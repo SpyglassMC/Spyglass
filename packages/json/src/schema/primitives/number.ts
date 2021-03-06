@@ -20,15 +20,15 @@ export function float(node: JsonAstNode, ctx: SchemaContext): node is JsonNumber
 
 const range = (schema: (node: JsonAstNode, ctx: SchemaContext) => node is JsonNumberAstNode) => (min: number | null, max: number | null) => {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
-		if (schema(node, ctx)) {
-			if (min !== null && max !== null && (node.value < min || node.value > max)) {
-				ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)
-			} else if (min !== null && node.value < min) {
-				ctx.err.report(localize('expected', [localize('number.>=', [min])]), node)
-			} else if (max !== null && node.value > max) {
-				ctx.err.report(localize('expected', [localize('number.<=', [max])]), node)
-			}
-		}
+		if (!schema(node, ctx)) {
+			return
+		} else if (min !== null && max !== null && (node.value < min || node.value > max)) {
+			ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)
+		} else if (min !== null && node.value < min) {
+			ctx.err.report(localize('expected', [localize('number.>=', [min])]), node)
+		} else if (max !== null && node.value > max) {
+			ctx.err.report(localize('expected', [localize('number.<=', [max])]), node)
+		}	
 	}
 }
 

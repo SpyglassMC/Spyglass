@@ -1,6 +1,6 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { JsonAstNode, JsonObjectAstNode } from '../../node'
+import { JsonAstNode, JsonObjectAstNode, JsonPropertyAstNode } from '../../node'
 import { Schema } from '../Schema'
 import { SchemaContext } from '../SchemaContext'
 import { as } from './util'
@@ -62,7 +62,7 @@ export function opt(schema: Schema<JsonAstNode>): OptSchema {
 	return { opt: schema }
 }
 
-export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values: (value: string) => Schema<JsonAstNode>): Schema<JsonAstNode> {
+export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values: (value: string, properties: JsonPropertyAstNode[]) => Schema<JsonAstNode>): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
@@ -75,7 +75,7 @@ export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values
 				keySchema(dispatcher.value, ctx)
 				if (dispatcher.value.type === 'json:string') {
 					node.properties.splice(dispatcherIndex, 1)
-					values(dispatcher.value.value)(node, ctx)
+					values(dispatcher.value.value, node.properties)(node, ctx)
 					node.properties.splice(dispatcherIndex, 0, dispatcher)
 				}
 			}
@@ -83,7 +83,10 @@ export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values
 	}
 }
 
-export function pick(value: string, cases: Record<string, SchemaRecord>): SchemaRecord {
+export function pick(value: string | undefined, cases: Record<string, SchemaRecord>): SchemaRecord {
+	if (value === undefined) {
+		return {}
+	}
 	const properties = cases[value.replace(/^minecraft:/, '')]
 	if (properties === undefined) {
 		return {}
@@ -93,4 +96,9 @@ export function pick(value: string, cases: Record<string, SchemaRecord>): Schema
 		properties[key] = isOpt(p) ? opt(as(key, p.opt)) : as(key, p)
 	})
 	return properties
+}
+
+export function extract(value: string, properties: JsonPropertyAstNode[]) {
+	const node = properties.find(p => p.key.value === value)
+	return node?.value?.type === 'json:string' ? node.value.value : undefined
 }

@@ -21,7 +21,7 @@ export function schemaFromUri(uri: string, ctx: SchemaContext): Schema<JsonAstNo
 	const parts = dissectUri(rel)
 	if (parts && Schemas.has(parts.category)) {
 		return Schemas.get(parts.category)!
-	} else if (uri.endsWith('/pack.mcmeta')) {
+	} else if (rel === '/pack.mcmeta') {
 		return pack_mcmeta
 	} else {
 		return () => {}
