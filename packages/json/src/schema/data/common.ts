@@ -1,4 +1,4 @@
-import { any, as, floatRange, int, opt, record, string } from '../primitives'
+import { any, as, float, floatRange, int, opt, record, string } from '../primitives'
 
 export const int_range = as('range', any([
 	int,
@@ -23,6 +23,20 @@ export const int_bounds = as('bounds', any([
 		record({
 			min: opt(int),
 			max: int,
+		}),
+	]),
+]))
+
+export const float_bounds = as('bounds', any([
+	float,
+	any([
+		record({
+			min: float,
+			max: opt(float),
+		}),
+		record({
+			min: opt(float),
+			max: float,
 		}),
 	]),
 ]))

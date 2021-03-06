@@ -11,7 +11,7 @@ export function string(node: JsonAstNode, ctx: SchemaContext): node is JsonStrin
 	return true
 }
 
-export function resource(id: string | string[]): Schema<JsonAstNode> {
+export function resource(id: string | string[], allowTag = false): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!string(node, ctx)) {
 			return

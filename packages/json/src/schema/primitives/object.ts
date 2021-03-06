@@ -62,6 +62,12 @@ export function opt(schema: Schema<JsonAstNode>): OptSchema {
 	return { opt: schema }
 }
 
+export function ref(schema: () => Schema<JsonAstNode>): Schema<JsonAstNode> {
+	return (node: JsonAstNode, ctx: SchemaContext) => {
+		return schema()(node, ctx)
+	}
+}
+
 export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values: (value: string, properties: JsonPropertyAstNode[]) => Schema<JsonAstNode>): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
