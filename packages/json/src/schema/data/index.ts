@@ -3,12 +3,14 @@ import { JsonAstNode } from '../../node'
 import { dissectUri } from '../../util'
 import { Schema } from '../Schema'
 import { SchemaContext } from '../SchemaContext'
+import { advancement } from './advancement'
 import { item_modifier_extended } from './item_modifier'
 import { loot_table } from './loot_table'
 import { pack_mcmeta } from './pack_mcmeta'
 import { predicate_extended } from './predicate'
 
 export const Schemas = new Map<FileCategory, Schema<JsonAstNode>>([
+	['advancement', advancement],
 	['item_modifier', item_modifier_extended],
 	['loot_table', loot_table],
 	['predicate', predicate_extended],
