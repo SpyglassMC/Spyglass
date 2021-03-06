@@ -1,4 +1,4 @@
-import { any, as, boolean, dispatch, float, floatRange, int, listOf, object, opt, pick, record, resource, string } from '../primitives'
+import { any, as, boolean, dispatch, float, floatRange, int, listOf, literal, object, opt, pick, record, resource, string } from '../primitives'
 import { int_bounds, int_range } from './common'
 
 export const predicate = as('predicate', dispatch('condition', resource('loot_condition_type'),
@@ -11,19 +11,19 @@ export const predicate = as('predicate', dispatch('condition', resource('loot_co
 			properties: object(
 				string,
 				() => string,
-			), // TODO
+			), // TODO: block states
 		},
 		damage_source_properties: {
-			predicate: object(), // TODO
+			predicate: object(), // TODO: damage source predicate
 		},
 		entity_properties: {
-			entity: string, // TODO
-			predicate: object(), // TODO
+			entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+			predicate: object(), // TODO: entity predicate
 		},
 		entity_scores: {
-			entity: string, // TODO
+			entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
 			scores: object(
-				string, // TODO
+				literal('objective'),
 				() => int_bounds
 			),
 		},
@@ -37,10 +37,10 @@ export const predicate = as('predicate', dispatch('condition', resource('loot_co
 			offsetX: opt(int),
 			offsetY: opt(int),
 			offsetZ: opt(int),
-			predicate: object(), // TODO
+			predicate: object(), // TODO: location predicate
 		},
 		match_tool: {
-			predicate: object(), // TODO
+			predicate: object(), // TODO: item predicate
 		},
 		random_chance: {
 			chance: floatRange(0, 1),

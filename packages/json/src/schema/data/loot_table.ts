@@ -1,4 +1,4 @@
-import { as, dispatch, int, intRange, listOf, opt, pick, record, resource, string } from '../primitives'
+import { as, dispatch, int, intRange, listOf, opt, pick, record, resource } from '../primitives'
 import { int_range } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
@@ -12,7 +12,7 @@ export const loot_entry = as('loot_entry', dispatch('type', resource('loot_pool_
 				children: listOf(loot_entry),
 			},
 			dynamic: {
-				name: string,
+				name: resource(['contents']),
 			},
 			group: {
 				children: listOf(loot_entry),
@@ -43,8 +43,23 @@ export const loot_pool = as('loot_pool', record({
 	conditions: opt(listOf(predicate)),
 }))
 
+const loot_context_types = [
+	'minecraft:empty',
+	'minecraft:chest',
+	'minecraft:command',
+	'minecraft:selector',
+	'minecraft:fishing',
+	'minecraft:entity',
+	'minecraft:gift',
+	'minecraft:barter',
+	'minecraft:advancement_reward',
+	'minecraft:advancement_entity',
+	'minecraft:generic',
+	'minecraft:block',
+]
+
 export const loot_table = as('loot_table', record({
-	type: opt(string),
+	type: opt(resource(loot_context_types)),
 	pools: opt(listOf(loot_pool)),
 	functions: opt(listOf(item_modifier)),
 }))
