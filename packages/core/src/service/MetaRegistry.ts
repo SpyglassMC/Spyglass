@@ -3,7 +3,7 @@
 import { AstNode } from '../node'
 import { EntryNode, EntryParser } from '../parser'
 import { Colorizer, FallbackColorizer } from '../processor'
-import { Binder, FallbackBinder, UriBinder } from '../symbol'
+import { Binder, Checker, FallbackBinder, FallbackChecker, UriBinder } from '../symbol'
 
 export interface LanguageOptions {
 	/**
@@ -12,6 +12,7 @@ export interface LanguageOptions {
 	extensions: string[],
 	parser: EntryParser<any>,
 	binder?: Binder<any>,
+	checker?: Checker<any>,
 	colorizer?: Colorizer<any>,
 }
 
@@ -43,6 +44,13 @@ export class MetaRegistry {
 	}
 
 	/**
+	 * An array of file extensions (including the leading dot (`.`)) that are supported.
+	 */
+	public get supportedFileExtensions(): string[] {
+		return Array.from(this.#languages.values()).flatMap(v => v.extensions)
+	}
+
+	/**
 	 * @param fileExtension The file extension including the leading dot. e.g. `".mcfunction"`.
 	 * @returns The language ID registered for the file extension, or `undefined`.
 	 */
@@ -70,14 +78,21 @@ export class MetaRegistry {
 	 * @returns The corresponding `Binder` for the language ID, or a fallback binder that does nothing.
 	 */
 	public getBinder<N extends AstNode>(languageID: string): Binder<N> {
-		return (this.#languages.get(languageID)?.binder ?? FallbackBinder) 
+		return this.#languages.get(languageID)?.binder ?? FallbackBinder
+	}
+
+	/**
+	 * @returns The corresponding `Checker` for the language ID, or a fallback checker that does nothing.
+	 */
+	public getChecker<N extends AstNode>(languageID: string): Checker<N> {
+		return this.#languages.get(languageID)?.checker ?? FallbackChecker
 	}
 
 	/**
 	 * @returns The corresponding `Colorizer` for the language ID, or a fallback colorizer that produces nothing.
 	 */
 	public getColorizer<N extends AstNode>(languageID: string): Colorizer<N> {
-		return (this.#languages.get(languageID)?.colorizer ?? FallbackColorizer)
+		return this.#languages.get(languageID)?.colorizer ?? FallbackColorizer
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

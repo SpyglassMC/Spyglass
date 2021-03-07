@@ -46,20 +46,6 @@ export function activate(context: vsc.ExtensionContext) {
 		progressOnInitialization: true,
 	}
 
-	// if (workspace.workspaceFolders) {
-	// 	for (const root of workspace.workspaceFolders) {
-	// 		clientOptions.synchronize.fileEvents.push(
-	// 			workspace.createFileSystemWatcher(
-	// 				new RelativePattern(root, '**/data/**/*.{json,mcfunction,nbt}')
-	// 			),
-	// 			workspace.createFileSystemWatcher(
-	// 				new RelativePattern(root, '**/{data,pack.mcmeta}'),
-	// 				false, true, false
-	// 			)
-	// 		)
-	// 	}
-	// }
-
 	// Create the language client and start the client.
 	client = new lc.LanguageClient(
 		'spyglass',

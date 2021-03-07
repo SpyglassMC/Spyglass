@@ -4,9 +4,9 @@ import { file } from '../parser'
 import { ColorToken } from '../processor'
 import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
-import { BinderContext, ColorizerContext, ColorizerOptions, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { BinderContext, CheckerContext, ColorizerContext, ColorizerOptions, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import { FileService } from './FileService'
-import { walk } from './fileUtil'
+import * as fileUtil from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 import { TextDocuments } from './TextDocuments'
@@ -16,61 +16,92 @@ interface Options {
 	logger?: Logger,
 	roots?: string[],
 	symbols?: SymbolUtil,
+	/**
+	 * Whether files and folders under the roots are watched.
+	 */
+	rootsWatched?: boolean,
 }
 
 export class Service {
-	public readonly meta = MetaRegistry.instance
-	public readonly fs: FileService
-	public readonly logger: Logger
+	readonly #roots: string[] = []
+
+	readonly rootsWatched: boolean
+	readonly meta = MetaRegistry.instance
+	readonly fs: FileService
+	readonly logger: Logger
+	readonly symbols: SymbolUtil
+	readonly textDocuments: TextDocuments
+
 	/**
 	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 */
-	public readonly roots: string[]
-	public readonly symbols: SymbolUtil
-	public readonly textDocuments: TextDocuments
+	get roots(): string[] {
+		return this.#roots
+	}
+	set roots(newRoots: string[]) {
+		newRoots = newRoots
+			.filter(fileUtil.isFileUri)
+			.map(r => r.endsWith('/') ? r : `${r}/`)
+		this.#roots.splice(0, this.#roots.length, ...newRoots)
+	}
+
+	/**
+	 * The root paths. Each path in this array is guaranteed to end with the platform-specific path sep character (`/` or `\`).
+	 */
+	get rootPaths(): string[] {
+		return this.roots.map(fileUtil.fileUriToPath)
+	}
 
 	constructor({
 		fs = FileService.create(),
 		logger = Logger.create(),
 		roots = [],
 		symbols = new SymbolUtil({}),
+		rootsWatched = false,
 	}: Options = {}) {
 		this.fs = fs
 		this.logger = logger
-		this.roots = roots.map(r => r.endsWith('/') ? r : `${r}/`)
+		this.roots = roots
 		this.symbols = symbols
 		this.textDocuments = new TextDocuments({ fs })
+		this.rootsWatched = rootsWatched
 	}
 
-	public parse(doc: TextDocument): FileNode<AstNode> {
+	parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = this.getParserCtx(doc)
 		const src = new Source(doc.getText())
 		const ans = file()(src, ctx)
-		this.textDocuments.cacheNode(doc.uri, ans)
+		this.textDocuments.tryCachingNode(doc.uri, ans)
 		return ans
 	}
 
-	public bind(node: FileNode<AstNode>, doc: TextDocument): void {
+	bind(node: FileNode<AstNode>, doc: TextDocument): void {
 		const binder = this.meta.getBinder(doc.languageId)
 		const ctx = this.getBinderCtx(doc)
-		const ans = binder(node, ctx)
+		binder(node, ctx)
 		node.binderErrors = ctx.err.dump()
-		return ans
 	}
 
-	public colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
+	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
+		const checker = this.meta.getChecker(doc.languageId)
+		const ctx = this.getCheckerCtx(doc)
+		await checker(node, ctx)
+		node.checkerErrors = ctx.err.dump()
+	}
+
+	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
 		const colorizer = this.meta.getColorizer(doc.languageId)
 		return colorizer(node, this.getColorizerCtx(doc, options))
 	}
 
-	public async bindUris(): Promise<void> {
+	async bindUris(): Promise<void> {
 		const ctx = this.getUriBinderCtx()
 		ctx.symbols.startUriBinding()
 		try {
 			const uris: string[] = []
 
-			for (const root of this.roots) {
-				await walk(this.fs, root, u => uris.push(u))
+			for (const root of this.#roots) {
+				await fileUtil.walk(this.fs, root, u => uris.push(u))
 			}
 
 			for (const binder of this.meta.getUriBinders()) {
@@ -83,9 +114,25 @@ export class Service {
 		}
 	}
 
-	public setRoots(roots: string[]) {
-		roots = roots.map(r => r.endsWith('/') ? r : `${r}/`)
-		this.roots.splice(0, this.roots.length, ...roots)
+	private isWatched(uri: string): boolean {
+		return this.rootsWatched && this.roots.some(r => uri.startsWith(r))
+	}
+
+	async ensureDoc(uri: string): Promise<TextDocument | null> {
+		try {
+			return await this.textDocuments.read(uri, this.isWatched(uri))
+		} catch (_) {
+			// Ignored. Most likely the file at `uri` doesn't exist.
+			return null
+		}
+	}
+
+	async ensureDocAndNode(uri: string): Promise<{ node: FileNode<AstNode>, doc: TextDocument } | null> {
+		const doc = this.ensureDoc(uri)
+		if (doc) {
+
+		}
+		return null
 	}
 
 	private getCtxBase(): ContextBase {
@@ -93,7 +140,7 @@ export class Service {
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
-			roots: this.roots,
+			roots: this.#roots,
 		})
 	}
 	private getParserCtx(doc: TextDocument): ParserContext {
@@ -111,6 +158,12 @@ export class Service {
 	}
 	private getBinderCtx(doc: TextDocument): BinderContext {
 		return BinderContext.create(this.getProcessorCtx(doc))
+	}
+	private getCheckerCtx(doc: TextDocument): CheckerContext {
+		return CheckerContext.create({
+			...this.getProcessorCtx(doc),
+			service: this,
+		})
 	}
 	private getColorizerCtx(doc: TextDocument, options: ColorizerOptions): ColorizerContext {
 		return ColorizerContext.create({

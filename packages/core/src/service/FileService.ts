@@ -3,7 +3,6 @@
 export { URL as Uri } from 'url'
 
 import { promises as fsp } from 'fs'
-import * as url from 'url'
 import { Uri } from '.'
 
 export interface FileService {
@@ -28,21 +27,6 @@ export interface FileService {
 	readdir(uri: string): Promise<string[]>
 
 	stat(uri: string): Promise<FileStats>
-
-	join(fromUri: string, toUri: string): string
-
-	/**
-	 * @param fileUri A file URI.
-	 * @returns The corresponding file path of the `fileUri`.
-	 * @throws If the URI is not a file schema URI.
-	 */
-	fileUriToPath(fileUri: string): string
-
-	/**
-	 * @param path A file path.
-	 * @returns The corresponding file URI of the `path`.
-	 */
-	pathToFileUri(path: string): string
 }
 
 export namespace FileService {
@@ -61,32 +45,20 @@ export namespace FileService {
  * @internal This is only exported to be overridden in tests.
  */
 export class FileServiceImpl implements FileService {
-	public async accessible(uri: string): Promise<boolean> {
+	async accessible(uri: string): Promise<boolean> {
 		return fsp.stat(new Uri(uri)).then(() => true, () => false)
 	}
 
-	public async readFile(uri: string): Promise<string> {
+	async readFile(uri: string): Promise<string> {
 		return fsp.readFile(new Uri(uri), 'utf-8')
 	}
 
-	public async readdir(uri: string): Promise<string[]> {
+	async readdir(uri: string): Promise<string[]> {
 		return fsp.readdir(new Uri(uri))
 	}
 
-	public async stat(uri: string): Promise<FileStats> {
+	async stat(uri: string): Promise<FileStats> {
 		return fsp.stat(new Uri(uri))
-	}
-
-	public join(fromUri: string, toUri: string): string {
-		return (fromUri.endsWith('/') ? fromUri : `${fromUri}/`) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
-	}
-
-	public fileUriToPath(fileUri: string): string {
-		return url.fileURLToPath(new Uri(fileUri))
-	}
-
-	public pathToFileUri(path: string): string {
-		return url.pathToFileURL(path).toString()
 	}
 }
 

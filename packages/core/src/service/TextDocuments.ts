@@ -102,7 +102,7 @@ export class TextDocuments implements TextDocuments {
 	 */
 	public onDidClose(uri: string): void {
 		this.activeUris.delete(uri)
-		this.clearCache(uri)
+		this.tryClearingCache(uri)
 	}
 
 	/**
@@ -110,7 +110,7 @@ export class TextDocuments implements TextDocuments {
 	 */
 	public onWatchedFileModified(uri: string): void {
 		this.watchedUris.delete(uri)
-		this.clearCache(uri)
+		this.tryClearingCache(uri)
 	}
 
 	/**
@@ -118,21 +118,26 @@ export class TextDocuments implements TextDocuments {
 	 */
 	public onWatchedFileDeleted(uri: string): void {
 		this.watchedUris.delete(uri)
-		this.clearCache(uri)
+		this.tryClearingCache(uri)
 	}
 
 	/**
 	 * Remove the cache for `uri` if it is neither active nor watched.
 	 */
-	private clearCache(uri: string): void {
+	private tryClearingCache(uri: string): void {
 		if (!this.activeUris.has(uri) && !this.watchedUris.has(uri)) {
 			this.docCache.delete(uri)
 			this.nodeCache.delete(uri)
 		}
 	}
 
-	public cacheNode(uri: string, node: FileNode<any>): void {
-		this.nodeCache.set(uri, node)
+	/**
+	 * Cache the node if it is cacheable (i.e. the URI is either active or watched).
+	 */
+	public tryCachingNode(uri: string, node: FileNode<any>): void {
+		if (this.activeUris.has(uri) || this.watchedUris.has(uri)) {
+			this.nodeCache.set(uri, node)
+		}
 	}
 
 	public getCachedNode(uri: string): FileNode<any> | undefined {

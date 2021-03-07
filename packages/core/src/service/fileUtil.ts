@@ -1,3 +1,4 @@
+import url, { URL as Url } from 'url'
 import { FileService, FileStats } from './FileService'
 
 /**
@@ -29,9 +30,34 @@ export async function walk(fs: FileService, uri: string, callbackFn: (this: void
 			if (name === '.git') {
 				continue
 			}
-			await walk(fs, fs.join(uri, name), callbackFn)
+			await walk(fs, join(uri, name), callbackFn)
 		}
 	} else if (stat.isFile()) {
 		callbackFn(uri, stat)
 	}
+}
+
+export function join(fromUri: string, toUri: string): string {
+	return (fromUri.endsWith('/') ? fromUri : `${fromUri}/`) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
+}
+
+export function isFileUri(uri: string): boolean {
+	return new Url(uri).protocol === 'file:'
+}
+
+/**
+ * @param fileUri A file URI.
+ * @returns The corresponding file path of the `fileUri` in platform-specific format.
+ * @throws If the URI is not a file schema URI.
+ */
+export function fileUriToPath(fileUri: string): string {
+	return url.fileURLToPath(new Url(fileUri))
+}
+
+/**
+ * @param path A file path.
+ * @returns The corresponding file URI of the `path`.
+ */
+export function pathToFileUri(path: string): string {
+	return url.pathToFileURL(path).toString()
 }
