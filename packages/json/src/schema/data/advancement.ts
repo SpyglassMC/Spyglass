@@ -8,8 +8,9 @@ const entity = (any([
 	listOf(predicate),
 ]))
 
-export const criterion = as('criterion', dispatch('trigger', resource('advancement_trigger'),
+export const criterion = as('criterion', dispatch('trigger',
 	(trigger) => record({
+		trigger: resource('advancement_trigger'),
 		conditions: opt(record({
 			...trigger === 'impossible' ? {} : {
 				player: opt(entity),

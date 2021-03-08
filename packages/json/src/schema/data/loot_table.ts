@@ -3,8 +3,9 @@ import { int_range } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
 
-export const loot_entry = as('loot_entry', dispatch('type', resource('loot_pool_entry_type'),
+export const loot_entry = as('loot_entry', dispatch('type',
 	(type) => record({
+		type: resource('loot_pool_entry_type'),
 		weight: opt(intRange(1, null)),
 		quality: opt(int),
 		...pick(type, {

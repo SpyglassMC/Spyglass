@@ -68,23 +68,15 @@ export function ref(schema: () => Schema<JsonAstNode>): Schema<JsonAstNode> {
 	}
 }
 
-export function dispatch(keyName: string, keySchema: Schema<JsonAstNode>, values: (value: string, properties: JsonPropertyAstNode[]) => Schema<JsonAstNode>): Schema<JsonAstNode> {
+export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => Schema<JsonAstNode>): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
 			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
 			const dispatcher = node.properties[dispatcherIndex]
-			if (!dispatcher) {
-				ctx.err.report(localize('missing-key', [localize('punc.quote', [keyName])]), Range.create(node.range.start, node.range.start + 1))
-			} else if (dispatcher.value) {
-				keySchema(dispatcher.value, ctx)
-				if (dispatcher.value.type === 'json:string') {
-					node.properties.splice(dispatcherIndex, 1)
-					values(dispatcher.value.value, node.properties)(node, ctx)
-					node.properties.splice(dispatcherIndex, 0, dispatcher)
-				}
-			}
+			const value = dispatcher.value?.type === 'json:string' ? dispatcher.value.value : undefined
+			values(value, node.properties)(node, ctx)
 		}
 	}
 }

@@ -74,8 +74,9 @@ export const mob_effect_predicate = as('mob_effect', record({
 	visible: opt(boolean),
 }))
 
-export const statistic_predicate = as('statistic', dispatch('type', resource('stat_type'),
+export const statistic_predicate = as('statistic', dispatch('type',
 	(stat) => record({
+		type: resource('stat_type'),
 		...pick(stat, {
 			mined: { stat: resource('block') },
 			crafted: { stat: resource('item') },
@@ -161,70 +162,73 @@ export const damage_predicate = as('damage', record({
 	type: opt(damage_source_predicate),
 }))
 
-export const predicate = as('predicate', dispatch('condition', resource('loot_condition_type'),
-	(condition) => record(pick(condition, {
-		alternative: {
-			terms: listOf(predicate),
-		},
-		block_state_property: {
-			block: resource('block'),
-			properties: object(
-				string,
-				() => string,
-			), // TODO: block states
-		},
-		damage_source_properties: {
-			predicate: damage_source_predicate,
-		},
-		entity_properties: {
-			entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
-			predicate: entity_predicate,
-		},
-		entity_scores: {
-			entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
-			scores: object(
-				literal('objective'),
-				() => int_bounds
-			),
-		},
-		inverted: {
-			term: predicate,
-		},
-		killed_by_player: {
-			inverse: opt(boolean),
-		},
-		location_check: {
-			offsetX: opt(int),
-			offsetY: opt(int),
-			offsetZ: opt(int),
-			predicate:location_predicate,
-		},
-		match_tool: {
-			predicate: item_predicate,
-		},
-		random_chance: {
-			chance: floatRange(0, 1),
-		},
-		random_chance_with_looting: {
-			chance: floatRange(0, 1),
-			looting_multiplier: float,
-		},
-		reference: {
-			name: resource('predicate'),
-		},
-		table_bonus: {
-			enchantment: resource('enchantment'),
-			chances: listOf(floatRange(0, 1)),
-		},
-		time_check: {
-			value: int_bounds,
-			period: opt(int),
-		},
-		weather_check: {
-			rainding: opt(boolean),
-			thundering: opt(boolean),
-		},
-	}))
+export const predicate = as('predicate', dispatch('condition',
+	(condition) => record({
+		condition: resource('loot_condition_type'),
+		...pick(condition, {
+			alternative: {
+				terms: listOf(predicate),
+			},
+			block_state_property: {
+				block: resource('block'),
+				properties: object(
+					string,
+					() => string,
+				), // TODO: block states
+			},
+			damage_source_properties: {
+				predicate: damage_source_predicate,
+			},
+			entity_properties: {
+				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+				predicate: entity_predicate,
+			},
+			entity_scores: {
+				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+				scores: object(
+					literal('objective'),
+					() => int_bounds
+				),
+			},
+			inverted: {
+				term: predicate,
+			},
+			killed_by_player: {
+				inverse: opt(boolean),
+			},
+			location_check: {
+				offsetX: opt(int),
+				offsetY: opt(int),
+				offsetZ: opt(int),
+				predicate:location_predicate,
+			},
+			match_tool: {
+				predicate: item_predicate,
+			},
+			random_chance: {
+				chance: floatRange(0, 1),
+			},
+			random_chance_with_looting: {
+				chance: floatRange(0, 1),
+				looting_multiplier: float,
+			},
+			reference: {
+				name: resource('predicate'),
+			},
+			table_bonus: {
+				enchantment: resource('enchantment'),
+				chances: listOf(floatRange(0, 1)),
+			},
+			time_check: {
+				value: int_bounds,
+				period: opt(int),
+			},
+			weather_check: {
+				rainding: opt(boolean),
+				thundering: opt(boolean),
+			},
+		}),
+	})
 ))
 
 export const predicate_extended = any([

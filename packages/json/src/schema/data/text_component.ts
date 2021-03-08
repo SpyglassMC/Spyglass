@@ -11,8 +11,8 @@ const component = (properties: Parameters<typeof record>[0]) => record({
 	obfuscated: opt(boolean), 
 	insertion: opt(string),
 	clickEvent: opt(dispatch('action',
-		literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
 		(action) => record({
+			action: literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
 			value: (node, ctx) => {
 				if (!string(node, ctx)) return
 				// TODO: command validation
@@ -20,33 +20,35 @@ const component = (properties: Parameters<typeof record>[0]) => record({
 		})
 	)),
 	hoverEvent: opt(dispatch('action',
-		literal(['show_text', 'show_item', 'show_entity']),
-		(action) => record(pick(action, {
-			show_text: {
-				value: opt(text_component),
-				contents: opt(text_component),
-			},
-			show_item: {
-				value: opt(string), // TODO: item nbt
-				contents: opt(record({
-					id: resource('item'),
-					count: opt(int),
-					tag: opt(string), // TODO: item tag nbt
-				})),
-			},
-			show_entity: {
-				value: opt(record({
-					name: opt(string),
-					type: opt(resource('entity_type')),
-					id: opt(string), // TODO: uuid
-				})),
-				contents: opt(record({
-					name: opt(text_component),
-					type: opt(resource('entity_type')),
-					id: opt(string), // TODO: uuid
-				})),
-			},
-		}))
+		(action) => record({
+			action: literal(['show_text', 'show_item', 'show_entity']),
+			...pick(action, {
+				show_text: {
+					value: opt(text_component),
+					contents: opt(text_component),
+				},
+				show_item: {
+					value: opt(string), // TODO: item nbt
+					contents: opt(record({
+						id: resource('item'),
+						count: opt(int),
+						tag: opt(string), // TODO: item tag nbt
+					})),
+				},
+				show_entity: {
+					value: opt(record({
+						name: opt(string),
+						type: opt(resource('entity_type')),
+						id: opt(string), // TODO: uuid
+					})),
+					contents: opt(record({
+						name: opt(text_component),
+						type: opt(resource('entity_type')),
+						id: opt(string), // TODO: uuid
+					})),
+				},
+			}),
+		})
 	)),
 })
 
