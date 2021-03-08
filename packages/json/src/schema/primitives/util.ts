@@ -3,6 +3,12 @@ import { JsonAstNode } from '../../node'
 import { Schema } from '../Schema'
 import { SchemaContext } from '../SchemaContext'
 
+export function ref(schema: () => Schema<JsonAstNode>): Schema<JsonAstNode> {
+	return (node: JsonAstNode, ctx: SchemaContext) => {
+		return schema()(node, ctx)
+	}
+}
+
 export function as(context: string, schema: Schema<JsonAstNode>): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		schema(node, ctx)
