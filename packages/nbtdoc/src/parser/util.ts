@@ -1,6 +1,6 @@
 import { AstNode, CommentNode, InfallibleParser, Parser, ParserContext, repeat, sequence, Source } from '@spyglassmc/core'
-import { comment } from '.'
-import { SyntaxUtil } from '..'
+import { SyntaxUtil } from '../node'
+import { comment } from './terminator'
 
 // TODO: Move this whole file to `@spyglassmc/core`.
 
