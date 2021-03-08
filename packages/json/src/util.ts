@@ -1,4 +1,4 @@
-import { FileCategory } from '@spyglassmc/core'
+import type { FileCategory } from '@spyglassmc/core'
 
 export const Categories = new Map<string, FileCategory>([
 	['advancements', 'advancement'],

@@ -1,6 +1,6 @@
 import { Range } from '@spyglassmc/core'
-import { ASTNode as VscodeAstNode } from 'vscode-json-languageservice'
-import { JsonAstNode, JsonStringAstNode, JsonPropertyAstNode } from '../node'
+import type { ASTNode as VscodeAstNode } from 'vscode-json-languageservice'
+import type { JsonAstNode, JsonPropertyAstNode, JsonStringAstNode } from '../node'
 
 export function transformer(node: VscodeAstNode): JsonAstNode {
 	const range = Range.create(node.offset, node.offset + node.length) 

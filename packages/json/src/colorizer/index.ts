@@ -1,9 +1,11 @@
-import { ColorToken, ColorTokenType, traverseLeaves } from '@spyglassmc/core'
-import { JsonAstNode, JsonStringAstNode } from '../node'
+import type { ColorTokenType } from '@spyglassmc/core'
+import { ColorToken, traverseLeaves } from '@spyglassmc/core'
+import type { JsonAstNode, JsonStringAstNode } from '../node'
+import { JsonPropertyAstNode } from '../node'
 
-export function colorizer(root: JsonAstNode): readonly ColorToken[] {
+export function entry(root: JsonAstNode): readonly ColorToken[] {
 	const ans: ColorToken[] = []
-	traverseLeaves(root, (node, parents) => {
+	traverseLeaves(root, (node, [parent]) => {
 		let type: ColorTokenType | undefined
 		switch(node.type) {
 			case 'json:number':
@@ -13,8 +15,7 @@ export function colorizer(root: JsonAstNode): readonly ColorToken[] {
 				type = 'modifier'
 				break
 			case 'json:string':
-				const p = parents[parents.length - 1] as JsonAstNode
-				if (p.type === 'json:property' && node.range.start === p.key.range.start) {
+				if (JsonPropertyAstNode.is(parent) && node.range.start === parent.key.range.start) {
 					type = 'property'
 				} else if ((node as JsonStringAstNode).resource) {
 					type = 'resourceLocation'
