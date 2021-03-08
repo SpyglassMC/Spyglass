@@ -1,7 +1,10 @@
-import { AstNode, SequenceUtil } from '../node'
+import type { AstNode} from '../node'
+import { SequenceUtil } from '../node'
 import { ErrorReporter, ParserContext } from '../service'
-import { ErrorSeverity, Range, Source } from '../source'
-import { Failure, InfallibleParser, Parser, Result, Returnable } from './Parser'
+import type { ErrorSeverity, Source } from '../source'
+import { Range } from '../source'
+import type { InfallibleParser, Parser, Result, Returnable } from './Parser'
+import { Failure } from './Parser'
 
 export type AttemptResult<N extends Returnable = AstNode> = {
 	result: Result<N>,

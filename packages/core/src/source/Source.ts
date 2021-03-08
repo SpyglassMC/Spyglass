@@ -1,4 +1,5 @@
-import { Range, RangeLike } from './Range'
+import type { RangeLike } from './Range'
+import { Range } from './Range'
 
 type Space =
 	| ' '

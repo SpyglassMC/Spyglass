@@ -1,4 +1,4 @@
-import { Range } from './Range'
+import type { Range } from './Range'
 
 export interface LanguageError {
 	message: string,

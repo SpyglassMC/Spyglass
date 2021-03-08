@@ -1,4 +1,4 @@
-import { AstNode } from './AstNode'
+import type { AstNode } from './AstNode'
 
 export interface ErrorNode extends AstNode {
 	type: 'error',

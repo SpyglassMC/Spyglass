@@ -1,7 +1,9 @@
-import { CommentNode } from '../node'
-import { ParserContext } from '../service'
-import { Range, Source } from '../source'
-import { Failure, Parser, Result } from './Parser'
+import type { CommentNode } from '../node'
+import type { ParserContext } from '../service'
+import type { Source } from '../source'
+import { Range } from '../source'
+import type { Parser, Result } from './Parser'
+import { Failure } from './Parser'
 
 interface Options {
 	singleLinePrefixes: Set<string>,

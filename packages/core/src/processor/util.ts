@@ -1,4 +1,4 @@
-import { AstNode } from '../node'
+import type { AstNode } from '../node'
 import { Range } from '../source'
 
 type Callback<R> = (this: void, leaf: AstNode, parents: AstNode[]) => R

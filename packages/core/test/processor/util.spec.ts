@@ -1,7 +1,8 @@
 import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { AstNode, Range, traverseLeaves } from '../../lib'
+import type { AstNode} from '../../lib'
+import { Range, traverseLeaves } from '../../lib'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',

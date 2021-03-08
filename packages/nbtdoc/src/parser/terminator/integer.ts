@@ -1,6 +1,7 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { IntegerToken } from '../../node'
+import type { IntegerToken } from '../../node'
 
 const Regex = /^-?(0|[1-9][0-9]*)$/
 

@@ -1,8 +1,10 @@
-import { AstNode, ErrorNode, FileNode } from '../node'
-import { ParserContext } from '../service'
-import { Range, Source } from '../source'
+import type { AstNode, ErrorNode, FileNode } from '../node'
+import type { ParserContext } from '../service'
+import type { Source } from '../source'
+import { Range } from '../source'
 import { error } from './error'
-import { EntryNode, Failure, InfallibleParser } from './Parser'
+import type { EntryNode, InfallibleParser } from './Parser'
+import { Failure } from './Parser'
 
 /**
  * Dispatches to the corresponding parser for the language.

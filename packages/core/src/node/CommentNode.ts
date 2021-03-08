@@ -1,4 +1,4 @@
-import { AstNode } from './AstNode'
+import type { AstNode } from './AstNode'
 
 export interface CommentNode extends AstNode {
 	type: 'comment',

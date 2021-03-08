@@ -1,7 +1,8 @@
 import assert, { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { SymbolAddition, SymbolUtil, SymbolVisibility } from '../../lib'
+import type { SymbolAddition} from '../../lib'
+import { SymbolUtil, SymbolVisibility } from '../../lib'
 
 describe('SymbolUtil', () => {
 	const fileUri = 'file:///test.nbtdoc'

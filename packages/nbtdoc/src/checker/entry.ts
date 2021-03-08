@@ -1,5 +1,5 @@
-import { Checker, CheckerContext } from '@spyglassmc/core'
-import { CompoundDefinitionNode, ContentNode, DescribesClauseNode, EnumDefinitionNode, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import type { Checker, CheckerContext } from '@spyglassmc/core'
+import type { CompoundDefinitionNode, ContentNode, DescribesClauseNode, EnumDefinitionNode, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: CheckerContext): Promise<void> => {
 	for (const childNode of node.children) {

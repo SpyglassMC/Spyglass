@@ -1,5 +1,6 @@
-import { CommentNode, InfallibleParser, map } from '@spyglassmc/core'
-import { DocCommentsNode } from '../../node'
+import type { InfallibleParser} from '@spyglassmc/core'
+import { CommentNode, map } from '@spyglassmc/core'
+import type { DocCommentsNode } from '../../node'
 import { docComment } from '../terminator'
 import { syntaxRepeat } from '../util'
 

@@ -1,6 +1,7 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { IdentifierToken } from '../../node'
+import type { IdentifierToken } from '../../node'
 
 interface Options {
 	regex?: RegExp,

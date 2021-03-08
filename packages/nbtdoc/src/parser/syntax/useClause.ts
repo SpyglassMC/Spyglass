@@ -1,5 +1,7 @@
-import { any, map, Parser } from '@spyglassmc/core'
-import { IdentPathToken, LiteralToken, UseClauseNode } from '../../node'
+import type { Parser } from '@spyglassmc/core'
+import { any, map } from '@spyglassmc/core'
+import type { UseClauseNode } from '../../node'
+import { IdentPathToken, LiteralToken } from '../../node'
 import { identPath, keyword, literal, punctuation } from '../terminator'
 import { syntax } from '../util'
 

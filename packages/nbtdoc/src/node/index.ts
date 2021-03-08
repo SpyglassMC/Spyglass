@@ -1,7 +1,7 @@
-import { AstNode, CommentNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
-import { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
-import { EnumDefinitionNode } from './EnumDefinition'
-import { InjectClauseNode } from './InjectClause'
+import type { AstNode, CommentNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
+import type { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
+import type { EnumDefinitionNode } from './EnumDefinition'
+import type { InjectClauseNode } from './InjectClause'
 
 export * from './CompoundDefinition'
 export * from './EnumDefinition'

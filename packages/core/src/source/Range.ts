@@ -1,4 +1,5 @@
-import { Offset, OffsetLike } from './Offset'
+import type { OffsetLike } from './Offset'
+import { Offset } from './Offset'
 
 export type RangeLike =
 	| Range | RangeContainer | OffsetLike

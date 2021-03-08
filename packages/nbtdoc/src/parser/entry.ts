@@ -1,5 +1,6 @@
-import { any, InfallibleParser, map } from '@spyglassmc/core'
-import { ContentNode, MainNode, SyntaxUtil } from '../node'
+import type { InfallibleParser} from '@spyglassmc/core'
+import { any, map } from '@spyglassmc/core'
+import type { ContentNode, MainNode, SyntaxUtil } from '../node'
 import { compoundDefinition, describesClause, enumDefinition, injectClause, moduleDeclaration, useClause } from './syntax'
 import { syntaxRepeat } from './util'
 

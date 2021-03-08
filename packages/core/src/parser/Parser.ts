@@ -1,6 +1,6 @@
-import { AstNode } from '../node'
-import { ParserContext } from '../service'
-import { Source } from '../source'
+import type { AstNode } from '../node'
+import type { ParserContext } from '../service'
+import type { Source } from '../source'
 
 /**
  * A parser.

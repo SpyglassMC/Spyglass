@@ -1,5 +1,5 @@
 import url, { URL as Url } from 'url'
-import { FileService, FileStats } from './FileService'
+import type { FileService, FileStats } from './FileService'
 
 /**
  * @param roots The root URIs. Each URI in this array must end with a slash (`/`).

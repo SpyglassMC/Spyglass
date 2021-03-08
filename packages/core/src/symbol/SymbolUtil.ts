@@ -1,5 +1,6 @@
-import { RangeLike } from '../source'
-import { Symbol, SymbolForm, SymbolForms, SymbolLocation, SymbolMap, SymbolMetadata, SymbolPath, SymbolTable, SymbolVisibility } from './Symbol'
+import type { RangeLike } from '../source'
+import type { Symbol, SymbolForm, SymbolMap, SymbolMetadata, SymbolPath, SymbolTable} from './Symbol'
+import { SymbolForms, SymbolLocation, SymbolVisibility } from './Symbol'
 
 // I wrote a lot of comments in this file to pretend that I know what I am doing.
 // For the record, I absolutely do not understand any piece of this monster.

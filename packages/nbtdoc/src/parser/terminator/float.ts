@@ -1,6 +1,7 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { FloatToken } from '../../node'
+import type { FloatToken } from '../../node'
 
 const Regex = /^(-?[0-9]+([eE][-+]?[0-9]+)?|-?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)$/
 

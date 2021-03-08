@@ -1,6 +1,7 @@
-import { Failure, InfallibleParser, Parser, ParserContext, Range, Result, Source } from '@spyglassmc/core'
+import type { InfallibleParser, Parser, ParserContext, Result, Source } from '@spyglassmc/core'
+import { Failure, Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { LiteralToken } from '../../node'
+import type { LiteralToken } from '../../node'
 
 
 /**

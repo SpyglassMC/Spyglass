@@ -1,13 +1,13 @@
 /* istanbul ignore file */
 
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Range } from '../source'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type { Range } from '../source'
 import { SymbolUtil } from '../symbol'
 import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
-import { Service } from './Service'
+import type { Service } from './Service'
 
 export interface ContextBase {
 	fs: FileService,

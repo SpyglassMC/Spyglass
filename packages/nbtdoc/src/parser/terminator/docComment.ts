@@ -1,4 +1,5 @@
-import { comment, CommentNode, Parser } from '@spyglassmc/core'
+import type { CommentNode, Parser } from '@spyglassmc/core'
+import { comment } from '@spyglassmc/core'
 
 /**
  * @returns A comment parser that accepts doc comments (`///`).

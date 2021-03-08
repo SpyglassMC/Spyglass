@@ -1,6 +1,7 @@
-import { InfallibleParser, map, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { map, Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { MinecraftIdentifierToken } from '../../node'
+import type { MinecraftIdentifierToken } from '../../node'
 import { identifier } from './identifier'
 
 const Regex = /^[0-9a-z_-]*$/

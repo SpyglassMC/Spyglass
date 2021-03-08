@@ -1,5 +1,5 @@
-import { CompoundFieldNode, IdentPathToken, LiteralToken, SyntaxNode } from '.'
-import { EnumFieldNode, EnumTypeOrEmpty } from './EnumDefinition'
+import type { CompoundFieldNode, IdentPathToken, LiteralToken, SyntaxNode } from '.'
+import type { EnumFieldNode, EnumTypeOrEmpty } from './EnumDefinition'
 
 export interface InjectClauseNode extends SyntaxNode<InjectClauseChild> {
 	type: 'nbtdoc:inject_clause',

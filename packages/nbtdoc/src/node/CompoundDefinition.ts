@@ -1,5 +1,6 @@
-import { AstNode } from '@spyglassmc/core'
-import { DocCommentsNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, LiteralToken, MinecraftIdentifierToken, StringToken, SyntaxNode } from './index'
+import type { AstNode } from '@spyglassmc/core'
+import type { DocCommentsNode, FloatToken, IntegerToken, MinecraftIdentifierToken, SyntaxNode } from './index'
+import { IdentifierToken, IdentPathToken, LiteralToken, StringToken } from './index'
 
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',

@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------*/
 
 import path from 'path'
-import * as vsc from 'vscode'
+import type * as vsc from 'vscode'
 import * as lc from 'vscode-languageclient/node'
 
 let client: lc.LanguageClient

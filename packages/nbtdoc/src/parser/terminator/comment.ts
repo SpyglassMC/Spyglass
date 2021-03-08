@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
-import { CommentNode, Parser, validate } from '@spyglassmc/core'
+import type { CommentNode, Parser} from '@spyglassmc/core'
+import { validate } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 
 /**

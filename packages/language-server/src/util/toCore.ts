@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import * as ls from 'vscode-languageserver/node'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type * as ls from 'vscode-languageserver/node'
 
 /**
  * A series of functions that can transform `vscode-languageserver` types to `@spyglassmc/core` types.

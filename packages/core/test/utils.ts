@@ -1,5 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Failure, LanguageError, Parser, ParserContext, Returnable, Source } from '../lib'
+import type { LanguageError, Parser, Returnable} from '../lib'
+import { Failure, ParserContext, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
 Object.defineProperty(BigInt.prototype, 'toJSON', {

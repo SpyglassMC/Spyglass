@@ -24,6 +24,12 @@ module.exports = {
 		"/scripts",
 	],
 	"rules": {
+		"@typescript-eslint/consistent-type-imports": [
+			"warn",
+			{
+				"prefer": "type-imports"
+			}
+		],
 		"@typescript-eslint/prefer-for-of": "warn",
 		"@typescript-eslint/prefer-readonly": "warn",
 		"@typescript-eslint/quotes": [

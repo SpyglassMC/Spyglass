@@ -1,6 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { any, AstNode, Failure, Parser, ParserContext, Range, Result, Source } from '../../lib'
+import type { AstNode, Parser, ParserContext, Result, Source } from '../../lib'
+import { any, Failure, Range } from '../../lib'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 interface LiteralNode extends AstNode {

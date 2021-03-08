@@ -1,6 +1,7 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import { StringToken } from '../../node'
+import type { StringToken } from '../../node'
 
 const EscapeChars = ['"', '\\', 'b', 'f', 'n', 'r', 't'] as const
 type EscapeChar = typeof EscapeChars[number]

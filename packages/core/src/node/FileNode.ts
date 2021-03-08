@@ -1,5 +1,5 @@
-import { AstNode } from '../node'
-import { LanguageError } from '../source'
+import type { AstNode } from '../node'
+import type { LanguageError } from '../source'
 
 export interface FileNode<CN extends AstNode> extends AstNode {
 	type: 'file',

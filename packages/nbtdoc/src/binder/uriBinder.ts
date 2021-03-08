@@ -1,4 +1,5 @@
-import { getRel, Range, UriBinder, UriBinderContext } from '@spyglassmc/core'
+import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
+import { getRel, Range } from '@spyglassmc/core'
 
 const Extension = '.nbtdoc'
 const ModuleFileSuffix = '/mod'

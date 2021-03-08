@@ -1,5 +1,6 @@
-import { ColorizerContext, ColorToken, ColorTokenType, traverseLeaves } from '@spyglassmc/core'
-import { LeafNode, MainNode } from '../node'
+import type { ColorizerContext, ColorTokenType} from '@spyglassmc/core'
+import { ColorToken, traverseLeaves } from '@spyglassmc/core'
+import type { LeafNode, MainNode } from '../node'
 
 export function entry(node: MainNode, ctx: ColorizerContext): readonly ColorToken[] {
 	const ans: ColorToken[] = []

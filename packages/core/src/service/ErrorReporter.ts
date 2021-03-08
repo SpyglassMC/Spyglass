@@ -1,4 +1,5 @@
-import { ErrorSeverity, LanguageError, Range, RangeLike } from '../source'
+import type { RangeLike } from '../source'
+import { ErrorSeverity, LanguageError, Range } from '../source'
 
 export class ErrorReporter {
 	public errors: LanguageError[] = []

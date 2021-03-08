@@ -1,7 +1,8 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { AstNode, Range, RangeContainer, Source } from '../../lib'
+import type { AstNode} from '../../lib'
+import { Range, RangeContainer, Source } from '../../lib'
 
 describe('Range', () => {
 	describe('create()', () => {

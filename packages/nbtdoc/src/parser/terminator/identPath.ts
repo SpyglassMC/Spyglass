@@ -1,5 +1,6 @@
-import { InfallibleParser, ParserContext, Range, Source } from '@spyglassmc/core'
-import { IdentPathToken } from '../../node'
+import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
+import { Range } from '@spyglassmc/core'
+import type { IdentPathToken } from '../../node'
 import { identifier } from './identifier'
 
 export function identPath(): InfallibleParser<IdentPathToken> {
