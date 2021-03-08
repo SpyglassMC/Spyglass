@@ -1,7 +1,43 @@
-import { any, as, boolean, dispatch, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
+import { any, as, boolean, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
 
-const component = (properties: Parameters<typeof record>[0]) => record({
-	...properties,
+const text_component_object = as('text_component', (node, ctx) => record({
+	...having(node, ctx, {
+		text: {
+			text: string,
+		},
+		translate: {
+			translate: string,
+			with: opt(listOf(text_component)),
+		},
+		selector: {
+			selector: string, // TODO: entity selector
+		},
+		score: {
+			score: record({
+				name: string, // TODO: score holder
+				objective: string, // TODO: objective
+				value: opt(string),
+			}),
+		},
+		keybind: {
+			keybind: string, // TODO: keybind
+		},
+		nbt: () => ({
+			nbt: string, // TODO: nbt path
+			...having(node, ctx, {
+				block: {
+					block: string, // TODO: block pos
+				},
+				entity: {
+					entity: string, // TODO: entity selector
+				},
+				storage: {
+					storage: resource('storage'),
+				},
+			}),
+			interpret: opt(boolean),
+		}),
+	}),
 	color: opt(string),
 	font: opt(string),
 	bold: opt(boolean),
@@ -50,48 +86,11 @@ const component = (properties: Parameters<typeof record>[0]) => record({
 			}),
 		})
 	)),
-})
-
-const nbt_component = (properties: Parameters<typeof component>[0]) => component({
-	nbt: string, // TODO: nbt path
-	...properties,
-	interpret: opt(boolean),
-})
-
-const text_component_object = as('text_component', any([
-	component({
-		text: string,
-	}),
-	component({
-		translate: string,
-		with: opt(listOf(ref(() => text_component))),
-	}),
-	component({
-		selector: string, // TODO: entity selector
-	}),
-	component({
-		score: record({
-			name: string, // TODO: score holder
-			objective: string, // TODO: objective
-			value: opt(string),
-		}),
-	}),
-	component({
-		keybind: string, // TODO: keybind
-	}),
-	nbt_component({
-		block: string, // TODO: block pos
-	}),
-	nbt_component({
-		entity: string, // TODO: entity selector
-	}),
-	nbt_component({
-		storage: resource('storage'),
-	}),
-]))
+	extra: opt(listOf(text_component)),
+}))
 
 export const text_component = as('text_component', any([
 	string,
 	text_component_object,
-	listOf(text_component_object),
+	listOf(ref(() => text_component)),
 ]))

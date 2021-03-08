@@ -1,5 +1,5 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { JsonAstNode, JsonObjectAstNode, JsonPropertyAstNode } from '../../node'
 import { Schema } from '../Schema'
 import { SchemaContext } from '../SchemaContext'
@@ -62,12 +62,6 @@ export function opt(schema: Schema<JsonAstNode>): OptSchema {
 	return { opt: schema }
 }
 
-export function ref(schema: () => Schema<JsonAstNode>): Schema<JsonAstNode> {
-	return (node: JsonAstNode, ctx: SchemaContext) => {
-		return schema()(node, ctx)
-	}
-}
-
 export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => Schema<JsonAstNode>): Schema<JsonAstNode> {
 	return (node: JsonAstNode, ctx: SchemaContext) => {
 		if (!JsonObjectAstNode.is(node)) {
@@ -99,4 +93,19 @@ export function pick(value: string | undefined, cases: Record<string, SchemaReco
 export function extract(value: string, properties: JsonPropertyAstNode[]) {
 	const node = properties.find(p => p.key.value === value)
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
+}
+
+export function having(node: JsonAstNode, ctx: SchemaContext, cases: Record<string, SchemaRecord | (() => SchemaRecord)>): SchemaRecord {
+	if (!JsonObjectAstNode.is(node)) {
+		return {}
+	}
+
+	const givenKeys = new Set(node.properties.map(n => n.key.value))
+	const key = Object.keys(cases).find(c => givenKeys.has(c))
+	if (key === undefined) {
+		ctx.err.report(localize('missing-key', [arrayToMessage(Object.keys(cases), true, 'or')]), Range.create(node.range.start, node.range.start + 1))
+		return {}
+	}
+	const c = cases[key]
+	return typeof c === 'function' ? c() : c
 }
