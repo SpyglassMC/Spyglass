@@ -2,6 +2,7 @@
 
 import { MetaRegistry } from '@spyglassmc/core'
 import * as binder from './binder'
+import * as checker from './checker'
 import * as colorizer from './colorizer'
 import * as parser from './parser'
 
@@ -13,7 +14,7 @@ export function initializeNbtdoc() {
 		registry.registerLanguage('nbtdoc', {
 			extensions: ['.nbtdoc'],
 			parser: parser.entry,
-			binder: binder.entry,
+			checker: checker.entry,
 			colorizer: colorizer.entry,
 		})
 		registry.registerUriBinder(binder.uriBinder)

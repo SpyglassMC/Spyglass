@@ -3,4 +3,4 @@ import { BinderContext } from '../service'
 
 export type Binder<N extends AstNode> = (node: N, ctx: BinderContext) => void
 
-export const FallbackBinder = () => void 0
+export const FallbackBinder: Binder<any> = () => void 0

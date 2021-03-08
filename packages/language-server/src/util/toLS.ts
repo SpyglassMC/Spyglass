@@ -14,8 +14,8 @@ export namespace toLS {
 
 	export function diagnostics(fileNode: core.FileNode<core.AstNode>, doc: TextDocument): ls.Diagnostic[] {
 		return [
-			...fileNode.binderErrors.map(e => diagnostic(e, doc)),
-			...fileNode.checkerErrors.map(e => diagnostic(e, doc)),
+			...fileNode.binderErrors?.map(e => diagnostic(e, doc)) ?? [],
+			...fileNode.checkerErrors?.map(e => diagnostic(e, doc)) ?? [],
 			...fileNode.parserErrors.map(e => diagnostic(e, doc)),
 		]
 	}

@@ -7,6 +7,7 @@ import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
+import { Service } from './Service'
 
 export interface ContextBase {
 	fs: FileService,
@@ -77,22 +78,37 @@ export namespace BinderContext {
 	}
 }
 
+export interface CheckerContext extends ProcessorContext {
+	err: ErrorReporter,
+	service: Service,
+}
+interface CheckerContextLike extends ProcessorContextLike {
+	err?: ErrorReporter,
+	service: Service,
+}
+export namespace CheckerContext {
+	export function create(ctx: CheckerContextLike): CheckerContext {
+		return {
+			...ProcessorContext.create(ctx),
+			err: ctx.err ?? new ErrorReporter(),
+			service: ctx.service,
+		}
+	}
+}
+
 export interface ColorizerOptions {
 	range?: Range,
 }
 export interface ColorizerContext extends ProcessorContext {
-	err: ErrorReporter,
 	options: ColorizerOptions,
 }
 interface ColorizerContextLike extends ProcessorContextLike {
-	err?: ErrorReporter,
 	options: ColorizerOptions,
 }
 export namespace ColorizerContext {
 	export function create(ctx: ColorizerContextLike): ColorizerContext {
 		return {
 			...ProcessorContext.create(ctx),
-			err: ctx.err ?? new ErrorReporter(),
 			options: ctx.options,
 		}
 	}
