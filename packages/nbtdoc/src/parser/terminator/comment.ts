@@ -1,5 +1,5 @@
+import type { CommentNode, Parser } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import type { CommentNode, Parser} from '@spyglassmc/core'
 import { validate } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 
@@ -14,6 +14,6 @@ export function comment(): Parser<CommentNode> {
 			singleLinePrefixes: new Set(['//']),
 		}),
 		(res, src) => !src.slice(res).startsWith('///'),
-		localize('nbtdoc.error.syntax.doc-comment-unexpected')
+		localize('nbtdoc.parser.syntax.doc-comment-unexpected')
 	)
 }

@@ -37,7 +37,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 			if (!canBeFollowedByLetter && /^[A-Za-z0-9_]$/.test(src.peek())) {
 				ctx.err.report(
 					localize('expected', [
-						localize('nbtdoc.error.keyword.separation'),
+						localize('nbtdoc.parser.keyword.separation'),
 					]),
 					src
 				)

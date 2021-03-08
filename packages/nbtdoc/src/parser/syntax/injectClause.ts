@@ -1,4 +1,4 @@
-import type { InfallibleParser, Parser} from '@spyglassmc/core'
+import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { DefinitionInjectChild, InjectClauseChild, InjectClauseNode, SyntaxUtil } from '../../node'
@@ -46,7 +46,7 @@ const definitionInject: InfallibleParser<DefinitionInject | null> = map(
 			], true),
 		]),
 		(src, ctx) => {
-			ctx.err.report(localize('nbtdoc.error.inject-clause.definition-expected'), src)
+			ctx.err.report(localize('nbtdoc.parser.inject-clause.definition-expected'), src)
 			const ans: SyntaxUtil<DefinitionInjectChild> = {
 				isSequenceUtil: true,
 				range: Range.create(src),

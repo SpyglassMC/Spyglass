@@ -2,7 +2,6 @@ import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { getRel, Range } from '@spyglassmc/core'
 
 const Extension = '.nbtdoc'
-const ModuleFileSuffix = '/mod'
 const NbtdocRootPrefix = 'nbtdoc/'
 
 export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
@@ -15,10 +14,9 @@ export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
 		if (!rel) {
 			continue
 		}
-		rel = rel.slice(0, -Extension.length)
-		if (rel.endsWith(ModuleFileSuffix)) {
-			rel = rel.slice(0, -ModuleFileSuffix.length)
-		}
+		rel = rel
+			.slice(0, -Extension.length)
+			.replace(/(^|\/)mod$/, '')
 		urisAndRels.push([uri, rel])
 	}
 	// Now the value of `urisAndRels`:

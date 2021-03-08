@@ -31,8 +31,22 @@ exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/
   }
 }
 
-exports['uriBinder() Bind ["minecraft/mod.nbtdoc","minecraft/foo/mod.nbtdoc"] 1'] = {
+exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mod.nbtdoc"] 1'] = {
   "nbtdoc": {
+    "": {
+      "category": "nbtdoc",
+      "identifier": "",
+      "subcategory": "module",
+      "implementation": [
+        {
+          "uri": "file:///root/mod.nbtdoc",
+          "range": {
+            "start": 0,
+            "end": 0
+          }
+        }
+      ]
+    },
     "minecraft": {
       "category": "nbtdoc",
       "identifier": "minecraft",

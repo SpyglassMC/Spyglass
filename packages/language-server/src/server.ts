@@ -41,8 +41,6 @@ connection.onInitialize(async params => {
 
 	await bindUris()
 
-	/* DEBUG */ logger.log(JSON.stringify(service.symbols, undefined, '\t'))
-
 	const result: ls.InitializeResult = {
 		capabilities: {
 			textDocumentSync: {

@@ -35,10 +35,10 @@ export function integer(isUnsigned = false): InfallibleParser<IntegerToken> {
 			ctx.err.report(localize('expected', [localize('integer')]), ans)
 		} else {
 			if (!Regex.test(raw)) {
-				ctx.err.report(localize('nbtdoc.error.integer.illegal'), ans)
+				ctx.err.report(localize('nbtdoc.parser.integer.illegal'), ans)
 			}
 			if (isUnsigned && ans.value < 0) {
-				ctx.err.report(localize('expected', [localize('nbtdoc.error.integer.unsigned')]), ans)
+				ctx.err.report(localize('expected', [localize('nbtdoc.parser.integer.unsigned')]), ans)
 			}
 		}
 

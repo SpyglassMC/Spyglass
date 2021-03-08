@@ -58,7 +58,7 @@ export function string(): InfallibleParser<StringToken> {
 			}
 		} else {
 			ctx.err.report(localize('expected', [
-				localize('nbtdoc.error.string', [localize('punc.quote', ['"'])]),
+				localize('nbtdoc.parser.string', [localize('punc.quote', ['"'])]),
 			]), src)
 		}
 

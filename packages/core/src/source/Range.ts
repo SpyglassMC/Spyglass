@@ -40,6 +40,16 @@ export namespace Range {
 		}
 	}
 
+	/**
+	 * Creates a range that covers the area between `from.start` and `to.end`.
+	 */
+	export function span(from: RangeLike, to: RangeLike): Range {
+		return {
+			start: Range.get(from).start,
+			end: Range.get(to).end,
+		}
+	}
+
 	export function is(obj: unknown): obj is Range {
 		return (
 			!!obj && typeof obj === 'object' &&

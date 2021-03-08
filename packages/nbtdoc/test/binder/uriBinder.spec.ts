@@ -15,6 +15,7 @@ describe('uriBinder()', () => {
 		},
 		{
 			uris: [
+				'file:///root/mod.nbtdoc',
 				'file:///root/minecraft/mod.nbtdoc',
 				'file:///root/minecraft/foo/mod.nbtdoc',
 			],

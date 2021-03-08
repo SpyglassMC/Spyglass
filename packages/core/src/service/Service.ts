@@ -5,7 +5,7 @@ import { file } from '../parser'
 import type { ColorToken } from '../processor'
 import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
-import type { ColorizerOptions} from './Context'
+import type { ColorizerOptions } from './Context'
 import { BinderContext, CheckerContext, ColorizerContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
@@ -146,14 +146,14 @@ export class Service {
 	bind(node: FileNode<AstNode>, doc: TextDocument): void {
 		const binder = this.meta.getBinder(doc.languageId)
 		const ctx = this.getBinderCtx(doc)
-		binder(node, ctx)
+		binder(node.children[0], ctx)
 		node.binderErrors = ctx.err.dump()
 	}
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
 		const checker = this.meta.getChecker(doc.languageId)
 		const ctx = this.getCheckerCtx(doc)
-		await checker(node, ctx)
+		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 	}
 

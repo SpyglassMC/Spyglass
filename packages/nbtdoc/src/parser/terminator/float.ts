@@ -37,7 +37,7 @@ export function float(): InfallibleParser<FloatToken> {
 		if (!raw) {
 			ctx.err.report(localize('expected', [localize('float')]), ans)
 		} else if (!Regex.test(raw)) {
-			ctx.err.report(localize('nbtdoc.error.float.illegal'), ans)
+			ctx.err.report(localize('nbtdoc.parser.float.illegal'), ans)
 		}
 
 		return ans

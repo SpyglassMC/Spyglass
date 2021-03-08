@@ -26,13 +26,13 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 		if (!text && !allowEmpty) {
 			ctx.err.report(
 				localize('expected', [
-					localize('nbtdoc.error.identifier'),
+					localize('nbtdoc.parser.identifier'),
 				]),
 				ans
 			)
 		} else if (!text.match(regex)) {
 			ctx.err.report(
-				localize('nbtdoc.error.identifier.illegal', [
+				localize('nbtdoc.parser.identifier.illegal', [
 					localize('punc.quote', [text]),
 					localize('punc.quote', [regex.toString()]),
 				]),
