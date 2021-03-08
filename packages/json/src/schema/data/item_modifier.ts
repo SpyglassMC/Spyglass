@@ -4,8 +4,9 @@ import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
 import { text_component } from './text_component'
 
-export const item_modifier = as('item_modifier', dispatch('function', resource('loot_function_type'),
+export const item_modifier = as('item_modifier', dispatch('function',
 	(function_, props) => record({
+		function: resource('loot_function_type'),
 		...pick(function_, {
 			apply_bonus: {
 				enchantment: resource('enchantment'),
