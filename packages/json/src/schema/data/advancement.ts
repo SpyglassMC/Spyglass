@@ -1,6 +1,7 @@
 import { any, as, boolean, dispatch, int, listOf, literal, object, opt, pick, record, resource, string } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 import { damage_predicate, damage_source_predicate, entity_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
+import { text_component } from './text_component'
 
 const entity = (any([
 	entity_predicate,
@@ -186,8 +187,8 @@ export const advancement = as('advancement', record({
 			item: resource('item'),
 			nbt: opt(string), // TODO: nbt 
 		}),
-		title: string, // TODO: text component
-		description: string, // TODO: text component
+		title: text_component,
+		description: text_component,
 		background: opt(string),
 		frame: opt(literal(['task', 'challenge', 'goal'])),
 		show_toast: opt(boolean),
