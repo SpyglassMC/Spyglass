@@ -1,4 +1,5 @@
-import { getRel, Range, SymbolVisibility, UriBinder, UriBinderContext } from '@spyglassmc/core'
+import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
+import { getRel, Range, SymbolVisibility } from '@spyglassmc/core'
 import { dissectUri } from '../util'
 
 export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
@@ -7,7 +8,7 @@ export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
 		if (rel?.endsWith('.json')) {
 			const parts = dissectUri(rel)
 			if (parts) {
-				ctx.symbols.enter({
+				ctx.symbols.enterFor(uri, {
 					category: parts.category,
 					form: 'definition',
 					identifier: `${parts.namespace}:${parts.identifier}`,

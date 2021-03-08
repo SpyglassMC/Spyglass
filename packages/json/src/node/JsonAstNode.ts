@@ -1,4 +1,4 @@
-import { AstNode } from '@spyglassmc/core'
+import type { AstNode } from '@spyglassmc/core'
 
 export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAstNode | JsonStringAstNode | JsonNumberAstNode | JsonBooleanAstNode | JsonNullAstNode
 

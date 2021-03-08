@@ -1,6 +1,6 @@
 import { any, as, boolean, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
 
-const text_component_object = as('text_component', (node, ctx) => record({
+const text_component_object = as('text_component', async (node, ctx) => { record({
 	...having(node, ctx, {
 		text: {
 			text: string,
@@ -49,7 +49,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 	clickEvent: opt(dispatch('action',
 		(action) => record({
 			action: literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
-			value: (node, ctx) => {
+			value: async (node, ctx) => {
 				if (!string(node, ctx)) return
 				// TODO: command validation
 			},
@@ -87,7 +87,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 		})
 	)),
 	extra: opt(listOf(text_component)),
-}))
+})})
 
 export const text_component = as('text_component', any([
 	string,
