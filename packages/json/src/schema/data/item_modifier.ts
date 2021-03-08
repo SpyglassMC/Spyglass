@@ -2,6 +2,7 @@ import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, li
 import { int_bounds, int_range } from './common'
 import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
+import { text_component } from './text_component'
 
 export const item_modifier = as('item_modifier', dispatch('function', resource('loot_function_type'),
 	(function_, props) => record({
@@ -92,12 +93,12 @@ export const item_modifier = as('item_modifier', dispatch('function', resource('
 			},
 			set_lore: {
 				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
-				lore: listOf(string), // TODO: text component
+				lore: listOf(text_component),
 				replace: opt(boolean),
 			},
 			set_name: {
 				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
-				name: opt(string), // TODO: text component
+				name: opt(text_component),
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({
