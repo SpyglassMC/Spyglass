@@ -23,7 +23,6 @@ let workspaceFolders!: ls.WorkspaceFolder[]
 const logger: core.Logger = connection.console
 const meta = core.MetaRegistry.instance
 let service!: core.Service
-let textDocuments!: core.TextDocuments
 
 connection.onInitialize(async params => {
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
@@ -39,7 +38,6 @@ connection.onInitialize(async params => {
 		logger,
 		rootsWatched: capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration,
 	})
-	textDocuments = service.textDocuments
 
 	await bindUris()
 
@@ -87,11 +85,9 @@ connection.onInitialized(async () => {
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {
-	textDocuments.onDidOpen(uri, languageID, version, text)
+	service.onDidOpen(uri, languageID, version, text)
 
-	const doc = textDocuments.get(uri)!
-	// TODO: Simplify here. I still have no clue about the optimal structure though.
-	const node = service.parse(doc)
+	const { doc, node } = service.get(uri)!
 	service.bind(node, doc)
 	await service.check(node, doc)
 	connection.sendDiagnostics({
@@ -101,10 +97,9 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	})
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
-	textDocuments.onDidChange(uri, contentChanges, version)
+	service.onDidChange(uri, contentChanges, version)
 
-	const doc = textDocuments.get(uri)!
-	const node = service.parse(doc)
+	const { doc, node } = service.get(uri)!
 	service.bind(node, doc)
 	await service.check(node, doc)
 	connection.sendDiagnostics({
@@ -114,7 +109,7 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	})
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
-	textDocuments.onDidClose(uri)
+	service.onDidClose(uri)
 })
 
 connection.onDidChangeWatchedFiles(({ changes }) => {
@@ -124,24 +119,22 @@ connection.onDidChangeWatchedFiles(({ changes }) => {
 
 				break
 			case ls.FileChangeType.Changed:
-				textDocuments.onWatchedFileModified(uri)
+				service.onWatchedFileModified(uri)
 				break
 			case ls.FileChangeType.Deleted:
-				textDocuments.onWatchedFileDeleted(uri)
+				service.onWatchedFileDeleted(uri)
 				break
 		}
 	}
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
-	const doc = textDocuments.get(uri)!
-	const node = textDocuments.getCachedNode(uri)!
+	const { doc, node } = service.get(uri)!
 	const tokens = service.colorize(node, doc)
 	return toLS.semanticTokens(tokens, doc)
 })
 connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) => {
-	const doc = textDocuments.get(uri)!
-	const node = textDocuments.getCachedNode(uri)!
+	const { doc, node } = service.get(uri)!
 	const tokens = service.colorize(node, doc, {
 		range: toCore.range(range, doc),
 	})
