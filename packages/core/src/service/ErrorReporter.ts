@@ -1,4 +1,4 @@
-import type { RangeLike } from '../source'
+import type { LanguageErrorInfo, RangeLike } from '../source'
 import { ErrorSeverity, LanguageError, Range } from '../source'
 
 export class ErrorReporter {
@@ -9,8 +9,8 @@ export class ErrorReporter {
 	/**
 	 * Reports a new error.
 	 */
-	report(message: string, range: RangeLike, severity = ErrorSeverity.Error): void {
-		this.errors.push(LanguageError.create(message, Range.get(range), severity))
+	report(message: string, range: RangeLike, severity = ErrorSeverity.Error, info?: LanguageErrorInfo): void {
+		this.errors.push(LanguageError.create(message, Range.get(range), severity, info))
 	}
 
 	/**

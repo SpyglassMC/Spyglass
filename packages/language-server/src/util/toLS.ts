@@ -9,7 +9,19 @@ import * as ls from 'vscode-languageserver/node'
  */
 export namespace toLS {
 	export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Diagnostic {
-		return ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity))
+		const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity))
+		if (error.info?.deprecated) {
+			(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
+		}
+		if (error.info?.unnecessary) {
+			(ans.tags ??= [])?.push(ls.DiagnosticTag.Unnecessary)
+		}
+		if (error.info?.codeAction) {
+			ans.data = {
+				codeAction: error.info?.codeAction,
+			}
+		}
+		return ans
 	}
 
 	export function diagnostics(fileNode: core.FileNode<core.AstNode>, doc: TextDocument): ls.Diagnostic[] {
