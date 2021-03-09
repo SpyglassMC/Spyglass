@@ -7,14 +7,15 @@ import { as } from './util'
 
 type OptChecker = {
 	opt: Checker<JsonAstNode>,
+	deprecated?: boolean,
 }
 
 type CheckerProperty = Checker<JsonAstNode> | OptChecker
 
 type CheckerRecord = Record<string, CheckerProperty>
 
-function isOpt(Checker: CheckerProperty): Checker is OptChecker {
-	return (Checker as OptChecker).opt !== undefined
+function isOpt(checker: CheckerProperty): checker is OptChecker {
+	return (checker as OptChecker)?.opt !== undefined
 }
 
 export function object(): Checker<JsonAstNode>
@@ -28,15 +29,20 @@ export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: st
 			const givenKeys = node.properties.map(n => n.key.value)
 			keys.filter(k => !isOpt(values(k))).forEach(k => {
 				if (!givenKeys.includes(k)) {
-					ctx.err.report(localize('missing-key', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
+					ctx.err.report(localize('json.checker.property.missing', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
 				}})
 			node.properties.forEach(prop => {
 				const key = prop.key.value
 				if (!keys.includes(key)) {
-					ctx.err.report(localize('unknown-key', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Warning)
-				} else if (prop.value !== undefined) {
-					const value = values(key);
-					(isOpt(value) ? value.opt : value)(prop.value, ctx)
+					ctx.err.report(localize('json.checker.property.unknown', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Warning)
+				} else {
+					const value = values(key)
+					if (isOpt(value) && value.deprecated) {
+						ctx.err.report(localize('json.checker.property.deprecated', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Hint, { deprecated: true })
+					}
+					if (prop.value !== undefined) {
+						(isOpt(value) ? value.opt : value)(prop.value, ctx)
+					}
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
@@ -58,8 +64,12 @@ export function record(properties: CheckerRecord): Checker<JsonAstNode> {
 	)
 }
 
-export function opt(Checker: Checker<JsonAstNode>): OptChecker {
-	return { opt: Checker }
+export function opt(checker: Checker<JsonAstNode>): OptChecker {
+	return { opt: checker }
+}
+
+export function deprecated(checker: Checker<JsonAstNode>): OptChecker {
+	return { opt: checker, deprecated: true }
 }
 
 export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => Checker<JsonAstNode>): Checker<JsonAstNode> {
@@ -87,6 +97,16 @@ export function pick(value: string | undefined, cases: Record<string, CheckerRec
 		const p = properties[key]
 		properties[key] = isOpt(p) ? opt(as(key, p.opt)) : as(key, p)
 	})
+	return properties
+}
+
+export function when(value: string | undefined, values: string[], properties: CheckerRecord, notProperties: CheckerRecord = {}): CheckerRecord {
+	if (value === undefined) {
+		return {}
+	}
+	if (!values.includes(value.replace(/^minecraft:/, ''))) {
+		return notProperties
+	}
 	return properties
 }
 

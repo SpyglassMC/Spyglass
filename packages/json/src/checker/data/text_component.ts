@@ -1,6 +1,6 @@
-import { any, as, boolean, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
+import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
 
-const text_component_object = as('text_component', async (node, ctx) => { record({
+const text_component_object = as('text_component', async (node, ctx) => record({
 	...having(node, ctx, {
 		text: {
 			text: string,
@@ -60,11 +60,11 @@ const text_component_object = as('text_component', async (node, ctx) => { record
 			action: literal(['show_text', 'show_item', 'show_entity']),
 			...pick(action, {
 				show_text: {
-					value: opt(text_component),
+					value: deprecated(text_component),
 					contents: opt(text_component),
 				},
 				show_item: {
-					value: opt(string), // TODO: item nbt
+					value: deprecated(string), // TODO: item nbt
 					contents: opt(record({
 						id: resource('item'),
 						count: opt(int),
@@ -72,7 +72,7 @@ const text_component_object = as('text_component', async (node, ctx) => { record
 					})),
 				},
 				show_entity: {
-					value: opt(record({
+					value: deprecated(record({
 						name: opt(string),
 						type: opt(resource('entity_type')),
 						id: opt(string), // TODO: uuid
@@ -87,7 +87,7 @@ const text_component_object = as('text_component', async (node, ctx) => { record
 		})
 	)),
 	extra: opt(listOf(text_component)),
-})})
+})(node, ctx))
 
 export const text_component = as('text_component', any([
 	string,
