@@ -1,6 +1,6 @@
-import { any, as, boolean, dispatch, int, listOf, literal, object, opt, pick, record, resource, string } from '../primitives'
+import { any, as, boolean, deprecated, dispatch, int, listOf, literal, object, opt, pick, record, resource, string, when } from '../primitives'
 import { float_bounds, int_bounds } from './common'
-import { damage_predicate, damage_source_predicate, entity_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
+import { block_predicate, damage_predicate, damage_source_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
 import { text_component } from './text_component'
 
 const entity = (any([
@@ -12,9 +12,9 @@ export const criterion = as('criterion', dispatch('trigger',
 	(trigger) => record({
 		trigger: resource('advancement_trigger'),
 		conditions: opt(record({
-			...trigger === 'impossible' ? {} : {
+			...when(trigger, ['impossible'], {}, {
 				player: opt(entity),
-			},
+			}),
 			...pick(trigger, {
 				bee_nest_destroyed: {
 					block: opt(resource('block')),
@@ -177,6 +177,22 @@ export const criterion = as('criterion', dispatch('trigger',
 				voluntary_exile: {
 					location: location_predicate,
 				},
+			}),
+			...when(trigger, ['hero_of_the_village', 'location', 'slept_in_bed', 'voluntary_exile'], {
+				position: deprecated(record({
+					x: opt(float_bounds),
+					y: opt(float_bounds),
+					z: opt(float_bounds),
+				})),
+				biome: deprecated(resource('worldgen/biome')),
+				feature: deprecated(string), // TODO structure features
+				dimension: deprecated(resource('dimension')),
+				block: deprecated(block_predicate),
+				fluid: deprecated(fluid_predicate),
+				light: deprecated(record({
+					light: int_bounds,
+				})),
+				smokey: deprecated(boolean),
 			}),
 		})),
 	})
