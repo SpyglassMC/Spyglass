@@ -1,5 +1,5 @@
 import type { RangeLike } from '../source'
-import type { Symbol, SymbolForm, SymbolMap, SymbolMetadata, SymbolPath, SymbolTable} from './Symbol'
+import type { Symbol, SymbolForm, SymbolMap, SymbolMetadata, SymbolPath, SymbolTable } from './Symbol'
 import { SymbolForms, SymbolLocation, SymbolVisibility } from './Symbol'
 
 // I wrote a lot of comments in this file to pretend that I know what I am doing.
@@ -177,6 +177,21 @@ export class SymbolUtil {
 		this.openedStack.pop()
 	}
 
+	private static trim(table: SymbolTable): void {
+		for (const category of Object.keys(table)) {
+			const map = table[category]!
+			for (const identifier of Object.keys(map)) {
+				const symbol = map[identifier]!
+				if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length) {
+					delete map[identifier]
+				}
+			}
+			if (Object.keys(map).length === 0) {
+				delete table[category]
+			}
+		}
+	}
+
 	/**
 	 * Remove all references to the specific `uri` from the `table`.
 	 * 
@@ -195,6 +210,7 @@ export class SymbolUtil {
 				}
 			}
 		}
+		this.trim(table)
 	}
 
 	/**

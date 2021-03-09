@@ -1,16 +1,16 @@
 import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
-import { getRel, Range } from '@spyglassmc/core'
+import { fileUtil, Range } from '@spyglassmc/core'
 
 const Extension = '.nbtdoc'
 const NbtdocRootPrefix = 'nbtdoc/'
 
-export const uriBinder: UriBinder = (uris: string[], ctx: UriBinderContext) => {
+export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
 	let urisAndRels: [string, string][] = []
 	for (const uri of uris) {
 		if (!uri.endsWith(Extension)) {
 			continue
 		}
-		let rel = getRel(ctx.roots, uri)
+		let rel = fileUtil.getRel(ctx.roots, uri)
 		if (!rel) {
 			continue
 		}

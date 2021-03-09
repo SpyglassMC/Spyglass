@@ -7,20 +7,23 @@ import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
 import { BinderContext, CheckerContext, ColorizerContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import type { ErrorPublisher } from './ErrorPublisher'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 
 interface Options {
+	errorPublisher?: ErrorPublisher,
 	fs?: FileService,
+	isDebugging?: boolean,
 	logger?: Logger,
 	roots?: string[],
-	symbols?: SymbolUtil,
 	/**
 	 * Whether files and folders under the roots are watched.
 	 */
 	rootsWatched?: boolean,
+	symbols?: SymbolUtil,
 }
 
 interface DocAndNode {
@@ -43,7 +46,11 @@ export class Service {
 	readonly #watchedUpToDateUris = new Set<string>()
 	readonly #cache = new Map<string, DocAndNode>()
 	readonly #roots: string[] = []
+	readonly #files: string[] = []
 
+	private readonly errorPublisher: ErrorPublisher
+
+	readonly isDebugging: boolean
 	readonly rootsWatched: boolean
 	readonly meta = MetaRegistry.instance
 	readonly fs: FileService
@@ -54,12 +61,13 @@ export class Service {
 	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 */
 	get roots(): string[] {
-		return this.#roots
+		return [...this.#roots]
 	}
 	set roots(newRoots: string[]) {
 		newRoots = newRoots
 			.filter(fileUtil.isFileUri)
-			.map(r => r.endsWith('/') ? r : `${r}/`)
+			.map(fileUtil.normalize)
+			.map(fileUtil.ensureEndingSlash)
 		this.#roots.splice(0, this.#roots.length, ...newRoots)
 	}
 
@@ -71,23 +79,34 @@ export class Service {
 	}
 
 	constructor({
+		errorPublisher = async () => { },
 		fs = FileService.create(),
+		isDebugging = false,
 		logger = Logger.create(),
 		roots = [],
-		symbols = new SymbolUtil({}),
 		rootsWatched = false,
+		symbols = new SymbolUtil({}),
 	}: Options = {}) {
+		this.errorPublisher = errorPublisher
 		this.fs = fs
+		this.isDebugging = isDebugging
 		this.logger = logger
 		this.roots = roots
-		this.symbols = symbols
 		this.rootsWatched = rootsWatched
+		this.symbols = symbols
+	}
+
+	private debug(message: string): void {
+		if (this.isDebugging) {
+			this.logger.info(`[DEBUG] ${message}`)
+		}
 	}
 
 	/**
 	 * @returns The language ID of the file, or the file extension without the leading dot.
 	 */
 	private getLanguageID(uri: string): string {
+		uri = fileUtil.normalize(uri)
 		let ext = uri
 		ext = ext.slice(ext.lastIndexOf('.'))
 		return this.meta.getLanguageID(ext) ?? ext.slice(1)
@@ -97,6 +116,7 @@ export class Service {
 	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `undefined` when such data isn't available in cache.
 	 */
 	get(uri: string): DocAndNode | undefined {
+		uri = fileUtil.normalize(uri)
 		return this.#cache.get(uri)
 	}
 
@@ -106,6 +126,8 @@ export class Service {
 	 * @throws If the file doesn't exist.
 	 */
 	async open(uri: string): Promise<DocAndNode> {
+		uri = fileUtil.normalize(uri)
+		this.debug(`Opening '${uri}'`)
 		const content = await this.fs.readFile(uri)
 		const languageID = this.getLanguageID(uri)
 		const doc = TextDocument.create(uri, languageID, 0, content)
@@ -120,9 +142,11 @@ export class Service {
 	}
 
 	/**
-	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `undefined` when the file doesn't exist.
+	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `null` when the file doesn't exist.
 	 */
 	async ensure(uri: string): Promise<DocAndNode | null> {
+		uri = fileUtil.normalize(uri)
+		this.debug(`Ensuring '${uri}'`)
 		const cachedResult = this.get(uri)
 		if (cachedResult) {
 			return cachedResult
@@ -130,55 +154,98 @@ export class Service {
 		try {
 			// The 'await' below cannot be omitted, or errors couldn't be caught by the try-catch block.
 			return await this.open(uri)
-		} catch (_) {
+		} catch (e) {
 			// Ignored. Most likely the file doesn't exist.
+			this.debug(`Couldn't ensure '${uri}' due to error '${JSON.stringify(e)}'`)
 			return null
 		}
 	}
 
 	parse(doc: TextDocument): FileNode<AstNode> {
+		this.debug(`Parsing '${doc.uri}' @ ${doc.version}`)
 		const ctx = this.getParserCtx(doc)
 		const src = new Source(doc.getText())
 		const ans = file()(src, ctx)
+		this.scheduleErrorPublishing(doc.uri)
 		return ans
 	}
 
 	bind(node: FileNode<AstNode>, doc: TextDocument): void {
+		this.debug(`Binding '${doc.uri}' @ ${doc.version}`)
 		const binder = this.meta.getBinder(doc.languageId)
 		const ctx = this.getBinderCtx(doc)
 		binder(node.children[0], ctx)
 		node.binderErrors = ctx.err.dump()
+		this.scheduleErrorPublishing(doc.uri)
 	}
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
+		this.debug(`Checking '${doc.uri}' @ ${doc.version}`)
 		const checker = this.meta.getChecker(doc.languageId)
 		const ctx = this.getCheckerCtx(doc)
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
+		this.scheduleErrorPublishing(doc.uri)
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
+		this.debug(`Colorizing '${doc.uri}' @ ${doc.version}`)
 		const colorizer = this.meta.getColorizer(doc.languageId)
 		return colorizer(node, this.getColorizerCtx(doc, options))
 	}
 
-	async bindUris(): Promise<void> {
+	#uriBindingTimeout: NodeJS.Timeout | undefined
+	private scheduleUriBinding(): void {
+		this.debug('Scheduling URI binding')
+		if (this.#uriBindingTimeout) {
+			clearTimeout(this.#uriBindingTimeout)
+		}
+		this.#uriBindingTimeout = setTimeout(this.bindUris, 1000)
+	}
+	private readonly bindUris = () => {
+		this.debug('Start URI binding')
+		this.#uriBindingTimeout = undefined
 		const ctx = this.getUriBinderCtx()
 		ctx.symbols.startUriBinding()
 		try {
-			const uris: string[] = []
-
-			for (const root of this.#roots) {
-				await fileUtil.walk(this.fs, root, u => uris.push(u))
-			}
-
 			for (const binder of this.meta.getUriBinders()) {
-				binder(uris, ctx)
+				binder(this.#files, ctx)
 			}
 		} catch (e) {
 			this.logger.error(e?.toString())
 		} finally {
 			ctx.symbols.endUriBinding()
+		}
+		this.recheckAllCachedFiles()
+	}
+
+	#errorPublishingTimeouts = new Map<string, NodeJS.Timeout>()
+	private scheduleErrorPublishing(uri: string): void {
+		this.debug(`Scheduling error publishing for '${uri}'`)
+		if (this.#errorPublishingTimeouts.has(uri)) {
+			clearTimeout(this.#errorPublishingTimeouts.get(uri)!)
+		}
+		this.#errorPublishingTimeouts.set(uri, setTimeout(() => this.publishErrors(uri), 50))
+	}
+	private publishErrors(uri: string): void {
+		this.debug(`Publishing errors for '${uri}'`)
+		this.#errorPublishingTimeouts.delete(uri)
+		const result = this.get(uri)
+		if (!result) {
+			this.errorPublisher(uri)
+		} else {
+			const { doc, node } = result
+			this.errorPublisher(doc, [
+				...node.binderErrors ?? [],
+				...node.checkerErrors ?? [],
+				...node.parserErrors,
+			])
+		}
+	}
+	private recheckAllCachedFiles(): void {
+		this.debug('Rechecking all cached files')
+		for (const { doc, node } of this.#cache.values()) {
+			this.check(node, doc)
 		}
 	}
 
@@ -186,6 +253,8 @@ export class Service {
 	 * Notifies that a new document was opened in the editor.
 	 */
 	onDidOpen(uri: string, languageID: string, version: number, content: string): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onDidOpen '${uri}' @ ${version}`)
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const node = this.parse(doc)
 		this.#activeUris.add(uri)
@@ -197,6 +266,8 @@ export class Service {
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
 	onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onDidChange '${uri}' @ ${version}`)
 		const result = this.get(uri)
 		if (!result) {
 			throw new Error(`There is no TextDocument corresponding to '${uri}'`)
@@ -210,14 +281,30 @@ export class Service {
 	 * Notifies that an existing document was closed in the editor.
 	 */
 	onDidClose(uri: string): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onDidClose '${uri}'`)
 		this.#activeUris.delete(uri)
 		this.tryClearingCache(uri)
+	}
+
+	/**
+	 * Notifies that a watched file was created in the file system.
+	 */
+	onWatchedFileCreated(uri: string): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onWatchedFileCreated '${uri}'`)
+		if (!this.#files.includes(uri)) {
+			this.#files.push(uri)
+		}
+		this.scheduleUriBinding()
 	}
 
 	/**
 	 * Notifies that a watched file was modified in the file system.
 	 */
 	onWatchedFileModified(uri: string): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onWatchedFileModified '${uri}'`)
 		this.#watchedUpToDateUris.delete(uri)
 		this.tryClearingCache(uri)
 	}
@@ -226,8 +313,15 @@ export class Service {
 	 * Notifies that a watched file was deleted from the file system.
 	 */
 	onWatchedFileDeleted(uri: string): void {
+		uri = fileUtil.normalize(uri)
+		this.debug(`onWatchedFileDeleted '${uri}'`)
 		this.#watchedUpToDateUris.delete(uri)
 		this.tryClearingCache(uri)
+		const fileUriIndex = this.#files.findIndex(u => u === uri)
+		if (fileUriIndex !== -1) {
+			this.#files!.splice(fileUriIndex, 1)
+		}
+		this.scheduleUriBinding()
 	}
 
 	/**
@@ -236,6 +330,7 @@ export class Service {
 	private tryClearingCache(uri: string): void {
 		if (!this.shouldCache(uri)) {
 			this.#cache.delete(uri)
+			this.scheduleErrorPublishing(uri)
 		}
 	}
 

@@ -37,8 +37,12 @@ export async function walk(fs: FileService, uri: string, callbackFn: (this: void
 	}
 }
 
+export function ensureEndingSlash(uri: string): string {
+	return uri.endsWith('/') ? uri : `${uri}/`
+}
+
 export function join(fromUri: string, toUri: string): string {
-	return (fromUri.endsWith('/') ? fromUri : `${fromUri}/`) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
+	return ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
 }
 
 export function isFileUri(uri: string): boolean {
@@ -60,4 +64,8 @@ export function fileUriToPath(fileUri: string): string {
  */
 export function pathToFileUri(path: string): string {
 	return url.pathToFileURL(path).toString()
+}
+
+export function normalize(uri: string): string {
+	return pathToFileUri(fileUriToPath(uri))
 }

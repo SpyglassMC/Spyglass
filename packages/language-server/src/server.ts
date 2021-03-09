@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
-import * as path from 'path'
+import * as chokidar from 'chokidar'
 import * as ls from 'vscode-languageserver/node'
 import { toCore, toLS } from './util'
 
@@ -17,7 +17,7 @@ nbtdoc.initializeNbtdoc()
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
-let rootsWatcher: ls.Disposable | undefined
+let rootsWatcher: chokidar.FSWatcher
 let workspaceFolders!: ls.WorkspaceFolder[]
 
 const logger: core.Logger = connection.console
@@ -35,11 +35,12 @@ connection.onInitialize(async params => {
 	workspaceFolders = params.workspaceFolders ?? []
 
 	service = new core.Service({
+		errorPublisher: toCore.errorPublisher(connection),
+		isDebugging: true,
 		logger,
-		rootsWatched: capabilities.workspace?.didChangeWatchedFiles?.dynamicRegistration,
+		roots: workspaceFolders.map(w => w.uri),
+		rootsWatched: true,
 	})
-
-	await bindUris()
 
 	const result: ls.InitializeResult = {
 		capabilities: {
@@ -65,21 +66,31 @@ connection.onInitialize(async params => {
 	return result
 })
 
-async function registerRootWatcher() {
-	if (service.rootsWatched) {
-		if (rootsWatcher) {
-			rootsWatcher.dispose()
-		}
-		rootsWatcher = await connection.client.register(ls.DidChangeWatchedFilesNotification.type, {
-			watchers: service.rootPaths.map(r => ({
-				globPattern: path.join(`${r}**`, `*.{${meta.supportedFileExtensions.map(ext => ext.slice(1)).join(',')}}`),
-			})),
+function initializeRootWatcher() {
+	rootsWatcher = chokidar
+		.watch(
+			service.rootPaths,
+			{
+				ignored: '**/.git/**',
+				ignoreInitial: false,
+			}
+		)
+		.on('add', path => {
+			service.onWatchedFileCreated(core.fileUtil.pathToFileUri(path))
 		})
-	}
+		.on('change', path => {
+			service.onWatchedFileModified(core.fileUtil.pathToFileUri(path))
+		})
+		.on('unlink', path => {
+			service.onWatchedFileDeleted(core.fileUtil.pathToFileUri(path))
+		})
+		.on('error', error => {
+			logger.error(`[rootsWatcher] ${error.toString()}`)
+		})
 }
 
-connection.onInitialized(async () => {
-	await registerRootWatcher()
+connection.onInitialized(() => {
+	initializeRootWatcher()
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {
@@ -88,11 +99,6 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	const { doc, node } = service.get(uri)!
 	service.bind(node, doc)
 	await service.check(node, doc)
-	connection.sendDiagnostics({
-		diagnostics: toLS.diagnostics(node, doc),
-		uri,
-		version,
-	})
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
 	service.onDidChange(uri, contentChanges, version)
@@ -100,30 +106,12 @@ connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri,
 	const { doc, node } = service.get(uri)!
 	service.bind(node, doc)
 	await service.check(node, doc)
-	connection.sendDiagnostics({
-		diagnostics: toLS.diagnostics(node, doc),
-		uri,
-		version,
-	})
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.onDidClose(uri)
 })
 
-connection.onDidChangeWatchedFiles(({ changes }) => {
-	for (const { type, uri } of changes) {
-		switch (type) {
-			case ls.FileChangeType.Created:
-
-				break
-			case ls.FileChangeType.Changed:
-				service.onWatchedFileModified(uri)
-				break
-			case ls.FileChangeType.Deleted:
-				service.onWatchedFileDeleted(uri)
-				break
-		}
-	}
+connection.workspace.onDidRenameFiles(({ }) => {
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
@@ -140,11 +128,6 @@ connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) =
 })
 
 connection.listen()
-
-async function bindUris(): Promise<void> {
-	service.roots = workspaceFolders.map(w => w.uri)
-	return service.bindUris()
-}
 
 let isUp = true
 function exit() {
