@@ -26,6 +26,7 @@
 		"eslint": "^7.20.0",
 		"gitmoji-cli": "^3.2.18",
 		"mocha": "^8.3.0",
+		"node-loader": "^1.0.2",
 		"nyc": "^15.1.0",
 		"snap-shot-it": "^7.9.6",
 		"source-map-support": "^0.5.19",
