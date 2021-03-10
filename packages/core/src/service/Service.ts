@@ -3,6 +3,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { ColorToken } from '../processor'
+import { selectedLeaf } from '../processor'
 import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
@@ -10,6 +11,7 @@ import { BinderContext, CheckerContext, ColorizerContext, ContextBase, ParserCon
 import type { ErrorPublisher } from './ErrorPublisher'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
+import { Hover } from './Hover'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 
@@ -162,7 +164,7 @@ export class Service {
 	}
 
 	parse(doc: TextDocument): FileNode<AstNode> {
-		this.debug(`Parsing '${doc.uri}' @ ${doc.version}`)
+		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
 		const ctx = this.getParserCtx(doc)
 		const src = new Source(doc.getText())
 		const ans = file()(src, ctx)
@@ -171,7 +173,7 @@ export class Service {
 	}
 
 	bind(node: FileNode<AstNode>, doc: TextDocument): void {
-		this.debug(`Binding '${doc.uri}' @ ${doc.version}`)
+		this.debug(`Binding '${doc.uri}' # ${doc.version}`)
 		const binder = this.meta.getBinder(doc.languageId)
 		const ctx = this.getBinderCtx(doc)
 		binder(node.children[0], ctx)
@@ -180,7 +182,7 @@ export class Service {
 	}
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
-		this.debug(`Checking '${doc.uri}' @ ${doc.version}`)
+		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
 		const checker = this.meta.getChecker(doc.languageId)
 		const ctx = this.getCheckerCtx(doc)
 		ctx.symbols.clear(doc.uri)
@@ -190,9 +192,23 @@ export class Service {
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
-		this.debug(`Colorizing '${doc.uri}' @ ${doc.version}`)
+		this.debug(`Colorizing '${doc.uri}' # ${doc.version}`)
 		const colorizer = this.meta.getColorizer(doc.languageId)
 		return colorizer(node, this.getColorizerCtx(doc, options))
+	}
+
+	getHover(node: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
+		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
+		const result = selectedLeaf(node, offset)
+		if (result) {
+			const nodes = [result.leaf, ...result.parents]
+			for (const n of nodes) {
+				if (n.symbol) {
+					return Hover.create(n, `\`\`\`\n${n.symbol.identifier}\n\`\`\`` + (n.symbol.doc ? `\n\n${n.symbol.doc}` : ''))
+				}
+			}
+		}
+		return null
 	}
 
 	#uriBindingTimeout: NodeJS.Timeout | undefined

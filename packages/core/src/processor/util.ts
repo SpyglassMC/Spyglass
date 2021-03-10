@@ -8,7 +8,7 @@ export function traverseLeaves(node: AstNode, fn: Callback<unknown>, range?: Ran
 	if (range && !Range.intersects(node.range, range)) {
 		return
 	}
-	if (node.children) {
+	if (node.children?.length) {
 		for (const child of node.children) {
 			existingParents.unshift(node);
 			(traverseLeaves as any)(child, fn, range, existingParents)
@@ -39,3 +39,22 @@ export function traverseLeaves(node: AstNode, fn: Callback<unknown>, range?: Ran
 // 		}
 // 	}
 // }
+
+export function selectedLeaf(node: AstNode, offset: number): { leaf: AstNode, parents: AstNode[] } | null
+export function selectedLeaf(node: AstNode, offset: number, existingParents: AstNode[] = []): { leaf: AstNode, parents: AstNode[] } | null {
+	if (Range.contains(node.range, offset)) {
+		if (node.children?.length) {
+			existingParents.unshift(node)
+			// TODO: Binary search here.
+			for (const child of node.children) {
+				const result = (selectedLeaf as any)(child, offset, existingParents)
+				if (result) {
+					return result
+				}
+			}
+		} else {
+			return { leaf: node, parents: existingParents }
+		}
+	}
+	return null
+}

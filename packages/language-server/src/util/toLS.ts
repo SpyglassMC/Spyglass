@@ -52,6 +52,17 @@ export namespace toLS {
 		return ans
 	}
 
+	export function hover(hover: core.Hover, doc: TextDocument): ls.Hover {
+		const ans: ls.Hover = {
+			contents: {
+				kind: ls.MarkupKind.Markdown,
+				value: hover.markdown,
+			},
+			range: range(hover.range, doc),
+		}
+		return ans
+	}
+
 	export function location(location: core.Location): ls.Location {
 		return {
 			uri: location.uri,

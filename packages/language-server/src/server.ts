@@ -44,6 +44,13 @@ connection.onInitialize(async params => {
 
 	const result: ls.InitializeResult = {
 		capabilities: {
+			hoverProvider: true,
+			semanticTokensProvider: {
+				documentSelector: toLS.documentSelector(),
+				legend: toLS.semanticTokensLegend(),
+				full: { delta: false },
+				range: true,
+			},
 			textDocumentSync: {
 				change: ls.TextDocumentSyncKind.Incremental,
 				openClose: true,
@@ -53,12 +60,6 @@ connection.onInitialize(async params => {
 					supported: true,
 					changeNotifications: true,
 				},
-			},
-			semanticTokensProvider: {
-				documentSelector: toLS.documentSelector(),
-				legend: toLS.semanticTokensLegend(),
-				full: { delta: false },
-				range: true,
 			},
 		},
 	}
@@ -112,6 +113,12 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 })
 
 connection.workspace.onDidRenameFiles(({ }) => {
+})
+
+connection.onHover(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getHover(node, doc, toCore.offset(position, doc))
+	return ans ? toLS.hover(ans, doc) : null
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {

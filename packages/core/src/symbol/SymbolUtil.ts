@@ -97,6 +97,8 @@ export class SymbolUtil {
 	 * 
 	 * Or `null` if no such symbol can be found.
 	 */
+	public lookup({ category, path }: SymbolPath): { symbol: Symbol, visible: boolean | null } | null
+	public lookup({ category, path }: SymbolPath, uri: string): { symbol: Symbol, visible: boolean } | null
 	public lookup({ category, path }: SymbolPath, uri?: string): { symbol: Symbol, visible: boolean | null } | null {
 		if (uri) {
 			// TODO: Lookup in local stack as well.
