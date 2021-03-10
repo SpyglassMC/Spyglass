@@ -1,6 +1,6 @@
 import type { InfallibleParser, Parser, ParserContext, Result, Source } from '@spyglassmc/core'
 import { Failure, Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { LiteralToken } from '../../node'
 
 
@@ -44,9 +44,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 			}
 		} else if (partialMatch || infallible) {
 			ctx.err.report(
-				localize('expected', [
-					localize('punc.quote', [literal]),
-				]),
+				localize('expected', [localeQuote(literal)]),
 				ans
 			)
 		} else {

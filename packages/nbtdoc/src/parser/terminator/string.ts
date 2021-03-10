@@ -1,6 +1,6 @@
 import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
 import { Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { StringToken } from '../../node'
 
 const EscapeChars = ['"', '\\', 'b', 'f', 'n', 'r', 't'] as const
@@ -41,7 +41,7 @@ export function string(): InfallibleParser<StringToken> {
 						ans.value += EscapeTable.get(c2)
 					} else {
 						ctx.err.report(localize('unknown-escape', [
-							localize('punc.quote', [c2]),
+							localeQuote(c2),
 						]), Range.create(src, src.cursor + 1))
 						break
 					}
@@ -53,12 +53,12 @@ export function string(): InfallibleParser<StringToken> {
 				src.skip()
 			} else {
 				ctx.err.report(localize('expected', [
-					localize('punc.quote', ['"']),
+					localeQuote('"'),
 				]), src)
 			}
 		} else {
 			ctx.err.report(localize('expected', [
-				localize('nbtdoc.parser.string', [localize('punc.quote', ['"'])]),
+				localize('nbtdoc.parser.string', [localeQuote('"')]),
 			]), src)
 		}
 

@@ -1,6 +1,6 @@
 import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
 import { Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { IdentifierToken } from '../../node'
 
 interface Options {
@@ -33,8 +33,8 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 		} else if (!text.match(regex)) {
 			ctx.err.report(
 				localize('nbtdoc.parser.identifier.illegal', [
-					localize('punc.quote', [text]),
-					localize('punc.quote', [regex.toString()]),
+					localeQuote(text),
+					localeQuote(regex.toString()),
 				]),
 				ans
 			)

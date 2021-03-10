@@ -1,6 +1,6 @@
 import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
 import { map, Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { MinecraftIdentifierToken } from '../../node'
 import { identifier } from './identifier'
 
@@ -24,7 +24,7 @@ export function minecraftIdentifier(): InfallibleParser<MinecraftIdentifierToken
 		} else {
 			ctx.err.report(
 				localize('nbtdoc.parser.minecraft-identifier.colon-expected', [
-					localize('punc.quote', [':']),
+					localeQuote(':'),
 				]),
 				src
 			)

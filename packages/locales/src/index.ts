@@ -19,6 +19,10 @@ export function localize(param0: string | string[], params: any[] = [], depth = 
 	return _segmentedLocalize(param0, params, depth, minDepth)
 }
 
+export function localeQuote(content: string) {
+	return localize('punc.quote', [content])
+}
+
 /**
  * @param locale An [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag). Defaults to `en`.
  */
@@ -94,7 +98,7 @@ function _addPrefix(locale: Locale, prefix: string) {
  * arrayToMessage(['A', 'B', 'C'], false) // "A{conjunction.and_3+_1}B{conjunction.and_3+_2}C"
  */
 export function arrayToMessage(param: string | Iterable<string>, quoted = true, conjunction: 'and' | 'or' = 'or') {
-	const getPart = (str: string) => quoted ? localize('punc.quote', [str]) : str
+	const getPart = (str: string) => quoted ? localeQuote(str) : str
 	const arr = (typeof param === 'string' ? [param] : Array.from(param))
 		.map(getPart)
 	switch (arr.length) {
