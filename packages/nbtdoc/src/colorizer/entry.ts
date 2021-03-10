@@ -1,4 +1,4 @@
-import type { ColorizerContext, ColorTokenType} from '@spyglassmc/core'
+import type { ColorizerContext, ColorTokenType } from '@spyglassmc/core'
 import { ColorToken, traverseLeaves } from '@spyglassmc/core'
 import type { LeafNode, MainNode } from '../node'
 
