@@ -39,7 +39,7 @@ const definitionInject: InfallibleParser<DefinitionInject | null> = map(
 			], true),
 			syntax<DefinitionInjectChild>([
 				keyword('compound'), identPath(), punctuation('{'),
-				any<LiteralToken | SyntaxUtil<DefinitionInjectChild>>([
+				any([
 					marker('}'),
 					syntax<DefinitionInjectChild>([compoundFields, punctuation('}')], true),
 				]),

@@ -1,6 +1,6 @@
-import type { InfallibleParser, Parser, ParserContext, SequenceUtil, Source } from '@spyglassmc/core'
+import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
 import { any, map, optional, repeat, sequence } from '@spyglassmc/core'
-import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil} from '../../node'
+import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
 import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
 import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
@@ -14,9 +14,9 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 		syntax<CompoundChild>([
 			docComments,
 			keyword('compound'), identifier(), optional(extendsClause), punctuation('{'),
-			any<LiteralToken | SyntaxUtil<CompoundChild>>([
+			any([
 				marker('}'),
-				syntax<CompoundChild>([compoundFields, punctuation('}')], true),
+				syntax([compoundFields, punctuation('}')], true),
 			]),
 		], true),
 		res => {
@@ -49,7 +49,7 @@ const unsignedRange = _intRange<IntegerToken, UnsignedRangeNode>('nbtdoc:unsigne
  */
 const floatRange = _intRange<FloatToken, FloatRangeNode>('nbtdoc:float_range', float())
 
-const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any<CompoundFieldKey>([identifier(), string()])
+const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string()])
 
 function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNode {
 	return map(
@@ -257,15 +257,15 @@ function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode |
 	)
 }
 
-const fieldPathKey: InfallibleParser<FieldPathKey> = any<FieldPathKey>([
+const fieldPathKey: InfallibleParser<FieldPathKey> = any([
 	keyword('super'),
 	string(),
 	identifier(),
 ])
 
-const fieldPath: InfallibleParser<SequenceUtil<FieldPathKey | LiteralToken>> = sequence<FieldPathKey | LiteralToken>([
+const fieldPath = sequence([
 	fieldPathKey,
-	repeat(sequence<FieldPathKey | LiteralToken>([
+	repeat(sequence([
 		marker('.'),
 		fieldPathKey,
 	])),
@@ -292,5 +292,5 @@ const registryIndex: InfallibleParser<RegistryIndexNode> = map(
 
 const extendsClause: Parser<SyntaxUtil<LiteralToken | CompoundExtendable>> = syntax<LiteralToken | CompoundExtendable>([
 	keyword('extends'),
-	any<CompoundExtendable>([registryIndex, identPath()]),
+	any([registryIndex, identPath()]),
 ])

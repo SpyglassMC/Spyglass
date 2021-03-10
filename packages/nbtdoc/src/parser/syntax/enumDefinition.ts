@@ -1,4 +1,4 @@
-import type { InfallibleParser, Parser} from '@spyglassmc/core'
+import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { EnumChild, EnumDefinitionNode, EnumFieldChild, EnumTypeOrEmpty, SyntaxUtil } from '../../node'
@@ -52,7 +52,7 @@ export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover
 const enumField: InfallibleParser<EnumFieldNode> = map(
 	syntax<EnumFieldChild>([
 		docComments,
-		identifier(), punctuation('='), any<Primitive>([integer(), float(), string()]),
+		identifier(), punctuation('='), any([integer(), float(), string()]),
 	], true),
 	res => {
 		const ans: EnumFieldNode = {
