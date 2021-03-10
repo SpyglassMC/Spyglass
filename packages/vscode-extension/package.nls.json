@@ -105,6 +105,6 @@
     "datapack.config.lint.timeOmitTickUnit": "Whether or not to omit the tick units (`t`) of time arguments.",
     "datapack.config.snippets": "Code snippets.",
     "datapack.description": "Heavy language features for Minecraft: Java Edition data pack files",
-    "datapack.displayName": "Data-pack Helper Plus",
+    "datapack.displayName": "SPYGlass",
     "spyglass.trace.server": "Traces the communication between VS Code and the SPYGlass Language Server."
 }
