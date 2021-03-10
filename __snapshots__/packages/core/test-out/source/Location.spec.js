@@ -3,6 +3,16 @@ exports['Location create() Should create correctly 1'] = {
   "range": {
     "start": 5,
     "end": 6
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 5
+    },
+    "end": {
+      "line": 0,
+      "character": 6
+    }
   }
 }
 
@@ -11,6 +21,16 @@ exports['Location create() Should create correctly 2'] = {
   "range": {
     "start": 7,
     "end": 8
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 7
+    },
+    "end": {
+      "line": 0,
+      "character": 8
+    }
   }
 }
 
@@ -19,6 +39,16 @@ exports['Location create() Should create correctly 3'] = {
   "range": {
     "start": 9,
     "end": 9
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 9
+    },
+    "end": {
+      "line": 0,
+      "character": 9
+    }
   }
 }
 
@@ -27,6 +57,16 @@ exports['Location get() Should create correctly 1'] = {
   "range": {
     "start": 0,
     "end": 0
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    }
   }
 }
 
@@ -35,6 +75,16 @@ exports['Location get() Should create correctly 2'] = {
   "range": {
     "start": 0,
     "end": 0
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    }
   }
 }
 
@@ -43,6 +93,16 @@ exports['Location get() Should create correctly 3'] = {
   "range": {
     "start": 1,
     "end": 2
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    }
   }
 }
 
@@ -51,6 +111,16 @@ exports['Location get() Should create correctly 4'] = {
   "range": {
     "start": 1,
     "end": 2
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    }
   }
 }
 
@@ -59,5 +129,15 @@ exports['Location get() Should create correctly 5'] = {
   "range": {
     "start": 3,
     "end": 4
+  },
+  "posRange": {
+    "start": {
+      "line": 0,
+      "character": 0
+    },
+    "end": {
+      "line": 0,
+      "character": 0
+    }
   }
 }

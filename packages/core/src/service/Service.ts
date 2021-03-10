@@ -183,6 +183,7 @@ export class Service {
 		this.debug(`Checking '${doc.uri}' @ ${doc.version}`)
 		const checker = this.meta.getChecker(doc.languageId)
 		const ctx = this.getCheckerCtx(doc)
+		ctx.symbols.clear(doc.uri)
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)

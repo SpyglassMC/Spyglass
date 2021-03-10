@@ -1,5 +1,6 @@
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { RangeLike } from '../source'
-import { Location, Range } from '../source'
+import { Location, PositionRange, Range } from '../source'
 
 export const TagFileCategories = Object.freeze([
 	'tag/block',
@@ -104,7 +105,8 @@ export interface SymbolMetadata {
 	 */
 	fromDefaultLibrary?: true,
 	relations?: {
-		[relationship: string]: SymbolPath[],
+		aliasOf?: SymbolPath,
+		[relationship: string]: SymbolPath | undefined,
 	},
 }
 
@@ -125,12 +127,12 @@ export interface SymbolPath {
 	/**
 	 * Will be resolved as keys of the `members` property of the `Symbol`.
 	 */
-	path: [string, ...string[]],
+	path: string[],
 }
 export namespace SymbolPath {
-	export function create(category: AllCategory, ...path: [string, ...string[]]): SymbolPath
-	export function create(category: string, ...path: [string, ...string[]]): SymbolPath
-	export function create(category: string, ...path: [string, ...string[]]): SymbolPath {
+	export function create(category: AllCategory, ...path: string[]): SymbolPath
+	export function create(category: string, ...path: string[]): SymbolPath
+	export function create(category: string, ...path: string[]): SymbolPath {
 		return { category, path }
 	}
 }
@@ -153,6 +155,7 @@ export interface SymbolLocation extends Location {
 	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
 	 */
 	fullRange?: Range,
+	fullPosRange?: PositionRange,
 	/**
 	 * Whether this Location is contributed by a `UriBinder`.
 	 */
@@ -160,10 +163,10 @@ export interface SymbolLocation extends Location {
 }
 export namespace SymbolLocation {
 	/* istanbul ignore next */
-	export function create(uri: string, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean): SymbolLocation {
+	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean): SymbolLocation {
 		return {
-			...Location.create(uri, range),
-			...fullRange ? { fullRange: Range.get(fullRange) } : {},
+			...Location.create(doc, range),
+			...fullRange ? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) } : {},
 			...isUriBound ? { isUriBound } : {},
 		}
 	}

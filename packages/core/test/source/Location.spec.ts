@@ -1,6 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Location, Range } from '../../lib'
 
 describe('Location', () => {
@@ -23,9 +24,10 @@ describe('Location', () => {
 	})
 	describe('create()', () => {
 		it('Should create correctly', () => {
-			snapshot(Location.create('file:///home/spgoding/test', Range.create(5, 6)))
-			snapshot(Location.create('file:///home/spgoding/test', { range: Range.create(7, 8) }))
-			snapshot(Location.create('file:///home/spgoding/test', 9))
+			const doc = TextDocument.create('file:///home/spgoding/test', 'nbtdoc', 0, '01234567890')
+			snapshot(Location.create(doc, Range.create(5, 6)))
+			snapshot(Location.create(doc, { range: Range.create(7, 8) }))
+			snapshot(Location.create(doc, 9))
 		})
 	})
 })

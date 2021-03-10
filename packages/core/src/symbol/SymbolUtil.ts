@@ -1,4 +1,6 @@
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { RangeLike } from '../source'
+import { Range } from '../source'
 import type { Symbol, SymbolForm, SymbolMap, SymbolMetadata, SymbolPath, SymbolTable } from './Symbol'
 import { SymbolForms, SymbolLocation, SymbolVisibility } from './Symbol'
 
@@ -9,8 +11,7 @@ import { SymbolForms, SymbolLocation, SymbolVisibility } from './Symbol'
 // -- SPGoding 02/27/2021
 
 export class SymbolUtil {
-	public openedStack: SymbolStack | null = null
-	public openedUri: string | null = null
+	private readonly stacks = new Map<string, SymbolStack>()
 
 	private isUriBinding = false
 
@@ -18,95 +19,61 @@ export class SymbolUtil {
 		public readonly global: SymbolTable
 	) { }
 
-	/**
-	 * Opens a file URI for future `enter` and `lookup` operations. This method doesn't actually do anything to the
-	 * physical file system.
-	 * 
-	 * @throws When a file is already opened in this util.
-	 */
-	public open(uri: string): void {
-		if (this.openedStack && this.openedUri) {
-			throw new Error(`Unable to open '${uri}' as the util is already occupied by '${this.openedUri}'`)
-		}
-		this.openedStack = [{}]
-		this.openedUri = uri
-		SymbolUtil.removeLocations(this.global, l => l.uri === uri)
-	}
-
-	/**
-	 * Closes the currently opened file URI. This method doesn't actually do anything to the physical file system.
-	 * 
-	 * @throws When no file is opened in this util.
-	 */
-	public close(): void {
-		if (!this.openedStack || !this.openedUri) {
-			throw new Error('Unable to close as no file is opened')
-		}
-		this.openedStack = null
-		this.openedUri = null
-	}
-
 	/* istanbul ignore next */
 	/**
 	 * Do not use this method. This should only be called by `Service` before executing `UriBinder`s.
 	 */
-	public startUriBinding(): void {
+	startUriBinding(): void {
 		this.isUriBinding = true
-		SymbolUtil.removeLocations(this.global, l => !!l.isUriBound)
+		SymbolUtil.removeLocations(this.global, l => l.isUriBound)
 	}
 	/* istanbul ignore next */
 	/**
 	 * Do not use this method. This should only be called by `Service` after executing `UriBinder`s.
 	 */
-	public endUriBinding(): void {
+	endUriBinding(): void {
 		this.isUriBinding = false
 	}
 
+	getStack(uri: string): SymbolStack {
+		if (!this.stacks.has(uri)) {
+			this.stacks.set(uri, [{}])
+		}
+		return this.stacks.get(uri)!
+	}
+
+	clear(uri: string): void {
+		SymbolUtil.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
+	}
+
 	/**
-	 * Enters a `Symbol` into the `SymbolTable`.
+	 * Enters a symbol into the symbol table.
 	 * 
 	 * For `Symbol`s that do not support duplicated declarations, please use the `lookup` function to check if
 	 * the `Symbol` was already declared before calling this method, as this method tries to merge declarations
 	 * of `Symbol`s with the same category and identifier.
-	 * 
-	 * @throws When no file is opened.
 	 */
-	public enter(symbol: SymbolAddition): void {
-		if (!this.openedStack || !this.openedUri) {
-			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
-		}
-		const table = SymbolUtil.getTable(this.openedStack, this.global, symbol.visibility)
-		return SymbolUtil.enterTable(table, symbol, this.openedUri, this.isUriBinding)
+	enter(doc: TextDocument, symbol: SymbolAddition): void {
+		const stack = this.getStack(doc.uri)
+		const table = SymbolUtil.getTable(stack, this.global, symbol.visibility)
+		return SymbolUtil.enterTable(table, symbol, doc, this.isUriBinding)
 	}
 
 	/**
-	 * Enters a `Symbol` into the `SymbolTable` for the provided `uri`.
+	 * Enters a symbol into the symbol table by only providing the URI.
 	 * 
-	 * @throws If the `symbol` is of visibility `Block` or `File`.
+	 * For `Symbol`s that do not support duplicated declarations, please use the `lookup` function to check if
+	 * the `Symbol` was already declared before calling this method, as this method tries to merge declarations
+	 * of `Symbol`s with the same category and identifier.
 	 */
-	public enterFor(uri: string, symbol: SymbolAddition): void {
-		if (symbol.visibility === SymbolVisibility.Block || symbol.visibility === SymbolVisibility.File) {
-			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' for '${uri}' because of its visibility`)
-		}
-		return SymbolUtil.enterTable(this.global, symbol, uri, this.isUriBinding)
-	}
-
-	/**
-	 * Enters a `Symbol` as a member of the `Symbol` specified by `path`.
-	 * 
-	 * @throws When no file is opened.
-	 * @throws When the `Symbol` specified by `path` doesn't exist.
-	 */
-	public enterMember(path: SymbolPath, symbol: SymbolAddition): void {
-		if (!this.openedStack || !this.openedUri) {
-			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' at local level as no file is opened`)
-		}
-		const parent = this.lookup(path)
-		if (!parent) {
-			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
-		}
-		const members: SymbolMap = parent.symbol.members ??= {}
-		SymbolUtil.enterMap(members, symbol, this.openedUri!, this.isUriBinding)
+	enterForUri(uri: string, symbol: Omit<SymbolAddition, 'range' | 'fullRange'>): void
+	enterForUri(uri: string, symbol: SymbolAddition): void {
+		symbol.range = Range.create(0)
+		delete symbol.fullRange
+		const doc = TextDocument.create(uri, '', 0, '')
+		const stack = this.getStack(doc.uri)
+		const table = SymbolUtil.getTable(stack, this.global, symbol.visibility)
+		return SymbolUtil.enterTable(table, symbol, doc, this.isUriBinding)
 	}
 
 	/**
@@ -114,24 +81,28 @@ export class SymbolUtil {
 	 * 
 	 * @throws When the `Symbol` specified by `path` doesn't exist.
 	 */
-	public enterMemberFor(uri: string, path: SymbolPath, symbol: SymbolAddition): void {
-		const parent = this.lookup(path)
+	enterMember(doc: TextDocument, path: SymbolPath, symbol: SymbolAddition): void {
+		const parent = this.lookup(path, doc.uri)
 		if (!parent) {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
 		}
 		const members: SymbolMap = parent.symbol.members ??= {}
-		SymbolUtil.enterMap(members, symbol, uri, this.isUriBinding)
+		SymbolUtil.enterMap(members, symbol, doc, this.isUriBinding)
 	}
 
 	/**
 	 * @returns An object:
 	 * - `symbol`: The `Symbol` corresponding to the `path`.
-	 * - `visible`: If it is visible in the current opened file. This will be `null` if it is undeterminable.
+	 * - `visible`: If it is visible in `uri`. This will be `null` if it is undeterminable.
 	 * 
 	 * Or `null` if no such symbol can be found.
 	 */
-	public lookup({ category, path }: SymbolPath): { symbol: Symbol, visible: boolean | null } | null {
-		// TODO: Lookup in local stack as well.
+	public lookup({ category, path }: SymbolPath, uri?: string): { symbol: Symbol, visible: boolean | null } | null {
+		if (uri) {
+			// TODO: Lookup in local stack as well.
+			const stack = this.getStack(uri)
+			stack
+		}
 		const map = this.global[category]
 		if (map) {
 			let symbol = map[path[0]]
@@ -141,40 +112,33 @@ export class SymbolUtil {
 				i++
 			}
 			if (symbol) {
-				return { symbol, visible: SymbolUtil.isVisible(symbol, this.openedUri) }
+				return { symbol, visible: SymbolUtil.isVisible(symbol, uri) }
 			}
 		}
 		return null
 	}
 
 	/**
-	 * Push a new block to the current opened file's `SymbolStack`.
+	 * Push a new block to the `SymbolStack` corresponding to `uri`.
 	 * 
 	 * ~~We're not using blockchain technique here, unfortunately.~~
-	 * 
-	 * @throws When no file is opened.
 	 */
-	public pushBlock(): void {
-		if (!this.openedStack || !this.openedUri) {
-			throw new Error('Unable to push a new block as no file is opened')
-		}
-		this.openedStack.push({})
+	public pushBlock(uri: string): void {
+		const stack = this.getStack(uri)
+		stack.push({})
 	}
 
 	/**
-	 * Pops the newest block out of the current opened file's `SymbolStack`.
+	 * Pops the newest block out of the `SymbolStack` corresponding to `uri`.
 	 * 
-	 * @throws When no file is opened.
 	 * @throws When it is the last element in the stack.
 	 */
-	public popBlock(): void {
-		if (!this.openedStack || !this.openedUri) {
-			throw new Error('Unable to pop a block out as no file is opened')
+	public popBlock(uri: string): void {
+		const stack = this.getStack(uri)
+		if (stack.length <= 1) {
+			throw new Error('Unable to pop a block out as it is the last element in this stack')
 		}
-		if (this.openedStack.length <= 1) {
-			throw new Error('Unable to pop a block out as it is the last element in this block')
-		}
-		this.openedStack.pop()
+		stack.pop()
 	}
 
 	private static trim(table: SymbolTable): void {
@@ -193,11 +157,11 @@ export class SymbolUtil {
 	}
 
 	/**
-	 * Remove all references to the specific `uri` from the `table`.
+	 * Remove all references provided by the specific `uri` from the `table`.
 	 * 
-	 * @param predicate All locations that should be removed.
+	 * @param predicate A predicate that matches locations that should be removed.
 	 */
-	private static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => boolean): void {
+	private static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
 			for (const identifier of Object.keys(map)) {
@@ -229,21 +193,21 @@ export class SymbolUtil {
 		}
 	}
 
-	private static enterTable(table: SymbolTable, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
+	private static enterTable(table: SymbolTable, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
 		const map: SymbolMap = table[addition.category] ??= {}
-		this.enterMap(map, addition, uri, isUriBinding)
+		this.enterMap(map, addition, doc, isUriBinding)
 	}
 
-	private static enterMap(map: SymbolMap, addition: SymbolAddition, uri: string, isUriBinding: boolean): void {
+	private static enterMap(map: SymbolMap, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
 		let symbol: Symbol | undefined = map[addition.identifier]
 		if (symbol) {
 			this.mergeSymbol(symbol, addition)
 		} else {
 			symbol = map[addition.identifier] = SymbolUtil.getMetadata(addition)
 		}
-		if (addition.form && addition.range) {
+		if (addition.form !== undefined && addition.range !== undefined) {
 			const arr = symbol[addition.form] ??= []
-			arr.push(SymbolLocation.create(uri, addition.range, addition.fullRange, isUriBinding))
+			arr.push(SymbolLocation.create(doc, addition.range, addition.fullRange, isUriBinding))
 		}
 	}
 
@@ -289,7 +253,7 @@ export class SymbolUtil {
 	 * - For `Public` visibility, also always `true`, obviously.
 	 * - For `Restricted` visibility, // TODO: roots.
 	 */
-	private static isVisible(symbol: Symbol, _uri: string | null): boolean | null {
+	private static isVisible(symbol: Symbol, _uri: string | undefined): boolean | null {
 		switch (symbol.visibility) {
 			case SymbolVisibility.Restricted:
 				return false // FIXME: check with workspace root URIs.

@@ -10,6 +10,16 @@ exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -24,6 +34,16 @@ exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -43,6 +63,16 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -57,6 +87,16 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -71,6 +111,16 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -90,6 +140,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/ba
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -104,6 +164,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/ba
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -123,6 +193,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -137,6 +217,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -151,6 +241,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]
@@ -165,6 +265,16 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
           "range": {
             "start": 0,
             "end": 0
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
           }
         }
       ]

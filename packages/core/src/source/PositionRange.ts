@@ -1,4 +1,7 @@
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { Position } from './Position'
+import type { RangeLike } from './Range'
+import { Range } from './Range'
 
 export interface PositionRange {
 	start: Position,
@@ -27,6 +30,18 @@ export namespace PositionRange {
 				end: Position.create(partial.end ?? {}),
 			}
 		}
+	}
+
+	/**
+	 * @returns A `PositionRange` converted from a `RangeLike`.
+	 */
+	export function from(range: RangeLike, doc: TextDocument) {
+		const _range = Range.get(range)
+		const ans: PositionRange = {
+			start: doc.positionAt(_range.start),
+			end: doc.positionAt(_range.end),
+		}
+		return ans
 	}
 
 	/**
