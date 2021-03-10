@@ -1,5 +1,5 @@
 import type { Range } from '../source'
-import type { SymbolPath } from '../symbol'
+import type { Symbol } from '../symbol'
 
 export interface AstNode {
 	readonly type: string,
@@ -8,5 +8,5 @@ export interface AstNode {
 	 * All child nodes of this AST node.
 	 */
 	readonly children?: AstNode[],
-	symbol?: SymbolPath,
+	symbol?: Symbol,
 }
