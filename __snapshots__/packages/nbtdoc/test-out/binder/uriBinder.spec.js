@@ -1,8 +1,8 @@
 exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/bar.nbtdoc","minecraft/qux.mcfunction"] 1'] = {
   "nbtdoc": {
-    "minecraft/foo": {
+    "::minecraft::foo": {
       "category": "nbtdoc",
-      "identifier": "minecraft/foo",
+      "identifier": "::minecraft::foo",
       "subcategory": "module",
       "implementation": [
         {
@@ -24,9 +24,9 @@ exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/
         }
       ]
     },
-    "minecraft/bar": {
+    "::minecraft::bar": {
       "category": "nbtdoc",
-      "identifier": "minecraft/bar",
+      "identifier": "::minecraft::bar",
       "subcategory": "module",
       "implementation": [
         {
@@ -53,9 +53,9 @@ exports['uriBinder() Bind ["file:///a.nbtdoc","minecraft/foo.nbtdoc","minecraft/
 
 exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mod.nbtdoc"] 1'] = {
   "nbtdoc": {
-    "": {
+    "::": {
       "category": "nbtdoc",
-      "identifier": "",
+      "identifier": "::",
       "subcategory": "module",
       "implementation": [
         {
@@ -77,9 +77,9 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
         }
       ]
     },
-    "minecraft": {
+    "::minecraft": {
       "category": "nbtdoc",
-      "identifier": "minecraft",
+      "identifier": "::minecraft",
       "subcategory": "module",
       "implementation": [
         {
@@ -101,9 +101,9 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
         }
       ]
     },
-    "minecraft/foo": {
+    "::minecraft::foo": {
       "category": "nbtdoc",
-      "identifier": "minecraft/foo",
+      "identifier": "::minecraft::foo",
       "subcategory": "module",
       "implementation": [
         {
@@ -130,9 +130,9 @@ exports['uriBinder() Bind ["mod.nbtdoc","minecraft/mod.nbtdoc","minecraft/foo/mo
 
 exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/bar.nbtdoc"] 1'] = {
   "nbtdoc": {
-    "foo": {
+    "::foo": {
       "category": "nbtdoc",
-      "identifier": "foo",
+      "identifier": "::foo",
       "subcategory": "module",
       "implementation": [
         {
@@ -154,9 +154,9 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/ba
         }
       ]
     },
-    "minecraft/bar": {
+    "::minecraft::bar": {
       "category": "nbtdoc",
-      "identifier": "minecraft/bar",
+      "identifier": "::minecraft::bar",
       "subcategory": "module",
       "implementation": [
         {
@@ -183,9 +183,9 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/ba
 
 exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc","nbtdoc/minecraft/bar.nbtdoc"] 1'] = {
   "nbtdoc": {
-    "qux": {
+    "::qux": {
       "category": "nbtdoc",
-      "identifier": "qux",
+      "identifier": "::qux",
       "subcategory": "module",
       "implementation": [
         {
@@ -207,9 +207,9 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
         }
       ]
     },
-    "nbtdoc": {
+    "::nbtdoc": {
       "category": "nbtdoc",
-      "identifier": "nbtdoc",
+      "identifier": "::nbtdoc",
       "subcategory": "module",
       "implementation": [
         {
@@ -231,9 +231,9 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
         }
       ]
     },
-    "nbtdoc/foo": {
+    "::nbtdoc::foo": {
       "category": "nbtdoc",
-      "identifier": "nbtdoc/foo",
+      "identifier": "::nbtdoc::foo",
       "subcategory": "module",
       "implementation": [
         {
@@ -255,9 +255,9 @@ exports['uriBinder() Bind ["qux.nbtdoc","nbtdoc/mod.nbtdoc","nbtdoc/foo.nbtdoc",
         }
       ]
     },
-    "nbtdoc/minecraft/bar": {
+    "::nbtdoc::minecraft::bar": {
       "category": "nbtdoc",
-      "identifier": "nbtdoc/minecraft/bar",
+      "identifier": "::nbtdoc::minecraft::bar",
       "subcategory": "module",
       "implementation": [
         {

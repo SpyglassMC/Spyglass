@@ -1,5 +1,6 @@
 import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
+import { pathToIdentifier } from './util'
 
 const Extension = '.nbtdoc'
 const NbtdocRootPrefix = 'nbtdoc/'
@@ -38,7 +39,7 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 		ctx.symbols.enterForUri(uri, {
 			category: 'nbtdoc',
 			subcategory: 'module',
-			identifier: rel,
+			identifier: pathToIdentifier(rel.split('/')),
 			form: 'implementation',
 		})
 	}

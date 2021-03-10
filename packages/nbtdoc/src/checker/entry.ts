@@ -2,6 +2,7 @@ import type * as core from '@spyglassmc/core'
 import type { Checker } from '@spyglassmc/core'
 import { ErrorSeverity, Range, SymbolPath } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
+import { identifierToPath, pathToIdentifier } from '../binder'
 import type { CompoundDefinitionNode, DescribesClauseNode, EnumDefinitionNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
@@ -103,7 +104,7 @@ const moduleDeclaration = async (node: ModuleDeclarationNode, ctx: CheckerContex
 			// table and also trigger a re-check.
 			ctx.err.report(
 				localize('nbtdoc.checker.module-declaration.non-existent', [
-					localize('punc.quote', [pathToString(declaredPath)]),
+					localize('punc.quote', [declaredIdentifier]),
 				]),
 				node.identifier
 			)
@@ -112,14 +113,14 @@ const moduleDeclaration = async (node: ModuleDeclarationNode, ctx: CheckerContex
 				// Already declared somewhere else.
 				ctx.err.report(
 					localize('nbtdoc.checker.module-declaration.duplicated', [
-						localize('punc.quote', [pathToString(declaredPath)]),
+						localize('punc.quote', [declaredIdentifier]),
 					]),
 					node.identifier, ErrorSeverity.Warning,
 					{
 						related: [{
 							location: result.symbol.declaration[0],
 							message: localize('nbtdoc.checker.module-declaration.duplicated.related', [
-								localize('punc.quote', [pathToString(declaredPath)]),
+								localize('punc.quote', [declaredIdentifier]),
 							]),
 						}],
 					}
@@ -147,20 +148,13 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 }
 
 function uriToPath(uri: string, ctx: core.CheckerContext): string[] | null {
-	return Object.keys(ctx.symbols.global.nbtdoc ?? {})
+	const identifier = Object
+		.keys(ctx.symbols.global.nbtdoc ?? {})
 		.find(identifier => {
 			const symbol = ctx.symbols.global.nbtdoc![identifier]!
 			return symbol.subcategory === 'module' && symbol.implementation?.some(loc => loc.uri === uri)
 		})
-		?.split('/') ?? null
-}
-
-function pathToIdentifier(path: readonly string[]): string {
-	return path.join('/')
-}
-
-function pathToString(path: readonly string[]): string {
-	return `::${path.join('::')}`
+	return identifier ? identifierToPath(identifier) : null
 }
 
 /**
@@ -168,7 +162,7 @@ function pathToString(path: readonly string[]): string {
  */
 function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): string[] | null {
 	const ans = identPath.fromGlobalRoot ? [] : [...ctx.modPath]
-	for (const token of identPath.children) {
+	for (const [i, token] of identPath.children.entries()) {
 		// Resolve this token.
 		if (token.value === 'super') {
 			if (ans.length === 0) {
@@ -179,8 +173,6 @@ function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): strin
 		} else {
 			ans.push(token.value)
 		}
-		// Associate this token with the corresponding module's Symbol.
-		token.symbol = { category: 'nbtdoc', path: ans }
 		// Add this token as a reference of that Symbol.
 		ctx.symbols.enter(ctx.doc, {
 			category: 'nbtdoc',
@@ -190,6 +182,9 @@ function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): strin
 			range: token,
 			// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
 		})
+		// Associate this token with the corresponding module's Symbol.
+		const path = { category: 'nbtdoc', path: [pathToIdentifier(ans)] } // FIXME: Special handle for the last element.
+		token.symbol = ctx.symbols.lookup(path)!.symbol
 	}
 	return ans
 }
