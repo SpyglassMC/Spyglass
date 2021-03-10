@@ -6,7 +6,7 @@ import type { CompoundDefinitionNode, DescribesClauseNode, EnumDefinitionNode, I
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
-	const modPath = getCurrentModulePath(ctx)
+	const modPath = uriToPath(ctx.doc.uri, ctx)
 	if (modPath === null) {
 		ctx.err.report(localize('nbtdoc.checker.entry.null-mod-path'), 0, ErrorSeverity.Warning)
 		return
@@ -94,21 +94,48 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 
 const moduleDeclaration = async (node: ModuleDeclarationNode, ctx: CheckerContext): Promise<void> => {
 	if (node.identifier.value.length) {
-		const declaredModPath = [...ctx.modPath, node.identifier.value]
-		const result = ctx.symbols.lookup(SymbolPath.create('nbtdoc', pathToIdentifier(declaredModPath)))
+		const declaredPath = [...ctx.modPath, node.identifier.value]
+		const declaredIdentifier = pathToIdentifier(declaredPath)
+		const result = ctx.symbols.lookup(SymbolPath.create('nbtdoc', declaredIdentifier))
 		if (result?.symbol.subcategory !== 'module') {
-			ctx.err.report(localize('nbtdoc.checker.module-declaration.non-existent', [
-				localize('punc.quote', [pathToString(declaredModPath)]),
-			]), node.identifier)
+			// Not implemented.
+			// Once this module is implemented (i.e. the file is created), the uri binder will add it to the symbol
+			// table and also trigger a re-check.
+			ctx.err.report(
+				localize('nbtdoc.checker.module-declaration.non-existent', [
+					localize('punc.quote', [pathToString(declaredPath)]),
+				]),
+				node.identifier
+			)
+		} else {
+			if (result.symbol.declaration?.length) {
+				// Already declared somewhere else.
+				ctx.err.report(
+					localize('nbtdoc.checker.module-declaration.duplicated', [
+						localize('punc.quote', [pathToString(declaredPath)]),
+					]),
+					node.identifier, ErrorSeverity.Warning,
+					{
+						related: [{
+							location: result.symbol.declaration[0],
+							message: localize('nbtdoc.checker.module-declaration.duplicated.related', [
+								localize('punc.quote', [pathToString(declaredPath)]),
+							]),
+						}],
+					}
+				)
+			} else {
+				// Haven't been declared.
+				ctx.symbols.enter(ctx.doc, {
+					category: 'nbtdoc',
+					subcategory: 'module',
+					identifier: declaredIdentifier,
+					form: 'declaration',
+					range: node.identifier,
+					fullRange: node,
+				})
+			}
 		}
-		ctx.symbols.enterFor(ctx.doc.uri, {
-			category: 'nbtdoc',
-			subcategory: 'module',
-			identifier: pathToIdentifier(declaredModPath),
-			form: 'declaration',
-			range: node.identifier,
-			fullRange: node,
-		})
 	}
 }
 
@@ -119,23 +146,20 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 	}
 }
 
-function getCurrentModulePath(ctx: core.CheckerContext): string[] | null {
+function uriToPath(uri: string, ctx: core.CheckerContext): string[] | null {
 	return Object.keys(ctx.symbols.global.nbtdoc ?? {})
 		.find(identifier => {
 			const symbol = ctx.symbols.global.nbtdoc![identifier]!
-			if (symbol.subcategory === 'module') {
-				return symbol.implementation?.some(loc => loc.uri === ctx.doc.uri)
-			}
-			return false
+			return symbol.subcategory === 'module' && symbol.implementation?.some(loc => loc.uri === uri)
 		})
 		?.split('/') ?? null
 }
 
-function pathToIdentifier(path: string[]): string {
+function pathToIdentifier(path: readonly string[]): string {
 	return path.join('/')
 }
 
-function pathToString(path: string[]): string {
+function pathToString(path: readonly string[]): string {
 	return `::${path.join('::')}`
 }
 
@@ -145,9 +169,7 @@ function pathToString(path: string[]): string {
 function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): string[] | null {
 	const ans = identPath.fromGlobalRoot ? [] : [...ctx.modPath]
 	for (const token of identPath.children) {
-		// TODO: Associate this token with the corresponding module's Symbol.
-		// TODO: Add this token's location as a reference of the corresponding module's Symbol.
-		// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
+		// Resolve this token.
 		if (token.value === 'super') {
 			if (ans.length === 0) {
 				ctx.err.report(localize('nbtdoc.checker.ident-path.super-from-root'), Range.span(token, identPath))
@@ -157,6 +179,17 @@ function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): strin
 		} else {
 			ans.push(token.value)
 		}
+		// Associate this token with the corresponding module's Symbol.
+		token.symbol = { category: 'nbtdoc', path: ans }
+		// Add this token as a reference of that Symbol.
+		ctx.symbols.enter(ctx.doc, {
+			category: 'nbtdoc',
+			subcategory: 'module',
+			identifier: pathToIdentifier(ans),
+			form: 'reference',
+			range: token,
+			// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
+		})
 	}
 	return ans
 }

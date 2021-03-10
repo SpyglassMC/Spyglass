@@ -106,6 +106,8 @@
 	"nbtdoc.checker.entry.null-mod-path": "The current file is not under any roots and won't be checked semantically",
 	"nbtdoc.checker.ident-path.super-from-root": "Failed to resolve this “super” as it is out of the project's root",
 	"nbtdoc.checker.module-declaration.non-existent": "Couldn't declare module %0% as it does not exist",
+	"nbtdoc.checker.module-declaration.duplicated": "Couldn't declare module %0% as it has already been declared somewhere else",
+	"nbtdoc.checker.module-declaration.duplicated.related": "The module %0% has already been declared here",
 	"nbtdoc.parser.compound-definition.field-type": "a field type",
 	"nbtdoc.parser.float.illegal": "Encountered illegal float number",
 	"nbtdoc.parser.identifier": "an identifier",

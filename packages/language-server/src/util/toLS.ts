@@ -21,6 +21,12 @@ export namespace toLS {
 				codeAction: error.info?.codeAction,
 			}
 		}
+		if (error.info?.related) {
+			ans.relatedInformation = error.info?.related.map(v => ({
+				location: location(v.location),
+				message: v.message,
+			}))
+		}
 		return ans
 	}
 
@@ -44,6 +50,13 @@ export namespace toLS {
 	export function documentSelector(): ls.DocumentSelector {
 		const ans: ls.DocumentSelector = core.MetaRegistry.instance.languages.map(id => ({ language: id }))
 		return ans
+	}
+
+	export function location(location: core.Location): ls.Location {
+		return {
+			uri: location.uri,
+			range: location.posRange,
+		}
 	}
 
 	export function position(offset: number, doc: TextDocument): ls.Position {

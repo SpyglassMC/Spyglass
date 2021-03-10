@@ -1,3 +1,4 @@
+import type { Location } from './Location'
 import type { Range } from './Range'
 
 export interface LanguageError {
@@ -25,7 +26,11 @@ export const enum ErrorSeverity {
 }
 
 export interface LanguageErrorInfo {
+	codeAction?: string,
 	deprecated?: boolean,
 	unnecessary?: boolean,
-	codeAction?: string,
+	related?: {
+		location: Location,
+		message: string,
+	}[]
 }
