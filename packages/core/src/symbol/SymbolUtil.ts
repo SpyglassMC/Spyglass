@@ -376,7 +376,7 @@ interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identi
  */
 type SymbolStack = [SymbolTable, ...SymbolTable[]]
 
-type QueryCallback<S extends Symbol | null = Symbol | null> = (this: void, symbol: S) => unknown
+type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQueryResult, symbol: S) => unknown
 
 class SymbolQueryResult {
 	readonly category: string
@@ -400,12 +400,16 @@ class SymbolQueryResult {
 		this.#visible = visible
 	}
 
+	heyGimmeDaSymbol() {
+		return this.#symbol
+	}
+
 	if(predicate: (this: void, symbol: Symbol | null) => symbol is null, fn: QueryCallback<null>): this
 	if(predicate: (this: void, symbol: Symbol | null) => symbol is Symbol, fn: QueryCallback<Symbol>): this
 	if(predicate: QueryCallback, fn: QueryCallback): this
 	if(predicate: QueryCallback, fn: QueryCallback<any>): this {
-		if (predicate(this.#symbol)) {
-			fn(this.#symbol)
+		if (predicate.call(this, this.#symbol)) {
+			fn.call(this, this.#symbol)
 			this.#hasTriggeredIf = true
 		}
 		return this
@@ -458,7 +462,7 @@ class SymbolQueryResult {
 	 */
 	else(fn: QueryCallback): this {
 		if (!this.#hasTriggeredIf) {
-			fn(this.#symbol)
+			fn.call(this, this.#symbol)
 		}
 		return this
 	}

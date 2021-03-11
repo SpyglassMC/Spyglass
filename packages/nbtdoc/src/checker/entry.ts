@@ -245,9 +245,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				}
 			}
 
-			let ans: Symbol | null = null
-
-			ctx.symbols
+			return ctx.symbols
 				.query(ctx.doc, 'nbtdoc', targetId, token.value)
 				.ifUnknown(() => ctx.err.report(
 					localize('nbtdoc.checker.ident-path.unknown-identifier', [localeQuote(token.value), localeQuote(targetId)]),
@@ -257,9 +255,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 					usage: 'reference',
 					range: token,
 				})
-				.else(symbol => ans = symbol)
-
-			return ans
+				.heyGimmeDaSymbol()
 		}
 	}
 	return null
