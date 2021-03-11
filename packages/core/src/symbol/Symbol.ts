@@ -105,15 +105,15 @@ export interface SymbolMetadata {
 	 */
 	fromDefaultLibrary?: true,
 	relations?: {
-		aliasOf?: { category: string, path: [string, ...string[]] },
-		[relationship: string]: { category: string, path: [string, ...string[]] } | undefined,
+		aliasOf?: Symbol,
+		[relationship: string]: Symbol | undefined,
 	},
 }
 
-export const SymbolForms = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
-export type SymbolForm = typeof SymbolForms[number]
+export const SymbolUsages = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
+export type SymbolUsage = typeof SymbolUsages[number]
 
-export interface Symbol extends SymbolMetadata, Partial<Record<SymbolForm, SymbolLocation[]>> {
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsage, SymbolLocation[]>> {
 	members?: SymbolMap,
 }
 

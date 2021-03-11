@@ -1,9 +1,10 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { AstNode } from '../node'
 import type { Logger } from '../service'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
-import type { AllCategory, Symbol, SymbolForm, SymbolMap, SymbolMetadata, SymbolTable } from './Symbol'
-import { SymbolForms, SymbolLocation, SymbolVisibility } from './Symbol'
+import type { AllCategory, Symbol, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsage } from './Symbol'
+import { SymbolLocation, SymbolUsages, SymbolVisibility } from './Symbol'
 
 // I wrote a lot of comments in this file to pretend that I know what I am doing.
 // For the record, I absolutely do not understand any piece of this monster.
@@ -44,6 +45,7 @@ export class SymbolUtil {
 	}
 
 	clear(uri: string): void {
+		this.stacks.delete(uri)
 		SymbolUtil.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
 	}
 
@@ -52,37 +54,12 @@ export class SymbolUtil {
 	 * 
 	 * If the symbol already exists, this method tries to merge the two data.
 	 * 
-	 * @returns The entered symbol.
+	 * @returns The entered symbol. If the symbol already existed before entering, this method returns the same reference of the object.
 	 */
 	enter(doc: TextDocument, symbol: SymbolAddition): Symbol {
 		const stack = this.getStack(doc.uri)
 		const table = SymbolUtil.getTable(stack, this.global, symbol.visibility)
 		return SymbolUtil.enterTable(table, symbol, doc, this.isUriBinding)
-	}
-
-	/**
-	 * Amends the data of an existing symbol.
-	 * 
-	 * @returns The amended symbol, or `null` if the symbol didn't exist before calling this method.
-	 */
-	amend(doc: TextDocument, symbol: SymbolAddition): Symbol | null {
-		const result = this.lookup(symbol.category, [symbol.identifier], doc.uri)
-		return result?.visible ? SymbolUtil.mergeSymbol(result.symbol, symbol, doc, this.isUriBinding) : null
-	}
-
-	/**
-	 * Creates a new symbol.
-	 * 
-	 * @returns
-	 * - `symbol`: The created symbol or the existing symbol,
-	 * - `isNewlyCreated`: If the returned symbol is newly created.
-	 */
-	create(doc: TextDocument, symbol: SymbolAddition): { symbol: Symbol, isNewlyCreated: boolean } {
-		const result = this.lookup(symbol.category, [symbol.identifier], doc.uri)
-		return {
-			isNewlyCreated: !result,
-			symbol: result?.symbol ?? this.enter(doc, symbol),
-		}
 	}
 
 	/**
@@ -124,48 +101,17 @@ export class SymbolUtil {
 	}
 
 	/**
-	 * Amends the data of an existing member symbol.
-	 * 
-	 * @returns The amended symbol, or `null` if the symbol didn't exist before calling this method.
-	 */
-	amendMember(doc: TextDocument, category: AllCategory, path: string[], symbol: SymbolAddition): Symbol | null {
-		if (path.length === 0) {
-			return this.amend(doc, symbol)
-		}
-		const result = this.lookup(category, [...path, symbol.identifier], doc.uri)
-		return result?.visible ? SymbolUtil.mergeSymbol(result.symbol, symbol, doc, this.isUriBinding) : null
-	}
-
-	/**
-	 * Creates a new member symbol.
-	 * 
-	 * @throws When the `Symbol` specified by `path` doesn't exist.
-	 * 
-	 * @returns The amended symbol, or `null` if the symbol didn't exist before calling this method.
-	 */
-	createMember(doc: TextDocument, category: AllCategory, path: string[], symbol: SymbolAddition): { symbol: Symbol, isNewlyCreated: boolean } {
-		if (path.length === 0) {
-			return this.create(doc, symbol)
-		}
-		const result = this.lookup(category, [...path, symbol.identifier], doc.uri)
-		return {
-			isNewlyCreated: !result,
-			symbol: result?.symbol ?? this.enterMember(doc, category, path, symbol),
-		}
-	}
-
-	/**
 	 * @returns An object:
 	 * - `symbol`: The `Symbol` corresponding to the `path`.
 	 * - `visible`: If it is visible in `uri`. This will be `null` if it is undeterminable.
 	 * 
 	 * Or `null` if no such symbol can be found.
 	 */
-	public lookup(category: AllCategory, path: string[]): { symbol: Symbol, visible: boolean | null } | null
-	public lookup(category: string, path: string[]): { symbol: Symbol, visible: boolean | null } | null
-	public lookup(category: AllCategory, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
-	public lookup(category: string, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
-	public lookup(category: string, path: string[], uri?: string): { symbol: Symbol, visible: boolean | null } | null {
+	lookup(category: AllCategory, path: string[]): { symbol: Symbol, visible: boolean | null } | null
+	lookup(category: string, path: string[]): { symbol: Symbol, visible: boolean | null } | null
+	lookup(category: AllCategory, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
+	lookup(category: string, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
+	lookup(category: string, path: string[], uri?: string): { symbol: Symbol, visible: boolean | null } | null {
 		if (uri) {
 			// TODO: Lookup in local stack as well.
 			const stack = this.getStack(uri)
@@ -180,10 +126,17 @@ export class SymbolUtil {
 				i++
 			}
 			if (symbol) {
-				return { symbol, visible: SymbolUtil.isVisible(symbol, uri) }
+				return { symbol: SymbolUtil.resolveAlias(symbol), visible: SymbolUtil.isVisible(symbol, uri) }
 			}
 		}
 		return null
+	}
+
+	query(doc: TextDocument, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
+	query(doc: TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult
+	query(doc: TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
+		const result = this.lookup(category, path, doc.uri)
+		return new SymbolQueryResult(doc, this, category, path, result?.symbol ?? null, !!result?.visible)
 	}
 
 	/**
@@ -191,7 +144,7 @@ export class SymbolUtil {
 	 * 
 	 * ~~We're not using blockchain technique here, unfortunately.~~
 	 */
-	public pushBlock(uri: string): void {
+	pushBlock(uri: string): void {
 		const stack = this.getStack(uri)
 		stack.push({})
 	}
@@ -201,7 +154,7 @@ export class SymbolUtil {
 	 * 
 	 * @throws When it is the last element in the stack.
 	 */
-	public popBlock(uri: string): void {
+	popBlock(uri: string): void {
 		const stack = this.getStack(uri)
 		if (stack.length <= 1) {
 			throw new Error('Unable to pop a block out as it is the last element in this stack')
@@ -248,7 +201,7 @@ export class SymbolUtil {
 	private static removeLocationsFromMap(map: SymbolMap, predicate: (this: void, loc: SymbolLocation) => unknown): void {
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			for (const form of SymbolForms) {
+			for (const form of SymbolUsages) {
 				if (!symbol[form]) {
 					continue
 				}
@@ -281,7 +234,7 @@ export class SymbolUtil {
 		return this.enterMap(map, addition, doc, isUriBinding)
 	}
 
-	private static enterMap(map: SymbolMap, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	static enterMap(map: SymbolMap, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		return map[addition.identifier] = this.mergeSymbol(map[addition.identifier], addition, doc, isUriBinding)
 	}
 
@@ -294,8 +247,8 @@ export class SymbolUtil {
 		} else {
 			base = this.getMetadata(addition)
 		}
-		if (addition.form !== undefined && addition.range !== undefined) {
-			const arr = base[addition.form] ??= []
+		if (addition.usage !== undefined && addition.range !== undefined) {
+			const arr = base[addition.usage] ??= []
 			arr.push(SymbolLocation.create(doc, addition.range, addition.fullRange, isUriBinding))
 		}
 		return base
@@ -343,7 +296,9 @@ export class SymbolUtil {
 	 * - For `Public` visibility, also always `true`, obviously.
 	 * - For `Restricted` visibility, // TODO: roots.
 	 */
-	private static isVisible(symbol: Symbol, _uri: string | undefined): boolean | null {
+	static isVisible(symbol: Symbol, uri: string): boolean
+	static isVisible(symbol: Symbol, uri: string | undefined): boolean | null
+	static isVisible(symbol: Symbol, _uri: string | undefined): boolean | null {
 		switch (symbol.visibility) {
 			case SymbolVisibility.Restricted:
 				return false // FIXME: check with workspace root URIs.
@@ -354,15 +309,64 @@ export class SymbolUtil {
 				return true
 		}
 	}
+
+	/**
+	 * @returns The ultimate symbol being pointed by the passed-in `symbol`'s alias.
+	 */
+	static resolveAlias(symbol: Symbol): Symbol {
+		return symbol.relations?.aliasOf ? this.resolveAlias(symbol.relations.aliasOf) : symbol
+	}
+
+	/**
+	 * @returns If the symbol has declarations or definitions.
+	 */
+	static isDeclared(symbol: Symbol | null): symbol is Symbol {
+		return !!(symbol?.declaration?.length || symbol?.definition?.length)
+	}
+	/**
+	 * @returns If the symbol has definitions, or declarations and implementations.
+	 */
+	static isDefined(symbol: Symbol | null): symbol is Symbol {
+		return !!(symbol?.definition?.length || (symbol?.definition?.length && symbol?.implementation?.length))
+	}
+	/**
+	 * @returns If the symbol has implementations or definitions.
+	 */
+	static isImplemented(symbol: Symbol | null): symbol is Symbol {
+		return !!(symbol?.implementation?.length || symbol?.definition?.length)
+	}
+	/**
+	 * @returns If the symbol has references.
+	 */
+	static isReferenced(symbol: Symbol | null): symbol is Symbol {
+		return !!symbol?.reference?.length
+	}
+	/**
+	 * @returns If the symbol has type definitions.
+	 */
+	static isTypeDefined(symbol: Symbol | null): symbol is Symbol {
+		return !!symbol?.typeDefinition?.length
+	}
+
+	/**
+	 * @throws If the symbol does not have any declarations or definitions.
+	 */
+	static getDeclaredLocation(symbol: Symbol): SymbolLocation {
+		return symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => { throw new Error(`Cannot get declared location of ${JSON.stringify(symbol)}`) })()
+	}
 }
 
 export interface SymbolAddition extends SymbolMetadata {
 	/**
-	 * The existing form of this `Symbol`.
+	 * The usage of this `Symbol`. Use `definition` when the usage consists both a `declaration` and an `implementation`.
 	 */
-	form?: SymbolForm,
+	usage?: SymbolUsage,
 	range?: RangeLike,
 	fullRange?: RangeLike,
+}
+
+interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identifier'> {
+	range: AstNode
 }
 
 /**
@@ -371,3 +375,140 @@ export interface SymbolAddition extends SymbolMetadata {
  * Later elements represent different levels of `Block` visibility scopes.
  */
 type SymbolStack = [SymbolTable, ...SymbolTable[]]
+
+type QueryCallback<S extends Symbol | null = Symbol | null> = (this: void, symbol: S) => unknown
+
+class SymbolQueryResult {
+	readonly category: string
+	readonly path: readonly string[]
+	readonly #doc: TextDocument
+	readonly #util: SymbolUtil
+	#hasTriggeredIf = false
+	#symbol: Symbol | null
+	#visible: boolean
+
+	get symbol() {
+		return this.#symbol
+	}
+
+	constructor(doc: TextDocument, util: SymbolUtil, category: string, path: readonly string[], symbol: Symbol | null, visible: boolean) {
+		this.category = category
+		this.#doc = doc
+		this.path = path
+		this.#util = util
+		this.#symbol = symbol
+		this.#visible = visible
+	}
+
+	if(predicate: (this: void, symbol: Symbol | null) => symbol is null, fn: QueryCallback<null>): this
+	if(predicate: (this: void, symbol: Symbol | null) => symbol is Symbol, fn: QueryCallback<Symbol>): this
+	if(predicate: QueryCallback, fn: QueryCallback): this
+	if(predicate: QueryCallback, fn: QueryCallback<any>): this {
+		if (predicate(this.#symbol)) {
+			fn(this.#symbol)
+			this.#hasTriggeredIf = true
+		}
+		return this
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol does not exist or is not visible at the current scope.
+	 */
+	ifUnknown(fn: QueryCallback<null>): this {
+		return this.if(s => s === null || !this.#visible, fn as QueryCallback)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol has declarations or definitions.
+	 */
+	ifDeclared(fn: QueryCallback<Symbol>): this {
+		return this.if(SymbolUtil.isDeclared, fn)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol has definitions, or both declarations and implementations.
+	 */
+	ifDefined(fn: QueryCallback<Symbol>): this {
+		return this.if(SymbolUtil.isDefined, fn)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol has implementations or definitions.
+	 */
+	ifImplemented(fn: QueryCallback<Symbol>): this {
+		return this.if(SymbolUtil.isImplemented, fn)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol has references.
+	 */
+	ifReferenced(fn: QueryCallback<Symbol>): this {
+		return this.if(SymbolUtil.isReferenced, fn)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol has type definitions.
+	 */
+	ifTypeDefined(fn: QueryCallback<Symbol>): this {
+		return this.if(SymbolUtil.isTypeDefined, fn)
+	}
+
+	/**
+	 * Calls `fn` if none of the former `if` conditions are met.
+	 */
+	else(fn: QueryCallback): this {
+		if (!this.#hasTriggeredIf) {
+			fn(this.#symbol)
+		}
+		return this
+	}
+
+	/**
+	 * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
+	 */
+	elseAlias(symbol: SymbolAddition): this {
+		return this.else(() => this.alias(symbol))
+	}
+
+	/**
+	 * Enters the queried symbol if none of the former `if` conditions are met.
+	 * 
+	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
+	 */
+	elseEnter(symbol: SymbolQueryEnterable): this {
+		return this.else(() => this.enter(symbol))
+	}
+
+	/**
+	 * Creates an alias symbol that points to the queried symbol.
+	 */
+	alias(symbol: SymbolAddition): this {
+		this.#util.enter(this.#doc, {
+			...symbol,
+			...this.#symbol ? { relations: { aliasOf: this.#symbol } } : {},
+		})
+		return this
+	}
+
+	/**
+	 * Enters the queried symbol.
+	 *
+	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
+	 */
+	enter(symbol: SymbolQueryEnterable): this {
+		this.#symbol = this.#util.enterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
+		this.#visible = SymbolUtil.isVisible(this.#symbol, this.#doc.uri)
+		if (symbol.range) {
+			symbol.range.symbol = this.#symbol
+		}
+		return this
+	}
+
+	private enterableToAddition(enterable: SymbolQueryEnterable): SymbolAddition {
+		return {
+			...enterable,
+			category: this.category,
+			identifier: this.path[this.path.length - 1],
+		}
+	}
+}

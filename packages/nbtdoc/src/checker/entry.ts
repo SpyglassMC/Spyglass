@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
-import type { Checker, Symbol } from '@spyglassmc/core'
-import { ErrorSeverity, Range, SymbolVisibility } from '@spyglassmc/core'
+import type { Checker, RangeLike, Symbol } from '@spyglassmc/core'
+import { ErrorSeverity, Range, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
@@ -82,34 +82,20 @@ const compoundDefinitionHoisting = async (node: CompoundDefinitionNode, ctx: Che
 	if (!node.identifier.value) {
 		return
 	}
-	// TODO: Enter in file as well.
-	const { isNewlyCreated, symbol } = ctx.symbols.createMember(ctx.doc, 'nbtdoc', [ctx.modIdentifier], {
-		category: 'nbtdoc',
-		identifier: node.identifier.value,
-		form: 'definition',
-		range: node.identifier,
-		subcategory: 'compound',
-		doc: node.doc.doc,
-	})
-	if (isNewlyCreated) {
-		node.identifier.symbol = symbol
-	} else {
-		// Duplicated identifier.
-		ctx.err.report(
-			localize('nbtdoc.checker.duplicated-identifier', [
-				localeQuote(symbol.identifier),
-			]),
-			node.identifier, ErrorSeverity.Warning,
-			{
-				related: [{
-					location: symbol.declaration?.[0] ?? symbol.definition![0],
-					message: localize('nbtdoc.checker.duplicated-identifier.related', [
-						localeQuote(symbol.identifier),
-					]),
-				}],
-			}
-		)
-	}
+	ctx.symbols
+		.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
+		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
+		.elseEnter({
+			usage: 'definition',
+			range: node.identifier,
+			subcategory: 'compound',
+			doc: node.doc.doc,
+		})
+	// .elseAlias({
+	// 	category: 'nbtdoc',
+	// 	identifier: node.identifier.value,
+	// 	visibility: SymbolVisibility.File,
+	// })
 }
 
 const describesClause = async (node: DescribesClauseNode, ctx: CheckerContext): Promise<void> => {
@@ -124,34 +110,20 @@ const enumDefinitionHoisting = async (node: EnumDefinitionNode, ctx: CheckerCont
 	if (!node.identifier.value) {
 		return
 	}
-	// TODO: Enter in file as well.
-	const { isNewlyCreated, symbol } = ctx.symbols.createMember(ctx.doc, 'nbtdoc', [ctx.modIdentifier], {
-		category: 'nbtdoc',
-		identifier: node.identifier.value,
-		form: 'definition',
-		range: node.identifier,
-		subcategory: 'enum',
-		doc: node.doc.doc,
-	})
-	if (isNewlyCreated) {
-		node.identifier.symbol = symbol
-	} else {
-		// Duplicated identifier.
-		ctx.err.report(
-			localize('nbtdoc.checker.duplicated-identifier', [
-				localeQuote(symbol.identifier),
-			]),
-			node.identifier, ErrorSeverity.Warning,
-			{
-				related: [{
-					location: symbol.declaration?.[0] ?? symbol.definition![0],
-					message: localize('nbtdoc.checker.duplicated-identifier.related', [
-						localeQuote(symbol.identifier),
-					]),
-				}],
-			}
-		)
-	}
+	ctx.symbols
+		.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
+		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
+		.elseEnter({
+			usage: 'definition',
+			range: node.identifier,
+			subcategory: 'enum',
+			doc: node.doc.doc,
+		})
+	// .elseAlias({
+	// 	category: 'nbtdoc',
+	// 	identifier: node.identifier.value,
+	// 	visibility: SymbolVisibility.File,
+	// })
 }
 
 const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promise<void> => {
@@ -162,96 +134,50 @@ const moduleDeclaration = async (node: ModuleDeclarationNode, ctx: CheckerContex
 	if (node.identifier.value.length) {
 		const declaredSeg = [...ctx.modSeg, node.identifier.value]
 		const declaredIdentifier = segToIdentifier(declaredSeg)
-		const result = ctx.symbols.lookup('nbtdoc', [declaredIdentifier])
-		if (!result) {
-			// Not implemented.
-			// Once this module is implemented (i.e. the file is created), the uri binder will add it to the symbol
-			// table and also trigger a re-check.
-			ctx.err.report(
-				localize('nbtdoc.checker.module-declaration.non-existent', [
-					localeQuote(declaredIdentifier),
-				]),
+		ctx.symbols
+			.query(ctx.doc, 'nbtdoc', declaredIdentifier)
+			.ifUnknown(() => ctx.err.report(
+				localize('nbtdoc.checker.module-declaration.non-existent', [localeQuote(declaredIdentifier)]),
 				node.identifier
-			)
-		} else if (result.symbol.declaration?.length) {
-			// Already declared somewhere else.
-			ctx.err.report(
-				localize('nbtdoc.checker.module-declaration.duplicated', [
-					localeQuote(declaredIdentifier),
-				]),
-				node.identifier, ErrorSeverity.Warning,
-				{
-					related: [{
-						location: result.symbol.declaration[0],
-						message: localize('nbtdoc.checker.module-declaration.duplicated.related', [
-							localeQuote(declaredIdentifier),
-						]),
-					}],
-				}
-			)
-		} else {
-			// Haven't been declared.
-			node.identifier.symbol = ctx.symbols.enter(ctx.doc, {
-				category: 'nbtdoc',
-				identifier: declaredIdentifier,
-				form: 'declaration',
+			))
+			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.module-declaration.duplicated', ctx, symbol, node.identifier))
+			.elseEnter({
+				usage: 'declaration',
 				range: node.identifier,
 				fullRange: node,
 			})
-		}
 	}
 }
 
 const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void> => {
 	const usedSymbol = await resolveIdentPath(node.path, ctx)
 	if (usedSymbol) {
-		// Creates an alias symbol for the used symbol.
-
 		const lastToken = node.path.children[node.path.children.length - 1]
-		const { isNewlyCreated, symbol: aliasSymbol } = ctx.symbols.create(ctx.doc, {
-			category: 'nbtdoc',
-			identifier: usedSymbol.identifier,
-			form: 'declaration',
-			range: lastToken,
-			visibility: SymbolVisibility.File,
-			relations: {
-				// FIXME
-				// aliasOf: usedSymbol,
-			},
-		})
-		if (!isNewlyCreated) {
-			// Duplicated identifier.
-			ctx.err.report(
-				localize('nbtdoc.checker.duplicated-identifier', [
-					localeQuote(usedSymbol.identifier),
-				]),
-				lastToken, ErrorSeverity.Warning,
-				{
-					related: [{
-						location: aliasSymbol.declaration?.[0] ?? aliasSymbol.definition![0],
-						message: localize('nbtdoc.checker.duplicated-identifier.related', [
-							localeQuote(usedSymbol.identifier),
-						]),
-					}],
-				}
-			)
-		}
-
-		// Enter in module if this is export.
-
-		if (node.isExport) {
-			ctx.symbols.createMember(ctx.doc, 'nbtdoc', [ctx.modIdentifier], {
-				category: 'nbtdoc',
-				identifier: lastToken.value,
-				form: 'declaration',
+		ctx.symbols
+			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, usedSymbol.identifier)
+			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, lastToken))
+			.elseEnter({
+				usage: 'declaration',
 				range: lastToken,
 				relations: {
-					// FIXME
-					// aliasOf: usedSymbol,
+					aliasOf: usedSymbol,
 				},
+				...node.isExport ? {} : { visibility: SymbolVisibility.File },
 			})
-		}
 	}
+}
+
+function reportDuplicatedDeclaration(localeString: string, ctx: CheckerContext, symbol: Symbol, range: RangeLike) {
+	ctx.err.report(
+		localize(localeString, [localeQuote(symbol.identifier)]),
+		range, ErrorSeverity.Warning,
+		{
+			related: [{
+				location: SymbolUtil.getDeclaredLocation(symbol),
+				message: localize(`${localeString}.related`, [localeQuote(symbol.identifier)]),
+			}],
+		}
+	)
 }
 
 function uriToSeg(uri: string, ctx: core.CheckerContext): Segments | null {
@@ -270,7 +196,7 @@ function segToUri(seg: Segments, ctx: core.CheckerContext): string | null {
 }
 
 /**
- * @returns Target segments.
+ * @returns The actual symbol being used/imported from another module.
  */
 async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<Symbol | null> {
 	const targetSeg = identPath.fromGlobalRoot ? [] : [...ctx.modSeg]
@@ -289,17 +215,14 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				targetSeg.push(token.value)
 			}
 
-			const amendedSymbol = ctx.symbols.amend(ctx.doc, {
-				category: 'nbtdoc',
-				identifier: segToIdentifier(targetSeg),
-				form: 'reference',
-				range: token,
-				// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
-			})
-			if (!amendedSymbol) {
-				continue
-			}
-			token.symbol = amendedSymbol
+			ctx.symbols
+				.query(ctx.doc, 'nbtdoc', segToIdentifier(targetSeg))
+				.ifUnknown(() => { }) // Simply ignore. Unknown modules will be reported at the last token of the ident path.
+				.elseEnter({
+					usage: 'reference',
+					range: token,
+					// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
+				})
 		} else {
 			// Referencing to a compound or enum.
 
@@ -322,23 +245,21 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				}
 			}
 
-			const amendedSymbol = ctx.symbols.amendMember(ctx.doc, 'nbtdoc', [targetId], {
-				category: 'nbtdoc',
-				identifier: token.value,
-				form: 'reference',
-				range: token,
-			})
-			if (!amendedSymbol) {
-				ctx.err.report(
-					localize('nbtdoc.checker.ident-path.unknown-identifier', [
-						localeQuote(token.value),
-						localeQuote(targetId),
-					]),
+			let ans: Symbol | null = null
+
+			ctx.symbols
+				.query(ctx.doc, 'nbtdoc', targetId, token.value)
+				.ifUnknown(() => ctx.err.report(
+					localize('nbtdoc.checker.ident-path.unknown-identifier', [localeQuote(token.value), localeQuote(targetId)]),
 					Range.span(token, identPath)
-				)
-				return null
-			}
-			return token.symbol = amendedSymbol
+				))
+				.elseEnter({
+					usage: 'reference',
+					range: token,
+				})
+				.else(symbol => ans = symbol)
+
+			return ans
 		}
 	}
 	return null

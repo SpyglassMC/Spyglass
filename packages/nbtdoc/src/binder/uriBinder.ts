@@ -40,7 +40,7 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 			category: 'nbtdoc',
 			subcategory: 'module',
 			identifier: segToIdentifier(rel.split('/')),
-			form: 'implementation',
+			usage: 'implementation',
 		})
 	}
 }

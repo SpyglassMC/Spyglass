@@ -12,7 +12,7 @@ describe('SymbolUtil', () => {
 	const symbol: SymbolAddition = {
 		category: 'nbtdoc',
 		identifier: 'test',
-		form: 'definition',
+		usage: 'definition',
 		range: 1,
 		visibility: SymbolVisibility.Public,
 	}
@@ -22,8 +22,8 @@ describe('SymbolUtil', () => {
 			symbols.pushBlock(fileUri)
 			symbols.pushBlock(fileUri)
 			symbols.enter(doc, { ...symbol })
-			symbols.enter(doc, { ...symbol, form: 'reference', range: 2 })
-			symbols.enter(doc, { ...symbol, form: 'reference', range: 3 })
+			symbols.enter(doc, { ...symbol, usage: 'reference', range: 2 })
+			symbols.enter(doc, { ...symbol, usage: 'reference', range: 3 })
 			symbols.enter(doc, { ...symbol, range: 4, visibility: SymbolVisibility.Block })
 			symbols.enter(doc, { ...symbol, range: 5, visibility: SymbolVisibility.File })
 			symbols.enter(doc, { ...symbol, range: 6, visibility: SymbolVisibility.Restricted, visibilityRestriction: ['spgoding:**'] })
