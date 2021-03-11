@@ -1,4 +1,4 @@
-import { as, dispatch, int, intRange, listOf, opt, pick, record, resource } from '../primitives'
+import { as, boolean, dispatch, int, intRange, listOf, opt, pick, record, resource } from '../primitives'
 import { int_range } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
@@ -29,6 +29,7 @@ export const loot_entry = as('loot_entry', dispatch('type',
 			},
 			tag: {
 				name: resource('tag/item'),
+				expand: opt(boolean),
 			},
 		}),
 		functions: opt(listOf(item_modifier)),

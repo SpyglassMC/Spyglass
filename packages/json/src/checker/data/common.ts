@@ -1,14 +1,29 @@
-import { any, as, float, floatRange, int, opt, record, string } from '../primitives'
+import { any, as, float, floatRange, int, opt, record, resource } from '../primitives'
 
 export const int_range = as('range', any([
 	int,
 	record({
+		type: opt(resource(['uniform'])),
 		min: int,
 		max: int,
 	}),
 	record({
-		type: string,
+		type: resource(['binomial']),
 		n: int,
+		p: floatRange(0, 1),
+	}),
+]))
+
+export const float_range = as('range', any([
+	float,
+	record({
+		type: opt(resource(['uniform'])),
+		min: float,
+		max: float,
+	}),
+	record({
+		type: resource(['binomial']),
+		n: float,
 		p: floatRange(0, 1),
 	}),
 ]))

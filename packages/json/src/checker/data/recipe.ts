@@ -22,7 +22,7 @@ const recipe_result = record({
 export const recipe = as('recipe', dispatch('type',
 	(type) => record({
 		type: resource('recipe_serializer'),
-		group: string, // TODO
+		group: opt(string), // TODO
 		...pick(type, {
 			crafting_shaped: {
 				pattern: listOf(string), // TODO

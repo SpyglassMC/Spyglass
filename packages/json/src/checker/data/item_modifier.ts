@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, string } from '../primitives'
-import { int_bounds, int_range } from './common'
+import { float_range, int_bounds, int_range } from './common'
 import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
 import { text_component } from './text_component'
@@ -61,7 +61,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				limit: int_bounds,
 			},
 			looting_enchant: {
-				count: int_bounds,
+				count: int_range,
 				limit: opt(int),
 			},
 			set_attributes: {
@@ -81,12 +81,11 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			set_count: {
 				count: int_range,
+				add: opt(boolean),
 			},
 			set_damage: {
-				damage: as('range', record({
-					min: floatRange(0, 1),
-					max: floatRange(0, 1),
-				})),
+				damage: float_range,
+				add: opt(boolean),
 			},
 			set_loot_table: {
 				name: resource('loot_table'),
@@ -100,6 +99,9 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			set_name: {
 				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
 				name: opt(text_component),
+			},
+			set_nbt: {
+				tag: string, // TODO: nbt
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({
