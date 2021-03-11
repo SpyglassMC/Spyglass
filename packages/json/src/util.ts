@@ -10,7 +10,7 @@ export const Categories = new Map<string, FileCategory>([
 	['recipes', 'recipe'],
 	['tags/blocks', 'tag/block'],
 	['tags/entity_types', 'tag/entity_type'],
-	['tags/fluid', 'tag/fluid'],
+	['tags/fluids', 'tag/fluid'],
 	['tags/game_events', 'tag/game_event'],
 	['tags/items', 'tag/item'],
 	['worldgen/biome', 'worldgen/biome'],

@@ -126,7 +126,7 @@ export const entity_predicate = as('entity', record({
 		is_baby: opt(boolean),
 	})),
 	equipment: opt(object(
-		slots,
+		literal(slots),
 		() => item_predicate,
 	)),
 	effects: opt(object(
@@ -139,6 +139,7 @@ export const entity_predicate = as('entity', record({
 	fishing_hook: opt(record({
 		in_open_water: opt(boolean),
 	})),
+	catType: opt(string),
 }))
 
 export const damage_source_predicate = as('damage_source', record({

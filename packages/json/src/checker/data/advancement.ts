@@ -1,6 +1,6 @@
 import { any, as, boolean, deprecated, dispatch, int, listOf, literal, object, opt, pick, record, resource, string, when } from '../primitives'
 import { float_bounds, int_bounds } from './common'
-import { block_predicate, damage_predicate, damage_source_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
+import { block_predicate, damage_predicate, damage_source_predicate, distance_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
 import { text_component } from './text_component'
 
 const entity = (any([
@@ -102,14 +102,14 @@ export const criterion = as('criterion', dispatch('trigger',
 					victims: opt(listOf(entity)),
 				},
 				levitation: {
-					distance: opt(float_bounds),
+					distance: opt(distance_predicate),
 					duration: opt(float_bounds),
 				},
 				location: {
 					location: opt(location_predicate),
 				},
 				nether_travel: {
-					distance: opt(float_bounds),
+					distance: opt(distance_predicate),
 					entered: opt(location_predicate),
 					exited: opt(location_predicate),
 				},
@@ -161,7 +161,7 @@ export const criterion = as('criterion', dispatch('trigger',
 					signal_strength: opt(int_bounds),
 				},
 				thrown_item_picked_up_by_entity: {
-					entity: opt(entity_predicate),
+					entity: opt(entity),
 					item: opt(item_predicate),
 				},
 				used_ender_eye: {

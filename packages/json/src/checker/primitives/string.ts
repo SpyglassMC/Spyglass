@@ -16,7 +16,7 @@ export function resource(id: string | string[], allowTag = false): Checker<JsonA
 		} else if (typeof id === 'string') {
 			node.resource = id
 			// TODO
-		} else if(!id.includes(node.value)) {
+		} else if(!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
 			ctx.err.report(localize('expected', [arrayToMessage(id, true, 'or')]), node)
 		}
 	}

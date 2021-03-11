@@ -5,7 +5,7 @@ import { JsonNumberAstNode } from '../../node'
 
 const number = (type: 'integer' | 'float') => (min: number | null, max: number | null) => {
 	return async (node: JsonAstNode, ctx: CheckerContext) => {
-		if (!JsonNumberAstNode.is(node) || (type === 'integer' && !node.isInteger)) {
+		if (!JsonNumberAstNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', [localize(type)]), node)
 		} else if (min !== null && max !== null && (node.value < min || node.value > max)) {
 			ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)
