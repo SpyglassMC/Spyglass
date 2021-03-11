@@ -1,7 +1,9 @@
-export function identifierToPath(identifier: string): string[] {
+export type Segments = readonly string[]
+
+export function identifierToSeg(identifier: string): Segments {
 	return identifier.slice(2).split('::')
 }
 
-export function pathToIdentifier(path: readonly string[]): string {
-	return `::${path.join('::')}`
+export function segToIdentifier(seg: Segments): string {
+	return `::${seg.join('::')}`
 }

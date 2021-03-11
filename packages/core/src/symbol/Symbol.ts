@@ -105,36 +105,9 @@ export interface SymbolMetadata {
 	 */
 	fromDefaultLibrary?: true,
 	relations?: {
-		aliasOf?: SymbolPath,
-		[relationship: string]: SymbolPath | undefined,
+		aliasOf?: { category: string, path: [string, ...string[]] },
+		[relationship: string]: { category: string, path: [string, ...string[]] } | undefined,
 	},
-}
-
-/**
- * @example
- * {
- * 	category: 'advancement',
- * 	path: ['spgoding:foo/bar'],
- * }
- * 
- * {
- * 	category: 'nbtdoc',
- * 	path: ['util', 'minecraft', 'InventoryItem', 'Count'],
- * }
- */
-export interface SymbolPath {
-	category: string,
-	/**
-	 * Will be resolved as keys of the `members` property of the `Symbol`.
-	 */
-	path: string[],
-}
-export namespace SymbolPath {
-	export function create(category: AllCategory, ...path: string[]): SymbolPath
-	export function create(category: string, ...path: string[]): SymbolPath
-	export function create(category: string, ...path: string[]): SymbolPath {
-		return { category, path }
-	}
 }
 
 export const SymbolForms = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)

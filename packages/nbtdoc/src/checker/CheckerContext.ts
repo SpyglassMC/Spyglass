@@ -1,8 +1,18 @@
 import type * as core from '@spyglassmc/core'
+import type { Symbol } from '@spyglassmc/core'
+import type { Segments } from '../binder'
 
 export interface CheckerContext extends core.CheckerContext {
 	/**
-	 * The current file's module path.
+	 * The current module's identifier.
 	 */
-	modPath: readonly string[]
+	modIdentifier: string,
+	/**
+	 * The current module's segments.
+	 */
+	modSeg: Segments,
+	/**
+	 * The current module's symbol.
+	 */
+	modSymbol: Symbol,
 }

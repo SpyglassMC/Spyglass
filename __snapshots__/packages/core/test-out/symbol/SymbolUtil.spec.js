@@ -1,3 +1,56 @@
+exports['SymbolUtil clear() Should clear all 1'] = {
+  "nbtdoc": {
+    "ShouldBeKept1": {
+      "category": "nbtdoc",
+      "identifier": "ShouldBeKept1",
+      "definition": [
+        {
+          "uri": "file:///another_test.nbtdoc",
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 0
+            },
+            "end": {
+              "line": 0,
+              "character": 0
+            }
+          },
+          "range": {
+            "start": 0,
+            "end": 0
+          }
+        }
+      ],
+      "members": {
+        "ShouldBeKept2": {
+          "category": "nbtdoc",
+          "identifier": "ShouldBeKept2",
+          "definition": [
+            {
+              "uri": "file:///another_test.nbtdoc",
+              "posRange": {
+                "start": {
+                  "line": 0,
+                  "character": 0
+                },
+                "end": {
+                  "line": 0,
+                  "character": 0
+                }
+              },
+              "range": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
+
 exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
   {
     "nbtdoc": {

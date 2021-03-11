@@ -223,16 +223,11 @@ export class Service {
 		this.debug('Start URI binding')
 		this.#uriBindingTimeout = undefined
 		const ctx = this.getUriBinderCtx()
-		ctx.symbols.startUriBinding()
-		try {
+		ctx.symbols.uriBinding(ctx.logger, () => {
 			for (const binder of this.meta.getUriBinders()) {
 				binder(this.#files, ctx)
 			}
-		} catch (e) {
-			this.logger.error(e?.toString())
-		} finally {
-			ctx.symbols.endUriBinding()
-		}
+		})
 		this.recheckAllCachedFiles()
 	}
 
