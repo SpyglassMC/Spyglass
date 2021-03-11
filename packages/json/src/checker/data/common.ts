@@ -1,32 +1,48 @@
-import { any, as, float, floatRange, int, opt, record, resource } from '../primitives'
+import { any, as, dispatch, float, int, literal, opt, pick, record, resource, string } from '../primitives'
 
-export const int_range = as('range', any([
-	int,
-	record({
-		type: opt(resource(['uniform'])),
-		min: int,
-		max: int,
-	}),
-	record({
-		type: resource(['binomial']),
-		n: int,
-		p: floatRange(0, 1),
-	}),
-]))
-
-export const float_range = as('range', any([
+export const number_provider = as('range', any([
 	float,
-	record({
-		type: opt(resource(['uniform'])),
-		min: float,
-		max: float,
-	}),
-	record({
-		type: resource(['binomial']),
-		n: float,
-		p: floatRange(0, 1),
-	}),
+	dispatch('type', (type) => record({
+		type: resource('loot_number_provider_type'),
+		...type === undefined ? {
+			min: number_provider,
+			max: number_provider,
+		} : {},
+		...pick(type, {
+			constant: {
+				value: float,
+			},
+			uniform: {
+				min: number_provider,
+				max: number_provider,
+			},
+			binomial: {
+				n: number_provider,
+				p: number_provider,
+			},
+			score: {
+				target: score_provider,
+				score: literal('objective'),
+				scale: opt(float),
+			},
+		}),
+	})),
 ]))
+
+export const score_provider = any([
+	literal(['this', 'killer', 'player_killer', 'direct_killer']),
+	dispatch('type', (type) => record({
+		type: resource('loot_score_provider_type'),
+		...pick(type, {
+			context: {
+				target: literal(['this', 'killer', 'player_killer', 'direct_killer']),
+			},
+			fixed: {
+				name: string, // TODO: score holder, no selector
+			},
+		}),
+	})),
+])
 
 export const int_bounds = as('bounds', any([
 	int,

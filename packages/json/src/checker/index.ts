@@ -1,12 +1,12 @@
 import type { Checker, CheckerContext } from '@spyglassmc/core'
-import { getRel } from '@spyglassmc/core'
+import { fileUtil } from '@spyglassmc/core'
 import type { JsonAstNode } from '../node'
 import { dissectUri } from '../util'
 import { Checkers } from './data'
 import { pack_mcmeta } from './data/pack_mcmeta'
 
 export const entry: Checker<JsonAstNode> = async (node: JsonAstNode, ctx: CheckerContext): Promise<void> => {
-	const rel = getRel(ctx.roots, ctx.doc.uri)
+	const rel = fileUtil.getRel(ctx.roots, ctx.doc.uri)
 	if (!rel) return
 
 	const parts = dissectUri(rel)
