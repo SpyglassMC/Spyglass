@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, string } from '../primitives'
-import { float_range, int_bounds, int_range } from './common'
+import { int_bounds, number_provider } from './common'
 import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
 import { text_component } from './text_component'
@@ -44,7 +44,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				enchantments: opt(listOf(resource('enchantment'))),
 			},
 			enchant_with_levels: {
-				levels: int_range,
+				levels: number_provider,
 				treasure: opt(boolean),
 			},
 			exploration_map: {
@@ -61,7 +61,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				limit: int_bounds,
 			},
 			looting_enchant: {
-				count: int_range,
+				count: number_provider,
 				limit: opt(int),
 			},
 			set_attributes: {
@@ -69,7 +69,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 					attribute: resource('attribute'),
 					name: string,
 					id: opt(string), // TODO: uuid
-					amount: int_range,
+					amount: number_provider,
 					slot: any([
 						literal(slots),
 						listOf(literal(slots)),
@@ -80,11 +80,11 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				entries: listOf(loot_entry),
 			},
 			set_count: {
-				count: int_range,
+				count: number_provider,
 				add: opt(boolean),
 			},
 			set_damage: {
-				damage: float_range,
+				damage: number_provider,
 				add: opt(boolean),
 			},
 			set_loot_table: {
@@ -106,7 +106,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			set_stew_effect: {
 				effects: opt(listOf(record({
 					type: resource('mob_effect'),
-					duration: int_range,
+					duration: number_provider,
 				}))),
 			},
 		}),

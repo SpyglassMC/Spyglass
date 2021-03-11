@@ -1,5 +1,5 @@
 import { as, boolean, dispatch, int, intRange, listOf, opt, pick, record, resource } from '../primitives'
-import { int_range } from './common'
+import { number_provider } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
 
@@ -38,8 +38,8 @@ export const loot_entry = as('loot_entry', dispatch('type',
 ))
 
 export const loot_pool = as('loot_pool', record({
-	rolls: int_range,
-	bonus_rolls: opt(int_range),
+	rolls: number_provider,
+	bonus_rolls: opt(number_provider),
 	entries: listOf(loot_entry),
 	functions: opt(listOf(item_modifier)),
 	conditions: opt(listOf(predicate)),
