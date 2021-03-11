@@ -11,6 +11,11 @@
   "dependencies": {
     "vscode-json-languageservice": "4.0.2"
   },
+  "devDependencies": {
+    "@types/node-fetch": "^1.6.9",
+    "node-fetch": "^2.6.1",
+    "vanilla-datapack-data": "SPGoding/vanilla-datapack#data" 
+  },
   "publishConfig": {
     "access": "public"
   },
