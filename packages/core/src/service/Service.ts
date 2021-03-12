@@ -163,6 +163,19 @@ export class Service {
 		}
 	}
 
+	/**
+	 * @returns If the file was ensured to be checked successfully.
+	 */
+	async ensureChecked(uri: string): Promise<boolean> {
+		const docAndNode = await this.ensure(uri)
+		if (!docAndNode) {
+			return false
+		} else if (!docAndNode.node.checkerErrors) {
+			await this.check(docAndNode.node, docAndNode.doc)
+		}
+		return true
+	}
+
 	parse(doc: TextDocument): FileNode<AstNode> {
 		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
 		const ctx = this.getParserCtx(doc)
@@ -204,7 +217,8 @@ export class Service {
 			const nodes = [result.leaf, ...result.parents]
 			for (const n of nodes) {
 				if (n.symbol) {
-					return Hover.create(n, `\`\`\`\n${n.symbol.identifier}\n\`\`\`` + (n.symbol.doc ? `\n\n${n.symbol.doc}` : ''))
+					const symbol = SymbolUtil.resolveAlias(n.symbol)
+					return Hover.create(n, `\`\`\`\n${symbol.identifier}\n\`\`\`` + (symbol.doc ? `\n\n${symbol.doc}` : ''))
 				}
 			}
 		}
@@ -213,14 +227,12 @@ export class Service {
 
 	#uriBindingTimeout: NodeJS.Timeout | undefined
 	private scheduleUriBinding(): void {
-		this.debug('Scheduling URI binding')
 		if (this.#uriBindingTimeout) {
 			clearTimeout(this.#uriBindingTimeout)
 		}
 		this.#uriBindingTimeout = setTimeout(this.bindUris, 1000)
 	}
 	private readonly bindUris = () => {
-		this.debug('Start URI binding')
 		this.#uriBindingTimeout = undefined
 		const ctx = this.getUriBinderCtx()
 		ctx.symbols.uriBinding(ctx.logger, () => {
@@ -229,18 +241,17 @@ export class Service {
 			}
 		})
 		this.recheckAllCachedFiles()
+		this.debug('Finished URI binding')
 	}
 
 	#errorPublishingTimeouts = new Map<string, NodeJS.Timeout>()
 	private scheduleErrorPublishing(uri: string): void {
-		this.debug(`Scheduling error publishing for '${uri}'`)
 		if (this.#errorPublishingTimeouts.has(uri)) {
 			clearTimeout(this.#errorPublishingTimeouts.get(uri)!)
 		}
 		this.#errorPublishingTimeouts.set(uri, setTimeout(() => this.publishErrors(uri), 50))
 	}
 	private publishErrors(uri: string): void {
-		this.debug(`Publishing errors for '${uri}'`)
 		this.#errorPublishingTimeouts.delete(uri)
 		const result = this.get(uri)
 		if (!result) {
@@ -253,12 +264,14 @@ export class Service {
 				...node.parserErrors,
 			])
 		}
+		this.debug(`Published errors for '${uri}'`)
 	}
 	private recheckAllCachedFiles(): void {
 		this.debug('Rechecking all cached files')
 		for (const { doc, node } of this.#cache.values()) {
 			this.check(node, doc)
 		}
+		this.debug('Rechecked all cached files')
 	}
 
 	/**

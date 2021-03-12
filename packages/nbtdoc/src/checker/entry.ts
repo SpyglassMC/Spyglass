@@ -18,34 +18,33 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 	const modIdentifier = segToIdentifier(modSeg)
 	const modSymbol = ctx.symbols.lookup('nbtdoc', [modIdentifier], ctx.doc.uri)!.symbol
 
-	const compoundDefinitions: CompoundDefinitionNode[] = []
-	const describesClauses: DescribesClauseNode[] = []
-	const enumDefinitions: EnumDefinitionNode[] = []
-	const injectClauses: InjectClauseNode[] = []
-	const moduleDeclarations: ModuleDeclarationNode[] = []
-	const useClauses: UseClauseNode[] = []
+	const hoistingNodes: (CompoundDefinitionNode | EnumDefinitionNode | ModuleDeclarationNode | UseClauseNode)[] = []
+	const checkingNodes: (CompoundDefinitionNode | EnumDefinitionNode | DescribesClauseNode | InjectClauseNode)[] = []
 
 	for (const childNode of node.children) {
 		switch (childNode.type) {
-			case 'comment':
-				break
 			case 'nbtdoc:compound_definition':
-				compoundDefinitions.push(childNode)
+				hoistingNodes.push(childNode)
+				checkingNodes.push(childNode)
 				break
 			case 'nbtdoc:describes_clause':
-				describesClauses.push(childNode)
+				checkingNodes.push(childNode)
 				break
 			case 'nbtdoc:enum_definition':
-				enumDefinitions.push(childNode)
+				hoistingNodes.push(childNode)
+				checkingNodes.push(childNode)
 				break
 			case 'nbtdoc:inject_clause':
-				injectClauses.push(childNode)
+				checkingNodes.push(childNode)
 				break
 			case 'nbtdoc:module_declaration':
-				moduleDeclarations.push(childNode)
+				hoistingNodes.push(childNode)
 				break
 			case 'nbtdoc:use_clause':
-				useClauses.push(childNode)
+				hoistingNodes.push(childNode)
+				break
+			case 'comment':
+			default:
 				break
 		}
 	}
@@ -58,20 +57,40 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 	}
 
 	// Hoisting declarations.
-	await Promise.all([
-		...compoundDefinitions.map(n => compoundDefinitionHoisting(n, nbtdocCtx)),
-		...enumDefinitions.map(n => enumDefinitionHoisting(n, nbtdocCtx)),
-		...moduleDeclarations.map(n => moduleDeclaration(n, nbtdocCtx)),
-		...useClauses.map(n => useClause(n, nbtdocCtx)),
-	])
+	for (const childNode of hoistingNodes) {
+		switch (childNode.type) {
+			case 'nbtdoc:compound_definition':
+				await compoundDefinitionHoisting(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:enum_definition':
+				await enumDefinitionHoisting(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:module_declaration':
+				await moduleDeclaration(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:use_clause':
+				await useClause(childNode, nbtdocCtx)
+				break
+		}
+	}
 
 	// Actual checking.
-	await Promise.all([
-		...compoundDefinitions.map(n => compoundDefinition(n, nbtdocCtx)),
-		...describesClauses.map(n => describesClause(n, nbtdocCtx)),
-		...enumDefinitions.map(n => enumDefinition(n, nbtdocCtx)),
-		...injectClauses.map(n => injectClause(n, nbtdocCtx)),
-	])
+	for (const childNode of checkingNodes) {
+		switch (childNode.type) {
+			case 'nbtdoc:compound_definition':
+				await compoundDefinition(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:enum_definition':
+				await enumDefinition(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:describes_clause':
+				await describesClause(childNode, nbtdocCtx)
+				break
+			case 'nbtdoc:inject_clause':
+				await injectClause(childNode, nbtdocCtx)
+				break
+		}
+	}
 }
 
 const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerContext): Promise<void> => {
@@ -91,11 +110,6 @@ const compoundDefinitionHoisting = async (node: CompoundDefinitionNode, ctx: Che
 			subcategory: 'compound',
 			doc: node.doc.doc,
 		})
-	// .elseAlias({
-	// 	category: 'nbtdoc',
-	// 	identifier: node.identifier.value,
-	// 	visibility: SymbolVisibility.File,
-	// })
 }
 
 const describesClause = async (node: DescribesClauseNode, ctx: CheckerContext): Promise<void> => {
@@ -119,11 +133,6 @@ const enumDefinitionHoisting = async (node: EnumDefinitionNode, ctx: CheckerCont
 			subcategory: 'enum',
 			doc: node.doc.doc,
 		})
-	// .elseAlias({
-	// 	category: 'nbtdoc',
-	// 	identifier: node.identifier.value,
-	// 	visibility: SymbolVisibility.File,
-	// })
 }
 
 const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promise<void> => {
@@ -233,10 +242,8 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				// We should load and check that module first.
 
 				const targetUri = segToUri(targetSeg, ctx)
-				const targetDocAndNode = targetUri ? await ctx.service.ensure(targetUri) : null
-				if (targetDocAndNode) {
-					await ctx.service.check(targetDocAndNode.node, targetDocAndNode.doc)
-				} else {
+				const ensured = targetUri ? await ctx.service.ensureChecked(targetUri) : false
+				if (!ensured) {
 					ctx.err.report(
 						localize('nbtdoc.checker.ident-path.unknown-module', [localeQuote(targetId)]),
 						Range.span(token, identPath)
@@ -251,6 +258,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 					localize('nbtdoc.checker.ident-path.unknown-identifier', [localeQuote(token.value), localeQuote(targetId)]),
 					Range.span(token, identPath)
 				))
+				.elseResolveAlias()
 				.elseEnter({
 					usage: 'reference',
 					range: token,

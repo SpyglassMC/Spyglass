@@ -126,7 +126,7 @@ export class SymbolUtil {
 				i++
 			}
 			if (symbol) {
-				return { symbol: SymbolUtil.resolveAlias(symbol), visible: SymbolUtil.isVisible(symbol, uri) }
+				return { symbol, visible: SymbolUtil.isVisible(symbol, uri) }
 			}
 		}
 		return null
@@ -467,12 +467,12 @@ class SymbolQueryResult {
 		return this
 	}
 
-	/**
-	 * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
-	 */
-	elseAlias(symbol: SymbolAddition): this {
-		return this.else(() => this.alias(symbol))
-	}
+	// /**
+	//  * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
+	//  */
+	// elseAlias(symbol: SymbolAddition): this {
+	// 	return this.else(() => this.alias(symbol))
+	// }
 
 	/**
 	 * Enters the queried symbol if none of the former `if` conditions are met.
@@ -483,16 +483,30 @@ class SymbolQueryResult {
 		return this.else(() => this.enter(symbol))
 	}
 
+	// /**
+	//  * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
+	//  */
+	// elseAlias(symbol: SymbolAddition): this {
+	// 	return this.else(() => this.alias(symbol))
+	// }
+
 	/**
-	 * Creates an alias symbol that points to the queried symbol.
+	 * Resolves the queried symbol if it is an alias and if none of the former `if` conditions are met.
 	 */
-	alias(symbol: SymbolAddition): this {
-		this.#util.enter(this.#doc, {
-			...symbol,
-			...this.#symbol ? { relations: { aliasOf: this.#symbol } } : {},
-		})
-		return this
+	elseResolveAlias(): this {
+		return this.else(() => this.resolveAlias())
 	}
+
+	// /**
+	//  * Creates an alias symbol that points to the queried symbol.
+	//  */
+	// alias(symbol: SymbolAddition): this {
+	// 	this.#util.enter(this.#doc, {
+	// 		...symbol,
+	// 		...this.#symbol ? { relations: { aliasOf: this.#symbol } } : {},
+	// 	})
+	// 	return this
+	// }
 
 	/**
 	 * Enters the queried symbol.
@@ -504,6 +518,16 @@ class SymbolQueryResult {
 		this.#visible = SymbolUtil.isVisible(this.#symbol, this.#doc.uri)
 		if (symbol.range) {
 			symbol.range.symbol = this.#symbol
+		}
+		return this
+	}
+
+	/**
+	 * Resolves this symbol if it is an alias.
+	 */
+	resolveAlias(): this {
+		if (this.#symbol) {
+			this.#symbol = SymbolUtil.resolveAlias(this.#symbol)
 		}
 		return this
 	}
