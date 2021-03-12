@@ -60,13 +60,13 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 	for (const childNode of hoistingNodes) {
 		switch (childNode.type) {
 			case 'nbtdoc:compound_definition':
-				await compoundDefinitionHoisting(childNode, nbtdocCtx)
+				compoundDefinitionHoisting(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:enum_definition':
-				await enumDefinitionHoisting(childNode, nbtdocCtx)
+				enumDefinitionHoisting(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:module_declaration':
-				await moduleDeclaration(childNode, nbtdocCtx)
+				moduleDeclaration(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:use_clause':
 				await useClause(childNode, nbtdocCtx)
@@ -78,26 +78,26 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 	for (const childNode of checkingNodes) {
 		switch (childNode.type) {
 			case 'nbtdoc:compound_definition':
-				await compoundDefinition(childNode, nbtdocCtx)
+				compoundDefinition(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:enum_definition':
-				await enumDefinition(childNode, nbtdocCtx)
+				enumDefinition(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:describes_clause':
-				await describesClause(childNode, nbtdocCtx)
+				describesClause(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:inject_clause':
-				await injectClause(childNode, nbtdocCtx)
+				injectClause(childNode, nbtdocCtx)
 				break
 		}
 	}
 }
 
-const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerContext): Promise<void> => {
+const compoundDefinition = (node: CompoundDefinitionNode, ctx: CheckerContext): void => {
 
 }
 
-const compoundDefinitionHoisting = async (node: CompoundDefinitionNode, ctx: CheckerContext): Promise<void> => {
+const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerContext): void => {
 	if (!node.identifier.value) {
 		return
 	}
@@ -112,15 +112,15 @@ const compoundDefinitionHoisting = async (node: CompoundDefinitionNode, ctx: Che
 		})
 }
 
-const describesClause = async (node: DescribesClauseNode, ctx: CheckerContext): Promise<void> => {
+const describesClause = (node: DescribesClauseNode, ctx: CheckerContext): void => {
 
 }
 
-const enumDefinition = async (node: EnumDefinitionNode, ctx: CheckerContext): Promise<void> => {
+const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => {
 
 }
 
-const enumDefinitionHoisting = async (node: EnumDefinitionNode, ctx: CheckerContext): Promise<void> => {
+const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): void => {
 	if (!node.identifier.value) {
 		return
 	}
@@ -135,11 +135,11 @@ const enumDefinitionHoisting = async (node: EnumDefinitionNode, ctx: CheckerCont
 		})
 }
 
-const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promise<void> => {
+const injectClause = (node: InjectClauseNode, ctx: CheckerContext): void => {
 
 }
 
-const moduleDeclaration = async (node: ModuleDeclarationNode, ctx: CheckerContext): Promise<void> => {
+const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): void => {
 	if (node.identifier.value.length) {
 		const declaredSeg = [...ctx.modSeg, node.identifier.value]
 		const declaredIdentifier = segToIdentifier(declaredSeg)
