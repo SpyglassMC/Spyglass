@@ -9,4 +9,5 @@ export interface AstNode {
 	 */
 	readonly children?: AstNode[],
 	symbol?: Symbol,
+	hover?: string,
 }
