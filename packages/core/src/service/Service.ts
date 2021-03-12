@@ -33,6 +33,7 @@ interface DocAndNode {
 	node: FileNode<any>,
 }
 
+/* istanbul ignore next */
 export class Service {
 	/**
 	 * URI of files that are currently opened in the editor, whose changes shall be sent to the manager's
@@ -192,6 +193,7 @@ export class Service {
 		binder(node.children[0], ctx)
 		node.binderErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
+		this.scheduleRecheckingFiles()
 	}
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
@@ -202,6 +204,7 @@ export class Service {
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
+		this.scheduleRecheckingFiles()
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
@@ -243,7 +246,7 @@ export class Service {
 				binder(this.#files, ctx)
 			}
 		})
-		this.recheckAllCachedFiles()
+		this.scheduleRecheckingFiles()
 		this.debug('Finished URI binding')
 	}
 
@@ -268,6 +271,13 @@ export class Service {
 			])
 		}
 		this.debug(`Published errors for '${uri}'`)
+	}
+	#recheckingFilesTimeout: NodeJS.Timeout | undefined
+	private scheduleRecheckingFiles(): void {
+		if (this.#recheckingFilesTimeout) {
+			clearTimeout(this.#recheckingFilesTimeout)
+		}
+		this.#recheckingFilesTimeout = setTimeout(() => this.recheckAllCachedFiles(), 1000)
 	}
 	private recheckAllCachedFiles(): void {
 		this.debug('Rechecking all cached files')

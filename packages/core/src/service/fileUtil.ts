@@ -16,6 +16,7 @@ export function getRel(rootUris: string[], uri: string): string | null {
 	return null
 }
 
+/* istanbul ignore next */
 /**
  * @throws File system errors.
  */
@@ -49,6 +50,7 @@ export function isFileUri(uri: string): boolean {
 	return new Url(uri).protocol === 'file:'
 }
 
+/* istanbul ignore next */
 /**
  * @param fileUri A file URI.
  * @returns The corresponding file path of the `fileUri` in platform-specific format.
@@ -58,6 +60,7 @@ export function fileUriToPath(fileUri: string): string {
 	return url.fileURLToPath(new Url(fileUri))
 }
 
+/* istanbul ignore next */
 /**
  * @param path A file path.
  * @returns The corresponding file URI of the `path`.
@@ -66,6 +69,7 @@ export function pathToFileUri(path: string): string {
 	return url.pathToFileURL(path).toString()
 }
 
+/* istanbul ignore next */
 export function normalize(uri: string): string {
 	return pathToFileUri(fileUriToPath(uri))
 }

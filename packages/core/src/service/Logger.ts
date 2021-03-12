@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 export interface Logger {
 	/**
 	 * Log a message.
@@ -23,6 +21,7 @@ export interface Logger {
 }
 
 export namespace Logger {
+	/* istanbul ignore next */
 	/**
 	 * @returns The built-in `console`.
 	 * Do **not** use this implementation in language servers, as some clients cannot handle

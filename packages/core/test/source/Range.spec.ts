@@ -1,7 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import type { AstNode} from '../../lib'
+import type { AstNode } from '../../lib'
 import { Range, RangeContainer, Source } from '../../lib'
 
 describe('Range', () => {
@@ -32,6 +32,12 @@ describe('Range', () => {
 			const actual = Range.get(() => Range.Beginning)
 			assert.deepStrictEqual(actual, Range.Beginning)
 			assert.notStrictEqual(actual, Range.Beginning)
+		})
+	})
+	describe('span()', () => {
+		it('Should span correctly', () => {
+			const actual = Range.span(Range.create(2, 4), Range.create(0, 8))
+			assert.deepStrictEqual(actual, Range.create(2, 8))
 		})
 	})
 	describe('toString()', () => {

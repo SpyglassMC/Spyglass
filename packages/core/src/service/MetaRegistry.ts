@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 import type { AstNode } from '../node'
 import type { EntryNode, EntryParser } from '../parser'
 import type { Colorizer} from '../processor'
@@ -18,6 +16,7 @@ export interface LanguageOptions {
 	colorizer?: Colorizer<any>,
 }
 
+/* istanbul ignore next */
 /**
  * The meta registry of SPYGlass. You can register new parsers, processors, and languages here.
  * This is a singleton; use the `instance` static property to get an instance. 

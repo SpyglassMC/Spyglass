@@ -23,15 +23,13 @@ export function entry(node: MainNode, ctx: ColorizerContext): readonly ColorToke
 				type = 'number'
 				break
 			case 'nbtdoc:literal':
-				type = 'keyword' // FIXME
+				type = 'keyword'
 				break
 			case 'nbtdoc:minecraft_identifier':
 				type = 'resourceLocation'
 				break
 			case 'nbtdoc:string':
 				type = 'string'
-				break
-			default:
 				break
 		}
 		if (type !== undefined) {

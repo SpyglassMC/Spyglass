@@ -1,5 +1,3 @@
-/* istanbul ignore file */
-
 export * from './IndexMap'
 export * from './LanguageError'
 export * from './Location'
