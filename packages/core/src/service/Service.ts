@@ -5,7 +5,8 @@ import { file } from '../parser'
 import type { ColorToken } from '../processor'
 import { selectedLeaf } from '../processor'
 import { Source } from '../source'
-import { SymbolUtil } from '../symbol'
+import type { SymbolLocation, SymbolUsage } from '../symbol'
+import { SymbolUsages, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
 import { BinderContext, CheckerContext, ColorizerContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
@@ -14,6 +15,7 @@ import * as fileUtil from './fileUtil'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
+import { SymbolLocations } from './SymbolLocations'
 
 interface Options {
 	errorPublisher?: ErrorPublisher,
@@ -149,7 +151,6 @@ export class Service {
 	 */
 	async ensure(uri: string): Promise<DocAndNode | null> {
 		uri = fileUtil.normalize(uri)
-		this.debug(`Ensuring '${uri}'`)
 		const cachedResult = this.get(uri)
 		if (cachedResult) {
 			return cachedResult
@@ -193,7 +194,6 @@ export class Service {
 		binder(node.children[0], ctx)
 		node.binderErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
-		this.scheduleRecheckingFiles()
 	}
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
@@ -204,7 +204,6 @@ export class Service {
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
-		this.scheduleRecheckingFiles()
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
@@ -225,6 +224,35 @@ export class Service {
 				}
 				if (n.hover) {
 					return Hover.create(n, n.hover)
+				}
+			}
+		}
+		return null
+	}
+
+	/**
+	 * @param searchedUsages Type of symbol usages that should be included in the result. Defaults to all usages.
+	 * @param currentFileOnly Whether only symbol locations in the current file should be returned.
+	 * 
+	 * @returns Symbol locations of the selected symbol at `offset`, or `null` if there's no symbol at `offset`.
+	 */
+	getSymbolLocations(node: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsage[] = SymbolUsages, currentFileOnly = false): SymbolLocations | null {
+		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
+		const result = selectedLeaf(node, offset)
+		if (result) {
+			const nodes = [result.leaf, ...result.parents]
+			for (const n of nodes) {
+				if (n.symbol) {
+					const symbol = SymbolUtil.resolveAlias(n.symbol)
+					const locations: SymbolLocation[] = []
+					for (const usage of searchedUsages) {
+						let locs = symbol[usage] ?? []
+						if (currentFileOnly) {
+							locs = locs.filter(l => l.uri === doc.uri)
+						}
+						locations.push(...locs)
+					}
+					return SymbolLocations.create(n, locations.length ? locations : null)
 				}
 			}
 		}
@@ -313,6 +341,7 @@ export class Service {
 		TextDocument.update(result.doc, changes, version)
 		const node = this.parse(result.doc)
 		this.#cache.set(uri, { doc: result.doc, node })
+		// this.scheduleRecheckingFiles()
 	}
 
 	/**

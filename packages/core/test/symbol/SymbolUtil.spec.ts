@@ -147,16 +147,16 @@ describe('SymbolUtil', () => {
 								{ uri: fileUri, posRange: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }, range: { start: 0, end: 0 } },
 							],
 						},
-						ShouldBeRemoved5: {
+						ShouldBeKept2: {
 							category: 'nbtdoc',
-							identifier: 'ShouldBeRemoved5',
+							identifier: 'ShouldBeKept2',
 							reference: [
 								{ uri: anotherFileUri, posRange: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }, range: { start: 0, end: 0 } },
 							],
 						},
-						ShouldBeKept2: {
+						ShouldBeKept3: {
 							category: 'nbtdoc',
-							identifier: 'ShouldBeKept2',
+							identifier: 'ShouldBeKept3',
 							definition: [
 								{ uri: fileUri, posRange: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }, range: { start: 0, end: 0 } },
 								{ uri: anotherFileUri, posRange: { start: { line: 0, character: 0 }, end: { line: 0, character: 0 } }, range: { start: 0, end: 0 } },

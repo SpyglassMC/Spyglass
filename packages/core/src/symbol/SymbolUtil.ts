@@ -175,7 +175,7 @@ export class SymbolUtil {
 	private static trimMap(map: SymbolMap): void {
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.typeDefinition?.length) {
+			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
 				delete map[identifier]
 			} else if (symbol.members) {
 				this.trimMap(symbol.members)

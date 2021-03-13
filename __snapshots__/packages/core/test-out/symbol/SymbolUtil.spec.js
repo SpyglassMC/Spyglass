@@ -26,6 +26,29 @@ exports['SymbolUtil clear() Should clear all 1'] = {
         "ShouldBeKept2": {
           "category": "nbtdoc",
           "identifier": "ShouldBeKept2",
+          "reference": [
+            {
+              "uri": "file:///another_test.nbtdoc",
+              "posRange": {
+                "start": {
+                  "line": 0,
+                  "character": 0
+                },
+                "end": {
+                  "line": 0,
+                  "character": 0
+                }
+              },
+              "range": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
+        },
+        "ShouldBeKept3": {
+          "category": "nbtdoc",
+          "identifier": "ShouldBeKept3",
           "definition": [
             {
               "uri": "file:///another_test.nbtdoc",

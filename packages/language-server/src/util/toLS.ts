@@ -47,6 +47,14 @@ export namespace toLS {
 		}
 	}
 
+	export function documentHighlight(locations: core.SymbolLocations | null): ls.DocumentHighlight[] | null {
+		return locations?.locations
+			? locations.locations.map(loc => ({
+				range: loc.posRange,
+			}))
+			: null
+	}
+
 	export function documentSelector(): ls.DocumentSelector {
 		const ans: ls.DocumentSelector = core.MetaRegistry.instance.languages.map(id => ({ language: id }))
 		return ans
@@ -68,6 +76,21 @@ export namespace toLS {
 			uri: location.uri,
 			range: location.posRange,
 		}
+	}
+
+	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: false): ls.Location[] | null
+	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null
+	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null {
+		return locations?.locations
+			? linkSupport
+				? locations.locations.map(loc => ({
+					originSelectionRange: range(locations.range, doc),
+					targetUri: loc.uri,
+					targetRange: loc.fullPosRange ?? loc.posRange,
+					targetSelectionRange: loc.posRange,
+				}))
+				: locations.locations.map(location)
+			: null
 	}
 
 	export function position(offset: number, doc: TextDocument): ls.Position {

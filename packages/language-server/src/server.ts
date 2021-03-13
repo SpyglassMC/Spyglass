@@ -44,7 +44,13 @@ connection.onInitialize(async params => {
 
 	const result: ls.InitializeResult = {
 		capabilities: {
-			hoverProvider: true,
+			declarationProvider: {},
+			definitionProvider: {},
+			implementationProvider: {},
+			referencesProvider: {},
+			typeDefinitionProvider: {},
+			documentHighlightProvider: {},
+			hoverProvider: {},
 			semanticTokensProvider: {
 				documentSelector: toLS.documentSelector(),
 				legend: toLS.semanticTokensLegend(),
@@ -113,6 +119,38 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 })
 
 connection.workspace.onDidRenameFiles(({ }) => {
+})
+
+connection.onDeclaration(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
+})
+connection.onDefinition(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation'])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
+})
+connection.onImplementation(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
+})
+connection.onReferences(({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
+	return toLS.locationLink(ans, doc, false)
+})
+connection.onTypeDefinition(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
+})
+
+connection.onDocumentHighlight(({ textDocument: { uri }, position }) => {
+	const { doc, node } = service.get(uri)!
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
+	return toLS.documentHighlight(ans)
 })
 
 connection.onHover(({ textDocument: { uri }, position }) => {
