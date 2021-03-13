@@ -216,7 +216,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "comment": " Jigsaw block.\n"
               }
             ],
-            "doc": " Jigsaw block.\n"
+            "value": " Jigsaw block.\n"
           },
           {
             "type": "nbtdoc:literal",
@@ -299,7 +299,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " How the resultant structure can be transformed\n"
                   }
                 ],
-                "doc": " How the resultant structure can be transformed\n"
+                "value": " How the resultant structure can be transformed\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -360,7 +360,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " How the resultant structure can be transformed\n"
                 }
               ],
-              "doc": " How the resultant structure can be transformed\n"
+              "value": " How the resultant structure can be transformed\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -428,7 +428,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The id of the jigsaw that this will \"spawn\" in\n"
                   }
                 ],
-                "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+                "value": " The id of the jigsaw that this will \"spawn\" in\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -471,7 +471,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The id of the jigsaw that this will \"spawn\" in\n"
                 }
               ],
-              "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+              "value": " The id of the jigsaw that this will \"spawn\" in\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -521,7 +521,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure pool that the jigsaw will \"spawn\" in\n"
                   }
                 ],
-                "doc": " The structure pool that the jigsaw will \"spawn\" in\n"
+                "value": " The structure pool that the jigsaw will \"spawn\" in\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -564,7 +564,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure pool that the jigsaw will \"spawn\" in\n"
                 }
               ],
-              "doc": " The structure pool that the jigsaw will \"spawn\" in\n"
+              "value": " The structure pool that the jigsaw will \"spawn\" in\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -614,7 +614,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The final block state of the jigsaw\n"
                   }
                 ],
-                "doc": " The final block state of the jigsaw\n"
+                "value": " The final block state of the jigsaw\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -657,7 +657,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The final block state of the jigsaw\n"
                 }
               ],
-              "doc": " The final block state of the jigsaw\n"
+              "value": " The final block state of the jigsaw\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -707,7 +707,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The id of the type of jigsaw this will be \"spawned\" from\n"
                   }
                 ],
-                "doc": " The id of the type of jigsaw this will be \"spawned\" from\n"
+                "value": " The id of the type of jigsaw this will be \"spawned\" from\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -750,7 +750,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The id of the type of jigsaw this will be \"spawned\" from\n"
                 }
               ],
-              "doc": " The id of the type of jigsaw this will be \"spawned\" from\n"
+              "value": " The id of the type of jigsaw this will be \"spawned\" from\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -794,7 +794,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "comment": " Jigsaw block.\n"
             }
           ],
-          "doc": " Jigsaw block.\n"
+          "value": " Jigsaw block.\n"
         },
         "identifier": {
           "type": "nbtdoc:identifier",
@@ -854,7 +854,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " How the resultant structure can be transformed\n"
                   }
                 ],
-                "doc": " How the resultant structure can be transformed\n"
+                "value": " How the resultant structure can be transformed\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -915,7 +915,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " How the resultant structure can be transformed\n"
                 }
               ],
-              "doc": " How the resultant structure can be transformed\n"
+              "value": " How the resultant structure can be transformed\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -975,7 +975,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The id of the jigsaw that this will \"spawn\" in\n"
                   }
                 ],
-                "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+                "value": " The id of the jigsaw that this will \"spawn\" in\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1018,7 +1018,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The id of the jigsaw that this will \"spawn\" in\n"
                 }
               ],
-              "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+              "value": " The id of the jigsaw that this will \"spawn\" in\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1060,7 +1060,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure pool that the jigsaw will \"spawn\" in\n"
                   }
                 ],
-                "doc": " The structure pool that the jigsaw will \"spawn\" in\n"
+                "value": " The structure pool that the jigsaw will \"spawn\" in\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1103,7 +1103,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure pool that the jigsaw will \"spawn\" in\n"
                 }
               ],
-              "doc": " The structure pool that the jigsaw will \"spawn\" in\n"
+              "value": " The structure pool that the jigsaw will \"spawn\" in\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1145,7 +1145,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The final block state of the jigsaw\n"
                   }
                 ],
-                "doc": " The final block state of the jigsaw\n"
+                "value": " The final block state of the jigsaw\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1188,7 +1188,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The final block state of the jigsaw\n"
                 }
               ],
-              "doc": " The final block state of the jigsaw\n"
+              "value": " The final block state of the jigsaw\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1230,7 +1230,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The id of the type of jigsaw this will be \"spawned\" from\n"
                   }
                 ],
-                "doc": " The id of the type of jigsaw this will be \"spawned\" from\n"
+                "value": " The id of the type of jigsaw this will be \"spawned\" from\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1273,7 +1273,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The id of the type of jigsaw this will be \"spawned\" from\n"
                 }
               ],
-              "doc": " The id of the type of jigsaw this will be \"spawned\" from\n"
+              "value": " The id of the type of jigsaw this will be \"spawned\" from\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1317,7 +1317,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "comment": " Joint type.\n"
               }
             ],
-            "doc": " Joint type.\n"
+            "value": " Joint type.\n"
           },
           {
             "type": "nbtdoc:literal",
@@ -1390,7 +1390,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure can be rotated\n"
                   }
                 ],
-                "doc": " The structure can be rotated\n"
+                "value": " The structure can be rotated\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1433,7 +1433,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure can be rotated\n"
                 }
               ],
-              "doc": " The structure can be rotated\n"
+              "value": " The structure can be rotated\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1483,7 +1483,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure cannot be transformed\n"
                   }
                 ],
-                "doc": " The structure cannot be transformed\n"
+                "value": " The structure cannot be transformed\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1526,7 +1526,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure cannot be transformed\n"
                 }
               ],
-              "doc": " The structure cannot be transformed\n"
+              "value": " The structure cannot be transformed\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1570,7 +1570,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "comment": " Joint type.\n"
             }
           ],
-          "doc": " Joint type.\n"
+          "value": " Joint type.\n"
         },
         "enumType": {
           "type": "nbtdoc:literal",
@@ -1612,7 +1612,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure can be rotated\n"
                   }
                 ],
-                "doc": " The structure can be rotated\n"
+                "value": " The structure can be rotated\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1655,7 +1655,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure can be rotated\n"
                 }
               ],
-              "doc": " The structure can be rotated\n"
+              "value": " The structure can be rotated\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1697,7 +1697,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                     "comment": " The structure cannot be transformed\n"
                   }
                 ],
-                "doc": " The structure cannot be transformed\n"
+                "value": " The structure cannot be transformed\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1740,7 +1740,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "comment": " The structure cannot be transformed\n"
                 }
               ],
-              "doc": " The structure cannot be transformed\n"
+              "value": " The structure cannot be transformed\n"
             },
             "key": {
               "type": "nbtdoc:identifier",

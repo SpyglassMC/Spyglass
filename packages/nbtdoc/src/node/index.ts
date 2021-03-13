@@ -99,7 +99,7 @@ export namespace FloatToken {
 
 export interface DocCommentsNode extends SyntaxNode<CommentNode> {
 	type: 'nbtdoc:doc_comments',
-	doc: string,
+	value: string,
 }
 export namespace DocCommentsNode {
 	export function is(obj: object): obj is DocCommentsNode {

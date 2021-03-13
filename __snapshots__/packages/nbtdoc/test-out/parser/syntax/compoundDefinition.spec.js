@@ -27,7 +27,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "comment": " Doc comment for the compound.\n"
           }
         ],
-        "doc": " Doc comment for the compound.\n"
+        "value": " Doc comment for the compound.\n"
       },
       {
         "type": "nbtdoc:literal",
@@ -110,7 +110,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
                 "comment": " How the resultant structure can be transformed\n"
               }
             ],
-            "doc": " How the resultant structure can be transformed\n"
+            "value": " How the resultant structure can be transformed\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -171,7 +171,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "comment": " How the resultant structure can be transformed\n"
             }
           ],
-          "doc": " How the resultant structure can be transformed\n"
+          "value": " How the resultant structure can be transformed\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -239,7 +239,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
                 "comment": " The id of the jigsaw that this will \"spawn\" in\n"
               }
             ],
-            "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+            "value": " The id of the jigsaw that this will \"spawn\" in\n"
           },
           {
             "type": "nbtdoc:string",
@@ -282,7 +282,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "comment": " The id of the jigsaw that this will \"spawn\" in\n"
             }
           ],
-          "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+          "value": " The id of the jigsaw that this will \"spawn\" in\n"
         },
         "key": {
           "type": "nbtdoc:string",
@@ -326,7 +326,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "comment": " Doc comment for the compound.\n"
         }
       ],
-      "doc": " Doc comment for the compound.\n"
+      "value": " Doc comment for the compound.\n"
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -386,7 +386,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
                 "comment": " How the resultant structure can be transformed\n"
               }
             ],
-            "doc": " How the resultant structure can be transformed\n"
+            "value": " How the resultant structure can be transformed\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -447,7 +447,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "comment": " How the resultant structure can be transformed\n"
             }
           ],
-          "doc": " How the resultant structure can be transformed\n"
+          "value": " How the resultant structure can be transformed\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -507,7 +507,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
                 "comment": " The id of the jigsaw that this will \"spawn\" in\n"
               }
             ],
-            "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+            "value": " The id of the jigsaw that this will \"spawn\" in\n"
           },
           {
             "type": "nbtdoc:string",
@@ -550,7 +550,7 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "comment": " The id of the jigsaw that this will \"spawn\" in\n"
             }
           ],
-          "doc": " The id of the jigsaw that this will \"spawn\" in\n"
+          "value": " The id of the jigsaw that this will \"spawn\" in\n"
         },
         "key": {
           "type": "nbtdoc:string",
@@ -589,7 +589,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -629,7 +629,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:string",
@@ -790,7 +790,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:string",
@@ -952,7 +952,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -978,7 +978,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:string",
@@ -1139,7 +1139,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:string",
@@ -1305,7 +1305,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -1345,7 +1345,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1380,7 +1380,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1416,7 +1416,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -1442,7 +1442,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1477,7 +1477,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1517,7 +1517,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -1557,7 +1557,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1636,7 +1636,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1716,7 +1716,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -1742,7 +1742,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1821,7 +1821,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1905,7 +1905,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -1945,7 +1945,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1979,7 +1979,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2014,7 +2014,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -2040,7 +2040,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2074,7 +2074,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2113,7 +2113,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -2153,7 +2153,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2188,7 +2188,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2224,7 +2224,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -2250,7 +2250,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2285,7 +2285,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2325,7 +2325,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -2365,7 +2365,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2401,7 +2401,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2438,7 +2438,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -2464,7 +2464,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2500,7 +2500,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2541,7 +2541,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -2581,7 +2581,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2644,7 +2644,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2708,7 +2708,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -2734,7 +2734,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2797,7 +2797,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -2865,7 +2865,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -2905,7 +2905,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -2984,7 +2984,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3064,7 +3064,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -3090,7 +3090,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3169,7 +3169,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3253,7 +3253,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -3293,7 +3293,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3328,7 +3328,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3364,7 +3364,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -3390,7 +3390,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3425,7 +3425,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3465,7 +3465,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -3505,7 +3505,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3550,7 +3550,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3596,7 +3596,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -3622,7 +3622,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3667,7 +3667,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3717,7 +3717,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -3757,7 +3757,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -3837,7 +3837,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -3918,7 +3918,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -3944,7 +3944,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4024,7 +4024,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4109,7 +4109,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -4149,7 +4149,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4212,7 +4212,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4276,7 +4276,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -4302,7 +4302,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4365,7 +4365,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4433,7 +4433,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -4473,7 +4473,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4544,7 +4544,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4616,7 +4616,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -4642,7 +4642,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4713,7 +4713,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4789,7 +4789,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -4829,7 +4829,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -4893,7 +4893,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -4958,7 +4958,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -4984,7 +4984,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -5048,7 +5048,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -5117,7 +5117,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -5157,7 +5157,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -5280,7 +5280,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -5404,7 +5404,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -5430,7 +5430,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -5553,7 +5553,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -5681,7 +5681,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -5721,7 +5721,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -5792,7 +5792,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -5864,7 +5864,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -5890,7 +5890,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -5961,7 +5961,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
             "end": 15
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -6037,7 +6037,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -6077,7 +6077,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
               "end": 8
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -6129,7 +6129,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
             "end": 8
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -6182,7 +6182,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "identifier": {
       "type": "nbtdoc:identifier",
@@ -6208,7 +6208,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
               "end": 8
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -6260,7 +6260,7 @@ exports['compoundDefinition() Parse "compound" 1'] = {
             "end": 8
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",

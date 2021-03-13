@@ -1,4 +1,4 @@
-import type { InfallibleParser} from '@spyglassmc/core'
+import type { InfallibleParser } from '@spyglassmc/core'
 import { CommentNode, map } from '@spyglassmc/core'
 import type { DocCommentsNode } from '../../node'
 import { docComment } from '../terminator'
@@ -14,7 +14,7 @@ export const docComments: InfallibleParser<DocCommentsNode> = map(
 			type: 'nbtdoc:doc_comments',
 			range: res.range,
 			children: res.nodes,
-			doc: res.nodes.filter(CommentNode.is).map(v => v.comment).join(''),
+			value: res.nodes.filter(CommentNode.is).map(v => v.comment).join(''),
 		}
 		return ans
 	}

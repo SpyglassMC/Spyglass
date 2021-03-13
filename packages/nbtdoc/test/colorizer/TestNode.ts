@@ -57,7 +57,7 @@ export const TestNode: MainNode = {
 							comment: ' Doc comment.\n',
 						},
 					],
-					doc: ' Doc comment.\n',
+					value: ' Doc comment.\n',
 				},
 				{
 					type: 'nbtdoc:literal',
@@ -97,7 +97,7 @@ export const TestNode: MainNode = {
 								end: 34,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -132,7 +132,7 @@ export const TestNode: MainNode = {
 							end: 34,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -174,7 +174,7 @@ export const TestNode: MainNode = {
 								end: 46,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -226,7 +226,7 @@ export const TestNode: MainNode = {
 							end: 46,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -288,7 +288,7 @@ export const TestNode: MainNode = {
 						comment: ' Doc comment.\n',
 					},
 				],
-				doc: ' Doc comment.\n',
+				value: ' Doc comment.\n',
 			},
 			identifier: {
 				type: 'nbtdoc:identifier',
@@ -314,7 +314,7 @@ export const TestNode: MainNode = {
 								end: 34,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -349,7 +349,7 @@ export const TestNode: MainNode = {
 							end: 34,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -383,7 +383,7 @@ export const TestNode: MainNode = {
 								end: 46,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -435,7 +435,7 @@ export const TestNode: MainNode = {
 							end: 46,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -488,7 +488,7 @@ export const TestNode: MainNode = {
 						end: 58,
 					},
 					children: [],
-					doc: '',
+					value: '',
 				},
 				{
 					type: 'nbtdoc:literal',
@@ -552,7 +552,7 @@ export const TestNode: MainNode = {
 								end: 75,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -586,7 +586,7 @@ export const TestNode: MainNode = {
 							end: 75,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -621,7 +621,7 @@ export const TestNode: MainNode = {
 					end: 58,
 				},
 				children: [],
-				doc: '',
+				value: '',
 			},
 			enumType: {
 				type: 'nbtdoc:literal',
@@ -654,7 +654,7 @@ export const TestNode: MainNode = {
 								end: 75,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -688,7 +688,7 @@ export const TestNode: MainNode = {
 							end: 75,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -723,7 +723,7 @@ export const TestNode: MainNode = {
 						end: 86,
 					},
 					children: [],
-					doc: '',
+					value: '',
 				},
 				{
 					type: 'nbtdoc:literal',
@@ -787,7 +787,7 @@ export const TestNode: MainNode = {
 								end: 105,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -821,7 +821,7 @@ export const TestNode: MainNode = {
 							end: 105,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -856,7 +856,7 @@ export const TestNode: MainNode = {
 					end: 86,
 				},
 				children: [],
-				doc: '',
+				value: '',
 			},
 			enumType: {
 				type: 'nbtdoc:literal',
@@ -889,7 +889,7 @@ export const TestNode: MainNode = {
 								end: 105,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -923,7 +923,7 @@ export const TestNode: MainNode = {
 							end: 105,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -958,7 +958,7 @@ export const TestNode: MainNode = {
 						end: 118,
 					},
 					children: [],
-					doc: '',
+					value: '',
 				},
 				{
 					type: 'nbtdoc:literal',
@@ -1022,7 +1022,7 @@ export const TestNode: MainNode = {
 								end: 138,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -1056,7 +1056,7 @@ export const TestNode: MainNode = {
 							end: 138,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -1091,7 +1091,7 @@ export const TestNode: MainNode = {
 					end: 118,
 				},
 				children: [],
-				doc: '',
+				value: '',
 			},
 			enumType: {
 				type: 'nbtdoc:literal',
@@ -1124,7 +1124,7 @@ export const TestNode: MainNode = {
 								end: 138,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						{
 							type: 'nbtdoc:identifier',
@@ -1158,7 +1158,7 @@ export const TestNode: MainNode = {
 							end: 138,
 						},
 						children: [],
-						doc: '',
+						value: '',
 					},
 					key: {
 						type: 'nbtdoc:identifier',
@@ -1333,7 +1333,7 @@ export const TestNode: MainNode = {
 										end: 208,
 									},
 									children: [],
-									doc: '',
+									value: '',
 								},
 								{
 									type: 'nbtdoc:identifier',
@@ -1422,7 +1422,7 @@ export const TestNode: MainNode = {
 									end: 208,
 								},
 								children: [],
-								doc: '',
+								value: '',
 							},
 							key: {
 								type: 'nbtdoc:identifier',
@@ -1538,7 +1538,7 @@ export const TestNode: MainNode = {
 										end: 208,
 									},
 									children: [],
-									doc: '',
+									value: '',
 								},
 								{
 									type: 'nbtdoc:identifier',
@@ -1627,7 +1627,7 @@ export const TestNode: MainNode = {
 									end: 208,
 								},
 								children: [],
-								doc: '',
+								value: '',
 							},
 							key: {
 								type: 'nbtdoc:identifier',
@@ -1759,7 +1759,7 @@ export const TestNode: MainNode = {
 									end: 208,
 								},
 								children: [],
-								doc: '',
+								value: '',
 							},
 							{
 								type: 'nbtdoc:identifier',
@@ -1848,7 +1848,7 @@ export const TestNode: MainNode = {
 								end: 208,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						key: {
 							type: 'nbtdoc:identifier',
@@ -1964,7 +1964,7 @@ export const TestNode: MainNode = {
 									end: 208,
 								},
 								children: [],
-								doc: '',
+								value: '',
 							},
 							{
 								type: 'nbtdoc:identifier',
@@ -2053,7 +2053,7 @@ export const TestNode: MainNode = {
 								end: 208,
 							},
 							children: [],
-							doc: '',
+							value: '',
 						},
 						key: {
 							type: 'nbtdoc:identifier',

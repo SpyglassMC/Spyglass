@@ -284,7 +284,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment 1.\n"
                   }
                 ],
-                "doc": " Doc comment 1.\n"
+                "value": " Doc comment 1.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -327,7 +327,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -377,7 +377,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment 2.\n"
                   }
                 ],
-                "doc": " Doc comment 2.\n"
+                "value": " Doc comment 2.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -420,7 +420,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -498,7 +498,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment 1.\n"
                   }
                 ],
-                "doc": " Doc comment 1.\n"
+                "value": " Doc comment 1.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -541,7 +541,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -583,7 +583,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment 2.\n"
                   }
                 ],
-                "doc": " Doc comment 2.\n"
+                "value": " Doc comment 2.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -626,7 +626,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -720,7 +720,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -763,7 +763,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment 1.\n"
               }
             ],
-            "doc": " Doc comment 1.\n"
+            "value": " Doc comment 1.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -813,7 +813,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -856,7 +856,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment 2.\n"
               }
             ],
-            "doc": " Doc comment 2.\n"
+            "value": " Doc comment 2.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -934,7 +934,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -977,7 +977,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment 1.\n"
               }
             ],
-            "doc": " Doc comment 1.\n"
+            "value": " Doc comment 1.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -1019,7 +1019,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -1062,7 +1062,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment 2.\n"
               }
             ],
-            "doc": " Doc comment 2.\n"
+            "value": " Doc comment 2.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -1175,7 +1175,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment.\n"
                   }
                 ],
-                "doc": " Doc comment.\n"
+                "value": " Doc comment.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1218,7 +1218,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1296,7 +1296,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                     "comment": " Doc comment.\n"
                   }
                 ],
-                "doc": " Doc comment.\n"
+                "value": " Doc comment.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1339,7 +1339,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1433,7 +1433,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -1476,7 +1476,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment.\n"
               }
             ],
-            "doc": " Doc comment.\n"
+            "value": " Doc comment.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -1554,7 +1554,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -1597,7 +1597,7 @@ exports['injectClause() Parse "inject compound super::Foo {↓⮀/// Doc comment
                 "comment": " Doc comment.\n"
               }
             ],
-            "doc": " Doc comment.\n"
+            "value": " Doc comment.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -1693,7 +1693,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                   "end": 15
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1745,7 +1745,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                 "end": 15
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1824,7 +1824,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                   "end": 15
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -1876,7 +1876,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                 "end": 15
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -1971,7 +1971,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                 "end": 15
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -2023,7 +2023,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -2102,7 +2102,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
                 "end": 15
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -2154,7 +2154,7 @@ exports['injectClause() Parse "inject compound" 1'] = {
               "end": 15
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -2349,7 +2349,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                   "end": 27
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -2383,7 +2383,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "end": 27
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -2460,7 +2460,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                   "end": 27
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -2494,7 +2494,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "end": 27
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -2603,7 +2603,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "end": 27
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -2637,7 +2637,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "end": 27
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -2714,7 +2714,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "end": 27
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -2748,7 +2748,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "end": 27
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -2918,7 +2918,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment 1.\n"
                   }
                 ],
-                "doc": " Doc comment 1.\n"
+                "value": " Doc comment 1.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -2961,7 +2961,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -3011,7 +3011,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment 2.\n"
                   }
                 ],
-                "doc": " Doc comment 2.\n"
+                "value": " Doc comment 2.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -3054,7 +3054,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -3140,7 +3140,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment 1.\n"
                   }
                 ],
-                "doc": " Doc comment 1.\n"
+                "value": " Doc comment 1.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -3183,7 +3183,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -3225,7 +3225,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment 2.\n"
                   }
                 ],
-                "doc": " Doc comment 2.\n"
+                "value": " Doc comment 2.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -3268,7 +3268,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -3386,7 +3386,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -3429,7 +3429,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment 1.\n"
               }
             ],
-            "doc": " Doc comment 1.\n"
+            "value": " Doc comment 1.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -3479,7 +3479,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -3522,7 +3522,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment 2.\n"
               }
             ],
-            "doc": " Doc comment 2.\n"
+            "value": " Doc comment 2.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -3608,7 +3608,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 1.\n"
                 }
               ],
-              "doc": " Doc comment 1.\n"
+              "value": " Doc comment 1.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -3651,7 +3651,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment 1.\n"
               }
             ],
-            "doc": " Doc comment 1.\n"
+            "value": " Doc comment 1.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -3693,7 +3693,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment 2.\n"
                 }
               ],
-              "doc": " Doc comment 2.\n"
+              "value": " Doc comment 2.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -3736,7 +3736,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment 2.\n"
               }
             ],
-            "doc": " Doc comment 2.\n"
+            "value": " Doc comment 2.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -3873,7 +3873,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment.\n"
                   }
                 ],
-                "doc": " Doc comment.\n"
+                "value": " Doc comment.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -3916,7 +3916,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -4002,7 +4002,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                     "comment": " Doc comment.\n"
                   }
                 ],
-                "doc": " Doc comment.\n"
+                "value": " Doc comment.\n"
               },
               {
                 "type": "nbtdoc:identifier",
@@ -4045,7 +4045,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -4163,7 +4163,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -4206,7 +4206,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment.\n"
               }
             ],
-            "doc": " Doc comment.\n"
+            "value": " Doc comment.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -4292,7 +4292,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "comment": " Doc comment.\n"
                 }
               ],
-              "doc": " Doc comment.\n"
+              "value": " Doc comment.\n"
             },
             {
               "type": "nbtdoc:identifier",
@@ -4335,7 +4335,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "comment": " Doc comment.\n"
               }
             ],
-            "doc": " Doc comment.\n"
+            "value": " Doc comment.\n"
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -4455,7 +4455,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                   "end": 11
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -4489,7 +4489,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "end": 11
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -4558,7 +4558,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                   "end": 11
                 },
                 "children": [],
-                "doc": ""
+                "value": ""
               },
               {
                 "type": "nbtdoc:identifier",
@@ -4592,7 +4592,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "end": 11
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             "key": {
               "type": "nbtdoc:identifier",
@@ -4693,7 +4693,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "end": 11
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -4727,7 +4727,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "end": 11
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",
@@ -4796,7 +4796,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "end": 11
               },
               "children": [],
-              "doc": ""
+              "value": ""
             },
             {
               "type": "nbtdoc:identifier",
@@ -4830,7 +4830,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "end": 11
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           "key": {
             "type": "nbtdoc:identifier",

@@ -6,7 +6,7 @@ exports['docComments Parse "" 1'] = {
       "end": 0
     },
     "children": [],
-    "doc": ""
+    "value": ""
   },
   "errors": []
 }
@@ -28,7 +28,7 @@ exports['docComments Parse "/// This is a doc comment." 1'] = {
         "comment": " This is a doc comment."
       }
     ],
-    "doc": " This is a doc comment."
+    "value": " This is a doc comment."
   },
   "errors": []
 }
@@ -41,7 +41,7 @@ exports['docComments Parse "compound Something {}" 1'] = {
       "end": 0
     },
     "children": [],
-    "doc": ""
+    "value": ""
   },
   "errors": []
 }
@@ -71,7 +71,7 @@ exports['docComments Parse "⮀/// This is a doc comment.↓⮀/// And more?↓�
         "comment": " And more?\n"
       }
     ],
-    "doc": " This is a doc comment.\n And more?\n"
+    "value": " This is a doc comment.\n And more?\n"
   },
   "errors": []
 }

@@ -27,7 +27,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "comment": " Doc comments for enum\n"
           }
         ],
-        "doc": " Doc comments for enum\n"
+        "value": " Doc comments for enum\n"
       },
       {
         "type": "nbtdoc:literal",
@@ -100,7 +100,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
                 "comment": " Doc comments for field 1\n"
               }
             ],
-            "doc": " Doc comments for field 1\n"
+            "value": " Doc comments for field 1\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -143,7 +143,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "comment": " Doc comments for field 1\n"
             }
           ],
-          "doc": " Doc comments for field 1\n"
+          "value": " Doc comments for field 1\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -193,7 +193,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
                 "comment": " Doc comments for field 2\n"
               }
             ],
-            "doc": " Doc comments for field 2\n"
+            "value": " Doc comments for field 2\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -236,7 +236,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "comment": " Doc comments for field 2\n"
             }
           ],
-          "doc": " Doc comments for field 2\n"
+          "value": " Doc comments for field 2\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -280,7 +280,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "comment": " Doc comments for enum\n"
         }
       ],
-      "doc": " Doc comments for enum\n"
+      "value": " Doc comments for enum\n"
     },
     "enumType": {
       "type": "nbtdoc:literal",
@@ -322,7 +322,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
                 "comment": " Doc comments for field 1\n"
               }
             ],
-            "doc": " Doc comments for field 1\n"
+            "value": " Doc comments for field 1\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -365,7 +365,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "comment": " Doc comments for field 1\n"
             }
           ],
-          "doc": " Doc comments for field 1\n"
+          "value": " Doc comments for field 1\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -407,7 +407,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
                 "comment": " Doc comments for field 2\n"
               }
             ],
-            "doc": " Doc comments for field 2\n"
+            "value": " Doc comments for field 2\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -450,7 +450,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
               "comment": " Doc comments for field 2\n"
             }
           ],
-          "doc": " Doc comments for field 2\n"
+          "value": " Doc comments for field 2\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -498,7 +498,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "comment": " Doc comments for enum\n"
           }
         ],
-        "doc": " Doc comments for enum\n"
+        "value": " Doc comments for enum\n"
       },
       {
         "type": "nbtdoc:literal",
@@ -579,7 +579,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
                 "comment": " The second line\n"
               }
             ],
-            "doc": " Doc comments for field 1\n The second line\n"
+            "value": " Doc comments for field 1\n The second line\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -630,7 +630,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "comment": " The second line\n"
             }
           ],
-          "doc": " Doc comments for field 1\n The second line\n"
+          "value": " Doc comments for field 1\n The second line\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -674,7 +674,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "comment": " Doc comments for enum\n"
         }
       ],
-      "doc": " Doc comments for enum\n"
+      "value": " Doc comments for enum\n"
     },
     "enumType": {
       "type": "nbtdoc:literal",
@@ -724,7 +724,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
                 "comment": " The second line\n"
               }
             ],
-            "doc": " Doc comments for field 1\n The second line\n"
+            "value": " Doc comments for field 1\n The second line\n"
           },
           {
             "type": "nbtdoc:identifier",
@@ -775,7 +775,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "comment": " The second line\n"
             }
           ],
-          "doc": " Doc comments for field 1\n The second line\n"
+          "value": " Doc comments for field 1\n The second line\n"
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -814,7 +814,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -878,7 +878,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "end": 4
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -912,7 +912,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "end": 4
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -947,7 +947,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "enumType": {
       "type": "nbtdoc:literal",
@@ -980,7 +980,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "end": 4
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1014,7 +1014,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "end": 4
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1126,7 +1126,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "end": 0
         },
         "children": [],
-        "doc": ""
+        "value": ""
       },
       {
         "type": "nbtdoc:literal",
@@ -1190,7 +1190,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "end": 21
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1224,7 +1224,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "end": 21
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1265,7 +1265,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "end": 29
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1299,7 +1299,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "end": 29
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1334,7 +1334,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
         "end": 0
       },
       "children": [],
-      "doc": ""
+      "value": ""
     },
     "enumType": {
       "type": "nbtdoc:literal",
@@ -1367,7 +1367,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "end": 21
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1401,7 +1401,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "end": 21
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
@@ -1434,7 +1434,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "end": 29
             },
             "children": [],
-            "doc": ""
+            "value": ""
           },
           {
             "type": "nbtdoc:identifier",
@@ -1468,7 +1468,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "end": 29
           },
           "children": [],
-          "doc": ""
+          "value": ""
         },
         "key": {
           "type": "nbtdoc:identifier",
