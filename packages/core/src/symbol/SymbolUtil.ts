@@ -80,15 +80,25 @@ export class SymbolUtil {
 	}
 
 	/**
+	 * Enters a `Symbol` as a member of the `parent`.
+	 * 
+	 * @returns The entered symbol.
+	 */
+	enterMember(doc: TextDocument, parent: Symbol, symbol: SymbolAddition): Symbol {
+		const members: SymbolMap = parent.members ??= {}
+		return SymbolUtil.enterMap(members, symbol, doc, this.isUriBinding)
+	}
+
+	/**
 	 * Enters a `Symbol` as a member of the `Symbol` specified by `path`.
 	 * 
 	 * @throws When the `Symbol` specified by `path` doesn't exist.
 	 * 
 	 * @returns The entered symbol.
 	 */
-	enterMember(doc: TextDocument, category: AllCategory, path: string[], symbol: SymbolAddition): Symbol
-	enterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol
-	enterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol {
+	lookupAndEnterMember(doc: TextDocument, category: AllCategory, path: string[], symbol: SymbolAddition): Symbol
+	lookupAndEnterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol
+	lookupAndEnterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol {
 		if (path.length === 0) {
 			return this.enter(doc, symbol)
 		}
@@ -96,8 +106,7 @@ export class SymbolUtil {
 		if (!parent) {
 			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
 		}
-		const members: SymbolMap = parent.symbol.members ??= {}
-		return SymbolUtil.enterMap(members, symbol, doc, this.isUriBinding)
+		return this.enterMember(doc, parent.symbol, symbol)
 	}
 
 	/**
@@ -366,7 +375,7 @@ export interface SymbolAddition extends SymbolMetadata {
 }
 
 interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identifier'> {
-	range: AstNode
+	range?: AstNode
 }
 
 /**
@@ -378,7 +387,7 @@ type SymbolStack = [SymbolTable, ...SymbolTable[]]
 
 type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQueryResult, symbol: S) => unknown
 
-class SymbolQueryResult {
+export class SymbolQueryResult {
 	readonly category: string
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
@@ -420,6 +429,13 @@ class SymbolQueryResult {
 	 */
 	ifUnknown(fn: QueryCallback<null>): this {
 		return this.if(s => s === null || !this.#visible, fn as QueryCallback)
+	}
+
+	/**
+	 * Calls `fn` if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions) and is visible at the current scope.
+	 */
+	ifKnown(fn: QueryCallback<null>): this {
+		return this.if(s => s !== null && this.#visible, fn as QueryCallback)
 	}
 
 	/**
@@ -514,12 +530,28 @@ class SymbolQueryResult {
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
 	enter(symbol: SymbolQueryEnterable): this {
-		this.#symbol = this.#util.enterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
+		this.#symbol = this.#util.lookupAndEnterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
 		this.#visible = SymbolUtil.isVisible(this.#symbol, this.#doc.uri)
 		if (symbol.range) {
 			symbol.range.symbol = this.#symbol
 		}
 		return this
+	}
+
+	/**
+	 * Amends the queried symbol if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions) and is visible at the current scope.
+	 * 
+	 * This is equivalent to calling
+	 * ```typescript
+	 * query.ifKnown(function () {
+	 * 	this.enter(symbol)
+	 * })
+	 * ```
+	 * 
+	 * Therefore, if the symbol is successfully amended, `elseX` methods afterwards will **not** be executed.
+	 */
+	amend(symbol: SymbolQueryEnterable): this {
+		return this.ifKnown(() => this.enter(symbol))
 	}
 
 	/**

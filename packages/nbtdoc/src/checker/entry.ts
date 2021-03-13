@@ -1,5 +1,5 @@
 import type * as core from '@spyglassmc/core'
-import type { Checker, RangeLike, Symbol } from '@spyglassmc/core'
+import type { Checker, RangeLike, Symbol, SymbolQueryResult } from '@spyglassmc/core'
 import { ErrorSeverity, Range, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
@@ -78,7 +78,7 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 	for (const childNode of checkingNodes) {
 		switch (childNode.type) {
 			case 'nbtdoc:compound_definition':
-				compoundDefinition(childNode, nbtdocCtx)
+				await compoundDefinition(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:enum_definition':
 				enumDefinition(childNode, nbtdocCtx)
@@ -87,14 +87,42 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 				describesClause(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:inject_clause':
-				injectClause(childNode, nbtdocCtx)
+				await injectClause(childNode, nbtdocCtx)
 				break
 		}
 	}
 }
 
-const compoundDefinition = (node: CompoundDefinitionNode, ctx: CheckerContext): void => {
-
+const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerContext): Promise<void> => {
+	const definitionQuery = ctx.symbols.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
+	if (!definitionQuery.symbol) {
+		return
+	}
+	if (node.extends) {
+		if (node.extends.type === 'nbtdoc:ident_path') {
+			const extendedSymbol = (await resolveIdentPath(node.extends, ctx))?.symbol
+			if (extendedSymbol) {
+				definitionQuery.amend({ relations: { extends: extendedSymbol } })
+			}
+		} else {
+			// TODO: Check RegistryIndexNode.
+		}
+	}
+	for (const field of node.fields) {
+		ctx.symbols
+			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value, field.key.value)
+			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
+			.elseEnter({
+				usage: 'declaration',
+				range: field.key,
+				doc: field.doc.value,
+				fullRange: field,
+				relations: {
+					// TODO: Field type
+				},
+				subcategory: 'compound_key',
+			})
+	}
 }
 
 const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerContext): void => {
@@ -107,17 +135,37 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 		.elseEnter({
 			usage: 'definition',
 			range: node.identifier,
+			doc: node.doc.value,
+			fullRange: node,
 			subcategory: 'compound',
-			doc: node.doc.doc,
 		})
 }
 
 const describesClause = (node: DescribesClauseNode, ctx: CheckerContext): void => {
-
+	// TODO: Enter the symbol of the compound to a new category called `nbtdoc/description` (or something like that),
+	// which will be later accessed by the SNBT checker.
 }
 
 const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => {
-
+	const definitionQuery = ctx.symbols.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
+	if (!definitionQuery.symbol) {
+		return
+	}
+	for (const field of node.fields) {
+		ctx.symbols
+			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value, field.key.value)
+			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
+			.elseEnter({
+				usage: 'declaration',
+				range: field.key,
+				/* data: {
+					// TODO: Enum value
+				}, */
+				doc: field.doc.value,
+				fullRange: field,
+				subcategory: 'enum_key',
+			})
+	}
 }
 
 const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): void => {
@@ -130,13 +178,56 @@ const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): 
 		.elseEnter({
 			usage: 'definition',
 			range: node.identifier,
+			doc: node.doc.value,
+			fullRange: node,
 			subcategory: 'enum',
-			doc: node.doc.doc,
 		})
 }
 
-const injectClause = (node: InjectClauseNode, ctx: CheckerContext): void => {
-
+const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promise<void> => {
+	if (!node.def) {
+		return
+	}
+	const injectedQueryResult = await resolveIdentPath(node.def.path, ctx)
+	if (!injectedQueryResult?.symbol) {
+		return
+	}
+	// TODO: Check if the injected symbol has the same subcategory as our injection expects.
+	if (node.def?.type === 'nbtdoc:inject_clause/compound') {
+		for (const field of node.def.fields) {
+			const fieldPath = [...injectedQueryResult.path, field.key.value] as unknown as [string, ...string[]]
+			ctx.symbols
+				.query(ctx.doc, 'nbtdoc', ...fieldPath)
+				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
+				.elseEnter({
+					usage: 'declaration',
+					range: field.key,
+					doc: field.doc.value,
+					fullRange: field,
+					relations: {
+						// TODO: Field type
+					},
+					subcategory: 'compound_key',
+				})
+		}
+	} else if (node.def?.type === 'nbtdoc:inject_clause/enum') {
+		for (const field of node.def.fields) {
+			const fieldPath = [...injectedQueryResult.path, field.key.value] as unknown as [string, ...string[]]
+			ctx.symbols
+				.query(ctx.doc, 'nbtdoc', ...fieldPath)
+				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
+				.elseEnter({
+					usage: 'declaration',
+					range: field.key,
+					/* data: {
+						// TODO: Enum value
+					}, */
+					doc: field.doc.value,
+					fullRange: field,
+					subcategory: 'enum_key',
+				})
+		}
+	}
 }
 
 const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): void => {
@@ -159,7 +250,7 @@ const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): vo
 }
 
 const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void> => {
-	const usedSymbol = await resolveIdentPath(node.path, ctx)
+	const usedSymbol = (await resolveIdentPath(node.path, ctx))?.symbol
 	if (usedSymbol) {
 		const lastToken = node.path.children[node.path.children.length - 1]
 		ctx.symbols
@@ -168,6 +259,7 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 			.elseEnter({
 				usage: 'declaration',
 				range: lastToken,
+				fullRange: node,
 				relations: {
 					aliasOf: usedSymbol,
 				},
@@ -207,7 +299,7 @@ function segToUri(seg: Segments, ctx: core.CheckerContext): string | null {
 /**
  * @returns The actual symbol being used/imported from another module.
  */
-async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<Symbol | null> {
+async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<SymbolQueryResult | null> {
 	const targetSeg = identPath.fromGlobalRoot ? [] : [...ctx.modSeg]
 	for (const [i, token] of identPath.children.entries()) {
 		if (i < identPath.children.length - 1) {
@@ -226,8 +318,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 
 			ctx.symbols
 				.query(ctx.doc, 'nbtdoc', segToIdentifier(targetSeg))
-				.ifUnknown(() => { }) // Simply ignore. Unknown modules will be reported at the last token of the ident path.
-				.elseEnter({
+				.amend({
 					usage: 'reference',
 					range: token,
 					// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
@@ -263,7 +354,6 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 					usage: 'reference',
 					range: token,
 				})
-				.heyGimmeDaSymbol()
 		}
 	}
 	return null
