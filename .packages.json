@@ -12,6 +12,13 @@
 		]
 	},
 	"locales": {},
+	"nbt": {
+		"dependencies": [
+			"core",
+			"locales",
+			"nbtdoc"
+		]
+	},
 	"nbtdoc": {
 		"dependencies": [
 			"core",
