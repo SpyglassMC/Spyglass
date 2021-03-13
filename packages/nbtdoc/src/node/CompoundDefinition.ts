@@ -1,5 +1,5 @@
-import type { AstNode } from '@spyglassmc/core'
-import type { DocCommentsNode, FloatToken, IntegerToken, MinecraftIdentifierToken, SyntaxNode } from './index'
+import type { AstNode, FloatNode, IntegerNode } from '@spyglassmc/core'
+import type { DocCommentsNode, MinecraftIdentifierToken, SyntaxNode } from './index'
 import { IdentifierToken, IdentPathToken, LiteralToken, StringToken } from './index'
 
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
@@ -143,7 +143,7 @@ export namespace CompoundFieldTypeNode {
 	}
 }
 
-export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
+export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:int_range',
 	value: [bigint | null, bigint | null],
 }
@@ -153,7 +153,7 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface UnsignedRangeNode extends SyntaxNode<LiteralToken | IntegerToken> {
+export interface UnsignedRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:unsigned_range',
 	value: [bigint | null, bigint | null],
 }
@@ -163,7 +163,7 @@ export namespace UnsignedRangeNode {
 	}
 }
 
-export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatToken> {
+export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatNode> {
 	type: 'nbtdoc:float_range',
 	value: [number | null, number | null],
 }

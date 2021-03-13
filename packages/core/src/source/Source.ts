@@ -23,6 +23,10 @@ export class Source {
 		public string: string
 	) { }
 
+	get nextCharRange(): Range {
+		return Range.create(this, this.cursor + 1)
+	}
+
 	clone(): Source {
 		const ans = new Source(this.string)
 		ans.cursor = this.cursor

@@ -1,7 +1,7 @@
 import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
-import { any, map, optional, repeat, sequence } from '@spyglassmc/core'
+import { any, FloatNode, IntegerNode, map, optional, repeat, sequence } from '@spyglassmc/core'
 import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
-import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, FloatToken, IdentifierToken, IdentPathToken, IntegerToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
+import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
 import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -37,17 +37,17 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 /**
  * `Failure` when there is no `@` marker.
  */
-const intRange = _intRange<IntegerToken, IntRangeNode>('nbtdoc:int_range', integer())
+const intRange = _intRange<IntegerNode, IntRangeNode>('nbtdoc:int_range', integer())
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const unsignedRange = _intRange<IntegerToken, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true))
+const unsignedRange = _intRange<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true))
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const floatRange = _intRange<FloatToken, FloatRangeNode>('nbtdoc:float_range', float())
+const floatRange = _intRange<FloatNode, FloatRangeNode>('nbtdoc:float_range', float())
 
 const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string()])
 
@@ -222,7 +222,7 @@ export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | Compound
 /**
  * `Failure` when there is no `@` marker.
  */
-function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>): Parser<R> {
+function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>): Parser<R> {
 	return map(
 		syntax<LiteralToken | T>([
 			marker('@'),
@@ -235,7 +235,7 @@ function _intRange<T extends IntegerToken | FloatToken, R extends IntRangeNode |
 		]),
 		res => {
 			const sepIndex = res.nodes.findIndex(LiteralToken.is('..'))
-			const numbers = res.nodes.map((v, i) => ({ v, i })).filter((o): o is { v: T, i: number } => IntegerToken.is(o.v) || FloatToken.is(o.v))
+			const numbers = res.nodes.map((v, i) => ({ v, i })).filter((o): o is { v: T, i: number } => IntegerNode.is(o.v) || FloatNode.is(o.v))
 			let value: [T['value'] | null, T['value'] | null]
 			if (numbers.length === 2) {
 				value = [numbers[0].v.value, numbers[1].v.value]

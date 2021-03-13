@@ -1,4 +1,4 @@
-import type { AstNode, CommentNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
+import type { AstNode, CommentNode, FloatNode, IntegerNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
 import type { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
 import type { EnumDefinitionNode } from './EnumDefinition'
 import type { InjectClauseNode } from './InjectClause'
@@ -58,11 +58,11 @@ export namespace MinecraftIdentifierToken {
 	}
 }
 
-export type Primitive = FloatToken | IntegerToken | StringToken
+export type Primitive = FloatNode | IntegerNode | StringToken
 export namespace Primitive {
 	export function is(obj: object): obj is Primitive {
-		return (obj as Primitive).type === 'nbtdoc:float' ||
-			(obj as Primitive).type === 'nbtdoc:integer' ||
+		return (obj as Primitive).type === 'float' ||
+			(obj as Primitive).type === 'integer' ||
 			StringToken.is(obj)
 	}
 }
@@ -74,26 +74,6 @@ export interface StringToken extends AstNode {
 export namespace StringToken {
 	export function is(obj: object): obj is StringToken {
 		return (obj as StringToken).type === 'nbtdoc:string'
-	}
-}
-
-export interface IntegerToken extends AstNode {
-	type: 'nbtdoc:integer',
-	value: bigint,
-}
-export namespace IntegerToken {
-	export function is(obj: object): obj is IntegerToken {
-		return (obj as IntegerToken).type === 'nbtdoc:integer'
-	}
-}
-
-export interface FloatToken extends AstNode {
-	type: 'nbtdoc:float',
-	value: number,
-}
-export namespace FloatToken {
-	export function is(obj: object): obj is FloatToken {
-		return (obj as FloatToken).type === 'nbtdoc:float'
 	}
 }
 

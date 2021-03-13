@@ -571,7 +571,7 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:integer',
+							type: 'integer',
 							range: {
 								start: 81,
 								end: 82,
@@ -597,7 +597,7 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:integer',
+						type: 'integer',
 						range: {
 							start: 81,
 							end: 82,
@@ -673,7 +673,7 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:integer',
+							type: 'integer',
 							range: {
 								start: 81,
 								end: 82,
@@ -699,7 +699,7 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:integer',
+						type: 'integer',
 						range: {
 							start: 81,
 							end: 82,
@@ -806,7 +806,7 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:float',
+							type: 'float',
 							range: {
 								start: 111,
 								end: 114,
@@ -832,7 +832,7 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:float',
+						type: 'float',
 						range: {
 							start: 111,
 							end: 114,
@@ -908,7 +908,7 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:float',
+							type: 'float',
 							range: {
 								start: 111,
 								end: 114,
@@ -934,7 +934,7 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:float',
+						type: 'float',
 						range: {
 							start: 111,
 							end: 114,
@@ -1374,7 +1374,7 @@ export const TestNode: MainNode = {
 												value: '@',
 											},
 											{
-												type: 'nbtdoc:integer',
+												type: 'integer',
 												range: {
 													start: 226,
 													end: 227,
@@ -1455,7 +1455,7 @@ export const TestNode: MainNode = {
 											value: '@',
 										},
 										{
-											type: 'nbtdoc:integer',
+											type: 'integer',
 											range: {
 												start: 226,
 												end: 227,
@@ -1579,7 +1579,7 @@ export const TestNode: MainNode = {
 												value: '@',
 											},
 											{
-												type: 'nbtdoc:integer',
+												type: 'integer',
 												range: {
 													start: 226,
 													end: 227,
@@ -1660,7 +1660,7 @@ export const TestNode: MainNode = {
 											value: '@',
 										},
 										{
-											type: 'nbtdoc:integer',
+											type: 'integer',
 											range: {
 												start: 226,
 												end: 227,
@@ -1800,7 +1800,7 @@ export const TestNode: MainNode = {
 											value: '@',
 										},
 										{
-											type: 'nbtdoc:integer',
+											type: 'integer',
 											range: {
 												start: 226,
 												end: 227,
@@ -1881,7 +1881,7 @@ export const TestNode: MainNode = {
 										value: '@',
 									},
 									{
-										type: 'nbtdoc:integer',
+										type: 'integer',
 										range: {
 											start: 226,
 											end: 227,
@@ -2005,7 +2005,7 @@ export const TestNode: MainNode = {
 											value: '@',
 										},
 										{
-											type: 'nbtdoc:integer',
+											type: 'integer',
 											range: {
 												start: 226,
 												end: 227,
@@ -2086,7 +2086,7 @@ export const TestNode: MainNode = {
 										value: '@',
 									},
 									{
-										type: 'nbtdoc:integer',
+										type: 'integer',
 										range: {
 											start: 226,
 											end: 227,

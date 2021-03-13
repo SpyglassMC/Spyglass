@@ -5,17 +5,9 @@ import { integer } from '../../../lib'
 
 describe('integer()', () => {
 	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: 'foo' },
+		{ content: '-1' },
 		{ content: '0' },
 		{ content: '1' },
-		{ content: '-' },
-		{ content: '+1' },
-		{ content: '-1' },
-		{ content: '123' },
-		{ content: '-123' },
-		{ content: '0123' },
-		{ content: '-0123' },
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
@@ -26,13 +18,9 @@ describe('integer()', () => {
 })
 describe('integer(unsigned = true)', () => {
 	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: 'foo' },
+		{ content: '-1' },
 		{ content: '0' },
 		{ content: '1' },
-		{ content: '-1' },
-		{ content: '01' },
-		{ content: '-01' },
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {

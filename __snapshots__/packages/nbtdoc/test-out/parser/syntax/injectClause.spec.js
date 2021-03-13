@@ -2368,7 +2368,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "value": ""
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 27,
                   "end": 27
@@ -2394,7 +2394,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "value": ""
             },
             "value": {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 27,
                 "end": 27
@@ -2479,7 +2479,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "value": ""
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 27,
                   "end": 27
@@ -2505,7 +2505,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "value": ""
             },
             "value": {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 27,
                 "end": 27
@@ -2622,7 +2622,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "value": ""
             },
             {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 27,
                 "end": 27
@@ -2648,7 +2648,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
             "value": ""
           },
           "value": {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 27,
               "end": 27
@@ -2733,7 +2733,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "value": ""
             },
             {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 27,
                 "end": 27
@@ -2759,7 +2759,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
             "value": ""
           },
           "value": {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 27,
               "end": 27
@@ -4474,7 +4474,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "value": ""
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 11,
                   "end": 11
@@ -4500,7 +4500,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "value": ""
             },
             "value": {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 11,
                 "end": 11
@@ -4577,7 +4577,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "value": ""
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 11,
                   "end": 11
@@ -4603,7 +4603,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "value": ""
             },
             "value": {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 11,
                 "end": 11
@@ -4712,7 +4712,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "value": ""
             },
             {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 11,
                 "end": 11
@@ -4738,7 +4738,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
             "value": ""
           },
           "value": {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 11,
               "end": 11
@@ -4815,7 +4815,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "value": ""
             },
             {
-              "type": "nbtdoc:integer",
+              "type": "integer",
               "range": {
                 "start": 11,
                 "end": 11
@@ -4841,7 +4841,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
             "value": ""
           },
           "value": {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 11,
               "end": 11

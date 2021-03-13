@@ -13,13 +13,13 @@ export function entry(node: MainNode, ctx: ColorizerContext): readonly ColorToke
 			case 'nbtdoc:compound_definition/field/type':
 				type = 'type'
 				break
-			case 'nbtdoc:float':
+			case 'float':
 				type = 'number'
 				break
 			case 'nbtdoc:identifier':
 				type = 'property' // FIXME
 				break
-			case 'nbtdoc:integer':
+			case 'integer':
 				type = 'number'
 				break
 			case 'nbtdoc:literal':

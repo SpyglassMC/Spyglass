@@ -1,51 +1,17 @@
-import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
-import { Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
-import type { FloatToken } from '../../node'
+import type { FloatNode, InfallibleParser } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 
-const Regex = /^(-?[0-9]+([eE][-+]?[0-9]+)?|-?[0-9]*\.[0-9]+([eE][-+]?[0-9]+)?)$/
-
-// TODO: Rewrite this with `sequence`, `any`, `optional`, and `validate`.
-export function float(): InfallibleParser<FloatToken> {
-	return (src: Source, ctx: ParserContext): FloatToken => {
-		const ans: FloatToken = {
-			type: 'nbtdoc:float',
-			range: Range.create(src),
-			value: 0,
-		}
-
-		if (src.peek() === '-') {
-			src.skip()
-		}
-		skipDigitSequence(src)
-		if (src.peek() === '.') {
-			src.skip()
-			skipDigitSequence(src)
-		}
-		if (src.peek().toLowerCase() === 'e') {
-			src.skip()
-			if (src.peek() === '-' || src.peek() === '+') {
-				src.skip()
-			}
-			skipDigitSequence(src)
-		}
-
-		ans.range.end = src.cursor
-		const raw = src.slice(ans.range)
-		ans.value = parseFloat(raw) || 0
-
-		if (!raw) {
-			ctx.err.report(localize('expected', [localize('float')]), ans)
-		} else if (!Regex.test(raw)) {
-			ctx.err.report(localize('nbtdoc.parser.float.illegal'), ans)
-		}
-
-		return ans
-	}
-}
-
-function skipDigitSequence(src: Source) {
-	while (src.canRead() && /^[0-9]$/.test(src.peek())) {
-		src.skip()
-	}
+export function float(): InfallibleParser<FloatNode> {
+	return core.float({
+		leadingZeros: true,
+		emptyBeforeDecimalSeparator: true,
+		emptyAfterDecimalSeparator: false,
+		minusSign: true,
+		plusSign: false,
+		exponent: {
+			leadingZeros: true,
+			minusSign: true,
+			plusSign: true,
+		},
+	})
 }

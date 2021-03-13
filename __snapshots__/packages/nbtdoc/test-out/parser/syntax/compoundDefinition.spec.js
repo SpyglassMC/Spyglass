@@ -686,7 +686,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": "@"
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 29,
                           "end": 30
@@ -702,7 +702,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": ".."
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 32,
                           "end": 33
@@ -731,7 +731,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": "@"
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 38,
                           "end": 39
@@ -839,7 +839,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": "@"
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 29,
                         "end": 30
@@ -855,7 +855,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": ".."
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 32,
                         "end": 33
@@ -884,7 +884,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": "@"
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 38,
                         "end": 39
@@ -1035,7 +1035,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": "@"
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 29,
                           "end": 30
@@ -1051,7 +1051,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": ".."
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 32,
                           "end": 33
@@ -1080,7 +1080,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "value": "@"
                       },
                       {
-                        "type": "nbtdoc:integer",
+                        "type": "integer",
                         "range": {
                           "start": 38,
                           "end": 39
@@ -1188,7 +1188,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": "@"
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 29,
                         "end": 30
@@ -1204,7 +1204,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": ".."
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 32,
                         "end": 33
@@ -1233,7 +1233,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                       "value": "@"
                     },
                     {
-                      "type": "nbtdoc:integer",
+                      "type": "integer",
                       "range": {
                         "start": 38,
                         "end": 39
@@ -1606,7 +1606,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 33,
                     "end": 34
@@ -1677,7 +1677,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 33,
                   "end": 34
@@ -1791,7 +1791,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 33,
                     "end": 34
@@ -1862,7 +1862,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 33,
                   "end": 34
@@ -2622,7 +2622,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 29,
                     "end": 34
@@ -2677,7 +2677,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
                 "value": "@"
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 29,
                   "end": 34
@@ -2775,7 +2775,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 29,
                     "end": 34
@@ -2830,7 +2830,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
                 "value": "@"
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 29,
                   "end": 34
@@ -2946,7 +2946,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 28,
                     "end": 31
@@ -2962,7 +2962,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 33,
                     "end": 36
@@ -3017,7 +3017,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                 "value": "@"
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 28,
                   "end": 31
@@ -3033,7 +3033,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                 "value": ".."
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 33,
                   "end": 36
@@ -3131,7 +3131,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 28,
                     "end": 31
@@ -3147,7 +3147,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:float",
+                  "type": "float",
                   "range": {
                     "start": 33,
                     "end": 36
@@ -3202,7 +3202,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                 "value": "@"
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 28,
                   "end": 31
@@ -3218,7 +3218,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
                 "value": ".."
               },
               {
-                "type": "nbtdoc:float",
+                "type": "float",
                 "range": {
                   "start": 33,
                   "end": 36
@@ -3798,7 +3798,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 26,
                     "end": 27
@@ -3814,7 +3814,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 29,
                     "end": 30
@@ -3870,7 +3870,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 26,
                   "end": 27
@@ -3886,7 +3886,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 29,
                   "end": 30
@@ -3985,7 +3985,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 26,
                     "end": 27
@@ -4001,7 +4001,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 29,
                     "end": 30
@@ -4057,7 +4057,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 26,
                   "end": 27
@@ -4073,7 +4073,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 29,
                   "end": 30
@@ -4190,7 +4190,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 26,
                     "end": 27
@@ -4245,7 +4245,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 26,
                   "end": 27
@@ -4343,7 +4343,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 26,
                     "end": 27
@@ -4398,7 +4398,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 26,
                   "end": 27
@@ -4514,7 +4514,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 27,
                     "end": 28
@@ -4577,7 +4577,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 27,
                   "end": 28
@@ -4683,7 +4683,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 27,
                     "end": 28
@@ -4746,7 +4746,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 27,
                   "end": 28
@@ -4871,7 +4871,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 29,
                     "end": 30
@@ -4927,7 +4927,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 29,
                   "end": 30
@@ -5026,7 +5026,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                   "value": "@"
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 29,
                     "end": 30
@@ -5082,7 +5082,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                 "value": "@"
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 29,
                   "end": 30
@@ -5770,7 +5770,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 30,
                     "end": 31
@@ -5833,7 +5833,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 30,
                   "end": 31
@@ -5939,7 +5939,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                   "value": ".."
                 },
                 {
-                  "type": "nbtdoc:integer",
+                  "type": "integer",
                   "range": {
                     "start": 30,
                     "end": 31
@@ -6002,7 +6002,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                 "value": ".."
               },
               {
-                "type": "nbtdoc:integer",
+                "type": "integer",
                 "range": {
                   "start": 30,
                   "end": 31

@@ -119,7 +119,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "value": "="
           },
           {
-            "type": "nbtdoc:float",
+            "type": "float",
             "range": {
               "start": 86,
               "end": 89
@@ -154,7 +154,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "value": "One"
         },
         "value": {
-          "type": "nbtdoc:float",
+          "type": "float",
           "range": {
             "start": 86,
             "end": 89
@@ -212,7 +212,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "value": "="
           },
           {
-            "type": "nbtdoc:float",
+            "type": "float",
             "range": {
               "start": 128,
               "end": 131
@@ -247,7 +247,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "value": "Two"
         },
         "value": {
-          "type": "nbtdoc:float",
+          "type": "float",
           "range": {
             "start": 128,
             "end": 131
@@ -341,7 +341,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "value": "="
           },
           {
-            "type": "nbtdoc:float",
+            "type": "float",
             "range": {
               "start": 86,
               "end": 89
@@ -376,7 +376,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "value": "One"
         },
         "value": {
-          "type": "nbtdoc:float",
+          "type": "float",
           "range": {
             "start": 86,
             "end": 89
@@ -426,7 +426,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
             "value": "="
           },
           {
-            "type": "nbtdoc:float",
+            "type": "float",
             "range": {
               "start": 128,
               "end": 131
@@ -461,7 +461,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
           "value": "Two"
         },
         "value": {
-          "type": "nbtdoc:float",
+          "type": "float",
           "range": {
             "start": 128,
             "end": 131
@@ -897,7 +897,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "value": ""
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 4,
               "end": 4
@@ -923,7 +923,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "value": ""
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 4,
             "end": 4
@@ -999,7 +999,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "value": ""
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 4,
               "end": 4
@@ -1025,7 +1025,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
           "value": ""
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 4,
             "end": 4
@@ -1209,7 +1209,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "value": "="
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 27,
               "end": 28
@@ -1235,7 +1235,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "value": "One"
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 27,
             "end": 28
@@ -1284,7 +1284,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "value": ""
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 29,
               "end": 29
@@ -1310,7 +1310,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "value": ""
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 29,
             "end": 29
@@ -1386,7 +1386,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "value": "="
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 27,
               "end": 28
@@ -1412,7 +1412,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "value": "One"
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 27,
             "end": 28
@@ -1453,7 +1453,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "value": ""
           },
           {
-            "type": "nbtdoc:integer",
+            "type": "integer",
             "range": {
               "start": 29,
               "end": 29
@@ -1479,7 +1479,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
           "value": ""
         },
         "value": {
-          "type": "nbtdoc:integer",
+          "type": "integer",
           "range": {
             "start": 29,
             "end": 29
