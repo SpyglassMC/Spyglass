@@ -1,17 +1,16 @@
-import type { Checker } from '@spyglassmc/core'
-import { CheckerContext, ErrorReporter } from '@spyglassmc/core'
+import { CheckerContext as CoreCheckerContext, ErrorReporter } from '@spyglassmc/core'
 import type { JsonAstNode } from '../../node'
+import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
-export function ref(checker: () => Checker<JsonAstNode>): Checker<JsonAstNode> {
-	return (node: JsonAstNode, ctx: CheckerContext) => {
+export function ref(checker: () => JsonChecker): JsonChecker {
+	return (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		return checker()(node, ctx)
 	}
 }
 
-export function as(context: string, checker: Checker<JsonAstNode>): Checker<JsonAstNode> {
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
-		checker(node, ctx)
-		node.context = context
+export function as(context: string, checker: JsonChecker): JsonChecker {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+		checker(node, { ...ctx, context })
 	}
 }
 
@@ -20,15 +19,15 @@ export type AttemptResult = {
 	totalErrorRange: number,
 }
 
-export function attempt(checker: Checker<JsonAstNode>, node: JsonAstNode, ctx: CheckerContext): AttemptResult {
+export function attempt(checker: JsonChecker, node: JsonAstNode, ctx: JsonCheckerContext): AttemptResult {
 	// TODO: determine whether cloning of AST is necessary
 	// Currently nodes are not cloned
-	const tempCtx = CheckerContext.create({
+	const tempCtx = CoreCheckerContext.create({
 		...ctx,
 		err: new ErrorReporter(),
 	})
 
-	checker(node, tempCtx)
+	checker(node, { ...tempCtx, context: ctx.context })
 
 	const totalErrorRange = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
@@ -42,11 +41,11 @@ export function attempt(checker: Checker<JsonAstNode>, node: JsonAstNode, ctx: C
 	}
 }
 
-export function any(checkers: Checker<JsonAstNode>[]): Checker<JsonAstNode> {
+export function any(checkers: JsonChecker[]): JsonChecker {
 	if (checkers.length === 0) {
 		throw new Error('Expected at least one checker')
 	}
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		const attempts = checkers
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)

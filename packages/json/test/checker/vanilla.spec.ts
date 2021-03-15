@@ -38,7 +38,7 @@ describe('Check vanilla files', async () => {
 						const result = parser(src, pctx)
 						assert(result !== Failure)
 						const cctx = CheckerContext.create({ err, doc, service: null! })
-						checker(result, cctx)
+						checker(result, { ...cctx, context: '' })
 						assert.strictEqual(cctx.err.errors.length, 0)
 					})
 				})
