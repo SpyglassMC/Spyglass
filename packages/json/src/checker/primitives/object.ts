@@ -1,33 +1,38 @@
-import type { Checker, CheckerContext } from '@spyglassmc/core'
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { JsonAstNode, JsonPropertyAstNode } from '../../node'
 import { JsonObjectAstNode } from '../../node'
-import { as } from './util'
+import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
-type OptChecker = {
-	opt: Checker<JsonAstNode>,
+type ComplexProperty = {
+	checker: JsonChecker,
+	opt?: boolean,
 	deprecated?: boolean,
+	context?: string,
 }
 
-type CheckerProperty = Checker<JsonAstNode> | OptChecker
+type CheckerProperty = JsonChecker | ComplexProperty
 
 type CheckerRecord = Record<string, CheckerProperty>
 
-function isOpt(checker: CheckerProperty): checker is OptChecker {
-	return (checker as OptChecker)?.opt !== undefined
+function isComplex(checker: CheckerProperty): checker is ComplexProperty {
+	return (checker as ComplexProperty)?.checker !== undefined
 }
 
-export function object(): Checker<JsonAstNode>
-export function object(keys: string[], values: (key: string) => CheckerProperty): Checker<JsonAstNode>
-export function object(keys: Checker<JsonAstNode>, values: (key: string) => CheckerProperty): Checker<JsonAstNode>
-export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: string) => CheckerProperty): Checker<JsonAstNode> {
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
+export function object(): JsonChecker
+export function object(keys: string[], values: (key: string) => CheckerProperty): JsonChecker
+export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
+export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else if (Array.isArray(keys) && values) {
 			const givenKeys = node.properties.map(n => n.key.value)
-			keys.filter(k => !isOpt(values(k))).forEach(k => {
+			keys.forEach(k => {
+				const value = values(k)
+				if (isComplex(value) && (value.opt || value.deprecated)) {
+					return
+				}
 				if (!givenKeys.includes(k)) {
 					ctx.err.report(localize('json.checker.property.missing', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
 				}})
@@ -37,11 +42,14 @@ export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: st
 					ctx.err.report(localize('json.checker.property.unknown', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Warning)
 				} else {
 					const value = values(key)
-					if (isOpt(value) && value.deprecated) {
+					if (isComplex(value) && value.deprecated) {
 						ctx.err.report(localize('json.checker.property.deprecated', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Hint, { deprecated: true })
 					}
+					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
+					const doc = localize(`json.doc.${context}`)
+					prop.key.hover = `\`\`\`typescript\n${context}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 					if (prop.value !== undefined) {
-						(isOpt(value) ? value.opt : value)(prop.value, ctx)
+						(isComplex(value) ? value.checker : value)(prop.value, {...ctx, context })
 					}
 				}
 			})
@@ -50,30 +58,30 @@ export function object(keys?: string[] | Checker<JsonAstNode>, values?: (key: st
 				keys(prop.key, ctx)
 				if (prop.value !== undefined) {
 					const value = values(prop.key.value);
-					(isOpt(value) ? value.opt : value)(prop.value, ctx)
+					(isComplex(value) ? value.checker : value)(prop.value, ctx)
 				}
 			})
 		}
 	}
 }
 
-export function record(properties: CheckerRecord): Checker<JsonAstNode> {
+export function record(properties: CheckerRecord): JsonChecker {
 	return object(
 		Object.keys(properties),
 		(key) => properties[key]
 	)
 }
 
-export function opt(checker: Checker<JsonAstNode>): OptChecker {
-	return { opt: checker }
+export function opt(checker: JsonChecker): ComplexProperty {
+	return { checker: checker, opt: true }
 }
 
-export function deprecated(checker: Checker<JsonAstNode>): OptChecker {
-	return { opt: checker, deprecated: true }
+export function deprecated(checker: JsonChecker): ComplexProperty {
+	return { checker: checker, deprecated: true }
 }
 
-export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => Checker<JsonAstNode>): Checker<JsonAstNode> {
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
+export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => JsonChecker): JsonChecker {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
@@ -95,7 +103,12 @@ export function pick(value: string | undefined, cases: Record<string, CheckerRec
 	}
 	Object.keys(properties).forEach(key => {
 		const p = properties[key]
-		properties[key] = isOpt(p) ? opt(as(key, p.opt)) : as(key, p)
+		properties[key] = {
+			checker: isComplex(p) ? p.checker : p,
+			opt: isComplex(p) ? p.opt : undefined,
+			deprecated: isComplex(p) ? p.deprecated : undefined,
+			context: value.replace(/^minecraft:/, ''),
+		}
 	})
 	return properties
 }
@@ -115,7 +128,7 @@ export function extract(value: string, properties: JsonPropertyAstNode[]) {
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
 }
 
-export function having(node: JsonAstNode, ctx: CheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
+export function having(node: JsonAstNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
 	if (!JsonObjectAstNode.is(node)) {
 		return {}
 	}

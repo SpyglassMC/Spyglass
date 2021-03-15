@@ -1,16 +1,16 @@
-import type { Checker, CheckerContext } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { JsonAstNode } from '../../node'
 import { JsonStringAstNode } from '../../node'
+import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
-export async function string(node: JsonAstNode, ctx: CheckerContext) {
+export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
 	if(!JsonStringAstNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('string')]), node)
 	}
 }
 
-export function resource(id: string | string[], allowTag = false): Checker<JsonAstNode> {
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
+export function resource(id: string | string[], allowTag = false): JsonChecker {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof id === 'string') {
@@ -22,8 +22,8 @@ export function resource(id: string | string[], allowTag = false): Checker<JsonA
 	}
 }
 
-export function literal(value: string | string[]): Checker<JsonAstNode> {
-	return async (node: JsonAstNode, ctx: CheckerContext) => {
+export function literal(value: string | string[]): JsonChecker {
+	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof value === 'string') {

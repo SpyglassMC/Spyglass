@@ -3,7 +3,6 @@ import type { AstNode } from '@spyglassmc/core'
 export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAstNode | JsonStringAstNode | JsonNumberAstNode | JsonBooleanAstNode | JsonNullAstNode
 
 interface JsonBaseAstNode extends AstNode {
-	context?: string
 }
 
 export interface JsonObjectAstNode extends JsonBaseAstNode {

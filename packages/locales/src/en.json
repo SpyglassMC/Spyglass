@@ -46,6 +46,7 @@
 	"identity": "a namespaced ID",
 	"integer": "an integer",
 	"integer.between": "an integer between %0% and %1%",
+	"json.doc.advancement.display": "Advancement display settings. If present, the advancement will be visible in the advancement tabs.",
 	"json.checker.property.deprecated": "Property %0% is deprecated",
 	"json.checker.property.missing": "Missing property %0%",
 	"json.checker.property.unknown": "Unknown property %0%",
