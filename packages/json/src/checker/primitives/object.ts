@@ -24,6 +24,7 @@ export function object(keys: string[], values: (key: string) => CheckerProperty)
 export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+		node.typedoc = 'Object'
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else if (Array.isArray(keys) && values) {
@@ -47,10 +48,9 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
-					prop.key.hover = `\`\`\`typescript\n${context}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
-					if (prop.value !== undefined) {
-						(isComplex(value) ? value.checker : value)(prop.value, {...ctx, context })
-					}
+					const propNode: JsonAstNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
+					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
+					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.typedoc}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
@@ -87,7 +87,7 @@ export function dispatch(keyName: string, values: (value: string | undefined, pr
 		} else {
 			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
 			const dispatcher = node.properties[dispatcherIndex]
-			const value = dispatcher.value?.type === 'json:string' ? dispatcher.value.value : undefined
+			const value = dispatcher?.value?.type === 'json:string' ? dispatcher.value.value : undefined
 			values(value, node.properties)(node, ctx)
 		}
 	}

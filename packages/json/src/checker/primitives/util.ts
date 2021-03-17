@@ -15,8 +15,9 @@ export function as(context: string, checker: JsonChecker): JsonChecker {
 }
 
 export type AttemptResult = {
-	updateCtx: () => void,
 	totalErrorRange: number,
+	typedoc?: string,
+	updateCtx: () => void,
 }
 
 export function attempt(checker: JsonChecker, node: JsonAstNode, ctx: JsonCheckerContext): AttemptResult {
@@ -35,6 +36,7 @@ export function attempt(checker: JsonChecker, node: JsonAstNode, ctx: JsonChecke
 
 	return {
 		totalErrorRange,
+		typedoc: node.typedoc,
 		updateCtx: () => {
 			ctx.err.absorb(tempCtx.err)
 		},
@@ -50,5 +52,6 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)
 		attempts[0].updateCtx()
+		node.typedoc = attempts.filter(a => a.typedoc).map(a => a.typedoc).join(' | ')
 	}
 }
