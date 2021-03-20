@@ -2,12 +2,13 @@ import * as fs from 'fs'
 import * as path from 'path'
 
 const packages: Record<string, { dependencies?: string[]; devDependencies?: string[] }> = JSON.parse(fs.readFileSync(path.join(__dirname, '../.packages.json'), 'utf-8'))
+const packageNames = Object.keys(packages).sort()
 
 function getPackagePath(id: string): string {
 	return path.join(__dirname, `../packages/${id}`)
 }
 
-for (const key of Object.keys(packages)) {
+for (const key of packageNames) {
 	const { dependencies, devDependencies } = packages[key]
 	const allDependencies = dependencies || devDependencies ? [...dependencies ?? [], ...devDependencies ?? []] : undefined
 	const p = getPackagePath(key)
@@ -22,3 +23,10 @@ for (const key of Object.keys(packages)) {
 	}
 	fs.writeFileSync(tsconfigPath, JSON.stringify(tsconfig, undefined, '\t') + '\n', { encoding: 'utf-8' })
 }
+
+// Root tsconfig.json
+const rootTsConfigPath = path.join(__dirname, '../packages/tsconfig.json')
+fs.writeFileSync(rootTsConfigPath, JSON.stringify({
+	files: [],
+	references: packageNames.map(n => ({ path: n }))
+}, undefined, '\t') + '\n', { encoding: 'utf-8' })

@@ -5,6 +5,9 @@
 			"path": "core"
 		},
 		{
+			"path": "json"
+		},
+		{
 			"path": "language-server"
 		},
 		{
