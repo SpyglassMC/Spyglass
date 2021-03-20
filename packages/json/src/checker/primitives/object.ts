@@ -82,6 +82,7 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 
 export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => JsonChecker): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+		node.typedoc = 'Object'
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {

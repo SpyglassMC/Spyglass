@@ -52,6 +52,8 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)
 		attempts[0].updateCtx()
-		node.typedoc = attempts.filter(a => a.typedoc).map(a => a.typedoc).join(' | ')
+		node.typedoc = [...new Set(
+			attempts.filter(a => a.typedoc).map(a => a.typedoc)
+		)].join(' | ')
 	}
 }

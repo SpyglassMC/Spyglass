@@ -6,7 +6,8 @@ exports['JSON list listOf(int) Check "5" 1'] = {
       "end": 1
     },
     "value": 5,
-    "isInteger": true
+    "isInteger": true,
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -35,7 +36,8 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "Number"
       },
       {
         "type": "json:string",
@@ -43,7 +45,8 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "Number"
       }
     ],
     "children": [
@@ -53,7 +56,8 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "Number"
       },
       {
         "type": "json:string",
@@ -61,9 +65,11 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "Number"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -101,7 +107,8 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       },
       {
         "type": "json:number",
@@ -110,7 +117,8 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       },
       {
         "type": "json:number",
@@ -119,7 +127,8 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       }
     ],
     "children": [
@@ -130,7 +139,8 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       },
       {
         "type": "json:number",
@@ -139,7 +149,8 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       },
       {
         "type": "json:number",
@@ -148,9 +159,11 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Number"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -209,7 +222,8 @@ exports['JSON list listOf(int) Check "[[4, 6]]" 1'] = {
             "value": 6,
             "isInteger": true
           }
-        ]
+        ],
+        "typedoc": "Number"
       }
     ],
     "children": [
@@ -258,9 +272,11 @@ exports['JSON list listOf(int) Check "[[4, 6]]" 1'] = {
             "value": 6,
             "isInteger": true
           }
-        ]
+        ],
+        "typedoc": "Number"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -283,7 +299,8 @@ exports['JSON list listOf(int) Check "[]" 1'] = {
       "end": 2
     },
     "items": [],
-    "children": []
+    "children": [],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -297,7 +314,8 @@ exports['JSON list listOf(listOf(int)) Check "5" 1'] = {
       "end": 1
     },
     "value": 5,
-    "isInteger": true
+    "isInteger": true,
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -326,7 +344,8 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "Array"
       },
       {
         "type": "json:string",
@@ -334,7 +353,8 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "Array"
       }
     ],
     "children": [
@@ -344,7 +364,8 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "Array"
       },
       {
         "type": "json:string",
@@ -352,9 +373,11 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "Array"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -392,7 +415,8 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       },
       {
         "type": "json:number",
@@ -401,7 +425,8 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       },
       {
         "type": "json:number",
@@ -410,7 +435,8 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       }
     ],
     "children": [
@@ -421,7 +447,8 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       },
       {
         "type": "json:number",
@@ -430,7 +457,8 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       },
       {
         "type": "json:number",
@@ -439,9 +467,11 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "Array"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -494,7 +524,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 3
             },
             "value": 4,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           },
           {
             "type": "json:number",
@@ -503,7 +534,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 6
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ],
         "children": [
@@ -514,7 +546,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 3
             },
             "value": 4,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           },
           {
             "type": "json:number",
@@ -523,9 +556,11 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 6
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
-        ]
+        ],
+        "typedoc": "Array"
       }
     ],
     "children": [
@@ -543,7 +578,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 3
             },
             "value": 4,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           },
           {
             "type": "json:number",
@@ -552,7 +588,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 6
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ],
         "children": [
@@ -563,7 +600,8 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 3
             },
             "value": 4,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           },
           {
             "type": "json:number",
@@ -572,11 +610,14 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
               "end": 6
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
-        ]
+        ],
+        "typedoc": "Array"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -590,7 +631,8 @@ exports['JSON list listOf(listOf(int)) Check "[]" 1'] = {
       "end": 2
     },
     "items": [],
-    "children": []
+    "children": [],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -604,7 +646,8 @@ exports['JSON list listOf(string) Check "5" 1'] = {
       "end": 1
     },
     "value": 5,
-    "isInteger": true
+    "isInteger": true,
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -633,7 +676,8 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "String"
       },
       {
         "type": "json:string",
@@ -641,7 +685,8 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "String"
       }
     ],
     "children": [
@@ -651,7 +696,8 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "start": 1,
           "end": 6
         },
-        "value": "foo"
+        "value": "foo",
+        "typedoc": "String"
       },
       {
         "type": "json:string",
@@ -659,9 +705,11 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "start": 8,
           "end": 13
         },
-        "value": "bar"
+        "value": "bar",
+        "typedoc": "String"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -682,7 +730,8 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       },
       {
         "type": "json:number",
@@ -691,7 +740,8 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       },
       {
         "type": "json:number",
@@ -700,7 +750,8 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       }
     ],
     "children": [
@@ -711,7 +762,8 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 2
         },
         "value": 1,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       },
       {
         "type": "json:number",
@@ -720,7 +772,8 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 5
         },
         "value": 4,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       },
       {
         "type": "json:number",
@@ -729,9 +782,11 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
           "end": 8
         },
         "value": 6,
-        "isInteger": true
+        "isInteger": true,
+        "typedoc": "String"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -815,7 +870,8 @@ exports['JSON list listOf(string) Check "[[4, 6]]" 1'] = {
             "value": 6,
             "isInteger": true
           }
-        ]
+        ],
+        "typedoc": "String"
       }
     ],
     "children": [
@@ -864,9 +920,11 @@ exports['JSON list listOf(string) Check "[[4, 6]]" 1'] = {
             "value": 6,
             "isInteger": true
           }
-        ]
+        ],
+        "typedoc": "String"
       }
-    ]
+    ],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -889,7 +947,8 @@ exports['JSON list listOf(string) Check "[]" 1'] = {
       "end": 2
     },
     "items": [],
-    "children": []
+    "children": [],
+    "typedoc": "Array"
   },
   "parserErrors": [],
   "checkerErrors": []

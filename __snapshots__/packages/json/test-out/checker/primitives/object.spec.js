@@ -26,7 +26,8 @@ exports['JSON object object() Check "[2]" 1'] = {
         "value": 2,
         "isInteger": true
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -137,7 +138,8 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -321,7 +323,8 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -423,7 +426,8 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -437,7 +441,8 @@ exports['JSON object object() Check "{}" 1'] = {
       "end": 2
     },
     "properties": [],
-    "children": []
+    "children": [],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -471,7 +476,8 @@ exports['JSON object object(string, () => int) Check "[2]" 1'] = {
         "value": 2,
         "isInteger": true
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -506,7 +512,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "start": 2,
             "end": 5
           },
-          "value": "a"
+          "value": "a",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -515,7 +522,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -524,7 +532,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -533,7 +542,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
@@ -551,7 +561,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "start": 2,
             "end": 5
           },
-          "value": "a"
+          "value": "a",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -560,7 +571,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -569,7 +581,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -578,11 +591,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -608,7 +623,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 2,
             "end": 5
           },
-          "value": "a"
+          "value": "a",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -617,7 +633,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -626,7 +643,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -635,7 +653,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -651,7 +670,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 10,
             "end": 13
           },
-          "value": "b"
+          "value": "b",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:string",
@@ -659,7 +679,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 15,
             "end": 20
           },
-          "value": "foo"
+          "value": "foo",
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -668,7 +689,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 10,
               "end": 13
             },
-            "value": "b"
+            "value": "b",
+            "typedoc": "String"
           },
           {
             "type": "json:string",
@@ -676,7 +698,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 15,
               "end": 20
             },
-            "value": "foo"
+            "value": "foo",
+            "typedoc": "Number"
           }
         ]
       }
@@ -694,7 +717,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 2,
             "end": 5
           },
-          "value": "a"
+          "value": "a",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -703,7 +727,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -712,7 +737,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -721,7 +747,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -737,7 +764,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 10,
             "end": 13
           },
-          "value": "b"
+          "value": "b",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:string",
@@ -745,7 +773,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "start": 15,
             "end": 20
           },
-          "value": "foo"
+          "value": "foo",
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -754,7 +783,8 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 10,
               "end": 13
             },
-            "value": "b"
+            "value": "b",
+            "typedoc": "String"
           },
           {
             "type": "json:string",
@@ -762,11 +792,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 15,
               "end": 20
             },
-            "value": "foo"
+            "value": "foo",
+            "typedoc": "Number"
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -801,7 +833,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "start": 2,
             "end": 5
           },
-          "value": "b"
+          "value": "b",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -810,7 +843,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "end": 8
           },
           "value": 6,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -819,7 +853,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "b"
+            "value": "b",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -828,7 +863,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 8
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
@@ -846,7 +882,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "start": 2,
             "end": 5
           },
-          "value": "b"
+          "value": "b",
+          "typedoc": "String"
         },
         "value": {
           "type": "json:number",
@@ -855,7 +892,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "end": 8
           },
           "value": 6,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -864,7 +902,8 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "b"
+            "value": "b",
+            "typedoc": "String"
           },
           {
             "type": "json:number",
@@ -873,11 +912,13 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 8
             },
             "value": 6,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -891,7 +932,8 @@ exports['JSON object object(string, () => int) Check "{}" 1'] = {
       "end": 2
     },
     "properties": [],
-    "children": []
+    "children": [],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -925,7 +967,8 @@ exports['JSON object record({ a: int }) Check "[2]" 1'] = {
         "value": 2,
         "isInteger": true
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -961,7 +1004,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -970,7 +1013,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -980,7 +1024,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -989,7 +1033,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
@@ -1008,7 +1053,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1017,7 +1062,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1027,7 +1073,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1036,11 +1082,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1067,7 +1115,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1076,7 +1124,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1086,7 +1135,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1095,7 +1144,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -1155,7 +1205,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1164,7 +1214,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1174,7 +1225,7 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1183,7 +1234,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -1228,7 +1280,8 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1339,7 +1392,8 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1370,7 +1424,8 @@ exports['JSON object record({ a: int }) Check "{}" 1'] = {
       "end": 2
     },
     "properties": [],
-    "children": []
+    "children": [],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1413,7 +1468,8 @@ exports['JSON object record({ a: opt(int) }) Check "[2]" 1'] = {
         "value": 2,
         "isInteger": true
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1449,7 +1505,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1458,7 +1514,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1468,7 +1525,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1477,7 +1534,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
@@ -1496,7 +1554,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1505,7 +1563,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             "end": 8
           },
           "value": 1,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1515,7 +1574,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1524,11 +1583,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1555,7 +1616,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1564,7 +1625,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1574,7 +1636,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1583,7 +1645,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -1643,7 +1706,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "end": 5
           },
           "value": "a",
-          "hover": "```typescript\n.a\n```"
+          "hover": "```typescript\n.a: Number\n```"
         },
         "value": {
           "type": "json:number",
@@ -1652,7 +1715,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "end": 8
           },
           "value": 3,
-          "isInteger": true
+          "isInteger": true,
+          "typedoc": "Number"
         },
         "children": [
           {
@@ -1662,7 +1726,7 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 5
             },
             "value": "a",
-            "hover": "```typescript\n.a\n```"
+            "hover": "```typescript\n.a: Number\n```"
           },
           {
             "type": "json:number",
@@ -1671,7 +1735,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 8
             },
             "value": 3,
-            "isInteger": true
+            "isInteger": true,
+            "typedoc": "Number"
           }
         ]
       },
@@ -1716,7 +1781,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1827,7 +1893,8 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
           }
         ]
       }
-    ]
+    ],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1850,7 +1917,8 @@ exports['JSON object record({ a: opt(int) }) Check "{}" 1'] = {
       "end": 2
     },
     "properties": [],
-    "children": []
+    "children": [],
+    "typedoc": "Object"
   },
   "parserErrors": [],
   "checkerErrors": []
