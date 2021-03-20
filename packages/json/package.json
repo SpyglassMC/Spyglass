@@ -13,8 +13,9 @@
   },
   "devDependencies": {
     "@types/node-fetch": "^1.6.9",
+    "fast-glob": "^3.2.5",
     "node-fetch": "^2.6.1",
-    "vanilla-datapack-data": "SPGoding/vanilla-datapack#data" 
+    "vanilla-datapack-data": "SPGoding/vanilla-datapack#data"
   },
   "publishConfig": {
     "access": "public"
