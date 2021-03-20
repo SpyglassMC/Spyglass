@@ -5,8 +5,7 @@ import type { JsonCheckerContext } from '../JsonChecker'
 
 const number = (type: 'integer' | 'float') => (min: number | null, max: number | null) => {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.typedoc = type[0].toUpperCase() + type.slice(1)
-			+ (min === null && max === null ? '' : `Range(${min ?? '-∞'}, ${max ?? '+∞'})`)
+		node.typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
 		if (!JsonNumberAstNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', [localize(type)]), node)
 		} else if (min !== null && max !== null && (node.value < min || node.value > max)) {

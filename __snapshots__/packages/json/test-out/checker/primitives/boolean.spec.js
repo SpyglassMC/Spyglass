@@ -5,7 +5,8 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
       "start": 0,
       "end": 6
     },
-    "value": "true"
+    "value": "true",
+    "typedoc": "Boolean"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -28,7 +29,8 @@ exports['JSON boolean boolean Check "1" 1'] = {
       "end": 1
     },
     "value": 1,
-    "isInteger": true
+    "isInteger": true,
+    "typedoc": "Boolean"
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -50,7 +52,8 @@ exports['JSON boolean boolean Check "false" 1'] = {
       "start": 0,
       "end": 5
     },
-    "value": false
+    "value": false,
+    "typedoc": "Boolean"
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -69,7 +72,8 @@ exports['JSON boolean boolean Check "true" 1'] = {
       "start": 0,
       "end": 4
     },
-    "value": true
+    "value": true,
+    "typedoc": "Boolean"
   },
   "parserErrors": [],
   "checkerErrors": []
