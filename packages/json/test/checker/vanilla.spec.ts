@@ -1,48 +1,39 @@
-import type { FileCategory } from '@spyglassmc/core'
-import { CheckerContext, ErrorReporter, Failure, ParserContext, Source } from '@spyglassmc/core'
 import assert from 'assert'
-import fsp from 'fs/promises'
-import fetch from 'node-fetch'
+import fg from 'fast-glob'
+import fs from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Checkers } from '../../lib/checker/data'
-import { entry as parser } from '../../lib/parser'
 import { Categories } from '../../lib/util'
-
-const categoryToPath = new Map(Array.from(Categories, a => a.reverse()) as [string, string][])
-
-let doc: TextDocument
-const err = new ErrorReporter()
-afterEach(() => {
-	err.dump().forEach(e => {
-		const pos = doc.positionAt(e.range.start)
-		console.error(`\t${pos.line+1}:${pos.character} ${e.message}`)
-	})
-})
+import { testChecker } from '../utils'
 
 describe('Check vanilla files', async () => {
-	const summaryUrl = 'https://raw.githubusercontent.com/SPGoding/vanilla-datapack/summary/summary/flattened.min.json'
-	const summary = await (await fetch(summaryUrl)).json()
-	run()
+	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
+	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
 
-	Object.keys(summary).forEach(category => {
-		const checker = Checkers.get(category as FileCategory)
-		if (checker && summary[category]) {
-			describe(`Category ${category}`, () => {
-				summary[category].forEach((id: string) => {
-					it(id, async () => {
-						const path = `${categoryToPath.get(category)}/${id.slice(10)}`
-						const text = await fsp.readFile(`node_modules/vanilla-datapack-data/data/minecraft/${path}.json`, 'utf-8')
-						const src = new Source(text)
-						doc = TextDocument.create('', '', 0, text)
-						const pctx = ParserContext.create({ doc })
-						const result = parser(src, pctx)
-						assert(result !== Failure)
-						const cctx = CheckerContext.create({ err, doc, service: null! })
-						checker(result, { ...cctx, context: '' })
-						assert.strictEqual(cctx.err.errors.length, 0)
+	summary.forEach((files, i) => {
+		const category = [...Categories][i]
+		const checker = Checkers.get(category[1])
+		if (!checker || !files) return
+
+		it(`Category ${category[1]}`, () => {
+			let passing = true
+			files.forEach(file => {
+				const text = fs.readFileSync(file, 'utf-8')
+				const result = testChecker(checker, text)
+				const errors = result.parserErrors.concat(result.checkerErrors)
+				if (errors.length === 0) return
+
+				passing = false
+				setTimeout(() => {
+					console.log(`\t${file.slice(root.length + category[0].length + 1)}`)
+					const doc = TextDocument.create('', '', 0, text)
+					errors.forEach(e => {
+						const pos = doc.positionAt(e.range.start)
+						console.log(`\t  ${pos.line+1}:${pos.character}  ${e.message}`)
 					})
-				})
+				}, 0)
 			})
-		}
+			assert(passing)
+		})
 	})
 })
