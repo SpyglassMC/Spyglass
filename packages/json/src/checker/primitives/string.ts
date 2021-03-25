@@ -6,6 +6,7 @@ import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
 	node.typedoc = 'String'
+	node.expectation = { type: 'json:string' }
 	if(!JsonStringAstNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('string')]), node)
 	}
@@ -16,12 +17,12 @@ const referenceable = new Set(['predicate', 'tags/blocks', 'tags/entity_types', 
 export function resource(id: string | string[], allowTag = false): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		node.typedoc = typedoc(id)
+		node.expectation = { type: 'json:string', pool: id, resource: true }
+
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof id === 'string') {
-			node.resource = id
 			if (referenceable.has(id)) {
-				// ctx.logger.log(JSON.stringify(ctx.symbols.global))
 				reference(node, ctx, id)
 			} else {
 				const normalized = node.value.replace(/^minecraft:/, '')
@@ -37,6 +38,8 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 export function literal(value: string | string[]): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		node.typedoc = typedoc(value)
+		node.expectation = { type: 'json:string', pool: value }
+
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof value === 'string') {

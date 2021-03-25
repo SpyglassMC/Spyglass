@@ -1,11 +1,12 @@
 import type { ColorTokenType } from '@spyglassmc/core'
 import { ColorToken, traverseLeaves } from '@spyglassmc/core'
-import type { JsonAstNode, JsonStringAstNode } from '../node'
+import type { JsonAstNode } from '../node'
 import { JsonPropertyAstNode } from '../node'
 
 export function entry(root: JsonAstNode): readonly ColorToken[] {
 	const ans: ColorToken[] = []
-	traverseLeaves(root, (node, [parent]) => {
+	traverseLeaves(root, (astNode, [parent]) => {
+		const node = (astNode as JsonAstNode)
 		let type: ColorTokenType | undefined
 		switch(node.type) {
 			case 'json:number':
@@ -17,7 +18,7 @@ export function entry(root: JsonAstNode): readonly ColorToken[] {
 			case 'json:string':
 				if (JsonPropertyAstNode.is(parent) && node.range.start === parent.key.range.start) {
 					type = 'property'
-				} else if ((node as JsonStringAstNode).resource) {
+				} else if (node.expectation?.type === 'json:string' && node.expectation.resource) {
 					type = 'resourceLocation'
 				} else {
 					type = 'string'

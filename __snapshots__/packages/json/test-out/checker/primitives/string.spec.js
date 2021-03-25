@@ -6,7 +6,10 @@ exports['JSON string string Check ""foo"" 1'] = {
       "end": 5
     },
     "value": "foo",
-    "typedoc": "String"
+    "typedoc": "String",
+    "expectation": {
+      "type": "json:string"
+    }
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -20,7 +23,10 @@ exports['JSON string string Check ""foo"bar"" 1'] = {
       "end": 5
     },
     "value": "foo",
-    "typedoc": "String"
+    "typedoc": "String",
+    "expectation": {
+      "type": "json:string"
+    }
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -35,7 +41,10 @@ exports['JSON string string Check "4" 1'] = {
     },
     "value": 4,
     "isInteger": true,
-    "typedoc": "String"
+    "typedoc": "String",
+    "expectation": {
+      "type": "json:string"
+    }
   },
   "parserErrors": [],
   "checkerErrors": [

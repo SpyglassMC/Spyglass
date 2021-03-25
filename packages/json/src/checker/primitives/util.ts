@@ -1,5 +1,5 @@
-import { CheckerContext as CoreCheckerContext, ErrorReporter } from '@spyglassmc/core'
-import type { JsonAstNode } from '../../node'
+import { ErrorReporter, Range } from '@spyglassmc/core'
+import type { JsonAstNode, JsonExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export function ref(checker: () => JsonChecker): JsonChecker {
@@ -23,10 +23,7 @@ export type AttemptResult = {
 export function attempt(checker: JsonChecker, node: JsonAstNode, ctx: JsonCheckerContext): AttemptResult {
 	// TODO: determine whether cloning of AST is necessary
 	// Currently nodes are not cloned
-	const tempCtx = CoreCheckerContext.create({
-		...ctx,
-		err: new ErrorReporter(),
-	})
+	const tempCtx = { ...ctx, err: new ErrorReporter() }
 
 	checker(node, { ...tempCtx, context: ctx.context })
 
@@ -56,4 +53,15 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 			attempts.filter(a => a.typedoc).map(a => a.typedoc)
 		)].join(' | ')
 	}
+}
+
+export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation | undefined {
+	const node: JsonAstNode = { type: 'json:null', range: Range.create(0) }
+	const tempCtx: JsonCheckerContext = {
+		...ctx,
+		err: new ErrorReporter(),
+		depth: (ctx.depth ?? 0) + 1,
+	}
+	checker(node, tempCtx)
+	return node.expectation
 }
