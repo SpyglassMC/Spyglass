@@ -114,6 +114,21 @@ export namespace ColorizerContext {
 	}
 }
 
+export interface CompleterContext extends ProcessorContext {
+	offset: number
+}
+interface CompleterContextLike extends ProcessorContextLike {
+	offset: number
+}
+export namespace CompleterContext {
+	export function create(ctx: CompleterContextLike): CompleterContext {
+		return {
+			...ProcessorContext.create(ctx),
+			offset: ctx.offset,
+		}
+	}
+}
+
 export interface UriBinderContext extends ContextBase {
 	symbols: SymbolUtil,
 }

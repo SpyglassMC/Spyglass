@@ -55,6 +55,7 @@ connection.onInitialize(async params => {
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
 			hoverProvider: {},
+			completionProvider: {},
 			semanticTokensProvider: {
 				documentSelector: toLS.documentSelector(),
 				legend: toLS.semanticTokensLegend(),
@@ -161,6 +162,12 @@ connection.onHover(({ textDocument: { uri }, position }) => {
 	const { doc, node } = service.get(uri)!
 	const ans = service.getHover(node, doc, toCore.offset(position, doc))
 	return ans ? toLS.hover(ans, doc) : null
+})
+
+connection.onCompletion(({ textDocument: { uri}, position }) => {
+	const { doc, node } = service.get(uri)!
+	const items = service.getCompletion(node, doc, toCore.offset(position, doc))
+	return items.map(toLS.completionItem)
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
