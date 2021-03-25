@@ -8,7 +8,7 @@ import { Source } from '../source'
 import type { SymbolLocation, SymbolUsage } from '../symbol'
 import { SymbolUsages, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
-import { BinderContext, CheckerContext, ColorizerContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { BinderContext, CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
@@ -230,6 +230,12 @@ export class Service {
 		return null
 	}
 
+	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number) {
+		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
+		const completer = this.meta.getCompleter(doc.languageId)
+		return completer(node, this.getCompleterCtx(doc, offset))
+	}
+
 	/**
 	 * @param searchedUsages Type of symbol usages that should be included in the result. Defaults to all usages.
 	 * @param currentFileOnly Whether only symbol locations in the current file should be returned.
@@ -444,6 +450,12 @@ export class Service {
 		return ColorizerContext.create({
 			...this.getProcessorCtx(doc),
 			options,
+		})
+	}
+	private getCompleterCtx(doc: TextDocument, offset: number): CompleterContext {
+		return CompleterContext.create({
+			...this.getProcessorCtx(doc),
+			offset,
 		})
 	}
 	private getUriBinderCtx(): UriBinderContext {

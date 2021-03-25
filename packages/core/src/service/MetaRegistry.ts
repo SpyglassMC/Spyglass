@@ -1,7 +1,7 @@
 import type { AstNode } from '../node'
 import type { EntryParser, NullableNode } from '../parser'
-import type { Colorizer } from '../processor'
-import { FallbackColorizer } from '../processor'
+import type { Colorizer, Completer } from '../processor'
+import { FallbackColorizer, FallbackCompleter } from '../processor'
 import type { Binder, Checker, UriBinder } from '../symbol'
 import { FallbackBinder, FallbackChecker } from '../symbol'
 
@@ -14,6 +14,7 @@ export interface LanguageOptions {
 	binder?: Binder<any>,
 	checker?: Checker<any>,
 	colorizer?: Colorizer<any>,
+	completer?: Completer<any>,
 }
 
 /* istanbul ignore next */
@@ -94,6 +95,13 @@ export class MetaRegistry {
 	 */
 	public getColorizer<N extends AstNode>(languageID: string): Colorizer<N> {
 		return this.#languages.get(languageID)?.colorizer ?? FallbackColorizer
+	}
+
+	/**
+	 * @returns The corresponding `Completer` for the language ID, or a fallback colorizer that produces nothing.
+	 */
+	public getCompleter<N extends AstNode>(languageID: string): Completer<N> {
+		return this.#languages.get(languageID)?.completer ?? FallbackCompleter
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

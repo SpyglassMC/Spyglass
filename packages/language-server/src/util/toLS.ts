@@ -71,6 +71,30 @@ export namespace toLS {
 		return ans
 	}
 
+	export function completionItemKind(kind: core.CompletionKind): ls.CompletionItemKind {
+		switch (kind) {
+			case core.CompletionKind.TEXT:
+				return ls.CompletionItemKind.Text
+			case core.CompletionKind.METHOD:
+				return ls.CompletionItemKind.Method
+			case core.CompletionKind.FUNCTION:
+				return ls.CompletionItemKind.Function
+			case core.CompletionKind.FIELD:
+				return ls.CompletionItemKind.Field
+			case core.CompletionKind.VARIABLE:
+				return ls.CompletionItemKind.Variable
+		}
+	}
+
+	export function completionItem(completion: core.CompletionToken): ls.CompletionItem {
+		const ans: ls.CompletionItem = {
+			label: completion.label,
+			kind: toLS.completionItemKind(completion.kind),
+			detail: completion.detail,
+		}
+		return ans
+	}
+
 	export function location(location: core.Location): ls.Location {
 		return {
 			uri: location.uri,
