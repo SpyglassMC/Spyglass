@@ -4,8 +4,20 @@ export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAst
 
 interface JsonBaseAstNode extends AstNode {
 	typedoc?: string
+	expectation?: JsonExpectation
 }
 
+export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation
+
+export interface JsonObjectExpectation {
+	readonly type: 'json:object'
+	fields?: {
+		key: string,
+		value?: JsonExpectation,
+		opt?: boolean,
+	}[]
+	keys?: JsonStringExpectation
+}
 export interface JsonObjectAstNode extends JsonBaseAstNode {
 	readonly type: 'json:object'
 	readonly properties: JsonPropertyAstNode[]
@@ -27,6 +39,10 @@ export namespace JsonPropertyAstNode {
 	}
 }
 
+export interface JsonArrayExpectation {
+	readonly type: 'json:array'
+	items?: JsonExpectation
+}
 export interface JsonArrayAstNode extends JsonBaseAstNode {
 	readonly type: 'json:array'
 	readonly items: JsonAstNode[]
@@ -37,10 +53,14 @@ export namespace JsonArrayAstNode {
 	}
 }
 
+export interface JsonStringExpectation {
+	readonly type: 'json:string'
+	pool?: string | string[]
+	resource?: boolean
+}
 export interface JsonStringAstNode extends JsonBaseAstNode {
 	readonly type: 'json:string'
 	readonly value: string
-	resource?: string
 }
 export namespace JsonStringAstNode {
 	export function is(obj: object): obj is JsonStringAstNode {
@@ -48,11 +68,14 @@ export namespace JsonStringAstNode {
 	}
 }
 
+export interface JsonNumberExpectation {
+	readonly type: 'json:number'
+	isColor?: boolean
+}
 export interface JsonNumberAstNode extends JsonBaseAstNode {
 	readonly type: 'json:number'
 	readonly value: number
 	readonly isInteger: boolean
-	isColor?: boolean
 }
 export namespace JsonNumberAstNode {
 	export function is(obj: object): obj is JsonNumberAstNode {
@@ -60,6 +83,9 @@ export namespace JsonNumberAstNode {
 	}
 }
 
+export interface JsonBooleanExpectation {
+	readonly type: 'json:boolean'
+}
 export interface JsonBooleanAstNode extends JsonBaseAstNode {
 	readonly type: 'json:boolean'
 	readonly value: boolean

@@ -3,9 +3,11 @@ import type { JsonAstNode } from '../../node'
 import { JsonNumberAstNode } from '../../node'
 import type { JsonCheckerContext } from '../JsonChecker'
 
-const number = (type: 'integer' | 'float') => (min: number | null, max: number | null) => {
+const number = (type: 'integer' | 'float') => (min: number | null, max: number | null, isColor?: boolean) => {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		node.typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
+		node.expectation = { type: 'json:number', isColor }
+
 		if (!JsonNumberAstNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', [localize(type)]), node)
 		} else if (min !== null && max !== null && (node.value < min || node.value > max)) {
@@ -25,3 +27,5 @@ export const float = number('float')(null, null)
 export const intRange = number('integer')
 
 export const floatRange = number('float')
+
+export const color = number('integer')(null, null, true)
