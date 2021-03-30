@@ -1,4 +1,4 @@
+import type { Source } from '../source'
 import type { InfallibleParser } from './Parser'
 
-/* istanbul ignore next */
-export const empty: InfallibleParser<null> = () => null
+export const whitespace: InfallibleParser<string> = (src: Source) => src.readWhitespace()

@@ -2,9 +2,9 @@ import type { AstNode } from '../node'
 import type { LanguageError } from '../source'
 
 export interface FileNode<CN extends AstNode> extends AstNode {
-	type: 'file',
-	children: CN[],
-	parserErrors: readonly LanguageError[],
+	readonly type: 'file',
+	readonly children: CN[],
+	readonly parserErrors: readonly LanguageError[],
 	/**
 	 * Only exists when the file has been bound.
 	 */

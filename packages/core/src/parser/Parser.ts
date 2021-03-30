@@ -19,5 +19,5 @@ export type Failure = typeof Failure
 
 export type Returnable = object | string | number | bigint | boolean | null
 
-export type EntryParser<N extends EntryNode> = Parser<N>
-export type EntryNode = AstNode | null
+export type EntryParser<N extends NullableNode> = Parser<N>
+export type NullableNode = AstNode | null

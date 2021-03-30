@@ -1,8 +1,7 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { IntegerNode } from '../node'
+import type { IntegerNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
-import type { Source } from '../source'
-import { ErrorSeverity, Range } from '../source'
+import { ErrorSeverity, Range, Source } from '../source'
 import type { InfallibleParser, Parser, Result } from './Parser'
 import { Failure } from './Parser'
 
@@ -40,7 +39,7 @@ export function integer(options: InfallibleOptions): InfallibleParser<IntegerNod
 export function integer(options: FallibleOptions): Parser<IntegerNode>
 export function integer(options: Options): Parser<IntegerNode> {
 	return (src: Source, ctx: ParserContext): Result<IntegerNode> => {
-		const ans: IntegerNode = {
+		const ans: Mutable<IntegerNode> = {
 			type: 'integer',
 			range: Range.create(src),
 			value: BigInt(0),
@@ -58,8 +57,8 @@ export function integer(options: Options): Parser<IntegerNode> {
 			src.skip()
 		}
 
-		const hasLeadingZeros = src.peek() === '0' && /^[0-9]$/.test(src.peek(1, 1))
-		while (src.canRead() && /^[0-9]$/.test(src.peek())) {
+		const hasLeadingZeros = src.peek() === '0' && Source.isDigit(src.peek(1, 1))
+		while (src.canRead() && Source.isDigit(src.peek())) {
 			src.skip()
 		}
 

@@ -1,5 +1,5 @@
 import { localize } from '@spyglassmc/locales'
-import type { FloatNode } from '../node'
+import type { FloatNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { ErrorSeverity, Range } from '../source'
@@ -36,7 +36,7 @@ export interface Options {
 
 export function float(options: Options): InfallibleParser<FloatNode> {
 	return (src: Source, ctx: ParserContext): FloatNode => {
-		const ans: FloatNode = {
+		const ans: Mutable<FloatNode> = {
 			type: 'float',
 			range: Range.create(src),
 			value: 0,

@@ -1,8 +1,8 @@
 import type { AstNode } from './AstNode'
 
 export interface FloatNode extends AstNode {
-	type: 'float',
-	value: number,
+	readonly type: 'float',
+	readonly value: number,
 }
 export namespace FloatNode {
 	/* istanbul ignore next */

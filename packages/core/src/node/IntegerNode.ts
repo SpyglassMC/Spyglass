@@ -1,8 +1,8 @@
 import type { AstNode } from './AstNode'
 
 export interface IntegerNode extends AstNode {
-	type: 'integer',
-	value: bigint,
+	readonly type: 'integer',
+	readonly value: bigint,
 }
 export namespace IntegerNode {
 	export function is(obj: object): obj is IntegerNode {

@@ -1,11 +1,11 @@
 import type { AstNode } from './AstNode'
 
 export interface CommentNode extends AstNode {
-	type: 'comment',
+	readonly type: 'comment',
 	/**
 	 * The actual comment with prefixes and suffixes removed.
 	 */
-	comment: string,
+	readonly comment: string,
 }
 
 export namespace CommentNode {

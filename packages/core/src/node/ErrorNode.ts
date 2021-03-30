@@ -1,7 +1,7 @@
 import type { AstNode } from './AstNode'
 
 export interface ErrorNode extends AstNode {
-	type: 'error',
+	readonly type: 'error',
 }
 
 export namespace ErrorNode {

@@ -1,4 +1,4 @@
-import type { CommentNode } from '../node'
+import type { CommentNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
@@ -14,10 +14,9 @@ interface Options {
  * `Failure` when three isn't a comment.
  */
 export function comment({ singleLinePrefixes, includesEol }: Options): Parser<CommentNode> {
-	return (src: Source, ctx: ParserContext): Result<CommentNode> => {
-		src.skipWhitespace()
+	return (src: Source, _ctx: ParserContext): Result<CommentNode> => {
 		const start = src.cursor
-		const ans: CommentNode = {
+		const ans: Mutable<CommentNode> = {
 			type: 'comment',
 			range: Range.create(start),
 			comment: '',

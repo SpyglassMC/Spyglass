@@ -11,3 +11,7 @@ export interface AstNode {
 	symbol?: Symbol,
 	hover?: string,
 }
+
+export type Mutable<N> = N extends AstNode ? {
+	-readonly [K in keyof N]: Mutable<N[K]>
+} : N
