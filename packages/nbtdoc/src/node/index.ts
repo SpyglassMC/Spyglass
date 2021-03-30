@@ -1,4 +1,5 @@
 import type { AstNode, CommentNode, FloatNode, IntegerNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
+import { StringNode } from '@spyglassmc/core'
 import type { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
 import type { EnumDefinitionNode } from './EnumDefinition'
 import type { InjectClauseNode } from './InjectClause'
@@ -58,22 +59,12 @@ export namespace MinecraftIdentifierToken {
 	}
 }
 
-export type Primitive = FloatNode | IntegerNode | StringToken
+export type Primitive = FloatNode | IntegerNode | StringNode
 export namespace Primitive {
 	export function is(obj: object): obj is Primitive {
 		return (obj as Primitive).type === 'float' ||
 			(obj as Primitive).type === 'integer' ||
-			StringToken.is(obj)
-	}
-}
-
-export interface StringToken extends AstNode {
-	type: 'nbtdoc:string',
-	value: string,
-}
-export namespace StringToken {
-	export function is(obj: object): obj is StringToken {
-		return (obj as StringToken).type === 'nbtdoc:string'
+			StringNode.is(obj)
 	}
 }
 

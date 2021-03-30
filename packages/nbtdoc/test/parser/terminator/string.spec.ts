@@ -15,8 +15,7 @@ describe('string()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = string()
-			snapshot(testParser(parser, content))
+			snapshot(testParser(string, content))
 		})
 	}
 })

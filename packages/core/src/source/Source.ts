@@ -1,6 +1,17 @@
 import type { RangeLike } from './Range'
 import { Range } from './Range'
 
+type Digit =
+	| '0'
+	| '1'
+	| '2'
+	| '3'
+	| '4'
+	| '5'
+	| '6'
+	| '7'
+	| '8'
+	| '9'
 type Space =
 	| ' '
 	| '\t'
@@ -102,6 +113,11 @@ export class Source {
 		return this
 	}
 
+	readWhitespace() {
+		const start = this.cursor
+		this.skipWhitespace()
+		return this.string.slice(start, this.cursor)
+	}
 	skipWhitespace(): this {
 		while (this.canRead() && Source.isWhitespace(this.peek())) {
 			this.skip()
@@ -125,6 +141,13 @@ export class Source {
 		}
 		return ans
 	}
+	/**
+	 * @param terminators Ending character. Will not be skipped.
+	 */
+	skipUntilOrEnd(...terminators: string[]): this {
+		this.readUntilOrEnd(...terminators)
+		return this
+	}
 
 	skipRemaining(): this {
 		this.cursor = this.string.length
@@ -142,6 +165,10 @@ export class Source {
 	// 	this.cursor = converter.toOffset(Position.create(pos.line + 1, 0))
 	// 	return this
 	// }
+
+	static isDigit(c: string): c is Digit {
+		return c >= '0' && c <= '9'
+	}
 
 	static isSpace(c: string): c is Space {
 		return c === ' ' || c === '\t'

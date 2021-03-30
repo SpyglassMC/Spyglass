@@ -1,5 +1,6 @@
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageErrorInfo, RangeLike } from '../source'
-import { ErrorSeverity, LanguageError, Range } from '../source'
+import { ErrorSeverity, IndexMap, LanguageError, Range } from '../source'
 
 export class ErrorReporter {
 	public errors: LanguageError[] = []
@@ -26,7 +27,17 @@ export class ErrorReporter {
 	 * Adds all errors from another reporter's error stack to the current reporter.
 	 * This method does not affect the passed-in reporter.
 	 */
-	absorb(reporter: ErrorReporter): void {
-		this.errors.push(...reporter.errors)
+	absorb(reporter: ErrorReporter, mapping?: { map: IndexMap, doc: TextDocument }): void {
+		const incomingErrors = mapping ? reporter.errors.map(e => {
+			e.range = IndexMap.toOuterRange(mapping.map, e.range)
+			if (e.info?.related) {
+				e.info.related = e.info.related.map(v => ({
+					location: IndexMap.toOuterLocation(mapping.map, v.location, mapping.doc),
+					message: v.message,
+				}))
+			}
+			return e
+		}) : reporter.errors
+		this.errors.push(...incomingErrors)
 	}
 }

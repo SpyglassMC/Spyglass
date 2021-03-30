@@ -598,12 +598,23 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "value": "="
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 108,
               "end": 113
             },
-            "value": "foo"
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 109,
+                "end": 112
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         ],
         "doc": {
@@ -641,12 +652,23 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "value": "Foo"
         },
         "value": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 108,
             "end": 113
           },
-          "value": "foo"
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 109,
+              "end": 112
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       },
       {
@@ -743,12 +765,23 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "value": "="
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 108,
               "end": 113
             },
-            "value": "foo"
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 109,
+                "end": 112
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         ],
         "doc": {
@@ -786,12 +819,23 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "value": "Foo"
         },
         "value": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 108,
             "end": 113
           },
-          "value": "foo"
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 109,
+              "end": 112
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]

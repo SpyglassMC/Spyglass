@@ -1,3 +1,5 @@
+import type { TextDocument } from 'vscode-languageserver-textdocument'
+import { Location } from './Location'
 import { Range } from './Range'
 
 export interface IndexMap {
@@ -35,6 +37,13 @@ export namespace IndexMap {
 		return ans
 	}
 
+	export function toInnerRange(map: IndexMap, outer: Range): Range {
+		return Range.create(
+			toInnerOffset(map, outer.start),
+			toInnerOffset(map, outer.end)
+		)
+	}
+
 	export function toOuterOffset(map: IndexMap, inner: number): number {
 		const { innerRange, outerRange, pairs } = map
 		if (!Range.contains(innerRange, inner)) {
@@ -53,5 +62,19 @@ export namespace IndexMap {
 		}
 
 		return ans
+	}
+
+	export function toOuterRange(map: IndexMap, inner: Range): Range {
+		return Range.create(
+			toOuterOffset(map, inner.start),
+			toOuterOffset(map, inner.end)
+		)
+	}
+
+	export function toOuterLocation(map: IndexMap, inner: Location, doc: TextDocument): Location {
+		return Location.create(
+			doc,
+			toOuterRange(map, inner.range)
+		)
 	}
 }

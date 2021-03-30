@@ -242,12 +242,23 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "value": " The id of the jigsaw that this will \"spawn\" in\n"
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 203,
               "end": 209
             },
-            "value": "name"
+            "value": "name",
+            "valueMap": {
+              "outerRange": {
+                "start": 204,
+                "end": 208
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 4
+              },
+              "pairs": []
+            }
           },
           {
             "type": "nbtdoc:literal",
@@ -285,12 +296,23 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "value": " The id of the jigsaw that this will \"spawn\" in\n"
         },
         "key": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 203,
             "end": 209
           },
-          "value": "name"
+          "value": "name",
+          "valueMap": {
+            "outerRange": {
+              "start": 204,
+              "end": 208
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 4
+            },
+            "pairs": []
+          }
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -510,12 +532,23 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "value": " The id of the jigsaw that this will \"spawn\" in\n"
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 203,
               "end": 209
             },
-            "value": "name"
+            "value": "name",
+            "valueMap": {
+              "outerRange": {
+                "start": 204,
+                "end": 208
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 4
+              },
+              "pairs": []
+            }
           },
           {
             "type": "nbtdoc:literal",
@@ -553,12 +586,23 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "value": " The id of the jigsaw that this will \"spawn\" in\n"
         },
         "key": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 203,
             "end": 209
           },
-          "value": "name"
+          "value": "name",
+          "valueMap": {
+            "outerRange": {
+              "start": 204,
+              "end": 208
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 4
+            },
+            "pairs": []
+          }
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -632,12 +676,23 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "value": ""
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 15,
               "end": 20
             },
-            "value": "Bar"
+            "value": "Bar",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           {
             "type": "nbtdoc:literal",
@@ -793,12 +848,23 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "value": ""
         },
         "key": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 15,
             "end": 20
           },
-          "value": "Bar"
+          "value": "Bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -981,12 +1047,23 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "value": ""
           },
           {
-            "type": "nbtdoc:string",
+            "type": "string",
             "range": {
               "start": 15,
               "end": 20
             },
-            "value": "Bar"
+            "value": "Bar",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           {
             "type": "nbtdoc:literal",
@@ -1142,12 +1219,23 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "value": ""
         },
         "key": {
-          "type": "nbtdoc:string",
+          "type": "string",
           "range": {
             "start": 15,
             "end": 20
           },
-          "value": "Bar"
+          "value": "Bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",

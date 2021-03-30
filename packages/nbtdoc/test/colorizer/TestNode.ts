@@ -1,5 +1,5 @@
 import type { SymbolTable } from '@spyglassmc/core'
-import type { MainNode } from '../../src'
+import type { MainNode } from '../../lib'
 
 export const TestContent = `
 /// Doc comment.
@@ -1041,12 +1041,23 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:string',
+							type: 'string',
 							range: {
 								start: 144,
 								end: 149,
 							},
 							value: 'One',
+							valueMap: {
+								outerRange: {
+									start: 145,
+									end: 148,
+								},
+								innerRange: {
+									start: 0,
+									end: 3,
+								},
+								pairs: [],
+							},
 						},
 					],
 					doc: {
@@ -1067,12 +1078,23 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:string',
+						type: 'string',
 						range: {
 							start: 144,
 							end: 149,
 						},
 						value: 'One',
+						valueMap: {
+							outerRange: {
+								start: 145,
+								end: 148,
+							},
+							innerRange: {
+								start: 0,
+								end: 3,
+							},
+							pairs: [],
+						},
 					},
 				},
 				{
@@ -1143,12 +1165,23 @@ export const TestNode: MainNode = {
 							value: '=',
 						},
 						{
-							type: 'nbtdoc:string',
+							type: 'string',
 							range: {
 								start: 144,
 								end: 149,
 							},
 							value: 'One',
+							valueMap: {
+								outerRange: {
+									start: 145,
+									end: 148,
+								},
+								innerRange: {
+									start: 0,
+									end: 3,
+								},
+								pairs: [],
+							},
 						},
 					],
 					doc: {
@@ -1169,12 +1202,23 @@ export const TestNode: MainNode = {
 						value: 'One',
 					},
 					value: {
-						type: 'nbtdoc:string',
+						type: 'string',
 						range: {
 							start: 144,
 							end: 149,
 						},
 						value: 'One',
+						valueMap: {
+							outerRange: {
+								start: 145,
+								end: 148,
+							},
+							innerRange: {
+								start: 0,
+								end: 3,
+							},
+							pairs: [],
+						},
 					},
 				},
 			],

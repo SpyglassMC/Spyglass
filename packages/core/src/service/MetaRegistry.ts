@@ -1,6 +1,6 @@
 import type { AstNode } from '../node'
-import type { EntryNode, EntryParser } from '../parser'
-import type { Colorizer} from '../processor'
+import type { EntryParser, NullableNode } from '../parser'
+import type { Colorizer } from '../processor'
 import { FallbackColorizer } from '../processor'
 import type { Binder, Checker, UriBinder } from '../symbol'
 import { FallbackBinder, FallbackChecker } from '../symbol'
@@ -68,7 +68,7 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParser<N extends EntryNode>(languageID: string): EntryParser<N> {
+	public getParser<N extends NullableNode>(languageID: string): EntryParser<N> {
 		if (this.#languages.has(languageID)) {
 			return this.#languages.get(languageID)!.parser as unknown as EntryParser<N>
 		}

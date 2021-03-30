@@ -49,7 +49,7 @@ const unsignedRange = _intRange<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned
  */
 const floatRange = _intRange<FloatNode, FloatRangeNode>('nbtdoc:float_range', float())
 
-const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string()])
+const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
 
 function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNode {
 	return map(
@@ -259,7 +259,7 @@ function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | U
 
 const fieldPathKey: InfallibleParser<FieldPathKey> = any([
 	keyword('super'),
-	string(),
+	string,
 	identifier(),
 ])
 

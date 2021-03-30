@@ -1,6 +1,7 @@
 import type { AstNode, FloatNode, IntegerNode } from '@spyglassmc/core'
+import { StringNode } from '@spyglassmc/core'
 import type { DocCommentsNode, MinecraftIdentifierToken, SyntaxNode } from './index'
-import { IdentifierToken, IdentPathToken, LiteralToken, StringToken } from './index'
+import { IdentifierToken, IdentPathToken, LiteralToken } from './index'
 
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
@@ -46,10 +47,10 @@ export type CompoundFieldChild =
 	| DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
 	| IntRangeNode | UnsignedRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | MinecraftIdentifierToken
 
-export type CompoundFieldKey = IdentifierToken | StringToken
+export type CompoundFieldKey = IdentifierToken | StringNode
 export namespace CompoundFieldKey {
 	export function is(obj: object): obj is CompoundFieldKey {
-		return IdentifierToken.is(obj) || StringToken.is(obj)
+		return IdentifierToken.is(obj) || StringNode.is(obj)
 	}
 }
 
@@ -173,10 +174,10 @@ export namespace FloatRangeNode {
 	}
 }
 
-export type FieldPathKey = LiteralToken<'super'> | IdentifierToken | StringToken
+export type FieldPathKey = LiteralToken<'super'> | IdentifierToken | StringNode
 export namespace FieldPathKey {
 	export function is(obj: object): obj is FieldPathKey {
-		return LiteralToken.is('super')(obj) || IdentifierToken.is(obj) || StringToken.is(obj)
+		return LiteralToken.is('super')(obj) || IdentifierToken.is(obj) || StringNode.is(obj)
 	}
 }
 

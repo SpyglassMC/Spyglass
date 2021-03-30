@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { LanguageError, Parser, Returnable} from '../lib'
+import type { LanguageError, Parser, Returnable } from '../lib'
 import { Failure, ParserContext, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
@@ -14,7 +14,7 @@ export function showWhitespaceGlyph(string: string) {
 		.replace(/\t/g, '⮀')
 		.replace(/\r/g, '←')
 		.replace(/\n/g, '↓')
-		.replace(/\\/g, '⧵')
+		.replace(/\\/g, '⧵') // We replace normal back slashes with ⧵ (U+29f5) here, due to the snapshots being stupid and not escaping them before exporting.
 }
 
 export function markOffsetInString(string: string, offset: number) {
