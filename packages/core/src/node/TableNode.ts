@@ -1,7 +1,7 @@
 import type { Range } from '../source'
 import type { AstNode } from './AstNode'
 
-export interface MapNode<K extends AstNode, V extends AstNode> extends AstNode {
+export interface TableNode<K extends AstNode, V extends AstNode> extends AstNode {
 	readonly children: PairNode<K, V>[],
 }
 
