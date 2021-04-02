@@ -28,8 +28,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 	return (src: Source, ctx: ParserContext): TableNode<K, V> => {
 		const ans: TableNode<K, V> = {
 			type: 'table',
-			children: [],
 			range: Range.create(src),
+			children: [],
 		}
 
 		if (src.peek() === start) {
@@ -62,9 +62,10 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				}
 
 				// K-V sep.
+				let sepCharRange: Range | undefined = undefined
 				src.skipWhitespace()
 				if (src.peek() === pair.sep) {
-					src.skip()
+					sepCharRange = Range.create(src, () => src.skip())
 				} else {
 					ctx.err.report(localize('expected', [localeQuote(pair.sep)]), src)
 				}
@@ -83,7 +84,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				}
 
 				// Pair end.
-				let endCharRange: Range | null = null
+				let endCharRange: Range | undefined = undefined
 				src.skipWhitespace()
 				requiresPairEnd = true
 				if (hasPairEnd = src.peek() === pair.end) {
@@ -91,15 +92,15 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				}
 
 				// Create pair.
-				if (key && value) {
-					ans.children.push({
-						type: 'pair',
-						range: Range.create(pairStart, src),
-						key,
-						value,
-						end: endCharRange,
-					})
-				}
+				ans.children.push({
+					type: 'pair',
+					range: Range.create(pairStart, src),
+					... (key || value) ? { children: [key, value].filter((v): v is K | V => !!v) } : {},
+					key,
+					sep: sepCharRange,
+					value,
+					end: endCharRange,
+				})
 
 				src.skipWhitespace()
 			}
