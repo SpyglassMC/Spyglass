@@ -4,8 +4,7 @@ import { JsonBooleanAstNode } from '../../node'
 import type { JsonCheckerContext } from '../JsonChecker'
 
 export async function boolean(node: JsonAstNode, ctx: JsonCheckerContext) {
-	node.typedoc = 'Boolean'
-	node.expectation = { type: 'json:boolean' }
+	node.expectation = { type: 'json:boolean', typedoc: 'Boolean' }
 
 	if (!JsonBooleanAstNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('boolean')]), node)

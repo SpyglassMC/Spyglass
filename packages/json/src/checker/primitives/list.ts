@@ -6,8 +6,7 @@ import { expectation } from './util'
 
 export function listOf(checker: JsonChecker): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.typedoc = 'Array'
-		node.expectation = { type: 'json:array' }
+		node.expectation = { type: 'json:array', typedoc: 'Array' }
 		if (!ctx.depth || ctx.depth <= 0) {
 			node.expectation.items = expectation(checker, ctx)
 		}

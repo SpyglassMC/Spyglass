@@ -10,6 +10,7 @@ export interface LanguageOptions {
 	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
 	 */
 	extensions: string[],
+	triggerCharacters?: string[],
 	parser: EntryParser<any>,
 	binder?: Binder<any>,
 	checker?: Checker<any>,
@@ -50,6 +51,13 @@ export class MetaRegistry {
 	 */
 	public get supportedFileExtensions(): string[] {
 		return Array.from(this.#languages.values()).flatMap(v => v.extensions)
+	}
+
+	/**
+	 * An array of characters that trigger a completion request.
+	 */
+	public get triggerCharacters(): string[] {
+		return Array.from(this.#languages.values()).flatMap(v => v.triggerCharacters ?? [])
 	}
 
 	/**
@@ -100,8 +108,12 @@ export class MetaRegistry {
 	/**
 	 * @returns The corresponding `Completer` for the language ID, or a fallback colorizer that produces nothing.
 	 */
-	public getCompleter<N extends AstNode>(languageID: string): Completer<N> {
-		return this.#languages.get(languageID)?.completer ?? FallbackCompleter
+	public getCompleter<N extends AstNode>(languageID: string, triggerCharacter?: string): Completer<N> {
+		const language = this.#languages.get(languageID)
+		if (triggerCharacter && !language?.triggerCharacters?.includes(triggerCharacter)) {
+			return FallbackCompleter
+		}
+		return language?.completer ?? FallbackCompleter
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

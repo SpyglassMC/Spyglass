@@ -14,6 +14,7 @@ export function initializeJson() {
 	MetaRegistry.addInitializer((registry) => {
 		registry.registerLanguage('json', {
 			extensions: ['.json', '.mcmeta'],
+			triggerCharacters: completer.JsonTriggerCharacters,
 			parser: parser.entry,
 			checker: checker.entry,
 			colorizer: colorizer.entry,

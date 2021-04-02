@@ -230,10 +230,10 @@ export class Service {
 		return null
 	}
 
-	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number) {
+	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
 		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const completer = this.meta.getCompleter(doc.languageId)
-		return completer(node, this.getCompleterCtx(doc, offset))
+		const completer = this.meta.getCompleter(doc.languageId, triggerCharacter)
+		return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
 	}
 
 	/**
@@ -452,10 +452,11 @@ export class Service {
 			options,
 		})
 	}
-	private getCompleterCtx(doc: TextDocument, offset: number): CompleterContext {
+	private getCompleterCtx(doc: TextDocument, offset: number, triggerCharacter?: string): CompleterContext {
 		return CompleterContext.create({
 			...this.getProcessorCtx(doc),
 			offset,
+			triggerCharacter: triggerCharacter,
 		})
 	}
 	private getUriBinderCtx(): UriBinderContext {

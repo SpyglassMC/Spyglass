@@ -25,15 +25,17 @@ export function object(keys: string[], values: (key: string) => CheckerProperty)
 export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.typedoc = 'Object'
-		node.expectation = { type: 'json:object' }
+		node.expectation = { type: 'json:object', typedoc: 'Object' }
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
 				node.expectation.fields = keys.map(key => {
 					const prop = values(key)
-					const value = expectation(isComplex(prop) ? prop.checker : prop, ctx)
-					const opt = isComplex(prop) && (prop.opt || prop.deprecated)
-					return { key, value, ...(opt ? { opt: true } : {}) }
+					return {
+						key,
+						value: expectation(isComplex(prop) ? prop.checker : prop, ctx),
+						...isComplex(prop) && (prop.opt || prop.deprecated) ? { opt: true } : {},
+						...isComplex(prop) && prop.deprecated ? { deprecated: true } : {},
+					}
 				})
 			} else if (typeof keys === 'function' && values) {
 				const keysExpectation = expectation(keys, ctx)
@@ -68,7 +70,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					const doc = localize(`json.doc.${context}`)
 					const propNode: JsonAstNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
 					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
-					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.typedoc}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
+					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.typedoc}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
@@ -100,8 +102,7 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 
 export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => JsonChecker): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.typedoc = 'Object'
-		node.expectation = { type: 'json:object' }
+		node.expectation = { type: 'json:object', typedoc: 'Object' }
 
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
@@ -150,15 +151,15 @@ export function extract(value: string, properties: JsonPropertyAstNode[]) {
 }
 
 export function having(node: JsonAstNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
-	if (!JsonObjectAstNode.is(node)) {
-		return {}
-	}
-
-	const givenKeys = new Set(node.properties.map(n => n.key.value))
+	const givenKeys = new Set(JsonObjectAstNode.is(node)
+		? node.properties.map(n => n.key.value) : [])
 	const key = Object.keys(cases).find(c => givenKeys.has(c))
+
 	if (key === undefined) {
-		ctx.err.report(localize('missing-key', [arrayToMessage(Object.keys(cases), true, 'or')]), Range.create(node.range.start, node.range.start + 1))
-		return {}
+		ctx.err.report(localize('json.checker.property.missing', [arrayToMessage(Object.keys(cases), true, 'or')]), Range.create(node.range.start, node.range.start + 1))
+		return Object.fromEntries(Object.entries(cases)
+			.map(([k, v]) => [k, typeof v === 'function' ? v()[k] : v[k]])
+		)
 	}
 	const c = cases[key]
 	return typeof c === 'function' ? c() : c
