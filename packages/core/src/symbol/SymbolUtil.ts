@@ -148,6 +148,27 @@ export class SymbolUtil {
 		return new SymbolQueryResult(doc, this, category, path, result?.symbol ?? null, !!result?.visible)
 	}
 
+	getVisibleSymbols(uri: string, category: AllCategory): SymbolMap
+	getVisibleSymbols(uri: string, category: string): SymbolMap
+	getVisibleSymbols(uri: string, category: string): SymbolMap {
+		const ans: SymbolMap = {}
+
+		// TODO: Lookup in local stack as well.
+		const stack = this.getStack(uri)
+		stack
+
+		const map = this.global[category]
+		if (map) {
+			for (const key of Object.keys(map)) {
+				if (SymbolUtil.isVisible(map[key]!, uri)) {
+					ans[key] = map[key]
+				}
+			}
+		}
+
+		return ans
+	}
+
 	/**
 	 * Push a new block to the `SymbolStack` corresponding to `uri`.
 	 * 
