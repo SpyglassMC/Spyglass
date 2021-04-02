@@ -115,16 +115,19 @@ export namespace ColorizerContext {
 }
 
 export interface CompleterContext extends ProcessorContext {
-	offset: number
+	offset: number,
+	triggerCharacter?: string,
 }
 interface CompleterContextLike extends ProcessorContextLike {
-	offset: number
+	offset: number,
+	triggerCharacter?: string,
 }
 export namespace CompleterContext {
 	export function create(ctx: CompleterContextLike): CompleterContext {
 		return {
 			...ProcessorContext.create(ctx),
 			offset: ctx.offset,
+			triggerCharacter: ctx.triggerCharacter,
 		}
 	}
 }

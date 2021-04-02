@@ -7,11 +7,12 @@ exports['JSON list listOf(int) Check "5" 1'] = {
     },
     "value": 5,
     "isInteger": true,
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:number"
+        "type": "json:number",
+        "typedoc": "Number"
       }
     }
   },
@@ -43,9 +44,9 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -55,9 +56,9 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
@@ -69,9 +70,9 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -81,17 +82,18 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:number"
+        "type": "json:number",
+        "typedoc": "Number"
       }
     }
   },
@@ -132,9 +134,9 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -145,9 +147,9 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -158,9 +160,9 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
@@ -173,9 +175,9 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -186,9 +188,9 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       },
       {
@@ -199,17 +201,18 @@ exports['JSON list listOf(int) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:number"
+        "type": "json:number",
+        "typedoc": "Number"
       }
     }
   },
@@ -271,9 +274,9 @@ exports['JSON list listOf(int) Check "[[4, 6]]" 1'] = {
             "isInteger": true
           }
         ],
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
@@ -324,17 +327,18 @@ exports['JSON list listOf(int) Check "[[4, 6]]" 1'] = {
             "isInteger": true
           }
         ],
-        "typedoc": "Number",
         "expectation": {
-          "type": "json:number"
+          "type": "json:number",
+          "typedoc": "Number"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:number"
+        "type": "json:number",
+        "typedoc": "Number"
       }
     }
   },
@@ -360,11 +364,12 @@ exports['JSON list listOf(int) Check "[]" 1'] = {
     },
     "items": [],
     "children": [],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:number"
+        "type": "json:number",
+        "typedoc": "Number"
       }
     }
   },
@@ -381,11 +386,12 @@ exports['JSON list listOf(listOf(int)) Check "5" 1'] = {
     },
     "value": 5,
     "isInteger": true,
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:array"
+        "type": "json:array",
+        "typedoc": "Array"
       }
     }
   },
@@ -417,11 +423,12 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -432,11 +439,12 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
@@ -449,11 +457,12 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -464,20 +473,22 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:array"
+        "type": "json:array",
+        "typedoc": "Array"
       }
     }
   },
@@ -518,11 +529,12 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -534,11 +546,12 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -550,11 +563,12 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
@@ -568,11 +582,12 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -584,11 +599,12 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       },
@@ -600,20 +616,22 @@ exports['JSON list listOf(listOf(int)) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:array"
+        "type": "json:array",
+        "typedoc": "Array"
       }
     }
   },
@@ -669,9 +687,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 4,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           },
           {
@@ -682,9 +700,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           }
         ],
@@ -697,9 +715,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 4,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           },
           {
@@ -710,17 +728,18 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           }
         ],
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
@@ -741,9 +760,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 4,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           },
           {
@@ -754,9 +773,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           }
         ],
@@ -769,9 +788,9 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 4,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           },
           {
@@ -782,26 +801,28 @@ exports['JSON list listOf(listOf(int)) Check "[[4, 6]]" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "typedoc": "Number",
             "expectation": {
-              "type": "json:number"
+              "type": "json:number",
+              "typedoc": "Number"
             }
           }
         ],
-        "typedoc": "Array",
         "expectation": {
           "type": "json:array",
+          "typedoc": "Array",
           "items": {
-            "type": "json:number"
+            "type": "json:number",
+            "typedoc": "Number"
           }
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:array"
+        "type": "json:array",
+        "typedoc": "Array"
       }
     }
   },
@@ -818,11 +839,12 @@ exports['JSON list listOf(listOf(int)) Check "[]" 1'] = {
     },
     "items": [],
     "children": [],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:array"
+        "type": "json:array",
+        "typedoc": "Array"
       }
     }
   },
@@ -839,11 +861,12 @@ exports['JSON list listOf(string) Check "5" 1'] = {
     },
     "value": 5,
     "isInteger": true,
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:string"
+        "type": "json:string",
+        "typedoc": "String"
       }
     }
   },
@@ -875,9 +898,9 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -887,9 +910,9 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
@@ -901,9 +924,9 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "end": 6
         },
         "value": "foo",
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -913,17 +936,18 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "end": 13
         },
         "value": "bar",
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:string"
+        "type": "json:string",
+        "typedoc": "String"
       }
     }
   },
@@ -947,9 +971,9 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -960,9 +984,9 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -973,9 +997,9 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
@@ -988,9 +1012,9 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 1,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -1001,9 +1025,9 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 4,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       },
       {
@@ -1014,17 +1038,18 @@ exports['JSON list listOf(string) Check "[1, 4, 6]" 1'] = {
         },
         "value": 6,
         "isInteger": true,
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:string"
+        "type": "json:string",
+        "typedoc": "String"
       }
     }
   },
@@ -1111,9 +1136,9 @@ exports['JSON list listOf(string) Check "[[4, 6]]" 1'] = {
             "isInteger": true
           }
         ],
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
@@ -1164,17 +1189,18 @@ exports['JSON list listOf(string) Check "[[4, 6]]" 1'] = {
             "isInteger": true
           }
         ],
-        "typedoc": "String",
         "expectation": {
-          "type": "json:string"
+          "type": "json:string",
+          "typedoc": "String"
         }
       }
     ],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:string"
+        "type": "json:string",
+        "typedoc": "String"
       }
     }
   },
@@ -1200,11 +1226,12 @@ exports['JSON list listOf(string) Check "[]" 1'] = {
     },
     "items": [],
     "children": [],
-    "typedoc": "Array",
     "expectation": {
       "type": "json:array",
+      "typedoc": "Array",
       "items": {
-        "type": "json:string"
+        "type": "json:string",
+        "typedoc": "String"
       }
     }
   },

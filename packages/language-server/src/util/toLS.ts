@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import * as ls from 'vscode-languageserver/node'
+import { InsertTextFormat } from 'vscode-languageserver/node'
 
 /**
  * A series of functions that can transform `@spyglassmc/core` types to `vscode-languageserver` types.
@@ -71,26 +72,17 @@ export namespace toLS {
 		return ans
 	}
 
-	export function completionItemKind(kind: core.CompletionKind): ls.CompletionItemKind {
-		switch (kind) {
-			case core.CompletionKind.TEXT:
-				return ls.CompletionItemKind.Text
-			case core.CompletionKind.METHOD:
-				return ls.CompletionItemKind.Method
-			case core.CompletionKind.FUNCTION:
-				return ls.CompletionItemKind.Function
-			case core.CompletionKind.FIELD:
-				return ls.CompletionItemKind.Field
-			case core.CompletionKind.VARIABLE:
-				return ls.CompletionItemKind.Variable
-		}
-	}
-
 	export function completionItem(completion: core.CompletionToken): ls.CompletionItem {
 		const ans: ls.CompletionItem = {
 			label: completion.label,
-			kind: toLS.completionItemKind(completion.kind),
+			kind: completion.kind,
 			detail: completion.detail,
+			documentation: completion.documentation,
+			filterText: completion.filterText,
+			sortText: completion.sortText,
+			insertText: completion.insertText,
+			insertTextFormat: InsertTextFormat.Snippet,
+			...completion.deprecated ? { tags: [ls.CompletionItemTag.Deprecated] } : {},
 		}
 		return ans
 	}

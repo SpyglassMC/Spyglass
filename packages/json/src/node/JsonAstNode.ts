@@ -3,18 +3,22 @@ import type { AstNode } from '@spyglassmc/core'
 export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAstNode | JsonStringAstNode | JsonNumberAstNode | JsonBooleanAstNode | JsonNullAstNode
 
 interface JsonBaseAstNode extends AstNode {
-	typedoc?: string
 	expectation?: JsonExpectation
 }
 
-export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation
+export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation | JsonUnionExpectation
 
-export interface JsonObjectExpectation {
+interface JsonBaseExpectation {
+	typedoc: string
+}
+
+export interface JsonObjectExpectation extends JsonBaseExpectation {
 	readonly type: 'json:object'
 	fields?: {
 		key: string,
 		value?: JsonExpectation,
 		opt?: boolean,
+		deprecated?: boolean,
 	}[]
 	keys?: JsonStringExpectation
 }
@@ -39,7 +43,7 @@ export namespace JsonPropertyAstNode {
 	}
 }
 
-export interface JsonArrayExpectation {
+export interface JsonArrayExpectation extends JsonBaseExpectation {
 	readonly type: 'json:array'
 	items?: JsonExpectation
 }
@@ -53,7 +57,7 @@ export namespace JsonArrayAstNode {
 	}
 }
 
-export interface JsonStringExpectation {
+export interface JsonStringExpectation extends JsonBaseExpectation {
 	readonly type: 'json:string'
 	pool?: string | string[]
 	resource?: boolean
@@ -68,7 +72,7 @@ export namespace JsonStringAstNode {
 	}
 }
 
-export interface JsonNumberExpectation {
+export interface JsonNumberExpectation extends JsonBaseExpectation {
 	readonly type: 'json:number'
 	isColor?: boolean
 }
@@ -83,7 +87,7 @@ export namespace JsonNumberAstNode {
 	}
 }
 
-export interface JsonBooleanExpectation {
+export interface JsonBooleanExpectation extends JsonBaseExpectation {
 	readonly type: 'json:boolean'
 }
 export interface JsonBooleanAstNode extends JsonBaseAstNode {
@@ -103,4 +107,9 @@ export namespace JsonNullAstNode {
 	export function is(obj: object): obj is JsonNullAstNode {
 		return (obj as JsonNullAstNode).type === 'json:null'
 	}
+}
+
+export interface JsonUnionExpectation extends JsonBaseExpectation {
+	readonly type: 'json:union'
+	options: JsonExpectation[]
 }
