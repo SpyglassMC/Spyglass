@@ -72,7 +72,16 @@ export namespace toLS {
 		return ans
 	}
 
-	export function completionItem(completion: core.CompletionItem): ls.CompletionItem {
+	export function completionItem(completion: core.CompletionItem, doc: TextDocument, requestedOffset: number, insertReplaceSupport: boolean | undefined): ls.CompletionItem {
+		const insertText = completion.insertText ?? completion.label
+		const canInsertReplace = insertReplaceSupport && ![core.CR, core.LF, core.CRLF].includes(insertText)
+		const textEdit: ls.TextEdit | ls.InsertReplaceEdit = canInsertReplace
+			? ls.InsertReplaceEdit.create(
+				insertText,
+				/* insert  */ range(core.Range.create(completion.range.start, requestedOffset), doc),
+				/* replace */ range(completion.range, doc)
+			)
+			: ls.TextEdit.replace(range(completion.range, doc), insertText)
 		const ans: ls.CompletionItem = {
 			label: completion.label,
 			kind: completion.kind,
@@ -80,9 +89,9 @@ export namespace toLS {
 			documentation: completion.documentation,
 			filterText: completion.filterText,
 			sortText: completion.sortText,
-			insertText: completion.insertText,
-			insertTextMode: ls.InsertTextMode.adjustIndentation,
+			textEdit,
 			insertTextFormat: InsertTextFormat.Snippet,
+			insertTextMode: ls.InsertTextMode.adjustIndentation,
 			...completion.deprecated ? { tags: [ls.CompletionItemTag.Deprecated] } : {},
 		}
 		return ans

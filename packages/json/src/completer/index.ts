@@ -1,6 +1,6 @@
 import type { CompleterContext } from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, selectedNode } from '@spyglassmc/core'
-import type { JsonAstNode, JsonExpectation, JsonObjectAstNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
+import type { JsonAstNode, JsonExpectation, JsonObjectAstNode, JsonObjectExpectation, JsonStringAstNode, JsonStringExpectation } from '../node'
 
 export const JsonTriggerCharacters = ['\n', ':', '"']
 
@@ -16,9 +16,7 @@ const SIMPLE_SNIPPETS = {
 export function entry(root: JsonAstNode, ctx: CompleterContext): CompletionItem[] {
 	const result = selectedNode(root, ctx.offset)
 	if (result) {
-		const n0 = result.node as JsonAstNode
-		const n1 = result.parents[0] as JsonAstNode
-		const n2 = result.parents[1] as JsonAstNode
+		const [n0, n1, n2] = [result.node, ...result.parents] as JsonAstNode[]
 
 		// Object properties
 		// { "foo": 1, | }
@@ -47,7 +45,7 @@ export function entry(root: JsonAstNode, ctx: CompleterContext): CompletionItem[
 		// Inside a string
 		// { "foo": "|" }
 		if (n0.type === 'json:string' && n0.expectation?.type === 'json:string') {
-			return stringCompletion(n0.expectation, ctx, true)
+			return stringCompletion(n0, n0.expectation, ctx, true)
 		}
 
 		// Values after an object property
@@ -88,7 +86,7 @@ function objectCompletion(node: JsonObjectAstNode, expectation: JsonObjectExpect
 function fieldCompletion(field: Exclude<JsonObjectExpectation['fields'], undefined>[number], comma: boolean, quoted: boolean) {
 	const value = field.value ? SIMPLE_SNIPPETS[field.value.type] : ''
 	const text = `"${field.key}": ${value}${comma ? ',' : ''}`
-	return CompletionItem.create(field.key, text, {
+	return CompletionItem.create(field.key, TODO, text, {
 		kind: CompletionKind.Property,
 		detail: field.value?.typedoc,
 		sortText: `${field.deprecated ? 2 : field.opt ? 1 : 0}${field.key}`,
@@ -98,7 +96,7 @@ function fieldCompletion(field: Exclude<JsonObjectExpectation['fields'], undefin
 }
 
 function valueCompletion(expectation: JsonExpectation, ctx: CompleterContext, comma: boolean): CompletionItem[] {
-	switch(expectation.type) {
+	switch (expectation.type) {
 		case 'json:object':
 		case 'json:array':
 		case 'json:string':
@@ -116,14 +114,14 @@ function valueCompletion(expectation: JsonExpectation, ctx: CompleterContext, co
 }
 
 function simpleCompletion(value: string, comma: boolean) {
-	return CompletionItem.create(value.replace('$1', ''), `${value}${comma ? ',' : ''}`, {
+	return CompletionItem.create(value.replace('$1', ''), TODO, `${value}${comma ? ',' : ''}`, {
 		kind: CompletionKind.Value,
 	})
 }
 
-function stringCompletion(expectation: JsonStringExpectation, ctx: CompleterContext, quoted: boolean) {
+function stringCompletion(node: JsonStringAstNode, expectation: JsonStringExpectation, ctx: CompleterContext, quoted: boolean) {
 	if (Array.isArray(expectation.pool)) {
-		return expectation.pool.map(v => CompletionItem.create(v, `"${v}"`, {
+		return expectation.pool.map(v => CompletionItem.create(v, node, `"${v}"`, {
 			kind: CompletionKind.Value,
 			...quoted ? { filterText: `"${v}"` } : {},
 		}))
@@ -131,7 +129,7 @@ function stringCompletion(expectation: JsonStringExpectation, ctx: CompleterCont
 		const symbols = Object.values(ctx.symbols.getVisibleSymbols(ctx.doc.uri, expectation.pool))
 			.filter(s => s)
 		if (symbols.length > 0) {
-			return symbols.map(s => CompletionItem.create(s!.identifier, `"${s!.identifier}"`, {
+			return symbols.map(s => CompletionItem.create(s!.identifier, node, `"${s!.identifier}"`, {
 				kind: CompletionKind.Method,
 				...quoted ? { filterText: `"${s!.identifier}"` } : {},
 			}))

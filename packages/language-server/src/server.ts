@@ -168,8 +168,9 @@ connection.onHover(({ textDocument: { uri }, position }) => {
 
 connection.onCompletion(({ textDocument: { uri }, position, context }) => {
 	const { doc, node } = service.get(uri)!
-	const items = service.getCompletion(node, doc, toCore.offset(position, doc), context?.triggerCharacter)
-	return items.map(item => toLS.completionItem(item))
+	const offset = toCore.offset(position, doc)
+	const items = service.getCompletion(node, doc, offset, context?.triggerCharacter)
+	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {

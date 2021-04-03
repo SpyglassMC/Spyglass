@@ -1,5 +1,7 @@
 import type { AstNode } from '../node'
 import type { CompleterContext } from '../service'
+import type { RangeLike } from '../source'
+import { Range } from '../source'
 
 export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionItem[]
 
@@ -38,6 +40,7 @@ export const enum CompletionKind {
 
 export interface CompletionItem {
 	label: string,
+	range: Range,
 	kind?: CompletionKind,
 	detail?: string,
 	documentation?: string,
@@ -47,10 +50,11 @@ export interface CompletionItem {
 	filterText?: string,
 }
 export namespace CompletionItem {
-	export function create(label: string, text: string | undefined, other?: Partial<CompletionItem>): CompletionItem {
+	export function create(label: string, range: RangeLike, text?: string, other?: Partial<CompletionItem>): CompletionItem {
 		return {
 			...other,
 			label,
+			range: Range.get(range),
 			insertText: text,
 		}
 	}
