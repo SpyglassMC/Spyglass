@@ -81,6 +81,7 @@ export namespace toLS {
 			filterText: completion.filterText,
 			sortText: completion.sortText,
 			insertText: completion.insertText,
+			insertTextMode: ls.InsertTextMode.adjustIndentation,
 			insertTextFormat: InsertTextFormat.Snippet,
 			...completion.deprecated ? { tags: [ls.CompletionItemTag.Deprecated] } : {},
 		}
