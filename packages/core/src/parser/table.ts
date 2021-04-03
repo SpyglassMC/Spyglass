@@ -32,14 +32,14 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 			children: [],
 		}
 
-		if (src.peek() === start) {
+		if (src.peek(start.length) === start) {
 			src
-				.skip()
+				.skip(start.length)
 				.skipWhitespace()
 
 			let requiresPairEnd = false
 			let hasPairEnd = false
-			while (src.canRead() && src.peek() !== end) {
+			while (src.canRead() && src.peek(end.length) !== end) {
 				const pairStart = src.cursor
 				let key: K | undefined
 				let value: V | undefined
@@ -64,8 +64,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				// K-V sep.
 				let sepCharRange: Range | undefined = undefined
 				src.skipWhitespace()
-				if (src.peek() === pair.sep) {
-					sepCharRange = Range.create(src, () => src.skip())
+				if (src.peek(pair.sep.length) === pair.sep) {
+					sepCharRange = Range.create(src, () => src.skip(pair.sep.length))
 				} else {
 					ctx.err.report(localize('expected', [localeQuote(pair.sep)]), src)
 				}
@@ -87,8 +87,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				let endCharRange: Range | undefined = undefined
 				src.skipWhitespace()
 				requiresPairEnd = true
-				if (hasPairEnd = src.peek() === pair.end) {
-					endCharRange = Range.create(src, () => src.skip())
+				if (hasPairEnd = src.peek(pair.end.length) === pair.end) {
+					endCharRange = Range.create(src, () => src.skip(pair.end.length))
 				}
 
 				// Create pair.
@@ -111,8 +111,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 			}
 
 			// End.
-			if (src.peek() === end) {
-				src.skip()
+			if (src.peek(end.length) === end) {
+				src.skip(end.length)
 			} else {
 				ctx.err.report(localize('expected', [localeQuote(end)]), src)
 			}

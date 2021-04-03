@@ -1,6 +1,5 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { AstNode } from '../node'
-import type { ListNode } from '../node/ItemNode'
+import type { AstNode, ListNode } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
@@ -25,14 +24,14 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 			children: [],
 		}
 
-		if (src.peek() === start) {
+		if (src.peek(start.length) === start) {
 			src
-				.skip()
+				.skip(start.length)
 				.skipWhitespace()
 
 			let requiresValueSep = false
 			let hasValueSep = false
-			while (src.canRead() && src.peek() !== end) {
+			while (src.canRead() && src.peek(end.length) !== end) {
 				const itemStart = src.cursor
 				let valueNode: V | undefined
 
@@ -58,8 +57,8 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				let sepRange: Range | undefined = undefined
 				src.skipWhitespace()
 				requiresValueSep = true
-				if (hasValueSep = src.peek() === sep) {
-					sepRange = Range.create(src, () => src.skip())
+				if (hasValueSep = src.peek(sep.length) === sep) {
+					sepRange = Range.create(src, () => src.skip(sep.length))
 				}
 
 				// Create item.
@@ -79,8 +78,8 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 			}
 
 			// End.
-			if (src.peek() === end) {
-				src.skip()
+			if (src.peek(end.length) === end) {
+				src.skip(end.length)
 			} else {
 				ctx.err.report(localize('expected', [localeQuote(end)]), src)
 			}
