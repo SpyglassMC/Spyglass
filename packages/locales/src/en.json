@@ -105,6 +105,8 @@
 	"objective": "an objective",
 	"objective-not-following-convention": "Invalid objective %0% which doesn't follow %1% convention",
 	"parser.float.exponent-disallowed": "Exponent disallowed",
+	"parser.list.value": "a value",
+	"parser.list.trailing-sep": "Trailing separation",
 	"parser.table.key": "a key",
 	"parser.table.value": "a value",
 	"parser.table.trailing-end": "Trailing separation",
