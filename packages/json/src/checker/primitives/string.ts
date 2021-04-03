@@ -1,5 +1,6 @@
 import { ErrorSeverity } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { Categories } from '../../binder'
 import type { JsonAstNode } from '../../node'
 import { JsonStringAstNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
@@ -11,8 +12,6 @@ export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
 	}
 }
 
-const referenceable = new Set(['predicate', 'tags/blocks', 'tags/entity_types', 'tags/fluids', 'tags/functions', 'tags/game_events', 'tags/items', ''])
-
 export function resource(id: string | string[], allowTag = false): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
 		node.expectation = { type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }
@@ -20,7 +19,7 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof id === 'string') {
-			if (referenceable.has(id)) {
+			if (Categories.has(id)) {
 				reference(node, ctx, id)
 			} else {
 				const normalized = node.value.replace(/^minecraft:/, '')

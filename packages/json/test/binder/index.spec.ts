@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { dissectUri } from '../lib/util'
+import { dissectUri } from '../../lib/binder'
 
 describe('dissectUri()', () => {
 	const suites: { uri: string }[] = [

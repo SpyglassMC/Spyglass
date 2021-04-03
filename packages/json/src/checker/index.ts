@@ -1,7 +1,7 @@
 import type { Checker, CheckerContext as CoreCheckerContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
+import { dissectUri } from '../binder'
 import type { JsonAstNode } from '../node'
-import { dissectUri } from '../util'
 import { Checkers } from './data'
 import { pack_mcmeta } from './data/pack_mcmeta'
 
