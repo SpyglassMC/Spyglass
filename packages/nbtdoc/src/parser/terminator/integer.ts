@@ -5,9 +5,7 @@ import * as core from '@spyglassmc/core'
  * @param isUnsigned Defaults to `false`.
  */
 export function integer(isUnsigned = false): InfallibleParser<IntegerNode> {
-	return core.integer({
-		leadingZeros: false,
-		minusSign: !isUnsigned,
-		plusSign: false,
-	})
+	return isUnsigned
+		? core.integer({ pattern: /^(?:0|[1-9][0-9]*)$/ })
+		: core.integer({ pattern: /^-?(?:0|[1-9][0-9]*)$/ })
 }

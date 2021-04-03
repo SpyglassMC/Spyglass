@@ -47,9 +47,9 @@ exports['integer(unsigned = true) Parse "-1" 1'] = {
     {
       "range": {
         "start": 0,
-        "end": 1
+        "end": 2
       },
-      "message": "Minus sign (“-”) disallowed",
+      "message": "Illegal integer that doesn't follow /^(?:0|[1-9][0-9]*)$/",
       "severity": 3
     }
   ]

@@ -1,33 +1,4 @@
-exports['integer() integer(allowsEmpty) integer(allowsEmpty=true) Parse "" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "value": "0"
-  },
-  "errors": []
-}
-
-exports['integer() integer(allowsEmpty) integer(allowsEmpty=true) Parse "-" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "0"
-  },
-  "errors": []
-}
-
-exports['integer() integer(failsOnEmpty) integer(failsOnEmpty=true) Parse "" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "" 1'] = {
+exports['integer() integer() integer() Parse "" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -48,12 +19,12 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
   ]
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "+0" 1'] = {
+exports['integer() integer() integer() Parse "+" 1'] = {
   "node": {
     "type": "integer",
     "range": {
       "start": 0,
-      "end": 2
+      "end": 1
     },
     "value": "0"
   },
@@ -63,13 +34,13 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
         "start": 0,
         "end": 1
       },
-      "message": "Plus sign (“+”) disallowed",
+      "message": "Illegal integer that doesn't follow /^[+-]?(?:0|[1-9][0-9]*)$/",
       "severity": 3
     }
   ]
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "+1" 1'] = {
+exports['integer() integer() integer() Parse "+1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -78,69 +49,10 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
     },
     "value": "1"
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Plus sign (“+”) disallowed",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "-" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "0"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Minus sign (“-”) disallowed",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected a number",
-      "severity": 3
-    }
-  ]
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "-0" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "value": "0"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Minus sign (“-”) disallowed",
-      "severity": 3
-    }
-  ]
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "-1" 1'] = {
+exports['integer() integer() integer() Parse "-1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -149,31 +61,22 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
     },
     "value": "-1"
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Minus sign (“-”) disallowed",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "0" 1'] = {
+exports['integer() integer() integer() Parse "-123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
       "start": 0,
-      "end": 1
+      "end": 4
     },
-    "value": "0"
+    "value": "-123"
   },
   "errors": []
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "0123" 1'] = {
+exports['integer() integer() integer() Parse "0123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -188,25 +91,13 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
         "start": 0,
         "end": 4
       },
-      "message": "Leading zeros disallowed",
+      "message": "Illegal integer that doesn't follow /^[+-]?(?:0|[1-9][0-9]*)$/",
       "severity": 3
     }
   ]
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "1" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "1"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "123" 1'] = {
+exports['integer() integer() integer() Parse "123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -218,7 +109,7 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
   "errors": []
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, false, false) Parse "foo" 1'] = {
+exports['integer() integer() integer() Parse "foo" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -239,52 +130,12 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(false, fal
   ]
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "value": "0"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an integer",
-      "severity": 3
-    }
-  ]
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "+0" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "value": "0"
-  },
+exports['integer() integer(failsOnEmpty) integer(failsOnEmpty=true) Parse "" 1'] = {
+  "node": "FAILURE",
   "errors": []
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "+1" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "value": "1"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "-" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -299,127 +150,13 @@ exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true
         "start": 0,
         "end": 1
       },
-      "message": "Expected a number",
+      "message": "Test message!",
       "severity": 3
     }
   ]
 }
 
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "-0" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "value": "0"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "-1" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 2
-    },
-    "value": "-1"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "0" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "0"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "0123" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 4
-    },
-    "value": "123"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "1" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "1"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "123" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 3
-    },
-    "value": "123"
-  },
-  "errors": []
-}
-
-exports['integer() integer(leadingZeros, minusSign, plusSign) integer(true, true, true) Parse "foo" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "value": "0"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected an integer",
-      "severity": 3
-    }
-  ]
-}
-
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, 6, 2) Parse "0" 1'] = {
-  "node": {
-    "type": "integer",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": "0"
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected an integer between 1 and 6",
-      "severity": 2
-    }
-  ]
-}
-
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, 6, 2) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -431,7 +168,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(1, 6, 2) Parse 
   "errors": []
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, 6, 2) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -446,13 +183,13 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(1, 6, 2) Parse 
         "start": 0,
         "end": 1
       },
-      "message": "Expected an integer between 1 and 6",
-      "severity": 2
+      "message": "Test message!",
+      "severity": 3
     }
   ]
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, undefined) Parse "0" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -473,7 +210,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, u
   ]
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, undefined) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -485,7 +222,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, u
   "errors": []
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, undefined) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -497,7 +234,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(1, undefined, u
   "errors": []
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(undefined, 6, undefined) Parse "0" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -509,7 +246,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(undefined, 6, u
   "errors": []
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(undefined, 6, undefined) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -521,7 +258,7 @@ exports['integer() integer(min, max, outOfRangeSeverity) integer(undefined, 6, u
   "errors": []
 }
 
-exports['integer() integer(min, max, outOfRangeSeverity) integer(undefined, 6, undefined) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {

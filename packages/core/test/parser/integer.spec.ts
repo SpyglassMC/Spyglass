@@ -1,30 +1,28 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { ErrorSeverity, integer } from '../../lib'
+import { integer } from '../../lib'
 import type { Options } from '../../lib/parser/integer'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('integer()', () => {
-	describe('integer(leadingZeros, minusSign, plusSign)', () => {
+	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/
+
+	describe('integer()', () => {
 		const options: Options[] = [
-			{ leadingZeros: true, minusSign: true, plusSign: true },
-			{ leadingZeros: false, minusSign: false, plusSign: false },
+			{ pattern },
 		]
 		const cases: { content: string }[] = [
 			{ content: '' },
 			{ content: 'foo' },
-			{ content: '-' },
-			{ content: '-0' },
-			{ content: '0' },
-			{ content: '+0' },
-			{ content: '-1' },
-			{ content: '1' },
+			{ content: '+' },
 			{ content: '+1' },
+			{ content: '-1' },
 			{ content: '123' },
+			{ content: '-123' },
 			{ content: '0123' },
 		]
 		for (const option of options) {
-			describe(`integer(${option.leadingZeros}, ${option.minusSign}, ${option.plusSign})`, () => {
+			describe('integer()', () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = integer(option as any)
@@ -38,32 +36,17 @@ describe('integer()', () => {
 	describe('integer(failsOnEmpty)', () => {
 		describe('integer(failsOnEmpty=true)', () => {
 			it('Parse ""', () => {
-				const parser = integer({ leadingZeros: false, minusSign: false, plusSign: false, failsOnEmpty: true })
+				const parser = integer({ pattern, failsOnEmpty: true })
 				snapshot(testParser(parser, ''))
 			})
 		})
 	})
 
-	describe('integer(allowsEmpty)', () => {
-		describe('integer(allowsEmpty=true)', () => {
-			const cases: { content: string }[] = [
-				{ content: '' },
-				{ content: '-' },
-			]
-			for (const { content } of cases) {
-				it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-					const parser = integer({ leadingZeros: true, minusSign: true, plusSign: true, allowsEmpty: true })
-					snapshot(testParser(parser, content))
-				})
-			}
-		})
-	})
-
-	describe('integer(min, max, outOfRangeSeverity)', () => {
+	describe('integer(min, max, onOutOfRange)', () => {
 		const options: Options[] = [
-			{ leadingZeros: false, minusSign: false, plusSign: false, min: BigInt(1) },
-			{ leadingZeros: false, minusSign: true, plusSign: false, max: BigInt(6) },
-			{ leadingZeros: false, minusSign: false, plusSign: true, min: BigInt(1), max: BigInt(6), outOfRangeSeverity: ErrorSeverity.Warning },
+			{ pattern, min: BigInt(1) },
+			{ pattern, max: BigInt(6) },
+			{ pattern, min: BigInt(1), max: BigInt(6), onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans) },
 		]
 		const cases: { content: string }[] = [
 			{ content: '0' },
@@ -71,7 +54,7 @@ describe('integer()', () => {
 			{ content: '9' },
 		]
 		for (const option of options) {
-			describe(`integer(${option.min}, ${option.max}, ${option.outOfRangeSeverity})`, () => {
+			describe(`integer(${option.min}, ${option.max}, ${option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = integer(option as any)

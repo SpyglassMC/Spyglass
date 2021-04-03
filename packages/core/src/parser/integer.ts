@@ -1,4 +1,4 @@
-import { localeQuote, localize } from '@spyglassmc/locales'
+import { localize } from '@spyglassmc/locales'
 import type { IntegerNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
 import { ErrorSeverity, Range, Source } from '../source'
@@ -6,6 +6,7 @@ import type { InfallibleParser, Parser, Result } from './Parser'
 import { Failure } from './Parser'
 
 interface OptionsBase {
+	pattern: RegExp,
 	/**
 	 * Inclusive.
 	 */
@@ -14,14 +15,12 @@ interface OptionsBase {
 	 * Inclusive.
 	 */
 	max?: bigint,
-	allowsEmpty?: boolean,
 	/**
-	 * @default ErrorSeverity.Error
+	 * A callback function that will be called when the numeral value is out of range.
+	 * 
+	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	outOfRangeSeverity?: ErrorSeverity,
-	leadingZeros: boolean,
-	minusSign: boolean,
-	plusSign: boolean,
+	onOutOfRange?: (ans: IntegerNode, src: Source, ctx: ParserContext, options: Options) => void,
 }
 
 interface FallibleOptions extends OptionsBase {
@@ -35,6 +34,14 @@ interface InfallibleOptions extends OptionsBase {
 /** @internal For test only */
 export type Options = FallibleOptions | InfallibleOptions
 
+const fallbackOnOutOfRange = (ans: IntegerNode, _src: Source, ctx: ParserContext, options: Options) => {
+	ctx.err.report(
+		localize('expected', [localize('integer.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
+		ans,
+		ErrorSeverity.Error
+	)
+}
+
 export function integer(options: InfallibleOptions): InfallibleParser<IntegerNode>
 export function integer(options: FallibleOptions): Parser<IntegerNode>
 export function integer(options: Options): Parser<IntegerNode> {
@@ -45,50 +52,35 @@ export function integer(options: Options): Parser<IntegerNode> {
 			value: BigInt(0),
 		}
 
-		if (src.peek() === '-') {
-			if (!options.minusSign) {
-				ctx.err.report(localize('parser.number.minus-sign-disallowed', [localeQuote('-')]), src.nextCharRange)
-			}
-			src.skip()
-		} else if (src.peek() === '+') {
-			if (!options.plusSign) {
-				ctx.err.report(localize('parser.number.plus-sign-disallowed', [localeQuote('+')]), src.nextCharRange)
-			}
+		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
 		}
 
-		const hasLeadingZeros = src.peek() === '0' && Source.isDigit(src.peek(1, 1))
 		while (src.canRead() && Source.isDigit(src.peek())) {
 			src.skip()
 		}
 
 		ans.range.end = src.cursor
 		const raw = src.slice(ans.range)
+
+		let errorOccurred = false
 		try {
 			ans.value = BigInt(raw)
 		} catch (_) {
 			// `raw` might be "+" or "-" here.
-			if (!options.allowsEmpty) {
-				ctx.err.report(localize('expected', [localize('number')]), ans)
-			}
+			errorOccurred = true
 		}
 
-		if (!raw && !options.allowsEmpty) {
+		if (!raw) {
 			if (options.failsOnEmpty) {
 				return Failure
 			}
 			ctx.err.report(localize('expected', [localize('integer')]), ans)
-		} else {
-			if (!options.leadingZeros && hasLeadingZeros) {
-				ctx.err.report(localize('parser.number.leading-zeros'), ans)
-			}
-			if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
-				ctx.err.report(
-					localize('expected', [localize('integer.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
-					ans,
-					options.outOfRangeSeverity ?? ErrorSeverity.Error
-				)
-			}
+		} else if (!options.pattern.test(raw) || errorOccurred) {
+			ctx.err.report(localize('parser.integer.illegal', [options.pattern.toString()]), ans)
+		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
+			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
+			onOutOfRange(ans, src, ctx, options)
 		}
 
 		return ans

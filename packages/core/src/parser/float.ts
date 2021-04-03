@@ -1,14 +1,12 @@
 import { localize } from '@spyglassmc/locales'
 import type { FloatNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
-import type { Source } from '../source'
-import { ErrorSeverity, Range } from '../source'
-import { integer } from './integer'
+import { ErrorSeverity, Range, Source } from '../source'
 import type { InfallibleParser } from './Parser'
-import { Failure } from './Parser'
 
 /** @internal For test only */
 export interface Options {
+	pattern: RegExp,
 	/**
 	 * Inclusive.
 	 */
@@ -18,21 +16,20 @@ export interface Options {
 	 */
 	max?: number,
 	/**
-	 * @default ErrorSeverity.Error
+	 * A callback function that will be called when the numeral value is out of range.
+	 * 
+	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	outOfRangeSeverity?: ErrorSeverity,
-	emptyBeforeDecimalSeparator: boolean,
-	emptyAfterDecimalSeparator: boolean,
-	exponent?: {
-		leadingZeros: boolean,
-		minusSign: boolean,
-		plusSign: boolean,
-	},
-	leadingZeros: boolean,
-	minusSign: boolean,
-	plusSign: boolean,
+	onOutOfRange?: (ans: FloatNode, src: Source, ctx: ParserContext, options: Options) => void,
 }
 
+const fallbackOnOutOfRange = (ans: FloatNode, _src: Source, ctx: ParserContext, options: Options) => {
+	ctx.err.report(
+		localize('expected', [localize('float.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
+		ans,
+		ErrorSeverity.Error
+	)
+}
 
 export function float(options: Options): InfallibleParser<FloatNode> {
 	return (src: Source, ctx: ParserContext): FloatNode => {
@@ -42,45 +39,27 @@ export function float(options: Options): InfallibleParser<FloatNode> {
 			value: 0,
 		}
 
-		const beforeSep = integer({
-			leadingZeros: options.leadingZeros,
-			minusSign: options.minusSign,
-			plusSign: options.plusSign,
-			allowsEmpty: options.emptyBeforeDecimalSeparator && src.peek() === '.',
-			failsOnEmpty: true,
-		})(src, ctx)
-		if (beforeSep === Failure) {
-			ctx.err.report(localize('expected', [localize('number')]), src)
+		if (src.peek() === '-' || src.peek() === '+') {
+			src.skip()
+		}
+		while (src.canRead() && Source.isDigit(src.peek())) {
+			src.skip()
 		}
 
 		if (src.peek() === '.') {
 			src.skip()
-			const afterSep = integer({
-				leadingZeros: true,
-				minusSign: false,
-				plusSign: false,
-				allowsEmpty: options.emptyAfterDecimalSeparator,
-				failsOnEmpty: true,
-			})(src, ctx)
-			if (afterSep === Failure) {
-				ctx.err.report(localize('expected', [localize('number')]), src)
+			while (src.canRead() && Source.isDigit(src.peek())) {
+				src.skip()
 			}
 		}
 
 		if (src.peek().toLowerCase() === 'e') {
-			const exponentStart = src.cursor
 			src.skip()
-			const exponent = integer({
-				leadingZeros: options.exponent?.leadingZeros ?? true,
-				minusSign: options.exponent?.minusSign ?? true,
-				plusSign: options.exponent?.plusSign ?? true,
-				allowsEmpty: !options.exponent,
-				failsOnEmpty: true,
-			})(src, ctx)
-			if (exponent === Failure) {
-				ctx.err.report(localize('expected', [localize('number')]), src)
-			} else if (!options.exponent) {
-				ctx.err.report(localize('parser.float.exponent-disallowed'), Range.create(exponentStart, src))
+			if (src.peek() === '-' || src.peek() === '+') {
+				src.skip()
+			}
+			while (src.canRead() && Source.isDigit(src.peek())) {
+				src.skip()
 			}
 		}
 
@@ -88,12 +67,13 @@ export function float(options: Options): InfallibleParser<FloatNode> {
 		const raw = src.slice(ans.range)
 		ans.value = parseFloat(raw) || 0
 
-		if (raw && (options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
-			ctx.err.report(
-				localize('expected', [localize('float.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
-				ans,
-				options.outOfRangeSeverity ?? ErrorSeverity.Error
-			)
+		if (!raw) {
+			ctx.err.report(localize('expected', [localize('float')]), ans)
+		} else if (!options.pattern.test(raw)) {
+			ctx.err.report(localize('parser.float.illegal', [options.pattern.toString()]), ans)
+		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
+			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
+			onOutOfRange(ans, src, ctx, options)
 		}
 
 		return ans

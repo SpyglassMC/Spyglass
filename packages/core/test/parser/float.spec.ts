@@ -1,14 +1,14 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { ErrorSeverity, float } from '../../lib'
+import { float } from '../../lib'
 import type { Options } from '../../lib/parser/float'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('float()', () => {
-	describe('float(leadingZeros, minusSign, plusSign, emptyBeforeDecimalSeparator, emptyAfterDecimalSeparator, exponent)', () => {
+	const pattern = /[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?/i
+	describe('float()', () => {
 		const options: Options[] = [
-			{ leadingZeros: true, minusSign: true, plusSign: true, emptyBeforeDecimalSeparator: true, emptyAfterDecimalSeparator: true, exponent: { leadingZeros: true, minusSign: true, plusSign: true } },
-			{ leadingZeros: false, minusSign: false, plusSign: false, emptyBeforeDecimalSeparator: false, emptyAfterDecimalSeparator: false },
+			{ pattern },
 		]
 		const cases: { content: string }[] = [
 			{ content: '' },
@@ -19,7 +19,7 @@ describe('float()', () => {
 			{ content: '7e+3' },
 		]
 		for (const option of options) {
-			describe(`float(${option.leadingZeros}, ${option.minusSign}, ${option.plusSign}, ${option.emptyBeforeDecimalSeparator}, ${option.emptyAfterDecimalSeparator}, ${JSON.stringify(option.exponent)})`, () => {
+			describe('float()', () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = float(option)
@@ -30,11 +30,11 @@ describe('float()', () => {
 		}
 	})
 
-	describe('float(min, max, outOfRangeSeverity)', () => {
+	describe('float(min, max, onOutOfRange)', () => {
 		const options: Options[] = [
-			{ leadingZeros: false, minusSign: false, plusSign: false, emptyBeforeDecimalSeparator: false, emptyAfterDecimalSeparator: false, min: 1 },
-			{ leadingZeros: false, minusSign: false, plusSign: false, emptyBeforeDecimalSeparator: false, emptyAfterDecimalSeparator: false,  max: 6 },
-			{ leadingZeros: false, minusSign: false, plusSign: false, emptyBeforeDecimalSeparator: false, emptyAfterDecimalSeparator: false, min: 1, max: 6, outOfRangeSeverity: ErrorSeverity.Warning },
+			{ pattern, min: 1 },
+			{ pattern, max: 6 },
+			{ pattern, min: 1, max: 6, onOutOfRange: (ans, _src, ctx) => ctx.err.report('Testing MESSAGE', ans) },
 		]
 		const cases: { content: string }[] = [
 			{ content: '0.0' },
@@ -42,7 +42,7 @@ describe('float()', () => {
 			{ content: '9.0' },
 		]
 		for (const option of options) {
-			describe(`float(${option.min}, ${option.max}, ${option.outOfRangeSeverity})`, () => {
+			describe(`float(${option.min}, ${option.max}, ${option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = float(option as any)
