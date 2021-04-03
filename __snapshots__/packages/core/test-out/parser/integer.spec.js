@@ -135,7 +135,7 @@ exports['integer() integer(failsOnEmpty) integer(failsOnEmpty=true) Parse "" 1']
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "0" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -156,7 +156,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=
   ]
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -168,7 +168,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=>{cov_22z6b7mr12().f[9]++;cov_22z6b7mr12().s[25]++;return ctx.err.report(\'Test message!\',ans);}) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -189,7 +189,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, (ans,_src,ctx)=
   ]
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "0" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -210,7 +210,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefin
   ]
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -222,7 +222,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefin
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefined) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -234,7 +234,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, undefin
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "0" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -246,7 +246,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefin
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "3" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "3" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -258,7 +258,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefin
   "errors": []
 }
 
-exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, undefined) Parse "9" 1'] = {
+exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) Parse "9" 1'] = {
   "node": {
     "type": "integer",
     "range": {
