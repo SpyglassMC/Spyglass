@@ -42,7 +42,7 @@ describe('float()', () => {
 			{ content: '9.0' },
 		]
 		for (const option of options) {
-			describe(`float(${option.min}, ${option.max}, ${option.onOutOfRange})`, () => {
+			describe(`float(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = float(option as any)

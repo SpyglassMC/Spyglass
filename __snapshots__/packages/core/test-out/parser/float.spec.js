@@ -115,7 +115,7 @@ exports['float() float() float() Parse "foo" 1'] = {
   ]
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_1ydeszz2j5().f[6]++;cov_1ydeszz2j5().s[20]++;return ctx.err.report(\'Testing MESSAGE\',ans);}) Parse "0.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, 6, true) Parse "0.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -136,7 +136,7 @@ exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_
   ]
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_1ydeszz2j5().f[6]++;cov_1ydeszz2j5().s[20]++;return ctx.err.report(\'Testing MESSAGE\',ans);}) Parse "3.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, 6, true) Parse "3.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -148,7 +148,7 @@ exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_
   "errors": []
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_1ydeszz2j5().f[6]++;cov_1ydeszz2j5().s[20]++;return ctx.err.report(\'Testing MESSAGE\',ans);}) Parse "9.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, 6, true) Parse "9.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -169,7 +169,7 @@ exports['float() float(min, max, onOutOfRange) float(1, 6, (ans,_src,ctx)=>{cov_
   ]
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Parse "0.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, undefined, false) Parse "0.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -190,7 +190,7 @@ exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Pa
   ]
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Parse "3.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, undefined, false) Parse "3.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -202,7 +202,7 @@ exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Pa
   "errors": []
 }
 
-exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Parse "9.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(1, undefined, false) Parse "9.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -214,7 +214,7 @@ exports['float() float(min, max, onOutOfRange) float(1, undefined, undefined) Pa
   "errors": []
 }
 
-exports['float() float(min, max, onOutOfRange) float(undefined, 6, undefined) Parse "0.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(undefined, 6, false) Parse "0.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -226,7 +226,7 @@ exports['float() float(min, max, onOutOfRange) float(undefined, 6, undefined) Pa
   "errors": []
 }
 
-exports['float() float(min, max, onOutOfRange) float(undefined, 6, undefined) Parse "3.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(undefined, 6, false) Parse "3.0" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -238,7 +238,7 @@ exports['float() float(min, max, onOutOfRange) float(undefined, 6, undefined) Pa
   "errors": []
 }
 
-exports['float() float(min, max, onOutOfRange) float(undefined, 6, undefined) Parse "9.0" 1'] = {
+exports['float() float(min, max, onOutOfRange) float(undefined, 6, false) Parse "9.0" 1'] = {
   "node": {
     "type": "float",
     "range": {

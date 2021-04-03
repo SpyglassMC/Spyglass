@@ -54,7 +54,7 @@ describe('integer()', () => {
 			{ content: '9' },
 		]
 		for (const option of options) {
-			describe(`integer(${option.min}, ${option.max}, ${option.onOutOfRange})`, () => {
+			describe(`integer(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = integer(option as any)
