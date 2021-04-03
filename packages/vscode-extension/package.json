@@ -88,6 +88,12 @@
         "configuration": "./language-configuration.json"
       },
       {
+        "id": "nbt",
+        "extensions": [
+          ".snbt"
+        ]
+      },
+      {
         "id": "nbtdoc",
         "extensions": [
           ".nbtdoc"

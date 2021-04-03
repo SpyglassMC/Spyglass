@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as locales from '@spyglassmc/locales'
+import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as chokidar from 'chokidar'
 import * as ls from 'vscode-languageserver/node'
@@ -15,6 +16,7 @@ if (process.argv.length === 2) {
 }
 
 nbtdoc.initializeNbtdoc()
+nbt.initializeNbt()
 json.initializeJson()
 
 const connection = ls.createConnection()

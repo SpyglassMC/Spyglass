@@ -170,12 +170,16 @@ export class Source {
 		return c >= '0' && c <= '9'
 	}
 
-	static isSpace(c: string): c is Space {
-		return c === ' ' || c === '\t'
+	static isBrigadierQuote(c: string): c is '"' | "'" {
+		return c === '"' || c === "'"
 	}
 
 	static isNewline(c: string): c is Newline {
 		return c === '\r\n' || c === '\r' || c === '\n'
+	}
+
+	static isSpace(c: string): c is Space {
+		return c === ' ' || c === '\t'
 	}
 
 	static isWhitespace(c: string): c is Whitespace {

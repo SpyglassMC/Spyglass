@@ -164,3 +164,11 @@ export function string(options: Options): InfallibleParser<StringNode> {
 		return ans
 	}
 }
+
+export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]+$/
+
+export const brigadierString = string({
+	escapable: {},
+	quotes: ['"', '"'],
+	unquotable: BrigadierUnquotablePattern,
+})

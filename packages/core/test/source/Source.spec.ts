@@ -233,18 +233,15 @@ describe('Source', () => {
 		}
 	})
 	describe('static', () => {
-		describe('isSpace()', () => {
+		describe('isBrigadierQuote()', () => {
 			const suites: { c: string, expected: boolean }[] = [
-				{ c: ' ', expected: true },
-				{ c: '\t', expected: true },
-				{ c: '\r\n', expected: false },
-				{ c: '\r', expected: false },
-				{ c: '\n', expected: false },
-				{ c: 'A', expected: false },
+				{ c: ' ', expected: false },
+				{ c: '"', expected: true },
+				{ c: "'", expected: true },
 			]
 			for (const { c, expected } of suites) {
 				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
-					const actual = Source.isSpace(c)
+					const actual = Source.isBrigadierQuote(c)
 					assert.strictEqual(actual, expected)
 				})
 			}
@@ -261,6 +258,22 @@ describe('Source', () => {
 			for (const { c, expected } of suites) {
 				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
 					const actual = Source.isNewline(c)
+					assert.strictEqual(actual, expected)
+				})
+			}
+		})
+		describe('isSpace()', () => {
+			const suites: { c: string, expected: boolean }[] = [
+				{ c: ' ', expected: true },
+				{ c: '\t', expected: true },
+				{ c: '\r\n', expected: false },
+				{ c: '\r', expected: false },
+				{ c: '\n', expected: false },
+				{ c: 'A', expected: false },
+			]
+			for (const { c, expected } of suites) {
+				it(`Should return ${expected} for '${showWhitespaceGlyph(c)}'`, () => {
+					const actual = Source.isSpace(c)
 					assert.strictEqual(actual, expected)
 				})
 			}

@@ -6,11 +6,14 @@ import { Range } from '../source'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser'
 import { Failure } from './Parser'
 
-export type AttemptResult<N extends Returnable = AstNode> = {
+export interface AttemptResult<N extends Returnable = AstNode> {
 	result: Result<N>,
 	updateSrcAndCtx: () => void,
 	endCursor: number,
 	errorAmount: number,
+}
+interface InfallibleAttemptResult<N extends Returnable = AstNode> extends AttemptResult<N> {
+	result: N,
 }
 
 /**
@@ -19,6 +22,8 @@ export type AttemptResult<N extends Returnable = AstNode> = {
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
  */
+export function attempt<N extends Returnable = AstNode>(parser: InfallibleParser<N>, src: Source, ctx: ParserContext): InfallibleAttemptResult<N> 
+export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> 
 export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
