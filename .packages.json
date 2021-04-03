@@ -15,6 +15,7 @@
 			"core",
 			"json",
 			"locales",
+			"nbt",
 			"nbtdoc"
 		]
 	},
