@@ -2,8 +2,8 @@ import assert from 'assert'
 import fg from 'fast-glob'
 import fs from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Categories } from '../../lib/binder'
 import { Checkers } from '../../lib/checker/data'
-import { Categories } from '../../lib/util'
 import { testChecker } from '../utils'
 
 describe('Check vanilla files', async () => {
