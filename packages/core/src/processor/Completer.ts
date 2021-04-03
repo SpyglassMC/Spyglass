@@ -1,7 +1,7 @@
 import type { AstNode } from '../node'
 import type { CompleterContext } from '../service'
 
-export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionToken[]
+export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionItem[]
 
 /* istanbul ignore next */
 export const FallbackCompleter: Completer<any> = () => []
@@ -36,7 +36,7 @@ export const enum CompletionKind {
 	TypeParameter = 25,
 }
 
-export interface CompletionToken {
+export interface CompletionItem {
 	label: string,
 	kind?: CompletionKind,
 	detail?: string,
@@ -46,8 +46,8 @@ export interface CompletionToken {
 	sortText?: string,
 	filterText?: string,
 }
-export namespace CompletionToken {
-	export function create(label: string, text: string | undefined, other?: Partial<CompletionToken>): CompletionToken {
+export namespace CompletionItem {
+	export function create(label: string, text: string | undefined, other?: Partial<CompletionItem>): CompletionItem {
 		return {
 			...other,
 			label,

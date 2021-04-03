@@ -72,7 +72,7 @@ export namespace toLS {
 		return ans
 	}
 
-	export function completionItem(completion: core.CompletionToken): ls.CompletionItem {
+	export function completionItem(completion: core.CompletionItem): ls.CompletionItem {
 		const ans: ls.CompletionItem = {
 			label: completion.label,
 			kind: completion.kind,
