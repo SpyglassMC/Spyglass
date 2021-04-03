@@ -21,6 +21,7 @@ describe('Check vanilla files', async () => {
 				const text = fs.readFileSync(file, 'utf-8')
 				const result = testChecker(checker, text)
 				const errors = result.parserErrors.concat(result.checkerErrors)
+					.filter(e => !e.message.endsWith('does not exist'))
 				if (errors.length === 0) return
 
 				passing = false
