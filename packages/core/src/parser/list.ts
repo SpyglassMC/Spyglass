@@ -65,7 +65,8 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				ans.children.push({
 					type: 'item',
 					range: Range.create(itemStart, src),
-					children: [valueNode].filter((v): v is V => !!v),
+					... valueNode ? { children: [valueNode] } : {},
+					value: valueNode,
 					sep: sepRange,
 				})
 

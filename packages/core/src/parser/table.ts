@@ -95,7 +95,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				ans.children.push({
 					type: 'pair',
 					range: Range.create(pairStart, src),
-					... (key || value) ? { children: [key, value].filter((v): v is K | V => !!v) } : {},
+					... (key || value) ? { children: [key, value].filter(v => !!v) as [K, V] | [K] | [V] } : {},
 					key,
 					sep: sepCharRange,
 					value,

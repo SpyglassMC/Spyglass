@@ -6,6 +6,7 @@ export interface ListNode<V extends AstNode> extends AstNode {
 }
 
 export interface ItemNode<V extends AstNode> extends AstNode {
+	readonly children?: [V],
 	readonly value?: V,
 	readonly sep?: Range,
 }

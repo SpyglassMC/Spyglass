@@ -6,6 +6,7 @@ export interface TableNode<K extends AstNode, V extends AstNode> extends AstNode
 }
 
 export interface PairNode<K extends AstNode, V extends AstNode> extends AstNode {
+	readonly children?: [K, V] | [K] | [V],
 	readonly key?: K,
 	readonly sep?: Range,
 	readonly value?: V,
