@@ -1325,6 +1325,144 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
   ]
 }
 
+exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
+  "node": {
+    "type": "table",
+    "range": {
+      "start": 0,
+      "end": 19
+    },
+    "children": [
+      {
+        "type": "pair",
+        "range": {
+          "start": 2,
+          "end": 3
+        },
+        "end": {
+          "start": 2,
+          "end": 3
+        }
+      },
+      {
+        "type": "pair",
+        "range": {
+          "start": 4,
+          "end": 18
+        },
+        "children": [
+          {
+            "type": "string",
+            "range": {
+              "start": 4,
+              "end": 9
+            },
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 5,
+                "end": 8
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
+          },
+          {
+            "type": "string",
+            "range": {
+              "start": 12,
+              "end": 17
+            },
+            "value": "bar",
+            "valueMap": {
+              "outerRange": {
+                "start": 13,
+                "end": 16
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
+          }
+        ],
+        "key": {
+          "type": "string",
+          "range": {
+            "start": 4,
+            "end": 9
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 5,
+              "end": 8
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 10,
+          "end": 11
+        },
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 12,
+            "end": 17
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 13,
+              "end": 16
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 2,
+        "end": 2
+      },
+      "message": "Expected a key",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 2,
+        "end": 2
+      },
+      "message": "Expected “:”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 2,
+        "end": 2
+      },
+      "message": "Expected a value",
+      "severity": 3
+    }
+  ]
+}
+
 exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
   "node": {
     "type": "table",
