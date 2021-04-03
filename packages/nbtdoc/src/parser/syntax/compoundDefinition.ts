@@ -2,7 +2,7 @@ import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassm
 import { any, FloatNode, IntegerNode, map, optional, repeat, sequence } from '@spyglassmc/core'
 import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
 import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
-import { float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
+import { fallibleFloat, fallibleInteger, float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
 
@@ -37,17 +37,17 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 /**
  * `Failure` when there is no `@` marker.
  */
-const intRange = _intRange<IntegerNode, IntRangeNode>('nbtdoc:int_range', integer())
+const intRange = _intRange<IntegerNode, IntRangeNode>('nbtdoc:int_range', integer(), fallibleInteger())
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const unsignedRange = _intRange<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true))
+const unsignedRange = _intRange<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true), fallibleInteger(true))
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const floatRange = _intRange<FloatNode, FloatRangeNode>('nbtdoc:float_range', float())
+const floatRange = _intRange<FloatNode, FloatRangeNode>('nbtdoc:float_range', float, fallibleFloat)
 
 const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
 
@@ -56,9 +56,9 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 		any([
 			syntax<CompoundFieldChild>([keyword('boolean')]),
 			syntax<CompoundFieldChild>([keyword('string')]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), punctuation('['), punctuation(']'), optional(unsignedRange)]),
+			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
+			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
+			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
 			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('short'), optional(intRange)]),
 			syntax<CompoundFieldChild>([keyword('int'), optional(intRange)]),
@@ -222,14 +222,14 @@ export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | Compound
 /**
  * `Failure` when there is no `@` marker.
  */
-function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>): Parser<R> {
+function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>, fallibleNumberParser: Parser<T>): Parser<R> {
 	return map(
 		syntax<LiteralToken | T>([
 			marker('@'),
 			any([
 				syntax<LiteralToken | T>([marker('..'), numberParser]),
 				syntax<LiteralToken | T>([numberParser, marker('..')]),
-				syntax<LiteralToken | T>([numberParser, marker('..'), numberParser]),
+				syntax<LiteralToken | T>([numberParser, marker('..'), fallibleNumberParser]),
 				syntax<LiteralToken | T>([numberParser]),
 			]),
 		]),
@@ -271,10 +271,10 @@ const fieldPath = sequence([
 	])),
 ])
 
-const registryIndex: InfallibleParser<RegistryIndexNode> = map(
+const registryIndex: Parser<RegistryIndexNode> = map(
 	syntax<RegistryIndexChild>([
 		minecraftIdentifier(),
-		punctuation('['),
+		marker('['),
 		fieldPath,
 		punctuation(']'),
 	]),

@@ -1,4 +1,30 @@
-exports['integer() Parse "-1" 1'] = {
+exports['nbtdoc fallibleInteger() Parse "" 1'] = {
+  "node": "FAILURE",
+  "errors": []
+}
+
+exports['nbtdoc integer() Parse "" 1'] = {
+  "node": {
+    "type": "integer",
+    "range": {
+      "start": 0,
+      "end": 0
+    },
+    "value": "0"
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected an integer",
+      "severity": 3
+    }
+  ]
+}
+
+exports['nbtdoc integer() Parse "-1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -10,7 +36,7 @@ exports['integer() Parse "-1" 1'] = {
   "errors": []
 }
 
-exports['integer() Parse "0" 1'] = {
+exports['nbtdoc integer() Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -22,7 +48,7 @@ exports['integer() Parse "0" 1'] = {
   "errors": []
 }
 
-exports['integer() Parse "1" 1'] = {
+exports['nbtdoc integer() Parse "1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -34,7 +60,7 @@ exports['integer() Parse "1" 1'] = {
   "errors": []
 }
 
-exports['integer(unsigned = true) Parse "-1" 1'] = {
+exports['nbtdoc integer(unsigned = true) Parse "-1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -55,7 +81,7 @@ exports['integer(unsigned = true) Parse "-1" 1'] = {
   ]
 }
 
-exports['integer(unsigned = true) Parse "0" 1'] = {
+exports['nbtdoc integer(unsigned = true) Parse "0" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -67,7 +93,7 @@ exports['integer(unsigned = true) Parse "0" 1'] = {
   "errors": []
 }
 
-exports['integer(unsigned = true) Parse "1" 1'] = {
+exports['nbtdoc integer(unsigned = true) Parse "1" 1'] = {
   "node": {
     "type": "integer",
     "range": {

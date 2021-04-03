@@ -1,17 +1,31 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { float } from '../../../lib'
+import { fallibleFloat, float } from '../../../lib'
 
-describe('float()', () => {
+describe('nbtdoc float', () => {
 	const suites: { content: string }[] = [
+		{ content: '' },
 		{ content: '-1.4' },
 		{ content: '0' },
 		{ content: '.7e+3' },
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = float()
+			const parser = float
+			snapshot(testParser(parser, content))
+		})
+	}
+})
+
+describe('nbtdoc fallibleFloat', () => {
+	const suites: { content: string }[] = [
+		{ content: '' },
+		{ content: '.7e+3' },
+	]
+	for (const { content } of suites) {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			const parser = fallibleFloat
 			snapshot(testParser(parser, content))
 		})
 	}

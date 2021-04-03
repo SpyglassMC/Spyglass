@@ -7,9 +7,7 @@ import { showWhitespaceGlyph, testParser } from '../utils'
 describe('float()', () => {
 	const pattern = /[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?/i
 	describe('float()', () => {
-		const options: Options[] = [
-			{ pattern },
-		]
+		const option: Options = { pattern }
 		const cases: { content: string }[] = [
 			{ content: '' },
 			{ content: 'foo' },
@@ -18,14 +16,10 @@ describe('float()', () => {
 			{ content: '1.0045' },
 			{ content: '7e+3' },
 		]
-		for (const option of options) {
-			describe('float()', () => {
-				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-						const parser = float(option)
-						snapshot(testParser(parser, content))
-					})
-				}
+		for (const { content } of cases) {
+			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				const parser = float(option as any)
+				snapshot(testParser(parser, content))
 			})
 		}
 	})
@@ -49,6 +43,20 @@ describe('float()', () => {
 						snapshot(testParser(parser, content))
 					})
 				}
+			})
+		}
+	})
+
+	describe('float(failsOnEmpty = true)', () => {
+		const option: Options = { pattern, failsOnEmpty: true }
+		const cases: { content: string }[] = [
+			{ content: '' },
+			{ content: '7e+3' },
+		]
+		for (const { content } of cases) {
+			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				const parser = float(option as any)
+				snapshot(testParser(parser, content))
 			})
 		}
 	})

@@ -1,4 +1,4 @@
-exports['float() float() float() Parse "" 1'] = {
+exports['float() float() Parse "" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -19,7 +19,7 @@ exports['float() float() float() Parse "" 1'] = {
   ]
 }
 
-exports['float() float() float() Parse ".E" 1'] = {
+exports['float() float() Parse ".E" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -40,7 +40,7 @@ exports['float() float() float() Parse ".E" 1'] = {
   ]
 }
 
-exports['float() float() float() Parse "1.0045" 1'] = {
+exports['float() float() Parse "1.0045" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -52,7 +52,7 @@ exports['float() float() float() Parse "1.0045" 1'] = {
   "errors": []
 }
 
-exports['float() float() float() Parse "123" 1'] = {
+exports['float() float() Parse "123" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -73,7 +73,7 @@ exports['float() float() float() Parse "123" 1'] = {
   ]
 }
 
-exports['float() float() float() Parse "7e+3" 1'] = {
+exports['float() float() Parse "7e+3" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -94,7 +94,7 @@ exports['float() float() float() Parse "7e+3" 1'] = {
   ]
 }
 
-exports['float() float() float() Parse "foo" 1'] = {
+exports['float() float() Parse "foo" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -110,6 +110,32 @@ exports['float() float() float() Parse "foo" 1'] = {
         "end": 0
       },
       "message": "Expected a float",
+      "severity": 3
+    }
+  ]
+}
+
+exports['float() float(failsOnEmpty = true) Parse "" 1'] = {
+  "node": "FAILURE",
+  "errors": []
+}
+
+exports['float() float(failsOnEmpty = true) Parse "7e+3" 1'] = {
+  "node": {
+    "type": "float",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "value": 7000
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Illegal float numeral that doesn't follow /[-+]?(?:[0-9]+\\.|[0-9]*\\.[0-9]+)(?:e[-+]?[0-9]+)?/i",
       "severity": 3
     }
   ]

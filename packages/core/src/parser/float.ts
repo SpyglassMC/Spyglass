@@ -2,10 +2,10 @@ import { localize } from '@spyglassmc/locales'
 import type { FloatNode, Mutable } from '../node'
 import type { ParserContext } from '../service'
 import { ErrorSeverity, Range, Source } from '../source'
-import type { InfallibleParser } from './Parser'
+import type { InfallibleParser, Parser, Result } from './Parser'
+import { Failure } from './Parser'
 
-/** @internal For test only */
-export interface Options {
+interface OptionsBase {
 	pattern: RegExp,
 	/**
 	 * Inclusive.
@@ -23,6 +23,17 @@ export interface Options {
 	onOutOfRange?: (ans: FloatNode, src: Source, ctx: ParserContext, options: Options) => void,
 }
 
+interface FallibleOptions extends OptionsBase {
+	failsOnEmpty: true,
+}
+
+interface InfallibleOptions extends OptionsBase {
+	failsOnEmpty?: false,
+}
+
+/** @internal For test only */
+export type Options = FallibleOptions | InfallibleOptions
+
 const fallbackOnOutOfRange = (ans: FloatNode, _src: Source, ctx: ParserContext, options: Options) => {
 	ctx.err.report(
 		localize('expected', [localize('float.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
@@ -31,8 +42,10 @@ const fallbackOnOutOfRange = (ans: FloatNode, _src: Source, ctx: ParserContext, 
 	)
 }
 
-export function float(options: Options): InfallibleParser<FloatNode> {
-	return (src: Source, ctx: ParserContext): FloatNode => {
+export function float(options: InfallibleOptions): InfallibleParser<FloatNode>
+export function float(options: FallibleOptions): Parser<FloatNode>
+export function float(options: Options): Parser<FloatNode> {
+	return (src: Source, ctx: ParserContext): Result<FloatNode> => {
 		const ans: Mutable<FloatNode> = {
 			type: 'float',
 			range: Range.create(src),
@@ -68,6 +81,9 @@ export function float(options: Options): InfallibleParser<FloatNode> {
 		ans.value = parseFloat(raw) || 0
 
 		if (!raw) {
+			if (options.failsOnEmpty) {
+				return Failure
+			}
 			ctx.err.report(localize('expected', [localize('float')]), ans)
 		} else if (!options.pattern.test(raw)) {
 			ctx.err.report(localize('parser.float.illegal', [options.pattern.toString()]), ans)

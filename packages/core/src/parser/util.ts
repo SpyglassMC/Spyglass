@@ -185,7 +185,7 @@ export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N> {
 		const attempts: AttemptResult<N>[] = parsers
 			.map(parser => attempt(parser, src, ctx))
 			.filter(att => att.result !== Failure)
-			.sort((a, b) => (a.errorAmount - b.errorAmount) || (b.endCursor - a.endCursor))
+			.sort((a, b) => (b.endCursor - a.endCursor) || (a.errorAmount - b.errorAmount))
 		if (attempts.length === 0) {
 			return Failure
 		}

@@ -1,16 +1,9 @@
-exports['float() Parse "-1.4" 1'] = {
-  "node": {
-    "type": "float",
-    "range": {
-      "start": 0,
-      "end": 4
-    },
-    "value": -1.4
-  },
+exports['nbtdoc fallibleFloat Parse "" 1'] = {
+  "node": "FAILURE",
   "errors": []
 }
 
-exports['float() Parse ".7e+3" 1'] = {
+exports['nbtdoc fallibleFloat Parse ".7e+3" 1'] = {
   "node": {
     "type": "float",
     "range": {
@@ -22,7 +15,52 @@ exports['float() Parse ".7e+3" 1'] = {
   "errors": []
 }
 
-exports['float() Parse "0" 1'] = {
+exports['nbtdoc float Parse "" 1'] = {
+  "node": {
+    "type": "float",
+    "range": {
+      "start": 0,
+      "end": 0
+    },
+    "value": 0
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected a float",
+      "severity": 3
+    }
+  ]
+}
+
+exports['nbtdoc float Parse "-1.4" 1'] = {
+  "node": {
+    "type": "float",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "value": -1.4
+  },
+  "errors": []
+}
+
+exports['nbtdoc float Parse ".7e+3" 1'] = {
+  "node": {
+    "type": "float",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "value": 700
+  },
+  "errors": []
+}
+
+exports['nbtdoc float Parse "0" 1'] = {
   "node": {
     "type": "float",
     "range": {

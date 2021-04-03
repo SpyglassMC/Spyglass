@@ -52,7 +52,7 @@ export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover
 const enumField: InfallibleParser<EnumFieldNode> = map(
 	syntax<EnumFieldChild>([
 		docComments,
-		identifier(), punctuation('='), any([integer(), float(), string]),
+		identifier(), punctuation('='), any([integer(), float, string]),
 	], true),
 	res => {
 		const ans: EnumFieldNode = {

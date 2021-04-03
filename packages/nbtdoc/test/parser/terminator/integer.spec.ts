@@ -1,10 +1,11 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { integer } from '../../../lib'
+import { fallibleInteger, integer } from '../../../lib'
 
-describe('integer()', () => {
+describe('nbtdoc integer()', () => {
 	const suites: { content: string }[] = [
+		{ content: '' },
 		{ content: '-1' },
 		{ content: '0' },
 		{ content: '1' },
@@ -16,7 +17,7 @@ describe('integer()', () => {
 		})
 	}
 })
-describe('integer(unsigned = true)', () => {
+describe('nbtdoc integer(unsigned = true)', () => {
 	const suites: { content: string }[] = [
 		{ content: '-1' },
 		{ content: '0' },
@@ -25,6 +26,18 @@ describe('integer(unsigned = true)', () => {
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = integer(true)
+			snapshot(testParser(parser, content))
+		})
+	}
+})
+
+describe('nbtdoc fallibleInteger()', () => {
+	const suites: { content: string }[] = [
+		{ content: '' },
+	]
+	for (const { content } of suites) {
+		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			const parser = fallibleInteger()
 			snapshot(testParser(parser, content))
 		})
 	}
