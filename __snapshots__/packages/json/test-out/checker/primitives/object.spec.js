@@ -27,10 +27,12 @@ exports['JSON object object() Check "[2]" 1'] = {
         "isInteger": true
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object"
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -142,10 +144,12 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object"
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -330,10 +334,12 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object"
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -436,10 +442,12 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object"
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -454,10 +462,12 @@ exports['JSON object object() Check "{}" 1'] = {
     },
     "properties": [],
     "children": [],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object"
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -492,14 +502,18 @@ exports['JSON object object(string, () => int) Check "[2]" 1'] = {
         "isInteger": true
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "keys": {
-        "type": "json:string",
-        "typedoc": "String"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "keys": [
+          {
+            "type": "json:string",
+            "typedoc": "String"
+          }
+        ]
       }
-    }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -535,10 +549,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -548,10 +564,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -561,10 +579,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -574,10 +594,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
@@ -596,10 +618,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "end": 5
           },
           "value": "a",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -609,10 +633,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -622,10 +648,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -635,22 +663,28 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "keys": {
-        "type": "json:string",
-        "typedoc": "String"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "keys": [
+          {
+            "type": "json:string",
+            "typedoc": "String"
+          }
+        ]
       }
-    }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -677,10 +711,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 5
           },
           "value": "a",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -690,10 +726,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -703,10 +741,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 5
             },
             "value": "a",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -716,10 +756,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -736,10 +778,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 13
           },
           "value": "b",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:string",
@@ -748,10 +792,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 20
           },
           "value": "foo",
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -761,10 +807,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 13
             },
             "value": "b",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:string",
@@ -773,10 +821,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 20
             },
             "value": "foo",
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
@@ -795,10 +845,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 5
           },
           "value": "a",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -808,10 +860,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -821,10 +875,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 5
             },
             "value": "a",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -834,10 +890,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -854,10 +912,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 13
           },
           "value": "b",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:string",
@@ -866,10 +926,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "end": 20
           },
           "value": "foo",
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -879,10 +941,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 13
             },
             "value": "b",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:string",
@@ -891,22 +955,28 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 20
             },
             "value": "foo",
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "keys": {
-        "type": "json:string",
-        "typedoc": "String"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "keys": [
+          {
+            "type": "json:string",
+            "typedoc": "String"
+          }
+        ]
       }
-    }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -942,10 +1012,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "end": 5
           },
           "value": "b",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -955,10 +1027,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
           },
           "value": 6,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -968,10 +1042,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 5
             },
             "value": "b",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -981,10 +1057,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
@@ -1003,10 +1081,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "end": 5
           },
           "value": "b",
-          "expectation": {
-            "type": "json:string",
-            "typedoc": "String"
-          }
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
         },
         "value": {
           "type": "json:number",
@@ -1016,10 +1096,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
           },
           "value": 6,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1029,10 +1111,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 5
             },
             "value": "b",
-            "expectation": {
-              "type": "json:string",
-              "typedoc": "String"
-            }
+            "expectation": [
+              {
+                "type": "json:string",
+                "typedoc": "String"
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -1042,22 +1126,28 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             },
             "value": 6,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "keys": {
-        "type": "json:string",
-        "typedoc": "String"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "keys": [
+          {
+            "type": "json:string",
+            "typedoc": "String"
+          }
+        ]
       }
-    }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1072,14 +1162,18 @@ exports['JSON object object(string, () => int) Check "{}" 1'] = {
     },
     "properties": [],
     "children": [],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "keys": {
-        "type": "json:string",
-        "typedoc": "String"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "keys": [
+          {
+            "type": "json:string",
+            "typedoc": "String"
+          }
+        ]
       }
-    }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1114,19 +1208,23 @@ exports['JSON object record({ a: int }) Check "[2]" 1'] = {
         "isInteger": true
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
-        }
-      ]
-    }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1172,10 +1270,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1195,10 +1295,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
@@ -1227,10 +1329,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1250,27 +1354,33 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
-        }
-      ]
-    }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1307,10 +1417,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1330,10 +1442,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -1403,10 +1517,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1426,10 +1542,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -1475,19 +1593,23 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
-        }
-      ]
-    }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1599,19 +1721,23 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
-        }
-      ]
-    }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1643,19 +1769,23 @@ exports['JSON object record({ a: int }) Check "{}" 1'] = {
     },
     "properties": [],
     "children": [],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
-        }
-      ]
-    }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1699,20 +1829,24 @@ exports['JSON object record({ a: opt(int) }) Check "[2]" 1'] = {
         "isInteger": true
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
-          },
-          "opt": true
-        }
-      ]
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ],
+            "opt": true
+          }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -1758,10 +1892,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1781,10 +1917,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
@@ -1813,10 +1951,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
           },
           "value": 1,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1836,28 +1976,34 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             },
             "value": 1,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
-          },
-          "opt": true
-        }
-      ]
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ],
+            "opt": true
+          }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -1894,10 +2040,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -1917,10 +2065,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -1990,10 +2140,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           },
           "value": 3,
           "isInteger": true,
-          "expectation": {
-            "type": "json:number",
-            "typedoc": "Number"
-          }
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
         },
         "children": [
           {
@@ -2013,10 +2165,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             },
             "value": 3,
             "isInteger": true,
-            "expectation": {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
+            "expectation": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ]
           }
         ]
       },
@@ -2062,20 +2216,24 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
-          },
-          "opt": true
-        }
-      ]
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ],
+            "opt": true
+          }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -2187,20 +2345,24 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
         ]
       }
     ],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
-          },
-          "opt": true
-        }
-      ]
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ],
+            "opt": true
+          }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -2224,20 +2386,24 @@ exports['JSON object record({ a: opt(int) }) Check "{}" 1'] = {
     },
     "properties": [],
     "children": [],
-    "expectation": {
-      "type": "json:object",
-      "typedoc": "Object",
-      "fields": [
-        {
-          "key": "a",
-          "value": {
-            "type": "json:number",
-            "typedoc": "Number"
-          },
-          "opt": true
-        }
-      ]
-    }
+    "expectation": [
+      {
+        "type": "json:object",
+        "typedoc": "Object",
+        "fields": [
+          {
+            "key": "a",
+            "value": [
+              {
+                "type": "json:number",
+                "typedoc": "Number"
+              }
+            ],
+            "opt": true
+          }
+        ]
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []

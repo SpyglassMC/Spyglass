@@ -18,7 +18,7 @@ export function entry(root: JsonAstNode): readonly ColorToken[] {
 			case 'json:string':
 				if (JsonPropertyAstNode.is(parent) && node.range.start === parent.key.range.start) {
 					type = 'property'
-				} else if (node.expectation?.type === 'json:string' && node.expectation.resource) {
+				} else if (node.expectation?.find(e => e.type === 'json:string' && e.resource)) {
 					type = 'resourceLocation'
 				} else {
 					type = 'string'

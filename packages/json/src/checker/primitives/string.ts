@@ -6,7 +6,7 @@ import { JsonStringAstNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
-	node.expectation = { type: 'json:string', typedoc: 'String' }
+	node.expectation = [{ type: 'json:string', typedoc: 'String' }]
 	if(!JsonStringAstNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('string')]), node)
 	}
@@ -14,7 +14,7 @@ export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
 
 export function resource(id: string | string[], allowTag = false): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.expectation = { type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }
+		node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
 
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
@@ -34,7 +34,7 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 
 export function literal(value: string | string[]): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.expectation = { type: 'json:string', typedoc: typedoc(value), pool: value }
+		node.expectation = [{ type: 'json:string', typedoc: typedoc(value), pool: value }]
 
 		if(!JsonStringAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)

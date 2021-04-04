@@ -1,7 +1,7 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
-import type { JsonAstNode, JsonPropertyAstNode } from '../../node'
-import { JsonObjectAstNode } from '../../node'
+import type { JsonAstNode, JsonObjectExpectation, JsonPropertyAstNode } from '../../node'
+import { JsonObjectAstNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
 
@@ -25,10 +25,10 @@ export function object(keys: string[], values: (key: string) => CheckerProperty)
 export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.expectation = { type: 'json:object', typedoc: 'Object' }
+		node.expectation = [{ type: 'json:object', typedoc: 'Object' }]
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
-				node.expectation.fields = keys.map(key => {
+				(node.expectation[0] as JsonObjectExpectation).fields = keys.map(key => {
 					const prop = values(key)
 					return {
 						key,
@@ -38,10 +38,8 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					}
 				})
 			} else if (typeof keys === 'function' && values) {
-				const keysExpectation = expectation(keys, ctx)
-				if (keysExpectation?.type === 'json:string') {
-					node.expectation.keys = keysExpectation
-				}
+				(node.expectation[0] as JsonObjectExpectation).keys = expectation(keys, ctx)
+					?.filter(JsonStringExpectation.is)
 			}
 		}
 
@@ -70,7 +68,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					const doc = localize(`json.doc.${context}`)
 					const propNode: JsonAstNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
 					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
-					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.typedoc}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
+					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
@@ -102,8 +100,6 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 
 export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => JsonChecker): JsonChecker {
 	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		node.expectation = { type: 'json:object', typedoc: 'Object' }
-
 		if (!JsonObjectAstNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {

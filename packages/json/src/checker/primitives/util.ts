@@ -16,7 +16,7 @@ export function as(context: string, checker: JsonChecker): JsonChecker {
 
 export type AttemptResult = {
 	totalErrorRange: number,
-	expectation?: JsonExpectation,
+	expectation?: JsonExpectation[],
 	updateCtx: () => void,
 }
 
@@ -49,18 +49,11 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)
 		attempts[0].updateCtx()
-		const options = attempts.filter(a => a.expectation)
-			.map((a, i) => ({
-				...a.expectation!,
-				valid: a.totalErrorRange === 0,
-				preferred: i === 0,
-			}))
-		const typedoc = [...new Set(options.map(e => e.typedoc))].join(' | ')
-		node.expectation = { type: 'json:union', typedoc, options }
+		node.expectation = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)
 	}
 }
 
-export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation | undefined {
+export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation[] | undefined {
 	const node: JsonAstNode = { type: 'json:null', range: Range.create(0) }
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
