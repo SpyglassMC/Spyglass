@@ -3,10 +3,10 @@ import type { AstNode } from '@spyglassmc/core'
 export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAstNode | JsonStringAstNode | JsonNumberAstNode | JsonBooleanAstNode | JsonNullAstNode
 
 interface JsonBaseAstNode extends AstNode {
-	expectation?: JsonExpectation
+	expectation?: JsonExpectation[]
 }
 
-export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation | JsonUnionExpectation
+export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation
 
 interface JsonBaseExpectation {
 	typedoc: string
@@ -16,11 +16,11 @@ export interface JsonObjectExpectation extends JsonBaseExpectation {
 	readonly type: 'json:object'
 	fields?: {
 		key: string,
-		value?: JsonExpectation,
+		value?: JsonExpectation[],
 		opt?: boolean,
 		deprecated?: boolean,
 	}[]
-	keys?: JsonStringExpectation
+	keys?: JsonStringExpectation[]
 }
 export interface JsonObjectAstNode extends JsonBaseAstNode {
 	readonly type: 'json:object'
@@ -45,7 +45,7 @@ export namespace JsonPropertyAstNode {
 
 export interface JsonArrayExpectation extends JsonBaseExpectation {
 	readonly type: 'json:array'
-	items?: JsonExpectation
+	items?: JsonExpectation[]
 }
 export interface JsonArrayAstNode extends JsonBaseAstNode {
 	readonly type: 'json:array'
@@ -61,6 +61,11 @@ export interface JsonStringExpectation extends JsonBaseExpectation {
 	readonly type: 'json:string'
 	pool?: string | string[]
 	resource?: boolean
+}
+export namespace JsonStringExpectation {
+	export function is(obj: object): obj is JsonStringExpectation {
+		return (obj as JsonStringExpectation).type === 'json:string'
+	}
 }
 export interface JsonStringAstNode extends JsonBaseAstNode {
 	readonly type: 'json:string'
@@ -107,9 +112,4 @@ export namespace JsonNullAstNode {
 	export function is(obj: object): obj is JsonNullAstNode {
 		return (obj as JsonNullAstNode).type === 'json:null'
 	}
-}
-
-export interface JsonUnionExpectation extends JsonBaseExpectation {
-	readonly type: 'json:union'
-	options: JsonExpectation[]
 }

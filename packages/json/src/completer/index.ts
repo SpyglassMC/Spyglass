@@ -1,6 +1,6 @@
-import type { CompleterContext } from '@spyglassmc/core'
-import { CompletionItem, CompletionKind, selectedNode } from '@spyglassmc/core'
-import type { JsonAstNode, JsonExpectation, JsonObjectAstNode, JsonObjectExpectation, JsonStringAstNode, JsonStringExpectation } from '../node'
+import type { CompleterContext, RangeLike } from '@spyglassmc/core'
+import { CompletionItem, CompletionKind, selectedLeaf } from '@spyglassmc/core'
+import type { JsonArrayExpectation, JsonAstNode, JsonExpectation, JsonObjectAstNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
 
 export const JsonTriggerCharacters = ['\n', ':', '"']
 
@@ -10,130 +10,123 @@ const SIMPLE_SNIPPETS = {
 	'json:string': '"$1"',
 	'json:boolean': '${1|false,true|}',
 	'json:number': '${1:0}',
-	'json:union': '',
 }
 
 export function entry(root: JsonAstNode, ctx: CompleterContext): CompletionItem[] {
-	const result = selectedNode(root, ctx.offset)
+	const result = selectedLeaf(root, ctx.offset)
 	if (result) {
-		const [n0, n1, n2] = [result.node, ...result.parents] as JsonAstNode[]
+		const [n0, n1, n2] = [result.leaf, ...result.parents] as JsonAstNode[]
 
 		// Object properties
 		// { "foo": 1, | }
-		if (n0.type === 'json:object') {
-			if (n0.expectation?.type === 'json:object') {
-				return objectCompletion(n0, n0.expectation, ctx, false)
-			} else if (n0.expectation?.type === 'json:union') {
-				const expectation = n0.expectation.options.find(o => o.type === 'json:object')
-				if (expectation) {
-					return objectCompletion(n0, expectation as JsonObjectExpectation, ctx, false)
-				}
-			}
+		if (n0.type === 'json:object' && n0.expectation) {
+			return unique(n0.expectation.filter(e => e.type === 'json:object')
+				.flatMap(e => objectCompletion(ctx.offset, n0, e as JsonObjectExpectation, ctx)))
 		}
 		// { "foo": 1, "|" }
-		if (n0.type === 'json:string' && n1.type === 'json:property' && n1.key === n0 && n2.type === 'json:object') {
-			if (n2.expectation?.type == 'json:object') {
-				return objectCompletion(n2, n2.expectation, ctx, true)
-			} else if (n2.expectation?.type === 'json:union') {
-				const expectation = n2.expectation.options.find(o => o.type === 'json:object')
-				if (expectation) {
-					return objectCompletion(n2, expectation as JsonObjectExpectation, ctx, true)
-				}
-			}
+		if (n0.type === 'json:string' && n1.type === 'json:property' && n1.key === n0 && n2.type === 'json:object' && n2.expectation) {
+			return unique(n2.expectation.filter(e => e.type === 'json:object')
+				.flatMap(e => objectCompletion(n0, n2, e as JsonObjectExpectation, ctx)))
 		}
 
 		// Inside a string
 		// { "foo": "|" }
-		if (n0.type === 'json:string' && n0.expectation?.type === 'json:string') {
-			return stringCompletion(n0, n0.expectation, ctx, true)
+		if (n0.type === 'json:string' && n0.expectation) {
+			return unique(n0.expectation.filter(e => e.type === 'json:string')
+				.flatMap(e => stringCompletion(n0, e as JsonStringExpectation, ctx)))
 		}
 
 		// Values after an object property
 		// { "foo": | }
-		if (n0.type === 'json:property' && n0.value === undefined && ctx.offset >= n0.key.range.end && n1.type === 'json:object' && n1.expectation?.type === 'json:object' && n1.expectation.fields) {
-			const field = n1.expectation.fields.find(f => f.key === n0.key.value)
-			if (field?.value) {
-				if (field.value.type === 'json:string') {
-					return stringCompletion(field.value, ctx, false)
-				}
-				const comma = n1.properties.find(p => p.key.range.start > ctx.offset) !== undefined
-				return valueCompletion(field.value, ctx, comma)
-			}
+		if (n0.type === 'json:property' && n0.value === undefined && ctx.offset >= n0.key.range.end && n1.type === 'json:object' && n1.expectation) {
+			return unique(n1.expectation.filter(e => e.type === 'json:object' && e.fields)
+				.map(e => (e as JsonObjectExpectation).fields!.find(f => f.key === n0.key.value)!)
+				.flatMap(f => valueCompletion(ctx.offset, f.value!, ctx)))
 		}
 
 		// Values in an array
 		// { "foo": [|] }
-		if (n0.type === 'json:array' && n0.expectation?.type === 'json:array' && n0.expectation.items) {
-			const comma = n0.items.find(i => i.range.start > ctx.offset) !== undefined
-			return valueCompletion(n0.expectation.items, ctx, comma)
+		if (n0.type === 'json:array' && n0.expectation) {
+			return unique(n0.expectation.filter(e => e.type === 'json:array' && e.items)
+				.flatMap(e => valueCompletion(ctx.offset, (e as JsonArrayExpectation).items!, ctx)))
 		}
 	}
 	return []
 }
 
-function objectCompletion(node: JsonObjectAstNode, expectation: JsonObjectExpectation, ctx: CompleterContext, quoted: boolean) {
-	const comma = node.properties.find(p => p.key.range.start > ctx.offset) !== undefined
+function objectCompletion(range: RangeLike, node: JsonObjectAstNode, expectation: JsonObjectExpectation, ctx: CompleterContext): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
 			.filter(f => !node.properties.find(p => f.key === p.key.value))
-			.map(f => fieldCompletion(f, comma, quoted))
+			.map(f => fieldCompletion(range, f))
 	} else if (expectation.keys) {
-		return stringCompletion(expectation.keys, ctx, quoted)
+		return expectation.keys.flatMap(e => stringCompletion(range, e, ctx)
+			.map(c => ({ ...c, insertText: `${c.insertText}: ` })))
 	}
 	return []
 }
 
-function fieldCompletion(field: Exclude<JsonObjectExpectation['fields'], undefined>[number], comma: boolean, quoted: boolean) {
-	const value = field.value ? SIMPLE_SNIPPETS[field.value.type] : ''
-	const text = `"${field.key}": ${value}${comma ? ',' : ''}`
-	return CompletionItem.create(field.key, TODO, text, {
+function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation['fields'], undefined>[number]): CompletionItem {
+	const value = field.value?.[0] ? SIMPLE_SNIPPETS[field.value[0].type] : ''
+	const text = `"${field.key}": ${value}`
+	return CompletionItem.create(field.key, range, text, {
 		kind: CompletionKind.Property,
-		detail: field.value?.typedoc,
+		detail: field.value?.map(e => e.typedoc).join(' | '),
 		sortText: `${field.deprecated ? 2 : field.opt ? 1 : 0}${field.key}`,
 		deprecated: field.deprecated,
-		...quoted ? { filterText: `"${field.key}"` } : {},
+		filterText: `"${field.key}"`,
 	})
 }
 
-function valueCompletion(expectation: JsonExpectation, ctx: CompleterContext, comma: boolean): CompletionItem[] {
-	switch (expectation.type) {
-		case 'json:object':
-		case 'json:array':
-		case 'json:string':
-			return [simpleCompletion(SIMPLE_SNIPPETS[expectation.type], comma)]
-		case 'json:boolean':
-			return ['false', 'true'].map(v => simpleCompletion(v, comma))
-		case 'json:number':
-			return [simpleCompletion('0', comma)]
-		case 'json:union':
-			return expectation.options.reduce((a, o) => [
-				...a,
-				...valueCompletion(o, ctx, comma).filter(c => !a.find(t => t.label === c.label)),
-			], [] as CompletionItem[])
-	}
+function valueCompletion(range: RangeLike, expectation: JsonExpectation[], ctx: CompleterContext): CompletionItem[] {
+	return unique(expectation.flatMap(e => {
+		switch (e.type) {
+			case 'json:object':
+			case 'json:array':
+				return [simpleCompletion(range, SIMPLE_SNIPPETS[e.type])]
+			case 'json:string':
+				return stringCompletion(ctx.offset, e, ctx)
+			case 'json:boolean':
+				return ['false', 'true'].map(v => simpleCompletion(range, v))
+			case 'json:number':
+				return [simpleCompletion(range, '0')]
+		}
+	}))
 }
 
-function simpleCompletion(value: string, comma: boolean) {
-	return CompletionItem.create(value.replace('$1', ''), TODO, `${value}${comma ? ',' : ''}`, {
-		kind: CompletionKind.Value,
-	})
-}
-
-function stringCompletion(node: JsonStringAstNode, expectation: JsonStringExpectation, ctx: CompleterContext, quoted: boolean) {
+function stringCompletion(range: RangeLike, expectation: JsonStringExpectation, ctx: CompleterContext): CompletionItem[] {
 	if (Array.isArray(expectation.pool)) {
-		return expectation.pool.map(v => CompletionItem.create(v, node, `"${v}"`, {
+		return expectation.pool.map(v => CompletionItem.create(v, range, `"${v}"`, {
 			kind: CompletionKind.Value,
-			...quoted ? { filterText: `"${v}"` } : {},
+			filterText: `"${v}"`,
 		}))
 	} else if (typeof expectation.pool === 'string') {
 		const symbols = Object.values(ctx.symbols.getVisibleSymbols(ctx.doc.uri, expectation.pool))
 			.filter(s => s)
 		if (symbols.length > 0) {
-			return symbols.map(s => CompletionItem.create(s!.identifier, node, `"${s!.identifier}"`, {
+			return symbols.map(s => CompletionItem.create(s!.identifier, range, `"${s!.identifier}"`, {
 				kind: CompletionKind.Method,
-				...quoted ? { filterText: `"${s!.identifier}"` } : {},
+				filterText: `"${s!.identifier}"`,
 			}))
 		}
 	}
-	return [simpleCompletion(SIMPLE_SNIPPETS[expectation.type], false)]
+	return [simpleCompletion(range, SIMPLE_SNIPPETS[expectation.type])]
+}
+
+function simpleCompletion(range: RangeLike, value: string): CompletionItem {
+	return CompletionItem.create(value.replace('$1', ''), range, `${value}`, {
+		kind: CompletionKind.Value,
+	})
+}
+
+function unique(completions: CompletionItem[]) {
+	const ans: CompletionItem[] = []
+	const labels = new Set<string>()
+	completions.forEach(c => {
+		if (!labels.has(c.label)) {
+			labels.add(c.label)
+			ans.push(c)
+		}
+	})
+	return ans
 }

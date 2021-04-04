@@ -52,28 +52,9 @@ export function selectedLeaf(node: AstNode, offset: number, existingParents: Ast
 					return result
 				}
 			}
-		} else {
-			return { leaf: node, parents: existingParents }
-		}
-	}
-	return null
-}
-
-export function selectedNode(node: AstNode, offset: number): { node: AstNode, parents: AstNode[] } | null
-export function selectedNode(node: AstNode, offset: number, existingParents: AstNode[] = []): { node: AstNode, parents: AstNode[] } | null {
-	if (Range.contains(node.range, offset)) {
-		if (node.children?.length) {
-			existingParents.unshift(node)
-			// TODO: Binary search here.
-			for (const child of node.children) {
-				const result = (selectedNode as any)(child, offset, existingParents)
-				if (result) {
-					return result
-				}
-			}
 			existingParents.shift()
 		}
-		return { node: node, parents: existingParents }
+		return { leaf: node, parents: existingParents }
 	}
 	return null
 }

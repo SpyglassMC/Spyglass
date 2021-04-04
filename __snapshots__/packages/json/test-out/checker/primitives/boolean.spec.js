@@ -6,10 +6,12 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
       "end": 6
     },
     "value": "true",
-    "expectation": {
-      "type": "json:boolean",
-      "typedoc": "Boolean"
-    }
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -33,10 +35,12 @@ exports['JSON boolean boolean Check "1" 1'] = {
     },
     "value": 1,
     "isInteger": true,
-    "expectation": {
-      "type": "json:boolean",
-      "typedoc": "Boolean"
-    }
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": [
@@ -59,10 +63,12 @@ exports['JSON boolean boolean Check "false" 1'] = {
       "end": 5
     },
     "value": false,
-    "expectation": {
-      "type": "json:boolean",
-      "typedoc": "Boolean"
-    }
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
@@ -82,10 +88,12 @@ exports['JSON boolean boolean Check "true" 1'] = {
       "end": 4
     },
     "value": true,
-    "expectation": {
-      "type": "json:boolean",
-      "typedoc": "Boolean"
-    }
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
   },
   "parserErrors": [],
   "checkerErrors": []
