@@ -1,7 +1,7 @@
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
-import type { JsonAstNode, JsonObjectExpectation, JsonPropertyAstNode } from '../../node'
-import { JsonObjectAstNode, JsonStringExpectation } from '../../node'
+import type { JsonNode, JsonObjectExpectation, JsonPropertyNode } from '../../node'
+import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
 
@@ -24,7 +24,7 @@ export function object(): JsonChecker
 export function object(keys: string[], values: (key: string) => CheckerProperty): JsonChecker
 export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		node.expectation = [{ type: 'json:object', typedoc: 'Object' }]
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
@@ -43,7 +43,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 			}
 		}
 
-		if (!JsonObjectAstNode.is(node)) {
+		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else if (Array.isArray(keys) && values) {
 			const givenKeys = node.properties.map(n => n.key.value)
@@ -66,7 +66,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
-					const propNode: JsonAstNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
+					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
 					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
 					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
@@ -98,9 +98,9 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 	return { checker: checker, deprecated: true }
 }
 
-export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyAstNode[]) => JsonChecker): JsonChecker {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
-		if (!JsonObjectAstNode.is(node)) {
+export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyNode[]) => JsonChecker): JsonChecker {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
 			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
@@ -141,13 +141,13 @@ export function when(value: string | undefined, values: string[], properties: Ch
 	return properties
 }
 
-export function extract(value: string, properties: JsonPropertyAstNode[]) {
+export function extract(value: string, properties: JsonPropertyNode[]) {
 	const node = properties.find(p => p.key.value === value)
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
 }
 
-export function having(node: JsonAstNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
-	const givenKeys = new Set(JsonObjectAstNode.is(node)
+export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
+	const givenKeys = new Set(JsonObjectNode.is(node)
 		? node.properties.map(n => n.key.value) : [])
 	const key = Object.keys(cases).find(c => givenKeys.has(c))
 

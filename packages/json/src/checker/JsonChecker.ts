@@ -1,9 +1,9 @@
 import type { CheckerContext } from '@spyglassmc/core'
-import type { JsonAstNode } from '../node'
+import type { JsonNode } from '../node'
 
 export interface JsonCheckerContext extends CheckerContext {
 	context: string
 	depth?: number
 }
 
-export type JsonChecker = (node: JsonAstNode, ctx: JsonCheckerContext) => void
+export type JsonChecker = (node: JsonNode, ctx: JsonCheckerContext) => void

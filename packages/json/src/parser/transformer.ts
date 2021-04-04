@@ -1,15 +1,15 @@
 import { Range } from '@spyglassmc/core'
 import type { ASTNode as VscodeAstNode } from 'vscode-json-languageservice'
-import type { JsonAstNode, JsonPropertyAstNode, JsonStringAstNode } from '../node'
+import type { JsonNode, JsonPropertyNode, JsonStringNode } from '../node'
 
-export function transformer(node: VscodeAstNode): JsonAstNode {
+export function transformer(node: VscodeAstNode): JsonNode {
 	const range = Range.create(node.offset, node.offset + node.length) 
 	switch (node.type) {
 		case 'object':
-			const properties = node.properties.map(transformer) as JsonPropertyAstNode[]
+			const properties = node.properties.map(transformer) as JsonPropertyNode[]
 			return { type: 'json:object', range, properties, children: properties }
 		case 'property':
-			const key = transformer(node.keyNode) as JsonStringAstNode
+			const key = transformer(node.keyNode) as JsonStringNode
 			const value = node.valueNode ? transformer(node.valueNode) : undefined 
 			return { type: 'json:property', range, key, value, children: value ? [key, value] : [key] }
 		case 'array':

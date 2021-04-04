@@ -1,15 +1,15 @@
 import { ErrorReporter, Range } from '@spyglassmc/core'
-import type { JsonAstNode, JsonExpectation } from '../../node'
+import type { JsonExpectation, JsonNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export function ref(checker: () => JsonChecker): JsonChecker {
-	return (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return (node: JsonNode, ctx: JsonCheckerContext) => {
 		return checker()(node, ctx)
 	}
 }
 
 export function as(context: string, checker: JsonChecker): JsonChecker {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		checker(node, { ...ctx, context })
 	}
 }
@@ -20,7 +20,7 @@ export type AttemptResult = {
 	updateCtx: () => void,
 }
 
-export function attempt(checker: JsonChecker, node: JsonAstNode, ctx: JsonCheckerContext): AttemptResult {
+export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerContext): AttemptResult {
 	// TODO: determine whether cloning of AST is necessary
 	// Currently nodes are not cloned
 	const tempCtx = { ...ctx, err: new ErrorReporter() }
@@ -44,7 +44,7 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 	if (checkers.length === 0) {
 		throw new Error('Expected at least one checker')
 	}
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		const attempts = checkers
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)
@@ -54,7 +54,7 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 }
 
 export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation[] | undefined {
-	const node: JsonAstNode = { type: 'json:null', range: Range.create(0) }
+	const node: JsonNode = { type: 'json:null', range: Range.create(0) }
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),

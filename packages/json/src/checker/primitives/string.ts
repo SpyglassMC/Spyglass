@@ -1,22 +1,22 @@
 import { ErrorSeverity } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { Categories } from '../../binder'
-import type { JsonAstNode } from '../../node'
-import { JsonStringAstNode } from '../../node'
+import type { JsonNode } from '../../node'
+import { JsonStringNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
-export async function string(node: JsonAstNode, ctx: JsonCheckerContext) {
+export async function string(node: JsonNode, ctx: JsonCheckerContext) {
 	node.expectation = [{ type: 'json:string', typedoc: 'String' }]
-	if(!JsonStringAstNode.is(node)) {
+	if(!JsonStringNode.is(node)) {
 		ctx.err.report(localize('expected', [localize('string')]), node)
 	}
 }
 
 export function resource(id: string | string[], allowTag = false): JsonChecker {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
 
-		if(!JsonStringAstNode.is(node)) {
+		if(!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof id === 'string') {
 			if (Categories.has(id)) {
@@ -33,10 +33,10 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 }
 
 export function literal(value: string | string[]): JsonChecker {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(value), pool: value }]
 
-		if(!JsonStringAstNode.is(node)) {
+		if(!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('string')]), node)
 		} else if (typeof value === 'string') {
 			reference(node, ctx, value)
@@ -54,7 +54,7 @@ function typedoc(id: string | string[]) {
 			: 'String'
 }
 
-function reference(node: JsonStringAstNode, ctx: JsonCheckerContext, id: string) {
+function reference(node: JsonStringNode, ctx: JsonCheckerContext, id: string) {
 	ctx.symbols.query(ctx.doc, id, node.value)
 		.ifUnknown(() => {
 			ctx.err.report(localize('json.checker.string.undeclared', [id[0].toUpperCase() + id.slice(1), localize('punc.quote', [node.value])]), node, ErrorSeverity.Warning)

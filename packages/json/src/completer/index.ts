@@ -1,6 +1,6 @@
 import type { CompleterContext, RangeLike } from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, selectedLeaf } from '@spyglassmc/core'
-import type { JsonArrayExpectation, JsonAstNode, JsonExpectation, JsonObjectAstNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
+import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonObjectNode, JsonStringExpectation } from '../node'
 
 export const JsonTriggerCharacters = ['\n', ':', '"']
 
@@ -12,10 +12,10 @@ const SIMPLE_SNIPPETS = {
 	'json:number': '${1:0}',
 }
 
-export function entry(root: JsonAstNode, ctx: CompleterContext): CompletionItem[] {
+export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 	const result = selectedLeaf(root, ctx.offset)
 	if (result) {
-		const [n0, n1, n2] = [result.leaf, ...result.parents] as JsonAstNode[]
+		const [n0, n1, n2] = [result.leaf, ...result.parents] as JsonNode[]
 
 		// Object properties
 		// { "foo": 1, | }
@@ -54,7 +54,7 @@ export function entry(root: JsonAstNode, ctx: CompleterContext): CompletionItem[
 	return []
 }
 
-function objectCompletion(range: RangeLike, node: JsonObjectAstNode, expectation: JsonObjectExpectation, ctx: CompleterContext): CompletionItem[] {
+function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
 			.filter(f => !node.properties.find(p => f.key === p.key.value))

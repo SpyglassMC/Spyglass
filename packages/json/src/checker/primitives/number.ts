@@ -1,14 +1,14 @@
 import { localize } from '@spyglassmc/locales'
-import type { JsonAstNode } from '../../node'
-import { JsonNumberAstNode } from '../../node'
+import type { JsonNode } from '../../node'
+import { JsonNumberNode } from '../../node'
 import type { JsonCheckerContext } from '../JsonChecker'
 
 const number = (type: 'integer' | 'float') => (min: number | null, max: number | null, isColor?: boolean) => {
-	return async (node: JsonAstNode, ctx: JsonCheckerContext) => {
+	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		const typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
 		node.expectation = [{ type: 'json:number', typedoc, isColor }]
 
-		if (!JsonNumberAstNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
+		if (!JsonNumberNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', [localize(type)]), node)
 		} else if (min !== null && max !== null && (node.value < min || node.value > max)) {
 			ctx.err.report(localize('expected', [localize('number.between', [min, max])]), node)

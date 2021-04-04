@@ -1,11 +1,11 @@
 import type { Checker, CheckerContext as CoreCheckerContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
 import { dissectUri } from '../binder'
-import type { JsonAstNode } from '../node'
+import type { JsonNode } from '../node'
 import { Checkers } from './data'
 import { pack_mcmeta } from './data/pack_mcmeta'
 
-export const entry: Checker<JsonAstNode> = (node: JsonAstNode, ctx: CoreCheckerContext) => {
+export const entry: Checker<JsonNode> = (node: JsonNode, ctx: CoreCheckerContext) => {
 	const rel = fileUtil.getRel(ctx.roots, ctx.doc.uri)
 	if (!rel) return
 

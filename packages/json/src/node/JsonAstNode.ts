@@ -1,6 +1,6 @@
 import type { AstNode } from '@spyglassmc/core'
 
-export type JsonAstNode = JsonObjectAstNode | JsonPropertyAstNode | JsonArrayAstNode | JsonStringAstNode | JsonNumberAstNode | JsonBooleanAstNode | JsonNullAstNode
+export type JsonNode = JsonObjectNode | JsonPropertyNode | JsonArrayNode | JsonStringNode | JsonNumberNode | JsonBooleanNode | JsonNullNode
 
 interface JsonBaseAstNode extends AstNode {
 	expectation?: JsonExpectation[]
@@ -22,24 +22,24 @@ export interface JsonObjectExpectation extends JsonBaseExpectation {
 	}[]
 	keys?: JsonStringExpectation[]
 }
-export interface JsonObjectAstNode extends JsonBaseAstNode {
+export interface JsonObjectNode extends JsonBaseAstNode {
 	readonly type: 'json:object'
-	readonly properties: JsonPropertyAstNode[]
+	readonly properties: JsonPropertyNode[]
 }
-export namespace JsonObjectAstNode {
-	export function is(obj: object): obj is JsonObjectAstNode {
-		return (obj as JsonObjectAstNode).type === 'json:object'
+export namespace JsonObjectNode {
+	export function is(obj: object): obj is JsonObjectNode {
+		return (obj as JsonObjectNode).type === 'json:object'
 	}
 }
 
-export interface JsonPropertyAstNode extends JsonBaseAstNode {
+export interface JsonPropertyNode extends JsonBaseAstNode {
 	readonly type: 'json:property'
-	readonly key: JsonStringAstNode
-	readonly value?: JsonAstNode
+	readonly key: JsonStringNode
+	readonly value?: JsonNode
 }
-export namespace JsonPropertyAstNode {
-	export function is(obj: object): obj is JsonPropertyAstNode {
-		return (obj as JsonPropertyAstNode).type === 'json:property'
+export namespace JsonPropertyNode {
+	export function is(obj: object): obj is JsonPropertyNode {
+		return (obj as JsonPropertyNode).type === 'json:property'
 	}
 }
 
@@ -47,13 +47,13 @@ export interface JsonArrayExpectation extends JsonBaseExpectation {
 	readonly type: 'json:array'
 	items?: JsonExpectation[]
 }
-export interface JsonArrayAstNode extends JsonBaseAstNode {
+export interface JsonArrayNode extends JsonBaseAstNode {
 	readonly type: 'json:array'
-	readonly items: JsonAstNode[]
+	readonly items: JsonNode[]
 }
-export namespace JsonArrayAstNode {
-	export function is(obj: object): obj is JsonArrayAstNode {
-		return (obj as JsonArrayAstNode).type === 'json:array'
+export namespace JsonArrayNode {
+	export function is(obj: object): obj is JsonArrayNode {
+		return (obj as JsonArrayNode).type === 'json:array'
 	}
 }
 
@@ -67,13 +67,13 @@ export namespace JsonStringExpectation {
 		return (obj as JsonStringExpectation).type === 'json:string'
 	}
 }
-export interface JsonStringAstNode extends JsonBaseAstNode {
+export interface JsonStringNode extends JsonBaseAstNode {
 	readonly type: 'json:string'
 	readonly value: string
 }
-export namespace JsonStringAstNode {
-	export function is(obj: object): obj is JsonStringAstNode {
-		return (obj as JsonStringAstNode).type === 'json:string'
+export namespace JsonStringNode {
+	export function is(obj: object): obj is JsonStringNode {
+		return (obj as JsonStringNode).type === 'json:string'
 	}
 }
 
@@ -81,35 +81,35 @@ export interface JsonNumberExpectation extends JsonBaseExpectation {
 	readonly type: 'json:number'
 	isColor?: boolean
 }
-export interface JsonNumberAstNode extends JsonBaseAstNode {
+export interface JsonNumberNode extends JsonBaseAstNode {
 	readonly type: 'json:number'
 	readonly value: number
 	readonly isInteger: boolean
 }
-export namespace JsonNumberAstNode {
-	export function is(obj: object): obj is JsonNumberAstNode {
-		return (obj as JsonNumberAstNode).type === 'json:number'
+export namespace JsonNumberNode {
+	export function is(obj: object): obj is JsonNumberNode {
+		return (obj as JsonNumberNode).type === 'json:number'
 	}
 }
 
 export interface JsonBooleanExpectation extends JsonBaseExpectation {
 	readonly type: 'json:boolean'
 }
-export interface JsonBooleanAstNode extends JsonBaseAstNode {
+export interface JsonBooleanNode extends JsonBaseAstNode {
 	readonly type: 'json:boolean'
 	readonly value: boolean
 }
-export namespace JsonBooleanAstNode {
-	export function is(obj: object): obj is JsonBooleanAstNode {
-		return (obj as JsonBooleanAstNode).type === 'json:boolean'
+export namespace JsonBooleanNode {
+	export function is(obj: object): obj is JsonBooleanNode {
+		return (obj as JsonBooleanNode).type === 'json:boolean'
 	}
 }
 
-export interface JsonNullAstNode extends JsonBaseAstNode {
+export interface JsonNullNode extends JsonBaseAstNode {
 	readonly type: 'json:null'
 }
-export namespace JsonNullAstNode {
-	export function is(obj: object): obj is JsonNullAstNode {
-		return (obj as JsonNullAstNode).type === 'json:null'
+export namespace JsonNullNode {
+	export function is(obj: object): obj is JsonNullNode {
+		return (obj as JsonNullNode).type === 'json:null'
 	}
 }

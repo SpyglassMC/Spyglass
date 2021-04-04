@@ -4,11 +4,11 @@ import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { JsonChecker } from '../lib/checker/JsonChecker'
-import type { JsonAstNode } from '../lib/node'
+import type { JsonNode } from '../lib/node'
 import { entry as parser } from '../lib/parser'
 
 export function testChecker(checker: JsonChecker, test: string): {
-	node: JsonAstNode | 'FAILURE',
+	node: JsonNode | 'FAILURE',
 	parserErrors: readonly LanguageError[],
 	checkerErrors: readonly LanguageError[],
 } {
