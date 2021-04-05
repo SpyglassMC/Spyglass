@@ -119,7 +119,7 @@ export class MetaRegistry {
 	public registerUriBinder(uriBinder: UriBinder): void {
 		this.#uriBinders.add(uriBinder)
 	}
-	public getUriBinders(): Set<UriBinder> {
+	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
 	}
 

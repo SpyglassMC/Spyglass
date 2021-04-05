@@ -276,7 +276,7 @@ export class Service {
 		this.#uriBindingTimeout = undefined
 		const ctx = this.getUriBinderCtx()
 		ctx.symbols.uriBinding(ctx.logger, () => {
-			for (const binder of this.meta.getUriBinders()) {
+			for (const binder of this.meta.uriBinders) {
 				binder(this.#files, ctx)
 			}
 		})

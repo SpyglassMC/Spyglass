@@ -7,12 +7,6 @@ import { Uri } from '.'
 
 export interface FileService {
 	/**
-	 * @param uri A URI.
-	 * @returns If the URI is accessible in the real file system.
-	 */
-	accessible(uri: string): Promise<boolean>
-
-	/**
 	 * @param uri A file URI.
 	 * @returns The UTF-8 decoded content of the file at `uri`.
 	 * @throws If the URI doesn't exist in the file system.
@@ -45,10 +39,6 @@ export namespace FileService {
  * @internal This is only exported to be overridden in tests.
  */
 export class FileServiceImpl implements FileService {
-	async accessible(uri: string): Promise<boolean> {
-		return fsp.stat(new Uri(uri)).then(() => true, () => false)
-	}
-
 	async readFile(uri: string): Promise<string> {
 		return fsp.readFile(new Uri(uri), 'utf-8')
 	}
