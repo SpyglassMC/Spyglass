@@ -33,6 +33,11 @@
 			"locales"
 		]
 	},
+	"vanilla-resource": {
+		"devDependencies": [
+			"core"
+		]
+	},
 	"vscode-extension": {
 		"devDependencies": [
 			"language-server"
