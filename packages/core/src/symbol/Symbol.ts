@@ -41,11 +41,14 @@ export const FileCategories = Object.freeze([
 ] as const)
 export type FileCategory = typeof FileCategories[number]
 
-export const MiscCategories = Object.freeze([
+const MiscResourceLocationCategories = Object.freeze([
 	'bossbar',
+	'storage',
+] as const)
+export const MiscCategories = Object.freeze([
+	...MiscResourceLocationCategories,
 	'objective',
 	'score_holder',
-	'storage',
 	'tag',
 	'team',
 ] as const)
@@ -125,6 +128,13 @@ export const VanillaRegistryCategories = Object.freeze([
 export type VanillaRegistryCategory = typeof VanillaRegistryCategories[number]
 //#endregion
 
+export const ResourceLocationCategories = Object.freeze([
+	...FileCategories,
+	...MiscResourceLocationCategories,
+	...VanillaRegistryCategories,
+] as const)
+export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
+
 export const AllCategories = Object.freeze([
 	...DatapackCategories,
 	...NbtdocCategories,
@@ -174,14 +184,6 @@ export interface SymbolMetadata {
 	 * The documentation for this `Symbol`. May be edited by doc comments.
 	 */
 	doc?: string,
-	/**
-	 * Whether this Symbol comes from a default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
-	 * 
-	 * [mc-data]: https://github.com/Arcensoth/mc-data
-	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
-	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
-	 */
-	fromDefaultLibrary?: true,
 	relations?: {
 		aliasOf?: Symbol,
 		[relationship: string]: Symbol | undefined,
@@ -195,7 +197,19 @@ export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsage, Symb
 	members?: SymbolMap,
 }
 
-export interface SymbolLocation extends Location {
+export interface SymbolLocationMetadata {
+	accessType?: SymbolAccessType,
+	/**
+	 * Whether this SymbolLocation comes from a default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
+	 * 
+	 * [mc-data]: https://github.com/Arcensoth/mc-data
+	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
+	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
+	 */
+	fromDefaultLibrary?: true,
+}
+
+export interface SymbolLocation extends SymbolLocationMetadata, Location {
 	/**
 	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
 	 * ```nbtdoc
@@ -207,7 +221,6 @@ export interface SymbolLocation extends Location {
 	 */
 	fullRange?: Range,
 	fullPosRange?: PositionRange,
-	accessType?: SymbolAccessType,
 	/**
 	 * Whether this Location is contributed by a `UriBinder`.
 	 */
@@ -215,11 +228,15 @@ export interface SymbolLocation extends Location {
 }
 export namespace SymbolLocation {
 	/* istanbul ignore next */
-	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean): SymbolLocation {
+	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean, additional?: {
+		accessType?: SymbolAccessType,
+		fromDefaultLibrary?: true,
+	}): SymbolLocation {
 		return {
 			...Location.create(doc, range),
 			...fullRange ? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) } : {},
 			...isUriBound ? { isUriBound } : {},
+			...additional ? additional : {},
 		}
 	}
 }

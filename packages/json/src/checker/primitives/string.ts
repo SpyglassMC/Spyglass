@@ -61,6 +61,6 @@ function reference(node: JsonStringNode, ctx: JsonCheckerContext, id: string) {
 		})
 		.elseEnter({
 			usage: 'reference',
-			range: node,
+			node,
 		})
 }

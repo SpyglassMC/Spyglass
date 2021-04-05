@@ -114,7 +114,7 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 			.elseEnter({
 				usage: 'declaration',
-				range: field.key,
+				node: field.key,
 				doc: field.doc.value,
 				fullRange: field,
 				relations: {
@@ -134,7 +134,7 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
 		.elseEnter({
 			usage: 'definition',
-			range: node.identifier,
+			node: node.identifier,
 			doc: node.doc.value,
 			fullRange: node,
 			subcategory: 'compound',
@@ -157,7 +157,7 @@ const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => 
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 			.elseEnter({
 				usage: 'declaration',
-				range: field.key,
+				node: field.key,
 				/* data: {
 					// TODO: Enum value
 				}, */
@@ -176,11 +176,15 @@ const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): 
 		.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
 		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
 		.elseEnter({
-			usage: 'definition',
-			range: node.identifier,
-			doc: node.doc.value,
-			fullRange: node,
-			subcategory: 'enum',
+			data: {
+				doc: node.doc.value,
+				subcategory: 'enum',
+			},
+			location: {
+				usage: 'definition',
+				node: node.identifier,
+				fullRange: node,
+			},
 		})
 }
 
@@ -201,7 +205,7 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.elseEnter({
 					usage: 'declaration',
-					range: field.key,
+					node: field.key,
 					doc: field.doc.value,
 					fullRange: field,
 					relations: {
@@ -218,7 +222,7 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.elseEnter({
 					usage: 'declaration',
-					range: field.key,
+					node: field.key,
 					/* data: {
 						// TODO: Enum value
 					}, */
@@ -243,7 +247,7 @@ const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): vo
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.module-declaration.duplicated', ctx, symbol, node.identifier))
 			.elseEnter({
 				usage: 'declaration',
-				range: node.identifier,
+				node: node.identifier,
 				fullRange: node,
 			})
 	}
@@ -258,7 +262,7 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, lastToken))
 			.elseEnter({
 				usage: 'declaration',
-				range: lastToken,
+				node: lastToken,
 				fullRange: node,
 				relations: {
 					aliasOf: usedSymbol,
@@ -320,7 +324,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				.query(ctx.doc, 'nbtdoc', segToIdentifier(targetSeg))
 				.amend({
 					usage: 'reference',
-					range: token,
+					node: token,
 					// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
 				})
 		} else {
@@ -352,7 +356,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				.elseResolveAlias()
 				.elseEnter({
 					usage: 'reference',
-					range: token,
+					node: token,
 				})
 		}
 	}

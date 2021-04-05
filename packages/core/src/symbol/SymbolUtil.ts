@@ -3,7 +3,7 @@ import type { AstNode } from '../node'
 import type { Logger } from '../service'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
-import type { AllCategory, Symbol, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsage } from './Symbol'
+import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsage } from './Symbol'
 import { SymbolLocation, SymbolUsages, SymbolVisibility } from './Symbol'
 
 // I wrote a lot of comments in this file to pretend that I know what I am doing.
@@ -141,21 +141,34 @@ export class SymbolUtil {
 		return null
 	}
 
+	/**
+	 * Note: if only a `uri` is passed in, do not set `range` to things other than `[0, 0)` when entering symbols.
+	 */
+	query(uri: string, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
+	query(uri: string, category: string, ...path: [string, ...string[]]): SymbolQueryResult
 	query(doc: TextDocument, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
 	query(doc: TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
+	query(doc: string | TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
+		if (typeof doc === 'string') {
+			doc = TextDocument.create(doc, '', 0, '')
+		}
 		const result = this.lookup(category, path, doc.uri)
 		return new SymbolQueryResult(doc, this, category, path, result?.symbol ?? null, !!result?.visible)
 	}
 
+	getVisibleSymbols(category: AllCategory): SymbolMap
+	getVisibleSymbols(category: string): SymbolMap
 	getVisibleSymbols(uri: string, category: AllCategory): SymbolMap
 	getVisibleSymbols(uri: string, category: string): SymbolMap
-	getVisibleSymbols(uri: string, category: string): SymbolMap {
+	getVisibleSymbols(param1: string, param2?: string): SymbolMap {
+		const [uri, category] = param2 ? [param1, param2] : [undefined, param1]
 		const ans: SymbolMap = {}
 
-		// TODO: Lookup in local stack as well.
-		const stack = this.getStack(uri)
-		stack
+		if (uri) {
+			// TODO: Lookup in local stack as well.
+			const stack = this.getStack(uri)
+			stack
+		}
 
 		const map = this.global[category]
 		if (map) {
@@ -173,6 +186,8 @@ export class SymbolUtil {
 	 * Push a new block to the `SymbolStack` corresponding to `uri`.
 	 * 
 	 * ~~We're not using blockchain technique here, unfortunately.~~
+	 * 
+	 * @deprecated Use `block` instead.
 	 */
 	pushBlock(uri: string): void {
 		const stack = this.getStack(uri)
@@ -183,6 +198,8 @@ export class SymbolUtil {
 	 * Pops the newest block out of the `SymbolStack` corresponding to `uri`.
 	 * 
 	 * @throws When it is the last element in the stack.
+	 * 
+	 * @deprecated Use `block` instead.
 	 */
 	popBlock(uri: string): void {
 		const stack = this.getStack(uri)
@@ -192,7 +209,27 @@ export class SymbolUtil {
 		stack.pop()
 	}
 
-	private static trim(table: SymbolTable): void {
+	/**
+	 * Executes the `callbackFn` in a new block.
+	 * 
+	 * ~~We're not using blockchain technique here, unfortunately.~~
+	 */
+	block(uri: string, callbackFn: (this: void) => unknown): void {
+		const stack = this.getStack(uri)
+		stack.push({})
+		try {
+			callbackFn()
+		} catch (e) {
+			throw e
+		} finally {
+			if (stack.length <= 1) {
+				throw new Error('Unable to pop a block out as it is the last element in this stack')
+			}
+			stack.pop()
+		}
+	}
+
+	static trim(table: SymbolTable): void {
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
 			this.trimMap(map)
@@ -202,7 +239,7 @@ export class SymbolUtil {
 		}
 	}
 
-	private static trimMap(map: SymbolMap): void {
+	static trimMap(map: SymbolMap): void {
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
 			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
@@ -221,14 +258,17 @@ export class SymbolUtil {
 	 * 
 	 * @param predicate A predicate that matches locations that should be removed.
 	 */
-	private static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
+	static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
 		for (const category of Object.keys(table)) {
 			this.removeLocationsFromMap(table[category]!, predicate)
 		}
 		this.trim(table)
 	}
 
-	private static removeLocationsFromMap(map: SymbolMap, predicate: (this: void, loc: SymbolLocation) => unknown): void {
+	static removeLocationsFromMap(map: SymbolMap | undefined, predicate: (this: void, loc: SymbolLocation) => unknown): void {
+		if (!map) {
+			return
+		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
 			for (const form of SymbolUsages) {
@@ -259,7 +299,7 @@ export class SymbolUtil {
 		}
 	}
 
-	private static enterTable(table: SymbolTable, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	static enterTable(table: SymbolTable, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const map: SymbolMap = table[addition.category] ??= {}
 		return this.enterMap(map, addition, doc, isUriBinding)
 	}
@@ -272,20 +312,24 @@ export class SymbolUtil {
 	 * @returns The same reference as `base` if it's not `undefined`.
 	 */
 	private static mergeSymbol(base: Symbol | undefined, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+		// TODO: Split metadata and location data.
 		if (base) {
 			this.mergeMetadata(base, addition)
 		} else {
 			base = this.getMetadata(addition)
 		}
-		if (addition.usage !== undefined && addition.range !== undefined) {
+		if (addition.usage) {
 			const arr = base[addition.usage] ??= []
-			arr.push(SymbolLocation.create(doc, addition.range, addition.fullRange, isUriBinding))
+			arr.push(SymbolLocation.create(doc, addition.range ?? Range.create(0), addition.fullRange, isUriBinding, {
+				accessType: addition.accessType,
+				fromDefaultLibrary: addition.fromDefaultLibrary,
+			}))
 		}
 		return base
 	}
 
 	private static mergeMetadata<T extends SymbolMetadata>(symbol: Symbol, additionalMetadata: T): void {
-		for (const key of ['doc', 'fromDefaultLibrary', 'subcategory', 'visibility'] as const) {
+		for (const key of ['doc', 'subcategory', 'visibility'] as const) {
 			if (additionalMetadata[key] !== undefined) {
 				symbol[key] = additionalMetadata[key] as any
 			}
@@ -311,7 +355,7 @@ export class SymbolUtil {
 			category: obj.category,
 			identifier: obj.identifier,
 		}
-		for (const key of ['doc', 'fromDefaultLibrary', 'relations', 'subcategory', 'visibility', 'visibilityRestriction'] as const) {
+		for (const key of ['doc', 'relations', 'subcategory', 'visibility', 'visibilityRestriction'] as const) {
 			if (obj[key] !== undefined) {
 				ans[key] = obj[key] as any
 			}
@@ -386,17 +430,50 @@ export class SymbolUtil {
 	}
 }
 
-export interface SymbolAddition extends SymbolMetadata {
+/**
+ * @deprecated
+ */
+export interface SymbolAddition extends SymbolMetadata, SymbolLocationMetadata {
 	/**
 	 * The usage of this `Symbol`. Use `definition` when the usage consists both a `declaration` and an `implementation`.
 	 */
 	usage?: SymbolUsage,
 	range?: RangeLike,
+	/**
+	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
+	 * ```nbtdoc
+	 * 0123456789012345
+	 * compound Foo {}
+	 * ```
+	 * 
+	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
+	 */
 	fullRange?: RangeLike,
 }
 
+/**
+ * @deprecated
+ */
 interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identifier'> {
-	range?: AstNode
+	node?: AstNode,
+}
+
+interface SymbolQueryEnterable2 {
+	data?: Omit<SymbolMetadata, 'category' | 'identifier'>,
+	location?: SymbolEnterableLocationWithRange | SymbolEnterableLocationWithNode,
+}
+interface SymbolEnterableLocationBase extends SymbolLocationMetadata {
+	/**
+	 * The usage of this `Symbol`. Use `definition` when the usage consists both a `declaration` and an `implementation`.
+	 */
+	usage: SymbolUsage,
+	fullRange?: RangeLike,
+}
+interface SymbolEnterableLocationWithRange extends SymbolEnterableLocationBase {
+	range?: RangeLike,
+}
+interface SymbolEnterableLocationWithNode extends SymbolEnterableLocationBase {
+	node?: AstNode,
 }
 
 /**
@@ -504,28 +581,19 @@ export class SymbolQueryResult {
 		return this
 	}
 
-	// /**
-	//  * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
-	//  */
-	// elseAlias(symbol: SymbolAddition): this {
-	// 	return this.else(() => this.alias(symbol))
-	// }
-
+	/**
+	 * @deprecated Use another overload of this method instead.
+	 */
+	elseEnter(symbol: SymbolQueryEnterable): this
 	/**
 	 * Enters the queried symbol if none of the former `if` conditions are met.
 	 * 
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
-	elseEnter(symbol: SymbolQueryEnterable): this {
-		return this.else(() => this.enter(symbol))
+	elseEnter(symbol: SymbolQueryEnterable2): this
+	elseEnter(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
+		return this.else(() => this.enter(symbol as any))
 	}
-
-	// /**
-	//  * Creates an alias symbol that points to the queried symbol if none of the former `if` conditions are met.
-	//  */
-	// elseAlias(symbol: SymbolAddition): this {
-	// 	return this.else(() => this.alias(symbol))
-	// }
 
 	/**
 	 * Resolves the queried symbol if it is an alias and if none of the former `if` conditions are met.
@@ -534,31 +602,35 @@ export class SymbolQueryResult {
 		return this.else(() => this.resolveAlias())
 	}
 
-	// /**
-	//  * Creates an alias symbol that points to the queried symbol.
-	//  */
-	// alias(symbol: SymbolAddition): this {
-	// 	this.#util.enter(this.#doc, {
-	// 		...symbol,
-	// 		...this.#symbol ? { relations: { aliasOf: this.#symbol } } : {},
-	// 	})
-	// 	return this
-	// }
-
+	/**
+	 * @deprecated Use another overload of this method instead.
+	 */
+	enter(symbol: SymbolQueryEnterable): this
 	/**
 	 * Enters the queried symbol.
 	 *
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
-	enter(symbol: SymbolQueryEnterable): this {
+	enter(symbol: SymbolQueryEnterable2): this
+	enter(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
+		if (SymbolQueryResult.isNewEnterable(symbol)) {
+			symbol = {
+				...symbol.data,
+				...symbol.location,
+			}
+		}
 		this.#symbol = this.#util.lookupAndEnterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
 		this.#visible = SymbolUtil.isVisible(this.#symbol, this.#doc.uri)
-		if (symbol.range) {
-			symbol.range.symbol = this.#symbol
+		if (symbol.node) {
+			symbol.node.symbol = this.#symbol
 		}
 		return this
 	}
 
+	/**
+	 * @deprecated Use another overload of this method instead.
+	 */
+	amend(symbol: SymbolQueryEnterable): this
 	/**
 	 * Amends the queried symbol if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions) and is visible at the current scope.
 	 * 
@@ -571,8 +643,9 @@ export class SymbolQueryResult {
 	 * 
 	 * Therefore, if the symbol is successfully amended, `elseX` methods afterwards will **not** be executed.
 	 */
-	amend(symbol: SymbolQueryEnterable): this {
-		return this.ifKnown(() => this.enter(symbol))
+	amend(symbol: SymbolQueryEnterable2): this
+	amend(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
+		return this.ifKnown(() => this.enter(symbol as any))
 	}
 
 	/**
@@ -590,6 +663,11 @@ export class SymbolQueryResult {
 			...enterable,
 			category: this.category,
 			identifier: this.path[this.path.length - 1],
+			range: enterable.range ?? enterable.node,
 		}
+	}
+
+	private static isNewEnterable(enterable: SymbolQueryEnterable | SymbolQueryEnterable2): enterable is SymbolQueryEnterable2 {
+		return !!((enterable as SymbolQueryEnterable2).data || (enterable as SymbolQueryEnterable2).location)
 	}
 }
