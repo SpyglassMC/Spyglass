@@ -2,6 +2,7 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { RangeLike } from '../source'
 import { Location, PositionRange, Range } from '../source'
 
+//#region Data Pack Categories
 export const TagFileCategories = Object.freeze([
 	'tag/block',
 	'tag/entity_type',
@@ -10,6 +11,8 @@ export const TagFileCategories = Object.freeze([
 	'tag/game_event',
 	'tag/item',
 ] as const)
+export type TagFileCategory = typeof TagFileCategories[number]
+
 export const WorldgenFileCategories = Object.freeze([
 	'worldgen/biome',
 	'worldgen/configured_carver',
@@ -21,6 +24,8 @@ export const WorldgenFileCategories = Object.freeze([
 	'worldgen/processor_list',
 	'worldgen/template_pool',
 ] as const)
+export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
+
 export const FileCategories = Object.freeze([
 	'advancement',
 	'dimension',
@@ -34,30 +39,103 @@ export const FileCategories = Object.freeze([
 	...TagFileCategories,
 	...WorldgenFileCategories,
 ] as const)
+export type FileCategory = typeof FileCategories[number]
+
 export const MiscCategories = Object.freeze([
 	'bossbar',
-	'entity',
 	'objective',
 	'score_holder',
 	'storage',
 	'tag',
 	'team',
 ] as const)
-export const DeclarableCategories = Object.freeze([
+export type MiscCategory = typeof MiscCategories[number]
+
+export const DatapackCategories = Object.freeze([
 	...FileCategories,
 	...MiscCategories,
 ] as const)
-export const AllCategories = Object.freeze([
-	...DeclarableCategories,
-	'nbtdoc',
-] as const)
+export type DatapackCategory = typeof DatapackCategories[number]
+//#endregion
 
-export type TagFileCategory = typeof TagFileCategories[number]
-export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
-export type FileCategory = typeof FileCategories[number]
-export type MiscCategory = typeof MiscCategories[number]
-export type DeclarableCategory = typeof DeclarableCategories[number]
+//#region NBTDoc Categories
+export const NbtdocCategories = Object.freeze([
+	'nbtdoc',
+])
+export type NbtdocCategory = typeof NbtdocCategories[number]
+//#endregion
+
+//#region Vanilla Registry Categories
+export const VanillaRegistryCategories = Object.freeze([
+	'activity',
+	'attribute',
+	'block',
+	'block_entity_type',
+	'chunk_status',
+	'custom_stat',
+	'enchantment',
+	'entity_type',
+	'float_provider_type',
+	'fluid',
+	'game_event',
+	'height_provider_type',
+	'int_provider_type',
+	'item',
+	'loot_condition_type',
+	'loot_function_type',
+	'loot_nbt_provider_type',
+	'loot_number_provider_type',
+	'loot_pool_entry_type',
+	'loot_score_provider_type',
+	'memory_module_type',
+	'menu',
+	'mob_effect',
+	'motive',
+	'particle_type',
+	'point_of_interest_type',
+	'pos_rule_test',
+	'position_source_type',
+	'potion',
+	'recipe_serializer',
+	'recipe_type',
+	'rule_test',
+	'schedule',
+	'sensor_type',
+	'sound_event',
+	'stat_type',
+	'villager_profession',
+	'villager_type',
+	'worldgen/biome_source',
+	'worldgen/block_placer_type',
+	'worldgen/block_state_provider_type',
+	'worldgen/carver',
+	'worldgen/chunk_generator',
+	'worldgen/decorator',
+	'worldgen/feature',
+	'worldgen/feature_size_type',
+	'worldgen/foliage_placer_type',
+	'worldgen/structure_feature',
+	'worldgen/structure_piece',
+	'worldgen/structure_pool_element',
+	'worldgen/structure_processor',
+	'worldgen/surface_builder',
+	'worldgen/tree_decorator_type',
+	'worldgen/trunk_placer_type',
+])
+export type VanillaRegistryCategory = typeof VanillaRegistryCategories[number]
+//#endregion
+
+export const AllCategories = Object.freeze([
+	...DatapackCategories,
+	...NbtdocCategories,
+	...VanillaRegistryCategories,
+] as const)
 export type AllCategory = typeof AllCategories[number]
+
+export const enum SymbolAccessType {
+	Read,
+	Write,
+}
 
 export const enum SymbolVisibility {
 	Block,
@@ -97,7 +175,7 @@ export interface SymbolMetadata {
 	 */
 	doc?: string,
 	/**
-	 * Whether this Symbol comes from a default library (e.g. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
+	 * Whether this Symbol comes from a default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
 	 * 
 	 * [mc-data]: https://github.com/Arcensoth/mc-data
 	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
@@ -129,6 +207,7 @@ export interface SymbolLocation extends Location {
 	 */
 	fullRange?: Range,
 	fullPosRange?: PositionRange,
+	accessType?: SymbolAccessType,
 	/**
 	 * Whether this Location is contributed by a `UriBinder`.
 	 */
