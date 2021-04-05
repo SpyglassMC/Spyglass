@@ -61,7 +61,7 @@ export type DatapackCategory = typeof DatapackCategories[number]
 //#region NBTDoc Categories
 export const NbtdocCategories = Object.freeze([
 	'nbtdoc',
-])
+] as const)
 export type NbtdocCategory = typeof NbtdocCategories[number]
 //#endregion
 
@@ -121,7 +121,7 @@ export const VanillaRegistryCategories = Object.freeze([
 	'worldgen/surface_builder',
 	'worldgen/tree_decorator_type',
 	'worldgen/trunk_placer_type',
-])
+] as const)
 export type VanillaRegistryCategory = typeof VanillaRegistryCategories[number]
 //#endregion
 
