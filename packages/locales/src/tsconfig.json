@@ -6,5 +6,8 @@
 	"include": [
 		"./**/*.json",
 		"./**/*.ts"
+	],
+	"exclude": [
+		"./**/tsconfig.json"
 	]
 }
