@@ -85,19 +85,21 @@
         "extensions": [
           ".mcfunction"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./mcfunction-language-configuration.json"
       },
       {
         "id": "nbt",
         "extensions": [
           ".snbt"
-        ]
+        ],
+        "configuration": "./nbt-language-configuration.json"
       },
       {
         "id": "nbtdoc",
         "extensions": [
           ".nbtdoc"
-        ]
+        ],
+        "configuration": "./nbtdoc-language-configuration.json"
       },
       {
         "id": "json",
