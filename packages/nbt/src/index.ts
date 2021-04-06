@@ -1,6 +1,8 @@
 import * as core from '@spyglassmc/core'
+import * as colorizer from './colorizer'
 import * as parser from './parser'
 
+export * as colorizer from './colorizer'
 export * from './node'
 export * as parser from './parser'
 
@@ -10,6 +12,7 @@ export function initializeNbt() {
 		meta.registerLanguage('nbt', {
 			extensions: ['.snbt'],
 			parser: parser.entry,
+			colorizer: colorizer.entry,
 		})
 	})
 }
