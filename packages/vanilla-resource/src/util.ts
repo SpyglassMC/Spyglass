@@ -236,20 +236,26 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 				return `${WikiBaseUri}/Loot_table#Number_Providers`
 			case 'loot_pool_entry_type':
 				return `${WikiBaseUri}/Loot_table#Tags`
+			case 'motive':
+				return `${WikiBaseUri}/Painting#Canvases`
 			case 'potion':
 				return `${WikiBaseUri}/Potion#Item_data`
 			case 'particle_type':
 				return `${WikiBaseUri}/Java_Edition_data_values#Particles`
 			case 'recipe_serializer':
 				return `${WikiBaseUri}/Recipe#${shorten(longEntryId)}`
-			case 'worldgen/biome_source':
-				return `${WikiBaseUri}/Java_Edition_data_values#Biome_sources`
-			case 'worldgen/chunk_generator':
-				return `${WikiBaseUri}/Java_Edition_data_values#Chunk_generators`
 			case 'sound_event':
 				return `${SoundsBaseUri}?sound=${shorten(longEntryId)}`
 			case 'stat_type':
 				return `${WikiBaseUri}/Statistics#Statistic_types_and_names`
+			case 'villager_profession':
+				return `${WikiBaseUri}/Villager#Villager_profession`
+			case 'villager_type':
+				return `${WikiBaseUri}/Villager#Villager_type`
+			case 'worldgen/biome_source':
+				return `${WikiBaseUri}/Java_Edition_data_values#Biome_sources`
+			case 'worldgen/chunk_generator':
+				return `${WikiBaseUri}/Java_Edition_data_values#Chunk_generators`
 			default:
 				return RegistriesSpyglassUri
 		}
