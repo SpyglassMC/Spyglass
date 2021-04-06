@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { NbtByteArrayNode, NbtIntArrayNode, NbtListNode, NbtLongArrayNode } from '../node'
+import { localizeTag } from '../util'
 import { entry } from './entry'
 import { primitive } from './primitive'
 
@@ -15,7 +16,7 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 		for (const { value } of ans.children) {
 			if (value && value.type !== ans.valueType) {
 				ctx.err.report(
-					localize('expected-got', [localize(`nbt.node.${ans.valueType.slice(4)}`), localize(`nbt.node.${value.type.slice(4)}`)]),
+					localize('expected-got', [localizeTag(ans.valueType), localizeTag(value.type)]),
 					value
 				)
 			}
@@ -35,7 +36,7 @@ export const byteArray: core.Parser<NbtByteArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:byte') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.byte'), localize(`nbt.node.${value.type.slice(4)}`)]),
+				localize('expected-got', [localize('nbt.node.byte'), localizeTag(value.type)]),
 				value
 			)
 		}
@@ -53,7 +54,7 @@ export const intArray: core.Parser<NbtIntArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:int') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.int'), localize(`nbt.node.${value.type.slice(4)}`)]),
+				localize('expected-got', [localize('nbt.node.int'), localizeTag(value.type)]),
 				value
 			)
 		}
@@ -71,7 +72,7 @@ export const longArray: core.Parser<NbtLongArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:long') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.long'), localize(`nbt.node.${value.type.slice(4)}`)]),
+				localize('expected-got', [localize('nbt.node.long'), localizeTag(value.type)]),
 				value
 			)
 		}

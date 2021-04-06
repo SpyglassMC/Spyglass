@@ -789,7 +789,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
         "start": 11,
         "end": 19
       },
-      "message": "Expected a long tag but got ",
+      "message": "Expected a long tag but got a string tag",
       "severity": 3
     }
   ]

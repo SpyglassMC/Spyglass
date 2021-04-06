@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode } from '../node'
+import { localizeTag } from '../util'
 
 const enum Group {
 	Boolean,
@@ -53,7 +54,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (src: core.Sou
 			if (isOutOfRange) {
 				ctx.err.report(
 					localize('nbt.parser.number.out-of-range', [
-						localize(`nbt.node.${e.type.slice(4)}`), localize('nbt.node.string'), e.min, e.max,
+						localizeTag(e.type), localize('nbt.node.string'), e.min, e.max,
 					]),
 					unquotedResult,
 					core.ErrorSeverity.Warning
