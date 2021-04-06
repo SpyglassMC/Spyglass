@@ -169,6 +169,6 @@ export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]+$/
 
 export const brigadierString = string({
 	escapable: {},
-	quotes: ['"', '"'],
+	quotes: ['"', "'"],
 	unquotable: BrigadierUnquotablePattern,
 })
