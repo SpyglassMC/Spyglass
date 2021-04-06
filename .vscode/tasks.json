@@ -25,7 +25,7 @@
 				"background": {
 					"activeOnStart": true,
 					"beginsPattern": "^\\s*\\[webpack-cli\\] Compilation starting\\.\\.\\.",
-					"endsPattern": "^\\s*webpack [\\d\\.]+ compiled successfully in \\d+ ms"
+					"endsPattern": "^\\s*webpack [\\d\\.]+ compiled .+ in \\d+ ms"
 				},
 				"pattern": [
 					{
