@@ -15,7 +15,7 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 		for (const { value } of ans.children) {
 			if (value && value.type !== ans.valueType) {
 				ctx.err.report(
-					localize('expected-got', [localize(`nbt.node.${ans.valueType}`), localize(`nbt.node.${value.type.slice(4)}`)]),
+					localize('expected-got', [localize(`nbt.node.${ans.valueType.slice(4)}`), localize(`nbt.node.${value.type.slice(4)}`)]),
 					value
 				)
 			}
