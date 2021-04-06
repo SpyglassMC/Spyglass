@@ -58,7 +58,7 @@ exports['nbt primitive() Parse "1.23f" 1'] = {
     "type": "nbt:float",
     "range": {
       "start": 0,
-      "end": 4
+      "end": 5
     },
     "value": 1.23
   },
@@ -70,7 +70,7 @@ exports['nbt primitive() Parse "1024L" 1'] = {
     "type": "nbt:long",
     "range": {
       "start": 0,
-      "end": 4
+      "end": 5
     },
     "value": "1024"
   },
@@ -114,7 +114,7 @@ exports['nbt primitive() Parse "1b" 1'] = {
     "type": "nbt:byte",
     "range": {
       "start": 0,
-      "end": 1
+      "end": 2
     },
     "value": "1"
   },
@@ -138,7 +138,7 @@ exports['nbt primitive() Parse "4.56d" 1'] = {
     "type": "nbt:double",
     "range": {
       "start": 0,
-      "end": 4
+      "end": 5
     },
     "value": 4.56
   },
@@ -150,7 +150,7 @@ exports['nbt primitive() Parse "72s" 1'] = {
     "type": "nbt:short",
     "range": {
       "start": 0,
-      "end": 2
+      "end": 3
     },
     "value": "72"
   },

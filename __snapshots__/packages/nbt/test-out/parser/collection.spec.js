@@ -67,7 +67,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
             "type": "nbt:byte",
             "range": {
               "start": 10,
-              "end": 11
+              "end": 12
             },
             "value": "1"
           }
@@ -76,7 +76,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
           "type": "nbt:byte",
           "range": {
             "start": 10,
-            "end": 11
+            "end": 12
           },
           "value": "1"
         },
@@ -172,7 +172,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
             "type": "nbt:byte",
             "range": {
               "start": 10,
-              "end": 11
+              "end": 12
             },
             "value": "1"
           }
@@ -181,7 +181,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
           "type": "nbt:byte",
           "range": {
             "start": 10,
-            "end": 11
+            "end": 12
           },
           "value": "1"
         }
@@ -470,7 +470,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
             "type": "nbt:byte",
             "range": {
               "start": 11,
-              "end": 12
+              "end": 13
             },
             "value": "1"
           }
@@ -479,7 +479,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
           "type": "nbt:byte",
           "range": {
             "start": 11,
-            "end": 12
+            "end": 13
           },
           "value": "1"
         }
@@ -491,7 +491,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
     {
       "range": {
         "start": 11,
-        "end": 12
+        "end": 13
       },
       "message": "Expected a string tag but got a byte tag",
       "severity": 3
@@ -612,7 +612,7 @@ exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
             "type": "nbt:long",
             "range": {
               "start": 4,
-              "end": 5
+              "end": 6
             },
             "value": "0"
           }
@@ -621,7 +621,7 @@ exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
           "type": "nbt:long",
           "range": {
             "start": 4,
-            "end": 5
+            "end": 6
           },
           "value": "0"
         },
@@ -641,7 +641,7 @@ exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
             "type": "nbt:long",
             "range": {
               "start": 8,
-              "end": 9
+              "end": 10
             },
             "value": "1"
           }
@@ -650,7 +650,7 @@ exports['nbt longArray() Parse "[L; 0L, 1L]" 1'] = {
           "type": "nbt:long",
           "range": {
             "start": 8,
-            "end": 9
+            "end": 10
           },
           "value": "1"
         }
@@ -679,7 +679,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
             "type": "nbt:long",
             "range": {
               "start": 4,
-              "end": 5
+              "end": 6
             },
             "value": "0"
           }
@@ -688,7 +688,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
           "type": "nbt:long",
           "range": {
             "start": 4,
-            "end": 5
+            "end": 6
           },
           "value": "0"
         },

@@ -63,6 +63,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (src: core.Sou
 			updateNumeral()
 			if (e.hasSuffix) {
 				src.skip()
+				numeralResult.range.end++
 			}
 			return {
 				...numeralResult,
