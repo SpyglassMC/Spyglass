@@ -278,7 +278,7 @@ function reportDuplicatedDeclaration(localeString: string, ctx: CheckerContext, 
 		range, ErrorSeverity.Warning,
 		{
 			related: [{
-				location: SymbolUtil.getDeclaredLocation(symbol),
+				location: SymbolUtil.getDeclaredLocation(symbol) as core.Location,
 				message: localize(`${localeString}.related`, [localeQuote(symbol.identifier)]),
 			}],
 		}
