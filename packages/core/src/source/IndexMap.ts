@@ -17,9 +17,10 @@ export namespace IndexMap {
 		}
 	}
 
-	export function toInnerOffset(map: IndexMap, outer: number): number {
+	export function toInnerOffset(map: IndexMap, outer: number): number
+	export function toInnerOffset(map: IndexMap, outer: number, offsetForChecking?: number): number {
 		const { innerRange, outerRange, pairs } = map
-		if (!Range.contains(outerRange, outer)) {
+		if (!Range.contains(outerRange, offsetForChecking ?? outer)) {
 			throw new Error(`Offset ${outer} is not in range ${Range.toString(outerRange)}`)
 		}
 
@@ -40,13 +41,14 @@ export namespace IndexMap {
 	export function toInnerRange(map: IndexMap, outer: Range): Range {
 		return Range.create(
 			toInnerOffset(map, outer.start),
-			toInnerOffset(map, outer.end)
+			(toInnerOffset as any)(map, outer.end, outer.end - 1)
 		)
 	}
 
-	export function toOuterOffset(map: IndexMap, inner: number): number {
+	export function toOuterOffset(map: IndexMap, inner: number): number
+	export function toOuterOffset(map: IndexMap, inner: number, offsetForChecking?: number): number {
 		const { innerRange, outerRange, pairs } = map
-		if (!Range.contains(innerRange, inner)) {
+		if (!Range.contains(innerRange, offsetForChecking ?? inner)) {
 			throw new Error(`Offset ${inner} is not in range ${Range.toString(innerRange)}`)
 		}
 
@@ -67,7 +69,7 @@ export namespace IndexMap {
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
 		return Range.create(
 			toOuterOffset(map, inner.start),
-			toOuterOffset(map, inner.end)
+			(toOuterOffset as any)(map, inner.end, inner.end - 1)
 		)
 	}
 
