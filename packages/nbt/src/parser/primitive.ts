@@ -9,6 +9,8 @@ const enum Group {
 	FloatAlike,
 }
 
+const FloatMaximum = (2 - (2 ** -23)) * (2 ** 127)
+
 const NumeralPatterns: (
 	{ pattern: RegExp, type: 'nbt:byte', value: bigint, group: Group.Boolean } |
 	{ pattern: RegExp, type: NbtNumberNode['type'], hasSuffix: boolean, group: Group.IntegerAlike, min: bigint, max: bigint } |
@@ -19,7 +21,7 @@ const NumeralPatterns: (
 		{ pattern: /^[-+]?(?:0|[1-9][0-9]*)s$/i, type: 'nbt:short', hasSuffix: true, group: Group.IntegerAlike, min: BigInt('-32768'), max: BigInt('32767') },
 		{ pattern: /^[-+]?(?:0|[1-9][0-9]*)$/, type: 'nbt:int', hasSuffix: false, group: Group.IntegerAlike, min: BigInt('-2147483648'), max: BigInt('2147483647') },
 		{ pattern: /^[-+]?(?:0|[1-9][0-9]*)l$/i, type: 'nbt:long', hasSuffix: true, group: Group.IntegerAlike, min: BigInt('-9223372036854775808'), max: BigInt('9223372036854775807') },
-		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?f$/i, type: 'nbt:float', hasSuffix: true, group: Group.FloatAlike, min: 2 ** -149, max: (2 - (2 ** -23)) * (2 ** 127) },
+		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?f$/i, type: 'nbt:float', hasSuffix: true, group: Group.FloatAlike, min: -FloatMaximum, max: FloatMaximum },
 		{ pattern: /^[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?$/i, type: 'nbt:double', hasSuffix: false, group: Group.FloatAlike },
 		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d$/i, type: 'nbt:double', hasSuffix: true, group: Group.FloatAlike },
 		{ pattern: /^true$/i, type: 'nbt:byte', value: BigInt(1), group: Group.Boolean },
