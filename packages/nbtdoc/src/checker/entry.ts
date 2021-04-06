@@ -180,8 +180,8 @@ const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): 
 				doc: node.doc.value,
 				subcategory: 'enum',
 			},
-			location: {
-				usage: 'definition',
+			usage: {
+				type: 'definition',
 				node: node.identifier,
 				fullRange: node,
 			},

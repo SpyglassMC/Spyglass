@@ -320,10 +320,17 @@ export class SymbolUtil {
 		}
 		if (addition.usage) {
 			const arr = base[addition.usage] ??= []
-			arr.push(SymbolLocation.create(doc, addition.range ?? Range.create(0), addition.fullRange, isUriBinding, {
+			const loc = SymbolLocation.create(doc, addition.range ?? Range.create(0), addition.fullRange, isUriBinding, {
 				accessType: addition.accessType,
 				fromDefaultLibrary: addition.fromDefaultLibrary,
-			}))
+			})
+			if (!doc.uri.startsWith('file:')) {
+				delete loc.range
+				delete loc.posRange
+				delete loc.fullRange
+				delete loc.fullPosRange
+			}
+			arr.push(loc)
 		}
 		return base
 	}
@@ -460,19 +467,19 @@ interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identi
 
 interface SymbolQueryEnterable2 {
 	data?: Omit<SymbolMetadata, 'category' | 'identifier'>,
-	location?: SymbolEnterableLocationWithRange | SymbolEnterableLocationWithNode,
+	usage?: SymbolEnterableUsageWithRange | SymbolEnterableUsageWithNode,
 }
-interface SymbolEnterableLocationBase extends SymbolLocationMetadata {
+interface SymbolEnterableUsageBase extends SymbolLocationMetadata {
 	/**
-	 * The usage of this `Symbol`. Use `definition` when the usage consists both a `declaration` and an `implementation`.
+	 * The type of this usage. Use `definition` when the usage consists both a `declaration` and an `implementation`.
 	 */
-	usage: SymbolUsage,
+	type: SymbolUsage,
 	fullRange?: RangeLike,
 }
-interface SymbolEnterableLocationWithRange extends SymbolEnterableLocationBase {
+interface SymbolEnterableUsageWithRange extends SymbolEnterableUsageBase {
 	range?: RangeLike,
 }
-interface SymbolEnterableLocationWithNode extends SymbolEnterableLocationBase {
+interface SymbolEnterableUsageWithNode extends SymbolEnterableUsageBase {
 	node?: AstNode,
 }
 
@@ -615,8 +622,9 @@ export class SymbolQueryResult {
 	enter(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
 		if (SymbolQueryResult.isNewEnterable(symbol)) {
 			symbol = {
+				usage: symbol.usage?.type,
+				...symbol.usage,
 				...symbol.data,
-				...symbol.location,
 			}
 		}
 		this.#symbol = this.#util.lookupAndEnterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
@@ -668,6 +676,6 @@ export class SymbolQueryResult {
 	}
 
 	private static isNewEnterable(enterable: SymbolQueryEnterable | SymbolQueryEnterable2): enterable is SymbolQueryEnterable2 {
-		return !!((enterable as SymbolQueryEnterable2).data || (enterable as SymbolQueryEnterable2).location)
+		return !!((enterable as SymbolQueryEnterable2).data || (enterable as SymbolQueryEnterable2).usage)
 	}
 }

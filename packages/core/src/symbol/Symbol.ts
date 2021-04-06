@@ -209,7 +209,10 @@ export interface SymbolLocationMetadata {
 	fromDefaultLibrary?: true,
 }
 
-export interface SymbolLocation extends SymbolLocationMetadata, Location {
+export interface SymbolLocation extends SymbolLocationMetadata {
+	uri: string,
+	range?: Range,
+	posRange?: PositionRange,
 	/**
 	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
 	 * ```nbtdoc
