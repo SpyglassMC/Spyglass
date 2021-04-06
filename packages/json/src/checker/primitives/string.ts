@@ -1,5 +1,7 @@
-import { ErrorSeverity } from '@spyglassmc/core'
+import type { Parser } from '@spyglassmc/core'
+import { ErrorReporter, ErrorSeverity, Failure, ParserContext, Source } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Categories } from '../../binder'
 import type { JsonNode } from '../../node'
 import { JsonStringNode } from '../../node'
@@ -46,6 +48,37 @@ export function literal(value: string | string[]): JsonChecker {
 	}
 }
 
+export function special(name: string, parser: Parser): JsonChecker {
+	return (node, ctx) => {
+		node.expectation = [{ type: 'json:string', typedoc: typedoc(name) }]
+		if(!JsonStringNode.is(node)) {
+			ctx.err.report(localize('expected', [localize('string')]), node)
+		} else {
+			const src = new Source(node.value)
+			const parseCtx = ParserContext.create({
+				...ctx,
+				doc: TextDocument.create('spyglassmc://inner_string.txt', 'plaintext', 0, node.value),
+				err: new ErrorReporter(),
+			})
+			const result = parser(src, parseCtx)
+			if (result !== Failure) {
+				ctx.err.absorb(parseCtx.err, { map: {
+					outerRange: {
+						start: node.range.start + 1,
+						end: node.range.end - 1,
+					},
+					innerRange: {
+						start: result.range.start,
+						end: result.range.end + 1,
+					},
+					pairs: [],
+				}, doc: ctx.doc })
+				node.valueNode = result
+			}
+		}
+	}
+}
+
 function typedoc(id: string | string[]) {
 	return typeof id === 'string'
 		? `String("${id}")`
@@ -60,7 +93,9 @@ function reference(node: JsonStringNode, ctx: JsonCheckerContext, id: string) {
 			ctx.err.report(localize('json.checker.string.undeclared', [id[0].toUpperCase() + id.slice(1), localize('punc.quote', [node.value])]), node, ErrorSeverity.Warning)
 		})
 		.elseEnter({
-			usage: 'reference',
-			node,
+			usage: {
+				type: 'reference',
+				node,
+			},
 		})
 }

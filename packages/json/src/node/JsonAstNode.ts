@@ -70,6 +70,7 @@ export namespace JsonStringExpectation {
 export interface JsonStringNode extends JsonBaseAstNode {
 	readonly type: 'json:string'
 	readonly value: string
+	valueNode?: AstNode
 }
 export namespace JsonStringNode {
 	export function is(obj: object): obj is JsonStringNode {

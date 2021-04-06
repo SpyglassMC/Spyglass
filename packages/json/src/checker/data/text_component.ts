@@ -1,4 +1,5 @@
-import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, string } from '../primitives'
+import { compound } from '@spyglassmc/nbt/lib/parser'
+import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, special, string } from '../primitives'
 
 const text_component_object = as('text_component', async (node, ctx) => record({
 	...having(node, ctx, {
@@ -23,7 +24,7 @@ const text_component_object = as('text_component', async (node, ctx) => record({
 			keybind: string, // TODO: keybind
 		},
 		nbt: () => ({
-			nbt: string, // TODO: nbt path
+			nbt: special('nbt', compound),
 			...having(node, ctx, {
 				block: {
 					block: string, // TODO: block pos

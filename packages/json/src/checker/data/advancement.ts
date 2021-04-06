@@ -1,4 +1,5 @@
-import { any, as, boolean, deprecated, dispatch, int, listOf, literal, object, opt, pick, record, resource, string, when } from '../primitives'
+import { compound } from '@spyglassmc/nbt/lib/parser'
+import { any, as, boolean, deprecated, dispatch, int, listOf, literal, object, opt, pick, record, resource, special, string, when } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 import { block_predicate, damage_predicate, damage_source_predicate, distance_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
 import { text_component } from './text_component'
@@ -202,7 +203,7 @@ export const advancement = as('advancement', record({
 	display: opt(record({
 		icon: record({
 			item: resource('item'),
-			nbt: opt(string), // TODO: nbt 
+			nbt: opt(special('nbt', compound)),
 		}),
 		title: text_component,
 		description: text_component,

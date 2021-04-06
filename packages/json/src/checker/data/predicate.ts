@@ -1,4 +1,5 @@
-import { any, as, boolean, dispatch, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, string } from '../primitives'
+import { compound } from '@spyglassmc/nbt/lib/parser'
+import { any, as, boolean, dispatch, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, special, string } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 
 const slots = [
@@ -16,7 +17,7 @@ export const item_predicate = as('item', record({
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
 	potion: opt(resource('potion')),
-	nbt: opt(string), // TODO: nbt
+	nbt: opt(special('nbt', compound)),
 	enchantments: opt(listOf(record({
 		enchantment: opt(resource('enchantment')),
 		levels: opt(int_bounds),
@@ -26,7 +27,7 @@ export const item_predicate = as('item', record({
 export const block_predicate = as('block', record({
 	block: opt(resource('block')),
 	tag: opt(resource('tag/block')),
-	nbt: opt(string), // TODO: nbt
+	nbt: opt(special('nbt', compound)),
 	state: opt(object(
 		string,
 		() => any([string, int_bounds, boolean]),
@@ -114,7 +115,7 @@ export const player_predicate = as('player', record({
 
 export const entity_predicate = as('entity', record({
 	type: opt(resource('entity_type', true)),
-	nbt: opt(string), // TODO: nbt
+	nbt: opt(special('nbt', compound)),
 	team: opt(literal('team')),
 	location: opt(location_predicate),
 	distance: opt(distance_predicate),
