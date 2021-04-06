@@ -49,9 +49,10 @@ export namespace toLS {
 	}
 
 	export function documentHighlight(locations: core.SymbolLocations | null): ls.DocumentHighlight[] | null {
+		// FIXME: Check if location is of `file:` scheme.
 		return locations?.locations
 			? locations.locations.map(loc => ({
-				range: loc.posRange,
+				range: loc.posRange!,
 			}))
 			: null
 	}
@@ -107,15 +108,16 @@ export namespace toLS {
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: false): ls.Location[] | null
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null {
+		// FIXME: Check if location is of `file:` scheme.
 		return locations?.locations
 			? linkSupport
 				? locations.locations.map(loc => ({
 					originSelectionRange: range(locations.range, doc),
 					targetUri: loc.uri,
-					targetRange: loc.fullPosRange ?? loc.posRange,
-					targetSelectionRange: loc.posRange,
+					targetRange: loc.fullPosRange ?? loc.posRange!,
+					targetSelectionRange: loc.posRange!,
 				}))
-				: locations.locations.map(location)
+				: (locations.locations as core.Location[]).map(location)
 			: null
 	}
 

@@ -26,7 +26,8 @@ module.exports = {
 	},
 	devtool: 'source-map',
 	externals: {
-		vscode: 'commonjs vscode'
+		vscode: 'commonjs vscode',
+		electron: 'commonjs electron',
 	},
 	resolve: {
 		extensions: ['.ts', '.js', 'json']

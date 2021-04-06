@@ -16,7 +16,8 @@
 			"json",
 			"locales",
 			"nbt",
-			"nbtdoc"
+			"nbtdoc",
+			"vanilla-resource"
 		]
 	},
 	"locales": {},
@@ -34,7 +35,7 @@
 		]
 	},
 	"vanilla-resource": {
-		"devDependencies": [
+		"dependencies": [
 			"core"
 		]
 	},

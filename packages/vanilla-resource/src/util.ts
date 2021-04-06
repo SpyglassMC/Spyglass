@@ -1,4 +1,5 @@
-import type { VersionManifest } from './type'
+import * as core from '@spyglassmc/core'
+import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from './type'
 import { VersionStatus } from './type'
 
 /**
@@ -69,6 +70,20 @@ export function getVersionStatus(version: string, versions: string[]): number {
 const McdataBase = 'https://raw.githubusercontent.com/Arcensoth/mcdata'
 const McdataDefaultBranch = 'master'
 
+export function getMetadata(version: string, status: number): {
+	blocksUrl: string, commandsUrl: string, registriesUrl: string,
+	blocksTransformer: ((raw: RawVanillaBlocks) => VanillaBlocks) | ((raw: VanillaBlocks) => VanillaBlocks),
+	registriesTransformer: (raw: RawVanillaRegistries) => VanillaRegistries,
+} {
+	return {
+		blocksUrl: getBlocksUrl(version, status),
+		commandsUrl: getCommandsUrl(version, status),
+		registriesUrl: getRegistriesUrl(version, status),
+		blocksTransformer: (status & VersionStatus.ProcessedSimplifiedBlock) ? (v: VanillaBlocks) => v : transformBlocks,
+		registriesTransformer: transformRegistries,
+	}
+}
+
 export function getBlocksUrl(version: string, status: number): string {
 	if (status & VersionStatus.Latest) {
 		return `${McdataBase}/${McdataDefaultBranch}/processed/reports/blocks/simplified/data.min.json`
@@ -109,4 +124,154 @@ export function getRegistriesUrl(version: string, status: number): string {
 		return `${McdataBase}/${version}/processed/reports/registries/registries.min.json`
 	}
 	return `${McdataBase}/${version}/generated/reports/registries.json`
+}
+
+function transformBlocks(raw: RawVanillaBlocks): VanillaBlocks {
+	const ans: VanillaBlocks = {}
+	for (const blockId of Object.keys(raw)) {
+		ans[blockId] = {
+			properties: raw[blockId].properties ?? {},
+			default: raw[blockId].states.find(s => s.default)!.properties ?? {},
+		}
+	}
+	return ans
+}
+
+function transformRegistries(raw: RawVanillaRegistries): VanillaRegistries {
+	const ans: VanillaRegistries = {}
+	for (const registryId of Object.keys(raw)) {
+		ans[registryId] = Object.keys(raw[registryId].entries)
+	}
+	return ans
+}
+
+const RegistriesSpyglassUri = 'spyglassmc://vanilla-resource/registries.json'
+const SoundsBaseUri = 'https://misode.github.io/sounds/'
+const WikiBaseUri = 'https://minecraft.fandom.com/wiki'
+
+const shorten = (id: string): string => id.startsWith('minecraft:') ? id.slice(10) : id
+const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
+
+export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
+	// Remove all related existing symbols.
+	core.SymbolUtil.removeLocationsFromMap(symbols.global.block, loc => loc.fromDefaultLibrary)
+
+	// Add blocks and block states to the symbol table.
+	for (const id of Object.keys(blocks)) {
+		// FIXME: Those repeated queries are disastrous.
+		const block = blocks[id]
+		symbols
+			.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
+			.enter({
+				usage: {
+					type: 'declaration',
+					fromDefaultLibrary: true,
+				},
+			})
+		for (const state of Object.keys(block.properties)) {
+			const values = block.properties[state]
+			const stateQuery = symbols
+				.query(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, 'block', id, state)
+				.enter({
+					data: {
+						subcategory: 'state',
+					},
+					usage: {
+						type: 'declaration',
+						fromDefaultLibrary: true,
+					},
+				})
+			const defaultValue = block.default[state]!
+			for (const value of values) {
+				const stateValueQuery = symbols
+					.query(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, 'block', id, state, value)
+					.enter({
+						data: {
+							subcategory: 'state_value',
+						},
+						usage: {
+							type: 'declaration',
+							fromDefaultLibrary: true,
+						},
+					})
+				if (value === defaultValue) {
+					stateQuery.amend({
+						data: {
+							relations: {
+								default: stateValueQuery.symbol!,
+							},
+						},
+					})
+				}
+			}
+		}
+	}
+}
+
+export function addRegistriesSymbols(registries: VanillaRegistries, symbols: core.SymbolUtil) {
+	const isCategory = (str: string): str is core.VanillaRegistryCategory => core.VanillaRegistryCategories.includes(str as any)
+	const getUri = (registryId: Exclude<core.VanillaRegistryCategory, 'block'>, longEntryId: string): string => {
+		switch (registryId) {
+			case 'attribute':
+				return `${WikiBaseUri}/Attribute#Attributes`
+			case 'block_entity_type':
+				return `${WikiBaseUri}/${getWikiPageName(longEntryId)}#Block_data`
+			case 'custom_stat':
+				return `${WikiBaseUri}/Statistics#List_of_custom_statistic_names`
+			case 'enchantment':
+			case 'entity_type':
+			case 'item':
+			case 'mob_effect':
+				return `${WikiBaseUri}/${getWikiPageName(longEntryId)}`
+			case 'fluid':
+				return `${WikiBaseUri}/${longEntryId === 'minecraft:empty' ? 'Air' : getWikiPageName(longEntryId)}`
+			case 'game_event':
+				return `${WikiBaseUri}/Game_event`
+			case 'loot_condition_type':
+				return `${WikiBaseUri}/Predicate#JSON_structure`
+			case 'loot_function_type':
+				return `${WikiBaseUri}/Item_modifier#JSON_structure`
+			case 'loot_number_provider_type':
+			case 'loot_score_provider_type':
+				return `${WikiBaseUri}/Loot_table#Number_Providers`
+			case 'loot_pool_entry_type':
+				return `${WikiBaseUri}/Loot_table#Tags`
+			case 'potion':
+				return `${WikiBaseUri}/Potion#Item_data`
+			case 'particle_type':
+				return `${WikiBaseUri}/Java_Edition_data_values#Particles`
+			case 'recipe_serializer':
+				return `${WikiBaseUri}/Recipe#${shorten(longEntryId)}`
+			case 'worldgen/biome_source':
+				return `${WikiBaseUri}/Java_Edition_data_values#Biome_sources`
+			case 'worldgen/chunk_generator':
+				return `${WikiBaseUri}/Java_Edition_data_values#Chunk_generators`
+			case 'sound_event':
+				return `${SoundsBaseUri}?sound=${shorten(longEntryId)}`
+			case 'stat_type':
+				return `${WikiBaseUri}/Statistics#Statistic_types_and_names`
+			default:
+				return RegistriesSpyglassUri
+		}
+	}
+
+	for (const longRegistryId of Object.keys(registries)) {
+		const registryId = shorten(longRegistryId)
+		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
+			// Remove all related existing symbols.
+			core.SymbolUtil.removeLocationsFromMap(symbols.global[registryId], loc => loc.fromDefaultLibrary)
+
+			// Add resource locations from the registry to the symbol table.
+			for (const longEntryId of registries[longRegistryId]) {
+				symbols
+					.query(getUri(registryId, longEntryId), registryId, longEntryId)
+					.enter({
+						usage: {
+							type: 'declaration',
+							fromDefaultLibrary: true,
+						},
+					})
+			}
+		}
+	}
 }

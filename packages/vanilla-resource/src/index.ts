@@ -5,7 +5,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 import type { VanillaBlocks, VanillaCommands, VanillaRegistries, VanillaResources, VersionManifest } from './type'
 import { VersionStatus } from './type'
-import { getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion } from './util'
+import { addBlocksSymbols, addRegistriesSymbols, getMetadata, getVersionStatus, normalizeVersion } from './util'
 
 export * from './type'
 
@@ -28,12 +28,14 @@ export async function getVanillaResources(inputVersion: string, logger: core.Log
 	const status = getVersionStatus(version, versions)
 	const isLatestVersion = !!(status & (VersionStatus.Latest))
 
-	logger.info(`Getting vanilla resources for ${version} (${inputVersion}, ${status})...`)
+	logger.info(`Getting vanilla resources for ${version} (${inputVersion}, ${status}) [${cacheRoot}]...`)
+
+	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
 	return {
-		blocks: await downloadData<VanillaBlocks>(getBlocksUrl(version, status), ['mc_je', version, 'blocks.json'], isLatestVersion, logger),
-		commands: await downloadData<VanillaCommands>(getCommandsUrl(version, status), ['mc_je', version, 'commands.json'], isLatestVersion, logger),
-		registries: await downloadData<VanillaRegistries>(getRegistriesUrl(version, status), ['mc_je', version, 'registries.json'], isLatestVersion, logger),
+		blocks: await downloadData<VanillaBlocks>(blocksUrl, ['mc_je', version, 'blocks.json'], isLatestVersion, logger, blocksTransformer),
+		commands: await downloadData<VanillaCommands>(commandsUrl, ['mc_je', version, 'commands.json'], isLatestVersion, logger),
+		registries: await downloadData<VanillaRegistries>(registriesUrl, ['mc_je', version, 'registries.json'], isLatestVersion, logger, registriesTransformer),
 	}
 }
 
@@ -41,7 +43,7 @@ export async function getVanillaResources(inputVersion: string, logger: core.Log
 /**
  * @throws Network/file system errors.
  */
-async function downloadData<T extends object>(url: string, cachePaths: [string, string, ...string[]], tryDownloadingFirst: boolean, logger: core.Logger): Promise<T> {
+async function downloadData<T extends object>(url: string, cachePaths: [string, string, ...string[]], tryDownloadingFirst: boolean, logger: core.Logger, transformer: (value: any) => T = v => v): Promise<T> {
 	let error: Error
 
 	const cacheParent = path.join(cacheRoot, ...cachePaths.slice(0, -1))
@@ -50,17 +52,19 @@ async function downloadData<T extends object>(url: string, cachePaths: [string, 
 
 	const downloadAndCache = async () => {
 		try {
-			const ans = JSON.parse((await download(url)).toString('utf-8'))
+			const ans = transformer(JSON.parse((await download(url, undefined, {
+				useElectronNet: false,
+			})).toString('utf-8')))
 			try {
 				await fs.ensureDir(cacheParent)
-				await fs.writeFile(cacheFilePath, ans, { encoding: 'utf-8' })
+				await fs.writeJson(cacheFilePath, ans, { encoding: 'utf-8' })
 			} catch (e) {
 				// Cache failed.
 				error = e
 				logger.error(`Caching to '${cacheFilePath}': ${JSON.stringify(e)}`)
 			}
 			logger.info(`Downloaded from ${url}`)
-			return ans as T
+			return ans
 		} catch (e) {
 			// Download failed.
 			error = e
@@ -93,4 +97,10 @@ async function downloadData<T extends object>(url: string, cachePaths: [string, 
 	}
 
 	throw error
+}
+
+/* istanbul ignore next */
+export function registerSymbols(resources: VanillaResources, symbols: core.SymbolUtil) {
+	addBlocksSymbols(resources.blocks, symbols)
+	addRegistriesSymbols(resources.registries, symbols)
 }

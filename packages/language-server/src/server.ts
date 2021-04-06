@@ -3,6 +3,7 @@ import * as json from '@spyglassmc/json'
 import * as locales from '@spyglassmc/locales'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
+import * as vr from '@spyglassmc/vanilla-resource'
 import * as chokidar from 'chokidar'
 import * as ls from 'vscode-languageserver/node'
 import { toCore, toLS } from './util'
@@ -27,6 +28,8 @@ let workspaceFolders!: ls.WorkspaceFolder[]
 const logger: core.Logger = connection.console
 const meta = core.MetaRegistry.instance
 let service!: core.Service
+
+const formatError = (e: any): string => e && typeof e === 'object' ? e.toString() : JSON.stringify(e)
 
 connection.onInitialize(async params => {
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
@@ -103,7 +106,14 @@ function initializeRootWatcher() {
 		})
 }
 
-connection.onInitialized(() => {
+connection.onInitialized(async () => {
+	try {
+		const resources = await vr.getVanillaResources('latest snapshot', logger)
+		vr.registerSymbols(resources, service.symbols)
+	} catch (e) {
+		logger.error(`[getVanillaResources] ${formatError(e)}`)
+	}
+
 	initializeRootWatcher()
 })
 

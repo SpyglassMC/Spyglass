@@ -18,6 +18,9 @@
 			"path": "../nbtdoc"
 		},
 		{
+			"path": "../vanilla-resource"
+		},
+		{
 			"path": "src"
 		},
 		{

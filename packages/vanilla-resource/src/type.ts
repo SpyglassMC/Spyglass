@@ -15,6 +15,21 @@ export interface VanillaBlocks {
 	}
 }
 
+export interface RawVanillaBlocks {
+	[blockId: string]: {
+		properties?: {
+			[name: string]: string[],
+		},
+		states: {
+			id: number,
+			default?: boolean,
+			properties?: {
+				[name: string]: string,
+			},
+		}[],
+	}
+}
+
 export type VanillaCommands = VanillaCommandRootNode
 
 interface BaseNode {
@@ -52,6 +67,17 @@ export type VanillaCommandNode =
 
 export interface VanillaRegistries {
 	[id: string]: string[]
+}
+
+export interface RawVanillaRegistries {
+	[registryId: string]: {
+		protocol_id: number,
+		entries: {
+			[entryId: string]: {
+				protocol_id: number,
+			},
+		},
+	}
 }
 
 export interface VersionManifest {
