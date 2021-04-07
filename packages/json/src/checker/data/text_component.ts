@@ -1,5 +1,6 @@
-import { compound } from '@spyglassmc/nbt/lib/parser'
+import * as nbt from '@spyglassmc/nbt'
 import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, special, string } from '../primitives'
+import { stringColor } from '../primitives/string'
 
 const text_component_object = as('text_component', async (node, ctx) => record({
 	...having(node, ctx, {
@@ -24,7 +25,7 @@ const text_component_object = as('text_component', async (node, ctx) => record({
 			keybind: string, // TODO: keybind
 		},
 		nbt: () => ({
-			nbt: special('nbt', compound),
+			nbt: special('nbt', nbt.parser.compound),
 			...having(node, ctx, {
 				block: {
 					block: string, // TODO: block pos
@@ -39,13 +40,13 @@ const text_component_object = as('text_component', async (node, ctx) => record({
 			interpret: opt(boolean),
 		}),
 	}),
-	color: opt(string),
+	color: opt(stringColor()),
 	font: opt(string),
 	bold: opt(boolean),
 	italic: opt(boolean),
 	underlined: opt(boolean),
-	strikethrough: opt(boolean), 
-	obfuscated: opt(boolean), 
+	strikethrough: opt(boolean),
+	obfuscated: opt(boolean),
 	insertion: opt(string),
 	clickEvent: opt(dispatch('action',
 		(action) => record({

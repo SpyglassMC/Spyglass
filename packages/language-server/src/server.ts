@@ -51,6 +51,12 @@ connection.onInitialize(async params => {
 
 	const result: ls.InitializeResult = {
 		capabilities: {
+			colorProvider: {
+				documentSelector: null,
+			},
+			completionProvider: {
+				triggerCharacters: meta.triggerCharacters,
+			},
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
@@ -58,9 +64,6 @@ connection.onInitialize(async params => {
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
 			hoverProvider: {},
-			completionProvider: {
-				triggerCharacters: meta.triggerCharacters,
-			},
 			semanticTokensProvider: {
 				documentSelector: toLS.documentSelector(),
 				legend: toLS.semanticTokensLegend(),
@@ -138,6 +141,23 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 connection.workspace.onDidRenameFiles(({ }) => {
 })
 
+connection.onColorPresentation(({ textDocument: { uri }, color, range }) => {
+	const { doc, node } = service.get(uri)!
+	return null
+})
+connection.onDocumentColor(({ textDocument: { uri } }) => {
+	const { doc, node } = service.get(uri)!
+	const info = service.getColorInfo(node, doc)
+	return toLS.colorInformationArray(info, doc)
+})
+
+connection.onCompletion(({ textDocument: { uri }, position, context }) => {
+	const { doc, node } = service.get(uri)!
+	const offset = toCore.offset(position, doc)
+	const items = service.getCompletion(node, doc, offset, context?.triggerCharacter)
+	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
+})
+
 connection.onDeclaration(({ textDocument: { uri }, position }) => {
 	const { doc, node } = service.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
@@ -174,13 +194,6 @@ connection.onHover(({ textDocument: { uri }, position }) => {
 	const { doc, node } = service.get(uri)!
 	const ans = service.getHover(node, doc, toCore.offset(position, doc))
 	return ans ? toLS.hover(ans, doc) : null
-})
-
-connection.onCompletion(({ textDocument: { uri }, position, context }) => {
-	const { doc, node } = service.get(uri)!
-	const offset = toCore.offset(position, doc)
-	const items = service.getCompletion(node, doc, offset, context?.triggerCharacter)
-	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {

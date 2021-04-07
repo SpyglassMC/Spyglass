@@ -49,6 +49,7 @@
 	"json.checker.property.deprecated": "Property %0% is deprecated",
 	"json.checker.property.missing": "Missing property %0%",
 	"json.checker.property.unknown": "Unknown property %0%",
+	"json.checker.string.hex-color": "a 6-digit hexadecimal number",
 	"json.checker.string.undeclared": "%0% %1% does not exist",
 	"key-not-following-convention": "Invalid key %0% which doesn't follow %1% convention",
 	"leading-slash": "a leading slash “/”",

@@ -1,3 +1,4 @@
+import type { Color } from '../processor'
 import type { Range } from '../source'
 import type { Symbol } from '../symbol'
 
@@ -10,6 +11,10 @@ export interface AstNode {
 	readonly children?: AstNode[],
 	symbol?: Symbol,
 	hover?: string,
+	/**
+	 * An actual color that this node represents.
+	 */
+	color?: Color,
 }
 
 export type Mutable<N> = N extends AstNode ? {

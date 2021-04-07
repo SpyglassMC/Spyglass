@@ -30,7 +30,7 @@ export function resourceLocation(options: Options): InfallibleParser<ResourceLoc
 			category: options.category,
 		}
 
-		if (src.tryRead(ResourceLocationNode.TagPrefix)) {
+		if (src.trySkip(ResourceLocationNode.TagPrefix)) {
 			ans.isTag = true
 		}
 

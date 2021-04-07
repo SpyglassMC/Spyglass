@@ -1,3 +1,4 @@
+import { Color } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { JsonNode } from '../../node'
 import { JsonNumberNode } from '../../node'
@@ -6,7 +7,7 @@ import type { JsonCheckerContext } from '../JsonChecker'
 const number = (type: 'integer' | 'float') => (min: number | null, max: number | null, isColor?: boolean) => {
 	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		const typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
-		node.expectation = [{ type: 'json:number', typedoc, isColor }]
+		node.expectation = [{ type: 'json:number', typedoc }]
 
 		if (!JsonNumberNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', localize(type)), node)
@@ -16,7 +17,9 @@ const number = (type: 'integer' | 'float') => (min: number | null, max: number |
 			ctx.err.report(localize('expected', localize('number.>=', min)), node)
 		} else if (max !== null && node.value > max) {
 			ctx.err.report(localize('expected', localize('number.<=', max)), node)
-		}	
+		} else if (isColor) {
+			node.color = Color.fromCompositeInt(node.value)
+		}
 	}
 }
 
@@ -28,4 +31,4 @@ export const intRange = number('integer')
 
 export const floatRange = number('float')
 
-export const color = number('integer')(null, null, true)
+export const numberColor = number('integer')(null, null, true)

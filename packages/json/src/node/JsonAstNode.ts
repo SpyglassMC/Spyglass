@@ -71,7 +71,6 @@ export namespace JsonStringNode {
 
 export interface JsonNumberExpectation extends JsonBaseExpectation {
 	readonly type: 'json:number'
-	isColor?: boolean
 }
 export interface JsonNumberNode extends core.FloatBaseNode, JsonBaseAstNode {
 	readonly type: 'json:number'

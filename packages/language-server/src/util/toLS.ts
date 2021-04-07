@@ -9,6 +9,18 @@ import { InsertTextFormat } from 'vscode-languageserver/node'
  * Functions are named after types in `vscode-languageserver`.
  */
 export namespace toLS {
+	export function color(color: core.Color): ls.Color {
+		return ls.Color.create(...color)
+	}
+
+	export function colorInformation(info: core.ColorInfo, doc: TextDocument): ls.ColorInformation {
+		return ls.ColorInformation.create(range(info.range, doc), color(info.color!))
+	}
+
+	export function colorInformationArray(info: core.ColorInfo[], doc: TextDocument): ls.ColorInformation[] {
+		return info.map(i => colorInformation(i, doc))
+	}
+
 	export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Diagnostic {
 		const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity))
 		if (error.info?.deprecated) {

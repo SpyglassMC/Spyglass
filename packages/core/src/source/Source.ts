@@ -87,7 +87,7 @@ export class Source {
 	 * }
 	 * ```
 	 */
-	tryRead(expectedValue: string): boolean {
+	trySkip(expectedValue: string): boolean {
 		if (this.peek(expectedValue.length) === expectedValue) {
 			this.skip(expectedValue.length)
 			return true
@@ -169,22 +169,15 @@ export class Source {
 		return this
 	}
 
-	skipRemaining(): this {
+	readRemaining(): string {
+		const start = this.cursor
 		this.cursor = this.string.length
+		return this.string.slice(start)
+	}
+	skipRemaining(): this {
+		this.readRemaining()
 		return this
 	}
-
-	// lastLine(converter: OffsetPositionConverter) {
-	// 	const pos = converter.toPosition(this.cursor)
-	// 	this.cursor = converter.toOffset(Position.create(pos.line - 1, 0))
-	// 	return this
-	// }
-
-	// nextLine(converter: OffsetPositionConverter) {
-	// 	const pos = converter.toPosition(this.cursor)
-	// 	this.cursor = converter.toOffset(Position.create(pos.line + 1, 0))
-	// 	return this
-	// }
 
 	static isDigit(c: string): c is Digit {
 		return c >= '0' && c <= '9'

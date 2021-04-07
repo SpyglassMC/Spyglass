@@ -2,8 +2,8 @@ import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textd
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
-import type { ColorToken } from '../processor'
-import { selectedLeaf } from '../processor'
+import type { ColorInfo, ColorToken } from '../processor'
+import { selectedLeaf, traversePreOrder } from '../processor'
 import { Source } from '../source'
 import type { SymbolLocation, SymbolUsage } from '../symbol'
 import { SymbolUsages, SymbolUtil } from '../symbol'
@@ -212,6 +212,19 @@ export class Service {
 		return colorizer(node, this.getColorizerCtx(doc, options))
 	}
 
+	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
+		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
+		const ans: ColorInfo[] = []
+		traversePreOrder(node, n => n.color, n => ans.push({ color: n.color!, range: n.range }))
+		return ans
+	}
+
+	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
+		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
+		const completer = this.meta.getCompleter(doc.languageId, triggerCharacter)
+		return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
+	}
+
 	getHover(node: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
 		const result = selectedLeaf(node, offset)
@@ -228,12 +241,6 @@ export class Service {
 			}
 		}
 		return null
-	}
-
-	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
-		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const completer = this.meta.getCompleter(doc.languageId, triggerCharacter)
-		return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
 	}
 
 	/**

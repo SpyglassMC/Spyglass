@@ -40,6 +40,21 @@ export function traverseLeaves(node: AstNode, fn: Callback<unknown>, range?: Ran
 // 	}
 // }
 
+export function traversePreOrder(node: AstNode, predicate: Callback<unknown>, fn: Callback<unknown>): void
+export function traversePreOrder(node: AstNode, predicate: Callback<unknown>, fn: Callback<unknown>, existingParents: AstNode[] = []): void {
+	if (predicate(node, existingParents)) {
+		fn(node, existingParents)
+		return
+	}
+	if (node.children?.length) {
+		for (const child of node.children) {
+			existingParents.unshift(node);
+			(traversePreOrder as any)(child, predicate, fn, existingParents)
+			existingParents.shift()
+		}
+	}
+}
+
 export function selectedLeaf(node: AstNode, offset: number): { leaf: AstNode, parents: AstNode[] } | null
 export function selectedLeaf(node: AstNode, offset: number, existingParents: AstNode[] = []): { leaf: AstNode, parents: AstNode[] } | null {
 	if (Range.contains(node.range, offset)) {

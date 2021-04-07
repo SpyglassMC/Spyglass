@@ -149,7 +149,7 @@ export function string(options: Options): InfallibleParser<StringNode> {
 			const valueSrc = new Source(ans.value)
 			const valueCtx = ParserContext.create({
 				...ctx,
-				doc: TextDocument.create('spyglassmc://inner_string.txt', 'plaintext', 0, ans.value),
+				doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, ans.value),
 				err: new ErrorReporter(),
 			})
 			const valueResult = options.valueParser(valueSrc, valueCtx)

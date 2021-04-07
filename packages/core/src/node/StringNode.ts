@@ -4,7 +4,7 @@ import type { AstNode } from './AstNode'
 export interface StringBaseNode extends AstNode {
 	readonly value: string,
 	readonly valueMap: IndexMap,
-	readonly valueNode?: AstNode,
+	valueNode?: AstNode,
 }
 
 export interface StringNode extends StringBaseNode {
