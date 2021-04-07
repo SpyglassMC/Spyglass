@@ -1,6 +1,6 @@
 import type { PairNode } from '@spyglassmc/core'
 import { ErrorSeverity, Range } from '@spyglassmc/core'
-import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { JsonNode, JsonObjectExpectation, JsonStringNode } from '../../node'
 import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
@@ -45,7 +45,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 		}
 
 		if (!JsonObjectNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('object')]), node)
+			ctx.err.report(localize('expected', localize('object')), node)
 		} else if (Array.isArray(keys) && values) {
 			const givenKeys = node.children.map(n => n.key?.value)
 			keys.forEach(k => {
@@ -54,21 +54,22 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					return
 				}
 				if (!givenKeys.includes(k)) {
-					ctx.err.report(localize('json.checker.property.missing', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
-				}})
+					ctx.err.report(localize('json.checker.property.missing', localeQuote(k)), Range.create(node.range.start, node.range.start + 1))
+				}
+			})
 			node.children.filter(p => p.key).forEach(prop => {
 				const key = prop.key!.value
 				if (!keys.includes(key)) {
-					ctx.err.report(localize('json.checker.property.unknown', [localize('punc.quote', [key])]), prop.key!, ErrorSeverity.Warning)
+					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
 				} else {
 					const value = values(key)
 					if (isComplex(value) && value.deprecated) {
-						ctx.err.report(localize('json.checker.property.deprecated', [localize('punc.quote', [key])]), prop.key!, ErrorSeverity.Hint, { deprecated: true })
+						ctx.err.report(localize('json.checker.property.deprecated', localeQuote(key)), prop.key!, ErrorSeverity.Hint, { deprecated: true })
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
 					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
-					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
+						; (isComplex(value) ? value.checker : value)(propNode, { ...ctx, context })
 					prop.key!.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
@@ -102,7 +103,7 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker {
 	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		if (!JsonObjectNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('object')]), node)
+			ctx.err.report(localize('expected', localize('object')), node)
 		} else {
 			const dispatcherIndex = node.children.findIndex(p => p.key?.value === keyName)
 			const dispatcher = node.children[dispatcherIndex]
@@ -153,7 +154,7 @@ export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<st
 	const key = Object.keys(cases).find(c => givenKeys.has(c))
 
 	if (key === undefined) {
-		ctx.err.report(localize('json.checker.property.missing', [arrayToMessage(Object.keys(cases), true, 'or')]), Range.create(node.range.start, node.range.start + 1))
+		ctx.err.report(localize('json.checker.property.missing', Object.keys(cases)), Range.create(node.range.start, node.range.start + 1))
 		return Object.fromEntries(Object.entries(cases)
 			.map(([k, v]) => [k, typeof v === 'function' ? v()[k] : v[k]])
 		)

@@ -1,6 +1,6 @@
 import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
-import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { localize } from '@spyglassmc/locales'
 import type { EnumChild, EnumDefinitionNode, EnumFieldChild, EnumTypeOrEmpty, SyntaxUtil } from '../../node'
 import { DocCommentsNode, EnumFieldNode, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
@@ -36,9 +36,9 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
 	any(EnumTypes.map(t => keyword(t))),
 	(src, ctx) => {
-		ctx.err.report(localize('expected', [
-			arrayToMessage(EnumTypes),
-		]), src)
+		ctx.err.report(localize('expected', 
+			EnumTypes,
+		), src)
 		const ans: LiteralToken<''> = {
 			type: 'nbtdoc:literal',
 			value: '',

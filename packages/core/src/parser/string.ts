@@ -1,4 +1,4 @@
-import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Mutable, StringNode } from '../node'
 import type { InfallibleParser } from '../parser'
@@ -102,9 +102,10 @@ export function string(options: Options): InfallibleParser<StringNode> {
 						}
 					} else {
 						if (!options.escapable.allowUnknown) {
-							ctx.err.report(localize('parser.string.illegal-escape', [
-								localeQuote(c2),
-							]), Range.create(src, src.cursor + 1))
+							ctx.err.report(
+								localize('parser.string.illegal-escape', localeQuote(c2)), 
+								Range.create(src, src.cursor + 1)
+							)
 						}
 						ans.valueMap.pairs.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
@@ -121,11 +122,11 @@ export function string(options: Options): InfallibleParser<StringNode> {
 			if (src.peek() === currentQuote) {
 				src.skip()
 			} else {
-				ctx.err.report(localize('expected', [localeQuote(currentQuote)]), src)
+				ctx.err.report(localize('expected', localeQuote(currentQuote)), src)
 			}
 
 			if (!options.quotes.includes(currentQuote)) {
-				ctx.err.report(localize('parser.string.illegal-quote', [arrayToMessage(options.quotes)]), ans)
+				ctx.err.report(localize('parser.string.illegal-quote', options.quotes), ans)
 			}
 
 			ans.valueMap.outerRange = Range.create(contentStart, contentEnd)
@@ -134,11 +135,11 @@ export function string(options: Options): InfallibleParser<StringNode> {
 				ans.value += src.read()
 			}
 			if (!ans.value) {
-				ctx.err.report(localize('expected', [localize('string')]), src)
+				ctx.err.report(localize('expected', localize('string')), src)
 			}
 			ans.valueMap.outerRange = Range.create(start, src.cursor)
 		} else {
-			ctx.err.report(localize('expected', [arrayToMessage(options.quotes!)]), src)
+			ctx.err.report(localize('expected', options.quotes!), src)
 			ans.valueMap.outerRange = Range.create(start, src.cursor)
 		}
 

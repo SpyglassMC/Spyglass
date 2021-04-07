@@ -10,10 +10,18 @@ const Locales: Record<string, Locale> = {
 
 let language = 'en'
 
-export function localize(key: string, ...params: string[] | string[][]): string {
+type Parameter = string | number | boolean | bigint | RegExp | Date | readonly string[]
+
+/**
+ * @param key The locale key.
+ * @param params All parameters that will be filled into the locale string.
+ * If a string array is provided as a parameter, it will be converted to
+ * string by the `arrayToMessage` method with `quoted=true, conjunction='or'` arguments.
+ */
+export function localize(key: string, ...params: Parameter[]): string {
 	const value: string | undefined = Locales[language][key] ?? Locales.en[key]
 
-	return _resolveLocalePlaceholders(value, params.flatMap((v: string | string[]) => v)) ?? '' /* (
+	return _resolveLocalePlaceholders(value, params) ?? '' /* (
 		console.error(new Error(`Unknown locale key “${key}”`)),
 		''
 	) */
@@ -32,10 +40,14 @@ export async function loadLocale(locale = 'en'): Promise<void> {
 	}
 }
 
-function _resolveLocalePlaceholders(val: string | undefined, params: string[]) {
+function _resolveLocalePlaceholders(val: string | undefined, params: (Parameter | undefined)[]): string | undefined {
 	return val?.replace(/%\d+%/g, match => {
 		const index = parseInt(match.slice(1, -1))
-		return params?.[index] !== undefined ? params[index] : match
+		let param = params[index]
+		if (param instanceof Array) {
+			param = arrayToMessage(param)
+		}
+		return `${param ?? match}`
 	})
 }
 

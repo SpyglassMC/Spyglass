@@ -46,14 +46,14 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 
 				// Pair end of the last pair.
 				if (requiresPairEnd && !hasPairEnd) {
-					ctx.err.report(localize('expected', [localeQuote(pair.end)]), src)
+					ctx.err.report(localize('expected', localeQuote(pair.end)), src)
 				}
 
 				// Key.
 				const { result: keyResult, endCursor: keyEnd, updateSrcAndCtx: updateForKey } = attempt(pair.key, src, ctx)
 				if (keyResult === Failure || keyEnd === src.cursor) {
 					ctx.err.report(
-						localize('expected', [localize('parser.table.key')]),
+						localize('expected', localize('parser.table.key')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
 					)
 				} else {
@@ -67,7 +67,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				if (src.peek(pair.sep.length) === pair.sep) {
 					sepCharRange = Range.create(src, () => src.skip(pair.sep.length))
 				} else {
-					ctx.err.report(localize('expected', [localeQuote(pair.sep)]), src)
+					ctx.err.report(localize('expected', localeQuote(pair.sep)), src)
 				}
 
 				// Value.
@@ -75,7 +75,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				const { result: valueResult, endCursor: valueEnd, updateSrcAndCtx: updateForValue } = attempt(pair.value, src, ctx)
 				if (valueResult === Failure || valueEnd === src.cursor) {
 					ctx.err.report(
-						localize('expected', [localize('parser.table.value')]),
+						localize('expected', localize('parser.table.value')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
 					)
 				} else {
@@ -114,10 +114,10 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 			if (src.peek(end.length) === end) {
 				src.skip(end.length)
 			} else {
-				ctx.err.report(localize('expected', [localeQuote(end)]), src)
+				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}
 		} else {
-			ctx.err.report(localize('expected', [localeQuote(start)]), src)
+			ctx.err.report(localize('expected', localeQuote(start)), src)
 		}
 
 		ans.range.end = src.cursor

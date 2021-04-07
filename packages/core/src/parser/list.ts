@@ -37,7 +37,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 
 				// Item sep of the last item.
 				if (requiresValueSep && !hasValueSep) {
-					ctx.err.report(localize('expected', [localeQuote(sep)]), src)
+					ctx.err.report(localize('expected', localeQuote(sep)), src)
 				}
 
 				// Value.
@@ -45,7 +45,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				const { result, endCursor, updateSrcAndCtx } = attempt(value, src, ctx)
 				if (result === Failure || endCursor === src.cursor) {
 					ctx.err.report(
-						localize('expected', [localize('parser.list.value')]),
+						localize('expected', localize('parser.list.value')),
 						Range.create(src, () => src.skipUntilOrEnd(sep, end, '\r', '\n'))
 					)
 				} else {
@@ -82,10 +82,10 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 			if (src.peek(end.length) === end) {
 				src.skip(end.length)
 			} else {
-				ctx.err.report(localize('expected', [localeQuote(end)]), src)
+				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}
 		} else {
-			ctx.err.report(localize('expected', [localeQuote(start)]), src)
+			ctx.err.report(localize('expected', localeQuote(start)), src)
 		}
 
 		ans.range.end = src.cursor

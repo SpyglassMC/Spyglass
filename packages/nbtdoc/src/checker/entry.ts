@@ -241,7 +241,7 @@ const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): vo
 		ctx.symbols
 			.query(ctx.doc, 'nbtdoc', declaredIdentifier)
 			.ifUnknown(() => ctx.err.report(
-				localize('nbtdoc.checker.module-declaration.non-existent', [localeQuote(declaredIdentifier)]),
+				localize('nbtdoc.checker.module-declaration.non-existent', localeQuote(declaredIdentifier)),
 				node.identifier
 			))
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.module-declaration.duplicated', ctx, symbol, node.identifier))
@@ -274,12 +274,12 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 
 function reportDuplicatedDeclaration(localeString: string, ctx: CheckerContext, symbol: Symbol, range: RangeLike) {
 	ctx.err.report(
-		localize(localeString, [localeQuote(symbol.identifier)]),
+		localize(localeString, localeQuote(symbol.identifier)),
 		range, ErrorSeverity.Warning,
 		{
 			related: [{
 				location: SymbolUtil.getDeclaredLocation(symbol) as core.Location,
-				message: localize(`${localeString}.related`, [localeQuote(symbol.identifier)]),
+				message: localize(`${localeString}.related`, localeQuote(symbol.identifier)),
 			}],
 		}
 	)
@@ -340,7 +340,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				const ensured = targetUri ? await ctx.service.ensureChecked(targetUri) : false
 				if (!ensured) {
 					ctx.err.report(
-						localize('nbtdoc.checker.ident-path.unknown-module', [localeQuote(targetId)]),
+						localize('nbtdoc.checker.ident-path.unknown-module', localeQuote(targetId)),
 						Range.span(token, identPath)
 					)
 					return null
@@ -350,7 +350,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 			return ctx.symbols
 				.query(ctx.doc, 'nbtdoc', targetId, token.value)
 				.ifUnknown(() => ctx.err.report(
-					localize('nbtdoc.checker.ident-path.unknown-identifier', [localeQuote(token.value), localeQuote(targetId)]),
+					localize('nbtdoc.checker.ident-path.unknown-identifier', localeQuote(token.value), localeQuote(targetId)),
 					Range.span(token, identPath)
 				))
 				.elseResolveAlias()

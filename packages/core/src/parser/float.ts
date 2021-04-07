@@ -36,7 +36,7 @@ export type Options = FallibleOptions | InfallibleOptions
 
 const fallbackOnOutOfRange = (ans: FloatNode, _src: Source, ctx: ParserContext, options: Options) => {
 	ctx.err.report(
-		localize('expected', [localize('float.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
+		localize('expected', localize('float.between', options.min ?? '-∞', options.max ?? '+∞')),
 		ans,
 		ErrorSeverity.Error
 	)
@@ -84,9 +84,9 @@ export function float(options: Options): Parser<FloatNode> {
 			if (options.failsOnEmpty) {
 				return Failure
 			}
-			ctx.err.report(localize('expected', [localize('float')]), ans)
+			ctx.err.report(localize('expected', localize('float')), ans)
 		} else if (!options.pattern.test(raw)) {
-			ctx.err.report(localize('parser.float.illegal', [options.pattern.toString()]), ans)
+			ctx.err.report(localize('parser.float.illegal', options.pattern), ans)
 		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

@@ -55,9 +55,9 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (src: core.Sou
 			const { result: numeralResult, updateSrcAndCtx: updateNumeral } = core.attempt(numeralParser, src, ctx)
 			if (isOutOfRange) {
 				ctx.err.report(
-					localize('nbt.parser.number.out-of-range', [
-						localizeTag(e.type), localize('nbt.node.string'), e.min, e.max,
-					]),
+					localize('nbt.parser.number.out-of-range', 
+						localizeTag(e.type), localize('nbt.node.string'), e.min!, e.max!,
+					),
 					unquotedResult,
 					core.ErrorSeverity.Warning
 				)

@@ -12,7 +12,7 @@ export function listOf(checker: JsonChecker): JsonChecker {
 		}
 
 		if (!JsonArrayNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('array')]), node)
+			ctx.err.report(localize('expected', localize('array')), node)
 		} else {
 			node.children.filter(e => e.value)
 				.forEach(e => checker(e.value!, ctx))

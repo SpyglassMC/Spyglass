@@ -36,15 +36,13 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 			ans.value = literal
 			if (!canBeFollowedByLetter && /^[A-Za-z0-9_]$/.test(src.peek())) {
 				ctx.err.report(
-					localize('expected', [
-						localize('nbtdoc.parser.keyword.separation'),
-					]),
+					localize('expected', localize('nbtdoc.parser.keyword.separation')),
 					src
 				)
 			}
 		} else if (partialMatch || infallible) {
 			ctx.err.report(
-				localize('expected', [localeQuote(literal)]),
+				localize('expected', localeQuote(literal)),
 				ans
 			)
 		} else {

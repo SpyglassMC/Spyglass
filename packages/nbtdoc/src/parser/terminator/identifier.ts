@@ -25,17 +25,15 @@ export function identifier({ regex = Regex, allowEmpty = false }: Options = {}):
 
 		if (!text && !allowEmpty) {
 			ctx.err.report(
-				localize('expected', [
-					localize('nbtdoc.parser.identifier'),
-				]),
+				localize('expected', localize('nbtdoc.parser.identifier')),
 				ans
 			)
 		} else if (!text.match(regex)) {
 			ctx.err.report(
-				localize('nbtdoc.parser.identifier.illegal', [
+				localize('nbtdoc.parser.identifier.illegal',
 					localeQuote(text),
-					localeQuote(regex.toString()),
-				]),
+					localeQuote(regex.toString())
+				),
 				ans
 			)
 		}

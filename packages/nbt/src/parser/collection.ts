@@ -16,7 +16,7 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 		for (const { value } of ans.children) {
 			if (value && value.type !== ans.valueType) {
 				ctx.err.report(
-					localize('expected-got', [localizeTag(ans.valueType), localizeTag(value.type)]),
+					localize('expected-got', localizeTag(ans.valueType), localizeTag(value.type)),
 					value
 				)
 			}
@@ -36,7 +36,7 @@ export const byteArray: core.Parser<NbtByteArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:byte') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.byte'), localizeTag(value.type)]),
+				localize('expected-got', localize('nbt.node.byte'), localizeTag(value.type)),
 				value
 			)
 		}
@@ -54,7 +54,7 @@ export const intArray: core.Parser<NbtIntArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:int') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.int'), localizeTag(value.type)]),
+				localize('expected-got', localize('nbt.node.int'), localizeTag(value.type)),
 				value
 			)
 		}
@@ -72,7 +72,7 @@ export const longArray: core.Parser<NbtLongArrayNode> = (src, ctx) => {
 	for (const { value } of ans.children) {
 		if (value && value.type !== 'nbt:long') {
 			ctx.err.report(
-				localize('expected-got', [localize('nbt.node.long'), localizeTag(value.type)]),
+				localize('expected-got', localize('nbt.node.long'), localizeTag(value.type)),
 				value
 			)
 		}

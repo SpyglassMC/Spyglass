@@ -1,6 +1,6 @@
 import type { Mutable, Parser } from '@spyglassmc/core'
 import { ErrorReporter, ErrorSeverity, Failure, ParserContext, Source } from '@spyglassmc/core'
-import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Categories } from '../../binder'
 import type { JsonNode } from '../../node'
@@ -9,8 +9,8 @@ import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export async function string(node: JsonNode, ctx: JsonCheckerContext) {
 	node.expectation = [{ type: 'json:string', typedoc: 'String' }]
-	if(!JsonStringNode.is(node)) {
-		ctx.err.report(localize('expected', [localize('string')]), node)
+	if (!JsonStringNode.is(node)) {
+		ctx.err.report(localize('expected', localize('string')), node)
 	}
 }
 
@@ -18,8 +18,8 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
 
-		if(!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('string')]), node)
+		if (!JsonStringNode.is(node)) {
+			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (typeof id === 'string') {
 			if (Categories.has(id)) {
 				reference(node, ctx, id)
@@ -28,8 +28,8 @@ export function resource(id: string | string[], allowTag = false): JsonChecker {
 				const doc = localize(`json.doc.${id}.${normalized}`)
 				node.hover = `\`\`\`typescript\n(${id}) ${normalized}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 			}
-		} else if(!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
-			ctx.err.report(localize('expected', [arrayToMessage(id, true, 'or')]), node)
+		} else if (!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
+			ctx.err.report(localize('expected', id), node)
 		}
 	}
 }
@@ -38,12 +38,12 @@ export function literal(value: string | string[]): JsonChecker {
 	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(value), pool: value }]
 
-		if(!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('string')]), node)
+		if (!JsonStringNode.is(node)) {
+			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (typeof value === 'string') {
 			reference(node, ctx, value)
-		} else if(!value.includes(node.value)) {
-			ctx.err.report(localize('expected', [arrayToMessage(value, true, 'or')]), node)
+		} else if (!value.includes(node.value)) {
+			ctx.err.report(localize('expected', value), node)
 		}
 	}
 }
@@ -51,8 +51,8 @@ export function literal(value: string | string[]): JsonChecker {
 export function special(name: string, parser: Parser): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name) }]
-		if(!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', [localize('string')]), node)
+		if (!JsonStringNode.is(node)) {
+			ctx.err.report(localize('expected', localize('string')), node)
 		} else {
 			const src = new Source(node.value)
 			const parseCtx = ParserContext.create({
@@ -72,7 +72,7 @@ export function special(name: string, parser: Parser): JsonChecker {
 function typedoc(id: string | string[]) {
 	return typeof id === 'string'
 		? `String("${id}")`
-		:	id.length <= 10
+		: id.length <= 10
 			? id.map(e => `"${e}"`).join(' | ')
 			: 'String'
 }
@@ -80,7 +80,7 @@ function typedoc(id: string | string[]) {
 function reference(node: JsonStringNode, ctx: JsonCheckerContext, id: string) {
 	ctx.symbols.query(ctx.doc, id, node.value)
 		.ifUnknown(() => {
-			ctx.err.report(localize('json.checker.string.undeclared', [id[0].toUpperCase() + id.slice(1), localize('punc.quote', [node.value])]), node, ErrorSeverity.Warning)
+			ctx.err.report(localize('json.checker.string.undeclared', id[0].toUpperCase() + id.slice(1), localeQuote(node.value)), node, ErrorSeverity.Warning)
 		})
 		.elseEnter({
 			usage: {

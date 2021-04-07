@@ -36,7 +36,7 @@ export type Options = FallibleOptions | InfallibleOptions
 
 const fallbackOnOutOfRange = (ans: IntegerNode, _src: Source, ctx: ParserContext, options: Options) => {
 	ctx.err.report(
-		localize('expected', [localize('integer.between', [options.min ?? '-∞', options.max ?? '+∞'])]),
+		localize('expected', localize('integer.between', options.min ?? '-∞', options.max ?? '+∞')),
 		ans,
 		ErrorSeverity.Error
 	)
@@ -75,9 +75,9 @@ export function integer(options: Options): Parser<IntegerNode> {
 			if (options.failsOnEmpty) {
 				return Failure
 			}
-			ctx.err.report(localize('expected', [localize('integer')]), ans)
+			ctx.err.report(localize('expected', localize('integer')), ans)
 		} else if (!options.pattern.test(raw) || errorOccurred) {
-			ctx.err.report(localize('parser.integer.illegal', [options.pattern.toString()]), ans)
+			ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
 		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

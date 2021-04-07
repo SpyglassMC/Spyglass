@@ -23,9 +23,7 @@ export function minecraftIdentifier(): InfallibleParser<MinecraftIdentifierToken
 			} while (src.peek() === '/' && src.skip())
 		} else {
 			ctx.err.report(
-				localize('nbtdoc.parser.minecraft-identifier.colon-expected', [
-					localeQuote(':'),
-				]),
+				localize('nbtdoc.parser.minecraft-identifier.colon-expected', localeQuote(':')),
 				src
 			)
 		}
