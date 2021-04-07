@@ -68,8 +68,8 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
-					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
-						; (isComplex(value) ? value.checker : value)(propNode, { ...ctx, context })
+					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) };
+					(isComplex(value) ? value.checker : value)(propNode, { ...ctx, context })
 					prop.key!.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
