@@ -10,7 +10,7 @@ const Locales: Record<string, Locale> = {
 
 let language = 'en'
 
-type Parameter = string | number | boolean | bigint | RegExp | Date | readonly string[]
+type Parameter = string | number | boolean | bigint | RegExp | Date | Iterable<string>
 
 /**
  * @param key The locale key.
@@ -44,8 +44,8 @@ function _resolveLocalePlaceholders(val: string | undefined, params: (Parameter 
 	return val?.replace(/%\d+%/g, match => {
 		const index = parseInt(match.slice(1, -1))
 		let param = params[index]
-		if (param instanceof Array) {
-			param = arrayToMessage(param)
+		if (typeof param !== 'string' && (param as Iterable<string>)[Symbol.iterator]) {
+			param = arrayToMessage(param as Iterable<string>)
 		}
 		return `${param ?? match}`
 	})
