@@ -1,3 +1,3 @@
-export * from './Colorizer'
+export * from './colorizer'
 export * from './Completer'
 export * from './util'
