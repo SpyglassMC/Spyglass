@@ -8,9 +8,6 @@
   "directories": {
     "test": "test/"
   },
-  "dependencies": {
-    "vscode-json-languageservice": "4.0.2"
-  },
   "devDependencies": {
     "fast-glob": "^3.2.5",
     "vanilla-datapack-data": "SPGoding/vanilla-datapack#data"
