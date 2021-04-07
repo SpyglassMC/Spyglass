@@ -50,6 +50,8 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (src: core.Sou
 			let isOutOfRange = false
 			const onOutOfRange = () => isOutOfRange = true
 			const numeralParser: core.InfallibleParser<core.IntegerNode | core.FloatNode> = e.group === Group.IntegerAlike
+				// As we already checked the format of the value with `e.pattern` in the if-block, there is no need to check
+				// it again here in the parser, therefore we just pass in a simple /./ regex.
 				? core.integer({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
 				: core.float({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
 			const { result: numeralResult, updateSrcAndCtx: updateNumeral } = core.attempt(numeralParser, src, ctx)
