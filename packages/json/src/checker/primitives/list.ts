@@ -14,7 +14,8 @@ export function listOf(checker: JsonChecker): JsonChecker {
 		if (!JsonArrayNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('array')]), node)
 		} else {
-			node.items.forEach(e => checker(e, ctx))
+			node.children.filter(e => e.value)
+				.forEach(e => checker(e.value!, ctx))
 		}
 	}
 }

@@ -7,8 +7,10 @@ import * as colorizer from './colorizer'
 import * as completer from './completer'
 import * as parser from './parser'
 
+export * as checker from './checker'
+export * as colorizer from './colorizer'
 export * from './node'
-export * from './parser'
+export * as parser from './parser'
 
 export function initializeJson() {
 	MetaRegistry.addInitializer((registry) => {

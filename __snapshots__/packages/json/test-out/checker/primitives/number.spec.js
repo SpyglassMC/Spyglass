@@ -6,6 +6,17 @@ exports['JSON number float Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -34,7 +45,6 @@ exports['JSON number float Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -54,7 +64,6 @@ exports['JSON number float Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -74,7 +83,6 @@ exports['JSON number float Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -94,7 +102,6 @@ exports['JSON number float Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -114,7 +121,6 @@ exports['JSON number float Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -134,7 +140,6 @@ exports['JSON number float Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -154,7 +159,6 @@ exports['JSON number float Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -202,6 +206,17 @@ exports['JSON number floatRange(-5, null) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -230,7 +245,6 @@ exports['JSON number floatRange(-5, null) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -259,7 +273,6 @@ exports['JSON number floatRange(-5, null) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -288,7 +301,6 @@ exports['JSON number floatRange(-5, null) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -308,7 +320,6 @@ exports['JSON number floatRange(-5, null) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -328,7 +339,6 @@ exports['JSON number floatRange(-5, null) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -348,7 +358,6 @@ exports['JSON number floatRange(-5, null) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -368,7 +377,6 @@ exports['JSON number floatRange(-5, null) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -416,6 +424,17 @@ exports['JSON number floatRange(1, 2.4) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -444,7 +463,6 @@ exports['JSON number floatRange(1, 2.4) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -473,7 +491,6 @@ exports['JSON number floatRange(1, 2.4) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -502,7 +519,6 @@ exports['JSON number floatRange(1, 2.4) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -522,7 +538,6 @@ exports['JSON number floatRange(1, 2.4) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -551,7 +566,6 @@ exports['JSON number floatRange(1, 2.4) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -580,7 +594,6 @@ exports['JSON number floatRange(1, 2.4) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -609,7 +622,6 @@ exports['JSON number floatRange(1, 2.4) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -666,6 +678,17 @@ exports['JSON number int Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -694,7 +717,6 @@ exports['JSON number int Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -723,7 +745,6 @@ exports['JSON number int Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -743,7 +764,6 @@ exports['JSON number int Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -763,7 +783,6 @@ exports['JSON number int Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -783,7 +802,6 @@ exports['JSON number int Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -812,7 +830,6 @@ exports['JSON number int Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -832,7 +849,6 @@ exports['JSON number int Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -880,6 +896,17 @@ exports['JSON number intRange(-9, 0) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -908,7 +935,6 @@ exports['JSON number intRange(-9, 0) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -937,7 +963,6 @@ exports['JSON number intRange(-9, 0) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -957,7 +982,6 @@ exports['JSON number intRange(-9, 0) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -986,7 +1010,6 @@ exports['JSON number intRange(-9, 0) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1015,7 +1038,6 @@ exports['JSON number intRange(-9, 0) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1044,7 +1066,6 @@ exports['JSON number intRange(-9, 0) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1073,7 +1094,6 @@ exports['JSON number intRange(-9, 0) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1130,6 +1150,17 @@ exports['JSON number intRange(1, 3) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1158,7 +1189,6 @@ exports['JSON number intRange(1, 3) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1187,7 +1217,6 @@ exports['JSON number intRange(1, 3) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1216,7 +1245,6 @@ exports['JSON number intRange(1, 3) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1236,7 +1264,6 @@ exports['JSON number intRange(1, 3) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1265,7 +1292,6 @@ exports['JSON number intRange(1, 3) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1294,7 +1320,6 @@ exports['JSON number intRange(1, 3) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1323,7 +1348,6 @@ exports['JSON number intRange(1, 3) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1380,6 +1404,17 @@ exports['JSON number intRange(3, null) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1408,7 +1443,6 @@ exports['JSON number intRange(3, null) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1437,7 +1471,6 @@ exports['JSON number intRange(3, null) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1466,7 +1499,6 @@ exports['JSON number intRange(3, null) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1495,7 +1527,6 @@ exports['JSON number intRange(3, null) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1515,7 +1546,6 @@ exports['JSON number intRange(3, null) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1544,7 +1574,6 @@ exports['JSON number intRange(3, null) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1564,7 +1593,6 @@ exports['JSON number intRange(3, null) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1612,6 +1640,17 @@ exports['JSON number intRange(null, 3) Check ""5"" 1'] = {
       "end": 3
     },
     "value": "5",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1640,7 +1679,6 @@ exports['JSON number intRange(null, 3) Check "-5.62" 1'] = {
       "end": 5
     },
     "value": -5.62,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1669,7 +1707,6 @@ exports['JSON number intRange(null, 3) Check "-7" 1'] = {
       "end": 2
     },
     "value": -7,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1689,7 +1726,6 @@ exports['JSON number intRange(null, 3) Check "2" 1'] = {
       "end": 1
     },
     "value": 2,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1709,7 +1745,6 @@ exports['JSON number intRange(null, 3) Check "4" 1'] = {
       "end": 1
     },
     "value": 4,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1738,7 +1773,6 @@ exports['JSON number intRange(null, 3) Check "4.3" 1'] = {
       "end": 3
     },
     "value": 4.3,
-    "isInteger": false,
     "expectation": [
       {
         "type": "json:number",
@@ -1767,7 +1801,6 @@ exports['JSON number intRange(null, 3) Check "6e4" 1'] = {
       "end": 3
     },
     "value": 60000,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",
@@ -1796,7 +1829,6 @@ exports['JSON number intRange(null, 3) Check "8b" 1'] = {
       "end": 1
     },
     "value": 8,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:number",

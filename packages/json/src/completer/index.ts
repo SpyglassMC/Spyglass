@@ -1,6 +1,7 @@
-import type { CompleterContext, RangeLike } from '@spyglassmc/core'
+import type { AstNode, CompleterContext, PairNode, RangeLike } from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, selectedLeaf } from '@spyglassmc/core'
-import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonObjectNode, JsonStringExpectation } from '../node'
+import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
+import { JsonArrayNode, JsonObjectNode, JsonPairNode, JsonStringNode } from '../node'
 
 export const JsonTriggerCharacters = ['\n', ':', '"']
 
@@ -15,38 +16,38 @@ const SIMPLE_SNIPPETS = {
 export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 	const result = selectedLeaf(root, ctx.offset)
 	if (result) {
-		const [n0, n1, n2] = [result.leaf, ...result.parents] as JsonNode[]
+		const [n0, n1, n2] = [result.leaf, ...result.parents] as AstNode[]
 
 		// Object properties
 		// { "foo": 1, | }
-		if (n0.type === 'json:object' && n0.expectation) {
+		if (JsonObjectNode.is(n0) && n0.expectation) {
 			return unique(n0.expectation.filter(e => e.type === 'json:object')
 				.flatMap(e => objectCompletion(ctx.offset, n0, e as JsonObjectExpectation, ctx)))
 		}
 		// { "foo": 1, "|" }
-		if (n0.type === 'json:string' && n1.type === 'json:property' && n1.key === n0 && n2.type === 'json:object' && n2.expectation) {
+		if (n0.type === 'json:string' && n1.type === 'pair' && (n1 as PairNode<JsonStringNode, JsonNode>).key === n0 && JsonObjectNode.is(n2) && n2.expectation) {
 			return unique(n2.expectation.filter(e => e.type === 'json:object')
 				.flatMap(e => objectCompletion(n0, n2, e as JsonObjectExpectation, ctx)))
 		}
 
 		// Inside a string
 		// { "foo": "|" }
-		if (n0.type === 'json:string' && n0.expectation) {
+		if (JsonStringNode.is(n0) && n0.expectation) {
 			return unique(n0.expectation.filter(e => e.type === 'json:string')
 				.flatMap(e => stringCompletion(n0, e as JsonStringExpectation, ctx)))
 		}
 
 		// Values after an object property
 		// { "foo": | }
-		if (n0.type === 'json:property' && n0.value === undefined && ctx.offset >= n0.key.range.end && n1.type === 'json:object' && n1.expectation) {
+		if (JsonPairNode.is(n0) && n0.value === undefined && n0.key && ctx.offset >= n0.key.range.end && JsonObjectNode.is(n1) && n1.expectation) {
 			return unique(n1.expectation.filter(e => e.type === 'json:object' && e.fields)
-				.map(e => (e as JsonObjectExpectation).fields!.find(f => f.key === n0.key.value)!)
+				.map(e => (e as JsonObjectExpectation).fields!.find(f => f.key === n0.key?.value)!)
 				.flatMap(f => valueCompletion(ctx.offset, f.value!, ctx)))
 		}
 
 		// Values in an array
 		// { "foo": [|] }
-		if (n0.type === 'json:array' && n0.expectation) {
+		if (JsonArrayNode.is(n0) && n0.expectation) {
 			return unique(n0.expectation.filter(e => e.type === 'json:array' && e.items)
 				.flatMap(e => valueCompletion(ctx.offset, (e as JsonArrayExpectation).items!, ctx)))
 		}
@@ -57,7 +58,7 @@ export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
-			.filter(f => !node.properties.find(p => f.key === p.key.value))
+			.filter(f => !node.children.find(p => f.key === p.key?.value))
 			.map(f => fieldCompletion(range, f))
 	} else if (expectation.keys) {
 		return expectation.keys.flatMap(e => stringCompletion(range, e, ctx)

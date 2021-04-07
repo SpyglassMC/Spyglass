@@ -1,6 +1,7 @@
+import type { PairNode } from '@spyglassmc/core'
 import { ErrorSeverity, Range } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
-import type { JsonNode, JsonObjectExpectation, JsonPropertyNode } from '../../node'
+import type { JsonNode, JsonObjectExpectation, JsonStringNode } from '../../node'
 import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
@@ -46,7 +47,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else if (Array.isArray(keys) && values) {
-			const givenKeys = node.properties.map(n => n.key.value)
+			const givenKeys = node.children.map(n => n.key?.value)
 			keys.forEach(k => {
 				const value = values(k)
 				if (isComplex(value) && (value.opt || value.deprecated)) {
@@ -55,27 +56,27 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 				if (!givenKeys.includes(k)) {
 					ctx.err.report(localize('json.checker.property.missing', [localize('punc.quote', [k])]), Range.create(node.range.start, node.range.start + 1))
 				}})
-			node.properties.forEach(prop => {
-				const key = prop.key.value
+			node.children.filter(p => p.key).forEach(prop => {
+				const key = prop.key!.value
 				if (!keys.includes(key)) {
-					ctx.err.report(localize('json.checker.property.unknown', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Warning)
+					ctx.err.report(localize('json.checker.property.unknown', [localize('punc.quote', [key])]), prop.key!, ErrorSeverity.Warning)
 				} else {
 					const value = values(key)
 					if (isComplex(value) && value.deprecated) {
-						ctx.err.report(localize('json.checker.property.deprecated', [localize('punc.quote', [key])]), prop.key, ErrorSeverity.Hint, { deprecated: true })
+						ctx.err.report(localize('json.checker.property.deprecated', [localize('punc.quote', [key])]), prop.key!, ErrorSeverity.Hint, { deprecated: true })
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
 					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
 					;(isComplex(value) ? value.checker : value)(propNode, {...ctx, context })
-					prop.key.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
+					prop.key!.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
-			node.properties.forEach(prop => {
-				keys(prop.key, ctx)
+			node.children.filter(p => p.key).forEach(prop => {
+				keys(prop.key!, ctx)
 				if (prop.value !== undefined) {
-					const value = values(prop.key.value);
+					const value = values(prop.key!.value);
 					(isComplex(value) ? value.checker : value)(prop.value, ctx)
 				}
 			})
@@ -98,15 +99,15 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 	return { checker: checker, deprecated: true }
 }
 
-export function dispatch(keyName: string, values: (value: string | undefined, properties: JsonPropertyNode[]) => JsonChecker): JsonChecker {
+export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker {
 	return async (node: JsonNode, ctx: JsonCheckerContext) => {
 		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', [localize('object')]), node)
 		} else {
-			const dispatcherIndex = node.properties.findIndex(p => p.key.value === keyName)
-			const dispatcher = node.properties[dispatcherIndex]
+			const dispatcherIndex = node.children.findIndex(p => p.key?.value === keyName)
+			const dispatcher = node.children[dispatcherIndex]
 			const value = dispatcher?.value?.type === 'json:string' ? dispatcher.value.value : undefined
-			values(value, node.properties)(node, ctx)
+			values(value, node.children)(node, ctx)
 		}
 	}
 }
@@ -141,14 +142,14 @@ export function when(value: string | undefined, values: string[], properties: Ch
 	return properties
 }
 
-export function extract(value: string, properties: JsonPropertyNode[]) {
-	const node = properties.find(p => p.key.value === value)
+export function extract(value: string, children: PairNode<JsonStringNode, JsonNode>[]) {
+	const node = children.find(p => p.key?.value === value)
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
 }
 
 export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
 	const givenKeys = new Set(JsonObjectNode.is(node)
-		? node.properties.map(n => n.key.value) : [])
+		? node.children.map(n => n.key?.value) : [])
 	const key = Object.keys(cases).find(c => givenKeys.has(c))
 
 	if (key === undefined) {

@@ -1,11 +1,14 @@
 import type { IndexMap } from '../source'
 import type { AstNode } from './AstNode'
 
-export interface StringNode extends AstNode {
-	readonly type: 'string',
+export interface StringBaseNode extends AstNode {
 	readonly value: string,
 	readonly valueMap: IndexMap,
 	readonly valueNode?: AstNode,
+}
+
+export interface StringNode extends StringBaseNode {
+	readonly type: 'string',
 }
 export namespace StringNode {
 	/* istanbul ignore next */

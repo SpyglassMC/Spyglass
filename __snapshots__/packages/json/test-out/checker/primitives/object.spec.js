@@ -5,26 +5,31 @@ exports['JSON object object() Check "[2]" 1'] = {
       "start": 0,
       "end": 3
     },
-    "items": [
-      {
-        "type": "json:number",
-        "range": {
-          "start": 1,
-          "end": 2
-        },
-        "value": 2,
-        "isInteger": true
-      }
-    ],
     "children": [
       {
-        "type": "json:number",
+        "type": "item",
         "range": {
           "start": 1,
           "end": 2
         },
-        "value": 2,
-        "isInteger": true
+        "children": [
+          {
+            "type": "json:number",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": 2
+          }
+        ],
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 1,
+            "end": 2
+          },
+          "value": 2
+        }
       }
     ],
     "expectation": [
@@ -54,74 +59,12 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 1,
-            "isInteger": true
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true
+          "end": 9
         },
         "children": [
           {
@@ -130,7 +73,18 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:number",
@@ -138,10 +92,40 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": 1,
-            "isInteger": true
+            "value": 1
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 1
+        }
       }
     ],
     "expectation": [
@@ -162,115 +146,12 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
       "start": 0,
       "end": 22
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 3,
-            "isInteger": true
-          }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 10,
-            "end": 13
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:string",
-          "range": {
-            "start": 15,
-            "end": 20
-          },
-          "value": "foo"
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 10,
-              "end": 13
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:string",
-            "range": {
-              "start": 15,
-              "end": 20
-            },
-            "value": "foo"
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true
+          "end": 9
         },
         "children": [
           {
@@ -279,7 +160,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "a"
+            "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:number",
@@ -287,32 +179,50 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": 3,
-            "isInteger": true
+            "value": 3
           }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
+        ],
         "key": {
           "type": "json:string",
           "range": {
-            "start": 10,
-            "end": 13
+            "start": 2,
+            "end": 5
           },
-          "value": "b"
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
         },
         "value": {
-          "type": "json:string",
+          "type": "json:number",
           "range": {
-            "start": 15,
-            "end": 20
+            "start": 7,
+            "end": 8
           },
-          "value": "foo"
+          "value": 3
+        },
+        "end": {
+          "start": 8,
+          "end": 9
+        }
+      },
+      {
+        "type": "pair",
+        "range": {
+          "start": 10,
+          "end": 21
         },
         "children": [
           {
@@ -321,7 +231,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 10,
               "end": 13
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 11,
+                "end": 12
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:string",
@@ -329,9 +250,62 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 15,
               "end": 20
             },
-            "value": "foo"
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 10,
+            "end": 13
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 12
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 13,
+          "end": 14
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 15,
+            "end": 20
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
       }
     ],
     "expectation": [
@@ -352,74 +326,12 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 6,
-            "isInteger": true
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
+          "end": 9
         },
         "children": [
           {
@@ -428,7 +340,18 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:number",
@@ -436,10 +359,40 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": 6,
-            "isInteger": true
+            "value": 6
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 6
+        }
       }
     ],
     "expectation": [
@@ -460,7 +413,6 @@ exports['JSON object object() Check "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "properties": [],
     "children": [],
     "expectation": [
       {
@@ -480,26 +432,31 @@ exports['JSON object object(string, () => int) Check "[2]" 1'] = {
       "start": 0,
       "end": 3
     },
-    "items": [
-      {
-        "type": "json:number",
-        "range": {
-          "start": 1,
-          "end": 2
-        },
-        "value": 2,
-        "isInteger": true
-      }
-    ],
     "children": [
       {
-        "type": "json:number",
+        "type": "item",
         "range": {
           "start": 1,
           "end": 2
         },
-        "value": 2,
-        "isInteger": true
+        "children": [
+          {
+            "type": "json:number",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": 2
+          }
+        ],
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 1,
+            "end": 2
+          },
+          "value": 2
+        }
       }
     ],
     "expectation": [
@@ -535,110 +492,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "expectation": [
-              {
-                "type": "json:string",
-                "typedoc": "String"
-              }
-            ]
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 1,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -648,6 +507,17 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "expectation": [
               {
                 "type": "json:string",
@@ -662,7 +532,6 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -670,7 +539,50 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               }
             ]
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 1,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        }
       }
     ],
     "expectation": [
@@ -697,175 +609,12 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
       "start": 0,
       "end": 22
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "expectation": [
-              {
-                "type": "json:string",
-                "typedoc": "String"
-              }
-            ]
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 3,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 10,
-            "end": 13
-          },
-          "value": "b",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:string",
-          "range": {
-            "start": 15,
-            "end": 20
-          },
-          "value": "foo",
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 10,
-              "end": 13
-            },
-            "value": "b",
-            "expectation": [
-              {
-                "type": "json:string",
-                "typedoc": "String"
-              }
-            ]
-          },
-          {
-            "type": "json:string",
-            "range": {
-              "start": 15,
-              "end": 20
-            },
-            "value": "foo",
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -875,6 +624,17 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "expectation": [
               {
                 "type": "json:string",
@@ -889,7 +649,6 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 8
             },
             "value": 3,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -897,21 +656,25 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               }
             ]
           }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
+        ],
         "key": {
           "type": "json:string",
           "range": {
-            "start": 10,
-            "end": 13
+            "start": 2,
+            "end": 5
           },
-          "value": "b",
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
           "expectation": [
             {
               "type": "json:string",
@@ -919,19 +682,34 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             }
           ]
         },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
         "value": {
-          "type": "json:string",
+          "type": "json:number",
           "range": {
-            "start": 15,
-            "end": 20
+            "start": 7,
+            "end": 8
           },
-          "value": "foo",
+          "value": 3,
           "expectation": [
             {
               "type": "json:number",
               "typedoc": "Number"
             }
           ]
+        },
+        "end": {
+          "start": 8,
+          "end": 9
+        }
+      },
+      {
+        "type": "pair",
+        "range": {
+          "start": 10,
+          "end": 21
         },
         "children": [
           {
@@ -941,6 +719,17 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 13
             },
             "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 11,
+                "end": 12
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "expectation": [
               {
                 "type": "json:string",
@@ -955,6 +744,17 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "end": 20
             },
             "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            },
             "expectation": [
               {
                 "type": "json:number",
@@ -962,7 +762,61 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               }
             ]
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 10,
+            "end": 13
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 12
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
+        },
+        "sep": {
+          "start": 13,
+          "end": 14
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 15,
+            "end": 20
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          },
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        }
       }
     ],
     "expectation": [
@@ -998,110 +852,12 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "b",
-            "expectation": [
-              {
-                "type": "json:string",
-                "typedoc": "String"
-              }
-            ]
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 6,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b",
-          "expectation": [
-            {
-              "type": "json:string",
-              "typedoc": "String"
-            }
-          ]
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -1111,6 +867,17 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 5
             },
             "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "expectation": [
               {
                 "type": "json:string",
@@ -1125,7 +892,6 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "end": 8
             },
             "value": 6,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -1133,7 +899,50 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               }
             ]
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "expectation": [
+            {
+              "type": "json:string",
+              "typedoc": "String"
+            }
+          ]
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 6,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        }
       }
     ],
     "expectation": [
@@ -1160,7 +969,6 @@ exports['JSON object object(string, () => int) Check "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "properties": [],
     "children": [],
     "expectation": [
       {
@@ -1186,26 +994,31 @@ exports['JSON object record({ a: int }) Check "[2]" 1'] = {
       "start": 0,
       "end": 3
     },
-    "items": [
-      {
-        "type": "json:number",
-        "range": {
-          "start": 1,
-          "end": 2
-        },
-        "value": 2,
-        "isInteger": true
-      }
-    ],
     "children": [
       {
-        "type": "json:number",
+        "type": "item",
         "range": {
           "start": 1,
           "end": 2
         },
-        "value": 2,
-        "isInteger": true
+        "children": [
+          {
+            "type": "json:number",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": 2
+          }
+        ],
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 1,
+            "end": 2
+          },
+          "value": 2
+        }
       }
     ],
     "expectation": [
@@ -1246,95 +1059,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "hover": "```typescript\n.a: Number\n```"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 1,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -1344,6 +1074,17 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -1353,7 +1094,6 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -1361,7 +1101,45 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               }
             ]
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "hover": "```typescript\n.a: Number\n```"
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 1,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        }
       }
     ],
     "expectation": [
@@ -1393,136 +1171,12 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
       "start": 0,
       "end": 22
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "hover": "```typescript\n.a: Number\n```"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 3,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 10,
-            "end": 13
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:string",
-          "range": {
-            "start": 15,
-            "end": 20
-          },
-          "value": "foo"
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 10,
-              "end": 13
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:string",
-            "range": {
-              "start": 15,
-              "end": 20
-            },
-            "value": "foo"
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -1532,6 +1186,17 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -1541,7 +1206,6 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "end": 8
             },
             "value": 3,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -1549,29 +1213,55 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               }
             ]
           }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
+        ],
         "key": {
           "type": "json:string",
           "range": {
-            "start": 10,
-            "end": 13
+            "start": 2,
+            "end": 5
           },
-          "value": "b"
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "hover": "```typescript\n.a: Number\n```"
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
         },
         "value": {
-          "type": "json:string",
+          "type": "json:number",
           "range": {
-            "start": 15,
-            "end": 20
+            "start": 7,
+            "end": 8
           },
-          "value": "foo"
+          "value": 3,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        },
+        "end": {
+          "start": 8,
+          "end": 9
+        }
+      },
+      {
+        "type": "pair",
+        "range": {
+          "start": 10,
+          "end": 21
         },
         "children": [
           {
@@ -1580,7 +1270,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 10,
               "end": 13
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 11,
+                "end": 12
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:string",
@@ -1588,9 +1289,62 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 15,
               "end": 20
             },
-            "value": "foo"
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 10,
+            "end": 13
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 12
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 13,
+          "end": 14
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 15,
+            "end": 20
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
       }
     ],
     "expectation": [
@@ -1631,74 +1385,12 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 6,
-            "isInteger": true
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
+          "end": 9
         },
         "children": [
           {
@@ -1707,7 +1399,18 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:number",
@@ -1715,10 +1418,40 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": 6,
-            "isInteger": true
+            "value": 6
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 6
+        }
       }
     ],
     "expectation": [
@@ -1767,7 +1500,6 @@ exports['JSON object record({ a: int }) Check "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "properties": [],
     "children": [],
     "expectation": [
       {
@@ -1807,26 +1539,31 @@ exports['JSON object record({ a: opt(int) }) Check "[2]" 1'] = {
       "start": 0,
       "end": 3
     },
-    "items": [
-      {
-        "type": "json:number",
-        "range": {
-          "start": 1,
-          "end": 2
-        },
-        "value": 2,
-        "isInteger": true
-      }
-    ],
     "children": [
       {
-        "type": "json:number",
+        "type": "item",
         "range": {
           "start": 1,
           "end": 2
         },
-        "value": 2,
-        "isInteger": true
+        "children": [
+          {
+            "type": "json:number",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": 2
+          }
+        ],
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 1,
+            "end": 2
+          },
+          "value": 2
+        }
       }
     ],
     "expectation": [
@@ -1868,95 +1605,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "hover": "```typescript\n.a: Number\n```"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 1,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 1,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -1966,6 +1620,17 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -1975,7 +1640,6 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "end": 8
             },
             "value": 1,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -1983,7 +1647,45 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               }
             ]
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "hover": "```typescript\n.a: Number\n```"
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 1,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        }
       }
     ],
     "expectation": [
@@ -2016,136 +1718,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
       "start": 0,
       "end": 22
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "a",
-            "hover": "```typescript\n.a: Number\n```"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 3,
-            "isInteger": true,
-            "expectation": [
-              {
-                "type": "json:number",
-                "typedoc": "Number"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 10,
-            "end": 13
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:string",
-          "range": {
-            "start": 15,
-            "end": 20
-          },
-          "value": "foo"
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 10,
-              "end": 13
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:string",
-            "range": {
-              "start": 15,
-              "end": 20
-            },
-            "value": "foo"
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "a",
-          "hover": "```typescript\n.a: Number\n```"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 3,
-          "isInteger": true,
-          "expectation": [
-            {
-              "type": "json:number",
-              "typedoc": "Number"
-            }
-          ]
+          "end": 9
         },
         "children": [
           {
@@ -2155,6 +1733,17 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 5
             },
             "value": "a",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            },
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -2164,7 +1753,6 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "end": 8
             },
             "value": 3,
-            "isInteger": true,
             "expectation": [
               {
                 "type": "json:number",
@@ -2172,29 +1760,55 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               }
             ]
           }
-        ]
-      },
-      {
-        "type": "json:property",
-        "range": {
-          "start": 10,
-          "end": 20
-        },
+        ],
         "key": {
           "type": "json:string",
           "range": {
-            "start": 10,
-            "end": 13
+            "start": 2,
+            "end": 5
           },
-          "value": "b"
+          "value": "a",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          },
+          "hover": "```typescript\n.a: Number\n```"
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
         },
         "value": {
-          "type": "json:string",
+          "type": "json:number",
           "range": {
-            "start": 15,
-            "end": 20
+            "start": 7,
+            "end": 8
           },
-          "value": "foo"
+          "value": 3,
+          "expectation": [
+            {
+              "type": "json:number",
+              "typedoc": "Number"
+            }
+          ]
+        },
+        "end": {
+          "start": 8,
+          "end": 9
+        }
+      },
+      {
+        "type": "pair",
+        "range": {
+          "start": 10,
+          "end": 21
         },
         "children": [
           {
@@ -2203,7 +1817,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "start": 10,
               "end": 13
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 11,
+                "end": 12
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:string",
@@ -2211,9 +1836,62 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "start": 15,
               "end": 20
             },
-            "value": "foo"
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 16,
+                "end": 19
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 10,
+            "end": 13
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 12
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 13,
+          "end": 14
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 15,
+            "end": 20
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 16,
+              "end": 19
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
       }
     ],
     "expectation": [
@@ -2255,74 +1933,12 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
       "start": 0,
       "end": 10
     },
-    "properties": [
-      {
-        "type": "json:property",
-        "range": {
-          "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
-        },
-        "children": [
-          {
-            "type": "json:string",
-            "range": {
-              "start": 2,
-              "end": 5
-            },
-            "value": "b"
-          },
-          {
-            "type": "json:number",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 6,
-            "isInteger": true
-          }
-        ]
-      }
-    ],
     "children": [
       {
-        "type": "json:property",
+        "type": "pair",
         "range": {
           "start": 2,
-          "end": 8
-        },
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 2,
-            "end": 5
-          },
-          "value": "b"
-        },
-        "value": {
-          "type": "json:number",
-          "range": {
-            "start": 7,
-            "end": 8
-          },
-          "value": 6,
-          "isInteger": true
+          "end": 9
         },
         "children": [
           {
@@ -2331,7 +1947,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "value": "b"
+            "value": "b",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 4
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 1
+              },
+              "pairs": []
+            }
           },
           {
             "type": "json:number",
@@ -2339,10 +1966,40 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": 6,
-            "isInteger": true
+            "value": 6
           }
-        ]
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 2,
+            "end": 5
+          },
+          "value": "b",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 4
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 1
+            },
+            "pairs": []
+          }
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:number",
+          "range": {
+            "start": 7,
+            "end": 8
+          },
+          "value": 6
+        }
       }
     ],
     "expectation": [
@@ -2384,7 +2041,6 @@ exports['JSON object record({ a: opt(int) }) Check "{}" 1'] = {
       "start": 0,
       "end": 2
     },
-    "properties": [],
     "children": [],
     "expectation": [
       {

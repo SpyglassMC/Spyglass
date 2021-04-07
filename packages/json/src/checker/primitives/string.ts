@@ -1,4 +1,4 @@
-import type { Parser } from '@spyglassmc/core'
+import type { Mutable, Parser } from '@spyglassmc/core'
 import { ErrorReporter, ErrorSeverity, Failure, ParserContext, Source } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
@@ -62,18 +62,8 @@ export function special(name: string, parser: Parser): JsonChecker {
 			})
 			const result = parser(src, parseCtx)
 			if (result !== Failure) {
-				ctx.err.absorb(parseCtx.err, { map: {
-					outerRange: {
-						start: node.range.start + 1,
-						end: node.range.end - 1,
-					},
-					innerRange: {
-						start: result.range.start,
-						end: result.range.end + 1,
-					},
-					pairs: [],
-				}, doc: ctx.doc })
-				node.valueNode = result
+				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc })
+				;(node as Mutable<JsonStringNode>).valueNode = result
 			}
 		}
 	}

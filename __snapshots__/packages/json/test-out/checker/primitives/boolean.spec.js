@@ -6,6 +6,17 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
       "end": 6
     },
     "value": "true",
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 5
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 4
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:boolean",
@@ -34,7 +45,6 @@ exports['JSON boolean boolean Check "1" 1'] = {
       "end": 1
     },
     "value": 1,
-    "isInteger": true,
     "expectation": [
       {
         "type": "json:boolean",
@@ -75,9 +85,42 @@ exports['JSON boolean boolean Check "false" 1'] = {
 }
 
 exports['JSON boolean boolean Check "tru" 1'] = {
-  "node": "FAILURE",
+  "node": {
+    "type": "json:string",
+    "range": {
+      "start": 0,
+      "end": 0
+    },
+    "value": "",
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "pairs": []
+    },
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
+  },
   "parserErrors": [],
-  "checkerErrors": []
+  "checkerErrors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected a boolean",
+      "severity": 3
+    }
+  ]
 }
 
 exports['JSON boolean boolean Check "true" 1'] = {
@@ -100,7 +143,20 @@ exports['JSON boolean boolean Check "true" 1'] = {
 }
 
 exports['JSON boolean boolean Check "trues" 1'] = {
-  "node": "FAILURE",
+  "node": {
+    "type": "json:boolean",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "value": true,
+    "expectation": [
+      {
+        "type": "json:boolean",
+        "typedoc": "Boolean"
+      }
+    ]
+  },
   "parserErrors": [],
   "checkerErrors": []
 }
