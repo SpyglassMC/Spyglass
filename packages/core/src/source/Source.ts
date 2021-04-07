@@ -76,6 +76,26 @@ export class Source {
 	}
 
 	/**
+	 * If the `expectedValue` is right after the cursor, skips it and returns `true`. Otherwise returns `false`.
+	 * 
+	 * This is a shortcut for the following piece of code:
+	 * ```typescript
+	 * declare const src: Source
+	 * if (src.peek(expectedValue.length) === expectedValue) {
+	 * 	src.skip(expectedValue.length)
+	 * 	// Do something here.
+	 * }
+	 * ```
+	 */
+	tryRead(expectedValue: string): boolean {
+		if (this.peek(expectedValue.length) === expectedValue) {
+			this.skip(expectedValue.length)
+			return true
+		}
+		return false
+	}
+
+	/**
 	 * Reads until the end of this line.
 	 */
 	readLine() {

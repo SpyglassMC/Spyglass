@@ -24,6 +24,9 @@ describe('ResourceLocationNode', () => {
 			{ node: { namespace: 'spgoding', path: ['foo'] }, type: 'origin', expected: 'spgoding:foo' },
 			{ node: { namespace: 'spgoding', path: ['foo'] }, type: 'full', expected: 'spgoding:foo' },
 			{ node: { namespace: 'spgoding', path: ['foo'] }, type: 'short', expected: 'spgoding:foo' },
+			{ node: { isTag: true, path: ['foo', 'bar'] }, type: 'origin', expected: '#foo/bar' },
+			{ node: { isTag: true, path: ['foo', 'bar'] }, type: 'full', expected: '#minecraft:foo/bar' },
+			{ node: { isTag: true, path: ['foo', 'bar'] }, type: 'short', expected: '#foo/bar' },
 		]
 		for (const { node, type, expected } of suites) {
 			it(`It should convert to "${showWhitespaceGlyph(expected)}"`, () => {

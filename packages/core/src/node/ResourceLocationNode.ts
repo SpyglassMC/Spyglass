@@ -6,10 +6,15 @@ import type { AstNode } from './AstNode'
 export interface ResourceLocationNode extends AstNode {
 	readonly type: 'resource_location',
 	readonly category?: ResourceLocationCategory,
+	readonly isTag?: boolean,
 	readonly namespace?: string,
 	readonly path?: string[],
 }
 export namespace ResourceLocationNode {
+	/**
+	 * The prefix for tags.
+	 */
+	export const TagPrefix = '#'
 	/**
 	 * The seperator of namespace and path.
 	 */
@@ -31,6 +36,8 @@ export namespace ResourceLocationNode {
 
 	export function toString(node: ResourceLocationNode, type: 'origin' | 'full' | 'short' = 'origin'): string {
 		const path = node.path ? node.path.join(PathSep) : ''
+		let id: string
+		// Hey, why do we have more comments than actual code here?
 		/* 
 		 * `node.namespace` has three statuses here:
 		 * - `minecraft`
@@ -42,15 +49,18 @@ export namespace ResourceLocationNode {
 		switch (type) {
 			case 'origin':
 				// Use `node.namespace !== undefined`, so that empty namespaces can be correctly restored to string.
-				return node.namespace !== undefined ? `${node.namespace}${NamespacePathSep}${path}` : path
+				id = node.namespace !== undefined ? `${node.namespace}${NamespacePathSep}${path}` : path
+				break
 			case 'full':
 				// Use `node.namespace` before `||`, so that both undefined and empty value can result in the default namespace.
 				// Use `||` instead of `??`, so that empty namespaces can be converted to the default namespace.
-				return `${node.namespace || DefaultNamespace}${NamespacePathSep}${path}`
+				id = `${node.namespace || DefaultNamespace}${NamespacePathSep}${path}`
+				break
 			case 'short':
 				// Use `node.namespace` before `&&` for the same reason stated above.
-				return node.namespace && node.namespace !== DefaultNamespace ? `${node.namespace}${NamespacePathSep}${path}` : path
+				id = node.namespace && node.namespace !== DefaultNamespace ? `${node.namespace}${NamespacePathSep}${path}` : path
+				break
 		}
-		// Hey, why do we have more comments than actual code here?
+		return node.isTag ? `${TagPrefix}${id}` : id
 	}
 }
