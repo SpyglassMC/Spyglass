@@ -2,7 +2,7 @@ import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { AstNode } from '../../lib'
-import { Range, selectedNode, traverseLeaves } from '../../lib'
+import { Range, selectedNode, traverseLeaves, traversePreOrder } from '../../lib'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',
@@ -39,7 +39,46 @@ const TestNode: AstNode = {
 	],
 }
 
+const DiscontinuousTestNode: AstNode = {
+	type: 'not_leaf_1',
+	range: Range.create(0, 10),
+	children: [
+		{
+			type: 'not_leaf_2',
+			range: Range.create(0, 6),
+			children: [
+				{
+					type: 'leaf_1',
+					range: Range.create(0, 2),
+				},
+				{
+					type: 'leaf_2',
+					range: Range.create(4, 6),
+				},
+			],
+		},
+		{
+			type: 'not_leaf_4',
+			range: Range.create(9, 10),
+		},
+	],
+}
+
 describe('processor/util.ts', () => {
+	describe('traversePreOrder()', () => {
+		it('Should traverse nodes that match the predicates', () => {
+			traversePreOrder(
+				TestNode,
+				_ => true,
+				node => node.type === 'leaf_1' || node.type === 'not_leaf_3',
+				(node, parents) => snapshot({
+					node: node.type,
+					parents: parents.map(p => p.type),
+				})
+			)
+		})
+	})
+
 	describe('traverseLeaves()', () => {
 		it('Should traverse every leaf', () => {
 			traverseLeaves(
@@ -79,25 +118,47 @@ describe('processor/util.ts', () => {
 	})
 
 	describe('selectedNode()', () => {
-		const suites: number[] = [
-			0,
-			1,
-			5,
-			7,
-			9,
-			12,
-		]
-		for (const suite of suites) {
-			it(`Should return the leaf at ${suite}`, () => {
-				const actual = selectedNode(
-					TestNode,
-					suite,
-				)
-				snapshot(actual ? {
-					leaf: actual.node.type,
-					parents: actual.parents.map(p => p.type),
-				} : 'null')
-			})
-		}
+		describe('continuous', () => {
+			const suites: number[] = [
+				0,
+				1,
+				5,
+				7,
+				9,
+				12,
+			]
+			for (const suite of suites) {
+				it(`Should return the node at ${suite}`, () => {
+					const actual = selectedNode(
+						TestNode,
+						suite,
+					)
+					snapshot(actual ? {
+						node: actual.node.type,
+						parents: actual.parents.map(p => p.type),
+					} : 'null')
+				})
+			}
+		})
+		describe('discontinuous', () => {
+			const suites: number[] = [
+				0,
+				3,
+				7,
+				12,
+			]
+			for (const suite of suites) {
+				it(`Should return the node at ${suite}`, () => {
+					const actual = selectedNode(
+						DiscontinuousTestNode,
+						suite,
+					)
+					snapshot(actual ? {
+						node: actual.node.type,
+						parents: actual.parents.map(p => p.type),
+					} : 'null')
+				})
+			}
+		})
 	})
 })

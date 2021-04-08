@@ -16,11 +16,10 @@ export function minecraftIdentifier(): InfallibleParser<MinecraftIdentifierToken
 			path: [],
 		}
 
-		if (src.peek() === ':') {
-			src.skip()
+		if (src.trySkip(':')) {
 			do {
 				ans.path.push(minecraftIdentifierPart()(src, ctx))
-			} while (src.peek() === '/' && src.skip())
+			} while (src.trySkip('/'))
 		} else {
 			ctx.err.report(
 				localize('nbtdoc.parser.minecraft-identifier.colon-expected', localeQuote(':')),

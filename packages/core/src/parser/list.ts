@@ -24,10 +24,8 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 			children: [],
 		}
 
-		if (src.peek(start.length) === start) {
-			src
-				.skip(start.length)
-				.skipWhitespace()
+		if (src.trySkip(start)) {
+			src.skipWhitespace()
 
 			let requiresValueSep = false
 			let hasValueSep = false
@@ -65,7 +63,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				ans.children.push({
 					type: 'item',
 					range: Range.create(itemStart, src),
-					... valueNode ? { children: [valueNode] } : {},
+					...valueNode ? { children: [valueNode] } : {},
 					value: valueNode,
 					sep: sepRange,
 				})
@@ -79,9 +77,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 			}
 
 			// End.
-			if (src.peek(end.length) === end) {
-				src.skip(end.length)
-			} else {
+			if (!src.trySkip(end)) {
 				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}
 		} else {

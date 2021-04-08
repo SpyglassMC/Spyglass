@@ -1,13 +1,16 @@
+import { SymbolUtil } from '@spyglassmc/core'
 import assert from 'assert'
 import * as fs from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
-import type { VersionManifest } from '../lib/type'
+import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../lib/type'
 import { VersionStatus } from '../lib/type'
-import { getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion } from '../lib/util'
+import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion, transformBlocks, transformRegistries } from '../lib/util'
 
 const Fixtures = {
+	Blocks: fs.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaBlocks,
+	Registries: fs.readJsonSync(path.join(__dirname, 'fixture/registries.json')) as VanillaRegistries,
 	VersionManifest: fs.readJsonSync(path.join(__dirname, 'fixture/version_manifest.json')) as VersionManifest,
 	Versions: fs.readJsonSync(path.join(__dirname, 'fixture/versions.json')) as string[],
 }
@@ -70,5 +73,89 @@ describe('vanilla-resource util', () => {
 				snapshot(actual)
 			})
 		}
+	})
+
+	describe('transformBlocks()', () => {
+		it('Should transform correctly', () => {
+			const raw: RawVanillaBlocks = {
+				'minecraft:stone': {
+					states: [{ id: 0, default: true }],
+				},
+				'minecraft:grass_block': {
+					states: [
+						{
+							id: 1,
+							properties: { snowy: 'false' },
+							default: true,
+						},
+						{
+							id: 2,
+							properties: { snowy: 'true' },
+						},
+					],
+					properties: {
+						snowy: ['false', 'true'],
+					},
+				},
+			}
+			const actual = transformBlocks(raw)
+			snapshot(actual)
+		})
+	})
+
+	describe('transformRegistries()', () => {
+		it('Should transform correctly', () => {
+			const raw: RawVanillaRegistries = {
+				'minecraft:item': {
+					protocol_id: 0,
+					entries: {
+						'minecraft:stone': { protocol_id: 0 },
+						'minecraft:grass_block': { protocol_id: 1 },
+					},
+				},
+				'minecraft:particle': {
+					protocol_id: 1,
+					entries: {
+						'minecraft:cloud': { protocol_id: 0 },
+						'minecraft:dust': { protocol_id: 1 },
+						'minecraft:item': { protocol_id: 2 },
+					},
+				},
+			}
+			const actual = transformRegistries(raw)
+			snapshot(actual)
+		})
+	})
+
+	describe('addBlockSymbols()', () => {
+		it('Should add correctly', () => {
+			const symbols = new SymbolUtil({
+				block: {
+					oldExistingOne: {
+						category: 'block',
+						identifier: 'oldExistingOne',
+						declaration: [{ uri: 'spyglassmc://vanilla-resource/blocks.json', fromDefaultLibrary: true }],
+					},
+				},
+			})
+			addBlocksSymbols(Fixtures.Blocks, symbols)
+			snapshot(symbols.global)
+		})
+	})
+
+	describe('addRegistriesSymbols()', () => {
+		it('Should add correctly', () => {
+			const symbols = new SymbolUtil({
+				attribute: {
+					oldExistingOne: {
+						category: 'attribute',
+						identifier: 'oldExistingOne',
+						declaration: [{ uri: 'spyglassmc://vanilla-resource/registries.json', fromDefaultLibrary: true }],
+					},
+				},
+			})
+			addRegistriesSymbols(Fixtures.Registries, symbols)
+			snapshot(symbols.global)
+		})
 	})
 })

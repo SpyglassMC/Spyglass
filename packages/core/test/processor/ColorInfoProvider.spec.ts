@@ -1,3 +1,4 @@
+import * as assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { Color } from '../../lib'
@@ -26,6 +27,9 @@ describe('Color', () => {
 	describe('fromCompositeInt()', () => {
 		it('Should return correctly', () => {
 			snapshot(Color.fromCompositeInt(0xFFAA55))
+		})
+		it('Should return white for negative number', () => {
+			assert.deepStrictEqual(Color.fromCompositeInt(-1), [1.0, 1.0, 1.0, 1.0])
 		})
 	})
 })

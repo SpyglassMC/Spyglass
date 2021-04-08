@@ -27,12 +27,14 @@ export interface JsonObjectNode extends core.TableNode<JsonStringNode, JsonNode>
 	readonly type: 'json:object'
 }
 export namespace JsonObjectNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonObjectNode {
 		return (obj as JsonObjectNode).type === 'json:object'
 	}
 }
 export type JsonPairNode = PairNode<JsonStringNode, JsonNode>
 export namespace JsonPairNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonPairNode {
 		return (obj as JsonPairNode).type === 'pair'
 	}
@@ -57,6 +59,7 @@ export interface JsonStringExpectation extends JsonBaseExpectation {
 	resource?: boolean
 }
 export namespace JsonStringExpectation {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonStringExpectation {
 		return (obj as JsonStringExpectation).type === 'json:string'
 	}
@@ -65,6 +68,7 @@ export interface JsonStringNode extends core.StringBaseNode, JsonBaseAstNode {
 	readonly type: 'json:string'
 }
 export namespace JsonStringNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonStringNode {
 		return (obj as JsonStringNode).type === 'json:string'
 	}
@@ -78,6 +82,7 @@ export interface JsonNumberNode extends core.FloatBaseNode, JsonBaseAstNode {
 	readonly value: number
 }
 export namespace JsonNumberNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonNumberNode {
 		return (obj as JsonNumberNode).type === 'json:number'
 	}
@@ -91,6 +96,7 @@ export interface JsonBooleanNode extends core.AstNode, JsonBaseAstNode {
 	readonly value: boolean
 }
 export namespace JsonBooleanNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonBooleanNode {
 		return (obj as JsonBooleanNode).type === 'json:boolean'
 	}
@@ -100,6 +106,7 @@ export interface JsonNullNode extends core.AstNode, JsonBaseAstNode {
 	readonly type: 'json:null'
 }
 export namespace JsonNullNode {
+	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonNullNode {
 		return (obj as JsonNullNode).type === 'json:null'
 	}

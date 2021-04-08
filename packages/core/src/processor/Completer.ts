@@ -50,6 +50,7 @@ export interface CompletionItem {
 	filterText?: string,
 }
 export namespace CompletionItem {
+	/* istanbul ignore next */
 	export function create(label: string, range: RangeLike, text?: string, other?: Partial<CompletionItem>): CompletionItem {
 		return {
 			...other,

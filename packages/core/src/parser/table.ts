@@ -32,10 +32,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 			children: [],
 		}
 
-		if (src.peek(start.length) === start) {
-			src
-				.skip(start.length)
-				.skipWhitespace()
+		if (src.trySkip(start)) {
+			src.skipWhitespace()
 
 			let requiresPairEnd = false
 			let hasPairEnd = false
@@ -111,9 +109,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 			}
 
 			// End.
-			if (src.peek(end.length) === end) {
-				src.skip(end.length)
-			} else {
+			if (!src.trySkip(end)) {
 				ctx.err.report(localize('expected', localeQuote(end)), src)
 			}
 		} else {

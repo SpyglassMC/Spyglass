@@ -19,6 +19,122 @@ exports['list() list(no trailing comma) Parse "" 1'] = {
   ]
 }
 
+exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
+  "node": {
+    "type": "list",
+    "range": {
+      "start": 0,
+      "end": 17
+    },
+    "children": [
+      {
+        "type": "item",
+        "range": {
+          "start": 2,
+          "end": 10
+        },
+        "children": [
+          {
+            "type": "string",
+            "range": {
+              "start": 2,
+              "end": 7
+            },
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 3,
+                "end": 6
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
+      },
+      {
+        "type": "item",
+        "range": {
+          "start": 10,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "string",
+            "range": {
+              "start": 10,
+              "end": 15
+            },
+            "value": "bar",
+            "valueMap": {
+              "outerRange": {
+                "start": 11,
+                "end": 14
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 10,
+        "end": 10
+      },
+      "message": "Expected “,”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
   "node": {
     "type": "list",

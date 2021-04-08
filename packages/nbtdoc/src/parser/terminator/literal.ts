@@ -21,8 +21,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 		let fullMatch = true
 
 		for (const expectedChar of literal) {
-			if (src.peek() === expectedChar) {
-				src.skip()
+			if (src.trySkip(expectedChar)) {
 				partialMatch = true
 			} else {
 				fullMatch = false

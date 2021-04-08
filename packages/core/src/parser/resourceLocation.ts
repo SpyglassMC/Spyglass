@@ -49,8 +49,8 @@ export function resourceLocation(options: Options): InfallibleParser<ResourceLoc
 
 			// Check characters.
 			if (!raw.match(Pattern)) {
+				/* istanbul ignore next */
 				const chars = [...new Set([
-					/* istanbul ignore next */
 					...ans.namespace?.matchAll(IllegalNamespacePattern) ?? [],
 					...rawPath.matchAll(IllegalPathPattern),
 				].map(v => v[0]))]

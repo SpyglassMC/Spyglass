@@ -9,10 +9,10 @@ describe('file()', () => {
 			extensions: ['.@spyglassmc/core#file-test'],
 			parser: (src) => {
 				const start = src.cursor
-				if (src.peek() === '{') {
-					src.skip()
-					src.readUntilOrEnd('}')
-					src.skip()
+				if (src.trySkip('{')) {
+					src
+						.skipUntilOrEnd('}')
+						.skip()
 				}
 				return {
 					type: 'test',
@@ -21,7 +21,7 @@ describe('file()', () => {
 				}
 			},
 		})
-		
+
 		reg.registerLanguage('@spyglassmc/core#file-null', {
 			extensions: ['.@spyglassmc/core#file-null'],
 			parser: () => null,

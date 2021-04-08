@@ -3,16 +3,14 @@ import { Range } from '@spyglassmc/core'
 import type { JsonBooleanNode } from '../node'
 
 export const boolean: core.Parser<JsonBooleanNode> = (src, ctx) => {
-	if (src.peek(5) === 'false') {
-		src.skip(5)
+	if (src.trySkip('false')) {
 		return {
 			type: 'json:boolean',
 			range: Range.create(src.cursor - 5, src),
 			value: false,
 		}
 	}
-	if (src.peek(4) === 'true') {
-		src.skip(4)
+	if (src.trySkip('true')) {
 		return {
 			type: 'json:boolean',
 			range: Range.create(src.cursor - 4, src),

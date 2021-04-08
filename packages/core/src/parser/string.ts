@@ -103,7 +103,7 @@ export function string(options: Options): InfallibleParser<StringNode> {
 					} else {
 						if (!options.escapable.allowUnknown) {
 							ctx.err.report(
-								localize('parser.string.illegal-escape', localeQuote(c2)), 
+								localize('parser.string.illegal-escape', localeQuote(c2)),
 								Range.create(src, src.cursor + 1)
 							)
 						}
@@ -119,9 +119,7 @@ export function string(options: Options): InfallibleParser<StringNode> {
 			}
 
 			const contentEnd = src.cursor
-			if (src.peek() === currentQuote) {
-				src.skip()
-			} else {
+			if (!src.trySkip(currentQuote)) {
 				ctx.err.report(localize('expected', localeQuote(currentQuote)), src)
 			}
 

@@ -26,8 +26,7 @@ function literal(literal: string, meta?: string, errorAmount = 0): Parser<Litera
 		for (let i = 0; i < errorAmount; i++) {
 			ctx.err.report('Parse Error', Range.Beginning)
 		}
-		if (src.peek(literal.length) === literal) {
-			src.skip(literal.length)
+		if (src.trySkip(literal)) {
 			return ans
 		}
 		return Failure

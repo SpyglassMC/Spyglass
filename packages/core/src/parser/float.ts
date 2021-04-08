@@ -59,8 +59,7 @@ export function float(options: Options): Parser<FloatNode> {
 			src.skip()
 		}
 
-		if (src.peek() === '.') {
-			src.skip()
+		if (src.trySkip('.')) {
 			while (src.canRead() && Source.isDigit(src.peek())) {
 				src.skip()
 			}

@@ -69,7 +69,7 @@ export function getVersionStatus(version: string, versions: string[]): number {
 
 const McdataBase = 'https://raw.githubusercontent.com/Arcensoth/mcdata'
 const McdataDefaultBranch = 'master'
-
+/* istanbul ignore next */
 export function getMetadata(version: string, status: number): {
 	blocksUrl: string, commandsUrl: string, registriesUrl: string,
 	blocksTransformer: ((raw: RawVanillaBlocks) => VanillaBlocks) | ((raw: VanillaBlocks) => VanillaBlocks),
@@ -126,7 +126,7 @@ export function getRegistriesUrl(version: string, status: number): string {
 	return `${McdataBase}/${version}/generated/reports/registries.json`
 }
 
-function transformBlocks(raw: RawVanillaBlocks): VanillaBlocks {
+export function transformBlocks(raw: RawVanillaBlocks): VanillaBlocks {
 	const ans: VanillaBlocks = {}
 	for (const blockId of Object.keys(raw)) {
 		ans[blockId] = {
@@ -137,7 +137,7 @@ function transformBlocks(raw: RawVanillaBlocks): VanillaBlocks {
 	return ans
 }
 
-function transformRegistries(raw: RawVanillaRegistries): VanillaRegistries {
+export function transformRegistries(raw: RawVanillaRegistries): VanillaRegistries {
 	const ans: VanillaRegistries = {}
 	for (const registryId of Object.keys(raw)) {
 		ans[registryId] = Object.keys(raw[registryId].entries)
@@ -149,12 +149,13 @@ const RegistriesSpyglassUri = 'spyglassmc://vanilla-resource/registries.json'
 const SoundsBaseUri = 'https://misode.github.io/sounds/'
 const WikiBaseUri = 'https://minecraft.fandom.com/wiki'
 
-const shorten = (id: string): string => id.startsWith('minecraft:') ? id.slice(10) : id
+const shorten = (id: string): string => id.replace(/^minecraft:/, '')
 const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
 
 export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
 	// Remove all related existing symbols.
 	core.SymbolUtil.removeLocationsFromMap(symbols.global.block, loc => loc.fromDefaultLibrary)
+	core.SymbolUtil.trimMap(symbols.global.block)
 
 	// Add blocks and block states to the symbol table.
 	for (const id of Object.keys(blocks)) {
@@ -211,6 +212,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 export function addRegistriesSymbols(registries: VanillaRegistries, symbols: core.SymbolUtil) {
 	const isCategory = (str: string): str is core.VanillaRegistryCategory => core.VanillaRegistryCategories.includes(str as any)
 	const getUri = (registryId: Exclude<core.VanillaRegistryCategory, 'block'>, longEntryId: string): string => {
+		/* istanbul ignore next */
 		switch (registryId) {
 			case 'attribute':
 				return `${WikiBaseUri}/Attribute#Attributes`
@@ -266,6 +268,7 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
 			// Remove all related existing symbols.
 			core.SymbolUtil.removeLocationsFromMap(symbols.global[registryId], loc => loc.fromDefaultLibrary)
+			core.SymbolUtil.trimMap(symbols.global[registryId])
 
 			// Add resource locations from the registry to the symbol table.
 			for (const longEntryId of registries[longRegistryId]) {

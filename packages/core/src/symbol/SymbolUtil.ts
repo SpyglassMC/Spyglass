@@ -239,7 +239,10 @@ export class SymbolUtil {
 		}
 	}
 
-	static trimMap(map: SymbolMap): void {
+	static trimMap(map: SymbolMap | undefined): void {
+		if (!map) {
+			return
+		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
 			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {

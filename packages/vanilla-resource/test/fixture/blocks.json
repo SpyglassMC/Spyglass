@@ -1,0 +1,17 @@
+{
+	"minecraft:stone": {
+		"properties": {},
+		"default": {}
+	},
+	"minecraft:grass_block": {
+		"properties": {
+			"snowy": [
+				"false",
+				"true"
+			]
+		},
+		"default": {
+			"snowy": "false"
+		}
+	}
+}

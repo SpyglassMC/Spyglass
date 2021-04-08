@@ -12,15 +12,13 @@ export function identPath(): InfallibleParser<IdentPathToken> {
 			range: Range.create(src),
 		}
 
-		if (src.peek(2) === '::') {
-			src.skip(2)
+		if (src.trySkip('::')) {
 			ans.fromGlobalRoot = true
 		}
 
 		do {
-			if (src.peek(5) === 'super') {
-				const start = src.cursor
-				src.skip(5)
+			const start = src.cursor
+			if (src.trySkip('super')) {
 				ans.children.push({
 					type: 'nbtdoc:literal',
 					range: Range.create(start, src),
@@ -29,7 +27,7 @@ export function identPath(): InfallibleParser<IdentPathToken> {
 			} else {
 				ans.children.push(identifier()(src, ctx))
 			}
-		} while (src.peek(2) === '::' && src.skip(2))
+		} while (src.trySkip('::'))
 
 		ans.range.end = src.cursor
 
