@@ -1,5 +1,5 @@
 import type { AstNode, CompleterContext, RangeLike } from '@spyglassmc/core'
-import { CompletionItem, CompletionKind, selectedLeaf } from '@spyglassmc/core'
+import { CompletionItem, CompletionKind, selectedNode } from '@spyglassmc/core'
 import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
 import { JsonArrayNode, JsonObjectNode, JsonPairNode, JsonStringNode } from '../node'
 
@@ -14,9 +14,9 @@ const SIMPLE_SNIPPETS = {
 }
 
 export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
-	const result = selectedLeaf(root, ctx.offset)
+	const result = selectedNode(root, ctx.offset)
 	if (result) {
-		const [n0, n1, n2] = [result.leaf, ...result.parents] as AstNode[]
+		const [n0, n1, n2] = [result.node, ...result.parents] as AstNode[]
 
 		// Object properties
 		// { "foo": 1, | }

@@ -2,7 +2,7 @@ import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { AstNode } from '../../lib'
-import { Range, selectedLeaf, traverseLeaves } from '../../lib'
+import { Range, selectedNode, traverseLeaves } from '../../lib'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',
@@ -78,7 +78,7 @@ describe('processor/util.ts', () => {
 		}
 	})
 
-	describe('selectedLeaf()', () => {
+	describe('selectedNode()', () => {
 		const suites: number[] = [
 			0,
 			1,
@@ -89,12 +89,12 @@ describe('processor/util.ts', () => {
 		]
 		for (const suite of suites) {
 			it(`Should return the leaf at ${suite}`, () => {
-				const actual = selectedLeaf(
+				const actual = selectedNode(
 					TestNode,
 					suite,
 				)
 				snapshot(actual ? {
-					leaf: actual.leaf.type,
+					leaf: actual.node.type,
 					parents: actual.parents.map(p => p.type),
 				} : 'null')
 			})

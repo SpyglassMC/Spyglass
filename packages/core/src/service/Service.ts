@@ -3,7 +3,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { ColorInfo, ColorToken } from '../processor'
-import { selectedLeaf, traversePreOrder } from '../processor'
+import { selectedNode, traversePreOrder } from '../processor'
 import { Source } from '../source'
 import type { SymbolLocation, SymbolUsage } from '../symbol'
 import { SymbolUsages, SymbolUtil } from '../symbol'
@@ -218,9 +218,9 @@ export class Service {
 
 	getHover(node: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const result = selectedLeaf(node, offset)
+		const result = selectedNode(node, offset)
 		if (result) {
-			const nodes = [result.leaf, ...result.parents]
+			const nodes = [result.node, ...result.parents]
 			for (const n of nodes) {
 				if (n.symbol) {
 					const symbol = SymbolUtil.resolveAlias(n.symbol)
@@ -242,9 +242,9 @@ export class Service {
 	 */
 	getSymbolLocations(node: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsage[] = SymbolUsages, currentFileOnly = false): SymbolLocations | null {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
-		const result = selectedLeaf(node, offset)
+		const result = selectedNode(node, offset)
 		if (result) {
-			const nodes = [result.leaf, ...result.parents]
+			const nodes = [result.node, ...result.parents]
 			for (const n of nodes) {
 				if (n.symbol) {
 					const symbol = SymbolUtil.resolveAlias(n.symbol)
