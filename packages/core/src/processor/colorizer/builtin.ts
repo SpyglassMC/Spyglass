@@ -52,7 +52,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 	if (node.valueNode) {
 		const colorizer = ctx.meta.getColorizer(node.valueNode.type)
 		const result = colorizer(node.valueNode, ctx)
-		return ColorToken.fillGap(node.range, toOuterColorTokens(result, node.valueMap), 'string')
+		return ColorToken.fillGap(toOuterColorTokens(result, node.valueMap), node.range, 'string')
 	} else {
 		return [ColorToken.create(node, 'string')]
 	}

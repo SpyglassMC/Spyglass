@@ -21,10 +21,10 @@ export namespace ColorToken {
 	}
 
 	/**
-	 * @returns An array of color tokens that cover the whole range of `targetRange`, with gaps in `token` filled
+	 * @returns An array of color tokens that cover the whole range of `targetRange`, with gaps in `tokens` filled
 	 * with tokens created from the specified `type` and `modifiers`.
 	 */
-	export function fillGap(targetRange: Range, tokens: ColorToken[], type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken[] {
+	export function fillGap(tokens: ColorToken[], targetRange: Range, type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken[] {
 		const ans: ColorToken[] = []
 		let nextStart = Math.min(targetRange.start, tokens[0]?.range.start ?? Infinity)
 		for (const t of tokens) {

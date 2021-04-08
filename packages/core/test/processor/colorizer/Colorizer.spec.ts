@@ -44,7 +44,7 @@ describe('ColorToken', () => {
 		]
 		for (const { title, sourceTokens, targetRange } of suites) {
 			it(`Fill for “${showWhitespaceGlyph(title)}”`, () => {
-				snapshot(ColorToken.fillGap(targetRange, sourceTokens, 'string'))
+				snapshot(ColorToken.fillGap(sourceTokens, targetRange, 'string'))
 			})
 		}
 	})
