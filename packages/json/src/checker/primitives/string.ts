@@ -1,9 +1,9 @@
-import type { Parser } from '@spyglassmc/core'
+import type { Mutable, Parser, Returnable } from '@spyglassmc/core'
 import { Color, ErrorReporter, ErrorSeverity, Failure, ParserContext, Range, Source } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Categories } from '../../binder'
-import type { JsonNode } from '../../node'
+import type { JsonExpectation, JsonNode } from '../../node'
 import { JsonStringNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
@@ -91,29 +91,12 @@ export function stringColor(): JsonChecker {
 		return Color.fromCompositeInt(value)
 	}
 
-	return (node, ctx) => {
-		node.expectation = [{ type: 'json:string', typedoc: typedoc('color'), pool: ColorNames }]
-		if (!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', localize('string')), node)
-		} else {
-			const src = new Source(node.value)
-			const parseCtx = ParserContext.create({
-				...ctx,
-				doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, node.value),
-				err: new ErrorReporter(),
-			})
-			const result = parser(src, parseCtx)
-			if (result !== Failure) {
-				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc })
-				node.color = result
-			}
-		}
-	}
+	return special('color', parser, { pool: ColorNames }, 'color')
 }
 
-export function special(name: string, parser: Parser): JsonChecker {
+export function special(name: string, parser: Parser<Returnable>, expectation?: Partial<JsonExpectation>, store?: keyof JsonStringNode): JsonChecker {
 	return (node, ctx) => {
-		node.expectation = [{ type: 'json:string', typedoc: typedoc(name) }]
+		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else {
@@ -125,8 +108,8 @@ export function special(name: string, parser: Parser): JsonChecker {
 			})
 			const result = parser(src, parseCtx)
 			if (result !== Failure) {
-				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc })
-				node.valueNode = result
+				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc });
+				(node as Mutable<JsonStringNode>)[store ?? 'valueNode'] = result as any
 			}
 		}
 	}
