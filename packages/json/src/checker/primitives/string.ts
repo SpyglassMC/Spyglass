@@ -1,4 +1,4 @@
-import type { Mutable, Parser, Returnable } from '@spyglassmc/core'
+import type { Parser, Returnable } from '@spyglassmc/core'
 import { Color, ErrorReporter, ErrorSeverity, Failure, ParserContext, Range, Source } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
@@ -94,7 +94,7 @@ export function stringColor(): JsonChecker {
 	return special('color', parser, { pool: ColorNames }, 'color')
 }
 
-export function special(name: string, parser: Parser<Returnable>, expectation?: Partial<JsonExpectation>, store?: keyof JsonStringNode): JsonChecker {
+export function special(name: string, parser: Parser<Returnable>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {
@@ -108,8 +108,8 @@ export function special(name: string, parser: Parser<Returnable>, expectation?: 
 			})
 			const result = parser(src, parseCtx)
 			if (result !== Failure) {
-				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc });
-				(node as Mutable<JsonStringNode>)[store ?? 'valueNode'] = result as any
+				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc })
+				node[store] = result as any
 			}
 		}
 	}
