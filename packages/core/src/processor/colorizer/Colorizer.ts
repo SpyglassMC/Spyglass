@@ -5,9 +5,6 @@ import { Range } from '../../source'
 
 export type Colorizer<N = AstNode> = (node: N, ctx: ColorizerContext) => readonly ColorToken[]
 
-/* istanbul ignore next */
-export const FallbackColorizer: Colorizer<any> = () => []
-
 export interface ColorToken {
 	range: Range,
 	type: ColorTokenType,
@@ -41,6 +38,9 @@ export const ColorTokenTypes = Object.freeze([
 	'type',
 	'type',
 	// Below are custom types.
+	'error',
+	'literal',
+	'operator',
 	'resourceLocation',
 ] as const)
 export type ColorTokenType = typeof ColorTokenTypes[number]

@@ -199,14 +199,14 @@ export class Service {
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
 		this.debug(`Colorizing '${doc.uri}' # ${doc.version}`)
-		const colorizer = this.meta.getColorizer(doc.languageId)
+		const colorizer = this.meta.getColorizer(node.type)
 		return colorizer(node, this.getColorizerCtx(doc, options))
 	}
 
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
 		const ans: ColorInfo[] = []
-		traversePreOrder(node, n => n.color, n => ans.push({ color: n.color!, range: n.range }))
+		traversePreOrder(node, n => n.color, _ => false, n => ans.push({ color: n.color!, range: n.range }))
 		return ans
 	}
 

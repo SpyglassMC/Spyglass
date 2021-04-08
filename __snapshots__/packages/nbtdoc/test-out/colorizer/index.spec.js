@@ -1,4 +1,4 @@
-exports['entry() Should colorize correctly 1'] = [
+exports['nbtdoc colorizer Should colorize correctly 1'] = [
   {
     "range": {
       "start": 1,

@@ -1,13 +1,16 @@
-import { ColorizerContext } from '@spyglassmc/core'
+import { ColorizerContext, MetaRegistry } from '@spyglassmc/core'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { entry } from '../../lib/colorizer'
+import type { MainNode } from '../../lib'
+import { initializeNbtdoc } from '../../lib'
 import { TestContent, TestNode } from './TestNode'
 
-describe('entry()', () => {
+describe('nbtdoc colorizer', () => {
+	initializeNbtdoc()
 	it('Should colorize correctly', () => {
-		snapshot(entry(
+		const colorizer = MetaRegistry.instance.getColorizer<MainNode>('nbtdoc:main')
+		snapshot(colorizer(
 			TestNode,
 			ColorizerContext.create({
 				doc: TextDocument.create('', '', 0, TestContent),

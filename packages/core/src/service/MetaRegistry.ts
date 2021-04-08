@@ -1,7 +1,7 @@
-import type { AstNode } from '../node'
+import type { AstNode, CommentNode, ErrorNode, FloatNode, IntegerNode, ResourceLocationNode, StringNode } from '../node'
 import type { EntryParser, NullableNode } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
-import { FallbackChecker, FallbackColorizer, FallbackCompleter } from '../processor'
+import { colorizer, FallbackChecker, FallbackCompleter } from '../processor'
 import type { UriBinder } from '../symbol'
 
 export interface LanguageOptions {
@@ -12,7 +12,6 @@ export interface LanguageOptions {
 	triggerCharacters?: string[],
 	parser: EntryParser<any>,
 	checker?: Checker<any>,
-	colorizer?: Colorizer<any>,
 	completer?: Completer<any>,
 }
 
@@ -27,6 +26,7 @@ export class MetaRegistry {
 	 */
 	readonly #languages = new Map<string, LanguageOptions>()
 	readonly #uriBinders = new Set<UriBinder>()
+	readonly #colorizers = new Map<string, Colorizer<any>>()
 
 	/**
 	 * Registers a new language.
@@ -89,11 +89,14 @@ export class MetaRegistry {
 		return this.#languages.get(languageID)?.checker ?? FallbackChecker
 	}
 
-	/**
-	 * @returns The corresponding `Colorizer` for the language ID, or a fallback colorizer that produces nothing.
-	 */
-	public getColorizer<N extends AstNode>(languageID: string): Colorizer<N> {
-		return this.#languages.get(languageID)?.colorizer ?? FallbackColorizer
+	public hasColorizer<N extends AstNode>(type: N['type']): boolean {
+		return this.#colorizers.has(type)
+	}
+	public getColorizer<N extends AstNode>(type: N['type']): Colorizer<N> {
+		return this.#colorizers.get(type) ?? colorizer.fallback
+	}
+	public registerColorizer<N extends AstNode>(type: N['type'], colorizer: Colorizer<N>): void {
+		this.#colorizers.set(type, colorizer)
 	}
 
 	/**
@@ -114,7 +117,16 @@ export class MetaRegistry {
 		return this.#uriBinders
 	}
 
-	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>()
+	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
+		meta => {
+			meta.registerColorizer<CommentNode>('comment', colorizer.comment)
+			meta.registerColorizer<ErrorNode>('error', colorizer.error)
+			meta.registerColorizer<FloatNode>('float', colorizer.number)
+			meta.registerColorizer<IntegerNode>('integer', colorizer.number)
+			meta.registerColorizer<ResourceLocationNode>('resource_location', colorizer.resourceLocation)
+			meta.registerColorizer<StringNode>('string', colorizer.string)
+		},
+	])
 
 	public static addInitializer(initializer: (this: void, registry: MetaRegistry) => void): void {
 		if (this.initializers.has(initializer)) {

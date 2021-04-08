@@ -37,7 +37,6 @@ export namespace ResourceLocationNode {
 	export function toString(node: ResourceLocationNode, type: 'origin' | 'full' | 'short' = 'origin'): string {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string
-		// Hey, why do we have more comments than actual code here?
 		/* 
 		 * `node.namespace` has three statuses here:
 		 * - `minecraft`

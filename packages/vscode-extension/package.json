@@ -177,6 +177,10 @@
     },
     "semanticTokenTypes": [
       {
+        "id": "error",
+        "description": "An error."
+      },
+      {
         "id": "resourceLocation",
         "description": "A resource location."
       }
@@ -185,6 +189,15 @@
     "semanticTokenScopes": [
       {
         "scopes": {
+          "error": [
+            "invalid.illegal"
+          ],
+          "literal": [
+            "keyword.other"
+          ],
+          "operator": [
+            "keyword.operator"
+          ],
           "resourceLocation": [
             "entity.name.function"
           ]
