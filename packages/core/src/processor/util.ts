@@ -40,18 +40,18 @@ export function traverseLeaves(node: AstNode, fn: Callback<unknown>, range?: Ran
 // 	}
 // }
 
-export function traversePreOrder(node: AstNode, positivePredicate: Callback<unknown>, negativePredicate: Callback<unknown>, fn: Callback<unknown>): void
-export function traversePreOrder(node: AstNode, positivePredicate: Callback<unknown>, negativePredicate: Callback<unknown>, fn: Callback<unknown>, existingParents: AstNode[] = []): void {
-	if (negativePredicate(node, existingParents)) {
+export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>): void
+export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>, existingParents: AstNode[] = []): void {
+	if (!shouldContinue(node, existingParents)) {
 		return
 	}
-	if (positivePredicate(node, existingParents)) {
+	if (shouldCallFn(node, existingParents)) {
 		fn(node, existingParents)
 		return
 	}
 	for (const child of node.children ?? []) {
 		existingParents.unshift(node);
-		(traversePreOrder as any)(child, positivePredicate, negativePredicate, fn, existingParents)
+		(traversePreOrder as any)(child, shouldContinue, shouldCallFn, fn, existingParents)
 		existingParents.shift()
 	}
 }

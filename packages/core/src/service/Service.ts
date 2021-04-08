@@ -206,7 +206,7 @@ export class Service {
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
 		const ans: ColorInfo[] = []
-		traversePreOrder(node, n => n.color, _ => false, n => ans.push({ color: n.color!, range: n.range }))
+		traversePreOrder(node, _ => true, n => n.color, n => ans.push({ color: n.color!, range: n.range }))
 		return ans
 	}
 
