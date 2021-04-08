@@ -31,9 +31,10 @@ export namespace JsonObjectNode {
 		return (obj as JsonObjectNode).type === 'json:object'
 	}
 }
+export type JsonPairNode = PairNode<JsonStringNode, JsonNode>
 export namespace JsonPairNode {
-	export function is(obj: object): obj is PairNode<JsonStringNode, JsonNode> {
-		return (obj as PairNode<JsonStringNode, JsonNode>).type === 'pair'
+	export function is(obj: object): obj is JsonPairNode {
+		return (obj as JsonPairNode).type === 'pair'
 	}
 }
 

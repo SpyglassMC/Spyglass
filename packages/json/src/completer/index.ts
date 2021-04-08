@@ -1,4 +1,4 @@
-import type { AstNode, CompleterContext, PairNode, RangeLike } from '@spyglassmc/core'
+import type { AstNode, CompleterContext, RangeLike } from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, selectedLeaf } from '@spyglassmc/core'
 import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
 import { JsonArrayNode, JsonObjectNode, JsonPairNode, JsonStringNode } from '../node'
@@ -22,12 +22,12 @@ export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 		// { "foo": 1, | }
 		if (JsonObjectNode.is(n0) && n0.expectation) {
 			return unique(n0.expectation.filter(e => e.type === 'json:object')
-				.flatMap(e => objectCompletion(ctx.offset, n0, e as JsonObjectExpectation, ctx)))
+				.flatMap(e => objectCompletion(ctx.offset, n0, e as JsonObjectExpectation, ctx, true)))
 		}
 		// { "foo": 1, "|" }
-		if (n0.type === 'json:string' && n1.type === 'pair' && (n1 as PairNode<JsonStringNode, JsonNode>).key === n0 && JsonObjectNode.is(n2) && n2.expectation) {
+		if (n0.type === 'json:string' && n1.type === 'pair' && (n1 as JsonPairNode).key === n0 && JsonObjectNode.is(n2) && n2.expectation) {
 			return unique(n2.expectation.filter(e => e.type === 'json:object')
-				.flatMap(e => objectCompletion(n0, n2, e as JsonObjectExpectation, ctx)))
+				.flatMap(e => objectCompletion(n0, n2, e as JsonObjectExpectation, ctx, (n1 as JsonPairNode).value === undefined)))
 		}
 
 		// Inside a string
@@ -55,21 +55,24 @@ export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 	return []
 }
 
-function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext): CompletionItem[] {
+function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext, insertValue: boolean): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
 			.filter(f => !node.children.find(p => f.key === p.key?.value))
-			.map(f => fieldCompletion(range, f))
+			.map(f => fieldCompletion(range, f, insertValue))
 	} else if (expectation.keys) {
 		return expectation.keys.flatMap(e => stringCompletion(range, e, ctx)
-			.map(c => ({ ...c, insertText: `${c.insertText}: ` })))
+			.map(c => ({
+				...c,
+				...insertValue ? { insertText: `${c.insertText}: ` } : {},
+			})))
 	}
 	return []
 }
 
-function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation['fields'], undefined>[number]): CompletionItem {
+function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation['fields'], undefined>[number], insertValue: boolean): CompletionItem {
 	const value = field.value?.[0] ? SIMPLE_SNIPPETS[field.value[0].type] : ''
-	const text = `"${field.key}": ${value}`
+	const text = `"${field.key}"${insertValue ? `: ${value}` : ''}`
 	return CompletionItem.create(field.key, range, text, {
 		kind: CompletionKind.Property,
 		detail: field.value?.map(e => e.typedoc).join(' | '),
