@@ -1,9 +1,8 @@
 import type { AstNode } from '../node'
 import type { EntryParser, NullableNode } from '../parser'
-import type { Colorizer, Completer } from '../processor'
-import { FallbackColorizer, FallbackCompleter } from '../processor'
-import type { Binder, Checker, UriBinder } from '../symbol'
-import { FallbackBinder, FallbackChecker } from '../symbol'
+import type { Checker, Colorizer, Completer } from '../processor'
+import { FallbackChecker, FallbackColorizer, FallbackCompleter } from '../processor'
+import type { UriBinder } from '../symbol'
 
 export interface LanguageOptions {
 	/**
@@ -12,7 +11,6 @@ export interface LanguageOptions {
 	extensions: string[],
 	triggerCharacters?: string[],
 	parser: EntryParser<any>,
-	binder?: Binder<any>,
 	checker?: Checker<any>,
 	colorizer?: Colorizer<any>,
 	completer?: Completer<any>,
@@ -82,13 +80,6 @@ export class MetaRegistry {
 			return this.#languages.get(languageID)!.parser as unknown as EntryParser<N>
 		}
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
-	}
-
-	/**
-	 * @returns The corresponding `Binder` for the language ID, or a fallback binder that does nothing.
-	 */
-	public getBinder<N extends AstNode>(languageID: string): Binder<N> {
-		return this.#languages.get(languageID)?.binder ?? FallbackBinder
 	}
 
 	/**

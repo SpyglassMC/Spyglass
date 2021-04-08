@@ -8,7 +8,7 @@ import { Source } from '../source'
 import type { SymbolLocation, SymbolUsage } from '../symbol'
 import { SymbolUsages, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
-import { BinderContext, CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
@@ -187,15 +187,6 @@ export class Service {
 		return ans
 	}
 
-	bind(node: FileNode<AstNode>, doc: TextDocument): void {
-		this.debug(`Binding '${doc.uri}' # ${doc.version}`)
-		const binder = this.meta.getBinder(doc.languageId)
-		const ctx = this.getBinderCtx(doc)
-		binder(node.children[0], ctx)
-		node.binderErrors = ctx.err.dump()
-		this.scheduleErrorPublishing(doc.uri)
-	}
-
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
 		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
 		const checker = this.meta.getChecker(doc.languageId)
@@ -306,7 +297,6 @@ export class Service {
 		} else {
 			const { doc, node } = result
 			this.errorPublisher(doc, [
-				...node.binderErrors ?? [],
 				...node.checkerErrors ?? [],
 				...node.parserErrors,
 			])
@@ -443,9 +433,6 @@ export class Service {
 			doc,
 			symbols: this.symbols,
 		})
-	}
-	private getBinderCtx(doc: TextDocument): BinderContext {
-		return BinderContext.create(this.getProcessorCtx(doc))
 	}
 	private getCheckerCtx(doc: TextDocument): CheckerContext {
 		return CheckerContext.create({

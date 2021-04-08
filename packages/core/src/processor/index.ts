@@ -1,3 +1,4 @@
+export * from './checker'
 export * from './ColorInfoProvider'
 export * from './colorizer'
 export * from './Completer'

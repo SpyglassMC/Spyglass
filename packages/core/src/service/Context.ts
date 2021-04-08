@@ -30,10 +30,12 @@ export namespace ContextBase {
 export interface ParserContext extends ContextBase {
 	doc: TextDocument,
 	err: ErrorReporter,
+	symbols: SymbolUtil,
 }
 interface ParserContextLike extends ContextBaseLike {
 	doc: TextDocument,
 	err?: ErrorReporter,
+	symbols?: SymbolUtil,
 }
 export namespace ParserContext {
 	export function create(ctx: ParserContextLike): ParserContext {
@@ -41,6 +43,7 @@ export namespace ParserContext {
 			...ContextBase.create(ctx),
 			doc: ctx.doc,
 			err: ctx.err ?? new ErrorReporter(),
+			symbols: ctx.symbols ?? new SymbolUtil({}),
 		}
 	}
 }
@@ -59,21 +62,6 @@ export namespace ProcessorContext {
 			...ContextBase.create(ctx),
 			doc: ctx.doc,
 			symbols: ctx.symbols ?? new SymbolUtil({}),
-		}
-	}
-}
-
-export interface BinderContext extends ProcessorContext {
-	err: ErrorReporter,
-}
-interface BinderContextLike extends ProcessorContextLike {
-	err?: ErrorReporter,
-}
-export namespace BinderContext {
-	export function create(ctx: BinderContextLike): BinderContext {
-		return {
-			...ProcessorContext.create(ctx),
-			err: ctx.err ?? new ErrorReporter(),
 		}
 	}
 }
