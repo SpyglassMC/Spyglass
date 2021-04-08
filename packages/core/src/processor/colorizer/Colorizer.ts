@@ -19,6 +19,26 @@ export namespace ColorToken {
 			modifiers,
 		}
 	}
+
+	/**
+	 * @returns An array of color tokens that cover the whole range of `targetRange`, with gaps in `token` filled
+	 * with tokens created from the specified `type` and `modifiers`.
+	 */
+	export function fillGap(targetRange: Range, tokens: ColorToken[], type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken[] {
+		const ans: ColorToken[] = []
+		let nextStart = Math.min(targetRange.start, tokens[0]?.range.start ?? Infinity)
+		for (const t of tokens) {
+			if (t.range.start > nextStart) {
+				ans.push(ColorToken.create(Range.create(nextStart, t.range.start), type, modifiers))
+			}
+			ans.push(t)
+			nextStart = t.range.end
+		}
+		if (nextStart < targetRange.end) {
+			ans.push(ColorToken.create(Range.create(nextStart, targetRange.end), type, modifiers))
+		}
+		return ans
+	}
 }
 
 // Built-in LSP semantic tokens: https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens

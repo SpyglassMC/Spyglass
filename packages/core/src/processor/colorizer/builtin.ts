@@ -49,16 +49,13 @@ export const resourceLocation: Colorizer<ResourceLocationNode> = (node, ctx) => 
 }
 
 export const string: Colorizer<StringBaseNode> = (node, ctx) => {
-	const ans: ColorToken[] = []
 	if (node.valueNode) {
 		const colorizer = ctx.meta.getColorizer(node.valueNode.type)
 		const result = colorizer(node.valueNode, ctx)
-		ans.push(...toOuterColorTokens(result, node.valueMap))
-		// TODO: Fill the gap between those tokens with 'string'.
+		return ColorToken.fillGap(node.range, toOuterColorTokens(result, node.valueMap), 'string')
 	} else {
-		ans.push(ColorToken.create(node, 'string'))
+		return [ColorToken.create(node, 'string')]
 	}
-	return ans
 }
 
 function toOuterColorTokens(tokens: readonly ColorToken[], mapping: IndexMap): ColorToken[] {
