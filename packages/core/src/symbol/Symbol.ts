@@ -41,14 +41,11 @@ export const FileCategories = Object.freeze([
 ] as const)
 export type FileCategory = typeof FileCategories[number]
 
-const MiscResourceLocationCategories = Object.freeze([
-	'bossbar',
-	'storage',
-] as const)
 export const MiscCategories = Object.freeze([
-	...MiscResourceLocationCategories,
+	'bossbar',
 	'objective',
 	'score_holder',
+	'storage',
 	'tag',
 	'team',
 ] as const)
@@ -128,19 +125,30 @@ export const VanillaRegistryCategories = Object.freeze([
 export type VanillaRegistryCategory = typeof VanillaRegistryCategories[number]
 //#endregion
 
-export const ResourceLocationCategories = Object.freeze([
-	...FileCategories,
-	...MiscResourceLocationCategories,
-	...VanillaRegistryCategories,
-] as const)
-export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
-
 export const AllCategories = Object.freeze([
 	...DatapackCategories,
 	...NbtdocCategories,
 	...VanillaRegistryCategories,
 ] as const)
 export type AllCategory = typeof AllCategories[number]
+
+export const ResourceLocationCategories = Object.freeze([
+	'bossbar',
+	'storage',
+	...FileCategories,
+	...VanillaRegistryCategories,
+] as const)
+export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
+
+export const TagResourceLocationCategories = Object.freeze([
+	'block',
+	'entity_type',
+	'fluid',
+	'function',
+	'game_event',
+	'item',
+] as const)
+export type TagResourceLocationCategory = typeof TagResourceLocationCategories[number]
 
 export const enum SymbolAccessType {
 	Read,

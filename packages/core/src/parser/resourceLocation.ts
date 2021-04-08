@@ -4,7 +4,7 @@ import { ResourceLocationNode } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
-import type { ResourceLocationCategory } from '../symbol'
+import type { ResourceLocationCategory, TagResourceLocationCategory } from '../symbol'
 import type { InfallibleParser } from './Parser'
 
 const Pattern = /^(?:[_\-a-z0-9.]*:)?[_\-a-z0-9/.]*$/g
@@ -16,10 +16,16 @@ const IllegalPathPattern = /[^_\-a-z0-9/.]/g
  */
 export type Options = {
 	category: ResourceLocationCategory,
+	pool?: undefined,
 	allowTag?: false,
 } | {
-	category: 'block' | 'entity_type' | 'fluid' | 'function' | 'game_event' | 'item',
+	category: TagResourceLocationCategory,
+	pool?: undefined,
 	allowTag?: boolean,
+} | {
+	category?: undefined,
+	pool: string[],
+	allowTag?: false,
 }
 
 export function resourceLocation(options: Options): InfallibleParser<ResourceLocationNode> {
@@ -61,6 +67,8 @@ export function resourceLocation(options: Options): InfallibleParser<ResourceLoc
 				ctx.err.report(localize('parser.resource-location.tag-diallowed'), ans)
 			}
 		}
+
+		// TODO: Check the resource location if `pool` exists.
 
 		return ans
 	}

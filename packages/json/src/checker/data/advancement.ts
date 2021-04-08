@@ -4,6 +4,51 @@ import { float_bounds, int_bounds } from './common'
 import { block_predicate, damage_predicate, damage_source_predicate, distance_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
 import { text_component } from './text_component'
 
+const Triggers = [
+	'minecraft:bee_nest_destroyed',
+	'minecraft:bred_animals',
+	'minecraft:brewed_potion',
+	'minecraft:changed_dimension',
+	'minecraft:channeled_lightning',
+	'minecraft:construct_beacon',
+	'minecraft:consume_item',
+	'minecraft:cured_zombie_villager',
+	'minecraft:effects_changed',
+	'minecraft:enchanted_item',
+	'minecraft:enter_block',
+	'minecraft:entity_hurt_player',
+	'minecraft:entity_killed_player',
+	'minecraft:filled_bucket',
+	'minecraft:fishing_rod_hooked',
+	'minecraft:hero_of_the_village',
+	'minecraft:impossible',
+	'minecraft:inventory_changed',
+	'minecraft:item_durability_changed',
+	'minecraft:item_used_on_block',
+	'minecraft:killed_by_crossbow',
+	'minecraft:levitation',
+	'minecraft:location',
+	'minecraft:nether_travel',
+	'minecraft:placed_block',
+	'minecraft:player_generates_container_loot',
+	'minecraft:player_hurt_entity',
+	'minecraft:player_interacted_with_entity',
+	'minecraft:player_killed_entity',
+	'minecraft:recipe_unlocked',
+	'minecraft:shot_crossbow',
+	'minecraft:slept_in_bed',
+	'minecraft:slide_down_block',
+	'minecraft:summoned_entity',
+	'minecraft:tame_animal',
+	'minecraft:target_hit',
+	'minecraft:thrown_item_picked_up_by_entity',
+	'minecraft:tick',
+	'minecraft:used_ender_eye',
+	'minecraft:used_totem',
+	'minecraft:villager_trade',
+	'minecraft:voluntary_exile',
+]
+
 const entity = (any([
 	entity_predicate,
 	listOf(predicate),
@@ -11,7 +56,7 @@ const entity = (any([
 
 export const criterion = as('criterion', dispatch('trigger',
 	(trigger) => record({
-		trigger: resource('advancement_trigger'),
+		trigger: resource(Triggers),
 		conditions: opt(record({
 			...when(trigger, ['impossible'], {}, {
 				player: opt(entity),

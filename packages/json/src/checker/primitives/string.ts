@@ -1,8 +1,7 @@
-import type { Parser, Returnable } from '@spyglassmc/core'
-import { Color, ErrorReporter, ErrorSeverity, Failure, ParserContext, Range, Source } from '@spyglassmc/core'
+import type { Parser, ResourceLocationCategory, Returnable, TagResourceLocationCategory } from '@spyglassmc/core'
+import { Color, ErrorReporter, ErrorSeverity, Failure, ParserContext, Range, resourceLocation, Source } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Categories } from '../../binder'
 import type { JsonExpectation, JsonNode } from '../../node'
 import { JsonStringNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
@@ -14,24 +13,27 @@ export async function string(node: JsonNode, ctx: JsonCheckerContext) {
 	}
 }
 
-export function resource(id: string | string[], allowTag = false): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
-		node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
+export function resource(id: TagResourceLocationCategory, allowTag?: boolean): JsonChecker
+export function resource(id: ResourceLocationCategory | string[], allowTag?: false): JsonChecker
+export function resource(id: ResourceLocationCategory | string[], allowTag = false): JsonChecker {
+	// async (node: JsonNode, ctx: JsonCheckerContext) => {
+	// 	node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
 
-		if (!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', localize('string')), node)
-		} else if (typeof id === 'string') {
-			if (Categories.has(id)) {
-				reference(node, ctx, id)
-			} else {
-				const normalized = node.value.replace(/^minecraft:/, '')
-				const doc = localize(`json.doc.${id}.${normalized}`)
-				node.hover = `\`\`\`typescript\n(${id}) ${normalized}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
-			}
-		} else if (!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
-			ctx.err.report(localize('expected', id), node)
-		}
-	}
+	// 	if (!JsonStringNode.is(node)) {
+	// 		ctx.err.report(localize('expected', localize('string')), node)
+	// 	} else if (typeof id === 'string') {
+	// 		if (Categories.has(id)) {
+	// 			reference(node, ctx, id)
+	// 		} else {
+	// 			const normalized = node.value.replace(/^minecraft:/, '')
+	// 			const doc = localize(`json.doc.${id}.${normalized}`)
+	// 			node.hover = `\`\`\`typescript\n(${id}) ${normalized}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
+	// 		}
+	// 	} else if (!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
+	// 		ctx.err.report(localize('expected', id), node)
+	// 	}
+	// }
+	return special(id, resourceLocation(typeof id === 'string' ? { category: id as any, allowTag } : { pool: id }))
 }
 
 export function literal(value: string | string[]): JsonChecker {
@@ -94,7 +96,7 @@ export function stringColor(): JsonChecker {
 	return special('color', parser, { pool: ColorNames }, 'color')
 }
 
-export function special(name: string, parser: Parser<Returnable>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
+export function special(name: string | string[], parser: Parser<Returnable>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {

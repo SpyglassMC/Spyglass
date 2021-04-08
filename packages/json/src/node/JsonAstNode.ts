@@ -56,7 +56,6 @@ export namespace JsonArrayNode {
 export interface JsonStringExpectation extends JsonBaseExpectation {
 	readonly type: 'json:string'
 	pool?: string | string[]
-	resource?: boolean
 }
 export namespace JsonStringExpectation {
 	/* istanbul ignore next */
