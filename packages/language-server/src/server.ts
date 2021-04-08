@@ -124,14 +124,12 @@ connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, la
 	service.onDidOpen(uri, languageID, version, text)
 
 	const { doc, node } = service.get(uri)!
-	service.bind(node, doc)
 	await service.check(node, doc)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
 	service.onDidChange(uri, contentChanges, version)
 
 	const { doc, node } = service.get(uri)!
-	service.bind(node, doc)
 	await service.check(node, doc)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
