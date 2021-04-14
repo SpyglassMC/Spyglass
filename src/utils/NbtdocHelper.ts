@@ -512,15 +512,15 @@ export class NbtdocHelper {
     /**
      * @param node The node which is at the same level as the `doc`
      */
-    isInheritFromItemBase(doc: nbtdoc.CompoundTag | null, node: NbtCompoundNode | null): boolean {
+    canHaveArbitraryTags(doc: nbtdoc.CompoundTag | null, node: NbtCompoundNode | null): boolean {
         if (!doc) {
             return false
         }
-        if (doc.fields.hasOwnProperty('CustomModelData')) {
+        if (doc.fields.hasOwnProperty('CustomModelData') || doc.fields.hasOwnProperty('data')) {
             return true
         }
         const superDoc = this.getSupers(doc.supers, node)
-        return this.isInheritFromItemBase(
+        return this.canHaveArbitraryTags(
             this.readCompound(superDoc ? superDoc.Compound : null),
             node ? node[SuperNode] : null
         )
@@ -537,7 +537,7 @@ export class NbtdocHelper {
                     this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
                 } else {
                     // Errors.
-                    if (!this.isInheritFromItemBase(doc, node/* [SuperNode] */)) {
+                    if (!this.canHaveArbitraryTags(doc, node/* [SuperNode] */)) {
                         let code: ErrorCode | undefined
                         //#region UUID datafix: #377
                         if (['ConversionPlayerLeast', 'ConversionPlayerMost', 'UUIDLeast', 'UUIDMost', 'LoveCauseLeast', 'LoveCauseMost', 'OwnerUUID', 'OwnerUUIDLeast', 'OwnerUUIDMost', 'target_uuid', 'TrustedUUIDs'].includes(key)) {

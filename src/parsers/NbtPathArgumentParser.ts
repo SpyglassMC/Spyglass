@@ -165,7 +165,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         if (helper && doc) {
             const compoundDoc = helper.readCompound(helper.resolveCompoundOrIndexDoc(doc, null, ctx))
             const field = helper.readField(compoundDoc, key, null)
-            if (!field && !helper.isInheritFromItemBase(compoundDoc, null)) {
+            if (!field && !helper.canHaveArbitraryTags(compoundDoc, null)) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unknown-key', locale('punc.quote', key)),

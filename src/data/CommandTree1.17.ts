@@ -691,6 +691,15 @@ export const CommandTree: ICommandTree = {
                 start_stop_report: {
                     parser: new LiteralArgumentParser('start', 'stop', 'report'),
                     executable: true
+                },
+                function: {
+                    parser: new LiteralArgumentParser('function'),
+                    children: {
+                        name: {
+                            parser: new IdentityArgumentParser('$function', true),
+                            executable: true,
+                        }
+                    }
                 }
             }
         },
