@@ -6,13 +6,7 @@
 			"path": "../core"
 		},
 		{
-			"path": "../json"
-		},
-		{
 			"path": "../locales"
-		},
-		{
-			"path": "../mcfunction"
 		},
 		{
 			"path": "../nbtdoc"

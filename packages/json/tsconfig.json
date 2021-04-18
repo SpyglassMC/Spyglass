@@ -9,12 +9,6 @@
 			"path": "../locales"
 		},
 		{
-			"path": "../mcfunction"
-		},
-		{
-			"path": "../nbt"
-		},
-		{
 			"path": "src"
 		},
 		{

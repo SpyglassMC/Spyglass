@@ -1,7 +1,10 @@
+import type { SymbolAccessType, SymbolUsage } from '../symbol'
 import type { AstNode } from './AstNode'
 
 export interface SymbolOptions {
 	category: string,
+	accessType?: SymbolAccessType,
+	usageType?: SymbolUsage,
 }
 
 export interface SymbolBaseNode extends AstNode {

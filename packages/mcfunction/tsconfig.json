@@ -6,13 +6,10 @@
 			"path": "../core"
 		},
 		{
-			"path": "../json"
-		},
-		{
 			"path": "../locales"
 		},
 		{
-			"path": "../nbt"
+			"path": "../vanilla-resource"
 		},
 		{
 			"path": "src"
