@@ -1414,6 +1414,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "start": 723,
                   "end": 733
                 },
+                "options": {
+                  "quotes": [
+                    "\""
+                  ],
+                  "escapable": {
+                    "characters": [
+                      "b",
+                      "f",
+                      "n",
+                      "r",
+                      "t"
+                    ]
+                  }
+                },
                 "value": "rollable",
                 "valueMap": {
                   "outerRange": {
@@ -1459,6 +1473,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "range": {
                 "start": 723,
                 "end": 733
+              },
+              "options": {
+                "quotes": [
+                  "\""
+                ],
+                "escapable": {
+                  "characters": [
+                    "b",
+                    "f",
+                    "n",
+                    "r",
+                    "t"
+                  ]
+                }
               },
               "value": "rollable",
               "valueMap": {
@@ -1529,6 +1557,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "start": 787,
                   "end": 796
                 },
+                "options": {
+                  "quotes": [
+                    "\""
+                  ],
+                  "escapable": {
+                    "characters": [
+                      "b",
+                      "f",
+                      "n",
+                      "r",
+                      "t"
+                    ]
+                  }
+                },
                 "value": "aligned",
                 "valueMap": {
                   "outerRange": {
@@ -1574,6 +1616,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "range": {
                 "start": 787,
                 "end": 796
+              },
+              "options": {
+                "quotes": [
+                  "\""
+                ],
+                "escapable": {
+                  "characters": [
+                    "b",
+                    "f",
+                    "n",
+                    "r",
+                    "t"
+                  ]
+                }
               },
               "value": "aligned",
               "valueMap": {
@@ -1680,6 +1736,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "start": 723,
                   "end": 733
                 },
+                "options": {
+                  "quotes": [
+                    "\""
+                  ],
+                  "escapable": {
+                    "characters": [
+                      "b",
+                      "f",
+                      "n",
+                      "r",
+                      "t"
+                    ]
+                  }
+                },
                 "value": "rollable",
                 "valueMap": {
                   "outerRange": {
@@ -1725,6 +1795,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "range": {
                 "start": 723,
                 "end": 733
+              },
+              "options": {
+                "quotes": [
+                  "\""
+                ],
+                "escapable": {
+                  "characters": [
+                    "b",
+                    "f",
+                    "n",
+                    "r",
+                    "t"
+                  ]
+                }
               },
               "value": "rollable",
               "valueMap": {
@@ -1787,6 +1871,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "start": 787,
                   "end": 796
                 },
+                "options": {
+                  "quotes": [
+                    "\""
+                  ],
+                  "escapable": {
+                    "characters": [
+                      "b",
+                      "f",
+                      "n",
+                      "r",
+                      "t"
+                    ]
+                  }
+                },
                 "value": "aligned",
                 "valueMap": {
                   "outerRange": {
@@ -1832,6 +1930,20 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
               "range": {
                 "start": 787,
                 "end": 796
+              },
+              "options": {
+                "quotes": [
+                  "\""
+                ],
+                "escapable": {
+                  "characters": [
+                    "b",
+                    "f",
+                    "n",
+                    "r",
+                    "t"
+                  ]
+                }
               },
               "value": "aligned",
               "valueMap": {

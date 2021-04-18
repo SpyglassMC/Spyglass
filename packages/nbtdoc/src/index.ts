@@ -2,7 +2,7 @@ import { MetaRegistry } from '@spyglassmc/core'
 import * as binder from './binder'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
-import type { CompoundFieldTypeNode, IdentifierToken, LiteralToken, MinecraftIdentifierToken } from './node'
+import type { CompoundFieldTypeNode, IdentifierToken, LiteralToken, MainNode, MinecraftIdentifierToken } from './node'
 import * as parser from './parser'
 
 export * as colorizer from './colorizer'
@@ -15,8 +15,9 @@ export function initializeNbtdoc() {
 		registry.registerLanguage('nbtdoc', {
 			extensions: ['.nbtdoc'],
 			parser: parser.entry,
-			checker: checker.entry,
 		})
+
+		registry.registerChecker<MainNode>('nbtdoc:main', checker.entry)
 
 		registry.registerColorizer<CompoundFieldTypeNode>('nbtdoc:compound_definition/field/type', colorizer.compoundFieldType)
 		registry.registerColorizer<IdentifierToken>('nbtdoc:identifier', colorizer.identifier)

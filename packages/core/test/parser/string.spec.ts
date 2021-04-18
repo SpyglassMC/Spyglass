@@ -1,11 +1,11 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
+import type { StringOptions } from '../../lib'
 import { string } from '../../lib'
-import type { Options } from '../../lib/parser/string'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('string()', () => {
-	const suites: { title: string, options: Options, contents: string[] }[] = [
+	const suites: { title: string, options: StringOptions, contents: string[] }[] = [
 		{
 			title: 'quoted_string(", ⧵n⧵t)', // We use ⧵ (U+29f5) instead of normal back slash here, due to the snapshots being stupid and not escaping it before exporting.
 			options: { quotes: ['"'], escapable: { characters: ['n', 't'] } },
@@ -46,7 +46,14 @@ describe('string()', () => {
 		},
 		{
 			title: 'quoted_string(quoted_string())',
-			options: { quotes: ['"'], escapable: { allowUnknown: true, unicode: true }, valueParser: string({ quotes: ['"'], escapable: {} }) },
+			options: {
+				quotes: ['"'],
+				escapable: { allowUnknown: true, unicode: true },
+				value: {
+					type: 'string',
+					parser: string({ quotes: ['"'], escapable: {} }),
+				},
+			},
 			contents: [
 				'"foo"',
 				'"\\"\\u0066oo\\\\\\\\bar\\""',

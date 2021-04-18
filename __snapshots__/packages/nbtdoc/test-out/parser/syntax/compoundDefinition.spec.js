@@ -247,6 +247,20 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "start": 203,
               "end": 209
             },
+            "options": {
+              "quotes": [
+                "\""
+              ],
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ]
+              }
+            },
             "value": "name",
             "valueMap": {
               "outerRange": {
@@ -300,6 +314,20 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "range": {
             "start": 203,
             "end": 209
+          },
+          "options": {
+            "quotes": [
+              "\""
+            ],
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ]
+            }
           },
           "value": "name",
           "valueMap": {
@@ -537,6 +565,20 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "start": 203,
               "end": 209
             },
+            "options": {
+              "quotes": [
+                "\""
+              ],
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ]
+              }
+            },
             "value": "name",
             "valueMap": {
               "outerRange": {
@@ -590,6 +632,20 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "range": {
             "start": 203,
             "end": 209
+          },
+          "options": {
+            "quotes": [
+              "\""
+            ],
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ]
+            }
           },
           "value": "name",
           "valueMap": {
@@ -680,6 +736,20 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "range": {
               "start": 15,
               "end": 20
+            },
+            "options": {
+              "quotes": [
+                "\""
+              ],
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ]
+              }
             },
             "value": "Bar",
             "valueMap": {
@@ -852,6 +922,20 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "quotes": [
+              "\""
+            ],
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ]
+            }
           },
           "value": "Bar",
           "valueMap": {
@@ -1052,6 +1136,20 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "start": 15,
               "end": 20
             },
+            "options": {
+              "quotes": [
+                "\""
+              ],
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ]
+              }
+            },
             "value": "Bar",
             "valueMap": {
               "outerRange": {
@@ -1223,6 +1321,20 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "quotes": [
+              "\""
+            ],
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ]
+            }
           },
           "value": "Bar",
           "valueMap": {

@@ -83,6 +83,11 @@ exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
         "visibility": 1,
         "definition": [
           {
+            "uri": "file:///test.nbtdoc",
+            "range": {
+              "start": 5,
+              "end": 5
+            },
             "posRange": {
               "start": {
                 "line": 0,
@@ -92,11 +97,6 @@ exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
                 "line": 0,
                 "character": 5
               }
-            },
-            "uri": "file:///test.nbtdoc",
-            "range": {
-              "start": 5,
-              "end": 5
             }
           }
         ]
@@ -112,6 +112,11 @@ exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
         "visibility": 0,
         "definition": [
           {
+            "uri": "file:///test.nbtdoc",
+            "range": {
+              "start": 4,
+              "end": 4
+            },
             "posRange": {
               "start": {
                 "line": 0,
@@ -121,11 +126,6 @@ exports['SymbolUtil enter() Should enter multiple symbols 1'] = [
                 "line": 0,
                 "character": 4
               }
-            },
-            "uri": "file:///test.nbtdoc",
-            "range": {
-              "start": 4,
-              "end": 4
             }
           }
         ]
@@ -142,23 +142,28 @@ exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
       "visibility": 3,
       "definition": [
         {
-          "posRange": {
-            "start": {
-              "line": 0,
-              "character": 1
-            },
-            "end": {
-              "line": 0,
-              "character": 1
-            }
-          },
           "uri": "file:///test.nbtdoc",
           "range": {
             "start": 1,
             "end": 1
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 1
+            },
+            "end": {
+              "line": 0,
+              "character": 1
+            }
           }
         },
         {
+          "uri": "file:///test.nbtdoc",
+          "range": {
+            "start": 6,
+            "end": 6
+          },
           "posRange": {
             "start": {
               "line": 0,
@@ -168,33 +173,33 @@ exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
               "line": 0,
               "character": 6
             }
-          },
-          "uri": "file:///test.nbtdoc",
-          "range": {
-            "start": 6,
-            "end": 6
           }
         }
       ],
       "reference": [
         {
-          "posRange": {
-            "start": {
-              "line": 0,
-              "character": 2
-            },
-            "end": {
-              "line": 0,
-              "character": 2
-            }
-          },
           "uri": "file:///test.nbtdoc",
           "range": {
             "start": 2,
             "end": 2
+          },
+          "posRange": {
+            "start": {
+              "line": 0,
+              "character": 2
+            },
+            "end": {
+              "line": 0,
+              "character": 2
+            }
           }
         },
         {
+          "uri": "file:///test.nbtdoc",
+          "range": {
+            "start": 3,
+            "end": 3
+          },
           "posRange": {
             "start": {
               "line": 0,
@@ -204,11 +209,6 @@ exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
               "line": 0,
               "character": 3
             }
-          },
-          "uri": "file:///test.nbtdoc",
-          "range": {
-            "start": 3,
-            "end": 3
           }
         }
       ],
@@ -222,6 +222,11 @@ exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
       "visibility": 2,
       "definition": [
         {
+          "uri": "file:///test.nbtdoc",
+          "range": {
+            "start": 7,
+            "end": 7
+          },
           "posRange": {
             "start": {
               "line": 0,
@@ -231,11 +236,6 @@ exports['SymbolUtil enter() Should enter multiple symbols 2'] = {
               "line": 0,
               "character": 7
             }
-          },
-          "uri": "file:///test.nbtdoc",
-          "range": {
-            "start": 7,
-            "end": 7
           }
         }
       ]

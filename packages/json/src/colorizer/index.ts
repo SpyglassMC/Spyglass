@@ -1,6 +1,7 @@
-import type { Colorizer } from '@spyglassmc/core'
+import type { Colorizer, MetaRegistry } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { ColorToken } from '@spyglassmc/core'
-import type { JsonBooleanNode, JsonNullNode, JsonObjectNode } from '../node'
+import type { JsonBooleanNode, JsonNullNode, JsonNumberNode, JsonObjectNode, JsonStringNode } from '../node'
 
 export const boolean: Colorizer<JsonBooleanNode> = node => {
 	return [ColorToken.create(node, 'literal')]
@@ -22,4 +23,12 @@ export const object: Colorizer<JsonObjectNode> = (node, ctx) => {
 		}
 	}
 	return ans
+}
+
+export function register(meta: MetaRegistry): void {
+	meta.registerColorizer<JsonBooleanNode>('json:boolean', boolean)
+	meta.registerColorizer<JsonNullNode>('json:null', null_)
+	meta.registerColorizer<JsonNumberNode>('json:number', core.colorizer.number)
+	meta.registerColorizer<JsonObjectNode>('json:object', object)
+	meta.registerColorizer<JsonStringNode>('json:string', core.colorizer.string)
 }

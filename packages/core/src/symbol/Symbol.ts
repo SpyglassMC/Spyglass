@@ -140,7 +140,7 @@ export const ResourceLocationCategories = Object.freeze([
 ] as const)
 export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
 
-export const TagResourceLocationCategories = Object.freeze([
+export const TaggableResourceLocationCategories = Object.freeze([
 	'block',
 	'entity_type',
 	'fluid',
@@ -148,7 +148,7 @@ export const TagResourceLocationCategories = Object.freeze([
 	'game_event',
 	'item',
 ] as const)
-export type TagResourceLocationCategory = typeof TagResourceLocationCategories[number]
+export type TaggableResourceLocationCategory = typeof TaggableResourceLocationCategories[number]
 
 export const enum SymbolAccessType {
 	Read,
@@ -206,6 +206,9 @@ export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsage, Symb
 }
 
 export interface SymbolLocationMetadata {
+	/**
+	 * @default SymbolAccessType.Read
+	 */
 	accessType?: SymbolAccessType,
 	/**
 	 * Whether this SymbolLocation comes from a default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).

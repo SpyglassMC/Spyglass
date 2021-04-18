@@ -1,7 +1,7 @@
-import type { AstNode, CommentNode, ErrorNode, FloatNode, IntegerNode, ResourceLocationNode, StringNode } from '../node'
+import type { AstNode } from '../node'
 import type { EntryParser, NullableNode } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
-import { colorizer, FallbackChecker, FallbackCompleter } from '../processor'
+import { checker, colorizer, completer } from '../processor'
 import type { UriBinder } from '../symbol'
 
 export interface LanguageOptions {
@@ -11,8 +11,6 @@ export interface LanguageOptions {
 	extensions: string[],
 	triggerCharacters?: string[],
 	parser: EntryParser<any>,
-	checker?: Checker<any>,
-	completer?: Completer<any>,
 }
 
 /* istanbul ignore next */
@@ -26,7 +24,9 @@ export class MetaRegistry {
 	 */
 	readonly #languages = new Map<string, LanguageOptions>()
 	readonly #uriBinders = new Set<UriBinder>()
+	readonly #checkers = new Map<string, Checker<any>>()
 	readonly #colorizers = new Map<string, Colorizer<any>>()
+	readonly #completers = new Map<string, Completer<any>>()
 
 	/**
 	 * Registers a new language.
@@ -82,11 +82,14 @@ export class MetaRegistry {
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}
 
-	/**
-	 * @returns The corresponding `Checker` for the language ID, or a fallback checker that does nothing.
-	 */
-	public getChecker<N extends AstNode>(languageID: string): Checker<N> {
-		return this.#languages.get(languageID)?.checker ?? FallbackChecker
+	public hasChecker<N extends AstNode>(type: N['type']): boolean {
+		return this.#checkers.has(type)
+	}
+	public getChecker<N extends AstNode>(type: N['type']): Checker<N> {
+		return this.#checkers.get(type) ?? checker.fallback
+	}
+	public registerChecker<N extends AstNode>(type: N['type'], checker: Checker<N>): void {
+		this.#checkers.set(type, checker)
 	}
 
 	public hasColorizer<N extends AstNode>(type: N['type']): boolean {
@@ -99,15 +102,18 @@ export class MetaRegistry {
 		this.#colorizers.set(type, colorizer)
 	}
 
-	/**
-	 * @returns The corresponding `Completer` for the language ID, or a fallback colorizer that produces nothing.
-	 */
-	public getCompleter<N extends AstNode>(languageID: string, triggerCharacter?: string): Completer<N> {
+	public hasCompleter<N extends AstNode>(type: N['type']): boolean {
+		return this.#completers.has(type)
+	}
+	public getCompleter<N extends AstNode>(type: N['type']): Completer<N> {
+		return this.#completers.get(type) ?? completer.fallback
+	}
+	public registerCompleter<N extends AstNode>(type: N['type'], completer: Completer<N>): void {
+		this.#completers.set(type, completer)
+	}
+	public shouldComplete(languageID: string, triggerCharacter?: string): boolean {
 		const language = this.#languages.get(languageID)
-		if (triggerCharacter && !language?.triggerCharacters?.includes(triggerCharacter)) {
-			return FallbackCompleter
-		}
-		return language?.completer ?? FallbackCompleter
+		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {
@@ -119,12 +125,9 @@ export class MetaRegistry {
 
 	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
 		meta => {
-			meta.registerColorizer<CommentNode>('comment', colorizer.comment)
-			meta.registerColorizer<ErrorNode>('error', colorizer.error)
-			meta.registerColorizer<FloatNode>('float', colorizer.number)
-			meta.registerColorizer<IntegerNode>('integer', colorizer.number)
-			meta.registerColorizer<ResourceLocationNode>('resource_location', colorizer.resourceLocation)
-			meta.registerColorizer<StringNode>('string', colorizer.string)
+			checker.registerCheckers(meta)
+			colorizer.registerColorizers(meta)
+			completer.registerCompleters(meta)
 		},
 	])
 

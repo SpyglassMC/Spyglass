@@ -5,6 +5,20 @@ exports['string() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
+    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -36,6 +50,20 @@ exports['string() Parse ""foo" 1'] = {
     "range": {
       "start": 0,
       "end": 4
+    },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
     },
     "value": "foo",
     "valueMap": {
@@ -69,6 +97,20 @@ exports['string() Parse ""foo"" 1'] = {
       "start": 0,
       "end": 5
     },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
+    },
     "value": "foo",
     "valueMap": {
       "outerRange": {
@@ -91,6 +133,20 @@ exports['string() Parse ""fo↓o"" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
     },
     "value": "fo",
     "valueMap": {
@@ -123,6 +179,20 @@ exports['string() Parse ""fo⧵Ao"" 1'] = {
     "range": {
       "start": 0,
       "end": 7
+    },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
     },
     "value": "foAo",
     "valueMap": {
@@ -167,6 +237,20 @@ exports['string() Parse ""fo⧵no"" 1'] = {
       "start": 0,
       "end": 7
     },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
+    },
     "value": "fo\no",
     "valueMap": {
       "outerRange": {
@@ -200,6 +284,20 @@ exports['string() Parse "foo" 1'] = {
     "range": {
       "start": 0,
       "end": 0
+    },
+    "options": {
+      "quotes": [
+        "\""
+      ],
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ]
+      }
     },
     "value": "",
     "valueMap": {

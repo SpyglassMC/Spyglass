@@ -59,10 +59,10 @@ exports['IndexMap toInnerOffset() Should throw error for 12 1'] = `
 Offset 12 is not in range [13, 30)
 `
 
-exports['IndexMap toInnerOffset() Should throw error for 30 1'] = `
-Offset 30 is not in range [13, 30)
+exports['IndexMap toInnerOffset() Should throw error for 31 1'] = `
+Offset 31 is not in range [13, 30)
 `
 
-exports['IndexMap toOuterOffset() Should throw error for 11 1'] = `
-Offset 11 is not in range [0, 11)
+exports['IndexMap toOuterOffset() Should throw error for 12 1'] = `
+Offset 12 is not in range [0, 11)
 `

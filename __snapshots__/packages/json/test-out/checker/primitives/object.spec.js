@@ -73,6 +73,21 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -100,6 +115,21 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -160,6 +190,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -187,6 +232,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -231,6 +291,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 10,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -249,6 +324,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             "range": {
               "start": 15,
               "end": 20
+            },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
             },
             "value": "foo",
             "valueMap": {
@@ -269,6 +359,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 10,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -292,6 +397,21 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -340,6 +460,21 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -367,6 +502,21 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -506,6 +656,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -545,6 +710,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -623,6 +803,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -662,6 +857,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -718,6 +928,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               "start": 10,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -742,6 +967,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "range": {
               "start": 15,
               "end": 20
+            },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
             },
             "value": "foo",
             "valueMap": {
@@ -768,6 +1008,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "range": {
             "start": 10,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -797,6 +1052,21 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -866,6 +1136,21 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -905,6 +1190,21 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -1073,6 +1373,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -1107,6 +1422,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -1185,6 +1515,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -1219,6 +1564,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -1270,6 +1630,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               "start": 10,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -1288,6 +1663,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "range": {
               "start": 15,
               "end": 20
+            },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
             },
             "value": "foo",
             "valueMap": {
@@ -1308,6 +1698,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 10,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -1331,6 +1736,21 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -1399,6 +1819,21 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -1426,6 +1861,21 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -1619,6 +2069,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -1653,6 +2118,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -1732,6 +2212,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "a",
             "valueMap": {
               "outerRange": {
@@ -1766,6 +2261,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "a",
           "valueMap": {
@@ -1817,6 +2327,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               "start": 10,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -1835,6 +2360,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "range": {
               "start": 15,
               "end": 20
+            },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
             },
             "value": "foo",
             "valueMap": {
@@ -1855,6 +2395,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "range": {
             "start": 10,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {
@@ -1878,6 +2433,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "range": {
             "start": 15,
             "end": 20
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -1947,6 +2517,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
               "start": 2,
               "end": 5
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "b",
             "valueMap": {
               "outerRange": {
@@ -1974,6 +2559,21 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "b",
           "valueMap": {

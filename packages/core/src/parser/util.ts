@@ -195,6 +195,21 @@ export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N> {
 }
 
 /**
+ * @returns A parser that fails when the passed-in parser didn't move the cursor at all.
+ */
+export function fail<T extends Returnable>(parser: InfallibleParser<T>): Parser<T> {
+	return (src, ctx) => {
+		const start = src.cursor
+		const result = attempt(parser, src, ctx)
+		if (result.endCursor - start > 0) {
+			result.updateSrcAndCtx()
+			return result.result
+		}
+		return Failure
+	}
+}
+
+/**
  * @returns A parser that takes an optional syntax component.
  */
 export function optional<N extends Returnable>(parser: InfallibleParser<N>): void

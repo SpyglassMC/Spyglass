@@ -5,6 +5,21 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
       "start": 0,
       "end": 6
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "true",
     "valueMap": {
       "outerRange": {
@@ -90,6 +105,21 @@ exports['JSON boolean boolean Check "tru" 1'] = {
     "range": {
       "start": 0,
       "end": 0
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "",
     "valueMap": {

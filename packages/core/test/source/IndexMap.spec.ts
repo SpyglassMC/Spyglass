@@ -48,7 +48,8 @@ describe('IndexMap', () => {
 		{ input: 27, expected: 8 },
 		{ input: 28, expected: 9 },
 		{ input: 29, expected: 10 },
-		{ input: 30, expected: null },
+		{ input: 30, expected: 11 },
+		{ input: 31, expected: null },
 	]
 	const toOuterCases: { input: number, expected: number | null }[] = [
 		{ input: 0, expected: 13 },
@@ -62,7 +63,8 @@ describe('IndexMap', () => {
 		{ input: 8, expected: 27 },
 		{ input: 9, expected: 28 },
 		{ input: 10, expected: 29 },
-		{ input: 11, expected: null },
+		{ input: 11, expected: 30 },
+		{ input: 12, expected: null },
 	]
 	for (const method of ['toInnerOffset', 'toOuterOffset'] as const) {
 		describe(`${method}()`, () => {

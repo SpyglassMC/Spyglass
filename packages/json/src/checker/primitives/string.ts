@@ -1,7 +1,7 @@
-import type { Parser, ResourceLocationCategory, Returnable, TagResourceLocationCategory } from '@spyglassmc/core'
-import { Color, ErrorReporter, ErrorSeverity, Failure, ParserContext, Range, resourceLocation, Source } from '@spyglassmc/core'
-import { localeQuote, localize } from '@spyglassmc/locales'
-import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { AllCategory, Parser, ResourceLocationCategory, Returnable, TaggableResourceLocationCategory } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
+import { Color, Failure, Range } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import type { JsonExpectation, JsonNode } from '../../node'
 import { JsonStringNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
@@ -13,41 +13,17 @@ export async function string(node: JsonNode, ctx: JsonCheckerContext) {
 	}
 }
 
-export function resource(id: TagResourceLocationCategory, allowTag?: boolean): JsonChecker
+export function resource(id: TaggableResourceLocationCategory, allowTag?: boolean): JsonChecker
 export function resource(id: ResourceLocationCategory | string[], allowTag?: false): JsonChecker
 export function resource(id: ResourceLocationCategory | string[], allowTag = false): JsonChecker {
-	// async (node: JsonNode, ctx: JsonCheckerContext) => {
-	// 	node.expectation = [{ type: 'json:string', typedoc: typedoc(id), pool: id, resource: true }]
-
-	// 	if (!JsonStringNode.is(node)) {
-	// 		ctx.err.report(localize('expected', localize('string')), node)
-	// 	} else if (typeof id === 'string') {
-	// 		if (Categories.has(id)) {
-	// 			reference(node, ctx, id)
-	// 		} else {
-	// 			const normalized = node.value.replace(/^minecraft:/, '')
-	// 			const doc = localize(`json.doc.${id}.${normalized}`)
-	// 			node.hover = `\`\`\`typescript\n(${id}) ${normalized}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
-	// 		}
-	// 	} else if (!id.includes(node.value.replace(/^minecraft:/, '')) && !id.includes(node.value)) {
-	// 		ctx.err.report(localize('expected', id), node)
-	// 	}
-	// }
-	return special(id, resourceLocation(typeof id === 'string' ? { category: id as any, allowTag } : { pool: id }))
+	return special(id, core.resourceLocation(typeof id === 'string' ? { category: id as any, allowTag } : { pool: id }))
 }
 
-export function literal(value: string | string[]): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
-		node.expectation = [{ type: 'json:string', typedoc: typedoc(value), pool: value }]
-
-		if (!JsonStringNode.is(node)) {
-			ctx.err.report(localize('expected', localize('string')), node)
-		} else if (typeof value === 'string') {
-			reference(node, ctx, value)
-		} else if (!value.includes(node.value)) {
-			ctx.err.report(localize('expected', value), node)
-		}
-	}
+export function literal(value: AllCategory | string[]): JsonChecker {
+	return special(value, typeof value === 'string'
+		? core.symbol(value)
+		: core.literal(...value)
+	)
 }
 
 export function stringColor(): JsonChecker {
@@ -102,15 +78,8 @@ export function special(name: string | string[], parser: Parser<Returnable>, exp
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else {
-			const src = new Source(node.value)
-			const parseCtx = ParserContext.create({
-				...ctx,
-				doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, node.value),
-				err: new ErrorReporter(),
-			})
-			const result = parser(src, parseCtx)
+			const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
 			if (result !== Failure) {
-				ctx.err.absorb(parseCtx.err, { map: node.valueMap, doc: ctx.doc })
 				node[store] = result as any
 			}
 		}
@@ -123,17 +92,4 @@ function typedoc(id: string | string[]) {
 		: id.length <= 10
 			? id.map(e => `"${e}"`).join(' | ')
 			: `${id.slice(0, 10).map(e => `"${e}"`).join(' | ')} | ...`
-}
-
-function reference(node: JsonStringNode, ctx: JsonCheckerContext, id: string) {
-	ctx.symbols.query(ctx.doc, id, node.value)
-		.ifUnknown(() => {
-			ctx.err.report(localize('json.checker.string.undeclared', id[0].toUpperCase() + id.slice(1), localeQuote(node.value)), node, ErrorSeverity.Warning)
-		})
-		.elseEnter({
-			usage: {
-				type: 'reference',
-				node,
-			},
-		})
 }

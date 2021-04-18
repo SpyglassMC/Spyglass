@@ -3,8 +3,6 @@ import { repeat, sequence } from '@spyglassmc/core'
 import type { SyntaxUtil } from '../node'
 import { comment } from './terminator'
 
-// TODO: Move this whole file to `@spyglassmc/core`.
-
 /**
  * @returns A parser that parses the gap between **SYNTAX** rules, which may contains whitespace and regular comments.
  */

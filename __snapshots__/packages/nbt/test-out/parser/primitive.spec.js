@@ -5,6 +5,14 @@ exports['nbt primitive() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
+    "options": {
+      "escapable": {},
+      "quotes": [
+        "\"",
+        "'"
+      ],
+      "unquotable": {}
+    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -36,6 +44,14 @@ exports['nbt primitive() Parse ""quoted"" 1'] = {
     "range": {
       "start": 0,
       "end": 8
+    },
+    "options": {
+      "escapable": {},
+      "quotes": [
+        "\"",
+        "'"
+      ],
+      "unquotable": {}
     },
     "value": "quoted",
     "valueMap": {
@@ -83,6 +99,14 @@ exports['nbt primitive() Parse "123456b" 1'] = {
     "range": {
       "start": 0,
       "end": 7
+    },
+    "options": {
+      "escapable": {},
+      "quotes": [
+        "\"",
+        "'"
+      ],
+      "unquotable": {}
     },
     "value": "123456b",
     "valueMap": {
@@ -199,6 +223,14 @@ exports['nbt primitive() Parse "unquoted" 1'] = {
     "range": {
       "start": 0,
       "end": 8
+    },
+    "options": {
+      "escapable": {},
+      "quotes": [
+        "\"",
+        "'"
+      ],
+      "unquotable": {}
     },
     "value": "unquoted",
     "valueMap": {

@@ -1,11 +1,24 @@
 import type { Range } from '../source'
-import type { ResourceLocationCategory } from '../symbol'
+import type { ResourceLocationCategory, TaggableResourceLocationCategory } from '../symbol'
 import type { AstNode } from './AstNode'
 
+export type ResourceLocationOptions = {
+	category: ResourceLocationCategory,
+	pool?: undefined,
+	allowTag?: false,
+} | {
+	category: TaggableResourceLocationCategory,
+	pool?: undefined,
+	allowTag?: boolean,
+} | {
+	category?: undefined,
+	pool: string[],
+	allowTag?: false,
+}
 
 export interface ResourceLocationNode extends AstNode {
 	readonly type: 'resource_location',
-	readonly category?: ResourceLocationCategory,
+	readonly options: ResourceLocationOptions,
 	readonly isTag?: boolean,
 	readonly namespace?: string,
 	readonly path?: string[],

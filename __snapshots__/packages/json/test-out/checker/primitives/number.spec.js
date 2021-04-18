@@ -5,6 +5,21 @@ exports['JSON number float Check ""5"" 1'] = {
       "start": 0,
       "end": 3
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "5",
     "valueMap": {
       "outerRange": {
@@ -204,6 +219,21 @@ exports['JSON number floatRange(-5, null) Check ""5"" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "5",
     "valueMap": {
@@ -422,6 +452,21 @@ exports['JSON number floatRange(1, 2.4) Check ""5"" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "5",
     "valueMap": {
@@ -677,6 +722,21 @@ exports['JSON number int Check ""5"" 1'] = {
       "start": 0,
       "end": 3
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "5",
     "valueMap": {
       "outerRange": {
@@ -894,6 +954,21 @@ exports['JSON number intRange(-9, 0) Check ""5"" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "5",
     "valueMap": {
@@ -1149,6 +1224,21 @@ exports['JSON number intRange(1, 3) Check ""5"" 1'] = {
       "start": 0,
       "end": 3
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "5",
     "valueMap": {
       "outerRange": {
@@ -1403,6 +1493,21 @@ exports['JSON number intRange(3, null) Check ""5"" 1'] = {
       "start": 0,
       "end": 3
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "5",
     "valueMap": {
       "outerRange": {
@@ -1638,6 +1743,21 @@ exports['JSON number intRange(null, 3) Check ""5"" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "5",
     "valueMap": {

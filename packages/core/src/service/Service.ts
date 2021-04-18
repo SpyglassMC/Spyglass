@@ -189,7 +189,7 @@ export class Service {
 
 	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
 		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
-		const checker = this.meta.getChecker(doc.languageId)
+		const checker = this.meta.getChecker(node.type)
 		const ctx = this.getCheckerCtx(doc)
 		ctx.symbols.clear(doc.uri)
 		await checker(node.children[0], ctx)
@@ -210,10 +210,14 @@ export class Service {
 		return ans
 	}
 
-	getCompletion(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
+	complete(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
 		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const completer = this.meta.getCompleter(doc.languageId, triggerCharacter)
-		return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
+		const shouldComplete = this.meta.shouldComplete(doc.languageId, triggerCharacter)
+		if (shouldComplete) {
+			const completer = this.meta.getCompleter(node.type)
+			return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
+		}
+		return []
 	}
 
 	getHover(node: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {

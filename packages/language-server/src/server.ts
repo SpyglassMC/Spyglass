@@ -152,7 +152,7 @@ connection.onDocumentColor(({ textDocument: { uri } }) => {
 connection.onCompletion(({ textDocument: { uri }, position, context }) => {
 	const { doc, node } = service.get(uri)!
 	const offset = toCore.offset(position, doc)
-	const items = service.getCompletion(node, doc, offset, context?.triggerCharacter)
+	const items = service.complete(node, doc, offset, context?.triggerCharacter)
 	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
 })
 

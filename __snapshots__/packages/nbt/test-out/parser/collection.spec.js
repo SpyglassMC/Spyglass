@@ -421,6 +421,14 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
               "start": 1,
               "end": 9
             },
+            "options": {
+              "escapable": {},
+              "quotes": [
+                "\"",
+                "'"
+              ],
+              "unquotable": {}
+            },
             "value": "string",
             "valueMap": {
               "outerRange": {
@@ -440,6 +448,14 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
           "range": {
             "start": 1,
             "end": 9
+          },
+          "options": {
+            "escapable": {},
+            "quotes": [
+              "\"",
+              "'"
+            ],
+            "unquotable": {}
           },
           "value": "string",
           "valueMap": {
@@ -520,6 +536,14 @@ exports['nbt list() Parse "["string"]" 1'] = {
               "start": 1,
               "end": 9
             },
+            "options": {
+              "escapable": {},
+              "quotes": [
+                "\"",
+                "'"
+              ],
+              "unquotable": {}
+            },
             "value": "string",
             "valueMap": {
               "outerRange": {
@@ -539,6 +563,14 @@ exports['nbt list() Parse "["string"]" 1'] = {
           "range": {
             "start": 1,
             "end": 9
+          },
+          "options": {
+            "escapable": {},
+            "quotes": [
+              "\"",
+              "'"
+            ],
+            "unquotable": {}
           },
           "value": "string",
           "valueMap": {
@@ -739,6 +771,14 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               "start": 11,
               "end": 19
             },
+            "options": {
+              "escapable": {},
+              "quotes": [
+                "\"",
+                "'"
+              ],
+              "unquotable": {}
+            },
             "value": "string",
             "valueMap": {
               "outerRange": {
@@ -758,6 +798,14 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
           "range": {
             "start": 11,
             "end": 19
+          },
+          "options": {
+            "escapable": {},
+            "quotes": [
+              "\"",
+              "'"
+            ],
+            "unquotable": {}
           },
           "value": "string",
           "valueMap": {

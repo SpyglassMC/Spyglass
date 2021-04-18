@@ -57,6 +57,7 @@ export const ColorTokenTypes = Object.freeze([
 	'struct',
 	'type',
 	'type',
+	'variable',
 	// Below are custom types.
 	'error',
 	'literal',

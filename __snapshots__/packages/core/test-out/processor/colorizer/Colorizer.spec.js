@@ -60,16 +60,6 @@ exports['ColorToken fillGap() Fill for “"foo:qux"” 1'] = [
   }
 ]
 
-exports['ColorToken fillGap() Fill for “” 1'] = [
-  {
-    "range": {
-      "start": 0,
-      "end": 20
-    },
-    "type": "string"
-  }
-]
-
 exports['ColorToken fillGap() Fill for “bar” 1'] = [
   {
     "range": {
@@ -77,5 +67,15 @@ exports['ColorToken fillGap() Fill for “bar” 1'] = [
       "end": 8
     },
     "type": "keyword"
+  }
+]
+
+exports['ColorToken fillGap() Fill for “” 1'] = [
+  {
+    "range": {
+      "start": 0,
+      "end": 20
+    },
+    "type": "string"
   }
 ]

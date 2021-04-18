@@ -53,6 +53,21 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
               "start": 1,
               "end": 6
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -78,6 +93,21 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 1,
             "end": 6
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -116,6 +146,21 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
               "start": 8,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -141,6 +186,21 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 8,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "bar",
           "valueMap": {
@@ -604,6 +664,21 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
               "start": 1,
               "end": 6
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -635,6 +710,21 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 1,
             "end": 6
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -679,6 +769,21 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
               "start": 8,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -710,6 +815,21 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 8,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "bar",
           "valueMap": {
@@ -1291,6 +1411,21 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
               "start": 1,
               "end": 6
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -1316,6 +1451,21 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 1,
             "end": 6
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "foo",
           "valueMap": {
@@ -1354,6 +1504,21 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
               "start": 8,
               "end": 13
             },
+            "options": {
+              "escapable": {
+                "characters": [
+                  "b",
+                  "f",
+                  "n",
+                  "r",
+                  "t"
+                ],
+                "unicode": true
+              },
+              "quotes": [
+                "\""
+              ]
+            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -1379,6 +1544,21 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "range": {
             "start": 8,
             "end": 13
+          },
+          "options": {
+            "escapable": {
+              "characters": [
+                "b",
+                "f",
+                "n",
+                "r",
+                "t"
+              ],
+              "unicode": true
+            },
+            "quotes": [
+              "\""
+            ]
           },
           "value": "bar",
           "valueMap": {

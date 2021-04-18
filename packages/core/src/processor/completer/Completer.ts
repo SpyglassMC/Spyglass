@@ -1,7 +1,7 @@
-import type { AstNode } from '../node'
-import type { CompleterContext } from '../service'
-import type { RangeLike } from '../source'
-import { Range } from '../source'
+import type { AstNode } from '../../node'
+import type { CompleterContext } from '../../service'
+import type { RangeLike } from '../../source'
+import { Range } from '../../source'
 
 export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionItem[]
 

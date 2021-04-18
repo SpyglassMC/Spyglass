@@ -1,11 +1,11 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
+import type { ResourceLocationOptions } from '../../lib'
 import { resourceLocation } from '../../lib'
-import type { Options } from '../../lib/parser/resourceLocation'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('resourceLocation()', () => {
-	const suites: { options: Options, content: string }[] = [
+	const suites: { options: ResourceLocationOptions, content: string }[] = [
 		{ options: { category: 'function' }, content: '' },
 		{ options: { category: 'function' }, content: 'foo' },
 		{ options: { category: 'function' }, content: 'foo/bar' },

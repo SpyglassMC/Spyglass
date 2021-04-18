@@ -1,70 +1,20 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { Mutable, StringNode } from '../node'
+import type { Mutable, Quote, StringNode, StringOptions } from '../node'
+import { EscapeChar, EscapeTable } from '../node'
 import type { InfallibleParser } from '../parser'
 import { ErrorReporter, ParserContext } from '../service'
 import { IndexMap, Range, Source } from '../source'
-import type { Parser } from './Parser'
+import type { Parser, Result, Returnable } from './Parser'
 import { Failure } from './Parser'
 
-/** @internal Exported for test only. */
-export interface Options {
-	escapable?: {
-		/**
-		 * A list of characters that can be escaped. The current quote of the string and backslash (`\`)
-		 * will be added to this list automatically.
-		 */
-		characters?: EscapeChar[],
-		/**
-		 * Whether escapes like `\u####` where #### is a hexdecimal numeral are allowed.
-		 */
-		unicode?: boolean,
-		/**
-		 * Whether unknown characters can be escaped, which would just result in the character itself.
-		 */
-		allowUnknown?: boolean,
-	} | false,
-	/**
-	 * A list of characters that can serve as a quotation mark.
-	 */
-	quotes?: Quote[],
-	/**
-	 * Whether this string could be an unquoted string. If yes, specify the regex that the string has to satisfy.
-	 * Otherwise set this to `false`.
-	 */
-	unquotable?: RegExp | false,
-	/**
-	 * An optional parser that will be used to parse the content of the string.
-	 */
-	valueParser?: Parser,
-}
-
-const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 't'] as const
-type EscapeChar = typeof EscapeChars[number]
-
-export type Quote = "'" | '"'
-
-function isEscapeChar(expected: EscapeChar[] | undefined, c: string): c is EscapeChar {
-	return expected ? expected.includes(c as any) : false
-}
-
-const EscapeTable = new Map<EscapeChar, string>([
-	['"', '"'],
-	["'", "'"],
-	['\\', '\\'],
-	['b', '\b'],
-	['f', '\f'],
-	['n', '\n'],
-	['r', '\r'],
-	['t', '\t'],
-])
-
-export function string(options: Options): InfallibleParser<StringNode> {
+export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
 		const start = src.cursor
 		const ans: Mutable<StringNode> = {
 			type: 'string',
 			range: Range.create(src),
+			options,
 			value: '',
 			valueMap: IndexMap.create(),
 		}
@@ -77,7 +27,7 @@ export function string(options: Options): InfallibleParser<StringNode> {
 				const c = src.read()
 				if (options.escapable && c === '\\') {
 					const c2 = src.read()
-					if (c2 === '\\' || c2 === currentQuote || isEscapeChar(options.escapable.characters, c2)) {
+					if (c2 === '\\' || c2 === currentQuote || EscapeChar.is(options.escapable.characters, c2)) {
 						ans.valueMap.pairs.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(charStart, charStart + 2),
@@ -143,15 +93,8 @@ export function string(options: Options): InfallibleParser<StringNode> {
 
 		ans.valueMap.innerRange = Range.create(0, ans.value.length)
 
-		if (options.valueParser) {
-			const valueSrc = new Source(ans.value)
-			const valueCtx = ParserContext.create({
-				...ctx,
-				doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, ans.value),
-				err: new ErrorReporter(),
-			})
-			const valueResult = options.valueParser(valueSrc, valueCtx)
-			ctx.err.absorb(valueCtx.err, { map: ans.valueMap, doc: ctx.doc })
+		if (options.value?.parser) {
+			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
 				ans.valueNode = valueResult
@@ -162,6 +105,22 @@ export function string(options: Options): InfallibleParser<StringNode> {
 
 		return ans
 	}
+}
+
+export function parseStringValue<T extends Returnable>(parser: Parser<T>, value: string, map: IndexMap, ctx: ParserContext): Result<T> {
+	const valueSrc = new Source(value)
+	const valueCtx = ParserContext.create({
+		...ctx,
+		doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, value),
+		err: new ErrorReporter(),
+	})
+	const valueResult = parser(valueSrc, valueCtx)
+	/* istanbul ignore else */
+	if (valueResult !== Failure) {
+		ctx.err.absorb(valueCtx.err, { map, doc: ctx.doc })
+	}
+	// TODO: Mark trailing string as errors.
+	return valueResult
 }
 
 export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]+$/

@@ -5,6 +5,21 @@ exports['JSON string string Check ""foo"" 1'] = {
       "start": 0,
       "end": 5
     },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
+    },
     "value": "foo",
     "valueMap": {
       "outerRange": {
@@ -34,6 +49,21 @@ exports['JSON string string Check ""foo"bar"" 1'] = {
     "range": {
       "start": 0,
       "end": 5
+    },
+    "options": {
+      "escapable": {
+        "characters": [
+          "b",
+          "f",
+          "n",
+          "r",
+          "t"
+        ],
+        "unicode": true
+      },
+      "quotes": [
+        "\""
+      ]
     },
     "value": "foo",
     "valueMap": {

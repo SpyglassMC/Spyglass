@@ -74,6 +74,18 @@ exports['vanilla-resource util addBlockSymbols() Should add correctly 1'] = {
 }
 
 exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] = {
+  "attribute": {
+    "minecraft:generic.max_health": {
+      "category": "attribute",
+      "identifier": "minecraft:generic.max_health",
+      "declaration": [
+        {
+          "uri": "https://minecraft.fandom.com/wiki/Attribute#Attributes",
+          "fromDefaultLibrary": true
+        }
+      ]
+    }
+  },
   "activity": {
     "minecraft:core": {
       "category": "activity",
@@ -101,18 +113,6 @@ exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] =
       "declaration": [
         {
           "uri": "spyglassmc://vanilla-resource/registries.json",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "attribute": {
-    "minecraft:generic.max_health": {
-      "category": "attribute",
-      "identifier": "minecraft:generic.max_health",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Attribute#Attributes",
           "fromDefaultLibrary": true
         }
       ]

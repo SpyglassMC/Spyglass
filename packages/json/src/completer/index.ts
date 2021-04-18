@@ -1,6 +1,7 @@
-import type { AstNode, CompleterContext, RangeLike } from '@spyglassmc/core'
+import type { AstNode, CompleterContext, MetaRegistry, RangeLike } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, selectedNode } from '@spyglassmc/core'
-import type { JsonArrayExpectation, JsonExpectation, JsonNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
+import type { JsonArrayExpectation, JsonBooleanNode, JsonExpectation, JsonNode, JsonNullNode, JsonNumberNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
 import { JsonArrayNode, JsonObjectNode, JsonPairNode, JsonStringNode } from '../node'
 
 export const JsonTriggerCharacters = ['\n', ':', '"']
@@ -104,15 +105,6 @@ function stringCompletion(range: RangeLike, expectation: JsonStringExpectation, 
 			kind: CompletionKind.Value,
 			filterText: `"${v}"`,
 		}))
-	} else if (typeof expectation.pool === 'string') {
-		const symbols = Object.values(ctx.symbols.getVisibleSymbols(ctx.doc.uri, expectation.pool))
-			.filter(s => s)
-		if (symbols.length > 0) {
-			return symbols.map(s => CompletionItem.create(s!.identifier, range, `"${s!.identifier}"`, {
-				kind: CompletionKind.Method,
-				filterText: `"${s!.identifier}"`,
-			}))
-		}
 	}
 	return [simpleCompletion(range, SIMPLE_SNIPPETS[expectation.type])]
 }
@@ -133,4 +125,12 @@ function unique(completions: CompletionItem[]) {
 		}
 	})
 	return ans
+}
+
+export function register(meta: MetaRegistry): void {
+	meta.registerCompleter<JsonBooleanNode>('json:boolean', entry)
+	meta.registerCompleter<JsonNullNode>('json:null', entry)
+	meta.registerCompleter<JsonNumberNode>('json:number', entry)
+	meta.registerCompleter<JsonObjectNode>('json:object', entry)
+	meta.registerCompleter<JsonStringNode>('json:string', core.completer.string)
 }
