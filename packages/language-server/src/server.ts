@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as locales from '@spyglassmc/locales'
+import * as mcfunction from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as vr from '@spyglassmc/vanilla-resource'
@@ -19,6 +20,7 @@ if (process.argv.length === 2) {
 nbtdoc.initializeNbtdoc()
 nbt.initializeNbt()
 json.initializeJson()
+mcfunction.initializeMcfunction()
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities

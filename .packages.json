@@ -8,6 +8,7 @@
 		"dependencies": [
 			"core",
 			"locales",
+			"mcfunction",
 			"nbt"
 		]
 	},
@@ -16,16 +17,27 @@
 			"core",
 			"json",
 			"locales",
+			"mcfunction",
 			"nbt",
 			"nbtdoc",
 			"vanilla-resource"
 		]
 	},
 	"locales": {},
+	"mcfunction": {
+		"dependencies": [
+			"core",
+			"json",
+			"locales",
+			"nbt"
+		]
+	},
 	"nbt": {
 		"dependencies": [
 			"core",
+			"json",
 			"locales",
+			"mcfunction",
 			"nbtdoc"
 		]
 	},
