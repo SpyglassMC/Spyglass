@@ -42,6 +42,7 @@ export const FileCategories = Object.freeze([
 export type FileCategory = typeof FileCategories[number]
 
 export const MiscCategories = Object.freeze([
+	'attribute_modifier_uuid',
 	'bossbar',
 	'objective',
 	'score_holder',

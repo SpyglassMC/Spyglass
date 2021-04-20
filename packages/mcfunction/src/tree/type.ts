@@ -113,7 +113,6 @@ type DetailedArgumentTreeNode = ArgumentTreeNode & ({
 	parser: 'minecraft:nbt_tag',
 } | {
 	parser: 'minecraft:objective',
-	properties?: Partial<SymbolOptions>,
 } | {
 	parser: 'minecraft:objective_criteria',
 } | {
@@ -140,6 +139,7 @@ type DetailedArgumentTreeNode = ArgumentTreeNode & ({
 	parser: 'minecraft:time',
 } | {
 	parser: 'minecraft:uuid',
+	properties?: Partial<SymbolOptions>,
 } | {
 	parser: 'minecraft:vec2',
 } | {

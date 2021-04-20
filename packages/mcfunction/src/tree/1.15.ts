@@ -1,8 +1,6 @@
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from './type'
 
-// TODO : minecraft:(resource_location|nbt_compound_tag|nbt_path|nbt_tag|objective)
-
 const AdvancementTargets: PartialTreeNode = {
 	children: {
 		targets: {
@@ -48,43 +46,28 @@ const AdvancementTargets: PartialTreeNode = {
 	},
 }
 
-const DataSource: PartialTreeNode = {
+const DataSource = {
 	children: {
-		block: {
-			children: {
-				sourcePos: {
-					children: {
-						sourcePath: {
-							parser: 'minecraft:nbt_path',
-							// FIXME
-						},
-					},
-				},
-			},
-		},
-		entity: {
-			children: {
-				source: {
-					children: {
-						sourcePath: {
-							parser: 'minecraft:nbt_path',
-							// FIXME
-						},
-					},
-				},
-			},
-		},
 		storage: {
 			children: {
 				source: {
 					properties: {
 						category: 'storage',
 					},
-					children: {
-						sourcePath: {
-							parser: 'minecraft:nbt_path',
-							// FIXME
-						},
+				},
+			},
+		},
+	},
+}
+
+const DataTarget = {
+	children: {
+		storage: {
+			children: {
+				target: {
+					properties: {
+						category: 'storage',
+						accessType: SymbolAccessType.Write,
 					},
 				},
 			},
@@ -95,14 +78,6 @@ const DataSource: PartialTreeNode = {
 const DataModifySource: PartialTreeNode = {
 	children: {
 		from: DataSource,
-		value: {
-			children: {
-				value: {
-					parser: 'minecraft:nbt_tag',
-					// FIXME
-				},
-			},
-		},
 	},
 }
 
@@ -120,227 +95,14 @@ const DataModifyOperation: PartialTreeNode = {
 	},
 }
 
-// FIXME
 const ExecuteCondition: PartialTreeNode = {
 	children: {
-		data: {
-			type: 'literal',
-			children: {
-				block: {
-					type: 'literal',
-					children: {
-						sourcePos: {
-							type: 'argument',
-							parser: 'minecraft:block_pos',
-							children: {
-								path: {
-									type: 'argument',
-									parser: 'minecraft:nbt_path',
-									executable: true,
-									redirect: [
-										'execute',
-									],
-								},
-							},
-						},
-					},
-				},
-				entity: {
-					type: 'literal',
-					children: {
-						source: {
-							type: 'argument',
-							parser: 'minecraft:entity',
-							properties: {
-								amount: 'single',
-								type: 'entities',
-							},
-							children: {
-								path: {
-									type: 'argument',
-									parser: 'minecraft:nbt_path',
-									executable: true,
-									redirect: [
-										'execute',
-									],
-								},
-							},
-						},
-					},
-				},
-				storage: {
-					type: 'literal',
-					children: {
-						source: {
-							type: 'argument',
-							parser: 'minecraft:resource_location',
-							children: {
-								path: {
-									type: 'argument',
-									parser: 'minecraft:nbt_path',
-									executable: true,
-									redirect: [
-										'execute',
-									],
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+		data: DataSource,
 		predicate: {
-			type: 'literal',
 			children: {
 				predicate: {
-					type: 'argument',
-					parser: 'minecraft:resource_location',
-					executable: true,
-					redirect: [
-						'execute',
-					],
-				},
-			},
-		},
-		score: {
-			type: 'literal',
-			children: {
-				target: {
-					type: 'argument',
-					parser: 'minecraft:score_holder',
 					properties: {
-						amount: 'single',
-					},
-					children: {
-						targetObjective: {
-							type: 'argument',
-							parser: 'minecraft:objective',
-							children: {
-								'<': {
-									type: 'literal',
-									children: {
-										source: {
-											type: 'argument',
-											parser: 'minecraft:score_holder',
-											properties: {
-												amount: 'single',
-											},
-											children: {
-												sourceObjective: {
-													type: 'argument',
-													parser: 'minecraft:objective',
-													executable: true,
-													redirect: [
-														'execute',
-													],
-												},
-											},
-										},
-									},
-								},
-								'<=': {
-									type: 'literal',
-									children: {
-										source: {
-											type: 'argument',
-											parser: 'minecraft:score_holder',
-											properties: {
-												amount: 'single',
-											},
-											children: {
-												sourceObjective: {
-													type: 'argument',
-													parser: 'minecraft:objective',
-													executable: true,
-													redirect: [
-														'execute',
-													],
-												},
-											},
-										},
-									},
-								},
-								'=': {
-									type: 'literal',
-									children: {
-										source: {
-											type: 'argument',
-											parser: 'minecraft:score_holder',
-											properties: {
-												amount: 'single',
-											},
-											children: {
-												sourceObjective: {
-													type: 'argument',
-													parser: 'minecraft:objective',
-													executable: true,
-													redirect: [
-														'execute',
-													],
-												},
-											},
-										},
-									},
-								},
-								'>': {
-									type: 'literal',
-									children: {
-										source: {
-											type: 'argument',
-											parser: 'minecraft:score_holder',
-											properties: {
-												amount: 'single',
-											},
-											children: {
-												sourceObjective: {
-													type: 'argument',
-													parser: 'minecraft:objective',
-													executable: true,
-													redirect: [
-														'execute',
-													],
-												},
-											},
-										},
-									},
-								},
-								'>=': {
-									type: 'literal',
-									children: {
-										source: {
-											type: 'argument',
-											parser: 'minecraft:score_holder',
-											properties: {
-												amount: 'single',
-											},
-											children: {
-												sourceObjective: {
-													type: 'argument',
-													parser: 'minecraft:objective',
-													executable: true,
-													redirect: [
-														'execute',
-													],
-												},
-											},
-										},
-									},
-								},
-								matches: {
-									type: 'literal',
-									children: {
-										range: {
-											type: 'argument',
-											parser: 'minecraft:int_range',
-											executable: true,
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-							},
-						},
+						category: 'predicate',
 					},
 				},
 			},
@@ -348,321 +110,38 @@ const ExecuteCondition: PartialTreeNode = {
 	},
 }
 
-// FIXME
 const ExecuteStoreTarget: PartialTreeNode = {
-	type: 'literal',
 	children: {
-		block: {
-			type: 'literal',
-			children: {
-				targetPos: {
-					type: 'argument',
-					parser: 'minecraft:block_pos',
-					children: {
-						path: {
-							type: 'argument',
-							parser: 'minecraft:nbt_path',
-							children: {
-								byte: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								double: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								float: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								int: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								long: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								short: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
+		...DataTarget.children,
 		bossbar: {
-			type: 'literal',
 			children: {
 				id: {
-					type: 'argument',
-					parser: 'minecraft:resource_location',
-					children: {
-						max: {
-							type: 'literal',
-							redirect: [
-								'execute',
-							],
-						},
-						value: {
-							type: 'literal',
-							redirect: [
-								'execute',
-							],
-						},
-					},
-				},
-			},
-		},
-		entity: {
-			type: 'literal',
-			children: {
-				target: {
-					type: 'argument',
-					parser: 'minecraft:entity',
 					properties: {
-						amount: 'single',
-						type: 'entities',
-					},
-					children: {
-						path: {
-							type: 'argument',
-							parser: 'minecraft:nbt_path',
-							children: {
-								byte: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								double: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								float: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								int: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								long: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								short: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-							},
-						},
+						category: 'bossbar',
+						accessType: SymbolAccessType.Write,
 					},
 				},
 			},
 		},
-		score: {
-			type: 'literal',
+	},
+}
+
+const LootSource: PartialTreeNode = {
+	children: {
+		fish: {
 			children: {
-				targets: {
-					type: 'argument',
-					parser: 'minecraft:score_holder',
+				loot_table: {
 					properties: {
-						amount: 'multiple',
-					},
-					children: {
-						objective: {
-							type: 'argument',
-							parser: 'minecraft:objective',
-							redirect: [
-								'execute',
-							],
-						},
+						category: 'loot_table',
 					},
 				},
 			},
 		},
-		storage: {
-			type: 'literal',
+		loot: {
 			children: {
-				target: {
-					type: 'argument',
-					parser: 'minecraft:resource_location',
-					children: {
-						path: {
-							type: 'argument',
-							parser: 'minecraft:nbt_path',
-							children: {
-								byte: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								double: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								float: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								int: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								long: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-								short: {
-									type: 'literal',
-									children: {
-										scale: {
-											type: 'argument',
-											parser: 'brigadier:double',
-											redirect: [
-												'execute',
-											],
-										},
-									},
-								},
-							},
-						},
+				loot_table: {
+					properties: {
+						category: 'loot_table',
 					},
 				},
 			},
@@ -677,6 +156,20 @@ const ObjectiveWriteTargets: PartialTreeNode = {
 				objective: {
 					properties: {
 						accessType: SymbolAccessType.Write,
+					},
+				},
+			},
+		},
+	},
+}
+
+const RecipeTargets: PartialTreeNode = {
+	children: {
+		targets: {
+			children: {
+				recipe: {
+					properties: {
+						category: 'recipe',
 					},
 				},
 			},
@@ -699,13 +192,9 @@ const Sound: PartialTreeNode = {
  * 
  * The following parsers are patched with new properties:
  * - `minecraft:resource_location`
- * - `minecraft:nbt_compound_tag`
- * - `minecraft:nbt_path`
- * - `minecraft:nbt_tag`
- * - `minecraft:objective`
+ * - `spyglassmc:symbol`
  */
 export const Tree1_15: PartialRootTreeNode = {
-	type: 'root',
 	children: {
 		advancement: {
 			children: {
@@ -767,18 +256,14 @@ export const Tree1_15: PartialRootTreeNode = {
 		data: {
 			children: {
 				get: DataSource,
-				merge: DataSource, // FIXME: The storage here is being written.
+				merge: DataTarget,
 				modify: {
 					children: {
 						block: {
 							children: {
 								targetPos: {
 									children: {
-										targetPath: {
-											parser: 'minecraft:nbt_path',
-											// FIXME
-											children: DataModifyOperation.children,
-										},
+										targetPath: DataModifyOperation,
 									},
 								},
 							},
@@ -787,11 +272,7 @@ export const Tree1_15: PartialRootTreeNode = {
 							children: {
 								target: {
 									children: {
-										targetPath: {
-											parser: 'minecraft:nbt_path',
-											// FIXME
-											children: DataModifyOperation.children,
-										},
+										targetPath: DataModifyOperation,
 									},
 								},
 							},
@@ -804,11 +285,7 @@ export const Tree1_15: PartialRootTreeNode = {
 										accessType: SymbolAccessType.Write,
 									},
 									children: {
-										targetPath: {
-											parser: 'minecraft:nbt_path',
-											// FIXME
-											children: DataModifyOperation.children,
-										},
+										targetPath: DataModifyOperation,
 									},
 								},
 							},
@@ -845,59 +322,16 @@ export const Tree1_15: PartialRootTreeNode = {
 		list: {
 			permission: 0,
 		},
-		// FIXME: Extract
 		loot: {
 			children: {
 				give: {
 					children: {
-						players: {
-							children: {
-								fish: {
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-								loot: {
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-							},
-						},
+						players: LootSource,
 					},
 				},
 				insert: {
 					children: {
-						targetPos: {
-							children: {
-								fish: {
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-								loot: {
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-							},
-						},
+						targetPos: LootSource,
 					},
 				},
 				replace: {
@@ -908,46 +342,8 @@ export const Tree1_15: PartialRootTreeNode = {
 									children: {
 										slot: {
 											children: {
-												fish: {
-													children: {
-														loot_table: {
-															properties: {
-																category: 'loot_table',
-															},
-														},
-													},
-												},
-												loot: {
-													children: {
-														loot_table: {
-															properties: {
-																category: 'loot_table',
-															},
-														},
-													},
-												},
-												count: {
-													children: {
-														fish: {
-															children: {
-																loot_table: {
-																	properties: {
-																		category: 'loot_table',
-																	},
-																},
-															},
-														},
-														loot: {
-															children: {
-																loot_table: {
-																	properties: {
-																		category: 'loot_table',
-																	},
-																},
-															},
-														},
-													},
-												},
+												...LootSource.children,
+												count: LootSource,
 											},
 										},
 									},
@@ -960,46 +356,8 @@ export const Tree1_15: PartialRootTreeNode = {
 									children: {
 										slot: {
 											children: {
-												fish: {
-													children: {
-														loot_table: {
-															properties: {
-																category: 'loot_table',
-															},
-														},
-													},
-												},
-												loot: {
-													children: {
-														loot_table: {
-															properties: {
-																category: 'loot_table',
-															},
-														},
-													},
-												},
-												count: {
-													children: {
-														fish: {
-															children: {
-																loot_table: {
-																	properties: {
-																		category: 'loot_table',
-																	},
-																},
-															},
-														},
-														loot: {
-															children: {
-																loot_table: {
-																	properties: {
-																		category: 'loot_table',
-																	},
-																},
-															},
-														},
-													},
-												},
+												...LootSource.children,
+												count: LootSource,
 											},
 										},
 									},
@@ -1010,29 +368,7 @@ export const Tree1_15: PartialRootTreeNode = {
 				},
 				spawn: {
 					children: {
-						targetPos: {
-							children: {
-								fish: {
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-								loot: {
-									type: 'literal',
-									children: {
-										loot_table: {
-											properties: {
-												category: 'loot_table',
-											},
-										},
-									},
-								},
-							},
-						},
+						targetPos: LootSource,
 					},
 				},
 			},
@@ -1058,32 +394,8 @@ export const Tree1_15: PartialRootTreeNode = {
 		},
 		recipe: {
 			children: {
-				give: {
-					children: {
-						targets: {
-							children: {
-								recipe: {
-									properties: {
-										category: 'recipe',
-									},
-								},
-							},
-						},
-					},
-				},
-				take: {
-					children: {
-						targets: {
-							children: {
-								recipe: {
-									properties: {
-										category: 'recipe',
-									},
-								},
-							},
-						},
-					},
-				},
+				give: RecipeTargets,
+				take: RecipeTargets,
 			},
 		},
 		'save-all': {
@@ -1144,22 +456,6 @@ export const Tree1_15: PartialRootTreeNode = {
 						record: Sound,
 						voice: Sound,
 						weather: Sound,
-					},
-				},
-			},
-		},
-		summon: {
-			children: {
-				entity: {
-					children: {
-						pos: {
-							children: {
-								nbt: {
-									parser: 'minecraft:nbt_compound_tag',
-									// FIXME
-								},
-							},
-						},
 					},
 				},
 			},
