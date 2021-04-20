@@ -1,6 +1,6 @@
 import { Tree1_15 } from './1.15'
 import type { PartialRootTreeNode } from './type'
-import { mergeTree } from './util'
+import { merge } from './util'
 
 /**
  * Patch for Minecraft: Java Edition 1.16.5
@@ -9,7 +9,7 @@ import { mergeTree } from './util'
  * - `minecraft:resource_location`
  * - `minecraft:uuid`
  */
-export const Tree1_16: PartialRootTreeNode = mergeTree(Tree1_15, {
+export const Tree1_16: PartialRootTreeNode = merge(Tree1_15, {
 	children: {
 		attribute: {
 			children: {

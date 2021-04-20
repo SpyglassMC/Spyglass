@@ -1,6 +1,6 @@
 import { Tree1_16 } from './1.16'
 import type { PartialRootTreeNode, PartialTreeNode } from './type'
-import { mergeTree } from './util'
+import { merge } from './util'
 
 const ItemOperation: PartialTreeNode = {
 	children: {
@@ -60,7 +60,7 @@ const ItemOperation: PartialTreeNode = {
  * The following parsers are patched with new properties:
  * - `minecraft:resource_location`
  */
-export const Tree1_17: PartialRootTreeNode = mergeTree(Tree1_16, {
+export const Tree1_17: PartialRootTreeNode = merge(Tree1_16, {
 	children: {
 		item: {
 			children: {
@@ -84,7 +84,6 @@ export const Tree1_17: PartialRootTreeNode = mergeTree(Tree1_16, {
 				},
 			},
 		},
+		replaceitem: undefined,
 	},
 })
-
-delete Tree1_17.children?.replaceitem

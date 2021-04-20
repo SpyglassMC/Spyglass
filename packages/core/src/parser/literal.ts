@@ -4,14 +4,13 @@ import type { LiteralNode, LiteralOptions } from '../node/LiteralNode'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
-import type { Parser, Result } from './Parser'
-import { Failure } from './Parser'
+import type { InfallibleParser } from './Parser'
 
-export function literal(...pool: string[]): Parser<LiteralNode>
-export function literal(options: LiteralOptions): Parser<LiteralNode>
-export function literal(...param: [LiteralOptions] | string[]): Parser<LiteralNode> {
+export function literal(...pool: string[]): InfallibleParser<LiteralNode>
+export function literal(options: LiteralOptions): InfallibleParser<LiteralNode>
+export function literal(...param: [LiteralOptions] | string[]): InfallibleParser<LiteralNode> {
 	const options = getOptions(param)
-	return (src: Source, ctx: ParserContext): Result<LiteralNode> => {
+	return (src: Source, ctx: ParserContext): LiteralNode => {
 		const ans: Mutable<LiteralNode> = {
 			type: 'literal',
 			range: Range.create(src),
