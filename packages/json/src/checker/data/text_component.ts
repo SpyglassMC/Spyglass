@@ -1,4 +1,4 @@
-import * as nbt from '@spyglassmc/nbt'
+import { MetaRegistry } from '@spyglassmc/core'
 import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, special, string } from '../primitives'
 import { stringColor } from '../primitives/string'
 
@@ -25,7 +25,7 @@ const text_component_object = as('text_component', async (node, ctx) => record({
 			keybind: string, // TODO: keybind
 		},
 		nbt: () => ({
-			nbt: special('nbt', nbt.parser.compound),
+			nbt: special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound')),
 			...having(node, ctx, {
 				block: {
 					block: string, // TODO: block pos

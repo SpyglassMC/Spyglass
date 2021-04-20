@@ -20,7 +20,7 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 			parserErrors: [],
 		}
 
-		const parser = ctx.meta.getParser<NullableNode>(ctx.doc.languageId)
+		const parser = ctx.meta.getParserFromLanguageId<NullableNode>(ctx.doc.languageId)
 		const result = parser(src, ctx)
 		if (result !== Failure && result !== null) {
 			ans.children.push(result)

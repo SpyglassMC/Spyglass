@@ -1,4 +1,4 @@
-import { compound } from '@spyglassmc/nbt/lib/parser'
+import { MetaRegistry } from '@spyglassmc/core'
 import { any, as, boolean, dispatch, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, special, string } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 
@@ -17,7 +17,7 @@ export const item_predicate = as('item', record({
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
 	potion: opt(resource('potion')),
-	nbt: opt(special('nbt', compound)),
+	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
 	enchantments: opt(listOf(record({
 		enchantment: opt(resource('enchantment')),
 		levels: opt(int_bounds),
@@ -27,7 +27,7 @@ export const item_predicate = as('item', record({
 export const block_predicate = as('block', record({
 	block: opt(resource('block')),
 	tag: opt(resource('tag/block')),
-	nbt: opt(special('nbt', compound)),
+	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
 	state: opt(object(
 		string,
 		() => any([string, int_bounds, boolean]),
@@ -115,7 +115,7 @@ export const player_predicate = as('player', record({
 
 export const entity_predicate = as('entity', record({
 	type: opt(resource('entity_type', true)),
-	nbt: opt(special('nbt', compound)),
+	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
 	team: opt(literal('team')),
 	location: opt(location_predicate),
 	distance: opt(distance_predicate),

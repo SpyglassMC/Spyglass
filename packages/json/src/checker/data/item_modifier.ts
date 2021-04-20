@@ -1,4 +1,4 @@
-import { compound } from '@spyglassmc/nbt/lib/parser'
+import { MetaRegistry } from '@spyglassmc/core'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, special, string } from '../primitives'
 import { int_bounds, number_provider } from './common'
 import { loot_entry } from './loot_table'
@@ -102,7 +102,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				name: opt(text_component),
 			},
 			set_nbt: {
-				tag: special('nbt', compound),
+				tag: special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound')),
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({

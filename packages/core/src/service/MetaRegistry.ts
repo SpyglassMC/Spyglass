@@ -1,5 +1,5 @@
 import type { AstNode } from '../node'
-import type { EntryParser, NullableNode } from '../parser'
+import type { EntryParser, NullableNode, Parser } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
 import { checker, colorizer, completer } from '../processor'
 import type { UriBinder } from '../symbol'
@@ -27,6 +27,7 @@ export class MetaRegistry {
 	readonly #checkers = new Map<string, Checker<any>>()
 	readonly #colorizers = new Map<string, Colorizer<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
+	readonly #parsers = new Map<string, Parser<any>>()
 
 	/**
 	 * Registers a new language.
@@ -71,17 +72,6 @@ export class MetaRegistry {
 		return undefined
 	}
 
-	/**
-	 * @returns The corresponding `Parser` for the language ID.
-	 * @throws If there's no such language in the registry.
-	 */
-	public getParser<N extends NullableNode>(languageID: string): EntryParser<N> {
-		if (this.#languages.has(languageID)) {
-			return this.#languages.get(languageID)!.parser as unknown as EntryParser<N>
-		}
-		throw new Error(`There is no parser registered for language ID '${languageID}'`)
-	}
-
 	public hasChecker<N extends AstNode>(type: N['type']): boolean {
 		return this.#checkers.has(type)
 	}
@@ -114,6 +104,33 @@ export class MetaRegistry {
 	public shouldComplete(languageID: string, triggerCharacter?: string): boolean {
 		const language = this.#languages.get(languageID)
 		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
+	}
+
+	public hasParser<N extends AstNode>(type: N['type']): boolean {
+		return this.#parsers.has(type)
+	}
+	public getParser<N extends AstNode>(type: N['type']): Parser<N> {
+		const ans = this.#parsers.get(type)
+		if (!ans) {
+			throw new Error(`There is no parser registered for node type '${type}'`)
+		}
+		return ans
+	}
+	public getParserLazily<N extends AstNode>(type: N['type']): UnresolvedLazy<Parser<N>> {
+		return Lazy.create(() => this.getParser(type))
+	}
+	public registerParser<N extends AstNode>(type: N['type'], parser: Parser<N>): void {
+		this.#parsers.set(type, parser)
+	}
+	/**
+	 * @returns The corresponding `Parser` for the language ID.
+	 * @throws If there's no such language in the registry.
+	 */
+	public getParserFromLanguageId<N extends NullableNode>(languageID: string): EntryParser<N> {
+		if (this.#languages.has(languageID)) {
+			return this.#languages.get(languageID)!.parser as unknown as EntryParser<N>
+		}
+		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {
@@ -156,4 +173,28 @@ export class MetaRegistry {
 		}
 	}
 	private static _instance: MetaRegistry
+}
+
+const LazyDiscriminator = Symbol('LazyDiscriminator')
+
+type UnresolvedLazy<T> = {
+	discriminator: typeof LazyDiscriminator,
+	getter: (this: void) => T,
+}
+export type Lazy<T> = T | UnresolvedLazy<T>
+export namespace Lazy {
+	export function create<T>(getter: (this: void) => T): UnresolvedLazy<T> {
+		return {
+			discriminator: LazyDiscriminator,
+			getter,
+		}
+	}
+
+	export function isUnresolved<T = any>(lazy: any): lazy is UnresolvedLazy<T> {
+		return lazy?.discriminator === LazyDiscriminator
+	}
+
+	export function resolve<T>(lazy: Lazy<T>): T {
+		return isUnresolved(lazy) ? lazy.getter() : lazy
+	}
 }

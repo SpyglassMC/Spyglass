@@ -14,6 +14,8 @@ export function initializeNbt() {
 			extensions: ['.snbt'],
 			parser: parser.entry,
 		})
+	
+		meta.registerParser<NbtCompoundNode>('nbt:compound', parser.compound)
 
 		meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)
 		meta.registerColorizer<NbtShortNode>('nbt:short', core.colorizer.number)
