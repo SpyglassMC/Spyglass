@@ -2,7 +2,7 @@ import { MetaRegistry } from '@spyglassmc/core'
 import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, special, string } from '../primitives'
 import { stringColor } from '../primitives/string'
 
-const text_component_object = as('text_component', async (node, ctx) => record({
+const text_component_object = as('text_component', (node, ctx) => record({
 	...having(node, ctx, {
 		text: {
 			text: string,
@@ -51,10 +51,7 @@ const text_component_object = as('text_component', async (node, ctx) => record({
 	clickEvent: opt(dispatch('action',
 		(action) => record({
 			action: literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
-			value: async (node, ctx) => {
-				if (!string(node, ctx)) return
-				// TODO: command validation
-			},
+			value: string, // TODO: validation
 		})
 	)),
 	hoverEvent: opt(dispatch('action',

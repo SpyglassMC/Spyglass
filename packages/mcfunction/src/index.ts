@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
+import * as parser from './parser'
 
-declare const parser: any
+export * as parser from './parser'
 
 /* istanbul ignore next */
 export function initializeMcfunction() {

@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@spyglassmc/mcfunction.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/mcfunction)
 
-This package contains parsers amd processors for [mcfunction][mcfunction].
+This package contains parsers and processors for [mcfunction][mcfunction].
 
 # Usage
 

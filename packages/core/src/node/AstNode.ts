@@ -1,5 +1,5 @@
 import type { Color } from '../processor'
-import type { Range } from '../source'
+import { Range } from '../source'
 import type { Symbol } from '../symbol'
 
 export interface AstNode {
@@ -15,6 +15,12 @@ export interface AstNode {
 	 * An actual color that this node represents.
 	 */
 	color?: Color,
+}
+export namespace AstNode {
+	export function is(obj: unknown): obj is AstNode {
+		return typeof (obj as AstNode).type === 'string'
+			&& Range.is((obj as AstNode).range)
+	}
 }
 
 export type Mutable<N> = N extends AstNode ? {

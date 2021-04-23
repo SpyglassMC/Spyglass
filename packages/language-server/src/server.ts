@@ -119,7 +119,11 @@ connection.onInitialized(async () => {
 		logger.error(`[getVanillaResources] ${formatError(e)}`)
 	}
 
-	initializeRootWatcher()
+	try {
+		initializeRootWatcher()
+	} catch (e) {
+		logger.error(`[initializeRootWatcher] ${formatError(e)}`)
+	}
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {

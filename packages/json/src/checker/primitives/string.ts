@@ -1,6 +1,6 @@
-import type { AllCategory, Parser, ResourceLocationCategory, Returnable, TaggableResourceLocationCategory } from '@spyglassmc/core'
+import type { AllCategory, Checker, Parser, ResourceLocationCategory, Returnable, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { Color, Failure, Lazy, Range } from '@spyglassmc/core'
+import { AstNode, Color, Failure, Lazy, Range } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { JsonExpectation, JsonNode } from '../../node'
 import { JsonStringNode } from '../../node'
@@ -69,18 +69,21 @@ export function stringColor(): JsonChecker {
 		return Color.fromCompositeInt(value)
 	}
 
-	return special('color', parser, { pool: ColorNames }, 'color')
+	return special('color', parser, undefined, { pool: ColorNames }, 'color')
 }
 
-export function special(name: string | string[], parser: Lazy<Parser<Returnable>>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
+export function special(name: string | string[], parser?: Lazy<Parser<Returnable>>, checker?: Lazy<Checker<AstNode>>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
-		} else {
+		} else if (parser) {
 			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx)
 			if (result !== Failure) {
 				node[store] = result as any
+				if (checker && AstNode.is(result)) {
+					Lazy.resolve(checker)(result, ctx)
+				}
 			}
 		}
 	}
