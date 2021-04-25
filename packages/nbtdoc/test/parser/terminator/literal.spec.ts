@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { keyword, literal, marker, punctuation } from '../../../lib'
 
-describe('keyword()', () => {
+describe('nbtdoc keyword()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: 'f' },
@@ -19,7 +19,7 @@ describe('keyword()', () => {
 	}
 })
 
-describe('literal()', () => {
+describe('nbtdoc literal()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: 'f' },
@@ -35,7 +35,7 @@ describe('literal()', () => {
 	}
 })
 
-describe('marker()', () => {
+describe('nbtdoc marker()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: ';' },
@@ -50,7 +50,7 @@ describe('marker()', () => {
 	}
 })
 
-describe('punctuation()', () => {
+describe('nbtdoc punctuation()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: ';' },

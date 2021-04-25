@@ -17,6 +17,7 @@ export interface AstNode {
 	color?: Color,
 }
 export namespace AstNode {
+	/* istanbul ignore next */
 	export function is(obj: unknown): obj is AstNode {
 		return typeof (obj as AstNode).type === 'string'
 			&& Range.is((obj as AstNode).range)

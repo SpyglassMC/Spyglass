@@ -181,7 +181,13 @@ type UnresolvedLazy<T> = {
 	discriminator: typeof LazyDiscriminator,
 	getter: (this: void) => T,
 }
-export type Lazy<T> = T | UnresolvedLazy<T>
+type ResolvedLazy<T> = {
+	discriminator: typeof LazyDiscriminator,
+	getter: (this: void) => T,
+	value: T,
+}
+type ComplexLazy<T> = ResolvedLazy<T> | UnresolvedLazy<T>
+export type Lazy<T> = T | ComplexLazy<T>
 export namespace Lazy {
 	export function create<T>(getter: (this: void) => T): UnresolvedLazy<T> {
 		return {
@@ -190,11 +196,15 @@ export namespace Lazy {
 		}
 	}
 
-	export function isUnresolved<T = any>(lazy: any): lazy is UnresolvedLazy<T> {
+	export function isComplex<T = any>(lazy: any): lazy is ComplexLazy<T> {
 		return lazy?.discriminator === LazyDiscriminator
 	}
 
+	export function isUnresolved<T = any>(lazy: any): lazy is UnresolvedLazy<T> {
+		return isComplex(lazy) && !('value' in lazy)
+	}
+
 	export function resolve<T>(lazy: Lazy<T>): T {
-		return isUnresolved(lazy) ? lazy.getter() : lazy
+		return isUnresolved(lazy) ? (lazy as ResolvedLazy<T>).value = lazy.getter() : lazy
 	}
 }

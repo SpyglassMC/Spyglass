@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@spyglassmc/nbt.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/nbt)
 
-This package contains parsers amd processors for [stringified NBT][nbt-format].
+This package contains parsers and processors for [stringified NBT][nbt-format].
 
 # Contributions
 

@@ -43,15 +43,31 @@ connection.onInitialize(async params => {
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
 
-	service = new core.Service({
-		errorPublisher: toCore.errorPublisher(connection),
-		isDebugging: true,
-		logger,
-		roots: workspaceFolders.map(w => w.uri),
-		rootsWatched: true,
-	})
+	try {
+		const resources = await vr.getVanillaResources('latest snapshot', logger)
 
-	const result: ls.InitializeResult = {
+		mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands)
+
+		service = new core.Service({
+			errorPublisher: toCore.errorPublisher(connection),
+			isDebugging: true,
+			logger,
+			roots: workspaceFolders.map(w => w.uri),
+			rootsWatched: true,
+		})
+
+		vr.registerSymbols(resources, service.symbols)
+	} catch (e) {
+		logger.error(`[getVanillaResources] ${formatError(e)}`)
+	}
+
+	try {
+		initializeRootWatcher()
+	} catch (e) {
+		logger.error(`[initializeRootWatcher] ${formatError(e)}`)
+	}
+
+	return {
 		capabilities: {
 			colorProvider: {
 				documentSelector: null,
@@ -84,8 +100,6 @@ connection.onInitialize(async params => {
 			},
 		},
 	}
-
-	return result
 })
 
 function initializeRootWatcher() {
@@ -112,18 +126,7 @@ function initializeRootWatcher() {
 }
 
 connection.onInitialized(async () => {
-	try {
-		const resources = await vr.getVanillaResources('latest snapshot', logger)
-		vr.registerSymbols(resources, service.symbols)
-	} catch (e) {
-		logger.error(`[getVanillaResources] ${formatError(e)}`)
-	}
 
-	try {
-		initializeRootWatcher()
-	} catch (e) {
-		logger.error(`[initializeRootWatcher] ${formatError(e)}`)
-	}
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {

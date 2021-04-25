@@ -22,8 +22,8 @@ const NumeralPatterns: (
 		{ pattern: /^[-+]?(?:0|[1-9][0-9]*)$/, type: 'nbt:int', hasSuffix: false, group: Group.IntegerAlike, min: BigInt('-2147483648'), max: BigInt('2147483647') },
 		{ pattern: /^[-+]?(?:0|[1-9][0-9]*)l$/i, type: 'nbt:long', hasSuffix: true, group: Group.IntegerAlike, min: BigInt('-9223372036854775808'), max: BigInt('9223372036854775807') },
 		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?f$/i, type: 'nbt:float', hasSuffix: true, group: Group.FloatAlike, min: -FloatMaximum, max: FloatMaximum },
-		{ pattern: /^[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?$/i, type: 'nbt:double', hasSuffix: false, group: Group.FloatAlike },
-		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d$/i, type: 'nbt:double', hasSuffix: true, group: Group.FloatAlike },
+		{ pattern: /^[-+]?(?:[0-9]+\.|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?$/i, type: 'nbt:double', hasSuffix: false, group: Group.FloatAlike, min: -Number.MAX_VALUE, max: Number.MAX_VALUE },
+		{ pattern: /^[-+]?(?:[0-9]+\.?|[0-9]*\.[0-9]+)(?:e[-+]?[0-9]+)?d$/i, type: 'nbt:double', hasSuffix: true, group: Group.FloatAlike, min: -Number.MAX_VALUE, max: Number.MAX_VALUE },
 		{ pattern: /^true$/i, type: 'nbt:byte', value: BigInt(1), group: Group.Boolean },
 		{ pattern: /^false$/i, type: 'nbt:byte', value: BigInt(0), group: Group.Boolean },
 	]
@@ -57,7 +57,7 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (src: core.Sou
 			const { result: numeralResult, updateSrcAndCtx: updateNumeral } = core.attempt(numeralParser, src, ctx)
 			if (isOutOfRange) {
 				ctx.err.report(
-					localize('nbt.parser.number.out-of-range', 
+					localize('nbt.parser.number.out-of-range',
 						localizeTag(e.type), localize('nbt.node.string'), e.min!, e.max!,
 					),
 					unquotedResult,

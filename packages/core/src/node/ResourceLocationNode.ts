@@ -48,10 +48,6 @@ export namespace ResourceLocationNode {
 		return (obj as ResourceLocationNode).type === 'resource_location'
 	}
 
-	export function inferPathRanges(node: ResourceLocationNode): Range[] {
-		throw 'TODO'
-	}
-
 	export function toString(node: ResourceLocationNode, type: 'origin' | 'full' | 'short' = 'origin'): string {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string

@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/@spyglassmc/nbtdoc.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/nbtdoc)
 
-This package contains parsers amd processors for [the `nbtdoc` language][nbtdoc-format] designed by [Yurihaia][yurihaia].
+This package contains parsers and processors for [the `nbtdoc` language][nbtdoc-format] designed by [Yurihaia][yurihaia].
 
 # Contributions
 

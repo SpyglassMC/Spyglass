@@ -22,8 +22,8 @@ interface InfallibleAttemptResult<N extends Returnable = AstNode> extends Attemp
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
  */
-export function attempt<N extends Returnable = AstNode>(parser: InfallibleParser<N>, src: Source, ctx: ParserContext): InfallibleAttemptResult<N> 
-export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> 
+export function attempt<N extends Returnable = AstNode>(parser: InfallibleParser<N>, src: Source, ctx: ParserContext): InfallibleAttemptResult<N>
+export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N>
 export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
 	const tmpCtx = ParserContext.create({
@@ -70,7 +70,7 @@ export function sequence<CN extends AstNode>(parsers: SP<CN>[], parseGap?: Infal
 export function sequence<CN1 extends AstNode>(parsers: [SP<CN1>]): Parser<SequenceUtil<CN1>>
 export function sequence<CN1 extends AstNode, CN2 extends AstNode>(parsers: [SP<CN1>, SP<CN2>]): Parser<SequenceUtil<CN1 | CN2>>
 export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>]): Parser<SequenceUtil<CN1 | CN2 | CN3>>
-export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode, CN4 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>, SP<CN4>]): Parser<SequenceUtil<CN1 | CN2 | CN3 | CN4>>        
+export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode, CN4 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>, SP<CN4>]): Parser<SequenceUtil<CN1 | CN2 | CN3 | CN4>>
 export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode, CN4 extends AstNode, CN5 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>, SP<CN4>, SP<CN5>]): Parser<SequenceUtil<CN1 | CN2 | CN3 | CN4 | CN5>>
 export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode, CN4 extends AstNode, CN5 extends AstNode, CN6 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>, SP<CN4>, SP<CN5>, SP<CN6>]): Parser<SequenceUtil<CN1 | CN2 | CN3 | CN4 | CN5 | CN6>>
 export function sequence<CN1 extends AstNode, CN2 extends AstNode, CN3 extends AstNode, CN4 extends AstNode, CN5 extends AstNode, CN6 extends AstNode, CN7 extends AstNode>(parsers: [SP<CN1>, SP<CN2>, SP<CN3>, SP<CN4>, SP<CN5>, SP<CN6>, SP<CN7>]): Parser<SequenceUtil<CN1 | CN2 | CN3 | CN4 | CN5 | CN6 | CN7>>
@@ -174,7 +174,7 @@ export function any<N1 extends Returnable>(parsers: [Parser<N1>]): Parser<N1>
 export function any<N1 extends Returnable, N2 extends Returnable>(parsers: [Parser<N1>, Parser<N2>]): Parser<N1 | N2>
 export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>]): Parser<N1 | N2 | N3>
 export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>]): Parser<N1 | N2 | N3 | N4>
-export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable, N5 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>, Parser<N5>]): Parser<N1 | N2 | N3 | N4 | N5>        
+export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable, N5 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>, Parser<N5>]): Parser<N1 | N2 | N3 | N4 | N5>
 export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable, N5 extends Returnable, N6 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>, Parser<N5>, Parser<N6>]): Parser<N1 | N2 | N3 | N4 | N5 | N6>
 export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable, N5 extends Returnable, N6 extends Returnable, N7 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>, Parser<N5>, Parser<N6>, Parser<N7>]): Parser<N1 | N2 | N3 | N4 | N5 | N6 | N7>
 export function any<N1 extends Returnable, N2 extends Returnable, N3 extends Returnable, N4 extends Returnable, N5 extends Returnable, N6 extends Returnable, N7 extends Returnable, N8 extends Returnable>(parsers: [Parser<N1>, Parser<N2>, Parser<N3>, Parser<N4>, Parser<N5>, Parser<N6>, Parser<N7>, Parser<N8>]): Parser<N1 | N2 | N3 | N4 | N5 | N6 | N7 | N8>
@@ -197,13 +197,13 @@ export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N> {
 /**
  * @returns A parser that fails when the passed-in parser didn't move the cursor at all.
  */
-export function fail<T extends Returnable>(parser: InfallibleParser<T>): Parser<T> {
+export function failOnEmpty<T extends Returnable>(parser: InfallibleParser<T>): Parser<T> {
 	return (src, ctx) => {
 		const start = src.cursor
-		const result = attempt(parser, src, ctx)
-		if (result.endCursor - start > 0) {
-			result.updateSrcAndCtx()
-			return result.result
+		const { endCursor, updateSrcAndCtx, result } = attempt(parser, src, ctx)
+		if (endCursor - start > 0) {
+			updateSrcAndCtx()
+			return result
 		}
 		return Failure
 	}

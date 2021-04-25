@@ -48,6 +48,10 @@ export class Source {
 		return this.cursor + length <= this.string.length
 	}
 
+	canReadInLine() {
+		return this.canRead() && this.peek() !== CR && this.peek() !== LF
+	}
+
 	/**
 	 * Peeks a substring from the current cursor.
 	 * @param length The length of the substring. @default 1
@@ -167,6 +171,13 @@ export class Source {
 	skipUntilOrEnd(...terminators: string[]): this {
 		this.readUntilOrEnd(...terminators)
 		return this
+	}
+
+	readUntilLineEnd() {
+		return this.readUntilOrEnd(CR, LF)
+	}
+	skipUntilLineEnd() {
+		return this.skipUntilOrEnd(CR, LF)
 	}
 
 	readRemaining(): string {

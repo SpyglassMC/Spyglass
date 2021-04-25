@@ -1,9 +1,9 @@
-exports['keyword() Parse "" 1'] = {
+exports['nbtdoc keyword() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['keyword() Parse "f" 1'] = {
+exports['nbtdoc keyword() Parse "f" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -24,7 +24,7 @@ exports['keyword() Parse "f" 1'] = {
   ]
 }
 
-exports['keyword() Parse "foo something else;" 1'] = {
+exports['nbtdoc keyword() Parse "foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -36,7 +36,7 @@ exports['keyword() Parse "foo something else;" 1'] = {
   "errors": []
 }
 
-exports['keyword() Parse "foo" 1'] = {
+exports['nbtdoc keyword() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -48,7 +48,7 @@ exports['keyword() Parse "foo" 1'] = {
   "errors": []
 }
 
-exports['keyword() Parse "foobar" 1'] = {
+exports['nbtdoc keyword() Parse "foobar" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -69,7 +69,7 @@ exports['keyword() Parse "foobar" 1'] = {
   ]
 }
 
-exports['literal() Parse "" 1'] = {
+exports['nbtdoc literal() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -90,7 +90,7 @@ exports['literal() Parse "" 1'] = {
   ]
 }
 
-exports['literal() Parse "f" 1'] = {
+exports['nbtdoc literal() Parse "f" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -111,7 +111,7 @@ exports['literal() Parse "f" 1'] = {
   ]
 }
 
-exports['literal() Parse "foo something else;" 1'] = {
+exports['nbtdoc literal() Parse "foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -123,7 +123,7 @@ exports['literal() Parse "foo something else;" 1'] = {
   "errors": []
 }
 
-exports['literal() Parse "foo" 1'] = {
+exports['nbtdoc literal() Parse "foo" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -135,7 +135,7 @@ exports['literal() Parse "foo" 1'] = {
   "errors": []
 }
 
-exports['literal() Parse "foobar" 1'] = {
+exports['nbtdoc literal() Parse "foobar" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -156,12 +156,12 @@ exports['literal() Parse "foobar" 1'] = {
   ]
 }
 
-exports['marker() Parse "" 1'] = {
+exports['nbtdoc marker() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['marker() Parse ";" 1'] = {
+exports['nbtdoc marker() Parse ";" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -173,7 +173,7 @@ exports['marker() Parse ";" 1'] = {
   "errors": []
 }
 
-exports['marker() Parse ";foo" 1'] = {
+exports['nbtdoc marker() Parse ";foo" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -185,7 +185,7 @@ exports['marker() Parse ";foo" 1'] = {
   "errors": []
 }
 
-exports['marker() Parse ";↓something else;" 1'] = {
+exports['nbtdoc marker() Parse ";↓something else;" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -197,7 +197,7 @@ exports['marker() Parse ";↓something else;" 1'] = {
   "errors": []
 }
 
-exports['punctuation() Parse "" 1'] = {
+exports['nbtdoc punctuation() Parse "" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -218,7 +218,7 @@ exports['punctuation() Parse "" 1'] = {
   ]
 }
 
-exports['punctuation() Parse ";" 1'] = {
+exports['nbtdoc punctuation() Parse ";" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -230,7 +230,7 @@ exports['punctuation() Parse ";" 1'] = {
   "errors": []
 }
 
-exports['punctuation() Parse ";foo" 1'] = {
+exports['nbtdoc punctuation() Parse ";foo" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
@@ -242,7 +242,7 @@ exports['punctuation() Parse ";foo" 1'] = {
   "errors": []
 }
 
-exports['punctuation() Parse ";↓something else;" 1'] = {
+exports['nbtdoc punctuation() Parse ";↓something else;" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
     "range": {
