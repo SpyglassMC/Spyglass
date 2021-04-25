@@ -171,6 +171,17 @@ export interface SymbolMetadata {
 	 * independent with each other. e.g. advancements and functions.
 	 */
 	category: string,
+
+	// Other information.
+	/**
+	 * The documentation for this `Symbol`. May be edited by doc comments.
+	 */
+	doc?: string,
+	members?: SymbolMap,
+	relations?: {
+		aliasOf?: Symbol,
+		[relationship: string]: Symbol | undefined,
+	},
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
 	 * subcategories may be used interchangeablely in certain context. e.g. both 
@@ -179,8 +190,6 @@ export interface SymbolMetadata {
 	 * other than `function` (like `nbtdoc`), and with different subcategories.
 	 */
 	subcategory?: string,
-
-	// Other information.
 	/**
 	 * The visibility of this `Symbol`. Defaults to `SymbolVisibility.Public`.
 	 */
@@ -189,21 +198,12 @@ export interface SymbolMetadata {
 	 * An array of regular expressions in string form. Only exists if `visibility` is set to `SymbolVisibility.Restricted`.
 	 */
 	visibilityRestriction?: string[],
-	/**
-	 * The documentation for this `Symbol`. May be edited by doc comments.
-	 */
-	doc?: string,
-	relations?: {
-		aliasOf?: Symbol,
-		[relationship: string]: Symbol | undefined,
-	},
 }
 
-export const SymbolUsages = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
-export type SymbolUsage = typeof SymbolUsages[number]
+export const SymbolUsageTypes = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
+export type SymbolUsageType = typeof SymbolUsageTypes[number]
 
-export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsage, SymbolLocation[]>> {
-	members?: SymbolMap,
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
 }
 
 export interface SymbolLocationMetadata {
@@ -223,21 +223,40 @@ export interface SymbolLocationMetadata {
 
 export interface SymbolLocation extends SymbolLocationMetadata {
 	uri: string,
+	/**
+	 * The range of this symbol usage. It should contain exactly the symbol identifier itself, with no
+	 * whitespaces whatsoever included.
+	 * 
+	 * Does not exist for non-file URIs.
+	 */
 	range?: Range,
+	/**
+	 * The same range as `range`, but in `PositionRange` form.
+	 * 
+	 * Does not exist for non-file URIs.
+	 */
 	posRange?: PositionRange,
 	/**
-	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
+	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
+	 * nbtdoc code,
 	 * ```nbtdoc
 	 * 0123456789012345
 	 * compound Foo {}
 	 * ```
 	 * 
 	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
+	 * 
+	 * Does not exist for non-file URIs.
 	 */
 	fullRange?: Range,
+	/**
+	 * The same range as `fullRange`, but in `PositionRange` form.
+	 * 
+	 * Does not exist for non-file URIs.
+	 */
 	fullPosRange?: PositionRange,
 	/**
-	 * Whether this Location is contributed by a `UriBinder`.
+	 * Whether this usage is contributed by a `UriBinder`.
 	 */
 	isUriBound?: true,
 }

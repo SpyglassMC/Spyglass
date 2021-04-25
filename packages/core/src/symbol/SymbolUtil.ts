@@ -3,8 +3,8 @@ import type { AstNode } from '../node'
 import type { Logger } from '../service'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
-import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsage } from './Symbol'
-import { SymbolLocation, SymbolUsages, SymbolVisibility } from './Symbol'
+import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
+import { SymbolLocation, SymbolUsageTypes, SymbolVisibility } from './Symbol'
 
 // I wrote a lot of comments in this file to pretend that I know what I am doing.
 // For the record, I absolutely do not understand any piece of this monster.
@@ -50,110 +50,51 @@ export class SymbolUtil {
 	}
 
 	/**
-	 * Enters a symbol into the symbol table.
-	 * 
-	 * If the symbol already exists, this method tries to merge the two data.
-	 * 
-	 * @returns The entered symbol. If the symbol already existed before entering, this method returns the same reference of the object.
-	 */
-	enter(doc: TextDocument, symbol: SymbolAddition): Symbol {
-		const stack = this.getStack(doc.uri)
-		const table = SymbolUtil.getTable(stack, this.global, symbol.visibility)
-		return SymbolUtil.enterTable(table, symbol, doc, this.isUriBinding)
-	}
-
-	/**
-	 * Enters a symbol into the symbol table by only providing the URI.
-	 * 
-	 * If the symbol already exists, this method tries to merge the two data.
-	 * 
-	 * @returns The entered symbol.
-	 */
-	enterForUri(uri: string, symbol: Omit<SymbolAddition, 'range' | 'fullRange'>): Symbol
-	enterForUri(uri: string, symbol: SymbolAddition): Symbol {
-		symbol.range = Range.create(0)
-		delete symbol.fullRange
-		const doc = TextDocument.create(uri, '', 0, '')
-		const stack = this.getStack(doc.uri)
-		const table = SymbolUtil.getTable(stack, this.global, symbol.visibility)
-		return SymbolUtil.enterTable(table, symbol, doc, this.isUriBinding)
-	}
-
-	/**
-	 * Enters a `Symbol` as a member of the `parent`.
-	 * 
-	 * @returns The entered symbol.
-	 */
-	enterMember(doc: TextDocument, parent: Symbol, symbol: SymbolAddition): Symbol {
-		const members: SymbolMap = parent.members ??= {}
-		return SymbolUtil.enterMap(members, symbol, doc, this.isUriBinding)
-	}
-
-	/**
-	 * Enters a `Symbol` as a member of the `Symbol` specified by `path`.
-	 * 
-	 * @throws When the `Symbol` specified by `path` doesn't exist.
-	 * 
-	 * @returns The entered symbol.
-	 */
-	lookupAndEnterMember(doc: TextDocument, category: AllCategory, path: string[], symbol: SymbolAddition): Symbol
-	lookupAndEnterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol
-	lookupAndEnterMember(doc: TextDocument, category: string, path: string[], symbol: SymbolAddition): Symbol {
-		if (path.length === 0) {
-			return this.enter(doc, symbol)
-		}
-		const parent = this.lookup(category, path, doc.uri)
-		if (!parent) {
-			throw new Error(`Unable to enter '${JSON.stringify(symbol)}' as a member of '${JSON.stringify(path)}' as that path doesn't exist`)
-		}
-		return this.enterMember(doc, parent.symbol, symbol)
-	}
-
-	/**
 	 * @returns An object:
 	 * - `symbol`: The `Symbol` corresponding to the `path`.
-	 * - `visible`: If it is visible in `uri`. This will be `null` if it is undeterminable.
+	 * - `symbol`: The `Symbol` corresponding to the `path`.
+	 * - `visible`: If it is visible in `uri`. This will be `null` if it is undeterminable (e.g.
+	 * no `uri` is passed-in, and the visibility is `Restricted`).
 	 * 
 	 * Or `null` if no such symbol can be found.
 	 */
-	lookup(category: AllCategory, path: string[]): { symbol: Symbol, visible: boolean | null } | null
-	lookup(category: string, path: string[]): { symbol: Symbol, visible: boolean | null } | null
-	lookup(category: AllCategory, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
-	lookup(category: string, path: string[], uri: string): { symbol: Symbol, visible: boolean } | null
-	lookup(category: string, path: string[], uri?: string): { symbol: Symbol, visible: boolean | null } | null {
+	lookup(category: AllCategory, path: string[]): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null
+	lookup(category: string, path: string[]): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null
+	lookup(category: AllCategory, path: string[], uri: string): { map: SymbolMap, symbol: Symbol, visible: boolean } | null
+	lookup(category: string, path: string[], uri: string): { map: SymbolMap, symbol: Symbol, visible: boolean } | null
+	lookup(category: string, path: string[], uri?: string): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null {
 		if (uri) {
 			// TODO: Lookup in local stack as well.
 			const stack = this.getStack(uri)
 			stack
 		}
-		const map = this.global[category]
-		if (map) {
-			let symbol = map[path[0]]
-			let i = 1
-			while (symbol && i < path.length) {
-				symbol = symbol.members?.[path[i]]
-				i++
+		let map = this.global[category]
+		for (let i = 0; map && i < path.length; i++) {
+			const symbol = map[path[i]]
+			if (!symbol) {
+				break
 			}
-			if (symbol) {
-				return { symbol, visible: SymbolUtil.isVisible(symbol, uri) }
+			if (i === path.length - 1) {
+				return { map, symbol, visible: SymbolUtil.isVisible(symbol, uri) }
 			}
+			map = symbol.members
 		}
 		return null
 	}
 
-	/**
-	 * Note: if only a `uri` is passed in, do not set `range` to things other than `[0, 0)` when entering symbols.
-	 */
-	query(uri: string, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
-	query(uri: string, category: string, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: TextDocument, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: string | TextDocument, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
-		if (typeof doc === 'string') {
-			doc = TextDocument.create(doc, '', 0, '')
-		}
-		const result = this.lookup(category, path, doc.uri)
-		return new SymbolQueryResult(doc, this, category, path, result?.symbol ?? null, !!result?.visible)
+	query(doc: TextDocument | string, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
+	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult
+	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
+		const uri = SymbolUtil.toUri(doc)
+		const lookupResult = this.lookup(category, path, uri)
+		return new SymbolQueryResult({
+			category,
+			doc,
+			getMap: addition => SymbolUtil.getTable(this.getStack(uri), this.global, addition.data?.visibility)[category] ??= {},
+			map: lookupResult?.visible ? lookupResult.map : null,
+			path,
+			symbol: lookupResult?.visible ? lookupResult.symbol : null,
+		})
 	}
 
 	getVisibleSymbols(category: AllCategory): SymbolMap
@@ -183,33 +124,6 @@ export class SymbolUtil {
 	}
 
 	/**
-	 * Push a new block to the `SymbolStack` corresponding to `uri`.
-	 * 
-	 * ~~We're not using blockchain technique here, unfortunately.~~
-	 * 
-	 * @deprecated Use `block` instead.
-	 */
-	pushBlock(uri: string): void {
-		const stack = this.getStack(uri)
-		stack.push({})
-	}
-
-	/**
-	 * Pops the newest block out of the `SymbolStack` corresponding to `uri`.
-	 * 
-	 * @throws When it is the last element in the stack.
-	 * 
-	 * @deprecated Use `block` instead.
-	 */
-	popBlock(uri: string): void {
-		const stack = this.getStack(uri)
-		if (stack.length <= 1) {
-			throw new Error('Unable to pop a block out as it is the last element in this stack')
-		}
-		stack.pop()
-	}
-
-	/**
 	 * Executes the `callbackFn` in a new block.
 	 * 
 	 * ~~We're not using blockchain technique here, unfortunately.~~
@@ -227,6 +141,10 @@ export class SymbolUtil {
 			}
 			stack.pop()
 		}
+	}
+
+	static toUri(uri: TextDocument | string): string {
+		return typeof uri === 'string' ? uri : uri.uri
 	}
 
 	static trim(table: SymbolTable): void {
@@ -274,7 +192,7 @@ export class SymbolUtil {
 		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			for (const form of SymbolUsages) {
+			for (const form of SymbolUsageTypes) {
 				if (!symbol[form]) {
 					continue
 				}
@@ -287,9 +205,11 @@ export class SymbolUtil {
 	}
 
 	/**
+	 * @param visibility `undefined` will be seen as `Public`.
+	 * 
 	 * @returns The `SymbolTable` that should be used to insert the `Symbol` with the given `visibility`.
 	 */
-	private static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable {
+	static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable {
 		switch (visibility) {
 			case SymbolVisibility.Block:
 				return stack[stack.length - 1]
@@ -302,28 +222,122 @@ export class SymbolUtil {
 		}
 	}
 
-	static enterTable(table: SymbolTable, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
-		const map: SymbolMap = table[addition.category] ??= {}
-		return this.enterMap(map, addition, doc, isUriBinding)
+	private static enterMapContainer<K extends string>({ container, keyToMap, category, identifier, addition, doc, isUriBinding }: {
+		addition: SymbolAddition,
+		category: string,
+		container: {
+			[key in K]?: SymbolMap
+		},
+		doc: TextDocument,
+		identifier: string,
+		isUriBinding: boolean,
+		keyToMap: K,
+	}): Symbol {
+		const map: SymbolMap = container[keyToMap] ??= {}
+		return this.enterMap(map, category, identifier, addition, doc, isUriBinding)
 	}
 
-	static enterMap(map: SymbolMap, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
-		return map[addition.identifier] = this.mergeSymbol(map[addition.identifier], addition, doc, isUriBinding)
+	static enterTable(table: SymbolTable, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+		return this.enterMapContainer({
+			container: table,
+			keyToMap: category,
+			category,
+			identifier,
+			addition,
+			doc,
+			isUriBinding,
+		})
+	}
+
+	static enterMember(symbol: Symbol, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+		return this.enterMapContainer({
+			container: symbol,
+			keyToMap: 'members',
+			category: symbol.category,
+			identifier,
+			addition,
+			doc,
+			isUriBinding,
+		})
 	}
 
 	/**
-	 * @returns The same reference as `base` if it's not `undefined`.
+	 * Enters a symbol into a symbol map. If there is already a symbol with the specified identifier under the map,
+	 * it will be amended with the information provided in `addition`. Otherwise, a new symbol with that identifier
+	 * will be created.
+	 * 
+	 * @param map The map where this symbol will be entered into.
+	 * @param category The category of this symbol.
+	 * @param identifier The identifier of this symbol.
+	 * @param addition The metadata and usage that will be amended onto this symbol if it already exists, or
+	 * to create the symbol if it doesn't exist yet.
+	 * @param doc The `TextDocument` where this symbol belongs to.
+	 * @param isUriBinding Whether this entering is done by a URI binder or not.
+	 * 
+	 * @returns The created/amended symbol.
 	 */
-	private static mergeSymbol(base: Symbol | undefined, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
-		// TODO: Split metadata and location data.
-		if (base) {
-			this.mergeMetadata(base, addition)
+	static enterMap(map: SymbolMap, category: AllCategory, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	static enterMap(map: SymbolMap, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	static enterMap(map: SymbolMap, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+		const target = map[identifier]
+		if (target) {
+			this.amendSymbol(target, addition, doc, isUriBinding)
+			return target
 		} else {
-			base = this.getMetadata(addition)
+			return map[identifier] = this.createSymbol(category, identifier, addition, doc, isUriBinding)
 		}
-		if (addition.usage) {
-			const arr = base[addition.usage] ??= []
-			const loc = SymbolLocation.create(doc, addition.range ?? Range.create(0), addition.fullRange, isUriBinding, {
+	}
+
+	private static createSymbol(category: string, identifier: string, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+		const ans: Symbol = {
+			category,
+			identifier,
+			...enterable.data,
+		}
+		this.amendSymbolUsage(ans, enterable.usage, doc, isUriBinding)
+		return ans
+	}
+
+	static amendSymbol(symbol: Symbol, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
+		this.amendSymbolMetadata(symbol, enterable.data)
+		this.amendSymbolUsage(symbol, enterable.usage, doc, isUriBinding)
+	}
+
+	private static amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']) {
+		if (addition) {
+			if (addition.doc !== undefined) {
+				symbol.doc = addition.doc
+			}
+			if (addition.relations && Object.keys(addition.relations).length) {
+				symbol.relations ??= {}
+				for (const relationship of Object.keys(addition.relations)) {
+					symbol.relations[relationship] = addition.relations[relationship]
+				}
+			}
+			if (addition.subcategory !== undefined) {
+				symbol.doc = addition.subcategory
+			}
+			if (addition.visibility !== undefined) {
+				// Visibility changes are only accepted if the change wouldn't result in the
+				// symbol being stored in a different symbol table.
+				const inGlobalTable = (v: SymbolVisibility | undefined) => v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
+				if (symbol.visibility === addition.visibility || (inGlobalTable(symbol.visibility) && inGlobalTable(addition.visibility))) {
+					symbol.visibility = addition.visibility
+				} else {
+					throw new Error(`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${JSON.stringify(symbol)}`)
+				}
+			}
+			if (addition.visibilityRestriction?.length) {
+				symbol.visibilityRestriction = (symbol.visibilityRestriction ?? []).concat(addition.visibilityRestriction)
+			}
+		}
+	}
+
+	private static amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
+		if (addition) {
+			const arr = symbol[addition.type] ??= []
+			const range = Range.get((SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0)
+			const loc = SymbolLocation.create(doc, range, addition.fullRange, isUriBinding, {
 				accessType: addition.accessType,
 				fromDefaultLibrary: addition.fromDefaultLibrary,
 			})
@@ -335,41 +349,17 @@ export class SymbolUtil {
 			}
 			arr.push(loc)
 		}
-		return base
 	}
 
-	private static mergeMetadata<T extends SymbolMetadata>(symbol: Symbol, additionalMetadata: T): void {
-		for (const key of ['doc', 'subcategory', 'visibility'] as const) {
-			if (additionalMetadata[key] !== undefined) {
-				symbol[key] = additionalMetadata[key] as any
-			}
-		}
-		for (const key of ['relations'] as const) {
-			if (additionalMetadata[key] && Object.keys(additionalMetadata[key]!).length) {
-				symbol.relations ??= {}
-				for (const relationship of Object.keys(additionalMetadata[key]!)) {
-					symbol.relations![relationship] = additionalMetadata[key]![relationship]
-				}
-			}
-		}
-		for (const key of ['visibilityRestriction'] as const) {
-			if (additionalMetadata[key]?.length) {
-				symbol[key] = (symbol[key] ?? []).concat(additionalMetadata[key]!)
-			}
-			break
-		}
-	}
+	static filterVisibleSymbols(uri: string, map: SymbolMap = {}): SymbolMap {
+		const ans: SymbolMap = {}
 
-	private static getMetadata<T extends SymbolMetadata>(obj: T): SymbolMetadata {
-		const ans: SymbolMetadata = {
-			category: obj.category,
-			identifier: obj.identifier,
-		}
-		for (const key of ['doc', 'relations', 'subcategory', 'visibility', 'visibilityRestriction'] as const) {
-			if (obj[key] !== undefined) {
-				ans[key] = obj[key] as any
+		for (const [identifier, symbol] of Object.entries(map)) {
+			if (SymbolUtil.isVisible(symbol!, uri)) {
+				ans[identifier] = symbol
 			}
 		}
+
 		return ans
 	}
 
@@ -440,17 +430,19 @@ export class SymbolUtil {
 	}
 }
 
-/**
- * @deprecated
- */
-export interface SymbolAddition extends SymbolMetadata, SymbolLocationMetadata {
+interface SymbolAddition {
+	data?: Omit<SymbolMetadata, 'category' | 'identifier' | 'members'>,
+	usage?: SymbolAdditionUsage,
+}
+type SymbolAdditionUsage = SymbolAdditionUsageWithRange | SymbolAdditionUsageWithNode
+interface SymbolAdditionUsageBase extends SymbolLocationMetadata {
 	/**
-	 * The usage of this `Symbol`. Use `definition` when the usage consists both a `declaration` and an `implementation`.
+	 * The type of this usage. Use `definition` when the usage consists both a `declaration` and an `implementation`.
 	 */
-	usage?: SymbolUsage,
-	range?: RangeLike,
+	type: SymbolUsageType,
 	/**
-	 * The range of the full declaration for this `Symbol`. For example, for the following piece of nbtdoc code,
+	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
+	 * nbtdoc code,
 	 * ```nbtdoc
 	 * 0123456789012345
 	 * compound Foo {}
@@ -460,42 +452,51 @@ export interface SymbolAddition extends SymbolMetadata, SymbolLocationMetadata {
 	 */
 	fullRange?: RangeLike,
 }
-
-/**
- * @deprecated
- */
-interface SymbolQueryEnterable extends Omit<SymbolAddition, 'category' | 'identifier'> {
-	node?: AstNode,
-}
-
-interface SymbolQueryEnterable2 {
-	data?: Omit<SymbolMetadata, 'category' | 'identifier'>,
-	usage?: SymbolEnterableUsageWithRange | SymbolEnterableUsageWithNode,
-}
-interface SymbolEnterableUsageBase extends SymbolLocationMetadata {
+interface SymbolAdditionUsageWithRange extends SymbolAdditionUsageBase {
 	/**
-	 * The type of this usage. Use `definition` when the usage consists both a `declaration` and an `implementation`.
-	 */
-	type: SymbolUsage,
-	fullRange?: RangeLike,
-}
-interface SymbolEnterableUsageWithRange extends SymbolEnterableUsageBase {
-	/**
-	 * Either this property or `node` could be used. Both could represent the range of this usage.
+	 * The range of this symbol usage. It should contain exactly the symbol identifier itself, with no
+	 * whitespaces whatsoever included.
 	 * 
-	 * However, using `node` also have the benefit of auto setting `node.symbol` to the queried symbol.
-	 * It is recommended to use `node` whenever applicable.
+	 * This property is ignored when the specified document's URI is not of `file:` schema. It is also ignored and
+	 * set to `[0, 0)` if only a file URI, instead of a `TextDocument`, is provided.
+	 * 
+	 * Please use `node` instead of this property whenever it makes sense. Learn more at the documentation
+	 * for that property.
+	 * 
+	 * If neither `node` nor `range` is provided, the range falls back to `[0, 0)`.
 	 */
 	range?: RangeLike,
+	node?: undefined,
 }
-interface SymbolEnterableUsageWithNode extends SymbolEnterableUsageBase {
+namespace SymbolAdditionUsageWithRange {
+	/* istanbul ignore next */
+	export function is(usage: SymbolAdditionUsage | undefined): usage is SymbolAdditionUsageWithRange {
+		return !!usage?.range
+	}
+}
+interface SymbolAdditionUsageWithNode extends SymbolAdditionUsageBase {
 	/**
-	 * Either this property or `range` could be used. Both could represent the range of this usage.
+	 * The node associated with this symbol usage. It should contain exactly the symbol identifier itself, with no
+	 * wrapper nodes whatsoever included.
+	 * 
+	 * This property is ignored when the specified document's URI is not of `file:` schema. It is also ignored and
+	 * treated as `range: [0, 0)` if only a file URI, instead of a `TextDocument`, is provided.
+	 * 
+	 * Either this property or `range` could be used to represent the range of this usage.
 	 * 
 	 * However, using `node` also have the benefit of auto setting `node.symbol` to the queried symbol.
 	 * It is recommended to use `node` whenever applicable.
+	 * 
+	 * If neither `node` nor `range` is provided, the range falls back to `[0, 0)`.
 	 */
 	node?: AstNode,
+	range?: undefined,
+}
+namespace SymbolAdditionUsageWithNode {
+	/* istanbul ignore next */
+	export function is(usage: SymbolAdditionUsage | undefined): usage is SymbolAdditionUsageWithNode {
+		return !!usage?.node
+	}
 }
 
 /**
@@ -511,22 +512,55 @@ export class SymbolQueryResult {
 	readonly category: string
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
-	readonly #util: SymbolUtil
+	/**
+	 * If only a string URI (instead of a `TextDocument`) is provided when constructing this class.
+	 * 
+	 * If this is `true`, `usage.range` is ignored and treated as `[0, 0)` when entering symbols through this class.
+	 */
+	readonly #createdWithUri?: boolean
+	/**
+	 * A function that returns the symbol map where the queried symbol should be in when creating it.
+	 */
+	readonly #getMap: (this: void, addition: SymbolAddition) => SymbolMap
 	#hasTriggeredIf = false
+	/**
+	 * The map where the queried symbol is stored. `null` if the symbol hasn't been created yet, and will be pointed
+	 * to the map returned by `this.#getMap` when the symbol is being created.
+	 */
+	#map: SymbolMap | null
+	/**
+	 * The queried symbol. `null` if the symbol hasn't been created yet, and will be pointed to the symbol
+	 * after it's created.
+	 */
 	#symbol: Symbol | null
-	#visible: boolean
 
-	get symbol() {
+	get symbol(): Symbol | null {
 		return this.#symbol
 	}
 
-	constructor(doc: TextDocument, util: SymbolUtil, category: string, path: readonly string[], symbol: Symbol | null, visible: boolean) {
+	get visibleMembers(): SymbolMap {
+		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
+	}
+
+	constructor({ category, doc, getMap, map, path, symbol }: {
+		category: string,
+		doc: TextDocument | string,
+		getMap: (this: void, addition: SymbolAddition) => SymbolMap,
+		map: SymbolMap | null,
+		path: readonly string[],
+		symbol: Symbol | null,
+	}) {
 		this.category = category
-		this.#doc = doc
 		this.path = path
-		this.#util = util
+
+		if (typeof doc === 'string') {
+			doc = TextDocument.create(doc, '', 0, '')
+			this.#createdWithUri = true
+		}
+		this.#doc = doc
+		this.#getMap = getMap
+		this.#map = map
 		this.#symbol = symbol
-		this.#visible = visible
 	}
 
 	heyGimmeDaSymbol() {
@@ -545,17 +579,17 @@ export class SymbolQueryResult {
 	}
 
 	/**
-	 * Calls `fn` if the queried symbol does not exist or is not visible at the current scope.
+	 * Calls `fn` if the queried symbol does not exist.
 	 */
 	ifUnknown(fn: QueryCallback<null>): this {
-		return this.if(s => s === null || !this.#visible, fn as QueryCallback)
+		return this.if(s => s === null, fn as QueryCallback)
 	}
 
 	/**
-	 * Calls `fn` if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions) and is visible at the current scope.
+	 * Calls `fn` if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions).
 	 */
 	ifKnown(fn: QueryCallback<null>): this {
-		return this.if(s => s !== null && this.#visible, fn as QueryCallback)
+		return this.if(s => s !== null, fn as QueryCallback)
 	}
 
 	/**
@@ -608,8 +642,7 @@ export class SymbolQueryResult {
 	 * 
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
-	elseEnter(symbol: SymbolQueryEnterable2): this
-	elseEnter(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
+	elseEnter(symbol: SymbolAddition): this {
 		return this.else(() => this.enter(symbol as any))
 	}
 
@@ -625,19 +658,16 @@ export class SymbolQueryResult {
 	 *
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
-	enter(symbol: SymbolQueryEnterable2): this
-	enter(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
-		if (SymbolQueryResult.isNewEnterable(symbol)) {
-			symbol = {
-				usage: symbol.usage?.type,
-				...symbol.usage,
-				...symbol.data,
-			}
+	enter(addition: SymbolAddition): this {
+		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
+		if (this.#createdWithUri && SymbolAdditionUsageWithRange.is(addition.usage)) {
+			addition.usage.range = Range.create(0, 0)
 		}
-		this.#symbol = this.#util.lookupAndEnterMember(this.#doc, this.category, this.path.slice(0, -1), this.enterableToAddition(symbol))
-		this.#visible = SymbolUtil.isVisible(this.#symbol, this.#doc.uri)
-		if (symbol.node) {
-			symbol.node.symbol = this.#symbol
+
+		this.#map ??= this.#getMap(addition)
+		this.#symbol = SymbolUtil.enterMap(this.#map, this.category, this.path[this.path.length - 1], addition, this.#doc, false) // FIXME: isUriBinding
+		if (addition.usage?.node) {
+			addition.usage.node.symbol = this.#symbol
 		}
 		return this
 	}
@@ -654,8 +684,7 @@ export class SymbolQueryResult {
 	 * 
 	 * Therefore, if the symbol is successfully amended, `elseX` methods afterwards will **not** be executed.
 	 */
-	amend(symbol: SymbolQueryEnterable2): this
-	amend(symbol: SymbolQueryEnterable | SymbolQueryEnterable2): this {
+	amend(symbol: SymbolAddition): this {
 		return this.ifKnown(() => this.enter(symbol as any))
 	}
 
@@ -669,16 +698,24 @@ export class SymbolQueryResult {
 		return this
 	}
 
-	private enterableToAddition(enterable: SymbolQueryEnterable): SymbolAddition {
-		return {
-			...enterable,
-			category: this.category,
-			identifier: this.path[this.path.length - 1],
-			range: enterable.range ?? enterable.node,
+	/**
+	 * @param identifier The identifier of the member symbol.
+	 * @param fn A callback function where `this` is the member symbol's query result.
+	 * 
+	 * @throws If the current queried symbol doesn't exist.
+	 */
+	queryMember(identifier: string, fn: QueryCallback) {
+		if (this.#symbol === null) {
+			throw new Error(`Tried to find member symbol “${identifier}” from an undefined symbol`)
 		}
-	}
-
-	private static isNewEnterable(enterable: SymbolQueryEnterable | SymbolQueryEnterable2): enterable is SymbolQueryEnterable2 {
-		return !!((enterable as SymbolQueryEnterable2).data || (enterable as SymbolQueryEnterable2).usage)
+		const map = this.#symbol.members ??= {}
+		const newResult = new SymbolQueryResult({
+			category: this.category,
+			doc: this.#doc,
+			getMap: () => map,
+			map,
+			path: [...this.path, identifier],
+			symbol: map[identifier] ?? null,
+		})
 	}
 }
