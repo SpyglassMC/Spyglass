@@ -102,7 +102,7 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 		if (node.extends.type === 'nbtdoc:ident_path') {
 			const extendedSymbol = (await resolveIdentPath(node.extends, ctx))?.symbol
 			if (extendedSymbol) {
-				definitionQuery.amend({ relations: { extends: extendedSymbol } })
+				definitionQuery.amend({ data: { relations: { extends: extendedSymbol } } })
 			}
 		} else {
 			// TODO: Check RegistryIndexNode.
@@ -113,14 +113,18 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value, field.key.value)
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 			.elseEnter({
-				usage: 'declaration',
-				node: field.key,
-				doc: field.doc.value,
-				fullRange: field,
-				relations: {
-					// TODO: Field type
+				data: {
+					doc: field.doc.value,
+					relations: {
+						// TODO: Field type
+					},
+					subcategory: 'compound_key',
 				},
-				subcategory: 'compound_key',
+				usage: {
+					type: 'declaration',
+					node: field.key,
+					fullRange: field,
+				},
 			})
 	}
 }
@@ -133,11 +137,15 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 		.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value)
 		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
 		.elseEnter({
-			usage: 'definition',
-			node: node.identifier,
-			doc: node.doc.value,
-			fullRange: node,
-			subcategory: 'compound',
+			data: {
+				doc: node.doc.value,
+				subcategory: 'compound',
+			},
+			usage: {
+				type: 'definition',
+				node: node.identifier,
+				fullRange: node,
+			},
 		})
 }
 
@@ -156,14 +164,18 @@ const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => 
 			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value, field.key.value)
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 			.elseEnter({
-				usage: 'declaration',
-				node: field.key,
-				/* data: {
-					// TODO: Enum value
-				}, */
-				doc: field.doc.value,
-				fullRange: field,
-				subcategory: 'enum_key',
+				data: {
+					/* data: {
+						// TODO: Enum value
+					}, */
+					doc: field.doc.value,
+					subcategory: 'enum_key',
+				},
+				usage: {
+					type: 'declaration',
+					node: field.key,
+					fullRange: field,
+				},
 			})
 	}
 }
@@ -204,14 +216,18 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 				.query(ctx.doc, 'nbtdoc', ...fieldPath)
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.elseEnter({
-					usage: 'declaration',
-					node: field.key,
-					doc: field.doc.value,
-					fullRange: field,
-					relations: {
-						// TODO: Field type
+					data: {
+						doc: field.doc.value,
+						relations: {
+							// TODO: Field type
+						},
+						subcategory: 'compound_key',
 					},
-					subcategory: 'compound_key',
+					usage: {
+						type: 'declaration',
+						node: field.key,
+						fullRange: field,
+					},
 				})
 		}
 	} else if (node.def?.type === 'nbtdoc:inject_clause/enum') {
@@ -221,14 +237,18 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 				.query(ctx.doc, 'nbtdoc', ...fieldPath)
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.elseEnter({
-					usage: 'declaration',
-					node: field.key,
-					/* data: {
-						// TODO: Enum value
-					}, */
-					doc: field.doc.value,
-					fullRange: field,
-					subcategory: 'enum_key',
+					data: {
+						/* data: {
+							// TODO: Enum value
+						}, */
+						doc: field.doc.value,
+						subcategory: 'enum_key',
+					},
+					usage: {
+						type: 'declaration',
+						node: field.key,
+						fullRange: field,
+					},
 				})
 		}
 	}
@@ -246,9 +266,11 @@ const moduleDeclaration = (node: ModuleDeclarationNode, ctx: CheckerContext): vo
 			))
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.module-declaration.duplicated', ctx, symbol, node.identifier))
 			.elseEnter({
-				usage: 'declaration',
-				node: node.identifier,
-				fullRange: node,
+				usage: {
+					type: 'declaration',
+					node: node.identifier,
+					fullRange: node,
+				},
 			})
 	}
 }
@@ -261,13 +283,17 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, usedSymbol.identifier)
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, lastToken))
 			.elseEnter({
-				usage: 'declaration',
-				node: lastToken,
-				fullRange: node,
-				relations: {
-					aliasOf: usedSymbol,
+				data: {
+					relations: {
+						aliasOf: usedSymbol,
+					},
 				},
-				...node.isExport ? {} : { visibility: SymbolVisibility.File },
+				usage: {
+					type: 'declaration',
+					node: lastToken,
+					fullRange: node,
+					...node.isExport ? {} : { visibility: SymbolVisibility.File },
+				},
 			})
 	}
 }
@@ -323,9 +349,11 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 			ctx.symbols
 				.query(ctx.doc, 'nbtdoc', segToIdentifier(targetSeg))
 				.amend({
-					usage: 'reference',
-					node: token,
-					// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
+					usage: {
+						type: 'reference',
+						node: token,
+						// TODO: If this token is 'super', we should make sure that renaming the module will not change this 'super' to the new name of the module.
+					},
 				})
 		} else {
 			// Referencing to a compound or enum.
@@ -355,8 +383,10 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				))
 				.elseResolveAlias()
 				.elseEnter({
-					usage: 'reference',
-					node: token,
+					usage: {
+						type: 'reference',
+						node: token,
+					},
 				})
 		}
 	}

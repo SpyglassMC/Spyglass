@@ -18,7 +18,16 @@ const IntegerPattern = /^-?\d+$/
  * [NegativeSign] `.` Digits
  * ```
  */
-const FloatPattern = /^-?(?:\d+\.?(?:\d+)?|\.\d+)$/
+const FloatPattern = /^-?(?:\d+\.?\d*|\.\d+)$/
+
+const DoubleMax = Number.MAX_VALUE
+const DoubleMin = -DoubleMax
+const FloatMax = (2 - (2 ** -23)) * (2 ** 127)
+const FloatMin = -FloatMax
+const IntegerMax = 2 ** 31 - 1
+const IntegerMin = -(2 ** 31)
+const LongMax = 2 ** 63 - 1
+const LongMin = -(2 ** 63)
 
 /**
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
@@ -41,29 +50,29 @@ export function argument(name: string, treeNode: ArgumentTreeNode): core.Parser<
 			return wrap(core.float({
 				failsOnEmpty: true,
 				pattern: FloatPattern,
-				max: treeNode.properties?.max,
-				min: treeNode.properties?.min,
+				max: treeNode.properties?.max ?? DoubleMax,
+				min: treeNode.properties?.min ?? -DoubleMax,
 			}))
 		case 'brigadier:float':
 			return wrap(core.float({
 				failsOnEmpty: true,
 				pattern: FloatPattern,
-				max: treeNode.properties?.max,
-				min: treeNode.properties?.min,
+				max: treeNode.properties?.max ?? FloatMax,
+				min: treeNode.properties?.min ?? -FloatMax,
 			}))
 		case 'brigadier:integer':
 			return wrap(core.integer({
 				failsOnEmpty: true,
 				pattern: IntegerPattern,
-				max: BigInt(treeNode.properties?.max),
-				min: BigInt(treeNode.properties?.min),
+				max: BigInt(treeNode.properties?.max ?? 2 ** 31) ?? IntegerMax,
+				min: BigInt(treeNode.properties?.min) ?? IntegerMin,
 			}))
 		case 'brigadier:long':
 			return wrap(core.integer({
 				failsOnEmpty: true,
 				pattern: IntegerPattern,
-				max: BigInt(treeNode.properties?.max),
-				min: BigInt(treeNode.properties?.min),
+				max: BigInt(treeNode.properties?.max) ?? LongMax,
+				min: BigInt(treeNode.properties?.min) ?? LongMin,
 			}))
 		case 'brigadier:string':
 			switch (treeNode.properties.type) {
