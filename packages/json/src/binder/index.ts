@@ -31,7 +31,7 @@ export function dissectUri(uri: string) {
 		category: Categories.get(match[2])!,
 		namespace: match[1],
 		identifier: match[3],
-	} 
+	}
 }
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
@@ -40,12 +40,13 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 		if (rel?.endsWith('.json')) {
 			const parts = dissectUri(rel)
 			if (parts) {
-				ctx.symbols.enterForUri(uri, {
-					category: parts.category,
-					usage: 'definition',
-					identifier: `${parts.namespace}:${parts.identifier}`,
-					visibility: SymbolVisibility.Public,
-				})
+				ctx.symbols
+					.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`)
+					.enter({
+						usage: {
+							type: 'definition',
+						},
+					})
 			}
 		}
 	}

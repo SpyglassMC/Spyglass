@@ -530,7 +530,7 @@ export class SymbolQueryResult {
 	#map: SymbolMap | null
 	/**
 	 * The queried symbol. `null` if the symbol hasn't been created yet, and will be pointed to the symbol
-	 * after it's created.
+	 * once it's created.
 	 */
 	#symbol: Symbol | null
 

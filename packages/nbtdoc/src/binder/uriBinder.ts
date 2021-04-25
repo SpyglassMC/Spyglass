@@ -36,11 +36,16 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 	// file:///root/nbtdoc/foo/bar.nbtdoc -> foo/bar
 
 	for (const [uri, rel] of urisAndRels) {
-		ctx.symbols.enterForUri(uri, {
-			category: 'nbtdoc',
-			subcategory: 'module',
-			identifier: segToIdentifier(rel.split('/')),
-			usage: 'implementation',
-		})
+		ctx.symbols
+			.query(uri, 'nbtdoc', segToIdentifier(rel.split('/')))
+			.ifKnown(() => { })
+			.elseEnter({
+				data: {
+					subcategory: 'module',
+				},
+				usage: {
+					type: 'implementation',
+				},
+			})
 	}
 }
