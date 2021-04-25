@@ -1,5 +1,6 @@
 import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, QuoteTypeConfig, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { ResourceLocationNode } from '../../node'
+import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { CompleterContext, MetaRegistry } from '../../service'
 import { IndexMap, Range } from '../../source'
 import type { TagFileCategory } from '../../symbol'
@@ -21,6 +22,13 @@ export const fallback: Completer<AstNode> = (node, ctx) => {
 		}
 	}
 	return []
+}
+
+export const boolean: Completer<BooleanBaseNode> = node => {
+	return [
+		CompletionItem.create('false', node, undefined, { kind: CompletionKind.Keyword }),
+		CompletionItem.create('true', node, undefined, { kind: CompletionKind.Keyword }),
+	]
 }
 
 export const literal: Completer<LiteralBaseNode> = node => {
@@ -112,6 +120,7 @@ function toInnerCtx(ctx: CompleterContext, mapping: IndexMap): CompleterContext 
 }
 
 export function registerCompleters(meta: MetaRegistry) {
+	meta.registerCompleter<BooleanNode>('boolean', boolean)
 	meta.registerCompleter<FloatNode>('float', number)
 	meta.registerCompleter<IntegerNode>('integer', number)
 	meta.registerCompleter<LiteralNode>('literal', literal)

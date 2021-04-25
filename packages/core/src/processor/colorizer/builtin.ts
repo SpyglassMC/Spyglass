@@ -1,5 +1,6 @@
 import type { MetaRegistry } from '../..'
 import type { AstNode, CommentNode, ErrorNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, ResourceLocationNode, StringBaseNode, StringNode } from '../../node'
+import type { BooleanNode } from '../../node/BooleanNode'
 import type { LiteralBaseNode, LiteralNode } from '../../node/LiteralNode'
 import type { SymbolBaseNode, SymbolNode } from '../../node/SymbolNode'
 import { IndexMap, Range } from '../../source'
@@ -22,6 +23,10 @@ export const fallback: Colorizer<AstNode> = (node, ctx) => {
 		}
 	)
 	return Object.freeze(ans)
+}
+
+export const boolean: Colorizer<BooleanNode> = node => {
+	return [ColorToken.create(node, 'literal')]
 }
 
 export const comment: Colorizer<CommentNode> = node => {
@@ -78,6 +83,7 @@ function toOuterColorTokens(tokens: readonly ColorToken[], mapping: IndexMap): C
 }
 
 export function registerColorizers(meta: MetaRegistry) {
+	meta.registerColorizer<BooleanNode>('boolean', boolean)
 	meta.registerColorizer<CommentNode>('comment', comment)
 	meta.registerColorizer<ErrorNode>('error', error)
 	meta.registerColorizer<FloatNode>('float', number)

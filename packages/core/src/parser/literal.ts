@@ -20,6 +20,7 @@ export function literal(...param: [LiteralOptions] | string[]): InfallibleParser
 
 		for (const expected of options.pool) {
 			if (src.trySkip(expected)) {
+				ans.value = expected
 				ans.range.end = src.cursor
 				return ans
 			}

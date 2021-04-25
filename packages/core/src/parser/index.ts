@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+export * from './boolean'
 export * from './comment'
 export * from './empty'
 export * from './error'

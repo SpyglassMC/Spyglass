@@ -1,4 +1,5 @@
 export * from './AstNode'
+export * from './BooleanNode'
 export * from './CommentNode'
 export * from './ErrorNode'
 export * from './FileNode'
