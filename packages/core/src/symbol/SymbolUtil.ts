@@ -480,9 +480,21 @@ interface SymbolEnterableUsageBase extends SymbolLocationMetadata {
 	fullRange?: RangeLike,
 }
 interface SymbolEnterableUsageWithRange extends SymbolEnterableUsageBase {
+	/**
+	 * Either this property or `node` could be used. Both could represent the range of this usage.
+	 * 
+	 * However, using `node` also have the benefit of auto setting `node.symbol` to the queried symbol.
+	 * It is recommended to use `node` whenever applicable.
+	 */
 	range?: RangeLike,
 }
 interface SymbolEnterableUsageWithNode extends SymbolEnterableUsageBase {
+	/**
+	 * Either this property or `range` could be used. Both could represent the range of this usage.
+	 * 
+	 * However, using `node` also have the benefit of auto setting `node.symbol` to the queried symbol.
+	 * It is recommended to use `node` whenever applicable.
+	 */
 	node?: AstNode,
 }
 
@@ -592,10 +604,6 @@ export class SymbolQueryResult {
 	}
 
 	/**
-	 * @deprecated Use another overload of this method instead.
-	 */
-	elseEnter(symbol: SymbolQueryEnterable): this
-	/**
 	 * Enters the queried symbol if none of the former `if` conditions are met.
 	 * 
 	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
@@ -612,10 +620,6 @@ export class SymbolQueryResult {
 		return this.else(() => this.resolveAlias())
 	}
 
-	/**
-	 * @deprecated Use another overload of this method instead.
-	 */
-	enter(symbol: SymbolQueryEnterable): this
 	/**
 	 * Enters the queried symbol.
 	 *
@@ -638,10 +642,6 @@ export class SymbolQueryResult {
 		return this
 	}
 
-	/**
-	 * @deprecated Use another overload of this method instead.
-	 */
-	amend(symbol: SymbolQueryEnterable): this
 	/**
 	 * Amends the queried symbol if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions) and is visible at the current scope.
 	 * 
