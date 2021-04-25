@@ -6,11 +6,7 @@ import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
 import { SymbolLocation, SymbolUsageTypes, SymbolVisibility } from './Symbol'
 
-// I wrote a lot of comments in this file to pretend that I know what I am doing.
-// For the record, I absolutely do not understand any piece of this monster.
-// If it works, it's because of magic. If it doesn't, I will gladly take the credit.
-//
-// -- SPGoding 02/27/2021
+
 
 export class SymbolUtil {
 	private readonly stacks = new Map<string, SymbolStack>()
@@ -51,49 +47,62 @@ export class SymbolUtil {
 
 	/**
 	 * @returns An object:
-	 * - `symbol`: The `Symbol` corresponding to the `path`.
-	 * - `symbol`: The `Symbol` corresponding to the `path`.
-	 * - `visible`: If it is visible in `uri`. This will be `null` if it is undeterminable (e.g.
-	 * no `uri` is passed-in, and the visibility is `Restricted`).
-	 * 
-	 * Or `null` if no such symbol can be found.
+	 * - `map`: The `SymbolMap` that (potentially) contains the symbol. `null` if no such map exists.
+	 * - `createMap`: A method that can be called to create the `SymbolMap` containing the symbol if it doesn't exist. `null` if such map cannot be created (e.g. when the symbol containing the member symbol doesn't exist either).
+	 * - `symbol`: The `Symbol` corresponding to the `path`. `null` if no such symbol exists.
+	 * - `visible`: If it is visible in `uri`. This will be `null` if the symbol is `null`. // FIXME REMOVE THE LATTER PART it is undeterminable (e.g.
+	 * no `uri` is passed-in and the visibility is `Restricted`, or the symbol is `null`).
 	 */
-	lookup(category: AllCategory, path: string[]): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null
-	lookup(category: string, path: string[]): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null
-	lookup(category: AllCategory, path: string[], uri: string): { map: SymbolMap, symbol: Symbol, visible: boolean } | null
-	lookup(category: string, path: string[], uri: string): { map: SymbolMap, symbol: Symbol, visible: boolean } | null
-	lookup(category: string, path: string[], uri?: string): { map: SymbolMap, symbol: Symbol, visible: boolean | null } | null {
+	lookup(category: AllCategory, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null }
+	lookup(category: string, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null }
+	lookup(category: string, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null } {
 		if (uri) {
 			// TODO: Lookup in local stack as well.
 			const stack = this.getStack(uri)
 			stack
 		}
-		let map = this.global[category]
+		let parentSymbol: Symbol | null = null
+		let symbol: Symbol | null = null
+		let map: SymbolMap | null = this.global[category] ?? null
 		for (let i = 0; map && i < path.length; i++) {
-			const symbol = map[path[i]]
+			symbol = map[path[i]] ?? null
 			if (!symbol) {
 				break
 			}
 			if (i === path.length - 1) {
-				return { map, symbol, visible: SymbolUtil.isVisible(symbol, uri) }
+				break
 			}
-			map = symbol.members
+			parentSymbol = symbol
+			map = symbol.members ?? null
 		}
-		return null
+		return {
+			createMap: path.length === 1
+				? (addition: SymbolAddition) => SymbolUtil.getTable(this.getStack(uri), this.global, addition.data?.visibility)[category] ??= {}
+				: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : null,
+			map,
+			symbol,
+			visible: symbol ? SymbolUtil.isVisible(symbol, uri) : null,
+		}
 	}
 
+	/**
+	 * @throws When the queried symbol belongs to another non-existent symbol.
+	 */
 	query(doc: TextDocument | string, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
 	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult
 	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
 		const uri = SymbolUtil.toUri(doc)
 		const lookupResult = this.lookup(category, path, uri)
+		if (!lookupResult.createMap) {
+			throw new Error(`Cannot query symbol at path “${path.join('.')}” as its parent doesn't exist`)
+		}
 		return new SymbolQueryResult({
 			category,
+			createMap: lookupResult.createMap,
 			doc,
-			getMap: addition => SymbolUtil.getTable(this.getStack(uri), this.global, addition.data?.visibility)[category] ??= {},
-			map: lookupResult?.visible ? lookupResult.map : null,
+			map: lookupResult.visible ? lookupResult.map : null,
 			path,
-			symbol: lookupResult?.visible ? lookupResult.symbol : null,
+			symbol: lookupResult.visible ? lookupResult.symbol : null,
 		})
 	}
 
@@ -520,17 +529,17 @@ export class SymbolQueryResult {
 	readonly #createdWithUri?: boolean
 	/**
 	 * A function that returns the symbol map where the queried symbol should be in when creating it.
+	 * 
+	 * This is only called if `#map` is `null`.
 	 */
-	readonly #getMap: (this: void, addition: SymbolAddition) => SymbolMap
+	readonly #createMap: (this: void, addition: SymbolAddition) => SymbolMap
 	#hasTriggeredIf = false
 	/**
-	 * The map where the queried symbol is stored. `null` if the symbol hasn't been created yet, and will be pointed
-	 * to the map returned by `this.#getMap` when the symbol is being created.
+	 * The map where the queried symbol is stored. `null` if the map hasn't been created yet. 
 	 */
 	#map: SymbolMap | null
 	/**
-	 * The queried symbol. `null` if the symbol hasn't been created yet, and will be pointed to the symbol
-	 * once it's created.
+	 * The queried symbol. `null` if the symbol hasn't been created yet.
 	 */
 	#symbol: Symbol | null
 
@@ -542,10 +551,10 @@ export class SymbolQueryResult {
 		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
 	}
 
-	constructor({ category, doc, getMap, map, path, symbol }: {
+	constructor({ category, doc, createMap, map, path, symbol }: {
 		category: string,
 		doc: TextDocument | string,
-		getMap: (this: void, addition: SymbolAddition) => SymbolMap,
+		createMap: (this: void, addition: SymbolAddition) => SymbolMap,
 		map: SymbolMap | null,
 		path: readonly string[],
 		symbol: Symbol | null,
@@ -553,12 +562,12 @@ export class SymbolQueryResult {
 		this.category = category
 		this.path = path
 
+		this.#createMap = createMap
 		if (typeof doc === 'string') {
 			doc = TextDocument.create(doc, '', 0, '')
 			this.#createdWithUri = true
 		}
 		this.#doc = doc
-		this.#getMap = getMap
 		this.#map = map
 		this.#symbol = symbol
 	}
@@ -639,8 +648,6 @@ export class SymbolQueryResult {
 
 	/**
 	 * Enters the queried symbol if none of the former `if` conditions are met.
-	 * 
-	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
 	elseEnter(symbol: SymbolAddition): this {
 		return this.else(() => this.enter(symbol as any))
@@ -655,8 +662,6 @@ export class SymbolQueryResult {
 
 	/**
 	 * Enters the queried symbol.
-	 *
-	 * @throws If the queried symbol is the member of another symbol, and that symbol doesn't exist.
 	 */
 	enter(addition: SymbolAddition): this {
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
@@ -664,7 +669,7 @@ export class SymbolQueryResult {
 			addition.usage.range = Range.create(0, 0)
 		}
 
-		this.#map ??= this.#getMap(addition)
+		this.#map ??= this.#createMap(addition)
 		this.#symbol = SymbolUtil.enterMap(this.#map, this.category, this.path[this.path.length - 1], addition, this.#doc, false) // FIXME: isUriBinding
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
@@ -706,16 +711,18 @@ export class SymbolQueryResult {
 	 */
 	queryMember(identifier: string, fn: QueryCallback) {
 		if (this.#symbol === null) {
-			throw new Error(`Tried to find member symbol “${identifier}” from an undefined symbol`)
+			throw new Error(`Tried to query member symbol “${identifier}” from an undefined symbol (path “${this.path.join('.')}”)`)
 		}
-		const map = this.#symbol.members ??= {}
-		const newResult = new SymbolQueryResult({
+		const memberMap = this.#symbol.members ??= {}
+		const memberSymbol = memberMap[identifier] ?? null
+		const memberQueryResult = new SymbolQueryResult({
 			category: this.category,
+			createMap: () => memberMap,
 			doc: this.#doc,
-			getMap: () => map,
-			map,
+			map: memberMap,
 			path: [...this.path, identifier],
-			symbol: map[identifier] ?? null,
+			symbol: memberSymbol,
 		})
+		fn.call(memberQueryResult, memberSymbol)
 	}
 }
