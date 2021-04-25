@@ -158,9 +158,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 	core.SymbolUtil.trimMap(symbols.global.block)
 
 	// Add blocks and block states to the symbol table.
-	for (const id of Object.keys(blocks)) {
-		// FIXME: Those repeated queries are disastrous.
-		const block = blocks[id]
+	for (const [id, block] of Object.entries(blocks)) {
 		symbols
 			.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
 			.enter({
@@ -169,43 +167,44 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 					fromDefaultLibrary: true,
 				},
 			})
-		for (const state of Object.keys(block.properties)) {
-			const values = block.properties[state]
-			const stateQuery = symbols
-				.query(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, 'block', id, state)
-				.enter({
-					data: {
-						subcategory: 'state',
-					},
-					usage: {
-						type: 'declaration',
-						fromDefaultLibrary: true,
-					},
-				})
-			const defaultValue = block.default[state]!
-			for (const value of values) {
-				const stateValueQuery = symbols
-					.query(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, 'block', id, state, value)
-					.enter({
-						data: {
-							subcategory: 'state_value',
-						},
-						usage: {
-							type: 'declaration',
-							fromDefaultLibrary: true,
-						},
-					})
-				if (value === defaultValue) {
-					stateQuery.amend({
-						data: {
-							relations: {
-								default: stateValueQuery.symbol!,
+			.onEach(Object.entries(block.properties), ([state, values], blockQuery) => {
+				const defaultValue = block.default[state]!
+
+				blockQuery.queryMember(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
+					stateQuery
+						.enter({
+							data: {
+								subcategory: 'state',
 							},
-						},
-					})
-				}
-			}
-		}
+							usage: {
+								type: 'declaration',
+								fromDefaultLibrary: true,
+							},
+						})
+						.onEach(values, value => {
+							stateQuery.queryMember(value, valueQuery => {
+								valueQuery.enter({
+									data: {
+										subcategory: 'state_value',
+									},
+									usage: {
+										type: 'declaration',
+										fromDefaultLibrary: true,
+									},
+								})
+								if (value === defaultValue) {
+									stateQuery.amend({
+										data: {
+											relations: {
+												default: valueQuery.symbol!,
+											},
+										},
+									})
+								}
+							})
+						})
+				})
+			})
 	}
 }
 

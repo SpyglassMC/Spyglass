@@ -16,7 +16,7 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 		ctx.err.report(localize('nbtdoc.checker.entry.empty-mod-seg'), 0, ErrorSeverity.Warning)
 	}
 	const modIdentifier = segToIdentifier(modSeg)
-	const modSymbol = ctx.symbols.lookup('nbtdoc', [modIdentifier], ctx.doc.uri)!.symbol
+	const modSymbol = ctx.symbols.lookup('nbtdoc', [modIdentifier], ctx.doc.uri).symbol!
 
 	const hoistingNodes: (CompoundDefinitionNode | EnumDefinitionNode | ModuleDeclarationNode | UseClauseNode)[] = []
 	const checkingNodes: (CompoundDefinitionNode | EnumDefinitionNode | DescribesClauseNode | InjectClauseNode)[] = []

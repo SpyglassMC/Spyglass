@@ -516,6 +516,7 @@ namespace SymbolAdditionUsageWithNode {
 type SymbolStack = [SymbolTable, ...SymbolTable[]]
 
 type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQueryResult, symbol: S) => unknown
+type QueryMemberCallback = (this: void, query: SymbolQueryResult) => unknown
 
 export class SymbolQueryResult {
 	readonly category: string
@@ -709,20 +710,50 @@ export class SymbolQueryResult {
 	 * 
 	 * @throws If the current queried symbol doesn't exist.
 	 */
-	queryMember(identifier: string, fn: QueryCallback) {
+	queryMember(identifier: string, fn: QueryMemberCallback): void
+	queryMember(doc: TextDocument | string, identifier: string, fn: QueryMemberCallback): void
+	queryMember(): void {
+		// Handle overloads.
+		let doc: TextDocument | string, identifier: string, fn: QueryMemberCallback
+		if (arguments.length === 2) {
+			// Ensure the member query result will not unknowingly have a dummy TextDocument passed down from this class.
+			doc = this.#createdWithUri ? this.#doc.uri : this.#doc
+			identifier = arguments[0]
+			fn = arguments[1]
+		} else {
+			doc = arguments[0]
+			identifier = arguments[1]
+			fn = arguments[2]
+		}
+
 		if (this.#symbol === null) {
 			throw new Error(`Tried to query member symbol “${identifier}” from an undefined symbol (path “${this.path.join('.')}”)`)
 		}
+
+		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri && !this.#createdWithUri
+			? this.#doc
+			: doc
 		const memberMap = this.#symbol.members ??= {}
 		const memberSymbol = memberMap[identifier] ?? null
 		const memberQueryResult = new SymbolQueryResult({
 			category: this.category,
 			createMap: () => memberMap,
-			doc: this.#doc,
+			doc: memberDoc,
 			map: memberMap,
 			path: [...this.path, identifier],
 			symbol: memberSymbol,
 		})
-		fn.call(memberQueryResult, memberSymbol)
+		fn(memberQueryResult)
+	}
+
+	/**
+	 * Do something with this query on each value in a given iterable. The query itself will be included
+	 * in the callback function as the second parameter.
+	 */
+	onEach<T>(values: Iterable<T>, fn: (this: this, value: T, query: this) => unknown): this {
+		for (const value of values) {
+			fn.call(this, value, this)
+		}
+		return this
 	}
 }
