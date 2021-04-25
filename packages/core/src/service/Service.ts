@@ -5,8 +5,8 @@ import { file } from '../parser'
 import type { ColorInfo, ColorToken } from '../processor'
 import { selectedNode, traversePreOrder } from '../processor'
 import { Source } from '../source'
-import type { SymbolLocation, SymbolUsage } from '../symbol'
-import { SymbolUsages, SymbolUtil } from '../symbol'
+import type { SymbolLocation, SymbolUsageType } from '../symbol'
+import { SymbolUsageTypes, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
 import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
@@ -244,7 +244,7 @@ export class Service {
 	 * 
 	 * @returns Symbol locations of the selected symbol at `offset`, or `null` if there's no symbol at `offset`.
 	 */
-	getSymbolLocations(node: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsage[] = SymbolUsages, currentFileOnly = false): SymbolLocations | null {
+	getSymbolLocations(node: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | null {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
 		const result = selectedNode(node, offset)
 		if (result) {

@@ -1,12 +1,12 @@
 import type { Range } from '../source'
-import type { ResourceLocationCategory, SymbolAccessType, SymbolUsage, TaggableResourceLocationCategory } from '../symbol'
+import type { ResourceLocationCategory, SymbolAccessType, SymbolUsageType, TaggableResourceLocationCategory } from '../symbol'
 import type { AstNode } from './AstNode'
 
 export type ResourceLocationOptions = {
 	accessType?: SymbolAccessType,
 	allowUnknown?: boolean,
 	isPredicate?: boolean,
-	usageType?: SymbolUsage,
+	usageType?: SymbolUsageType,
 } & ({
 	category: ResourceLocationCategory,
 	pool?: undefined,

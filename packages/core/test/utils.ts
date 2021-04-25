@@ -9,6 +9,9 @@ Object.defineProperty(BigInt.prototype, 'toJSON', {
 	},
 })
 
+/**
+ * @returns The string with `\t`, `\r`, `\n`, and `\\` replaced with non-special characters.
+ */
 export function showWhitespaceGlyph(string: string) {
 	return string
 		.replace(/\t/g, '⮀')

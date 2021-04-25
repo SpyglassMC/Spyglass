@@ -4,6 +4,21 @@ import { Range, Source } from '../../lib'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils'
 
 describe('Source', () => {
+	describe('nextCharRange()', () => {
+		const suites: { string: string, cursor: number, expected: Range }[] = [
+			{ string: 'foo', cursor: 0, expected: Range.create(0, 1) },
+			{ string: 'foo', cursor: 1, expected: Range.create(1, 2) },
+			{ string: 'foo', cursor: 2, expected: Range.create(2, 3) },
+		]
+		for (const { string, cursor, expected } of suites) {
+			it(`Should return '${Range.toString(expected)}' for ${markOffsetInString(string, cursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actual = src.nextCharRange
+				assert.deepStrictEqual(actual, expected)
+			})
+		}
+	})
 	describe('clone()', () => {
 		it('Should clone correctly', () => {
 			const src = new Source('foobar')
@@ -27,6 +42,25 @@ describe('Source', () => {
 				const src = new Source(string)
 				src.cursor = cursor
 				const actual = src.canRead(step)
+				assert.strictEqual(actual, expected)
+			})
+		}
+	})
+	describe('canReadInLine()', () => {
+		const suites: { string: string, cursor: number, expected: boolean }[] = [
+			{ string: 'fo\nbar', cursor: 0, expected: true },
+			{ string: 'fo\nbar', cursor: 1, expected: true },
+			{ string: 'fo\nbar', cursor: 2, expected: false },
+			{ string: 'fo\nbar', cursor: 3, expected: true },
+			{ string: 'fo\nbar', cursor: 4, expected: true },
+			{ string: 'fo\nbar', cursor: 5, expected: true },
+			{ string: 'fo\nbar', cursor: 6, expected: false },
+		]
+		for (const { string, cursor, expected } of suites) {
+			it(`Should return ${expected} for ${markOffsetInString(string, cursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actual = src.canReadInLine()
 				assert.strictEqual(actual, expected)
 			})
 		}
@@ -184,6 +218,21 @@ describe('Source', () => {
 			})
 		}
 	})
+	describe('readWhitespace()', () => {
+		const suites: { string: string, cursor: number, expected: string }[] = [
+			{ string: 'foo', cursor: 0, expected: '' },
+			{ string: ' \t\r\nF', cursor: 0, expected: ' \t\r\n' },
+			{ string: ' \t\r\n', cursor: 0, expected: ' \t\r\n' },
+		]
+		for (const { string, cursor, expected } of suites) {
+			it(`Should return ${showWhitespaceGlyph(expected)} for ${markOffsetInString(string, cursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actual = src.readWhitespace()
+				assert.strictEqual(actual, expected)
+			})
+		}
+	})
 	describe('skipWhitespace()', () => {
 		const suites: { string: string, cursor: number, expectedCursor: number }[] = [
 			{ string: 'foo', cursor: 0, expectedCursor: 0 },
@@ -214,6 +263,37 @@ describe('Source', () => {
 				src.cursor = cursor
 				const actual = src.readUntilOrEnd('$')
 				assert.strictEqual(actual, expected)
+			})
+		}
+	})
+	describe('readUntilLineEnd()', () => {
+		const suites: { string: string, cursor: number, expected: string }[] = [
+			{ string: 'foo', cursor: 0, expected: 'foo' },
+			{ string: ' \t\r\n', cursor: 0, expected: ' \t' },
+			{ string: 'foo\nbar', cursor: 4, expected: 'bar' },
+		]
+		for (const { string, cursor, expected } of suites) {
+			it(`Should return ${showWhitespaceGlyph(expected)} for ${markOffsetInString(string, cursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actual = src.readUntilLineEnd()
+				assert.strictEqual(actual, expected)
+			})
+		}
+	})
+	describe('skipUntilLineEnd()', () => {
+		const suites: { string: string, cursor: number, expectedCursor: number }[] = [
+			{ string: 'foo', cursor: 0, expectedCursor: 3 },
+			{ string: ' \t\r\n', cursor: 0, expectedCursor: 2 },
+			{ string: 'foo\nbar', cursor: 4, expectedCursor: 7 },
+		]
+		for (const { string, cursor, expectedCursor } of suites) {
+			it(`Should skip from ${markOffsetInString(string, cursor)} to ${markOffsetInString(string, expectedCursor)}`, () => {
+				const src = new Source(string)
+				src.cursor = cursor
+				const actualSelf = src.skipUntilLineEnd()
+				assert.strictEqual(actualSelf, src)
+				assert.strictEqual(actualSelf.cursor, expectedCursor)
 			})
 		}
 	})
