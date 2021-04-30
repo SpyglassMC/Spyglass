@@ -10,11 +10,11 @@ interface OptionsBase {
 	/**
 	 * Inclusive.
 	 */
-	min?: bigint,
+	min?: number,
 	/**
 	 * Inclusive.
 	 */
-	max?: bigint,
+	max?: number,
 	/**
 	 * A callback function that will be called when the numeral value is out of range.
 	 * 
@@ -49,7 +49,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 		const ans: Mutable<IntegerNode> = {
 			type: 'integer',
 			range: Range.create(src),
-			value: BigInt(0),
+			value: 0,
 		}
 
 		if (src.peek() === '-' || src.peek() === '+') {
@@ -65,7 +65,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 
 		let errorOccurred = false
 		try {
-			ans.value = BigInt(raw)
+			ans.value = Number(raw)
 		} catch (_) {
 			// `raw` might be "+" or "-" here.
 			errorOccurred = true
@@ -78,7 +78,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 			ctx.err.report(localize('expected', localize('integer')), ans)
 		} else if (!options.pattern.test(raw) || errorOccurred) {
 			ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
-		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
+		} else if ((options.min !== undefined && ans.value < options.min) || (options.max !== undefined && ans.value > options.max)) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)
 		}

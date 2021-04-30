@@ -70,7 +70,7 @@ export namespace NbtIntNode {
 	}
 }
 
-export interface NbtLongNode extends core.IntegerBaseNode {
+export interface NbtLongNode extends core.LongBaseNode {
 	readonly type: 'nbt:long',
 }
 export namespace NbtLongNode {

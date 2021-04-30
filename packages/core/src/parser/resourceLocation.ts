@@ -22,7 +22,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			ans.isTag = true
 		}
 
-		const raw = src.readUntilOrEnd(' ', '\r', '\n')
+		const raw = src.readUntil(' ', '\r', '\n')
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {

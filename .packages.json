@@ -5,6 +5,10 @@
 		]
 	},
 	"json": {
+		"circularDependencies": [
+			"mcfunction",
+			"nbt"
+		],
 		"dependencies": [
 			"core",
 			"locales"
@@ -23,6 +27,10 @@
 	},
 	"locales": {},
 	"mcfunction": {
+		"circularDependencies": [
+			"json",
+			"nbt"
+		],
 		"dependencies": [
 			"core",
 			"locales"
@@ -32,6 +40,10 @@
 		]
 	},
 	"nbt": {
+		"circularDependencies": [
+			"json",
+			"mcfunction"
+		],
 		"dependencies": [
 			"core",
 			"locales",

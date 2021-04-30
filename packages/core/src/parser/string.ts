@@ -82,7 +82,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			while (src.canRead() && options.unquotable.test(ans.value + src.peek())) {
 				ans.value += src.read()
 			}
-			if (!ans.value) {
+			if (!ans.value && !options.unquotable.test(ans.value)) {
 				ctx.err.report(localize('expected', localize('string')), src)
 			}
 			ans.valueMap.outerRange = Range.create(start, src.cursor)
@@ -123,10 +123,12 @@ export function parseStringValue<T extends Returnable>(parser: Parser<T>, value:
 	return valueResult
 }
 
-export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]+$/
+export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]*$/
 
-export const brigadierString = string({
+export const BrigadierStringOptions: StringOptions = {
 	escapable: {},
 	quotes: ['"', "'"],
 	unquotable: BrigadierUnquotablePattern,
-})
+}
+
+export const brigadierString = string(BrigadierStringOptions)

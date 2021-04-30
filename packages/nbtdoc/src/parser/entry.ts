@@ -17,7 +17,7 @@ export const entry: InfallibleParser<MainNode> = map(
 		const ans: MainNode = {
 			type: 'nbtdoc:main',
 			range: res.range,
-			children: res.nodes,
+			children: res.children,
 		}
 		return ans
 	}

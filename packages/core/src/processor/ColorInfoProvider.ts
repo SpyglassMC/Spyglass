@@ -10,6 +10,26 @@ export interface ColorInfo {
  */
 export type Color = [number, number, number, number]
 export namespace Color {
+	export const NamedColors = new Map<string, number>([
+		['aqua', 0x55ffff],
+		['black', 0x000000],
+		['blue', 0x5555ff],
+		['dark_aqua', 0x00aaaa],
+		['dark_blue', 0x0000aa],
+		['dark_gray', 0x555555],
+		['dark_green', 0x00aa00],
+		['dark_purple', 0xaa00aa],
+		['dark_red', 0xaa0000],
+		['gold', 0xffaa00],
+		['gray', 0xaaaaaa],
+		['green', 0x55ff55],
+		['light_purple', 0xff55ff],
+		['red', 0xff5555],
+		['white', 0xffffff],
+		['yellow', 0xffff55],
+	])
+	export const ColorNames = [...NamedColors.keys()]
+
 	/**
 	 * @param r A decimal within [0.0, 1.0].
 	 * @param g A decimal within [0.0, 1.0].

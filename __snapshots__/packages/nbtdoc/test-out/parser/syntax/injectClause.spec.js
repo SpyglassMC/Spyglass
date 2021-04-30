@@ -2373,7 +2373,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                   "start": 27,
                   "end": 27
                 },
-                "value": "0"
+                "value": 0
               }
             ],
             "doc": {
@@ -2399,7 +2399,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "value": "0"
+              "value": 0
             }
           },
           {
@@ -2484,7 +2484,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                   "start": 27,
                   "end": 27
                 },
-                "value": "0"
+                "value": 0
               }
             ],
             "doc": {
@@ -2510,7 +2510,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "value": "0"
+              "value": 0
             }
           }
         ]
@@ -2627,7 +2627,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "value": "0"
+              "value": 0
             }
           ],
           "doc": {
@@ -2653,7 +2653,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "value": "0"
+            "value": 0
           }
         },
         {
@@ -2738,7 +2738,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
                 "start": 27,
                 "end": 27
               },
-              "value": "0"
+              "value": 0
             }
           ],
           "doc": {
@@ -2764,7 +2764,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
               "start": 27,
               "end": 27
             },
-            "value": "0"
+            "value": 0
           }
         }
       ]
@@ -5079,7 +5079,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                   "start": 11,
                   "end": 11
                 },
-                "value": "0"
+                "value": 0
               }
             ],
             "doc": {
@@ -5105,7 +5105,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "value": "0"
+              "value": 0
             }
           },
           {
@@ -5182,7 +5182,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                   "start": 11,
                   "end": 11
                 },
-                "value": "0"
+                "value": 0
               }
             ],
             "doc": {
@@ -5208,7 +5208,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "value": "0"
+              "value": 0
             }
           }
         ]
@@ -5317,7 +5317,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "value": "0"
+              "value": 0
             }
           ],
           "doc": {
@@ -5343,7 +5343,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "value": "0"
+            "value": 0
           }
         },
         {
@@ -5420,7 +5420,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
                 "start": 11,
                 "end": 11
               },
-              "value": "0"
+              "value": 0
             }
           ],
           "doc": {
@@ -5446,7 +5446,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
               "start": 11,
               "end": 11
             },
-            "value": "0"
+            "value": 0
           }
         }
       ]

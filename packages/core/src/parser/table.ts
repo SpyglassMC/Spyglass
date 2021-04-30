@@ -14,7 +14,9 @@ export interface Options<K extends AstNode, V extends AstNode> {
 	pair: {
 		key: Parser<K>,
 		sep: string,
-		value: Parser<V>,
+		value: Parser<V> | {
+			get: (tableResult: TableNode<K, V>, keyResult: K | undefined) => Parser<V>,
+		},
 		end: string,
 		trailingEnd: boolean,
 	},
@@ -48,8 +50,8 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				}
 
 				// Key.
-				const { result: keyResult, endCursor: keyEnd, updateSrcAndCtx: updateForKey } = attempt(pair.key, src, ctx)
-				if (keyResult === Failure || keyEnd === src.cursor) {
+				const { result: keyResult, updateSrcAndCtx: updateForKey } = attempt(pair.key, src, ctx)
+				if (keyResult === Failure) {
 					ctx.err.report(
 						localize('expected', localize('parser.table.key')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
@@ -70,8 +72,9 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 
 				// Value.
 				src.skipWhitespace()
-				const { result: valueResult, endCursor: valueEnd, updateSrcAndCtx: updateForValue } = attempt(pair.value, src, ctx)
-				if (valueResult === Failure || valueEnd === src.cursor) {
+				const valueParser = typeof pair.value === 'function' ? pair.value : pair.value.get(ans, key)
+				const { result: valueResult, updateSrcAndCtx: updateForValue } = attempt(valueParser, src, ctx)
+				if (valueResult === Failure) {
 					ctx.err.report(
 						localize('expected', localize('parser.table.value')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))

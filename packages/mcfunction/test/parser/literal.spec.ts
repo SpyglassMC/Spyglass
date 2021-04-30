@@ -13,7 +13,7 @@ describe('mcfunction literal()', () => {
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = literal(options )
+			const parser = literal(options)
 			snapshot(testParser(parser, content))
 		})
 	}

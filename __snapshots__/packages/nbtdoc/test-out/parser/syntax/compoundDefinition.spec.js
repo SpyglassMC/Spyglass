@@ -816,7 +816,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 29,
                           "end": 30
                         },
-                        "value": "0"
+                        "value": 0
                       },
                       {
                         "type": "nbtdoc:literal",
@@ -832,12 +832,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 32,
                           "end": 33
                         },
-                        "value": "1"
+                        "value": 1
                       }
                     ],
                     "value": [
-                      "0",
-                      "1"
+                      0,
+                      1
                     ]
                   },
                   "lengthRange": {
@@ -861,12 +861,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 38,
                           "end": 39
                         },
-                        "value": "8"
+                        "value": 8
                       }
                     ],
                     "value": [
-                      "8",
-                      "8"
+                      8,
+                      8
                     ]
                   }
                 },
@@ -994,7 +994,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 29,
                         "end": 30
                       },
-                      "value": "0"
+                      "value": 0
                     },
                     {
                       "type": "nbtdoc:literal",
@@ -1010,12 +1010,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 32,
                         "end": 33
                       },
-                      "value": "1"
+                      "value": 1
                     }
                   ],
                   "value": [
-                    "0",
-                    "1"
+                    0,
+                    1
                   ]
                 },
                 "lengthRange": {
@@ -1039,12 +1039,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 38,
                         "end": 39
                       },
-                      "value": "8"
+                      "value": 8
                     }
                   ],
                   "value": [
-                    "8",
-                    "8"
+                    8,
+                    8
                   ]
                 }
               },
@@ -1215,7 +1215,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 29,
                           "end": 30
                         },
-                        "value": "0"
+                        "value": 0
                       },
                       {
                         "type": "nbtdoc:literal",
@@ -1231,12 +1231,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 32,
                           "end": 33
                         },
-                        "value": "1"
+                        "value": 1
                       }
                     ],
                     "value": [
-                      "0",
-                      "1"
+                      0,
+                      1
                     ]
                   },
                   "lengthRange": {
@@ -1260,12 +1260,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                           "start": 38,
                           "end": 39
                         },
-                        "value": "8"
+                        "value": 8
                       }
                     ],
                     "value": [
-                      "8",
-                      "8"
+                      8,
+                      8
                     ]
                   }
                 },
@@ -1393,7 +1393,7 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 29,
                         "end": 30
                       },
-                      "value": "0"
+                      "value": 0
                     },
                     {
                       "type": "nbtdoc:literal",
@@ -1409,12 +1409,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 32,
                         "end": 33
                       },
-                      "value": "1"
+                      "value": 1
                     }
                   ],
                   "value": [
-                    "0",
-                    "1"
+                    0,
+                    1
                   ]
                 },
                 "lengthRange": {
@@ -1438,12 +1438,12 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
                         "start": 38,
                         "end": 39
                       },
-                      "value": "8"
+                      "value": 8
                     }
                   ],
                   "value": [
-                    "8",
-                    "8"
+                    8,
+                    8
                   ]
                 }
               },
@@ -1811,12 +1811,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                     "start": 33,
                     "end": 34
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
                 null,
-                "1"
+                1
               ]
             },
             "item": {
@@ -1882,12 +1882,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                   "start": 33,
                   "end": 34
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
               null,
-              "1"
+              1
             ]
           },
           "item": {
@@ -1996,12 +1996,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                     "start": 33,
                     "end": 34
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
                 null,
-                "1"
+                1
               ]
             },
             "item": {
@@ -2067,12 +2067,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
                   "start": 33,
                   "end": 34
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
               null,
-              "1"
+              1
             ]
           },
           "item": {
@@ -4003,7 +4003,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                     "start": 26,
                     "end": 27
                   },
-                  "value": "0"
+                  "value": 0
                 },
                 {
                   "type": "nbtdoc:literal",
@@ -4019,12 +4019,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                     "start": 29,
                     "end": 30
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
-                "0",
-                "1"
+                0,
+                1
               ]
             },
             "lengthRange": null
@@ -4075,7 +4075,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "start": 26,
                   "end": 27
                 },
-                "value": "0"
+                "value": 0
               },
               {
                 "type": "nbtdoc:literal",
@@ -4091,12 +4091,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "start": 29,
                   "end": 30
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
-              "0",
-              "1"
+              0,
+              1
             ]
           },
           "lengthRange": null
@@ -4190,7 +4190,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                     "start": 26,
                     "end": 27
                   },
-                  "value": "0"
+                  "value": 0
                 },
                 {
                   "type": "nbtdoc:literal",
@@ -4206,12 +4206,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                     "start": 29,
                     "end": 30
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
-                "0",
-                "1"
+                0,
+                1
               ]
             },
             "lengthRange": null
@@ -4262,7 +4262,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "start": 26,
                   "end": 27
                 },
-                "value": "0"
+                "value": 0
               },
               {
                 "type": "nbtdoc:literal",
@@ -4278,12 +4278,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                   "start": 29,
                   "end": 30
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
-              "0",
-              "1"
+              0,
+              1
             ]
           },
           "lengthRange": null
@@ -4395,12 +4395,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                     "start": 26,
                     "end": 27
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
-                "1",
-                "1"
+                1,
+                1
               ]
             }
           }
@@ -4450,12 +4450,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                   "start": 26,
                   "end": 27
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
-              "1",
-              "1"
+              1,
+              1
             ]
           }
         }
@@ -4548,12 +4548,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                     "start": 26,
                     "end": 27
                   },
-                  "value": "1"
+                  "value": 1
                 }
               ],
               "value": [
-                "1",
-                "1"
+                1,
+                1
               ]
             }
           }
@@ -4603,12 +4603,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
                   "start": 26,
                   "end": 27
                 },
-                "value": "1"
+                "value": 1
               }
             ],
             "value": [
-              "1",
-              "1"
+              1,
+              1
             ]
           }
         }
@@ -4719,7 +4719,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                     "start": 27,
                     "end": 28
                   },
-                  "value": "2"
+                  "value": 2
                 },
                 {
                   "type": "nbtdoc:literal",
@@ -4731,7 +4731,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                 }
               ],
               "value": [
-                "2",
+                2,
                 null
               ]
             }
@@ -4782,7 +4782,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                   "start": 27,
                   "end": 28
                 },
-                "value": "2"
+                "value": 2
               },
               {
                 "type": "nbtdoc:literal",
@@ -4794,7 +4794,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
               }
             ],
             "value": [
-              "2",
+              2,
               null
             ]
           }
@@ -4888,7 +4888,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                     "start": 27,
                     "end": 28
                   },
-                  "value": "2"
+                  "value": 2
                 },
                 {
                   "type": "nbtdoc:literal",
@@ -4900,7 +4900,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                 }
               ],
               "value": [
-                "2",
+                2,
                 null
               ]
             }
@@ -4951,7 +4951,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
                   "start": 27,
                   "end": 28
                 },
-                "value": "2"
+                "value": 2
               },
               {
                 "type": "nbtdoc:literal",
@@ -4963,7 +4963,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
               }
             ],
             "value": [
-              "2",
+              2,
               null
             ]
           }
@@ -5076,12 +5076,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                     "start": 29,
                     "end": 30
                   },
-                  "value": "4"
+                  "value": 4
                 }
               ],
               "value": [
-                "4",
-                "4"
+                4,
+                4
               ]
             }
           }
@@ -5132,12 +5132,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                   "start": 29,
                   "end": 30
                 },
-                "value": "4"
+                "value": 4
               }
             ],
             "value": [
-              "4",
-              "4"
+              4,
+              4
             ]
           }
         }
@@ -5231,12 +5231,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                     "start": 29,
                     "end": 30
                   },
-                  "value": "4"
+                  "value": 4
                 }
               ],
               "value": [
-                "4",
-                "4"
+                4,
+                4
               ]
             }
           }
@@ -5287,12 +5287,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
                   "start": 29,
                   "end": 30
                 },
-                "value": "4"
+                "value": 4
               }
             ],
             "value": [
-              "4",
-              "4"
+              4,
+              4
             ]
           }
         }
@@ -5975,12 +5975,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                     "start": 30,
                     "end": 31
                   },
-                  "value": "3"
+                  "value": 3
                 }
               ],
               "value": [
                 null,
-                "3"
+                3
               ]
             }
           }
@@ -6038,12 +6038,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                   "start": 30,
                   "end": 31
                 },
-                "value": "3"
+                "value": 3
               }
             ],
             "value": [
               null,
-              "3"
+              3
             ]
           }
         }
@@ -6144,12 +6144,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                     "start": 30,
                     "end": 31
                   },
-                  "value": "3"
+                  "value": 3
                 }
               ],
               "value": [
                 null,
-                "3"
+                3
               ]
             }
           }
@@ -6207,12 +6207,12 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
                   "start": 30,
                   "end": 31
                 },
-                "value": "3"
+                "value": 3
               }
             ],
             "value": [
               null,
-              "3"
+              3
             ]
           }
         }

@@ -7,7 +7,7 @@ interface BaseTreeNode {
 		[name: string]: TreeNode,
 	},
 	executable?: boolean,
-	redirect?: [string],
+	redirect?: string[],
 
 	// The following properties are custom.
 	/**
@@ -88,7 +88,7 @@ export interface MinecraftDimensionArgumentTreeNode extends BaseArgumentTreeNode
 export interface MinecraftEntityArgumentTreeNode extends BaseArgumentTreeNode {
 	parser: 'minecraft:entity',
 	properties: {
-		amount: 'single' | 'multiple',
+		amount: 'multiple' | 'single',
 		type: 'entities' | 'players',
 	},
 }

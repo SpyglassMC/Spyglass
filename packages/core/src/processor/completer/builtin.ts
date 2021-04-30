@@ -1,4 +1,4 @@
-import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, QuoteTypeConfig, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { ResourceLocationNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { CompleterContext, MetaRegistry } from '../../service'
@@ -35,7 +35,7 @@ export const literal: Completer<LiteralBaseNode> = node => {
 	return node.options.pool.map(v => CompletionItem.create(v, node, undefined, { kind: CompletionKind.Constant }))
 }
 
-export const number: Completer<IntegerBaseNode | FloatBaseNode> = node => {
+export const number: Completer<FloatBaseNode | IntegerBaseNode | LongBaseNode> = node => {
 	return []
 }
 
@@ -101,7 +101,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 	return Object
-		.keys(ctx.symbols.getVisibleSymbols(node.options.category))
+		.keys(ctx.symbols.query(ctx.doc, node.options.category, ...node.options.parentPath ?? []).visibleMembers)
 		.map(v => CompletionItem.create(v, node, undefined, { kind: CompletionKind.Variable }))
 }
 
@@ -123,6 +123,7 @@ export function registerCompleters(meta: MetaRegistry) {
 	meta.registerCompleter<BooleanNode>('boolean', boolean)
 	meta.registerCompleter<FloatNode>('float', number)
 	meta.registerCompleter<IntegerNode>('integer', number)
+	meta.registerCompleter<LongNode>('long', number)
 	meta.registerCompleter<LiteralNode>('literal', literal)
 	meta.registerCompleter<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerCompleter<StringNode>('string', string)

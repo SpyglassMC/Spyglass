@@ -10,7 +10,7 @@ exports['nbtdoc integer() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "value": "0"
+    "value": 0
   },
   "errors": [
     {
@@ -31,7 +31,7 @@ exports['nbtdoc integer() Parse "-1" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "-1"
+    "value": -1
   },
   "errors": []
 }
@@ -43,7 +43,7 @@ exports['nbtdoc integer() Parse "0" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": []
 }
@@ -55,7 +55,7 @@ exports['nbtdoc integer() Parse "1" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": "1"
+    "value": 1
   },
   "errors": []
 }
@@ -67,7 +67,7 @@ exports['nbtdoc integer(unsigned = true) Parse "-1" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "-1"
+    "value": -1
   },
   "errors": [
     {
@@ -88,7 +88,7 @@ exports['nbtdoc integer(unsigned = true) Parse "0" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": []
 }
@@ -100,7 +100,7 @@ exports['nbtdoc integer(unsigned = true) Parse "1" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": "1"
+    "value": 1
   },
   "errors": []
 }

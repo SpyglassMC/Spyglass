@@ -18,7 +18,8 @@ exports['mcfunction literal() Parse "advancement grant @s everything" 1'] = {
       ]
     },
     "value": "advancement",
-    "name": "advancement"
+    "name": "advancement",
+    "isRoot": false
   },
   "errors": []
 }
@@ -38,7 +39,8 @@ exports['mcfunction literal() Parse "tell @p Hello!" 1'] = {
       ]
     },
     "value": "tell",
-    "name": "tell"
+    "name": "tell",
+    "isRoot": false
   },
   "errors": []
 }
@@ -58,7 +60,8 @@ exports['mcfunction literal() Parse "tellraw @a "World!"" 1'] = {
       ]
     },
     "value": "tellraw",
-    "name": "tellraw"
+    "name": "tellraw",
+    "isRoot": false
   },
   "errors": []
 }

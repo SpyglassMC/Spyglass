@@ -28,12 +28,12 @@ export function describesClause(): Parser<DescribesClauseNode> {
 			punctuation(';'),
 		]),
 		res => {
-			const mcIds = res.nodes.filter(MinecraftIdentifierToken.is)
+			const mcIds = res.children.filter(MinecraftIdentifierToken.is)
 			const ans: DescribesClauseNode = {
 				type: 'nbtdoc:describes_clause',
 				range: res.range,
-				children: res.nodes,
-				path: res.nodes.find(IdentPathToken.is)!,
+				children: res.children,
+				path: res.children.find(IdentPathToken.is)!,
 				registry: mcIds[0],
 				objects: mcIds.length > 1 ? mcIds.slice(1) : null,
 			}

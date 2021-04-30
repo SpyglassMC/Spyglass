@@ -44,8 +44,8 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 	}
 }
 
-type SP<CN extends AstNode> = Parser<CN | SequenceUtil<CN> | null>
-type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | null>
+type SP<CN extends AstNode> = Parser<CN | SequenceUtil<CN> | null> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | null> }
+type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | null> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | null> }
 /**
  * @template CN Child node.
  * 
@@ -81,24 +81,24 @@ export function sequence<CN extends AstNode>(parsers: SP<CN>[], parseGap?: Infal
 	return (src: Source, ctx: ParserContext): Result<SequenceUtil<CN>> => {
 		const ans: SequenceUtil<CN> = {
 			isSequenceUtil: true,
-			nodes: [],
+			children: [],
 			range: Range.create(src),
 		}
 
 		for (const parser of parsers) {
 			if (parseGap) {
-				ans.nodes.push(...parseGap(src, ctx))
+				ans.children.push(...parseGap(src, ctx))
 			}
 
-			const result = parser(src, ctx)
+			const result = (typeof parser === 'function' ? parser : parser.get(ans))(src, ctx)
 			if (result === Failure) {
 				return Failure
 			} else if (result === null) {
 				continue
 			} else if (SequenceUtil.is(result)) {
-				ans.nodes.push(...result.nodes)
+				ans.children.push(...result.children)
 			} else {
-				ans.nodes.push(result)
+				ans.children.push(result)
 			}
 		}
 
@@ -122,13 +122,13 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>
 	return (src: Source, ctx: ParserContext): SequenceUtil<CN> => {
 		const ans: SequenceUtil<CN> = {
 			isSequenceUtil: true,
-			nodes: [],
+			children: [],
 			range: Range.create(src),
 		}
 
 		while (src.canRead()) {
 			if (parseGap) {
-				ans.nodes.push(...parseGap(src, ctx))
+				ans.children.push(...parseGap(src, ctx))
 			}
 
 			const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
@@ -139,9 +139,9 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>
 
 			updateSrcAndCtx()
 			if (SequenceUtil.is(result)) {
-				ans.nodes.push(...result.nodes)
+				ans.children.push(...result.children)
 			} else {
-				ans.nodes.push(result)
+				ans.children.push(result)
 			}
 		}
 
@@ -197,7 +197,7 @@ export function any<N extends Returnable>(parsers: Parser<N>[]): Parser<N> {
 /**
  * @returns A parser that fails when the passed-in parser didn't move the cursor at all.
  */
-export function failOnEmpty<T extends Returnable>(parser: InfallibleParser<T>): Parser<T> {
+export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> {
 	return (src, ctx) => {
 		const start = src.cursor
 		const { endCursor, updateSrcAndCtx, result } = attempt(parser, src, ctx)
@@ -253,9 +253,9 @@ export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (
  * 
  * `Failure` when the `parser` returns a `Failure`.
  */
-export function map<NA extends Returnable, NB extends Returnable>(parser: InfallibleParser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): InfallibleParser<NB>
-export function map<NA extends Returnable, NB extends Returnable>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB>
-export function map<NA extends Returnable, NB extends Returnable>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB> {
+export function map<NA extends Returnable, NB extends Returnable = NA>(parser: InfallibleParser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): InfallibleParser<NB>
+export function map<NA extends Returnable, NB extends Returnable = NA>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB>
+export function map<NA extends Returnable, NB extends Returnable = NA>(parser: Parser<NA>, fn: (res: NA, src: Source, ctx: ParserContext) => NB): Parser<NB> {
 	return (src: Source, ctx: ParserContext): Result<NB> => {
 		const result = parser(src, ctx)
 		if (result === Failure) {
@@ -284,4 +284,24 @@ export function validate<N extends AstNode>(parser: Parser<N>, validator: (res: 
 			return res
 		}
 	)
+}
+
+/**
+ * @returns A parser that is based on the passed-in `parser`, but will never read to any of the terminator strings.
+ */
+export function stopBefore<N extends Returnable>(parser: InfallibleParser<N>, ...teminators: string[]): InfallibleParser<N>
+export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: string[]): Parser<N>
+export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: string[]): Parser<N> {
+	return (src, ctx): Result<N> => {
+		const tmpSrc = src.clone()
+		// Cut newSrc.string before the nearest terminator.
+		tmpSrc.string = tmpSrc.string.slice(0, teminators.reduce((p, c) => {
+			const index = tmpSrc.string.indexOf(c, tmpSrc.cursor)
+			return Math.min(p, index === -1 ? Infinity : index)
+		}, Infinity))
+
+		const ans = parser(tmpSrc, ctx)
+		src.cursor = tmpSrc.cursor
+		return ans
+	}
 }

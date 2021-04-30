@@ -3,7 +3,7 @@ import type { NbtCompoundNode } from '../node'
 import { entry } from './entry'
 import { string } from './primitive'
 
-export const compound: core.Parser<NbtCompoundNode> = (src, ctx) => {
+export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
 	const parser = core.table({
 		start: '{',
 		pair: { key: string, sep: ':', value: entry, end: ',', trailingEnd: false },

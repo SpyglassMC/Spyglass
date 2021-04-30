@@ -13,8 +13,8 @@ export const docComments: InfallibleParser<DocCommentsNode> = map(
 		const ans: DocCommentsNode = {
 			type: 'nbtdoc:doc_comments',
 			range: res.range,
-			children: res.nodes,
-			value: res.nodes.filter(CommentNode.is).map(v => v.comment).join(''),
+			children: res.children,
+			value: res.children.filter(CommentNode.is).map(v => v.comment).join(''),
 		}
 		return ans
 	}

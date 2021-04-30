@@ -22,11 +22,11 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 			const ans: EnumDefinitionNode = {
 				type: 'nbtdoc:enum_definition',
 				range: res.range,
-				children: res.nodes,
-				doc: res.nodes.find(DocCommentsNode.is)!,
-				enumType: res.nodes.find(LiteralToken.is(EnumTypesOrEmpty))!,
-				identifier: res.nodes.find(IdentifierToken.is)!,
-				fields: res.nodes.filter(EnumFieldNode.is),
+				children: res.children,
+				doc: res.children.find(DocCommentsNode.is)!,
+				enumType: res.children.find(LiteralToken.is(EnumTypesOrEmpty))!,
+				identifier: res.children.find(IdentifierToken.is)!,
+				fields: res.children.filter(EnumFieldNode.is),
 			}
 			return ans
 		}
@@ -58,10 +58,10 @@ const enumField: InfallibleParser<EnumFieldNode> = map(
 		const ans: EnumFieldNode = {
 			type: 'nbtdoc:enum_definition/field',
 			range: res.range,
-			children: res.nodes,
-			doc: res.nodes.find(DocCommentsNode.is)!,
-			key: res.nodes.find(IdentifierToken.is)!,
-			value: res.nodes.find(Primitive.is)!,
+			children: res.children,
+			doc: res.children.find(DocCommentsNode.is)!,
+			key: res.children.find(IdentifierToken.is)!,
+			value: res.children.find(Primitive.is)!,
 		}
 		return ans
 	}

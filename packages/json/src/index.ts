@@ -19,6 +19,8 @@ export function initializeJson() {
 			triggerCharacters: completer.JsonTriggerCharacters,
 			parser: parser.entry,
 		})
+		
+		meta.registerParser('json:entry' as any, parser.entry)
 
 		checker.register(meta)
 		colorizer.register(meta)

@@ -26,16 +26,7 @@ exports['nbt primitive() Parse "" 1'] = {
       "pairs": []
     }
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Expected a string",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['nbt primitive() Parse ""quoted"" 1'] = {
@@ -140,7 +131,7 @@ exports['nbt primitive() Parse "1b" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "1"
+    "value": 1
   },
   "errors": []
 }
@@ -176,7 +167,7 @@ exports['nbt primitive() Parse "72s" 1'] = {
       "start": 0,
       "end": 3
     },
-    "value": "72"
+    "value": 72
   },
   "errors": []
 }
@@ -188,7 +179,7 @@ exports['nbt primitive() Parse "987" 1'] = {
       "start": 0,
       "end": 3
     },
-    "value": "987"
+    "value": 987
   },
   "errors": []
 }
@@ -200,7 +191,7 @@ exports['nbt primitive() Parse "false" 1'] = {
       "start": 0,
       "end": 5
     },
-    "value": "0"
+    "value": 0
   },
   "errors": []
 }
@@ -212,7 +203,7 @@ exports['nbt primitive() Parse "true" 1'] = {
       "start": 0,
       "end": 4
     },
-    "value": "1"
+    "value": 1
   },
   "errors": []
 }

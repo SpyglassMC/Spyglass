@@ -88,7 +88,7 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
               "start": 7,
               "end": 11
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "key": {
@@ -128,7 +128,7 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
             "start": 7,
             "end": 11
           },
-          "value": "1"
+          "value": 1
         }
       }
     ]

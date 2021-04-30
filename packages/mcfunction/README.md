@@ -67,9 +67,11 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 | `minecraft:vec2`               | `MinecraftVec2`              |
 | `minecraft:vec3`               | `MinecraftVec3`              |
 | `spyglassmc:symbol`            | `SpyglassmcSymbol`           |
-| `spyglassmc:unknown`\*         | `SpyglassmcUnknown`          |
+| `spyglassmc:trailing`\*        | `SpyglassmcTrailing`         |
+| `spyglassmc:unknown`\*\*       | `SpyglassmcUnknown`          |
 
-\* All parsers that are not listed in the table will be treated as `spyglassmc:unknown`.
+\* This parser is responsible for parsing trailing string after a command.  \
+\*\* All parsers that are not listed in the table will be treated as `spyglassmc:unknown`.
 
 # Contributions
 

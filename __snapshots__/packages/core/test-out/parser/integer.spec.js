@@ -5,7 +5,7 @@ exports['integer() integer() integer() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "value": "0"
+    "value": 0
   },
   "errors": [
     {
@@ -26,7 +26,7 @@ exports['integer() integer() integer() Parse "+" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": null
   },
   "errors": [
     {
@@ -47,7 +47,7 @@ exports['integer() integer() integer() Parse "+1" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "1"
+    "value": 1
   },
   "errors": []
 }
@@ -59,7 +59,7 @@ exports['integer() integer() integer() Parse "-1" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "-1"
+    "value": -1
   },
   "errors": []
 }
@@ -71,7 +71,7 @@ exports['integer() integer() integer() Parse "-123" 1'] = {
       "start": 0,
       "end": 4
     },
-    "value": "-123"
+    "value": -123
   },
   "errors": []
 }
@@ -83,7 +83,7 @@ exports['integer() integer() integer() Parse "0123" 1'] = {
       "start": 0,
       "end": 4
     },
-    "value": "123"
+    "value": 123
   },
   "errors": [
     {
@@ -104,7 +104,7 @@ exports['integer() integer() integer() Parse "123" 1'] = {
       "start": 0,
       "end": 3
     },
-    "value": "123"
+    "value": 123
   },
   "errors": []
 }
@@ -116,7 +116,7 @@ exports['integer() integer() integer() Parse "foo" 1'] = {
       "start": 0,
       "end": 0
     },
-    "value": "0"
+    "value": 0
   },
   "errors": [
     {
@@ -142,7 +142,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "0"
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": [
     {
@@ -163,7 +163,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "3"
       "start": 0,
       "end": 1
     },
-    "value": "3"
+    "value": 3
   },
   "errors": []
 }
@@ -175,7 +175,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, 6, true) Parse "9"
       "start": 0,
       "end": 1
     },
-    "value": "9"
+    "value": 9
   },
   "errors": [
     {
@@ -196,7 +196,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": [
     {
@@ -217,7 +217,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
       "start": 0,
       "end": 1
     },
-    "value": "3"
+    "value": 3
   },
   "errors": []
 }
@@ -229,7 +229,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(1, undefined, false) 
       "start": 0,
       "end": 1
     },
-    "value": "9"
+    "value": 9
   },
   "errors": []
 }
@@ -241,7 +241,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
       "start": 0,
       "end": 1
     },
-    "value": "0"
+    "value": 0
   },
   "errors": []
 }
@@ -253,7 +253,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
       "start": 0,
       "end": 1
     },
-    "value": "3"
+    "value": 3
   },
   "errors": []
 }
@@ -265,7 +265,7 @@ exports['integer() integer(min, max, onOutOfRange) integer(undefined, 6, false) 
       "start": 0,
       "end": 1
     },
-    "value": "9"
+    "value": 9
   },
   "errors": [
     {

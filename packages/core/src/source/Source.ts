@@ -103,7 +103,7 @@ export class Source {
 	 * Reads until the end of this line.
 	 */
 	readLine() {
-		return this.readUntilOrEnd(CR, LF)
+		return this.readUntil(CR, LF)
 	}
 	/**
 	 * Skips until the end of this line.
@@ -152,7 +152,7 @@ export class Source {
 	/**
 	 * @param terminators Ending character. Will not be skipped or included in the result.
 	 */
-	readUntilOrEnd(...terminators: string[]) {
+	readUntil(...terminators: string[]) {
 		let ans = ''
 		while (this.canRead()) {
 			const c = this.peek()
@@ -169,12 +169,12 @@ export class Source {
 	 * @param terminators Ending character. Will not be skipped.
 	 */
 	skipUntilOrEnd(...terminators: string[]): this {
-		this.readUntilOrEnd(...terminators)
+		this.readUntil(...terminators)
 		return this
 	}
 
 	readUntilLineEnd() {
-		return this.readUntilOrEnd(CR, LF)
+		return this.readUntil(CR, LF)
 	}
 	skipUntilLineEnd() {
 		return this.skipUntilOrEnd(CR, LF)

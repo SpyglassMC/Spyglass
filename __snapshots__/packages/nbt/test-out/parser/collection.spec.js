@@ -40,7 +40,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
               "start": 4,
               "end": 8
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -49,7 +49,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
             "start": 4,
             "end": 8
           },
-          "value": "1"
+          "value": 1
         },
         "sep": {
           "start": 8,
@@ -69,7 +69,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
               "start": 10,
               "end": 12
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -78,7 +78,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
             "start": 10,
             "end": 12
           },
-          "value": "1"
+          "value": 1
         },
         "sep": {
           "start": 12,
@@ -98,7 +98,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
               "start": 14,
               "end": 15
             },
-            "value": "2"
+            "value": 2
           }
         ],
         "value": {
@@ -107,7 +107,7 @@ exports['nbt byteArray() Parse "[B; true, 1b, 2]" 1'] = {
             "start": 14,
             "end": 15
           },
-          "value": "2"
+          "value": 2
         }
       }
     ]
@@ -145,7 +145,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
               "start": 4,
               "end": 8
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -154,7 +154,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
             "start": 4,
             "end": 8
           },
-          "value": "1"
+          "value": 1
         },
         "sep": {
           "start": 8,
@@ -174,7 +174,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
               "start": 10,
               "end": 12
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -183,7 +183,7 @@ exports['nbt byteArray() Parse "[B; true, 1b]" 1'] = {
             "start": 10,
             "end": 12
           },
-          "value": "1"
+          "value": 1
         }
       }
     ]
@@ -245,7 +245,7 @@ exports['nbt intArray() Parse "[I; 0, 1.]" 1'] = {
               "start": 4,
               "end": 5
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "value": {
@@ -254,7 +254,7 @@ exports['nbt intArray() Parse "[I; 0, 1.]" 1'] = {
             "start": 4,
             "end": 5
           },
-          "value": "0"
+          "value": 0
         },
         "sep": {
           "start": 5,
@@ -321,7 +321,7 @@ exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
               "start": 4,
               "end": 5
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "value": {
@@ -330,7 +330,7 @@ exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
             "start": 4,
             "end": 5
           },
-          "value": "0"
+          "value": 0
         },
         "sep": {
           "start": 5,
@@ -350,7 +350,7 @@ exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
               "start": 7,
               "end": 8
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -359,7 +359,7 @@ exports['nbt intArray() Parse "[I; 0, 1]" 1'] = {
             "start": 7,
             "end": 8
           },
-          "value": "1"
+          "value": 1
         }
       }
     ]
@@ -488,7 +488,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
               "start": 11,
               "end": 13
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "value": {
@@ -497,7 +497,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
             "start": 11,
             "end": 13
           },
-          "value": "1"
+          "value": 1
         }
       }
     ],
@@ -742,7 +742,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               "start": 8,
               "end": 9
             },
-            "value": "2"
+            "value": 2
           }
         ],
         "value": {
@@ -751,7 +751,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
             "start": 8,
             "end": 9
           },
-          "value": "2"
+          "value": 2
         },
         "sep": {
           "start": 9,

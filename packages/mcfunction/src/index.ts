@@ -1,6 +1,8 @@
 import * as core from '@spyglassmc/core'
+import * as colorizer from './colorizer'
 import * as parser from './parser'
 
+export * as colorizer from './colorizer'
 export * as parser from './parser'
 export * from './tree'
 
@@ -11,5 +13,7 @@ export function initializeMcfunction() {
 			extensions: ['.mcfunction'],
 			parser: parser.entry,
 		})
+
+		colorizer.register(meta)
 	})
 }

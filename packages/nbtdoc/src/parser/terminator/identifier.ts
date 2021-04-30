@@ -16,7 +16,7 @@ const HardSeparations = new Set([
 export function identifier({ regex = Regex, allowEmpty = false }: Options = {}): InfallibleParser<IdentifierToken> {
 	return (src: Source, ctx: ParserContext): IdentifierToken => {
 		const start = src.cursor
-		const text = src.readUntilOrEnd(...HardSeparations)
+		const text = src.readUntil(...HardSeparations)
 		const ans: IdentifierToken = {
 			type: 'nbtdoc:identifier',
 			range: Range.create(start, src),

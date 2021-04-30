@@ -22,9 +22,9 @@ export function useClause(): Parser<UseClauseNode> {
 			const ans: UseClauseNode = {
 				type: 'nbtdoc:use_clause',
 				range: res.range,
-				children: res.nodes,
-				isExport: res.nodes.some(LiteralToken.is('export')),
-				path: res.nodes.find(IdentPathToken.is)!,
+				children: res.children,
+				isExport: res.children.some(LiteralToken.is('export')),
+				path: res.children.find(IdentPathToken.is)!,
 			}
 			return ans
 		}

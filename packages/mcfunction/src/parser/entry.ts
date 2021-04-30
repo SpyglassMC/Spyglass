@@ -21,6 +21,7 @@ export const entry: core.Parser<McfunctionNode> = (src, ctx) => {
 			result = command(tree)(src, ctx)
 		}
 		ans.children.push(result)
+		src.nextLine()
 	}
 
 	ans.range.end = src.cursor

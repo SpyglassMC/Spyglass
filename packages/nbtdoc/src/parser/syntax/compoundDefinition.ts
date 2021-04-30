@@ -23,11 +23,11 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 			const ans: CompoundDefinitionNode = {
 				type: 'nbtdoc:compound_definition',
 				range: res.range,
-				children: res.nodes,
-				doc: res.nodes.find(DocCommentsNode.is)!,
-				identifier: res.nodes.find(IdentifierToken.is)!,
-				extends: res.nodes.find(CompoundExtendable.is) ?? null,
-				fields: res.nodes.filter(CompoundFieldNode.is),
+				children: res.children,
+				doc: res.children.find(DocCommentsNode.is)!,
+				identifier: res.children.find(IdentifierToken.is)!,
+				extends: res.children.find(CompoundExtendable.is) ?? null,
+				fields: res.children.filter(CompoundFieldNode.is),
 			}
 			return ans
 		}
@@ -37,17 +37,17 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 /**
  * `Failure` when there is no `@` marker.
  */
-const intRange = _intRange<IntegerNode, IntRangeNode>('nbtdoc:int_range', integer(), fallibleInteger())
+const intRange = _range<IntegerNode, IntRangeNode>('nbtdoc:int_range', integer(), fallibleInteger())
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const unsignedRange = _intRange<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true), fallibleInteger(true))
+const unsignedRange = _range<IntegerNode, UnsignedRangeNode>('nbtdoc:unsigned_range', integer(true), fallibleInteger(true))
 
 /**
  * `Failure` when there is no `@` marker.
  */
-const floatRange = _intRange<FloatNode, FloatRangeNode>('nbtdoc:float_range', float, fallibleFloat)
+const floatRange = _range<FloatNode, FloatRangeNode>('nbtdoc:float_range', float, fallibleFloat)
 
 const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
 
@@ -75,7 +75,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 			syntax<CompoundFieldChild>([identPath()]),
 		]),
 		res => {
-			const literals = res.nodes.filter(LiteralToken.is())
+			const literals = res.children.filter(LiteralToken.is())
 			if (literals.length > 0) {
 				switch (literals[0].value) {
 					case 'string':
@@ -92,8 +92,8 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					case 'int':
 					case 'long': {
 						if (literals[1]?.value === '[') {
-							const valueRange = res.nodes.find(IntRangeNode.is) ?? null
-							const lengthRange = res.nodes.find(UnsignedRangeNode.is) ?? null
+							const valueRange = res.children.find(IntRangeNode.is) ?? null
+							const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
 							const ans: CompoundFieldTypeNode = {
 								type: 'nbtdoc:compound_definition/field/type',
 								range: res.range,
@@ -107,7 +107,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					// Fall through.
 					/* eslint-disable-next-line no-fallthrough */
 					case 'short': {
-						const valueRange = res.nodes.find(IntRangeNode.is) ?? null
+						const valueRange = res.children.find(IntRangeNode.is) ?? null
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -119,7 +119,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 
 					case 'float':
 					case 'double': {
-						const valueRange = res.nodes.find(FloatRangeNode.is) ?? null
+						const valueRange = res.children.find(FloatRangeNode.is) ?? null
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -130,8 +130,8 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 
 					case '[': {
-						const lengthRange = res.nodes.find(UnsignedRangeNode.is) ?? null
-						const item = res.nodes.find(CompoundFieldTypeNode.is)!
+						const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
+						const item = res.children.find(CompoundFieldTypeNode.is)!
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -143,7 +143,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 
 					case 'id': {
-						const registry = res.nodes.find(MinecraftIdentifierToken.is)!
+						const registry = res.children.find(MinecraftIdentifierToken.is)!
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -154,7 +154,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 
 					case '(': {
-						const members = res.nodes.filter(CompoundFieldTypeNode.is)
+						const members = res.children.filter(CompoundFieldTypeNode.is)
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -169,7 +169,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 						throw 'never'
 				}
 			} else {
-				const index = res.nodes.find(RegistryIndexNode.is)
+				const index = res.children.find(RegistryIndexNode.is)
 				if (index) {
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
@@ -179,7 +179,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 					return ans
 				} else {
-					const path = res.nodes.find(IdentPathToken.is)!
+					const path = res.children.find(IdentPathToken.is)!
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
@@ -202,10 +202,10 @@ const compoundField: InfallibleParser<CompoundFieldNode> = map(
 		const ans: CompoundFieldNode = {
 			type: 'nbtdoc:compound_definition/field',
 			range: res.range,
-			children: res.nodes,
-			doc: res.nodes.find(DocCommentsNode.is)!,
-			key: res.nodes.find(CompoundFieldKey.is)!,
-			fieldType: res.nodes.find(CompoundFieldTypeNode.is)!,
+			children: res.children,
+			doc: res.children.find(DocCommentsNode.is)!,
+			key: res.children.find(CompoundFieldKey.is)!,
+			fieldType: res.children.find(CompoundFieldTypeNode.is)!,
 		}
 		return ans
 	}
@@ -222,7 +222,7 @@ export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | Compound
 /**
  * `Failure` when there is no `@` marker.
  */
-function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>, fallibleNumberParser: Parser<T>): Parser<R> {
+function _range<T extends IntegerNode | FloatNode, R extends IntRangeNode | UnsignedRangeNode | FloatRangeNode>(type: R['type'], numberParser: InfallibleParser<T>, fallibleNumberParser: Parser<T>): Parser<R> {
 	return map(
 		syntax<LiteralToken | T>([
 			marker('@'),
@@ -234,8 +234,8 @@ function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | U
 			]),
 		]),
 		res => {
-			const sepIndex = res.nodes.findIndex(LiteralToken.is('..'))
-			const numbers = res.nodes.map((v, i) => ({ v, i })).filter((o): o is { v: T, i: number } => IntegerNode.is(o.v) || FloatNode.is(o.v))
+			const sepIndex = res.children.findIndex(LiteralToken.is('..'))
+			const numbers = res.children.map((v, i) => ({ v, i })).filter((o): o is { v: T, i: number } => IntegerNode.is(o.v) || FloatNode.is(o.v))
 			let value: [T['value'] | null, T['value'] | null]
 			if (numbers.length === 2) {
 				value = [numbers[0].v.value, numbers[1].v.value]
@@ -249,7 +249,7 @@ function _intRange<T extends IntegerNode | FloatNode, R extends IntRangeNode | U
 			const ans: R = {
 				type,
 				range: res.range,
-				children: res.nodes,
+				children: res.children,
 				value: value as R['value'],
 			} as R
 			return ans
@@ -282,9 +282,9 @@ const registryIndex: Parser<RegistryIndexNode> = map(
 		const ans: RegistryIndexNode = {
 			type: 'nbtdoc:registry_index',
 			range: res.range,
-			children: res.nodes,
-			registry: res.nodes.find(MinecraftIdentifierToken.is)!,
-			path: res.nodes.filter(FieldPathKey.is),
+			children: res.children,
+			registry: res.children.find(MinecraftIdentifierToken.is)!,
+			path: res.children.filter(FieldPathKey.is),
 		}
 		return ans
 	}

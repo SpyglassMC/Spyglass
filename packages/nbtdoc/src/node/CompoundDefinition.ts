@@ -146,7 +146,7 @@ export namespace CompoundFieldTypeNode {
 
 export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:int_range',
-	value: [bigint | null, bigint | null],
+	value: [number | null, number | null],
 }
 export namespace IntRangeNode {
 	export function is(obj: object): obj is IntRangeNode {

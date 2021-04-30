@@ -1,7 +1,9 @@
+import type { ColorTokenType } from '../processor'
 import type { AstNode } from './AstNode'
 
 export interface LiteralOptions {
 	pool: string[],
+	colorTokenType?: ColorTokenType,
 }
 
 export interface LiteralBaseNode extends AstNode {

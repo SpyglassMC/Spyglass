@@ -1,8 +1,5 @@
-import type { MetaRegistry } from '../..'
-import type { AstNode, CommentNode, ErrorNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, ResourceLocationNode, StringBaseNode, StringNode } from '../../node'
-import type { BooleanNode } from '../../node/BooleanNode'
-import type { LiteralBaseNode, LiteralNode } from '../../node/LiteralNode'
-import type { SymbolBaseNode, SymbolNode } from '../../node/SymbolNode'
+import type { BooleanNode, CommentNode, ErrorNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { MetaRegistry } from '../../service'
 import { IndexMap, Range } from '../../source'
 import { traversePreOrder } from '../util'
 import type { Colorizer, ColorTokenType } from './Colorizer'
@@ -11,7 +8,7 @@ import { ColorToken } from './Colorizer'
 /**
  * Use the shallowest children that have their own colorizers to provide the color tokens.
  */
-export const fallback: Colorizer<AstNode> = (node, ctx) => {
+export const fallback: Colorizer = (node, ctx) => {
 	const ans: ColorToken[] = []
 	traversePreOrder(node,
 		node => !ctx.options.range || Range.intersects(node.range, ctx.options.range),
@@ -25,27 +22,27 @@ export const fallback: Colorizer<AstNode> = (node, ctx) => {
 	return Object.freeze(ans)
 }
 
-export const boolean: Colorizer<BooleanNode> = node => {
+export const boolean: Colorizer = node => {
 	return [ColorToken.create(node, 'literal')]
 }
 
-export const comment: Colorizer<CommentNode> = node => {
+export const comment: Colorizer = node => {
 	return [ColorToken.create(node, 'comment')]
 }
 
-export const error: Colorizer<ErrorNode> = node => {
+export const error: Colorizer = node => {
 	return [ColorToken.create(node, 'error')]
 }
 
 export const literal: Colorizer<LiteralBaseNode> = node => {
-	return [ColorToken.create(node, 'literal')]
+	return [ColorToken.create(node, node.options.colorTokenType ?? 'literal')]
 }
 
-export const number: Colorizer<IntegerBaseNode | FloatBaseNode> = node => {
+export const number: Colorizer = node => {
 	return [ColorToken.create(node, 'number')]
 }
 
-export const resourceLocation: Colorizer<ResourceLocationNode> = (node, ctx) => {
+export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (node, _ctx) => {
 	let type: ColorTokenType
 	switch (node.options.category) {
 		case 'function':
@@ -64,7 +61,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		const colorizer = ctx.meta.getColorizer(node.valueNode.type)
 		const result = colorizer(node.valueNode, ctx)
 		// TODO: Fill the gap between the last token and the ending quote with errors.
-		return ColorToken.fillGap(toOuterColorTokens(result, node.valueMap), node.range, 'string')
+		return ColorToken.fillGap(toOuterColorTokens(result, node.valueMap), node.range, node.options.colorTokenType ?? 'string')
 	} else {
 		return [ColorToken.create(node, 'string')]
 	}
@@ -88,6 +85,7 @@ export function registerColorizers(meta: MetaRegistry) {
 	meta.registerColorizer<ErrorNode>('error', error)
 	meta.registerColorizer<FloatNode>('float', number)
 	meta.registerColorizer<IntegerNode>('integer', number)
+	meta.registerColorizer<LongNode>('long', number)
 	meta.registerColorizer<LiteralNode>('literal', literal)
 	meta.registerColorizer<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerColorizer<StringNode>('string', string)

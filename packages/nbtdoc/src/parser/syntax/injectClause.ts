@@ -21,8 +21,8 @@ export function injectClause(): Parser<InjectClauseNode> {
 			const ans: InjectClauseNode = {
 				type: 'nbtdoc:inject_clause',
 				range: res.range,
-				children: res.nodes,
-				def: res.nodes.find(DefinitionInject.is) ?? null,
+				children: res.children,
+				def: res.children.find(DefinitionInject.is) ?? null,
 			}
 			return ans
 		}
@@ -50,30 +50,30 @@ const definitionInject: InfallibleParser<DefinitionInject | null> = map(
 			const ans: SyntaxUtil<DefinitionInjectChild> = {
 				isSequenceUtil: true,
 				range: Range.create(src),
-				nodes: [],
+				children: [],
 			}
 			return ans
 		}
 	),
 	res => {
 		let ans: DefinitionInject | null = null
-		const literal = res.nodes.find(LiteralToken.is(['compound', 'enum']))
+		const literal = res.children.find(LiteralToken.is(['compound', 'enum']))
 		if (literal?.value === 'compound') {
 			ans = {
 				type: 'nbtdoc:inject_clause/compound',
 				range: res.range,
-				children: res.nodes,
-				path: res.nodes.find(IdentPathToken.is)!,
-				fields: res.nodes.filter(CompoundFieldNode.is),
+				children: res.children,
+				path: res.children.find(IdentPathToken.is)!,
+				fields: res.children.filter(CompoundFieldNode.is),
 			}
 		} else if (literal?.value === 'enum') {
 			ans = {
 				type: 'nbtdoc:inject_clause/enum',
 				range: res.range,
-				children: res.nodes,
-				enumType: res.nodes.find(LiteralToken.is(EnumTypesOrEmpty))!,
-				path: res.nodes.find(IdentPathToken.is)!,
-				fields: res.nodes.filter(EnumFieldNode.is),
+				children: res.children,
+				enumType: res.children.find(LiteralToken.is(EnumTypesOrEmpty))!,
+				path: res.children.find(IdentPathToken.is)!,
+				fields: res.children.filter(EnumFieldNode.is),
 			}
 		}
 		return ans

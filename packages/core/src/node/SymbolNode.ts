@@ -3,6 +3,7 @@ import type { AstNode } from './AstNode'
 
 export interface SymbolOptions {
 	category: string,
+	parentPath?: string[],
 	accessType?: SymbolAccessType,
 	usageType?: SymbolUsageType,
 }

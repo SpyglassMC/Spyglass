@@ -12,9 +12,11 @@ export namespace CommandNode {
 	}
 }
 
-export interface CommandChildBaseNode extends core.AstNode {
+export interface CommandChildNodeExtender {
 	/**
 	 * The name of this node in the command tree.
 	 */
 	name: string,
 }
+
+export interface CommandChildBaseNode extends core.AstNode, CommandChildNodeExtender {}

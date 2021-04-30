@@ -1002,7 +1002,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "start": 4,
               "end": 4
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "doc": {
@@ -1028,7 +1028,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "start": 4,
             "end": 4
           },
-          "value": "0"
+          "value": 0
         }
       },
       {
@@ -1104,7 +1104,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
               "start": 4,
               "end": 4
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "doc": {
@@ -1130,7 +1130,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
             "start": 4,
             "end": 4
           },
-          "value": "0"
+          "value": 0
         }
       }
     ]
@@ -1314,7 +1314,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 27,
               "end": 28
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "doc": {
@@ -1340,7 +1340,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 27,
             "end": 28
           },
-          "value": "1"
+          "value": 1
         }
       },
       {
@@ -1389,7 +1389,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 29,
               "end": 29
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "doc": {
@@ -1415,7 +1415,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 29,
             "end": 29
           },
-          "value": "0"
+          "value": 0
         }
       },
       {
@@ -1491,7 +1491,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 27,
               "end": 28
             },
-            "value": "1"
+            "value": 1
           }
         ],
         "doc": {
@@ -1517,7 +1517,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 27,
             "end": 28
           },
-          "value": "1"
+          "value": 1
         }
       },
       {
@@ -1558,7 +1558,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
               "start": 29,
               "end": 29
             },
-            "value": "0"
+            "value": 0
           }
         ],
         "doc": {
@@ -1584,7 +1584,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
             "start": 29,
             "end": 29
           },
-          "value": "0"
+          "value": 0
         }
       }
     ]

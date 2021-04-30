@@ -16,7 +16,7 @@ export interface SequenceNode<CN extends AstNode = AstNode> extends AstNode {
 export interface SequenceUtil<CN extends AstNode = AstNode> {
 	isSequenceUtil: true,
 	range: Range,
-	nodes: CN[],
+	children: CN[],
 }
 
 export namespace SequenceUtil {

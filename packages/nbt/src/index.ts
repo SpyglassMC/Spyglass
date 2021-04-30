@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as colorizer from './colorizer'
-import type { NbtByteNode, NbtCompoundNode, NbtDoubleNode, NbtFloatNode, NbtIntNode, NbtLongNode, NbtShortNode } from './node'
+import type { NbtByteNode, NbtCompoundNode, NbtDoubleNode, NbtFloatNode, NbtIntNode, NbtLongNode, NbtNode, NbtShortNode } from './node'
 import * as parser from './parser'
 
 export * as colorizer from './colorizer'
@@ -14,7 +14,8 @@ export function initializeNbt() {
 			extensions: ['.snbt'],
 			parser: parser.entry,
 		})
-	
+
+		meta.registerParser<NbtNode>('nbt:entry' as any, parser.entry)
 		meta.registerParser<NbtCompoundNode>('nbt:compound', parser.compound)
 
 		meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)

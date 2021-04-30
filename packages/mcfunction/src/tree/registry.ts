@@ -48,6 +48,7 @@ export class CommandTreeRegistry {
 	public register(version: string, vanillaTree: VanillaCommandRootNode, treePatch: PartialRootTreeNode): void
 	public register(version: string, vanillaTree: VanillaCommandRootNode, treePatch?: PartialRootTreeNode): void {
 		this.#trees.set(version, merge(vanillaTree as RootTreeNode, treePatch ?? CommandTreeRegistry.getTreePatch(version)))
+		/* DEBUG */ console.log('this.#trees', require('util').inspect(this.#trees, true, null))
 	}
 
 	/**

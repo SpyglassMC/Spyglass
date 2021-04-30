@@ -3,6 +3,10 @@ import type { CommandChildBaseNode } from './command'
 
 export interface LiteralNode extends CommandChildBaseNode {
 	type: 'mcfunction:literal',
+	/**
+	 * If this literal is under the root command tree node (i.e. the start of a command).
+	 */
+	isRoot: boolean,
 }
 export namespace LiteralNode {
 	/* istanbul ignore next */

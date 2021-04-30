@@ -1,7 +1,7 @@
 import type { AstNode } from './AstNode'
 
 export interface IntegerBaseNode extends AstNode {
-	readonly value: bigint,
+	readonly value: number,
 }
 
 export interface IntegerNode extends IntegerBaseNode {

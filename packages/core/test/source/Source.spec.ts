@@ -249,7 +249,7 @@ describe('Source', () => {
 			})
 		}
 	})
-	describe('readUntilOrEnd()', () => {
+	describe('readUntil()', () => {
 		const suites: { string: string, cursor: number, expected: string }[] = [
 			{ string: 'foo', cursor: 0, expected: 'foo' },
 			{ string: 'foo$bar', cursor: 0, expected: 'foo' },
@@ -261,7 +261,7 @@ describe('Source', () => {
 			it(`Should return '${expected}' for ${markOffsetInString(string, cursor)} when reading until '$'`, () => {
 				const src = new Source(string)
 				src.cursor = cursor
-				const actual = src.readUntilOrEnd('$')
+				const actual = src.readUntil('$')
 				assert.strictEqual(actual, expected)
 			})
 		}

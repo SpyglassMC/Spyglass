@@ -84,14 +84,14 @@ export class SymbolUtil {
 
 	/**
 	 * @param doc A `TextDocument` or a string URI. It is used to both check the visibility of symbols and serve as
-	 * the location of future entered symbol usages. If a string URI is provided, all `range`s while entering symbol
-	 * usages latter will be ignored and seen as `[0, 0)`.
+	 * the location of future entered symbol usages. If a string URI is provided, all `range`s specified while entering
+	 * symbol usages latter will be ignored and seen as `[0, 0)`.
 	 * 
 	 * @throws When the queried symbol belongs to another non-existent symbol.
 	 */
-	query(doc: TextDocument | string, category: AllCategory, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult
-	query(doc: TextDocument | string, category: string, ...path: [string, ...string[]]): SymbolQueryResult {
+	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQueryResult
+	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQueryResult
+	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQueryResult {
 		const uri = SymbolUtil.toUri(doc)
 		const lookupResult = this.lookup(category, path, uri)
 		if (!lookupResult.createMap) {

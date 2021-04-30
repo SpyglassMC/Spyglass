@@ -1,4 +1,5 @@
 import type { Parser } from '../parser'
+import type { ColorTokenType } from '../processor'
 import type { IndexMap } from '../source'
 import type { AstNode } from './AstNode'
 
@@ -25,6 +26,7 @@ export const EscapeTable = new Map<EscapeChar, string>([
 export type Quote = "'" | '"'
 
 export interface StringOptions {
+	colorTokenType?: ColorTokenType,
 	escapable?: {
 		/**
 		 * A list of characters that can be escaped. The current quote of the string and backslash (`\`)

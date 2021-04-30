@@ -44,9 +44,9 @@ describe('integer()', () => {
 
 	describe('integer(min, max, onOutOfRange)', () => {
 		const options: Options[] = [
-			{ pattern, min: BigInt(1) },
-			{ pattern, max: BigInt(6) },
-			{ pattern, min: BigInt(1), max: BigInt(6), onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans) },
+			{ pattern, min: 1 },
+			{ pattern, max: 6 },
+			{ pattern, min: 1, max: 6, onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans) },
 		]
 		const cases: { content: string }[] = [
 			{ content: '0' },
