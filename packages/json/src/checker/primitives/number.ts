@@ -1,11 +1,10 @@
 import { Color } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { JsonNode } from '../../node'
 import { JsonNumberNode } from '../../node'
-import type { JsonCheckerContext } from '../JsonChecker'
+import type { JsonChecker } from '../JsonChecker'
 
-const number = (type: 'integer' | 'float') => (min: number | null, max: number | null, isColor?: boolean) => {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+const number = (type: 'integer' | 'float') => (min: number | null, max: number | null, isColor?: boolean): JsonChecker => {
+	return (node, ctx) => {
 		const typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
 		node.expectation = [{ type: 'json:number', typedoc }]
 

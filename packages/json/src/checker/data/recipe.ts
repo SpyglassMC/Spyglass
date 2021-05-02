@@ -1,4 +1,5 @@
-import { any, as, dispatch, float, int, intRange, listOf, object, opt, pick, record, resource, string, when } from '../primitives'
+import { patternKeys, recipeGroup } from '../common'
+import { any, as, dispatch, float, int, intRange, listOf, object, opt, pick, record, resource, simpleString, when } from '../primitives'
 
 const one_recipe_ingredient = any([
 	record({
@@ -20,14 +21,14 @@ const recipe_result = record({
 })
 
 export const recipe = as('recipe', dispatch('type',
-	(type) => record({
+	(type, props) => record({
 		type: resource('recipe_serializer'),
-		group: opt(string), // TODO
+		group: opt(recipeGroup),
 		...pick(type, {
 			crafting_shaped: {
-				pattern: listOf(string), // TODO
+				pattern: listOf(simpleString),
 				key: object(
-					string, // TODO
+					patternKeys(props),
 					() => recipe_ingredient,
 				),
 				result: recipe_result,

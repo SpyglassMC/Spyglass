@@ -1,37 +1,73 @@
-import { MetaRegistry } from '@spyglassmc/core'
-import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, special, string } from '../primitives'
-import { stringColor } from '../primitives/string'
+import { nbt, stringColor, uuid } from '../common'
+import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '../primitives'
+
+const Keybinds = [
+	'key.jump',
+	'key.sneak',
+	'key.sprint',
+	'key.left',
+	'key.right',
+	'key.back',
+	'key.forward',
+	'key.attack',
+	'key.pickItem',
+	'key.use',
+	'key.drop',
+	'key.hotbar.1',
+	'key.hotbar.2',
+	'key.hotbar.3',
+	'key.hotbar.4',
+	'key.hotbar.5',
+	'key.hotbar.6',
+	'key.hotbar.7',
+	'key.hotbar.8',
+	'key.hotbar.9',
+	'key.inventory',
+	'key.swapOffhand',
+	'key.loadToolbarActivator',
+	'key.saveToolbarActivator',
+	'key.playerlist',
+	'key.chat',
+	'key.command',
+	'key.socialInteractions',
+	'key.advancements',
+	'key.spectatorOutlines',
+	'key.screenshot',
+	'key.smoothCamera',
+	'key.fullscreen',
+	'key.togglePerspective',
+]
 
 const text_component_object = as('text_component', (node, ctx) => record({
 	...having(node, ctx, {
 		text: {
-			text: string,
+			text: simpleString,
 		},
 		translate: {
-			translate: string,
+			translate: simpleString,
 			with: opt(listOf(text_component)),
 		},
 		selector: {
-			selector: string, // TODO: entity selector
+			selector: simpleString, // TODO: entity selector
 		},
 		score: {
 			score: record({
-				name: string, // TODO: score holder
-				objective: string, // TODO: objective
-				value: opt(string),
+				name: simpleString, // TODO: score holder
+				objective: simpleString, // TODO: objective
+				value: opt(simpleString),
 			}),
 		},
 		keybind: {
-			keybind: string, // TODO: keybind
+			keybind: literal(Keybinds),
 		},
 		nbt: () => ({
-			nbt: special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound')),
+			nbt: nbt(),
 			...having(node, ctx, {
 				block: {
-					block: string, // TODO: block pos
+					block: simpleString, // TODO: block pos
 				},
 				entity: {
-					entity: string, // TODO: entity selector
+					entity: simpleString, // TODO: entity selector
 				},
 				storage: {
 					storage: resource('storage'),
@@ -41,17 +77,17 @@ const text_component_object = as('text_component', (node, ctx) => record({
 		}),
 	}),
 	color: opt(stringColor()),
-	font: opt(string),
+	font: opt(simpleString),
 	bold: opt(boolean),
 	italic: opt(boolean),
 	underlined: opt(boolean),
 	strikethrough: opt(boolean),
 	obfuscated: opt(boolean),
-	insertion: opt(string),
+	insertion: opt(simpleString),
 	clickEvent: opt(dispatch('action',
 		(action) => record({
 			action: literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
-			value: string, // TODO: validation
+			value: simpleString, // TODO: validation
 		})
 	)),
 	hoverEvent: opt(dispatch('action',
@@ -63,23 +99,23 @@ const text_component_object = as('text_component', (node, ctx) => record({
 					contents: opt(text_component),
 				},
 				show_item: {
-					value: deprecated(string), // TODO: item nbt
+					value: deprecated(simpleString), // TODO: item nbt
 					contents: opt(record({
 						id: resource('item'),
 						count: opt(int),
-						tag: opt(string), // TODO: item tag nbt
+						tag: opt(nbt()), // TODO: item tag nbt
 					})),
 				},
 				show_entity: {
 					value: deprecated(record({
-						name: opt(string),
+						name: opt(simpleString),
 						type: opt(resource('entity_type')),
-						id: opt(string), // TODO: uuid
+						id: opt(uuid),
 					})),
 					contents: opt(record({
 						name: opt(text_component),
 						type: opt(resource('entity_type')),
-						id: opt(string), // TODO: uuid
+						id: opt(uuid),
 					})),
 				},
 			}),
@@ -89,7 +125,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 })(node, ctx))
 
 export const text_component = as('text_component', any([
-	string,
+	simpleString,
 	text_component_object,
 	listOf(ref(() => text_component)),
 ]))

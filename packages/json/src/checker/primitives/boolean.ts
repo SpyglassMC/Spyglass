@@ -3,7 +3,7 @@ import type { JsonNode } from '../../node'
 import { JsonBooleanNode } from '../../node'
 import type { JsonCheckerContext } from '../JsonChecker'
 
-export async function boolean(node: JsonNode, ctx: JsonCheckerContext) {
+export function boolean(node: JsonNode, ctx: JsonCheckerContext) {
 	node.expectation = [{ type: 'json:boolean', typedoc: 'Boolean' }]
 
 	if (!JsonBooleanNode.is(node)) {

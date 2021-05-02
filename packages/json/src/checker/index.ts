@@ -5,6 +5,9 @@ import type { JsonNode } from '../node'
 import { Checkers } from './data'
 import { pack_mcmeta } from './data/pack_mcmeta'
 
+export * from './common'
+export * from './primitives'
+
 export const entry: Checker<JsonNode> = (node: JsonNode, ctx: CoreCheckerContext) => {
 	const rel = fileUtil.getRel(ctx.roots, ctx.doc.uri)
 	if (!rel) return

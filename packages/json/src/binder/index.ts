@@ -1,5 +1,5 @@
 import type { FileCategory, UriBinder, UriBinderContext } from '@spyglassmc/core'
-import { fileUtil, SymbolVisibility } from '@spyglassmc/core'
+import { fileUtil } from '@spyglassmc/core'
 
 export const Categories = new Map<string, FileCategory>([
 	['advancements', 'advancement'],

@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { string } from '../../../lib/checker/primitives'
+import { simpleString } from '../../../lib/checker/primitives'
 import { testGrid } from '../../utils'
 
 describe('JSON string', () => {
@@ -8,6 +8,6 @@ describe('JSON string', () => {
 		{ content: '"foo\"bar"' },
 		{ content: '4' },
 	], [
-		{ name: 'string', checker: string },
+		{ name: 'string', checker: simpleString },
 	])
 })

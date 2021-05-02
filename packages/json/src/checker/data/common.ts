@@ -1,4 +1,4 @@
-import { any, as, dispatch, float, int, literal, opt, pick, record, resource, string } from '../primitives'
+import { any, as, dispatch, float, int, literal, opt, pick, record, resource, simpleString } from '../primitives'
 
 export const number_provider = as('range', any([
 	float,
@@ -38,7 +38,7 @@ export const score_provider = any([
 				target: literal(['this', 'killer', 'player_killer', 'direct_killer']),
 			},
 			fixed: {
-				name: string, // TODO: score holder, no selector
+				name: simpleString, // TODO: score holder, no selector
 			},
 		}),
 	})),

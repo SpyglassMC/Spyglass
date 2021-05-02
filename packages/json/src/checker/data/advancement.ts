@@ -1,5 +1,8 @@
-import { MetaRegistry } from '@spyglassmc/core'
-import { any, as, boolean, deprecated, dispatch, int, listOf, literal, object, opt, pick, record, resource, special, string, when } from '../primitives'
+import { getRel } from '@spyglassmc/core/lib/service/fileUtil'
+import { dissectUri } from '../../binder'
+import type { JsonStringNode } from '../../node'
+import { blockStateMap, criterionReference, nbt } from '../common'
+import { any, as, boolean, deprecated, dispatch, extract, int, listOf, literal, object, opt, pick, record, resource, simpleString, string, when } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 import { block_predicate, damage_predicate, damage_source_predicate, distance_predicate, entity_predicate, fluid_predicate, item_predicate, location_predicate, mob_effect_predicate, predicate } from './predicate'
 import { text_component } from './text_component'
@@ -57,7 +60,7 @@ const entity = (any([
 export const criterion = as('criterion', dispatch('trigger',
 	(trigger) => record({
 		trigger: resource(Triggers),
-		conditions: opt(record({
+		conditions: opt(dispatch(props => record({
 			...when(trigger, ['impossible'], {}, {
 				player: opt(entity),
 			}),
@@ -100,10 +103,7 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				enter_block: {
 					block: resource('block'),
-					state: opt(object(
-						string,
-						() => string,
-					)), // TODO: block states
+					state: opt(blockStateMap(extract('block', props))),
 				},
 				enchanted_item: {
 					levels: opt(int_bounds),
@@ -161,10 +161,7 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				placed_block: {
 					block: opt(resource('block')),
-					state: opt(object(
-						string,
-						() => string,
-					)), // TODO: block states
+					state: opt(blockStateMap(extract('block', props))),
 					item: opt(item_predicate),
 					location: opt(location_predicate),
 				},
@@ -231,7 +228,7 @@ export const criterion = as('criterion', dispatch('trigger',
 					z: opt(float_bounds),
 				})),
 				biome: deprecated(resource('worldgen/biome')),
-				feature: deprecated(string), // TODO structure features
+				feature: deprecated(simpleString), // TODO structure features
 				dimension: deprecated(resource('dimension')),
 				block: deprecated(block_predicate),
 				fluid: deprecated(fluid_predicate),
@@ -240,7 +237,7 @@ export const criterion = as('criterion', dispatch('trigger',
 				})),
 				smokey: deprecated(boolean),
 			}),
-		})),
+		}))),
 	})
 ))
 
@@ -248,11 +245,11 @@ export const advancement = as('advancement', record({
 	display: opt(record({
 		icon: record({
 			item: resource('item'),
-			nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
+			nbt: opt(nbt()), // TODO: item nbt
 		}),
 		title: text_component,
 		description: text_component,
-		background: opt(string),
+		background: opt(simpleString),
 		frame: opt(literal(['task', 'challenge', 'goal'])),
 		show_toast: opt(boolean),
 		announce_to_chat: opt(boolean),
@@ -260,10 +257,29 @@ export const advancement = as('advancement', record({
 	})),
 	parent: opt(resource('advancement')),
 	criteria: object(
-		string, // TODO: criteria
+		string(undefined, undefined, (node, ctx) => {
+			// FIXME: Temporary solution to make tests pass when service is not given.
+			if (!ctx.service) {
+				return
+			}
+			const parts = dissectUri(getRel(ctx.roots, ctx.doc.uri) ?? '')
+			const advancement = `${parts?.namespace}:${parts?.identifier}`
+			const criterion = (node as JsonStringNode).value
+			ctx.symbols.query(ctx.doc, 'advancement', advancement, criterion)
+				.enter({
+					data: { subcategory: 'criterion' },
+					usage: { type: 'definition', node },
+				})
+		}),
 		() => criterion,
 	),
-	requirements: opt(listOf(listOf(string))), // TODO: criteria
+	requirements: opt(listOf(listOf(
+		(node, ctx) => {
+			const parts = dissectUri(getRel(ctx.roots, ctx.doc.uri) ?? '')
+			const advancement = `${parts?.namespace}:${parts?.identifier}`
+			criterionReference(advancement)(node, ctx)
+		}
+	))),
 	rewards: opt(record({
 		function: opt(resource('function')),
 		loot: opt(listOf(resource('loot_table'))),

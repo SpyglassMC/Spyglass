@@ -90,7 +90,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 
 	// TODO: Complete when the cursor is outside the quotes.
 
-	if (node.valueNode && Range.contains(node.valueMap.outerRange, ctx.offset)) {
+	if (node.valueNode && Range.containsInclusive(node.valueMap.outerRange, ctx.offset)) {
 		const completer = ctx.meta.getCompleter(node.valueNode.type)
 		const result = completer(node.valueNode, toInnerCtx(ctx, node.valueMap))
 		return toOuterItems(result, node.valueMap)

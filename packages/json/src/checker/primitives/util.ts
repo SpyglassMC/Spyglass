@@ -3,13 +3,13 @@ import type { JsonExpectation, JsonNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
 export function ref(checker: () => JsonChecker): JsonChecker {
-	return (node: JsonNode, ctx: JsonCheckerContext) => {
+	return (node, ctx) => {
 		return checker()(node, ctx)
 	}
 }
 
 export function as(context: string, checker: JsonChecker): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+	return (node, ctx) => {
 		checker(node, { ...ctx, context })
 	}
 }
@@ -44,7 +44,7 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 	if (checkers.length === 0) {
 		throw new Error('Expected at least one checker')
 	}
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+	return (node, ctx) => {
 		const attempts = checkers
 			.map(Checker => attempt(Checker, node, ctx))
 			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)

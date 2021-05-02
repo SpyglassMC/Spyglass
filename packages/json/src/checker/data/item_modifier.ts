@@ -1,5 +1,5 @@
-import { MetaRegistry } from '@spyglassmc/core'
-import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, special, string } from '../primitives'
+import { blockStateList, nbt, uuid } from '../common'
+import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, simpleString } from '../primitives'
 import { int_bounds, number_provider } from './common'
 import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
@@ -32,14 +32,14 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			copy_nbt: {
 				source: literal(['this', 'killer', 'killer_player', 'block_entity']),
 				ops: listOf(record({
-					source: string, // TODO: nbt path
-					target: string, // TODO: nbt path
+					source: simpleString, // TODO: nbt path
+					target: simpleString, // TODO: nbt path
 					op: literal(['replace', 'append', 'merge']),
 				})),
 			},
 			copy_state: {
 				block: resource('block'),
-				properties: listOf(string), // TODO: block states
+				properties: blockStateList(extract('block', props)),
 			},
 			enchant_randomly: {
 				enchantments: opt(listOf(resource('enchantment'))),
@@ -68,8 +68,8 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			set_attributes: {
 				modifiers: listOf(record({
 					attribute: resource('attribute'),
-					name: string,
-					id: opt(string), // TODO: uuid
+					name: simpleString,
+					id: opt(uuid),
 					amount: number_provider,
 					slot: any([
 						literal(slots),
@@ -102,7 +102,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				name: opt(text_component),
 			},
 			set_nbt: {
-				tag: special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound')),
+				tag: nbt(), // TODO: item nbt
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({

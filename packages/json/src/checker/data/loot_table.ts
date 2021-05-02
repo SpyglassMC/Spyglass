@@ -1,4 +1,4 @@
-import { as, boolean, dispatch, int, intRange, listOf, opt, pick, record, resource } from '../primitives'
+import { as, boolean, dispatch, int, intRange, listOf, object, opt, pick, record, ref, resource } from '../primitives'
 import { number_provider } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
@@ -32,7 +32,7 @@ export const loot_entry = as('loot_entry', dispatch('type',
 				expand: opt(boolean),
 			},
 		}),
-		functions: opt(listOf(item_modifier)),
+		functions: opt(listOf(object())),
 		conditions: opt(listOf(predicate)),
 	})
 ))
@@ -41,7 +41,7 @@ export const loot_pool = as('loot_pool', record({
 	rolls: number_provider,
 	bonus_rolls: opt(number_provider),
 	entries: listOf(loot_entry),
-	functions: opt(listOf(item_modifier)),
+	functions: opt(listOf(ref(() => item_modifier))),
 	conditions: opt(listOf(predicate)),
 }))
 
@@ -63,5 +63,5 @@ const loot_context_types = [
 export const loot_table = as('loot_table', record({
 	type: opt(resource(loot_context_types)),
 	pools: opt(listOf(loot_pool)),
-	functions: opt(listOf(item_modifier)),
+	functions: opt(listOf(ref(() => item_modifier))),
 }))

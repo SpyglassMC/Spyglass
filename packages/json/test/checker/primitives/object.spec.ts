@@ -1,5 +1,5 @@
 import { describe } from 'mocha'
-import { int, object, opt, record, string } from '../../../lib/checker/primitives'
+import { int, object, opt, record, simpleString } from '../../../lib/checker/primitives'
 import { testGrid } from '../../utils'
 
 describe('JSON object', () => {
@@ -13,6 +13,6 @@ describe('JSON object', () => {
 		{ name: 'object()', checker: object() },
 		{ name: 'record({ a: int })', checker: record({ a: int }) },
 		{ name: 'record({ a: opt(int) })', checker: record({ a: opt(int) }) },
-		{ name: 'object(string, () => int)', checker: object(string, () => int) },
+		{ name: 'object(string, () => int)', checker: object(simpleString, () => int) },
 	])
 })

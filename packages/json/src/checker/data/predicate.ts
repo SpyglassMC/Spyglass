@@ -1,5 +1,5 @@
-import { MetaRegistry } from '@spyglassmc/core'
-import { any, as, boolean, dispatch, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, special, string } from '../primitives'
+import { blockStateMap, criterionReference, nbt } from '../common'
+import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '../primitives'
 import { float_bounds, int_bounds } from './common'
 
 const slots = [
@@ -17,31 +17,25 @@ export const item_predicate = as('item', record({
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
 	potion: opt(resource('potion')),
-	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
+	nbt: opt(nbt()), // TODO: item nbt
 	enchantments: opt(listOf(record({
 		enchantment: opt(resource('enchantment')),
 		levels: opt(int_bounds),
 	}))),
 }))
 
-export const block_predicate = as('block', record({
+export const block_predicate = as('block', dispatch(props => record({
 	block: opt(resource('block')),
 	tag: opt(resource('tag/block')),
-	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
-	state: opt(object(
-		string,
-		() => any([string, int_bounds, boolean]),
-	)), // TODO: block states
-}))
+	nbt: opt(nbt()), // TODO: block nbt
+	state: opt(blockStateMap(extract('block', props), true)),
+})))
 
-export const fluid_predicate = as('fluid', record({
+export const fluid_predicate = as('fluid', dispatch(props => record({
 	fluid: opt(resource('fluid')),
 	tag: opt(resource('tag/fluid')),
-	state: opt(object(
-		string,
-		() => any([string, int_bounds, boolean]),
-	)), // TODO: fluid states
-}))
+	state: opt(blockStateMap(extract('fluid', props), true)),
+})))
 
 export const location_predicate = as('location', record({
 	position: opt(record({
@@ -50,7 +44,7 @@ export const location_predicate = as('location', record({
 		z: opt(float_bounds),
 	})),
 	biome: opt(resource('worldgen/biome')),
-	feature: opt(string), // TODO structure features
+	feature: opt(simpleString), // TODO structure features
 	dimension: opt(resource('dimension')),
 	block: opt(block_predicate),
 	fluid: opt(fluid_predicate),
@@ -98,10 +92,10 @@ export const player_predicate = as('player', record({
 	level: opt(int_bounds),
 	advancements: opt(object(
 		resource('advancement'),
-		() => any([
+		(advancement) => any([
 			boolean,
 			object(
-				string, // TODO: advancement criteria
+				criterionReference(advancement),
 				() => boolean
 			),
 		]),
@@ -115,7 +109,7 @@ export const player_predicate = as('player', record({
 
 export const entity_predicate = as('entity', record({
 	type: opt(resource('entity_type', true)),
-	nbt: opt(special('nbt', MetaRegistry.instance.getParserLazily('nbt:compound'))),
+	nbt: opt(nbt()), // TODO: entity nbt
 	team: opt(literal('team')),
 	location: opt(location_predicate),
 	distance: opt(distance_predicate),
@@ -131,7 +125,7 @@ export const entity_predicate = as('entity', record({
 		() => item_predicate,
 	)),
 	effects: opt(object(
-		string,
+		simpleString,
 		() => mob_effect_predicate,
 	)),
 	vehicle: opt(ref(() => entity_predicate)),
@@ -140,7 +134,7 @@ export const entity_predicate = as('entity', record({
 	fishing_hook: opt(record({
 		in_open_water: opt(boolean),
 	})),
-	catType: opt(string),
+	catType: opt(simpleString),
 }))
 
 export const damage_source_predicate = as('damage_source', record({
@@ -165,7 +159,7 @@ export const damage_predicate = as('damage', record({
 }))
 
 export const predicate = as('predicate', dispatch('condition',
-	(condition) => record({
+	(condition, props) => record({
 		condition: resource('loot_condition_type'),
 		...pick(condition, {
 			alternative: {
@@ -173,10 +167,7 @@ export const predicate = as('predicate', dispatch('condition',
 			},
 			block_state_property: {
 				block: resource('block'),
-				properties: object(
-					string,
-					() => string,
-				), // TODO: block states
+				properties: blockStateMap(extract('block', props)),
 			},
 			damage_source_properties: {
 				predicate: damage_source_predicate,

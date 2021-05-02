@@ -22,15 +22,15 @@ function isComplex(checker: CheckerProperty): checker is ComplexProperty {
 }
 
 export function object(): JsonChecker
-export function object(keys: string[], values: (key: string) => CheckerProperty): JsonChecker
-export function object(keys: JsonChecker, values: (key: string) => CheckerProperty): JsonChecker
-export function object(keys?: string[] | JsonChecker, values?: (key: string) => CheckerProperty): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+export function object(keys: string[], values: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker
+export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker
+export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker {
+	return (node, ctx) => {
 		node.expectation = [{ type: 'json:object', typedoc: 'Object' }]
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
 				(node.expectation[0] as JsonObjectExpectation).fields = keys.map(key => {
-					const prop = values(key)
+					const prop = values(key, ctx)
 					return {
 						key,
 						value: expectation(isComplex(prop) ? prop.checker : prop, ctx),
@@ -49,7 +49,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 		} else if (Array.isArray(keys) && values) {
 			const givenKeys = node.children.map(n => n.key?.value)
 			keys.forEach(k => {
-				const value = values(k)
+				const value = values(k, ctx)
 				if (isComplex(value) && (value.opt || value.deprecated)) {
 					return
 				}
@@ -61,15 +61,21 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 				const key = prop.key!.value
 				if (!keys.includes(key)) {
 					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
-				} else {
-					const value = values(key)
+				}
+				const value = values(key, ctx)
+				if (value) {
 					if (isComplex(value) && value.deprecated) {
 						ctx.err.report(localize('json.checker.property.deprecated', localeQuote(key)), prop.key!, ErrorSeverity.Hint, { deprecated: true })
 					}
 					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
 					const doc = localize(`json.doc.${context}`)
-					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) };
-					(isComplex(value) ? value.checker : value)(propNode, { ...ctx, context })
+					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
+					const checker = isComplex(value) ? value.checker : value
+					try {
+						checker(propNode, { ...ctx, context })
+					} catch (e) {
+						console.log(`ERROR checking ${key}`, checker)
+					}
 					prop.key!.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
 				}
 			})
@@ -77,8 +83,9 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string) => 
 			node.children.filter(p => p.key).forEach(prop => {
 				keys(prop.key!, ctx)
 				if (prop.value !== undefined) {
-					const value = values(prop.key!.value);
-					(isComplex(value) ? value.checker : value)(prop.value, ctx)
+					const value = values(prop.key!.value, ctx)
+					const checker = isComplex(value) ? value.checker : value
+					checker(prop.value, ctx)
 				}
 			})
 		}
@@ -100,15 +107,19 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 	return { checker: checker, deprecated: true }
 }
 
-export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+export function dispatch(values: (children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
+export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
+export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker), arg2?: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker {
+	return (node, ctx) => {
 		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', localize('object')), node)
-		} else {
-			const dispatcherIndex = node.children.findIndex(p => p.key?.value === keyName)
+		} else if (arg2) {
+			const dispatcherIndex = node.children.findIndex(p => p.key?.value === arg1)
 			const dispatcher = node.children[dispatcherIndex]
 			const value = dispatcher?.value?.type === 'json:string' ? dispatcher.value.value : undefined
-			values(value, node.children)(node, ctx)
+			arg2(value, node.children)(node, ctx)
+		} else {
+			(arg1 as Function)(node.children)(node, ctx)
 		}
 	}
 }

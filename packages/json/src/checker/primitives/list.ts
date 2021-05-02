@@ -1,11 +1,11 @@
 import { localize } from '@spyglassmc/locales'
-import type { JsonArrayExpectation, JsonNode } from '../../node'
+import type { JsonArrayExpectation } from '../../node'
 import { JsonArrayNode } from '../../node'
-import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
+import type { JsonChecker } from '../JsonChecker'
 import { expectation } from './util'
 
 export function listOf(checker: JsonChecker): JsonChecker {
-	return async (node: JsonNode, ctx: JsonCheckerContext) => {
+	return (node, ctx) => {
 		node.expectation = [{ type: 'json:array', typedoc: 'Array' }]
 		if (!ctx.depth || ctx.depth <= 0) {
 			(node.expectation[0] as JsonArrayExpectation).items = expectation(checker, ctx)
