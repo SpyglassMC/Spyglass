@@ -27,13 +27,11 @@
 	},
 	"locales": {},
 	"mcfunction": {
-		"circularDependencies": [
-			"json",
-			"nbt"
-		],
 		"dependencies": [
 			"core",
-			"locales"
+			"json",
+			"locales",
+			"nbt"
 		],
 		"devDependencies": [
 			"vanilla-resource"
