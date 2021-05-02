@@ -1,5 +1,5 @@
 import type { FileCategory } from '@spyglassmc/core'
-import type { JsonChecker } from '../JsonChecker'
+import type { JsonChecker } from '../../JsonChecker'
 import { advancement } from './advancement'
 import { item_modifier_extended } from './item_modifier'
 import { loot_table } from './loot_table'

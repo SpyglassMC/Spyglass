@@ -1,5 +1,5 @@
-import { nbt, stringColor, uuid } from '../common'
-import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '../primitives'
+import { nbt, stringColor, uuid } from '../../common'
+import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '../../primitives'
 
 const Keybinds = [
 	'key.jump',

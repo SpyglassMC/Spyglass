@@ -1,5 +1,5 @@
-import { patternKeys, recipeGroup } from '../common'
-import { any, as, dispatch, float, int, intRange, listOf, object, opt, pick, record, resource, simpleString, when } from '../primitives'
+import { patternKeys, recipeGroup } from '../../common'
+import { any, as, dispatch, float, int, intRange, listOf, object, opt, pick, record, resource, simpleString, when } from '../../primitives'
 
 const one_recipe_ingredient = any([
 	record({

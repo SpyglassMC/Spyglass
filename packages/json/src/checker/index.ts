@@ -2,8 +2,8 @@ import type { Checker, CheckerContext as CoreCheckerContext, MetaRegistry } from
 import { fileUtil } from '@spyglassmc/core'
 import { dissectUri } from '../binder'
 import type { JsonNode } from '../node'
-import { Checkers } from './data'
-import { pack_mcmeta } from './data/pack_mcmeta'
+import { Checkers } from './data/1.17'
+import { pack_mcmeta } from './data/1.17/pack_mcmeta'
 
 export * from './common'
 export * from './primitives'

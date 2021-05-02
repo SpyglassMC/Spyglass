@@ -1,7 +1,6 @@
 import type { Symbol } from '@spyglassmc/core'
-import { int_bounds } from '../data/common'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
-import { any, boolean, listOf, literal, object, opt, simpleString } from '../primitives'
+import { any, boolean, intRange, listOf, literal, object, opt, record, simpleString } from '../primitives'
 
 export function blockStateMap(block?: string, mixedTypes = false): JsonChecker {
 	return (node, ctx) => {
@@ -9,7 +8,7 @@ export function blockStateMap(block?: string, mixedTypes = false): JsonChecker {
 		if (!ctx.service) {
 			object(
 				simpleString,
-				() => mixedTypes ? any([boolean, simpleString, int_bounds]) : simpleString
+				() => mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			)(node, ctx)
 			return
 		}
@@ -25,7 +24,7 @@ export function blockStateMap(block?: string, mixedTypes = false): JsonChecker {
 					if (['true', 'false'].includes(values[0])) {
 						return opt(boolean)
 					} else if (values[0].match(/^\d+$/)) {
-						return opt(int_bounds)
+						return opt(intBounds(parseInt(values[0]), parseInt(values[values.length - 1])))
 					}
 				}
 				return opt(literal(values))
@@ -46,4 +45,14 @@ function getStates(block: string, ctx: JsonCheckerContext) {
 	const symbol = ctx.symbols.query(ctx.doc, 'block', identifier).symbol
 	return Object.values(symbol?.members ?? {})
 		.filter((m): m is Symbol => m?.subcategory === 'state')
+}
+
+function intBounds(min: number | null = null, max: number | null = null): JsonChecker {
+	return any([
+		intRange(min, max),
+		record({
+			min: opt(intRange(min, max)),
+			max: opt(intRange(min, max)),
+		}),
+	])
 }

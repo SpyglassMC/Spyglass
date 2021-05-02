@@ -1,5 +1,5 @@
 import type { TaggableResourceLocationCategory } from '@spyglassmc/core'
-import { any, boolean, listOf, opt, record, resource } from '../primitives'
+import { any, boolean, listOf, opt, record, resource } from '../../primitives'
 
 const tag = (type: TaggableResourceLocationCategory) => record({
 	replace: opt(boolean),

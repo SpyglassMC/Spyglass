@@ -1,4 +1,4 @@
-import { any, as, dispatch, float, int, literal, opt, pick, record, resource, simpleString } from '../primitives'
+import { any, as, dispatch, float, int, literal, opt, pick, record, resource, simpleString } from '../../primitives'
 
 export const number_provider = as('range', any([
 	float,

@@ -1,4 +1,4 @@
-import { as, boolean, dispatch, int, intRange, listOf, object, opt, pick, record, ref, resource } from '../primitives'
+import { as, boolean, dispatch, int, intRange, listOf, object, opt, pick, record, ref, resource } from '../../primitives'
 import { number_provider } from './common'
 import { item_modifier } from './item_modifier'
 import { predicate } from './predicate'
