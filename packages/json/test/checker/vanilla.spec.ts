@@ -3,7 +3,7 @@ import fg from 'fast-glob'
 import fs from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Categories } from '../../lib/binder'
-import { Checkers } from '../../lib/checker/data'
+import { Checkers } from '../../lib/checker/data/1.17'
 import { testChecker } from '../utils'
 
 describe('Check vanilla files', async () => {
