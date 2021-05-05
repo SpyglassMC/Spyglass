@@ -1,0 +1,21 @@
+{
+	"extends": "../tsconfig-base",
+	"files": [],
+	"references": [
+		{
+			"path": "../json"
+		},
+		{
+			"path": "../mcfunction"
+		},
+		{
+			"path": "../nbt"
+		},
+		{
+			"path": "src"
+		},
+		{
+			"path": "test"
+		}
+	]
+}

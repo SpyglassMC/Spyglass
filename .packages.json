@@ -4,11 +4,14 @@
 			"locales"
 		]
 	},
-	"json": {
-		"circularDependencies": [
+	"java-edition": {
+		"dependencies": [
+			"json",
 			"mcfunction",
 			"nbt"
-		],
+		]
+	},
+	"json": {
 		"dependencies": [
 			"core",
 			"locales"
@@ -29,19 +32,13 @@
 	"mcfunction": {
 		"dependencies": [
 			"core",
-			"json",
-			"locales",
-			"nbt"
+			"locales"
 		],
 		"devDependencies": [
 			"vanilla-resource"
 		]
 	},
 	"nbt": {
-		"circularDependencies": [
-			"json",
-			"mcfunction"
-		],
 		"dependencies": [
 			"core",
 			"locales",

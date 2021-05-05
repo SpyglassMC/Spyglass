@@ -5,6 +5,9 @@
 			"path": "core"
 		},
 		{
+			"path": "java-edition"
+		},
+		{
 			"path": "json"
 		},
 		{

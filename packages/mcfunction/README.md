@@ -8,70 +8,43 @@ This package contains parsers and processors for [mcfunction][mcfunction].
 
 # Usage
 
-1. Register vanilla command trees and command tree patches to `CommandTreeRegistry`.
 ```typescript
-CommandTreeRegistry.instance.register('1.15', vanillaCommandTreeFor1_15)
-CommandTreeRegistry.instance.register('1.16', vanillaCommandTreeFor1_16)
-CommandTreeRegistry.instance.register('1.17', vanillaCommandTreeFor1_17)
+import * as mcf from '@spyglassmc/mcfunction'
 
-CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tridentCommandTreePatchFor1_17)
+// Register the command tree for a specific version.
+mcf.CommandTreeRegistry.instance.register('1.15', vanillaCommandTreeFor1_15, customCommandTreePatchFor1_15)
+
+// Define a function that returns the corresponding parser for the provided argument tree node.
+// The template `ARGUMENT_NODES` here should be a union type of all argument nodes supported by this function.
+// Those argument nodes need to extend `mcf.ChildBaseNode`.
+const argument: mcf.parser.ArgumentParserGetter<ARGUMENT_NODES> = (name: string, treeNode: mcf.ArgumentTreeNode) => {
+	console.log(`The name of this argument tree node is ${name}.`)
+	switch (treeNode.parser) {
+		case 'brigadier:double':
+			return parser1
+		case 'brigadier:int':
+			return parser2
+		// ...
+		default:
+			// Unsupported parser.
+			// Just return `null` or `undefined`, of your choice.
+			return null
+	}
+}
+
+// Get the command parser.
+const commandParser = mcf.parser.command('1.15', argument)
+
+// Or the mcfunction parser.
+const mcfunctionParser = mcf.parser.entry('1.15', argument)
 ```
-2. // TODO
 
-# Supported Parsers
+# Special Built-in Nodes
 
-| Identifier                     | Camel Case                   |
-| ------------------------------ | ---------------------------- |
-| `brigadier:bool`               | `BrigadierBool`              |
-| `brigadier:double`             | `BrigadierDouble`            |
-| `brigadier:float`              | `BrigadierFloat`             |
-| `brigadier:integer`            | `BrigadierInteger`           |
-| `brigadier:long`               | `BrigadierLong`              |
-| `brigadier:string`             | `BrigadierString`            |
-| `minecraft:angle`              | `MinecraftAngle`             |
-| `minecraft:block_pos`          | `MinecraftBlockPos`          |
-| `minecraft:block_predicate`    | `MinecraftBlockPredicate`    |
-| `minecraft:block_state`        | `MinecraftBlockState`        |
-| `minecraft:color`              | `MinecraftColor`             |
-| `minecraft:column_pos`         | `MinecraftColumnPos`         |
-| `minecraft:component`          | `MinecraftComponent`         |
-| `minecraft:dimension`          | `MinecraftDimension`         |
-| `minecraft:entity`             | `MinecraftEntity`            |
-| `minecraft:entity_anchor`      | `MinecraftEntityAnchor`      |
-| `minecraft:entity_summon`      | `MinecraftEntitySummon`      |
-| `minecraft:float_range`        | `MinecraftFloatRange`        |
-| `minecraft:function`           | `MinecraftFunction`          |
-| `minecraft:game_profile`       | `MinecraftGameProfile`       |
-| `minecraft:int_range`          | `MinecraftIntRange`          |
-| `minecraft:item_enchantment`   | `MinecraftItemEnchantment`   |
-| `minecraft:item_predicate`     | `MinecraftItemPredicate`     |
-| `minecraft:item_slot`          | `MinecraftItemSlot`          |
-| `minecraft:item_stack`         | `MinecraftItemStack`         |
-| `minecraft:message`            | `MinecraftMessage`           |
-| `minecraft:mob_effect`         | `MinecraftMobEffect`         |
-| `minecraft:nbt_compound_tag`   | `MinecraftNbtCompoundTag`    |
-| `minecraft:nbt_path`           | `MinecraftNbtPath`           |
-| `minecraft:nbt_tag`            | `MinecraftNbtTag`            |
-| `minecraft:objective`          | `MinecraftObjective`         |
-| `minecraft:objective_criteria` | `MinecraftObjectiveCriteria` |
-| `minecraft:operation`          | `MinecraftOperation`         |
-| `minecraft:particle`           | `MinecraftParticle`          |
-| `minecraft:resource_location`  | `MinecraftResourceLocation`  |
-| `minecraft:rotation`           | `MinecraftRotation`          |
-| `minecraft:score_holder`       | `MinecraftScoreHolder`       |
-| `minecraft:scoreboard_slot`    | `MinecraftScoreboardSlot`    |
-| `minecraft:swizzle`            | `MinecraftSwizzle`           |
-| `minecraft:team`               | `MinecraftTeam`              |
-| `minecraft:time`               | `MinecraftTime`              |
-| `minecraft:uuid`               | `MinecraftUuid`              |
-| `minecraft:vec2`               | `MinecraftVec2`              |
-| `minecraft:vec3`               | `MinecraftVec3`              |
-| `spyglassmc:symbol`            | `SpyglassmcSymbol`           |
-| `spyglassmc:trailing`\*        | `SpyglassmcTrailing`         |
-| `spyglassmc:unknown`\*\*       | `SpyglassmcUnknown`          |
-
-\* This parser is responsible for parsing trailing string after a command.  \
-\*\* All parsers that are not listed in the table will be treated as `spyglassmc:unknown`.
+| Identifier            | Camel Case           | Note                                                                                               |
+| --------------------- | -------------------- | -------------------------------------------------------------------------------------------------- |
+| `spyglassmc:trailing` | `SpyglassmcTrailing` | Stores trailing string after a command.                                                            |
+| `spyglassmc:unknown`  | `SpyglassmcUnknown`  | The passed-in `ArgumentParserGetter` should treat all unsupported parsers as `spyglassmc:unknown`. |
 
 # Contributions
 

@@ -1,32 +1,35 @@
 import * as core from '@spyglassmc/core'
-import type { CommandNode, McfunctionNode } from '../node'
+import type { ChildBaseNode, CommandNode, McfunctionNode } from '../node'
 import { CommandTreeRegistry } from '../tree'
+import type { ArgumentParserGetter } from './argument'
 import { command } from './command'
 
-export const entry: core.Parser<McfunctionNode> = (src, ctx) => {
-	const ans: McfunctionNode = {
-		type: 'mcfunction:entry',
-		range: core.Range.create(src),
-		children: [],
-	}
-
-	// FIXME: Use the version number from config.
-	const tree = CommandTreeRegistry.instance.get('1.17')
-
-	while (src.skipWhitespace().canReadInLine()) {
-		let result: core.CommentNode | CommandNode
-		if (src.peek() === '#') {
-			result = comment(src, ctx) as core.CommentNode
-		} else {
-			result = command(tree)(src, ctx)
+/**
+ * @throws When there's no command tree associated with `commandTreeName`.
+ */
+export function entry<A extends ChildBaseNode>(commandTreeName: string, argument: ArgumentParserGetter<A>): core.Parser<McfunctionNode<A>> {
+	return (src, ctx) => {
+		const ans: McfunctionNode<A> = {
+			type: 'mcfunction:entry',
+			range: core.Range.create(src),
+			children: [],
 		}
-		ans.children.push(result)
-		src.nextLine()
+
+		while (src.skipWhitespace().canReadInLine()) {
+			let result: core.CommentNode | CommandNode<A>
+			if (src.peek() === '#') {
+				result = comment(src, ctx) as core.CommentNode
+			} else {
+				result = command<A>(CommandTreeRegistry.instance.get(commandTreeName), argument)(src, ctx)
+			}
+			ans.children.push(result)
+			src.nextLine()
+		}
+
+		ans.range.end = src.cursor
+
+		return ans
 	}
-
-	ans.range.end = src.cursor
-
-	return ans
 }
 
 const comment = core.comment({

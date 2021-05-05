@@ -46,7 +46,7 @@ connection.onInitialize(async params => {
 	try {
 		const resources = await vr.getVanillaResources('latest snapshot', logger)
 
-		mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands)
+		// mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands)
 
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),

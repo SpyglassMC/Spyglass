@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
-import type { CommandChildBaseNode } from './command'
+import type { ChildBaseNode } from './command'
 
-export interface LiteralNode extends CommandChildBaseNode {
+export interface LiteralNode extends ChildBaseNode {
 	type: 'mcfunction:literal',
 	/**
 	 * If this literal is under the root command tree node (i.e. the start of a command).

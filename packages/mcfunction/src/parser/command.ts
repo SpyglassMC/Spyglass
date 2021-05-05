@@ -1,24 +1,25 @@
 import * as core from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
-import type { ArgumentNode, CommandNode, LiteralNode } from '../node'
+import { localeQuote, localize } from '@spyglassmc/locales'
+import type { ChildBaseNode, CommandNode, LiteralNode, SpecialArgumentNode, SpyglassmcUnknownArgumentNode } from '../node'
 import { redirect } from '../tree'
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
-import { argument, argumentTreeNodeToString } from './argument'
+import type { ArgumentParserGetter } from './argument'
+import { argumentTreeNodeToString } from './argument'
 import { sep } from './common'
 import { literal } from './literal'
 
 /**
  * @returns A parser that always takes a whole line (excluding line turn characters) and tries to parse it as a command.
  */
-export function command(tree: RootTreeNode): core.InfallibleParser<CommandNode> {
-	return (src, ctx): CommandNode => {
-		const ans: CommandNode = {
+export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: ArgumentParserGetter<A>): core.InfallibleParser<CommandNode<A>> {
+	return (src, ctx): CommandNode<A> => {
+		const ans: CommandNode<A> = {
 			type: 'mcfunction:command',
 			range: core.Range.create(src),
 			children: [],
 		}
 
-		dispatch(ans.children, src, ctx, tree, tree)
+		dispatch<A>(ans.children, src, ctx, tree, tree, argument)
 
 		if (src.canReadInLine()) {
 			// There is trailing string after the command.
@@ -43,7 +44,7 @@ export function command(tree: RootTreeNode): core.InfallibleParser<CommandNode> 
  * 
  * @param ans An array where child nodes will be pushed into.
  */
-function dispatch(ans: (LiteralNode | ArgumentNode)[], src: core.Source, ctx: core.ParserContext, rootTreeNode: RootTreeNode, parentTreeNode: TreeNode): void {
+function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgumentNode)[], src: core.Source, ctx: core.ParserContext, rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter<A>): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
 	const permissionLevelInConfig = 2 // TODO: Use real config.
@@ -57,12 +58,12 @@ function dispatch(ans: (LiteralNode | ArgumentNode)[], src: core.Source, ctx: co
 
 	const { literalTreeNodes, argumentTreeNodes } = categorize(children)
 
-	const argumentParsers = argumentTreeNodes.map(([name, treeNode]) => argument(name, treeNode))
+	const argumentParsers = argumentTreeNodes.map(([name, treeNode]) => argument(name, treeNode) ?? unknown(name, treeNode))
 	const literalParser = literalTreeNodes.length
 		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parentTreeNode.type === 'root')
 		: undefined
 
-	const parsers: core.Parser<LiteralNode | ArgumentNode>[] = [
+	const parsers: core.Parser<LiteralNode | A | SpecialArgumentNode>[] = [
 		...argumentParsers,
 		...literalParser ? [literalParser] : [],
 	]
@@ -91,7 +92,7 @@ function dispatch(ans: (LiteralNode | ArgumentNode)[], src: core.Source, ctx: co
 			// Skip command argument separation (a space).
 			sep(src, ctx)
 			// Recursive dispatch for the child tree node.
-			dispatch(ans, src, ctx, rootTreeNode, childTreeNode)
+			dispatch<A>(ans, src, ctx, rootTreeNode, childTreeNode, argument)
 		} else {
 			// End-of-command.
 			if (!childTreeNode.executable) {
@@ -104,6 +105,25 @@ function dispatch(ans: (LiteralNode | ArgumentNode)[], src: core.Source, ctx: co
 			localize('expected', treeNodeChildrenToString(children)),
 			core.Range.create(src.cursor)
 		)
+	}
+}
+
+function unknown(name: string, treeNode: ArgumentTreeNode): core.InfallibleParser<SpyglassmcUnknownArgumentNode> {
+	return (src, ctx): SpyglassmcUnknownArgumentNode => {
+		const start = src.cursor
+		const value = src.readUntilLineEnd()
+		const range = core.Range.create(start, src.cursor)
+		ctx.err.report(
+			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.parser)),
+			range,
+			core.ErrorSeverity.Hint
+		)
+		return {
+			type: 'mcfunction:argument/spyglassmc:unknown',
+			range,
+			name,
+			value,
+		}
 	}
 }
 
