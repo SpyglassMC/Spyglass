@@ -26,9 +26,6 @@
 			"path": "nbtdoc"
 		},
 		{
-			"path": "vanilla-resource"
-		},
-		{
 			"path": "vscode-extension"
 		}
 	]

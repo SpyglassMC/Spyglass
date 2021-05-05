@@ -9,9 +9,6 @@
 			"path": "../locales"
 		},
 		{
-			"path": "../vanilla-resource"
-		},
-		{
 			"path": "src"
 		},
 		{

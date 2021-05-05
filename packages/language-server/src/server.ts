@@ -1,10 +1,7 @@
 import * as core from '@spyglassmc/core'
-import * as json from '@spyglassmc/json'
+import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
-import * as mcfunction from '@spyglassmc/mcfunction'
-import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
-import * as vr from '@spyglassmc/vanilla-resource'
 import * as chokidar from 'chokidar'
 import * as ls from 'vscode-languageserver/node'
 import { toCore, toLS } from './util'
@@ -18,9 +15,6 @@ if (process.argv.length === 2) {
 }
 
 nbtdoc.initializeNbtdoc()
-nbt.initializeNbt()
-json.initializeJson()
-mcfunction.initializeMcfunction()
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
@@ -44,10 +38,6 @@ connection.onInitialize(async params => {
 	workspaceFolders = params.workspaceFolders ?? []
 
 	try {
-		const resources = await vr.getVanillaResources('latest snapshot', logger)
-
-		// mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands)
-
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),
 			isDebugging: true,
@@ -56,9 +46,9 @@ connection.onInitialize(async params => {
 			rootsWatched: true,
 		})
 
-		vr.registerSymbols(resources, service.symbols)
+		await je.initialize(meta, logger, service.symbols)
 	} catch (e) {
-		logger.error(`[getVanillaResources] ${formatError(e)}`)
+		logger.error(`[je.initialize] ${formatError(e)}`)
 	}
 
 	try {

@@ -1,10 +1,6 @@
-# `@spyglassmc/vanilla-resource`
-
 ![banner](https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png)
 
-[![npm](https://img.shields.io/npm/v/@spyglassmc/vanilla-resource.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/vanilla-resource)
-
-This package exports a method for getting the vanilla resources of a specific Minecraft version.
+This file documents the interaction with vanilla resources.
 
 # References
 

@@ -20,12 +20,9 @@
 	"language-server": {
 		"dependencies": [
 			"core",
-			"json",
+			"java-edition",
 			"locales",
-			"mcfunction",
-			"nbt",
-			"nbtdoc",
-			"vanilla-resource"
+			"nbtdoc"
 		]
 	},
 	"locales": {},
@@ -33,9 +30,6 @@
 		"dependencies": [
 			"core",
 			"locales"
-		],
-		"devDependencies": [
-			"vanilla-resource"
 		]
 	},
 	"nbt": {
@@ -49,11 +43,6 @@
 		"dependencies": [
 			"core",
 			"locales"
-		]
-	},
-	"vanilla-resource": {
-		"dependencies": [
-			"core"
 		]
 	},
 	"vscode-extension": {

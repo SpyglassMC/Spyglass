@@ -4,9 +4,9 @@ import * as fs from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
-import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../lib/type'
-import { VersionStatus } from '../lib/type'
-import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion, transformBlocks, transformRegistries } from '../lib/util'
+import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
+import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
+import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
 
 const Fixtures = {
 	Blocks: fs.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaBlocks,

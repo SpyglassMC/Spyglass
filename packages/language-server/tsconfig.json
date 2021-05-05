@@ -6,22 +6,13 @@
 			"path": "../core"
 		},
 		{
-			"path": "../json"
+			"path": "../java-edition"
 		},
 		{
 			"path": "../locales"
 		},
 		{
-			"path": "../mcfunction"
-		},
-		{
-			"path": "../nbt"
-		},
-		{
 			"path": "../nbtdoc"
-		},
-		{
-			"path": "../vanilla-resource"
 		},
 		{
 			"path": "src"

@@ -1,4 +1,3 @@
-import type { VanillaCommandRootNode } from '@spyglassmc/vanilla-resource'
 import type { PartialRootTreeNode, RootTreeNode } from './type'
 import { merge } from './util'
 
@@ -14,11 +13,11 @@ export class CommandTreeRegistry {
 	 * Register command tree for an arbitrary version.
 	 * 
 	 * @param version The game version. e.g. `1.15-tdn`.
-	 * @param vanillaTree The vanilla command tree for this version.
-	 * @param treePatch A custom command tree patch that will be merged onto the `vanillaTree`.
+	 * @param tree The command tree for this version.
+	 * @param treePatch A custom command tree patch that will be merged onto `tree`.
 	 */
-	public register(version: string, vanillaTree: VanillaCommandRootNode, treePatch: PartialRootTreeNode): void {
-		this.#trees.set(version, merge(vanillaTree as RootTreeNode, treePatch))
+	public register(version: string, tree: RootTreeNode, treePatch?: PartialRootTreeNode): void {
+		this.#trees.set(version, treePatch ? merge(tree, treePatch) : tree)
 		/* DEBUG */ console.log('this.#trees', require('util').inspect(this.#trees, true, null))
 	}
 
