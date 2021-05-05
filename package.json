@@ -31,6 +31,7 @@
 		"node-loader": "^2.0.0",
 		"nyc": "^15.1.0",
 		"snap-shot-it": "^7.9.6",
+		"source-map-loader": "^2.0.1",
 		"source-map-support": "^0.5.19",
 		"ts-loader": "^8.1.0",
 		"ts-node": "^9.1.1",
