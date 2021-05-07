@@ -84,7 +84,9 @@ export const processor_list_ref = as('processor_list', any([
 
 const template_element = as('template_element', dispatch('element_type', type => record({
 	element_type: resource('worldgen/structure_pool_element'),
-	projection: literal(['rigid', 'terrain_matching']),
+	...when(type, ['empty_pool_element'], {}, {
+		projection: literal(['rigid', 'terrain_matching']),
+	}),
 	...pick(type, {
 		feature_pool_element: {
 			feature: configured_feature_ref,
