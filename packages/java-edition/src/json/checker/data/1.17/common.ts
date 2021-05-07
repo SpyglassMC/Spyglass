@@ -214,3 +214,12 @@ export const HeightmapType = [
 	'WORLD_SURFACE',
 	'WORLD_SURFACE_WG',
 ]
+
+export const Slots = [
+	'mainhand',
+	'offhand',
+	'head',
+	'chest',
+	'legs',
+	'feet',
+]

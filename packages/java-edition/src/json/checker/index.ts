@@ -1,9 +1,8 @@
 import type { Checker, CheckerContext as CoreCheckerContext, MetaRegistry } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
-import { dissectUri } from '../binder'
 import type { JsonNode } from '@spyglassmc/json'
-import { Checkers } from './data/1.17'
-import { pack_mcmeta } from './data/1.17/pack_mcmeta'
+import { dissectUri } from '../binder'
+import { Checkers, pack_mcmeta } from './data/1.17'
 
 export const entry: Checker<JsonNode> = (node: JsonNode, ctx: CoreCheckerContext) => {
 	const rel = fileUtil.getRel(ctx.roots, ctx.doc.uri)
