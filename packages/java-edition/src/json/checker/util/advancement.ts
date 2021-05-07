@@ -1,6 +1,6 @@
 import type { Symbol } from '@spyglassmc/core'
-import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { literal, simpleString } from '@spyglassmc/json/lib/checker'
+import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 
 export function criterionReference(advancement: string): JsonChecker {
 	return (node, ctx) => {

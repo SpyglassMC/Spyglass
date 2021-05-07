@@ -1,5 +1,5 @@
-import { blockStateMap, criterionReference, nbt } from '../../common'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { blockStateMap, criterionReference, nbt } from '../../util'
 import { float_bounds, int_bounds } from './common'
 
 const slots = [

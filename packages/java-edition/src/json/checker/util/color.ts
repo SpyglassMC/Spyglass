@@ -1,8 +1,9 @@
 import type { Parser } from '@spyglassmc/core'
 import { Color, Range } from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
-import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
+import { JsonNumberNode } from '@spyglassmc/json'
 import { string } from '@spyglassmc/json/lib/checker'
+import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
+import { localize } from '@spyglassmc/locales'
 
 export function stringColor(): JsonChecker {
 	const HexPattern = /^[0-9a-f]{1,6}$/i
@@ -29,4 +30,14 @@ export function stringColor(): JsonChecker {
 	}
 
 	return string('color', parser, undefined, { pool: Color.ColorNames }, 'color')
+}
+
+export function intColor(): JsonChecker {
+	return (node, ctx) => {
+		if (!JsonNumberNode.is(node) || !Number.isInteger(node.value)) {
+			ctx.err.report(localize('expected', localize('integer')), node)
+		} else {
+			node.color = Color.fromCompositeInt(node.value)
+		}
+	}
 }

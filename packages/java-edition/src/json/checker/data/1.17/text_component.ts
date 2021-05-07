@@ -1,5 +1,5 @@
-import { nbt, stringColor, uuid } from '../../common'
 import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { nbt, stringColor, uuid } from '../../util'
 
 const Keybinds = [
 	'key.jump',

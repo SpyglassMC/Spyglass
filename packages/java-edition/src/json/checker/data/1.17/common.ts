@@ -1,4 +1,21 @@
-import { any, as, dispatch, float, int, literal, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
+import { any, as, dispatch, extract, float, floatRange, int, intRange, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { blockStateMap } from '../../util'
+
+function smallestEncompassingPowerOfTwo(n: number) {
+	n = n - 1
+	n |= n >> 1
+	n |= n >> 2
+	n |= n >> 4
+	n |= n >> 8
+	n |= n >> 16
+	return n + 1
+}
+
+const BITS_FOR_Y = 64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000)))
+export const Y_SIZE = (1 << BITS_FOR_Y) - 32
+export const MAX_Y = (Y_SIZE >> 1) - 1
+export const MIN_Y = MAX_Y - Y_SIZE + 1
 
 export const number_provider = as('range', any([
 	float,
@@ -71,3 +88,129 @@ export const float_bounds = as('bounds', any([
 		}),
 	]),
 ]))
+
+export const block_state = as('block_state', dispatch(props => record({
+	Name: resource('block'),
+	Properties: opt(blockStateMap(extract('Name', props))), // TODO: require all states
+})))
+
+export const fluid_state = as('fluid_state', dispatch(props => record({
+	Name: resource('fluid'),
+	Properties: opt(blockStateMap(extract('Name', props))), // TODO: require all states
+})))
+
+export const vertical_anchor = as('vertical_anchor', any([
+	record({
+		absolute: intRange(MIN_Y, MAX_Y),
+	}),
+	record({
+		above_bottom: intRange(MIN_Y, MAX_Y),
+	}),
+	record({
+		below_top: intRange(MIN_Y, MAX_Y),
+	}),
+]))
+
+export const height_provider = as('height_provider', any([
+	vertical_anchor,
+	dispatch('type', type => record({
+		type: resource('height_provider_type'),
+		...pick(type, {
+			constant: {
+				value: vertical_anchor,
+			},
+			uniform: {
+				min_inclusive: vertical_anchor,
+				max_inclusive: vertical_anchor,
+			},
+			biased_to_bottom: {
+				min_inclusive: vertical_anchor,
+				max_inclusive: vertical_anchor,
+				inner: opt(intRange(1, null)),
+			},
+			very_biased_to_bottom: {
+				min_inclusive: vertical_anchor,
+				max_inclusive: vertical_anchor,
+				inner: opt(intRange(1, null)),
+			},
+			trapezoid: {
+				min_inclusive: vertical_anchor,
+				max_inclusive: vertical_anchor,
+				plateau: opt(int),
+			},
+		}),
+	})),
+]))
+
+export const floatProvider = (min: number | null = null, max: number | null = null) => as('float_provider', any([
+	floatRange(min, max),
+	dispatch('type', type => record({
+		type: resource('float_provider_type'),
+		...pick(type, {
+			constant: {
+				value: floatRange(min, max),
+			},
+			uniform: {
+				value: record({
+					min_inclusive: floatRange(min, max),
+					max_exclusive: floatRange(min, max),
+				}),
+			},
+			clamped_normal: {
+				value: record({
+					mean: float,
+					deviation: float,
+					min: floatRange(min, max),
+					max: floatRange(min, max),
+				}),
+			},
+			trapezoid: {
+				value: record({
+					min: floatRange(min, max),
+					max: floatRange(min, max),
+					plateau: float,
+				}),
+			},
+		}),
+	})),
+]))
+
+export const intProvider = (min: number | null = null, max: number | null = null): JsonChecker => as('int_provider', any([
+	intRange(min, max),
+	dispatch('type', type => record({
+		type: resource('int_provider_type'),
+		...pick(type, {
+			constant: {
+				value: intRange(min, max),
+			},
+			uniform: {
+				value: record({
+					min_inclusive: intRange(min, max),
+					max_inclusive: intRange(min, max),
+				}),
+			},
+			biased_to_bottom: {
+				value: record({
+					min_inclusive: intRange(min, max),
+					max_inclusive: intRange(min, max),
+				}),
+			},
+			clamped: {
+				value: record({
+					min_inclusive: intRange(min, max),
+					max_inclusive: intRange(min, max),
+					source: ref(() => intProvider()),
+				}),
+			},
+		}),
+	})),
+]))
+
+export const HeightmapType = [
+	'MOTION_BLOCKING',
+	'MOTION_BLOCKING_NO_LEAVES',
+	'OCEAN_FLOOR',
+	'OCEAN_FLOOR_WG',
+	'WORLD_SURFACE',
+	'WORLD_SURFACE_WG',
+]

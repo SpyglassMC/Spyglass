@@ -1,5 +1,5 @@
-import { blockStateList, nbt, uuid } from '../../common'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, listOf, literal, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { blockStateList, nbt, uuid } from '../../util'
 import { int_bounds, number_provider } from './common'
 import { loot_entry } from './loot_table'
 import { predicate } from './predicate'
