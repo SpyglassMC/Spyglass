@@ -1,11 +1,56 @@
-import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import type { Symbol } from '@spyglassmc/core'
+import type { JsonNode } from '@spyglassmc/json'
+import { JsonArrayNode, JsonObjectNode } from '@spyglassmc/json'
+import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
+import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, Y_SIZE } from './common'
 
-const block_state_provider = as('block_state_provider', dispatch('type', type => record({
+function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerContext) {
+	if (node && JsonObjectNode.is(node)) {
+		let block = extract('Name', node.children)
+		if (block) {
+			if (!block.startsWith('minecraft:')) {
+				block = `minecraft:${block}`
+			}
+			return Object.values(ctx.symbols.query(ctx.doc, 'block', block).symbol?.members ?? {})
+				.filter((m): m is Symbol => m?.subcategory === 'state')
+				.filter(m => Object.keys(m.members ?? {})[0]?.match(/^\d+$/))
+				.map(m => m.identifier)
+		}
+	}
+	return []
+}
+
+function blockProviderProperties(node: JsonNode | undefined, ctx: JsonCheckerContext): string[] {
+	if (!node || !JsonObjectNode.is(node)) return []
+	switch (extract('type', node.children)?.replace(/^minecraft:/, '')) {
+		case 'randomized_int_state_provider':
+			const source = node.children.find(p => p.key?.value === 'source')?.value
+			return blockProviderProperties(source, ctx)
+		case 'rotated_block_provider':
+		case 'simple_state_provider':
+			const state = node.children.find(p => p.key?.value === 'state')?.value
+			return blockStateIntProperties(state, ctx)
+		case 'weighted_state_provider':
+			const entries = node.children.find(p => p.key?.value === 'entries')?.value
+			if (entries && JsonArrayNode.is(entries)) {
+				const values = entries.children
+					.map(n => n.value && JsonObjectNode.is(n.value) &&
+						n.value.children.find(p => p.key?.value === 'data')?.value)
+					.filter(n => n)
+					.map(n => blockStateIntProperties(n as JsonNode, ctx))
+				return [...new Set(([] as string[]).concat(...values).filter(e => values.every(a => a.includes(e))))]
+			}
+	}
+	return []
+}
+
+const block_state_provider = as('block_state_provider', dispatch('type', (type, props, ctx) => record({
 	type: resource('worldgen/block_state_provider_type'),
 	...pick(type, {
 		randomized_int_state_provider: {
-			property: simpleString,
+			// FIXME: Temporary solution to make tests pass when service is not given.
+			property: ctx.service ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
 			values: intProvider(),
 			source: block_state_provider,
 		},

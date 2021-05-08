@@ -91,12 +91,12 @@ export const float_bounds = as('bounds', any([
 
 export const block_state = as('block_state', dispatch(props => record({
 	Name: resource('block'),
-	Properties: opt(blockStateMap(extract('Name', props))), // TODO: require all states
+	Properties: opt(blockStateMap(extract('Name', props), false, true)),
 })))
 
 export const fluid_state = as('fluid_state', dispatch(props => record({
 	Name: resource('fluid'),
-	Properties: opt(blockStateMap(extract('Name', props))), // TODO: require all states
+	Properties: opt(blockStateMap(extract('Name', props), false, true)),
 })))
 
 export const vertical_anchor = as('vertical_anchor', any([

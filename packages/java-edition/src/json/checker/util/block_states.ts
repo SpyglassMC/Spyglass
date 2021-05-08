@@ -1,14 +1,15 @@
 import type { Symbol } from '@spyglassmc/core'
-import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { any, boolean, intRange, listOf, literal, object, opt, record, simpleString } from '@spyglassmc/json/lib/checker'
+import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker'
 
-export function blockStateMap(block?: string, mixedTypes = false): JsonChecker {
+export function blockStateMap(block?: string, mixedTypes = false, requireAll = false): JsonChecker {
 	return (node, ctx) => {
 		// FIXME: Temporary solution to make tests pass when service is not given.
 		if (!ctx.service) {
+			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			object(
 				simpleString,
-				() => mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
+				() => requireAll ? values : opt(values)
 			)(node, ctx)
 			return
 		}
@@ -27,7 +28,7 @@ export function blockStateMap(block?: string, mixedTypes = false): JsonChecker {
 						return opt(intBounds(parseInt(values[0]), parseInt(values[values.length - 1])))
 					}
 				}
-				return opt(literal(values))
+				return requireAll ? literal(values) : opt(literal(values))
 			},
 		)(node, ctx)
 	}

@@ -108,8 +108,8 @@ export function deprecated(checker: JsonChecker): ComplexProperty {
 }
 
 export function dispatch(values: (children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
-export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
-export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker), arg2?: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker {
+export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker
+export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker), arg2?: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker {
 	return (node, ctx) => {
 		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', localize('object')), node)
@@ -117,7 +117,7 @@ export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, Jso
 			const dispatcherIndex = node.children.findIndex(p => p.key?.value === arg1)
 			const dispatcher = node.children[dispatcherIndex]
 			const value = dispatcher?.value?.type === 'json:string' ? dispatcher.value.value : undefined
-			arg2(value, node.children)(node, ctx)
+			arg2(value, node.children, ctx)(node, ctx)
 		} else {
 			(arg1 as Function)(node.children)(node, ctx)
 		}
