@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import Fallback from './en.json'
+import Fallback from './locales/en.json'
 
 type Locale = Record<string, string>
 
@@ -52,7 +52,7 @@ function _resolveLocalePlaceholders(val: string | undefined, params: (Parameter 
 }
 
 async function _setupLanguage(code: string) {
-	const locale = await import(`./${code}.json`)
+	const locale = await import(`./locales/${code}.json`)
 	Locales[code] = locale
 	language = code
 
