@@ -84,7 +84,7 @@ export function fixCommandComponent(ans: CodeAction[], ctx: ParsingContext, node
             ans.push(getCodeAction(
                 'command-replaceitem', commandReplaceitem,
                 ctx.textDoc, { start: startLiteral.range.start, end: count ? count.range.end : item.range.end },
-                `item ${target1.data} ${(target2.data as ArgumentNode)[GetFormattedString](ctx.config.lint)} ${slot.data} replace ${(item.data as ArgumentNode)[GetFormattedString](ctx.config.lint)}${count ? ` ${count.data}` : ''}`
+                `item replace ${target1.data} ${(target2.data as ArgumentNode)[GetFormattedString](ctx.config.lint)} ${slot.data} with ${(item.data as ArgumentNode)[GetFormattedString](ctx.config.lint)}${count ? ` ${count.data}` : ''}`
             ))
         }
     }

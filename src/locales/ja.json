@@ -34,7 +34,7 @@
     "argument-type.vector.4D": "4D vector",
     "boolean": "boolean型",
     "code-action.block-state-sort-keys": "block stateをソートする",
-    "code-action.command-replaceitem": "このコマンドを/item ... replaceに更新します",
+    "code-action.command-replaceitem": "このコマンドを/item replace ...に更新します",
     "code-action.fix-file": "このファイルの修正可能な問題を一括修正する",
     "code-action.fix-workspace": "このワークスペース内のすべての修正可能な問題を一括修正する",
     "code-action.id-attribute-datafix": "このattributeのnameを1.16に更新する",

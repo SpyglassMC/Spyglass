@@ -34,7 +34,7 @@
     "argument-type.vector.4D": "四维向量",
     "boolean": "一个布尔值",
     "code-action.block-state-sort-keys": "将方块状态按键排序",
-    "code-action.command-replaceitem": "将该命令升级为 /item ... replace",
+    "code-action.command-replaceitem": "将该命令升级为 /item replace ...",
     "code-action.fix-file": "修复当前文件中所有可自动修复的问题",
     "code-action.fix-workspace": "修复当前工作空间中所有可自动修复的问题",
     "code-action.id-attribute-datafix": "将该属性名更新到 1.16",
