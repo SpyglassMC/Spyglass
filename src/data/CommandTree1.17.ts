@@ -697,7 +697,7 @@ export const CommandTree: ICommandTree = {
                     children: {
                         name: {
                             parser: new IdentityArgumentParser('$function', true),
-                            executable: true,
+                            executable: true
                         }
                     }
                 }
@@ -1063,52 +1063,69 @@ export const CommandTree: ICommandTree = {
         item: {
             parser: new LiteralArgumentParser('item'),
             children: {
-                target: {
-                    template: 'item_holder',
+                [Switchable]: true,
+                modify: {
+                    parser: new LiteralArgumentParser('modify'),
                     children: {
-                        slot: {
-                            parser: new ItemSlotArgumentParser(),
+                        source: {
+                            template: 'item_holder',
                             children: {
-                                [Switchable]: true,
-                                copy: {
-                                    parser: new LiteralArgumentParser('copy'),
-                                    children: {
-                                        source: {
-                                            template: 'item_holder',
-                                            children: {
-                                                slot: {
-                                                    parser: new ItemSlotArgumentParser(),
-                                                    executable: true,
-                                                    children: {
-                                                        modifier: {
-                                                            parser: new IdentityArgumentParser('$item_modifier'),
-                                                            executable: true
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                modify: {
-                                    parser: new LiteralArgumentParser('modify'),
+                                slot: {
+                                    parser: new ItemSlotArgumentParser(),
+                                    executable: true,
                                     children: {
                                         modifier: {
                                             parser: new IdentityArgumentParser('$item_modifier'),
                                             executable: true
                                         }
                                     }
-                                },
-                                replace: {
-                                    parser: new LiteralArgumentParser('replace'),
+                                }
+                            }
+                        }
+                    }  
+                },
+                replace: {
+                    parser: new LiteralArgumentParser('replace'),
+                    children: {
+                        source: {
+                            template: 'item_holder',
+                            children: {
+                                slot: {
+                                    parser: new ItemSlotArgumentParser(),
                                     children: {
-                                        item: {
-                                            parser: new ItemArgumentParser(false),
-                                            executable: true,
+                                        [Switchable]: true,
+                                        width: {
+                                            parser: new LiteralArgumentParser('with'),
                                             children: {
-                                                count: {
-                                                    parser: new NumberArgumentParser('integer', 0, 64),
-                                                    executable: true
+                                                item: {
+                                                    parser: new ItemArgumentParser(false),
+                                                    executable: true,
+                                                    children: {
+                                                        count: {
+                                                            parser: new NumberArgumentParser('integer', 0, 64),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        from: {
+                                            parser: new LiteralArgumentParser('from'),
+                                            children: {
+                                                source: {
+                                                    template: 'item_holder',
+                                                    children: {
+                                                        slot: {
+                                                            parser: new ItemSlotArgumentParser(),
+                                                            executable: true,
+                                                            children: {
+                                                                modifier: {
+                                                                    parser: new IdentityArgumentParser('$item_modifier'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
