@@ -1094,7 +1094,7 @@ export const CommandTree: ICommandTree = {
                                     parser: new ItemSlotArgumentParser(),
                                     children: {
                                         [Switchable]: true,
-                                        width: {
+                                        with: {
                                             parser: new LiteralArgumentParser('with'),
                                             children: {
                                                 item: {
