@@ -1,5 +1,5 @@
 import type * as core from '@spyglassmc/core'
-import type { Checker, RangeLike, Symbol, SymbolQueryResult } from '@spyglassmc/core'
+import type { Checker, RangeLike, Symbol, SymbolQuery } from '@spyglassmc/core'
 import { ErrorSeverity, Range, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
@@ -329,7 +329,7 @@ function segToUri(seg: Segments, ctx: core.CheckerContext): string | null {
 /**
  * @returns The actual symbol being used/imported from another module.
  */
-async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<SymbolQueryResult | null> {
+async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<SymbolQuery | null> {
 	const targetSeg = identPath.fromGlobalRoot ? [] : [...ctx.modSeg]
 	for (const [i, token] of identPath.children.entries()) {
 		if (i < identPath.children.length - 1) {

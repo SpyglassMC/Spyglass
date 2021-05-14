@@ -6,6 +6,19 @@ import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
 import { SymbolLocation, SymbolUsageTypes, SymbolVisibility } from './Symbol'
 
+interface LookupResult {
+	parentSymbol: Symbol | null,
+	map: SymbolMap | null,
+	symbol: Symbol | null,
+}
+
+export const enum SpecialUri {
+	DefaultLibrary = 'spyglassmc://symbol/default-library',
+	OnlyDeclaration = 'spyglassmc://symbol/only-declaration',
+	OnlyReference = 'spyglassmc://symbol/only-reference',
+	UriBound = 'spyglassmc://symbol/uri-bound',
+}
+
 export class SymbolUtil {
 	private readonly stacks = new Map<string, SymbolStack>()
 
@@ -15,9 +28,10 @@ export class SymbolUtil {
 		public readonly global: SymbolTable
 	) { }
 
-	/* istanbul ignore next */
 	/**
 	 * Do not use this method. This should only be called by `Service` when executing `UriBinder`s.
+	 * 
+	 * @param fn All symbols added in this function will be considered as URI bound.
 	 */
 	uriBinding(logger: Logger, fn: () => unknown): void {
 		this.isUriBinding = true
@@ -38,6 +52,13 @@ export class SymbolUtil {
 		return this.stacks.get(uri)!
 	}
 
+	/**
+	 * This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
+	 */
+	setStack(uri: string, stack: SymbolStack) {
+		this.stacks.set(uri, stack)
+	}
+
 	clear(uri: string): void {
 		this.stacks.delete(uri)
 		SymbolUtil.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
@@ -45,66 +66,43 @@ export class SymbolUtil {
 
 	/**
 	 * @returns An object:
-	 * - `map`: The `SymbolMap` that (potentially) contains the symbol. `null` if no such map exists.
+	 * - `map`: The {@link SymbolMap} that (potentially) contains the symbol. `null` if no such map exists.
 	 * - `createMap`: A method that can be called to create the `SymbolMap` containing the symbol if it doesn't exist. `null` if such map cannot be created (e.g. when the symbol containing the member symbol doesn't exist either).
 	 * - `symbol`: The `Symbol` corresponding to the `path`. `null` if no such symbol exists.
 	 * - `visible`: If it is visible in `uri`. This will be `null` if the symbol is `null`.
 	 */
-	lookup(category: AllCategory, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null }
-	lookup(category: string, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null }
-	lookup(category: string, path: string[], uri: string): { map: SymbolMap | null, createMap: ((addition: SymbolAddition) => SymbolMap) | null, symbol: Symbol | null, visible: boolean | null } {
-		if (uri) {
-			// TODO: Lookup in local stack as well.
-			const stack = this.getStack(uri)
-			stack
-		}
-		let parentSymbol: Symbol | null = null
-		let symbol: Symbol | null = null
-		let map: SymbolMap | null = this.global[category] ?? null
-		for (let i = 0; map && i < path.length; i++) {
-			symbol = map[path[i]] ?? null
-			if (!symbol) {
-				break
-			}
-			if (i === path.length - 1) {
-				break
-			}
-			parentSymbol = symbol
-			map = symbol.members ?? null
-		}
-		return {
-			createMap: path.length === 1
-				? (addition: SymbolAddition) => SymbolUtil.getTable(this.getStack(uri), this.global, addition.data?.visibility)[category] ??= {}
-				: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : null,
-			map,
-			symbol,
-			visible: symbol ? SymbolUtil.isVisible(symbol, uri) : null,
-		}
+	lookup(category: AllCategory, path: string[], uri?: string): LookupResult
+	lookup(category: string, path: string[], uri?: string): LookupResult
+	lookup(category: string, path: string[], uri?: string): LookupResult {
+		const stack = uri ? this.getStack(uri) : []
+		return SymbolUtil.lookupTables([this.global, ...stack], category, path)
 	}
 
 	/**
-	 * @param doc A `TextDocument` or a string URI. It is used to both check the visibility of symbols and serve as
+	 * @param doc A {@link TextDocument} or a string URI. It is used to both check the visibility of symbols and serve as
 	 * the location of future entered symbol usages. If a string URI is provided, all `range`s specified while entering
 	 * symbol usages latter will be ignored and seen as `[0, 0)`.
 	 * 
 	 * @throws When the queried symbol belongs to another non-existent symbol.
 	 */
-	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQueryResult
-	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQueryResult
-	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQueryResult {
+	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQuery
+	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery
+	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery {
 		const uri = SymbolUtil.toUri(doc)
-		const lookupResult = this.lookup(category, path, uri)
-		if (!lookupResult.createMap) {
-			throw new Error(`Cannot query symbol at path “${path.join('.')}” as its parent doesn't exist`)
-		}
-		return new SymbolQueryResult({
+		const stack = this.getStack(uri)
+		const { parentSymbol, map, symbol } = this.lookup(category, path, uri)
+		const createMap = path.length === 1
+			? (addition: SymbolAddition) => SymbolUtil.getTable(stack, this.global, addition.data?.visibility)[category] ??= {}
+			: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : null
+		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : null
+		return new SymbolQuery({
 			category,
-			createMap: lookupResult.createMap,
+			createMap,
 			doc,
 			isUriBinding: this.isUriBinding,
-			map: lookupResult.visible ? lookupResult.map : null,
+			map: visible ? map : null,
 			path,
-			symbol: lookupResult.visible ? lookupResult.symbol : null,
+			symbol: visible ? symbol : null,
 		})
 	}
 
@@ -116,13 +114,7 @@ export class SymbolUtil {
 		const [uri, category] = param2 ? [param1, param2] : [undefined, param1]
 		const ans: SymbolMap = {}
 
-		if (uri) {
-			// TODO: Lookup in local stack as well.
-			const stack = this.getStack(uri)
-			stack
-		}
-
-		const map = this.global[category]
+		const map = this.lookup(category, [], uri).map
 		if (map) {
 			for (const key of Object.keys(map)) {
 				if (SymbolUtil.isVisible(map[key]!, uri)) {
@@ -135,7 +127,7 @@ export class SymbolUtil {
 	}
 
 	/**
-	 * Executes the `callbackFn` in a new block.
+	 * Executes the specified {@link callbackFn} in a new block.
 	 * 
 	 * ~~We're not using blockchain technique here, unfortunately.~~
 	 */
@@ -299,6 +291,52 @@ export class SymbolUtil {
 		}
 	}
 
+	static lookupTable(table: SymbolTable, category: AllCategory, path: string[]): LookupResult
+	static lookupTable(table: SymbolTable, category: string, path: string[]): LookupResult
+	static lookupTable(table: SymbolTable, category: string, path: string[]): LookupResult {
+		let parentSymbol: Symbol | null = null
+		let symbol: Symbol | null = null
+		let map: SymbolMap | null = table[category] ?? null
+		for (let i = 0; i < path.length; i++) {
+			symbol = map?.[path[i]] ?? null
+			if (!symbol) {
+				if (i !== path.length - 1) {
+					parentSymbol = null
+					map = null
+				}
+				break
+			}
+			if (i === path.length - 1) {
+				break
+			}
+			parentSymbol = symbol
+			map = symbol.members ?? null
+		}
+		return { parentSymbol, map, symbol }
+	}
+
+	/**
+	 * @param tables Should be ordered from global to the toppest block.
+	 */
+	static lookupTables(tables: SymbolTable[], category: AllCategory, path: string[]): LookupResult
+	static lookupTables(tables: SymbolTable[], category: string, path: string[]): LookupResult
+	static lookupTables(tables: SymbolTable[], category: string, path: string[]): LookupResult {
+		let parentSymbol: Symbol | null = null
+		let map: SymbolMap | null = null
+		for (let i = tables.length - 1; i >= 0; i--) {
+			const table = tables[i]
+			const result = this.lookupTable(table, category, path)
+			if (result.symbol) {
+				return result
+			}
+			if (!parentSymbol && !map && (result.parentSymbol || result.map)) {
+				parentSymbol = result.parentSymbol
+				map = result.map
+			}
+		}
+		return { parentSymbol, map, symbol: null }
+	}
+
 	private static createSymbol(category: string, identifier: string, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const ans: Symbol = {
 			category,
@@ -346,7 +384,8 @@ export class SymbolUtil {
 
 	private static amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
 		if (addition) {
-			const arr = symbol[addition.type] ??= []
+			const type = addition.type ?? 'reference'
+			const arr = symbol[type] ??= []
 			const range = Range.get((SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0)
 			const loc = SymbolLocation.create(doc, range, addition.fullRange, isUriBinding, {
 				accessType: addition.accessType,
@@ -450,7 +489,7 @@ interface SymbolAdditionUsageBase extends SymbolLocationMetadata {
 	/**
 	 * The type of this usage. Use `definition` when the usage consists both a `declaration` and an `implementation`.
 	 */
-	type: SymbolUsageType,
+	type?: SymbolUsageType,
 	/**
 	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
 	 * nbtdoc code,
@@ -511,16 +550,16 @@ namespace SymbolAdditionUsageWithNode {
 }
 
 /**
- * A stack of `SymbolTable`s. The first element represents the `File` visibility scope,
+ * A stack of {@link SymbolTable}s. The first element represents the `File` visibility scope,
  * which is accessible by any later elements but not saved to the global `SymbolTable`.
  * Later elements represent different levels of `Block` visibility scopes.
  */
-type SymbolStack = [SymbolTable, ...SymbolTable[]]
+export type SymbolStack = [SymbolTable, ...SymbolTable[]]
 
-type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQueryResult, symbol: S) => unknown
-type QueryMemberCallback = (this: void, query: SymbolQueryResult) => unknown
+type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQuery, symbol: S) => unknown
+type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 
-export class SymbolQueryResult {
+export class SymbolQuery {
 	readonly category: string
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
@@ -535,7 +574,7 @@ export class SymbolQueryResult {
 	 * 
 	 * This is only called if `#map` is `null`.
 	 */
-	readonly #createMap: (this: void, addition: SymbolAddition) => SymbolMap
+	readonly #createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | null
 	readonly #isUriBinding: boolean
 	#hasTriggeredIf = false
 	/**
@@ -557,7 +596,7 @@ export class SymbolQueryResult {
 
 	constructor({ category, createMap, doc, isUriBinding, map, path, symbol }: {
 		category: string,
-		createMap: (this: void, addition: SymbolAddition) => SymbolMap,
+		createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | null,
 		doc: TextDocument | string,
 		isUriBinding: boolean,
 		map: SymbolMap | null,
@@ -670,6 +709,10 @@ export class SymbolQueryResult {
 	 * Enters the queried symbol.
 	 */
 	enter(addition: SymbolAddition): this {
+		if (!this.#createMap) {
+			throw new Error(`Cannot enter the symbol of path “${this.path.join('.')}” as its parent doesn't exist`)
+		}
+
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
 		if (this.#createdWithUri && SymbolAdditionUsageWithRange.is(addition.usage)) {
 			addition.usage.range = Range.create(0, 0)
@@ -740,7 +783,7 @@ export class SymbolQueryResult {
 			: doc
 		const memberMap = this.#symbol.members ?? null
 		const memberSymbol = memberMap?.[identifier] ?? null
-		const memberQueryResult = new SymbolQueryResult({
+		const memberQueryResult = new SymbolQuery({
 			category: this.category,
 			createMap: () => this.#symbol!.members ??= {},
 			doc: memberDoc,
