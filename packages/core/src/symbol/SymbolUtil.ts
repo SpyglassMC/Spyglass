@@ -1,6 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode } from '../node'
 import type { Logger } from '../service'
+import type { EventPublisher } from '../service/EventPublisher'
+import { EventPublisherImpl } from '../service/EventPublisher'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
@@ -16,17 +18,78 @@ export const enum SpecialUri {
 	DefaultLibrary = 'spyglassmc://symbol/default-library',
 	OnlyDeclaration = 'spyglassmc://symbol/only-declaration',
 	OnlyReference = 'spyglassmc://symbol/only-reference',
+	PotentiallyTrimable = 'spyglassmc://symbol/potentially-trimable',
 	UriBound = 'spyglassmc://symbol/uri-bound',
 }
 
-export class SymbolUtil {
+interface SymbolEvent {
+	path: readonly string[],
+	map: SymbolMap,
+	symbol: Symbol,
+}
+interface SymbolLocationEvent extends SymbolEvent {
+	type: SymbolUsageType,
+	location: SymbolLocation,
+}
+interface AliasEvent {
+	target: Symbol,
+	alias: SymbolEvent,
+}
+
+export class SymbolUtil implements EventPublisher {
+	#event = new EventPublisherImpl()
 	private readonly stacks = new Map<string, SymbolStack>()
 
 	private isUriBinding = false
 
 	constructor(
 		public readonly global: SymbolTable
-	) { }
+	) {
+		this.on('symbolRemoved', ({ path, map, symbol }) => {
+			if (symbol.relations?.aliasOf) {
+				this.trigger('symbolAliasRemoved', {
+					alias: { path, map, symbol },
+					target: symbol.relations.aliasOf,
+				})
+			}
+		})
+
+		this.on('symbolAliasCreated', ({ target }) => {
+			target.aliasAmount ??= 0
+			target.aliasAmount++
+		})
+
+		this.on('symbolAliasRemoved', ({ target }) => {
+			if (target.aliasAmount !== undefined) {
+				target.aliasAmount--
+			}
+		})
+	}
+
+	/**
+	 * The order of the event actually happening and the callback function being called is NOT guaranteed.
+	 */
+	on(event: 'symbolCreated', callbackFn: (this: void, data: SymbolEvent) => void): void
+	on(event: 'symbolAmended', callbackFn: (this: void, data: SymbolEvent) => void): void
+	on(event: 'symbolRemoved', callbackFn: (this: void, data: SymbolEvent) => void): void
+	on(event: 'symbolAliasCreated', callbackFn: (this: void, data: AliasEvent) => void): void
+	on(event: 'symbolAliasRemoved', callbackFn: (this: void, data: AliasEvent) => void): void
+	on(event: 'symbolLocationCreated', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
+	on(event: 'symbolLocationRemoved', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
+	on(event: string, callbackFn: (this: void, ...params: any[]) => unknown): void {
+		this.#event.on(event, callbackFn)
+	}
+
+	private trigger(event: 'symbolCreated', data: SymbolEvent): void
+	private trigger(event: 'symbolAmended', data: SymbolEvent): void
+	private trigger(event: 'symbolRemoved', data: SymbolEvent): void
+	private trigger(event: 'symbolAliasCreated', data: AliasEvent): void
+	private trigger(event: 'symbolAliasRemoved', data: AliasEvent): void
+	private trigger(event: 'symbolLocationCreated', data: SymbolLocationEvent): void
+	private trigger(event: 'symbolLocationRemoved', data: SymbolLocationEvent): void
+	private trigger(event: string, ...params: unknown[]): void {
+		this.#event.trigger(event, ...params)
+	}
 
 	/**
 	 * Do not use this method. This should only be called by `Service` when executing `UriBinder`s.
@@ -35,7 +98,7 @@ export class SymbolUtil {
 	 */
 	uriBinding(logger: Logger, fn: () => unknown): void {
 		this.isUriBinding = true
-		SymbolUtil.removeLocations(this.global, l => l.isUriBound)
+		this.removeLocations(this.global, l => l.isUriBound)
 		try {
 			fn()
 		} catch (e) {
@@ -61,7 +124,7 @@ export class SymbolUtil {
 
 	clear(uri: string): void {
 		this.stacks.delete(uri)
-		SymbolUtil.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
+		this.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
 	}
 
 	/**
@@ -103,6 +166,7 @@ export class SymbolUtil {
 			map: visible ? map : null,
 			path,
 			symbol: visible ? symbol : null,
+			util: this,
 		})
 	}
 
@@ -150,7 +214,7 @@ export class SymbolUtil {
 		return typeof uri === 'string' ? uri : uri.uri
 	}
 
-	static trim(table: SymbolTable): void {
+	trim(table: SymbolTable): void {
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
 			this.trimMap(map)
@@ -160,16 +224,20 @@ export class SymbolUtil {
 		}
 	}
 
-	static trimMap(map: SymbolMap | undefined): void {
+	trimMap(map: SymbolMap | undefined, path: string[] = []): void {
 		if (!map) {
 			return
 		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
+			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length && !symbol.aliasAmount) {
+				if (symbol.relations?.aliasOf && symbol.relations.aliasOf.aliasAmount !== undefined) {
+					symbol.relations.aliasOf.aliasAmount--
+				}
 				delete map[identifier]
+				this.trigger('symbolRemoved', { path, map, symbol })
 			} else if (symbol.members) {
-				this.trimMap(symbol.members)
+				this.trimMap(symbol.members, [...path, identifier])
 				if (Object.keys(symbol.members).length === 0) {
 					delete symbol.members
 				}
@@ -182,27 +250,35 @@ export class SymbolUtil {
 	 * 
 	 * @param predicate A predicate that matches locations that should be removed.
 	 */
-	static removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
+	removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
 		for (const category of Object.keys(table)) {
 			this.removeLocationsFromMap(table[category]!, predicate)
 		}
 		this.trim(table)
 	}
 
-	static removeLocationsFromMap(map: SymbolMap | undefined, predicate: (this: void, loc: SymbolLocation) => unknown): void {
+	removeLocationsFromMap(map: SymbolMap | undefined, predicate: (this: void, loc: SymbolLocation) => unknown, path: string[] = []): void {
 		if (!map) {
 			return
 		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			for (const form of SymbolUsageTypes) {
-				if (!symbol[form]) {
+			for (const type of SymbolUsageTypes) {
+				if (!symbol[type]) {
 					continue
 				}
-				symbol[form] = symbol[form]!.filter(l => !predicate(l))
+				const result: SymbolLocation[] = []
+				symbol[type]!.forEach(location => {
+					if (predicate(location)) {
+						this.trigger('symbolLocationRemoved', { path, map, symbol, type, location })
+					} else {
+						result.push(location)
+					}
+				})
+				symbol[type] = result
 			}
 			if (symbol.members) {
-				this.removeLocationsFromMap(symbol.members, predicate)
+				this.removeLocationsFromMap(symbol.members, predicate, [...path, identifier])
 			}
 		}
 	}
@@ -225,7 +301,7 @@ export class SymbolUtil {
 		}
 	}
 
-	private static enterMapContainer<K extends string>({ container, keyToMap, category, identifier, addition, doc, isUriBinding }: {
+	private enterMapContainer<K extends string>({ addition, container, doc, category, identifier, isUriBinding, keyToMap, path }: {
 		addition: SymbolAddition,
 		category: string,
 		container: {
@@ -235,12 +311,13 @@ export class SymbolUtil {
 		identifier: string,
 		isUriBinding: boolean,
 		keyToMap: K,
+		path: readonly string[],
 	}): Symbol {
 		const map: SymbolMap = container[keyToMap] ??= {}
-		return this.enterMap(map, category, identifier, addition, doc, isUriBinding)
+		return this.enterMap(map, category, path, identifier, addition, doc, isUriBinding)
 	}
 
-	static enterTable(table: SymbolTable, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	enterTable(table: SymbolTable, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		return this.enterMapContainer({
 			container: table,
 			keyToMap: category,
@@ -249,10 +326,11 @@ export class SymbolUtil {
 			addition,
 			doc,
 			isUriBinding,
+			path,
 		})
 	}
 
-	static enterMember(symbol: Symbol, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	enterMember(symbol: Symbol, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		return this.enterMapContainer({
 			container: symbol,
 			keyToMap: 'members',
@@ -261,6 +339,7 @@ export class SymbolUtil {
 			addition,
 			doc,
 			isUriBinding,
+			path,
 		})
 	}
 
@@ -279,15 +358,18 @@ export class SymbolUtil {
 	 * 
 	 * @returns The created/amended symbol.
 	 */
-	static enterMap(map: SymbolMap, category: AllCategory, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
-	static enterMap(map: SymbolMap, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
-	static enterMap(map: SymbolMap, category: string, identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	enterMap(map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	enterMap(map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	enterMap(map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const target = map[identifier]
 		if (target) {
-			this.amendSymbol(target, addition, doc, isUriBinding)
+			this.amendSymbol(map, path, target, addition, doc, isUriBinding)
+			this.trigger('symbolAmended', { path, map, symbol: target })
 			return target
 		} else {
-			return map[identifier] = this.createSymbol(category, identifier, addition, doc, isUriBinding)
+			const ans = map[identifier] = this.createSymbol(category, map, path, identifier, addition, doc, isUriBinding)
+			this.trigger('symbolCreated', { path, map, symbol: ans })
+			return ans
 		}
 	}
 
@@ -323,6 +405,8 @@ export class SymbolUtil {
 	static lookupTables(tables: SymbolTable[], category: string, path: string[]): LookupResult {
 		let parentSymbol: Symbol | null = null
 		let map: SymbolMap | null = null
+
+		// Traverse from the last table to the first one.
 		for (let i = tables.length - 1; i >= 0; i--) {
 			const table = tables[i]
 			const result = this.lookupTable(table, category, path)
@@ -334,25 +418,26 @@ export class SymbolUtil {
 				map = result.map
 			}
 		}
+
 		return { parentSymbol, map, symbol: null }
 	}
 
-	private static createSymbol(category: string, identifier: string, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	createSymbol(category: string, map: SymbolMap, path: readonly string[], identifier: string, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const ans: Symbol = {
 			category,
 			identifier,
 			...enterable.data,
 		}
-		this.amendSymbolUsage(ans, enterable.usage, doc, isUriBinding)
+		this.amendSymbolUsage(map, path, ans, enterable.usage, doc, isUriBinding)
 		return ans
 	}
 
-	static amendSymbol(symbol: Symbol, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
-		this.amendSymbolMetadata(symbol, enterable.data)
-		this.amendSymbolUsage(symbol, enterable.usage, doc, isUriBinding)
+	amendSymbol(map: SymbolMap, path: readonly string[], symbol: Symbol, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
+		this.amendSymbolMetadata(map, path, symbol, enterable.data)
+		this.amendSymbolUsage(map, path, symbol, enterable.usage, doc, isUriBinding)
 	}
 
-	private static amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']) {
+	private amendSymbolMetadata(map: SymbolMap, path: readonly string[], symbol: Symbol, addition: SymbolAddition['data']) {
 		if (addition) {
 			if (addition.doc !== undefined) {
 				symbol.doc = addition.doc
@@ -360,11 +445,23 @@ export class SymbolUtil {
 			if (addition.relations && Object.keys(addition.relations).length) {
 				symbol.relations ??= {}
 				for (const relationship of Object.keys(addition.relations)) {
+					if (relationship === 'aliasOf' && symbol.relations.aliasOf !== addition.relations.aliasOf) {
+						this.trigger('symbolAliasCreated', {
+							target: addition.relations.aliasOf!,
+							alias: { path, map, symbol },
+						})
+						if (symbol.relations.aliasOf) {
+							this.trigger('symbolAliasRemoved', {
+								target: symbol.relations.aliasOf,
+								alias: { path, map, symbol },
+							})
+						}
+					}
 					symbol.relations[relationship] = addition.relations[relationship]
 				}
 			}
 			if (addition.subcategory !== undefined) {
-				symbol.doc = addition.subcategory
+				symbol.subcategory = addition.subcategory
 			}
 			if (addition.visibility !== undefined) {
 				// Visibility changes are only accepted if the change wouldn't result in the
@@ -382,22 +479,23 @@ export class SymbolUtil {
 		}
 	}
 
-	private static amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
+	private amendSymbolUsage(map: SymbolMap, path: readonly string[], symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
 		if (addition) {
 			const type = addition.type ?? 'reference'
 			const arr = symbol[type] ??= []
 			const range = Range.get((SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0)
-			const loc = SymbolLocation.create(doc, range, addition.fullRange, isUriBinding, {
+			const location = SymbolLocation.create(doc, range, addition.fullRange, isUriBinding, {
 				accessType: addition.accessType,
 				fromDefaultLibrary: addition.fromDefaultLibrary,
 			})
 			if (!doc.uri.startsWith('file:')) {
-				delete loc.range
-				delete loc.posRange
-				delete loc.fullRange
-				delete loc.fullPosRange
+				delete location.range
+				delete location.posRange
+				delete location.fullRange
+				delete location.fullPosRange
 			}
-			arr.push(loc)
+			arr.push(location)
+			this.trigger('symbolLocationCreated', { path, map, symbol, type, location })
 		}
 	}
 
@@ -491,7 +589,7 @@ interface SymbolAdditionUsageBase extends SymbolLocationMetadata {
 	 */
 	type?: SymbolUsageType,
 	/**
-	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
+	 * The range of the full declaration/implementation of this {@link Symbol}. For example, for the following piece of
 	 * nbtdoc code,
 	 * ```nbtdoc
 	 * 0123456789012345
@@ -508,7 +606,7 @@ interface SymbolAdditionUsageWithRange extends SymbolAdditionUsageBase {
 	 * whitespaces whatsoever included.
 	 * 
 	 * This property is ignored when the specified document's URI is not of `file:` schema. It is also ignored and
-	 * set to `[0, 0)` if only a file URI, instead of a `TextDocument`, is provided.
+	 * set to `[0, 0)` if only a file URI, instead of a {@link TextDocument}, is provided.
 	 * 
 	 * Please use `node` instead of this property whenever it makes sense. Learn more at the documentation
 	 * for that property.
@@ -530,7 +628,7 @@ interface SymbolAdditionUsageWithNode extends SymbolAdditionUsageBase {
 	 * wrapper nodes whatsoever included.
 	 * 
 	 * This property is ignored when the specified document's URI is not of `file:` schema. It is also ignored and
-	 * treated as `range: [0, 0)` if only a file URI, instead of a `TextDocument`, is provided.
+	 * treated as `range: [0, 0)` if only a file URI, instead of a {@link TextDocument}, is provided.
 	 * 
 	 * Either this property or `range` could be used to represent the range of this usage.
 	 * 
@@ -564,15 +662,15 @@ export class SymbolQuery {
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
 	/**
-	 * If only a string URI (instead of a `TextDocument`) is provided when constructing this class.
+	 * If only a string URI (instead of a {@link TextDocument}) is provided when constructing this class.
 	 * 
-	 * If this is `true`, `usage.range` is ignored and treated as `[0, 0)` when entering symbols through this class.
+	 * If this is `true`, {@link SymbolAdditionUsageWithRange.range} is ignored and treated as `[0, 0)` when entering symbols through this class.
 	 */
 	readonly #createdWithUri?: boolean
 	/**
 	 * A function that returns the symbol map where the queried symbol should be in when creating it.
 	 * 
-	 * This is only called if `#map` is `null`.
+	 * This is only called if {@link #map} is `null`.
 	 */
 	readonly #createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | null
 	readonly #isUriBinding: boolean
@@ -585,6 +683,10 @@ export class SymbolQuery {
 	 * The queried symbol. `null` if the symbol hasn't been created yet.
 	 */
 	#symbol: Symbol | null
+	/**
+	 * The {@link SymbolUtil}
+	 */
+	#util: SymbolUtil
 
 	get symbol(): Symbol | null {
 		return this.#symbol
@@ -594,7 +696,7 @@ export class SymbolQuery {
 		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
 	}
 
-	constructor({ category, createMap, doc, isUriBinding, map, path, symbol }: {
+	constructor({ category, createMap, doc, isUriBinding, map, path, symbol, util }: {
 		category: string,
 		createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | null,
 		doc: TextDocument | string,
@@ -602,6 +704,7 @@ export class SymbolQuery {
 		map: SymbolMap | null,
 		path: readonly string[],
 		symbol: Symbol | null,
+		util: SymbolUtil,
 	}) {
 		this.category = category
 		this.path = path
@@ -615,6 +718,7 @@ export class SymbolQuery {
 		this.#isUriBinding = isUriBinding
 		this.#map = map
 		this.#symbol = symbol
+		this.#util = util
 	}
 
 	heyGimmeDaSymbol() {
@@ -719,7 +823,7 @@ export class SymbolQuery {
 		}
 
 		this.#map ??= this.#createMap(addition)
-		this.#symbol = SymbolUtil.enterMap(this.#map, this.category, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
+		this.#symbol = this.#util.enterMap(this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
 		}
@@ -791,6 +895,7 @@ export class SymbolQuery {
 			map: memberMap,
 			path: [...this.path, identifier],
 			symbol: memberSymbol,
+			util: this.#util,
 		})
 		fn(memberQueryResult)
 	}

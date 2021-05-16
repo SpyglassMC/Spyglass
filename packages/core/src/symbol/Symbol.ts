@@ -165,16 +165,20 @@ export const enum SymbolVisibility {
 
 export interface SymbolMetadata {
 	// Categorical information.
-	identifier: string,
 	/**
-	 * The main category of this Symbol. Symbols in different categories are definitely
+	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
 	 */
 	category: string,
+	identifier: string,
 
 	// Other information.
 	/**
-	 * The documentation for this `Symbol`. May be edited by doc comments.
+	 * How many {@link Symbol}s are an alias of this Symbol.
+	 */
+	aliasAmount?: number,
+	/**
+	 * The documentation for this {@link Symbol}. May be edited by doc comments.
 	 */
 	doc?: string,
 	members?: SymbolMap,
