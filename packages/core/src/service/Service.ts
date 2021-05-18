@@ -228,7 +228,7 @@ export class Service {
 			for (const n of nodes) {
 				if (n.symbol) {
 					const symbol = SymbolUtil.resolveAlias(n.symbol)
-					return Hover.create(n, `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.doc ? `\n******\n${symbol.doc}` : ''))
+					return Hover.create(n, `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : ''))
 				}
 				if (n.hover) {
 					return Hover.create(n, n.hover)

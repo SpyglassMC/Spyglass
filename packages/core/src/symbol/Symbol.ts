@@ -180,7 +180,7 @@ export interface SymbolMetadata {
 	/**
 	 * The documentation for this {@link Symbol}. May be edited by doc comments.
 	 */
-	doc?: string,
+	desc?: string,
 	members?: SymbolMap,
 	relations?: {
 		aliasOf?: Symbol,

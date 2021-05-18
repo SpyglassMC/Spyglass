@@ -225,7 +225,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Baz.Xer” 1'] =
   "parentSymbol": {
     "category": "advancement",
     "identifier": "Baz",
-    "doc": "STACK",
+    "desc": "STACK",
     "definition": [
       {
         "uri": "spyglassmc://test_file"
@@ -240,7 +240,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = {
   "parentSymbol": {
     "category": "advancement",
     "identifier": "Foo",
-    "doc": "STACK",
+    "desc": "STACK",
     "definition": [
       {
         "uri": "spyglassmc://test_file"
@@ -250,7 +250,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = {
       "Baz": {
         "category": "advancement",
         "identifier": "Baz",
-        "doc": "STACK",
+        "desc": "STACK",
         "definition": [
           {
             "uri": "spyglassmc://test_file"
@@ -263,7 +263,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = {
     "Baz": {
       "category": "advancement",
       "identifier": "Baz",
-      "doc": "STACK",
+      "desc": "STACK",
       "definition": [
         {
           "uri": "spyglassmc://test_file"
@@ -274,7 +274,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = {
   "symbol": {
     "category": "advancement",
     "identifier": "Baz",
-    "doc": "STACK",
+    "desc": "STACK",
     "definition": [
       {
         "uri": "spyglassmc://test_file"
@@ -287,7 +287,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] =
   "parentSymbol": {
     "category": "advancement",
     "identifier": "Foo",
-    "doc": "STACK",
+    "desc": "STACK",
     "definition": [
       {
         "uri": "spyglassmc://test_file"
@@ -297,7 +297,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] =
       "Baz": {
         "category": "advancement",
         "identifier": "Baz",
-        "doc": "STACK",
+        "desc": "STACK",
         "definition": [
           {
             "uri": "spyglassmc://test_file"
@@ -310,7 +310,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] =
     "Baz": {
       "category": "advancement",
       "identifier": "Baz",
-      "doc": "STACK",
+      "desc": "STACK",
       "definition": [
         {
           "uri": "spyglassmc://test_file"
@@ -327,7 +327,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = {
     "Foo": {
       "category": "advancement",
       "identifier": "Foo",
-      "doc": "STACK",
+      "desc": "STACK",
       "definition": [
         {
           "uri": "spyglassmc://test_file"
@@ -337,7 +337,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = {
         "Baz": {
           "category": "advancement",
           "identifier": "Baz",
-          "doc": "STACK",
+          "desc": "STACK",
           "definition": [
             {
               "uri": "spyglassmc://test_file"
@@ -350,7 +350,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = {
   "symbol": {
     "category": "advancement",
     "identifier": "Foo",
-    "doc": "STACK",
+    "desc": "STACK",
     "definition": [
       {
         "uri": "spyglassmc://test_file"
@@ -360,7 +360,7 @@ exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = {
       "Baz": {
         "category": "advancement",
         "identifier": "Baz",
-        "doc": "STACK",
+        "desc": "STACK",
         "definition": [
           {
             "uri": "spyglassmc://test_file"
@@ -377,7 +377,7 @@ exports['SymbolUtil lookup() Should return correctly for “Unknown” 1'] = {
     "Foo": {
       "category": "advancement",
       "identifier": "Foo",
-      "doc": "STACK",
+      "desc": "STACK",
       "definition": [
         {
           "uri": "spyglassmc://test_file"
@@ -387,7 +387,7 @@ exports['SymbolUtil lookup() Should return correctly for “Unknown” 1'] = {
         "Baz": {
           "category": "advancement",
           "identifier": "Baz",
-          "doc": "STACK",
+          "desc": "STACK",
           "definition": [
             {
               "uri": "spyglassmc://test_file"
@@ -406,7 +406,7 @@ exports['SymbolUtil lookup() Should return correctly for “” 1'] = {
     "Foo": {
       "category": "advancement",
       "identifier": "Foo",
-      "doc": "STACK",
+      "desc": "STACK",
       "definition": [
         {
           "uri": "spyglassmc://test_file"
@@ -416,7 +416,7 @@ exports['SymbolUtil lookup() Should return correctly for “” 1'] = {
         "Baz": {
           "category": "advancement",
           "identifier": "Baz",
-          "doc": "STACK",
+          "desc": "STACK",
           "definition": [
             {
               "uri": "spyglassmc://test_file"
@@ -502,7 +502,7 @@ exports['SymbolUtil uriBinding Should execute correctly 1'] = {
     "BeforeBinding2": {
       "category": "test",
       "identifier": "BeforeBinding2",
-      "doc": "Entered before URI binding w/ references.",
+      "desc": "Entered before URI binding w/ references.",
       "reference": [
         {
           "uri": "spyglassmc://test_file"
@@ -512,7 +512,7 @@ exports['SymbolUtil uriBinding Should execute correctly 1'] = {
     "Bound": {
       "category": "test",
       "identifier": "Bound",
-      "doc": "This symbol is URI bound.",
+      "desc": "This symbol is URI bound.",
       "reference": [
         {
           "uri": "spyglassmc://test_file",
@@ -523,7 +523,7 @@ exports['SymbolUtil uriBinding Should execute correctly 1'] = {
     "AfterBinding": {
       "category": "test",
       "identifier": "AfterBinding",
-      "doc": "Entered after URI binding w/ references.",
+      "desc": "Entered after URI binding w/ references.",
       "reference": [
         {
           "uri": "spyglassmc://test_file"

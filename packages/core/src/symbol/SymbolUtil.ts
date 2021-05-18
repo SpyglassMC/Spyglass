@@ -439,23 +439,23 @@ export class SymbolUtil implements EventPublisher {
 
 	private amendSymbolMetadata(map: SymbolMap, path: readonly string[], symbol: Symbol, addition: SymbolAddition['data']) {
 		if (addition) {
-			if (addition.doc !== undefined) {
-				symbol.doc = addition.doc
+			if (addition.desc !== undefined) {
+				symbol.desc = addition.desc
 			}
 			if (addition.relations && Object.keys(addition.relations).length) {
 				symbol.relations ??= {}
 				for (const relationship of Object.keys(addition.relations)) {
 					if (relationship === 'aliasOf' && symbol.relations.aliasOf !== addition.relations.aliasOf) {
-						this.trigger('symbolAliasCreated', {
-							target: addition.relations.aliasOf!,
-							alias: { path, map, symbol },
-						})
 						if (symbol.relations.aliasOf) {
 							this.trigger('symbolAliasRemoved', {
 								target: symbol.relations.aliasOf,
 								alias: { path, map, symbol },
 							})
 						}
+						this.trigger('symbolAliasCreated', {
+							target: addition.relations.aliasOf!,
+							alias: { path, map, symbol },
+						})
 					}
 					symbol.relations[relationship] = addition.relations[relationship]
 				}

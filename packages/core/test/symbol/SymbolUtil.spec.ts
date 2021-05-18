@@ -23,18 +23,18 @@ describe.only('SymbolUtil', () => {
 			const symbols = new SymbolUtil({})
 			symbols
 				.query(fileUri, 'test', 'BeforeBinding1')
-				.enter({ data: { doc: 'Entered before URI binding w/o references. Should be removed.' } })
+				.enter({ data: { desc: 'Entered before URI binding w/o references. Should be removed.' } })
 			symbols
 				.query(fileUri, 'test', 'BeforeBinding2')
-				.enter({ data: { doc: 'Entered before URI binding w/ references.' }, usage: {} })
+				.enter({ data: { desc: 'Entered before URI binding w/ references.' }, usage: {} })
 			symbols.uriBinding(console, () => {
 				symbols
 					.query(fileUri, 'test', 'Bound')
-					.enter({ data: { doc: 'This symbol is URI bound.' }, usage: {} })
+					.enter({ data: { desc: 'This symbol is URI bound.' }, usage: {} })
 			})
 			symbols
 				.query(fileUri, 'test', 'AfterBinding')
-				.enter({ data: { doc: 'Entered after URI binding w/ references.' }, usage: {} })
+				.enter({ data: { desc: 'Entered after URI binding w/ references.' }, usage: {} })
 			snapshot(symbols.global)
 		})
 	})
@@ -133,13 +133,13 @@ describe.only('SymbolUtil', () => {
 				Foo: {
 					category: 'advancement',
 					identifier: 'Foo',
-					doc: 'STACK',
+					desc: 'STACK',
 					definition: [{ uri: fileUri }],
 					members: {
 						Baz: {
 							category: 'advancement',
 							identifier: 'Baz',
-							doc: 'STACK',
+							desc: 'STACK',
 							definition: [{ uri: fileUri }],
 						},
 					},
@@ -178,6 +178,29 @@ describe.only('SymbolUtil', () => {
 		})
 	})
 	describe('query()', () => {
+		const global: SymbolTable = {
+			advancement: {
+				Foo: {
+					category: 'advancement',
+					identifier: 'Foo',
+					definition: [{ uri: fileUri }],
+					members: {
+						Bar: {
+							category: 'advancement',
+							identifier: 'Bar',
+							definition: [{ uri: fileUri }],
+							members: {
+								Qux: {
+									category: 'advancement',
+									identifier: 'Qux',
+									definition: [{ uri: fileUri }],
+								},
+							},
+						},
+					},
+				},
+			},
+		}
 
 	})
 	describe('getVisibleSymbols()', () => {
