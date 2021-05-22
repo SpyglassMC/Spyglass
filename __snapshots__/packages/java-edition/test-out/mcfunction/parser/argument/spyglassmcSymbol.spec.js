@@ -5,13 +5,13 @@ exports['mcfunction argument spyglassmc:symbol Parse "foo" with {"category":"tea
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "team"
-    },
     "value": "foo",
     "symbol": {
       "category": "team",
       "identifier": "foo",
+      "path": [
+        "foo"
+      ],
       "reference": [
         {
           "uri": ""

@@ -1,41 +1,43 @@
-import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
-import { map, Range } from '@spyglassmc/core'
-import { localeQuote, localize } from '@spyglassmc/locales'
-import type { MinecraftIdentifierToken } from '../../node'
-import { identifier } from './identifier'
+import type { InfallibleParser, ResourceLocationNode, ResourceLocationOptions } from '@spyglassmc/core'
+import { resourceLocation } from '@spyglassmc/core'
 
-const Regex = /^[0-9a-z_-]*$/
-
-export function minecraftIdentifier(): InfallibleParser<MinecraftIdentifierToken> {
-	return (src: Source, ctx: ParserContext): MinecraftIdentifierToken => {
-		const start = src.cursor
-		const ans: MinecraftIdentifierToken = {
-			type: 'nbtdoc:minecraft_identifier',
-			range: Range.create(start, src),
-			namespace: minecraftIdentifierPart()(src, ctx),
-			path: [],
-		}
-
-		if (src.trySkip(':')) {
-			do {
-				ans.path.push(minecraftIdentifierPart()(src, ctx))
-			} while (src.trySkip('/'))
-		} else {
-			ctx.err.report(
-				localize('nbtdoc.parser.minecraft-identifier.colon-expected', localeQuote(':')),
-				src
-			)
-		}
-
-		ans.range.end = src.cursor
-
-		return ans
-	}
+export function minecraftIdentifier(options: ResourceLocationOptions): InfallibleParser<ResourceLocationNode> {
+	return resourceLocation({
+		allowTag: false,
+		isPredicate: true,
+		...options,
+	})
 }
 
-function minecraftIdentifierPart(): InfallibleParser<string> {
-	return map(
-		identifier({ regex: Regex, allowEmpty: true }),
-		res => res.value
-	)
-}
+export const ExtendableRootRegistryMap = {
+	'minecraft:block': 'block',
+	'minecraft:entity': 'entity_type',
+	'minecraft:item': 'item',
+} as const
+export const ExtendableRootRegistries = Object.keys(ExtendableRootRegistryMap) as (keyof typeof ExtendableRootRegistryMap)[]
+
+export const RootRegistryMap = {
+	...ExtendableRootRegistryMap,
+	'custom:blockitemstates': 'custom:blockitemstates',
+	'custom:blockstates': 'custom:blockstates',
+	'custom:spawnitemtag': 'custom:spawnitemtag',
+} as const
+export const RootRegistries = Object.keys(RootRegistryMap) as (keyof typeof RootRegistryMap)[]
+
+export const IdRegistryMap = {
+	'minecraft:attribute': 'attribute',
+	'minecraft:block': 'block',
+	'minecraft:block_entity': 'block_entity_type',
+	'minecraft:dimension': 'dimension',
+	'minecraft:enchantment': 'enchantment',
+	'minecraft:entity': 'entity_type',
+	'minecraft:item': 'item',
+	'minecraft:loot_table': 'loot_table',
+	'minecraft:motive': 'motive',
+	'minecraft:potion': 'potion',
+	'minecraft:recipe': 'recipe',
+	'minecraft:structure': 'structure',
+	'minecraft:villager_profession': 'villager_profession',
+	'minecraft:villager_type': 'villager_type',
+} as const
+export const IdRegistries = Object.keys(IdRegistryMap) as (keyof typeof IdRegistryMap)[]

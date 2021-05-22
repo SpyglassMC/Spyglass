@@ -1,230 +1,90 @@
-exports['vanilla-resource util addBlockSymbols() Should add correctly 1'] = {
-  "block": {
-    "minecraft:stone": {
-      "category": "block",
-      "identifier": "minecraft:stone",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Stone",
-          "fromDefaultLibrary": true
-        }
-      ]
-    },
-    "minecraft:grass_block": {
-      "category": "block",
-      "identifier": "minecraft:grass_block",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Grass_Block",
-          "fromDefaultLibrary": true
-        }
-      ],
-      "members": {
-        "snowy": {
-          "category": "block",
-          "identifier": "snowy",
-          "subcategory": "state",
-          "declaration": [
-            {
-              "uri": "https://minecraft.fandom.com/wiki/Grass_Block#Block_states",
-              "fromDefaultLibrary": true
-            }
-          ],
-          "members": {
-            "false": {
-              "category": "block",
-              "identifier": "false",
-              "subcategory": "state_value",
-              "declaration": [
-                {
-                  "uri": "https://minecraft.fandom.com/wiki/Grass_Block#Block_states",
-                  "fromDefaultLibrary": true
-                }
-              ]
-            },
-            "true": {
-              "category": "block",
-              "identifier": "true",
-              "subcategory": "state_value",
-              "declaration": [
-                {
-                  "uri": "https://minecraft.fandom.com/wiki/Grass_Block#Block_states",
-                  "fromDefaultLibrary": true
-                }
-              ]
-            }
-          },
-          "relations": {
-            "default": {
-              "category": "block",
-              "identifier": "false",
-              "subcategory": "state_value",
-              "declaration": [
-                {
-                  "uri": "https://minecraft.fandom.com/wiki/Grass_Block#Block_states",
-                  "fromDefaultLibrary": true
-                }
-              ]
-            }
-          }
-        }
-      }
-    }
-  }
-}
+exports['vanilla-resource util addBlockSymbols() Should add correctly 1'] = `
+CATEGORY block
++ SYMBOL minecraft:stone {block} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Stone","fromDefaultLibrary":true}
++ ------------
++ SYMBOL minecraft:grass_block {block} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block","fromDefaultLibrary":true}
++ + members:
++ + + SYMBOL minecraft:grass_block.snowy {block (state)} [Public]
++ + + + declaration:
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
++ + + + relations: {"default":{"category":"block","path":["minecraft:grass_block","snowy","false"]}}
++ + + + members:
++ + + + + SYMBOL minecraft:grass_block.snowy.false {block (state_value)} [Public]
++ + + + + + declaration:
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
++ + + + + ------------
++ + + + + SYMBOL minecraft:grass_block.snowy.true {block (state_value)} [Public]
++ + + + + + declaration:
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
+`
 
-exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] = {
-  "attribute": {
-    "minecraft:generic.max_health": {
-      "category": "attribute",
-      "identifier": "minecraft:generic.max_health",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Attribute#Attributes",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "activity": {
-    "minecraft:core": {
-      "category": "activity",
-      "identifier": "minecraft:core",
-      "declaration": [
-        {
-          "uri": "spyglassmc://vanilla-resource/registries.json",
-          "fromDefaultLibrary": true
-        }
-      ]
-    },
-    "minecraft:idle": {
-      "category": "activity",
-      "identifier": "minecraft:idle",
-      "declaration": [
-        {
-          "uri": "spyglassmc://vanilla-resource/registries.json",
-          "fromDefaultLibrary": true
-        }
-      ]
-    },
-    "minecraft:work": {
-      "category": "activity",
-      "identifier": "minecraft:work",
-      "declaration": [
-        {
-          "uri": "spyglassmc://vanilla-resource/registries.json",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "block_entity_type": {
-    "minecraft:furnace": {
-      "category": "block_entity_type",
-      "identifier": "minecraft:furnace",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Furnace#Block_data",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "custom_stat": {
-    "minecraft:leave_game": {
-      "category": "custom_stat",
-      "identifier": "minecraft:leave_game",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "enchantment": {
-    "minecraft:protection": {
-      "category": "enchantment",
-      "identifier": "minecraft:protection",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Protection",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "entity_type": {
-    "minecraft:area_effect_cloud": {
-      "category": "entity_type",
-      "identifier": "minecraft:area_effect_cloud",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Area_Effect_Cloud",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "fluid": {
-    "minecraft:empty": {
-      "category": "fluid",
-      "identifier": "minecraft:empty",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Air",
-          "fromDefaultLibrary": true
-        }
-      ]
-    },
-    "minecraft:lava": {
-      "category": "fluid",
-      "identifier": "minecraft:lava",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Lava",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "item": {
-    "minecraft:air": {
-      "category": "item",
-      "identifier": "minecraft:air",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Air",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "recipe_serializer": {
-    "minecraft:crafting_shaped": {
-      "category": "recipe_serializer",
-      "identifier": "minecraft:crafting_shaped",
-      "declaration": [
-        {
-          "uri": "https://minecraft.fandom.com/wiki/Recipe#crafting_shaped",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  },
-  "sound_event": {
-    "minecraft:ambient.cave": {
-      "category": "sound_event",
-      "identifier": "minecraft:ambient.cave",
-      "declaration": [
-        {
-          "uri": "https://misode.github.io/sounds/?sound=ambient.cave",
-          "fromDefaultLibrary": true
-        }
-      ]
-    }
-  }
-}
+exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] = `
+CATEGORY attribute
++ SYMBOL minecraft:generic.max_health {attribute} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes","fromDefaultLibrary":true}
+------------
+CATEGORY activity
++ SYMBOL minecraft:core {activity} [Public]
++ + declaration:
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
++ ------------
++ SYMBOL minecraft:idle {activity} [Public]
++ + declaration:
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
++ ------------
++ SYMBOL minecraft:work {activity} [Public]
++ + declaration:
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
+------------
+CATEGORY block_entity_type
++ SYMBOL minecraft:furnace {block_entity_type} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Furnace#Block_data","fromDefaultLibrary":true}
+------------
+CATEGORY custom_stat
++ SYMBOL minecraft:leave_game {custom_stat} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names","fromDefaultLibrary":true}
+------------
+CATEGORY enchantment
++ SYMBOL minecraft:protection {enchantment} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Protection","fromDefaultLibrary":true}
+------------
+CATEGORY entity_type
++ SYMBOL minecraft:area_effect_cloud {entity_type} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Area_Effect_Cloud","fromDefaultLibrary":true}
+------------
+CATEGORY fluid
++ SYMBOL minecraft:empty {fluid} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","fromDefaultLibrary":true}
++ ------------
++ SYMBOL minecraft:lava {fluid} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Lava","fromDefaultLibrary":true}
+------------
+CATEGORY item
++ SYMBOL minecraft:air {item} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","fromDefaultLibrary":true}
+------------
+CATEGORY recipe_serializer
++ SYMBOL minecraft:crafting_shaped {recipe_serializer} [Public]
++ + declaration:
++ + + {"uri":"https://minecraft.fandom.com/wiki/Recipe#crafting_shaped","fromDefaultLibrary":true}
+------------
+CATEGORY sound_event
++ SYMBOL minecraft:ambient.cave {sound_event} [Public]
++ + declaration:
++ + + {"uri":"https://misode.github.io/sounds/?sound=ambient.cave","fromDefaultLibrary":true}
+`
 
 exports['vanilla-resource util getBlocksUrl() Should return the correct url for "1.14" (1) 1'] = `
 https://raw.githubusercontent.com/Arcensoth/mcdata/1.14/generated/reports/blocks.json

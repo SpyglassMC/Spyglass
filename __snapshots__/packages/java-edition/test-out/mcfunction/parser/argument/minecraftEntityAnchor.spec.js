@@ -5,12 +5,6 @@ exports['mcfunction argument minecraft:entity_anchor Parse "eyes" 1'] = {
       "start": 0,
       "end": 4
     },
-    "options": {
-      "pool": [
-        "feet",
-        "eyes"
-      ]
-    },
     "value": "eyes",
     "name": "test",
     "hover": "<test: entity_anchor>"
@@ -24,12 +18,6 @@ exports['mcfunction argument minecraft:entity_anchor Parse "feet" 1'] = {
     "range": {
       "start": 0,
       "end": 4
-    },
-    "options": {
-      "pool": [
-        "feet",
-        "eyes"
-      ]
     },
     "value": "feet",
     "name": "test",

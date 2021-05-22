@@ -12,14 +12,6 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
           "start": 0,
           "end": 4
         },
-        "options": {
-          "escapable": {},
-          "quotes": [
-            "\"",
-            "'"
-          ],
-          "unquotable": {}
-        },
         "value": "0123",
         "valueMap": {
           "outerRange": {
@@ -40,14 +32,6 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
       "range": {
         "start": 0,
         "end": 4
-      },
-      "options": {
-        "escapable": {},
-        "quotes": [
-          "\"",
-          "'"
-        ],
-        "unquotable": {}
       },
       "value": "0123",
       "valueMap": {
@@ -76,7 +60,11 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
     },
     "children": [
       {
-        "isSequenceUtil": true,
+        "type": "mcfunction:entity_selector",
+        "range": {
+          "start": 0,
+          "end": 2
+        },
         "children": [
           {
             "type": "literal",
@@ -84,24 +72,9 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
               "start": 0,
               "end": 2
             },
-            "options": {
-              "pool": [
-                "@p",
-                "@a",
-                "@r",
-                "@s",
-                "@e"
-              ],
-              "colorTokenType": "keyword"
-            },
             "value": "@e"
           }
         ],
-        "range": {
-          "start": 0,
-          "end": 2
-        },
-        "type": "mcfunction:entity_selector",
         "variable": "e",
         "currentEntity": false,
         "playersOnly": false,
@@ -115,7 +88,11 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
     ],
     "name": "test",
     "selector": {
-      "isSequenceUtil": true,
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
       "children": [
         {
           "type": "literal",
@@ -123,24 +100,9 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
             "start": 0,
             "end": 2
           },
-          "options": {
-            "pool": [
-              "@p",
-              "@a",
-              "@r",
-              "@s",
-              "@e"
-            ],
-            "colorTokenType": "keyword"
-          },
           "value": "@e"
         }
       ],
-      "range": {
-        "start": 0,
-        "end": 2
-      },
-      "type": "mcfunction:entity_selector",
       "variable": "e",
       "currentEntity": false,
       "playersOnly": false,
@@ -179,14 +141,6 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
           "start": 0,
           "end": 6
         },
-        "options": {
-          "escapable": {},
-          "quotes": [
-            "\"",
-            "'"
-          ],
-          "unquotable": {}
-        },
         "value": "Player",
         "valueMap": {
           "outerRange": {
@@ -207,14 +161,6 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
       "range": {
         "start": 0,
         "end": 6
-      },
-      "options": {
-        "escapable": {},
-        "quotes": [
-          "\"",
-          "'"
-        ],
-        "unquotable": {}
       },
       "value": "Player",
       "valueMap": {

@@ -1,8 +1,8 @@
 import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
-import { any, FloatNode, IntegerNode, map, optional, repeat, sequence } from '@spyglassmc/core'
+import { any, FloatNode, IntegerNode, map, optional, repeat, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
 import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
-import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IntRangeNode, LiteralToken, MinecraftIdentifierToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
-import { fallibleFloat, fallibleInteger, float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
+import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IntRangeNode, LiteralToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
+import { fallibleFloat, fallibleInteger, float, identifier, identPath, IdRegistries, integer, keyword, marker, minecraftIdentifier, punctuation, RootRegistries, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
 
@@ -66,7 +66,16 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 			syntax<CompoundFieldChild>([keyword('float'), optional(floatRange)]),
 			syntax<CompoundFieldChild>([keyword('double'), optional(floatRange)]),
 			syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('id'), punctuation('('), minecraftIdentifier(), punctuation(')')]),
+			syntax<CompoundFieldChild>([
+				keyword('id'), punctuation('('), minecraftIdentifier({
+					pool: [...new Set([
+						// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
+						// the registry names used by SPYGlass are supported here.
+						...IdRegistries,
+						...ResourceLocationCategories.map(v => `${ResourceLocationNode.DefaultNamespace}${ResourceLocationNode.NamespacePathSep}${v}`),
+					])],
+				}), punctuation(')'),
+			]),
 			any([
 				syntax<CompoundFieldChild>([marker('('), marker(')')]),
 				syntax<CompoundFieldChild>([marker('('), compoundFieldType, syntaxRepeat(syntax<CompoundFieldChild>([marker('|'), compoundFieldType])), punctuation(')')]),
@@ -143,7 +152,7 @@ function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNo
 					}
 
 					case 'id': {
-						const registry = res.children.find(MinecraftIdentifierToken.is)!
+						const registry = res.children.find(ResourceLocationNode.is)!
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -273,7 +282,7 @@ const fieldPath = sequence([
 
 const registryIndex: Parser<RegistryIndexNode> = map(
 	syntax<RegistryIndexChild>([
-		minecraftIdentifier(),
+		minecraftIdentifier({ pool: RootRegistries }),
 		marker('['),
 		fieldPath,
 		punctuation(']'),
@@ -283,7 +292,7 @@ const registryIndex: Parser<RegistryIndexNode> = map(
 			type: 'nbtdoc:registry_index',
 			range: res.range,
 			children: res.children,
-			registry: res.children.find(MinecraftIdentifierToken.is)!,
+			registry: res.children.find(ResourceLocationNode.is)!,
 			path: res.children.filter(FieldPathKey.is),
 		}
 		return ans

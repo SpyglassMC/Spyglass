@@ -6,12 +6,12 @@
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"target": "ES2020",
-
+		
+		"alwaysStrict": true,
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitAny": true,
 		"noImplicitReturns": true,
 		"noImplicitThis": true,
-		"alwaysStrict": true,
 		"strict": true,
 
 		"pretty": true,

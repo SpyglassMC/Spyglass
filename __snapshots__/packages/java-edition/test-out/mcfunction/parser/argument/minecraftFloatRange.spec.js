@@ -20,12 +20,6 @@ exports['mcfunction argument minecraft:float_range Parse "-100.76.." 1'] = {
           "start": 7,
           "end": 9
         },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
-        },
         "value": ".."
       }
     ],
@@ -84,12 +78,6 @@ exports['mcfunction argument minecraft:float_range Parse "..100" 1'] = {
         "range": {
           "start": 0,
           "end": 2
-        },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
         },
         "value": ".."
       },
@@ -160,12 +148,6 @@ exports['mcfunction argument minecraft:float_range Parse "0..5.2" 1'] = {
         "range": {
           "start": 1,
           "end": 3
-        },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
         },
         "value": ".."
       },

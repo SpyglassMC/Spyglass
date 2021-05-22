@@ -2942,20 +2942,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 64,
                   "end": 69
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Red",
                 "valueMap": {
                   "outerRange": {
@@ -3001,20 +2987,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 64,
                 "end": 69
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Red",
               "valueMap": {
@@ -3085,20 +3057,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 101,
                   "end": 107
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Blue",
                 "valueMap": {
                   "outerRange": {
@@ -3144,20 +3102,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 101,
                 "end": 107
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Blue",
               "valueMap": {
@@ -3264,20 +3208,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 64,
                   "end": 69
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Red",
                 "valueMap": {
                   "outerRange": {
@@ -3323,20 +3253,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 64,
                 "end": 69
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Red",
               "valueMap": {
@@ -3399,20 +3315,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 101,
                   "end": 107
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Blue",
                 "valueMap": {
                   "outerRange": {
@@ -3458,20 +3360,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 101,
                 "end": 107
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Blue",
               "valueMap": {
@@ -3610,20 +3498,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 64,
                 "end": 69
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Red",
               "valueMap": {
                 "outerRange": {
@@ -3669,20 +3543,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 64,
               "end": 69
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Red",
             "valueMap": {
@@ -3753,20 +3613,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 101,
                 "end": 107
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Blue",
               "valueMap": {
                 "outerRange": {
@@ -3812,20 +3658,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 101,
               "end": 107
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Blue",
             "valueMap": {
@@ -3932,20 +3764,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 64,
                 "end": 69
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Red",
               "valueMap": {
                 "outerRange": {
@@ -3991,20 +3809,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 64,
               "end": 69
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Red",
             "valueMap": {
@@ -4067,20 +3871,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 101,
                 "end": 107
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Blue",
               "valueMap": {
                 "outerRange": {
@@ -4126,20 +3916,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 101,
               "end": 107
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Blue",
             "valueMap": {
@@ -4297,20 +4073,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 61,
                   "end": 66
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Red",
                 "valueMap": {
                   "outerRange": {
@@ -4356,20 +4118,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 61,
                 "end": 66
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Red",
               "valueMap": {
@@ -4476,20 +4224,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "start": 61,
                   "end": 66
                 },
-                "options": {
-                  "quotes": [
-                    "\""
-                  ],
-                  "escapable": {
-                    "characters": [
-                      "b",
-                      "f",
-                      "n",
-                      "r",
-                      "t"
-                    ]
-                  }
-                },
                 "value": "Red",
                 "valueMap": {
                   "outerRange": {
@@ -4535,20 +4269,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "range": {
                 "start": 61,
                 "end": 66
-              },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
               },
               "value": "Red",
               "valueMap": {
@@ -4687,20 +4407,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 61,
                 "end": 66
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Red",
               "valueMap": {
                 "outerRange": {
@@ -4746,20 +4452,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 61,
               "end": 66
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Red",
             "valueMap": {
@@ -4866,20 +4558,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "start": 61,
                 "end": 66
               },
-              "options": {
-                "quotes": [
-                  "\""
-                ],
-                "escapable": {
-                  "characters": [
-                    "b",
-                    "f",
-                    "n",
-                    "r",
-                    "t"
-                  ]
-                }
-              },
               "value": "Red",
               "valueMap": {
                 "outerRange": {
@@ -4925,20 +4603,6 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "range": {
               "start": 61,
               "end": 66
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Red",
             "valueMap": {

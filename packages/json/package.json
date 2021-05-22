@@ -9,8 +9,7 @@
     "test": "test/"
   },
   "devDependencies": {
-    "fast-glob": "^3.2.5",
-    "vanilla-datapack-data": "SPGoding/vanilla-datapack#data"
+    "fast-glob": "^3.2.5"
   },
   "publishConfig": {
     "access": "public"

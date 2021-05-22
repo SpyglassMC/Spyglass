@@ -1,11 +1,11 @@
 import type { CommentNode, Parser } from '@spyglassmc/core'
-import { map, optional } from '@spyglassmc/core'
-import type { DescribesClauseNode, LiteralToken} from '../../node'
-import { IdentPathToken, MinecraftIdentifierToken } from '../../node'
-import { identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
+import { map, optional, ResourceLocationNode } from '@spyglassmc/core'
+import type { DescribesClauseNode, LiteralToken } from '../../node'
+import { IdentPathToken } from '../../node'
+import { ExtendableRootRegistries, ExtendableRootRegistryMap, identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 
-type ChildNode = IdentPathToken | LiteralToken | MinecraftIdentifierToken | CommentNode
+type ChildNode = IdentPathToken | LiteralToken | ResourceLocationNode | CommentNode
 
 /**
  * `Failure` when there isn't the `describes` keyword.
@@ -15,20 +15,33 @@ export function describesClause(): Parser<DescribesClauseNode> {
 		syntax<ChildNode>([
 			identPath(),
 			keyword('describes'),
-			minecraftIdentifier(),
-			optional(syntax<ChildNode>([
-				marker('['),
-				minecraftIdentifier(),
-				syntaxRepeat<ChildNode>(syntax<ChildNode>([
-					marker(','),
-					minecraftIdentifier(),
-				])),
-				punctuation(']'),
-			])),
+			minecraftIdentifier({ pool: ExtendableRootRegistries }),
+			{
+				get: res => {
+					const typeNode = res.children[2]
+					const type = typeNode && ResourceLocationNode.is(typeNode)
+						? ResourceLocationNode.toString(typeNode, 'full')
+						: undefined
+					const identifier = minecraftIdentifier(
+						type && type in ExtendableRootRegistryMap
+							? { category: ExtendableRootRegistryMap[type as keyof typeof ExtendableRootRegistryMap] }
+							: { pool: [], allowUnknown: true }
+					)
+					return optional(syntax<ChildNode>([
+						marker('['),
+						identifier,
+						syntaxRepeat<ChildNode>(syntax<ChildNode>([
+							marker(','),
+							identifier,
+						])),
+						punctuation(']'),
+					]))
+				},
+			},
 			punctuation(';'),
 		]),
 		res => {
-			const mcIds = res.children.filter(MinecraftIdentifierToken.is)
+			const mcIds = res.children.filter(ResourceLocationNode.is)
 			const ans: DescribesClauseNode = {
 				type: 'nbtdoc:describes_clause',
 				range: res.range,

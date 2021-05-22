@@ -1,10 +1,11 @@
 import type * as core from '@spyglassmc/core'
 import type { Checker, RangeLike, Symbol, SymbolQuery } from '@spyglassmc/core'
-import { ErrorSeverity, Range, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
+import { ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
 import type { CompoundDefinitionNode, DescribesClauseNode, EnumDefinitionNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import { ExtendableRootRegistries, ExtendableRootRegistryMap } from '../parser'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -114,7 +115,7 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 			.elseEnter({
 				data: {
-					doc: field.doc.value,
+					desc: field.doc.value,
 					relations: {
 						// TODO: Field type
 					},
@@ -138,7 +139,7 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
 		.elseEnter({
 			data: {
-				doc: node.doc.value,
+				desc: node.doc.value,
 				subcategory: 'compound',
 			},
 			usage: {
@@ -150,8 +151,13 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 }
 
 const describesClause = (node: DescribesClauseNode, ctx: CheckerContext): void => {
-	// TODO: Enter the symbol of the compound to a new category called `nbtdoc/description` (or something like that),
-	// which will be later accessed by the SNBT checker.
+	const registry = ResourceLocationNode.toString(node.registry, 'full')
+	if (!ExtendableRootRegistries.includes(registry as any)) {
+		return
+	}
+	const category = ExtendableRootRegistryMap[registry as keyof typeof ExtendableRootRegistryMap]
+	ctx.symbols
+		.query(ctx.doc, category,)
 }
 
 const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => {
@@ -168,7 +174,7 @@ const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => 
 					/* data: {
 						// TODO: Enum value
 					}, */
-					doc: field.doc.value,
+					desc: field.doc.value,
 					subcategory: 'enum_key',
 				},
 				usage: {
@@ -189,7 +195,7 @@ const enumDefinitionHoisting = (node: EnumDefinitionNode, ctx: CheckerContext): 
 		.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, node.identifier))
 		.elseEnter({
 			data: {
-				doc: node.doc.value,
+				desc: node.doc.value,
 				subcategory: 'enum',
 			},
 			usage: {
@@ -217,7 +223,7 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.elseEnter({
 					data: {
-						doc: field.doc.value,
+						desc: field.doc.value,
 						relations: {
 							// TODO: Field type
 						},
@@ -241,7 +247,7 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 						/* data: {
 							// TODO: Enum value
 						}, */
-						doc: field.doc.value,
+						desc: field.doc.value,
 						subcategory: 'enum_key',
 					},
 					usage: {
@@ -285,7 +291,7 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 			.elseEnter({
 				data: {
 					relations: {
-						aliasOf: usedSymbol,
+						aliasOf: { category: 'nbtdoc', path: usedSymbol.path },
 					},
 				},
 				usage: {

@@ -5,15 +5,6 @@ exports['string() quoted_string(", ⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
       "start": 0,
       "end": 16
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [],
-        "allowUnknown": true
-      }
-    },
     "value": "foou00a7abar",
     "valueMap": {
       "outerRange": {
@@ -58,17 +49,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
-    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -100,17 +80,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
     "range": {
       "start": 0,
       "end": 4
-    },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
     },
     "value": "foo",
     "valueMap": {
@@ -144,17 +113,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo"" 1'] = {
       "start": 0,
       "end": 5
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
-    },
     "value": "foo",
     "valueMap": {
       "outerRange": {
@@ -177,17 +135,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
     "range": {
       "start": 0,
       "end": 4
-    },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
     },
     "value": "foo",
     "valueMap": {
@@ -220,17 +167,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵nbar⧵t⧵"⧵⧵qux
     "range": {
       "start": 0,
       "end": 19
-    },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
     },
     "value": "foo\nbar\t\"\\qux",
     "valueMap": {
@@ -296,17 +232,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
       "start": 0,
       "end": 16
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
-    },
     "value": "foou00a7abar",
     "valueMap": {
       "outerRange": {
@@ -368,17 +293,6 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "\'foo\'" 1'] = {
       "start": 0,
       "end": 5
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [
-          "n",
-          "t"
-        ]
-      }
-    },
     "value": "foo",
     "valueMap": {
       "outerRange": {
@@ -410,16 +324,6 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = 
     "range": {
       "start": 0,
       "end": 16
-    },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [],
-        "allowUnknown": true,
-        "unicode": true
-      }
     },
     "value": "foo§abar",
     "valueMap": {
@@ -465,16 +369,6 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""⧵uggez"" 1'] = {
       "start": 0,
       "end": 8
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "characters": [],
-        "allowUnknown": true,
-        "unicode": true
-      }
-    },
     "value": "uggez",
     "valueMap": {
       "outerRange": {
@@ -518,18 +412,6 @@ exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
       "start": 0,
       "end": 5
     },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "allowUnknown": true,
-        "unicode": true
-      },
-      "value": {
-        "type": "string"
-      }
-    },
     "value": "foo",
     "valueMap": {
       "outerRange": {
@@ -547,12 +429,6 @@ exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
       "range": {
         "start": 0,
         "end": 0
-      },
-      "options": {
-        "quotes": [
-          "\""
-        ],
-        "escapable": {}
       },
       "value": "",
       "valueMap": {
@@ -586,18 +462,6 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
     "range": {
       "start": 0,
       "end": 21
-    },
-    "options": {
-      "quotes": [
-        "\""
-      ],
-      "escapable": {
-        "allowUnknown": true,
-        "unicode": true
-      },
-      "value": {
-        "type": "string"
-      }
     },
     "value": "\"foo\\\\bar\"",
     "valueMap": {
@@ -668,12 +532,6 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
         "start": 0,
         "end": 10
       },
-      "options": {
-        "quotes": [
-          "\""
-        ],
-        "escapable": {}
-      },
       "value": "foo\\bar",
       "valueMap": {
         "outerRange": {
@@ -709,9 +567,6 @@ exports['string() unquoted_string() Parse "" 1'] = {
       "start": 0,
       "end": 0
     },
-    "options": {
-      "unquotable": {}
-    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -743,9 +598,6 @@ exports['string() unquoted_string() Parse ""foo"" 1'] = {
     "range": {
       "start": 0,
       "end": 0
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "",
     "valueMap": {
@@ -779,9 +631,6 @@ exports['string() unquoted_string() Parse "$$$" 1'] = {
       "start": 0,
       "end": 0
     },
-    "options": {
-      "unquotable": {}
-    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -813,9 +662,6 @@ exports['string() unquoted_string() Parse "foo" 1'] = {
     "range": {
       "start": 0,
       "end": 3
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "foo",
     "valueMap": {

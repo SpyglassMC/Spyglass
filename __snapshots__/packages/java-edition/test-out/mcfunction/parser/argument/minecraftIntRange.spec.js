@@ -20,12 +20,6 @@ exports['mcfunction argument minecraft:int_range Parse "-100.." 1'] = {
           "start": 4,
           "end": 6
         },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
-        },
         "value": ".."
       }
     ],
@@ -84,12 +78,6 @@ exports['mcfunction argument minecraft:int_range Parse "..100" 1'] = {
         "range": {
           "start": 0,
           "end": 2
-        },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
         },
         "value": ".."
       },
@@ -160,12 +148,6 @@ exports['mcfunction argument minecraft:int_range Parse "0..5" 1'] = {
         "range": {
           "start": 1,
           "end": 3
-        },
-        "options": {
-          "pool": [
-            ".."
-          ],
-          "colorTokenType": "keyword"
         },
         "value": ".."
       },

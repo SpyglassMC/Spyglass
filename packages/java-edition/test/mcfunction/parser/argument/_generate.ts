@@ -7,6 +7,15 @@ import { CommandArgumentTestSuites } from './_suites'
 
 const ShouldGenerate = false // Prevent from mis-triggering.
 
+const ProduceExtraChildren = [
+	'minecraft:block_predicate', 
+	'minecraft:block_state', 
+	'minecraft:entity', 
+	'minecraft:item_predicate', 
+	'minecraft:item_stack', 
+	'minecraft:score_holder',
+]
+
 function template(parser: string): string {
 	return `import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
@@ -24,7 +33,7 @@ describe('mcfunction argument ${parser}', () => {
 		}
 		for (const string of content) {
 			it(\`Parse "\${showWhitespaceGlyph(string)}"\${properties ? \` with \${JSON.stringify(properties)}\` : ''}\`, () => {
-				snapshot(testParser(argument('test', treeNode)!, string))
+				snapshot(testParser(argument('test', treeNode)!, string${ProduceExtraChildren.includes(parser) ? ', { removeTopLevelChildren: true }' : ''}))
 			})
 		}
 	}

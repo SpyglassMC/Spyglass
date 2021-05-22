@@ -1,4 +1,5 @@
 import { UriBinderContext } from '@spyglassmc/core'
+import { stringifySymbolTable } from '@spyglassmc/core/test-out/symbol/SymbolUtil.spec'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { uriBinder } from '../../lib/binder/uriBinder'
@@ -40,7 +41,7 @@ describe('uriBinder()', () => {
 		it(`Bind ${JSON.stringify(uris.map(u => u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u))}`, () => {
 			const ctx = UriBinderContext.create({ roots: ['file:///root/'] })
 			uriBinder(uris, ctx)
-			snapshot(ctx.symbols.global)
+			snapshot(stringifySymbolTable(ctx.symbols.global))
 		})
 	}
 })

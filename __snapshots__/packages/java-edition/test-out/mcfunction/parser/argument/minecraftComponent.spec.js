@@ -5,21 +5,6 @@ exports['mcfunction argument minecraft:component Parse """" 1'] = {
       "start": 0,
       "end": 2
     },
-    "options": {
-      "escapable": {
-        "characters": [
-          "b",
-          "f",
-          "n",
-          "r",
-          "t"
-        ],
-        "unicode": true
-      },
-      "quotes": [
-        "\""
-      ]
-    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -44,21 +29,6 @@ exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
     "range": {
       "start": 0,
       "end": 13
-    },
-    "options": {
-      "escapable": {
-        "characters": [
-          "b",
-          "f",
-          "n",
-          "r",
-          "t"
-        ],
-        "unicode": true
-      },
-      "quotes": [
-        "\""
-      ]
     },
     "value": "hello world",
     "valueMap": {
@@ -99,21 +69,6 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
               "start": 1,
               "end": 3
             },
-            "options": {
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ],
-                "unicode": true
-              },
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "",
             "valueMap": {
               "outerRange": {
@@ -133,21 +88,6 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
           "range": {
             "start": 1,
             "end": 3
-          },
-          "options": {
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ],
-              "unicode": true
-            },
-            "quotes": [
-              "\""
-            ]
           },
           "value": "",
           "valueMap": {
@@ -191,21 +131,6 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
               "start": 1,
               "end": 7
             },
-            "options": {
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ],
-                "unicode": true
-              },
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "text",
             "valueMap": {
               "outerRange": {
@@ -224,21 +149,6 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
             "range": {
               "start": 8,
               "end": 21
-            },
-            "options": {
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ],
-                "unicode": true
-              },
-              "quotes": [
-                "\""
-              ]
             },
             "value": "hello world",
             "valueMap": {
@@ -259,21 +169,6 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
           "range": {
             "start": 1,
             "end": 7
-          },
-          "options": {
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ],
-              "unicode": true
-            },
-            "quotes": [
-              "\""
-            ]
           },
           "value": "text",
           "valueMap": {
@@ -297,21 +192,6 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
           "range": {
             "start": 8,
             "end": 21
-          },
-          "options": {
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ],
-              "unicode": true
-            },
-            "quotes": [
-              "\""
-            ]
           },
           "value": "hello world",
           "valueMap": {

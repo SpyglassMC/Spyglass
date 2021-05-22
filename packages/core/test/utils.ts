@@ -25,13 +25,34 @@ export function markOffsetInString(string: string, offset: number) {
 	return "'" + string.slice(0, offset) + `|${string.charAt(offset)}` + string.slice(offset + 1) + "'"
 }
 
+function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean): void {
+	if (!node || typeof node !== 'object') {
+		return
+	}
+	if (removeChildren) {
+		delete node.children
+	}
+	if (!keepOptions) {
+		delete node.options
+	}
+	delete node.symbol?.parentMap
+	delete node.symbol?.parentSymbol
+	for (const value of Object.values(node)) {
+		removeExtraProperties(value, keepOptions, false)
+	}
+}
+
 /* eslint-disable @typescript-eslint/indent */
 export function testParser(parser: Parser<Returnable>, text: string, {
 	uri = '',
 	languageID = '',
+	keepOptions = false,
+	removeTopLevelChildren = false,
 }: {
 	uri?: string,
 	languageID?: string,
+	keepOptions?: boolean,
+	removeTopLevelChildren?: boolean,
 } = {}): {
 	node: Returnable | 'FAILURE',
 	errors: readonly LanguageError[],
@@ -41,7 +62,8 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	const ctx = ParserContext.create({
 		doc: TextDocument.create(uri, languageID, 0, text),
 	})
-	const result = parser(src, ctx)
+	const result: any = parser(src, ctx)
+	removeExtraProperties(result, keepOptions, removeTopLevelChildren)
 	return {
 		node: result === Failure ? 'FAILURE' : result,
 		errors: ctx.err.dump(),

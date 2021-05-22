@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
 import { ResourceLocationNode } from '../../lib'
 import { showWhitespaceGlyph } from '../utils'

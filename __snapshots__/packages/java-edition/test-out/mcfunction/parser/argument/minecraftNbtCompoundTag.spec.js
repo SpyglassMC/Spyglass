@@ -19,14 +19,6 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
               "start": 1,
               "end": 4
             },
-            "options": {
-              "escapable": {},
-              "quotes": [
-                "\"",
-                "'"
-              ],
-              "unquotable": {}
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -45,14 +37,6 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
             "range": {
               "start": 5,
               "end": 8
-            },
-            "options": {
-              "escapable": {},
-              "quotes": [
-                "\"",
-                "'"
-              ],
-              "unquotable": {}
             },
             "value": "bar",
             "valueMap": {
@@ -73,14 +57,6 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
           "range": {
             "start": 1,
             "end": 4
-          },
-          "options": {
-            "escapable": {},
-            "quotes": [
-              "\"",
-              "'"
-            ],
-            "unquotable": {}
           },
           "value": "foo",
           "valueMap": {
@@ -104,14 +80,6 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
           "range": {
             "start": 5,
             "end": 8
-          },
-          "options": {
-            "escapable": {},
-            "quotes": [
-              "\"",
-              "'"
-            ],
-            "unquotable": {}
           },
           "value": "bar",
           "valueMap": {

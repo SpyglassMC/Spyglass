@@ -5,9 +5,6 @@ exports['mcfunction argument minecraft:dimension Parse "minecraft:overworld" 1']
       "start": 0,
       "end": 19
     },
-    "options": {
-      "category": "dimension"
-    },
     "namespace": "minecraft",
     "path": [
       "overworld"
@@ -24,9 +21,6 @@ exports['mcfunction argument minecraft:dimension Parse "minecraft:the_nether" 1'
     "range": {
       "start": 0,
       "end": 20
-    },
-    "options": {
-      "category": "dimension"
     },
     "namespace": "minecraft",
     "path": [

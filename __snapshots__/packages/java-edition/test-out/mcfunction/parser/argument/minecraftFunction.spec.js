@@ -5,10 +5,6 @@ exports['mcfunction argument minecraft:function Parse "#foo" 1'] = {
       "start": 0,
       "end": 4
     },
-    "options": {
-      "category": "function",
-      "allowTag": true
-    },
     "isTag": true,
     "path": [
       "foo"
@@ -26,10 +22,6 @@ exports['mcfunction argument minecraft:function Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "function",
-      "allowTag": true
-    },
     "path": [
       "foo"
     ],
@@ -45,10 +37,6 @@ exports['mcfunction argument minecraft:function Parse "foo:bar" 1'] = {
     "range": {
       "start": 0,
       "end": 7
-    },
-    "options": {
-      "category": "function",
-      "allowTag": true
     },
     "namespace": "foo",
     "path": [

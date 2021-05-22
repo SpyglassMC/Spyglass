@@ -1,4 +1,4 @@
-import assert from 'assert'
+import { strict as assert } from 'assert'
 import fg from 'fast-glob'
 import fs from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'

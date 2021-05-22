@@ -46,7 +46,7 @@ export namespace ResourceLocationNode {
 	export const DefaultNamespace = 'minecraft'
 
 	/* istanbul ignore next */
-	export function is(obj: object): obj is ResourceLocationNode {
+	export function is(obj: AstNode): obj is ResourceLocationNode {
 		return (obj as ResourceLocationNode).type === 'resource_location'
 	}
 

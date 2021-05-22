@@ -226,8 +226,8 @@ export class Service {
 		if (result) {
 			const nodes = [result.node, ...result.parents]
 			for (const n of nodes) {
-				if (n.symbol) {
-					const symbol = SymbolUtil.resolveAlias(n.symbol)
+				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
+				if (symbol) {
 					return Hover.create(n, `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : ''))
 				}
 				if (n.hover) {
@@ -250,8 +250,8 @@ export class Service {
 		if (result) {
 			const nodes = [result.node, ...result.parents]
 			for (const n of nodes) {
-				if (n.symbol) {
-					const symbol = SymbolUtil.resolveAlias(n.symbol)
+				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
+				if (symbol) {
 					const locations: SymbolLocation[] = []
 					for (const usage of searchedUsages) {
 						let locs = symbol[usage] ?? []

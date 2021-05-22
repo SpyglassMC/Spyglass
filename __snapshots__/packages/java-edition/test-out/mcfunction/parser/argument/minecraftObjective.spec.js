@@ -10,13 +10,13 @@ exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "objective"
-    },
     "value": "012",
     "symbol": {
       "category": "objective",
       "identifier": "012",
+      "path": [
+        "012"
+      ],
       "reference": [
         {
           "uri": ""
@@ -36,13 +36,13 @@ exports['mcfunction argument minecraft:objective Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "objective"
-    },
     "value": "foo",
     "symbol": {
       "category": "objective",
       "identifier": "foo",
+      "path": [
+        "foo"
+      ],
       "reference": [
         {
           "uri": ""

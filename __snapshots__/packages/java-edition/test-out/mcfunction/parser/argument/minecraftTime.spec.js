@@ -44,14 +44,6 @@ exports['mcfunction argument minecraft:time Parse "0d" 1'] = {
           "start": 1,
           "end": 2
         },
-        "options": {
-          "pool": [
-            "t",
-            "s",
-            "d",
-            ""
-          ]
-        },
         "value": "d"
       }
     ],
@@ -109,14 +101,6 @@ exports['mcfunction argument minecraft:time Parse "0s" 1'] = {
           "start": 1,
           "end": 2
         },
-        "options": {
-          "pool": [
-            "t",
-            "s",
-            "d",
-            ""
-          ]
-        },
         "value": "s"
       }
     ],
@@ -149,14 +133,6 @@ exports['mcfunction argument minecraft:time Parse "0t" 1'] = {
         "range": {
           "start": 1,
           "end": 2
-        },
-        "options": {
-          "pool": [
-            "t",
-            "s",
-            "d",
-            ""
-          ]
         },
         "value": "t"
       }

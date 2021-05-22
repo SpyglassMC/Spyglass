@@ -122,6 +122,7 @@
   "parser.list.value": "a value",
   "parser.list.trailing-sep": "Trailing separation",
   "parser.resource-location.illegal": "Illegal character(s): %0%",
+  "parser.resource-location.namespace-expected": "Namespaces cannot be omitted here",
   "parser.resource-location.tag-diallowed": "Tags are not allowed here",
   "parser.string.illegal-quote": "Only %0% can be used to quote strings here",
   "parser.string.illegal-unicode-escape": "Hexadecimal digit expected",

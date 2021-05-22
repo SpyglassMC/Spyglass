@@ -61,14 +61,6 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
               "start": 2,
               "end": 5
             },
-            "options": {
-              "escapable": {},
-              "quotes": [
-                "\"",
-                "'"
-              ],
-              "unquotable": {}
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -96,14 +88,6 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
           "range": {
             "start": 2,
             "end": 5
-          },
-          "options": {
-            "escapable": {},
-            "quotes": [
-              "\"",
-              "'"
-            ],
-            "unquotable": {}
           },
           "value": "foo",
           "valueMap": {

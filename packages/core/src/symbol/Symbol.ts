@@ -163,28 +163,23 @@ export const enum SymbolVisibility {
 	Restricted,
 }
 
-export interface SymbolMetadata {
-	// Categorical information.
-	/**
-	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
-	 * independent with each other. e.g. advancements and functions.
-	 */
+interface SymbolPath {
 	category: string,
-	identifier: string,
+	path: readonly string[],
+}
 
-	// Other information.
-	/**
-	 * How many {@link Symbol}s are an alias of this Symbol.
-	 */
-	aliasAmount?: number,
+export interface SymbolMetadata {
 	/**
 	 * The documentation for this {@link Symbol}. May be edited by doc comments.
 	 */
 	desc?: string,
-	members?: SymbolMap,
+	/**
+	 * A map of symbols that are related to the current symbol. **Only** symbols defined in the global symbol table
+	 * (i.e. visibility is {@link SymbolVisibility.Public} or {@link SymbolVisibility.Restricted}) can be specified in this map.
+	 */
 	relations?: {
-		aliasOf?: Symbol,
-		[relationship: string]: Symbol | undefined,
+		aliasOf?: SymbolPath,
+		[relationship: string]: SymbolPath | undefined,
 	},
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
@@ -195,11 +190,11 @@ export interface SymbolMetadata {
 	 */
 	subcategory?: string,
 	/**
-	 * The visibility of this `Symbol`. Defaults to `SymbolVisibility.Public`.
+	 * The visibility of this `Symbol`. Defaults to {@link SymbolVisibility.Public}.
 	 */
 	visibility?: SymbolVisibility,
 	/**
-	 * An array of regular expressions in string form. Only exists if `visibility` is set to `SymbolVisibility.Restricted`.
+	 * An array of regular expressions in string form. Only exists if `visibility` is set to {@link SymbolVisibility.Restricted}.
 	 */
 	visibilityRestriction?: string[],
 }
@@ -208,6 +203,19 @@ export const SymbolUsageTypes = Object.freeze(['definition', 'declaration', 'imp
 export type SymbolUsageType = typeof SymbolUsageTypes[number]
 
 export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
+	/**
+	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
+	 * independent with each other. e.g. advancements and functions.
+	 */
+	category: string,
+	identifier: string,
+	members?: SymbolMap,
+	parentMap: SymbolMap,
+	/**
+	 * The parent symbol of this symbol. Does not exist if the current symbol is not a member of another symbol.
+	 */
+	parentSymbol?: Symbol,
+	path: readonly string[],
 }
 
 export interface SymbolLocationMetadata {

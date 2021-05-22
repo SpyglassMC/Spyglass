@@ -8,7 +8,11 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
     "name": "test",
     "children": [
       {
-        "isSequenceUtil": true,
+        "type": "mcfunction:entity_selector",
+        "range": {
+          "start": 0,
+          "end": 2
+        },
         "children": [
           {
             "type": "literal",
@@ -16,24 +20,9 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
               "start": 0,
               "end": 2
             },
-            "options": {
-              "pool": [
-                "@p",
-                "@a",
-                "@r",
-                "@s",
-                "@e"
-              ],
-              "colorTokenType": "keyword"
-            },
             "value": "@e"
           }
         ],
-        "range": {
-          "start": 0,
-          "end": 2
-        },
-        "type": "mcfunction:entity_selector",
         "variable": "e",
         "currentEntity": false,
         "playersOnly": false,
@@ -65,9 +54,6 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
           "start": 0,
           "end": 6
         },
-        "options": {
-          "unquotable": {}
-        },
         "value": "Hello ",
         "valueMap": {
           "outerRange": {
@@ -82,7 +68,11 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         }
       },
       {
-        "isSequenceUtil": true,
+        "type": "mcfunction:entity_selector",
+        "range": {
+          "start": 6,
+          "end": 8
+        },
         "children": [
           {
             "type": "literal",
@@ -90,24 +80,9 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
               "start": 6,
               "end": 8
             },
-            "options": {
-              "pool": [
-                "@p",
-                "@a",
-                "@r",
-                "@s",
-                "@e"
-              ],
-              "colorTokenType": "keyword"
-            },
             "value": "@p"
           }
         ],
-        "range": {
-          "start": 6,
-          "end": 8
-        },
-        "type": "mcfunction:entity_selector",
         "variable": "p",
         "currentEntity": false,
         "playersOnly": true,
@@ -120,9 +95,6 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "range": {
           "start": 8,
           "end": 11
-        },
-        "options": {
-          "unquotable": {}
         },
         "value": " :)",
         "valueMap": {
@@ -158,9 +130,6 @@ exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
           "start": 0,
           "end": 12
         },
-        "options": {
-          "unquotable": {}
-        },
         "value": "Hello world!",
         "valueMap": {
           "outerRange": {
@@ -194,9 +163,6 @@ exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
         "range": {
           "start": 0,
           "end": 3
-        },
-        "options": {
-          "unquotable": {}
         },
         "value": "foo",
         "valueMap": {

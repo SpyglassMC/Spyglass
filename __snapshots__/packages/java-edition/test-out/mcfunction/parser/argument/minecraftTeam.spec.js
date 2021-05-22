@@ -5,13 +5,13 @@ exports['mcfunction argument minecraft:team Parse "123" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "team"
-    },
     "value": "123",
     "symbol": {
       "category": "team",
       "identifier": "123",
+      "path": [
+        "123"
+      ],
       "reference": [
         {
           "uri": ""
@@ -31,13 +31,13 @@ exports['mcfunction argument minecraft:team Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "team"
-    },
     "value": "foo",
     "symbol": {
       "category": "team",
       "identifier": "foo",
+      "path": [
+        "foo"
+      ],
       "reference": [
         {
           "uri": ""

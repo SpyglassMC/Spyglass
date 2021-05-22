@@ -5,10 +5,6 @@ exports['mcfunction argument minecraft:resource_location Parse "012" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "pool": [],
-      "allowUnknown": true
-    },
     "path": [
       "012"
     ],
@@ -24,9 +20,6 @@ exports['mcfunction argument minecraft:resource_location Parse "012" with {"cate
     "range": {
       "start": 0,
       "end": 3
-    },
-    "options": {
-      "category": "bossbar"
     },
     "path": [
       "012"
@@ -44,10 +37,6 @@ exports['mcfunction argument minecraft:resource_location Parse "foo" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "pool": [],
-      "allowUnknown": true
-    },
     "path": [
       "foo"
     ],
@@ -63,9 +52,6 @@ exports['mcfunction argument minecraft:resource_location Parse "foo" with {"cate
     "range": {
       "start": 0,
       "end": 3
-    },
-    "options": {
-      "category": "bossbar"
     },
     "path": [
       "foo"
@@ -83,10 +69,6 @@ exports['mcfunction argument minecraft:resource_location Parse "foo:bar" 1'] = {
       "start": 0,
       "end": 7
     },
-    "options": {
-      "pool": [],
-      "allowUnknown": true
-    },
     "namespace": "foo",
     "path": [
       "bar"
@@ -103,9 +85,6 @@ exports['mcfunction argument minecraft:resource_location Parse "foo:bar" with {"
     "range": {
       "start": 0,
       "end": 7
-    },
-    "options": {
-      "category": "bossbar"
     },
     "namespace": "foo",
     "path": [

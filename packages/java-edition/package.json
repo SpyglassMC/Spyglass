@@ -18,7 +18,8 @@
   },
   "devDependencies": {
     "@types/download": "^6.2.4",
-    "@types/fs-extra": "^9.0.10"
+    "@types/fs-extra": "^9.0.10",
+    "vanilla-datapack-data": "SPGoding/vanilla-datapack#data"
   },
   "publishConfig": {
     "access": "public"

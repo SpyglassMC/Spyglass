@@ -1,6 +1,6 @@
-import type { AstNode, FloatNode, IntegerNode } from '@spyglassmc/core'
+import type { AstNode, FloatNode, IntegerNode, ResourceLocationNode } from '@spyglassmc/core'
 import { StringNode } from '@spyglassmc/core'
-import type { DocCommentsNode, MinecraftIdentifierToken, SyntaxNode } from './index'
+import type { DocCommentsNode, SyntaxNode } from './index'
 import { IdentifierToken, IdentPathToken, LiteralToken } from './index'
 
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
@@ -15,7 +15,7 @@ export type CompoundChild = DocCommentsNode | LiteralToken | IdentifierToken | C
 
 export interface RegistryIndexNode extends SyntaxNode {
 	type: 'nbtdoc:registry_index',
-	registry: MinecraftIdentifierToken,
+	registry: ResourceLocationNode,
 	path: FieldPathKey[],
 }
 export namespace RegistryIndexNode {
@@ -45,7 +45,7 @@ export namespace CompoundFieldNode {
 
 export type CompoundFieldChild =
 	| DocCommentsNode | CompoundFieldKey | LiteralToken | CompoundFieldTypeNode
-	| IntRangeNode | UnsignedRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | MinecraftIdentifierToken
+	| IntRangeNode | UnsignedRangeNode | FloatRangeNode | RegistryIndexNode | IdentPathToken | ResourceLocationNode
 
 export type CompoundFieldKey = IdentifierToken | StringNode
 export namespace CompoundFieldKey {
@@ -130,7 +130,7 @@ export type CompoundFieldTypeNode = AstNode & {
 	index: RegistryIndexNode,
 } | {
 	typeType: 'id',
-	registry: MinecraftIdentifierToken,
+	registry: ResourceLocationNode,
 } | {
 	typeType: 'path',
 	path: IdentPathToken,
@@ -181,4 +181,4 @@ export namespace FieldPathKey {
 	}
 }
 
-export type RegistryIndexChild = MinecraftIdentifierToken | LiteralToken | FieldPathKey
+export type RegistryIndexChild = ResourceLocationNode | LiteralToken | FieldPathKey

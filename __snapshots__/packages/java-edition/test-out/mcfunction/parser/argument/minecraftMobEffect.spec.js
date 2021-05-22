@@ -5,9 +5,6 @@ exports['mcfunction argument minecraft:mob_effect Parse "effect" 1'] = {
       "start": 0,
       "end": 6
     },
-    "options": {
-      "category": "mob_effect"
-    },
     "path": [
       "effect"
     ],
@@ -23,9 +20,6 @@ exports['mcfunction argument minecraft:mob_effect Parse "spooky" 1'] = {
     "range": {
       "start": 0,
       "end": 6
-    },
-    "options": {
-      "category": "mob_effect"
     },
     "path": [
       "spooky"

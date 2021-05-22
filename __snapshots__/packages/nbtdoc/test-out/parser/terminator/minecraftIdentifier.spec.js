@@ -1,12 +1,10 @@
 exports['minecraftIdentifier() Parse "" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 0
-    },
-    "namespace": "",
-    "path": []
+    }
   },
   "errors": [
     {
@@ -14,7 +12,7 @@ exports['minecraftIdentifier() Parse "" 1'] = {
         "start": 0,
         "end": 0
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Expected a resource location",
       "severity": 3
     }
   ]
@@ -22,7 +20,7 @@ exports['minecraftIdentifier() Parse "" 1'] = {
 
 exports['minecraftIdentifier() Parse ":/" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 2
@@ -33,26 +31,36 @@ exports['minecraftIdentifier() Parse ":/" 1'] = {
       ""
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "Namespaces cannot be omitted here",
+      "severity": 3
+    }
+  ]
 }
 
 exports['minecraftIdentifier() Parse "foo" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 3
     },
-    "namespace": "foo",
-    "path": []
+    "path": [
+      "foo"
+    ]
   },
   "errors": [
     {
       "range": {
-        "start": 3,
+        "start": 0,
         "end": 3
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Namespaces cannot be omitted here",
       "severity": 3
     }
   ]
@@ -60,7 +68,7 @@ exports['minecraftIdentifier() Parse "foo" 1'] = {
 
 exports['minecraftIdentifier() Parse "foo:" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 4
@@ -75,7 +83,7 @@ exports['minecraftIdentifier() Parse "foo:" 1'] = {
 
 exports['minecraftIdentifier() Parse "foo:bar" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 7
@@ -90,7 +98,7 @@ exports['minecraftIdentifier() Parse "foo:bar" 1'] = {
 
 exports['minecraftIdentifier() Parse "foo:bar/baz" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 11
@@ -106,22 +114,31 @@ exports['minecraftIdentifier() Parse "foo:bar/baz" 1'] = {
 
 exports['minecraftIdentifier() Parse "foo:bar:baz" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
-      "end": 7
+      "end": 11
     },
     "namespace": "foo",
     "path": [
-      "bar"
+      "bar:baz"
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 11
+      },
+      "message": "Illegal character(s): “:”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['minecraftIdentifier() Parse "foo:bar↓something else;" 1'] = {
   "node": {
-    "type": "nbtdoc:minecraft_identifier",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 7

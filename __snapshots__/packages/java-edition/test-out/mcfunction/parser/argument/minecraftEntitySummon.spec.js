@@ -5,9 +5,6 @@ exports['mcfunction argument minecraft:entity_summon Parse "cow" 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "entity_type"
-    },
     "path": [
       "cow"
     ],
@@ -23,9 +20,6 @@ exports['mcfunction argument minecraft:entity_summon Parse "minecraft:pig" 1'] =
     "range": {
       "start": 0,
       "end": 13
-    },
-    "options": {
-      "category": "entity_type"
     },
     "namespace": "minecraft",
     "path": [

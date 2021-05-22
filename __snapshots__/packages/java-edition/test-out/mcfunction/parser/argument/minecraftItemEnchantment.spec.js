@@ -5,9 +5,6 @@ exports['mcfunction argument minecraft:item_enchantment Parse "silk_touch" 1'] =
       "start": 0,
       "end": 10
     },
-    "options": {
-      "category": "enchantment"
-    },
     "path": [
       "silk_touch"
     ],
@@ -23,9 +20,6 @@ exports['mcfunction argument minecraft:item_enchantment Parse "unbreaking" 1'] =
     "range": {
       "start": 0,
       "end": 10
-    },
-    "options": {
-      "category": "enchantment"
     },
     "path": [
       "unbreaking"

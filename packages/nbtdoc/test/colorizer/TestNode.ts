@@ -1257,11 +1257,12 @@ export const TestNode: MainNode = {
 					value: 'describes',
 				},
 				{
-					type: 'nbtdoc:minecraft_identifier',
+					type: 'resource_location',
 					range: {
 						start: 167,
 						end: 182,
 					},
+					options: { pool: ['block', 'entity_type', 'item'] },
 					namespace: 'minecraft',
 					path: [
 						'block',
@@ -1295,11 +1296,12 @@ export const TestNode: MainNode = {
 				},
 			},
 			registry: {
-				type: 'nbtdoc:minecraft_identifier',
+				type: 'resource_location',
 				range: {
 					start: 167,
 					end: 182,
 				},
+				options: { pool: ['block', 'entity_type', 'item'] },
 				namespace: 'minecraft',
 				path: [
 					'block',

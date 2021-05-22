@@ -247,20 +247,6 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "start": 203,
               "end": 209
             },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
-            },
             "value": "name",
             "valueMap": {
               "outerRange": {
@@ -314,20 +300,6 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "range": {
             "start": 203,
             "end": 209
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "name",
           "valueMap": {
@@ -565,20 +537,6 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "start": 203,
               "end": 209
             },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
-            },
             "value": "name",
             "valueMap": {
               "outerRange": {
@@ -632,20 +590,6 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "range": {
             "start": 203,
             "end": 209
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "name",
           "valueMap": {
@@ -736,20 +680,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "range": {
               "start": 15,
               "end": 20
-            },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
             },
             "value": "Bar",
             "valueMap": {
@@ -922,20 +852,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "range": {
             "start": 15,
             "end": 20
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "Bar",
           "valueMap": {
@@ -1136,20 +1052,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "start": 15,
               "end": 20
             },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
-            },
             "value": "Bar",
             "valueMap": {
               "outerRange": {
@@ -1321,20 +1223,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "range": {
             "start": 15,
             "end": 20
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "Bar",
           "valueMap": {
@@ -3731,7 +3619,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
             },
             "typeType": "id",
             "registry": {
-              "type": "nbtdoc:minecraft_identifier",
+              "type": "resource_location",
               "range": {
                 "start": 23,
                 "end": 39
@@ -3768,7 +3656,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
           },
           "typeType": "id",
           "registry": {
-            "type": "nbtdoc:minecraft_identifier",
+            "type": "resource_location",
             "range": {
               "start": 23,
               "end": 39
@@ -3848,7 +3736,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
             },
             "typeType": "id",
             "registry": {
-              "type": "nbtdoc:minecraft_identifier",
+              "type": "resource_location",
               "range": {
                 "start": 23,
                 "end": 39
@@ -3885,7 +3773,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
           },
           "typeType": "id",
           "registry": {
-            "type": "nbtdoc:minecraft_identifier",
+            "type": "resource_location",
             "range": {
               "start": 23,
               "end": 39
@@ -5390,7 +5278,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               },
               "children": [
                 {
-                  "type": "nbtdoc:minecraft_identifier",
+                  "type": "resource_location",
                   "range": {
                     "start": 20,
                     "end": 35
@@ -5442,7 +5330,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
                 }
               ],
               "registry": {
-                "type": "nbtdoc:minecraft_identifier",
+                "type": "resource_location",
                 "range": {
                   "start": 20,
                   "end": 35
@@ -5505,7 +5393,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
             },
             "children": [
               {
-                "type": "nbtdoc:minecraft_identifier",
+                "type": "resource_location",
                 "range": {
                   "start": 20,
                   "end": 35
@@ -5557,7 +5445,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               }
             ],
             "registry": {
-              "type": "nbtdoc:minecraft_identifier",
+              "type": "resource_location",
               "range": {
                 "start": 20,
                 "end": 35
@@ -5663,7 +5551,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               },
               "children": [
                 {
-                  "type": "nbtdoc:minecraft_identifier",
+                  "type": "resource_location",
                   "range": {
                     "start": 20,
                     "end": 35
@@ -5715,7 +5603,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
                 }
               ],
               "registry": {
-                "type": "nbtdoc:minecraft_identifier",
+                "type": "resource_location",
                 "range": {
                   "start": 20,
                   "end": 35
@@ -5778,7 +5666,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
             },
             "children": [
               {
-                "type": "nbtdoc:minecraft_identifier",
+                "type": "resource_location",
                 "range": {
                   "start": 20,
                   "end": 35
@@ -5830,7 +5718,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
               }
             ],
             "registry": {
-              "type": "nbtdoc:minecraft_identifier",
+              "type": "resource_location",
               "range": {
                 "start": 20,
                 "end": 35

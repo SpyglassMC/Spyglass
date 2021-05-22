@@ -6,6 +6,7 @@ import type { Source } from '../source'
 import { Range } from '../source'
 import type { InfallibleParser } from './Parser'
 
+const AcceptableCharacter = /^[_\-a-z0-9:/.]$/i
 const Pattern = /^(?:[_\-a-z0-9.]*:)?[_\-a-z0-9/.]*$/g
 const IllegalNamespacePattern = /[^_\-a-z0-9.]/g
 const IllegalPathPattern = /[^_\-a-z0-9/.]/g
@@ -22,7 +23,11 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			ans.isTag = true
 		}
 
-		const raw = src.readUntil(' ', '\r', '\n')
+		const start = src.cursor
+		while (src.canReadInLine() && src.peek().match(AcceptableCharacter)) {
+			src.skip()
+		}
+		const raw = src.string.slice(start, src.cursor)
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {
@@ -48,6 +53,12 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			if (ans.isTag && !options.allowTag) {
 				ctx.err.report(localize('parser.resource-location.tag-diallowed'), ans)
 			}
+
+			if (!ans.namespace && options.isPredicate) {
+				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
+			}
+
+			// TODO: SymbolTable
 		}
 
 		return ans

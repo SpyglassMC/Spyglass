@@ -1,4 +1,4 @@
-import type { AstNode, CommentNode, FloatNode, IntegerNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
+import type { AstNode, CommentNode, FloatNode, IntegerNode, ResourceLocationBaseNode, ResourceLocationNode, SequenceNode, SequenceUtil } from '@spyglassmc/core'
 import { StringNode } from '@spyglassmc/core'
 import type { CompoundDefinitionNode, CompoundFieldTypeNode } from './CompoundDefinition'
 import type { EnumDefinitionNode } from './EnumDefinition'
@@ -45,20 +45,6 @@ export namespace IdentPathToken {
 	}
 }
 
-export interface MinecraftIdentifierToken extends AstNode {
-	type: 'nbtdoc:minecraft_identifier',
-	/**
-	 * The part before `:`.
-	 */
-	namespace: string,
-	path: string[],
-}
-export namespace MinecraftIdentifierToken {
-	export function is(obj: object): obj is MinecraftIdentifierToken {
-		return (obj as MinecraftIdentifierToken).type === 'nbtdoc:minecraft_identifier'
-	}
-}
-
 export type Primitive = FloatNode | IntegerNode | StringNode
 export namespace Primitive {
 	export function is(obj: object): obj is Primitive {
@@ -78,11 +64,11 @@ export namespace DocCommentsNode {
 	}
 }
 
-export interface DescribesClauseNode extends SyntaxNode<IdentPathToken | LiteralToken | MinecraftIdentifierToken> {
+export interface DescribesClauseNode extends SyntaxNode<IdentPathToken | LiteralToken | ResourceLocationNode> {
 	type: 'nbtdoc:describes_clause',
 	path: IdentPathToken,
-	registry: MinecraftIdentifierToken,
-	objects: MinecraftIdentifierToken[] | null,
+	registry: ResourceLocationNode,
+	objects: ResourceLocationNode[] | null,
 }
 
 export interface ModuleDeclarationNode extends SyntaxNode<LiteralToken | IdentifierToken> {
@@ -113,7 +99,7 @@ export interface MainNode extends SyntaxNode {
 export type LeafNode =
 	| LiteralToken
 	| IdentifierToken
-	| MinecraftIdentifierToken
+	| ResourceLocationNode
 	| Primitive
 	| CommentNode
 	| CompoundFieldTypeNode

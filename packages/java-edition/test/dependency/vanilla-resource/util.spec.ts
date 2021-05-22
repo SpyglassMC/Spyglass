@@ -1,11 +1,12 @@
 import { SymbolUtil } from '@spyglassmc/core'
-import assert from 'assert'
+import { stringifySymbolTable } from '@spyglassmc/core/test-out/symbol/SymbolUtil.spec'
+import { strict as assert } from 'assert'
 import * as fs from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
-import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
 import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
+import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
 import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
 
 const Fixtures = {
@@ -129,33 +130,25 @@ describe('vanilla-resource util', () => {
 
 	describe('addBlockSymbols()', () => {
 		it('Should add correctly', () => {
-			const symbols = new SymbolUtil({
-				block: {
-					oldExistingOne: {
-						category: 'block',
-						identifier: 'oldExistingOne',
-						declaration: [{ uri: 'spyglassmc://vanilla-resource/blocks.json', fromDefaultLibrary: true }],
-					},
-				},
-			})
+			const symbols = new SymbolUtil({})
+			symbols
+				.query('spyglassmc://vanilla-resource/blocks.json', 'block', 'oldExistingOne')
+				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
+
 			addBlocksSymbols(Fixtures.Blocks, symbols)
-			snapshot(symbols.global)
+			snapshot(stringifySymbolTable(symbols.global))
 		})
 	})
 
 	describe('addRegistriesSymbols()', () => {
 		it('Should add correctly', () => {
-			const symbols = new SymbolUtil({
-				attribute: {
-					oldExistingOne: {
-						category: 'attribute',
-						identifier: 'oldExistingOne',
-						declaration: [{ uri: 'spyglassmc://vanilla-resource/registries.json', fromDefaultLibrary: true }],
-					},
-				},
-			})
+			const symbols = new SymbolUtil({})
+			symbols
+				.query('spyglassmc://vanilla-resource/registries.json', 'attribute', 'oldExistingOne')
+				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
+
 			addRegistriesSymbols(Fixtures.Registries, symbols)
-			snapshot(symbols.global)
+			snapshot(stringifySymbolTable(symbols.global))
 		})
 	})
 })

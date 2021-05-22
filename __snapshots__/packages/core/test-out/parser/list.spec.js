@@ -40,11 +40,6 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -64,11 +59,6 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -97,11 +87,6 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "start": 10,
               "end": 15
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -121,11 +106,6 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
           "range": {
             "start": 10,
             "end": 15
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "bar",
           "valueMap": {
@@ -176,11 +156,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -200,11 +175,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -237,11 +207,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "start": 10,
               "end": 15
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -261,11 +226,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "range": {
             "start": 10,
             "end": 15
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "bar",
           "valueMap": {
@@ -320,11 +280,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -344,11 +299,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -381,11 +331,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "start": 10,
               "end": 15
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -405,11 +350,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "range": {
             "start": 10,
             "end": 15
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "bar",
           "valueMap": {
@@ -451,11 +391,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -475,11 +410,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -534,11 +464,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -558,11 +483,6 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -615,11 +535,6 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
               "start": 4,
               "end": 9
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -639,11 +554,6 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
           "range": {
             "start": 4,
             "end": 9
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -768,11 +678,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -792,11 +697,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -829,11 +729,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "start": 10,
               "end": 15
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -853,11 +748,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "range": {
             "start": 10,
             "end": 15
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "bar",
           "valueMap": {
@@ -903,11 +793,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -927,11 +812,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -964,11 +844,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "start": 10,
               "end": 15
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "bar",
             "valueMap": {
               "outerRange": {
@@ -988,11 +863,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "range": {
             "start": 10,
             "end": 15
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "bar",
           "valueMap": {
@@ -1034,11 +904,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -1058,11 +923,6 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {
@@ -1108,11 +968,6 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
               "start": 2,
               "end": 7
             },
-            "options": {
-              "quotes": [
-                "\""
-              ]
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -1132,11 +987,6 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
           "range": {
             "start": 2,
             "end": 7
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ]
           },
           "value": "foo",
           "valueMap": {

@@ -8,9 +8,20 @@ import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
 import { SymbolLocation, SymbolUsageTypes, SymbolVisibility } from './Symbol'
 
-interface LookupResult {
+export interface LookupResult {
+	/**
+	 * The {@link SymbolMap} that contains the symbol. If `symbol` is `null`, this property will be the map that could
+	 * potentially store the symbol if it's ever created. `null` if no such map exists.
+	 */
+	parentMap: SymbolMap | null,
+	/**
+	 * The {@link Symbol} of which `symbol` is a member. If `symbol` is `null`, this property will be the symbol that could
+	 * potentially store the symbol as a member if it's ever created. `null` if no such symbol exists.
+	 */
 	parentSymbol: Symbol | null,
-	map: SymbolMap | null,
+	/**
+	 * The {@link Symbol} corresponding to the `path`. `null` if no such symbol exists.
+	 */
 	symbol: Symbol | null,
 }
 
@@ -23,17 +34,11 @@ export const enum SpecialUri {
 }
 
 interface SymbolEvent {
-	path: readonly string[],
-	map: SymbolMap,
 	symbol: Symbol,
 }
 interface SymbolLocationEvent extends SymbolEvent {
 	type: SymbolUsageType,
 	location: SymbolLocation,
-}
-interface AliasEvent {
-	target: Symbol,
-	alias: SymbolEvent,
 }
 
 export class SymbolUtil implements EventPublisher {
@@ -45,25 +50,6 @@ export class SymbolUtil implements EventPublisher {
 	constructor(
 		public readonly global: SymbolTable
 	) {
-		this.on('symbolRemoved', ({ path, map, symbol }) => {
-			if (symbol.relations?.aliasOf) {
-				this.trigger('symbolAliasRemoved', {
-					alias: { path, map, symbol },
-					target: symbol.relations.aliasOf,
-				})
-			}
-		})
-
-		this.on('symbolAliasCreated', ({ target }) => {
-			target.aliasAmount ??= 0
-			target.aliasAmount++
-		})
-
-		this.on('symbolAliasRemoved', ({ target }) => {
-			if (target.aliasAmount !== undefined) {
-				target.aliasAmount--
-			}
-		})
 	}
 
 	/**
@@ -72,8 +58,6 @@ export class SymbolUtil implements EventPublisher {
 	on(event: 'symbolCreated', callbackFn: (this: void, data: SymbolEvent) => void): void
 	on(event: 'symbolAmended', callbackFn: (this: void, data: SymbolEvent) => void): void
 	on(event: 'symbolRemoved', callbackFn: (this: void, data: SymbolEvent) => void): void
-	on(event: 'symbolAliasCreated', callbackFn: (this: void, data: AliasEvent) => void): void
-	on(event: 'symbolAliasRemoved', callbackFn: (this: void, data: AliasEvent) => void): void
 	on(event: 'symbolLocationCreated', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
 	on(event: 'symbolLocationRemoved', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
 	on(event: string, callbackFn: (this: void, ...params: any[]) => unknown): void {
@@ -83,8 +67,6 @@ export class SymbolUtil implements EventPublisher {
 	private trigger(event: 'symbolCreated', data: SymbolEvent): void
 	private trigger(event: 'symbolAmended', data: SymbolEvent): void
 	private trigger(event: 'symbolRemoved', data: SymbolEvent): void
-	private trigger(event: 'symbolAliasCreated', data: AliasEvent): void
-	private trigger(event: 'symbolAliasRemoved', data: AliasEvent): void
 	private trigger(event: 'symbolLocationCreated', data: SymbolLocationEvent): void
 	private trigger(event: 'symbolLocationRemoved', data: SymbolLocationEvent): void
 	private trigger(event: string, ...params: unknown[]): void {
@@ -128,15 +110,13 @@ export class SymbolUtil implements EventPublisher {
 	}
 
 	/**
-	 * @returns An object:
-	 * - `map`: The {@link SymbolMap} that (potentially) contains the symbol. `null` if no such map exists.
-	 * - `createMap`: A method that can be called to create the `SymbolMap` containing the symbol if it doesn't exist. `null` if such map cannot be created (e.g. when the symbol containing the member symbol doesn't exist either).
-	 * - `symbol`: The `Symbol` corresponding to the `path`. `null` if no such symbol exists.
-	 * - `visible`: If it is visible in `uri`. This will be `null` if the symbol is `null`.
+	 * @param uri Optional. The corresponding {@link SymbolStack} of the file will also be looked up if this is specified.
+	 * 
+	 * @returns A {@link LookupResult}
 	 */
-	lookup(category: AllCategory, path: string[], uri?: string): LookupResult
-	lookup(category: string, path: string[], uri?: string): LookupResult
-	lookup(category: string, path: string[], uri?: string): LookupResult {
+	lookup(category: AllCategory, path: readonly string[], uri?: string): LookupResult
+	lookup(category: string, path: readonly string[], uri?: string): LookupResult
+	lookup(category: string, path: readonly string[], uri?: string): LookupResult {
 		const stack = uri ? this.getStack(uri) : []
 		return SymbolUtil.lookupTables([this.global, ...stack], category, path)
 	}
@@ -153,7 +133,7 @@ export class SymbolUtil implements EventPublisher {
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery {
 		const uri = SymbolUtil.toUri(doc)
 		const stack = this.getStack(uri)
-		const { parentSymbol, map, symbol } = this.lookup(category, path, uri)
+		const { parentSymbol, parentMap, symbol } = this.lookup(category, path, uri)
 		const createMap = path.length === 1
 			? (addition: SymbolAddition) => SymbolUtil.getTable(stack, this.global, addition.data?.visibility)[category] ??= {}
 			: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : null
@@ -163,7 +143,7 @@ export class SymbolUtil implements EventPublisher {
 			createMap,
 			doc,
 			isUriBinding: this.isUriBinding,
-			map: visible ? map : null,
+			map: visible ? parentMap : null,
 			path,
 			symbol: visible ? symbol : null,
 			util: this,
@@ -176,18 +156,10 @@ export class SymbolUtil implements EventPublisher {
 	getVisibleSymbols(uri: string, category: string): SymbolMap
 	getVisibleSymbols(param1: string, param2?: string): SymbolMap {
 		const [uri, category] = param2 ? [param1, param2] : [undefined, param1]
-		const ans: SymbolMap = {}
 
-		const map = this.lookup(category, [], uri).map
-		if (map) {
-			for (const key of Object.keys(map)) {
-				if (SymbolUtil.isVisible(map[key]!, uri)) {
-					ans[key] = map[key]
-				}
-			}
-		}
+		const map = this.lookup(category, [], uri).parentMap ?? undefined
 
-		return ans
+		return SymbolUtil.filterVisibleSymbols(uri, map)
 	}
 
 	/**
@@ -230,12 +202,9 @@ export class SymbolUtil implements EventPublisher {
 		}
 		for (const identifier of Object.keys(map)) {
 			const symbol = map[identifier]!
-			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length && !symbol.aliasAmount) {
-				if (symbol.relations?.aliasOf && symbol.relations.aliasOf.aliasAmount !== undefined) {
-					symbol.relations.aliasOf.aliasAmount--
-				}
+			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
 				delete map[identifier]
-				this.trigger('symbolRemoved', { path, map, symbol })
+				this.trigger('symbolRemoved', { symbol })
 			} else if (symbol.members) {
 				this.trimMap(symbol.members, [...path, identifier])
 				if (Object.keys(symbol.members).length === 0) {
@@ -270,7 +239,7 @@ export class SymbolUtil implements EventPublisher {
 				const result: SymbolLocation[] = []
 				symbol[type]!.forEach(location => {
 					if (predicate(location)) {
-						this.trigger('symbolLocationRemoved', { path, map, symbol, type, location })
+						this.trigger('symbolLocationRemoved', { symbol, type, location })
 					} else {
 						result.push(location)
 					}
@@ -363,28 +332,31 @@ export class SymbolUtil implements EventPublisher {
 	enterMap(map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const target = map[identifier]
 		if (target) {
-			this.amendSymbol(map, path, target, addition, doc, isUriBinding)
-			this.trigger('symbolAmended', { path, map, symbol: target })
+			this.amendSymbol(target, addition, doc, isUriBinding)
+			this.trigger('symbolAmended', { symbol: target })
 			return target
 		} else {
 			const ans = map[identifier] = this.createSymbol(category, map, path, identifier, addition, doc, isUriBinding)
-			this.trigger('symbolCreated', { path, map, symbol: ans })
+			this.trigger('symbolCreated', { symbol: ans })
 			return ans
 		}
 	}
 
-	static lookupTable(table: SymbolTable, category: AllCategory, path: string[]): LookupResult
-	static lookupTable(table: SymbolTable, category: string, path: string[]): LookupResult
-	static lookupTable(table: SymbolTable, category: string, path: string[]): LookupResult {
+	/**
+	 * @returns A {@link LookupResult}
+	 */
+	static lookupTable(table: SymbolTable, category: AllCategory, path: readonly string[]): LookupResult
+	static lookupTable(table: SymbolTable, category: string, path: readonly string[]): LookupResult
+	static lookupTable(table: SymbolTable, category: string, path: readonly string[]): LookupResult {
+		let parentMap: SymbolMap | null = table[category] ?? null
 		let parentSymbol: Symbol | null = null
 		let symbol: Symbol | null = null
-		let map: SymbolMap | null = table[category] ?? null
 		for (let i = 0; i < path.length; i++) {
-			symbol = map?.[path[i]] ?? null
+			symbol = parentMap?.[path[i]] ?? null
 			if (!symbol) {
 				if (i !== path.length - 1) {
 					parentSymbol = null
-					map = null
+					parentMap = null
 				}
 				break
 			}
@@ -392,19 +364,21 @@ export class SymbolUtil implements EventPublisher {
 				break
 			}
 			parentSymbol = symbol
-			map = symbol.members ?? null
+			parentMap = symbol.members ?? null
 		}
-		return { parentSymbol, map, symbol }
+		return { parentSymbol, parentMap, symbol }
 	}
 
 	/**
 	 * @param tables Should be ordered from global to the toppest block.
+	 * 
+	 * @returns A {@link LookupResult}
 	 */
-	static lookupTables(tables: SymbolTable[], category: AllCategory, path: string[]): LookupResult
-	static lookupTables(tables: SymbolTable[], category: string, path: string[]): LookupResult
-	static lookupTables(tables: SymbolTable[], category: string, path: string[]): LookupResult {
+	static lookupTables(tables: SymbolTable[], category: AllCategory, path: readonly string[]): LookupResult
+	static lookupTables(tables: SymbolTable[], category: string, path: readonly string[]): LookupResult
+	static lookupTables(tables: SymbolTable[], category: string, path: readonly string[]): LookupResult {
+		let parentMap: SymbolMap | null = null
 		let parentSymbol: Symbol | null = null
-		let map: SymbolMap | null = null
 
 		// Traverse from the last table to the first one.
 		for (let i = tables.length - 1; i >= 0; i--) {
@@ -413,31 +387,33 @@ export class SymbolUtil implements EventPublisher {
 			if (result.symbol) {
 				return result
 			}
-			if (!parentSymbol && !map && (result.parentSymbol || result.map)) {
+			if (!parentSymbol && !parentMap && (result.parentSymbol || result.parentMap)) {
 				parentSymbol = result.parentSymbol
-				map = result.map
+				parentMap = result.parentMap
 			}
 		}
 
-		return { parentSymbol, map, symbol: null }
+		return { parentSymbol, parentMap, symbol: null }
 	}
 
-	createSymbol(category: string, map: SymbolMap, path: readonly string[], identifier: string, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	createSymbol(category: string, map: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const ans: Symbol = {
 			category,
 			identifier,
-			...enterable.data,
+			parentMap: map,
+			path,
+			...addition.data,
 		}
-		this.amendSymbolUsage(map, path, ans, enterable.usage, doc, isUriBinding)
+		this.amendSymbolUsage(ans, addition.usage, doc, isUriBinding)
 		return ans
 	}
 
-	amendSymbol(map: SymbolMap, path: readonly string[], symbol: Symbol, enterable: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
-		this.amendSymbolMetadata(map, path, symbol, enterable.data)
-		this.amendSymbolUsage(map, path, symbol, enterable.usage, doc, isUriBinding)
+	amendSymbol(symbol: Symbol, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): void {
+		this.amendSymbolMetadata(symbol, addition.data)
+		this.amendSymbolUsage(symbol, addition.usage, doc, isUriBinding)
 	}
 
-	private amendSymbolMetadata(map: SymbolMap, path: readonly string[], symbol: Symbol, addition: SymbolAddition['data']) {
+	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']) {
 		if (addition) {
 			if (addition.desc !== undefined) {
 				symbol.desc = addition.desc
@@ -445,18 +421,6 @@ export class SymbolUtil implements EventPublisher {
 			if (addition.relations && Object.keys(addition.relations).length) {
 				symbol.relations ??= {}
 				for (const relationship of Object.keys(addition.relations)) {
-					if (relationship === 'aliasOf' && symbol.relations.aliasOf !== addition.relations.aliasOf) {
-						if (symbol.relations.aliasOf) {
-							this.trigger('symbolAliasRemoved', {
-								target: symbol.relations.aliasOf,
-								alias: { path, map, symbol },
-							})
-						}
-						this.trigger('symbolAliasCreated', {
-							target: addition.relations.aliasOf!,
-							alias: { path, map, symbol },
-						})
-					}
 					symbol.relations[relationship] = addition.relations[relationship]
 				}
 			}
@@ -479,7 +443,7 @@ export class SymbolUtil implements EventPublisher {
 		}
 	}
 
-	private amendSymbolUsage(map: SymbolMap, path: readonly string[], symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
+	private amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
 		if (addition) {
 			const type = addition.type ?? 'reference'
 			const arr = symbol[type] ??= []
@@ -495,11 +459,20 @@ export class SymbolUtil implements EventPublisher {
 				delete location.fullPosRange
 			}
 			arr.push(location)
-			this.trigger('symbolLocationCreated', { path, map, symbol, type, location })
+			this.trigger('symbolLocationCreated', { symbol, type, location })
 		}
 	}
 
-	static filterVisibleSymbols(uri: string, map: SymbolMap = {}): SymbolMap {
+	/**
+	 * @returns The ultimate symbol being pointed by the passed-in `symbol`'s alias.
+	 */
+	resolveAlias(symbol: Symbol | null): Symbol | null {
+		return symbol?.relations?.aliasOf
+			? this.resolveAlias(this.lookup(symbol.relations.aliasOf.category, symbol.relations.aliasOf.path).symbol)
+			: symbol
+	}
+
+	static filterVisibleSymbols(uri: string | undefined, map: SymbolMap = {}): SymbolMap {
 		const ans: SymbolMap = {}
 
 		for (const [identifier, symbol] of Object.entries(map)) {
@@ -530,13 +503,6 @@ export class SymbolUtil implements EventPublisher {
 			default:
 				return true
 		}
-	}
-
-	/**
-	 * @returns The ultimate symbol being pointed by the passed-in `symbol`'s alias.
-	 */
-	static resolveAlias(symbol: Symbol): Symbol {
-		return symbol.relations?.aliasOf ? this.resolveAlias(symbol.relations.aliasOf) : symbol
 	}
 
 	/**
@@ -579,7 +545,7 @@ export class SymbolUtil implements EventPublisher {
 }
 
 interface SymbolAddition {
-	data?: Omit<SymbolMetadata, 'category' | 'identifier' | 'members'>,
+	data?: SymbolMetadata,
 	usage?: SymbolAdditionUsage,
 }
 type SymbolAdditionUsage = SymbolAdditionUsageWithRange | SymbolAdditionUsageWithNode
@@ -657,6 +623,7 @@ export type SymbolStack = [SymbolTable, ...SymbolTable[]]
 type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQuery, symbol: S) => unknown
 type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 
+/* istanbul ignore next */
 export class SymbolQuery {
 	readonly category: string
 	readonly path: readonly string[]
@@ -804,6 +771,8 @@ export class SymbolQuery {
 
 	/**
 	 * Resolves the queried symbol if it is an alias and if none of the former `if` conditions are met.
+	 * 
+	 * @throws If the current symbol points to an non-existent symbol.
 	 */
 	elseResolveAlias(): this {
 		return this.else(() => this.resolveAlias())
@@ -811,10 +780,12 @@ export class SymbolQuery {
 
 	/**
 	 * Enters the queried symbol.
+	 * 
+	 * @throws If the parent of this symbol doesn't exist either.
 	 */
 	enter(addition: SymbolAddition): this {
 		if (!this.#createMap) {
-			throw new Error(`Cannot enter the symbol of path “${this.path.join('.')}” as its parent doesn't exist`)
+			throw new Error(`Cannot enter the symbol at path “${this.path.join('.')}” as its parent doesn't exist`)
 		}
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
@@ -847,11 +818,19 @@ export class SymbolQuery {
 	}
 
 	/**
-	 * Resolves this symbol if it is an alias.
+	 * Resolves this symbol if it exists and is an alias.
+	 * 
+	 * @throws If the current symbol points to an non-existent symbol. The state of this object will not be changed
+	 * after the error is thrown.
 	 */
 	resolveAlias(): this {
 		if (this.#symbol) {
-			this.#symbol = SymbolUtil.resolveAlias(this.#symbol)
+			const result = this.#util.resolveAlias(this.#symbol)
+			if (!result) {
+				throw new Error('The current symbol points to an non-existent symbol.')
+			}
+			this.#symbol = result
+			this.#symbol
 		}
 		return this
 	}
@@ -862,9 +841,9 @@ export class SymbolQuery {
 	 * 
 	 * @throws If the current queried symbol doesn't exist.
 	 */
-	queryMember(identifier: string, fn: QueryMemberCallback): void
-	queryMember(doc: TextDocument | string, identifier: string, fn: QueryMemberCallback): void
-	queryMember(): void {
+	member(identifier: string, fn: QueryMemberCallback): this
+	member(doc: TextDocument | string, identifier: string, fn: QueryMemberCallback): this
+	member(): this {
 		// Handle overloads.
 		let doc: TextDocument | string, identifier: string, fn: QueryMemberCallback
 		if (arguments.length === 2) {
@@ -898,6 +877,8 @@ export class SymbolQuery {
 			util: this.#util,
 		})
 		fn(memberQueryResult)
+
+		return this
 	}
 
 	/**

@@ -154,8 +154,8 @@ const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => 
 
 export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
 	// Remove all related existing symbols.
-	core.SymbolUtil.removeLocationsFromMap(symbols.global.block, loc => loc.fromDefaultLibrary)
-	core.SymbolUtil.trimMap(symbols.global.block)
+	symbols.removeLocationsFromMap(symbols.global.block, loc => loc.fromDefaultLibrary)
+	symbols.trimMap(symbols.global.block)
 
 	// Add blocks and block states to the symbol table.
 	for (const [id, block] of Object.entries(blocks)) {
@@ -170,7 +170,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 			.onEach(Object.entries(block.properties), ([state, values], blockQuery) => {
 				const defaultValue = block.default[state]!
 
-				blockQuery.queryMember(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
+				blockQuery.member(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
 					stateQuery
 						.enter({
 							data: {
@@ -182,7 +182,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 							},
 						})
 						.onEach(values, value => {
-							stateQuery.queryMember(value, valueQuery => {
+							stateQuery.member(value, valueQuery => {
 								valueQuery.enter({
 									data: {
 										subcategory: 'state_value',
@@ -196,7 +196,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 									stateQuery.amend({
 										data: {
 											relations: {
-												default: valueQuery.symbol!,
+												default: { category: 'block', path: valueQuery.path },
 											},
 										},
 									})
@@ -266,8 +266,8 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		const registryId = shorten(longRegistryId)
 		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
 			// Remove all related existing symbols.
-			core.SymbolUtil.removeLocationsFromMap(symbols.global[registryId], loc => loc.fromDefaultLibrary)
-			core.SymbolUtil.trimMap(symbols.global[registryId])
+			symbols.removeLocationsFromMap(symbols.global[registryId], loc => loc.fromDefaultLibrary)
+			symbols.trimMap(symbols.global[registryId])
 
 			// Add resource locations from the registry to the symbol table.
 			for (const longEntryId of registries[longRegistryId]) {

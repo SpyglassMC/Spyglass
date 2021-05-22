@@ -212,7 +212,7 @@ function block(isPredicate: true): core.InfallibleParser<MinecraftBlockPredicate
 function block(isPredicate: boolean): core.InfallibleParser<MinecraftBlockPredicateArgumentNode | MinecraftBlockStateArgumentNode> {
 	return core.map<core.SequenceUtil<core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode>, MinecraftBlockPredicateArgumentNode | MinecraftBlockStateArgumentNode>(
 		core.sequence([
-			core.stopBefore(core.resourceLocation({ category: 'block', allowTag: isPredicate }), '[', '{'),
+			core.resourceLocation({ category: 'block', allowTag: isPredicate }),
 			core.optional(core.map<core.TableNode<core.StringNode, core.StringNode>, BlockStatesNode>(
 				core.failOnEmpty(core.table<core.StringNode, core.StringNode>({
 					start: '[',
@@ -757,8 +757,9 @@ function selector(): core.Parser<EntitySelectorNode> {
 		]),
 		res => {
 			const ans: EntitySelectorNode = {
-				...res,
 				type: 'mcfunction:entity_selector',
+				range: res.range,
+				children: res.children,
 				variable: res.children.find(core.LiteralNode.is)?.value.slice(1),
 				argument: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
@@ -896,7 +897,7 @@ const uuid: core.InfallibleParser<MinecraftUuidArgumentNode> = (src, ctx): Minec
 				ans.bits[0] = BigInt.asIntN(64, (parts[0] << 32n) | (parts[1] << 16n) | parts[2])
 				ans.bits[1] = BigInt.asIntN(64, (parts[3] << 48n) | parts[4])
 			}
-		} catch (e) {
+		} catch {
 			// Ignored.
 		}
 	}

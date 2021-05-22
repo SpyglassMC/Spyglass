@@ -4,9 +4,6 @@ exports['resourceLocation() Parse "" with function, undefined 1'] = {
     "range": {
       "start": 0,
       "end": 0
-    },
-    "options": {
-      "category": "function"
     }
   },
   "errors": [
@@ -27,10 +24,6 @@ exports['resourceLocation() Parse "#tick" with function, false 1'] = {
     "range": {
       "start": 0,
       "end": 5
-    },
-    "options": {
-      "category": "function",
-      "allowTag": false
     },
     "isTag": true,
     "path": [
@@ -56,10 +49,6 @@ exports['resourceLocation() Parse "#tick" with function, true 1'] = {
       "start": 0,
       "end": 5
     },
-    "options": {
-      "category": "function",
-      "allowTag": true
-    },
     "isTag": true,
     "path": [
       "tick"
@@ -75,9 +64,6 @@ exports['resourceLocation() Parse ":" with function, undefined 1'] = {
       "start": 0,
       "end": 1
     },
-    "options": {
-      "category": "function"
-    },
     "namespace": "",
     "path": [
       ""
@@ -92,9 +78,6 @@ exports['resourceLocation() Parse ":/" with function, undefined 1'] = {
     "range": {
       "start": 0,
       "end": 2
-    },
-    "options": {
-      "category": "function"
     },
     "namespace": "",
     "path": [
@@ -112,9 +95,6 @@ exports['resourceLocation() Parse ":foo" with function, undefined 1'] = {
       "start": 0,
       "end": 4
     },
-    "options": {
-      "category": "function"
-    },
     "namespace": "",
     "path": [
       "foo"
@@ -129,9 +109,6 @@ exports['resourceLocation() Parse ":foo/bar" with function, undefined 1'] = {
     "range": {
       "start": 0,
       "end": 8
-    },
-    "options": {
-      "category": "function"
     },
     "namespace": "",
     "path": [
@@ -149,9 +126,6 @@ exports['resourceLocation() Parse "foo # can you stop before here?" with functio
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "function"
-    },
     "path": [
       "foo"
     ]
@@ -166,9 +140,6 @@ exports['resourceLocation() Parse "foo" with function, undefined 1'] = {
       "start": 0,
       "end": 3
     },
-    "options": {
-      "category": "function"
-    },
     "path": [
       "foo"
     ]
@@ -182,9 +153,6 @@ exports['resourceLocation() Parse "foo/bar" with function, undefined 1'] = {
     "range": {
       "start": 0,
       "end": 7
-    },
-    "options": {
-      "category": "function"
     },
     "path": [
       "foo",
@@ -201,9 +169,6 @@ exports['resourceLocation() Parse "minecraft:foo/bar" with function, undefined 1
       "start": 0,
       "end": 17
     },
-    "options": {
-      "category": "function"
-    },
     "namespace": "minecraft",
     "path": [
       "foo",
@@ -213,20 +178,17 @@ exports['resourceLocation() Parse "minecraft:foo/bar" with function, undefined 1
   "errors": []
 }
 
-exports['resourceLocation() Parse "spg!:foo:qux/@#$%%ehh/42" with function, undefined 1'] = {
+exports['resourceLocation() Parse "spg/:foo:qux/H/42" with function, undefined 1'] = {
   "node": {
     "type": "resource_location",
     "range": {
       "start": 0,
-      "end": 24
+      "end": 17
     },
-    "options": {
-      "category": "function"
-    },
-    "namespace": "spg!",
+    "namespace": "spg/",
     "path": [
       "foo:qux",
-      "@#$%%ehh",
+      "H",
       "42"
     ]
   },
@@ -234,9 +196,9 @@ exports['resourceLocation() Parse "spg!:foo:qux/@#$%%ehh/42" with function, unde
     {
       "range": {
         "start": 0,
-        "end": 24
+        "end": 17
       },
-      "message": "Illegal character(s): “!”, “:”, “@”, “#”, “$”, and “%”",
+      "message": "Illegal character(s): “/”, “:”, and “H”",
       "severity": 3
     }
   ]
@@ -248,9 +210,6 @@ exports['resourceLocation() Parse "spgoding:foo/bar" with function, undefined 1'
     "range": {
       "start": 0,
       "end": 16
-    },
-    "options": {
-      "category": "function"
     },
     "namespace": "spgoding",
     "path": [

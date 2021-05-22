@@ -47,13 +47,11 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 14
-        },
-        "namespace": "",
-        "path": []
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -64,13 +62,11 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "value": "["
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 15,
           "end": 15
-        },
-        "namespace": "",
-        "path": []
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -108,23 +104,19 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 14
-      },
-      "namespace": "",
-      "path": []
+      }
     },
     "objects": [
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 15,
           "end": 15
-        },
-        "namespace": "",
-        "path": []
+        }
       }
     ]
   },
@@ -134,7 +126,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "start": 14,
         "end": 14
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Expected a resource location",
       "severity": 3
     },
     {
@@ -142,7 +134,7 @@ exports['describesClause() Parse "Foo describes [];" 1'] = {
         "start": 15,
         "end": 15
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Expected a resource location",
       "severity": 3
     }
   ]
@@ -183,7 +175,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -221,7 +213,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -280,7 +272,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -318,7 +310,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -368,7 +360,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -406,7 +398,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -456,7 +448,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -475,13 +467,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "value": "["
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 29,
           "end": 29
-        },
-        "namespace": "",
-        "path": []
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -519,7 +509,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -531,13 +521,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
     },
     "objects": [
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 29,
           "end": 29
-        },
-        "namespace": "",
-        "path": []
+        }
       }
     ]
   },
@@ -547,7 +535,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[];" 1'] = {
         "start": 29,
         "end": 29
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Expected a resource location",
       "severity": 3
     }
   ]
@@ -588,7 +576,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -607,7 +595,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         "value": "["
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 29,
           "end": 44
@@ -653,7 +641,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -665,7 +653,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
     },
     "objects": [
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 29,
           "end": 44
@@ -715,7 +703,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -734,7 +722,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": "["
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 31,
           "end": 46
@@ -753,7 +741,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": ","
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 49,
           "end": 70
@@ -772,13 +760,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": ","
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 72,
           "end": 72
-        },
-        "namespace": "",
-        "path": []
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -816,7 +802,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -828,7 +814,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     },
     "objects": [
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 31,
           "end": 46
@@ -839,7 +825,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 49,
           "end": 70
@@ -850,13 +836,11 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 72,
           "end": 72
-        },
-        "namespace": "",
-        "path": []
+        }
       }
     ]
   },
@@ -866,7 +850,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "start": 72,
         "end": 72
       },
-      "message": "Expected the colon (“:”) of Minecraft identifier",
+      "message": "Expected a resource location",
       "severity": 3
     }
   ]
@@ -907,7 +891,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": "describes"
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 14,
           "end": 28
@@ -926,7 +910,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": "["
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 31,
           "end": 46
@@ -945,7 +929,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "value": ","
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 49,
           "end": 70
@@ -991,7 +975,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
       }
     },
     "registry": {
-      "type": "nbtdoc:minecraft_identifier",
+      "type": "resource_location",
       "range": {
         "start": 14,
         "end": 28
@@ -1003,7 +987,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
     },
     "objects": [
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 31,
           "end": 46
@@ -1014,7 +998,7 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         ]
       },
       {
-        "type": "nbtdoc:minecraft_identifier",
+        "type": "resource_location",
         "range": {
           "start": 49,
           "end": 70

@@ -5,20 +5,6 @@ exports['mcfunction argument minecraft:operation Parse "<" 1'] = {
       "start": 0,
       "end": 1
     },
-    "options": {
-      "pool": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "><",
-        "=",
-        "<",
-        ">"
-      ],
-      "colorTokenType": "operator"
-    },
     "value": "<",
     "name": "test",
     "hover": "<test: operation>"
@@ -33,20 +19,6 @@ exports['mcfunction argument minecraft:operation Parse "=" 1'] = {
       "start": 0,
       "end": 1
     },
-    "options": {
-      "pool": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "><",
-        "=",
-        "<",
-        ">"
-      ],
-      "colorTokenType": "operator"
-    },
     "value": "=",
     "name": "test",
     "hover": "<test: operation>"
@@ -60,20 +32,6 @@ exports['mcfunction argument minecraft:operation Parse ">" 1'] = {
     "range": {
       "start": 0,
       "end": 1
-    },
-    "options": {
-      "pool": [
-        "+=",
-        "-=",
-        "*=",
-        "/=",
-        "%=",
-        "><",
-        "=",
-        "<",
-        ">"
-      ],
-      "colorTokenType": "operator"
     },
     "value": ">",
     "name": "test",

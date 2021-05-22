@@ -603,20 +603,6 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "start": 108,
               "end": 113
             },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -670,20 +656,6 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "range": {
             "start": 108,
             "end": 113
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "foo",
           "valueMap": {
@@ -798,20 +770,6 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "start": 108,
               "end": 113
             },
-            "options": {
-              "quotes": [
-                "\""
-              ],
-              "escapable": {
-                "characters": [
-                  "b",
-                  "f",
-                  "n",
-                  "r",
-                  "t"
-                ]
-              }
-            },
             "value": "foo",
             "valueMap": {
               "outerRange": {
@@ -865,20 +823,6 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "range": {
             "start": 108,
             "end": 113
-          },
-          "options": {
-            "quotes": [
-              "\""
-            ],
-            "escapable": {
-              "characters": [
-                "b",
-                "f",
-                "n",
-                "r",
-                "t"
-              ]
-            }
           },
           "value": "foo",
           "valueMap": {

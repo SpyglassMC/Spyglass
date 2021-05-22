@@ -5,27 +5,6 @@ exports['mcfunction argument minecraft:color Parse "green" 1'] = {
       "start": 0,
       "end": 5
     },
-    "options": {
-      "pool": [
-        "light_purple",
-        "dark_purple",
-        "dark_green",
-        "dark_aqua",
-        "dark_blue",
-        "dark_gray",
-        "dark_red",
-        "yellow",
-        "black",
-        "green",
-        "white",
-        "reset",
-        "aqua",
-        "blue",
-        "gold",
-        "gray",
-        "red"
-      ]
-    },
     "value": "green",
     "color": [
       0.3333333333333333,
@@ -45,27 +24,6 @@ exports['mcfunction argument minecraft:color Parse "red" 1'] = {
     "range": {
       "start": 0,
       "end": 3
-    },
-    "options": {
-      "pool": [
-        "light_purple",
-        "dark_purple",
-        "dark_green",
-        "dark_aqua",
-        "dark_blue",
-        "dark_gray",
-        "dark_red",
-        "yellow",
-        "black",
-        "green",
-        "white",
-        "reset",
-        "aqua",
-        "blue",
-        "gold",
-        "gray",
-        "red"
-      ]
     },
     "value": "red",
     "color": [

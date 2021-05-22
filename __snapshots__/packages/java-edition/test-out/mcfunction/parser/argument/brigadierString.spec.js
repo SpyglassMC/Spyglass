@@ -5,14 +5,6 @@ exports['mcfunction argument brigadier:string Parse """" with {"type":"phrase"} 
       "start": 0,
       "end": 2
     },
-    "options": {
-      "escapable": {},
-      "quotes": [
-        "\"",
-        "'"
-      ],
-      "unquotable": {}
-    },
     "value": "",
     "valueMap": {
       "outerRange": {
@@ -37,9 +29,6 @@ exports['mcfunction argument brigadier:string Parse ""and symbols"" with {"type"
     "range": {
       "start": 0,
       "end": 13
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "\"and symbols\"",
     "valueMap": {
@@ -66,14 +55,6 @@ exports['mcfunction argument brigadier:string Parse ""quoted phrase"" with {"typ
       "start": 0,
       "end": 15
     },
-    "options": {
-      "escapable": {},
-      "quotes": [
-        "\"",
-        "'"
-      ],
-      "unquotable": {}
-    },
     "value": "quoted phrase",
     "valueMap": {
       "outerRange": {
@@ -98,9 +79,6 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"greedy"
     "range": {
       "start": 0,
       "end": 4
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "word",
     "valueMap": {
@@ -127,14 +105,6 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"phrase"
       "start": 0,
       "end": 4
     },
-    "options": {
-      "escapable": {},
-      "quotes": [
-        "\"",
-        "'"
-      ],
-      "unquotable": {}
-    },
     "value": "word",
     "valueMap": {
       "outerRange": {
@@ -159,9 +129,6 @@ exports['mcfunction argument brigadier:string Parse "word" with {"type":"word"} 
     "range": {
       "start": 0,
       "end": 4
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "word",
     "valueMap": {
@@ -188,9 +155,6 @@ exports['mcfunction argument brigadier:string Parse "word_with_underscores" with
       "start": 0,
       "end": 21
     },
-    "options": {
-      "unquotable": {}
-    },
     "value": "word_with_underscores",
     "valueMap": {
       "outerRange": {
@@ -215,9 +179,6 @@ exports['mcfunction argument brigadier:string Parse "words with spaces" with {"t
     "range": {
       "start": 0,
       "end": 17
-    },
-    "options": {
-      "unquotable": {}
     },
     "value": "words with spaces",
     "valueMap": {

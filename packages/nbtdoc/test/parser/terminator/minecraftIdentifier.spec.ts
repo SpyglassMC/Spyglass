@@ -16,7 +16,7 @@ describe('minecraftIdentifier()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = minecraftIdentifier()
+			const parser = minecraftIdentifier({ pool: [], allowUnknown: true })
 			snapshot(testParser(parser, content))
 		})
 	}
