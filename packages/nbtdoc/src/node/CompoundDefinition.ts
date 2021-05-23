@@ -1,7 +1,7 @@
-import type { AstNode, FloatNode, IntegerNode, ResourceLocationNode } from '@spyglassmc/core'
-import { StringNode } from '@spyglassmc/core'
-import type { DocCommentsNode, SyntaxNode } from './index'
-import { IdentifierToken, IdentPathToken, LiteralToken } from './index'
+import type { AstNode, FloatNode, IntegerNode, SymbolPath } from '@spyglassmc/core'
+import { ResourceLocationNode, StringNode } from '@spyglassmc/core'
+import type { DocCommentsNode, ResolvedIdRegistry, ResolvedRootRegistry, SyntaxNode } from './misc'
+import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
 
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
@@ -9,6 +9,17 @@ export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	identifier: IdentifierToken,
 	extends: CompoundExtendable | null,
 	fields: CompoundFieldNode[],
+}
+export namespace CompoundDefinitionNode {
+	export interface SymbolData {
+		extends?: CompoundExtendable.SymbolData,
+	}
+
+	export function toSymbolData(node: CompoundDefinitionNode, symbol?: SymbolPath): SymbolData {
+		return {
+			extends: node.extends ? CompoundExtendable.toSymbolData(node.extends, symbol) : undefined,
+		}
+	}
 }
 
 export type CompoundChild = DocCommentsNode | LiteralToken | IdentifierToken | CompoundFieldNode | CompoundExtendable
@@ -22,12 +33,37 @@ export namespace RegistryIndexNode {
 	export function is(obj: object): obj is RegistryIndexNode {
 		return (obj as RegistryIndexNode).type === 'nbtdoc:registry_index'
 	}
+
+	export interface SymbolData {
+		registry: ResolvedRootRegistry | undefined,
+		path: (string | { special: 'super' })[],
+	}
+
+	export function toSymbolData(node: RegistryIndexNode): SymbolData {
+		const stringRegistry = ResourceLocationNode.toString(node.registry, 'full')
+		return {
+			registry: stringRegistry in RootRegistryMap
+				? RootRegistryMap[stringRegistry as keyof typeof RootRegistryMap]
+				: undefined,
+			path: node.path.map(v => LiteralToken.is('super')(v) ? { special: 'super' } : v.value),
+		}
+	}
 }
 
 export type CompoundExtendable = RegistryIndexNode | IdentPathToken
 export namespace CompoundExtendable {
 	export function is(obj: object): obj is CompoundExtendable {
 		return RegistryIndexNode.is(obj) || IdentPathToken.is(obj)
+	}
+
+	export type SymbolData =
+		| { type: 'index', index: RegistryIndexNode.SymbolData }
+		| { type: 'symbol', symbol: SymbolPath | undefined }
+
+	export function toSymbolData(node: CompoundExtendable, symbol?: SymbolPath): SymbolData {
+		return RegistryIndexNode.is(node)
+			? { type: 'index', index: RegistryIndexNode.toSymbolData(node) }
+			: { type: 'symbol', symbol }
 	}
 }
 
@@ -40,6 +76,16 @@ export interface CompoundFieldNode extends SyntaxNode<CompoundFieldChild> {
 export namespace CompoundFieldNode {
 	export function is(obj: object): obj is CompoundFieldNode {
 		return (obj as CompoundFieldNode).type === 'nbtdoc:compound_definition/field'
+	}
+
+	export interface SymbolData {
+		fieldType: CompoundFieldTypeNode.SymbolData
+	}
+
+	export function toSymbolData(node: CompoundFieldNode, symbol?: SymbolPath): SymbolData {
+		return {
+			fieldType: CompoundFieldTypeNode.toSymbolData(node.fieldType, symbol),
+		}
 	}
 }
 
@@ -142,6 +188,122 @@ export namespace CompoundFieldTypeNode {
 	export function is(obj: object): obj is CompoundFieldTypeNode {
 		return (obj as CompoundFieldTypeNode).type === 'nbtdoc:compound_definition/field/type'
 	}
+
+	export type SymbolData = {
+		type: 'boolean',
+	} | {
+		type: 'string',
+	} | {
+		type: 'byte_array',
+		valueRange?: IntRangeNode.SymbolData,
+		lengthRange?: UnsignedRangeNode.SymbolData,
+	} | {
+		type: 'int_array',
+		valueRange?: IntRangeNode.SymbolData,
+		lengthRange?: UnsignedRangeNode.SymbolData,
+	} | {
+		type: 'long_array',
+		valueRange?: IntRangeNode.SymbolData,
+		lengthRange?: UnsignedRangeNode.SymbolData,
+	} | {
+		type: 'byte',
+		valueRange?: IntRangeNode.SymbolData,
+	} | {
+		type: 'short',
+		valueRange?: IntRangeNode.SymbolData,
+	} | {
+		type: 'int',
+		valueRange?: IntRangeNode.SymbolData,
+	} | {
+		type: 'long',
+		valueRange?: IntRangeNode.SymbolData,
+	} | {
+		type: 'float',
+		valueRange?: FloatRangeNode.SymbolData,
+	} | {
+		type: 'double',
+		valueRange?: FloatRangeNode.SymbolData,
+	} | {
+		type: 'list',
+		item: CompoundFieldTypeNode.SymbolData,
+		lengthRange?: UnsignedRangeNode.SymbolData,
+	} | {
+		type: 'index',
+		index: RegistryIndexNode.SymbolData,
+	} | {
+		type: 'id',
+		registry?: ResolvedIdRegistry,
+	} | {
+		type: 'symbol',
+		symbol: SymbolPath | undefined,
+	} | {
+		type: 'union',
+		members: CompoundFieldTypeNode.SymbolData[],
+	}
+
+	/**
+	 * @param symbol If `node.typeType === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
+	 */
+	export function toSymbolData(node: CompoundFieldTypeNode, symbol?: SymbolPath): SymbolData {
+		switch (node.typeType) {
+			case 'boolean':
+			case 'string':
+				return { type: node.typeType }
+			case 'byte_array':
+			case 'int_array':
+			case 'long_array':
+				return {
+					type: node.typeType,
+					valueRange: node.valueRange ? IntRangeNode.toSymbolData(node.valueRange) : undefined,
+					lengthRange: node.lengthRange ? UnsignedRangeNode.toSymbolData(node.lengthRange) : undefined,
+				}
+			case 'byte':
+			case 'short':
+			case 'int':
+			case 'long':
+				return {
+					type: node.typeType,
+					valueRange: node.valueRange ? IntRangeNode.toSymbolData(node.valueRange) : undefined,
+				}
+			case 'float':
+			case 'double':
+				return {
+					type: node.typeType,
+					valueRange: node.valueRange ? FloatRangeNode.toSymbolData(node.valueRange) : undefined,
+				}
+			case 'list':
+				return {
+					type: 'list',
+					item: toSymbolData(node.item, symbol),
+					lengthRange: node.lengthRange ? UnsignedRangeNode.toSymbolData(node.lengthRange) : undefined,
+				}
+			case 'index':
+				return {
+					type: 'index',
+					index: RegistryIndexNode.toSymbolData(node.index),
+				}
+			case 'id':
+				const stringId = ResourceLocationNode.toString(node.registry, 'full')
+				return {
+					type: 'id',
+					registry: stringId in IdRegistryMap
+						? IdRegistryMap[stringId as keyof typeof IdRegistryMap]
+						: undefined,
+				}
+			case 'path':
+				return {
+					type: 'symbol',
+					symbol,
+				}
+			case 'union':
+				return {
+					type: 'union',
+					members: node.members.map(m => toSymbolData(m, symbol)),
+				}
+			default:
+				throw ''
+		}
+	}
 }
 
 export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
@@ -151,6 +313,14 @@ export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 export namespace IntRangeNode {
 	export function is(obj: object): obj is IntRangeNode {
 		return (obj as IntRangeNode).type === 'nbtdoc:int_range'
+	}
+
+	export interface SymbolData {
+		value: [number | null, number | null],
+	}
+
+	export function toSymbolData(node: IntRangeNode): SymbolData {
+		return { value: node.value }
 	}
 }
 
@@ -162,6 +332,14 @@ export namespace UnsignedRangeNode {
 	export function is(obj: object): obj is UnsignedRangeNode {
 		return (obj as UnsignedRangeNode).type === 'nbtdoc:unsigned_range'
 	}
+
+	export interface SymbolData {
+		value: [bigint | null, bigint | null],
+	}
+
+	export function toSymbolData(node: UnsignedRangeNode): SymbolData {
+		return { value: node.value }
+	}
 }
 
 export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatNode> {
@@ -171,6 +349,14 @@ export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatNode> {
 export namespace FloatRangeNode {
 	export function is(obj: object): obj is FloatRangeNode {
 		return (obj as FloatRangeNode).type === 'nbtdoc:float_range'
+	}
+
+	export interface SymbolData {
+		value: [number | null, number | null],
+	}
+
+	export function toSymbolData(node: FloatRangeNode): SymbolData {
+		return { value: node.value }
 	}
 }
 

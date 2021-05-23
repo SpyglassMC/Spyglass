@@ -1,11 +1,11 @@
 import type * as core from '@spyglassmc/core'
 import type { Checker, RangeLike, Symbol, SymbolQuery } from '@spyglassmc/core'
-import { ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
+import { ErrorSeverity, Range, ResourceLocationNode, SymbolPath, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
-import type { CompoundDefinitionNode, DescribesClauseNode, EnumDefinitionNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
-import { ExtendableRootRegistries, ExtendableRootRegistryMap } from '../parser'
+import type { DescribesClauseNode, EnumDefinitionNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import { CompoundDefinitionNode, CompoundFieldNode, ExtendableRootRegistries, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -99,35 +99,45 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 	if (!definitionQuery.symbol) {
 		return
 	}
+
 	if (node.extends) {
-		if (node.extends.type === 'nbtdoc:ident_path') {
-			const extendedSymbol = (await resolveIdentPath(node.extends, ctx))?.symbol
-			if (extendedSymbol) {
-				definitionQuery.amend({ data: { relations: { extends: extendedSymbol } } })
-			}
-		} else {
-			// TODO: Check RegistryIndexNode.
-		}
+		const extendedSymbol = node.extends.type === 'nbtdoc:ident_path'
+			? (await resolveIdentPath(node.extends, ctx))?.symbol ?? undefined
+			: undefined
+		const data = CompoundDefinitionNode.toSymbolData(node, SymbolPath.fromSymbol(extendedSymbol))
+		definitionQuery.amend({ data: { data } })
 	}
-	for (const field of node.fields) {
-		ctx.symbols
-			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, node.identifier.value, field.key.value)
-			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
-			.elseEnter({
-				data: {
-					desc: field.doc.value,
-					relations: {
-						// TODO: Field type
-					},
-					subcategory: 'compound_key',
-				},
-				usage: {
-					type: 'declaration',
-					node: field.key,
-					fullRange: field,
-				},
-			})
-	}
+
+	const promises: Promise<void>[] = []
+
+	definitionQuery.onEach(node.fields, field => {
+		promises.push(new Promise((resolve) => {
+			definitionQuery.member(field.key.value, member => member
+				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
+				.else(async () => {
+					const typeSymbol = field.fieldType.typeType === 'path'
+						? (await resolveIdentPath(field.fieldType.path, ctx))?.symbol ?? undefined
+						: undefined
+					const data = CompoundFieldNode.toSymbolData(field, SymbolPath.fromSymbol(typeSymbol))
+					member.enter({
+						data: {
+							data,
+							desc: field.doc.value,
+							subcategory: 'compound_key',
+						},
+						usage: {
+							type: 'definition',
+							node: field.key,
+							fullRange: field,
+						},
+					})
+					resolve()
+				})
+			)
+		}))
+	})
+
+	await Promise.all(promises)
 }
 
 const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerContext): void => {
@@ -214,7 +224,7 @@ const injectClause = async (node: InjectClauseNode, ctx: CheckerContext): Promis
 	if (!injectedQueryResult?.symbol) {
 		return
 	}
-	// TODO: Check if the injected symbol has the same subcategory as our injection expects.
+	// TODO: Check if the injected symbol has the same subcategory as our injection expects. 
 	if (node.def?.type === 'nbtdoc:inject_clause/compound') {
 		for (const field of node.def.fields) {
 			const fieldPath = [...injectedQueryResult.path, field.key.value] as unknown as [string, ...string[]]

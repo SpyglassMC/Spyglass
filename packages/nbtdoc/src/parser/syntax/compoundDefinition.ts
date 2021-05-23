@@ -1,8 +1,8 @@
 import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
 import { any, FloatNode, IntegerNode, map, optional, repeat, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
 import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
-import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IntRangeNode, LiteralToken, RegistryIndexNode, UnsignedRangeNode } from '../../node'
-import { fallibleFloat, fallibleInteger, float, identifier, identPath, IdRegistries, integer, keyword, marker, minecraftIdentifier, punctuation, RootRegistries, string } from '../terminator'
+import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IdRegistries, IntRangeNode, LiteralToken, RegistryIndexNode, RootRegistries, UnsignedRangeNode } from '../../node'
+import { fallibleFloat, fallibleInteger, float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
 

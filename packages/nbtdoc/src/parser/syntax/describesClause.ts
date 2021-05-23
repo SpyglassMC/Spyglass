@@ -1,8 +1,8 @@
 import type { CommentNode, Parser } from '@spyglassmc/core'
 import { map, optional, ResourceLocationNode } from '@spyglassmc/core'
 import type { DescribesClauseNode, LiteralToken } from '../../node'
-import { IdentPathToken } from '../../node'
-import { ExtendableRootRegistries, ExtendableRootRegistryMap, identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
+import { ExtendableRootRegistries, ExtendableRootRegistryMap, IdentPathToken } from '../../node'
+import { identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 
 type ChildNode = IdentPathToken | LiteralToken | ResourceLocationNode | CommentNode

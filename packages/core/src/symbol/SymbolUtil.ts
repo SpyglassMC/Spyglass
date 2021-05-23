@@ -1,3 +1,4 @@
+import { strict as assert } from 'assert'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode } from '../node'
 import type { Logger } from '../service'
@@ -415,7 +416,10 @@ export class SymbolUtil implements EventPublisher {
 
 	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']) {
 		if (addition) {
-			if (addition.desc !== undefined) {
+			if ('data' in addition) {
+				symbol.data = addition.data
+			}
+			if ('desc' in addition) {
 				symbol.desc = addition.desc
 			}
 			if (addition.relations && Object.keys(addition.relations).length) {
@@ -424,10 +428,10 @@ export class SymbolUtil implements EventPublisher {
 					symbol.relations[relationship] = addition.relations[relationship]
 				}
 			}
-			if (addition.subcategory !== undefined) {
+			if ('subcategory' in addition) {
 				symbol.subcategory = addition.subcategory
 			}
-			if (addition.visibility !== undefined) {
+			if ('visibility' in addition) {
 				// Visibility changes are only accepted if the change wouldn't result in the
 				// symbol being stored in a different symbol table.
 				const inGlobalTable = (v: SymbolVisibility | undefined) => v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
@@ -830,7 +834,7 @@ export class SymbolQuery {
 				throw new Error('The current symbol points to an non-existent symbol.')
 			}
 			this.#symbol = result
-			this.#symbol
+			this.#map = result.parentMap
 		}
 		return this
 	}
@@ -890,5 +894,99 @@ export class SymbolQuery {
 			fn.call(this, value, this)
 		}
 		return this
+	}
+}
+
+/* istanbul ignore next */
+/**
+ * A series of methods for converting symbol structures to human-readable outputs. Mostly for debug purposes.
+ */
+export namespace SymbolFormatter {
+	const IndentChar = '+ '
+
+	export function stringifySymbolStack(stack: SymbolStack): string {
+		return stack.map(table => stringifySymbolTable(table)).join('\n------------\n')
+	}
+
+	export function stringifySymbolTable(table: SymbolTable, indent = ''): string {
+		const ans: [string, string][] = []
+		for (const category of Object.keys(table)) {
+			const map = table[category]!
+			ans.push([category, stringifySymbolMap(map, `${indent}${IndentChar}`)])
+		}
+		return ans.map(v => `CATEGORY ${v[0]}\n${v[1]}`).join(`\n${indent}------------\n`) || 'EMPTY TABLE'
+	}
+
+	export function stringifySymbolMap(map: SymbolMap | null, indent = ''): string {
+		if (!map) {
+			return 'null'
+		}
+		const ans: string[] = []
+		for (const identifier of Object.keys(map)) {
+			const symbol: Symbol = map[identifier]!
+			assert.equal(identifier, symbol.identifier)
+			ans.push(stringifySymbol(symbol, indent))
+		}
+		return ans.join(`\n${indent}------------\n`)
+	}
+
+	export function stringifySymbol(symbol: Symbol | null, indent = ''): string {
+		if (!symbol) {
+			return 'null'
+		}
+		const ans: string[] = []
+		assert.equal(symbol.path[symbol.path.length - 1], symbol.identifier)
+		ans.push(
+			`SYMBOL ${symbol.path.join('.')}` +
+			` {${symbol.category}${symbol.subcategory ? ` (${symbol.subcategory})` : ''}}` +
+			` [${stringifyVisibility(symbol.visibility, symbol.visibilityRestriction)}]`
+		)
+		if (symbol.data) {
+			ans.push(`${IndentChar}data: ${JSON.stringify(symbol.data)}`)
+		}
+		if (symbol.desc) {
+			ans.push(`${IndentChar}description: ${symbol.desc}`)
+		}
+		for (const type of SymbolUsageTypes) {
+			if (symbol[type]) {
+				ans.push(`${IndentChar}${type}:\n${symbol[type]!.map(v => `${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`).join(`\n${indent}${IndentChar.repeat(2)}------------\n`)}`)
+			}
+		}
+		if (symbol.relations) {
+			ans.push(`${IndentChar}relations: ${JSON.stringify(symbol.relations)}`)
+		}
+		if (symbol.members) {
+			ans.push(`${IndentChar}members:\n${stringifySymbolMap(symbol.members, `${indent}${IndentChar.repeat(2)}`)}`)
+		}
+		return ans.map(v => `${indent}${v}`).join('\n')
+	}
+
+	export function stringifyVisibility(visibility: SymbolVisibility | undefined, visibilityRestriction: string[] | undefined) {
+		let stringVisibility: string
+		// Const enums cannot be indexed even if `--preserveConstEnums` is on: https://github.com/microsoft/TypeScript/issues/31353
+		switch (visibility) {
+			case SymbolVisibility.Block:
+				stringVisibility = 'Block'
+				break
+			case SymbolVisibility.File:
+				stringVisibility = 'File'
+				break
+			case SymbolVisibility.Restricted:
+				stringVisibility = 'Restricted'
+				break
+			default:
+				stringVisibility = 'Public'
+				break
+		}
+		return `${stringVisibility}${visibilityRestriction ? ` ${visibilityRestriction.map(v => `“${v}”`).join(', ')}` : ''}`
+	}
+
+	export function stringifyLookupResult(result: LookupResult): string {
+		return `parentSymbol:
+${stringifySymbol(result.parentSymbol, IndentChar)}
+parentMap:
+${stringifySymbolMap(result.parentMap, IndentChar)}
+symbol:
+${stringifySymbol(result.symbol, IndentChar)}`
 	}
 }

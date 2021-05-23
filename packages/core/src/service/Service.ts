@@ -6,7 +6,7 @@ import type { ColorInfo, ColorToken } from '../processor'
 import { selectedNode, traversePreOrder } from '../processor'
 import { Source } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
-import { SymbolUsageTypes, SymbolUtil } from '../symbol'
+import { SymbolFormatter, SymbolUsageTypes, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
 import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
@@ -195,6 +195,7 @@ export class Service {
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
+		console.log(SymbolFormatter.stringifySymbolTable({ nbtdoc: this.symbols.global.nbtdoc }))
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {

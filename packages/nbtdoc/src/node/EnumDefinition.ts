@@ -1,4 +1,4 @@
-import type { DocCommentsNode, IdentifierToken, LiteralToken, Primitive, SyntaxNode } from './index'
+import type { DocCommentsNode, IdentifierToken, LiteralToken, Primitive, SyntaxNode } from './misc'
 
 export interface EnumDefinitionNode extends SyntaxNode<EnumChild> {
 	type: 'nbtdoc:enum_definition'

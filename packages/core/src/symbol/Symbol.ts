@@ -163,12 +163,27 @@ export const enum SymbolVisibility {
 	Restricted,
 }
 
-interface SymbolPath {
+export interface SymbolPath {
 	category: string,
 	path: readonly string[],
 }
+export namespace SymbolPath {
+	export function fromSymbol(symbol: Symbol): SymbolPath
+	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined
+	export function fromSymbol(symbol: Symbol | null): SymbolPath | null
+	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined | null
+	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined | null {
+		return symbol
+			? { category: symbol.category, path: symbol.path }
+			: symbol
+	}
+}
 
 export interface SymbolMetadata {
+	/**
+	 * Custom information about this symbol that cannot be expressed by other fields.
+	 */
+	data?: unknown,
 	/**
 	 * The documentation for this {@link Symbol}. May be edited by doc comments.
 	 */

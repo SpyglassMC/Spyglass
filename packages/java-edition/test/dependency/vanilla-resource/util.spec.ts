@@ -1,5 +1,4 @@
-import { SymbolUtil } from '@spyglassmc/core'
-import { stringifySymbolTable } from '@spyglassmc/core/test-out/symbol/SymbolUtil.spec'
+import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import { strict as assert } from 'assert'
 import * as fs from 'fs-extra'
 import { describe, it } from 'mocha'
@@ -136,7 +135,7 @@ describe('vanilla-resource util', () => {
 				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
 
 			addBlocksSymbols(Fixtures.Blocks, symbols)
-			snapshot(stringifySymbolTable(symbols.global))
+			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
 
@@ -148,7 +147,7 @@ describe('vanilla-resource util', () => {
 				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
 
 			addRegistriesSymbols(Fixtures.Registries, symbols)
-			snapshot(stringifySymbolTable(symbols.global))
+			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
 })
