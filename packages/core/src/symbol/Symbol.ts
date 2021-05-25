@@ -62,6 +62,7 @@ export type DatapackCategory = typeof DatapackCategories[number]
 //#region NBTDoc Categories
 export const NbtdocCategories = Object.freeze([
 	'nbtdoc',
+	'nbtdoc/description',
 ] as const)
 export type NbtdocCategory = typeof NbtdocCategories[number]
 //#endregion
@@ -169,13 +170,11 @@ export interface SymbolPath {
 }
 export namespace SymbolPath {
 	export function fromSymbol(symbol: Symbol): SymbolPath
-	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined
-	export function fromSymbol(symbol: Symbol | null): SymbolPath | null
-	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined | null
-	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined | null {
+	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined
+	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined {
 		return symbol
 			? { category: symbol.category, path: symbol.path }
-			: symbol
+			: undefined
 	}
 }
 
@@ -303,7 +302,7 @@ export namespace SymbolLocation {
 }
 
 export interface SymbolMap {
-	[identifier: string]: Symbol | undefined,
+	[identifier: string]: Symbol,
 }
 
 export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {

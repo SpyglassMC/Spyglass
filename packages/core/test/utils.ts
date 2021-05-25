@@ -1,6 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageError, Parser, Returnable } from '../lib'
-import { Failure, ParserContext, Source } from '../lib'
+import { AstNode, Failure, ParserContext, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
 Object.defineProperty(BigInt.prototype, 'toJSON', {
@@ -26,7 +26,7 @@ export function markOffsetInString(string: string, offset: number) {
 }
 
 function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean): void {
-	if (!node || typeof node !== 'object') {
+	if (!AstNode.is(node as unknown)) {
 		return
 	}
 	if (removeChildren) {
@@ -35,6 +35,7 @@ function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: 
 	if (!keepOptions) {
 		delete node.options
 	}
+	delete node.parent
 	delete node.symbol?.parentMap
 	delete node.symbol?.parentSymbol
 	for (const value of Object.values(node)) {

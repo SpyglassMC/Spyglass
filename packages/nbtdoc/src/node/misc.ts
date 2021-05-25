@@ -104,6 +104,7 @@ export const ExtendableRootRegistryMap = {
 	'minecraft:block': 'block',
 	'minecraft:entity': 'entity_type',
 	'minecraft:item': 'item',
+	'minecraft:storage': 'storage',
 } as const
 export const ExtendableRootRegistries = Object.keys(ExtendableRootRegistryMap) as (keyof typeof ExtendableRootRegistryMap)[]
 

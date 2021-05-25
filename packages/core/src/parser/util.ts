@@ -21,6 +21,8 @@ interface InfallibleAttemptResult<N extends Returnable = AstNode> extends Attemp
  * @returns
  * - `result`: The result returned by the `parser`.
  * - `updateSrcAndCtx`: A function that will update the passed-in `src` and `ctx` to the state where `parser` has been executed.
+ * - `endCursor`: The offset where the `parser` stopped  parsing.
+ * - `errorAmount`: The amount of errors created by the `parser`.
  */
 export function attempt<N extends Returnable = AstNode>(parser: InfallibleParser<N>, src: Source, ctx: ParserContext): InfallibleAttemptResult<N>
 export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N>

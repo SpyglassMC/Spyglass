@@ -1,4 +1,5 @@
-import type { AstNode, ErrorNode, FileNode, Mutable } from '../node'
+import type { ErrorNode, FileNode, Mutable } from '../node'
+import { AstNode } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
@@ -29,6 +30,8 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 		if (src.skipWhitespace().canRead()) {
 			ans.children.push(error(src, ctx) as ErrorNode)
 		}
+
+		AstNode.setParents(ans)
 
 		ans.parserErrors = ctx.err.dump()
 

@@ -1,9 +1,11 @@
 import type * as core from '@spyglassmc/core'
 import * as mcfunction from '@spyglassmc/mcfunction'
 import { getVanillaResources, registerSymbols } from '../dependency'
+import * as checker from './checker'
 import * as colorizer from './colorizer'
 import * as parser from './parser'
 
+export * as checker from './checker'
 export * as colorizer from './colorizer'
 export * as parser from './parser'
 
@@ -20,5 +22,6 @@ export async function initialize(meta: core.MetaRegistry, logger: core.Logger, s
 		parser: mcfunction.parser.entry('1.17', parser.argument),
 	})
 
+	checker.register(meta)
 	colorizer.register(meta)
 }

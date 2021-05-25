@@ -1,7 +1,8 @@
-import type { AstNode, ResourceLocationNode, StringBaseNode, StringNode } from '../../node'
-import type { SymbolBaseNode, SymbolNode } from '../../node'
+import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { AstNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { Failure, parseStringValue } from '../../parser'
 import type { MetaRegistry } from '../../service'
+import { CheckerContext, ErrorReporter } from '../../service'
 import { Range } from '../../source'
 import { traversePreOrder } from '../util'
 import type { Checker } from './Checker'
@@ -29,14 +30,24 @@ export const resourceLocation: Checker<ResourceLocationNode> = (_node, _ctx) => 
 	// TODO
 }
 
-export const string: Checker<StringBaseNode> = (node, ctx) => {
+export const string: Checker<StringBaseNode> = async (node, ctx) => {
 	if (!node.valueNode && node.options.value?.parser && Range.length(node.range)) {
 		const valueResult = parseStringValue(node.options.value.parser, node.value, node.valueMap, ctx)
 		if (valueResult !== Failure) {
 			node.valueNode = valueResult
 		}
 	}
-	// TODO
+	if (node.valueNode) {
+		const checker = ctx.meta.getChecker(node.valueNode?.type)
+		const valueCtx = CheckerContext.create({
+			...ctx,
+			doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, node.value),
+			err: new ErrorReporter(),
+		})
+		await checker(node.valueNode, valueCtx)
+		ctx.err.absorb(valueCtx.err, { map: node.valueMap, doc: ctx.doc })
+		// FIXME: Map symbol locations.
+	}
 }
 
 export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {

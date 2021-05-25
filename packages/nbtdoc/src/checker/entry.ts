@@ -5,7 +5,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
 import type { DescribesClauseNode, EnumDefinitionNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
-import { CompoundDefinitionNode, CompoundFieldNode, ExtendableRootRegistries, ExtendableRootRegistryMap } from '../node'
+import { CompoundDefinitionNode, CompoundFieldNode, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -85,7 +85,7 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 				enumDefinition(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:describes_clause':
-				describesClause(childNode, nbtdocCtx)
+				await describesClause(childNode, nbtdocCtx)
 				break
 			case 'nbtdoc:inject_clause':
 				await injectClause(childNode, nbtdocCtx)
@@ -100,13 +100,11 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 		return
 	}
 
-	if (node.extends) {
-		const extendedSymbol = node.extends.type === 'nbtdoc:ident_path'
-			? (await resolveIdentPath(node.extends, ctx))?.symbol ?? undefined
-			: undefined
-		const data = CompoundDefinitionNode.toSymbolData(node, SymbolPath.fromSymbol(extendedSymbol))
-		definitionQuery.amend({ data: { data } })
-	}
+	const extendedSymbol = node.extends?.type === 'nbtdoc:ident_path'
+		? (await resolveIdentPath(node.extends, ctx))?.symbol ?? undefined
+		: undefined
+	const data = CompoundDefinitionNode.toSymbolData(node, SymbolPath.fromSymbol(extendedSymbol))
+	definitionQuery.amend({ data: { data } })
 
 	const promises: Promise<void>[] = []
 
@@ -160,14 +158,31 @@ const compoundDefinitionHoisting = (node: CompoundDefinitionNode, ctx: CheckerCo
 		})
 }
 
-const describesClause = (node: DescribesClauseNode, ctx: CheckerContext): void => {
+const describesClause = async (node: DescribesClauseNode, ctx: CheckerContext): Promise<void> => {
 	const registry = ResourceLocationNode.toString(node.registry, 'full')
-	if (!ExtendableRootRegistries.includes(registry as any)) {
+	if (!(registry in ExtendableRootRegistryMap)) {
 		return
 	}
+
+	const describerSymbol = await resolveIdentPath(node.path, ctx)
+
 	const category = ExtendableRootRegistryMap[registry as keyof typeof ExtendableRootRegistryMap]
+	const objects = node.objects ? node.objects.map(v => ResourceLocationNode.toString(v, 'full')) : ['@default']
 	ctx.symbols
-		.query(ctx.doc, category,)
+		.query(ctx.doc, 'nbtdoc/description', category)
+		.enter({})
+		.onEach(objects, (object, query) => {
+			query.member(object, member => member
+				.enter({
+					data: {
+						relations: {
+							describedBy: SymbolPath.fromSymbol(describerSymbol?.symbol),
+						},
+					},
+					usage: { type: 'definition', range: node },
+				})
+			)
+		})
 }
 
 const enumDefinition = (node: EnumDefinitionNode, ctx: CheckerContext): void => {

@@ -187,6 +187,9 @@ export class SymbolUtil implements EventPublisher {
 		return typeof uri === 'string' ? uri : uri.uri
 	}
 
+	/**
+	 * @see {@link SymbolUtil.trimMap}
+	 */
 	trim(table: SymbolTable): void {
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
@@ -197,20 +200,23 @@ export class SymbolUtil implements EventPublisher {
 		}
 	}
 
-	trimMap(map: SymbolMap | undefined, path: string[] = []): void {
+	/**
+	 * Remove symbols that don't have any usages AND don't have any members.
+	 */
+	trimMap(map: SymbolMap | undefined): void {
 		if (!map) {
 			return
 		}
-		for (const identifier of Object.keys(map)) {
-			const symbol = map[identifier]!
-			if (!symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
-				delete map[identifier]
-				this.trigger('symbolRemoved', { symbol })
-			} else if (symbol.members) {
-				this.trimMap(symbol.members, [...path, identifier])
+		for (const [identifier, symbol] of Object.entries(map)) {
+			if (symbol.members) {
+				this.trimMap(symbol.members)
 				if (Object.keys(symbol.members).length === 0) {
 					delete symbol.members
 				}
+			}
+			if (!symbol.members && !symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
+				delete map[identifier]
+				this.trigger('symbolRemoved', { symbol })
 			}
 		}
 	}
@@ -624,7 +630,7 @@ namespace SymbolAdditionUsageWithNode {
  */
 export type SymbolStack = [SymbolTable, ...SymbolTable[]]
 
-type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQuery, symbol: S) => unknown
+type QueryCallback<S extends Symbol | null = Symbol | null> = (this: SymbolQuery, symbol: S, query: SymbolQuery) => unknown
 type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 
 /* istanbul ignore next */
@@ -696,12 +702,17 @@ export class SymbolQuery {
 		return this.#symbol
 	}
 
+	with(fn: QueryMemberCallback): this {
+		fn(this)
+		return this
+	}
+
 	if(predicate: (this: void, symbol: Symbol | null) => symbol is null, fn: QueryCallback<null>): this
 	if(predicate: (this: void, symbol: Symbol | null) => symbol is Symbol, fn: QueryCallback<Symbol>): this
 	if(predicate: QueryCallback, fn: QueryCallback): this
 	if(predicate: QueryCallback, fn: QueryCallback<any>): this {
-		if (predicate.call(this, this.#symbol)) {
-			fn.call(this, this.#symbol)
+		if (predicate.call(this, this.#symbol, this)) {
+			fn.call(this, this.#symbol, this)
 			this.#hasTriggeredIf = true
 		}
 		return this
@@ -717,7 +728,7 @@ export class SymbolQuery {
 	/**
 	 * Calls `fn` if the queried symbol exists (i.e. has any of declarations/definitions/implementations/references/typeDefinitions).
 	 */
-	ifKnown(fn: QueryCallback<null>): this {
+	ifKnown(fn: QueryCallback<Symbol>): this {
 		return this.if(s => s !== null, fn as QueryCallback)
 	}
 
@@ -761,7 +772,7 @@ export class SymbolQuery {
 	 */
 	else(fn: QueryCallback): this {
 		if (!this.#hasTriggeredIf) {
-			fn.call(this, this.#symbol)
+			fn.call(this, this.#symbol, this)
 		}
 		return this
 	}

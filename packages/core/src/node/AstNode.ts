@@ -9,6 +9,7 @@ export interface AstNode {
 	 * All child nodes of this AST node.
 	 */
 	readonly children?: AstNode[],
+	readonly parent?: AstNode,
 	symbol?: Symbol,
 	hover?: string,
 	/**
@@ -19,8 +20,15 @@ export interface AstNode {
 export namespace AstNode {
 	/* istanbul ignore next */
 	export function is(obj: unknown): obj is AstNode {
-		return typeof (obj as AstNode).type === 'string'
-			&& Range.is((obj as AstNode).range)
+		return !!obj && typeof obj === 'object' && typeof (obj as AstNode).type === 'string' &&
+			Range.is((obj as AstNode).range)
+	}
+
+	export function setParents(node: AstNode): void {
+		for (const child of node.children ?? []) {
+			(child as Mutable<AstNode>).parent = node
+			setParents(child)
+		}
 	}
 }
 

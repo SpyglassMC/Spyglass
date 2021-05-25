@@ -11,7 +11,7 @@ export type NbtPrimitiveNode =
 	| core.StringNode
 export namespace NbtPrimitiveNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is NbtIntegerAlikeNode {
+	export function is(node: core.AstNode): node is NbtPrimitiveNode {
 		return NbtNumberNode.is(node) || core.StringNode.is(node)
 	}
 }
@@ -159,7 +159,7 @@ export namespace NbtPrimitiveArrayNode {
 	}
 }
 
-export interface NbtByteArrayNode extends core.ListNode<NbtPrimitiveNode> {
+export interface NbtByteArrayNode extends core.ListNode<NbtByteNode> {
 	readonly type: 'nbt:byte_array',
 }
 export namespace NbtByteArrayNode {
@@ -169,7 +169,7 @@ export namespace NbtByteArrayNode {
 	}
 }
 
-export interface NbtIntArrayNode extends core.ListNode<NbtPrimitiveNode> {
+export interface NbtIntArrayNode extends core.ListNode<NbtIntNode> {
 	readonly type: 'nbt:int_array',
 }
 export namespace NbtIntArrayNode {
@@ -179,7 +179,7 @@ export namespace NbtIntArrayNode {
 	}
 }
 
-export interface NbtLongArrayNode extends core.ListNode<NbtPrimitiveNode> {
+export interface NbtLongArrayNode extends core.ListNode<NbtLongNode> {
 	readonly type: 'nbt:long_array',
 }
 export namespace NbtLongArrayNode {

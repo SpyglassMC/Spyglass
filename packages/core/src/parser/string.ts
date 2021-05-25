@@ -120,6 +120,7 @@ export function parseStringValue<T extends Returnable>(parser: Parser<T>, value:
 		ctx.err.absorb(valueCtx.err, { map, doc: ctx.doc })
 	}
 	// TODO: Mark trailing string as errors.
+	// FIXME: Map symbol locations.
 	return valueResult
 }
 

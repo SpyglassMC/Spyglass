@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
+import type { ChildBaseExtender, ChildBaseNode } from '@spyglassmc/mcfunction/lib/node'
 import type * as nbt from '@spyglassmc/nbt'
-import type { ChildBaseNode, ChildBaseExtender } from '@spyglassmc/mcfunction/lib/node'
 
 export interface BlockStatesNode extends core.TableNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
@@ -202,9 +202,7 @@ export interface MinecraftMessageArgumentNode extends ChildBaseNode {
 export interface MinecraftMobEffectArgumentNode extends ChildBaseNode, core.ResourceLocationBaseNode {
 	type: 'mcfunction:argument/minecraft:mob_effect',
 }
-export interface MinecraftNbtCompoundTagArgumentNode extends ChildBaseNode {
-	type: 'mcfunction:argument/minecraft:nbt_compound_tag',
-}
+export interface MinecraftNbtCompoundTagArgumentNode extends nbt.NbtCompoundNode, ChildBaseExtender { }
 export interface MinecraftNbtPathArgumentNode extends ChildBaseNode {
 	type: 'mcfunction:argument/minecraft:nbt_path',
 }

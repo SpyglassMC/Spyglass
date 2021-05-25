@@ -1429,8 +1429,8 @@ export const TestNode: MainNode = {
 											},
 										],
 										value: [
-											'4',
-											'4',
+											4,
+											4,
 										],
 									},
 									item: {
@@ -1510,8 +1510,8 @@ export const TestNode: MainNode = {
 										},
 									],
 									value: [
-										'4',
-										'4',
+										4,
+										4,
 									],
 								},
 								item: {
@@ -1634,8 +1634,8 @@ export const TestNode: MainNode = {
 											},
 										],
 										value: [
-											'4',
-											'4',
+											4,
+											4,
 										],
 									},
 									item: {
@@ -1715,8 +1715,8 @@ export const TestNode: MainNode = {
 										},
 									],
 									value: [
-										'4',
-										'4',
+										4,
+										4,
 									],
 								},
 								item: {
@@ -1855,8 +1855,8 @@ export const TestNode: MainNode = {
 										},
 									],
 									value: [
-										'4',
-										'4',
+										4,
+										4,
 									],
 								},
 								item: {
@@ -1936,8 +1936,8 @@ export const TestNode: MainNode = {
 									},
 								],
 								value: [
-									'4',
-									'4',
+									4,
+									4,
 								],
 							},
 							item: {
@@ -2060,8 +2060,8 @@ export const TestNode: MainNode = {
 										},
 									],
 									value: [
-										'4',
-										'4',
+										4,
+										4,
 									],
 								},
 								item: {
@@ -2141,8 +2141,8 @@ export const TestNode: MainNode = {
 									},
 								],
 								value: [
-									'4',
-									'4',
+									4,
+									4,
 								],
 							},
 							item: {

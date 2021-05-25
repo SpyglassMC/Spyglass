@@ -300,8 +300,6 @@ export namespace CompoundFieldTypeNode {
 					type: 'union',
 					members: node.members.map(m => toSymbolData(m, symbol)),
 				}
-			default:
-				throw ''
 		}
 	}
 }
@@ -326,7 +324,7 @@ export namespace IntRangeNode {
 
 export interface UnsignedRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:unsigned_range',
-	value: [bigint | null, bigint | null],
+	value: [number | null, number | null],
 }
 export namespace UnsignedRangeNode {
 	export function is(obj: object): obj is UnsignedRangeNode {
@@ -334,7 +332,7 @@ export namespace UnsignedRangeNode {
 	}
 
 	export interface SymbolData {
-		value: [bigint | null, bigint | null],
+		value: [number | null, number | null],
 	}
 
 	export function toSymbolData(node: UnsignedRangeNode): SymbolData {

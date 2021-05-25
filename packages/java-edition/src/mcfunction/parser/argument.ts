@@ -40,11 +40,11 @@ const LongMin = -9223372036854775808n
 export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: string, rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | null => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
-	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser<ArgumentNode> => core.map(
+	const wrap = <T extends core.AstNode>(parser: core.Parser<T>, noTypeOverride = false): core.Parser<ArgumentNode> => core.map(
 		core.failOnEmpty<T>(parser),
 		res => ({
 			...res,
-			type: `mcfunction:argument/${treeNode.parser}`,
+			...noTypeOverride ? {} : { type: `mcfunction:argument/${treeNode.parser}` },
 			name,
 			hover: `${argumentTreeNodeToString(name, treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
 		} as ArgumentNode)
@@ -150,7 +150,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 				category: 'mob_effect',
 			}))
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbt.parser.compound)
+			return wrap(nbt.parser.compound, true)
 		case 'minecraft:nbt_tag':
 			return wrap(nbt.parser.entry)
 		case 'minecraft:objective':
