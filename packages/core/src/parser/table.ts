@@ -50,8 +50,9 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				}
 
 				// Key.
-				const { result: keyResult, updateSrcAndCtx: updateForKey } = attempt(pair.key, src, ctx)
-				if (keyResult === Failure) {
+				const keyStart = src.cursor
+				const { result: keyResult, updateSrcAndCtx: updateForKey, endCursor: keyEnd } = attempt(pair.key, src, ctx)
+				if (keyResult === Failure || (keyEnd - keyStart === 0 && ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))) {
 					ctx.err.report(
 						localize('expected', localize('parser.table.key')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
@@ -73,8 +74,9 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				// Value.
 				src.skipWhitespace()
 				const valueParser = typeof pair.value === 'function' ? pair.value : pair.value.get(ans, key)
-				const { result: valueResult, updateSrcAndCtx: updateForValue } = attempt(valueParser, src, ctx)
-				if (valueResult === Failure) {
+				const valueStart = src.cursor
+				const { result: valueResult, updateSrcAndCtx: updateForValue, endCursor: valueEnd } = attempt(valueParser, src, ctx)
+				if (valueResult === Failure || (valueEnd - valueStart === 0 && ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))) {
 					ctx.err.report(
 						localize('expected', localize('parser.table.value')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
