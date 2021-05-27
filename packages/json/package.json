@@ -8,9 +8,6 @@
   "directories": {
     "test": "test/"
   },
-  "devDependencies": {
-    "fast-glob": "^3.2.5"
-  },
   "publishConfig": {
     "access": "public"
   },

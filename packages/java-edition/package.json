@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/download": "^6.2.4",
     "@types/fs-extra": "^9.0.10",
+    "fast-glob": "^3.2.5",
     "vanilla-datapack-data": "SPGoding/vanilla-datapack#data"
   },
   "publishConfig": {
