@@ -21,6 +21,15 @@ export namespace toLS {
 		return info.map(i => colorInformation(i, doc))
 	}
 
+	export function colorPresentation(presentation: core.ColorPresentation, doc: TextDocument): ls.ColorPresentation {
+		const edit = ls.TextEdit.replace(range(presentation.range, doc), presentation.text)
+		return ls.ColorPresentation.create(presentation.label, edit)
+	}
+
+	export function colorPresentationArray(presentation: core.ColorPresentation[], doc: TextDocument): ls.ColorPresentation[] {
+		return presentation.map(p => colorPresentation(p, doc))
+	}
+
 	export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Diagnostic {
 		const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity))
 		if (error.info?.deprecated) {

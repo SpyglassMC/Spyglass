@@ -1,6 +1,6 @@
-import type { AllCategory, Checker, Color, Parser, ResourceLocationCategory, Returnable, TaggableResourceLocationCategory } from '@spyglassmc/core'
+import type { AllCategory, AstNode, Checker, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { AstNode, Failure, Lazy } from '@spyglassmc/core'
+import { Failure, Lazy } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { JsonExpectation } from '../../node'
 import { JsonStringNode } from '../../node'
@@ -20,8 +20,7 @@ export function literal(value: AllCategory | string[]): JsonChecker {
 
 export function string<T extends AstNode>(name: string | string[] | undefined, parser: Lazy<Parser<T>>, checker?: Lazy<Checker<T>>, expectation?: Partial<JsonExpectation>): JsonChecker
 export function string(name?: string | string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
-export function string(name: string | string[], parser: Lazy<Parser<Color>>, checker: undefined, expectation: Partial<JsonExpectation>, store: 'color'): JsonChecker
-export function string(name?: string | string[], parser?: Lazy<Parser<Returnable>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>, store: 'color' | 'valueNode' = 'valueNode'): JsonChecker {
+export function string(name?: string | string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {
@@ -29,8 +28,8 @@ export function string(name?: string | string[], parser?: Lazy<Parser<Returnable
 		} else if (parser) {
 			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx)
 			if (result !== Failure) {
-				node[store] = result as any
-				if (checker && AstNode.is(result)) {
+				node.valueNode = result
+				if (checker) {
 					Lazy.resolve(checker)(result, ctx)
 				}
 			}

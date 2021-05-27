@@ -140,7 +140,8 @@ connection.workspace.onDidRenameFiles(({ }) => {
 
 connection.onColorPresentation(({ textDocument: { uri }, color, range }) => {
 	const { doc, node } = service.get(uri)!
-	return null
+	const presentation = service.getColorPresentation(node, doc, toCore.range(range, doc), toCore.color(color))
+	return toLS.colorPresentationArray(presentation, doc)
 })
 connection.onDocumentColor(({ textDocument: { uri } }) => {
 	const { doc, node } = service.get(uri)!

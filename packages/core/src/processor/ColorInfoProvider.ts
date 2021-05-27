@@ -83,3 +83,75 @@ export namespace Color {
 		return fromIntRGB(r, g, b)
 	}
 }
+
+export enum ColorFormat {
+	/**
+	 * `1 0.6 0.2 1.0`
+	 */
+	DecRGBA,
+	/**
+	 * `1 0.6 0.2`
+	 */
+	DecRGB,
+	/**
+	 * `255 153 51 25`
+	 */
+	IntRGBA,
+	/**
+	 * `255 153 51`
+	 */
+	IntRGB,
+	/**
+	 * `#ff9933ff`
+	 */
+	HexRGBA,
+	/**
+	 * `#ff9933`
+	 */
+	HexRGB,
+	/**
+	 * `16620441`
+	 */
+	CompositeInt,
+}
+
+export type FormattableColor = {
+	value: Color,
+	format: ColorFormat[],
+	range?: Range,
+}
+
+export type ColorPresentation = {
+	label: string,
+	text: string,
+	range: Range,
+}
+export namespace ColorPresentation {
+	export function fromColorFormat(format: ColorFormat, color: Color, range: Range): ColorPresentation {
+		const presentation = colorPresentation(format, color)
+		return {
+			label: presentation,
+			text: presentation,
+			range,
+		}
+	}
+
+	function colorPresentation(format: ColorFormat, color: Color): string {
+		switch (format) {
+			case ColorFormat.DecRGBA:
+				return `${color[0]} ${color[1]} ${color[2]} ${color[3]}`
+			case ColorFormat.DecRGB:
+				return `${color[0]} ${color[1]} ${color[2]}`
+			case ColorFormat.IntRGBA:
+				return `${Math.round(color[0] * 255)} ${Math.round(color[1] * 255)} ${Math.round(color[2] * 255)} ${Math.round(color[3] * 255)}`
+			case ColorFormat.IntRGB:
+				return `${Math.round(color[0] * 255)} ${Math.round(color[1] * 255)} ${Math.round(color[2] * 255)}`
+			case ColorFormat.HexRGBA:
+				return `#${Math.round((color[0] * 255 << 24) + (color[1] * 255 << 16) + (color[2] * 255) << 8 + color[3] * 255).toString(16).padStart(8, '0')}`
+			case ColorFormat.HexRGB:
+				return `#${Math.round((color[0] * 255 << 16) + (color[1] * 255 << 8) + color[2] * 255).toString(16).padStart(6, '0')}`
+			case ColorFormat.CompositeInt:
+				return `${Math.round((color[0] * 255 << 16) + (color[1] * 255 << 8) + color[2] * 255)}`
+		}
+	}
+}

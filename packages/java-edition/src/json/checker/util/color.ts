@@ -1,7 +1,6 @@
 import type { Parser } from '@spyglassmc/core'
-import { Color, Range } from '@spyglassmc/core'
-import { JsonNumberNode } from '@spyglassmc/json'
-import { string } from '@spyglassmc/json/lib/checker'
+import { Color, ColorFormat, Failure, parseStringValue, Range } from '@spyglassmc/core'
+import { JsonNumberNode, JsonStringNode } from '@spyglassmc/json'
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { localize } from '@spyglassmc/locales'
 
@@ -29,7 +28,21 @@ export function stringColor(): JsonChecker {
 		return Color.fromCompositeInt(value)
 	}
 
-	return string('color', parser, undefined, { pool: Color.ColorNames }, 'color')
+	return (node, ctx) => {
+		node.expectation = [{ type: 'json:string', typedoc: 'String("Color")', pool: Color.ColorNames }]
+		if (!JsonStringNode.is(node)) {
+			ctx.err.report(localize('expected', localize('string')), node)
+		} else {
+			const result = parseStringValue(parser, node.value, node.valueMap, ctx)
+			if (result !== Failure) {
+				node.color = {
+					value: result,
+					format: [ColorFormat.HexRGB],
+					range: { start: node.range.start + 1, end: node.range.end - 1 },
+				}
+			}
+		}
+	}
 }
 
 export function intColor(): JsonChecker {
@@ -37,7 +50,10 @@ export function intColor(): JsonChecker {
 		if (!JsonNumberNode.is(node) || !Number.isInteger(node.value)) {
 			ctx.err.report(localize('expected', localize('integer')), node)
 		} else {
-			node.color = Color.fromCompositeInt(node.value)
+			node.color = {
+				value: Color.fromCompositeInt(node.value),
+				format: [ColorFormat.CompositeInt],
+			}
 		}
 	}
 }

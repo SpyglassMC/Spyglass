@@ -2,8 +2,9 @@ import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textd
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
-import type { ColorInfo, ColorToken } from '../processor'
-import { selectedNode, traversePreOrder } from '../processor'
+import type { Color, ColorInfo, ColorToken } from '../processor'
+import { ColorPresentation, selectedNode, traversePreOrder } from '../processor'
+import type { Range } from '../source'
 import { Source } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolFormatter, SymbolUsageTypes, SymbolUtil } from '../symbol'
@@ -207,8 +208,22 @@ export class Service {
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
 		const ans: ColorInfo[] = []
-		traversePreOrder(node, _ => true, n => n.color, n => ans.push({ color: n.color!, range: n.range }))
+		traversePreOrder(node, _ => true, n => n.color, n => ans.push({
+			color: Array.isArray(n.color) ? n.color : n.color!.value,
+			range: n.range,
+		}))
 		return ans
+	}
+
+	getColorPresentation(node: FileNode<AstNode>, doc: TextDocument, range: Range, color: Color): ColorPresentation[] {
+		this.debug(`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${range.start}-${range.end}`)
+		const result = selectedNode(node, range.start)
+		const nodeColor = result?.node.color
+		if (nodeColor && !Array.isArray(nodeColor)) {
+			const colorRange = nodeColor.range ?? result!.node.range
+			return nodeColor.format.map(format => ColorPresentation.fromColorFormat(format, color, colorRange))
+		}
+		return []
 	}
 
 	complete(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {

@@ -31,4 +31,8 @@ export namespace toCore {
 	export function range(range: ls.Range, doc: TextDocument): core.Range {
 		return core.Range.create(offset(range.start, doc), offset(range.end, doc))
 	}
+
+	export function color(color: ls.Color): core.Color {
+		return [color.red, color.green, color.blue, color.alpha]
+	}
 }

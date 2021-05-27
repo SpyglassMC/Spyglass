@@ -1,4 +1,4 @@
-import type { Color } from '../processor'
+import type { Color, FormattableColor } from '../processor'
 import { Range } from '../source'
 import type { Symbol } from '../symbol'
 
@@ -14,7 +14,7 @@ export interface AstNode {
 	/**
 	 * An actual color that this node represents.
 	 */
-	color?: Color,
+	color?: Color | FormattableColor,
 }
 export namespace AstNode {
 	/* istanbul ignore next */
