@@ -1,4 +1,4 @@
-import { ErrorReporter, Range } from '@spyglassmc/core'
+import { AstNode, ErrorReporter, Range } from '@spyglassmc/core'
 import type { JsonExpectation, JsonNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
@@ -15,27 +15,39 @@ export function as(context: string, checker: JsonChecker): JsonChecker {
 }
 
 export type AttemptResult = {
-	totalErrorRange: number,
+	totalErrorSpan: number,
 	expectation?: JsonExpectation[],
-	updateCtx: () => void,
+	updateNodeAndCtx: () => void,
 }
 
 export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerContext): AttemptResult {
-	// TODO: determine whether cloning of AST is necessary
-	// Currently nodes are not cloned
-	const tempCtx = { ...ctx, err: new ErrorReporter() }
+	// TODO: The code below is mostly copied from core with some changes to support `expectation`. Could be refactored... I guess.
+	// Misode mentioned to somehow check the raw type first before any. https://discord.com/channels/666020457568403505/666037123450929163/847671251371819079
+	const tempNode = AstNode.clone(node)
+	const tempCtx = {
+		...ctx,
+		err: new ErrorReporter(),
+		symbols: ctx.symbols.clone(),
+	}
 
-	checker(node, { ...tempCtx, context: ctx.context })
+	checker(tempNode, tempCtx)
 
-	const totalErrorRange = tempCtx.err.errors
+	const totalErrorSpan = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
 		.reduce((a, b) => a + b, 0)
 
 	return {
-		totalErrorRange,
-		expectation: node.expectation,
-		updateCtx: () => {
+		totalErrorSpan,
+		expectation: tempNode.expectation,
+		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
+			ctx.symbols.absorb(tempCtx.symbols)
+
+			// Technically we could pass a `[N]` instead of `N` in all checkers to simulate a pointer.
+			// But why bother. Just copying all properties from `tempNode` to `node` should work.
+			for (const [key, value] of Object.entries(tempNode)) {
+				(node as any)[key] = value
+			}
 		},
 	}
 }
@@ -46,9 +58,9 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 	}
 	return (node, ctx) => {
 		const attempts = checkers
-			.map(Checker => attempt(Checker, node, ctx))
-			.sort((a, b) => a.totalErrorRange - b.totalErrorRange)
-		attempts[0].updateCtx()
+			.map(checker => attempt(checker, node, ctx))
+			.sort((a, b) => a.totalErrorSpan - b.totalErrorSpan)
+		attempts[0].updateNodeAndCtx()
 		node.expectation = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)
 	}
 }

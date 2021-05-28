@@ -1,11 +1,60 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { AstNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import { AstNode} from '../../node'
+import type { ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { Failure, parseStringValue } from '../../parser'
 import type { MetaRegistry } from '../../service'
 import { CheckerContext, ErrorReporter } from '../../service'
 import { Range } from '../../source'
 import { traversePreOrder } from '../util'
 import type { Checker } from './Checker'
+
+export type AttemptResult = {
+	errorAmount: number,
+	totalErrorSpan: number,
+	updateNodeAndCtx: () => void,
+}
+
+export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: CheckerContext): AttemptResult {
+	const tempNode = AstNode.clone(node)
+	const tempCtx = {
+		...ctx,
+		err: new ErrorReporter(),
+		symbols: ctx.symbols.clone(),
+	}
+
+	checker(tempNode, tempCtx)
+
+	const totalErrorSpan = tempCtx.err.errors
+		.map(e => e.range.end - e.range.start)
+		.reduce((a, b) => a + b, 0)
+
+	return {
+		errorAmount: tempCtx.err.errors.length,
+		totalErrorSpan,
+		updateNodeAndCtx: () => {
+			ctx.err.absorb(tempCtx.err)
+			ctx.symbols.absorb(tempCtx.symbols)
+
+			// Technically we could pass a `[N]` instead of `N` in all checkers to simulate a pointer.
+			// But why bother. Just copying all properties from `tempNode` to `node` should work.
+			for (const [key, value] of Object.entries(tempNode)) {
+				(node as any)[key] = value
+			}
+		},
+	}
+}
+
+export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
+	if (checkers.length === 0) {
+		throw new Error('Expected at least one checker')
+	}
+	return (node, ctx) => {
+		const attempts = checkers
+			.map(checker => attempt(checker, node, ctx))
+			.sort((a, b) => a.errorAmount - b.errorAmount || a.totalErrorSpan - b.totalErrorSpan)
+		attempts[0].updateNodeAndCtx()
+	}
+}
 
 /**
  * Use the shallowest children that have their own colorizers to provide the color tokens.

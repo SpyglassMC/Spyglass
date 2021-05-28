@@ -57,28 +57,51 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 		return ans
 	}
 
+
+	return (node, ctx) => {
+		if (!path) {
+			return
+		}
+
+		for (const { key: keyNode, value: valueNode } of node.children) {
+			if (!keyNode || !valueNode) {
+				continue
+			}
+			const key = keyNode.value
+			const type = getFieldType(path, node, key, ctx)
+			if (type) {
+				fieldType(type, options)(valueNode, ctx)
+			} else {
+				// Unknown key.
+				// TODO
+			}
+		}
+	}
+}
+
+function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
 	const isInRange = (value: number, [min, max]: [number | null, number | null]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 
-	const checkFieldType = (node: NbtNode, type: nbtdoc.CompoundFieldTypeNode.SymbolData, ctx: core.CheckerContext): void => {
-		const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'union'>, NbtNode['type']> = {
-			boolean: 'nbt:byte',
-			byte: 'nbt:byte',
-			byte_array: 'nbt:byte_array',
-			double: 'nbt:double',
-			float: 'nbt:float',
-			id: 'string',
-			index: 'nbt:compound',
-			int: 'nbt:int',
-			int_array: 'nbt:int_array',
-			list: 'nbt:list',
-			long: 'nbt:long',
-			long_array: 'nbt:long_array',
-			short: 'nbt:short',
-			string: 'string',
-			symbol: 'nbt:compound',
-		}
+	const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'union'>, NbtNode['type']> = {
+		boolean: 'nbt:byte',
+		byte: 'nbt:byte',
+		byte_array: 'nbt:byte_array',
+		double: 'nbt:double',
+		float: 'nbt:float',
+		id: 'string',
+		index: 'nbt:compound',
+		int: 'nbt:int',
+		int_array: 'nbt:int_array',
+		list: 'nbt:list',
+		long: 'nbt:long',
+		long_array: 'nbt:long_array',
+		short: 'nbt:short',
+		string: 'string',
+		symbol: 'nbt:compound',
+	}
 
+	return (node, ctx): void => {
 		// Rough type check.
 		if (type.type !== 'union' && node.type !== ExpectedTypes[type.type]) {
 			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.type])), node)
@@ -155,7 +178,7 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 				}
 				for (const { value: childNode } of node.children) {
 					if (childNode) {
-						checkFieldType(childNode, type.item, ctx)
+						fieldType(type.item, options)(childNode, ctx)
 					}
 				}
 				break
@@ -167,30 +190,8 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 				compound(type.symbol, options)(node, ctx)
 				break
 			case 'union':
-				for (const member of type.members) {
-					
-				}
+				core.checker.any(type.members.map(t => fieldType(t, options)))(node, ctx)
 				break
-		}
-	}
-
-	return (node, ctx) => {
-		if (!path) {
-			return
-		}
-
-		for (const { key: keyNode, value: valueNode } of node.children) {
-			if (!keyNode || !valueNode) {
-				continue
-			}
-			const key = keyNode.value
-			const type = getFieldType(path, node, key, ctx)
-			if (type) {
-				checkFieldType(valueNode, type, ctx)
-			} else {
-				// Unknown key.
-				// TODO
-			}
 		}
 	}
 }

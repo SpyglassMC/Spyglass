@@ -1,9 +1,10 @@
 import { strict as assert } from 'assert'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { deepClone } from '../common'
 import type { AstNode } from '../node'
 import type { Logger } from '../service'
-import type { EventPublisher } from '../service/EventPublisher'
-import { EventPublisherImpl } from '../service/EventPublisher'
+import type { EventListenable } from '../service/EventPublisher'
+import { EventPublisher } from '../service/EventPublisher'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
@@ -42,15 +43,54 @@ interface SymbolLocationEvent extends SymbolEvent {
 	location: SymbolLocation,
 }
 
-export class SymbolUtil implements EventPublisher {
-	#event = new EventPublisherImpl()
-	private readonly stacks = new Map<string, SymbolStack>()
+export class SymbolUtil implements EventListenable {
+	#event: EventPublisher
+	#global: SymbolTable
+	#stacks: Map<string, SymbolStack>
 
-	private isUriBinding = false
+	#isUriBinding: boolean
+
+	get event() {
+		return this.#event
+	}
+	get global() {
+		return this.#global
+	}
+	get stacks() {
+		return this.#stacks
+	}
 
 	constructor(
-		public readonly global: SymbolTable
+		global: SymbolTable,
+		/** @internal */
+		_event = EventPublisher.create(),
+		/** @internal */
+		_stacks = new Map<string, SymbolStack>(),
+		/** @internal */
+		_isUriBinding = false,
 	) {
+		this.#global = global
+		this.#event = _event
+		this.#stacks = _stacks
+		this.#isUriBinding = _isUriBinding
+	}
+
+	clone(): SymbolUtil {
+		const clonedEvent = this.#event.clone()
+		clonedEvent.startDelay()
+		return new SymbolUtil(
+			deepClone(this.#global),
+			clonedEvent,
+			deepClone(this.#stacks),
+			this.#isUriBinding
+		)
+	}
+	absorb(other: SymbolUtil): void {
+		this.#event = other.event
+		this.#event.publishDelayedEvents()
+
+		this.#global = other.global
+		this.#stacks = other.stacks
 	}
 
 	/**
@@ -80,33 +120,33 @@ export class SymbolUtil implements EventPublisher {
 	 * @param fn All symbols added in this function will be considered as URI bound.
 	 */
 	uriBinding(logger: Logger, fn: () => unknown): void {
-		this.isUriBinding = true
+		this.#isUriBinding = true
 		this.removeLocations(this.global, l => l.isUriBound)
 		try {
 			fn()
 		} catch (e) {
 			logger.error(JSON.stringify(e))
 		} finally {
-			this.isUriBinding = false
+			this.#isUriBinding = false
 		}
 	}
 
 	getStack(uri: string): SymbolStack {
-		if (!this.stacks.has(uri)) {
-			this.stacks.set(uri, [{}])
+		if (!this.#stacks.has(uri)) {
+			this.#stacks.set(uri, [{}])
 		}
-		return this.stacks.get(uri)!
+		return this.#stacks.get(uri)!
 	}
 
 	/**
 	 * This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
 	 */
 	setStack(uri: string, stack: SymbolStack) {
-		this.stacks.set(uri, stack)
+		this.#stacks.set(uri, stack)
 	}
 
 	clear(uri: string): void {
-		this.stacks.delete(uri)
+		this.#stacks.delete(uri)
 		this.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
 	}
 
@@ -143,7 +183,7 @@ export class SymbolUtil implements EventPublisher {
 			category,
 			createMap,
 			doc,
-			isUriBinding: this.isUriBinding,
+			isUriBinding: this.#isUriBinding,
 			map: visible ? parentMap : null,
 			path,
 			symbol: visible ? symbol : null,

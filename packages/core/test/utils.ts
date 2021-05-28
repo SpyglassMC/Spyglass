@@ -26,18 +26,20 @@ export function markOffsetInString(string: string, offset: number) {
 }
 
 function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean): void {
-	if (!AstNode.is(node as unknown)) {
+	if (!node || typeof node !== 'object') {
 		return
 	}
-	if (removeChildren) {
-		delete node.children
+	if (AstNode.is(node as unknown)) {
+		if (removeChildren) {
+			delete node.children
+		}
+		if (!keepOptions) {
+			delete node.options
+		}
+		delete node.parent
+		delete node.symbol?.parentMap
+		delete node.symbol?.parentSymbol
 	}
-	if (!keepOptions) {
-		delete node.options
-	}
-	delete node.parent
-	delete node.symbol?.parentMap
-	delete node.symbol?.parentSymbol
 	for (const value of Object.values(node)) {
 		removeExtraProperties(value, keepOptions, false)
 	}

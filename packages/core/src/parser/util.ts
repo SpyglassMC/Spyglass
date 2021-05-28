@@ -31,6 +31,7 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 	const tmpCtx = ParserContext.create({
 		...ctx,
 		err: new ErrorReporter(),
+		symbols: ctx.symbols.clone(),
 	})
 
 	const result = parser(tmpSrc, tmpCtx)
@@ -42,6 +43,7 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 		updateSrcAndCtx: () => {
 			src.cursor = tmpSrc.cursor
 			ctx.err.absorb(tmpCtx.err)
+			ctx.symbols.absorb(tmpCtx.symbols)
 		},
 	}
 }

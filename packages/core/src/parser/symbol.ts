@@ -33,7 +33,7 @@ export function symbol(param: string | SymbolOptions): InfallibleParser<SymbolNo
 				.query(ctx.doc, options.category, ...path)
 				.enter({
 					usage: {
-						type: 'reference', // FIXME
+						type: options.usageType,
 						node: ans,
 					},
 				})

@@ -1,4 +1,5 @@
 import type { Color, FormattableColor } from '../processor'
+import { deepClone } from '../common'
 import { Range } from '../source'
 import type { Symbol } from '../symbol'
 
@@ -29,6 +30,10 @@ export namespace AstNode {
 			(child as Mutable<AstNode>).parent = node
 			setParents(child)
 		}
+	}
+
+	export function clone<T extends AstNode>(node: T): T {
+		return deepClone(node)
 	}
 }
 

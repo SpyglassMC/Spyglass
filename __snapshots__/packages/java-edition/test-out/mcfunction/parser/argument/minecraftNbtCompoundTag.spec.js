@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:nbt_compound_tag",
+    "type": "nbt:compound",
     "range": {
       "start": 0,
       "end": 9
@@ -104,7 +104,7 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
 
 exports['mcfunction argument minecraft:nbt_compound_tag Parse "{}" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:nbt_compound_tag",
+    "type": "nbt:compound",
     "range": {
       "start": 0,
       "end": 2
