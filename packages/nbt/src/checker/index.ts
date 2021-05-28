@@ -57,7 +57,6 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 		return ans
 	}
 
-
 	return (node, ctx) => {
 		if (!path) {
 			return

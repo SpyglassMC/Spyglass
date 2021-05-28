@@ -1,6 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode} from '../../node'
 import type { ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import { AstNode } from '../../node'
 import { Failure, parseStringValue } from '../../parser'
 import type { MetaRegistry } from '../../service'
 import { CheckerContext, ErrorReporter } from '../../service'
@@ -34,12 +34,7 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
 			ctx.symbols.absorb(tempCtx.symbols)
-
-			// Technically we could pass a `[N]` instead of `N` in all checkers to simulate a pointer.
-			// But why bother. Just copying all properties from `tempNode` to `node` should work.
-			for (const [key, value] of Object.entries(tempNode)) {
-				(node as any)[key] = value
-			}
+			AstNode.replace(node, tempNode)
 		},
 	}
 }

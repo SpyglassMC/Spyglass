@@ -35,6 +35,24 @@ export namespace AstNode {
 	export function clone<T extends AstNode>(node: T): T {
 		return deepClone(node)
 	}
+	
+	export function replace<T extends AstNode>(a: T, b: T): void {
+		for (const key of Object.keys(a)) {
+			if (key === 'parent') {
+				continue
+			}
+			delete (a as any)[key]
+		}
+
+		for (const [key, value] of Object.entries(b)) {
+			if (key === 'parent') {
+				continue
+			}
+			(a as any)[key] = value
+		}
+		
+		setParents(a)
+	}
 }
 
 export type Mutable<N> = N extends AstNode ? {

@@ -22,7 +22,6 @@ export type AttemptResult = {
 
 export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerContext): AttemptResult {
 	// TODO: The code below is mostly copied from core with some changes to support `expectation`. Could be refactored... I guess.
-	// Misode mentioned to somehow check the raw type first before any. https://discord.com/channels/666020457568403505/666037123450929163/847671251371819079
 	const tempNode = AstNode.clone(node)
 	const tempCtx = {
 		...ctx,
@@ -42,12 +41,7 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
 			ctx.symbols.absorb(tempCtx.symbols)
-
-			// Technically we could pass a `[N]` instead of `N` in all checkers to simulate a pointer.
-			// But why bother. Just copying all properties from `tempNode` to `node` should work.
-			for (const [key, value] of Object.entries(tempNode)) {
-				(node as any)[key] = value
-			}
+			AstNode.replace(node, tempNode)
 		},
 	}
 }
@@ -57,6 +51,7 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 		throw new Error('Expected at least one checker')
 	}
 	return (node, ctx) => {
+		// TODO: somehow check the raw type first. https://discord.com/channels/666020457568403505/666037123450929163/847671251371819079
 		const attempts = checkers
 			.map(checker => attempt(checker, node, ctx))
 			.sort((a, b) => a.totalErrorSpan - b.totalErrorSpan)
