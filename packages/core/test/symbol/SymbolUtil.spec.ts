@@ -53,32 +53,32 @@ describe('SymbolUtil', () => {
 			const global: SymbolTable = {}
 			const symbols = new SymbolUtil(global)
 			symbols
-				.query(fileUri, 'nbtdoc', 'ShouldBeRemoved1')
+				.query(fileUri, 'nbtdoc', 'ShouldBeKept1')
 				.enter({ usage: { type: 'definition' } })
-				.member('ShouldBeRemoved2', memberQuery => {
+				.member('ShouldBeRemoved1', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeRemoved3', memberQuery => {
-					memberQuery.enter({ usage: { type: 'definition' } })
-				})
-			symbols
-				.query(anotherFileUri, 'nbtdoc', 'ShouldBeRemoved1', 'ShouldBeRemoved3')
-				.enter({ usage: { type: 'definition' } })
-			symbols
-				.query(anotherFileUri, 'nbtdoc', 'ShouldBeKept1')
-				.enter({ usage: { type: 'definition' } })
 				.member('ShouldBeKept2', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeKept3', memberQuery => {
+			symbols
+				.query(anotherFileUri, 'nbtdoc', 'ShouldBeKept1', 'ShouldBeKept2')
+				.enter({ usage: { type: 'definition' } })
+			symbols
+				.query(anotherFileUri, 'nbtdoc', 'ShouldBeKept3')
+				.enter({ usage: { type: 'definition' } })
+				.member('ShouldBeKept4', memberQuery => {
+					memberQuery.enter({ usage: { type: 'definition' } })
+				})
+				.member('ShouldBeKept5', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			symbols
-				.query(fileUri, 'nbtdoc', 'ShouldBeKept1')
-				.member('ShouldBeRemoved4', memberQuery => {
+				.query(fileUri, 'nbtdoc', 'ShouldBeKept3')
+				.member('ShouldBeRemoved3', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeKept3', memberQuery => {
+				.member('ShouldBeKept5', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
