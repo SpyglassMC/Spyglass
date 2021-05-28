@@ -17,17 +17,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 			value: '',
 		}
 
-		let partialMatch = false
-		let fullMatch = true
-
-		for (const expectedChar of literal) {
-			if (src.trySkip(expectedChar)) {
-				partialMatch = true
-			} else {
-				fullMatch = false
-				break
-			}
-		}
+		const fullMatch = src.trySkip(literal)
 
 		ans.range.end = src.cursor
 
@@ -39,7 +29,7 @@ function _literal(literal: string, canBeFollowedByLetter: boolean, infallible: b
 					src
 				)
 			}
-		} else if (partialMatch || infallible) {
+		} else if (infallible) {
 			ctx.err.report(
 				localize('expected', localeQuote(literal)),
 				ans

@@ -6,9 +6,7 @@ import { useClause } from '../../../lib'
 describe('useClause()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: 'e' },
 		{ content: 'export' },
-		{ content: 'u' },
 		{ content: 'use' },
 		{ content: 'use foo' },
 		{ content: 'use foo;' },

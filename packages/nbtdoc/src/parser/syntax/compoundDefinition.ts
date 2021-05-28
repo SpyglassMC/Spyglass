@@ -51,156 +51,154 @@ const floatRange = _range<FloatNode, FloatRangeNode>('nbtdoc:float_range', float
 
 const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
 
-function compoundFieldType(src: Source, ctx: ParserContext): CompoundFieldTypeNode {
-	return map(
-		any([
-			syntax<CompoundFieldChild>([keyword('boolean')]),
-			syntax<CompoundFieldChild>([keyword('string')]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([keyword('byte'), optional(intRange)]),
-			syntax<CompoundFieldChild>([keyword('short'), optional(intRange)]),
-			syntax<CompoundFieldChild>([keyword('int'), optional(intRange)]),
-			syntax<CompoundFieldChild>([keyword('long'), optional(intRange)]),
-			syntax<CompoundFieldChild>([keyword('float'), optional(floatRange)]),
-			syntax<CompoundFieldChild>([keyword('double'), optional(floatRange)]),
-			syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(unsignedRange)]),
-			syntax<CompoundFieldChild>([
-				keyword('id'), punctuation('('), minecraftIdentifier({
-					pool: [...new Set([
-						// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
-						// the registry names used by SPYGlass are supported here.
-						...IdRegistries,
-						...ResourceLocationCategories.map(v => `${ResourceLocationNode.DefaultNamespace}${ResourceLocationNode.NamespacePathSep}${v}`),
-					])],
-				}), punctuation(')'),
-			]),
-			any([
-				syntax<CompoundFieldChild>([marker('('), marker(')')]),
-				syntax<CompoundFieldChild>([marker('('), compoundFieldType, syntaxRepeat(syntax<CompoundFieldChild>([marker('|'), compoundFieldType])), punctuation(')')]),
-			]),
-			syntax<CompoundFieldChild>([registryIndex]),
-			syntax<CompoundFieldChild>([identPath()]),
+const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source, ctx: ParserContext): CompoundFieldTypeNode => map(
+	any([
+		syntax<CompoundFieldChild>([keyword('boolean')]),
+		syntax<CompoundFieldChild>([keyword('string')]),
+		syntax<CompoundFieldChild>([keyword('byte'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
+		syntax<CompoundFieldChild>([keyword('int'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
+		syntax<CompoundFieldChild>([keyword('long'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
+		syntax<CompoundFieldChild>([keyword('byte'), optional(intRange)]),
+		syntax<CompoundFieldChild>([keyword('short'), optional(intRange)]),
+		syntax<CompoundFieldChild>([keyword('int'), optional(intRange)]),
+		syntax<CompoundFieldChild>([keyword('long'), optional(intRange)]),
+		syntax<CompoundFieldChild>([keyword('float'), optional(floatRange)]),
+		syntax<CompoundFieldChild>([keyword('double'), optional(floatRange)]),
+		syntax<CompoundFieldChild>([marker('['), compoundFieldType, punctuation(']'), optional(unsignedRange)]),
+		syntax<CompoundFieldChild>([
+			keyword('id'), punctuation('('), minecraftIdentifier({
+				pool: [...new Set([
+					// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
+					// the registry names used by SPYGlass are supported here.
+					...IdRegistries,
+					...ResourceLocationCategories.map(v => `${ResourceLocationNode.DefaultNamespace}${ResourceLocationNode.NamespacePathSep}${v}`),
+				])],
+			}), punctuation(')'),
 		]),
-		res => {
-			const literals = res.children.filter(LiteralToken.is())
-			if (literals.length > 0) {
-				switch (literals[0].value) {
-					case 'string':
-					case 'boolean': {
-						const ans: CompoundFieldTypeNode = {
-							type: 'nbtdoc:compound_definition/field/type',
-							range: res.range,
-							typeType: literals[0].value,
-						}
-						return ans
+		any([
+			syntax<CompoundFieldChild>([marker('('), marker(')')]),
+			syntax<CompoundFieldChild>([marker('('), compoundFieldType, syntaxRepeat(syntax<CompoundFieldChild>([marker('|'), compoundFieldType])), punctuation(')')]),
+		]),
+		syntax<CompoundFieldChild>([registryIndex]),
+		syntax<CompoundFieldChild>([identPath()]),
+	]),
+	res => {
+		const literals = res.children.filter(LiteralToken.is())
+		if (literals.length > 0) {
+			switch (literals[0].value) {
+				case 'string':
+				case 'boolean': {
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: literals[0].value,
 					}
+					return ans
+				}
 
-					case 'byte':
-					case 'int':
-					case 'long': {
-						if (literals[1]?.value === '[') {
-							const valueRange = res.children.find(IntRangeNode.is) ?? null
-							const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
-							const ans: CompoundFieldTypeNode = {
-								type: 'nbtdoc:compound_definition/field/type',
-								range: res.range,
-								typeType: `${literals[0].value}_array` as 'byte_array' | 'int_array' | 'long_array',
-								valueRange,
-								lengthRange,
-							}
-							return ans
-						}
-					}
-					// Fall through.
-					/* eslint-disable-next-line no-fallthrough */
-					case 'short': {
+				case 'byte':
+				case 'int':
+				case 'long': {
+					if (literals[1]?.value === '[') {
 						const valueRange = res.children.find(IntRangeNode.is) ?? null
-						const ans: CompoundFieldTypeNode = {
-							type: 'nbtdoc:compound_definition/field/type',
-							range: res.range,
-							typeType: literals[0].value,
-							valueRange,
-						}
-						return ans
-					}
-
-					case 'float':
-					case 'double': {
-						const valueRange = res.children.find(FloatRangeNode.is) ?? null
-						const ans: CompoundFieldTypeNode = {
-							type: 'nbtdoc:compound_definition/field/type',
-							range: res.range,
-							typeType: literals[0].value,
-							valueRange,
-						}
-						return ans
-					}
-
-					case '[': {
 						const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
-						const item = res.children.find(CompoundFieldTypeNode.is)!
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
-							typeType: 'list',
+							typeType: `${literals[0].value}_array` as 'byte_array' | 'int_array' | 'long_array',
+							valueRange,
 							lengthRange,
-							item,
 						}
 						return ans
 					}
-
-					case 'id': {
-						const registry = res.children.find(ResourceLocationNode.is)!
-						const ans: CompoundFieldTypeNode = {
-							type: 'nbtdoc:compound_definition/field/type',
-							range: res.range,
-							typeType: 'id',
-							registry,
-						}
-						return ans
-					}
-
-					case '(': {
-						const members = res.children.filter(CompoundFieldTypeNode.is)
-						const ans: CompoundFieldTypeNode = {
-							type: 'nbtdoc:compound_definition/field/type',
-							range: res.range,
-							typeType: 'union',
-							members,
-						}
-						return ans
-					}
-
-					/* istanbul ignore next */
-					default:
-						throw 'never'
 				}
+				// Fall through.
+				/* eslint-disable-next-line no-fallthrough */
+				case 'short': {
+					const valueRange = res.children.find(IntRangeNode.is) ?? null
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: literals[0].value,
+						valueRange,
+					}
+					return ans
+				}
+
+				case 'float':
+				case 'double': {
+					const valueRange = res.children.find(FloatRangeNode.is) ?? null
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: literals[0].value,
+						valueRange,
+					}
+					return ans
+				}
+
+				case '[': {
+					const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
+					const item = res.children.find(CompoundFieldTypeNode.is)!
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: 'list',
+						lengthRange,
+						item,
+					}
+					return ans
+				}
+
+				case 'id': {
+					const registry = res.children.find(ResourceLocationNode.is)!
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: 'id',
+						registry,
+					}
+					return ans
+				}
+
+				case '(': {
+					const members = res.children.filter(CompoundFieldTypeNode.is)
+					const ans: CompoundFieldTypeNode = {
+						type: 'nbtdoc:compound_definition/field/type',
+						range: res.range,
+						typeType: 'union',
+						members,
+					}
+					return ans
+				}
+
+				/* istanbul ignore next */
+				default:
+					throw new Error(`literals = ${JSON.stringify(res.children)}. This should never happen.`)
+			}
+		} else {
+			const index = res.children.find(RegistryIndexNode.is)
+			if (index) {
+				const ans: CompoundFieldTypeNode = {
+					type: 'nbtdoc:compound_definition/field/type',
+					range: res.range,
+					typeType: 'index',
+					index,
+				}
+				return ans
 			} else {
-				const index = res.children.find(RegistryIndexNode.is)
-				if (index) {
-					const ans: CompoundFieldTypeNode = {
-						type: 'nbtdoc:compound_definition/field/type',
-						range: res.range,
-						typeType: 'index',
-						index,
-					}
-					return ans
-				} else {
-					const path = res.children.find(IdentPathToken.is)!
-					const ans: CompoundFieldTypeNode = {
-						type: 'nbtdoc:compound_definition/field/type',
-						range: res.range,
-						typeType: 'path',
-						path,
-					}
-					return ans
+				const path = res.children.find(IdentPathToken.is)!
+				const ans: CompoundFieldTypeNode = {
+					type: 'nbtdoc:compound_definition/field/type',
+					range: res.range,
+					typeType: 'path',
+					path,
 				}
+				return ans
 			}
 		}
-	)(src, ctx) as any
-}
+	}
+)(src, ctx) 
 
 const compoundField: InfallibleParser<CompoundFieldNode> = map(
 	syntax<CompoundFieldChild>([

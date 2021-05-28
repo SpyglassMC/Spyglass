@@ -6,7 +6,6 @@ import { moduleDeclaration } from '../../../lib'
 describe('moduleDeclaration()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: 'm' },
 		{ content: 'mod' },
 		{ content: 'mod zombie' },
 		{ content: 'mod zombie;' },

@@ -22,6 +22,7 @@ describe('compoundDefinition()', () => {
 		{ content: 'compound Foo { Bar: int @ 0..1 [] }' },
 		{ content: 'compound Foo { Bar: long[] @ 4 }' },
 		{ content: 'compound Foo { Bar: [string] @ ..1 }' },
+		{ content: 'compound Foo { Bar: (boolean | int) }' },
 		{ content: 'compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] }' },
 		{
 			content: `/// Doc comment for the compound.

@@ -6,7 +6,6 @@ import { keyword, literal, marker, punctuation } from '../../../lib'
 describe('nbtdoc keyword()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: 'f' },
 		{ content: 'foo' },
 		{ content: 'foobar' },
 		{ content: 'foo something else;' },
@@ -22,7 +21,6 @@ describe('nbtdoc keyword()', () => {
 describe('nbtdoc literal()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: 'f' },
 		{ content: 'foo' },
 		{ content: 'foobar' },
 		{ content: 'foo something else;' },
