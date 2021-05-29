@@ -617,17 +617,7 @@ export class DatapackLanguageService {
         if (!(doc && textDoc && config.features.codeActions)) {
             return null
         }
-        if (isMcfunctionDocument(doc)) {
-            return onCodeAction({ service: this, uri, doc, textDoc, diagnostics, range, cacheFile: this.cacheFile })
-        } else {
-            const vanillaData = await this.getVanillaData(config)
-            const jsonSchemas = await this.getJsonSchemas(config, vanillaData)
-            const schema = jsonSchemas.get(doc.nodes[0].schemaType)
-            const ctx = await this.getParsingContext({ textDoc, uri })
-            const start = textDoc.offsetAt(range.start)
-            const end = textDoc.offsetAt(range.end)
-            return JsonSchemaHelper.onCodeAction(doc.nodes[0].json.root, schema, ctx, [start, end], diagnostics)
-        }
+        return await onCodeAction({ service: this, uri, doc, textDoc, diagnostics, range })
     }
 
     async onCallHierarchyPrepare(uri: Uri, position: lsp.Position) {

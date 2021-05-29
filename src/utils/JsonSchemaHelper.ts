@@ -222,7 +222,7 @@ export class JsonSchemaHelper {
             schema.hook(JsonSchemaHelper.CodeActionHook, path, node, ans, ctx, range, getDiagnosticMap(diagnostics))
             return ans
         } catch (e) {
-            console.error('[JsonSchemaHelper#onHover]', e)
+            console.error('[JsonSchemaHelper#onCodeAction]', e)
         }
         return null
     }

@@ -4,44 +4,20 @@ import { DatapackLanguageService, getCodeAction } from '..'
 import { locale } from '../locales'
 import { getSelectedNode } from '../nodes'
 import { ArgumentNode, DiagnosticMap, GetCodeActions, NodeRange } from '../nodes/ArgumentNode'
-import { CacheFile, CommandComponent, CommandComponentNode, ErrorCode, GetFormattedString, McfunctionDocument, ParsingContext, Uri } from '../types'
+import { CommandComponent, CommandComponentNode, DatapackDocument, ErrorCode, GetFormattedString, isMcfunctionDocument, JsonDocument, McfunctionDocument, ParsingContext, Uri } from '../types'
 import { areOverlapped } from '../types/TextRange'
+import { JsonSchemaHelper } from '../utils/JsonSchemaHelper'
 import { getDiagnosticMap } from './common'
 
-export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, service }: { uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, cacheFile: CacheFile, service: DatapackLanguageService }): Promise<CodeAction[] | null> {
+export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, service }: { uri: Uri, doc: DatapackDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, service: DatapackLanguageService }): Promise<CodeAction[] | null> {
     try {
         const ans: CodeAction[] = []
 
-        const diagnosticMap = getDiagnosticMap(diagnostics)
-
-        const start = textDoc.offsetAt(range.start)
-        const end = textDoc.offsetAt(range.end)
-        const selectedRange = { start, end }
-
-        const { index: startNodeIndex } = getSelectedNode(doc.nodes, start)
-        const { index: endNodeIndex } = getSelectedNode(doc.nodes, end)
-
-        const ctx = await service.getParsingContext({ textDoc, uri })
-
-        for (let i = startNodeIndex; i <= endNodeIndex; i++) {
-            const node = doc.nodes[i]
-            /* istanbul ignore else */
-            if (node && node.data instanceof Array) {
-                if (areOverlapped(selectedRange, node.range)) {
-                    for (const { data } of node.data) {
-                        /* istanbul ignore else */
-                        if (data instanceof ArgumentNode) {
-                            const nodeRange = data[NodeRange]
-                            if (areOverlapped(selectedRange, nodeRange)) {
-                                ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))
-                            }
-                        }
-                    }
-                    fixCommandComponent(ans, ctx, node as CommandComponent, diagnosticMap)
-                }
-            }
+        if (isMcfunctionDocument(doc)) {
+            await onMcfunctionCodeAction(uri, doc, textDoc, diagnostics, range, service, ans)
+        } else {
+            await onJsonCodeAction(uri, doc, textDoc, diagnostics, range, service, ans)
         }
-
 
         if (ans.length > 0) {
             addFixAllActions(ans, CodeActionKind.QuickFix, { uri })
@@ -51,11 +27,55 @@ export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, serv
         return ans
     } catch (e) {
         console.error('[onCodeAction]', e)
+        return null
     }
-    return null
 }
 
-export function addFixAllActions(ans: CodeAction[], kind: CodeActionKind, args: { uri: Uri }) {
+async function onMcfunctionCodeAction(uri: Uri, doc: McfunctionDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, service: DatapackLanguageService, ans: CodeAction[]): Promise<void> {
+    const diagnosticMap = getDiagnosticMap(diagnostics)
+
+    const start = textDoc.offsetAt(range.start)
+    const end = textDoc.offsetAt(range.end)
+    const selectedRange = { start, end }
+
+    const { index: startNodeIndex } = getSelectedNode(doc.nodes, start)
+    const { index: endNodeIndex } = getSelectedNode(doc.nodes, end)
+
+    const ctx = await service.getParsingContext({ textDoc, uri })
+
+    for (let i = startNodeIndex; i <= endNodeIndex; i++) {
+        const node = doc.nodes[i]
+        /* istanbul ignore else */
+        if (node && node.data instanceof Array) {
+            if (areOverlapped(selectedRange, node.range)) {
+                for (const { data } of node.data) {
+                    /* istanbul ignore else */
+                    if (data instanceof ArgumentNode) {
+                        const nodeRange = data[NodeRange]
+                        if (areOverlapped(selectedRange, nodeRange)) {
+                            ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticMap))
+                        }
+                    }
+                }
+                fixCommandComponent(ans, ctx, node as CommandComponent, diagnosticMap)
+            }
+        }
+    }
+}
+
+async function onJsonCodeAction(uri: Uri, doc: JsonDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, service: DatapackLanguageService, ans: CodeAction[]) {
+    const config = await service.getConfig(uri)
+    const vanillaData = await service.getVanillaData(config)
+    const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
+    const schema = jsonSchemas.get(doc.nodes[0].schemaType)
+    const ctx = await service.getParsingContext({ textDoc, uri })
+    const start = textDoc.offsetAt(range.start)
+    const end = textDoc.offsetAt(range.end)
+
+    ans.push(...JsonSchemaHelper.onCodeAction(doc.nodes[0].json.root, schema, ctx, [start, end], diagnostics) ?? [])
+}
+
+function addFixAllActions(ans: CodeAction[], kind: CodeActionKind, args: { uri: Uri }) {
     ans.push(
         CodeAction.create(
             locale('code-action.fix-file'),

@@ -1,7 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CodeAction, Diagnostic, TextDocumentEdit } from 'vscode-languageserver/node'
 import { ArgumentNode, GetCodeActions } from '../../nodes'
-import { areOverlapped, CommandComponent, Config, isMcfunctionDocument, McfunctionDocument, Uri } from '../../types'
+import { areOverlapped, CommandComponent, Config, DatapackDocument, isMcfunctionDocument, JsonDocument, McfunctionDocument, Uri } from '../../types'
+import { JsonSchemaHelper } from '../../utils/JsonSchemaHelper'
 import { getDiagnosticMap } from '../common'
 import { DatapackLanguageService } from '../DatapackLanguageService'
 import { fixCommandComponent } from '../onCodeAction'
@@ -10,53 +11,61 @@ export async function fixFileCommandHandler({ uri, service }: { uri: Uri, servic
     const { doc, textDoc } = await service.getDocuments(uri)
     /* istanbul ignore else */
     if (doc && textDoc) {
-        if (isMcfunctionDocument(doc)) {
-            const config = await service.getConfig(uri)
-            const edit = await getMergedPreferredEdit(service, doc, textDoc, config, uri)
-            if (edit) {
-                service.applyEdit?.(edit)
-            }
-            // TODO: Finish command part when we have any quick fixes using it}
-        } else {
-            // TODO: JSON
+        const config = await service.getConfig(uri)
+        const edit = await getMergedPreferredEdit(service, doc, textDoc, config, uri)
+        if (edit) {
+            service.applyEdit?.(edit)
         }
+        // TODO: Finish command part when we have any quick fixes using it}
     }
 }
 
-async function getMergedPreferredEdit(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+async function getMergedPreferredEdit(service: DatapackLanguageService, doc: DatapackDocument, textDoc: TextDocument, config: Config, uri: Uri) {
     const preferredActions = (await getActions(service, doc, textDoc, config, uri))
         .filter(v => v.isPreferred)
 
-    return mergeActionEdit(doc, textDoc, preferredActions)
+    return mergeActionEdit(textDoc, preferredActions)
 }
 
-async function getActions(service: DatapackLanguageService, doc: McfunctionDocument, textDoc: TextDocument, config: Config, uri: Uri) {
+async function getActions(service: DatapackLanguageService, doc: DatapackDocument, textDoc: TextDocument, config: Config, uri: Uri) {
     const ans: CodeAction[] = []
 
-    for (const node of doc.nodes) {
-        const diagnostics: Diagnostic[] = []
-        node.errors?.forEach(err => diagnostics.push(err.toDiagnostic(textDoc)))
-        const diagnosticsMap = getDiagnosticMap(diagnostics)
-
-        const selectedRange = { start: 0, end: Infinity }
-        const ctx = await service.getParsingContext({ textDoc, uri })
-
-        if (node.data instanceof Array) {
-            for (const { data } of node.data) {
-                /* istanbul ignore else */
-                if (data instanceof ArgumentNode) {
-                    ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
+    if (isMcfunctionDocument(doc)) {
+        for (const node of doc.nodes) {
+            const diagnostics: Diagnostic[] = []
+            node.errors?.forEach(err => diagnostics.push(err.toDiagnostic(textDoc)))
+            const diagnosticsMap = getDiagnosticMap(diagnostics)
+    
+            const selectedRange = { start: 0, end: Infinity }
+            const ctx = await service.getParsingContext({ textDoc, uri })
+    
+            if (node.data instanceof Array) {
+                for (const { data } of node.data) {
+                    /* istanbul ignore else */
+                    if (data instanceof ArgumentNode) {
+                        ans.push(...data[GetCodeActions](uri.toString(), ctx, selectedRange, diagnosticsMap))
+                    }
                 }
             }
+    
+            fixCommandComponent(ans, ctx, node as CommandComponent, diagnosticsMap)
         }
+    } else {
+        const node = doc.nodes[0]!.json.root
 
-        fixCommandComponent(ans, ctx, node as CommandComponent, diagnosticsMap)
+        const vanillaData = await service.getVanillaData(config)
+        const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
+        const schema = jsonSchemas.get(doc.nodes[0].schemaType)
+        const ctx = await service.getParsingContext({ textDoc, uri })
+        const diagnostics = await service.getDiagnostics(uri)
+
+        ans.push(...JsonSchemaHelper.onCodeAction(node, schema, ctx, [0, node.length], diagnostics) ?? [])
     }
 
     return ans
 }
 
-function mergeActionEdit(doc: McfunctionDocument, textDoc: TextDocument, actions: CodeAction[]) {
+function mergeActionEdit(textDoc: TextDocument, actions: CodeAction[]) {
     let ans: CodeAction | undefined
 
     if (actions.length > 0) {

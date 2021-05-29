@@ -415,9 +415,8 @@ connection.onExecuteCommand(async ({ command, arguments: args }) => {
                     const namespaces = await pathAccessible(dataPath) ? await fsp.readdir(dataPath) : []
                     for (const namespace of namespaces) {
                         const namespacePath = path.join(dataPath, namespace)
-                        const functionsPath = path.join(namespacePath, 'functions')
-                        if (await pathAccessible(functionsPath)) {
-                            await walkFile(root.fsPath, functionsPath, async abs => {
+                        if (await pathAccessible(namespacePath)) {
+                            await walkFile(root.fsPath, namespacePath, async abs => {
                                 try {
                                     progress?.report(locale('server.progress.fixing-workspace.report', locale('punc.quote', abs)))
                                     const uri = service.parseUri(Uri.file(abs).toString())
