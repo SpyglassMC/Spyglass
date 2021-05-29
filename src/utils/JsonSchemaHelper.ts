@@ -493,13 +493,23 @@ export class JsonSchemaHelper {
 
     private static convertSchemaError({ path, params, error }: PathError, node: ASTNode | undefined) {
         const pathElements = path.getArray()
-        const range = node ? this.getNodeRange(this.navigateNodes(node, pathElements)) : { start: 0, end: 1 }
+        let range = { start: 0, end: 1 }
+        if (node?.type === 'object') {
+            const objNode = this.navigateNodes(node, pathElements)
+            range = { start: objNode.offset, end: objNode.offset + 1 }
+        } else if (node) {
+            range = this.getNodeRange(this.navigateNodes(node, pathElements))
+        }
         let message = locale(`json.${error}`, ...(params ?? [])) ?? (
             console.error('[convertSchemaError]', new Error(`Unknown JSON schema error “${error}”`)),
             ''
         )
         if (pathElements.length > 0) {
-            message = `${pathElements.join('.')} - ${message}`
+            if (error.startsWith('error.expected_')) {
+                message = locale('missing-key', locale('punc.quote', pathElements.join('.')))
+            } else {
+                message = `${pathElements.join('.')} - ${message}`
+            }
         }
         return new ParsingError(range, message)
     }

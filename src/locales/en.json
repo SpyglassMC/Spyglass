@@ -85,6 +85,7 @@
     "key-not-following-convention": "Invalid key %0% which doesn't follow %1% convention",
     "leading-slash": "a leading slash “/”",
     "long": "a long",
+    "missing-key": "Missing key %0%",
     "mixed-coordinates": "Cannot mix local coordinates and non-local coordinates together",
     "more-arguments": "more arguments",
     "nbt-path.filter": "a compound filter",
