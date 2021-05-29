@@ -55,7 +55,7 @@ export async function onCodeAction({ uri, doc, diagnostics, textDoc, range, serv
     return null
 }
 
-function addFixAllActions(ans: CodeAction[], kind: CodeActionKind, args: { uri: Uri }) {
+export function addFixAllActions(ans: CodeAction[], kind: CodeActionKind, args: { uri: Uri }) {
     ans.push(
         CodeAction.create(
             locale('code-action.fix-file'),

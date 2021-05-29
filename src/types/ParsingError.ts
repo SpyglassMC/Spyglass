@@ -12,6 +12,10 @@ export const enum ErrorCode {
     IdentityCompleteDefaultNamespace,
     IdentityOmitDefaultNamespace,
     IdentityUnknown,
+    //#region Json datafixes
+    JsonBlock,
+    JsonItem,
+    //#endregion,
     NbtByteToLiteral,
     NbtByteToNumber,
     NbtCompoundSortKeys,

@@ -1,12 +1,15 @@
-import { DataModel, INode, ModelPath, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
+import { DataModel, Hook, INode, ModelPath, Path, PathElement, PathError, RelativePath, ValidationOption } from '@mcschema/core'
 import deepEqual from 'fast-deep-equal'
 import { ArrayASTNode, ASTNode, Hover, InsertTextFormat, ObjectASTNode, StringASTNode } from 'vscode-json-languageservice'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CodeAction, CodeActionKind, Diagnostic, DiagnosticSeverity, Range } from 'vscode-languageserver/node'
 import { arrayToCompletions, handleCompletionText, quoteString, remapParserSuggestion } from '.'
+import { getCodeAction } from '..'
 import { locale, segmentedLocale } from '../locales'
-import { IdentityNode } from '../nodes'
+import { IdentityNode, DiagnosticMap } from '../nodes'
 import { CommandParser } from '../parsers/CommandParser'
-import { combineCache, downgradeParsingError, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
+import { getDiagnosticMap } from '../services/common'
+import { combineCache, downgradeParsingError, ErrorCode, getInnerIndex, IndexMapping, isInRange, LegacyValidateResult, ParserSuggestion, ParsingContext, ParsingError, remapCachePosition, remapParsingErrors, remapTokens, TextRange, ValidateResult } from '../types'
 import { StringReader } from './StringReader'
 
 export class JsonSchemaHelper {
@@ -17,6 +20,62 @@ export class JsonSchemaHelper {
         StringEnd: 'NR9lafzlCwHbjOIrzXcpZFgNQVpn7kpY',
         LiteralStart: 'gJK7ZIGIpFJlAal2UduKc93rHAOb5K3z',
         LiteralEnd: '1xs2m6JwQaNtXzexThOAwmpTFCIRftZi'
+    }
+
+    private static readonly ValidateHook: Hook<[ASTNode, ValidateResult, ParsingContext], void> = {
+        base() {},
+        list({ children }, path, node, ans, ctx) {
+            if (node.type !== 'array') return
+            node.items.forEach((n, i) => {
+                children.hook(this, path.modelPush(i), n, ans, ctx)
+            })
+        },
+        object({ getActiveFields, getChildModelPath }, path, node, ans, ctx) {
+            if (node.type !== 'object') return
+            const fields = getActiveFields(path)
+            for (const p of node.properties) {
+                if (!p.valueNode) continue
+                const key = p.keyNode.value
+                const field = fields[key]
+                const fieldPath = getChildModelPath(path, key)
+
+                const context = fieldPath.contextArr.join('.')
+                if (context === 'block.block' && p.valueNode.type === 'string') {
+                    ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-block'), true, DiagnosticSeverity.Error, ErrorCode.JsonBlock))
+                } else if (context === 'item.item' && p.valueNode.type === 'string') {
+                    ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-item'), true, DiagnosticSeverity.Error, ErrorCode.JsonItem))
+                }
+
+                if (field && field.enabled(path)) {
+                    field.hook(this, fieldPath, p.valueNode, ans, ctx)
+                }
+            }
+        },
+        map({ keys, children, config: { validation } }, path, node, ans, ctx) {
+            if (node.type !== 'object') return
+            if (validation) {
+                // TODO: block_state_map validation
+            }
+            const keyValidation = keys.validationOption(path)
+            for (const { keyNode, valueNode } of node.properties) {
+                if (!valueNode) continue
+                if (keyValidation) {
+                    const { result, out } = JsonSchemaHelper.legacyValidateFromStringValidator(JsonSchemaHelper.getNodeRange(keyNode), keyNode, ctx, keyValidation)
+                    JsonSchemaHelper.combineResult(ans, result, out.mapping)
+                }
+                children.hook(this, path.modelPush( keyNode.value), valueNode, ans, ctx)
+            }
+        },
+        string({ config }, path, node, ans, ctx) {
+            if (node.type !== 'string') return
+            if (config && 'validator' in config) {
+                const { result, out } = JsonSchemaHelper.legacyValidateFromStringValidator(JsonSchemaHelper.getNodeRange(node), node, ctx, config)
+                JsonSchemaHelper.combineResult(ans, result, out.mapping)
+            }
+        },
+        choice({ switchNode }, path, node, ans, ctx) {
+            switchNode.hook(this, path, node, ans, ctx)
+        }
     }
 
     static validate(ans: ValidateResult, node: ASTNode | undefined, schema: INode, ctx: ParsingContext) {
@@ -30,16 +89,7 @@ export class JsonSchemaHelper {
             return
         }
 
-        this.walkAstNode(
-            node, path, schema,
-            (node, path, schema) => {
-                const selectedSchema = schema.navigate(path, -1)
-                const validationOption = selectedSchema?.validationOption(path)
-                if (validationOption) {
-                    this.validateFromValidator(ans, node, validationOption, ctx)
-                }
-            }
-        )
+        schema.hook(JsonSchemaHelper.ValidateHook, path, node, ans, ctx)
     }
 
     static suggest(ans: ParserSuggestion[], node: ASTNode | undefined, schema: INode, ctx: ParsingContext) {
@@ -106,6 +156,71 @@ export class JsonSchemaHelper {
                     }
                 }
             }
+        } catch (e) {
+            console.error('[JsonSchemaHelper#onHover]', e)
+        }
+        return null
+    }
+
+    private static readonly CodeActionHook: Hook<[ASTNode, CodeAction[], ParsingContext, [number, number], DiagnosticMap], void> = {
+        base() {},
+        list({ children }, path, node, ans, ctx, range, diagnostics) {
+            if (node.type !== 'array') return
+            node.items.forEach((n, i) => {
+                if (n.offset > range[1] || n.offset + n.length < range[0]) return
+                children.hook(this, path.modelPush(i), n, ans, ctx, range, diagnostics)
+            })
+        },
+        object({ getActiveFields, getChildModelPath }, path, node, ans, ctx, range, diagnostics) {
+            if (node.type !== 'object') return
+            const fields = getActiveFields(path)
+            for (const p of node.properties) {
+                if (!p.valueNode || p.offset > range[1] || p.offset + p.length < range[0]) continue
+                const key = p.keyNode.value
+                const field = fields[key]
+                const fieldPath = getChildModelPath(path, key)
+
+                const context = fieldPath.contextArr.join('.')
+                if (context === 'block.block' && p.valueNode.type === 'string') {
+                    ans.push(getCodeAction(
+                        'json-block', diagnostics[ErrorCode.JsonBlock] ?? [],
+                        ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
+                        `"blocks": ["${p.valueNode.value}"]`
+                    ))
+                } else if (context === 'item.item' && p.valueNode.type === 'string') {
+                    ans.push(getCodeAction(
+                        'json-item', diagnostics[ErrorCode.JsonItem] ?? [],
+                        ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
+                        `"items": ["${p.valueNode.value}"]`
+                    ))
+                }
+
+                if (field && field.enabled(path)) {
+                    field.hook(this, fieldPath, p.valueNode, ans, ctx, range, diagnostics)
+                }
+            }
+        },
+        map({ children }, path, node, actions, ctx, range, diagnostics) {
+            if (node.type !== 'object') return
+            for (const p of node.properties) {
+                if (!p.valueNode || p.offset > range[1] || p.offset + p.length < range[0]) continue
+                children.hook(this, path.modelPush( p.keyNode.value), p.valueNode, actions, ctx, range, diagnostics)
+            }
+        },
+        choice({ switchNode }, path, node, actions, ctx, range, diagnostics) {
+            switchNode.hook(this, path, node, actions, ctx, range, diagnostics)
+        }
+    }
+
+    static onCodeAction(node: ASTNode | undefined, schema: INode, ctx: ParsingContext, range: [number, number], diagnostics: Diagnostic[]): CodeAction[] | null {
+        if (!node) {
+            return null
+        }
+        try {
+            const ans: CodeAction[] = []
+            const { path } = this.setUp(node, schema)
+            schema.hook(JsonSchemaHelper.CodeActionHook, path, node, ans, ctx, range, getDiagnosticMap(diagnostics))
+            return ans
         } catch (e) {
             console.error('[JsonSchemaHelper#onHover]', e)
         }
@@ -245,23 +360,6 @@ export class JsonSchemaHelper {
             for (const [i, childNode] of node.items.entries()) {
                 const childPath = path.push(i)
                 this.walkAstNode(childNode, childPath, schema, cb)
-            }
-        }
-    }
-
-    private static validateFromValidator(ans: ValidateResult, node: ASTNode, option: ValidationOption, ctx: ParsingContext) {
-        const valueRange = this.getNodeRange(node)
-        if (option.validator === 'block_state_map') {
-            // TODO: JSON block_state_map validation
-        } else if (node.type === 'string') {
-            // Validate the selected string node.
-            const { result, out } = this.legacyValidateFromStringValidator(valueRange, node, ctx, option)
-            this.combineResult(ans, result, out.mapping)
-        } else if (node.type === 'object') {
-            // Validate all the keys of the selected object node.
-            for (const { keyNode } of node.properties) {
-                const { result, out } = this.legacyValidateFromStringValidator(this.getNodeRange(keyNode), keyNode, ctx, option)
-                this.combineResult(ans, result, out.mapping)
             }
         }
     }
