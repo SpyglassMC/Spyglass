@@ -23,8 +23,6 @@
   "code-action.string-unquote": "移除该字符串的引号",
   "code-action.vector-align-0.0": "将该向量对齐至方块原点",
   "code-action.vector-align-0.5": "将该向量对齐至方块中心",
-  "collection-length.between": "一个元素数量位于 %0% 与 %1% 之间的集合",
-  "collection-length.exact": "一个元素数量为 %0% 的集合",
   "conjunction.and_2": "和",
   "conjunction.and_3+_1": "、",
   "conjunction.and_3+_2": "和",

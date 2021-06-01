@@ -23,8 +23,6 @@
   "code-action.string-unquote": "この文字列の引用符を外す",
   "code-action.vector-align-0.0": "座標の値をブロックの原点に揃える",
   "code-action.vector-align-0.5": "座標の値をブロックの中心に揃える",
-  "collection-length.between": "長さが%0% ~ %1%のコレクション",
-  "collection-length.exact": "長さが%0%のコレクション",
   "conjunction.and_2": " と ",
   "conjunction.and_3+_1": "と ",
   "conjunction.and_3+_2": "と ",

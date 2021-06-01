@@ -22,8 +22,6 @@
   "code-action.string-unquote": "Enlever les délimiteurs autour de cette chaîne de caractères",
   "code-action.vector-align-0.0": "Aligner ce vecteur à l'origine du bloc",
   "code-action.vector-align-0.5": "Aligner ce vecteur au centre du bloc",
-  "collection-length.between": "une collection de longueur comprise entre %0% et %1%",
-  "collection-length.exact": "une collection de longueur %0%",
   "conjunction.and_2": "et",
   "conjunction.and_3+_1": ",",
   "conjunction.and_3+_2": ", et",

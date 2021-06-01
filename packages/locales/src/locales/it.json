@@ -21,8 +21,6 @@
   "code-action.string-unquote": "De-quota questa stringa",
   "code-action.vector-align-0.0": "Allinea questo vettore all'origine del blocco",
   "code-action.vector-align-0.5": "Allinea questo vettore al centro del blocco",
-  "collection-length.between": "una collezione con lunghezze da %0% a %1%",
-  "collection-length.exact": "una collezione con lunghezza %0%",
   "conjunction.and_2": "e ",
   "conjunction.and_3+_1": ",",
   "conjunction.and_3+_2": ", e",
