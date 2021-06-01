@@ -9,6 +9,9 @@ import { InsertTextFormat } from 'vscode-languageserver/node'
  * Functions are named after types in `vscode-languageserver`.
  */
 export namespace toLS {
+	const ZeroPosition: ls.Position = { line: 0, character: 0 }
+	const ZeroRange: ls.Range = { start: ZeroPosition, end: ZeroPosition }
+
 	export function color(color: core.Color): ls.Color {
 		return ls.Color.create(...color)
 	}
@@ -70,17 +73,44 @@ export namespace toLS {
 	}
 
 	export function documentHighlight(locations: core.SymbolLocations | null): ls.DocumentHighlight[] | null {
-		// FIXME: Check if location is of `file:` scheme.
 		return locations?.locations
-			? locations.locations.map(loc => ({
-				range: loc.posRange!,
-			}))
-			: null
+			?.filter(loc => loc.posRange)
+			?.map(loc => ({ range: loc.posRange! }))
+			?? null
 	}
 
 	export function documentSelector(): ls.DocumentSelector {
 		const ans: ls.DocumentSelector = core.MetaRegistry.instance.languages.map(id => ({ language: id }))
 		return ans
+	}
+
+	export function documentSymbol(symbol: core.Symbol, symLoc: core.SymbolLocation, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol {
+		return {
+			name: symbol.identifier,
+			kind: symbolKind(symbol.category, symbol.subcategory, supportedKinds),
+			range: symLoc.fullPosRange ?? symLoc.posRange ?? ZeroRange,
+			selectionRange: symLoc.posRange ?? ZeroRange,
+			children: hierarchicalSupport ? documentSymbols(symbol.members, doc, hierarchicalSupport, supportedKinds) : undefined,
+		}
+	}
+
+	export function documentSymbols(map: core.SymbolMap = {}, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+		return Object.values(map)
+			.map(s => [s, [...s.declaration ?? [], ...s.definition ?? [], ...s.implementation ?? [], ...s.typeDefinition ?? []].find(l => l.uri === doc.uri)] as const)
+			.filter(([_s, l]) => !!l)
+			.map(([s, l]) => documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds))
+	}
+
+	export function documentSymbolsFromTable(table: core.SymbolTable, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+		return Object.values(table)
+			.map(m => documentSymbols(m, doc, hierarchicalSupport, supportedKinds))
+			.flat()
+	}
+
+	export function documentSymbolsFromTables(tables: core.SymbolTable[], doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+		return tables
+			.map(t => documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds))
+			.flat()
 	}
 
 	export function hover(hover: core.Hover, doc: TextDocument): ls.Hover {
@@ -119,7 +149,7 @@ export namespace toLS {
 		return ans
 	}
 
-	export function location(location: core.Location): ls.Location {
+	export function location(location: { uri: string, posRange: core.PositionRange }): ls.Location {
 		return {
 			uri: location.uri,
 			range: location.posRange,
@@ -129,16 +159,15 @@ export namespace toLS {
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: false): ls.Location[] | null
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null
 	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null {
-		// FIXME: Check if location is of `file:` scheme.
 		return locations?.locations
 			? linkSupport
 				? locations.locations.map(loc => ({
 					originSelectionRange: range(locations.range, doc),
 					targetUri: loc.uri,
-					targetRange: loc.fullPosRange ?? loc.posRange!,
-					targetSelectionRange: loc.posRange!,
+					targetRange: loc.fullPosRange ?? loc.posRange ?? ZeroRange,
+					targetSelectionRange: loc.posRange ?? ZeroRange,
 				}))
-				: (locations.locations as core.Location[]).map(location)
+				: (locations.locations).map(loc => location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange }))
 			: null
 	}
 
@@ -186,5 +215,55 @@ export namespace toLS {
 
 	export function semanticTokenType(type: core.ColorTokenType): number {
 		return core.ColorTokenTypes.indexOf(type)
+	}
+
+	export function symbolInformation(symbol: core.Symbol, symLoc: core.SymbolLocation, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation {
+		return {
+			name: symbol.identifier,
+			kind: symbolKind(symbol.category, symbol.subcategory, supportedKinds),
+			location: location({ uri: symLoc.uri, posRange: symLoc.fullPosRange ?? symLoc.posRange ?? ZeroRange }),
+		}
+	}
+
+	export function symbolInformationArray(map: core.SymbolMap = {}, query: string, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation[] {
+		return Object.values(map)
+			.filter(s => s.identifier.includes(query))
+			.map(s => [s, [...s.declaration ?? [], ...s.definition ?? [], ...s.implementation ?? [], ...s.typeDefinition ?? []][0]] as const)
+			.filter(([_s, l]) => !!l)
+			.map(([s, l]) => symbolInformation(s, l, supportedKinds))
+	}
+
+	export function symbolInformationArrayFromTable(table: core.SymbolTable, query: string, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation[] {
+		return Object.values(table)
+			.map(m => symbolInformationArray(m, query, supportedKinds))
+			.flat()
+	}
+
+	export function symbolKind(category: string, subcategory = '', supportedKinds: ls.SymbolKind[] = []): ls.SymbolKind {
+		const UltimateFallback = ls.SymbolKind.Variable
+		const getKind = (kind: ls.SymbolKind, fallback: ls.SymbolKind) => supportedKinds?.includes(kind) ? kind : fallback
+
+		if (core.ResourceLocationCategory.is(category)) {
+			return ls.SymbolKind.Function
+		}
+		if (category === 'nbtdoc') {
+			const map = new Map([
+				['enum', ls.SymbolKind.Enum],
+				['enum_key', getKind(ls.SymbolKind.EnumMember, ls.SymbolKind.Field)],
+				['compound', getKind(ls.SymbolKind.Struct, ls.SymbolKind.Interface)],
+				['compound_key', ls.SymbolKind.Field],
+				['module', ls.SymbolKind.Module],
+			])
+			return map.get(subcategory) ?? UltimateFallback
+		}
+		const map = new Map([
+			['attribute_modifier_uuid', ls.SymbolKind.Number],
+			['nbtdoc/description', ls.SymbolKind.Constructor],
+			['objective', ls.SymbolKind.Variable],
+			['score_holder', ls.SymbolKind.Class],
+			['tag', ls.SymbolKind.String],
+			['team', ls.SymbolKind.Array],
+		])
+		return map.get(category) ?? UltimateFallback
 	}
 }

@@ -71,6 +71,9 @@ connection.onInitialize(async params => {
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
+			documentSymbolProvider: {
+				label: 'SPYGlass',
+			},
 			hoverProvider: {},
 			semanticTokensProvider: {
 				documentSelector: toLS.documentSelector(),
@@ -88,6 +91,7 @@ connection.onInitialize(async params => {
 					changeNotifications: true,
 				},
 			},
+			workspaceSymbolProvider: {},
 		},
 	}
 })
@@ -188,6 +192,16 @@ connection.onDocumentHighlight(({ textDocument: { uri }, position }) => {
 	return toLS.documentHighlight(ans)
 })
 
+connection.onDocumentSymbol(({ textDocument: { uri } }) => {
+	const { doc } = service.get(uri)!
+	return toLS.documentSymbolsFromTables(
+		[service.symbols.global, ...service.symbols.getStack(doc.uri)],
+		doc,
+		capabilities.textDocument?.documentSymbol?.hierarchicalDocumentSymbolSupport,
+		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
+	)
+})
+
 connection.onHover(({ textDocument: { uri }, position }) => {
 	const { doc, node } = service.get(uri)!
 	const ans = service.getHover(node, doc, toCore.offset(position, doc))
@@ -205,6 +219,13 @@ connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) =
 		range: toCore.range(range, doc),
 	})
 	return toLS.semanticTokens(tokens, doc)
+})
+
+connection.onWorkspaceSymbol(({ query }) => {
+	return toLS.symbolInformationArrayFromTable(
+		service.symbols.global, query,
+		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
+	)
 })
 
 connection.listen()

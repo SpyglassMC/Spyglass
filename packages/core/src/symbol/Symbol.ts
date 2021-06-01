@@ -141,6 +141,11 @@ export const ResourceLocationCategories = Object.freeze([
 	...VanillaRegistryCategories,
 ] as const)
 export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
+export namespace ResourceLocationCategory {
+	export function is(category: string): category is ResourceLocationCategory {
+		return ResourceLocationCategories.includes(category as ResourceLocationCategory)
+	}
+}
 
 export const TaggableResourceLocationCategories = Object.freeze([
 	'block',
