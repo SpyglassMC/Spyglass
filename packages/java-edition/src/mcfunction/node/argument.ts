@@ -270,6 +270,9 @@ export interface MinecraftVec3ArgumentNode extends VectorBaseNode, ChildBaseExte
 export interface SpyglassmcSymbolArgumentNode extends ChildBaseNode, core.SymbolBaseNode {
 	type: 'mcfunction:argument/spyglassmc:symbol',
 }
+export interface SpyglassmcTagArgumentNode extends ChildBaseNode, core.SymbolBaseNode {
+	type: 'mcfunction:argument/spyglassmc:tag',
+}
 export interface SpyglassmcTrailingArgumentNode extends ChildBaseNode {
 	type: 'mcfunction:argument/spyglassmc:trailing',
 	value: string,
@@ -324,6 +327,7 @@ export type ArgumentNode =
 	| MinecraftUuidArgumentNode
 	| MinecraftVec2ArgumentNode
 	| MinecraftVec3ArgumentNode
+	| SpyglassmcTagArgumentNode
 	| SpyglassmcSymbolArgumentNode
 	| SpyglassmcTrailingArgumentNode
 	| SpyglassmcUnknownArgumentNode

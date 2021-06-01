@@ -142,8 +142,8 @@ export interface NbtListNode extends core.ListNode<NbtNode> {
 }
 export namespace NbtListNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is NbtListNode {
-		return (node as NbtListNode).type === 'nbt:list'
+	export function is(node: core.AstNode | undefined): node is NbtListNode {
+		return (node as NbtListNode | undefined)?.type === 'nbt:list'
 	}
 }
 

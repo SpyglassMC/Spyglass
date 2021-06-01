@@ -1,5 +1,5 @@
-import type { AstNode, FloatNode, IntegerNode, SymbolPath } from '@spyglassmc/core'
-import { ResourceLocationNode, StringNode } from '@spyglassmc/core'
+import type { AstNode, FloatNode, IntegerNode, Symbol } from '@spyglassmc/core'
+import { ResourceLocationNode, StringNode, SymbolPath } from '@spyglassmc/core'
 import type { DocCommentsNode, ResolvedIdRegistry, ResolvedRootRegistry, SyntaxNode } from './misc'
 import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
 
@@ -15,7 +15,7 @@ export namespace CompoundDefinitionNode {
 		extends?: CompoundExtendable.SymbolData,
 	}
 
-	export function toSymbolData(node: CompoundDefinitionNode, symbol?: SymbolPath): SymbolData {
+	export function toSymbolData(node: CompoundDefinitionNode, symbol?: Symbol): SymbolData {
 		return {
 			extends: node.extends ? CompoundExtendable.toSymbolData(node.extends, symbol) : undefined,
 		}
@@ -60,10 +60,10 @@ export namespace CompoundExtendable {
 		| { type: 'index', index: RegistryIndexNode.SymbolData }
 		| { type: 'symbol', symbol: SymbolPath | undefined }
 
-	export function toSymbolData(node: CompoundExtendable, symbol?: SymbolPath): SymbolData {
+	export function toSymbolData(node: CompoundExtendable, symbol?: Symbol): SymbolData {
 		return RegistryIndexNode.is(node)
 			? { type: 'index', index: RegistryIndexNode.toSymbolData(node) }
-			: { type: 'symbol', symbol }
+			: { type: 'symbol', symbol: SymbolPath.fromSymbol(symbol) }
 	}
 }
 
@@ -82,7 +82,7 @@ export namespace CompoundFieldNode {
 		fieldType: CompoundFieldTypeNode.SymbolData
 	}
 
-	export function toSymbolData(node: CompoundFieldNode, symbol?: SymbolPath): SymbolData {
+	export function toSymbolData(node: CompoundFieldNode, symbol?: Symbol): SymbolData {
 		return {
 			fieldType: CompoundFieldTypeNode.toSymbolData(node.fieldType, symbol),
 		}
@@ -234,7 +234,10 @@ export namespace CompoundFieldTypeNode {
 		type: 'id',
 		registry?: ResolvedIdRegistry,
 	} | {
-		type: 'symbol',
+		type: 'compound',
+		symbol: SymbolPath | undefined,
+	} | {
+		type: 'enum',
 		symbol: SymbolPath | undefined,
 	} | {
 		type: 'union',
@@ -244,7 +247,7 @@ export namespace CompoundFieldTypeNode {
 	/**
 	 * @param symbol If `node.typeType === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
 	 */
-	export function toSymbolData(node: CompoundFieldTypeNode, symbol?: SymbolPath): SymbolData {
+	export function toSymbolData(node: CompoundFieldTypeNode, symbol?: Symbol): SymbolData {
 		switch (node.typeType) {
 			case 'boolean':
 			case 'string':
@@ -292,8 +295,8 @@ export namespace CompoundFieldTypeNode {
 				}
 			case 'path':
 				return {
-					type: 'symbol',
-					symbol,
+					type: symbol?.subcategory === 'enum' ? 'enum' : 'compound',
+					symbol: SymbolPath.fromSymbol(symbol),
 				}
 			case 'union':
 				return {

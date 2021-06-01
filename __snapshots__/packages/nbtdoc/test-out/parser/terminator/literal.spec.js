@@ -3,27 +3,6 @@ exports['nbtdoc keyword() Parse "" 1'] = {
   "errors": []
 }
 
-exports['nbtdoc keyword() Parse "f" 1'] = {
-  "node": {
-    "type": "nbtdoc:literal",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": ""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
-      },
-      "message": "Expected “foo”",
-      "severity": 3
-    }
-  ]
-}
-
 exports['nbtdoc keyword() Parse "foo something else;" 1'] = {
   "node": {
     "type": "nbtdoc:literal",
@@ -83,27 +62,6 @@ exports['nbtdoc literal() Parse "" 1'] = {
       "range": {
         "start": 0,
         "end": 0
-      },
-      "message": "Expected “foo”",
-      "severity": 3
-    }
-  ]
-}
-
-exports['nbtdoc literal() Parse "f" 1'] = {
-  "node": {
-    "type": "nbtdoc:literal",
-    "range": {
-      "start": 0,
-      "end": 1
-    },
-    "value": ""
-  },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 1
       },
       "message": "Expected “foo”",
       "severity": 3

@@ -68,6 +68,7 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 | `minecraft:uuid`               | `MinecraftUuid`              |
 | `minecraft:vec2`               | `MinecraftVec2`              |
 | `minecraft:vec3`               | `MinecraftVec3`              |
+| `spyglassmc:tag`               | `SpyglassmcTag`              |
 | `spyglassmc:symbol`            | `SpyglassmcSymbol`           |
 | `spyglassmc:trailing`\*        | `SpyglassmcTrailing`         |
 | `spyglassmc:unknown`\*\*       | `SpyglassmcUnknown`          |

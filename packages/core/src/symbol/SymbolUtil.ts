@@ -185,6 +185,7 @@ export class SymbolUtil implements EventListenable {
 			doc,
 			isUriBinding: this.#isUriBinding,
 			map: visible ? parentMap : null,
+			parentSymbol: parentSymbol ?? undefined,
 			path,
 			symbol: visible ? symbol : null,
 			util: this,
@@ -317,7 +318,7 @@ export class SymbolUtil implements EventListenable {
 		}
 	}
 
-	private enterMapContainer<K extends string>({ addition, container, doc, category, identifier, isUriBinding, keyToMap, path }: {
+	private enterMapContainer<K extends string>({ addition, container, doc, category, identifier, isUriBinding, keyToMap, parentSymbol, path }: {
 		addition: SymbolAddition,
 		category: string,
 		container: {
@@ -327,10 +328,11 @@ export class SymbolUtil implements EventListenable {
 		identifier: string,
 		isUriBinding: boolean,
 		keyToMap: K,
+		parentSymbol: Symbol | undefined,
 		path: readonly string[],
 	}): Symbol {
 		const map: SymbolMap = container[keyToMap] ??= {}
-		return this.enterMap(map, category, path, identifier, addition, doc, isUriBinding)
+		return this.enterMap(parentSymbol, map, category, path, identifier, addition, doc, isUriBinding)
 	}
 
 	enterTable(table: SymbolTable, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
@@ -342,6 +344,7 @@ export class SymbolUtil implements EventListenable {
 			addition,
 			doc,
 			isUriBinding,
+			parentSymbol: undefined,
 			path,
 		})
 	}
@@ -355,6 +358,7 @@ export class SymbolUtil implements EventListenable {
 			addition,
 			doc,
 			isUriBinding,
+			parentSymbol: symbol,
 			path,
 		})
 	}
@@ -374,16 +378,16 @@ export class SymbolUtil implements EventListenable {
 	 * 
 	 * @returns The created/amended symbol.
 	 */
-	enterMap(map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
-	enterMap(map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
-	enterMap(map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol
+	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const target = map[identifier]
 		if (target) {
 			this.amendSymbol(target, addition, doc, isUriBinding)
 			this.trigger('symbolAmended', { symbol: target })
 			return target
 		} else {
-			const ans = map[identifier] = this.createSymbol(category, map, path, identifier, addition, doc, isUriBinding)
+			const ans = map[identifier] = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, isUriBinding)
 			this.trigger('symbolCreated', { symbol: ans })
 			return ans
 		}
@@ -443,11 +447,12 @@ export class SymbolUtil implements EventListenable {
 		return { parentSymbol, parentMap, symbol: null }
 	}
 
-	createSymbol(category: string, map: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
+	createSymbol(category: string, parentSymbol: Symbol | undefined, parentMap: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
 		const ans: Symbol = {
 			category,
 			identifier,
-			parentMap: map,
+			...parentSymbol ? { parentSymbol } : {},
+			parentMap,
 			path,
 			...addition.data,
 		}
@@ -501,6 +506,7 @@ export class SymbolUtil implements EventListenable {
 			const location = SymbolLocation.create(doc, range, addition.fullRange, isUriBinding, {
 				accessType: addition.accessType,
 				fromDefaultLibrary: addition.fromDefaultLibrary,
+				skipRenaming: addition.skipRenaming,
 			})
 			if (!doc.uri.startsWith('file:')) {
 				delete location.range
@@ -696,6 +702,7 @@ export class SymbolQuery {
 	 * The map where the queried symbol is stored. `null` if the map hasn't been created yet. 
 	 */
 	#map: SymbolMap | null
+	#parentSymbol: Symbol | undefined
 	/**
 	 * The queried symbol. `null` if the symbol hasn't been created yet.
 	 */
@@ -713,12 +720,13 @@ export class SymbolQuery {
 		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
 	}
 
-	constructor({ category, createMap, doc, isUriBinding, map, path, symbol, util }: {
+	constructor({ category, createMap, doc, isUriBinding, map, parentSymbol, path, symbol, util }: {
 		category: string,
 		createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | null,
 		doc: TextDocument | string,
 		isUriBinding: boolean,
 		map: SymbolMap | null,
+		parentSymbol: Symbol | undefined,
 		path: readonly string[],
 		symbol: Symbol | null,
 		util: SymbolUtil,
@@ -734,6 +742,7 @@ export class SymbolQuery {
 		this.#doc = doc
 		this.#isUriBinding = isUriBinding
 		this.#map = map
+		this.#parentSymbol = parentSymbol
 		this.#symbol = symbol
 		this.#util = util
 	}
@@ -849,7 +858,7 @@ export class SymbolQuery {
 		}
 
 		this.#map ??= this.#createMap(addition)
-		this.#symbol = this.#util.enterMap(this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
+		this.#symbol = this.#util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
 		}
@@ -927,6 +936,7 @@ export class SymbolQuery {
 			doc: memberDoc,
 			isUriBinding: this.#isUriBinding,
 			map: memberMap,
+			parentSymbol: this.#symbol,
 			path: [...this.path, identifier],
 			symbol: memberSymbol,
 			util: this.#util,
@@ -945,6 +955,13 @@ export class SymbolQuery {
 			fn.call(this, value, this)
 		}
 		return this
+	}
+
+	forEachMember(fn: (this: void, identifier: string, query: SymbolQuery) => unknown): this {
+		return this.onEach(
+			Object.keys(this.visibleMembers),
+			identifier => this.member(identifier, query => fn(identifier, query))
+		)
 	}
 }
 

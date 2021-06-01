@@ -460,6 +460,28 @@ export const Tree1_15: PartialRootTreeNode = {
 				},
 			},
 		},
+		tag: {
+			children: {
+				targets: {
+					children: {
+						add: {
+							children: {
+								name: {
+									parser: 'spyglassmc:tag',
+								},
+							},
+						},
+						remove: {
+							children: {
+								name: {
+									parser: 'spyglassmc:tag',
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 		team: {
 			children: {
 				add: {

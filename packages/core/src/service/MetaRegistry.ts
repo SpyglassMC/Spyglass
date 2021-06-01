@@ -109,6 +109,9 @@ export class MetaRegistry {
 	public hasParser<N extends AstNode>(type: N['type']): boolean {
 		return this.#parsers.has(type)
 	}
+	/**
+	 * @throws When no parser is registered for the node type.
+	 */
 	public getParser<N extends AstNode>(type: N['type']): Parser<N> {
 		const ans = this.#parsers.get(type)
 		if (!ans) {

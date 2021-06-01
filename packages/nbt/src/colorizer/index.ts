@@ -1,6 +1,7 @@
-import type { Colorizer } from '@spyglassmc/core'
+import type { Colorizer, MetaRegistry } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { ColorToken } from '@spyglassmc/core'
-import type { NbtCompoundNode } from '../node'
+import type { NbtByteNode, NbtCompoundNode, NbtDoubleNode, NbtFloatNode, NbtIntNode, NbtLongNode, NbtShortNode } from '../node'
 
 export const compound: Colorizer<NbtCompoundNode> = (node, ctx) => {
 	const ans: ColorToken[] = []
@@ -14,4 +15,14 @@ export const compound: Colorizer<NbtCompoundNode> = (node, ctx) => {
 		}
 	}
 	return ans
+}
+
+export function register(meta: MetaRegistry) {
+	meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)
+	meta.registerColorizer<NbtShortNode>('nbt:short', core.colorizer.number)
+	meta.registerColorizer<NbtIntNode>('nbt:int', core.colorizer.number)
+	meta.registerColorizer<NbtLongNode>('nbt:long', core.colorizer.number)
+	meta.registerColorizer<NbtFloatNode>('nbt:float', core.colorizer.number)
+	meta.registerColorizer<NbtDoubleNode>('nbt:double', core.colorizer.number)
+	meta.registerColorizer<NbtCompoundNode>('nbt:compound', compound)
 }

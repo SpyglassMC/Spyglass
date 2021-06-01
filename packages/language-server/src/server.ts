@@ -163,7 +163,7 @@ connection.onDeclaration(({ textDocument: { uri }, position }) => {
 })
 connection.onDefinition(({ textDocument: { uri }, position }) => {
 	const { doc, node } = service.get(uri)!
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation'])
+	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
 connection.onImplementation(({ textDocument: { uri }, position }) => {

@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { BrigadierBoolArgumentNode, BrigadierDoubleArgumentNode, BrigadierFloatArgumentNode, BrigadierIntegerArgumentNode, BrigadierLongArgumentNode, BrigadierStringArgumentNode, MinecraftColorArgumentNode, MinecraftDimensionArgumentNode, MinecraftEntityAnchorArgumentNode, MinecraftEntitySummonArgumentNode, MinecraftFunctionArgumentNode, MinecraftItemEnchantmentArgumentNode, MinecraftMobEffectArgumentNode, MinecraftObjectiveArgumentNode, MinecraftOperationArgumentNode, MinecraftResourceLocationArgumentNode, MinecraftScoreboardSlotArgumentNode, MinecraftSwizzleArgumentNode, SpyglassmcSymbolArgumentNode } from '../node'
+import type { BrigadierBoolArgumentNode, BrigadierDoubleArgumentNode, BrigadierFloatArgumentNode, BrigadierIntegerArgumentNode, BrigadierLongArgumentNode, BrigadierStringArgumentNode, MinecraftColorArgumentNode, MinecraftDimensionArgumentNode, MinecraftEntityAnchorArgumentNode, MinecraftEntitySummonArgumentNode, MinecraftFunctionArgumentNode, MinecraftItemEnchantmentArgumentNode, MinecraftMobEffectArgumentNode, MinecraftObjectiveArgumentNode, MinecraftOperationArgumentNode, MinecraftResourceLocationArgumentNode, MinecraftScoreboardSlotArgumentNode, MinecraftSwizzleArgumentNode, SpyglassmcSymbolArgumentNode, SpyglassmcTagArgumentNode } from '../node'
 
 export function register(meta: core.MetaRegistry) {
 	meta.registerColorizer<BrigadierBoolArgumentNode>('mcfunction:argument/brigadier:bool', core.colorizer.boolean)
@@ -46,5 +46,6 @@ export function register(meta: core.MetaRegistry) {
 	// meta.registerColorizer<MinecraftUuidArgumentNode>('mcfunction:argument/minecraft:uuid',)
 	// meta.registerColorizer<MinecraftVec2ArgumentNode>('mcfunction:argument/minecraft:vec2',)
 	// meta.registerColorizer<MinecraftVec3ArgumentNode>('mcfunction:argument/minecraft:vec3',)
+	meta.registerColorizer<SpyglassmcTagArgumentNode>('mcfunction:argument/spyglassmc:tag', core.colorizer.symbol)
 	meta.registerColorizer<SpyglassmcSymbolArgumentNode>('mcfunction:argument/spyglassmc:symbol', core.colorizer.symbol)
 }

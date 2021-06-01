@@ -244,7 +244,11 @@ export interface SymbolLocationMetadata {
 	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
 	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
 	 */
-	fromDefaultLibrary?: true,
+	fromDefaultLibrary?: boolean,
+	/**
+	 * Whether this symbol location should be skipped during renaming.
+	 */
+	skipRenaming?: boolean,
 }
 
 export interface SymbolLocation extends SymbolLocationMetadata {
@@ -288,10 +292,7 @@ export interface SymbolLocation extends SymbolLocationMetadata {
 }
 export namespace SymbolLocation {
 	/* istanbul ignore next */
-	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean, additional?: {
-		accessType?: SymbolAccessType,
-		fromDefaultLibrary?: true,
-	}): SymbolLocation {
+	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean, additional?: SymbolLocationMetadata): SymbolLocation {
 		return {
 			...Location.create(doc, range),
 			...fullRange ? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) } : {},

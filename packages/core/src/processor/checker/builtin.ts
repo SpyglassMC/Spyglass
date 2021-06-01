@@ -6,7 +6,7 @@ import type { MetaRegistry } from '../../service'
 import { CheckerContext, ErrorReporter } from '../../service'
 import { Range } from '../../source'
 import { traversePreOrder } from '../util'
-import type { Checker } from './Checker'
+import type { Checker, SyncChecker } from './Checker'
 
 export type AttemptResult = {
 	errorAmount: number,
@@ -50,6 +50,11 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 		attempts[0].updateNodeAndCtx()
 	}
 }
+
+/**
+ * No operation.
+ */
+export const noop: SyncChecker<AstNode> = () => {}
 
 /**
  * Use the shallowest children that have their own colorizers to provide the color tokens.

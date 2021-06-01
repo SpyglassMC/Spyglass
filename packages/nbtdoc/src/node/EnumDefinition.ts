@@ -7,6 +7,16 @@ export interface EnumDefinitionNode extends SyntaxNode<EnumChild> {
 	identifier: IdentifierToken
 	fields: EnumFieldNode[]
 }
+export namespace EnumDefinitionNode {
+	export interface SymbolData {
+		enumType?: EnumType
+	}
+	export function toSymbolData(node: EnumDefinitionNode): SymbolData {
+		return {
+			enumType: node.enumType.value || undefined,
+		}
+	}
+}
 
 export type EnumChild = DocCommentsNode | LiteralToken | IdentifierToken | EnumFieldNode
 
@@ -19,6 +29,15 @@ export interface EnumFieldNode extends SyntaxNode<EnumFieldChild> {
 export namespace EnumFieldNode {
 	export function is(obj: object): obj is EnumFieldNode {
 		return (obj as EnumFieldNode).type === 'nbtdoc:enum_definition/field'
+	}
+
+	export interface SymbolData {
+		value: number | string
+	}
+	export function toSymbolData(node: EnumFieldNode): SymbolData {
+		return {
+			value: node.value.value,
+		}
 	}
 }
 

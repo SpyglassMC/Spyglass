@@ -2,9 +2,10 @@ import * as core from '@spyglassmc/core'
 import type * as nbtdoc from '@spyglassmc/nbtdoc'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'
 import { localeQuote, localize } from '../../../locales/lib'
-import type { NbtByteNode, NbtListNode, NbtNode, NbtNumberNode, NbtPrimitiveArrayNode } from '../node'
-import { NbtCompoundNode, NbtPrimitiveNode } from '../node'
+import type { NbtByteNode, NbtNode, NbtNumberNode, NbtPrimitiveArrayNode } from '../node'
+import { NbtCompoundNode, NbtListNode, NbtPrimitiveNode } from '../node'
 import { localizeTag } from '../util'
+import { getBlockFromItem, getEntityFromItem, getSpecialStringParser, isExpandableCompound } from './nbtdocUtil'
 
 interface Options {
 	isPredicate?: boolean,
@@ -13,11 +14,17 @@ interface Options {
 export function index(registry: nbtdoc.ResolvedRootRegistry, id: string, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	switch (registry) {
 		case 'custom:blockitemstates':
-			throw ''
+			const blockIds = getBlockFromItem(id)
+			return blockIds
+				? blockStates(blockIds, options)
+				: core.checker.noop
 		case 'custom:blockstates':
-			throw ''
+			return blockStates([id], options)
 		case 'custom:spawnitemtag':
-			throw ''
+			const entityId = getEntityFromItem(id)
+			return entityId
+				? index('entity_type', entityId, options)
+				: core.checker.noop
 		default:
 			return (node, ctx) => {
 				const definitionPath = resolveRootRegistry(registry, id, ctx)
@@ -26,32 +33,96 @@ export function index(registry: nbtdoc.ResolvedRootRegistry, id: string, options
 	}
 }
 
+export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+	function* getStates(blocks: string[], ctx: core.CheckerContext) {
+		const ans: Record<string, Set<string>> = {}
+		blocks = blocks.map(v => v.includes(':') ? v : `minecraft:${v}`)
+		for (const block of blocks) {
+			const blockQuery = ctx.symbols.query(ctx.doc, 'block', block)
+			blockQuery.forEachMember((state, stateQuery) => {
+				const values = Object.keys(stateQuery.visibleMembers)
+				ans[state] = new Set([...ans[state] ?? [], ...values])
+			})
+			yield ans
+		}
+		return ans
+	}
+
+	return (node, ctx) => {
+		const statesIterator = getStates(blocks, ctx)
+		let statesResult = statesIterator.next()
+		for (const { key: keyNode, value: valueNode } of node.children) {
+			if (!keyNode || !valueNode) {
+				continue
+			}
+			// Type check.
+			if (valueNode.type === 'nbt:byte' && (ctx.src.slice(valueNode.range).toLowerCase() === 'false' || ctx.src.slice(valueNode.range).toLowerCase() === 'true')) {
+				ctx.err.report(localize('nbt.checker.block-states.fake-boolean'), valueNode, core.ErrorSeverity.Warning)
+				continue
+			} else if (valueNode.type !== 'string' && valueNode.type !== 'nbt:int') {
+				ctx.err.report(localize('nbt.checker.block-states.unexpected-value-type'), valueNode, core.ErrorSeverity.Warning)
+				continue
+			}
+
+			while (!statesResult.done && !Object.keys(statesResult.value).includes(keyNode.value)) {
+				// Expand `statesResult` only if the current key cannot be found in it.
+				statesResult = statesIterator.next()
+			}
+
+			if (Object.keys(statesResult.value).includes(keyNode.value)) {
+				// The current state exists. Check the value.
+				const stateValues = statesResult.value[keyNode.value]
+				if (!stateValues.has(valueNode.value.toString())) {
+					ctx.err.report(localize('expected-got', stateValues, localeQuote(valueNode.value.toString())), valueNode, core.ErrorSeverity.Warning)
+				}
+			} else {
+				// The current state doesn't exist.
+				ctx.err.report(
+					localize('nbt.checker.block-states.unknown-state', localeQuote(keyNode.value), blocks),
+					keyNode, core.ErrorSeverity.Warning
+				)
+			}
+		}
+	}
+}
+
 /**
  * @param path The {@link core.SymbolPath} to the compound definition.
  */
 export function compound(path: core.SymbolPath | undefined, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
-	const getFieldType = (path: core.SymbolPath | undefined, node: NbtCompoundNode, key: string, ctx: core.CheckerContext): nbtdoc.CompoundFieldTypeNode.SymbolData | undefined => {
+	const getFieldData = (path: core.SymbolPath | undefined, node: NbtCompoundNode, key: string, ctx: core.CheckerContext): {
+		expandable?: boolean,
+		query?: core.SymbolQuery,
+		type?: nbtdoc.CompoundFieldTypeNode.SymbolData,
+	} => {
+		const ans: ReturnType<typeof getFieldData> = {}
+
 		if (!path) {
-			return
+			return ans
 		}
+
+		ans.expandable = isExpandableCompound(path.path.join('::'))
 
 		const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
 		const data = query.symbol?.data as nbtdoc.CompoundDefinitionNode.SymbolData | undefined
-		if (!query || !data) {
-			return
-		}
+		node.symbol ??= query.symbol ?? undefined
 
-		let ans: nbtdoc.CompoundFieldTypeNode.SymbolData | undefined
 		query.member(key, member => member
-			.ifKnown(fieldSymbol => ans = (fieldSymbol.data as nbtdoc.CompoundFieldNode.SymbolData).fieldType)
+			.ifKnown(fieldSymbol => {
+				ans.type = (fieldSymbol.data as nbtdoc.CompoundFieldNode.SymbolData).fieldType
+				ans.query = member
+			})
 			.else(() => {
 				// Look up super.
-				ans = getFieldType(
-					data.extends?.type === 'index'
+				const result = getFieldData(
+					data?.extends?.type === 'index'
 						? resolveRootRegistry(data.extends.index.registry, resolveFieldPath(node, data.extends.index.path), ctx)
-						: data.extends?.symbol,
+						: data?.extends?.symbol,
 					node, key, ctx
 				)
+				ans.expandable ||= result.expandable
+				ans.query = result.query
+				ans.type = result.type
 			})
 		)
 		return ans
@@ -67,25 +138,59 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 				continue
 			}
 			const key = keyNode.value
-			const type = getFieldType(path, node, key, ctx)
-			if (type) {
-				fieldType(type, options)(valueNode, ctx)
-			} else {
+			const result = getFieldData(path, node, key, ctx)
+			if (result.query && result.type) {
+				result.query.enter({ usage: { type: 'reference', node: keyNode } })
+				fieldValue(result.type, options)(valueNode, ctx)
+			} else if (!result.expandable) {
 				// Unknown key.
-				// TODO
+				ctx.err.report(localize('unknown-key', localeQuote(key)), keyNode, core.ErrorSeverity.Warning)
 			}
 		}
 	}
 }
 
-function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
+export function enum_(path: core.SymbolPath | undefined, _options: Options = {}): core.SyncChecker<NbtPrimitiveNode> {
+	if (!path) {
+		return core.checker.noop
+	}
+
+	return (node, ctx) => {
+		const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
+		const data = query.symbol?.data as nbtdoc.EnumDefinitionNode.SymbolData | undefined
+
+		// Check type.
+		if (data?.enumType && node.type !== data.enumType && node.type !== `nbt:${data.enumType}`) {
+			ctx.err.report(localize('expected', localize(`nbt.node.${data.enumType}`)), node, core.ErrorSeverity.Warning)
+		}
+
+		// Get all enum members.
+		const enumMembers: Record<string, string> = {}
+		query.forEachMember((name, memberQuery) => {
+			const value = (memberQuery.symbol?.data as nbtdoc.EnumFieldNode.SymbolData | undefined)?.value
+			if (value !== undefined) {
+				enumMembers[name] = value.toString()
+			}
+		})
+
+		// Check value.
+		if (!Object.values(enumMembers).includes(node.value.toString())) {
+			ctx.err.report(localize('expected',
+				Object.entries(enumMembers).map(([k, v]) => `${k} = ${v}`)
+			), node, core.ErrorSeverity.Warning)
+		}
+	}
+}
+
+function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
 	const isInRange = (value: number, [min, max]: [number | null, number | null]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 
-	const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'union'>, NbtNode['type']> = {
+	const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'enum' | 'union'>, NbtNode['type']> = {
 		boolean: 'nbt:byte',
 		byte: 'nbt:byte',
 		byte_array: 'nbt:byte_array',
+		compound: 'nbt:compound',
 		double: 'nbt:double',
 		float: 'nbt:float',
 		id: 'string',
@@ -97,13 +202,12 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 		long_array: 'nbt:long_array',
 		short: 'nbt:short',
 		string: 'string',
-		symbol: 'nbt:compound',
 	}
 
 	return (node, ctx): void => {
 		// Rough type check.
-		if (type.type !== 'union' && node.type !== ExpectedTypes[type.type]) {
-			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.type])), node)
+		if (type.type !== 'enum' && type.type !== 'union' && node.type !== ExpectedTypes[type.type]) {
+			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.type])), node, core.ErrorSeverity.Warning)
 			return
 		}
 
@@ -111,7 +215,10 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 			case 'boolean':
 				node = node as NbtByteNode
 				if (node.value !== 0 && node.value !== 1) {
-					ctx.err.report(localize('nbt.checker.boolean.out-of-range', localeQuote('0b'), localeQuote('1b')), node)
+					ctx.err.report(
+						localize('nbt.checker.boolean.out-of-range', localeQuote('0b'), localeQuote('1b')),
+						node, core.ErrorSeverity.Warning
+					)
 				}
 				break
 			case 'byte_array':
@@ -123,7 +230,7 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 						localizeTag(node.type),
 						type.lengthRange.value[0] ?? '-∞',
 						type.lengthRange.value[1] ?? '+∞'
-					), node)
+					), node, core.ErrorSeverity.Warning)
 				}
 				if (type.valueRange) {
 					for (const { value: childNode } of node.children) {
@@ -131,7 +238,7 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 							ctx.err.report(localize('number.between',
 								type.valueRange.value[0] ?? '-∞',
 								type.valueRange.value[1] ?? '+∞'
-							), node)
+							), node, core.ErrorSeverity.Warning)
 						}
 					}
 				}
@@ -147,12 +254,12 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 					ctx.err.report(localize('number.between',
 						type.valueRange.value[0] ?? '-∞',
 						type.valueRange.value[1] ?? '+∞'
-					), node)
+					), node, core.ErrorSeverity.Warning)
 				}
 				break
 			case 'index':
 				node = node as NbtCompoundNode
-				const id = resolveFieldPath(node, type.index.path)
+				const id = resolveFieldPath(node.parent?.parent, type.index.path)
 				if (type.index.registry && id) {
 					index(type.index.registry, id, options)(node, ctx)
 				}
@@ -173,29 +280,66 @@ function fieldType(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Optio
 						localizeTag(node.type),
 						type.lengthRange.value[0] ?? '-∞',
 						type.lengthRange.value[1] ?? '+∞'
-					), node)
+					), node, core.ErrorSeverity.Warning)
 				}
 				for (const { value: childNode } of node.children) {
 					if (childNode) {
-						fieldType(type.item, options)(childNode, ctx)
+						fieldValue(type.item, options)(childNode, ctx)
 					}
 				}
 				break
 			case 'string':
-				// TODO: https://github.com/SPYGlassMC/SPYGlass/blob/3d3aefa73be8ce37da1fc8e88c6d37ec1f5e0022/src/utils/NbtdocHelper.ts#L881-L900
+				node = node as core.StringNode
+				let suffix = ''
+				let valueNode: NbtNode = node
+				if (core.ItemNode.is(node.parent) && NbtListNode.is(node.parent.parent)) {
+					suffix = '[]'
+					valueNode = node.parent.parent
+				}
+				if (core.PairNode.is<core.StringNode, NbtNode>(valueNode.parent)) {
+					const compoundNbtdocPath = valueNode.parent.key?.symbol?.parentSymbol?.path.join('::')
+					const key = valueNode.parent.key?.value
+					const path = `${compoundNbtdocPath}.${key}${suffix}`
+					const parserName = getSpecialStringParser(path)
+					if (parserName) {
+						try {
+							const parser = ctx.meta.getParser(parserName)
+							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
+							if (result !== core.Failure) {
+								node.valueNode = result
+							}
+						} catch (e) {
+							ctx.logger.error(`[nbt.checker.fieldValue#string] ${e?.toString()}`)
+						}
+					}
+				}
 				break
-			case 'symbol':
+			case 'compound':
 				node = node as NbtCompoundNode
 				compound(type.symbol, options)(node, ctx)
 				break
+			case 'enum':
+				node = node as NbtPrimitiveNode
+				enum_(type.symbol, options)(node, ctx)
+				break
 			case 'union':
-				core.checker.any(type.members.map(t => fieldType(t, options)))(node, ctx)
+				if (type.members.length === 0) {
+					ctx.err.report(
+						localize('nbt.checker.compound.field.union-empty-members'),
+						core.PairNode.is(node.parent)
+							? (node.parent.key ?? node.parent)
+							: node,
+						core.ErrorSeverity.Warning
+					)
+				} else {
+					core.checker.any(type.members.map(t => fieldValue(t, options)))(node, ctx)
+				}
 				break
 		}
 	}
 }
 
-function resolveFieldPath(compound: NbtCompoundNode, fieldPath: (string | { special: 'super' })[]): string | undefined {
+function resolveFieldPath(compound: core.AstNode | undefined, fieldPath: (string | { special: 'super' })[]): string | undefined {
 	let node: core.AstNode | undefined = compound
 	for (const path of fieldPath) {
 		if (!node) {

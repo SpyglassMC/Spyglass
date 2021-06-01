@@ -1,4 +1,4 @@
-import type { Colorizer, ResourceLocationNode } from '@spyglassmc/core'
+import type { Colorizer } from '@spyglassmc/core'
 import { ColorToken } from '@spyglassmc/core'
 import type { CompoundFieldTypeNode, IdentifierToken, LiteralToken } from '../node'
 
@@ -7,7 +7,7 @@ export const compoundFieldType: Colorizer<CompoundFieldTypeNode> = node => {
 }
 
 export const identifier: Colorizer<IdentifierToken> = node => {
-	return [ColorToken.create(node, 'property')] // FIXME
+	return [ColorToken.create(node, 'property')]
 }
 
 export const literal: Colorizer<LiteralToken> = node => {

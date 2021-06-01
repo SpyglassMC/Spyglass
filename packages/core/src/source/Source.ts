@@ -27,7 +27,7 @@ export const CRLF = '\r\n'
 export const CR = '\r'
 export const LF = '\n'
 
-export class Source {
+export class ReadonlySource {
 	public cursor = 0
 
 	constructor(
@@ -38,6 +38,22 @@ export class Source {
 		return Range.create(this, this.cursor + 1)
 	}
 
+	/**
+	 * Peeks a substring from the current cursor.
+	 * @param length The length of the substring. @default 1
+	 * @param offset The index to offset from cursor. @default 0
+	 */
+	peek(length = 1, offset = 0) {
+		return this.string.substr(this.cursor + offset, length)
+	}
+
+	slice(rangeLike: RangeLike): string {
+		const range = Range.get(rangeLike)
+		return this.string.slice(range.start, range.end)
+	}
+}
+
+export class Source extends ReadonlySource {
 	clone(): Source {
 		const ans = new Source(this.string)
 		ans.cursor = this.cursor
@@ -52,15 +68,6 @@ export class Source {
 		return this.canRead() && this.peek() !== CR && this.peek() !== LF
 	}
 
-	/**
-	 * Peeks a substring from the current cursor.
-	 * @param length The length of the substring. @default 1
-	 * @param offset The index to offset from cursor. @default 0
-	 */
-	peek(length = 1, offset = 0) {
-		return this.string.substr(this.cursor + offset, length)
-	}
-
 	read() {
 		return this.string.charAt(this.cursor++)
 	}
@@ -72,11 +79,6 @@ export class Source {
 	skip(step = 1): this {
 		this.cursor += step
 		return this
-	}
-
-	slice(rangeLike: RangeLike): string {
-		const range = Range.get(rangeLike)
-		return this.string.slice(range.start, range.end)
 	}
 
 	/**

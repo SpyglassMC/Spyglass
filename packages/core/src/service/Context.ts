@@ -2,6 +2,7 @@
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Range } from '../source'
+import { ReadonlySource } from '../source'
 import { SymbolUtil } from '../symbol'
 import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
@@ -50,10 +51,12 @@ export namespace ParserContext {
 
 export interface ProcessorContext extends ContextBase {
 	doc: TextDocument,
+	src: ReadonlySource,
 	symbols: SymbolUtil,
 }
 interface ProcessorContextLike extends ContextBaseLike {
 	doc: TextDocument,
+	src?: ReadonlySource,
 	symbols?: SymbolUtil,
 }
 export namespace ProcessorContext {
@@ -61,6 +64,7 @@ export namespace ProcessorContext {
 		return {
 			...ContextBase.create(ctx),
 			doc: ctx.doc,
+			src: ctx.src ?? new ReadonlySource(ctx.doc.getText()),
 			symbols: ctx.symbols ?? new SymbolUtil({}),
 		}
 	}

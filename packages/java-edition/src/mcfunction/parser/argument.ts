@@ -99,7 +99,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		case 'minecraft:column_pos':
 			return wrap(vector(2, true))
 		case 'minecraft:component':
-			return wrap(json.parser.entry)
+			return wrap(component)
 		case 'minecraft:dimension':
 			return wrap(core.resourceLocation({
 				category: 'dimension',
@@ -196,6 +196,8 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 			return wrap(vector(2, undefined, true))
 		case 'minecraft:vec3':
 			return wrap(vector(3))
+		case 'spyglassmc:tag':
+			return wrap(core.symbol({ category: 'tag' }))
 		case 'spyglassmc:symbol':
 			return wrap(core.symbol(treeNode.properties))
 		case 'minecraft:nbt_path':
@@ -250,7 +252,9 @@ function block(isPredicate: boolean): core.InfallibleParser<MinecraftBlockPredic
 	)
 }
 const blockState: core.InfallibleParser<MinecraftBlockStateArgumentNode> = block(false)
-const blockPredicate: core.InfallibleParser<MinecraftBlockPredicateArgumentNode> = block(true)
+export const blockPredicate: core.InfallibleParser<MinecraftBlockPredicateArgumentNode> = block(true)
+
+export const component = json.parser.entry
 
 function double(min = DoubleMin, max = DoubleMax): core.InfallibleParser<core.FloatNode> {
 	return core.float({

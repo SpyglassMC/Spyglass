@@ -1,8 +1,8 @@
-import { Source } from './Source'
+import { ReadonlySource } from './Source'
 
 export type OffsetLike =
-	| number | Source
-	| ((this: void) => number | Source)
+	| number | ReadonlySource
+	| ((this: void) => number | ReadonlySource)
 
 export namespace Offset {
 	/**
@@ -16,7 +16,7 @@ export namespace Offset {
 		if (typeof offset === 'function') {
 			offset = offset()
 		}
-		if (offset instanceof Source) {
+		if (offset instanceof ReadonlySource) {
 			offset = offset.cursor
 		}
 		return offset

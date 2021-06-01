@@ -162,6 +162,9 @@ export interface MinecraftVec2ArgumentTreeNode extends mcf.ArgumentTreeNode {
 export interface MinecraftVec3ArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:vec3',
 }
+export interface SpyglassmcTagArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'spyglassmc:tag',
+}
 export interface SpyglassmcSymbolArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'spyglassmc:symbol',
 	properties: core.SymbolOptions,
@@ -213,4 +216,5 @@ export type ArgumentTreeNode =
 	| MinecraftUuidArgumentTreeNode
 	| MinecraftVec2ArgumentTreeNode
 	| MinecraftVec3ArgumentTreeNode
+	| SpyglassmcTagArgumentTreeNode
 	| SpyglassmcSymbolArgumentTreeNode
