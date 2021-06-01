@@ -126,7 +126,7 @@ export function getEntityFromItem(item: string): string | undefined {
 	if (result) {
 		return `minecraft:${result[1]}`
 	}
-	return
+	return undefined
 }
 
 const SpecialStrings: { [path: string]: string } = {

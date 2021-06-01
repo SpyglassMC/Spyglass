@@ -8,6 +8,7 @@ import { localizeTag } from '../util'
 import { getBlockFromItem, getEntityFromItem, getSpecialStringParser, isExpandableCompound } from './nbtdocUtil'
 
 interface Options {
+	allowUnknownKey?: boolean,
 	isPredicate?: boolean,
 }
 
@@ -36,8 +37,8 @@ export function index(registry: nbtdoc.ResolvedRootRegistry, id: string, options
 export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	function* getStates(blocks: string[], ctx: core.CheckerContext) {
 		const ans: Record<string, Set<string>> = {}
-		blocks = blocks.map(v => v.includes(':') ? v : `minecraft:${v}`)
-		for (const block of blocks) {
+		for (let block of blocks) {
+			block = block.includes(':') ? block : `minecraft:${block}`
 			const blockQuery = ctx.symbols.query(ctx.doc, 'block', block)
 			blockQuery.forEachMember((state, stateQuery) => {
 				const values = Object.keys(stateQuery.visibleMembers)
@@ -71,6 +72,10 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 
 			if (Object.keys(statesResult.value).includes(keyNode.value)) {
 				// The current state exists. Check the value.
+				while (!statesResult.done && !statesResult.value[keyNode.value].has(keyNode.value)) {
+					// Expand `statesResult` only if the current value cannot be found in it.
+					statesResult = statesIterator.next()
+				}
 				const stateValues = statesResult.value[keyNode.value]
 				if (!stateValues.has(valueNode.value.toString())) {
 					ctx.err.report(localize('expected-got', stateValues, localeQuote(valueNode.value.toString())), valueNode, core.ErrorSeverity.Warning)
