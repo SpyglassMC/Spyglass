@@ -6,17 +6,19 @@ exports['mcfunction argument minecraft:component Parse """" 1'] = {
       "end": 2
     },
     "value": "",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 1
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "pairs": []
-    },
+    "childrenMaps": [
+      {
+        "outerRange": {
+          "start": 1,
+          "end": 1
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 0
+        },
+        "pairs": []
+      }
+    ],
     "name": "test",
     "hover": "<test: component>"
   },
@@ -31,17 +33,19 @@ exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
       "end": 13
     },
     "value": "hello world",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 12
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 11
-      },
-      "pairs": []
-    },
+    "childrenMaps": [
+      {
+        "outerRange": {
+          "start": 1,
+          "end": 12
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 11
+        },
+        "pairs": []
+      }
+    ],
     "name": "test",
     "hover": "<test: component>"
   },
@@ -70,7 +74,30 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
               "end": 3
             },
             "value": "",
-            "valueMap": {
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 2,
+                  "end": 2
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 0
+                },
+                "pairs": []
+              }
+            ]
+          }
+        ],
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 3
+          },
+          "value": "",
+          "childrenMaps": [
+            {
               "outerRange": {
                 "start": 2,
                 "end": 2
@@ -81,26 +108,7 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
               },
               "pairs": []
             }
-          }
-        ],
-        "value": {
-          "type": "json:string",
-          "range": {
-            "start": 1,
-            "end": 3
-          },
-          "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          ]
         }
       }
     ],
@@ -132,7 +140,51 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
               "end": 7
             },
             "value": "text",
-            "valueMap": {
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 2,
+                  "end": 6
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              }
+            ]
+          },
+          {
+            "type": "json:string",
+            "range": {
+              "start": 8,
+              "end": 21
+            },
+            "value": "hello world",
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 9,
+                  "end": 20
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 11
+                },
+                "pairs": []
+              }
+            ]
+          }
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 7
+          },
+          "value": "text",
+          "childrenMaps": [
+            {
               "outerRange": {
                 "start": 2,
                 "end": 6
@@ -143,45 +195,7 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
               },
               "pairs": []
             }
-          },
-          {
-            "type": "json:string",
-            "range": {
-              "start": 8,
-              "end": 21
-            },
-            "value": "hello world",
-            "valueMap": {
-              "outerRange": {
-                "start": 9,
-                "end": 20
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 11
-              },
-              "pairs": []
-            }
-          }
-        ],
-        "key": {
-          "type": "json:string",
-          "range": {
-            "start": 1,
-            "end": 7
-          },
-          "value": "text",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 4
-            },
-            "pairs": []
-          }
+          ]
         },
         "sep": {
           "start": 7,
@@ -194,17 +208,19 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
             "end": 21
           },
           "value": "hello world",
-          "valueMap": {
-            "outerRange": {
-              "start": 9,
-              "end": 20
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 11
-            },
-            "pairs": []
-          }
+          "childrenMaps": [
+            {
+              "outerRange": {
+                "start": 9,
+                "end": 20
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 11
+              },
+              "pairs": []
+            }
+          ]
         }
       }
     ],

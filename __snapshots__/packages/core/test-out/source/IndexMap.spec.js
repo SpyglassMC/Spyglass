@@ -55,6 +55,39 @@ exports['IndexMap create() Should create correctly create 1'] = {
   ]
 }
 
+exports['IndexMap merge() Should merge correctly 1'] = {
+  "outerRange": {
+    "start": 21,
+    "end": 38
+  },
+  "innerRange": {
+    "start": 0,
+    "end": 11
+  },
+  "pairs": [
+    {
+      "outer": {
+        "start": 16,
+        "end": 18
+      },
+      "inner": {
+        "start": 3,
+        "end": 4
+      }
+    },
+    {
+      "outer": {
+        "start": 21,
+        "end": 27
+      },
+      "inner": {
+        "start": 7,
+        "end": 8
+      }
+    }
+  ]
+}
+
 exports['IndexMap toInnerOffset() Should throw error for 12 1'] = `
 Offset 12 is not in range [13, 30)
 `

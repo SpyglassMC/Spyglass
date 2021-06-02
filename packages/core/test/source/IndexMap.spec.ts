@@ -88,4 +88,32 @@ describe('IndexMap', () => {
 			}
 		})
 	}
+
+	/*
+	 * Index Tens - 0000000000111111111122222222223333333333
+	 * Index Ones - 0123456789012345678901234567890123456789
+	 * Outer (L2) -        [helloworld::"foo\"bar\u00a7qux"]
+	 * Middle(L1) - helloworld::"foo\"bar\u00a7qux"
+	 * Inner (L0) - foo"bar§qux
+	 */
+	const outerMap = IndexMap.create({
+		outerRange: Range.create(8, 39),
+		innerRange: Range.create(0, 31),
+		pairs: [],
+	})
+	const innerMap = IndexMap.create({
+		outerRange: Range.create(13, 30),
+		innerRange: Range.create(0, 11),
+		pairs: [
+			{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
+			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
+		],
+	})
+	describe('merge()', () => {
+		it ('Should merge correctly', () => {
+			const mergedMap = IndexMap.merge(outerMap, innerMap)
+			snapshot(mergedMap)
+		})
+		
+	})
 })

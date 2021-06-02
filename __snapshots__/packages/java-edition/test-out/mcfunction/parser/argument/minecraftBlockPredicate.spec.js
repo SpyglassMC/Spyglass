@@ -62,7 +62,51 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
                 "end": 10
               },
               "value": "foo",
-              "valueMap": {
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 7,
+                    "end": 10
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 11,
+                "end": 14
+              },
+              "value": "bar",
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 11,
+                    "end": 14
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 7,
+              "end": 10
+            },
+            "value": "foo",
+            "childrenMaps": [
+              {
                 "outerRange": {
                   "start": 7,
                   "end": 10
@@ -73,45 +117,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
                 },
                 "pairs": []
               }
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 11,
-                "end": 14
-              },
-              "value": "bar",
-              "valueMap": {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 7,
-              "end": 10
-            },
-            "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 7,
-                "end": 10
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            ]
           },
           "sep": {
             "start": 10,
@@ -124,17 +130,19 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "end": 14
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 11,
+                  "end": 14
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            ]
           }
         }
       ]
@@ -160,7 +168,51 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
                 "end": 19
               },
               "value": "baz",
-              "valueMap": {
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 16,
+                    "end": 19
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 20,
+                "end": 23
+              },
+              "value": "nbt",
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 20,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 16,
+              "end": 19
+            },
+            "value": "baz",
+            "childrenMaps": [
+              {
                 "outerRange": {
                   "start": 16,
                   "end": 19
@@ -171,45 +223,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
                 },
                 "pairs": []
               }
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 20,
-                "end": 23
-              },
-              "value": "nbt",
-              "valueMap": {
-                "outerRange": {
-                  "start": 20,
-                  "end": 23
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 16,
-              "end": 19
-            },
-            "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            ]
           },
           "sep": {
             "start": 19,
@@ -222,17 +236,19 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "end": 23
             },
             "value": "nbt",
-            "valueMap": {
-              "outerRange": {
-                "start": 20,
-                "end": 23
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 20,
+                  "end": 23
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            ]
           }
         }
       ]
@@ -328,7 +344,51 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
                 "end": 9
               },
               "value": "foo",
-              "valueMap": {
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 6,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 10,
+                "end": 13
+              },
+              "value": "bar",
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 10,
+                    "end": 13
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                }
+              ]
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 6,
+              "end": 9
+            },
+            "value": "foo",
+            "childrenMaps": [
+              {
                 "outerRange": {
                   "start": 6,
                   "end": 9
@@ -339,45 +399,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
                 },
                 "pairs": []
               }
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 10,
-                "end": 13
-              },
-              "value": "bar",
-              "valueMap": {
-                "outerRange": {
-                  "start": 10,
-                  "end": 13
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 6,
-              "end": 9
-            },
-            "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 6,
-                "end": 9
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            ]
           },
           "sep": {
             "start": 9,
@@ -390,17 +412,19 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
               "end": 13
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 10,
-                "end": 13
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 10,
+                  "end": 13
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            ]
           }
         }
       ]

@@ -3,9 +3,9 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { Color, ColorInfo, ColorToken } from '../processor'
-import { ColorPresentation, selectedNode, traversePreOrder } from '../processor'
+import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
-import { Source } from '../source'
+import { IndexMap, Source } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolFormatter, SymbolUsageTypes, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
@@ -208,19 +208,19 @@ export class Service {
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
 		const ans: ColorInfo[] = []
-		traversePreOrder(node, _ => true, n => n.color, n => ans.push({
-			color: Array.isArray(n.color) ? n.color : n.color!.value,
-			range: n.range,
+		traversePreOrder(node, _ => true, ({ node }) => node.color, ({ node, map }) => ans.push({
+			color: Array.isArray(node.color) ? node.color : node.color!.value,
+			range: IndexMap.toOuterRange(map, node.range),
 		}))
 		return ans
 	}
 
-	getColorPresentation(node: FileNode<AstNode>, doc: TextDocument, range: Range, color: Color): ColorPresentation[] {
+	getColorPresentation(file: FileNode<AstNode>, doc: TextDocument, range: Range, color: Color): ColorPresentation[] {
 		this.debug(`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${range.start}-${range.end}`)
-		const result = selectedNode(node, range.start)
-		const nodeColor = result?.node.color
+		const { node } = findNode(file, range)
+		const nodeColor = node?.color
 		if (nodeColor && !Array.isArray(nodeColor)) {
-			const colorRange = nodeColor.range ?? result!.node.range
+			const colorRange = nodeColor.range ?? node!.range
 			return nodeColor.format.map(format => ColorPresentation.fromColorFormat(format, color, colorRange))
 		}
 		return []
@@ -236,11 +236,11 @@ export class Service {
 		return []
 	}
 
-	getHover(node: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
+	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const result = selectedNode(node, offset)
-		if (result) {
-			const nodes = [result.node, ...result.parents]
+		const { node, parents } = selectedNode(file, offset)
+		if (node) {
+			const nodes = [node, ...parents]
 			for (const n of nodes) {
 				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
 				if (symbol) {
@@ -260,11 +260,11 @@ export class Service {
 	 * 
 	 * @returns Symbol locations of the selected symbol at `offset`, or `null` if there's no symbol at `offset`.
 	 */
-	getSymbolLocations(node: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | null {
+	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | null {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
-		const result = selectedNode(node, offset)
-		if (result) {
-			const nodes = [result.node, ...result.parents]
+		const { node, parents } = selectedNode(file, offset)
+		if (node) {
+			const nodes = [node, ...parents]
 			for (const n of nodes) {
 				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
 				if (symbol) {

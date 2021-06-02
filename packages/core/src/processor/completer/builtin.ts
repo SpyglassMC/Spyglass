@@ -11,10 +11,10 @@ import { CompletionItem, CompletionKind } from './Completer'
 /**
  * Uses the deepest selected node that has its own completer to provide the completion items.
  */
-export const fallback: Completer<AstNode> = (node, ctx) => {
-	const result = selectedNode(node, ctx.offset)
-	if (result) {
-		for (const n of [result.node, ...result.parents]) {
+export const fallback: Completer<AstNode> = (root, ctx) => {
+	const { node, parents } = selectedNode(root, ctx.offset)
+	if (node) {
+		for (const n of [node, ...parents]) {
 			if (ctx.meta.hasCompleter(n.type)) {
 				const completer = ctx.meta.getCompleter(n.type)
 				return completer(n, ctx)
@@ -90,10 +90,10 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 
 	// TODO: Complete when the cursor is outside the quotes.
 
-	if (node.valueNode && Range.containsInclusive(node.valueMap.outerRange, ctx.offset)) {
-		const completer = ctx.meta.getCompleter(node.valueNode.type)
-		const result = completer(node.valueNode, toInnerCtx(ctx, node.valueMap))
-		return toOuterItems(result, node.valueMap)
+	if (node.children && Range.containsInclusive(node.childrenMaps[0].outerRange, ctx.offset)) {
+		const completer = ctx.meta.getCompleter(node.children[0].type)
+		const result = completer(node.children[0], toInnerCtx(ctx, node.childrenMaps[0]))
+		return toOuterItems(result, node.childrenMaps[0])
 	}
 
 	return []

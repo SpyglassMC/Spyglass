@@ -21,17 +21,19 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
       ]
     },
     "value": "true",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 5
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 4
-      },
-      "pairs": []
-    },
+    "childrenMaps": [
+      {
+        "outerRange": {
+          "start": 1,
+          "end": 5
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "pairs": []
+      }
+    ],
     "expectation": [
       {
         "type": "json:boolean",
@@ -122,17 +124,19 @@ exports['JSON boolean boolean Check "tru" 1'] = {
       ]
     },
     "value": "",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "pairs": []
-    },
+    "childrenMaps": [
+      {
+        "outerRange": {
+          "start": 0,
+          "end": 0
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 0
+        },
+        "pairs": []
+      }
+    ],
     "expectation": [
       {
         "type": "json:boolean",

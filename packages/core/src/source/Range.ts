@@ -88,6 +88,10 @@ export namespace Range {
 		return Range.contains(a, b.start) || Range.contains(b, a.start)
 	}
 
+	export function equals(a: Range, b: Range): boolean {
+		return a.start === b.start && a.end === b.end
+	}
+
 	export function endsBefore(range: Range, offset: number): boolean {
 		return range.end <= offset
 	}

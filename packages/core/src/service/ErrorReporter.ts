@@ -1,6 +1,6 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageErrorInfo, RangeLike } from '../source'
-import { ErrorSeverity, IndexMap, LanguageError, Range } from '../source'
+import { ErrorSeverity, IndexMap, LanguageError, Location, Range } from '../source'
 
 export class ErrorReporter {
 	public errors: LanguageError[] = []
@@ -32,12 +32,19 @@ export class ErrorReporter {
 			e.range = IndexMap.toOuterRange(mapping.map, e.range)
 			if (e.info?.related) {
 				e.info.related = e.info.related.map(v => ({
-					location: IndexMap.toOuterLocation(mapping.map, v.location, mapping.doc),
+					location: ErrorReporter.toOuterLocation(mapping.map, v.location, mapping.doc),
 					message: v.message,
 				}))
 			}
 			return e
 		}) : reporter.errors
 		this.errors.push(...incomingErrors)
+	}
+
+	private static toOuterLocation(map: IndexMap, inner: Location, doc: TextDocument): Location {
+		return Location.create(
+			doc,
+			IndexMap.toOuterRange(map, inner.range)
+		)
 	}
 }

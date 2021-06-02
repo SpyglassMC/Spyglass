@@ -1,5 +1,6 @@
-import type { Color, FormattableColor } from '../processor'
 import { deepClone } from '../common'
+import type { Color, FormattableColor } from '../processor'
+import type { IndexMap } from '../source'
 import { Range } from '../source'
 import type { Symbol } from '../symbol'
 
@@ -10,6 +11,7 @@ export interface AstNode {
 	 * All child nodes of this AST node.
 	 */
 	readonly children?: AstNode[],
+	readonly childrenMaps?: IndexMap[],
 	readonly parent?: AstNode,
 	symbol?: Symbol,
 	hover?: string,

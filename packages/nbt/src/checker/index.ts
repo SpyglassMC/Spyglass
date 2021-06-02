@@ -1,3 +1,4 @@
+import type { AstNode, Mutable } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import type * as nbtdoc from '@spyglassmc/nbtdoc'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'
@@ -275,7 +276,7 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 					core.resourceLocation(type.registry
 						? { category: type.registry, isPredicate: options.isPredicate }
 						: { allowUnknown: true, pool: [], isPredicate: options.isPredicate }),
-					node.value, node.valueMap, ctx
+					node.value, node.childrenMaps[0], ctx
 				)
 				break
 			case 'list':
@@ -309,9 +310,9 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 					if (parserName) {
 						try {
 							const parser = ctx.meta.getParser(parserName)
-							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
+							const result = core.parseStringValue(parser, node.value, node.childrenMaps[0], ctx)
 							if (result !== core.Failure) {
-								node.valueNode = result
+								(node as Mutable<AstNode>).children = [result]
 							}
 						} catch (e) {
 							ctx.logger.error(`[nbt.checker.fieldValue#string] ${e?.toString()}`)

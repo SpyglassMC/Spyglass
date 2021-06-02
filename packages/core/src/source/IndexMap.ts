@@ -1,5 +1,3 @@
-import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { Location } from './Location'
 import { Range } from './Range'
 
 export interface IndexMap {
@@ -9,6 +7,12 @@ export interface IndexMap {
 }
 
 export namespace IndexMap {
+	export const DEFAULT: IndexMap = {
+		outerRange: Range.create(0, Number.MAX_VALUE),
+		innerRange: Range.create(0, Number.MAX_VALUE),
+		pairs: [],
+	}
+
 	export function create(partial: Partial<IndexMap> = {}): IndexMap {
 		return {
 			outerRange: partial.outerRange ?? Range.Beginning,
@@ -71,10 +75,11 @@ export namespace IndexMap {
 		)
 	}
 
-	export function toOuterLocation(map: IndexMap, inner: Location, doc: TextDocument): Location {
-		return Location.create(
-			doc,
-			toOuterRange(map, inner.range)
-		)
+	export function merge(outer: IndexMap, inner: IndexMap): IndexMap {
+		return {
+			outerRange: IndexMap.toOuterRange(outer, inner.outerRange),
+			innerRange: inner.innerRange,
+			pairs: inner.pairs, // FIXME: Make this work when outer has pairs.
+		}
 	}
 }

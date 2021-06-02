@@ -249,7 +249,7 @@ export const criterion = as('criterion', dispatch('trigger',
 					)),
 				},
 				enter_block: {
-					block: resource('block'),
+					block: opt(resource('block')),
 					state: opt(blockStateMap(extract('block', props))),
 				},
 				enchanted_item: {

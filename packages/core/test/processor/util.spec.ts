@@ -1,8 +1,7 @@
-import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { AstNode } from '../../lib'
-import { Range, selectedNode, traverseLeaves, traversePreOrder } from '../../lib'
+import { findNode, Range, selectedNode, traversePreOrder } from '../../lib'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',
@@ -70,51 +69,13 @@ describe('processor/util.ts', () => {
 			traversePreOrder(
 				TestNode,
 				_ => true,
-				node => node.type === 'leaf_1' || node.type === 'not_leaf_3',
-				(node, parents) => snapshot({
+				({ node }) => node.type === 'leaf_1' || node.type === 'not_leaf_3',
+				({ node, parents }) => snapshot({
 					node: node.type,
 					parents: parents.map(p => p.type),
 				})
 			)
 		})
-	})
-
-	describe('traverseLeaves()', () => {
-		it('Should traverse every leaf', () => {
-			traverseLeaves(
-				TestNode,
-				(leaf, parents) => snapshot({
-					leaf: leaf.type,
-					parents: parents.map(p => p.type),
-				})
-			)
-		})
-		it('Should not traverse at all if the provided range [10, 10) does not intersect with any node', () => {
-			traverseLeaves(
-				TestNode,
-				fail,
-				Range.create(10, 10)
-			)
-		})
-		const suites: Range[] = [
-			Range.create(0, 10),
-			Range.create(4, 5),
-			Range.create(5, 7),
-			Range.create(6, 7),
-			Range.create(7, 10),
-		]
-		for (const suite of suites) {
-			it(`Should traverse every leaf in ${Range.toString(suite)}`, () => {
-				traverseLeaves(
-					TestNode,
-					(leaf, parents) => snapshot({
-						leaf: leaf.type,
-						parents: parents.map(p => p.type),
-					}),
-					suite
-				)
-			})
-		}
 	})
 
 	describe('selectedNode()', () => {
@@ -129,13 +90,13 @@ describe('processor/util.ts', () => {
 			]
 			for (const suite of suites) {
 				it(`Should return the node at ${suite}`, () => {
-					const actual = selectedNode(
+					const { node, parents } = selectedNode(
 						TestNode,
 						suite,
 					)
-					snapshot(actual ? {
-						node: actual.node.type,
-						parents: actual.parents.map(p => p.type),
+					snapshot(node ? {
+						node: node.type,
+						parents: parents.map(p => p.type),
 					} : 'null')
 				})
 			}
@@ -149,13 +110,54 @@ describe('processor/util.ts', () => {
 			]
 			for (const suite of suites) {
 				it(`Should return the node at ${suite}`, () => {
-					const actual = selectedNode(
+					const { node, parents } = selectedNode(
 						DiscontinuousTestNode,
 						suite,
 					)
-					snapshot(actual ? {
-						node: actual.node.type,
-						parents: actual.parents.map(p => p.type),
+					snapshot(node ? {
+						node: node.type,
+						parents: parents.map(p => p.type),
+					} : 'null')
+				})
+			}
+		})
+	})
+
+	describe('findNode()', () => {
+		describe('continuous', () => {
+			const suites: Range[] = [
+				Range.create(0, 10),
+				Range.create(5, 6),
+				Range.create(9, 10),
+			]
+			for (const suite of suites) {
+				it(`Should return the node at ${Range.toString(suite)}`, () => {
+					const { node, parents } = findNode(
+						TestNode,
+						suite,
+					)
+					snapshot(node ? {
+						node: node.type,
+						parents: parents.map(p => p.type),
+					} : 'null')
+				})
+			}
+		})
+		describe('discontinuous', () => {
+			const suites: Range[] = [
+				Range.create(0, 10),
+				Range.create(0, 2),
+				Range.create(9, 10),
+			]
+			for (const suite of suites) {
+				it(`Should return the node at ${Range.toString(suite)}`, () => {
+					const { node, parents } = findNode(
+						DiscontinuousTestNode,
+						suite,
+					)
+					snapshot(node ? {
+						node: node.type,
+						parents: parents.map(p => p.type),
 					} : 'null')
 				})
 			}

@@ -1415,17 +1415,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "end": 733
                 },
                 "value": "rollable",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 724,
-                    "end": 732
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 724,
+                      "end": 732
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
+                ]
               }
             ],
             "doc": {
@@ -1461,17 +1463,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "end": 733
               },
               "value": "rollable",
-              "valueMap": {
-                "outerRange": {
-                  "start": 724,
-                  "end": 732
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 8
-                },
-                "pairs": []
-              }
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 724,
+                    "end": 732
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                }
+              ]
             }
           },
           {
@@ -1530,17 +1534,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "end": 796
                 },
                 "value": "aligned",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 788,
-                    "end": 795
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 7
-                  },
-                  "pairs": []
-                }
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 788,
+                      "end": 795
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  }
+                ]
               }
             ],
             "doc": {
@@ -1576,17 +1582,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "end": 796
               },
               "value": "aligned",
-              "valueMap": {
-                "outerRange": {
-                  "start": 788,
-                  "end": 795
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 7
-                },
-                "pairs": []
-              }
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 788,
+                    "end": 795
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                }
+              ]
             }
           },
           {
@@ -1681,17 +1689,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "end": 733
                 },
                 "value": "rollable",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 724,
-                    "end": 732
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 724,
+                      "end": 732
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
+                ]
               }
             ],
             "doc": {
@@ -1727,17 +1737,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "end": 733
               },
               "value": "rollable",
-              "valueMap": {
-                "outerRange": {
-                  "start": 724,
-                  "end": 732
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 8
-                },
-                "pairs": []
-              }
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 724,
+                    "end": 732
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                }
+              ]
             }
           },
           {
@@ -1788,17 +1800,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                   "end": 796
                 },
                 "value": "aligned",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 788,
-                    "end": 795
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 7
-                  },
-                  "pairs": []
-                }
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 788,
+                      "end": 795
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  }
+                ]
               }
             ],
             "doc": {
@@ -1834,17 +1848,19 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
                 "end": 796
               },
               "value": "aligned",
-              "valueMap": {
-                "outerRange": {
-                  "start": 788,
-                  "end": 795
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 7
-                },
-                "pairs": []
-              }
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 788,
+                    "end": 795
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                }
+              ]
             }
           }
         ]

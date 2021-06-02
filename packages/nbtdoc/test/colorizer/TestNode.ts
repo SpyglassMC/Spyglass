@@ -1047,17 +1047,19 @@ export const TestNode: MainNode = {
 								end: 149,
 							},
 							value: 'One',
-							valueMap: {
-								outerRange: {
-									start: 145,
-									end: 148,
+							childrenMaps: [
+								{
+									outerRange: {
+										start: 145,
+										end: 148,
+									},
+									innerRange: {
+										start: 0,
+										end: 3,
+									},
+									pairs: [],
 								},
-								innerRange: {
-									start: 0,
-									end: 3,
-								},
-								pairs: [],
-							},
+							],
 						},
 					],
 					doc: {
@@ -1084,17 +1086,19 @@ export const TestNode: MainNode = {
 							end: 149,
 						},
 						value: 'One',
-						valueMap: {
-							outerRange: {
-								start: 145,
-								end: 148,
+						childrenMaps: [
+							{
+								outerRange: {
+									start: 145,
+									end: 148,
+								},
+								innerRange: {
+									start: 0,
+									end: 3,
+								},
+								pairs: [],
 							},
-							innerRange: {
-								start: 0,
-								end: 3,
-							},
-							pairs: [],
-						},
+						],
 					},
 				},
 				{
@@ -1171,17 +1175,19 @@ export const TestNode: MainNode = {
 								end: 149,
 							},
 							value: 'One',
-							valueMap: {
-								outerRange: {
-									start: 145,
-									end: 148,
+							childrenMaps: [
+								{
+									outerRange: {
+										start: 145,
+										end: 148,
+									},
+									innerRange: {
+										start: 0,
+										end: 3,
+									},
+									pairs: [],
 								},
-								innerRange: {
-									start: 0,
-									end: 3,
-								},
-								pairs: [],
-							},
+							],
 						},
 					],
 					doc: {
@@ -1208,17 +1214,19 @@ export const TestNode: MainNode = {
 							end: 149,
 						},
 						value: 'One',
-						valueMap: {
-							outerRange: {
-								start: 145,
-								end: 148,
+						childrenMaps: [
+							{
+								outerRange: {
+									start: 145,
+									end: 148,
+								},
+								innerRange: {
+									start: 0,
+									end: 3,
+								},
+								pairs: [],
 							},
-							innerRange: {
-								start: 0,
-								end: 3,
-							},
-							pairs: [],
-						},
+						],
 					},
 				},
 			],

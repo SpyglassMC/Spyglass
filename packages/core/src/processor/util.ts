@@ -1,47 +1,51 @@
 import type { AstNode } from '../node'
-import { Range } from '../source'
+import { IndexMap, Range } from '../source'
 
-type Callback<R> = (this: void, node: AstNode, parents: AstNode[]) => R
+type Callback<R> = (this: void, result: { node: AstNode, parents: AstNode[], map: IndexMap }) => R
 
-export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>): void
-export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>, existingParents: AstNode[] = []): void {
-	if (!shouldContinue(node, existingParents)) {
+export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>): void {
+	traversePreOrderImpl(node, shouldContinue, shouldCallFn, fn, [], IndexMap.DEFAULT)
+}
+
+function traversePreOrderImpl(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>, parents: AstNode[], map: IndexMap): void {
+	if (shouldCallFn({ node, parents, map })) {
+		fn({ node, parents, map })
+	}
+	if (!node.children || !shouldContinue({ node, parents, map })) {
 		return
 	}
-	if (shouldCallFn(node, existingParents)) {
-		fn(node, existingParents)
-		return
-	}
+	let i = 0
 	for (const child of node.children ?? []) {
-		existingParents.unshift(node);
-		(traversePreOrder as any)(child, shouldContinue, shouldCallFn, fn, existingParents)
-		existingParents.shift()
-	}
-}
-
-export function traverseLeaves(node: AstNode, fn: Callback<unknown>, range?: Range): void {
-	traversePreOrder(node,
-		node => !range || Range.intersects(node.range, range),
-		node => !node.children?.length,
-		fn
-	)
-}
-
-export function selectedNode(node: AstNode, offset: number): { node: AstNode, parents: AstNode[] } | null
-export function selectedNode(node: AstNode, offset: number, existingParents: AstNode[] = []): { node: AstNode, parents: AstNode[] } | null {
-	if (Range.contains(node.range, offset)) {
-		if (node.children?.length) {
-			existingParents.unshift(node)
-			// TODO: Binary search here.
-			for (const child of node.children) {
-				const result = (selectedNode as any)(child, offset, existingParents)
-				if (result) {
-					return result
-				}
-			}
-			existingParents.shift()
+		parents.unshift(node)
+		if (node.childrenMaps) {
+			map = IndexMap.merge(map, node.childrenMaps[i])
 		}
-		return { node, parents: existingParents }
+		traversePreOrderImpl(child, shouldContinue, shouldCallFn, fn, parents, map)
+		parents.shift()
+		i += 1
 	}
-	return null
+}
+
+type NodeResult = { node: AstNode | null, parents: AstNode[], map: IndexMap }
+
+export function selectedNode(node: AstNode, offset: number): NodeResult {
+	let ans: NodeResult = { node: null, parents: [], map: IndexMap.DEFAULT }
+	// TODO: Binary search here.
+	traversePreOrder(node,
+		({ node, map }) => Range.contains(node.range, IndexMap.toInnerOffset(map, offset)),
+		({ node, map }) => Range.contains(node.range, IndexMap.toInnerOffset(map, offset)),
+		({ node, map, parents }) => ans = { node, map, parents: [...parents] },
+	)
+	return ans
+}
+
+export function findNode(node: AstNode, range: Range): NodeResult {
+	let ans: NodeResult = { node: null, parents: [], map: IndexMap.DEFAULT }
+	// TODO: Binary search here.
+	traversePreOrder(node,
+		({ node, map }) => ans.node === null && Range.intersects(node.range, IndexMap.toInnerRange(map, range)),
+		({ node, map }) => Range.equals(node.range, IndexMap.toInnerRange(map, range)),
+		({ node, map, parents }) => ans = { node, map, parents: [...parents] },
+	)
+	return ans
 }

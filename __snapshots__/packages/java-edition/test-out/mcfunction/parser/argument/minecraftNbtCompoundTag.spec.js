@@ -20,7 +20,51 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
               "end": 4
             },
             "value": "foo",
-            "valueMap": {
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 1,
+                  "end": 4
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            ]
+          },
+          {
+            "type": "string",
+            "range": {
+              "start": 5,
+              "end": 8
+            },
+            "value": "bar",
+            "childrenMaps": [
+              {
+                "outerRange": {
+                  "start": 5,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            ]
+          }
+        ],
+        "key": {
+          "type": "string",
+          "range": {
+            "start": 1,
+            "end": 4
+          },
+          "value": "foo",
+          "childrenMaps": [
+            {
               "outerRange": {
                 "start": 1,
                 "end": 4
@@ -31,45 +75,7 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
               },
               "pairs": []
             }
-          },
-          {
-            "type": "string",
-            "range": {
-              "start": 5,
-              "end": 8
-            },
-            "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 5,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
-          }
-        ],
-        "key": {
-          "type": "string",
-          "range": {
-            "start": 1,
-            "end": 4
-          },
-          "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 1,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          ]
         },
         "sep": {
           "start": 4,
@@ -82,17 +88,19 @@ exports['mcfunction argument minecraft:nbt_compound_tag Parse "{foo:bar}" 1'] = 
             "end": 8
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 5,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "childrenMaps": [
+            {
+              "outerRange": {
+                "start": 5,
+                "end": 8
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
+          ]
         }
       }
     ],
