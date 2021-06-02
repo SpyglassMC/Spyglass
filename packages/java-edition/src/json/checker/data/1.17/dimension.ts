@@ -46,9 +46,9 @@ export const noise_settings: JsonChecker = (node, ctx) => as('noise_settings', r
 		density_factor: float,
 		density_offset: float,
 		simplex_surface_noise: boolean,
-		random_density_offset: opt(boolean),
-		island_noise_override: opt(boolean),
-		amplified: opt(boolean),
+		random_density_offset: opt(boolean, false),
+		island_noise_override: opt(boolean, false),
+		amplified: opt(boolean, false),
 		sampling: record({
 			xz_scale: floatRange(0.001, 1000),
 			y_scale: floatRange(0.001, 1000),
@@ -70,7 +70,7 @@ const biome_source = as('biome_source', dispatch('type', type => record({
 	type: resource('worldgen/biome_source'),
 	...pick(type, {
 		checkerboard: {
-			scale: opt(intRange(0, 62)),
+			scale: opt(intRange(0, 62), 2),
 			biomes: listOf(resource('worldgen/biome')),
 		},
 		fixed: {
@@ -99,8 +99,8 @@ const biome_source = as('biome_source', dispatch('type', type => record({
 		},
 		vanilla_layered: {
 			seed: int,
-			large_biomes: opt(boolean),
-			legacy_biome_init_layer: opt(boolean),
+			large_biomes: opt(boolean, false),
+			legacy_biome_init_layer: opt(boolean, false),
 		},
 	}),
 })))
@@ -114,7 +114,7 @@ export const dimension_type: JsonChecker = (node, ctx) => as('dimension_type', r
 	ambient_light: float,
 	fixed_time: opt(int),
 	infiniburn: resource('tag/block'),
-	effects: opt(resource(['overworld', 'the_nether', 'the_end'])),
+	effects: opt(resource(['overworld', 'the_nether', 'the_end']), 'overworld'),
 	ultrawarm: boolean,
 	natural: boolean,
 	piglin_safe: boolean,
@@ -139,9 +139,9 @@ export const dimension = as('dimension', record({
 						block: resource('block'),
 						height: intRange(0, 4096),
 					})),
-					biome: opt(resource('worldgen/biome')),
-					lakes: opt(boolean),
-					features: opt(boolean),
+					biome: resource('worldgen/biome'),
+					lakes: opt(boolean, false),
+					features: opt(boolean, false),
 					structures: structure_settings,
 				}),
 			},

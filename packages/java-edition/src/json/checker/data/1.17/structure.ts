@@ -1,6 +1,6 @@
 import { any, as, boolean, dispatch, float, floatRange, intRange, listOf, literal, opt, pick, record, resource, simpleString, when } from '@spyglassmc/json/lib/checker'
 import { nbt } from '../../util'
-import { block_state, HeightmapType } from './common'
+import { block_state, HeightmapType, height_provider } from './common'
 import { configured_feature_ref } from './feature'
 
 export const rule_test = as('rule_test', dispatch('predicate_type', type => record({
@@ -42,7 +42,7 @@ export const pos_rule_test = as('pos_rule_test', dispatch('predicate_type', type
 })))
 
 const processor_rule = as('processor_rule', record({
-	position_predicate: opt(pos_rule_test),
+	position_predicate: opt(pos_rule_test, { predicate_type: 'always_true' }),
 	input_predicate: rule_test,
 	location_predicate: rule_test,
 	output_state: block_state,
@@ -63,6 +63,9 @@ const processor = as('processor', dispatch('processor_type', type => record({
 		},
 		gravity: {
 			heightmap: literal(HeightmapType),
+		},
+		protected_blocks: {
+			value: resource('tag/block'),
 		},
 		rule: {
 			rules: listOf(processor_rule),
@@ -133,6 +136,9 @@ export const configured_structure_feature = as('structure_feature', dispatch('ty
 				type: literal(['normal', 'mesa']),
 				probability: floatRange(0, 1),
 			},
+			nether_fossil: {
+				height: height_provider,
+			},
 			ocean_ruin: {
 				biome_temp: literal(['cold', 'warm']),
 				large_probability: floatRange(0, 1),
@@ -142,7 +148,7 @@ export const configured_structure_feature = as('structure_feature', dispatch('ty
 				portal_type: literal(['standard', 'desert', 'jungle', 'mountain', 'nether', 'ocean', 'swamp']),
 			},
 			shipwreck: {
-				is_beached: opt(boolean),
+				is_beached: opt(boolean, false),
 			},
 		})),
 	}),

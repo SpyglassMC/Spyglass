@@ -6,9 +6,12 @@ import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
 
+type JsonValue = string | number | boolean | null | JsonValue[] | {[key: string]: JsonValue}
+
 type ComplexProperty = {
 	checker: JsonChecker,
 	opt?: boolean,
+	def?: JsonValue,
 	deprecated?: boolean,
 	context?: string,
 }
@@ -67,16 +70,19 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 					if (isComplex(value) && value.deprecated) {
 						ctx.err.report(localize('json.checker.property.deprecated', localeQuote(key)), prop.key!, ErrorSeverity.Hint, { deprecated: true })
 					}
-					const context = `${ctx.context}.${isComplex(value) && value.context ? `${value.context}.` : ''}${key}`
+					const context = ctx.context + (isComplex(value) && value.context ? `.${value.context}` : '')
 					const doc = localize(`json.doc.${context}`)
 					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
 					const checker = isComplex(value) ? value.checker : value
 					try {
-						checker(propNode, { ...ctx, context })
+						checker(propNode, { ...ctx, context: `${context}.${key}` })
 					} catch (e) {
-						console.log(`ERROR checking ${key}`, checker)
+						const pos = ctx.doc.positionAt(prop.range.start)
+						ctx.logger.error(`Checking "${key}" at ${pos.line}:${pos.character}: ${e.message}`)
 					}
-					prop.key!.hover = `\`\`\`typescript\n${context}: ${propNode.expectation?.map(e => e.typedoc).join(' | ')}\n\`\`\`${doc ? `\n******\n${doc}` : ''}`
+					const defaultValue = isComplex(value) ? value.def : undefined
+					const typedoc = propNode.expectation?.map(e => e.typedoc).join(' | ')
+					prop.key!.hover = `\`\`\`typescript\n${context}.${key}: ${typedoc}\n\`\`\`${doc || defaultValue !== undefined ? '\n******\n ' : ''}${doc}${defaultValue !== undefined ? `\n\`@default\` ${JSON.stringify(defaultValue)}` : ''}`
 				}
 			})
 		} else if (typeof keys === 'function' && values) {
@@ -99,8 +105,8 @@ export function record(properties: CheckerRecord): JsonChecker {
 	)
 }
 
-export function opt(checker: JsonChecker): ComplexProperty {
-	return { checker: checker, opt: true }
+export function opt(checker: JsonChecker, defaultValue?: JsonValue): ComplexProperty {
+	return { checker: checker, opt: true, def: defaultValue }
 }
 
 export function deprecated(checker: JsonChecker): ComplexProperty {

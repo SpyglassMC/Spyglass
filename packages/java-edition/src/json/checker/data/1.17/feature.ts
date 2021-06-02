@@ -4,6 +4,7 @@ import { JsonArrayNode, JsonObjectNode } from '@spyglassmc/json'
 import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, Y_SIZE } from './common'
+import { processor_list_ref, rule_test } from './structure'
 
 function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerContext) {
 	if (node && JsonObjectNode.is(node)) {
@@ -83,16 +84,16 @@ const feature_size = as('feature_size', dispatch('type', type => record({
 	min_clipped_height: opt(intRange(0, 80)),
 	...pick(type, {
 		two_layers_feature_size: {
-			limit: opt(intRange(0, 81)),
-			lower_size: opt(intRange(0, 16)),
-			upper_size: opt(intRange(0, 16)),
+			limit: opt(intRange(0, 81), 1),
+			lower_size: opt(intRange(0, 16), 0),
+			upper_size: opt(intRange(0, 16), 1),
 		},
 		three_layers_feature_size: {
-			limit: opt(intRange(0, 81)),
-			upper_limit: opt(intRange(0, 80)),
-			lower_size: opt(intRange(0, 16)),
-			middle_size: opt(intRange(0, 16)),
-			upper_size: opt(intRange(0, 16)),
+			limit: opt(intRange(0, 81), 1),
+			upper_limit: opt(intRange(0, 80), 1),
+			lower_size: opt(intRange(0, 16), 0),
+			middle_size: opt(intRange(0, 16), 1),
+			upper_size: opt(intRange(0, 16), 1),
 		},
 	}),
 })))
@@ -105,7 +106,7 @@ const trunk_placer = as('trunk_placer', dispatch('type', type => record({
 	...pick(type, {
 		bending_trunk_placer: {
 			bend_length: intProvider(1, 64),
-			min_height_for_leaves: opt(intRange(1, null)),
+			min_height_for_leaves: opt(intRange(1, null), 1),
 		},
 	}),
 })))
@@ -170,17 +171,17 @@ const RandomPatchConfig = {
 	block_placer: block_placer,
 	whitelist: listOf(block_state),
 	blacklist: listOf(block_state),
-	tries: opt(intRange(1, null)),
-	xspread: opt(intRange(0, null)),
-	yspread: opt(intRange(0, null)),
-	zspread: opt(intRange(0, null)),
-	can_replace: opt(boolean),
-	project: opt(boolean),
-	need_water: opt(boolean),
+	tries: opt(intRange(1, null), 128),
+	xspread: opt(intRange(0, null), 7),
+	yspread: opt(intRange(0, null), 3),
+	zspread: opt(intRange(0, null), 7),
+	can_replace: opt(boolean, false),
+	project: opt(boolean, true),
+	need_water: opt(boolean, false),
 }
 
 const HugeMushroomConfig = {
-	foliage_radius: opt(int),
+	foliage_radius: opt(int, 2),
 	cap_provider: block_state_provider,
 	stem_provider: block_state_provider,
 }
@@ -239,7 +240,7 @@ export const configured_decorator = as('decorator', dispatch('type', type => rec
 		count_noise_biased: {
 			noise_to_count_ratio: int,
 			noise_factor: float,
-			noise_offset: opt(float),
+			noise_offset: opt(float, 0),
 		},
 		decorated: {
 			outer: configured_decorator,
@@ -305,14 +306,14 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			exact: boolean,
 		},
 		end_spike: {
-			crystal_invulnerable: opt(boolean),
+			crystal_invulnerable: opt(boolean, false),
 			crystal_beam_target: opt(listOf(int)),
 			spikes: listOf(record({
-				centerX: opt(int),
-				centerZ: opt(int),
-				radius: opt(int),
-				height: opt(int),
-				guarded: opt(boolean),
+				centerX: opt(int, 0),
+				centerZ: opt(int, 0),
+				radius: opt(int, 0),
+				height: opt(int, 0),
+				guarded: opt(boolean, false),
 			})),
 		},
 		fill_layer: {
@@ -327,14 +328,8 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			max_empty_corners_allowed: intRange(0, 7),
 			fossil_structures: listOf(resource('structure')),
 			overlay_structures: listOf(resource('structure')),
-			fossil_processors: any([
-				resource('worldgen/processor_list'),
-				listOf(object()), // TODO: processor list
-			]),
-			overlay_processors: any([
-				resource('worldgen/processor_list'),
-				listOf(object()), // TODO: processor list
-			]),
+			fossil_processors: processor_list_ref,
+			overlay_processors: processor_list_ref,
 		},
 		geode: {
 			blocks: record({
@@ -344,35 +339,37 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 				middle_layer_provider: block_state_provider,
 				outer_layer_provider: block_state_provider,
 				inner_placements: listOf(block_state),
+				cannot_replace: resource('tag/block'),
+				invalid_blocks: resource('tag/block'),
 			}),
 			layers: record({
-				filling: opt(floatRange(0.01, 50)),
-				inner_layer: opt(floatRange(0.01, 50)),
-				middle_layer: opt(floatRange(0.01, 50)),
-				outer_layer: opt(floatRange(0.01, 50)),
+				filling: opt(floatRange(0.01, 50), 1.7),
+				inner_layer: opt(floatRange(0.01, 50), 2.2),
+				middle_layer: opt(floatRange(0.01, 50), 3.2),
+				outer_layer: opt(floatRange(0.01, 50), 4.2),
 			}),
 			crack: record({
-				generate_crack_chance: opt(floatRange(0, 1)),
-				base_crack_size: opt(floatRange(0, 5)),
-				crack_point_offset: opt(intRange(0, 10)),
+				generate_crack_chance: opt(floatRange(0, 1), 1),
+				base_crack_size: opt(floatRange(0, 5), 2),
+				crack_point_offset: opt(intRange(0, 10), 2),
 			}),
-			noise_multiplier: opt(floatRange(0, 1)),
-			use_potential_placements_chance: opt(floatRange(0, 1)),
-			use_alternate_layer0_chance: opt(floatRange(0, 1)),
-			placements_require_layer0_alternate: opt(boolean),
-			outer_wall_distance: opt(intProvider(0, 10)),
-			distribution_points: opt(intProvider(1, 20)),
-			point_offset: opt(intProvider(0, 10)),
-			min_gen_offset: opt(int),
-			max_gen_offset: opt(int),
+			noise_multiplier: opt(floatRange(0, 1), 0.05),
+			use_potential_placements_chance: opt(floatRange(0, 1), 0.35),
+			use_alternate_layer0_chance: opt(floatRange(0, 1), 0),
+			placements_require_layer0_alternate: opt(boolean, true),
+			outer_wall_distance: opt(intProvider(0, 10), { value: { min_inclusive: 0, max_inclusive: 10 } }),
+			distribution_points: opt(intProvider(1, 20), { value: { min_inclusive: 3, max_inclusive: 4 } }),
+			point_offset: opt(intProvider(0, 10), { value: { min_inclusive: 1, max_inclusive: 2 } }),
+			min_gen_offset: opt(int, -16),
+			max_gen_offset: opt(int, 16),
 			invalid_blocks_threshold: int,
 		},
 		glow_lichen: {
-			search_range: opt(intRange(1, 64)),
-			chance_of_spreading: opt(floatRange(0, 1)),
-			can_place_on_floor: opt(boolean),
-			can_place_on_wall: opt(boolean),
-			can_place_on_ceiling: opt(boolean),
+			search_range: opt(intRange(1, 64), 10),
+			chance_of_spreading: opt(floatRange(0, 1), 0.5),
+			can_place_on_floor: opt(boolean, false),
+			can_place_on_wall: opt(boolean, false),
+			can_place_on_ceiling: opt(boolean, false),
 			can_be_placed_on: listOf(block_state),
 		},
 		growing_plant: {
@@ -387,7 +384,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		},
 		huge_brown_mushroom: HugeMushroomConfig,
 		huge_fungus: {
-			planted: opt(boolean),
+			planted: opt(boolean, false),
 			hat_state: block_state,
 			decor_state: block_state,
 			stem_state: block_state,
@@ -402,7 +399,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			state: block_state,
 		},
 		large_dripstone: {
-			floor_to_ceiling_search_range: opt(intRange(1, 512)),
+			floor_to_ceiling_search_range: opt(intRange(1, 512), 30),
 			column_radius: intProvider(0, 20),
 			height_scale: floatProvider(0, 20),
 			max_column_radius_to_cave_height_ratio: floatRange(0, 1),
@@ -416,7 +413,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			state_provider: block_state_provider,
 		},
 		netherrack_replace_blobs: {
-			radius: intProvider(),
+			radius: intProvider(0, 12),
 			state: block_state,
 			target: block_state,
 		},
@@ -437,7 +434,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		replace_single_block: {
 			targets: listOf(record({
 				state: block_state,
-				target: object(), // TODO: rule test
+				target: rule_test,
 			})),
 		},
 		root_system: {
@@ -461,31 +458,32 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		},
 		simple_block: {
 			to_place: block_state_provider,
-			place_on: opt(listOf(block_state)),
-			place_in: opt(listOf(block_state)),
-			place_under: opt(listOf(block_state)),
+			place_on: opt(listOf(block_state), []),
+			place_in: opt(listOf(block_state), []),
+			place_under: opt(listOf(block_state), []),
 		},
 		simple_random_selector: {
 			features: configured_feature_list_ref,
 		},
 		small_dripstone: {
-			max_placements: opt(intRange(0, 100)),
-			empty_space_search_radius: opt(intRange(0, 20)),
-			max_offset_from_origin: opt(intRange(0, 20)),
-			chance_of_taller_dripstone: opt(floatRange(0, 1)),
+			max_placements: opt(intRange(0, 100), 5),
+			empty_space_search_radius: opt(intRange(0, 20), 10),
+			max_offset_from_origin: opt(intRange(0, 20), 2),
+			chance_of_taller_dripstone: opt(floatRange(0, 1), 0.2),
 		},
 		spring_feature: {
-			requires_block_below: opt(boolean),
-			rock_count: opt(int),
-			hole_count: opt(int),
+			requires_block_below: opt(boolean, true),
+			rock_count: opt(int, 4),
+			hole_count: opt(int, 1),
 			state: fluid_state,
 			valid_blocks: listOf(resource('block')),
 		},
 		tree: {
-			ignore_vines: opt(boolean),
-			force_dirt: opt(boolean),
+			ignore_vines: opt(boolean, false),
+			force_dirt: opt(boolean, false),
 			minimum_size: feature_size,
 			dirt_provider: block_state_provider,
+			sapling_provider: block_state_provider,
 			trunk_provider: block_state_provider,
 			foliage_provider: block_state_provider,
 			trunk_placer: trunk_placer,

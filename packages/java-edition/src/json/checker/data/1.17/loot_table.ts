@@ -1,4 +1,4 @@
-import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { blockStateList, blockStateMap, nbt, uuid } from '../../util'
 import { damage_source_predicate, entity_predicate, item_predicate, location_predicate } from './advancement'
 import { int_bounds, number_provider, Slots } from './common'
@@ -78,12 +78,12 @@ export const predicate = as('predicate', dispatch('condition',
 				term: predicate,
 			},
 			killed_by_player: {
-				inverse: opt(boolean),
+				inverse: opt(boolean, false),
 			},
 			location_check: {
-				offsetX: opt(int),
-				offsetY: opt(int),
-				offsetZ: opt(int),
+				offsetX: opt(int, 0),
+				offsetY: opt(int, 0),
+				offsetZ: opt(int, 0),
 				predicate: location_predicate,
 			},
 			match_tool: {
@@ -119,7 +119,6 @@ export const predicate_list = any([
 	predicate,
 	listOf(predicate),
 ])
-
 
 export const item_modifier = as('item_modifier', dispatch('function',
 	(function_, props) => record({
@@ -162,14 +161,14 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			enchant_with_levels: {
 				levels: number_provider,
-				treasure: opt(boolean),
+				treasure: opt(boolean, false),
 			},
 			exploration_map: {
-				destination: opt(resource('worldgen/structure_feature')),
-				decoration: opt(literal(map_decorations)),
-				zoom: opt(int),
-				search_radius: opt(int),
-				skip_existing_chunks: opt(boolean),
+				destination: opt(resource('worldgen/structure_feature'), 'buried_treasure'),
+				decoration: opt(literal(map_decorations), 'mansion'),
+				zoom: opt(int, 2),
+				search_radius: opt(int, 50),
+				skip_existing_chunks: opt(boolean, true),
 			},
 			fill_player_head: {
 				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
@@ -179,7 +178,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			looting_enchant: {
 				count: number_provider,
-				limit: opt(int),
+				limit: opt(int, 0),
 			},
 			set_attributes: {
 				modifiers: listOf(record({
@@ -198,20 +197,20 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			set_count: {
 				count: number_provider,
-				add: opt(boolean),
+				add: opt(boolean, false),
 			},
 			set_damage: {
 				damage: number_provider,
-				add: opt(boolean),
+				add: opt(boolean, false),
 			},
 			set_loot_table: {
 				name: resource('loot_table'),
-				seed: opt(int),
+				seed: opt(int, 0),
 			},
 			set_lore: {
 				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
 				lore: listOf(text_component),
-				replace: opt(boolean),
+				replace: opt(boolean, false),
 			},
 			set_name: {
 				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
@@ -224,7 +223,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				effects: opt(listOf(record({
 					type: resource('mob_effect'),
 					duration: number_provider,
-				}))),
+				})), []),
 			},
 		}),
 		conditions: opt(listOf(predicate)),
@@ -239,8 +238,8 @@ export const item_modifier_list = any([
 export const loot_entry = as('loot_entry', dispatch('type',
 	(type) => record({
 		type: resource('loot_pool_entry_type'),
-		weight: opt(intRange(1, null)),
-		quality: opt(int),
+		weight: opt(intRange(1, null), 1),
+		quality: opt(int, 0),
 		...pick(type, {
 			alternatives: {
 				children: listOf(loot_entry),
@@ -262,24 +261,24 @@ export const loot_entry = as('loot_entry', dispatch('type',
 			},
 			tag: {
 				name: resource('tag/item'),
-				expand: opt(boolean),
+				expand: boolean,
 			},
 		}),
-		functions: opt(listOf(object())),
-		conditions: opt(listOf(predicate)),
+		functions: opt(listOf(item_modifier), []),
+		conditions: opt(listOf(predicate), []),
 	})
 ))
 
 export const loot_pool = as('loot_pool', record({
 	rolls: number_provider,
-	bonus_rolls: opt(number_provider),
+	bonus_rolls: opt(number_provider, 0),
 	entries: listOf(loot_entry),
-	functions: opt(listOf(ref(() => item_modifier))),
-	conditions: opt(listOf(predicate)),
+	functions: opt(listOf(item_modifier), []),
+	conditions: opt(listOf(predicate), []),
 }))
 
 export const loot_table = as('loot_table', record({
 	type: opt(resource(loot_context_types)),
-	pools: opt(listOf(loot_pool)),
-	functions: opt(listOf(ref(() => item_modifier))),
+	pools: opt(listOf(loot_pool), []),
+	functions: opt(listOf(item_modifier), []),
 }))

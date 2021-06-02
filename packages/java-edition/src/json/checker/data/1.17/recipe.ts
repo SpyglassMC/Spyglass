@@ -17,7 +17,7 @@ const recipe_ingredient = any([
 
 const recipe_result = record({
 	item: resource('item'),
-	count: opt(intRange(1, 64)),
+	count: opt(intRange(1, 64), 1),
 })
 
 export const recipe = as('recipe', dispatch('type',
@@ -51,8 +51,8 @@ export const recipe = as('recipe', dispatch('type',
 		...when(type, ['blasting', 'campfire_cooking', 'smelting', 'smoking'], {
 			ingredient: recipe_ingredient,
 			result: resource('item'),
-			experience: opt(float),
-			cookingtime: opt(int),
+			experience: opt(float, 0),
+			cookingtime: opt(int, type === 'smelting' ? 200 : 100),
 		}),
 	})
 ))

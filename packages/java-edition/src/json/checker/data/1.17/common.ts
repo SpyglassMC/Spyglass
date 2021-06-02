@@ -126,17 +126,17 @@ export const height_provider = as('height_provider', any([
 			biased_to_bottom: {
 				min_inclusive: vertical_anchor,
 				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, null)),
+				inner: opt(intRange(1, null), 1),
 			},
 			very_biased_to_bottom: {
 				min_inclusive: vertical_anchor,
 				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, null)),
+				inner: opt(intRange(1, null), 1),
 			},
 			trapezoid: {
 				min_inclusive: vertical_anchor,
 				max_inclusive: vertical_anchor,
-				plateau: opt(int),
+				plateau: opt(int, 0),
 			},
 		}),
 	})),

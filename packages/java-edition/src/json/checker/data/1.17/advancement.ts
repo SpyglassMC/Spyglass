@@ -30,6 +30,7 @@ const Triggers = [
 	'minecraft:item_used_on_block',
 	'minecraft:killed_by_crossbow',
 	'minecraft:levitation',
+	'minecraft:lightning_strike',
 	'minecraft:location',
 	'minecraft:nether_travel',
 	'minecraft:placed_block',
@@ -41,6 +42,7 @@ const Triggers = [
 	'minecraft:shot_crossbow',
 	'minecraft:slept_in_bed',
 	'minecraft:slide_down_block',
+	'minecraft:started_riding',
 	'minecraft:summoned_entity',
 	'minecraft:tame_animal',
 	'minecraft:target_hit',
@@ -48,12 +50,13 @@ const Triggers = [
 	'minecraft:tick',
 	'minecraft:used_ender_eye',
 	'minecraft:used_totem',
+	'minecraft:using_item',
 	'minecraft:villager_trade',
 	'minecraft:voluntary_exile',
 ]
 
 export const item_predicate = as('item', record({
-	item: opt(resource('item')),
+	items: opt(listOf(resource('item'))),
 	tag: opt(resource('tag/item')),
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
@@ -66,7 +69,7 @@ export const item_predicate = as('item', record({
 }))
 
 export const block_predicate = as('block', dispatch(props => record({
-	block: opt(resource('block')),
+	blocks: opt(listOf(resource('block'))),
 	tag: opt(resource('tag/block')),
 	nbt: opt(nbt()), // TODO: block nbt
 	state: opt(blockStateMap(extract('block', props), true)),
@@ -146,6 +149,7 @@ export const player_predicate = as('player', record({
 		() => boolean,
 	)),
 	stats: opt(listOf(statistic_predicate)),
+	looking_at: opt(ref(() => entity_predicate)),
 }))
 
 export const entity_predicate = as('entity', record({
@@ -153,6 +157,7 @@ export const entity_predicate = as('entity', record({
 	nbt: opt(nbt()), // TODO: entity nbt
 	team: opt(literal('team')),
 	location: opt(location_predicate),
+	stepping_on: opt(location_predicate),
 	distance: opt(distance_predicate),
 	flags: opt(record({
 		is_on_fire: opt(boolean),
@@ -169,9 +174,14 @@ export const entity_predicate = as('entity', record({
 		simpleString,
 		() => mob_effect_predicate,
 	)),
-	vehicle: opt(ref(() => entity_predicate)),
-	targeted_entity: opt(ref(() => entity_predicate)),
 	player: opt(player_predicate),
+	vehicle: opt(ref(() => entity_predicate)),
+	passenger: opt(ref(() => entity_predicate)),
+	targeted_entity: opt(ref(() => entity_predicate)),
+	lightning_bolt: opt(record({
+		blocks_set_on_fire: opt(int_bounds),
+		entity_struck: opt(ref(() => entity_predicate)),
+	})),
 	fishing_hook: opt(record({
 		in_open_water: opt(boolean),
 	})),
@@ -247,6 +257,7 @@ export const criterion = as('criterion', dispatch('trigger',
 						resource('mob_effect'),
 						() => mob_effect_predicate,
 					)),
+					source: opt(entity),
 				},
 				enter_block: {
 					block: opt(resource('block')),
@@ -297,6 +308,10 @@ export const criterion = as('criterion', dispatch('trigger',
 				levitation: {
 					distance: opt(distance_predicate),
 					duration: opt(float_bounds),
+				},
+				lightning_strike: {
+					lightning: opt(entity),
+					bystander: opt(entity),
 				},
 				location: {
 					location: opt(location_predicate),
@@ -360,6 +375,9 @@ export const criterion = as('criterion', dispatch('trigger',
 				used_totem: {
 					item: opt(item_predicate),
 				},
+				using_item: {
+					item: opt(item_predicate),
+				},
 				villager_trade: {
 					villager: opt(entity_predicate),
 					item: opt(item_predicate),
@@ -397,10 +415,10 @@ export const advancement = as('advancement', record({
 		title: text_component,
 		description: text_component,
 		background: opt(simpleString),
-		frame: opt(literal(['task', 'challenge', 'goal'])),
-		show_toast: opt(boolean),
-		announce_to_chat: opt(boolean),
-		hidden: opt(boolean),
+		frame: opt(literal(['task', 'challenge', 'goal']), 'task'),
+		show_toast: opt(boolean, true),
+		announce_to_chat: opt(boolean, true),
+		hidden: opt(boolean, false),
 	})),
 	parent: opt(resource('advancement')),
 	criteria: object(

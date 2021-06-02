@@ -45,7 +45,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 		},
 		translate: {
 			translate: simpleString,
-			with: opt(listOf(text_component)),
+			with: opt(listOf(text_component), []),
 		},
 		selector: {
 			selector: simpleString, // TODO: entity selector
@@ -73,7 +73,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 					storage: resource('storage'),
 				},
 			}),
-			interpret: opt(boolean),
+			interpret: opt(boolean, false),
 		}),
 	}),
 	color: opt(stringColor()),

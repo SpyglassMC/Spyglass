@@ -2,12 +2,12 @@ import type { TaggableResourceLocationCategory } from '@spyglassmc/core'
 import { any, boolean, listOf, opt, record, resource } from '@spyglassmc/json/lib/checker/primitives'
 
 const tag = (type: TaggableResourceLocationCategory) => record({
-	replace: opt(boolean),
+	replace: opt(boolean, false),
 	values: listOf(any([
 		resource(type, true),
 		record({
 			id: resource(type, true),
-			required: opt(boolean),
+			required: opt(boolean, true),
 		}),
 	])),
 })

@@ -2,6 +2,7 @@ import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, l
 import { intColor } from '../../util'
 import { block_state, floatProvider, height_provider, vertical_anchor } from './common'
 import { configured_feature_list_ref } from './feature'
+import { configured_structure_feature } from './structure'
 
 const BiomeCategory = [
 	'beach',
@@ -148,7 +149,7 @@ export const biome = as('biome', record({
 	),
 	starts: any([
 		listOf(resource('worldgen/configured_structure_feature')),
-		listOf(object()), // TODO: configured structure feature
+		listOf(configured_structure_feature),
 	]),
 	features: listOf(configured_feature_list_ref),
 }))
