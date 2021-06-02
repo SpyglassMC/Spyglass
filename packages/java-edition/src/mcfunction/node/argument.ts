@@ -131,7 +131,7 @@ export interface BrigadierIntegerArgumentNode extends ChildBaseNode, core.Intege
 export interface BrigadierLongArgumentNode extends ChildBaseNode, core.LongBaseNode {
 	type: 'mcfunction:argument/brigadier:long',
 }
-export interface BrigadierStringArgumentNode extends ChildBaseNode, core.StringBaseNode {
+export interface BrigadierStringArgumentNode extends Omit<ChildBaseNode, 'childrenMaps'>, core.StringBaseNode {
 	type: 'mcfunction:argument/brigadier:string',
 }
 export interface MinecraftAngleArgumentNode extends ChildBaseNode, CoordinateBaseNode {
