@@ -23,20 +23,19 @@ export function join(fromUri: string, toUri: string): string {
 	return ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
 }
 
+/**
+ * @throws If `uri` is not a valid URI.
+ */
 export function isFileUri(uri: string): boolean {
-	try {
-		return new Url(uri).protocol === 'file:'
-	} catch {
-		return false
-	}
+	return new Url(uri).protocol === 'file:'
 }
 
 /**
  * @returns The part from the last `.` to the end of the URI, or an empty string if no dots exist. No special treatment for leading dots.
  */
-export function extname(fileUri: string): string {
-	const i = fileUri.lastIndexOf('.')
-	return i >= 0 ? fileUri.slice(i) : ''
+export function extname(value: string): string {
+	const i = value.lastIndexOf('.')
+	return i >= 0 ? value.slice(i) : ''
 }
 
 /* istanbul ignore next */
@@ -60,5 +59,9 @@ export function pathToFileUri(path: string): string {
 
 /* istanbul ignore next */
 export function normalize(uri: string): string {
-	return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : uri
+	try {
+		return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : new Url(uri).toString()
+	} catch {
+		return uri
+	}
 }

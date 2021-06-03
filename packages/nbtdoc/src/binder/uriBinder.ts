@@ -25,10 +25,9 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 	// file:///root/nbtdoc/foo/bar.nbtdoc -> nbtdoc/foo/bar
 
 	// A special check for the directory named `nbtdoc`:
-	// If this folder doesn't contain `mod.nbtdoc`, we will treat that folder as the "root" instead.
-	if (urisAndRels.some(([_, rel]) => rel.startsWith(NbtdocRootPrefix)) && !urisAndRels.some(([_, rel]) => rel === 'nbtdoc')) {
+	// If all files are put under this folder, we will treat that folder as the "root" instead.
+	if (urisAndRels.every(([_, rel]) => rel.startsWith(NbtdocRootPrefix))) {
 		urisAndRels = urisAndRels
-			.filter(([_, rel]) => rel.startsWith(NbtdocRootPrefix))
 			.map(([uri, rel]) => [uri, rel.slice(NbtdocRootPrefix.length)])
 	}
 	// Now the value of `urisAndRels`:

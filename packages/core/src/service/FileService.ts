@@ -1,9 +1,7 @@
 /* istanbul ignore file */
 
-export { URL as Uri } from 'url'
-
 import { promises as fsp } from 'fs'
-import { Uri } from '.'
+import { Uri } from '../common'
 
 export interface FileService {
 	/**

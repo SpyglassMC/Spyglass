@@ -1,6 +1,7 @@
 import decompress from 'decompress'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { CachePromise, Delay, SpyglassUri, Uri } from '../common'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { Color, ColorInfo, ColorToken } from '../processor'
@@ -19,10 +20,10 @@ import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 import { SymbolLocations } from './SymbolLocations'
 
-export type CompressedRoots = Record<string, { buffer: Buffer, startDepth?: number }>
+export type Archives = Record<string, { buffer: Buffer, startDepth?: number }>
 
 interface Options {
-	compressedRoots?: CompressedRoots,
+	archives?: Archives,
 	errorPublisher?: ErrorPublisher,
 	fs?: FileService,
 	isDebugging?: boolean,
@@ -55,8 +56,8 @@ export class Service {
 	 */
 	readonly #watchedUpToDateUris = new Set<string>()
 	readonly #cache = new Map<string, DocAndNode>()
-	#compressedRoots: CompressedRoots = {}
-	#decompressedRoots: Record<string, decompress.File[]> = {}
+	#archives: Archives = {}
+	#unzippedArchives: Record<string, decompress.File[]> = {}
 	readonly #roots: string[] = []
 	readonly #files: string[] = []
 
@@ -83,12 +84,35 @@ export class Service {
 		this.#roots.splice(0, this.#roots.length, ...newRoots)
 	}
 
-	get compressedRoots(): CompressedRoots {
-		return this.#compressedRoots
+	get archives(): Archives {
+		return this.#archives
 	}
-	set compressedRoots(newRoots: CompressedRoots) {
-		this.#decompressedRoots = {}
-		this.#compressedRoots = newRoots
+	set archives(newArchives: Archives) {
+		this.#unzippedArchives = {}
+		this.#archives = newArchives
+	}
+
+	get archiveFiles(): string[] {
+		return Object
+			.entries(this.#unzippedArchives)
+			.flatMap(([archiveFsPath, files]) => files
+				.filter(file => file.type === 'file')
+				.map(file => SpyglassUri.Archive.get(archiveFsPath, file.path))
+			)
+	}
+	get archiveRoots(): string[] {
+		return Object
+			.keys(this.#archives)
+			.map(p => SpyglassUri.Archive.get(p))
+	}
+
+	/**
+	 * All files that are tracked and supported by this service, including both files on the physical disk and
+	 * files in archives.
+	 */
+	get trackedFiles(): string[] {
+		return [...this.archiveFiles, ...this.#files]
+			.filter(file => this.meta.supportedFileExtensions.includes(fileUtil.extname(file)))
 	}
 
 	/**
@@ -99,7 +123,7 @@ export class Service {
 	}
 
 	constructor({
-		compressedRoots = {},
+		archives = {},
 		errorPublisher = async () => { },
 		fs = FileService.create(),
 		isDebugging = false,
@@ -108,7 +132,7 @@ export class Service {
 		rootsWatched = false,
 		symbols = new SymbolUtil({}),
 	}: Options = {}) {
-		this.#compressedRoots = compressedRoots
+		this.#archives = archives
 		this.errorPublisher = errorPublisher
 		this.fs = fs
 		this.isDebugging = isDebugging
@@ -141,22 +165,70 @@ export class Service {
 		return this.#cache.get(uri)
 	}
 
+	parse(doc: TextDocument): FileNode<AstNode> {
+		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
+		const ctx = this.getParserCtx(doc)
+		const src = new Source(doc.getText())
+		const ans = file()(src, ctx)
+		this.publishErrors(doc.uri)
+		return ans
+	}
+
+	@CachePromise()
+	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
+		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
+		const checker = this.meta.getChecker(node.type)
+		const ctx = this.getCheckerCtx(doc)
+		ctx.symbols.clear(doc.uri)
+		await checker(node.children[0], ctx)
+		node.checkerErrors = ctx.err.dump()
+		this.publishErrors(doc.uri)
+	}
+
 	/**
-	 * Opens a file.
-	 * @returns The `TextDocument` and `AstNode` for the URI gotten from the file system.
-	 * @throws If the file doesn't exist, or if the file has an unsupported language ID.
+	 * Read a file. Support `file:` and `spyglassmc://archive` URIs.
+	 * 
+	 * @throws If the URI cannot be resolved to a file.
 	 */
-	async open(uri: string): Promise<DocAndNode> {
+	private async readFile(uri: string): Promise<string> {
+		const uriObj = new Uri(uri)
+		if (uriObj.protocol === 'file:') {
+			return this.fs.readFile(uri)
+		} else if (SpyglassUri.Archive.is(uriObj)) {
+			const { archiveFsPath, pathInArchive } = SpyglassUri.Archive.decode(uriObj)
+			if (!pathInArchive) {
+				throw new Error(`Failed to decode pathInArchive from “${uri}”`)
+			}
+			const files = this.#unzippedArchives[archiveFsPath]
+			if (!files) {
+				throw new Error(`Archive “${archiveFsPath}” has not been loaded into the memory`)
+			}
+			const file = files.find(f => f.type === 'file' && f.path === pathInArchive)
+			if (!file) {
+				throw new Error(`File “${pathInArchive}” does not exist in archive “${archiveFsPath}”`)
+			}
+			return file.data.toString('utf-8')
+		}
+		throw new Error(`Unsupported URI protocol and/or hostname in “${uri}”`)
+	}
+
+	/**
+	 * Open a file and parse it.
+	 * @returns The `TextDocument` and `AstNode` for the URI.
+	 * @throws If the file doesn't exist, has an unsupported URI protocol, or has an unsupported language ID.
+	 */
+	@CachePromise()
+	async openAndParse(uri: string): Promise<DocAndNode> {
 		uri = fileUtil.normalize(uri)
 		this.debug(`Opening '${uri}'`)
 		const languageID = this.getLanguageID(uri)
 		if (!this.meta.languages.includes(languageID)) {
-			throw new Error(`File ${uri} has unsupported language ID: ${languageID}`)
+			throw new Error(`File “${uri}” has unsupported language ID: “${languageID}”`)
 		}
-		const content = await this.fs.readFile(uri)
+		const content = await this.readFile(uri)
 		const doc = TextDocument.create(uri, languageID, 0, content)
 		const node = this.parse(doc)
-		if (this.isWatched(uri)) {
+		if (this.isWatched(uri) || SpyglassUri.Archive.is(new Uri(uri))) {
 			this.#watchedUpToDateUris.add(uri)
 			if (!this.#activeUris.has(uri)) {
 				this.#cache.set(uri, { doc, node })
@@ -165,11 +237,11 @@ export class Service {
 		return { doc, node }
 	}
 
-	readonly ensurePromises: Record<string, Promise<DocAndNode | null>> = {}
 	/**
 	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `null` when the file doesn't exist.
 	 */
-	async ensure(uri: string): Promise<DocAndNode | null> {
+	@CachePromise()
+	async ensureOpenAndParsed(uri: string): Promise<DocAndNode | null> {
 		uri = fileUtil.normalize(uri)
 		const cachedResult = this.get(uri)
 		if (cachedResult) {
@@ -177,49 +249,34 @@ export class Service {
 		}
 		try {
 			// The 'await' below cannot be removed, or errors couldn't be caught by the try-catch block.
-			return await this.open(uri)
+			return await this.openAndParse(uri)
 		} catch (e) {
-			// Most likely the file doesn't exist or has an unsupported language ID.
 			this.debug(`Couldn't ensure '${uri}' due to error '${e?.toString()}'`)
 			return null
 		}
 	}
 
-	readonly ensureCheckedPromises: Record<string, Promise<boolean>> = {}
 	/**
-	 * @returns If the file was ensured to be checked successfully.
+	 * Only check if `node.checkerErrors` is `undefined`.
 	 */
-	async ensureChecked(uri: string): Promise<boolean> {
-		return this.ensureCheckedPromises[uri] ??= (async () => {
-			const docAndNode = await this.ensure(uri)
-			if (!docAndNode) {
-				delete this.ensureCheckedPromises[uri]
-				return false
-			} else if (!docAndNode.node.checkerErrors) {
-				await this.check(docAndNode.node, docAndNode.doc)
-			}
-			delete this.ensureCheckedPromises[uri]
+	@CachePromise()
+	async ensureChecked(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
+		if (!node.checkerErrors) {
+			await this.check(node, doc)
+		}
+	}
+
+	/**
+	 * @returns If the file is successfully ensured to be parsed and checked.
+	 */
+	@CachePromise()
+	async ensureParsedAndChecked(uri: string): Promise<boolean> {
+		const result = await this.ensureOpenAndParsed(uri)
+		if (result) {
+			await this.ensureChecked(result.node, result.doc)
 			return true
-		})()
-	}
-
-	parse(doc: TextDocument, ctxOverride: Partial<ParserContext> = {}): FileNode<AstNode> {
-		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
-		const ctx = this.getParserCtx(doc, ctxOverride)
-		const src = new Source(doc.getText())
-		const ans = file()(src, ctx)
-		this.scheduleErrorPublishing(doc.uri)
-		return ans
-	}
-
-	async check(node: FileNode<AstNode>, doc: TextDocument, ctxOverride: Partial<CheckerContext> = {}): Promise<void> {
-		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
-		const checker = this.meta.getChecker(node.type)
-		const ctx = this.getCheckerCtx(doc, ctxOverride)
-		ctx.symbols.clear(doc.uri)
-		await checker(node.children[0], ctx)
-		node.checkerErrors = ctx.err.dump()
-		this.scheduleErrorPublishing(doc.uri)
+		}
+		return false
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
@@ -306,46 +363,26 @@ export class Service {
 		return null
 	}
 
-	#uriBindingTimeout: NodeJS.Timeout | undefined
-	private scheduleUriBinding(): void {
-		if (this.#uriBindingTimeout) {
-			clearTimeout(this.#uriBindingTimeout)
-		}
-		this.#uriBindingTimeout = setTimeout(this.bindUris, 1000)
-	}
-	private readonly bindUris = () => {
-		this.#uriBindingTimeout = undefined
+	@Delay(1000)
+	private async bindUris() {
+		await this.decompressRoots()
 		const ctx = this.getUriBinderCtx()
+		const files = this.trackedFiles
 		ctx.symbols.uriBinding(ctx.logger, () => {
 			for (const binder of this.meta.uriBinders) {
-				binder(this.#files, ctx)
+				binder(files, ctx)
 			}
 		})
 		this.parseAndCheckAllFiles() // TODO
-		this.scheduleRecheckingFiles()
+		this.recheckAllCachedFiles()
 		this.debug('Finished URI binding')
 	}
-	private readonly appendUriBinding = (uri: string, overrideCtx: Partial<UriBinderContext> = {}) => {
-		const ctx = this.getUriBinderCtx(overrideCtx)
-		ctx.symbols.uriBinding(ctx.logger, () => {
-			for (const binder of this.meta.uriBinders) {
-				binder([uri], ctx)
-			}
-		}, true)
-	}
 
-	#errorPublishingTimeouts = new Map<string, NodeJS.Timeout>()
-	private scheduleErrorPublishing(uri: string): void {
+	@Delay(50)
+	private publishErrors(uri: string): void {
 		if (uri.startsWith('spyglassmc:')) {
 			return
 		}
-		if (this.#errorPublishingTimeouts.has(uri)) {
-			clearTimeout(this.#errorPublishingTimeouts.get(uri)!)
-		}
-		this.#errorPublishingTimeouts.set(uri, setTimeout(() => this.publishErrors(uri), 50))
-	}
-	private publishErrors(uri: string): void {
-		this.#errorPublishingTimeouts.delete(uri)
 		const result = this.get(uri)
 		if (!result) {
 			this.errorPublisher(uri)
@@ -358,13 +395,7 @@ export class Service {
 		}
 		this.debug(`Published errors for '${uri}'`)
 	}
-	#recheckingFilesTimeout: NodeJS.Timeout | undefined
-	private scheduleRecheckingFiles(): void {
-		if (this.#recheckingFilesTimeout) {
-			clearTimeout(this.#recheckingFilesTimeout)
-		}
-		this.#recheckingFilesTimeout = setTimeout(() => this.recheckAllCachedFiles(), 1000)
-	}
+	@Delay(1000)
 	private recheckAllCachedFiles(): void {
 		this.debug('Rechecking all cached files')
 		for (const { doc, node } of this.#cache.values()) {
@@ -374,45 +405,32 @@ export class Service {
 	}
 
 	private async decompressRoots(): Promise<void> {
-		if (Object.keys(this.#decompressedRoots).length) {
+		if (Object.keys(this.#unzippedArchives).length) {
 			return
 		}
-		for (const [path, { buffer, startDepth }] of Object.entries(this.#compressedRoots)) {
+		for (const [path, { buffer, startDepth }] of Object.entries(this.#archives)) {
 			try {
-				this.#decompressedRoots[path] = await decompress(buffer, { strip: startDepth })
+				this.#unzippedArchives[path] = await decompress(buffer, { strip: startDepth })
 			} catch (e) {
 				this.logger.error(`[decompressRoots] ${path} - ${e?.toString()}`)
-				delete this.#compressedRoots[path]
+				delete this.#archives[path]
 			}
 		}
 	}
 
-	private parseAndCheckPromise: Promise<void> | undefined
+	@CachePromise()
 	async parseAndCheckAllFiles(): Promise<void> {
-		return this.parseAndCheckPromise ??= (async () => {
-			const date0 = new Date()
-			await this.decompressRoots()
-			for (const [_path, files] of Object.entries(this.#decompressedRoots)) {
-				await Promise.all(files
-					.filter(f => f.type === 'file' && this.meta.languages.includes(this.getLanguageID(f.path)))
-					.map(async f => {
-						const languageID = this.getLanguageID(f.path)
-						const rootUri = 'spyglassmc://compressed/'
-						const uri = `${rootUri}${f.path.replace(/\\/g, '/')}`
-						const doc = TextDocument.create(uri, languageID, 0, f.data.toString('utf-8'))
-						this.appendUriBinding(uri, { roots: [rootUri] })
-						const node = this.parse(doc, { roots: [rootUri] })
-						return this.check(node, doc, { roots: [rootUri] })
-					}))
-			}
-			const date1 = new Date()
-			await Promise.all(this.#files.map(f => this.ensureChecked(f)))
-			const date2 = new Date()
-			this.debug(`[parseAndCheckAllFiles] Compressed Files: ${date1.getTime() - date0.getTime()} ms`)
-			this.debug(`[parseAndCheckAllFiles] Other Files: ${date2.getTime() - date1.getTime()} ms`)
-			this.debug(`[parseAndCheckAllFiles] Total: ${date2.getTime() - date0.getTime()} ms`)
-			this.parseAndCheckPromise = undefined
-		})()
+		const date0 = new Date()
+		await this.decompressRoots()
+		const date1 = new Date()
+		const results = await Promise.all(this.trackedFiles.map(f => this.ensureOpenAndParsed(f)))
+		const date2 = new Date()
+		await Promise.all(results.map(r => r ? this.ensureChecked(r.node, r.doc) : undefined))
+		const date3 = new Date()
+		this.debug(`[parseAndCheckAllFiles] Decompress Archives: ${date1.getTime() - date0.getTime()} ms`)
+		this.debug(`[parseAndCheckAllFiles] Parse all Files: ${date2.getTime() - date1.getTime()} ms`)
+		this.debug(`[parseAndCheckAllFiles] Check all Files: ${date3.getTime() - date2.getTime()} ms`)
+		this.debug(`[parseAndCheckAllFiles] Total: ${date3.getTime() - date0.getTime()} ms`)
 	}
 
 	/**
@@ -463,7 +481,7 @@ export class Service {
 		if (!this.#files.includes(uri)) {
 			this.#files.push(uri)
 		}
-		this.scheduleUriBinding()
+		this.bindUris()
 	}
 
 	/**
@@ -488,7 +506,7 @@ export class Service {
 		if (fileUriIndex !== -1) {
 			this.#files!.splice(fileUriIndex, 1)
 		}
-		this.scheduleUriBinding()
+		this.bindUris()
 	}
 
 	/**
@@ -497,7 +515,7 @@ export class Service {
 	private tryClearingCache(uri: string): void {
 		if (!this.shouldCache(uri)) {
 			this.#cache.delete(uri)
-			this.scheduleErrorPublishing(uri)
+			this.publishErrors(uri)
 		}
 	}
 
@@ -506,35 +524,34 @@ export class Service {
 	}
 
 	private isWatched(uri: string): boolean {
-		return this.rootsWatched && this.roots.some(r => uri.startsWith(r))
+		return fileUtil.isFileUri(uri) && this.rootsWatched && this.roots.some(r => uri.startsWith(r))
 	}
 
 	//#region Contexts.
-	private getCtxBase(ctx: Partial<ParserContext> = {}): ContextBase {
+	private getCtxBase(): ContextBase {
 		return ContextBase.create({
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
-			roots: this.#roots,
-			...ctx,
+			roots: [...this.archiveRoots, ...this.roots],
 		})
 	}
-	private getParserCtx(doc: TextDocument, ctx: Partial<ParserContext> = {}): ParserContext {
+	private getParserCtx(doc: TextDocument): ParserContext {
 		return ParserContext.create({
-			...this.getCtxBase(ctx),
+			...this.getCtxBase(),
 			doc,
 		})
 	}
-	private getProcessorCtx(doc: TextDocument, ctx: Partial<ProcessorContext> = {}): ProcessorContext {
+	private getProcessorCtx(doc: TextDocument): ProcessorContext {
 		return ProcessorContext.create({
-			...this.getCtxBase(ctx),
+			...this.getCtxBase(),
 			doc,
 			symbols: this.symbols,
 		})
 	}
-	private getCheckerCtx(doc: TextDocument, ctx: Partial<CheckerContext> = {}): CheckerContext {
+	private getCheckerCtx(doc: TextDocument): CheckerContext {
 		return CheckerContext.create({
-			...this.getProcessorCtx(doc, ctx),
+			...this.getProcessorCtx(doc),
 			service: this,
 		})
 	}
@@ -551,9 +568,9 @@ export class Service {
 			triggerCharacter: triggerCharacter,
 		})
 	}
-	private getUriBinderCtx(ctx: Partial<UriBinderContext> = {}): UriBinderContext {
+	private getUriBinderCtx(): UriBinderContext {
 		return UriBinderContext.create({
-			...this.getCtxBase(ctx),
+			...this.getCtxBase(),
 			symbols: this.symbols,
 		})
 	}

@@ -40,7 +40,7 @@ connection.onInitialize(async params => {
 	try {
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),
-			isDebugging: false,
+			isDebugging: true,
 			logger,
 			roots: workspaceFolders.map(w => w.uri),
 			rootsWatched: true,

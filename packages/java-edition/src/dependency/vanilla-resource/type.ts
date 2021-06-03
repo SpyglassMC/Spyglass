@@ -1,9 +1,9 @@
 import type * as core from '@spyglassmc/core'
 
 export interface VanillaResources {
+	archives: core.Archives,
 	blocks: VanillaBlocks,
 	commands: VanillaCommands,
-	compressedRoots: core.CompressedRoots,
 	registries: VanillaRegistries,
 }
 

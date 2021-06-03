@@ -3,7 +3,7 @@
 export * from './Context'
 export * from './ErrorPublisher'
 export * from './ErrorReporter'
-export { FileService, FileStats, Uri } from './FileService'
+export { FileService, FileStats } from './FileService'
 export * as fileUtil from './fileUtil'
 export * from './Hover'
 export * from './Logger'

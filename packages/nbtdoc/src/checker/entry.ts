@@ -363,7 +363,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				// We should load and check that module first.
 
 				const targetUri = segToUri(targetSeg, ctx)
-				const ensured = targetUri ? await ctx.service.ensureChecked(targetUri) : false
+				const ensured = targetUri ? await ctx.service.ensureParsedAndChecked(targetUri) : false
 				if (!ensured) {
 					ctx.err.report(
 						localize('nbtdoc.checker.ident-path.unknown-module', localeQuote(targetId)),

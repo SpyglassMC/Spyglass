@@ -21,7 +21,7 @@ export async function initialize(service: core.Service) {
 	registerSymbols(resources, symbols)
 
 	// TODO: Move out.
-	service.compressedRoots = resources.compressedRoots
+	service.archives = resources.archives
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],

@@ -29,18 +29,18 @@ export async function getVanillaResources(inputVersion: string, logger: core.Log
 
 	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
-	const compressedRoots: core.CompressedRoots = {}
+	const archives: core.Archives = {}
 	try {
 		const result = await getMcNbtdoc(version, status, logger)
-		compressedRoots[result.path] = { buffer: result.buffer, startDepth: 1 }
+		archives[result.path] = { buffer: result.buffer, startDepth: 1 }
 	} catch (e) {
-		logger.error(`[getVanillaResources#compressedRoots] ${e?.toString()}`)
+		logger.error(`[getVanillaResources#archives] ${e?.toString()}`)
 	}
 
 	return {
+		archives,
 		blocks: await downloadJson<VanillaBlocks>(logger, blocksUrl, ['mc_je', version, 'blocks.json'], !isLatestVersion, blocksTransformer),
 		commands: await downloadJson<VanillaCommands>(logger, commandsUrl, ['mc_je', version, 'commands.json'], !isLatestVersion),
-		compressedRoots,
 		registries: await downloadJson<VanillaRegistries>(logger, registriesUrl, ['mc_je', version, 'registries.json'], !isLatestVersion, registriesTransformer),
 	}
 }
