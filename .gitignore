@@ -1,6 +1,7 @@
 **/coverage
 **/node_modules
 **/.nyc_output
+**/*.cpuprofile
 **/*.tsbuildinfo
 
 /.vscode/settings.json
