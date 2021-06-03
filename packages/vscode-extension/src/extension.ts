@@ -15,8 +15,8 @@ export function activate(context: vsc.ExtensionContext) {
 		path.join('dist', 'server.js')
 	)
 	// The debug options for the server
-	// --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
-	const debugOptions = { execArgv: ['--nolazy', '--inspect=6009'] }
+	// --inspect=6037: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+	const debugOptions = { execArgv: ['--nolazy', '--inspect=6037'] }
 
 	// If the extension is launched in debug mode then the debug server options are used
 	// Otherwise the run options are used
