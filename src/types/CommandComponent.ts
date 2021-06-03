@@ -43,7 +43,8 @@ export function combineCommand(base: CommandComponent, override: CommandComponen
 export function componentToLintedString(com: SyntaxComponent<unknown>, lint: LintConfig): string {
     if (com.type === 'spgoding:doc_comment/doc_comment') {
         const docCom = com as DocCommentComponent
-        return toFormattedString(docCom.data.doc, lint) + getEol(lint) + docCom.data.commands?.map(v => v.indent + componentToLintedString(v.component, lint)).join(getEol(lint))
+        const commands = docCom.data.commands?.map(v => v.indent + componentToLintedString(v.component, lint)).join(getEol(lint))
+        return toFormattedString(docCom.data.doc, lint) + (commands ? (getEol(lint) + commands) : '')
     }
     const cmdCom = com as CommandComponent
     return cmdCom.data.map(v => toFormattedString(v.data, lint)).join(' ')
