@@ -29,7 +29,12 @@ describe('uriBinder()', () => {
 		},
 		{
 			uris: [
-				'file:///root/qux.nbtdoc',
+				'file:///root/nbtdoc/foo.nbtdoc',
+				'file:///root/nbtdoc/minecraft/bar.nbtdoc',
+			],
+		},
+		{
+			uris: [
 				'file:///root/nbtdoc/mod.nbtdoc',
 				'file:///root/nbtdoc/foo.nbtdoc',
 				'file:///root/nbtdoc/minecraft/bar.nbtdoc',
