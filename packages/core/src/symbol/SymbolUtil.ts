@@ -1,4 +1,5 @@
 import { strict as assert } from 'assert'
+import rfdc from 'rfdc'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { deepClone } from '../common'
 import type { AstNode } from '../node'
@@ -119,13 +120,15 @@ export class SymbolUtil implements EventListenable {
 	 * 
 	 * @param fn All symbols added in this function will be considered as URI bound.
 	 */
-	uriBinding(logger: Logger, fn: () => unknown): void {
+	uriBinding(logger: Logger, fn: () => unknown, noRemoval = false): void {
 		this.#isUriBinding = true
-		this.removeLocations(this.global, l => l.isUriBound)
+		if (!noRemoval) {
+			this.removeLocations(this.global, l => l.isUriBound)
+		}
 		try {
 			fn()
 		} catch (e) {
-			logger.error(JSON.stringify(e))
+			logger.error(`[uriBinding] ${e?.toString()}`)
 		} finally {
 			this.#isUriBinding = false
 		}
@@ -597,6 +600,30 @@ export class SymbolUtil implements EventListenable {
 	 */
 	static getDeclaredLocation(symbol: Symbol): SymbolLocation {
 		return symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => { throw new Error(`Cannot get declared location of ${JSON.stringify(symbol)}`) })()
+	}
+
+	static forEachSymbolInMap(map: SymbolMap, fn: (symbol: Symbol) => unknown): void {
+		for (const symbol of Object.values(map!)) {
+			fn(symbol)
+			if (symbol.members) {
+				this.forEachSymbolInMap(symbol.members, fn)
+			}
+		}
+	}
+
+	static forEachSymbol(table: SymbolTable, fn: (symbol: Symbol) => unknown): void {
+		for (const map of Object.values(table)) {
+			this.forEachSymbolInMap(map!, fn)
+		}
+	}
+
+	static toJson(table: SymbolTable): string {
+		const clone = rfdc({ circles: true })(table)
+		this.forEachSymbol(clone, symbol => {
+			delete (symbol as any).parentMap
+			delete symbol.parentSymbol
+		})
+		return JSON.stringify(clone)
 	}
 }
 

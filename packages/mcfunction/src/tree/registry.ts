@@ -18,7 +18,6 @@ export class CommandTreeRegistry {
 	 */
 	public register(version: string, tree: RootTreeNode, treePatch?: PartialRootTreeNode): void {
 		this.#trees.set(version, treePatch ? merge(tree, treePatch) : tree)
-		/* DEBUG */ console.log('this.#trees', require('util').inspect(this.#trees, true, null))
 	}
 
 	/**

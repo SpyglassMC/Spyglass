@@ -7,8 +7,8 @@ export * as dependency from './dependency'
 export * as json from './json'
 export * as mcf from './mcfunction'
 
-export async function initialize(meta: core.MetaRegistry, logger: core.Logger, symbols: core.SymbolUtil) {
-	json.initialize(meta)
-	await mcf.initialize(meta, logger, symbols)
+export async function initialize(service: core.Service) {
+	json.initialize(service.meta)
+	await mcf.initialize(service)
 	nbt.initializeNbt()
 }

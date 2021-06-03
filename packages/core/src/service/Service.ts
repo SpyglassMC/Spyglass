@@ -1,3 +1,4 @@
+import decompress from 'decompress'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
@@ -7,7 +8,7 @@ import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../
 import type { Range } from '../source'
 import { IndexMap, Source } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
-import { SymbolFormatter, SymbolUsageTypes, SymbolUtil } from '../symbol'
+import { SymbolUsageTypes, SymbolUtil } from '../symbol'
 import type { ColorizerOptions } from './Context'
 import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
 import type { ErrorPublisher } from './ErrorPublisher'
@@ -18,7 +19,10 @@ import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 import { SymbolLocations } from './SymbolLocations'
 
+export type CompressedRoots = Record<string, { buffer: Buffer, startDepth?: number }>
+
 interface Options {
+	compressedRoots?: CompressedRoots,
 	errorPublisher?: ErrorPublisher,
 	fs?: FileService,
 	isDebugging?: boolean,
@@ -39,18 +43,20 @@ interface DocAndNode {
 /* istanbul ignore next */
 export class Service {
 	/**
-	 * URI of files that are currently opened in the editor, whose changes shall be sent to the manager's
+	 * URI of files that are currently opened in the editor, whose changes shall be sent to the service's
 	 * `onDidX` methods by client notifications via `TextDocumentContentChangeEvent`. The content of those
 	 * URIs are always up-to-date.
 	 */
 	readonly #activeUris = new Set<string>()
 	/**
 	 * URI of files that are watched by the client and are update to date. Changes to these files shall be
-	 * sent to the manager's `onWatchedFileX` methods by client notifications. Once a watched file is changed,
+	 * sent to the service's `onWatchedFileX` methods by client notifications. Once a watched file is changed,
 	 * it is removed from this set.
 	 */
 	readonly #watchedUpToDateUris = new Set<string>()
 	readonly #cache = new Map<string, DocAndNode>()
+	#compressedRoots: CompressedRoots = {}
+	#decompressedRoots: Record<string, decompress.File[]> = {}
 	readonly #roots: string[] = []
 	readonly #files: string[] = []
 
@@ -77,6 +83,14 @@ export class Service {
 		this.#roots.splice(0, this.#roots.length, ...newRoots)
 	}
 
+	get compressedRoots(): CompressedRoots {
+		return this.#compressedRoots
+	}
+	set compressedRoots(newRoots: CompressedRoots) {
+		this.#decompressedRoots = {}
+		this.#compressedRoots = newRoots
+	}
+
 	/**
 	 * The root paths. Each path in this array is guaranteed to end with the platform-specific path sep character (`/` or `\`).
 	 */
@@ -85,6 +99,7 @@ export class Service {
 	}
 
 	constructor({
+		compressedRoots = {},
 		errorPublisher = async () => { },
 		fs = FileService.create(),
 		isDebugging = false,
@@ -93,6 +108,7 @@ export class Service {
 		rootsWatched = false,
 		symbols = new SymbolUtil({}),
 	}: Options = {}) {
+		this.#compressedRoots = compressedRoots
 		this.errorPublisher = errorPublisher
 		this.fs = fs
 		this.isDebugging = isDebugging
@@ -111,10 +127,9 @@ export class Service {
 	/**
 	 * @returns The language ID of the file, or the file extension without the leading dot.
 	 */
-	private getLanguageID(uri: string): string {
+	getLanguageID(uri: string): string {
 		uri = fileUtil.normalize(uri)
-		let ext = uri
-		ext = ext.slice(ext.lastIndexOf('.'))
+		const ext = fileUtil.extname(uri)
 		return this.meta.getLanguageID(ext) ?? ext.slice(1)
 	}
 
@@ -129,13 +144,16 @@ export class Service {
 	/**
 	 * Opens a file.
 	 * @returns The `TextDocument` and `AstNode` for the URI gotten from the file system.
-	 * @throws If the file doesn't exist.
+	 * @throws If the file doesn't exist, or if the file has an unsupported language ID.
 	 */
 	async open(uri: string): Promise<DocAndNode> {
 		uri = fileUtil.normalize(uri)
 		this.debug(`Opening '${uri}'`)
-		const content = await this.fs.readFile(uri)
 		const languageID = this.getLanguageID(uri)
+		if (!this.meta.languages.includes(languageID)) {
+			throw new Error(`File ${uri} has unsupported language ID: ${languageID}`)
+		}
+		const content = await this.fs.readFile(uri)
 		const doc = TextDocument.create(uri, languageID, 0, content)
 		const node = this.parse(doc)
 		if (this.isWatched(uri)) {
@@ -147,6 +165,7 @@ export class Service {
 		return { doc, node }
 	}
 
+	readonly ensurePromises: Record<string, Promise<DocAndNode | null>> = {}
 	/**
 	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `null` when the file doesn't exist.
 	 */
@@ -157,46 +176,50 @@ export class Service {
 			return cachedResult
 		}
 		try {
-			// The 'await' below cannot be omitted, or errors couldn't be caught by the try-catch block.
+			// The 'await' below cannot be removed, or errors couldn't be caught by the try-catch block.
 			return await this.open(uri)
 		} catch (e) {
-			// Ignored. Most likely the file doesn't exist.
-			this.debug(`Couldn't ensure '${uri}' due to error '${JSON.stringify(e)}'`)
+			// Most likely the file doesn't exist or has an unsupported language ID.
+			this.debug(`Couldn't ensure '${uri}' due to error '${e?.toString()}'`)
 			return null
 		}
 	}
 
+	readonly ensureCheckedPromises: Record<string, Promise<boolean>> = {}
 	/**
 	 * @returns If the file was ensured to be checked successfully.
 	 */
 	async ensureChecked(uri: string): Promise<boolean> {
-		const docAndNode = await this.ensure(uri)
-		if (!docAndNode) {
-			return false
-		} else if (!docAndNode.node.checkerErrors) {
-			await this.check(docAndNode.node, docAndNode.doc)
-		}
-		return true
+		return this.ensureCheckedPromises[uri] ??= (async () => {
+			const docAndNode = await this.ensure(uri)
+			if (!docAndNode) {
+				delete this.ensureCheckedPromises[uri]
+				return false
+			} else if (!docAndNode.node.checkerErrors) {
+				await this.check(docAndNode.node, docAndNode.doc)
+			}
+			delete this.ensureCheckedPromises[uri]
+			return true
+		})()
 	}
 
-	parse(doc: TextDocument): FileNode<AstNode> {
+	parse(doc: TextDocument, ctxOverride: Partial<ParserContext> = {}): FileNode<AstNode> {
 		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
-		const ctx = this.getParserCtx(doc)
+		const ctx = this.getParserCtx(doc, ctxOverride)
 		const src = new Source(doc.getText())
 		const ans = file()(src, ctx)
 		this.scheduleErrorPublishing(doc.uri)
 		return ans
 	}
 
-	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
+	async check(node: FileNode<AstNode>, doc: TextDocument, ctxOverride: Partial<CheckerContext> = {}): Promise<void> {
 		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
 		const checker = this.meta.getChecker(node.type)
-		const ctx = this.getCheckerCtx(doc)
+		const ctx = this.getCheckerCtx(doc, ctxOverride)
 		ctx.symbols.clear(doc.uri)
 		await checker(node.children[0], ctx)
 		node.checkerErrors = ctx.err.dump()
 		this.scheduleErrorPublishing(doc.uri)
-		console.log(SymbolFormatter.stringifySymbolTable({ nbtdoc: this.symbols.global.nbtdoc }))
 	}
 
 	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
@@ -298,12 +321,24 @@ export class Service {
 				binder(this.#files, ctx)
 			}
 		})
+		this.parseAndCheckAllFiles() // TODO
 		this.scheduleRecheckingFiles()
 		this.debug('Finished URI binding')
+	}
+	private readonly appendUriBinding = (uri: string, overrideCtx: Partial<UriBinderContext> = {}) => {
+		const ctx = this.getUriBinderCtx(overrideCtx)
+		ctx.symbols.uriBinding(ctx.logger, () => {
+			for (const binder of this.meta.uriBinders) {
+				binder([uri], ctx)
+			}
+		}, true)
 	}
 
 	#errorPublishingTimeouts = new Map<string, NodeJS.Timeout>()
 	private scheduleErrorPublishing(uri: string): void {
+		if (uri.startsWith('spyglassmc:')) {
+			return
+		}
 		if (this.#errorPublishingTimeouts.has(uri)) {
 			clearTimeout(this.#errorPublishingTimeouts.get(uri)!)
 		}
@@ -336,6 +371,48 @@ export class Service {
 			this.check(node, doc)
 		}
 		this.debug('Rechecked all cached files')
+	}
+
+	private async decompressRoots(): Promise<void> {
+		if (Object.keys(this.#decompressedRoots).length) {
+			return
+		}
+		for (const [path, { buffer, startDepth }] of Object.entries(this.#compressedRoots)) {
+			try {
+				this.#decompressedRoots[path] = await decompress(buffer, { strip: startDepth })
+			} catch (e) {
+				this.logger.error(`[decompressRoots] ${path} - ${e?.toString()}`)
+				delete this.#compressedRoots[path]
+			}
+		}
+	}
+
+	private parseAndCheckPromise: Promise<void> | undefined
+	async parseAndCheckAllFiles(): Promise<void> {
+		return this.parseAndCheckPromise ??= (async () => {
+			const date0 = new Date()
+			await this.decompressRoots()
+			for (const [_path, files] of Object.entries(this.#decompressedRoots)) {
+				await Promise.all(files
+					.filter(f => f.type === 'file' && this.meta.languages.includes(this.getLanguageID(f.path)))
+					.map(async f => {
+						const languageID = this.getLanguageID(f.path)
+						const rootUri = 'spyglassmc://compressed/'
+						const uri = `${rootUri}${f.path.replace(/\\/g, '/')}`
+						const doc = TextDocument.create(uri, languageID, 0, f.data.toString('utf-8'))
+						this.appendUriBinding(uri, { roots: [rootUri] })
+						const node = this.parse(doc, { roots: [rootUri] })
+						return this.check(node, doc, { roots: [rootUri] })
+					}))
+			}
+			const date1 = new Date()
+			await Promise.all(this.#files.map(f => this.ensureChecked(f)))
+			const date2 = new Date()
+			this.debug(`[parseAndCheckAllFiles] Compressed Files: ${date1.getTime() - date0.getTime()} ms`)
+			this.debug(`[parseAndCheckAllFiles] Other Files: ${date2.getTime() - date1.getTime()} ms`)
+			this.debug(`[parseAndCheckAllFiles] Total: ${date2.getTime() - date0.getTime()} ms`)
+			this.parseAndCheckPromise = undefined
+		})()
 	}
 
 	/**
@@ -433,30 +510,31 @@ export class Service {
 	}
 
 	//#region Contexts.
-	private getCtxBase(): ContextBase {
+	private getCtxBase(ctx: Partial<ParserContext> = {}): ContextBase {
 		return ContextBase.create({
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
 			roots: this.#roots,
+			...ctx,
 		})
 	}
-	private getParserCtx(doc: TextDocument): ParserContext {
+	private getParserCtx(doc: TextDocument, ctx: Partial<ParserContext> = {}): ParserContext {
 		return ParserContext.create({
-			...this.getCtxBase(),
+			...this.getCtxBase(ctx),
 			doc,
 		})
 	}
-	private getProcessorCtx(doc: TextDocument): ProcessorContext {
+	private getProcessorCtx(doc: TextDocument, ctx: Partial<ProcessorContext> = {}): ProcessorContext {
 		return ProcessorContext.create({
-			...this.getCtxBase(),
+			...this.getCtxBase(ctx),
 			doc,
 			symbols: this.symbols,
 		})
 	}
-	private getCheckerCtx(doc: TextDocument): CheckerContext {
+	private getCheckerCtx(doc: TextDocument, ctx: Partial<CheckerContext> = {}): CheckerContext {
 		return CheckerContext.create({
-			...this.getProcessorCtx(doc),
+			...this.getProcessorCtx(doc, ctx),
 			service: this,
 		})
 	}
@@ -473,9 +551,9 @@ export class Service {
 			triggerCharacter: triggerCharacter,
 		})
 	}
-	private getUriBinderCtx(): UriBinderContext {
+	private getUriBinderCtx(ctx: Partial<UriBinderContext> = {}): UriBinderContext {
 		return UriBinderContext.create({
-			...this.getCtxBase(),
+			...this.getCtxBase(ctx),
 			symbols: this.symbols,
 		})
 	}

@@ -24,7 +24,19 @@ export function join(fromUri: string, toUri: string): string {
 }
 
 export function isFileUri(uri: string): boolean {
-	return new Url(uri).protocol === 'file:'
+	try {
+		return new Url(uri).protocol === 'file:'
+	} catch {
+		return false
+	}
+}
+
+/**
+ * @returns The part from the last `.` to the end of the URI, or an empty string if no dots exist. No special treatment for leading dots.
+ */
+export function extname(fileUri: string): string {
+	const i = fileUri.lastIndexOf('.')
+	return i >= 0 ? fileUri.slice(i) : ''
 }
 
 /* istanbul ignore next */
@@ -48,5 +60,5 @@ export function pathToFileUri(path: string): string {
 
 /* istanbul ignore next */
 export function normalize(uri: string): string {
-	return pathToFileUri(fileUriToPath(uri))
+	return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : uri
 }

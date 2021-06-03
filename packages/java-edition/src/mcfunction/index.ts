@@ -12,12 +12,16 @@ export * as colorizer from './colorizer'
 export * as parser from './parser'
 
 /* istanbul ignore next */
-export async function initialize(meta: core.MetaRegistry, logger: core.Logger, symbols: core.SymbolUtil) {
+export async function initialize(service: core.Service) {
+	const { meta, logger, symbols } = service
 	mcfunction.initializeMcfunction()
 
 	const resources = await getVanillaResources('latest snapshot', logger)
 	mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands, Tree1_17)
 	registerSymbols(resources, symbols)
+
+	// TODO: Move out.
+	service.compressedRoots = resources.compressedRoots
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],

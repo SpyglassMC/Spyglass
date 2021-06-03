@@ -8,9 +8,11 @@ import { VersionStatus } from './type'
  * 	- `latest release`: the latest release.
  * 	- `latest snapshot`: the latest snapshot.
  * 	- A version released before 1.14: `1.14`.
- * 	- A non-existent version: the latest release.
+ * 	- A version that doesn't exist in the [`version_manifest.json`][manifest]: the latest release.
  * 	- Other cases: the `version` itself.
  * - `versions`: An array of version identifiers, sorted from the oldest to the latest.
+ * 
+ * [manifest]: https://launchermeta.mojang.com/mc/game/version_manifest.json
  */
 export function normalizeVersion(version: string, manifest: VersionManifest): { version: string, versions: string[] } {
 	const versions = manifest.versions.map(v => v.id).reverse()

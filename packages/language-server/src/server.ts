@@ -40,13 +40,13 @@ connection.onInitialize(async params => {
 	try {
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),
-			isDebugging: true,
+			isDebugging: false,
 			logger,
 			roots: workspaceFolders.map(w => w.uri),
 			rootsWatched: true,
 		})
 
-		await je.initialize(meta, logger, service.symbols)
+		await je.initialize(service)
 	} catch (e) {
 		logger.error(`[je.initialize] ${formatError(e)}`)
 	}

@@ -30,4 +30,18 @@ export namespace Logger {
 	export function create(): Logger {
 		return console
 	}
+
+	/**
+	 * @returns A logger that does nothing.
+	 */
+	export function noop(): Logger {
+		return new NoopLogger()
+	}
+}
+
+class NoopLogger implements Logger {
+	log(): void { }
+	info(): void { }
+	warn(): void { }
+	error(): void { }
 }
