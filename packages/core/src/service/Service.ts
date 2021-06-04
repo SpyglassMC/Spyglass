@@ -70,6 +70,20 @@ export class Service {
 	readonly logger: Logger
 	readonly symbols: SymbolUtil
 
+	#isFileListEstablished = false
+
+	/**
+	 * When set to `true`, files changes will initiate URI binding.
+	 */
+	get isFileListEstablished(): boolean {
+		return this.#isFileListEstablished
+	}
+	set isFileListEstablished(value: boolean) {
+		if (this.#isFileListEstablished = value) {
+			this.bindUris()
+		}
+	}
+
 	/**
 	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 */
@@ -186,7 +200,7 @@ export class Service {
 	}
 
 	/**
-	 * Read a file. Support `file:` and `spyglassmc://archive` URIs.
+	 * Read a file. Support `file:` and {@link SpyglassUri.Archive} URIs.
 	 * 
 	 * @throws If the URI cannot be resolved to a file.
 	 */
@@ -363,10 +377,10 @@ export class Service {
 		return null
 	}
 
-	@Delay(1000)
+	@Delay(500)
 	@CachePromise()
 	private async bindUris(): Promise<void> {
-		await this.decompressRoots()
+		await this.unzipArchives()
 		const ctx = this.getUriBinderCtx()
 		const files = this.trackedFiles
 		ctx.symbols.uriBinding(ctx.logger, () => {
@@ -376,10 +390,10 @@ export class Service {
 		})
 		this.parseAndCheckAllFiles() // TODO
 		this.recheckAllCachedFiles()
-		this.debug('Finished URI binding')
+		this.debug('[bindUris] Done')
 	}
 
-	@Delay(50)
+	@Delay(100)
 	private publishErrors(uri: string): void {
 		if (uri.startsWith('spyglassmc:')) {
 			return
@@ -394,44 +408,44 @@ export class Service {
 				...node.parserErrors,
 			])
 		}
-		this.debug(`Published errors for '${uri}'`)
+		this.debug(`[publishErrors] “${uri}”`)
 	}
 	@Delay(1000)
 	private recheckAllCachedFiles(): void {
-		this.debug('Rechecking all cached files')
 		for (const { doc, node } of this.#cache.values()) {
 			this.check(node, doc)
 		}
-		this.debug('Rechecked all cached files')
+		this.debug('[recheckAllCachedFiles] Done')
 	}
 
-	private async decompressRoots(): Promise<void> {
+	private async unzipArchives(): Promise<void> {
 		if (Object.keys(this.#unzippedArchives).length) {
 			return
 		}
+		const date0 = new Date()
 		for (const [path, { buffer, startDepth }] of Object.entries(this.#archives)) {
 			try {
 				this.#unzippedArchives[path] = await decompress(buffer, { strip: startDepth })
 			} catch (e) {
-				this.logger.error(`[decompressRoots] ${path} - ${e?.toString()}`)
+				this.logger.error(`[unzipArchives] ${path} - ${e?.toString()}`)
 				delete this.#archives[path]
 			}
 		}
+		const date1 = new Date()
+		this.logger.info(`[unzipArchives] Total: ${date1.getTime() - date0.getTime()} ms`)
 	}
 
 	@CachePromise()
 	async parseAndCheckAllFiles(): Promise<void> {
+		await this.unzipArchives()
 		const date0 = new Date()
-		await this.decompressRoots()
-		const date1 = new Date()
 		const results = await Promise.all(this.trackedFiles.map(f => this.ensureOpenAndParsed(f)))
-		const date2 = new Date()
+		const date1 = new Date()
 		await Promise.all(results.map(r => r ? this.ensureChecked(r.node, r.doc) : undefined))
-		const date3 = new Date()
-		this.debug(`[parseAndCheckAllFiles] Decompress Archives: ${date1.getTime() - date0.getTime()} ms`)
-		this.debug(`[parseAndCheckAllFiles] Parse all Files: ${date2.getTime() - date1.getTime()} ms`)
-		this.debug(`[parseAndCheckAllFiles] Check all Files: ${date3.getTime() - date2.getTime()} ms`)
-		this.debug(`[parseAndCheckAllFiles] Total: ${date3.getTime() - date0.getTime()} ms`)
+		const date2 = new Date()
+		this.logger.info(`[parseAndCheckAllFiles] Parse all Files: ${date1.getTime() - date0.getTime()} ms`)
+		this.logger.info(`[parseAndCheckAllFiles] Check all Files: ${date2.getTime() - date1.getTime()} ms`)
+		this.logger.info(`[parseAndCheckAllFiles] Total: ${date2.getTime() - date0.getTime()} ms`)
 	}
 
 	/**
@@ -482,7 +496,9 @@ export class Service {
 		if (!this.#files.includes(uri)) {
 			this.#files.push(uri)
 		}
-		this.bindUris()
+		if (this.#isFileListEstablished) {
+			this.bindUris()
+		}
 	}
 
 	/**
@@ -507,7 +523,9 @@ export class Service {
 		if (fileUriIndex !== -1) {
 			this.#files!.splice(fileUriIndex, 1)
 		}
-		this.bindUris()
+		if (this.#isFileListEstablished) {
+			this.bindUris()
+		}
 	}
 
 	/**

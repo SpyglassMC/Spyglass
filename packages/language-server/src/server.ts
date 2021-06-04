@@ -43,7 +43,7 @@ connection.onInitialize(async params => {
 	try {
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),
-			isDebugging: true,
+			isDebugging: false,
 			logger,
 			roots: workspaceFolders.map(w => w.uri),
 			rootsWatched: true,
@@ -108,6 +108,7 @@ function initializeRootWatcher() {
 				ignoreInitial: false,
 			}
 		)
+		.once('ready', () => service.isFileListEstablished = true)
 		.on('add', path => {
 			service.onWatchedFileCreated(core.fileUtil.pathToFileUri(path))
 		})
