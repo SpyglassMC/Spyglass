@@ -111,7 +111,7 @@ export function compound(path: core.SymbolPath | undefined, options: Options = {
 
 		const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
 		const data = query.symbol?.data as nbtdoc.CompoundDefinitionNode.SymbolData | undefined
-		node.symbol ??= query.symbol ?? undefined
+		ctx.ops.set(node, 'symbol', node.symbol ?? query.symbol ?? undefined)
 
 		query.member(key, member => member
 			.ifKnown(fieldSymbol => {
@@ -312,7 +312,7 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 							const parser = ctx.meta.getParser(parserName)
 							const result = core.parseStringValue(parser, node.value, node.childrenMaps[0], ctx)
 							if (result !== core.Failure) {
-								(node as Mutable<AstNode>).children = [result]
+								ctx.ops.set(node, 'children', [result])
 							}
 						} catch (e) {
 							ctx.logger.error(`[nbt.checker.fieldValue#string] ${e?.toString()}`)

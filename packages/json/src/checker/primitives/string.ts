@@ -22,7 +22,7 @@ export function string<T extends AstNode>(name: string | string[] | undefined, p
 export function string(name?: string | string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
 export function string(name?: string | string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
 	return (node, ctx) => {
-		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
+		ctx.ops.set(node, 'expectation', [{ type: 'json:string', typedoc: typedoc(name), ...expectation }])
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (parser) {

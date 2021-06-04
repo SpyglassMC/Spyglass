@@ -1,6 +1,7 @@
 import type { ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node'
-import { AstNode } from '../../node'
+import type { AstNode } from '../../node'
 import type { CheckerContext, MetaRegistry } from '../../service'
+import { Operations } from '../../service'
 import { ErrorReporter } from '../../service'
 import { traversePreOrder } from '../util'
 import type { Checker, SyncChecker } from './Checker'
@@ -12,14 +13,17 @@ export type AttemptResult = {
 }
 
 export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: CheckerContext): AttemptResult {
-	const tempNode = AstNode.clone(node)
-	const tempCtx = {
+	const tempCtx: CheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
+		ops: new Operations(),
 		symbols: ctx.symbols.clone(),
 	}
 
-	checker(tempNode, tempCtx)
+	// FIXME: await
+	checker(node, tempCtx)
+
+	tempCtx.ops.undo()
 
 	const totalErrorSpan = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
@@ -30,8 +34,8 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 		totalErrorSpan,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
-			ctx.symbols.absorb(tempCtx.symbols)
-			AstNode.replace(node, tempNode)
+			tempCtx.ops.redo()
+			tempCtx.symbols.applyDelayedEdits()
 		},
 	}
 }
@@ -51,7 +55,7 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 /**
  * No operation.
  */
-export const noop: SyncChecker<AstNode> = () => {}
+export const noop: SyncChecker<AstNode> = () => { }
 
 /**
  * Use the shallowest children that have their own colorizers to provide the color tokens.

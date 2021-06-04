@@ -43,7 +43,7 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 		updateSrcAndCtx: () => {
 			src.cursor = tmpSrc.cursor
 			ctx.err.absorb(tmpCtx.err)
-			ctx.symbols.absorb(tmpCtx.symbols)
+			tmpCtx.symbols.applyDelayedEdits()
 		},
 	}
 }

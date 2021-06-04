@@ -1,4 +1,4 @@
-import { AstNode, ErrorReporter, Range } from '@spyglassmc/core'
+import { ErrorReporter, Operations, Range } from '@spyglassmc/core'
 import type { JsonExpectation, JsonNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
@@ -22,14 +22,16 @@ export type AttemptResult = {
 
 export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerContext): AttemptResult {
 	// TODO: The code below is mostly copied from core with some changes to support `expectation`. Could be refactored... I guess.
-	const tempNode = AstNode.clone(node)
-	const tempCtx = {
+	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
+		ops: new Operations(),
 		symbols: ctx.symbols.clone(),
 	}
 
-	checker(tempNode, tempCtx)
+	checker(node, tempCtx)
+
+	tempCtx.ops.undo()
 
 	const totalErrorSpan = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
@@ -37,11 +39,11 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 
 	return {
 		totalErrorSpan,
-		expectation: tempNode.expectation,
+		expectation: node.expectation, // FIXME: use tempNode's expectation
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
-			ctx.symbols.absorb(tempCtx.symbols)
-			AstNode.replace(node, tempNode)
+			tempCtx.ops.redo()
+			tempCtx.symbols.applyDelayedEdits()
 		},
 	}
 }
@@ -56,7 +58,7 @@ export function any(checkers: JsonChecker[]): JsonChecker {
 			.map(checker => attempt(checker, node, ctx))
 			.sort((a, b) => a.totalErrorSpan - b.totalErrorSpan)
 		attempts[0].updateNodeAndCtx()
-		node.expectation = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)
+		ctx.ops.set(node, 'expectation', attempts.filter(a => a.expectation).flatMap(a => a.expectation!))
 	}
 }
 

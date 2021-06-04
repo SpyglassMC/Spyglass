@@ -1,4 +1,3 @@
-import { deepClone } from '../common'
 import type { Color, FormattableColor } from '../processor'
 import type { IndexMap } from '../source'
 import { Range } from '../source'
@@ -32,28 +31,6 @@ export namespace AstNode {
 			(child as Mutable<AstNode>).parent = node
 			setParents(child)
 		}
-	}
-
-	export function clone<T extends AstNode>(node: T): T {
-		return deepClone(node)
-	}
-	
-	export function replace<T extends AstNode>(a: T, b: T): void {
-		for (const key of Object.keys(a)) {
-			if (key === 'parent') {
-				continue
-			}
-			delete (a as any)[key]
-		}
-
-		for (const [key, value] of Object.entries(b)) {
-			if (key === 'parent') {
-				continue
-			}
-			(a as any)[key] = value
-		}
-		
-		setParents(a)
 	}
 }
 

@@ -6,9 +6,9 @@ import { expectation } from './util'
 
 export function listOf(checker: JsonChecker): JsonChecker {
 	return (node, ctx) => {
-		node.expectation = [{ type: 'json:array', typedoc: 'Array' }]
+		ctx.ops.set(node, 'expectation', [{ type: 'json:array', typedoc: 'Array' }])
 		if (!ctx.depth || ctx.depth <= 0) {
-			(node.expectation[0] as JsonArrayExpectation).items = expectation(checker, ctx)
+			ctx.ops.set((node.expectation![0] as JsonArrayExpectation), 'items', expectation(checker, ctx))
 		}
 
 		if (!JsonArrayNode.is(node)) {

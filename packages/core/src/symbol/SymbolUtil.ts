@@ -1,7 +1,6 @@
 import { strict as assert } from 'assert'
 import rfdc from 'rfdc'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { deepClone } from '../common'
 import type { AstNode } from '../node'
 import type { Logger } from '../service'
 import type { EventListenable } from '../service/EventPublisher'
@@ -51,6 +50,15 @@ export class SymbolUtil implements EventListenable {
 
 	#isUriBinding: boolean
 
+	/** 
+	 * @internal
+	 */
+	_delayedOps: ((this: void) => unknown)[] = []
+	/** 
+	 * @internal
+	 */
+	_inDelayMode: boolean
+
 	get event() {
 		return this.#event
 	}
@@ -69,29 +77,34 @@ export class SymbolUtil implements EventListenable {
 		_stacks = new Map<string, SymbolStack>(),
 		/** @internal */
 		_isUriBinding = false,
+		/** @internal */
+		_inDelayMode = false,
 	) {
 		this.#global = global
 		this.#event = _event
 		this.#stacks = _stacks
 		this.#isUriBinding = _isUriBinding
+		this._inDelayMode = _inDelayMode
 	}
 
+	/**
+	 * @returns A clone of this SymbolUtil that is in delay mode: changes to the symbol table happened in the clone will
+	 * not take effect until the {@link SymbolUtil.applyDelayedEdits} method is called on that clone.
+	 * 
+	 * The clone shares the same reference of the global symbol table and symbol stacks, meaning that after
+	 * `applyDelayedEdits` is called, the original SymbolUtil will also be modified.
+	 */
 	clone(): SymbolUtil {
-		const clonedEvent = this.#event.clone()
-		clonedEvent.startDelay()
-		return new SymbolUtil(
-			deepClone(this.#global),
-			clonedEvent,
-			deepClone(this.#stacks),
-			this.#isUriBinding
-		)
+		return new SymbolUtil(this.#global, this.#event, this.#stacks, this.#isUriBinding, true)
 	}
-	absorb(other: SymbolUtil): void {
-		this.#event = other.event
-		this.#event.publishDelayedEvents()
 
-		this.#global = other.global
-		this.#stacks = other.stacks
+	/**
+	 * Apply edits done during the delay mode.
+	 */
+	applyDelayedEdits(): void {
+		this._delayedOps.forEach(f => f())
+		this._delayedOps = []
+		this._inDelayMode = false
 	}
 
 	/**
@@ -111,6 +124,7 @@ export class SymbolUtil implements EventListenable {
 	private trigger(event: 'symbolRemoved', data: SymbolEvent): void
 	private trigger(event: 'symbolLocationCreated', data: SymbolLocationEvent): void
 	private trigger(event: 'symbolLocationRemoved', data: SymbolLocationEvent): void
+	@DelayModeSupport()
 	private trigger(event: string, ...params: unknown[]): void {
 		this.#event.trigger(event, ...params)
 	}
@@ -142,12 +156,13 @@ export class SymbolUtil implements EventListenable {
 	}
 
 	/**
-	 * This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
+	 * @internal This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
 	 */
-	setStack(uri: string, stack: SymbolStack) {
+	_setStack(uri: string, stack: SymbolStack) {
 		this.#stacks.set(uri, stack)
 	}
 
+	@DelayModeSupport()
 	clear(uri: string): void {
 		this.#stacks.delete(uri)
 		this.removeLocations(this.global, loc => !loc.isUriBound && loc.uri === uri)
@@ -234,6 +249,7 @@ export class SymbolUtil implements EventListenable {
 	/**
 	 * @see {@link SymbolUtil.trimMap}
 	 */
+	@DelayModeSupport()
 	trim(table: SymbolTable): void {
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
@@ -247,6 +263,7 @@ export class SymbolUtil implements EventListenable {
 	/**
 	 * Remove symbols that don't have any usages AND don't have any members.
 	 */
+	@DelayModeSupport()
 	trimMap(map: SymbolMap | undefined): void {
 		if (!map) {
 			return
@@ -270,6 +287,7 @@ export class SymbolUtil implements EventListenable {
 	 * 
 	 * @param predicate A predicate that matches locations that should be removed.
 	 */
+	@DelayModeSupport()
 	removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
 		for (const category of Object.keys(table)) {
 			this.removeLocationsFromMap(table[category]!, predicate)
@@ -277,6 +295,7 @@ export class SymbolUtil implements EventListenable {
 		this.trim(table)
 	}
 
+	@DelayModeSupport()
 	removeLocationsFromMap(map: SymbolMap | undefined, predicate: (this: void, loc: SymbolLocation) => unknown, path: string[] = []): void {
 		if (!map) {
 			return
@@ -319,51 +338,6 @@ export class SymbolUtil implements EventListenable {
 			default:
 				return global
 		}
-	}
-
-	private enterMapContainer<K extends string>({ addition, container, doc, category, identifier, isUriBinding, keyToMap, parentSymbol, path }: {
-		addition: SymbolAddition,
-		category: string,
-		container: {
-			[key in K]?: SymbolMap
-		},
-		doc: TextDocument,
-		identifier: string,
-		isUriBinding: boolean,
-		keyToMap: K,
-		parentSymbol: Symbol | undefined,
-		path: readonly string[],
-	}): Symbol {
-		const map: SymbolMap = container[keyToMap] ??= {}
-		return this.enterMap(parentSymbol, map, category, path, identifier, addition, doc, isUriBinding)
-	}
-
-	enterTable(table: SymbolTable, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
-		return this.enterMapContainer({
-			container: table,
-			keyToMap: category,
-			category,
-			identifier,
-			addition,
-			doc,
-			isUriBinding,
-			parentSymbol: undefined,
-			path,
-		})
-	}
-
-	enterMember(symbol: Symbol, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, isUriBinding: boolean): Symbol {
-		return this.enterMapContainer({
-			container: symbol,
-			keyToMap: 'members',
-			category: symbol.category,
-			identifier,
-			addition,
-			doc,
-			isUriBinding,
-			parentSymbol: symbol,
-			path,
-		})
 	}
 
 	/**
@@ -468,7 +442,7 @@ export class SymbolUtil implements EventListenable {
 		this.amendSymbolUsage(symbol, addition.usage, doc, isUriBinding)
 	}
 
-	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']) {
+	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']): void {
 		if (addition) {
 			if ('data' in addition) {
 				symbol.data = addition.data
@@ -501,7 +475,7 @@ export class SymbolUtil implements EventListenable {
 		}
 	}
 
-	private amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean) {
+	private amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, isUriBinding: boolean): void {
 		if (addition) {
 			const type = addition.type ?? 'reference'
 			const arr = symbol[type] ??= []
@@ -735,9 +709,9 @@ export class SymbolQuery {
 	 */
 	#symbol: Symbol | null
 	/**
-	 * The {@link SymbolUtil}
+	 * The {@link SymbolUtil} where this query was created.
 	 */
-	#util: SymbolUtil
+	util: SymbolUtil
 
 	get symbol(): Symbol | null {
 		return this.#symbol
@@ -771,7 +745,7 @@ export class SymbolQuery {
 		this.#map = map
 		this.#parentSymbol = parentSymbol
 		this.#symbol = symbol
-		this.#util = util
+		this.util = util
 	}
 
 	heyGimmeDaSymbol() {
@@ -869,12 +843,8 @@ export class SymbolQuery {
 		return this.else(() => this.resolveAlias())
 	}
 
-	/**
-	 * Enters the queried symbol.
-	 * 
-	 * @throws If the parent of this symbol doesn't exist either.
-	 */
-	enter(addition: SymbolAddition): this {
+	@DelayModeSupport((self: SymbolQuery) => self.util)
+	private _enter(addition: SymbolAddition): void {
 		if (!this.#createMap) {
 			throw new Error(`Cannot enter the symbol at path “${this.path.join('.')}” as its parent doesn't exist`)
 		}
@@ -885,10 +855,19 @@ export class SymbolQuery {
 		}
 
 		this.#map ??= this.#createMap(addition)
-		this.#symbol = this.#util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
+		this.#symbol = this.util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#isUriBinding)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
 		}
+	}
+
+	/**
+	 * Enters the queried symbol.
+	 * 
+	 * @throws If the parent of this symbol doesn't exist either.
+	 */
+	enter(addition: SymbolAddition): this {
+		this._enter(addition)
 		return this
 	}
 
@@ -916,7 +895,7 @@ export class SymbolQuery {
 	 */
 	resolveAlias(): this {
 		if (this.#symbol) {
-			const result = this.#util.resolveAlias(this.#symbol)
+			const result = this.util.resolveAlias(this.#symbol)
 			if (!result) {
 				throw new Error('The current symbol points to an non-existent symbol.')
 			}
@@ -966,7 +945,7 @@ export class SymbolQuery {
 			parentSymbol: this.#symbol,
 			path: [...this.path, identifier],
 			symbol: memberSymbol,
-			util: this.#util,
+			util: this.util,
 		})
 		fn(memberQueryResult)
 
@@ -1083,5 +1062,27 @@ parentMap:
 ${stringifySymbolMap(result.parentMap, IndentChar)}
 symbol:
 ${stringifySymbol(result.symbol, IndentChar)}`
+	}
+}
+
+/**
+ * Make a method support delay mode: if the {@link SymbolUtil} is in delay mode, the actual invocation of the method will be
+ * stored to the {@link SymbolUtil._delayedOps} array.
+ * 
+ * The decorated method MUST have return type `void`.
+ */
+function DelayModeSupport(getUtil: (self: any) => SymbolUtil = self => self): MethodDecorator {
+	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
+		// The `function` syntax is used to preserve `this` context from the decorated method.
+		descripter.value = function (this: unknown, ...args: unknown[]) {
+			const util = getUtil(this)
+			if (util._inDelayMode) {
+				util._delayedOps.push(decoratedMethod.bind(this, ...args))
+			} else {
+				decoratedMethod.apply(this, args)
+			}
+		}
+		return descripter
 	}
 }

@@ -8,6 +8,7 @@ import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
+import { Operations } from './Operations'
 import type { Service } from './Service'
 
 export interface ContextBase {
@@ -72,10 +73,12 @@ export namespace ProcessorContext {
 
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
+	ops: Operations,
 	service: Service,
 }
 interface CheckerContextLike extends ProcessorContextLike {
 	err?: ErrorReporter,
+	ops?: Operations,
 	service: Service,
 }
 export namespace CheckerContext {
@@ -83,6 +86,7 @@ export namespace CheckerContext {
 		return {
 			...ProcessorContext.create(ctx),
 			err: ctx.err ?? new ErrorReporter(),
+			ops: ctx.ops ?? new Operations(),
 			service: ctx.service,
 		}
 	}

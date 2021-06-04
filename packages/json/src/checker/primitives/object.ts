@@ -6,7 +6,7 @@ import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
 
-type JsonValue = string | number | boolean | null | JsonValue[] | {[key: string]: JsonValue}
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
 
 type ComplexProperty = {
 	checker: JsonChecker,
@@ -29,10 +29,10 @@ export function object(keys: string[], values: (key: string, ctx: JsonCheckerCon
 export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker {
 	return (node, ctx) => {
-		node.expectation = [{ type: 'json:object', typedoc: 'Object' }]
+		ctx.ops.set(node, 'expectation', [{ type: 'json:object', typedoc: 'Object' }])
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
-				(node.expectation[0] as JsonObjectExpectation).fields = keys.map(key => {
+				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'fields', keys.map(key => {
 					const prop = values(key, ctx)
 					return {
 						key,
@@ -40,10 +40,11 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 						...isComplex(prop) && (prop.opt || prop.deprecated) ? { opt: true } : {},
 						...isComplex(prop) && prop.deprecated ? { deprecated: true } : {},
 					}
-				})
+				}))
 			} else if (typeof keys === 'function' && values) {
-				(node.expectation[0] as JsonObjectExpectation).keys = expectation(keys, ctx)
+				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'keys', expectation(keys, ctx)
 					?.filter(JsonStringExpectation.is)
+				)
 			}
 		}
 

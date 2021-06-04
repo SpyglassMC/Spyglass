@@ -37,6 +37,9 @@ connection.onInitialize(async params => {
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
 
+	// TODO: Remove this. This is to give the debugger time to attach.
+	await new Promise(resolve => setTimeout(resolve, 7000))
+
 	try {
 		service = new core.Service({
 			errorPublisher: toCore.errorPublisher(connection),

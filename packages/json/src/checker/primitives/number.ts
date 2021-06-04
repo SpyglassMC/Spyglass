@@ -5,7 +5,7 @@ import type { JsonChecker } from '../JsonChecker'
 const number = (type: 'integer' | 'float') => (min: number | null, max: number | null): JsonChecker => {
 	return (node, ctx) => {
 		const typedoc = 'Number' + (min === null && max === null ? '' : `(${min ?? '-∞'}, ${max ?? '+∞'})`)
-		node.expectation = [{ type: 'json:number', typedoc }]
+		ctx.ops.set(node, 'expectation', [{ type: 'json:number', typedoc }])
 
 		if (!JsonNumberNode.is(node) || (type === 'integer' && !Number.isInteger(node.value))) {
 			ctx.err.report(localize('expected', localize(type)), node)

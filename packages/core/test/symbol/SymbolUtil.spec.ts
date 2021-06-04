@@ -112,7 +112,7 @@ describe('SymbolUtil', () => {
 					usage: { type: 'definition' },
 				})
 			)
-		symbols.setStack(fileUri, [stackSymbols.global])
+		symbols._setStack(fileUri, [stackSymbols.global])
 
 		const paths: string[][] = [
 			[],

@@ -364,7 +364,8 @@ export class Service {
 	}
 
 	@Delay(1000)
-	private async bindUris() {
+	@CachePromise()
+	private async bindUris(): Promise<void> {
 		await this.decompressRoots()
 		const ctx = this.getUriBinderCtx()
 		const files = this.trackedFiles
