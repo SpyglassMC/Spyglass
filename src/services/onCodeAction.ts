@@ -65,6 +65,8 @@ async function onMcfunctionCodeAction(uri: Uri, doc: McfunctionDocument, textDoc
 
 async function onJsonCodeAction(uri: Uri, doc: JsonDocument, textDoc: TextDocument, diagnostics: Diagnostic[], range: Range, service: DatapackLanguageService, ans: CodeAction[]) {
     const config = await service.getConfig(uri)
+    if (config.env.jsonVersion !== '1.17') return
+
     const vanillaData = await service.getVanillaData(config)
     const jsonSchemas = await service.getJsonSchemas(config, vanillaData)
     const schema = jsonSchemas.get(doc.nodes[0].schemaType)
