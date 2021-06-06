@@ -39,11 +39,13 @@ export class JsonSchemaHelper {
                 const field = fields[key]
                 const fieldPath = getChildModelPath(path, key)
 
-                const context = fieldPath.contextArr.join('.')
-                if (context === 'block.block' && p.valueNode.type === 'string') {
-                    ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-block'), true, DiagnosticSeverity.Error, ErrorCode.JsonBlock))
-                } else if (context === 'item.item' && p.valueNode.type === 'string') {
-                    ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-item'), true, DiagnosticSeverity.Error, ErrorCode.JsonItem))
+                if (ctx.config.env.jsonVersion === '1.17') {
+                    const context = fieldPath.contextArr.join('.')
+                    if (context === 'block.block' && p.valueNode.type === 'string') {
+                        ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-block'), true, DiagnosticSeverity.Error, ErrorCode.JsonBlock))
+                    } else if (context === 'item.item' && p.valueNode.type === 'string') {
+                        ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-item'), true, DiagnosticSeverity.Error, ErrorCode.JsonItem))
+                    }
                 }
 
                 if (field && field.enabled(path)) {
@@ -180,19 +182,21 @@ export class JsonSchemaHelper {
                 const field = fields[key]
                 const fieldPath = getChildModelPath(path, key)
 
-                const context = fieldPath.contextArr.join('.')
-                if (context === 'block.block' && p.valueNode.type === 'string') {
-                    ans.push(getCodeAction(
-                        'json-block', diagnostics[ErrorCode.JsonBlock] ?? [],
-                        ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
-                        `"blocks": ["${p.valueNode.value}"]`
-                    ))
-                } else if (context === 'item.item' && p.valueNode.type === 'string') {
-                    ans.push(getCodeAction(
-                        'json-item', diagnostics[ErrorCode.JsonItem] ?? [],
-                        ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
-                        `"items": ["${p.valueNode.value}"]`
-                    ))
+                if (ctx.config.env.jsonVersion === '1.17') {
+                    const context = fieldPath.contextArr.join('.')
+                    if (context === 'block.block' && p.valueNode.type === 'string') {
+                        ans.push(getCodeAction(
+                            'json-block', diagnostics[ErrorCode.JsonBlock] ?? [],
+                            ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
+                            `"blocks": ["${p.valueNode.value}"]`
+                        ))
+                    } else if (context === 'item.item' && p.valueNode.type === 'string') {
+                        ans.push(getCodeAction(
+                            'json-item', diagnostics[ErrorCode.JsonItem] ?? [],
+                            ctx.textDoc, { start: p.keyNode.offset, end: p.valueNode.offset + p.valueNode.length },
+                            `"items": ["${p.valueNode.value}"]`
+                        ))
+                    }
                 }
 
                 if (field && field.enabled(path)) {
