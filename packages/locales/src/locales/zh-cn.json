@@ -1,4 +1,5 @@
 {
+  "array": "一个数组",
   "boolean": "一个布尔值",
   "code-action.block-state-sort-keys": "将方块状态按键排序",
   "code-action.command-replaceitem": "将该命令升级为 /item ... replace",
