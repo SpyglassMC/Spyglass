@@ -1,8 +1,10 @@
-*
-*/**
+# Ignore everything
+/*
 
-!dist/*.js
-!resource/*.json
+# Whitelist needed files
+!dist
+dist/*.js.map
+!resource
 !CHANGELOG.md
 !icon.png
 !LICENSE
