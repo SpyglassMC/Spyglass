@@ -1,7 +1,7 @@
 import { getRel } from '@spyglassmc/core/lib/service/fileUtil'
 import type { JsonStringNode } from '@spyglassmc/json'
 import { any, as, boolean, deprecated, dispatch, extract, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
-import { dissectUri } from '../../../binder'
+import { dissectUri } from '../../../../binder'
 import { blockStateMap, criterionReference, nbt } from '../../util'
 import { float_bounds, int_bounds, Slots } from './common'
 import { predicate } from './loot_table'
@@ -427,7 +427,7 @@ export const advancement = as('advancement', record({
 			if (!ctx.service) {
 				return
 			}
-			const parts = dissectUri(getRel(ctx.roots, ctx.doc.uri) ?? '')
+			const parts = dissectUri(ctx.doc.uri, ctx.roots)
 			const advancement = `${parts?.namespace}:${parts?.identifier}`
 			const criterion = (node as JsonStringNode).value
 			ctx.symbols.query(ctx.doc, 'advancement', advancement, criterion)
@@ -440,7 +440,7 @@ export const advancement = as('advancement', record({
 	),
 	requirements: opt(listOf(listOf(
 		(node, ctx) => {
-			const parts = dissectUri(getRel(ctx.roots, ctx.doc.uri) ?? '')
+			const parts = dissectUri(ctx.doc.uri, ctx.roots)
 			const advancement = `${parts?.namespace}:${parts?.identifier}`
 			criterionReference(advancement)(node, ctx)
 		}

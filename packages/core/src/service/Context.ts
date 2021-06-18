@@ -15,7 +15,7 @@ export interface ContextBase {
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
-	roots: string[],
+	roots: readonly string[],
 }
 interface ContextBaseLike extends Partial<ContextBase> { }
 export namespace ContextBase {

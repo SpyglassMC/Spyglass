@@ -1,4 +1,3 @@
-import type { AstNode, Mutable } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import type * as nbtdoc from '@spyglassmc/nbtdoc'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'

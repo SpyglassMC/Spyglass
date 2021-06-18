@@ -1,10 +1,10 @@
+import { testChecker } from '@spyglassmc/json/test-out/utils'
 import { strict as assert } from 'assert'
 import fg from 'fast-glob'
 import fs from 'fs'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Categories } from '../../../lib/json/binder'
+import { Categories } from '../../../lib/binder'
 import { Checkers } from '../../../lib/json/checker/data/1.17'
-import { testChecker } from '@spyglassmc/json/test-out/utils'
 
 describe('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
@@ -12,7 +12,7 @@ describe('Check vanilla files', async () => {
 
 	summary.forEach((files, i) => {
 		const category = [...Categories][i]
-		const checker = Checkers.get(category[1])
+		const checker = Checkers.get(category[1].category)
 		if (!checker || !files) return
 
 		it(`Category ${category[1]}`, () => {

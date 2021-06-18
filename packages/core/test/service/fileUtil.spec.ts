@@ -5,10 +5,12 @@ import { fileUtil } from '../../lib'
 describe('fileUtil', () => {
 	describe('getRel()', () => {
 		const rootUris = [
+			'file:///root1/subdir/',
 			'file:///root1/',
 			'file:///root2/',
 		]
 		const suites: { uri: string, expected: string | null }[] = [
+			{ uri: 'file:///root1/subdir/foo.nbtdoc', expected: 'foo.nbtdoc' },
 			{ uri: 'file:///root1/foo.nbtdoc', expected: 'foo.nbtdoc' },
 			{ uri: 'file:///root1/foo/bar.nbtdoc', expected: 'foo/bar.nbtdoc' },
 			{ uri: 'file:///root2/baz.nbtdoc', expected: 'baz.nbtdoc' },
@@ -16,7 +18,7 @@ describe('fileUtil', () => {
 		]
 		for (const { uri, expected } of suites) {
 			it(`Should return '${expected}' for '${uri}'`, () => {
-				assert.strictEqual(fileUtil.getRel(rootUris, uri), expected)
+				assert.strictEqual(fileUtil.getRel(uri, rootUris), expected)
 			})
 		}
 	})

@@ -58,8 +58,8 @@ export class Service {
 	readonly #cache = new Map<string, DocAndNode>()
 	#archives: Archives = {}
 	#unzippedArchives: Record<string, decompress.File[]> = {}
-	readonly #roots: string[] = []
-	readonly #files: string[] = []
+	#rawRoots: readonly string[] = []
+	readonly #rawFiles: string[] = []
 
 	private readonly errorPublisher: ErrorPublisher
 
@@ -82,20 +82,6 @@ export class Service {
 		if (this.#isFileListEstablished = value) {
 			this.bindUris()
 		}
-	}
-
-	/**
-	 * The root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
-	 */
-	get roots(): string[] {
-		return [...this.#roots]
-	}
-	set roots(newRoots: string[]) {
-		newRoots = newRoots
-			.filter(fileUtil.isFileUri)
-			.map(fileUtil.normalize)
-			.map(fileUtil.ensureEndingSlash)
-		this.#roots.splice(0, this.#roots.length, ...newRoots)
 	}
 
 	get archives(): Archives {
@@ -121,11 +107,47 @@ export class Service {
 	}
 
 	/**
+	 * The raw root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
+	 */
+	get rawRoots(): readonly string[] {
+		return this.#rawRoots
+	}
+	set rawRoots(newRoots: readonly string[]) {
+		this.#rawRoots = newRoots
+			.filter(fileUtil.isFileUri)
+			.map(fileUtil.normalize)
+			.map(fileUtil.ensureEndingSlash)
+		this.#trackedRoots = undefined
+	}
+
+	#trackedRoots: string[] | undefined
+	/**
+	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
+	 * 
+	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
+	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
+	 */
+	get trackedRoots(): readonly string[] {
+		return this.#trackedRoots ??= (() => {
+			const rawRoots = [...this.archiveRoots, ...this.rawRoots]
+			const ans = new Set<string>(rawRoots)
+			// Identify roots indicated by `pack.mcmeta`.
+			const suffix = '/pack.mcmeta'
+			for (const file of this.trackedFiles) {
+				if (file.endsWith(suffix) && rawRoots.some(r => file.startsWith(r))) {
+					ans.add(file.slice(0, 1 - suffix.length))
+				}
+			}
+			return [...ans].sort((a, b) => b.length - a.length)
+		})()
+	}
+
+	/**
 	 * All files that are tracked and supported by this service, including both files on the physical disk and
 	 * files in archives.
 	 */
 	get trackedFiles(): string[] {
-		return [...this.archiveFiles, ...this.#files]
+		return [...this.archiveFiles, ...this.#rawFiles]
 			.filter(file => this.meta.supportedFileExtensions.includes(fileUtil.extname(file)))
 	}
 
@@ -133,7 +155,7 @@ export class Service {
 	 * The root paths. Each path in this array is guaranteed to end with the platform-specific path sep character (`/` or `\`).
 	 */
 	get rootPaths(): string[] {
-		return this.roots.map(fileUtil.fileUriToPath)
+		return this.rawRoots.map(fileUtil.fileUriToPath)
 	}
 
 	constructor({
@@ -151,7 +173,7 @@ export class Service {
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
-		this.roots = roots
+		this.rawRoots = roots
 		this.rootsWatched = rootsWatched
 		this.symbols = symbols
 	}
@@ -493,8 +515,8 @@ export class Service {
 	onWatchedFileCreated(uri: string): void {
 		uri = fileUtil.normalize(uri)
 		this.debug(`onWatchedFileCreated '${uri}'`)
-		if (!this.#files.includes(uri)) {
-			this.#files.push(uri)
+		if (!this.#rawFiles.includes(uri)) {
+			this.#rawFiles.push(uri)
 		}
 		if (this.#isFileListEstablished) {
 			this.bindUris()
@@ -519,9 +541,9 @@ export class Service {
 		this.debug(`onWatchedFileDeleted '${uri}'`)
 		this.#watchedUpToDateUris.delete(uri)
 		this.tryClearingCache(uri)
-		const fileUriIndex = this.#files.findIndex(u => u === uri)
+		const fileUriIndex = this.#rawFiles.findIndex(u => u === uri)
 		if (fileUriIndex !== -1) {
-			this.#files!.splice(fileUriIndex, 1)
+			this.#rawFiles!.splice(fileUriIndex, 1)
 		}
 		if (this.#isFileListEstablished) {
 			this.bindUris()
@@ -543,7 +565,7 @@ export class Service {
 	}
 
 	private isWatched(uri: string): boolean {
-		return fileUtil.isFileUri(uri) && this.rootsWatched && this.roots.some(r => uri.startsWith(r))
+		return fileUtil.isFileUri(uri) && this.rootsWatched && this.rawRoots.some(r => uri.startsWith(r))
 	}
 
 	//#region Contexts.
@@ -552,7 +574,7 @@ export class Service {
 			fs: this.fs,
 			logger: this.logger,
 			meta: this.meta,
-			roots: [...this.archiveRoots, ...this.roots],
+			roots: this.trackedRoots,
 		})
 	}
 	private getParserCtx(doc: TextDocument): ParserContext {

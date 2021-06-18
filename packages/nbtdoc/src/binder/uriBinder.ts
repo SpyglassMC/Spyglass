@@ -11,7 +11,7 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 		if (!uri.endsWith(Extension)) {
 			continue
 		}
-		let rel = fileUtil.getRel(ctx.roots, uri)
+		let rel = fileUtil.getRel(uri, ctx.roots)
 		if (!rel) {
 			continue
 		}

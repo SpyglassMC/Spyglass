@@ -1,18 +1,36 @@
 import url, { URL as Url } from 'url'
 
 /**
- * @param roots The root URIs. Each URI in this array must end with a slash (`/`).
+ * @param rootUris The root URIs. Each URI in this array must end with a slash (`/`).
  * @param uri The target file URI.
  * @returns The relative path from one of the `roots` to the `uri`, or `null` if the `uri` is not under any roots.
  * The separation used in the relative path is always slash (`/`).
+ * @example 
+ * getRels(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json')
+ * // -> 'bar/qux.json'
+ * // -> 'foo/bar/qux.json'
+ * // -> null
+ *
+ * getRels(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json')
+ * // -> null
  */
-export function getRel(rootUris: string[], uri: string): string | null {
-	for (const rootUri of rootUris) {
-		if (uri.startsWith(rootUri)) {
-			return decodeURI(uri.slice(rootUri.length))
+export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, null, unknown> {
+	for (const root of rootUris) {
+		if (uri.startsWith(root)) {
+			yield decodeURIComponent(uri.slice(root.length))
 		}
 	}
 	return null
+}
+
+/**
+ * @see {@link getRels}
+ * @example 
+ * getRel(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json') // -> 'bar/qux.json'
+ * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> null
+ */
+export function getRel(uri: string, rootUris: readonly string[]): string | null {
+	return getRels(uri, rootUris).next().value
 }
 
 export function ensureEndingSlash(uri: string): string {
