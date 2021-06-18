@@ -8,10 +8,10 @@ export class ParticleNode<T extends ArgumentNode> extends ArgumentNode {
 
     constructor(
         public id: IdentityNode,
-        public param?: T
+        public param?: T | T[]
     ) { super() }
 
     [GetFormattedString](lint: LintConfig) {
-        return `${this.id[GetFormattedString](lint)}${this.param ? ` ${this.param[GetFormattedString](lint)}` : ''}`
+        return `${this.id[GetFormattedString](lint)}${this.param ? ` ${Array.isArray(this.param) ? this.param.map(p => p[GetFormattedString](lint)).join(' ') : this.param[GetFormattedString](lint)}` : ''}`
     }
 }

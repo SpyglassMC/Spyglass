@@ -23,7 +23,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
 
         try {
             switch (type.toString()) {
-                case 'minecraft:dust':
+                case 'minecraft:dust': {
                     reader
                         .expect(' ')
                         .skip()
@@ -51,11 +51,70 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     const sizeResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
                     const sizeNode = new VectorElementNode(VectorElementType.Absolute, sizeResult.data.valueOf(), sizeResult.data.toString())
                     sizeNode[NodeRange] = { start: sizeStart, end: reader.cursor }
-                    combineArgumentParserResult(ans, colorResult)
+                    combineArgumentParserResult(ans, sizeResult)
                     color.push(sizeNode)
                     color[NodeRange].end = reader.cursor
                     ans.data.param = color
                     break
+                }
+                case 'minecraft:dust_color_transition': {
+                    // To whomever wrote this whole system:
+                    //  ╔═══╗╔╗ ╔╗╔═══╗╔╗╔═╗    ╔╗  ╔╗╔═══╗╔╗ ╔╗
+                    //  ║╔══╝║║ ║║║╔═╗║║║║╔╝    ║╚╗╔╝║║╔═╗║║║ ║║
+                    //  ║╚══╗║║ ║║║║ ╚╝║╚╝╝     ╚╗╚╝╔╝║║ ║║║║ ║║
+                    //  ║╔══╝║║ ║║║║ ╔╗║╔╗║      ╚╗╔╝ ║║ ║║║║ ║║
+                    // ╔╝╚╗  ║╚═╝║║╚═╝║║║║╚╗      ║║  ║╚═╝║║╚═╝║
+                    // ╚══╝  ╚═══╝╚═══╝╚╝╚═╝      ╚╝  ╚═══╝╚═══╝
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const color1Result = new ctx.parsers.Vector(
+                        3, 'float', false, false
+                    ).parse(reader, ctx)
+                    const color1 = color1Result.data
+                    combineArgumentParserResult(ans, color1Result)
+                    /* istanbul ignore else */
+                    if (ans.errors.length === 0) {
+                        const key = `${color1[0].value} ${color1[1].value} ${color1[2].value}`
+                        ans.cache = {
+                            color: {
+                                [key]: {
+                                    def: [],
+                                    ref: [{ start, end: reader.cursor }]
+                                }
+                            }
+                        }
+                    }
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const sizeResult: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
+                    const sizeNode = sizeResult.data
+                    combineArgumentParserResult(ans, sizeResult)
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const color2Start = reader.cursor
+                    const color2Result = new ctx.parsers.Vector(
+                        3, 'float', false, false
+                    ).parse(reader, ctx)
+                    const color2 = color2Result.data
+                    combineArgumentParserResult(ans, color2Result)
+                    /* istanbul ignore else */
+                    if (ans.errors.length === 0) {
+                        const key = `${color2[0].value} ${color2[1].value} ${color2[2].value}`
+                        ans.cache = {
+                            color: {
+                                [key]: {
+                                    def: [],
+                                    ref: [{ start: color2Start, end: reader.cursor }]
+                                }
+                            }
+                        }
+                    }
+                    ans.data.param = [color1, sizeNode, color2]
+                    break
+                }
                 case 'minecraft:block':
                 case 'minecraft:falling_dust':
                     reader
@@ -75,6 +134,21 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     combineArgumentParserResult(ans, itemResult)
                     ans.data.param = item
                     break
+                case 'minecraft:vibration': {
+                    reader
+                        .expect(' ')
+                        .skip()
+                    ans.data.param = []
+                    for (let i = 0; i < 6; i++) {
+                        const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
+                        combineArgumentParserResult(ans, result)
+                        ans.data.param.push(result.data)
+                    }
+                    const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('integer').parse(reader, ctx)
+                    combineArgumentParserResult(ans, result)
+                    ans.data.param.push(result.data)
+                    break
+                }
                 default:
                     break
             }
