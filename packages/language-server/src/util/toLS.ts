@@ -34,7 +34,7 @@ export namespace toLS {
 	}
 
 	export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Diagnostic {
-		const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity))
+		const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity), undefined, 'spyglassmc')
 		if (error.info?.deprecated) {
 			(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
 		}
