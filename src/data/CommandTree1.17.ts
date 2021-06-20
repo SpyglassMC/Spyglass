@@ -1008,7 +1008,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning', 'universalAnger', 'forgiveDeadPlayers'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWeatherCycle', 'freezeDamage', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning', 'universalAnger', 'forgiveDeadPlayers'),
                     executable: true,
                     children: {
                         value: {
@@ -1018,7 +1018,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 intRuleName: {
-                    parser: new LiteralArgumentParser('maxCommandChainLength', 'maxEntityCramming', 'randomTickSpeed', 'spawnRadius'),
+                    parser: new LiteralArgumentParser('maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'spawnRadius'),
                     executable: true,
                     children: {
                         value: {
