@@ -1,4 +1,5 @@
 import decompress from 'decompress'
+import EventEmitter from 'events'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { CachePromise, Delay, SpyglassUri, Uri } from '../common'
@@ -6,13 +7,14 @@ import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { Color, ColorInfo, ColorToken } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
-import type { Range } from '../source'
+import type { LanguageError, Range } from '../source'
 import { IndexMap, Source } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes, SymbolUtil } from '../symbol'
+import type { Config } from './Config'
+import { ConfigService, VanillaConfig } from './Config'
 import type { ColorizerOptions } from './Context'
 import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
-import type { ErrorPublisher } from './ErrorPublisher'
 import { FileService } from './FileService'
 import * as fileUtil from './fileUtil'
 import { Hover } from './Hover'
@@ -22,8 +24,16 @@ import { SymbolLocations } from './SymbolLocations'
 
 export type Archives = Record<string, { buffer: Buffer, startDepth?: number }>
 
+export type ConfigFetcher = (this: void, uri: string) => Promise<Config>
+
+/**
+ * When only a string is parsed in as the `target`, the errors for the URI `target` should be cleared.
+ */
+export type ErrorPublisher = (this: void, target: string | TextDocument, errors?: readonly LanguageError[]) => unknown
+
 interface Options {
 	archives?: Archives,
+	configFetcher?: ConfigFetcher,
 	errorPublisher?: ErrorPublisher,
 	fs?: FileService,
 	isDebugging?: boolean,
@@ -41,8 +51,33 @@ interface DocAndNode {
 	node: FileNode<any>,
 }
 
+type FileEvent = { uri: string }
+type EmptyEvent = {}
+
+export interface Service {
+	on(event: 'fileCreated', callbackFn: (data: FileEvent) => void): this
+	on(event: 'fileModified', callbackFn: (data: FileEvent) => void): this
+	on(event: 'fileDeleted', callbackFn: (data: FileEvent) => void): this
+	on(event: 'fileListReady', callbackFn: (data: EmptyEvent) => void): this
+	on(event: 'rootsChanged', callbackFn: (data: EmptyEvent) => void): this
+
+	once(event: 'fileCreated', callbackFn: (data: FileEvent) => void): this
+	once(event: 'fileModified', callbackFn: (data: FileEvent) => void): this
+	once(event: 'fileDeleted', callbackFn: (data: FileEvent) => void): this
+	once(event: 'fileListReady', callbackFn: (data: EmptyEvent) => void): this
+	once(event: 'rootsChanged', callbackFn: (data: EmptyEvent) => void): this
+
+	emit(event: 'fileCreated', data: FileEvent): boolean
+	emit(event: 'fileModified', data: FileEvent): boolean
+	emit(event: 'fileDeleted', data: FileEvent): boolean
+	emit(event: 'fileListReady', data: EmptyEvent): boolean
+	emit(event: 'rootsChanged', data: EmptyEvent): boolean
+}
+
 /* istanbul ignore next */
-export class Service {
+export class Service extends EventEmitter {
+	private static readonly RootSuffix = '/pack.mcmeta'
+
 	/**
 	 * URI of files that are currently opened in the editor, whose changes shall be sent to the service's
 	 * `onDidX` methods by client notifications via `TextDocumentContentChangeEvent`. The content of those
@@ -58,16 +93,17 @@ export class Service {
 	readonly #cache = new Map<string, DocAndNode>()
 	#archives: Archives = {}
 	#unzippedArchives: Record<string, decompress.File[]> = {}
-	#rawRoots: readonly string[] = []
+	readonly #rawRoots: string[] = []
 	readonly #rawFiles: string[] = []
 
 	private readonly errorPublisher: ErrorPublisher
 
-	readonly isDebugging: boolean
-	readonly rootsWatched: boolean
-	readonly meta = MetaRegistry.instance
+	readonly config: ConfigService
 	readonly fs: FileService
+	readonly isDebugging: boolean
 	readonly logger: Logger
+	readonly meta = MetaRegistry.instance
+	readonly rootsWatched: boolean
 	readonly symbols: SymbolUtil
 
 	#isFileListEstablished = false
@@ -80,6 +116,7 @@ export class Service {
 	}
 	set isFileListEstablished(value: boolean) {
 		if (this.#isFileListEstablished = value) {
+			this.emit('fileListReady', {})
 			this.bindUris()
 		}
 	}
@@ -90,6 +127,7 @@ export class Service {
 	set archives(newArchives: Archives) {
 		this.#unzippedArchives = {}
 		this.#archives = newArchives
+		this.emit('rootsChanged', {})
 	}
 
 	get archiveFiles(): string[] {
@@ -113,11 +151,12 @@ export class Service {
 		return this.#rawRoots
 	}
 	set rawRoots(newRoots: readonly string[]) {
-		this.#rawRoots = newRoots
+		newRoots = newRoots
 			.filter(fileUtil.isFileUri)
 			.map(fileUtil.normalize)
 			.map(fileUtil.ensureEndingSlash)
-		this.#trackedRoots = undefined
+		this.#rawRoots.splice(0, this.#rawRoots.length, ...newRoots)
+		this.emit('rootsChanged', {})
 	}
 
 	#trackedRoots: string[] | undefined
@@ -132,10 +171,9 @@ export class Service {
 			const rawRoots = [...this.archiveRoots, ...this.rawRoots]
 			const ans = new Set<string>(rawRoots)
 			// Identify roots indicated by `pack.mcmeta`.
-			const suffix = '/pack.mcmeta'
 			for (const file of this.trackedFiles) {
-				if (file.endsWith(suffix) && rawRoots.some(r => file.startsWith(r))) {
-					ans.add(file.slice(0, 1 - suffix.length))
+				if (file.endsWith(Service.RootSuffix) && rawRoots.some(r => file.startsWith(r))) {
+					ans.add(file.slice(0, 1 - Service.RootSuffix.length))
 				}
 			}
 			return [...ans].sort((a, b) => b.length - a.length)
@@ -160,6 +198,7 @@ export class Service {
 
 	constructor({
 		archives = {},
+		configFetcher = async () => VanillaConfig,
 		errorPublisher = async () => { },
 		fs = FileService.create(),
 		isDebugging = false,
@@ -168,7 +207,32 @@ export class Service {
 		rootsWatched = false,
 		symbols = new SymbolUtil({}),
 	}: Options = {}) {
+		super()
+
+		const rootsChangedEmitter = ({ uri }: FileEvent) => {
+			if (uri.endsWith(Service.RootSuffix)) {
+				this.emit('rootsChanged', {})
+			}
+		}
+		const fileEventHandler = (e: EmptyEvent | FileEvent) => {
+			this.config.onFileAddedChangedOrRemoved((e as FileEvent).uri)
+		}
+
+		this.on('rootsChanged', () => {
+			this.#trackedRoots = undefined
+			this.config.onRootsUpdated()
+		})
+
+		this.on('fileCreated', rootsChangedEmitter)
+		this.on('fileDeleted', rootsChangedEmitter)
+
+		this.on('fileCreated', fileEventHandler)
+		this.on('fileModified', fileEventHandler)
+		this.on('fileDeleted', fileEventHandler)
+		this.on('fileListReady', fileEventHandler)
+
 		this.#archives = archives
+		this.config = new ConfigService(configFetcher, logger, () => this.trackedFiles, () => this.trackedRoots, this.readFile.bind(this))
 		this.errorPublisher = errorPublisher
 		this.fs = fs
 		this.isDebugging = isDebugging
@@ -417,7 +481,7 @@ export class Service {
 
 	@Delay(100)
 	private publishErrors(uri: string): void {
-		if (uri.startsWith('spyglassmc:')) {
+		if (uri.startsWith(SpyglassUri.Protocol)) {
 			return
 		}
 		const result = this.get(uri)
@@ -460,6 +524,7 @@ export class Service {
 	@CachePromise()
 	async parseAndCheckAllFiles(): Promise<void> {
 		await this.unzipArchives()
+		await this.config.buildConfigCache()
 		const date0 = new Date()
 		const results = await Promise.all(this.trackedFiles.map(f => this.ensureOpenAndParsed(f)))
 		const date1 = new Date()
@@ -515,6 +580,10 @@ export class Service {
 	onWatchedFileCreated(uri: string): void {
 		uri = fileUtil.normalize(uri)
 		this.debug(`onWatchedFileCreated '${uri}'`)
+		if (this.#isFileListEstablished) {
+			this.emit('fileCreated', { uri })
+		}
+
 		if (!this.#rawFiles.includes(uri)) {
 			this.#rawFiles.push(uri)
 		}
@@ -529,6 +598,10 @@ export class Service {
 	onWatchedFileModified(uri: string): void {
 		uri = fileUtil.normalize(uri)
 		this.debug(`onWatchedFileModified '${uri}'`)
+		if (this.#isFileListEstablished) {
+			this.emit('fileModified', { uri })
+		}
+
 		this.#watchedUpToDateUris.delete(uri)
 		this.tryClearingCache(uri)
 	}
@@ -546,6 +619,7 @@ export class Service {
 			this.#rawFiles!.splice(fileUriIndex, 1)
 		}
 		if (this.#isFileListEstablished) {
+			this.emit('fileDeleted', { uri })
 			this.bindUris()
 		}
 	}
@@ -580,12 +654,14 @@ export class Service {
 	private getParserCtx(doc: TextDocument): ParserContext {
 		return ParserContext.create({
 			...this.getCtxBase(),
+			config: this.config.getConfig(doc.uri),
 			doc,
 		})
 	}
 	private getProcessorCtx(doc: TextDocument): ProcessorContext {
 		return ProcessorContext.create({
 			...this.getCtxBase(),
+			config: this.config.getConfig(doc.uri),
 			doc,
 			symbols: this.symbols,
 		})

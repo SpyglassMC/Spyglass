@@ -3,33 +3,33 @@ import url, { URL as Url } from 'url'
 /**
  * @param rootUris The root URIs. Each URI in this array must end with a slash (`/`).
  * @param uri The target file URI.
- * @returns The relative path from one of the `roots` to the `uri`, or `null` if the `uri` is not under any roots.
+ * @returns The relative path from one of the `roots` to the `uri`, or `undefined` if the `uri` is not under any roots.
  * The separation used in the relative path is always slash (`/`).
  * @example 
  * getRels(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json')
  * // -> 'bar/qux.json'
  * // -> 'foo/bar/qux.json'
- * // -> null
+ * // -> undefined
  *
  * getRels(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json')
- * // -> null
+ * // -> undefined
  */
-export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, null, unknown> {
+export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, undefined, unknown> {
 	for (const root of rootUris) {
 		if (uri.startsWith(root)) {
 			yield decodeURIComponent(uri.slice(root.length))
 		}
 	}
-	return null
+	return undefined
 }
 
 /**
  * @see {@link getRels}
  * @example 
  * getRel(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json') // -> 'bar/qux.json'
- * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> null
+ * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> undefined
  */
-export function getRel(uri: string, rootUris: readonly string[]): string | null {
+export function getRel(uri: string, rootUris: readonly string[]): string | undefined {
 	return getRels(uri, rootUris).next().value
 }
 

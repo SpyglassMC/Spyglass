@@ -1,7 +1,6 @@
 /* istanbul ignore file */
 
 export * from './Context'
-export * from './ErrorPublisher'
 export * from './ErrorReporter'
 export { FileService, FileStats } from './FileService'
 export * as fileUtil from './fileUtil'

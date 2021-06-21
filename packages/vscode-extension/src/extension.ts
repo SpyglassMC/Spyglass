@@ -50,7 +50,7 @@ export function activate(context: vsc.ExtensionContext) {
 
 	// Create the language client and start the client.
 	client = new lc.LanguageClient(
-		'spyglass',
+		'spyglassmc',
 		'SPYGlass Language Server',
 		serverOptions,
 		clientOptions

@@ -60,7 +60,7 @@ connection.onInitialize(async params => {
 		logger.error(`[initializeRootWatcher] ${formatError(e)}`)
 	}
 
-	return {
+	const ans: ls.InitializeResult = {
 		capabilities: {
 			colorProvider: {
 				documentSelector: null,
@@ -88,15 +88,20 @@ connection.onInitialize(async params => {
 				change: ls.TextDocumentSyncKind.Incremental,
 				openClose: true,
 			},
-			workspace: {
-				workspaceFolders: {
-					supported: true,
-					changeNotifications: true,
-				},
-			},
 			workspaceSymbolProvider: {},
 		},
 	}
+
+	if (capabilities.workspace?.workspaceFolders) {
+		ans.capabilities.workspace = {
+			workspaceFolders: {
+				supported: true,
+				changeNotifications: true,
+			},
+		}
+	}
+
+	return ans
 })
 
 function initializeRootWatcher() {
@@ -124,7 +129,11 @@ function initializeRootWatcher() {
 }
 
 connection.onInitialized(async () => {
-
+	if (capabilities.workspace?.workspaceFolders) {
+		connection.workspace.onDidChangeWorkspaceFolders(async () => {
+			service.rawRoots = (await connection.workspace.getWorkspaceFolders() ?? []).map(r => r.uri)
+		})
+	}
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {

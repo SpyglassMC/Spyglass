@@ -1,3 +1,8 @@
+import rfdc from 'rfdc'
+import { CachePromise } from '../common'
+import type { Logger } from './Logger'
+import type { ConfigFetcher } from './Service'
+
 export interface Config {
 	/**
 	 * Runtime environment.
@@ -22,21 +27,23 @@ export interface Config {
 }
 
 export interface EnvConfig {
-	defaultVisibility: string,
 	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@mc-nbtdoc` and
 	 * `@vanilla`.
 	 */
 	dependencies: string[],
-	detectionDepth: number,
 	exclude: string[],
 	/**
 	 * Locale language for error messages.
 	 */
 	language: string,
 	permissionLevel: 1 | 2 | 3 | 4,
-	vanillaResources: string,
+	vanillaResources: {
+		blocks?: string,
+		commands?: string,
+		registries?: string,
+	},
 	/**
 	 * - `Auto`: Auto infer from `pack.mcmeta`.
 	 * - `Latest release`
@@ -84,6 +91,7 @@ export interface FormatterConfig {
 }
 
 export interface LinterConfig {
+	defaultVisibility: string,
 	blockStateSortKeys: DiagnosticConfig<'alphabetically'>,
 	idOmitDefaultNamespace: DiagnosticConfig<boolean>,
 	nameOfObjectives: DiagnosticConfig<NamingConventionConfig>,
@@ -161,15 +169,13 @@ export interface SnippetsConfig {
 export const VanillaConfig: Config = {
 	env: {
 		permissionLevel: 2,
-		defaultVisibility: 'public',
 		dependencies: [
 			'@vanilla',
 			'@mc-nbtdoc',
 		],
-		detectionDepth: 1,
 		exclude: [],
 		language: 'Default',
-		vanillaResources: 'Auto',
+		vanillaResources: {},
 		version: 'Auto',
 	},
 	format: {
@@ -202,6 +208,7 @@ export const VanillaConfig: Config = {
 		timeOmitTickUnit: false,
 	},
 	lint: {
+		defaultVisibility: 'public',
 		blockStateSortKeys: null,
 		idOmitDefaultNamespace: null,
 		nameOfNbtCompoundTagKeys: null,
@@ -271,4 +278,107 @@ export const VanillaConfig: Config = {
 		executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
 		summonAec: 'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}',
 	},
+}
+
+export class ConfigService {
+	static readonly ConfigFileNames = Object.freeze([
+		'.spyglassconfig',
+		'.spyglassconfig.json',
+		'.spyglassrc',
+		'.spyglassrc.json',
+	] as const)
+
+	#rootConfigCache = new Map<string, Config>()
+	#files: readonly string[]
+	#roots: readonly string[]
+
+	constructor(
+		private readonly configFetcher: ConfigFetcher,
+		private readonly logger: Logger,
+		private readonly getFiles: () => readonly string[],
+		private readonly getRoots: () => readonly string[],
+		private readonly readFile: (uri: string) => Promise<string>
+	) {
+		this.#files = getFiles()
+		this.#roots = getRoots()
+	}
+
+	onRootsUpdated(): void {
+		this.#roots = this.getRoots()
+		this.buildConfigCache()
+	}
+	onFileAddedChangedOrRemoved(uri?: string): void {
+		this.#files = this.getFiles()
+		if (!uri || ConfigService.ConfigFileNames.some(n => uri.endsWith(n))) {
+			this.buildConfigCache()
+		}
+	}
+
+	@CachePromise()
+	async buildConfigCache(): Promise<void> {
+		this.#rootConfigCache.clear()
+		for (const root of this.#roots) {
+			const overrides: Partial<Config>[] = []
+
+			// Fetch editor config.
+			try {
+				const result = await this.configFetcher(root)
+				if (!result || typeof result !== 'object') {
+					throw new Error(`result is ${JSON.stringify(result)}`)
+				}
+				overrides.push(result)
+			} catch (e) {
+				this.logger.error(`[ConfigService#buildConfigCache] Fetching editor config for “${root}”: ${e?.toString()}`)
+			}
+
+			// Read config file.
+			const path = this.getConfigPath(root)
+			if (path) {
+				try {
+					const result = JSON.parse(await this.readFile(path))
+					if (!result || typeof result !== 'object') {
+						throw new Error(`result is ${JSON.stringify(result)}`)
+					}
+					overrides.push(result)
+				} catch (e) {
+					this.logger.error(`[ConfigService#buildConfigCache] Reading config file at “${path}” for “${root}”: ${e?.toString()}`)
+				}
+			}
+
+			this.#rootConfigCache.set(root, Object.freeze(this.mergeConfig(VanillaConfig, ...overrides)))
+		}
+	}
+
+	private getConfigPath(uri: string): string | undefined {
+		for (const root of this.#roots) {
+			if (!uri.startsWith(root)) {
+				continue
+			}
+
+			for (const name of ConfigService.ConfigFileNames) {
+				const potentialPath = root + name
+				if (this.#files.includes(potentialPath)) {
+					return potentialPath
+				}
+			}
+		}
+		return undefined
+	}
+
+	getConfig(uri: string): Config {
+		const root = this.#roots.find(r => uri.startsWith(r))
+		return (root
+			? this.#rootConfigCache.get(root)
+			: undefined) ?? VanillaConfig
+	}
+
+	private mergeConfig(base: Config, ...overrides: Partial<Config>[]): Config {
+		const ans = rfdc()(base)
+		for (const override of overrides) {
+			for (const key of ['env', 'features', 'format', 'lint', 'snippets'] as const) {
+				ans[key] = { ...ans[key], ...override[key] } as any
+			}
+		}
+		return ans
+	}
 }

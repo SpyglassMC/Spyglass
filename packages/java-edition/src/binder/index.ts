@@ -26,17 +26,17 @@ export const Categories = new Map<string, { category: FileCategory, extname: str
 	['worldgen/template_pool', { category: 'worldgen/template_pool', extname: '.json' }],
 ])
 
-export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, null, unknown> {
+export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, undefined, unknown> {
 	yield* fileUtil.getRels(uri, rootUris)
 
 	const parts = uri.split('/')
 	for (let i = parts.length - 2; i >= 0; i--) {
 		if (parts[i] === 'data') {
-			yield parts.slice(i + 1).join('/')
+			yield parts.slice(i).join('/')
 		}
 	}
 
-	return null
+	return undefined
 }
 
 export function dissectUri(uri: string, roots: readonly string[]) {

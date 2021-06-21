@@ -15,7 +15,7 @@ describe('Check vanilla files', async () => {
 		const checker = Checkers.get(category[1].category)
 		if (!checker || !files) return
 
-		it(`Category ${category[1]}`, () => {
+		it(`Category ${category[1].category}`, () => {
 			let passing = true
 			files.forEach(file => {
 				const text = fs.readFileSync(file, 'utf-8')

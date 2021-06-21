@@ -106,5 +106,5 @@
     "datapack.config.snippets": "Code snippets.",
     "datapack.description": "Heavy language features for Minecraft: Java Edition data pack files",
     "datapack.displayName": "SPYGlass",
-    "spyglass.trace.server": "Traces the communication between VS Code and the SPYGlass Language Server."
+    "spyglassmc.trace.server": "Traces the communication between VS Code and the SPYGlass Language Server."
 }

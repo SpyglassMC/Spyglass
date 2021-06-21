@@ -4,6 +4,8 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Range } from '../source'
 import { ReadonlySource } from '../source'
 import { SymbolUtil } from '../symbol'
+import type { Config } from './Config'
+import { VanillaConfig } from './Config'
 import { ErrorReporter } from './ErrorReporter'
 import { FileService } from './FileService'
 import { Logger } from './Logger'
@@ -30,11 +32,13 @@ export namespace ContextBase {
 }
 
 export interface ParserContext extends ContextBase {
+	config: Config,
 	doc: TextDocument,
 	err: ErrorReporter,
 	symbols: SymbolUtil,
 }
 interface ParserContextLike extends ContextBaseLike {
+	config?: Config,
 	doc: TextDocument,
 	err?: ErrorReporter,
 	symbols?: SymbolUtil,
@@ -43,6 +47,7 @@ export namespace ParserContext {
 	export function create(ctx: ParserContextLike): ParserContext {
 		return {
 			...ContextBase.create(ctx),
+			config: ctx.config ?? VanillaConfig,
 			doc: ctx.doc,
 			err: ctx.err ?? new ErrorReporter(),
 			symbols: ctx.symbols ?? new SymbolUtil({}),
@@ -51,11 +56,13 @@ export namespace ParserContext {
 }
 
 export interface ProcessorContext extends ContextBase {
+	config: Config,
 	doc: TextDocument,
 	src: ReadonlySource,
 	symbols: SymbolUtil,
 }
 interface ProcessorContextLike extends ContextBaseLike {
+	config?: Config,
 	doc: TextDocument,
 	src?: ReadonlySource,
 	symbols?: SymbolUtil,
@@ -64,6 +71,7 @@ export namespace ProcessorContext {
 	export function create(ctx: ProcessorContextLike): ProcessorContext {
 		return {
 			...ContextBase.create(ctx),
+			config: ctx.config ?? VanillaConfig,
 			doc: ctx.doc,
 			src: ctx.src ?? new ReadonlySource(ctx.doc.getText()),
 			symbols: ctx.symbols ?? new SymbolUtil({}),

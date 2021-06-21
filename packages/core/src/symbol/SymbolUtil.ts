@@ -26,14 +26,6 @@ export interface LookupResult {
 	symbol: Symbol | null,
 }
 
-export const enum SpecialUri {
-	DefaultLibrary = 'spyglassmc://symbol/default-library',
-	OnlyDeclaration = 'spyglassmc://symbol/only-declaration',
-	OnlyReference = 'spyglassmc://symbol/only-reference',
-	PotentiallyTrimable = 'spyglassmc://symbol/potentially-trimable',
-	UriBound = 'spyglassmc://symbol/uri-bound',
-}
-
 interface SymbolEvent {
 	symbol: Symbol,
 }

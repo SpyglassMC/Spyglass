@@ -9,6 +9,13 @@ import { toLS } from './toLS'
  * Functions are named after types in `@spyglassmc/core`.
  */
 export namespace toCore {
+	export function configFetcher(connection: ls.Connection): core.ConfigFetcher {
+		const ans: core.ConfigFetcher = async (uri) => {
+			return connection.workspace.getConfiguration({ scopeUri: uri, section: 'spyglassmc' })
+		}
+		return ans
+	}
+
 	export function errorPublisher(connection: ls.Connection): core.ErrorPublisher {
 		const ans: core.ErrorPublisher = (target, errors) => {
 			if (typeof target === 'string') {

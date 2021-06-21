@@ -152,14 +152,14 @@
     "configuration": {
       "title": "SPYGlass",
       "properties": {
-        "spyglass.trace.server": {
+        "spyglassmc.trace.server": {
           "type": "string",
           "enum": [
             "off",
             "messages",
             "verbose"
           ],
-          "markdownDescription": "%spyglass.trace.server%",
+          "markdownDescription": "%spyglassmc.trace.server%",
           "default": "off"
         }
       }
