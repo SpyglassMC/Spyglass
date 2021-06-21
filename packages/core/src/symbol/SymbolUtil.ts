@@ -1,10 +1,9 @@
 import { strict as assert } from 'assert'
+import EventEmitter from 'events'
 import rfdc from 'rfdc'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode } from '../node'
 import type { Logger } from '../service'
-import type { EventListenable } from '../service/EventPublisher'
-import { EventPublisher } from '../service/EventPublisher'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
@@ -43,8 +42,27 @@ interface SymbolLocationEvent extends SymbolEvent {
 	location: SymbolLocation,
 }
 
-export class SymbolUtil implements EventListenable {
-	#event: EventPublisher
+export interface SymbolUtil {
+	on(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	on(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
+
+	once(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	once(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
+
+	emit(event: 'symbolCreated', data: SymbolEvent): boolean
+	emit(event: 'symbolAmended', data: SymbolEvent): boolean
+	emit(event: 'symbolRemoved', data: SymbolEvent): boolean
+	emit(event: 'symbolLocationCreated', data: SymbolLocationEvent): boolean
+	emit(event: 'symbolLocationRemoved', data: SymbolLocationEvent): boolean
+}
+
+export class SymbolUtil extends EventEmitter {
 	#global: SymbolTable
 	#stacks: Map<string, SymbolStack>
 
@@ -59,9 +77,6 @@ export class SymbolUtil implements EventListenable {
 	 */
 	_inDelayMode: boolean
 
-	get event() {
-		return this.#event
-	}
 	get global() {
 		return this.#global
 	}
@@ -72,16 +87,15 @@ export class SymbolUtil implements EventListenable {
 	constructor(
 		global: SymbolTable,
 		/** @internal */
-		_event = EventPublisher.create(),
-		/** @internal */
 		_stacks = new Map<string, SymbolStack>(),
 		/** @internal */
 		_isUriBinding = false,
 		/** @internal */
 		_inDelayMode = false,
 	) {
+		super()
+
 		this.#global = global
-		this.#event = _event
 		this.#stacks = _stacks
 		this.#isUriBinding = _isUriBinding
 		this._inDelayMode = _inDelayMode
@@ -95,7 +109,7 @@ export class SymbolUtil implements EventListenable {
 	 * `applyDelayedEdits` is called, the original SymbolUtil will also be modified.
 	 */
 	clone(): SymbolUtil {
-		return new SymbolUtil(this.#global, this.#event, this.#stacks, this.#isUriBinding, true)
+		return new SymbolUtil(this.#global, this.#stacks, this.#isUriBinding, true)
 	}
 
 	/**
@@ -105,28 +119,6 @@ export class SymbolUtil implements EventListenable {
 		this._delayedOps.forEach(f => f())
 		this._delayedOps = []
 		this._inDelayMode = false
-	}
-
-	/**
-	 * The order of the event actually happening and the callback function being called is NOT guaranteed.
-	 */
-	on(event: 'symbolCreated', callbackFn: (this: void, data: SymbolEvent) => void): void
-	on(event: 'symbolAmended', callbackFn: (this: void, data: SymbolEvent) => void): void
-	on(event: 'symbolRemoved', callbackFn: (this: void, data: SymbolEvent) => void): void
-	on(event: 'symbolLocationCreated', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
-	on(event: 'symbolLocationRemoved', callbackFn: (this: void, data: SymbolLocationEvent) => void): void
-	on(event: string, callbackFn: (this: void, ...params: any[]) => unknown): void {
-		this.#event.on(event, callbackFn)
-	}
-
-	private trigger(event: 'symbolCreated', data: SymbolEvent): void
-	private trigger(event: 'symbolAmended', data: SymbolEvent): void
-	private trigger(event: 'symbolRemoved', data: SymbolEvent): void
-	private trigger(event: 'symbolLocationCreated', data: SymbolLocationEvent): void
-	private trigger(event: 'symbolLocationRemoved', data: SymbolLocationEvent): void
-	@DelayModeSupport()
-	private trigger(event: string, ...params: unknown[]): void {
-		this.#event.trigger(event, ...params)
 	}
 
 	/**
@@ -277,7 +269,7 @@ export class SymbolUtil implements EventListenable {
 			}
 			if (!symbol.members && !symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
 				delete map[identifier]
-				this.trigger('symbolRemoved', { symbol })
+				this.emit('symbolRemoved', { symbol })
 			}
 		}
 	}
@@ -309,7 +301,7 @@ export class SymbolUtil implements EventListenable {
 				const result: SymbolLocation[] = []
 				symbol[type]!.forEach(location => {
 					if (predicate(location)) {
-						this.trigger('symbolLocationRemoved', { symbol, type, location })
+						this.emit('symbolLocationRemoved', { symbol, type, location })
 					} else {
 						result.push(location)
 					}
@@ -361,11 +353,11 @@ export class SymbolUtil implements EventListenable {
 		const target = map[identifier]
 		if (target) {
 			this.amendSymbol(target, addition, doc, isUriBinding)
-			this.trigger('symbolAmended', { symbol: target })
+			this.emit('symbolAmended', { symbol: target })
 			return target
 		} else {
 			const ans = map[identifier] = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, isUriBinding)
-			this.trigger('symbolCreated', { symbol: ans })
+			this.emit('symbolCreated', { symbol: ans })
 			return ans
 		}
 	}
@@ -492,7 +484,7 @@ export class SymbolUtil implements EventListenable {
 				delete location.fullPosRange
 			}
 			arr.push(location)
-			this.trigger('symbolLocationCreated', { symbol, type, location })
+			this.emit('symbolLocationCreated', { symbol, type, location })
 		}
 	}
 
