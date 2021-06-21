@@ -143,11 +143,9 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
                         combineArgumentParserResult(ans, result)
                         ans.data.param.push(result.data)
-                        if (i !== 5) {
-                            reader
-                                .expect(' ')
-                                .skip()
-                        }
+                        reader
+                            .expect(' ')
+                            .skip()
                     }
                     const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('integer').parse(reader, ctx)
                     combineArgumentParserResult(ans, result)
