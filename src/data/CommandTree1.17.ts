@@ -1413,6 +1413,49 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('reload'),
             executable: true
         },
+        replaceitem: {
+            parser: new LiteralArgumentParser('replaceitem'),
+            children: {
+                target: {
+                    template: 'item_holder',
+                    children: {
+                        slot: {
+                            parser: new ItemSlotArgumentParser(),
+                            children: {
+                                item: {
+                                    parser: new ItemArgumentParser(false),
+                                    executable: true,
+                                    run: ({ data, errors }) => {
+                                        if (errors.length === 0) {
+                                            errors.push(new ParsingError(
+                                                { start: getArgData(data, 5)!.range.start, end: getArgData(data, 1)!.range.end },
+                                                locale('datafix.error.command-replaceitem'),
+                                                undefined, undefined, errors.length === 0 ? ErrorCode.CommandReplaceitem : undefined
+                                            ))
+                                        }
+                                    },
+                                    children: {
+                                        count: {
+                                            parser: new NumberArgumentParser('integer', 0, 64),
+                                            executable: true,
+                                            run: ({ data, errors }) => {
+                                                if (errors.length === 0) {
+                                                    errors.push(new ParsingError(
+                                                        { start: getArgData(data, 6)!.range.start, end: getArgData(data, 1)!.range.end },
+                                                        locale('datafix.error.command-replaceitem'),
+                                                        undefined, undefined, errors.length === 0 ? ErrorCode.CommandReplaceitem : undefined
+                                                    ))
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         'save-all': {
             parser: new LiteralArgumentParser('save-all'),
             permission: 4,
