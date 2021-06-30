@@ -4,6 +4,7 @@ import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as chokidar from 'chokidar'
 import * as ls from 'vscode-languageserver/node'
+import * as util from 'util'
 import { toCore, toLS } from './util'
 
 if (process.argv.length === 2) {
@@ -21,7 +22,12 @@ let capabilities!: ls.ClientCapabilities
 let rootsWatcher: chokidar.FSWatcher
 let workspaceFolders!: ls.WorkspaceFolder[]
 
-const logger: core.Logger = connection.console
+const logger: core.Logger = {
+	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
+	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
+	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
+	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
+}
 const meta = core.MetaRegistry.instance
 let service!: core.Service
 

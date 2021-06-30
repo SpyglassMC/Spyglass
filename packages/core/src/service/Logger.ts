@@ -1,23 +1,23 @@
 export interface Logger {
 	/**
-	 * Log a message.
+	 * Output an error message.
 	 */
-	log(message: string): void
+	error(data: any, ...args: any[]): void
 
 	/**
 	 * Log an information.
 	 */
-	info(message: string): void
+	info(data: any, ...args: any[]): void
+
+	/**
+	 * Log a message.
+	 */
+	log(data: any, ...args: any[]): void
 
 	/**
 	 * Output a warning message.
 	 */
-	warn(message: string): void
-
-	/**
-	 * Output an error message.
-	 */
-	error(message: string): void
+	warn(data: any, ...args: any[]): void
 }
 
 export namespace Logger {
@@ -40,8 +40,8 @@ export namespace Logger {
 }
 
 class NoopLogger implements Logger {
-	log(): void { }
-	info(): void { }
-	warn(): void { }
 	error(): void { }
+	info(): void { }
+	log(): void { }
+	warn(): void { }
 }
