@@ -51,11 +51,14 @@
         "fileMatch": [
           "pack.mcmeta",
           "data/*/advancements/*.json",
+          "data/*/dimension/*.json",
+          "data/*/dimension_type/*.json",
           "data/*/item_modifiers/*.json",
           "data/*/loot_tables/*.json",
           "data/*/predicates/*.json",
           "data/*/recipes/*.json",
           "data/*/tags/*.json",
+          "data/*/worldgen/*.json",
           "data/minecraft/*.json"
         ],
         "url": "./resource/empty-object.json"
@@ -105,6 +108,10 @@
         "id": "json",
         "extensions": [
           ".mcmeta"
+        ],
+        "filenames": [
+          ".spyglassconfig",
+          ".spyglassrc"
         ]
       }
     ],
