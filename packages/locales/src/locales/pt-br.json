@@ -89,7 +89,6 @@
   "nbtdoc.checker.duplicated-identifier": "Identificador duplicado %0%",
   "nbtdoc.checker.duplicated-identifier.related": "O identificador %0% é declarado aqui",
   "nbtdoc.checker.entry.empty-mod-seg": "Você não pode colocar “mod.nbtdoc” em uma raiz diretamente",
-  "nbtdoc.checker.entry.null-mod-seg": "O arquivo atual não está sob nenhuma raiz e não será verificado semanticamente",
   "nbtdoc.checker.ident-path.super-from-root": "Esse “super” está fora da raiz do projeto",
   "nbtdoc.checker.ident-path.unknown-identifier": "O identificador %0% não existe no módulo %1%",
   "nbtdoc.checker.ident-path.unknown-module": "Módulo %0% não existe",
