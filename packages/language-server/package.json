@@ -6,7 +6,8 @@
   "author": "SPGoding",
   "license": "MIT",
   "directories": {
-    "test": "test/"
+    "man": "man",
+    "test": "test"
   },
   "bin": {
     "spyglassmc-language-server": "./bin/server"
