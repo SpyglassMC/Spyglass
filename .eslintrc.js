@@ -72,6 +72,13 @@ module.exports = {
 		"indent": "off",
 		"eol-last": "warn",
 		"no-fallthrough": "warn",
+		"no-restricted-syntax": [
+			"warn",
+			{
+				"selector": ":matches(Literal[raw=null], TSNullKeyword)",
+				"message": "Use `undefined` instead of `null` when possible."
+			}
+		],
 		"prefer-const": "warn",
 		"prefer-object-spread": "warn",
 		"quote-props": [
