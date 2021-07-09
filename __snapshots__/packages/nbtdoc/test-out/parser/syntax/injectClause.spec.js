@@ -5256,8 +5256,7 @@ exports['injectClause() Parse "inject" 1'] = {
         },
         "value": "inject"
       }
-    ],
-    "def": null
+    ]
   },
   "errors": [
     {

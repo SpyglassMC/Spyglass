@@ -126,12 +126,12 @@ export const height_provider = as('height_provider', any([
 			biased_to_bottom: {
 				min_inclusive: vertical_anchor,
 				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, null), 1),
+				inner: opt(intRange(1, undefined), 1),
 			},
 			very_biased_to_bottom: {
 				min_inclusive: vertical_anchor,
 				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, null), 1),
+				inner: opt(intRange(1, undefined), 1),
 			},
 			trapezoid: {
 				min_inclusive: vertical_anchor,
@@ -142,7 +142,7 @@ export const height_provider = as('height_provider', any([
 	})),
 ]))
 
-export const floatProvider = (min: number | null = null, max: number | null = null) => as('float_provider', any([
+export const floatProvider = (min: number | undefined = undefined, max: number | undefined = undefined) => as('float_provider', any([
 	floatRange(min, max),
 	dispatch('type', type => record({
 		type: resource('float_provider_type'),
@@ -175,7 +175,7 @@ export const floatProvider = (min: number | null = null, max: number | null = nu
 	})),
 ]))
 
-export const intProvider = (min: number | null = null, max: number | null = null): JsonChecker => as('int_provider', any([
+export const intProvider = (min: number | undefined = undefined, max: number | undefined = undefined): JsonChecker => as('int_provider', any([
 	intRange(min, max),
 	dispatch('type', type => record({
 		type: resource('int_provider_type'),

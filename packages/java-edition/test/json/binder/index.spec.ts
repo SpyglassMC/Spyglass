@@ -1,9 +1,10 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { dissectUri } from '../../../lib/binder'
+import type { RootUriString } from '@spyglassmc/core'
 
 describe('dissectUri()', () => {
-	const roots = ['file:///']
+	const roots: RootUriString[] = ['file:///']
 	const suites: { uri: string }[] = [
 		{ uri: 'file:///data/minecraft/loot_tables/foo.json' },
 		{ uri: 'file:///data/minecraft/tags/blocks/bar.json' },
@@ -15,7 +16,7 @@ describe('dissectUri()', () => {
 	]
 	for (const { uri } of suites) {
 		it(`Dissect Uri "${uri}"`, () => {
-			snapshot(dissectUri(uri, roots) ?? 'null')
+			snapshot(dissectUri(uri, roots) ?? 'undefined')
 		})
 	}
 })

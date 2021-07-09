@@ -55,29 +55,156 @@ const ItemOperation: PartialTreeNode = {
 }
 
 /**
- * Patch for Minecraft: Java Edition 21w15a
+ * Patch for Minecraft: Java Edition 1.17.1
  * 
  * The following parsers are patched with new properties:
  * - `minecraft:resource_location`
+ * 
+ * The following commands are removed:
+ * - `replaceitem`
  */
 export const Tree1_17: PartialRootTreeNode = merge(Tree1_16, {
 	children: {
 		item: {
 			children: {
-				block: {
+				replace: {
 					children: {
-						pos: {
+						block: {
 							children: {
-								slot: ItemOperation,
+								pos: {
+									children: {
+										slot: {
+											children: {
+												from: {
+													children: {
+														block: {
+															children: {
+																source: {
+																	children: {
+																		sourceSlot: {
+																			children: {
+																				modifier: {
+																					properties: {
+																						category: 'item_modifier',
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+														entity: {
+															children: {
+																source: {
+																	children: {
+																		sourceSlot: {
+																			children: {
+																				modifier: {
+																					properties: {
+																						category: 'item_modifier',
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						entity: {
+							children: {
+								targets: {
+									children: {
+										slot: {
+											children: {
+												from: {
+													children: {
+														block: {
+															children: {
+																source: {
+																	children: {
+																		sourceSlot: {
+																			children: {
+																				modifier: {
+																					properties: {
+																						category: 'item_modifier',
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+														entity: {
+															children: {
+																source: {
+																	children: {
+																		sourceSlot: {
+																			children: {
+																				modifier: {
+																					properties: {
+																						category: 'item_modifier',
+																					},
+																				},
+																			},
+																		},
+																	},
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
 							},
 						},
 					},
 				},
-				entity: {
+				modify: {
 					children: {
-						targets: {
+						block: {
 							children: {
-								slot: ItemOperation,
+								pos: {
+									children: {
+										slot: {
+											children: {
+												modifier: {
+													properties: {
+														category: 'item_modifier',
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+						entity: {
+							children: {
+								targets: {
+									children: {
+										slot: {
+											children: {
+												modifier: {
+													properties: {
+														category: 'item_modifier',
+													},
+												},
+											},
+										},
+									},
+								},
 							},
 						},
 					},

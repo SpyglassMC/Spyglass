@@ -7,11 +7,11 @@ import type { InfallibleParser } from './Parser'
 
 /**
  * Returns an error node containing all the remaining text (including whitespace),
- * or returns `null` if the `Source` has already reached its end.
+ * or returns `undefined` if the `Source` has already reached its end.
  */
-export const error: InfallibleParser<ErrorNode | null> = (src: Source, ctx: ParserContext): ErrorNode | null => {
+export const error: InfallibleParser<ErrorNode | undefined> = (src: Source, ctx: ParserContext): ErrorNode | undefined => {
 	if (!src.canRead()) {
-		return null
+		return undefined
 	}
 	const ans: ErrorNode = {
 		type: 'error',

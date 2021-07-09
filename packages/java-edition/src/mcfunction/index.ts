@@ -1,31 +1,33 @@
 import type * as core from '@spyglassmc/core'
-import * as mcfunction from '@spyglassmc/mcfunction'
-import { getVanillaResources, registerSymbols } from '../dependency'
+import type { PartialRootTreeNode } from '@spyglassmc/mcfunction'
+import * as mcf from '@spyglassmc/mcfunction'
+import type { MajorVersion, VanillaCommands } from '../dependency'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
 import type { CommandNode, MinecraftBlockPredicateArgumentNode } from './node'
 import * as parser from './parser'
-import { Tree1_17 } from './tree'
+import { Tree1_15, Tree1_16, Tree1_17 } from './tree'
 
 export * as checker from './checker'
 export * as colorizer from './colorizer'
 export * as parser from './parser'
 
+const Trees: Record<MajorVersion, PartialRootTreeNode> = {
+	1.15: Tree1_15,
+	1.16: Tree1_16,
+	1.17: Tree1_17,
+}
+
 /* istanbul ignore next */
-export async function initialize(service: core.Service) {
-	const { meta, logger, symbols } = service
-	mcfunction.initializeMcfunction()
+export const initialize = (ctx: core.ProjectInitializerContext, commands: VanillaCommands, majorVersion: MajorVersion) => {
+	const { meta } = ctx
 
-	const resources = await getVanillaResources('latest snapshot', logger)
-	mcfunction.CommandTreeRegistry.instance.register('1.17', resources.commands, Tree1_17)
-	registerSymbols(resources, symbols)
-
-	// TODO: Move out.
-	service.archives = resources.archives
+	mcf.initialize(ctx)
+	mcf.CommandTreeRegistry.instance.register(majorVersion, commands, Trees[majorVersion])
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcfunction.parser.entry('1.17', parser.argument),
+		parser: mcf.parser.entry(majorVersion, parser.argument),
 	})
 
 	meta.registerParser<MinecraftBlockPredicateArgumentNode>('mcfunction:argument/minecraft:block_predicate', parser.blockPredicate)
@@ -33,7 +35,7 @@ export async function initialize(service: core.Service) {
 	// TODO: 'mcfunction:argument/minecraft:particle'
 	// TODO: 'mcfunction:argument/minecraft:team'
 	// TODO: 'mcfunction:argument/spyglassmc:tag'
-	meta.registerParser<CommandNode>('mcfunction:command', mcfunction.parser.command(mcfunction.CommandTreeRegistry.instance.get('1.17'), parser.argument))
+	meta.registerParser<CommandNode>('mcfunction:command', mcf.parser.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
 
 	checker.register(meta)
 	colorizer.register(meta)

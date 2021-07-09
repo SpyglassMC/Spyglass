@@ -10,8 +10,8 @@ import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
 	const modSeg = uriToSeg(ctx.doc.uri, ctx)
-	if (modSeg === null) {
-		ctx.err.report(localize('nbtdoc.checker.entry.null-mod-seg'), 0, ErrorSeverity.Warning)
+	if (modSeg === undefined) {
+		ctx.err.report(localize('nbtdoc.checker.entry.undefined-mod-seg'), 0, ErrorSeverity.Warning)
 		return
 	} else if (modSeg.length === 0) {
 		ctx.err.report(localize('nbtdoc.checker.entry.empty-mod-seg'), 0, ErrorSeverity.Warning)
@@ -103,7 +103,7 @@ async function compoundFields<N extends { fields: CompoundFieldNode[] }>(definit
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.else(async () => {
 					const typeSymbol = field.fieldType.typeType === 'path'
-						? (await resolveIdentPath(field.fieldType.path, ctx))?.symbol ?? undefined
+						? (await resolveIdentPath(field.fieldType.path, ctx))?.symbol
 						: undefined
 					const data = CompoundFieldNode.toSymbolData(field, typeSymbol)
 					member.enter({
@@ -116,7 +116,7 @@ async function compoundFields<N extends { fields: CompoundFieldNode[] }>(definit
 		}))
 	})
 
-	return Promise.all(promises)
+	return Promise.allSettled(promises)
 }
 
 const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerContext): Promise<void> => {
@@ -126,7 +126,7 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 	}
 
 	const extendedSymbol = node.extends?.type === 'nbtdoc:ident_path'
-		? (await resolveIdentPath(node.extends, ctx))?.symbol ?? undefined
+		? (await resolveIdentPath(node.extends, ctx))?.symbol
 		: undefined
 	const data = CompoundDefinitionNode.toSymbolData(node, extendedSymbol)
 	definitionQuery.amend({ data: { data } })
@@ -309,25 +309,25 @@ function reportDuplicatedDeclaration(localeString: string, ctx: CheckerContext, 
 	)
 }
 
-function uriToSeg(uri: string, ctx: core.CheckerContext): Segments | null {
+function uriToSeg(uri: string, ctx: core.CheckerContext): Segments | undefined {
 	const identifier = Object
 		.keys(ctx.symbols.global.nbtdoc ?? {})
 		.find(identifier => {
 			const symbol = ctx.symbols.global.nbtdoc![identifier]!
 			return symbol.subcategory === 'module' && symbol.implementation?.some(loc => loc.uri === uri)
 		})
-	return identifier ? identifierToSeg(identifier) : null
+	return identifier ? identifierToSeg(identifier) : undefined
 }
 
-function segToUri(seg: Segments, ctx: core.CheckerContext): string | null {
+function segToUri(seg: Segments, ctx: core.CheckerContext): string | undefined {
 	const identifier = segToIdentifier(seg)
-	return ctx.symbols.global.nbtdoc?.[identifier]?.implementation?.[0]?.uri ?? null
+	return ctx.symbols.global.nbtdoc?.[identifier]?.implementation?.[0]?.uri
 }
 
 /**
  * @returns The actual symbol being used/imported from another module.
  */
-async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<SymbolQuery | null> {
+async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext): Promise<SymbolQuery | undefined> {
 	const targetSeg = identPath.fromGlobalRoot ? [] : [...ctx.modSeg]
 	for (const [i, token] of identPath.children.entries()) {
 		if (i < identPath.children.length - 1) {
@@ -337,7 +337,7 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 			if (token.value === 'super') {
 				if (targetSeg.length === 0) {
 					ctx.err.report(localize('nbtdoc.checker.ident-path.super-from-root'), Range.span(token, identPath))
-					return null
+					return undefined
 				}
 				targetSeg.pop()
 			} else {
@@ -363,13 +363,13 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				// We should load and check that module first.
 
 				const targetUri = segToUri(targetSeg, ctx)
-				const ensured = targetUri ? await ctx.service.ensureParsedAndChecked(targetUri) : false
+				const ensured = targetUri ? await ctx.ensureChecked(targetUri) : false
 				if (!ensured) {
 					ctx.err.report(
 						localize('nbtdoc.checker.ident-path.unknown-module', localeQuote(targetId)),
 						Range.span(token, identPath)
 					)
-					return null
+					return undefined
 				}
 			}
 
@@ -388,5 +388,5 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 				})
 		}
 	}
-	return null
+	return undefined
 }

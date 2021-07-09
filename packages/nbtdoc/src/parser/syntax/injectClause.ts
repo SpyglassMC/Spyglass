@@ -22,14 +22,14 @@ export function injectClause(): Parser<InjectClauseNode> {
 				type: 'nbtdoc:inject_clause',
 				range: res.range,
 				children: res.children,
-				def: res.children.find(DefinitionInject.is) ?? null,
+				def: res.children.find(DefinitionInject.is),
 			}
 			return ans
 		}
 	)
 }
 
-const definitionInject: InfallibleParser<DefinitionInject | null> = map(
+const definitionInject: InfallibleParser<DefinitionInject | undefined> = map(
 	recover(
 		any([
 			syntax<DefinitionInjectChild>([
@@ -56,7 +56,7 @@ const definitionInject: InfallibleParser<DefinitionInject | null> = map(
 		}
 	),
 	res => {
-		let ans: DefinitionInject | null = null
+		let ans: DefinitionInject | undefined = undefined
 		const literal = res.children.find(LiteralToken.is(['compound', 'enum']))
 		if (literal?.value === 'compound') {
 			ans = {

@@ -1,12 +1,15 @@
 /* istanbul ignore file */
 
+export * from './Config'
 export * from './Context'
+export * from './Dependency'
 export * from './ErrorReporter'
-export { FileService, FileStats } from './FileService'
-export * as fileUtil from './fileUtil'
+export { FileService, UriProtocolSupporter } from './FileService'
+export * from './fileUtil'
 export * from './Hover'
 export * from './Logger'
 export * from './MetaRegistry'
 export * from './Operations'
+export * from './Project'
 export * from './Service'
 export * from './SymbolLocations'

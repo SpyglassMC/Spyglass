@@ -109,11 +109,11 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 
 export function parseStringValue<T extends Returnable>(parser: Parser<T>, value: string, map: IndexMap, ctx: ParserContext): Result<T> {
 	const valueSrc = new Source(value)
-	const valueCtx = ParserContext.create({
+	const valueCtx = {
 		...ctx,
 		doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, value),
 		err: new ErrorReporter(),
-	})
+	}
 	const valueResult = parser(valueSrc, valueCtx)
 	/* istanbul ignore else */
 	if (valueResult !== Failure) {

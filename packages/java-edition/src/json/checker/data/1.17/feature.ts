@@ -50,8 +50,8 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 	type: resource('worldgen/block_state_provider_type'),
 	...pick(type, {
 		randomized_int_state_provider: {
-			// FIXME: Temporary solution to make tests pass when service is not given.
-			property: ctx.service ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
+			// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+			property: (ctx.ensureChecked) ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
 			values: intProvider(),
 			source: block_state_provider,
 		},
@@ -63,7 +63,7 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 		},
 		weighted_state_provider: {
 			entries: listOf(record({
-				weight: intRange(1, null),
+				weight: intRange(1, undefined),
 				data: block_state,
 			})),
 		},
@@ -74,7 +74,7 @@ const block_placer = as('block_placer', dispatch('type', type => record({
 	type: resource('worldgen/block_placer_type'),
 	...pick(type, {
 		column_placer: {
-			size: intProvider(0, null),
+			size: intProvider(0, undefined),
 		},
 	}),
 })))
@@ -106,7 +106,7 @@ const trunk_placer = as('trunk_placer', dispatch('type', type => record({
 	...pick(type, {
 		bending_trunk_placer: {
 			bend_length: intProvider(1, 64),
-			min_height_for_leaves: opt(intRange(1, null), 1),
+			min_height_for_leaves: opt(intRange(1, undefined), 1),
 		},
 	}),
 })))
@@ -171,10 +171,10 @@ const RandomPatchConfig = {
 	block_placer: block_placer,
 	whitelist: listOf(block_state),
 	blacklist: listOf(block_state),
-	tries: opt(intRange(1, null), 128),
-	xspread: opt(intRange(0, null), 7),
-	yspread: opt(intRange(0, null), 3),
-	zspread: opt(intRange(0, null), 7),
+	tries: opt(intRange(1, undefined), 128),
+	xspread: opt(intRange(0, undefined), 7),
+	yspread: opt(intRange(0, undefined), 3),
+	zspread: opt(intRange(0, undefined), 7),
 	can_replace: opt(boolean, false),
 	project: opt(boolean, true),
 	need_water: opt(boolean, false),

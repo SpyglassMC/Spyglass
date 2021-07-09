@@ -719,7 +719,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 57
             },
             "typeType": "list",
-            "lengthRange": null,
             "item": {
               "type": "nbtdoc:compound_definition/field/type",
               "range": {
@@ -885,7 +884,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 57
           },
           "typeType": "list",
-          "lengthRange": null,
           "item": {
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
@@ -1040,7 +1038,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -1094,7 +1091,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 57
             },
             "typeType": "list",
-            "lengthRange": null,
             "item": {
               "type": "nbtdoc:compound_definition/field/type",
               "range": {
@@ -1260,7 +1256,6 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 57
           },
           "typeType": "list",
-          "lengthRange": null,
           "item": {
             "type": "nbtdoc:compound_definition/field/type",
             "range": {
@@ -1530,7 +1525,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: () }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -1701,8 +1695,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: (boolean | int) }" 1'] 
                   "start": 31,
                   "end": 34
                 },
-                "typeType": "int",
-                "valueRange": null
+                "typeType": "int"
               }
             ]
           }
@@ -1746,8 +1739,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: (boolean | int) }" 1'] 
                 "start": 31,
                 "end": 34
               },
-              "typeType": "int",
-              "valueRange": null
+              "typeType": "int"
             }
           ]
         }
@@ -1778,7 +1770,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: (boolean | int) }" 1'] 
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -1834,8 +1825,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: (boolean | int) }" 1'] 
                   "start": 31,
                   "end": 34
                 },
-                "typeType": "int",
-                "valueRange": null
+                "typeType": "int"
               }
             ]
           }
@@ -1879,8 +1869,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: (boolean | int) }" 1'] 
                 "start": 31,
                 "end": 34
               },
-              "typeType": "int",
-              "valueRange": null
+              "typeType": "int"
             }
           ]
         }
@@ -2114,7 +2103,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: [string] @ ..1 }" 1'] =
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -2412,7 +2400,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: boolean }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -2565,8 +2552,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
               "start": 20,
               "end": 25
             },
-            "typeType": "byte",
-            "valueRange": null
+            "typeType": "byte"
           }
         ],
         "doc": {
@@ -2592,8 +2578,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
             "start": 20,
             "end": 25
           },
-          "typeType": "byte",
-          "valueRange": null
+          "typeType": "byte"
         }
       },
       {
@@ -2622,7 +2607,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -2662,8 +2646,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
               "start": 20,
               "end": 25
             },
-            "typeType": "byte",
-            "valueRange": null
+            "typeType": "byte"
           }
         ],
         "doc": {
@@ -2689,8 +2672,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte }" 1'] = {
             "start": 20,
             "end": 25
           },
-          "typeType": "byte",
-          "valueRange": null
+          "typeType": "byte"
         }
       }
     ]
@@ -2777,9 +2759,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
               "start": 20,
               "end": 27
             },
-            "typeType": "byte_array",
-            "valueRange": null,
-            "lengthRange": null
+            "typeType": "byte_array"
           }
         ],
         "doc": {
@@ -2805,9 +2785,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
             "start": 20,
             "end": 27
           },
-          "typeType": "byte_array",
-          "valueRange": null,
-          "lengthRange": null
+          "typeType": "byte_array"
         }
       },
       {
@@ -2836,7 +2814,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -2876,9 +2853,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
               "start": 20,
               "end": 27
             },
-            "typeType": "byte_array",
-            "valueRange": null,
-            "lengthRange": null
+            "typeType": "byte_array"
           }
         ],
         "doc": {
@@ -2904,9 +2879,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: byte[] }" 1'] = {
             "start": 20,
             "end": 27
           },
-          "typeType": "byte_array",
-          "valueRange": null,
-          "lengthRange": null
+          "typeType": "byte_array"
         }
       }
     ]
@@ -3106,7 +3079,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: double @ 5.6e3 }" 1'] =
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -3462,7 +3434,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float @ 1.2..3.4 }" 1']
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -3705,8 +3676,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
               "start": 20,
               "end": 26
             },
-            "typeType": "float",
-            "valueRange": null
+            "typeType": "float"
           }
         ],
         "doc": {
@@ -3732,8 +3702,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
             "start": 20,
             "end": 26
           },
-          "typeType": "float",
-          "valueRange": null
+          "typeType": "float"
         }
       },
       {
@@ -3762,7 +3731,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -3802,8 +3770,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
               "start": 20,
               "end": 26
             },
-            "typeType": "float",
-            "valueRange": null
+            "typeType": "float"
           }
         ],
         "doc": {
@@ -3829,8 +3796,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: float }" 1'] = {
             "start": 20,
             "end": 26
           },
-          "typeType": "float",
-          "valueRange": null
+          "typeType": "float"
         }
       }
     ]
@@ -3994,7 +3960,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: id(minecraft:entity) }"
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -4214,8 +4179,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 0,
                 1
               ]
-            },
-            "lengthRange": null
+            }
           }
         ],
         "doc": {
@@ -4286,8 +4250,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
               0,
               1
             ]
-          },
-          "lengthRange": null
+          }
         }
       },
       {
@@ -4316,7 +4279,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -4401,8 +4363,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
                 0,
                 1
               ]
-            },
-            "lengthRange": null
+            }
           }
         ],
         "doc": {
@@ -4473,8 +4434,7 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 0..1 [] }" 1'] = 
               0,
               1
             ]
-          },
-          "lengthRange": null
+          }
         }
       }
     ]
@@ -4674,7 +4634,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: int @ 1 }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -5014,7 +4973,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long @ 2.. }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -5242,7 +5200,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
               "end": 30
             },
             "typeType": "long_array",
-            "valueRange": null,
             "lengthRange": {
               "type": "nbtdoc:unsigned_range",
               "range": {
@@ -5298,7 +5255,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "end": 30
           },
           "typeType": "long_array",
-          "valueRange": null,
           "lengthRange": {
             "type": "nbtdoc:unsigned_range",
             "range": {
@@ -5356,7 +5312,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -5397,7 +5352,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
               "end": 30
             },
             "typeType": "long_array",
-            "valueRange": null,
             "lengthRange": {
               "type": "nbtdoc:unsigned_range",
               "range": {
@@ -5453,7 +5407,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: long[] @ 4 }" 1'] = {
             "end": 30
           },
           "typeType": "long_array",
-          "valueRange": null,
           "lengthRange": {
             "type": "nbtdoc:unsigned_range",
             "range": {
@@ -5802,7 +5755,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: minecraft:block[name.se
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -6262,7 +6214,6 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
       },
       "value": "Foo"
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",
@@ -6580,7 +6531,6 @@ exports['compoundDefinition() Parse "compound" 1'] = {
       },
       "value": ""
     },
-    "extends": null,
     "fields": [
       {
         "type": "nbtdoc:compound_definition/field",

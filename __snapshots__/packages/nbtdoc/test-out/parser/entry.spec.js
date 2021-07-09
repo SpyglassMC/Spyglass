@@ -99,8 +99,7 @@ exports['entry() Parse "mod describes minecraft:block;" 1'] = {
           "path": [
             "block"
           ]
-        },
-        "objects": null
+        }
       }
     ]
   },

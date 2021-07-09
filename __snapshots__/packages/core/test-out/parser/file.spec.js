@@ -101,16 +101,3 @@ exports['file() Parse "{test content}↓⮀" 1'] = {
   },
   "errors": []
 }
-
-exports['file() Parse with an entry parser returning null 1'] = {
-  "node": {
-    "type": "file",
-    "range": {
-      "start": 0,
-      "end": 0
-    },
-    "children": [],
-    "parserErrors": []
-  },
-  "errors": []
-}

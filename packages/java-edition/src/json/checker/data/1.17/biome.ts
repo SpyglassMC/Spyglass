@@ -69,7 +69,7 @@ export const configured_carver = as('carver', dispatch('type', type => record({
 			shape: record({
 				distance_factor: floatProvider(),
 				thickness: floatProvider(),
-				width_smoothness: intRange(0, null),
+				width_smoothness: intRange(0, undefined),
 				horizontal_radius_factor: floatProvider(),
 				vertical_radius_default_factor: float,
 				vertical_radius_center_factor: float,

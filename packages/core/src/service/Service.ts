@@ -1,245 +1,48 @@
-import decompress from 'decompress'
 import EventEmitter from 'events'
-import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
-import { TextDocument } from 'vscode-languageserver-textdocument'
-import { CachePromise, Delay, SpyglassUri, Uri } from '../common'
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
-import { file } from '../parser'
 import type { Color, ColorInfo, ColorToken } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
-import type { LanguageError, Range } from '../source'
-import { IndexMap, Source } from '../source'
+import type { Range } from '../source'
+import { IndexMap } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
-import { SymbolUsageTypes, SymbolUtil } from '../symbol'
-import type { Config } from './Config'
-import { ConfigService, VanillaConfig } from './Config'
-import type { ColorizerOptions } from './Context'
-import { CheckerContext, ColorizerContext, CompleterContext, ContextBase, ParserContext, ProcessorContext, UriBinderContext } from './Context'
+import { SymbolUsageTypes } from '../symbol'
+import { ColorizerContext, CompleterContext } from './Context'
 import { FileService } from './FileService'
-import * as fileUtil from './fileUtil'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
-import { MetaRegistry } from './MetaRegistry'
+import type { ProjectInitializer } from './Project'
+import { Project } from './Project'
 import { SymbolLocations } from './SymbolLocations'
 
-export type Archives = Record<string, { buffer: Buffer, startDepth?: number }>
-
-export type ConfigFetcher = (this: void, uri: string) => Promise<Config>
-
-/**
- * When only a string is parsed in as the `target`, the errors for the URI `target` should be cleared.
- */
-export type ErrorPublisher = (this: void, target: string | TextDocument, errors?: readonly LanguageError[]) => unknown
-
 interface Options {
-	archives?: Archives,
-	configFetcher?: ConfigFetcher,
-	errorPublisher?: ErrorPublisher,
 	fs?: FileService,
+	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
 	logger?: Logger,
-	roots?: string[],
-	/**
-	 * Whether files and folders under the roots are watched.
-	 */
-	rootsWatched?: boolean,
-	symbols?: SymbolUtil,
-}
-
-interface DocAndNode {
-	doc: TextDocument,
-	node: FileNode<any>,
-}
-
-type FileEvent = { uri: string }
-type EmptyEvent = {}
-
-export interface Service {
-	on(event: 'fileCreated', callbackFn: (data: FileEvent) => void): this
-	on(event: 'fileModified', callbackFn: (data: FileEvent) => void): this
-	on(event: 'fileDeleted', callbackFn: (data: FileEvent) => void): this
-	on(event: 'fileListReady', callbackFn: (data: EmptyEvent) => void): this
-	on(event: 'rootsChanged', callbackFn: (data: EmptyEvent) => void): this
-
-	once(event: 'fileCreated', callbackFn: (data: FileEvent) => void): this
-	once(event: 'fileModified', callbackFn: (data: FileEvent) => void): this
-	once(event: 'fileDeleted', callbackFn: (data: FileEvent) => void): this
-	once(event: 'fileListReady', callbackFn: (data: EmptyEvent) => void): this
-	once(event: 'rootsChanged', callbackFn: (data: EmptyEvent) => void): this
-
-	emit(event: 'fileCreated', data: FileEvent): boolean
-	emit(event: 'fileModified', data: FileEvent): boolean
-	emit(event: 'fileDeleted', data: FileEvent): boolean
-	emit(event: 'fileListReady', data: EmptyEvent): boolean
-	emit(event: 'rootsChanged', data: EmptyEvent): boolean
+	projectPath: string,
 }
 
 /* istanbul ignore next */
 export class Service extends EventEmitter {
-	private static readonly RootSuffix = '/pack.mcmeta'
-
-	/**
-	 * URI of files that are currently opened in the editor, whose changes shall be sent to the service's
-	 * `onDidX` methods by client notifications via `TextDocumentContentChangeEvent`. The content of those
-	 * URIs are always up-to-date.
-	 */
-	readonly #activeUris = new Set<string>()
-	/**
-	 * URI of files that are watched by the client and are update to date. Changes to these files shall be
-	 * sent to the service's `onWatchedFileX` methods by client notifications. Once a watched file is changed,
-	 * it is removed from this set.
-	 */
-	readonly #watchedUpToDateUris = new Set<string>()
-	readonly #cache = new Map<string, DocAndNode>()
-	#archives: Archives = {}
-	#unzippedArchives: Record<string, decompress.File[]> = {}
-	readonly #rawRoots: string[] = []
-	readonly #rawFiles: string[] = []
-
-	private readonly errorPublisher: ErrorPublisher
-
-	readonly config: ConfigService
 	readonly fs: FileService
 	readonly isDebugging: boolean
 	readonly logger: Logger
-	readonly meta = MetaRegistry.instance
-	readonly rootsWatched: boolean
-	readonly symbols: SymbolUtil
-
-	#isFileListEstablished = false
-
-	/**
-	 * When set to `true`, files changes will initiate URI binding.
-	 */
-	get isFileListEstablished(): boolean {
-		return this.#isFileListEstablished
-	}
-	set isFileListEstablished(value: boolean) {
-		if (this.#isFileListEstablished = value) {
-			this.emit('fileListReady', {})
-			this.bindUris()
-		}
-	}
-
-	get archives(): Archives {
-		return this.#archives
-	}
-	set archives(newArchives: Archives) {
-		this.#unzippedArchives = {}
-		this.#archives = newArchives
-		this.emit('rootsChanged', {})
-	}
-
-	get archiveFiles(): string[] {
-		return Object
-			.entries(this.#unzippedArchives)
-			.flatMap(([archiveFsPath, files]) => files
-				.filter(file => file.type === 'file')
-				.map(file => SpyglassUri.Archive.get(archiveFsPath, file.path))
-			)
-	}
-	get archiveRoots(): string[] {
-		return Object
-			.keys(this.#archives)
-			.map(p => SpyglassUri.Archive.get(p))
-	}
-
-	/**
-	 * The raw root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
-	 */
-	get rawRoots(): readonly string[] {
-		return this.#rawRoots
-	}
-	set rawRoots(newRoots: readonly string[]) {
-		newRoots = newRoots
-			.filter(fileUtil.isFileUri)
-			.map(fileUtil.normalize)
-			.map(fileUtil.ensureEndingSlash)
-		this.#rawRoots.splice(0, this.#rawRoots.length, ...newRoots)
-		this.emit('rootsChanged', {})
-	}
-
-	#trackedRoots: string[] | undefined
-	/**
-	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
-	 * 
-	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
-	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
-	 */
-	get trackedRoots(): readonly string[] {
-		return this.#trackedRoots ??= (() => {
-			const rawRoots = [...this.archiveRoots, ...this.rawRoots]
-			const ans = new Set<string>(rawRoots)
-			// Identify roots indicated by `pack.mcmeta`.
-			for (const file of this.trackedFiles) {
-				if (file.endsWith(Service.RootSuffix) && rawRoots.some(r => file.startsWith(r))) {
-					ans.add(file.slice(0, 1 - Service.RootSuffix.length))
-				}
-			}
-			return [...ans].sort((a, b) => b.length - a.length)
-		})()
-	}
-
-	/**
-	 * All files that are tracked and supported by this service, including both files on the physical disk and
-	 * files in archives.
-	 */
-	get trackedFiles(): string[] {
-		return [...this.archiveFiles, ...this.#rawFiles]
-			.filter(file => this.meta.supportedFileExtensions.includes(fileUtil.extname(file)))
-	}
-
-	/**
-	 * The root paths. Each path in this array is guaranteed to end with the platform-specific path sep character (`/` or `\`).
-	 */
-	get rootPaths(): string[] {
-		return this.rawRoots.map(fileUtil.fileUriToPath)
-	}
+	readonly project: Project
 
 	constructor({
-		archives = {},
-		configFetcher = async () => VanillaConfig,
-		errorPublisher = async () => { },
 		fs = FileService.create(),
+		initializers = [],
 		isDebugging = false,
 		logger = Logger.create(),
-		roots = [],
-		rootsWatched = false,
-		symbols = new SymbolUtil({}),
-	}: Options = {}) {
+		projectPath,
+	}: Options) {
 		super()
 
-		const rootsChangedEmitter = ({ uri }: FileEvent) => {
-			if (uri.endsWith(Service.RootSuffix)) {
-				this.emit('rootsChanged', {})
-			}
-		}
-		const fileEventHandler = (e: EmptyEvent | FileEvent) => {
-			this.config.onFileAddedChangedOrRemoved((e as FileEvent).uri)
-		}
-
-		this.on('rootsChanged', () => {
-			this.#trackedRoots = undefined
-			this.config.onRootsUpdated()
-		})
-
-		this.on('fileCreated', rootsChangedEmitter)
-		this.on('fileDeleted', rootsChangedEmitter)
-
-		this.on('fileCreated', fileEventHandler)
-		this.on('fileModified', fileEventHandler)
-		this.on('fileDeleted', fileEventHandler)
-		this.on('fileListReady', fileEventHandler)
-
-		this.#archives = archives
-		this.config = new ConfigService(configFetcher, logger, () => this.trackedFiles, () => this.trackedRoots, this.readFile.bind(this))
-		this.errorPublisher = errorPublisher
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
-		this.rawRoots = roots
-		this.rootsWatched = rootsWatched
-		this.symbols = symbols
+		this.project = new Project({ fs, initializers, logger, projectPath })
 	}
 
 	private debug(message: string): void {
@@ -248,141 +51,10 @@ export class Service extends EventEmitter {
 		}
 	}
 
-	/**
-	 * @returns The language ID of the file, or the file extension without the leading dot.
-	 */
-	getLanguageID(uri: string): string {
-		uri = fileUtil.normalize(uri)
-		const ext = fileUtil.extname(uri)
-		return this.meta.getLanguageID(ext) ?? ext.slice(1)
-	}
-
-	/**
-	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `undefined` when such data isn't available in cache.
-	 */
-	get(uri: string): DocAndNode | undefined {
-		uri = fileUtil.normalize(uri)
-		return this.#cache.get(uri)
-	}
-
-	parse(doc: TextDocument): FileNode<AstNode> {
-		this.debug(`Parsing '${doc.uri}' # ${doc.version}`)
-		const ctx = this.getParserCtx(doc)
-		const src = new Source(doc.getText())
-		const ans = file()(src, ctx)
-		this.publishErrors(doc.uri)
-		return ans
-	}
-
-	@CachePromise()
-	async check(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
-		this.debug(`Checking '${doc.uri}' # ${doc.version}`)
-		const checker = this.meta.getChecker(node.type)
-		const ctx = this.getCheckerCtx(doc)
-		ctx.symbols.clear(doc.uri)
-		await checker(node.children[0], ctx)
-		node.checkerErrors = ctx.err.dump()
-		this.publishErrors(doc.uri)
-	}
-
-	/**
-	 * Read a file. Support `file:` and {@link SpyglassUri.Archive} URIs.
-	 * 
-	 * @throws If the URI cannot be resolved to a file.
-	 */
-	private async readFile(uri: string): Promise<string> {
-		const uriObj = new Uri(uri)
-		if (uriObj.protocol === 'file:') {
-			return this.fs.readFile(uri)
-		} else if (SpyglassUri.Archive.is(uriObj)) {
-			const { archiveFsPath, pathInArchive } = SpyglassUri.Archive.decode(uriObj)
-			if (!pathInArchive) {
-				throw new Error(`Failed to decode pathInArchive from “${uri}”`)
-			}
-			const files = this.#unzippedArchives[archiveFsPath]
-			if (!files) {
-				throw new Error(`Archive “${archiveFsPath}” has not been loaded into the memory`)
-			}
-			const file = files.find(f => f.type === 'file' && f.path === pathInArchive)
-			if (!file) {
-				throw new Error(`File “${pathInArchive}” does not exist in archive “${archiveFsPath}”`)
-			}
-			return file.data.toString('utf-8')
-		}
-		throw new Error(`Unsupported URI protocol and/or hostname in “${uri}”`)
-	}
-
-	/**
-	 * Open a file and parse it.
-	 * @returns The `TextDocument` and `AstNode` for the URI.
-	 * @throws If the file doesn't exist, has an unsupported URI protocol, or has an unsupported language ID.
-	 */
-	@CachePromise()
-	async openAndParse(uri: string): Promise<DocAndNode> {
-		uri = fileUtil.normalize(uri)
-		this.debug(`Opening '${uri}'`)
-		const languageID = this.getLanguageID(uri)
-		if (!this.meta.languages.includes(languageID)) {
-			throw new Error(`File “${uri}” has unsupported language ID: “${languageID}”`)
-		}
-		const content = await this.readFile(uri)
-		const doc = TextDocument.create(uri, languageID, 0, content)
-		const node = this.parse(doc)
-		if (this.isWatched(uri) || SpyglassUri.Archive.is(new Uri(uri))) {
-			this.#watchedUpToDateUris.add(uri)
-			if (!this.#activeUris.has(uri)) {
-				this.#cache.set(uri, { doc, node })
-			}
-		}
-		return { doc, node }
-	}
-
-	/**
-	 * @returns The up-to-date `TextDocument` and `AstNode` for the URI, or `null` when the file doesn't exist.
-	 */
-	@CachePromise()
-	async ensureOpenAndParsed(uri: string): Promise<DocAndNode | null> {
-		uri = fileUtil.normalize(uri)
-		const cachedResult = this.get(uri)
-		if (cachedResult) {
-			return cachedResult
-		}
-		try {
-			// The 'await' below cannot be removed, or errors couldn't be caught by the try-catch block.
-			return await this.openAndParse(uri)
-		} catch (e) {
-			this.debug(`Couldn't ensure '${uri}' due to error '${e?.toString()}'`)
-			return null
-		}
-	}
-
-	/**
-	 * Only check if `node.checkerErrors` is `undefined`.
-	 */
-	@CachePromise()
-	async ensureChecked(node: FileNode<AstNode>, doc: TextDocument): Promise<void> {
-		if (!node.checkerErrors) {
-			await this.check(node, doc)
-		}
-	}
-
-	/**
-	 * @returns If the file is successfully ensured to be parsed and checked.
-	 */
-	@CachePromise()
-	async ensureParsedAndChecked(uri: string): Promise<boolean> {
-		const result = await this.ensureOpenAndParsed(uri)
-		if (result) {
-			await this.ensureChecked(result.node, result.doc)
-			return true
-		}
-		return false
-	}
-
-	colorize(node: FileNode<AstNode>, doc: TextDocument, options: ColorizerOptions = {}): readonly ColorToken[] {
+	colorize(node: FileNode<AstNode>, doc: TextDocument, range?: Range): readonly ColorToken[] {
 		this.debug(`Colorizing '${doc.uri}' # ${doc.version}`)
-		const colorizer = this.meta.getColorizer(node.type)
-		return colorizer(node, this.getColorizerCtx(doc, options))
+		const colorizer = this.project.meta.getColorizer(node.type)
+		return colorizer(node, ColorizerContext.create(this.project, { doc, range }))
 	}
 
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
@@ -408,21 +80,21 @@ export class Service extends EventEmitter {
 
 	complete(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
 		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const shouldComplete = this.meta.shouldComplete(doc.languageId, triggerCharacter)
+		const shouldComplete = this.project.meta.shouldComplete(doc.languageId, triggerCharacter)
 		if (shouldComplete) {
-			const completer = this.meta.getCompleter(node.type)
-			return completer(node, this.getCompleterCtx(doc, offset, triggerCharacter))
+			const completer = this.project.meta.getCompleter(node.type)
+			return completer(node, CompleterContext.create(this.project, { doc, offset, triggerCharacter }))
 		}
 		return []
 	}
 
-	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | null {
+	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
 		const { node, parents } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
-				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
+				const symbol = this.project.symbols.resolveAlias(n.symbol)
 				if (symbol) {
 					return Hover.create(n, `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : ''))
 				}
@@ -431,22 +103,22 @@ export class Service extends EventEmitter {
 				}
 			}
 		}
-		return null
+		return undefined
 	}
 
 	/**
 	 * @param searchedUsages Type of symbol usages that should be included in the result. Defaults to all usages.
 	 * @param currentFileOnly Whether only symbol locations in the current file should be returned.
 	 * 
-	 * @returns Symbol locations of the selected symbol at `offset`, or `null` if there's no symbol at `offset`.
+	 * @returns Symbol locations of the selected symbol at `offset`, or `undefined` if there's no symbol at `offset`.
 	 */
-	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | null {
+	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | undefined {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
 		const { node, parents } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
-				const symbol = this.symbols.resolveAlias(n.symbol ?? null)
+				const symbol = this.project.symbols.resolveAlias(n.symbol)
 				if (symbol) {
 					const locations: SymbolLocation[] = []
 					for (const usage of searchedUsages) {
@@ -456,240 +128,10 @@ export class Service extends EventEmitter {
 						}
 						locations.push(...locs)
 					}
-					return SymbolLocations.create(n, locations.length ? locations : null)
+					return SymbolLocations.create(n, locations.length ? locations : undefined)
 				}
 			}
 		}
-		return null
+		return undefined
 	}
-
-	@Delay(500)
-	@CachePromise()
-	private async bindUris(): Promise<void> {
-		await this.unzipArchives()
-		const ctx = this.getUriBinderCtx()
-		const files = this.trackedFiles
-		ctx.symbols.uriBinding(ctx.logger, () => {
-			for (const binder of this.meta.uriBinders) {
-				binder(files, ctx)
-			}
-		})
-		this.parseAndCheckAllFiles() // TODO
-		this.recheckAllCachedFiles()
-		this.debug('[bindUris] Done')
-	}
-
-	@Delay(100)
-	private publishErrors(uri: string): void {
-		if (uri.startsWith(SpyglassUri.Protocol)) {
-			return
-		}
-		const result = this.get(uri)
-		if (!result) {
-			this.errorPublisher(uri)
-		} else {
-			const { doc, node } = result
-			this.errorPublisher(doc, [
-				...node.checkerErrors ?? [],
-				...node.parserErrors,
-			])
-		}
-		this.debug(`[publishErrors] “${uri}”`)
-	}
-	@Delay(1000)
-	private recheckAllCachedFiles(): void {
-		for (const { doc, node } of this.#cache.values()) {
-			this.check(node, doc)
-		}
-		this.debug('[recheckAllCachedFiles] Done')
-	}
-
-	private async unzipArchives(): Promise<void> {
-		if (Object.keys(this.#unzippedArchives).length) {
-			return
-		}
-		const date0 = new Date()
-		for (const [path, { buffer, startDepth }] of Object.entries(this.#archives)) {
-			try {
-				this.#unzippedArchives[path] = await decompress(buffer, { strip: startDepth })
-			} catch (e) {
-				this.logger.error(`[unzipArchives] ${path} - ${e?.toString()}`)
-				delete this.#archives[path]
-			}
-		}
-		const date1 = new Date()
-		this.logger.info(`[unzipArchives] Total: ${date1.getTime() - date0.getTime()} ms`)
-	}
-
-	@CachePromise()
-	async parseAndCheckAllFiles(): Promise<void> {
-		await this.unzipArchives()
-		await this.config.buildConfigCache()
-		const date0 = new Date()
-		const results = await Promise.all(this.trackedFiles.map(f => this.ensureOpenAndParsed(f)))
-		const date1 = new Date()
-		await Promise.all(results.map(r => r ? this.ensureChecked(r.node, r.doc) : undefined))
-		const date2 = new Date()
-		this.logger.info(`[parseAndCheckAllFiles] Parse all Files: ${date1.getTime() - date0.getTime()} ms`)
-		this.logger.info(`[parseAndCheckAllFiles] Check all Files: ${date2.getTime() - date1.getTime()} ms`)
-		this.logger.info(`[parseAndCheckAllFiles] Total: ${date2.getTime() - date0.getTime()} ms`)
-	}
-
-	/**
-	 * Notifies that a new document was opened in the editor.
-	 */
-	onDidOpen(uri: string, languageID: string, version: number, content: string): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onDidOpen '${uri}' @ ${version}`)
-		const doc = TextDocument.create(uri, languageID, version, content)
-		const node = this.parse(doc)
-		this.#activeUris.add(uri)
-		this.#cache.set(uri, { doc, node })
-	}
-
-	/**
-	 * Notifies that an existing document was changed in the editor.
-	 * @throws If there is no `TextDocument` corresponding to the URI.
-	 */
-	onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onDidChange '${uri}' @ ${version}`)
-		const result = this.get(uri)
-		if (!result) {
-			throw new Error(`There is no TextDocument corresponding to '${uri}'`)
-		}
-		TextDocument.update(result.doc, changes, version)
-		const node = this.parse(result.doc)
-		this.#cache.set(uri, { doc: result.doc, node })
-		// this.scheduleRecheckingFiles()
-	}
-
-	/**
-	 * Notifies that an existing document was closed in the editor.
-	 */
-	onDidClose(uri: string): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onDidClose '${uri}'`)
-		this.#activeUris.delete(uri)
-		this.tryClearingCache(uri)
-	}
-
-	/**
-	 * Notifies that a watched file was created in the file system.
-	 */
-	onWatchedFileCreated(uri: string): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onWatchedFileCreated '${uri}'`)
-		if (this.#isFileListEstablished) {
-			this.emit('fileCreated', { uri })
-		}
-
-		if (!this.#rawFiles.includes(uri)) {
-			this.#rawFiles.push(uri)
-		}
-		if (this.#isFileListEstablished) {
-			this.bindUris()
-		}
-	}
-
-	/**
-	 * Notifies that a watched file was modified in the file system.
-	 */
-	onWatchedFileModified(uri: string): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onWatchedFileModified '${uri}'`)
-		if (this.#isFileListEstablished) {
-			this.emit('fileModified', { uri })
-		}
-
-		this.#watchedUpToDateUris.delete(uri)
-		this.tryClearingCache(uri)
-	}
-
-	/**
-	 * Notifies that a watched file was deleted from the file system.
-	 */
-	onWatchedFileDeleted(uri: string): void {
-		uri = fileUtil.normalize(uri)
-		this.debug(`onWatchedFileDeleted '${uri}'`)
-		this.#watchedUpToDateUris.delete(uri)
-		this.tryClearingCache(uri)
-		const fileUriIndex = this.#rawFiles.findIndex(u => u === uri)
-		if (fileUriIndex !== -1) {
-			this.#rawFiles!.splice(fileUriIndex, 1)
-		}
-		if (this.#isFileListEstablished) {
-			this.emit('fileDeleted', { uri })
-			this.bindUris()
-		}
-	}
-
-	/**
-	 * Remove the cache for `uri` if it is neither active nor watched.
-	 */
-	private tryClearingCache(uri: string): void {
-		if (!this.shouldCache(uri)) {
-			this.#cache.delete(uri)
-			this.publishErrors(uri)
-		}
-	}
-
-	private shouldCache(uri: string): boolean {
-		return this.#activeUris.has(uri) || this.#watchedUpToDateUris.has(uri)
-	}
-
-	private isWatched(uri: string): boolean {
-		return fileUtil.isFileUri(uri) && this.rootsWatched && this.rawRoots.some(r => uri.startsWith(r))
-	}
-
-	//#region Contexts.
-	private getCtxBase(): ContextBase {
-		return ContextBase.create({
-			fs: this.fs,
-			logger: this.logger,
-			meta: this.meta,
-			roots: this.trackedRoots,
-		})
-	}
-	private getParserCtx(doc: TextDocument): ParserContext {
-		return ParserContext.create({
-			...this.getCtxBase(),
-			config: this.config.getConfig(doc.uri),
-			doc,
-		})
-	}
-	private getProcessorCtx(doc: TextDocument): ProcessorContext {
-		return ProcessorContext.create({
-			...this.getCtxBase(),
-			config: this.config.getConfig(doc.uri),
-			doc,
-			symbols: this.symbols,
-		})
-	}
-	private getCheckerCtx(doc: TextDocument): CheckerContext {
-		return CheckerContext.create({
-			...this.getProcessorCtx(doc),
-			service: this,
-		})
-	}
-	private getColorizerCtx(doc: TextDocument, options: ColorizerOptions): ColorizerContext {
-		return ColorizerContext.create({
-			...this.getProcessorCtx(doc),
-			options,
-		})
-	}
-	private getCompleterCtx(doc: TextDocument, offset: number, triggerCharacter?: string): CompleterContext {
-		return CompleterContext.create({
-			...this.getProcessorCtx(doc),
-			offset,
-			triggerCharacter: triggerCharacter,
-		})
-	}
-	private getUriBinderCtx(): UriBinderContext {
-		return UriBinderContext.create({
-			...this.getCtxBase(),
-			symbols: this.symbols,
-		})
-	}
-	//#endregion
 }

@@ -37,7 +37,7 @@ const LongMin = -9223372036854775808n
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: string, rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | null => {
+export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: string, rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>, noTypeOverride = false): core.Parser<ArgumentNode> => core.map(
@@ -205,7 +205,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		case 'minecraft:particle':
 		default:
 			// Unknown parser.
-			return null
+			return undefined
 	}
 }
 
@@ -433,11 +433,11 @@ function range(type: 'float' | 'integer', min?: number, max?: number, cycleable?
 					? valueNodes.length === 2
 						? [valueNodes[0].value, valueNodes[1].value]
 						: core.Range.endsBefore(valueNodes[0].range, sepNode.range.start)
-							? [valueNodes[0].value, null]
-							: [null, valueNodes[0].value]
+							? [valueNodes[0].value, undefined]
+							: [undefined, valueNodes[0].value]
 					: [valueNodes[0].value, valueNodes[0].value],
 			}
-			if (!cycleable && ans.value[0] !== null && ans.value[1] !== null && ans.value[0] > ans.value[1]) {
+			if (!cycleable && ans.value[0] !== undefined && ans.value[1] !== undefined && ans.value[0] > ans.value[1]) {
 				ctx.err.report(localize('mcfunction.parser.range.min>max', ans.value[0], ans.value[1]), res)
 			}
 			return ans
@@ -473,7 +473,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 						return core.map<core.SequenceUtil<core.LiteralNode | T>, EntitySelectorInvertableArgumentValueNode<T>>(
 							core.sequence<core.LiteralNode | T>([
 								core.optional(core.failOnEmpty(core.literal({ pool: ['!'], colorTokenType: 'keyword' }))),
-								src => { src.skipSpace(); return null },
+								src => { src.skipSpace(); return undefined },
 								parser,
 							]),
 							res => {
@@ -560,7 +560,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 													(res, _, ctx) => {
 														dimensionLimited = true
 														// x, y, z, dx, dy, dz take precedence over distance, so we use ??= instead of = to ensure it won't override the result.
-														chunkLimited ??= !playersOnly && res.value[1] !== null
+														chunkLimited ??= !playersOnly && res.value[1] !== undefined
 														if (hasKey(key.value)) {
 															ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
 														}

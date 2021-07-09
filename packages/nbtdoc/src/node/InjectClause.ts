@@ -4,7 +4,7 @@ import type { IdentPathToken, LiteralToken, SyntaxNode } from './misc'
 
 export interface InjectClauseNode extends SyntaxNode<InjectClauseChild> {
 	type: 'nbtdoc:inject_clause',
-	def: DefinitionInject | null,
+	def: DefinitionInject | undefined,
 }
 
 export type InjectClauseChild = LiteralToken | DefinitionInject

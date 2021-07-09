@@ -1,4 +1,3 @@
-import { getRel } from '@spyglassmc/core/lib/service/fileUtil'
 import type { JsonStringNode } from '@spyglassmc/json'
 import { any, as, boolean, deprecated, dispatch, extract, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
 import { dissectUri } from '../../../../binder'
@@ -423,8 +422,8 @@ export const advancement = as('advancement', record({
 	parent: opt(resource('advancement')),
 	criteria: object(
 		string(undefined, undefined, (node, ctx) => {
-			// FIXME: Temporary solution to make tests pass when service is not given.
-			if (!ctx.service) {
+			// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+			if (!ctx.ensureChecked) {
 				return
 			}
 			const parts = dissectUri(ctx.doc.uri, ctx.roots)

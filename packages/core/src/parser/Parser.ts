@@ -17,7 +17,4 @@ export type Success<T extends Returnable> = T
 export const Failure = Symbol('Failure')
 export type Failure = typeof Failure
 
-export type Returnable = object | string | number | bigint | boolean | null
-
-export type EntryParser<N extends NullableNode> = Parser<N>
-export type NullableNode = AstNode | null
+export type Returnable = object | string | number | bigint | boolean | undefined

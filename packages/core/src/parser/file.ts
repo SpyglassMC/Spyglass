@@ -4,7 +4,7 @@ import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
 import { error } from './error'
-import type { InfallibleParser, NullableNode } from './Parser'
+import type { InfallibleParser } from './Parser'
 import { Failure } from './Parser'
 
 /**
@@ -21,9 +21,9 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 			parserErrors: [],
 		}
 
-		const parser = ctx.meta.getParserFromLanguageId<NullableNode>(ctx.doc.languageId)
+		const parser = ctx.meta.getParserFromLanguageId<AstNode>(ctx.doc.languageId)
 		const result = parser(src, ctx)
-		if (result !== Failure && result !== null) {
+		if (result && result !== Failure) {
 			ans.children.push(result)
 		}
 

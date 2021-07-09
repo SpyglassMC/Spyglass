@@ -31,7 +31,7 @@ export class ReadonlySource {
 	public cursor = 0
 
 	constructor(
-		public string: string
+		public readonly string: string
 	) { }
 
 	get nextCharRange(): Range {
@@ -54,6 +54,12 @@ export class ReadonlySource {
 }
 
 export class Source extends ReadonlySource {
+	constructor(
+		public string: string
+	) {
+		super(string)
+	}
+
 	clone(): Source {
 		const ans = new Source(this.string)
 		ans.cursor = this.cursor

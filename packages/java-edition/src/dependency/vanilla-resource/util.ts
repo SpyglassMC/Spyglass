@@ -1,31 +1,59 @@
 import * as core from '@spyglassmc/core'
-import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from './type'
-import { VersionStatus } from './type'
+import type { MajorVersion, RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from './type'
+import { MajorVersions, VersionStatus } from './type'
+
+type LatestReleases = readonly { major: MajorVersion, latest: string }[]
+
+type AutoVersionResolver = () => Promise<string>
+
+export function getLatestReleases(manifest: VersionManifest): LatestReleases {
+	return MajorVersions.map(major => ({
+		major,
+		latest: manifest.versions.find(v => v.type === 'release' && v.id.startsWith(major))?.id ?? major,
+	}))
+}
 
 /**
- * @returns 
- * - `version`
- * 	- `latest release`: the latest release.
- * 	- `latest snapshot`: the latest snapshot.
- * 	- A version released before 1.14: `1.14`.
- * 	- A version that doesn't exist in the [`version_manifest.json`][manifest]: the latest release.
- * 	- Other cases: the `version` itself.
- * - `versions`: An array of version identifiers, sorted from the oldest to the latest.
+ * @param input `auto`, `latest release`, `latest snapshot`, or a version identifier.
+ * @param manifest Can be provided by {@link getVersionManifest}.
+ * @param latestReleases Can be provided by {@link getLatestReleases}.
+ * @param autoVersionResolver An asynchronous function that will be called when the `input` is `auto`. It should return
+ * a string storing the version identifier of the resolved version.
  * 
- * [manifest]: https://launchermeta.mojang.com/mc/game/version_manifest.json
+ * @returns 
+ * - `major`: The version identifier of the corresponding major release version.
+ * - `version`: The exact version identifier resolved from `input`.
+ * - `status`: The {@link VersionStatus} for this version.
  */
-export function normalizeVersion(version: string, manifest: VersionManifest): { version: string, versions: string[] } {
+export async function resolveVersion(input: string, manifest: VersionManifest, latestReleases: LatestReleases, autoVersionResolver: AutoVersionResolver, logger: core.Logger): Promise<{ major: MajorVersion, version: string, status: VersionStatus }> {
+	let version: string
+	/** Sorted from the oldest to the latest. */
 	const versions = manifest.versions.map(v => v.id).reverse()
-	if (version.toLowerCase() === 'latest release') {
+	if (input.toLowerCase() === 'auto') {
+		version = await autoVersionResolver()
+	} else if (input.toLowerCase() === 'latest release') {
 		version = manifest.latest.release
-	} else if (version.toLowerCase() === 'latest snapshot') {
+	} else if (input.toLowerCase() === 'latest snapshot') {
 		version = manifest.latest.snapshot
-	} else if (!versions.includes(version)) {
+	} else if (!versions.includes(input)) {
+		logger.error(`[resolveVersion] Unknown version “${input}”. Fall back to the latest release ${manifest.latest.release} instead.`)
 		version = manifest.latest.release
-	} else if (versions.indexOf(version) < versions.indexOf('1.14')) {
-		version = '1.14'
+	} else if (versions.indexOf(input) < versions.indexOf(latestReleases[0].latest)) {
+		logger.error(`[resolveVersion] Version “${input}” is older than ${latestReleases[0].latest}. Fall back to ${latestReleases[0].latest} instead.`)
+		version = latestReleases[0].latest
+	} else {
+		version = input
 	}
-	return { version, versions }
+	const major: MajorVersion =
+		// Get `1.15` from identifiers like `1.15-pre1`.
+		latestReleases.reduce<MajorVersion | undefined>((result, { major }) => result ?? (version.startsWith(major) ? major : undefined), undefined) ??
+		// Otherwise return the oldest major version released after the specified `version`.
+		latestReleases.reduce<MajorVersion | undefined>((result, { major, latest }) => result ?? (versions.indexOf(version) <= versions.indexOf(latest) ? major : undefined), undefined) ??
+		// Fall back to the latest supported major version.
+		MajorVersions[MajorVersions.length - 1]
+	const status = getVersionStatus(version, versions)
+	logger.info(`[resolveVersion] Resolved “${input}” as { m: “${major}”, v: “${version}”, s: ${status} }`)
+	return { major, version, status }
 }
 
 /**
@@ -156,58 +184,47 @@ const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => 
 
 export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
 	// Remove all related existing symbols.
-	symbols.removeLocationsFromMap(symbols.global.block, loc => loc.fromDefaultLibrary)
+	symbols.removeLocationsFromMap(symbols.global.block, loc => loc.contributor === 'default_library')
 	symbols.trimMap(symbols.global.block)
 
 	// Add blocks and block states to the symbol table.
-	for (const [id, block] of Object.entries(blocks)) {
-		symbols
-			.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
-			.enter({
-				usage: {
-					type: 'declaration',
-					fromDefaultLibrary: true,
-				},
-			})
-			.onEach(Object.entries(block.properties), ([state, values], blockQuery) => {
-				const defaultValue = block.default[state]!
-
-				blockQuery.member(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
-					stateQuery
-						.enter({
-							data: {
-								subcategory: 'state',
-							},
-							usage: {
-								type: 'declaration',
-								fromDefaultLibrary: true,
-							},
-						})
-						.onEach(values, value => {
-							stateQuery.member(value, valueQuery => {
-								valueQuery.enter({
-									data: {
-										subcategory: 'state_value',
-									},
-									usage: {
-										type: 'declaration',
-										fromDefaultLibrary: true,
-									},
-								})
-								if (value === defaultValue) {
-									stateQuery.amend({
-										data: {
-											relations: {
-												default: { category: 'block', path: valueQuery.path },
-											},
-										},
-									})
-								}
-							})
-						})
+	symbols.contributeAs('default_library', () => {
+		for (const [id, block] of Object.entries(blocks)) {
+			symbols
+				.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
+				.enter({
+					usage: { type: 'declaration' },
 				})
-			})
-	}
+				.onEach(Object.entries(block.properties), ([state, values], blockQuery) => {
+					const defaultValue = block.default[state]!
+
+					blockQuery.member(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
+						stateQuery
+							.enter({
+								data: { subcategory: 'state' },
+								usage: { type: 'declaration' },
+							})
+							.onEach(values, value => {
+								stateQuery.member(value, valueQuery => {
+									valueQuery.enter({
+										data: { subcategory: 'state_value' },
+										usage: { type: 'declaration' },
+									})
+									if (value === defaultValue) {
+										stateQuery.amend({
+											data: {
+												relations: {
+													default: { category: 'block', path: valueQuery.path },
+												},
+											},
+										})
+									}
+								})
+							})
+					})
+				})
+		}
+	})
 }
 
 export function addRegistriesSymbols(registries: VanillaRegistries, symbols: core.SymbolUtil) {
@@ -268,20 +285,21 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		const registryId = shorten(longRegistryId)
 		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
 			// Remove all related existing symbols.
-			symbols.removeLocationsFromMap(symbols.global[registryId], loc => loc.fromDefaultLibrary)
+			symbols.removeLocationsFromMap(symbols.global[registryId], loc => loc.contributor === 'default_library')
 			symbols.trimMap(symbols.global[registryId])
 
-			// Add resource locations from the registry to the symbol table.
-			for (const longEntryId of registries[longRegistryId]) {
-				symbols
-					.query(getUri(registryId, longEntryId), registryId, longEntryId)
-					.enter({
-						usage: {
-							type: 'declaration',
-							fromDefaultLibrary: true,
-						},
-					})
-			}
+			symbols.contributeAs('default_library', () => {
+				// Add resource locations from the registry to the symbol table.
+				for (const longEntryId of registries[longRegistryId]) {
+					symbols
+						.query(getUri(registryId, longEntryId), registryId, longEntryId)
+						.enter({
+							usage: {
+								type: 'declaration',
+							},
+						})
+				}
+			})
 		}
 	}
 }

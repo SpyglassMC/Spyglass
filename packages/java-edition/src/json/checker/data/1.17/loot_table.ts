@@ -238,7 +238,7 @@ export const item_modifier_list = any([
 export const loot_entry = as('loot_entry', dispatch('type',
 	(type) => record({
 		type: resource('loot_pool_entry_type'),
-		weight: opt(intRange(1, null), 1),
+		weight: opt(intRange(1, undefined), 1),
 		quality: opt(int, 0),
 		...pick(type, {
 			alternatives: {

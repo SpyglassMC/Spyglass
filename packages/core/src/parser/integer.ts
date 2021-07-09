@@ -63,12 +63,9 @@ export function integer(options: Options): Parser<IntegerNode> {
 		ans.range.end = src.cursor
 		const raw = src.slice(ans.range)
 
-		let errorOccurred = false
-		try {
+		const isOnlySign = raw === '-' || raw === '+'
+		if (!isOnlySign) {
 			ans.value = Number(raw)
-		} catch (_) {
-			// `raw` might be "+" or "-" here.
-			errorOccurred = true
 		}
 
 		if (!raw) {
@@ -76,7 +73,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 				return Failure
 			}
 			ctx.err.report(localize('expected', localize('integer')), ans)
-		} else if (!options.pattern.test(raw) || errorOccurred) {
+		} else if (!options.pattern.test(raw) || isOnlySign) {
 			ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
 		} else if ((options.min !== undefined && ans.value < options.min) || (options.max !== undefined && ans.value > options.max)) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange

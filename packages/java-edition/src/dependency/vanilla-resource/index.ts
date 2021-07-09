@@ -1,11 +1,11 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import download from 'download'
 import envPaths from 'env-paths'
-import * as fs from 'fs-extra'
+import * as fse from 'fs-extra'
 import * as path from 'path'
 import type { VanillaBlocks, VanillaCommands, VanillaRegistries, VanillaResources, VersionManifest } from './type'
 import { VersionStatus } from './type'
-import { addBlocksSymbols, addRegistriesSymbols, getMetadata, getVersionStatus, normalizeVersion } from './util'
+import { addBlocksSymbols, addRegistriesSymbols, getMetadata } from './util'
 
 export * from './type'
 
@@ -13,108 +13,188 @@ const cacheRoot = envPaths('spyglassmc').cache
 
 /* istanbul ignore next */
 /**
- * @param inputVersion A version identifier that will be normalized with {@link normalizeVersion}.
- * 
- * @throws Network/file system errors.
+ * Return the deserialized [`version_manifest.json`][manifest].
  * 
  * [manifest]: https://launchermeta.mojang.com/mc/game/version_manifest.json
+ * 
+ * @throws Network/file system errors.
  */
-export async function getVanillaResources(inputVersion: string, logger: core.Logger): Promise<VanillaResources> {
-	const manifest = await downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', ['mc_je', 'version_manifest.json'])
-	const { version, versions } = normalizeVersion(inputVersion, manifest)
-	const status = getVersionStatus(version, versions)
-	const isLatestVersion = !!(status & VersionStatus.Latest)
+export async function getVersionManifest(logger: core.Logger): Promise<VersionManifest> {
+	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', ['mc_je', 'version_manifest.json'])
+}
 
-	logger.info(`[getVanillaResources] Getting vanilla resources for ${version} (${inputVersion}, ${status}) [${cacheRoot}]...`)
+/* istanbul ignore next */
+/**
+ * @throws Network/file system errors.
+ */
+export async function getVanillaResources(version: string, status: VersionStatus, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
+	logger.info(`[getVanillaResources] Getting vanilla resources for { v: “${version}”, s: ${status}, cacheRoot: “${cacheRoot}” }...`)
 
 	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
-	const archives: core.Archives = {}
+	const refs = getRefs({
+		defaultBranch: 'master',
+		getTag: v => v,
+		status,
+		version,
+	})
+	const cachedShaPath = path.join(cacheRoot, 'mc_je', version, 'mcdata.json')
+	const { latestSha, shouldRefresh } = await invalidateGitTagCache('Arcensoth', 'mcdata', refs, cachedShaPath, logger)
+	// Save the sha of commit for future cache invalidation.
 	try {
-		const result = await getMcNbtdoc(version, status, logger)
-		archives[result.path] = { buffer: result.buffer, startDepth: 1 }
+		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
-		logger.error(`[getVanillaResources#archives] ${e?.toString()}`)
+		logger.error('[getMcNbtdoc#sha_write]', e)
 	}
 
-	return {
-		archives,
-		blocks: await downloadJson<VanillaBlocks>(logger, blocksUrl, ['mc_je', version, 'blocks.json'], !isLatestVersion, blocksTransformer),
-		commands: await downloadJson<VanillaCommands>(logger, commandsUrl, ['mc_je', version, 'commands.json'], !isLatestVersion),
-		registries: await downloadJson<VanillaRegistries>(logger, registriesUrl, ['mc_je', version, 'registries.json'], !isLatestVersion, registriesTransformer),
+	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
+		if (overridePath) {
+			try {
+				return transformer(await fse.readFile(overridePath))
+			} catch (e) {
+				throw new Error(`[getVanillaResources] Failed loading customized vanilla resource “${overridePath}”: ${e?.toString()}`)
+			}
+		}
+		return downloadJson<T>(logger, url, ['mc_je', version, fileName], !shouldRefresh, transformer)
 	}
+
+	const [blocks, commands, registries] = await Promise.all([
+		getResource<VanillaBlocks>(blocksUrl, 'blocks.json', overridePaths.blocks, blocksTransformer),
+		getResource<VanillaCommands>(commandsUrl, 'commands.json', overridePaths.commands),
+		getResource<VanillaRegistries>(registriesUrl, 'registries.json', overridePaths.registries, registriesTransformer),
+	])
+
+	return { blocks, commands, registries }
 }
-
-const McNbtdocUser = 'Yurihaia'
-const McNbtdocRepo = 'mc-nbtdoc'
-const McNbtdocDefaultBranch = 'master'
 
 type GitHubRefResponse =
 	| { message: string }
 	| { message?: undefined, ref: string, object: { sha: string } }
 	| { message?: undefined, ref: string, object: { sha: string } }[]
 
-/* istanbul ignore next */
-/**
- * @param version An already normalized version identifier.
- * 
- * @throws Network/file system errors.
- * 
- * @returns
- * 	- `buffer`: Buffer representation of the tarball.
- * 	- `path`: Path to the `.tar.gz` file.
- */
-async function getMcNbtdoc(version: string, status: VersionStatus, logger: core.Logger): Promise<{ path: string, buffer: Buffer }> {
-	let sha: string | undefined
-	let shouldRedownload = true
-
-	const cachePathArray = ['mc_je', version, `${McNbtdocRepo}.tar.gz`] as const
-	const cachePath = path.join(cacheRoot, ...cachePathArray)
-	const cachedShaPath = path.join(cacheRoot, 'mc_je', version, `${McNbtdocRepo}.json`)
-	const refs = (status & VersionStatus.Latest) ? `refs/heads/${McNbtdocDefaultBranch}` : `refs/tags/${version}`
-
-	// Invalidate cache.
+async function invalidateGitTagCache(user: string, repo: string, refs: string, cachedShaPath: string, logger: core.Logger): Promise<{ latestSha: string | undefined, shouldRefresh: boolean }> {
+	let latestSha: string | undefined
+	let shouldRefresh = false
 	try {
 		// Get the latest sha of the commit corresponding to the refs.
-		const tagUrl = `https://api.github.com/repos/${McNbtdocUser}/${McNbtdocRepo}/git/${refs}`
+		const tagUrl = `https://api.github.com/repos/${user}/${repo}/git/${refs}`
 		const tagResponse = await fetchJson<GitHubRefResponse>(tagUrl)
 		if (Array.isArray(tagResponse)) {
-			sha = tagResponse.find(v => v.ref === refs)?.object.sha
+			latestSha = tagResponse.find(v => v.ref === refs)?.object.sha
 		} else if (tagResponse.message === undefined) {
-			sha = tagResponse.object.sha
+			latestSha = tagResponse.object.sha
 		}
 
-		if (sha) {
+		if (latestSha) {
 			try {
-				const cachedSha: string = (await fs.readJson(cachedShaPath, { encoding: 'utf-8' })).sha
-				if (shouldRedownload = (!!cachedSha && sha !== cachedSha)) {
-					logger.info(`[getMcNbtdoc] ${cachedSha} !== ${sha}. Redownload.`)
+				const cachedSha: string = (await fse.readJson(cachedShaPath, { encoding: 'utf-8' })).sha
+				if (cachedSha && latestSha !== cachedSha) {
+					shouldRefresh = true
+					logger.info(`[invalidateGitTagCache] Cache ${cachedSha} for ${user}/${repo} is different than the latest ${latestSha}`)
+				} else {
+					logger.info(`[invalidateGitTagCache] Cache ${cachedSha} for ${user}/${repo} is up to date`)
 				}
 			} catch {
 				// File doesn't exist. Ignored.
 			}
 		}
 	} catch (e) {
-		logger.error(`[getMcNbtdoc#sha_read] ${e?.toString()}`)
+		logger.error('[invalidateGitTagCache]', e)
 	}
+	return { latestSha, shouldRefresh }
+}
 
-	const tarball = await downloadData(
-		logger,
-		`https://api.github.com/repos/${McNbtdocUser}/${McNbtdocRepo}/tarball/${refs}`,
-		cachePathArray,
-		!shouldRedownload, buffer => buffer
-	)
+function getRefs({ defaultBranch, getTag, status, version }: {
+	defaultBranch: string,
+	getTag: (version: string) => string,
+	status: VersionStatus,
+	version: string,
+}): string {
+	return (status & VersionStatus.Latest) ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
+}
 
+/**
+ * @returns The URI to the `.tar.gz` file.
+ */
+async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status, user, version }: {
+	defaultBranch: string,
+	getTag: (version: string) => string,
+	logger: core.Logger,
+	repo: string,
+	status: VersionStatus,
+	user: string,
+	version: string,
+}): Promise<string> {
+	const cachePathArray = ['mc_je', version, `${repo}.tar.gz`] as const
+	const cachePath = path.join(cacheRoot, ...cachePathArray)
+	const cachedShaPath = path.join(cacheRoot, 'mc_je', version, `${repo}.json`)
+	const refs = getRefs({ defaultBranch, getTag, status, version })
+
+	const { latestSha, shouldRefresh } = await invalidateGitTagCache(user, repo, refs, cachedShaPath, logger)
 	// Save the sha of commit for future cache invalidation.
 	try {
-		await fs.writeJson(cachedShaPath, { sha }, { encoding: 'utf-8' })
+		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
-		logger.error(`[getMcNbtdoc#sha_write] ${e?.toString()}`)
+		logger.error('[getMcNbtdoc#sha_write]', e)
 	}
 
+	await downloadData(
+		logger,
+		`https://api.github.com/repos/${user}/${repo}/tarball/${refs}`,
+		cachePathArray,
+		!shouldRefresh, buffer => buffer
+	)
+
+	return core.fileUtil.pathToFileUri(cachePath)
+}
+
+/* istanbul ignore next */
+/**
+ * @param version An already resolved version identifier.
+ * 
+ * @throws Network/file system errors.
+ * 
+ * @returns
+ * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
+ * 	- `uri`: URI to the `.tar.gz` file.
+ */
+export async function getMcNbtdoc(version: string, status: VersionStatus, logger: core.Logger): Promise<core.Dependency> {
 	return {
-		buffer: tarball,
-		path: cachePath,
+		info: { startDepth: 1 },
+		uri: await downloadGitHubRepo({
+			defaultBranch: 'master',
+			getTag: v => v,
+			logger,
+			repo: 'mc-nbtdoc',
+			status,
+			user: 'Yurihaia',
+			version,
+		}),
+	}
+}
+
+/* istanbul ignore next */
+/**
+ * @param version An already resolved version identifier.
+ * 
+ * @throws Network/file system errors.
+ * 
+ * @returns
+ * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
+ * 	- `uri`: URI to the `.tar.gz` file.
+ */
+export async function getVanillaDatapack(version: string, status: VersionStatus, logger: core.Logger): Promise<core.Dependency> {
+	return {
+		info: { startDepth: 1 },
+		uri: await downloadGitHubRepo({
+			defaultBranch: 'data',
+			getTag: v => `${v}-data`,
+			logger,
+			repo: 'vanilla-datapack',
+			status,
+			user: 'SPGoding',
+			version,
+		}),
 	}
 }
 
@@ -139,26 +219,26 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 	const cacheFileName = cachePaths[cachePaths.length - 1]
 	const cacheFilePath = path.join(cacheParent, cacheFileName)
 
-	const downloadAndCache = async (): Promise<T | null> => {
+	const downloadAndCache = async (): Promise<T | undefined> => {
 		try {
 			const buffer = await download(url)
 			const ans = transformer(buffer)
 			try {
-				await fs.ensureDir(cacheParent)
-				await fs.writeFile(cacheFilePath, buffer)
+				await fse.ensureDir(cacheParent)
+				await fse.writeFile(cacheFilePath, buffer)
 			} catch (e) {
 				// Cache failed.
 				error = e
-				logger.error(`[downloadData] Caching to '${cacheFilePath}': ${e?.toString()}`)
+				logger.error(`[downloadData] Caching to “${cacheFilePath}”`, e)
 			}
-			logger.info(`[downloadData] Downloaded from ${url}`)
+			logger.info(`[downloadData] Downloaded from “${url}”`)
 			return ans
 		} catch (e) {
 			// Download failed.
 			error = e
-			logger.error(`[downloadData] Downloading from '${url}': ${e?.toString()}`)
+			logger.error(`[downloadData] Downloading from “${url}”`, e)
 		}
-		return null
+		return undefined
 	}
 
 	if (!preferCache) {
@@ -169,14 +249,13 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 	}
 
 	try {
-		const buffer = await fs.readFile(cacheFilePath)
+		const buffer = await fse.readFile(cacheFilePath)
 		const ans = transformer(buffer)
-		logger.info(`[downloadData] Read from ${cacheFilePath}`)
+		logger.info(`[downloadData] Read cache from “${cacheFilePath}”`)
 		return ans
 	} catch (e) {
 		// Read cache failed.
 		error = e
-		logger.warn(`[downloadData] Reading from '${cacheFilePath}': ${e?.toString()}`)
 		if (preferCache) {
 			const ans = await downloadAndCache()
 			if (ans) {

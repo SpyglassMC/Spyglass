@@ -4,7 +4,7 @@ import { fileUtil } from '../../lib'
 
 describe('fileUtil', () => {
 	describe('getRel()', () => {
-		const rootUris = [
+		const rootUris: `${string}/`[] = [
 			'file:///root1/subdir/',
 			'file:///root1/',
 			'file:///root2/',
@@ -23,7 +23,7 @@ describe('fileUtil', () => {
 		}
 	})
 	describe('ensureEndingSlash()', () => {
-		const suites: { uri: string, expected: string  }[] = [
+		const suites: { uri: string, expected: string }[] = [
 			{ uri: 'file:///root1/foo', expected: 'file:///root1/foo/' },
 			{ uri: 'file:///root1/foo/', expected: 'file:///root1/foo/' },
 		]
@@ -34,7 +34,7 @@ describe('fileUtil', () => {
 		}
 	})
 	describe('join()', () => {
-		const suites: { fromUri: string, toUri: string, expected: string  }[] = [
+		const suites: { fromUri: string, toUri: string, expected: string }[] = [
 			{ fromUri: 'file:///root1/foo', toUri: 'bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
 			{ fromUri: 'file:///root1/foo/', toUri: 'bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
 			{ fromUri: 'file:///root1/foo', toUri: '/bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },

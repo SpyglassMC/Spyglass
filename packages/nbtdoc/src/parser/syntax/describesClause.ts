@@ -48,7 +48,7 @@ export function describesClause(): Parser<DescribesClauseNode> {
 				children: res.children,
 				path: res.children.find(IdentPathToken.is)!,
 				registry: mcIds[0],
-				objects: mcIds.length > 1 ? mcIds.slice(1) : null,
+				objects: mcIds.length > 1 ? mcIds.slice(1) : undefined,
 			}
 			return ans
 		}

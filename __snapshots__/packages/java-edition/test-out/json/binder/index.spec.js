@@ -1,5 +1,5 @@
 exports['dissectUri() Dissect Uri "file:///data/loot_tables/foo.json" 1'] = `
-null
+undefined
 `
 
 exports['dissectUri() Dissect Uri "file:///data/minecraft/advancements/data/foo/predicates/bar.json" 1'] = {
@@ -9,7 +9,7 @@ exports['dissectUri() Dissect Uri "file:///data/minecraft/advancements/data/foo/
 }
 
 exports['dissectUri() Dissect Uri "file:///data/minecraft/entities/foo.json" 1'] = `
-null
+undefined
 `
 
 exports['dissectUri() Dissect Uri "file:///data/minecraft/loot_tables/foo.json" 1'] = {
@@ -31,5 +31,5 @@ exports['dissectUri() Dissect Uri "file:///data/qux/dimension/foo/baz.json" 1'] 
 }
 
 exports['dissectUri() Dissect Uri "file:///pack.mcmeta" 1'] = `
-null
+undefined
 `

@@ -63,12 +63,12 @@ export function long(options: Options): Parser<LongNode> {
 		ans.range.end = src.cursor
 		const raw = src.slice(ans.range)
 
-		let errorOccurred = false
+		let isOnlySign = false
 		try {
 			ans.value = BigInt(raw)
 		} catch (_) {
 			// `raw` might be "+" or "-" here.
-			errorOccurred = true
+			isOnlySign = true
 		}
 
 		if (!raw) {
@@ -76,7 +76,7 @@ export function long(options: Options): Parser<LongNode> {
 				return Failure
 			}
 			ctx.err.report(localize('expected', localize('long')), ans)
-		} else if (!options.pattern.test(raw) || errorOccurred) {
+		} else if (!options.pattern.test(raw) || isOnlySign) {
 			ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
 		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange

@@ -1,4 +1,5 @@
 import type { URL as Uri } from 'url'
+import type { RootUriString } from '../service'
 
 export { URL as Uri } from 'url'
 
@@ -27,6 +28,19 @@ export function CachePromise(getCacheKey: (args: any[]) => any = args => args[0]
 		}
 		return descripter
 	}
+}
+
+/**
+ * This is a decorator for async methods. Decorated methods will return the same `Promise` no matter what.
+ */
+export const SingletonPromise: MethodDecorator = (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+	let promise: Promise<unknown> | undefined
+	const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
+	// The `function` syntax is used to preserve `this` context from the decorated method.
+	descripter.value = function (...args: unknown[]) {
+		return promise ??= decoratedMethod.apply(this, args)
+	}
+	return descripter
 }
 
 /**
@@ -60,8 +74,11 @@ export namespace SpyglassUri {
 	export namespace Archive {
 		export const Hostname = 'archive'
 
-		export function get(archiveFsPath: string, pathInArchive?: string) {
-			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveFsPath)}/${pathInArchive ? pathInArchive.replace(/\\/g, '/') : ''}`
+
+		export function get(archiveUri: string): RootUriString
+		export function get(archiveUri: string, pathInArchive: string): string
+		export function get(archiveUri: string, pathInArchive = '') {
+			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive}`
 		}
 
 		export function is(uri: Uri): boolean {
@@ -71,17 +88,17 @@ export namespace SpyglassUri {
 		/**
 		 * @throws When `uri` has the wrong protocol or hostname.
 		 */
-		export function decode(uri: Uri): { archiveFsPath: string, pathInArchive: string } {
+		export function decode(uri: Uri): { archiveUri: string, pathInArchive: string } {
 			if (uri.protocol !== Protocol) {
-				throw new Error(`Unexpected protocol “${uri.protocol}” in “${uri.toString()}”`)
+				throw new Error(`Expected protocol “${Protocol}” in “${uri.toString()}”`)
 			}
 			if (uri.hostname !== Hostname) {
-				throw new Error(`Unexpected hostname “${uri.hostname}” in “${uri.toString()}”`)
+				throw new Error(`Expected hostname “${Hostname}” in “${uri.toString()}”`)
 			}
 			// Ex. `pathname`: `/C%3A%5Ca.tar.gz/foo/bar.json`
 			const paths = uri.pathname.split('/')
 			return {
-				archiveFsPath: decodeURIComponent(paths[1]),
+				archiveUri: decodeURIComponent(paths[1]),
 				pathInArchive: paths.slice(2).join('/'),
 			}
 		}

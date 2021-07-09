@@ -13,14 +13,14 @@ const structure_settings = as('structure_settings', record({
 		() => record({
 			spacing: intRange(0, 4096),
 			separation: intRange(0, 4096), // TODO: validate separation < spacing
-			salt: intRange(0, null),
+			salt: intRange(0, undefined),
 		})
 	),
 }))
 
 const noise_slide_settings = record({
 	target: int,
-	size: intRange(0, null),
+	size: intRange(0, undefined),
 	offset: int,
 })
 

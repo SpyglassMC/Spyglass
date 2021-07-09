@@ -1,6 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageError, Parser, Returnable } from '../lib'
-import { AstNode, Failure, ParserContext, Source } from '../lib'
+import { AstNode, Failure, ParserContext, ProjectLike, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
 Object.defineProperty(BigInt.prototype, 'toJSON', {
@@ -50,11 +50,13 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	uri = '',
 	languageID = '',
 	keepOptions = false,
+	project = {},
 	removeTopLevelChildren = false,
 }: {
 	uri?: string,
 	languageID?: string,
 	keepOptions?: boolean,
+	project?: Partial<ProjectLike>,
 	removeTopLevelChildren?: boolean,
 } = {}): {
 	node: Returnable | 'FAILURE',
@@ -62,13 +64,17 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 } {
 	/* eslint-enable @typescript-eslint/indent */
 	const src = new Source(text)
-	const ctx = ParserContext.create({
-		doc: TextDocument.create(uri, languageID, 0, text),
-	})
+	const ctx = ParserContext.create(
+		ProjectLike.mock(project),
+		{
+			doc: TextDocument.create(uri, languageID, 0, text),
+		}
+	)
 	const result: any = parser(src, ctx)
 	removeExtraProperties(result, keepOptions, removeTopLevelChildren)
 	return {
-		node: result === Failure ? 'FAILURE' : result,
+		node: result === Failure ? 'FAILURE' :
+			result === undefined ? 'undefined' : result,
 		errors: ctx.err.dump(),
 	}
 }

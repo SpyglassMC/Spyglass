@@ -175,8 +175,8 @@ export interface SymbolPath {
 }
 export namespace SymbolPath {
 	export function fromSymbol(symbol: Symbol): SymbolPath
-	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined
-	export function fromSymbol(symbol: Symbol | undefined | null): SymbolPath | undefined {
+	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined
+	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined {
 		return symbol
 			? { category: symbol.category, path: symbol.path }
 			: undefined
@@ -243,18 +243,26 @@ export interface SymbolLocationMetadata {
 	 */
 	accessType?: SymbolAccessType,
 	/**
-	 * Whether this SymbolLocation comes from a default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
-	 * 
-	 * [mc-data]: https://github.com/Arcensoth/mc-data
-	 * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
-	 * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
-	 */
-	fromDefaultLibrary?: boolean,
-	/**
 	 * Whether this symbol location should be skipped during renaming.
 	 */
 	skipRenaming?: boolean,
 }
+
+/**
+ * - `checker`: Contributed by checkers.
+ * - `default_library`: Contributed by default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
+ * - `parser`: Contributed by parsers.
+ * - `uri_binder`: Contributed by URI binders.
+ * 
+ * [mc-data]: https://github.com/Arcensoth/mc-data
+ * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
+ * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
+ */
+export type SymbolLocationBuiltInContributor =
+	| 'checker'
+	| 'default_library'
+	| 'parser'
+	| 'uri_binder'
 
 export interface SymbolLocation extends SymbolLocationMetadata {
 	uri: string,
@@ -291,17 +299,19 @@ export interface SymbolLocation extends SymbolLocationMetadata {
 	 */
 	fullPosRange?: PositionRange,
 	/**
-	 * Whether this usage is contributed by a `UriBinder`.
+	 * What this usage is contributed by.
+	 * 
+	 * For a list of default contributors, see {@link SymbolLocationBuiltInContributor}
 	 */
-	isUriBound?: true,
+	contributor?: string,
 }
 export namespace SymbolLocation {
 	/* istanbul ignore next */
-	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, isUriBound?: boolean, additional?: SymbolLocationMetadata): SymbolLocation {
+	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, contributor?: string, additional?: SymbolLocationMetadata): SymbolLocation {
 		return {
 			...Location.create(doc, range),
 			...fullRange ? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) } : {},
-			...isUriBound ? { isUriBound } : {},
+			...contributor ? { contributor } : {},
 			...additional ? additional : {},
 		}
 	}

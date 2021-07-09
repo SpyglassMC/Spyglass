@@ -1,9 +1,14 @@
-import { initializeJson } from '@spyglassmc/json'
+import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import type { ArgumentTreeNode } from '@spyglassmc/mcfunction/lib/tree'
-import { initializeNbt } from '@spyglassmc/nbt'
+import * as nbt from '@spyglassmc/nbt'
 
-initializeJson()
-initializeNbt()
+const project = core.ProjectLike.mock()
+
+json.initialize(project)
+nbt.initialize(project)
+
+export const { meta } = project
 
 export const CommandArgumentTestSuites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, content: string[] }[]>> = {
 	'brigadier:bool': [

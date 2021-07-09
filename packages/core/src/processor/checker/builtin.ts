@@ -73,7 +73,7 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 			}
 		}
 	)
-	await Promise.all(promises)
+	await Promise.allSettled(promises)
 }
 
 export const resourceLocation: Checker<ResourceLocationNode> = (_node, _ctx) => {

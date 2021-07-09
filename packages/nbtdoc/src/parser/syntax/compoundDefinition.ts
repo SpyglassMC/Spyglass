@@ -26,7 +26,7 @@ export function compoundDefinition(): Parser<CompoundDefinitionNode> {
 				children: res.children,
 				doc: res.children.find(DocCommentsNode.is)!,
 				identifier: res.children.find(IdentifierToken.is)!,
-				extends: res.children.find(CompoundExtendable.is) ?? null,
+				extends: res.children.find(CompoundExtendable.is),
 				fields: res.children.filter(CompoundFieldNode.is),
 			}
 			return ans
@@ -100,8 +100,8 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 				case 'int':
 				case 'long': {
 					if (literals[1]?.value === '[') {
-						const valueRange = res.children.find(IntRangeNode.is) ?? null
-						const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
+						const valueRange = res.children.find(IntRangeNode.is)
+						const lengthRange = res.children.find(UnsignedRangeNode.is)
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
@@ -115,7 +115,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 				// Fall through.
 				/* eslint-disable-next-line no-fallthrough */
 				case 'short': {
-					const valueRange = res.children.find(IntRangeNode.is) ?? null
+					const valueRange = res.children.find(IntRangeNode.is)
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
@@ -127,7 +127,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 
 				case 'float':
 				case 'double': {
-					const valueRange = res.children.find(FloatRangeNode.is) ?? null
+					const valueRange = res.children.find(FloatRangeNode.is)
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
@@ -138,7 +138,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 				}
 
 				case '[': {
-					const lengthRange = res.children.find(UnsignedRangeNode.is) ?? null
+					const lengthRange = res.children.find(UnsignedRangeNode.is)
 					const item = res.children.find(CompoundFieldTypeNode.is)!
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
@@ -243,15 +243,15 @@ function _range<T extends IntegerNode | FloatNode, R extends IntRangeNode | Unsi
 		res => {
 			const sepIndex = res.children.findIndex(LiteralToken.is('..'))
 			const numbers = res.children.map((v, i) => ({ v, i })).filter((o): o is { v: T, i: number } => IntegerNode.is(o.v) || FloatNode.is(o.v))
-			let value: [T['value'] | null, T['value'] | null]
+			let value: [T['value'] | undefined, T['value'] | undefined]
 			if (numbers.length === 2) {
 				value = [numbers[0].v.value, numbers[1].v.value]
 			} else if (sepIndex === -1) {
 				value = [numbers[0].v.value, numbers[0].v.value]
 			} else if (numbers[0].i < sepIndex) {
-				value = [numbers[0].v.value, null]
+				value = [numbers[0].v.value, undefined]
 			} else {
-				value = [null, numbers[0].v.value]
+				value = [undefined, numbers[0].v.value]
 			}
 			const ans: R = {
 				type,

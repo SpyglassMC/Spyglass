@@ -50,6 +50,7 @@ describe('Range', () => {
 	})
 	describe('is()', () => {
 		it('Should return false for null', () => {
+			// eslint-disable-next-line no-restricted-syntax
 			assert.strictEqual(Range.is(null), false)
 		})
 		it('Should return false for undefined', () => {
@@ -173,6 +174,7 @@ describe('Range', () => {
 describe('RangeContainer', () => {
 	describe('is()', () => {
 		it('Should return false for null', () => {
+			// eslint-disable-next-line no-restricted-syntax
 			assert.strictEqual(RangeContainer.is(null), false)
 		})
 		it('Should return false for undefined', () => {

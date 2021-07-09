@@ -122,7 +122,7 @@ export const TestNode: MainNode = {
 								end: 43,
 							},
 							typeType: 'byte',
-							valueRange: null,
+							valueRange: undefined,
 						},
 					],
 					doc: {
@@ -149,7 +149,7 @@ export const TestNode: MainNode = {
 							end: 43,
 						},
 						typeType: 'byte',
-						valueRange: null,
+						valueRange: undefined,
 					},
 				},
 				{
@@ -298,7 +298,7 @@ export const TestNode: MainNode = {
 				},
 				value: 'Foo',
 			},
-			extends: null,
+			extends: undefined,
 			fields: [
 				{
 					type: 'nbtdoc:compound_definition/field',
@@ -339,7 +339,7 @@ export const TestNode: MainNode = {
 								end: 43,
 							},
 							typeType: 'byte',
-							valueRange: null,
+							valueRange: undefined,
 						},
 					],
 					doc: {
@@ -366,7 +366,7 @@ export const TestNode: MainNode = {
 							end: 43,
 						},
 						typeType: 'byte',
-						valueRange: null,
+						valueRange: undefined,
 					},
 				},
 				{
@@ -1315,7 +1315,7 @@ export const TestNode: MainNode = {
 					'block',
 				],
 			},
-			objects: null,
+			objects: undefined,
 		},
 		{
 			type: 'nbtdoc:inject_clause',

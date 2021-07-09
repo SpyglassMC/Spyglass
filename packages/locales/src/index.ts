@@ -21,10 +21,7 @@ type Parameter = string | number | boolean | bigint | RegExp | Date | Iterable<s
 export function localize(key: string, ...params: Parameter[]): string {
 	const value: string | undefined = Locales[language][key] ?? Locales.en[key]
 
-	return _resolveLocalePlaceholders(value, params) ?? '' /* (
-		console.error(new Error(`Unknown locale key “${key}”`)),
-		''
-	) */
+	return _resolveLocalePlaceholders(value, params) ?? ''
 }
 
 export function localeQuote(content: string) {

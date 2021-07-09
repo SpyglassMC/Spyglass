@@ -1,4 +1,4 @@
-import { MetaRegistry } from '@spyglassmc/core'
+import type * as core from '@spyglassmc/core'
 import * as binder from './binder'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
@@ -10,19 +10,17 @@ export * from './node'
 export * from './parser'
 
 /* istanbul ignore next */
-export function initializeNbtdoc() {
-	MetaRegistry.addInitializer((registry) => {
-		registry.registerLanguage('nbtdoc', {
-			extensions: ['.nbtdoc'],
-			parser: parser.entry,
-		})
-
-		registry.registerChecker<MainNode>('nbtdoc:main', checker.entry)
-
-		registry.registerColorizer<CompoundFieldTypeNode>('nbtdoc:compound_definition/field/type', colorizer.compoundFieldType)
-		registry.registerColorizer<IdentifierToken>('nbtdoc:identifier', colorizer.identifier)
-		registry.registerColorizer<LiteralToken>('nbtdoc:literal', colorizer.literal)
-
-		registry.registerUriBinder(binder.uriBinder)
+export const initialize: core.ProjectInitializer = ({ meta }) => {
+	meta.registerLanguage('nbtdoc', {
+		extensions: ['.nbtdoc'],
+		parser: parser.entry,
 	})
+
+	meta.registerChecker<MainNode>('nbtdoc:main', checker.entry)
+
+	meta.registerColorizer<CompoundFieldTypeNode>('nbtdoc:compound_definition/field/type', colorizer.compoundFieldType)
+	meta.registerColorizer<IdentifierToken>('nbtdoc:identifier', colorizer.identifier)
+	meta.registerColorizer<LiteralToken>('nbtdoc:literal', colorizer.literal)
+
+	meta.registerUriBinder(binder.uriBinder)
 }

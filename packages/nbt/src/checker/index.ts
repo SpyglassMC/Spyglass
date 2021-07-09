@@ -188,7 +188,7 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 }
 
 function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
-	const isInRange = (value: number, [min, max]: [number | null, number | null]) =>
+	const isInRange = (value: number, [min, max]: [number | undefined, number | undefined]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 
 	const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'enum' | 'union'>, NbtNode['type']> = {
@@ -314,7 +314,7 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 								ctx.ops.set(node, 'children', [result])
 							}
 						} catch (e) {
-							ctx.logger.error(`[nbt.checker.fieldValue#string] ${e?.toString()}`)
+							ctx.logger.error('[nbt.checker.fieldValue#string]', e)
 						}
 					}
 				}

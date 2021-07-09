@@ -97,7 +97,7 @@
   "nbtdoc.checker.duplicated-identifier": "Duplicated identifier %0%",
   "nbtdoc.checker.duplicated-identifier.related": "Identifier %0% is declared here",
   "nbtdoc.checker.entry.empty-mod-seg": "You cannot put “mod.nbtdoc” under a root directly",
-  "nbtdoc.checker.entry.null-mod-seg": "The current file is not under any roots and won't be checked semantically",
+  "nbtdoc.checker.entry.undefined-mod-seg": "The current file is not under any roots and won't be checked semantically",
   "nbtdoc.checker.ident-path.super-from-root": "This “super” it is out of the project's root",
   "nbtdoc.checker.ident-path.unknown-identifier": "Identifier %0% does not exist in module %1%",
   "nbtdoc.checker.ident-path.unknown-module": "Module %0% does not exist",

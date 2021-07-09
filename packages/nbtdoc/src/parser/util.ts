@@ -25,8 +25,8 @@ export function syntaxGap(
 	}
 }
 
-type SP<CN extends AstNode> = Parser<CN | SyntaxUtil<CN> | null> | { get: (result: SyntaxUtil<CN>) => Parser<CN | SyntaxUtil<CN> | null> }
-type SIP<CN extends AstNode> = InfallibleParser<CN | SyntaxUtil<CN> | null> | { get: (result: SyntaxUtil<CN>) => InfallibleParser<CN | SyntaxUtil<CN> | null> }
+type SP<CN extends AstNode> = Parser<CN | SyntaxUtil<CN> | undefined> | { get: (result: SyntaxUtil<CN>) => Parser<CN | SyntaxUtil<CN> | undefined> }
+type SIP<CN extends AstNode> = InfallibleParser<CN | SyntaxUtil<CN> | undefined> | { get: (result: SyntaxUtil<CN>) => InfallibleParser<CN | SyntaxUtil<CN> | undefined> }
 /**
  * @template CN Child node.
  * 

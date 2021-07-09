@@ -170,7 +170,7 @@ export interface MinecraftEntitySummonArgumentNode extends ChildBaseNode, core.R
 export interface MinecraftFloatRangeArgumentNode extends ChildBaseNode {
 	type: 'mcfunction:argument/minecraft:float_range',
 	children: (core.FloatNode | core.LiteralNode)[],
-	value: [number | null, number | null],
+	value: [number | undefined, number | undefined],
 }
 export interface MinecraftFunctionArgumentNode extends ChildBaseNode, core.ResourceLocationBaseNode {
 	type: 'mcfunction:argument/minecraft:function',
@@ -181,7 +181,7 @@ export interface MinecraftGameProfileArgumentNode extends EntityBaseNode {
 export interface MinecraftIntRangeArgumentNode extends ChildBaseNode {
 	type: 'mcfunction:argument/minecraft:int_range',
 	children: (core.IntegerNode | core.LiteralNode)[],
-	value: [number | null, number | null],
+	value: [number | undefined, number | undefined],
 }
 export interface MinecraftItemEnchantmentArgumentNode extends ChildBaseNode, core.ResourceLocationBaseNode {
 	type: 'mcfunction:argument/minecraft:item_enchantment',

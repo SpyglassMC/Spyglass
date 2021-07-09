@@ -7,7 +7,7 @@ export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
 	doc: DocCommentsNode,
 	identifier: IdentifierToken,
-	extends: CompoundExtendable | null,
+	extends: CompoundExtendable | undefined,
 	fields: CompoundFieldNode[],
 }
 export namespace CompoundDefinitionNode {
@@ -139,38 +139,38 @@ export type CompoundFieldTypeNode = AstNode & {
 	typeType: 'string',
 } | {
 	typeType: 'byte_array',
-	valueRange: IntRangeNode | null,
-	lengthRange: UnsignedRangeNode | null,
+	valueRange: IntRangeNode | undefined,
+	lengthRange: UnsignedRangeNode | undefined,
 } | {
 	typeType: 'int_array',
-	valueRange: IntRangeNode | null,
-	lengthRange: UnsignedRangeNode | null,
+	valueRange: IntRangeNode | undefined,
+	lengthRange: UnsignedRangeNode | undefined,
 } | {
 	typeType: 'long_array',
-	valueRange: IntRangeNode | null,
-	lengthRange: UnsignedRangeNode | null,
+	valueRange: IntRangeNode | undefined,
+	lengthRange: UnsignedRangeNode | undefined,
 } | {
 	typeType: 'byte',
-	valueRange: IntRangeNode | null,
+	valueRange: IntRangeNode | undefined,
 } | {
 	typeType: 'short',
-	valueRange: IntRangeNode | null,
+	valueRange: IntRangeNode | undefined,
 } | {
 	typeType: 'int',
-	valueRange: IntRangeNode | null,
+	valueRange: IntRangeNode | undefined,
 } | {
 	typeType: 'long',
-	valueRange: IntRangeNode | null,
+	valueRange: IntRangeNode | undefined,
 } | {
 	typeType: 'float',
-	valueRange: FloatRangeNode | null,
+	valueRange: FloatRangeNode | undefined,
 } | {
 	typeType: 'double',
-	valueRange: FloatRangeNode | null,
+	valueRange: FloatRangeNode | undefined,
 } | {
 	typeType: 'list',
 	item: CompoundFieldTypeNode,
-	lengthRange: UnsignedRangeNode | null,
+	lengthRange: UnsignedRangeNode | undefined,
 } | {
 	typeType: 'index',
 	index: RegistryIndexNode,
@@ -309,7 +309,7 @@ export namespace CompoundFieldTypeNode {
 
 export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:int_range',
-	value: [number | null, number | null],
+	value: [number | undefined, number | undefined],
 }
 export namespace IntRangeNode {
 	export function is(obj: object): obj is IntRangeNode {
@@ -317,7 +317,7 @@ export namespace IntRangeNode {
 	}
 
 	export interface SymbolData {
-		value: [number | null, number | null],
+		value: [number | undefined, number | undefined],
 	}
 
 	export function toSymbolData(node: IntRangeNode): SymbolData {
@@ -327,7 +327,7 @@ export namespace IntRangeNode {
 
 export interface UnsignedRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
 	type: 'nbtdoc:unsigned_range',
-	value: [number | null, number | null],
+	value: [number | undefined, number | undefined],
 }
 export namespace UnsignedRangeNode {
 	export function is(obj: object): obj is UnsignedRangeNode {
@@ -335,7 +335,7 @@ export namespace UnsignedRangeNode {
 	}
 
 	export interface SymbolData {
-		value: [number | null, number | null],
+		value: [number | undefined, number | undefined],
 	}
 
 	export function toSymbolData(node: UnsignedRangeNode): SymbolData {
@@ -345,7 +345,7 @@ export namespace UnsignedRangeNode {
 
 export interface FloatRangeNode extends SyntaxNode<LiteralToken | FloatNode> {
 	type: 'nbtdoc:float_range',
-	value: [number | null, number | null],
+	value: [number | undefined, number | undefined],
 }
 export namespace FloatRangeNode {
 	export function is(obj: object): obj is FloatRangeNode {
@@ -353,7 +353,7 @@ export namespace FloatRangeNode {
 	}
 
 	export interface SymbolData {
-		value: [number | null, number | null],
+		value: [number | undefined, number | undefined],
 	}
 
 	export function toSymbolData(node: FloatRangeNode): SymbolData {

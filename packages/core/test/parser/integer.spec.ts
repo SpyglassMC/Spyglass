@@ -8,9 +8,7 @@ describe('integer()', () => {
 	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/
 
 	describe('integer()', () => {
-		const options: Options[] = [
-			{ pattern },
-		]
+		const option: Options = { pattern }
 		const cases: { content: string }[] = [
 			{ content: '' },
 			{ content: 'foo' },
@@ -21,14 +19,10 @@ describe('integer()', () => {
 			{ content: '-123' },
 			{ content: '0123' },
 		]
-		for (const option of options) {
-			describe('integer()', () => {
-				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-						const parser = integer(option as any)
-						snapshot(testParser(parser, content))
-					})
-				}
+		for (const { content } of cases) {
+			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				const parser = integer(option)
+				snapshot(testParser(parser, content))
 			})
 		}
 	})

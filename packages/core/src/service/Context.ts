@@ -3,30 +3,29 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Range } from '../source'
 import { ReadonlySource } from '../source'
-import { SymbolUtil } from '../symbol'
+import type { SymbolUtil } from '../symbol'
 import type { Config } from './Config'
-import { VanillaConfig } from './Config'
 import { ErrorReporter } from './ErrorReporter'
-import { FileService } from './FileService'
-import { Logger } from './Logger'
-import { MetaRegistry } from './MetaRegistry'
+import type { FileService } from './FileService'
+import type { RootUriString } from './fileUtil'
+import type { Logger } from './Logger'
+import type { MetaRegistry } from './MetaRegistry'
 import { Operations } from './Operations'
-import type { Service } from './Service'
+import type { ProjectLike } from './Project'
 
 export interface ContextBase {
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
-	roots: readonly string[],
+	roots: readonly RootUriString[],
 }
-interface ContextBaseLike extends Partial<ContextBase> { }
 export namespace ContextBase {
-	export function create(ctx: ContextBaseLike): ContextBase {
+	export function create(project: ProjectLike): ContextBase {
 		return {
-			fs: ctx.fs ?? FileService.create(),
-			logger: ctx.logger ?? Logger.create(),
-			meta: ctx.meta ?? MetaRegistry.instance,
-			roots: ctx.roots ?? [],
+			fs: project.fs,
+			logger: project.logger,
+			meta: project.meta,
+			roots: project.allRoots,
 		}
 	}
 }
@@ -37,20 +36,18 @@ export interface ParserContext extends ContextBase {
 	err: ErrorReporter,
 	symbols: SymbolUtil,
 }
-interface ParserContextLike extends ContextBaseLike {
-	config?: Config,
+interface ParserContextOptions {
 	doc: TextDocument,
 	err?: ErrorReporter,
-	symbols?: SymbolUtil,
 }
 export namespace ParserContext {
-	export function create(ctx: ParserContextLike): ParserContext {
+	export function create(project: ProjectLike, opts: ParserContextOptions): ParserContext {
 		return {
-			...ContextBase.create(ctx),
-			config: ctx.config ?? VanillaConfig,
-			doc: ctx.doc,
-			err: ctx.err ?? new ErrorReporter(),
-			symbols: ctx.symbols ?? new SymbolUtil({}),
+			...ContextBase.create(project),
+			config: project.config,
+			doc: opts.doc,
+			err: opts.err ?? new ErrorReporter(),
+			symbols: project.symbols,
 		}
 	}
 }
@@ -61,20 +58,18 @@ export interface ProcessorContext extends ContextBase {
 	src: ReadonlySource,
 	symbols: SymbolUtil,
 }
-interface ProcessorContextLike extends ContextBaseLike {
-	config?: Config,
+interface ProcessorContextOptions {
 	doc: TextDocument,
 	src?: ReadonlySource,
-	symbols?: SymbolUtil,
 }
 export namespace ProcessorContext {
-	export function create(ctx: ProcessorContextLike): ProcessorContext {
+	export function create(project: ProjectLike, opts: ProcessorContextOptions): ProcessorContext {
 		return {
-			...ContextBase.create(ctx),
-			config: ctx.config ?? VanillaConfig,
-			doc: ctx.doc,
-			src: ctx.src ?? new ReadonlySource(ctx.doc.getText()),
-			symbols: ctx.symbols ?? new SymbolUtil({}),
+			...ContextBase.create(project),
+			config: project.config,
+			doc: opts.doc,
+			src: opts.src ?? new ReadonlySource(opts.doc.getText()),
+			symbols: project.symbols,
 		}
 	}
 }
@@ -82,38 +77,46 @@ export namespace ProcessorContext {
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
 	ops: Operations,
-	service: Service,
+	ensureChecked: (this: void, uri: string) => Promise<void>,
 }
-interface CheckerContextLike extends ProcessorContextLike {
+interface CheckerContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
 	ops?: Operations,
-	service: Service,
 }
 export namespace CheckerContext {
-	export function create(ctx: CheckerContextLike): CheckerContext {
+	export function create(project: ProjectLike, opts: CheckerContextOptions): CheckerContext {
 		return {
-			...ProcessorContext.create(ctx),
-			err: ctx.err ?? new ErrorReporter(),
-			ops: ctx.ops ?? new Operations(),
-			service: ctx.service,
+			...ProcessorContext.create(project, opts),
+			err: opts.err ?? new ErrorReporter(),
+			ops: opts.ops ?? new Operations(),
+			ensureChecked: (project.ensureChecked) && (project.ensureParsed)
+				? async uri => {
+					try {
+						const result = await project.ensureParsed(uri)
+						if (result) {
+							const { doc, node } = result
+							await project.ensureChecked(doc, node)
+						}
+					} catch {
+						// Ignored.
+					}
+				}
+				: undefined!,
 		}
 	}
 }
 
-export interface ColorizerOptions {
+export interface ColorizerContext extends ProcessorContext {
 	range?: Range,
 }
-export interface ColorizerContext extends ProcessorContext {
-	options: ColorizerOptions,
-}
-interface ColorizerContextLike extends ProcessorContextLike {
-	options: ColorizerOptions,
+export interface ColorizerContextOptions extends ProcessorContextOptions {
+	range?: Range,
 }
 export namespace ColorizerContext {
-	export function create(ctx: ColorizerContextLike): ColorizerContext {
+	export function create(project: ProjectLike, opts: ColorizerContextOptions): ColorizerContext {
 		return {
-			...ProcessorContext.create(ctx),
-			options: ctx.options,
+			...ProcessorContext.create(project, opts),
+			range: opts.range,
 		}
 	}
 }
@@ -122,16 +125,16 @@ export interface CompleterContext extends ProcessorContext {
 	offset: number,
 	triggerCharacter?: string,
 }
-interface CompleterContextLike extends ProcessorContextLike {
+interface CompleterContextOptions extends ProcessorContextOptions {
 	offset: number,
 	triggerCharacter?: string,
 }
 export namespace CompleterContext {
-	export function create(ctx: CompleterContextLike): CompleterContext {
+	export function create(project: ProjectLike, opts: CompleterContextOptions): CompleterContext {
 		return {
-			...ProcessorContext.create(ctx),
-			offset: ctx.offset,
-			triggerCharacter: ctx.triggerCharacter,
+			...ProcessorContext.create(project, opts),
+			offset: opts.offset,
+			triggerCharacter: opts.triggerCharacter,
 		}
 	}
 }
@@ -139,14 +142,11 @@ export namespace CompleterContext {
 export interface UriBinderContext extends ContextBase {
 	symbols: SymbolUtil,
 }
-interface UriBinderContextLike extends ContextBaseLike {
-	symbols?: SymbolUtil,
-}
 export namespace UriBinderContext {
-	export function create(ctx: UriBinderContextLike): UriBinderContext {
+	export function create(project: ProjectLike): UriBinderContext {
 		return {
-			...ContextBase.create(ctx),
-			symbols: ctx.symbols ?? new SymbolUtil({}),
+			...ContextBase.create(project),
+			symbols: project.symbols,
 		}
 	}
 }

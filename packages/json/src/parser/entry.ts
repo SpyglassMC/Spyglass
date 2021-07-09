@@ -7,7 +7,7 @@ import { number } from './number'
 import { object } from './object'
 import { string } from './string'
 
-export const entry: core.EntryParser<JsonNode> = (src, ctx) => {
+export const entry: core.Parser<JsonNode> = (src, ctx) => {
 	const result = core.any([
 		string,
 		number,

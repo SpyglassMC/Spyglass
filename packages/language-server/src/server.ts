@@ -2,24 +2,19 @@ import * as core from '@spyglassmc/core'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
-import * as chokidar from 'chokidar'
-import * as ls from 'vscode-languageserver/node'
 import * as util from 'util'
+import * as ls from 'vscode-languageserver/node'
 import { toCore, toLS } from './util'
 
 if (process.argv.length === 2) {
 	// When the server is launched from the cmd script, the process arguments
 	// are wiped. I don't know why it happens, but this is what it is.
 	// Therefore, we push a '--stdio' if the argument list is too short.
-	// See also my bug report at https://github.com/npm/cli/issues/1633.
 	process.argv.push('--stdio')
 }
 
-nbtdoc.initializeNbtdoc()
-
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
-let rootsWatcher: chokidar.FSWatcher
 let workspaceFolders!: ls.WorkspaceFolder[]
 
 const logger: core.Logger = {
@@ -28,17 +23,12 @@ const logger: core.Logger = {
 	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
 	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
 }
-const meta = core.MetaRegistry.instance
 let service!: core.Service
-
-const formatError = (e: any): string => e && typeof e === 'object' ? e.toString() : JSON.stringify(e)
 
 connection.onInitialize(async params => {
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
 	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`)
 	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(params.initializationOptions)}`)
-
-	await locales.loadLocale(params.locale)
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
@@ -47,32 +37,31 @@ connection.onInitialize(async params => {
 	await new Promise(resolve => setTimeout(resolve, 7000))
 
 	try {
-		service = new core.Service({
-			errorPublisher: toCore.errorPublisher(connection),
-			isDebugging: false,
-			logger,
-			roots: workspaceFolders.map(w => w.uri),
-			rootsWatched: true,
-		})
-
-		await je.initialize(service)
+		await locales.loadLocale(params.locale)
 	} catch (e) {
-		logger.error(`[je.initialize] ${formatError(e)}`)
+		logger.error('[loadLocale]', e)
 	}
 
 	try {
-		initializeRootWatcher()
+		service = new core.Service({
+			initializers: [
+				nbtdoc.initialize,
+				je.initialize,
+			],
+			isDebugging: false,
+			logger,
+			projectPath: core.fileUtil.fileUriToPath(workspaceFolders[0].uri),
+		})
+		await service.project.ready()
 	} catch (e) {
-		logger.error(`[initializeRootWatcher] ${formatError(e)}`)
+		logger.error('[new Service]', e)
 	}
 
 	const ans: ls.InitializeResult = {
 		capabilities: {
-			colorProvider: {
-				documentSelector: null,
-			},
+			colorProvider: {},
 			completionProvider: {
-				triggerCharacters: meta.triggerCharacters,
+				triggerCharacters: service.project.meta.getTriggerCharacters(),
 			},
 			declarationProvider: {},
 			definitionProvider: {},
@@ -85,7 +74,7 @@ connection.onInitialize(async params => {
 			},
 			hoverProvider: {},
 			semanticTokensProvider: {
-				documentSelector: toLS.documentSelector(),
+				documentSelector: toLS.documentSelector(service.project.meta),
 				legend: toLS.semanticTokensLegend(),
 				full: { delta: false },
 				range: true,
@@ -110,111 +99,82 @@ connection.onInitialize(async params => {
 	return ans
 })
 
-function initializeRootWatcher() {
-	rootsWatcher = chokidar
-		.watch(
-			service.rootPaths,
-			{
-				ignored: '**/.git/**',
-				ignoreInitial: false,
-			}
-		)
-		.once('ready', () => service.isFileListEstablished = true)
-		.on('add', path => {
-			service.onWatchedFileCreated(core.fileUtil.pathToFileUri(path))
-		})
-		.on('change', path => {
-			service.onWatchedFileModified(core.fileUtil.pathToFileUri(path))
-		})
-		.on('unlink', path => {
-			service.onWatchedFileDeleted(core.fileUtil.pathToFileUri(path))
-		})
-		.on('error', error => {
-			logger.error(`[rootsWatcher] ${error.toString()}`)
-		})
-}
-
 connection.onInitialized(async () => {
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
-			service.rawRoots = (await connection.workspace.getWorkspaceFolders() ?? []).map(r => r.uri)
+			// FIXME
+			// service.rawRoots = (await connection.workspace.getWorkspaceFolders() ?? []).map(r => r.uri)
 		})
 	}
 })
 
 connection.onDidOpenTextDocument(async ({ textDocument: { text, uri, version, languageId: languageID } }) => {
-	service.onDidOpen(uri, languageID, version, text)
-
-	const { doc, node } = service.get(uri)!
-	await service.check(node, doc)
+	service.project.onDidOpen(uri, languageID, version, text)
 })
 connection.onDidChangeTextDocument(async ({ contentChanges, textDocument: { uri, version } }) => {
-	service.onDidChange(uri, contentChanges, version)
-
-	const { doc, node } = service.get(uri)!
-	await service.check(node, doc)
+	service.project.onDidChange(uri, contentChanges, version)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
-	service.onDidClose(uri)
+	service.project.onDidClose(uri)
 })
 
 connection.workspace.onDidRenameFiles(({ }) => {
 })
 
 connection.onColorPresentation(({ textDocument: { uri }, color, range }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const presentation = service.getColorPresentation(node, doc, toCore.range(range, doc), toCore.color(color))
 	return toLS.colorPresentationArray(presentation, doc)
 })
 connection.onDocumentColor(({ textDocument: { uri } }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const info = service.getColorInfo(node, doc)
 	return toLS.colorInformationArray(info, doc)
 })
 
 connection.onCompletion(({ textDocument: { uri }, position, context }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const offset = toCore.offset(position, doc)
 	const items = service.complete(node, doc, offset, context?.triggerCharacter)
 	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
 })
 
 connection.onDeclaration(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
 })
 connection.onDefinition(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
 connection.onImplementation(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
 })
 connection.onReferences(({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
 	return toLS.locationLink(ans, doc, false)
 })
 connection.onTypeDefinition(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
 })
 
 connection.onDocumentHighlight(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
 	return toLS.documentHighlight(ans)
 })
 
 connection.onDocumentSymbol(({ textDocument: { uri } }) => {
-	const { doc } = service.get(uri)!
+	const { doc } = service.project.get(uri)!
 	return toLS.documentSymbolsFromTables(
-		[service.symbols.global, ...service.symbols.getStack(doc.uri)],
+		[service.project.symbols.global, ...service.project.symbols.getStack(doc.uri)],
 		doc,
 		capabilities.textDocument?.documentSymbol?.hierarchicalDocumentSymbolSupport,
 		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
@@ -222,27 +182,25 @@ connection.onDocumentSymbol(({ textDocument: { uri } }) => {
 })
 
 connection.onHover(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const ans = service.getHover(node, doc, toCore.offset(position, doc))
-	return ans ? toLS.hover(ans, doc) : null
+	return ans ? toLS.hover(ans, doc) : undefined
 })
 
 connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
-	const { doc, node } = service.get(uri)!
+	const { doc, node } = service.project.get(uri)!
 	const tokens = service.colorize(node, doc)
 	return toLS.semanticTokens(tokens, doc)
 })
 connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) => {
-	const { doc, node } = service.get(uri)!
-	const tokens = service.colorize(node, doc, {
-		range: toCore.range(range, doc),
-	})
+	const { doc, node } = service.project.get(uri)!
+	const tokens = service.colorize(node, doc, toCore.range(range, doc),)
 	return toLS.semanticTokens(tokens, doc)
 })
 
 connection.onWorkspaceSymbol(({ query }) => {
 	return toLS.symbolInformationArrayFromTable(
-		service.symbols.global, query,
+		service.project.symbols.global, query,
 		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
 	)
 })

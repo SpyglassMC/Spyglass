@@ -29,8 +29,8 @@ describe('IndexMap', () => {
 			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
 		],
 	})
-	const toInnerCases: { input: number, expected: number | null }[] = [
-		{ input: 12, expected: null },
+	const toInnerCases: { input: number, expected: number | undefined }[] = [
+		{ input: 12, expected: undefined },
 		{ input: 13, expected: 0 },
 		{ input: 14, expected: 1 },
 		{ input: 15, expected: 2 },
@@ -49,9 +49,9 @@ describe('IndexMap', () => {
 		{ input: 28, expected: 9 },
 		{ input: 29, expected: 10 },
 		{ input: 30, expected: 11 },
-		{ input: 31, expected: null },
+		{ input: 31, expected: undefined },
 	]
-	const toOuterCases: { input: number, expected: number | null }[] = [
+	const toOuterCases: { input: number, expected: number | undefined }[] = [
 		{ input: 0, expected: 13 },
 		{ input: 1, expected: 14 },
 		{ input: 2, expected: 15 },
@@ -64,12 +64,12 @@ describe('IndexMap', () => {
 		{ input: 9, expected: 28 },
 		{ input: 10, expected: 29 },
 		{ input: 11, expected: 30 },
-		{ input: 12, expected: null },
+		{ input: 12, expected: undefined },
 	]
 	for (const method of ['toInnerOffset', 'toOuterOffset'] as const) {
 		describe(`${method}()`, () => {
 			for (const { input, expected } of (method === 'toInnerOffset' ? toInnerCases : toOuterCases)) {
-				if (expected !== null) {
+				if (expected !== undefined) {
 					it(`Should return ${expected} for ${input}`, () => {
 						const actual = IndexMap[method](map, input)
 						assert.strictEqual(actual, expected)

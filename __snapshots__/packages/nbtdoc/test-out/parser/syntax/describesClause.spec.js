@@ -222,8 +222,7 @@ exports['describesClause() Parse "Foo describes minecraft:item" 1'] = {
       "path": [
         "item"
       ]
-    },
-    "objects": null
+    }
   },
   "errors": [
     {
@@ -319,8 +318,7 @@ exports['describesClause() Parse "Foo describes minecraft:item; something else;"
       "path": [
         "item"
       ]
-    },
-    "objects": null
+    }
   },
   "errors": []
 }
@@ -407,8 +405,7 @@ exports['describesClause() Parse "Foo describes minecraft:item;" 1'] = {
       "path": [
         "item"
       ]
-    },
-    "objects": null
+    }
   },
   "errors": []
 }

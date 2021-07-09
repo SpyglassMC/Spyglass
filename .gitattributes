@@ -2,3 +2,4 @@
 /__snapshots__/** linguist-generated=true
 /contributors/* linguist-generated=true
 /README.md linguist-generated=true
+/**/*.generated.* linguist-generated=true

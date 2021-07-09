@@ -5,14 +5,14 @@ import { CommandArgumentTestSuites } from './_suites'
 // Generates test files for each command argument parser with test suites from `./suites.ts`.
 // It is super laggy to have a giant 80k-line snapshot file, hence why we separated the tests to multiple files.
 
-const ShouldGenerate = false // Prevent from mis-triggering.
+const ShouldGenerate = true // Prevent from mis-triggering.
 
 const ProduceExtraChildren = [
-	'minecraft:block_predicate', 
-	'minecraft:block_state', 
-	'minecraft:entity', 
-	'minecraft:item_predicate', 
-	'minecraft:item_stack', 
+	'minecraft:block_predicate',
+	'minecraft:block_state',
+	'minecraft:entity',
+	'minecraft:item_predicate',
+	'minecraft:item_stack',
 	'minecraft:score_holder',
 ]
 
@@ -21,9 +21,9 @@ function template(parser: string): string {
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { CommandArgumentTestSuites } from './_suites'
 import { argument } from '../../../../lib/mcfunction/parser'
 import type { ArgumentTreeNode } from '../../../../lib/mcfunction/tree'
+import { CommandArgumentTestSuites, meta } from './_suites'
 
 describe('mcfunction argument ${parser}', () => {
 	for (const { content, properties } of CommandArgumentTestSuites['${parser}']!) {
@@ -34,7 +34,7 @@ describe('mcfunction argument ${parser}', () => {
 		}
 		for (const string of content) {
 			it(\`Parse "\${showWhitespaceGlyph(string)}"\${properties ? \` with \${JSON.stringify(properties)}\` : ''}\`, () => {
-				snapshot(testParser(argument('test', treeNode)!, string${ProduceExtraChildren.includes(parser) ? ', { removeTopLevelChildren: true }' : ''}))
+				snapshot(testParser(argument('test', treeNode)!, string, { project: { meta }${ProduceExtraChildren.includes(parser) ? ', removeTopLevelChildren: true' : ''} }))
 			})
 		}
 	}

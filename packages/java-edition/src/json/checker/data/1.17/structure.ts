@@ -112,7 +112,7 @@ export const template_pool = as('template_pool', record({
 	name: simpleString,
 	fallback: resource('worldgen/template_pool'),
 	elements: listOf(record({
-		weight: intRange(1, null),
+		weight: intRange(1, undefined),
 		element: template_element,
 	})),
 }))

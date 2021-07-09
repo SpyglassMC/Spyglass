@@ -72,15 +72,14 @@ export namespace toLS {
 		}
 	}
 
-	export function documentHighlight(locations: core.SymbolLocations | null): ls.DocumentHighlight[] | null {
+	export function documentHighlight(locations: core.SymbolLocations | undefined): ls.DocumentHighlight[] | undefined {
 		return locations?.locations
 			?.filter(loc => loc.posRange)
 			?.map(loc => ({ range: loc.posRange! }))
-			?? null
 	}
 
-	export function documentSelector(): ls.DocumentSelector {
-		const ans: ls.DocumentSelector = core.MetaRegistry.instance.languages.map(id => ({ language: id }))
+	export function documentSelector(meta: core.MetaRegistry): ls.DocumentSelector {
+		const ans: ls.DocumentSelector = meta.getLanguages().map(id => ({ language: id }))
 		return ans
 	}
 
@@ -156,9 +155,9 @@ export namespace toLS {
 		}
 	}
 
-	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: false): ls.Location[] | null
-	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null
-	export function locationLink(locations: core.SymbolLocations | null, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | null {
+	export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: false): ls.Location[] | undefined
+	export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | undefined
+	export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | undefined {
 		return locations?.locations
 			? linkSupport
 				? locations.locations.map(loc => ({
@@ -168,7 +167,7 @@ export namespace toLS {
 					targetSelectionRange: loc.posRange ?? ZeroRange,
 				}))
 				: (locations.locations).map(loc => location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange }))
-			: null
+			: undefined
 	}
 
 	export function position(offset: number, doc: TextDocument): ls.Position {

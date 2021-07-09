@@ -2,88 +2,88 @@ exports['vanilla-resource util addBlockSymbols() Should add correctly 1'] = `
 CATEGORY block
 + SYMBOL minecraft:stone {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Stone","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Stone","contributor":"default_library"}
 + ------------
 + SYMBOL minecraft:grass_block {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block","contributor":"default_library"}
 + + members:
 + + + SYMBOL minecraft:grass_block.snowy {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:grass_block","snowy","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:grass_block.snowy.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:grass_block.snowy.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","fromDefaultLibrary":true}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library"}
 `
 
 exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] = `
 CATEGORY attribute
 + SYMBOL minecraft:generic.max_health {attribute} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes","contributor":"default_library"}
 ------------
 CATEGORY activity
 + SYMBOL minecraft:core {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library"}
 + ------------
 + SYMBOL minecraft:idle {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library"}
 + ------------
 + SYMBOL minecraft:work {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","fromDefaultLibrary":true}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library"}
 ------------
 CATEGORY block_entity_type
 + SYMBOL minecraft:furnace {block_entity_type} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Furnace#Block_data","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Furnace#Block_data","contributor":"default_library"}
 ------------
 CATEGORY custom_stat
 + SYMBOL minecraft:leave_game {custom_stat} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names","contributor":"default_library"}
 ------------
 CATEGORY enchantment
 + SYMBOL minecraft:protection {enchantment} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Protection","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Protection","contributor":"default_library"}
 ------------
 CATEGORY entity_type
 + SYMBOL minecraft:area_effect_cloud {entity_type} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Area_Effect_Cloud","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Area_Effect_Cloud","contributor":"default_library"}
 ------------
 CATEGORY fluid
 + SYMBOL minecraft:empty {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Air","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"default_library"}
 + ------------
 + SYMBOL minecraft:lava {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Lava","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Lava","contributor":"default_library"}
 ------------
 CATEGORY item
 + SYMBOL minecraft:air {item} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Air","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"default_library"}
 ------------
 CATEGORY recipe_serializer
 + SYMBOL minecraft:crafting_shaped {recipe_serializer} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Recipe#crafting_shaped","fromDefaultLibrary":true}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Recipe#crafting_shaped","contributor":"default_library"}
 ------------
 CATEGORY sound_event
 + SYMBOL minecraft:ambient.cave {sound_event} [Public]
 + + declaration:
-+ + + {"uri":"https://misode.github.io/sounds/?sound=ambient.cave","fromDefaultLibrary":true}
++ + + {"uri":"https://misode.github.io/sounds/?sound=ambient.cave","contributor":"default_library"}
 `
 
 exports['vanilla-resource util getBlocksUrl() Should return the correct url for "1.14" (1) 1'] = `
@@ -125,6 +125,21 @@ https://raw.githubusercontent.com/Arcensoth/mcdata/21w03a/processed/reports/comm
 exports['vanilla-resource util getCommandsUrl() Should return the correct url for "21w13a" (29) 1'] = `
 https://raw.githubusercontent.com/Arcensoth/mcdata/master/processed/reports/commands/data.min.json
 `
+
+exports['vanilla-resource util getLatestReleases() Should return correctly 1'] = [
+  {
+    "major": "1.15",
+    "latest": "1.15.2"
+  },
+  {
+    "major": "1.16",
+    "latest": "1.16.5"
+  },
+  {
+    "major": "1.17",
+    "latest": "1.17"
+  }
+]
 
 exports['vanilla-resource util getRegistriesUrl() Should return the correct url for "1.14" (1) 1'] = `
 https://raw.githubusercontent.com/Arcensoth/mcdata/1.14/generated/reports/registries.json

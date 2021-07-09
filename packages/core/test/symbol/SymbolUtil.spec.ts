@@ -6,7 +6,7 @@ import { SymbolFormatter, SymbolUtil } from '../../lib'
 describe('SymbolUtil', () => {
 	const fileUri = 'spyglassmc://test_file'
 	const anotherFileUri = 'spyglassmc://another_test_file'
-	describe('uriBinding', () => {
+	describe('contributeAs', () => {
 		it('Should execute correctly', () => {
 			const symbols = new SymbolUtil({})
 			symbols
@@ -15,7 +15,7 @@ describe('SymbolUtil', () => {
 			symbols
 				.query(fileUri, 'test', 'BeforeBinding2')
 				.enter({ data: { desc: 'Entered before URI binding w/ references.' }, usage: {} })
-			symbols.uriBinding(console, () => {
+			symbols.contributeAs('checker', () => {
 				symbols
 					.query(fileUri, 'test', 'Bound')
 					.enter({ data: { desc: 'This symbol is URI bound.' }, usage: {} })
@@ -83,7 +83,7 @@ describe('SymbolUtil', () => {
 				})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 
-			symbols.clear(fileUri)
+			symbols.clear({ uri: fileUri })
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})

@@ -28,11 +28,11 @@ export function attempt<N extends Returnable = AstNode>(parser: InfallibleParser
 export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N>
 export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: Source, ctx: ParserContext): AttemptResult<N> {
 	const tmpSrc = src.clone()
-	const tmpCtx = ParserContext.create({
+	const tmpCtx = {
 		...ctx,
 		err: new ErrorReporter(),
 		symbols: ctx.symbols.clone(),
-	})
+	}
 
 	const result = parser(tmpSrc, tmpCtx)
 
@@ -48,8 +48,8 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 	}
 }
 
-type SP<CN extends AstNode> = Parser<CN | SequenceUtil<CN> | null> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | null> }
-type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | null> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | null> }
+type SP<CN extends AstNode> = Parser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | undefined> }
+type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | undefined> }
 /**
  * @template CN Child node.
  * 
@@ -97,7 +97,7 @@ export function sequence<CN extends AstNode>(parsers: SP<CN>[], parseGap?: Infal
 			const result = (typeof parser === 'function' ? parser : parser.get(ans))(src, ctx)
 			if (result === Failure) {
 				return Failure
-			} else if (result === null) {
+			} else if (result === undefined) {
 				continue
 			} else if (SequenceUtil.is(result)) {
 				ans.children.push(...result.children)
@@ -217,16 +217,16 @@ export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> 
  * @returns A parser that takes an optional syntax component.
  */
 export function optional<N extends Returnable>(parser: InfallibleParser<N>): void
-export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | null>
-export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | null> {
-	// return any<N | null>([
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined>
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined> {
+	// return any<N | undefined>([
 	// 	parser,
 	// 	empty,
 	// ])
-	return (src: Source, ctx: ParserContext): N | null => {
+	return (src: Source, ctx: ParserContext): N | undefined => {
 		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
 		if (result === Failure) {
-			return null
+			return undefined
 		} else {
 			updateSrcAndCtx()
 			return result

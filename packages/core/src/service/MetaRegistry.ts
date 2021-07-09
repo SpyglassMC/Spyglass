@@ -1,33 +1,41 @@
 import type { AstNode } from '../node'
-import type { EntryParser, NullableNode, Parser } from '../parser'
+import type { Parser } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
 import { checker, colorizer, completer } from '../processor'
 import type { UriBinder } from '../symbol'
+import type { DependencyKey, DependencyProvider } from './Dependency'
+import type { FileExtension } from './fileUtil'
 
 export interface LanguageOptions {
 	/**
 	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
 	 */
-	extensions: string[],
+	extensions: FileExtension[],
 	triggerCharacters?: string[],
-	parser: EntryParser<any>,
+	parser: Parser<AstNode>,
 }
 
 /* istanbul ignore next */
 /**
  * The meta registry of SPYGlass. You can register new parsers, processors, and languages here.
- * This is a singleton; use the `instance` static property to get an instance. 
  */
 export class MetaRegistry {
 	/**
 	 * A map from language IDs to language options.
 	 */
 	readonly #languages = new Map<string, LanguageOptions>()
-	readonly #uriBinders = new Set<UriBinder>()
 	readonly #checkers = new Map<string, Checker<any>>()
 	readonly #colorizers = new Map<string, Colorizer<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
+	readonly #dependencyProviders = new Map<DependencyKey, DependencyProvider>()
 	readonly #parsers = new Map<string, Parser<any>>()
+	readonly #uriBinders = new Set<UriBinder>()
+
+	constructor() {
+		checker.registerCheckers(this)
+		colorizer.registerColorizers(this)
+		completer.registerCompleters(this)
+	}
 
 	/**
 	 * Registers a new language.
@@ -41,21 +49,21 @@ export class MetaRegistry {
 	/**
 	 * An array of all registered language IDs.
 	 */
-	public get languages(): string[] {
+	public getLanguages(): string[] {
 		return Array.from(this.#languages.keys())
 	}
 
 	/**
 	 * An array of file extensions (including the leading dot (`.`)) that are supported.
 	 */
-	public get supportedFileExtensions(): string[] {
-		return Array.from(this.#languages.values()).flatMap(v => v.extensions)
+	public getSupportedFileExtensions(): FileExtension[] {
+		return [...this.#languages.values()].flatMap(v => v.extensions)
 	}
 
 	/**
 	 * An array of characters that trigger a completion request.
 	 */
-	public get triggerCharacters(): string[] {
+	public getTriggerCharacters(): string[] {
 		return Array.from(this.#languages.values()).flatMap(v => v.triggerCharacters ?? [])
 	}
 
@@ -63,7 +71,7 @@ export class MetaRegistry {
 	 * @param fileExtension The file extension including the leading dot. e.g. `".mcfunction"`.
 	 * @returns The language ID registered for the file extension, or `undefined`.
 	 */
-	public getLanguageID(fileExtension: string): string | undefined {
+	public getLanguageID(fileExtension: FileExtension): string | undefined {
 		for (const [languageID, { extensions }] of this.#languages) {
 			if (extensions.includes(fileExtension)) {
 				return languageID
@@ -106,6 +114,13 @@ export class MetaRegistry {
 		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
 	}
 
+	public getDependencyProvider(key: DependencyKey): DependencyProvider | undefined {
+		return this.#dependencyProviders.get(key)
+	}
+	public registerDependencyProvider(key: DependencyKey, provider: DependencyProvider): void {
+		this.#dependencyProviders.set(key, provider)
+	}
+
 	public hasParser<N extends AstNode>(type: N['type']): boolean {
 		return this.#parsers.has(type)
 	}
@@ -129,9 +144,9 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParserFromLanguageId<N extends NullableNode>(languageID: string): EntryParser<N> {
+	public getParserFromLanguageId<N extends AstNode>(languageID: string): Parser<N> {
 		if (this.#languages.has(languageID)) {
-			return this.#languages.get(languageID)!.parser as unknown as EntryParser<N>
+			return this.#languages.get(languageID)!.parser as Parser<N>
 		}
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}
@@ -142,40 +157,6 @@ export class MetaRegistry {
 	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
 	}
-
-	private static readonly initializers = new Set<(this: void, registry: MetaRegistry) => void>([
-		meta => {
-			checker.registerCheckers(meta)
-			colorizer.registerColorizers(meta)
-			completer.registerCompleters(meta)
-		},
-	])
-
-	public static addInitializer(initializer: (this: void, registry: MetaRegistry) => void): void {
-		if (this.initializers.has(initializer)) {
-			return
-		}
-		if (this._instance) {
-			initializer(this._instance)
-		}
-		this.initializers.add(initializer)
-	}
-
-	/**
-	 * An instance of `MetaRegistry`.
-	 */
-	public static get instance(): MetaRegistry {
-		return this._instance ?? (this._instance = new MetaRegistry())
-	}
-	private constructor() {
-		if (MetaRegistry._instance) {
-			throw new Error('Use the `instance` static property to get an instance.')
-		}
-		for (const initializer of MetaRegistry.initializers) {
-			initializer(this)
-		}
-	}
-	private static _instance: MetaRegistry
 }
 
 const LazyDiscriminator = Symbol('LazyDiscriminator')

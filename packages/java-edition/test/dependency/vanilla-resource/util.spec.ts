@@ -1,18 +1,23 @@
-import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
+import { Logger, SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import { strict as assert } from 'assert'
-import * as fs from 'fs-extra'
+import * as fse from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
 import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
 import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
-import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getRegistriesUrl, getVersionStatus, normalizeVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
+import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getLatestReleases, getRegistriesUrl, getVersionStatus, resolveVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
 
 const Fixtures = {
-	Blocks: fs.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaBlocks,
-	Registries: fs.readJsonSync(path.join(__dirname, 'fixture/registries.json')) as VanillaRegistries,
-	VersionManifest: fs.readJsonSync(path.join(__dirname, 'fixture/version_manifest.json')) as VersionManifest,
-	Versions: fs.readJsonSync(path.join(__dirname, 'fixture/versions.json')) as string[],
+	Blocks: fse.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaBlocks,
+	LatestReleases: [
+		{ major: '1.15', latest: '1.15.2' },
+		{ major: '1.16', latest: '1.16.2' },
+		{ major: '1.17', latest: '1.17.1' },
+	] as const,
+	Registries: fse.readJsonSync(path.join(__dirname, 'fixture/registries.json')) as VanillaRegistries,
+	VersionManifest: fse.readJsonSync(path.join(__dirname, 'fixture/version_manifest.json')) as VersionManifest,
+	Versions: fse.readJsonSync(path.join(__dirname, 'fixture/versions.json')) as string[],
 }
 
 const VersionStatuses: { version: string, status: number }[] = [
@@ -24,19 +29,27 @@ const VersionStatuses: { version: string, status: number }[] = [
 ]
 
 describe('vanilla-resource util', () => {
-	describe('normalizeVersion()', () => {
-		const suites: { version: string, expected: string }[] = [
-			{ version: 'Latest Release', expected: '1.16.5' },
-			{ version: 'Latest Snapshot', expected: '21w13a' },
-			{ version: 'foobar', expected: '1.16.5' },
-			{ version: '1.13', expected: '1.14' },
-			{ version: '21w03a', expected: '21w03a' },
+	describe('getLatestReleases()', () => {
+		it('Should return correctly', async () => {
+			const actual = getLatestReleases(Fixtures.VersionManifest)
+			snapshot(actual)
+		})
+	})
+
+	describe('resolveVersion()', () => {
+		const suites: { version: string, expectedMajor: string, expectedVersion: string }[] = [
+			{ version: 'Auto', expectedMajor: '1.17', expectedVersion: '1.17.1-auto-resolved-version' },
+			{ version: 'Latest Release', expectedMajor: '1.17', expectedVersion: '1.17' },
+			{ version: 'Latest Snapshot', expectedMajor: '1.17', expectedVersion: '1.17.1-rc2' },
+			{ version: 'unknown', expectedMajor: '1.17', expectedVersion: '1.17' },
+			{ version: '1.13', expectedMajor: '1.15', expectedVersion: '1.15.2' },
+			{ version: '20w06a', expectedMajor: '1.16', expectedVersion: '20w06a' },
 		]
-		for (const { version, expected } of suites) {
-			it(`Should normalize "${version}" to "${expected}"`, () => {
-				const actual = normalizeVersion(version, Fixtures.VersionManifest)
-				assert.strictEqual(actual.version, expected)
-				assert.deepStrictEqual(actual.versions, Fixtures.Versions)
+		for (const { version, expectedMajor, expectedVersion } of suites) {
+			it(`Should resolve "${version}" to "${expectedVersion}" / "${expectedMajor}"`, async () => {
+				const actual = await resolveVersion(version, Fixtures.VersionManifest, Fixtures.LatestReleases, async () => '1.17.1-auto-resolved-version', Logger.noop())
+				assert.strictEqual(actual.major, expectedMajor)
+				assert.strictEqual(actual.version, expectedVersion)
 			})
 		}
 	})
@@ -130,9 +143,10 @@ describe('vanilla-resource util', () => {
 	describe('addBlockSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols
+			symbols.contributeAs('default_library', () => symbols
 				.query('spyglassmc://vanilla-resource/blocks.json', 'block', 'oldExistingOne')
-				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
+				.enter({ usage: { type: 'declaration' } })
+			)
 
 			addBlocksSymbols(Fixtures.Blocks, symbols)
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
@@ -142,9 +156,10 @@ describe('vanilla-resource util', () => {
 	describe('addRegistriesSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols
+			symbols.contributeAs('default_library', () => symbols
 				.query('spyglassmc://vanilla-resource/registries.json', 'attribute', 'oldExistingOne')
-				.enter({ usage: { type: 'declaration', fromDefaultLibrary: true } })
+				.enter({ usage: { type: 'declaration' } })
+			)
 
 			addRegistriesSymbols(Fixtures.Registries, symbols)
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))

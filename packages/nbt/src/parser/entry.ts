@@ -4,7 +4,7 @@ import { byteArray, intArray, list, longArray } from './collection'
 import { compound } from './compound'
 import { primitive } from './primitive'
 
-export const entry: core.EntryParser<NbtNode> = (src, ctx) => core.failOnEmpty(core.any([
+export const entry: core.Parser<NbtNode> = (src, ctx) => core.failOnEmpty(core.any([
 	primitive,
 	compound,
 	list,

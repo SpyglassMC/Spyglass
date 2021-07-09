@@ -4,28 +4,22 @@ import { file, MetaRegistry, Range } from '../../lib'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('file()', () => {
-	MetaRegistry.addInitializer(reg => {
-		reg.registerLanguage('@spyglassmc/core#file-test', {
-			extensions: ['.@spyglassmc/core#file-test'],
-			parser: (src) => {
-				const start = src.cursor
-				if (src.trySkip('{')) {
-					src
-						.skipUntilOrEnd('}')
-						.skip()
-				}
-				return {
-					type: 'test',
-					range: Range.create(start, src),
-					value: src.slice(Range.create(start, src)),
-				}
-			},
-		})
-
-		reg.registerLanguage('@spyglassmc/core#file-null', {
-			extensions: ['.@spyglassmc/core#file-null'],
-			parser: () => null,
-		})
+	const meta = new MetaRegistry()
+	meta.registerLanguage('@spyglassmc/core#file-test', {
+		extensions: ['.@spyglassmc/core#file-test'],
+		parser: (src) => {
+			const start = src.cursor
+			if (src.trySkip('{')) {
+				src
+					.skipUntilOrEnd('}')
+					.skip()
+			}
+			return {
+				type: 'test',
+				range: Range.create(start, src),
+				value: src.slice(Range.create(start, src)),
+			}
+		},
 	})
 	const suites: { content: string }[] = [
 		{ content: '' },
@@ -35,10 +29,7 @@ describe('file()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			snapshot(testParser(file(), content, { languageID: '@spyglassmc/core#file-test' }))
+			snapshot(testParser(file(), content, { languageID: '@spyglassmc/core#file-test', project: { meta } }))
 		})
 	}
-	it('Parse with an entry parser returning null', () => {
-		snapshot(testParser(file(), '', { languageID: '@spyglassmc/core#file-null' }))
-	})
 })

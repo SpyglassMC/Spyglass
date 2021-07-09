@@ -1,20 +1,20 @@
-import { ColorizerContext, MetaRegistry } from '@spyglassmc/core'
+import { ColorizerContext, ProjectLike } from '@spyglassmc/core'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { MainNode } from '../../lib'
-import { initializeNbtdoc } from '../../lib'
+import { initialize } from '../../lib'
 import { TestContent, TestNode } from './TestNode'
 
 describe('nbtdoc colorizer', () => {
-	initializeNbtdoc()
+	const project = ProjectLike.mock()
+	initialize(project)
 	it('Should colorize correctly', () => {
-		const colorizer = MetaRegistry.instance.getColorizer<MainNode>('nbtdoc:main')
+		const colorizer = project.meta.getColorizer<MainNode>('nbtdoc:main')
 		snapshot(colorizer(
 			TestNode,
-			ColorizerContext.create({
+			ColorizerContext.create(project, {
 				doc: TextDocument.create('', '', 0, TestContent),
-				options: {},
 			})
 		))
 	})

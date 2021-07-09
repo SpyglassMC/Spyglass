@@ -55,7 +55,7 @@ exports['processor/util.ts selectedNode() continuous Should return the node at 1
 }
 
 exports['processor/util.ts selectedNode() continuous Should return the node at 12 1'] = `
-null
+undefined
 `
 
 exports['processor/util.ts selectedNode() continuous Should return the node at 5 1'] = {
@@ -93,7 +93,7 @@ exports['processor/util.ts selectedNode() discontinuous Should return the node a
 }
 
 exports['processor/util.ts selectedNode() discontinuous Should return the node at 12 1'] = `
-null
+undefined
 `
 
 exports['processor/util.ts selectedNode() discontinuous Should return the node at 3 1'] = {

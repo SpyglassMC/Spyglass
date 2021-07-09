@@ -56,6 +56,27 @@ CATEGORY nbtdoc
 + + + + + {"uri":"spyglassmc://another_test_file"}
 `
 
+exports['SymbolUtil contributeAs Should execute correctly 1'] = `
+CATEGORY test
++ SYMBOL BeforeBinding1 {test} [Public]
++ + description: Entered before URI binding w/o references. Should be removed.
++ ------------
++ SYMBOL BeforeBinding2 {test} [Public]
++ + description: Entered before URI binding w/ references.
++ + reference:
++ + + {"uri":"spyglassmc://test_file"}
++ ------------
++ SYMBOL Bound {test} [Public]
++ + description: This symbol is URI bound.
++ + reference:
++ + + {"uri":"spyglassmc://test_file","contributor":"checker"}
++ ------------
++ SYMBOL AfterBinding {test} [Public]
++ + description: Entered after URI binding w/ references.
++ + reference:
++ + + {"uri":"spyglassmc://test_file"}
+`
+
 exports['SymbolUtil getStack() Should create a new stack 1'] = `
 EMPTY TABLE
 `
@@ -75,9 +96,9 @@ parentSymbol:
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 parentMap:
-null
+undefined
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Qux” 1'] = `
@@ -113,7 +134,7 @@ parentMap:
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Bar” 1'] = `
@@ -154,9 +175,9 @@ parentSymbol:
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 parentMap:
-null
+undefined
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = `
@@ -199,12 +220,12 @@ parentMap:
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo” 1'] = `
 parentSymbol:
-null
+undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
 + + description: STACK
@@ -229,7 +250,7 @@ symbol:
 
 exports['SymbolUtil lookup() Should return correctly for “Unknown” 1'] = `
 parentSymbol:
-null
+undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
 + + description: STACK
@@ -241,12 +262,12 @@ parentMap:
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “” 1'] = `
 parentSymbol:
-null
+undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
 + + description: STACK
@@ -258,12 +279,12 @@ parentMap:
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
-null
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly when URI is not specified 1'] = `
 parentSymbol:
-null
+undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
 + + definition:
@@ -291,7 +312,7 @@ symbol:
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux.Xer” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Bar.Qux.Xer” 2'] = `
@@ -347,7 +368,7 @@ CATEGORY advancement
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Bar.Unknown” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Bar.Unknown” 2'] = `
@@ -411,7 +432,7 @@ CATEGORY advancement
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 2'] = `
@@ -419,7 +440,7 @@ Error: Cannot enter the symbol at path “Foo.Baz.Xer” as its parent doesn't e
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 3'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 4'] = `
@@ -438,7 +459,7 @@ CATEGORY advancement
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz” 2'] = `
@@ -465,7 +486,7 @@ CATEGORY advancement
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Unknown” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Unknown” 2'] = `
@@ -537,7 +558,7 @@ CATEGORY advancement
 `
 
 exports['SymbolUtil query() Should return correctly for “Unknown” 1'] = `
-null
+undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Unknown” 2'] = `
@@ -561,22 +582,4 @@ CATEGORY advancement
 + ------------
 + SYMBOL Unknown {advancement} [Public]
 + + description: Entered.
-`
-
-exports['SymbolUtil uriBinding Should execute correctly 1'] = `
-CATEGORY test
-+ SYMBOL BeforeBinding2 {test} [Public]
-+ + description: Entered before URI binding w/ references.
-+ + reference:
-+ + + {"uri":"spyglassmc://test_file"}
-+ ------------
-+ SYMBOL Bound {test} [Public]
-+ + description: This symbol is URI bound.
-+ + reference:
-+ + + {"uri":"spyglassmc://test_file","isUriBound":true}
-+ ------------
-+ SYMBOL AfterBinding {test} [Public]
-+ + description: Entered after URI binding w/ references.
-+ + reference:
-+ + + {"uri":"spyglassmc://test_file"}
 `

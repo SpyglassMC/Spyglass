@@ -1,4 +1,4 @@
-exports['integer() integer() integer() Parse "" 1'] = {
+exports['integer() integer() Parse "" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -19,14 +19,14 @@ exports['integer() integer() integer() Parse "" 1'] = {
   ]
 }
 
-exports['integer() integer() integer() Parse "+" 1'] = {
+exports['integer() integer() Parse "+" 1'] = {
   "node": {
     "type": "integer",
     "range": {
       "start": 0,
       "end": 1
     },
-    "value": null
+    "value": 0
   },
   "errors": [
     {
@@ -40,7 +40,7 @@ exports['integer() integer() integer() Parse "+" 1'] = {
   ]
 }
 
-exports['integer() integer() integer() Parse "+1" 1'] = {
+exports['integer() integer() Parse "+1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -52,7 +52,7 @@ exports['integer() integer() integer() Parse "+1" 1'] = {
   "errors": []
 }
 
-exports['integer() integer() integer() Parse "-1" 1'] = {
+exports['integer() integer() Parse "-1" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -64,7 +64,7 @@ exports['integer() integer() integer() Parse "-1" 1'] = {
   "errors": []
 }
 
-exports['integer() integer() integer() Parse "-123" 1'] = {
+exports['integer() integer() Parse "-123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -76,7 +76,7 @@ exports['integer() integer() integer() Parse "-123" 1'] = {
   "errors": []
 }
 
-exports['integer() integer() integer() Parse "0123" 1'] = {
+exports['integer() integer() Parse "0123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -97,7 +97,7 @@ exports['integer() integer() integer() Parse "0123" 1'] = {
   ]
 }
 
-exports['integer() integer() integer() Parse "123" 1'] = {
+exports['integer() integer() Parse "123" 1'] = {
   "node": {
     "type": "integer",
     "range": {
@@ -109,7 +109,7 @@ exports['integer() integer() integer() Parse "123" 1'] = {
   "errors": []
 }
 
-exports['integer() integer() integer() Parse "foo" 1'] = {
+exports['integer() integer() Parse "foo" 1'] = {
   "node": {
     "type": "integer",
     "range": {

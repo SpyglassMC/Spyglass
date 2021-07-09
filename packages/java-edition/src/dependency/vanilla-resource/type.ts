@@ -1,7 +1,4 @@
-import type * as core from '@spyglassmc/core'
-
 export interface VanillaResources {
-	archives: core.Archives,
 	blocks: VanillaBlocks,
 	commands: VanillaCommands,
 	registries: VanillaRegistries,
@@ -88,7 +85,7 @@ export interface VersionManifest {
 		release: string,
 		snapshot: string,
 	},
-	versions: {
+	versions: readonly {
 		id: string,
 		type: 'snapshot' | 'release',
 		url: string,
@@ -104,3 +101,6 @@ export const enum VersionStatus {
 	ProcessedSimplifiedBlock = 1 << 3,
 	Latest = 1 << 4,
 }
+
+export const MajorVersions = Object.freeze(['1.15', '1.16', '1.17'] as const)
+export type MajorVersion = typeof MajorVersions[number]

@@ -215,7 +215,7 @@ exports['JSON number float Check "false" 1'] = {
   ]
 }
 
-exports['JSON number floatRange(-5, null) Check ""5"" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check ""5"" 1'] = {
   "node": {
     "type": "json:string",
     "range": {
@@ -271,7 +271,7 @@ exports['JSON number floatRange(-5, null) Check ""5"" 1'] = {
   ]
 }
 
-exports['JSON number floatRange(-5, null) Check "-5.62" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "-5.62" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -299,7 +299,7 @@ exports['JSON number floatRange(-5, null) Check "-5.62" 1'] = {
   ]
 }
 
-exports['JSON number floatRange(-5, null) Check "-7" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "-7" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -327,7 +327,7 @@ exports['JSON number floatRange(-5, null) Check "-7" 1'] = {
   ]
 }
 
-exports['JSON number floatRange(-5, null) Check "2" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "2" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -346,7 +346,7 @@ exports['JSON number floatRange(-5, null) Check "2" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number floatRange(-5, null) Check "4" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -365,7 +365,7 @@ exports['JSON number floatRange(-5, null) Check "4" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number floatRange(-5, null) Check "4.3" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "4.3" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -384,7 +384,7 @@ exports['JSON number floatRange(-5, null) Check "4.3" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number floatRange(-5, null) Check "6e4" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "6e4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -403,7 +403,7 @@ exports['JSON number floatRange(-5, null) Check "6e4" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number floatRange(-5, null) Check "8b" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "8b" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -422,7 +422,7 @@ exports['JSON number floatRange(-5, null) Check "8b" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number floatRange(-5, null) Check "false" 1'] = {
+exports['JSON number floatRange(-5, undefined) Check "false" 1'] = {
   "node": {
     "type": "json:boolean",
     "range": {
@@ -1498,7 +1498,7 @@ exports['JSON number intRange(1, 3) Check "false" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check ""5"" 1'] = {
+exports['JSON number intRange(3, undefined) Check ""5"" 1'] = {
   "node": {
     "type": "json:string",
     "range": {
@@ -1554,7 +1554,7 @@ exports['JSON number intRange(3, null) Check ""5"" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check "-5.62" 1'] = {
+exports['JSON number intRange(3, undefined) Check "-5.62" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1582,7 +1582,7 @@ exports['JSON number intRange(3, null) Check "-5.62" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check "-7" 1'] = {
+exports['JSON number intRange(3, undefined) Check "-7" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1610,7 +1610,7 @@ exports['JSON number intRange(3, null) Check "-7" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check "2" 1'] = {
+exports['JSON number intRange(3, undefined) Check "2" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1638,7 +1638,7 @@ exports['JSON number intRange(3, null) Check "2" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check "4" 1'] = {
+exports['JSON number intRange(3, undefined) Check "4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1657,7 +1657,7 @@ exports['JSON number intRange(3, null) Check "4" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number intRange(3, null) Check "4.3" 1'] = {
+exports['JSON number intRange(3, undefined) Check "4.3" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1685,7 +1685,7 @@ exports['JSON number intRange(3, null) Check "4.3" 1'] = {
   ]
 }
 
-exports['JSON number intRange(3, null) Check "6e4" 1'] = {
+exports['JSON number intRange(3, undefined) Check "6e4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1704,7 +1704,7 @@ exports['JSON number intRange(3, null) Check "6e4" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number intRange(3, null) Check "8b" 1'] = {
+exports['JSON number intRange(3, undefined) Check "8b" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1723,7 +1723,7 @@ exports['JSON number intRange(3, null) Check "8b" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number intRange(3, null) Check "false" 1'] = {
+exports['JSON number intRange(3, undefined) Check "false" 1'] = {
   "node": {
     "type": "json:boolean",
     "range": {
@@ -1751,7 +1751,7 @@ exports['JSON number intRange(3, null) Check "false" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check ""5"" 1'] = {
+exports['JSON number intRange(undefined, 3) Check ""5"" 1'] = {
   "node": {
     "type": "json:string",
     "range": {
@@ -1807,7 +1807,7 @@ exports['JSON number intRange(null, 3) Check ""5"" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "-5.62" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "-5.62" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1835,7 +1835,7 @@ exports['JSON number intRange(null, 3) Check "-5.62" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "-7" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "-7" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1854,7 +1854,7 @@ exports['JSON number intRange(null, 3) Check "-7" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number intRange(null, 3) Check "2" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "2" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1873,7 +1873,7 @@ exports['JSON number intRange(null, 3) Check "2" 1'] = {
   "checkerErrors": []
 }
 
-exports['JSON number intRange(null, 3) Check "4" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1901,7 +1901,7 @@ exports['JSON number intRange(null, 3) Check "4" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "4.3" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "4.3" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1929,7 +1929,7 @@ exports['JSON number intRange(null, 3) Check "4.3" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "6e4" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "6e4" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1957,7 +1957,7 @@ exports['JSON number intRange(null, 3) Check "6e4" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "8b" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "8b" 1'] = {
   "node": {
     "type": "json:number",
     "range": {
@@ -1985,7 +1985,7 @@ exports['JSON number intRange(null, 3) Check "8b" 1'] = {
   ]
 }
 
-exports['JSON number intRange(null, 3) Check "false" 1'] = {
+exports['JSON number intRange(undefined, 3) Check "false" 1'] = {
   "node": {
     "type": "json:boolean",
     "range": {

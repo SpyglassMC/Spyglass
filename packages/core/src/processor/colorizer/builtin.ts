@@ -11,7 +11,7 @@ import { ColorToken } from './Colorizer'
 export const fallback: Colorizer = (node, ctx) => {
 	const ans: ColorToken[] = []
 	traversePreOrder(node,
-		({ node, map }) => !ctx.meta.hasColorizer(node.type) && (!ctx.options.range || Range.intersects(node.range, IndexMap.toInnerRange(map, ctx.options.range))),
+		({ node, map }) => !ctx.meta.hasColorizer(node.type) && (!ctx.range || Range.intersects(node.range, IndexMap.toInnerRange(map, ctx.range))),
 		({ node }) => ctx.meta.hasColorizer(node.type),
 		({ node, map }) => {
 			const colorizer = ctx.meta.getColorizer(node.type)

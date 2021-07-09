@@ -6,6 +6,7 @@ import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 import { expectation } from './util'
 
+// eslint-disable-next-line no-restricted-syntax
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
 
 type ComplexProperty = {
@@ -79,7 +80,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 						checker(propNode, { ...ctx, context: `${context}.${key}` })
 					} catch (e) {
 						const pos = ctx.doc.positionAt(prop.range.start)
-						ctx.logger.error(`Checking "${key}" at ${pos.line}:${pos.character}: ${e.message}`)
+						ctx.logger.error(`Checking "${key}" at ${pos.line}:${pos.character} in "${ctx.doc.uri}"`, e)
 					}
 					const defaultValue = isComplex(value) ? value.def : undefined
 					const typedoc = propNode.expectation?.map(e => e.typedoc).join(' | ')

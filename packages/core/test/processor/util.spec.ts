@@ -97,7 +97,7 @@ describe('processor/util.ts', () => {
 					snapshot(node ? {
 						node: node.type,
 						parents: parents.map(p => p.type),
-					} : 'null')
+					} : 'undefined')
 				})
 			}
 		})
@@ -117,7 +117,7 @@ describe('processor/util.ts', () => {
 					snapshot(node ? {
 						node: node.type,
 						parents: parents.map(p => p.type),
-					} : 'null')
+					} : 'undefined')
 				})
 			}
 		})
@@ -139,7 +139,7 @@ describe('processor/util.ts', () => {
 					snapshot(node ? {
 						node: node.type,
 						parents: parents.map(p => p.type),
-					} : 'null')
+					} : 'undefined')
 				})
 			}
 		})
@@ -158,7 +158,7 @@ describe('processor/util.ts', () => {
 					snapshot(node ? {
 						node: node.type,
 						parents: parents.map(p => p.type),
-					} : 'null')
+					} : 'undefined')
 				})
 			}
 		})

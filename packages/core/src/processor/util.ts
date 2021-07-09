@@ -26,10 +26,10 @@ function traversePreOrderImpl(node: AstNode, shouldContinue: Callback<unknown>, 
 	}
 }
 
-type NodeResult = { node: AstNode | null, parents: AstNode[], map: IndexMap }
+type NodeResult = { node: AstNode | undefined, parents: AstNode[], map: IndexMap }
 
 export function selectedNode(node: AstNode, offset: number): NodeResult {
-	let ans: NodeResult = { node: null, parents: [], map: IndexMap.DEFAULT }
+	let ans: NodeResult = { node: undefined, parents: [], map: IndexMap.DEFAULT }
 	// TODO: Binary search here.
 	traversePreOrder(node,
 		({ node, map }) => Range.contains(node.range, IndexMap.toInnerOffset(map, offset)),
@@ -40,10 +40,10 @@ export function selectedNode(node: AstNode, offset: number): NodeResult {
 }
 
 export function findNode(node: AstNode, range: Range): NodeResult {
-	let ans: NodeResult = { node: null, parents: [], map: IndexMap.DEFAULT }
+	let ans: NodeResult = { node: undefined, parents: [], map: IndexMap.DEFAULT }
 	// TODO: Binary search here.
 	traversePreOrder(node,
-		({ node, map }) => ans.node === null && Range.intersects(node.range, IndexMap.toInnerRange(map, range)),
+		({ node, map }) => ans.node === undefined && Range.intersects(node.range, IndexMap.toInnerRange(map, range)),
 		({ node, map }) => Range.equals(node.range, IndexMap.toInnerRange(map, range)),
 		({ node, map, parents }) => ans = { node, map, parents: [...parents] },
 	)

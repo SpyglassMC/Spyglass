@@ -1,4 +1,4 @@
-import type { FileCategory, UriBinder, UriBinderContext } from '@spyglassmc/core'
+import type { FileCategory, RootUriString, UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
 
 export const Categories = new Map<string, { category: FileCategory, extname: string }>([
@@ -26,7 +26,7 @@ export const Categories = new Map<string, { category: FileCategory, extname: str
 	['worldgen/template_pool', { category: 'worldgen/template_pool', extname: '.json' }],
 ])
 
-export function* getRels(uri: string, rootUris: readonly string[]): Generator<string, undefined, unknown> {
+export function* getRels(uri: string, rootUris: readonly RootUriString[]): Generator<string, undefined, unknown> {
 	yield* fileUtil.getRels(uri, rootUris)
 
 	const parts = uri.split('/')
@@ -39,7 +39,7 @@ export function* getRels(uri: string, rootUris: readonly string[]): Generator<st
 	return undefined
 }
 
-export function dissectUri(uri: string, roots: readonly string[]) {
+export function dissectUri(uri: string, roots: readonly RootUriString[]) {
 	const regex = /^data\/([^\/]+)\/((?:tags\/|worldgen\/)?[a-z_]+)\/(.*)(\.(?:mcfunction|json))$/
 
 	const rels = getRels(uri, roots)
@@ -59,7 +59,7 @@ export function dissectUri(uri: string, roots: readonly string[]) {
 		}
 	}
 
-	return null
+	return undefined
 }
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {

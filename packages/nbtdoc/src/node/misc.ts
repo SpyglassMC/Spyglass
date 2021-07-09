@@ -64,7 +64,7 @@ export interface DescribesClauseNode extends SyntaxNode<IdentPathToken | Literal
 	type: 'nbtdoc:describes_clause',
 	path: IdentPathToken,
 	registry: ResourceLocationNode,
-	objects: ResourceLocationNode[] | null,
+	objects: ResourceLocationNode[] | undefined,
 }
 
 export interface ModuleDeclarationNode extends SyntaxNode<LiteralToken | IdentifierToken> {

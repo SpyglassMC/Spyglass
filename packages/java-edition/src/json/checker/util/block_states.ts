@@ -4,8 +4,8 @@ import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/check
 
 export function blockStateMap(block?: string, mixedTypes = false, requireAll = false): JsonChecker {
 	return (node, ctx) => {
-		// FIXME: Temporary solution to make tests pass when service is not given.
-		if (!ctx.service) {
+		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+		if (!ctx.ensureChecked) {
 			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			object(
 				simpleString,
@@ -21,7 +21,7 @@ export function blockStateMap(block?: string, mixedTypes = false, requireAll = f
 				const values = Object.values(stateSymbol?.members ?? {})
 					.filter((m): m is Symbol => m?.subcategory === 'state_value')
 					.map(m => m.identifier)
-				if (mixedTypes && values) {
+				if (mixedTypes && values.length) {
 					if (['true', 'false'].includes(values[0])) {
 						return opt(boolean)
 					} else if (values[0].match(/^\d+$/)) {
@@ -36,8 +36,8 @@ export function blockStateMap(block?: string, mixedTypes = false, requireAll = f
 
 export function blockStateList(block?: string): JsonChecker {
 	return (node, ctx) => {
-		// FIXME: Temporary solution to make tests pass when service is not given.
-		if (!ctx.service) {
+		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+		if (!ctx.ensureChecked) {
 			listOf(simpleString)(node, ctx)
 			return
 		}
@@ -53,7 +53,7 @@ function getStates(block: string, ctx: JsonCheckerContext) {
 		.filter((m): m is Symbol => m?.subcategory === 'state')
 }
 
-function intBounds(min: number | null = null, max: number | null = null): JsonChecker {
+function intBounds(min: number | undefined = undefined, max: number | undefined = undefined): JsonChecker {
 	return any([
 		intRange(min, max),
 		record({
