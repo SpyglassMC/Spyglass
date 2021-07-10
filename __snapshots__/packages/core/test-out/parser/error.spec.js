@@ -1,5 +1,5 @@
 exports['error() Parse "" 1'] = {
-  "node": 'undefined',
+  "node": "undefined",
   "errors": []
 }
 
