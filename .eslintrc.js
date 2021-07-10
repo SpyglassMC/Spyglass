@@ -75,7 +75,14 @@ module.exports = {
 		"no-restricted-syntax": [
 			"warn",
 			{
-				"selector": ":matches(Literal[raw=null], TSNullKeyword)",
+				// https://astexplorer.net/
+				// https://eslint.org/docs/developer-guide/selectors
+				"selector": `:matches(
+					TSNullKeyword,
+					:not(
+						CallExpression[callee.object.name="Object"][callee.property.name="create"]
+					) > Literal[raw=null]
+				)`.replace(/\s/g, ''),
 				"message": "Use `undefined` instead of `null` when possible."
 			}
 		],
