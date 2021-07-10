@@ -6,7 +6,7 @@ import type { AstNode } from '../node'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
 import type { AllCategory, Symbol, SymbolLocationBuiltInContributor, SymbolLocationMetadata, SymbolMap, SymbolMetadata, SymbolTable, SymbolUsageType } from './Symbol'
-import { SymbolLocation, SymbolUsageTypes, SymbolVisibility } from './Symbol'
+import { SymbolLocation, SymbolPath, SymbolUsageTypes, SymbolVisibility } from './Symbol'
 
 export interface LookupResult {
 	/**
@@ -53,9 +53,16 @@ export interface SymbolUtil {
 	emit(event: 'symbolLocationRemoved', data: SymbolLocationEvent): boolean
 }
 
+type UriSymbolCache = Record<string, Set<string>>
+
 export class SymbolUtil extends EventEmitter {
 	#global: SymbolTable
 	#stacks: Map<string, SymbolStack>
+
+	#trimmableSymbols = new Set<string>()
+	#cache: {
+		[contributor: string]: UriSymbolCache,
+	} = Object.create(null)
 
 	#currentContributor: string | undefined
 
@@ -90,6 +97,25 @@ export class SymbolUtil extends EventEmitter {
 		this.#stacks = _stacks
 		this.#currentContributor = _currentContributor
 		this._inDelayMode = _inDelayMode
+
+		this
+			.on('symbolCreated', ({ symbol }) => {
+				this.#trimmableSymbols.add(SymbolPath.toString(symbol))
+			})
+			.on('symbolRemoved', ({ symbol }) => {
+				this.#trimmableSymbols.delete(SymbolPath.toString(symbol))
+			})
+			.on('symbolLocationCreated', ({ symbol, location }) => {
+				const cache = this.#cache[location.contributor ?? 'undefined'] ??= Object.create(null) as never
+				const fileSymbols = cache[location.uri] ??= new Set()
+				const path = SymbolPath.toString(symbol)
+				fileSymbols.add(path)
+				this.#trimmableSymbols.delete(path)
+			})
+			.on('symbolLocationRemoved', ({ symbol }) => {
+				const path = SymbolPath.toString(symbol)
+				this.#trimmableSymbols.add(path)
+			})
 	}
 
 	/**
@@ -113,21 +139,23 @@ export class SymbolUtil extends EventEmitter {
 	}
 
 	/**
-	 * Do not use this method. This should only be called by `Service` when executing `UriBinder`s.
+	 * All symbol locations added in `fn` are associated with the specified `contributor`.
 	 * 
 	 * @param contributor The name of the contributor which will add symbols to the symbol table. See {@link SymbolLocation.contributor}
 	 * @param fn All symbols added in this function will be considered as URI bound.
 	 * @param keepExisting Default to `false`, indicating existing symbols contributed by the specified contributor will be removed first. Set to `true` to keep them instead.
 	 */
-	contributeAs(contributor: SymbolLocationBuiltInContributor, fn: () => unknown): void
-	contributeAs(contributor: string, fn: () => unknown): void
-	contributeAs(contributor: string, fn: () => unknown): void {
+	contributeAs(contributor: SymbolLocationBuiltInContributor, fn: () => unknown): this
+	contributeAs(contributor: string, fn: () => unknown): this
+	contributeAs(contributor: string, fn: () => unknown): this {
+		const originalValue = this.#currentContributor
 		this.#currentContributor = contributor
 		try {
 			fn()
 		} finally {
-			this.#currentContributor = undefined
+			this.#currentContributor = originalValue
 		}
+		return this
 	}
 
 	getStack(uri: string): SymbolStack {
@@ -146,23 +174,47 @@ export class SymbolUtil extends EventEmitter {
 
 	/**
 	 * @param
-	 * 	- `uri` Clear symbol locations associated with this URI.
-	 * 	- `contributor` Clear symbol locations contributed by this contributor.
-	 * 
-	 * At least one of the options should be specified.
+	 * 	- `contributor` - clear symbol locations contributed by this contributor. Pass in the string value `"undefined"`
+	 * 	to select all symbol locations that don't have a contributor.
+	 * 	- `uri` - clear symbol locations associated with this URI.
+	 * 	- `predicate` - clear symbol locations matching this predicate
 	 */
-	clear({ uri, contributor }: { contributor?: string, uri?: string }): void
-	clear({ uri, contributor }: { contributor?: string, uri?: string }): void
 	@DelayModeSupport()
-	clear({ uri, contributor }: { contributor?: string, uri?: string }): void {
-		// FIXME: handle stacks properly.
-		// this.#stacks.delete(uri)
-		const predicate: (loc: SymbolLocation) => unknown = contributor
-			? uri
-				? loc => loc.contributor === contributor && loc.uri === uri
-				: loc => loc.contributor === contributor
-			: loc => loc.uri === uri
-		this.removeLocations(this.global, predicate)
+	clear({ uri, contributor, predicate = () => true }: { contributor?: string, uri?: string, predicate?: (this: void, data: SymbolLocationEvent) => boolean }): void {
+		const getCaches = (): UriSymbolCache[] => {
+			if (contributor) {
+				return this.#cache[contributor] ? [this.#cache[contributor]] : []
+			} else {
+				return Object.values(this.#cache)
+			}
+		}
+		const getPaths = (): SymbolPath[] => {
+			const caches = getCaches()
+			const sets: Set<string>[] = uri
+				? caches.map(cache => cache[uri] ?? new Set())
+				: caches.map(cache => Object.values(cache)).flat()
+			return sets.map(s => [...s]).flat().map(SymbolPath.fromString)
+		}
+		const getTables = (): SymbolTable[] => {
+			return uri
+				? [this.#global, ...this.getStack(uri)]
+				: [this.global, ...[...this.stacks.values()].flat()]
+		}
+		const paths = getPaths()
+		const tables = getTables()
+		for (const table of tables) {
+			for (const path of paths) {
+				const { symbol } = SymbolUtil.lookupTable(table, path.category, path.path)
+				if (!symbol) {
+					continue
+				}
+				this.removeLocationsFromSymbol(symbol, uri
+					? data => data.location.uri === uri && predicate(data)
+					: predicate
+				)
+			}
+			this.trim(table)
+		}
 	}
 
 	/**
@@ -182,7 +234,7 @@ export class SymbolUtil extends EventEmitter {
 	 * the location of future entered symbol usages. If a string URI is provided, all `range`s specified while entering
 	 * symbol usages latter will be ignored and seen as `[0, 0)`.
 	 * 
-	 * @throws When the queried symbol belongs to another non-existent symbol.
+	 * @throws When the queried symbol belongs to another non-existent symbol, or when no contributor is specified.
 	 */
 	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQuery
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery
@@ -248,74 +300,37 @@ export class SymbolUtil extends EventEmitter {
 	 */
 	@DelayModeSupport()
 	trim(table: SymbolTable): void {
-		for (const category of Object.keys(table)) {
-			const map = table[category]!
-			this.trimMap(map)
-			if (Object.keys(map).length === 0) {
-				delete table[category]
+		const trimSymbol = (symbol: Symbol | undefined) => {
+			if (!symbol) {
+				return
 			}
-		}
-	}
-
-	/**
-	 * Remove symbols that don't have any usages AND don't have any members.
-	 */
-	@DelayModeSupport()
-	trimMap(map: SymbolMap | undefined): void {
-		if (!map) {
-			return
-		}
-		for (const [identifier, symbol] of Object.entries(map)) {
-			if (symbol.members) {
-				this.trimMap(symbol.members)
-				if (Object.keys(symbol.members).length === 0) {
-					delete symbol.members
-				}
-			}
-			if (!symbol.members && !symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length) {
-				delete map[identifier]
+			if (SymbolUtil.isTrimmable(symbol)) {
+				delete symbol.parentMap[symbol.identifier]
 				this.emit('symbolRemoved', { symbol })
+				trimSymbol(symbol.parentSymbol)
 			}
 		}
-	}
-
-	/**
-	 * Remove all references provided by the specific `uri` from the `table`.
-	 * 
-	 * @param predicate A predicate that matches locations that should be removed.
-	 */
-	@DelayModeSupport()
-	removeLocations(table: SymbolTable, predicate: (this: void, loc: SymbolLocation) => unknown): void {
-		for (const category of Object.keys(table)) {
-			this.removeLocationsFromMap(table[category]!, predicate)
+		for (const pathString of this.#trimmableSymbols) {
+			const path = SymbolPath.fromString(pathString)
+			const { symbol } = SymbolUtil.lookupTable(table, path.category, path.path)
+			trimSymbol(symbol)
 		}
-		this.trim(table)
 	}
 
 	@DelayModeSupport()
-	removeLocationsFromMap(map: SymbolMap | undefined, predicate: (this: void, loc: SymbolLocation) => unknown, path: string[] = []): void {
-		if (!map) {
-			return
-		}
-		for (const identifier of Object.keys(map)) {
-			const symbol = map[identifier]!
-			for (const type of SymbolUsageTypes) {
-				if (!symbol[type]) {
-					continue
+	removeLocationsFromSymbol(symbol: Symbol, predicate: (this: void, data: SymbolLocationEvent) => boolean): void {
+		for (const type of SymbolUsageTypes) {
+			if (!symbol[type]) {
+				continue
+			}
+			symbol[type] = symbol[type]!.reduce<SymbolLocation[]>((result, location) => {
+				if (predicate({ location, symbol, type })) {
+					this.emit('symbolLocationRemoved', { symbol, type, location })
+				} else {
+					result.push(location)
 				}
-				const result: SymbolLocation[] = []
-				symbol[type]!.forEach(location => {
-					if (predicate(location)) {
-						this.emit('symbolLocationRemoved', { symbol, type, location })
-					} else {
-						result.push(location)
-					}
-				})
-				symbol[type] = result
-			}
-			if (symbol.members) {
-				this.removeLocationsFromMap(symbol.members, predicate, [...path, identifier])
-			}
+				return result
+			}, [])
 		}
 	}
 
@@ -355,16 +370,14 @@ export class SymbolUtil extends EventEmitter {
 	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
 	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
 	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
-		const target = map[identifier]
-		if (target) {
-			this.amendSymbol(target, addition, doc, contributor)
-			this.emit('symbolAmended', { symbol: target })
-			return target
+		let ans = map[identifier]
+		if (ans) {
+			this.amendSymbol(ans, addition, doc, contributor)
 		} else {
-			const ans = map[identifier] = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, contributor)
-			this.emit('symbolCreated', { symbol: ans })
-			return ans
+			ans = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, contributor)
 		}
+		this.emit('symbolAmended', { symbol: ans })
+		return ans
 	}
 
 	/**
@@ -422,7 +435,7 @@ export class SymbolUtil extends EventEmitter {
 	}
 
 	createSymbol(category: string, parentSymbol: Symbol | undefined, parentMap: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
-		const ans: Symbol = {
+		const ans = parentMap[identifier] = {
 			category,
 			identifier,
 			...parentSymbol ? { parentSymbol } : {},
@@ -430,6 +443,7 @@ export class SymbolUtil extends EventEmitter {
 			path,
 			...addition.data,
 		}
+		this.emit('symbolCreated', { symbol: ans })
 		this.amendSymbolUsage(ans, addition.usage, doc, contributor)
 		return ans
 	}
@@ -511,6 +525,10 @@ export class SymbolUtil extends EventEmitter {
 		}
 
 		return ans
+	}
+
+	static isTrimmable(symbol: Symbol): boolean {
+		return !Object.keys(symbol.members ?? {}).length && !symbol.declaration?.length && !symbol.definition?.length && !symbol.implementation?.length && !symbol.reference?.length && !symbol.typeDefinition?.length
 	}
 
 	/**

@@ -9,20 +9,11 @@ describe('SymbolUtil', () => {
 	describe('contributeAs', () => {
 		it('Should execute correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols
-				.query(fileUri, 'test', 'BeforeBinding1')
-				.enter({ data: { desc: 'Entered before URI binding w/o references. Should be removed.' } })
-			symbols
-				.query(fileUri, 'test', 'BeforeBinding2')
-				.enter({ data: { desc: 'Entered before URI binding w/ references.' }, usage: {} })
-			symbols.contributeAs('checker', () => {
+			symbols.contributeAs('uri_binder', () => {
 				symbols
 					.query(fileUri, 'test', 'Bound')
 					.enter({ data: { desc: 'This symbol is URI bound.' }, usage: {} })
 			})
-			symbols
-				.query(fileUri, 'test', 'AfterBinding')
-				.enter({ data: { desc: 'Entered after URI binding w/ references.' }, usage: {} })
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})

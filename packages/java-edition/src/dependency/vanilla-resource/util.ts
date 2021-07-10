@@ -184,11 +184,10 @@ const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => 
 
 export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
 	// Remove all related existing symbols.
-	symbols.removeLocationsFromMap(symbols.global.block, loc => loc.contributor === 'default_library')
-	symbols.trimMap(symbols.global.block)
+	symbols.clear({ contributor: 'default_library/block' })
 
 	// Add blocks and block states to the symbol table.
-	symbols.contributeAs('default_library', () => {
+	symbols.contributeAs('default_library/block', () => {
 		for (const [id, block] of Object.entries(blocks)) {
 			symbols
 				.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
@@ -285,10 +284,9 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		const registryId = shorten(longRegistryId)
 		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
 			// Remove all related existing symbols.
-			symbols.removeLocationsFromMap(symbols.global[registryId], loc => loc.contributor === 'default_library')
-			symbols.trimMap(symbols.global[registryId])
+			symbols.clear({ contributor: `default_library/${registryId}` })
 
-			symbols.contributeAs('default_library', () => {
+			symbols.contributeAs(`default_library/${registryId}`, () => {
 				// Add resource locations from the registry to the symbol table.
 				for (const longEntryId of registries[longRegistryId]) {
 					symbols

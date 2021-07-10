@@ -143,7 +143,7 @@ describe('vanilla-resource util', () => {
 	describe('addBlockSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols.contributeAs('default_library', () => symbols
+			symbols.contributeAs('default_library/block', () => symbols
 				.query('spyglassmc://vanilla-resource/blocks.json', 'block', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
@@ -156,7 +156,7 @@ describe('vanilla-resource util', () => {
 	describe('addRegistriesSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols.contributeAs('default_library', () => symbols
+			symbols.contributeAs('default_library/attribute', () => symbols
 				.query('spyglassmc://vanilla-resource/registries.json', 'attribute', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)

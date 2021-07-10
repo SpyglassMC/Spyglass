@@ -181,6 +181,16 @@ export namespace SymbolPath {
 			? { category: symbol.category, path: symbol.path }
 			: undefined
 	}
+
+	/**
+	 * Equivalent {@link SymbolPath}s will always be serialized into the same string value.
+	 */
+	export function toString(path: SymbolPath): string {
+		return JSON.stringify({ category: path.category, path: path.path })
+	}
+	export function fromString(value: string): SymbolPath {
+		return JSON.parse(value)
+	}
 }
 
 export interface SymbolMetadata {
@@ -250,7 +260,7 @@ export interface SymbolLocationMetadata {
 
 /**
  * - `checker`: Contributed by checkers.
- * - `default_library`: Contributed by default library (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
+ * - `default_library/${category}`: Contributed by default library for the specific category (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
  * - `parser`: Contributed by parsers.
  * - `uri_binder`: Contributed by URI binders.
  * 
@@ -260,7 +270,7 @@ export interface SymbolLocationMetadata {
  */
 export type SymbolLocationBuiltInContributor =
 	| 'checker'
-	| 'default_library'
+	| `default_library/${string}`
 	| 'parser'
 	| 'uri_binder'
 

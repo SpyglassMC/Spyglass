@@ -58,23 +58,10 @@ CATEGORY nbtdoc
 
 exports['SymbolUtil contributeAs Should execute correctly 1'] = `
 CATEGORY test
-+ SYMBOL BeforeBinding1 {test} [Public]
-+ + description: Entered before URI binding w/o references. Should be removed.
-+ ------------
-+ SYMBOL BeforeBinding2 {test} [Public]
-+ + description: Entered before URI binding w/ references.
-+ + reference:
-+ + + {"uri":"spyglassmc://test_file"}
-+ ------------
 + SYMBOL Bound {test} [Public]
 + + description: This symbol is URI bound.
 + + reference:
-+ + + {"uri":"spyglassmc://test_file","contributor":"checker"}
-+ ------------
-+ SYMBOL AfterBinding {test} [Public]
-+ + description: Entered after URI binding w/ references.
-+ + reference:
-+ + + {"uri":"spyglassmc://test_file"}
++ + + {"uri":"spyglassmc://test_file","contributor":"uri_binder"}
 `
 
 exports['SymbolUtil getStack() Should create a new stack 1'] = `
