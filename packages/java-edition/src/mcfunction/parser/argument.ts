@@ -349,7 +349,7 @@ function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): co
 			if (amount === 'single' && ans.selector && !ans.selector.single) {
 				ctx.err.report(localize('mcfunction.parser.entity-selector.multiple-disallowed'), ans)
 			}
-			if (type === 'players' && (ans.uuid || ans.selector && !ans.selector.playersOnly)) {
+			if (type === 'players' && (ans.uuid || (ans.selector && !ans.selector.playersOnly && !ans.selector.currentEntity))) {
 				ctx.err.report(localize('mcfunction.parser.entity-selector.entities-disallowed'), ans)
 			}
 
