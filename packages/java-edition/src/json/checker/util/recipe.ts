@@ -4,10 +4,7 @@ import type { JsonNode, JsonStringNode } from '@spyglassmc/json'
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { string } from '@spyglassmc/json/lib/checker'
 
-export const recipeGroup: JsonChecker = string('recipe_group', symbol({
-	category: 'recipe_group',
-	usageType: 'reference',
-}))
+export const recipeGroup: JsonChecker = string('recipe_group', symbol('recipe_group'))
 
 export function patternKeys(props: PairNode<JsonStringNode, JsonNode>[]) {
 	return [...new Set((props

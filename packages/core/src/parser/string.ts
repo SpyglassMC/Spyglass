@@ -3,7 +3,8 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Mutable, Quote, StringNode, StringOptions } from '../node'
 import { EscapeChar, EscapeTable } from '../node'
 import type { InfallibleParser } from '../parser'
-import { ErrorReporter, ParserContext } from '../service'
+import type { ParserContext } from '../service'
+import { ErrorReporter } from '../service'
 import { IndexMap, Range, Source } from '../source'
 import type { Parser, Result, Returnable } from './Parser'
 import { Failure } from './Parser'
@@ -124,6 +125,13 @@ export function parseStringValue<T extends Returnable>(parser: Parser<T>, value:
 	return valueResult
 }
 
+export const BrigadierUnquotableCharacters = Object.freeze([
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'_', '.', '+', '-',
+] as const)
+export const BrigadierUnquotableCharacterSet = new Set(BrigadierUnquotableCharacters)
 export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]*$/
 
 export const BrigadierStringOptions: StringOptions = {

@@ -230,6 +230,11 @@ export interface SymbolMetadata {
 
 export const SymbolUsageTypes = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
 export type SymbolUsageType = typeof SymbolUsageTypes[number]
+export namespace SymbolUsageType {
+	export function is(value: unknown): value is SymbolUsageType {
+		return SymbolUsageTypes.includes(value as SymbolUsageType)
+	}
+}
 
 export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
 	/**

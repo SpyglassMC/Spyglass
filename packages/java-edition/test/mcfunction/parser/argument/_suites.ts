@@ -217,7 +217,4 @@ export const CommandArgumentTestSuites: Partial<Record<ArgumentTreeNode['parser'
 	'minecraft:vec3': [
 		{ content: ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5'] },
 	],
-	'spyglassmc:symbol': [
-		{ properties: { category: 'team' }, content: ['foo'] },
-	],
 }

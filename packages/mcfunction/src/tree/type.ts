@@ -18,7 +18,7 @@ interface BaseTreeNode {
 export interface ArgumentTreeNode extends BaseTreeNode {
 	type: 'argument',
 	parser: string,
-	properties?: Record<string, any>,
+	properties?: Record<string, unknown>,
 }
 
 export interface LiteralTreeNode extends BaseTreeNode {

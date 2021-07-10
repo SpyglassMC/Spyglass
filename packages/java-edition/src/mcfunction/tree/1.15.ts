@@ -192,7 +192,6 @@ const Sound: PartialTreeNode = {
  * 
  * The following parsers are patched with new properties:
  * - `minecraft:resource_location`
- * - `spyglassmc:symbol`
  */
 export const Tree1_15: PartialRootTreeNode = {
 	children: {
@@ -414,9 +413,7 @@ export const Tree1_15: PartialRootTreeNode = {
 						add: {
 							children: {
 								objective: {
-									parser: 'spyglassmc:symbol',
 									properties: {
-										category: 'objective',
 										usageType: 'definition',
 									},
 								},
@@ -487,9 +484,7 @@ export const Tree1_15: PartialRootTreeNode = {
 				add: {
 					children: {
 						team: {
-							parser: 'spyglassmc:symbol',
 							properties: {
-								category: 'team',
 								usageType: 'definition',
 							},
 						},

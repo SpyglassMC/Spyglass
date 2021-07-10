@@ -13,8 +13,6 @@ import type { ArgumentTreeNode } from '../tree'
 export type ArgumentParserGetter<A extends ChildBaseNode> = (name: string, treeNode: ArgumentTreeNode) => core.Parser<A | SpecialArgumentNode> | undefined | null
 
 export function argumentTreeNodeToString(name: string, treeNode: ArgumentTreeNode): string {
-	const parserName = treeNode.parser === 'spyglassmc:symbol'
-		? treeNode.properties!.category
-		: treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)
+	const parserName = treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)
 	return `<${name}: ${parserName}>`
 }

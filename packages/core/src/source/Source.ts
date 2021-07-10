@@ -27,6 +27,8 @@ export const CRLF = '\r\n'
 export const CR = '\r'
 export const LF = '\n'
 
+export const Whitespaces = Object.freeze([' ', '\n', '\r', '\t'] as const)
+
 export class ReadonlySource {
 	public cursor = 0
 

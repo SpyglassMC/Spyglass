@@ -1,6 +1,7 @@
 import type { AstNode } from '../node'
 import { SequenceUtil } from '../node'
-import { ErrorReporter, ParserContext } from '../service'
+import type { ParserContext } from '../service'
+import { ErrorReporter } from '../service'
 import type { ErrorSeverity, Source } from '../source'
 import { Range } from '../source'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser'
@@ -293,16 +294,40 @@ export function validate<N extends AstNode>(parser: Parser<N>, validator: (res: 
 /**
  * @returns A parser that is based on the passed-in `parser`, but will never read to any of the terminator strings.
  */
-export function stopBefore<N extends Returnable>(parser: InfallibleParser<N>, ...teminators: string[]): InfallibleParser<N>
-export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: string[]): Parser<N>
-export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: string[]): Parser<N> {
+export function stopBefore<N extends Returnable>(parser: InfallibleParser<N>, ...teminators: (string | readonly string[])[]): InfallibleParser<N>
+export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: (string | readonly string[])[]): Parser<N>
+export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminators: (string | readonly string[])[]): Parser<N> {
+	const flatTerminators = teminators.flat()
 	return (src, ctx): Result<N> => {
 		const tmpSrc = src.clone()
-		// Cut newSrc.string before the nearest terminator.
-		tmpSrc.string = tmpSrc.string.slice(0, teminators.reduce((p, c) => {
+		// Cut tmpSrc.string before the nearest terminator.
+		tmpSrc.string = tmpSrc.string.slice(0, flatTerminators.reduce((p, c) => {
 			const index = tmpSrc.string.indexOf(c, tmpSrc.cursor)
 			return Math.min(p, index === -1 ? Infinity : index)
 		}, Infinity))
+
+		const ans = parser(tmpSrc, ctx)
+		src.cursor = tmpSrc.cursor
+		return ans
+	}
+}
+
+/**
+ * @returns A parser that is based on the passed-in `parser`, but will only read the acceptable characters.
+ */
+export function acceptOnly<N extends Returnable>(parser: InfallibleParser<N>, ...characters: (string | readonly string[])[]): InfallibleParser<N>
+export function acceptOnly<N extends Returnable>(parser: Parser<N>, ...characters: (string | readonly string[])[]): Parser<N>
+export function acceptOnly<N extends Returnable>(parser: Parser<N>, ...characters: (string | readonly string[])[]): Parser<N> {
+	const set = new Set(characters.flat())
+	return (src, ctx): Result<N> => {
+		const tmpSrc = src.clone()
+		// Cut tmpSrc.string before the nearest unacceptable character.
+		for (let i = tmpSrc.cursor; i < tmpSrc.string.length; i++) {
+			if (!set.has(tmpSrc.string.charAt(i))) {
+				tmpSrc.string = tmpSrc.string.slice(0, i)
+				break
+			}
+		}
 
 		const ans = parser(tmpSrc, ctx)
 		src.cursor = tmpSrc.cursor

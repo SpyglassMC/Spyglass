@@ -33,6 +33,10 @@ const IntegerMin = -(2 ** 31)
 const LongMax = 9223372036854775807n
 const LongMin = -9223372036854775808n
 
+const FakeNameMaxLength = 40
+const ObjectiveMaxLength = 16
+const PlayerNameMaxLength = 16
+
 /**
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
@@ -46,7 +50,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 			...res,
 			...noTypeOverride ? {} : { type: `mcfunction:argument/${treeNode.parser}` },
 			name,
-			hover: `${argumentTreeNodeToString(name, treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
+			hover: `${mcf.parser.argumentTreeNodeToString(name, treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
 		} as ArgumentNode)
 	)
 
@@ -154,9 +158,10 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		case 'minecraft:nbt_tag':
 			return wrap(nbt.parser.entry)
 		case 'minecraft:objective':
-			return wrap(core.symbol({
-				category: 'objective',
-			}))
+			return wrap(objective(core.SymbolUsageType.is(treeNode.properties?.usageType)
+				? treeNode.properties?.usageType
+				: undefined
+			))
 		case 'minecraft:operation':
 			return wrap(core.literal({
 				pool: ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><'],
@@ -185,9 +190,10 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 				'z', 'zx', 'zy', 'zxy', 'zyx',
 			))
 		case 'minecraft:team':
-			return wrap(core.symbol({
-				category: 'team',
-			}))
+			return wrap(team(core.SymbolUsageType.is(treeNode.properties?.usageType)
+				? treeNode.properties?.usageType
+				: undefined
+			))
 		case 'minecraft:time':
 			return wrap(time)
 		case 'minecraft:uuid':
@@ -197,9 +203,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		case 'minecraft:vec3':
 			return wrap(vector(3))
 		case 'spyglassmc:tag':
-			return wrap(core.symbol({ category: 'tag' }))
-		case 'spyglassmc:symbol':
-			return wrap(core.symbol(treeNode.properties))
+			return wrap(tag())
 		case 'minecraft:nbt_path':
 		case 'minecraft:objective_criteria':
 		case 'minecraft:particle':
@@ -315,17 +319,12 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 }
 
 function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.InfallibleParser<MinecraftEntityArgumentNode> {
-	const MaxLength = 16
 	return core.map<core.StringNode | EntitySelectorNode | MinecraftUuidArgumentNode, MinecraftEntityArgumentNode>(
 		core.any([
-			core.map<core.StringNode>(
+			validateLength<core.StringNode>(
 				core.brigadierString,
-				(res, _src, ctx) => {
-					if (res.value.length > MaxLength) {
-						ctx.err.report(localize('mcfunction.parser.entity-selector.player-name.too-long', MaxLength), res)
-					}
-					return res
-				}
+				PlayerNameMaxLength,
+				'mcfunction.parser.entity-selector.player-name.too-long'
 			),
 			selector(),
 			uuid,
@@ -367,7 +366,7 @@ function item(isPredicate: true): core.InfallibleParser<MinecraftItemPredicateAr
 function item(isPredicate: boolean): core.InfallibleParser<MinecraftItemPredicateArgumentNode | MinecraftItemStackArgumentNode> {
 	return core.map<core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>, MinecraftItemPredicateArgumentNode | MinecraftItemStackArgumentNode>(
 		core.sequence([
-			core.stopBefore(core.resourceLocation({ category: 'item', allowTag: isPredicate }), '{'),
+			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
 			core.optional(core.failOnEmpty(nbt.parser.compound)),
 		]),
 		res => {
@@ -628,7 +627,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 													core.table<core.SymbolNode, MinecraftIntRangeArgumentNode>({
 														start: '{',
 														pair: {
-															key: core.symbol({ category: 'objective' }),
+															key: objective('reference', ['[', '=', ',', ']', '{', '}']),
 															sep: '=',
 															value: range('integer'),
 															end: ',',
@@ -667,10 +666,10 @@ function selector(): core.Parser<EntitySelectorNode> {
 													}
 												)
 											case 'tag':
-												return invertable(core.symbol({ category: 'tag' }))
+												return invertable(tag('[', '=', ',', ']', '{', '}'))
 											case 'team':
 												return core.map<EntitySelectorInvertableArgumentValueNode<core.SymbolNode>>(
-													invertable(core.symbol({ category: 'team' })),
+													invertable(team('reference', ['[', '=', ',', ']', '{', '}'])),
 													(res, _, ctx) => {
 														if (res.inverted ? hasNonInvertedKey(key.value) : hasKey(key.value)) {
 															ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
@@ -812,15 +811,10 @@ ${node.predicates.map(p => `- \`${p}\``).join('\n')}`
 	return ans
 }
 
-const FakeNameMaxLength = 40
-export const scoreHolderFakeName: core.Parser<core.SymbolNode> = core.map<core.SymbolNode>(
-	core.symbol({ category: 'score_holder' }),
-	(res, _src, ctx) => {
-		if (res.value.length > FakeNameMaxLength) {
-			ctx.err.report(localize('mcfunction.parser.score_holder.fake-name.too-long', FakeNameMaxLength), res)
-		}
-		return res
-	}
+export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<core.SymbolNode>(
+	symbol('score_holder'),
+	FakeNameMaxLength,
+	'mcfunction.parser.score_holder.fake-name.too-long',
 )
 
 function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreHolderArgumentNode> {
@@ -850,6 +844,30 @@ function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreH
 			return ans
 		}
 	)
+}
+
+function symbol(options: core.AllCategory | core.SymbolOptions, ...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
+	return core.stopBefore(core.symbol(options as never), core.Whitespaces, terminators)
+}
+
+function objective(usageType?: core.SymbolUsageType, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
+	return validateLength(
+		unquotableSymbol({ category: 'objective', usageType }, ...terminators),
+		ObjectiveMaxLength,
+		'mcfunction.parser.objective.too-long'
+	)
+}
+
+function tag(...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol('tag', ...terminators)
+}
+
+function team(usageType?: core.SymbolUsageType, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol({ category: 'team', usageType }, ...terminators)
+}
+
+function unquotableSymbol(options: core.AllCategory | core.SymbolOptions, ...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
+	return validateUnquotable(symbol(options, ...terminators))
 }
 
 const time: core.InfallibleParser<MinecraftTimeArgumentNode> = core.map(
@@ -915,6 +933,30 @@ const uuid: core.InfallibleParser<MinecraftUuidArgumentNode> = (src, ctx): Minec
 	return ans
 }
 
+function validateLength<T extends core.AstNode & { value: string }>(parser: core.InfallibleParser<T>, maxLength: number, localeKey: `${string}.too-long`): core.InfallibleParser<T> {
+	return core.map<T, T>(
+		parser,
+		(res, _src, ctx) => {
+			if (res.value.length > maxLength) {
+				ctx.err.report(localize(localeKey, maxLength), res)
+			}
+			return res
+		}
+	)
+}
+
+function validateUnquotable(parser: core.InfallibleParser<core.SymbolNode>): core.InfallibleParser<core.SymbolNode> {
+	return core.map(
+		parser,
+		(res, _src, ctx) => {
+			if (!res.value.match(core.BrigadierUnquotablePattern)) {
+				ctx.err.report(localize('parser.string.illegal-brigadier', localeQuote(res.value)), res)
+			}
+			return res
+		}
+	)
+}
+
 function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.InfallibleParser<VectorBaseNode> {
 	return (src, ctx): VectorBaseNode => {
 		const ans: VectorBaseNode = {
@@ -947,12 +989,4 @@ function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.In
 
 		return ans
 	}
-}
-
-export function argumentTreeNodeToString(name: string, rawTreeNode: mcf.ArgumentTreeNode): string {
-	const treeNode = rawTreeNode as ArgumentTreeNode
-	const parserName = treeNode.parser === 'spyglassmc:symbol'
-		? treeNode.properties.category
-		: treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)
-	return `<${name}: ${parserName}>`
 }
