@@ -52,7 +52,18 @@ connection.onInitialize(async params => {
 			logger,
 			projectPath: core.fileUtil.fileUriToPath(workspaceFolders[0].uri),
 		})
-		await service.project.ready()
+		service.project
+			.on('documentErrorred', ({ doc, errors }) => {
+				connection.sendDiagnostics({
+					diagnostics: toLS.diagnostics(errors, doc),
+					uri: doc.uri,
+					version: doc.version,
+				})
+			})
+			.on('documentRemoved', ({ uri }) => {
+				connection.sendDiagnostics({ uri, diagnostics: [] })
+			})
+		await service.project.init()
 	} catch (e) {
 		logger.error('[new Service]', e)
 	}
@@ -100,6 +111,7 @@ connection.onInitialize(async params => {
 })
 
 connection.onInitialized(async () => {
+	await service.project.ready()
 	if (capabilities.workspace?.workspaceFolders) {
 		connection.workspace.onDidChangeWorkspaceFolders(async () => {
 			// FIXME
@@ -121,58 +133,98 @@ connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 connection.workspace.onDidRenameFiles(({ }) => {
 })
 
-connection.onColorPresentation(({ textDocument: { uri }, color, range }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const presentation = service.getColorPresentation(node, doc, toCore.range(range, doc), toCore.color(color))
 	return toLS.colorPresentationArray(presentation, doc)
 })
-connection.onDocumentColor(({ textDocument: { uri } }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onDocumentColor(async ({ textDocument: { uri } }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const info = service.getColorInfo(node, doc)
 	return toLS.colorInformationArray(info, doc)
 })
 
-connection.onCompletion(({ textDocument: { uri }, position, context }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const offset = toCore.offset(position, doc)
 	const items = service.complete(node, doc, offset, context?.triggerCharacter)
 	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
 })
 
-connection.onDeclaration(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
 })
-connection.onDefinition(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onDefinition(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
-connection.onImplementation(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onImplementation(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
 })
-connection.onReferences(({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onReferences(async ({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
 	return toLS.locationLink(ans, doc, false)
 })
-connection.onTypeDefinition(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
 })
 
-connection.onDocumentHighlight(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
 	return toLS.documentHighlight(ans)
 })
 
-connection.onDocumentSymbol(({ textDocument: { uri } }) => {
-	const { doc } = service.project.get(uri)!
+connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc } = docAndNode
 	return toLS.documentSymbolsFromTables(
 		[service.project.symbols.global, ...service.project.symbols.getStack(doc.uri)],
 		doc,
@@ -181,19 +233,31 @@ connection.onDocumentSymbol(({ textDocument: { uri } }) => {
 	)
 })
 
-connection.onHover(({ textDocument: { uri }, position }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.onHover(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
 	const ans = service.getHover(node, doc, toCore.offset(position, doc))
 	return ans ? toLS.hover(ans, doc) : undefined
 })
 
-connection.languages.semanticTokens.on(({ textDocument: { uri } }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return { data: [] }
+	}
+	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc)
 	return toLS.semanticTokens(tokens, doc)
 })
-connection.languages.semanticTokens.onRange(({ textDocument: { uri }, range }) => {
-	const { doc, node } = service.project.get(uri)!
+connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return { data: [] }
+	}
+	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc, toCore.range(range, doc),)
 	return toLS.semanticTokens(tokens, doc)
 })

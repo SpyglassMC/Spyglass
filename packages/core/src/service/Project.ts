@@ -49,14 +49,13 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureChecked' | 'ensureParsed' | 'fs' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
+export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
 export namespace ProjectLike {
 	export function mock(data: Partial<ProjectLike> = {}): ProjectLike {
 		return {
 			allRoots: data.allRoots ?? [],
 			config: data.config ?? VanillaConfig,
-			ensureChecked: data.ensureChecked!,
-			ensureParsed: data.ensureParsed!,
+			ensureParsedAndChecked: data.ensureParsedAndChecked!,
 			fs: data.fs ?? FileService.create(),
 			logger: data.logger ?? Logger.create(),
 			meta: data.meta ?? new MetaRegistry(),
@@ -101,8 +100,9 @@ export class Project extends EventEmitter {
 	 */
 	readonly #clientManagedUris = new Set<string>()
 	readonly #configService!: ConfigService
-	readonly #initializationPromise: Promise<void>
 	readonly #initializers!: readonly ProjectInitializer[]
+	readonly #initPromise: Promise<void>
+	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new Set<string>()
 	readonly #watcher: chokidar.FSWatcher
 	#watcherReady = false
@@ -173,19 +173,18 @@ export class Project extends EventEmitter {
 		this.symbols = symbols
 
 		this.#configService
-			.on('changed', ({ config }) => this.config = config)
-			.on('error', ({ error, uri }) => this.logger.error(`[Project] [ConfigService] Config file “${uri}”`, error))
+			.on('changed', ({ config }) => {
+				this.config = config
+				this.logger.info('[Project] [Config] Changed')
+			})
+			.on('error', ({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error))
 
 		this.#watcher = chokidar
 			.watch(projectPath, { ignoreInitial: false })
 
 		const loadConfig = async () => {
-			try {
-				this.config = await this.#configService.load()
-			} catch (e) {
-				this.logger.error('[new Project#loadConfig]', e)
-				this.config = VanillaConfig
-			}
+			this.config = await this.#configService.load()
+			this.logger.info('[Project] [Config] Loaded')
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
@@ -209,13 +208,14 @@ export class Project extends EventEmitter {
 					const provider = this.meta.getDependencyProvider(dependency)
 					if (provider) {
 						try {
+							this.logger.info(`[Project] [getDependencies] Executing provider “${dependency}”...`)
 							ans.push(await provider())
-							this.logger.info(`[Project] [getDependencies] Executed the dependency provider for “${dependency}”`)
+							this.logger.info(`[Project] [getDependencies] Executed provider “${dependency}”`)
 						} catch (e) {
-							this.logger.error(`[Project] [getDependencies] Bad dependency provider for “${dependency}”`, e)
+							this.logger.error(`[Project] [getDependencies] Bad provider “${dependency}”`, e)
 						}
 					} else {
-						this.logger.error(`[Project] [getDependencies] Bad dependency “${dependency}”: no associated dependency provider`)
+						this.logger.error(`[Project] [getDependencies] Bad dependency “${dependency}”: no associated provider`)
 					}
 				} else {
 					ans.push({ uri: dependency })
@@ -258,11 +258,10 @@ export class Project extends EventEmitter {
 				}
 			})
 			.on('error', e => {
-				this.logger.error('[Project#chokidar]', e)
+				this.logger.error('[Project] [chokidar]', e)
 			})
 		)
-		const initialize = async () => {
-			/* Profile */ const date0 = new Date()
+		const init = async () => {
 			await Promise.all([
 				loadDependencies(),
 				loadProjectFiles(),
@@ -271,34 +270,38 @@ export class Project extends EventEmitter {
 			this.#dependencyFiles = new Set(this.fs.listFiles())
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
-			const allFiles = this.getAllFiles() // FIXME: nbtdoc files might need to be parsed and checked before others.
 			this.updateAllRoots()
+		}
+		const ready = async () => {
+			/* Profile */ const date0 = new Date()
+			/* Profile */ this.logger.info('[Project] [init] Starting...')
+			await this.init()
+
+			const allFiles = this.getAllFiles() // FIXME: nbtdoc files might need to be parsed and checked before others.
 			/* Profile */ const date1 = new Date()
-			/* Profile */ this.logger.info(`[Project] [initialize] Prepare   - ${date1.getTime() - date0.getTime()} ms`)
-			// Bind all URIs.
+			/* Profile */ this.logger.info(`[Project] [init] List URIs - ${date1.getTime() - date0.getTime()} ms`)
 			this.bind(allFiles)
 
 			const limit = pLimit(8)
 
 			/* Profile */ const date2 = new Date()
-			/* Profile */ this.logger.info(`[Project] [initialize] Bind URIs - ${date2.getTime() - date1.getTime()} ms`)
-			// Read, parse, and cache all files.
+			/* Profile */ this.logger.info(`[Project] [init] Bind URIs - ${date2.getTime() - date1.getTime()} ms`)
 			const ensureParsed = this.ensureParsed.bind(this)
-			const docAndNodes = await Promise.all(allFiles.map(f => limit(ensureParsed, f)))
+			const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
 
 			/* Profile */ const date3 = new Date()
-			/* Profile */ this.logger.info(`[Project] [initialize] Parse all - ${date3.getTime() - date2.getTime()} ms`)
-			// Check all cached documents.
+			/* Profile */ this.logger.info(`[Project] [init] Parse all - ${date3.getTime() - date2.getTime()} ms`)
 			const ensureChecked = this.ensureChecked.bind(this)
 			await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
 
 			this.emit('ready', {})
 			/* Profile */ const date4 = new Date()
-			/* Profile */ this.logger.info(`[Project] [initialize] Check all - ${date4.getTime() - date3.getTime()} ms`)
-			/* Profile */ this.logger.info(`[Project] [initialize] Total     - ${date4.getTime() - date0.getTime()} ms`)
+			/* Profile */ this.logger.info(`[Project] [init] Check all - ${date4.getTime() - date3.getTime()} ms`)
+			/* Profile */ this.logger.info(`[Project] [init] Total     - ${date4.getTime() - date0.getTime()} ms`)
 		}
 
-		this.#initializationPromise = initialize()
+		this.#initPromise = init()
+		this.#readyPromise = ready()
 
 		this
 			.on('documentUpdated', ({ doc, node }) => {
@@ -314,14 +317,12 @@ export class Project extends EventEmitter {
 					this.updateAllRoots()
 				}
 				this.bind(uri)
-				const { doc, node } = await this.ensureParsed(uri)
-				await this.ensureChecked(doc, node)
+				return this.ensureParsedAndChecked(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
 				if (this.isOnlyWatched(uri)) {
 					this.#cache.delete(uri)
-					const { doc, node } = await this.ensureParsed(uri)
-					await this.ensureChecked(doc, node)
+					await this.ensureParsedAndChecked(uri)
 				}
 			})
 			.on('fileDeleted', ({ uri }) => {
@@ -334,8 +335,13 @@ export class Project extends EventEmitter {
 			})
 	}
 
+	async init(): Promise<this> {
+		await this.#initPromise
+		return this
+	}
+
 	async ready(): Promise<this> {
-		await this.#initializationPromise
+		await this.#readyPromise
 		return this
 	}
 
@@ -359,17 +365,27 @@ export class Project extends EventEmitter {
 	/**
 	 * @throws FS-related errors
 	 */
-	async ensureParsed(uri: string): Promise<DocAndNode> {
+	@CachePromise()
+	async ensureParsed(uri: string): Promise<DocAndNode | undefined> {
 		uri = fileUtil.normalize(uri)
 
 		if (this.#cache.has(uri)) {
 			return this.#cache.get(uri)!
 		}
 
-		const content = (await this.fs.readFile(uri)).toString('utf-8')
 		const languageID = this.getLanguageID(uri)
-		const doc = TextDocument.create(uri, languageID, -1, content)
-		return this.parseAndCache(doc)
+		if (!this.meta.isSupportedLanguage(languageID)) {
+			return undefined
+		}
+
+		try {
+			const content = (await this.fs.readFile(uri)).toString('utf-8')
+			const doc = TextDocument.create(uri, languageID, -1, content)
+			return this.parseAndCache(doc)
+		} catch (e) {
+			this.logger.warn(`[Project] [ensureParsed] Failed for “${uri}”`, e)
+			return undefined
+		}
 	}
 
 	private parseAndCache(doc: TextDocument): DocAndNode {
@@ -399,8 +415,8 @@ export class Project extends EventEmitter {
 		const ctx = CheckerContext.create(this, { doc })
 		return new Promise<void>(rs => {
 			ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
-			ctx.symbols.contributeAs('parser', async () => {
-				await checker(node.children[0], ctx)
+			ctx.symbols.contributeAs('checker', async () => {
+				await checker(node, ctx)
 				node.checkerErrors = ctx.err.dump()
 				this.cache(doc, node)
 				rs()
@@ -411,8 +427,21 @@ export class Project extends EventEmitter {
 	@CachePromise()
 	async ensureChecked(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		if (!node.checkerErrors) {
-			return this.check(doc, node)
+			try {
+				return this.check(doc, node)
+			} catch (e) {
+				this.logger.error(`[Project] [ensuredChecked] Failed for “${doc.uri}” #${doc.version}`, e)
+			}
 		}
+	}
+
+	@CachePromise()
+	async ensureParsedAndChecked(uri: string): Promise<DocAndNode | undefined> {
+		const result = await this.ensureParsed(uri)
+		if (result) {
+			await this.ensureChecked(result.doc, result.node)
+		}
+		return result
 	}
 
 	private bind(param: string | string[]): void {

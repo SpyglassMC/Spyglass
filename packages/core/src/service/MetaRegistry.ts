@@ -53,6 +53,10 @@ export class MetaRegistry {
 		return Array.from(this.#languages.keys())
 	}
 
+	public isSupportedLanguage(language: string): boolean {
+		return this.#languages.has(language)
+	}
+
 	/**
 	 * An array of file extensions (including the leading dot (`.`)) that are supported.
 	 */

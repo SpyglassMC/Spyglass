@@ -28,8 +28,6 @@ export async function getVersionManifest(logger: core.Logger): Promise<VersionMa
  * @throws Network/file system errors.
  */
 export async function getVanillaResources(version: string, status: VersionStatus, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
-	logger.info(`[getVanillaResources] Getting vanilla resources for { v: “${version}”, s: ${status}, cacheRoot: “${cacheRoot}” }...`)
-
 	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
 	const refs = getRefs({
@@ -44,7 +42,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	try {
 		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
-		logger.error('[getMcNbtdoc#sha_write]', e)
+		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
 	}
 
 	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
@@ -52,7 +50,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 			try {
 				return transformer(await fse.readFile(overridePath))
 			} catch (e) {
-				throw new Error(`[getVanillaResources] Failed loading customized vanilla resource “${overridePath}”: ${e?.toString()}`)
+				logger.error(`[dependency] [vanillaResource] Failed loading customized vanilla resource “${overridePath}”`, e)
 			}
 		}
 		return downloadJson<T>(logger, url, ['mc_je', version, fileName], !shouldRefresh, transformer)
@@ -90,16 +88,16 @@ async function invalidateGitTagCache(user: string, repo: string, refs: string, c
 				const cachedSha: string = (await fse.readJson(cachedShaPath, { encoding: 'utf-8' })).sha
 				if (cachedSha && latestSha !== cachedSha) {
 					shouldRefresh = true
-					logger.info(`[invalidateGitTagCache] Cache ${cachedSha} for ${user}/${repo} is different than the latest ${latestSha}`)
+					logger.info(`[dependency] [invalidateCache] Cache ${cachedSha} for ${user}/${repo} is different than the latest ${latestSha}`)
 				} else {
-					logger.info(`[invalidateGitTagCache] Cache ${cachedSha} for ${user}/${repo} is up to date`)
+					logger.info(`[dependency] [invalidateCache] Cache ${cachedSha} for ${user}/${repo} is up to date`)
 				}
 			} catch {
 				// File doesn't exist. Ignored.
 			}
 		}
 	} catch (e) {
-		logger.error('[invalidateGitTagCache]', e)
+		logger.error('[dependency] [invalidateCache]', e)
 	}
 	return { latestSha, shouldRefresh }
 }
@@ -135,7 +133,7 @@ async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status,
 	try {
 		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
-		logger.error('[getMcNbtdoc#sha_write]', e)
+		logger.error(`[dependency] [repo] Failed writing sha for ${user}/${repo}`, e)
 	}
 
 	await downloadData(
@@ -229,14 +227,14 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 			} catch (e) {
 				// Cache failed.
 				error = e
-				logger.error(`[downloadData] Caching to “${cacheFilePath}”`, e)
+				logger.error(`[dependency] [download] Caching to “${cacheFilePath}”`, e)
 			}
-			logger.info(`[downloadData] Downloaded from “${url}”`)
+			logger.info(`[dependency] [download] Downloaded from “${url}”`)
 			return ans
 		} catch (e) {
 			// Download failed.
 			error = e
-			logger.error(`[downloadData] Downloading from “${url}”`, e)
+			logger.error(`[dependency] [download] Downloading from “${url}”`, e)
 		}
 		return undefined
 	}
@@ -251,7 +249,7 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 	try {
 		const buffer = await fse.readFile(cacheFilePath)
 		const ans = transformer(buffer)
-		logger.info(`[downloadData] Read cache from “${cacheFilePath}”`)
+		logger.info(`[dependency] [download] Read cache from “${cacheFilePath}”`)
 		return ans
 	} catch (e) {
 		// Read cache failed.

@@ -22,7 +22,7 @@ export function CachePromise(getCacheKey: (args: any[]) => any = args => args[0]
 				return promises.get(cacheKey)!
 			}
 			const ans = decoratedMethod.apply(this, args)
-				.then(() => promises.delete(cacheKey), () => promises.delete(cacheKey))
+				.then(ans => (promises.delete(cacheKey), ans), e => (promises.delete(cacheKey), Promise.reject(e)))
 			promises.set(cacheKey, ans)
 			return ans
 		}

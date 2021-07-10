@@ -77,7 +77,7 @@ export namespace ProcessorContext {
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
 	ops: Operations,
-	ensureChecked: (this: void, uri: string) => Promise<void>,
+	ensureChecked: (this: void, uri: string) => Promise<unknown>,
 }
 interface CheckerContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
@@ -89,19 +89,7 @@ export namespace CheckerContext {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
 			ops: opts.ops ?? new Operations(),
-			ensureChecked: (project.ensureChecked) && (project.ensureParsed)
-				? async uri => {
-					try {
-						const result = await project.ensureParsed(uri)
-						if (result) {
-							const { doc, node } = result
-							await project.ensureChecked(doc, node)
-						}
-					} catch {
-						// Ignored.
-					}
-				}
-				: undefined!,
+			ensureChecked: project.ensureParsedAndChecked,
 		}
 	}
 }
