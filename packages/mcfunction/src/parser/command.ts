@@ -47,11 +47,15 @@ export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: A
 function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgumentNode)[], src: core.Source, ctx: core.ParserContext, rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter<A>): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
-	const permissionLevelInConfig = 2 // TODO: Use real config.
+	const parent = parentTreeNode.redirect
+		? redirect(rootTreeNode, parentTreeNode.redirect)
+		: (parentTreeNode.children || parentTreeNode.executable)
+			? parentTreeNode
+			// The `execute.run` literal tree node doesn't have any property.
+			// We should use children from the root tree node in this case.
+			: rootTreeNode
 
-	const children = parentTreeNode.redirect
-		? redirect(rootTreeNode, parentTreeNode.redirect)?.children
-		: parentTreeNode.children
+	const children = parent?.children
 	if (!children) {
 		return
 	}
@@ -60,7 +64,7 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 
 	const argumentParsers = argumentTreeNodes.map(([name, treeNode]) => argument(name, treeNode) ?? unknown(name, treeNode))
 	const literalParser = literalTreeNodes.length
-		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parentTreeNode.type === 'root')
+		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent!.type === 'root')
 		: undefined
 
 	const parsers: core.Parser<LiteralNode | A | SpecialArgumentNode>[] = [
@@ -76,9 +80,9 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 		const childTreeNode = children[result.name]
 
 		const requiredPermissionLevel = childTreeNode.permission ?? 2
-		if (permissionLevelInConfig < requiredPermissionLevel) {
+		if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
 			ctx.err.report(
-				localize('mcfunction.parser.no-permission', requiredPermissionLevel, permissionLevelInConfig),
+				localize('mcfunction.parser.no-permission', requiredPermissionLevel, ctx.config.env.permissionLevel),
 				result
 			)
 		}
