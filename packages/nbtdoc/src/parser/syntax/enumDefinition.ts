@@ -11,8 +11,8 @@ import { docComments } from './docComments'
  * `Failure` when there's no `enum` keyword.
  */
 export function enumDefinition(): Parser<EnumDefinitionNode> {
-	return map(
-		syntax<EnumChild>([
+	return map<SyntaxUtil<EnumChild>, EnumDefinitionNode>(
+		syntax([
 			docComments,
 			keyword('enum'), punctuation('('), enumType, punctuation(')'), identifier(), punctuation('{'),
 			enumFields,
@@ -36,7 +36,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
 	any(EnumTypes.map(t => keyword(t))),
 	(src, ctx) => {
-		ctx.err.report(localize('expected', 
+		ctx.err.report(localize('expected',
 			EnumTypes,
 		), src)
 		const ans: LiteralToken<''> = {
@@ -50,7 +50,7 @@ export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover
 
 
 const enumField: InfallibleParser<EnumFieldNode> = map(
-	syntax<EnumFieldChild>([
+	syntax([
 		docComments,
 		identifier(), punctuation('='), any([integer(), float, string]),
 	], true),
@@ -67,7 +67,7 @@ const enumField: InfallibleParser<EnumFieldNode> = map(
 	}
 )
 
-export const enumFields: InfallibleParser<SyntaxUtil<LiteralToken | EnumFieldNode>> = syntax<LiteralToken | EnumFieldNode>([
+export const enumFields: InfallibleParser<SyntaxUtil<LiteralToken | EnumFieldNode>> = syntax([
 	enumField,
-	syntaxRepeat(syntax<LiteralToken | EnumFieldNode>([marker(','), enumField], true)),
+	syntaxRepeat(syntax([marker(','), enumField], true)),
 ], true)

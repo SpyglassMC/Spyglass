@@ -1,6 +1,6 @@
 import type { CommentNode, Parser } from '@spyglassmc/core'
 import { map, optional, ResourceLocationNode } from '@spyglassmc/core'
-import type { DescribesClauseNode, LiteralToken } from '../../node'
+import type { DescribesClauseNode, LiteralToken, SyntaxUtil } from '../../node'
 import { ExtendableRootRegistries, ExtendableRootRegistryMap, IdentPathToken } from '../../node'
 import { identPath, keyword, marker, minecraftIdentifier, punctuation } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
@@ -11,8 +11,8 @@ type ChildNode = IdentPathToken | LiteralToken | ResourceLocationNode | CommentN
  * `Failure` when there isn't the `describes` keyword.
  */
 export function describesClause(): Parser<DescribesClauseNode> {
-	return map(
-		syntax<ChildNode>([
+	return map<SyntaxUtil<ChildNode>, DescribesClauseNode>(
+		syntax([
 			identPath(),
 			keyword('describes'),
 			minecraftIdentifier({ pool: ExtendableRootRegistries }),
@@ -27,10 +27,10 @@ export function describesClause(): Parser<DescribesClauseNode> {
 							? { category: ExtendableRootRegistryMap[type as keyof typeof ExtendableRootRegistryMap] }
 							: { pool: [], allowUnknown: true }
 					)
-					return optional(syntax<ChildNode>([
+					return optional(syntax([
 						marker('['),
 						identifier,
-						syntaxRepeat<ChildNode>(syntax<ChildNode>([
+						syntaxRepeat(syntax([
 							marker(','),
 							identifier,
 						])),

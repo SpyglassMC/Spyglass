@@ -318,7 +318,7 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 	}
 }
 
-function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.InfallibleParser<MinecraftEntityArgumentNode> {
+function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.Parser<MinecraftEntityArgumentNode> {
 	return core.map<core.StringNode | EntitySelectorNode | MinecraftUuidArgumentNode, MinecraftEntityArgumentNode>(
 		core.any([
 			validateLength<core.StringNode>(
@@ -412,7 +412,7 @@ function range(type: 'float' | 'integer', min?: number, max?: number, cycleable?
 	const sep = core.failOnEmpty(core.literal({ pool: ['..'], colorTokenType: 'keyword' }))
 	const high = core.failOnEmpty(number)
 	return core.map<core.SequenceUtil<core.FloatNode | core.IntegerNode | core.LiteralNode>, MinecraftFloatRangeArgumentNode | MinecraftIntRangeArgumentNode>(
-		core.any<core.SequenceUtil<core.FloatNode | core.IntegerNode | core.LiteralNode>>([
+		core.any([
 			/* exactly */ core.sequence([low]),
 			/* atLeast */ core.sequence([low, sep]),
 			/* atMost  */ core.sequence([sep, high]),
@@ -470,7 +470,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 
 					function invertable<T extends core.AstNode>(parser: core.Parser<T>): core.Parser<EntitySelectorInvertableArgumentValueNode<T>> {
 						return core.map<core.SequenceUtil<core.LiteralNode | T>, EntitySelectorInvertableArgumentValueNode<T>>(
-							core.sequence<core.LiteralNode | T>([
+							core.sequence([
 								core.optional(core.failOnEmpty(core.literal({ pool: ['!'], colorTokenType: 'keyword' }))),
 								src => { src.skipSpace(); return undefined },
 								parser,
@@ -514,7 +514,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 														pair: {
 															key: core.resourceLocation({ category: 'advancement' }),
 															sep: '=',
-															value: core.any<core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode>([
+															value: core.any([
 																core.boolean,
 																core.map<core.TableNode<core.StringNode, core.BooleanNode>, EntitySelectorAdvancementsArgumentCriteriaNode>(
 																	core.table<core.StringNode, core.BooleanNode>({

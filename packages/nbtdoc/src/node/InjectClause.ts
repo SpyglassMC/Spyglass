@@ -9,18 +9,18 @@ export interface InjectClauseNode extends SyntaxNode<InjectClauseChild> {
 
 export type InjectClauseChild = LiteralToken | DefinitionInject
 
-export type DefinitionInject = SyntaxNode<DefinitionInjectChild> & (
-	{
-		type: 'nbtdoc:inject_clause/compound',
-		path: IdentPathToken,
-		fields: CompoundFieldNode[],
-	} | {
-		type: 'nbtdoc:inject_clause/enum',
-		path: IdentPathToken,
-		enumType: LiteralToken<EnumTypeOrEmpty>,
-		fields: EnumFieldNode[],
-	}
-)
+interface CompoundDefinitionInject extends SyntaxNode<DefinitionInjectChild> {
+	type: 'nbtdoc:inject_clause/compound',
+	path: IdentPathToken,
+	fields: CompoundFieldNode[],
+}
+interface EnumDefinitionInject extends SyntaxNode<DefinitionInjectChild> {
+	type: 'nbtdoc:inject_clause/enum',
+	path: IdentPathToken,
+	enumType: LiteralToken<EnumTypeOrEmpty>,
+	fields: EnumFieldNode[],
+}
+export type DefinitionInject = CompoundDefinitionInject | EnumDefinitionInject
 export namespace DefinitionInject {
 	export function is(obj: object): obj is DefinitionInject {
 		return (obj as DefinitionInject).type === 'nbtdoc:inject_clause/compound' ||

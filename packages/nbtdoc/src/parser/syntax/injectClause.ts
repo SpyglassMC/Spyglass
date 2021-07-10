@@ -12,8 +12,8 @@ import { enumFields, enumType } from './enumDefinition'
  * `Failure` when there's no `inject` keyword.
  */
 export function injectClause(): Parser<InjectClauseNode> {
-	return map(
-		syntax<InjectClauseChild>([
+	return map<SyntaxUtil<DefinitionInject | LiteralToken>, InjectClauseNode>(
+		syntax([
 			keyword('inject'),
 			definitionInject,
 		]),
@@ -32,16 +32,16 @@ export function injectClause(): Parser<InjectClauseNode> {
 const definitionInject: InfallibleParser<DefinitionInject | undefined> = map(
 	recover(
 		any([
-			syntax<DefinitionInjectChild>([
+			syntax([
 				keyword('enum'), punctuation('('), enumType, punctuation(')'), identPath(), punctuation('{'),
 				enumFields,
 				punctuation('}'),
 			], true),
-			syntax<DefinitionInjectChild>([
+			syntax([
 				keyword('compound'), identPath(), punctuation('{'),
 				any([
 					marker('}'),
-					syntax<DefinitionInjectChild>([compoundFields, punctuation('}')], true),
+					syntax([compoundFields, punctuation('}')], true),
 				]),
 			], true),
 		]),
