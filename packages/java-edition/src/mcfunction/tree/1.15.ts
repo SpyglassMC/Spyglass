@@ -495,6 +495,34 @@ export const Tree1_15: PartialRootTreeNode = {
 		teammsg: {
 			permission: 0,
 		},
+		/**
+		 * Original command syntax:
+		 * 1. `teleport <destination: entity(single)>`
+   	 * 2. `teleport <location: vec3>`
+   	 * 3. `teleport <targets: entity(multiple)> <...arguments>`
+		 * 
+		 * It is impossible for SPYGlass to differentiate between (1) and (3) when it encouters a single entity
+		 * at the position of the first argument, due to its lack of ability to backtrack.
+		 * 
+		 * Therefore, we have compromised to patch the trees to something like this:
+   	 * - `teleport <location: vec3>`
+   	 * - `teleport <targets: entity(multiple)> [<...arguments>]`
+		 * 
+		 * Diff:
+		 * - Removed (1) `teleport <destination: entity(single)>`.
+		 * - Marked `<...arguments>` in (3) as optional.
+		 * 
+		 * The downside of this patch is that entity selectors tracking multiple entities can now be used as the
+		 * `<destination>` argument. We will see how this work.
+		 */
+		teleport: {
+			children: {
+				destination: undefined,
+				targets: {
+					executable: true,
+				},
+			},
+		},
 		tell: {
 			permission: 0,
 		},
