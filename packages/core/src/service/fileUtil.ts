@@ -92,5 +92,4 @@ export namespace fileUtil {
 			return uri
 		}
 	}
-
 }

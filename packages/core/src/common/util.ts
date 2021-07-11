@@ -104,3 +104,15 @@ export namespace SpyglassUri {
 		}
 	}
 }
+
+/**
+ * @returns The string value decoded from the buffer according to UTF-8.
+ * Byte order mark is correctly removed.
+ */
+export function bufferToString(buffer: Buffer): string {
+	const ans = buffer.toString('utf-8')
+	if (ans.startsWith('\uFEFF')) {
+		return ans.slice(1)
+	}
+	return ans
+}

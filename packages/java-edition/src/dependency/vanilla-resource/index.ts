@@ -48,7 +48,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
 		if (overridePath) {
 			try {
-				return transformer(await fse.readFile(overridePath))
+				return transformer(await fse.readJson(overridePath))
 			} catch (e) {
 				logger.error(`[dependency] [vanillaResource] Failed loading customized vanilla resource “${overridePath}”`, e)
 			}
@@ -196,7 +196,7 @@ export async function getVanillaDatapack(version: string, status: VersionStatus,
 	}
 }
 
-const jsonTransformer = (buffer: Buffer) => JSON.parse(buffer.toString('utf-8'))
+const jsonTransformer = (buffer: Buffer) => JSON.parse(core.bufferToString(buffer))
 
 async function fetchJson<T = any>(url: string): Promise<T> {
 	return jsonTransformer(await download(url))

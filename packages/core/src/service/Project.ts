@@ -3,7 +3,7 @@ import EventEmitter from 'events'
 import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { CachePromise } from '../common'
+import { bufferToString, CachePromise } from '../common'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
 import type { LanguageError } from '../source'
@@ -379,7 +379,7 @@ export class Project extends EventEmitter {
 		}
 
 		try {
-			const content = (await this.fs.readFile(uri)).toString('utf-8')
+			const content = bufferToString(await this.fs.readFile(uri))
 			const doc = TextDocument.create(uri, languageID, -1, content)
 			return this.parseAndCache(doc)
 		} catch (e) {

@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
-import { Uri } from '../common/util'
+import { bufferToString, Uri } from '../common/util'
 import { VanillaRegistryCategories } from '../symbol'
 import type { Project } from './Project'
 /* eslint-disable no-restricted-syntax */
@@ -368,7 +368,7 @@ export class ConfigService extends EventEmitter {
 			const uriString = this.project.projectRoot + name
 			const uri = new Uri(uriString)
 			try {
-				ans = JSON.parse((await fsp.readFile(uri)).toString('utf-8'))
+				ans = JSON.parse(bufferToString(await fsp.readFile(uri)))
 			} catch (e) {
 				if (e instanceof Error && (e as any).code === 'ENOENT') {
 					// File doesn't exist.
