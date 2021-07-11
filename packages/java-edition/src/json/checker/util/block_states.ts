@@ -3,7 +3,7 @@ import { any, boolean, intRange, listOf, literal, object, opt, record, simpleStr
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { getTagValues } from '../../../common'
 
-interface ComplexProperty {
+interface Options {
 	block?: string | undefined,
 	blocks?: readonly string[] | undefined,
 	tag?: { category: core.TagFileCategory, id: string | undefined } | undefined,
@@ -11,26 +11,26 @@ interface ComplexProperty {
 	requireAll?: boolean,
 }
 
-export function blockStateMap(props: ComplexProperty): JsonChecker
+export function blockStateMap(props: Options): JsonChecker
 export function blockStateMap(block?: string, mixedTypes?: boolean, requireAll?: boolean): JsonChecker
-export function blockStateMap(): JsonChecker {
+export function blockStateMap(arg0?: string | Options, arg1?: boolean, arg2?: boolean): JsonChecker {
 	return (node, ctx) => {
 		let blocks: readonly string[] | undefined
 		let mixedTypes: boolean | undefined
 		let requireAll: boolean | undefined
-		if (arguments[0] === undefined || typeof arguments[0] === 'string') {
-			blocks = arguments[0] ? [arguments[0]] : [];
-			[, mixedTypes, requireAll] = arguments
+		if (arg0 === undefined || typeof arg0 === 'string') {
+			blocks = arg0 ? [arg0] : []
+			mixedTypes = arg1
+			requireAll = arg2
 		} else {
-			const props = arguments[0] as ComplexProperty
-			if (props.tag && props.tag.id) {
-				blocks = getTagValues(props.tag.category, props.tag.id, ctx)
-			} else if (props.block) {
-				blocks = [props.block]
+			if (arg0.tag && arg0.tag.id) {
+				blocks = getTagValues(arg0.tag.category, arg0.tag.id, ctx)
+			} else if (arg0.block) {
+				blocks = [arg0.block]
 			} else {
-				blocks = props.blocks
+				blocks = arg0.blocks
 			}
-			({ mixedTypes, requireAll } = props)
+			({ mixedTypes, requireAll } = arg0)
 		}
 		// Does not check if `blocks` is undefined or empty.
 		//                     FIXME: Temporary solution to make tests pass when ensureChecked is not given.
