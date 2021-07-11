@@ -56,6 +56,7 @@ export interface EnvConfig {
 	vanillaResources: {
 		blocks?: string,
 		commands?: string,
+		fluids?: string,
 		registries?: string,
 	},
 	/**

@@ -73,7 +73,7 @@ export const block_predicate = as('block', dispatch(props => record({
 	nbt: opt(nbt()), // TODO: block nbt
 	state: opt(blockStateMap({
 		blocks: extractStringArray('blocks', props),
-		tag: { category: 'tag/block', id: extract('tag', props) },
+		tag: extract('tag', props),
 		mixedTypes: true,
 	})),
 })))
@@ -82,8 +82,9 @@ export const fluid_predicate = as('fluid', dispatch(props => record({
 	fluid: opt(resource('fluid')),
 	tag: opt(resource('tag/fluid')),
 	state: opt(blockStateMap({
+		category: 'fluid',
 		block: extract('fluid', props),
-		tag: { category: 'tag/fluid', id: extract('tag', props) },
+		tag: extract('tag', props),
 		mixedTypes: true,
 	})),
 })))

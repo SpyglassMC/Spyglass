@@ -3,9 +3,9 @@ import download from 'download'
 import envPaths from 'env-paths'
 import * as fse from 'fs-extra'
 import * as path from 'path'
-import type { VanillaBlocks, VanillaCommands, VanillaRegistries, VanillaResources, VersionManifest } from './type'
+import type { VanillaCommands, VanillaRegistries, VanillaResources, VanillaStates, VersionManifest } from './type'
 import { VersionStatus } from './type'
-import { addBlocksSymbols, addRegistriesSymbols, getMetadata } from './util'
+import { addBlocksSymbols, addFluidsSymbols, addRegistriesSymbols, getMetadata, VanillaFluidsData } from './util'
 
 export * from './type'
 
@@ -45,7 +45,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
 	}
 
-	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
+	const wrap = async <T extends object>(overridePath: string | undefined, fallback: () => PromiseLike<T> | T, transformer: (value: any) => T = v => v) => {
 		if (overridePath) {
 			try {
 				return transformer(await fse.readJson(overridePath))
@@ -53,16 +53,21 @@ export async function getVanillaResources(version: string, status: VersionStatus
 				logger.error(`[dependency] [vanillaResource] Failed loading customized vanilla resource “${overridePath}”`, e)
 			}
 		}
-		return downloadJson<T>(logger, url, ['mc_je', version, fileName], !shouldRefresh, transformer)
+		return fallback()
 	}
 
-	const [blocks, commands, registries] = await Promise.all([
-		getResource<VanillaBlocks>(blocksUrl, 'blocks.json', overridePaths.blocks, blocksTransformer),
+	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
+		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, ['mc_je', version, fileName], !shouldRefresh, transformer), transformer)
+	}
+
+	const [blocks, commands, fluids, registries] = await Promise.all([
+		getResource<VanillaStates>(blocksUrl, 'blocks.json', overridePaths.blocks, blocksTransformer),
 		getResource<VanillaCommands>(commandsUrl, 'commands.json', overridePaths.commands),
+		wrap<VanillaStates>(overridePaths.fluids, () => VanillaFluidsData),
 		getResource<VanillaRegistries>(registriesUrl, 'registries.json', overridePaths.registries, registriesTransformer),
 	])
 
-	return { blocks, commands, registries }
+	return { blocks, commands, fluids, registries }
 }
 
 type GitHubRefResponse =
@@ -268,5 +273,6 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 /* istanbul ignore next */
 export function registerSymbols(resources: VanillaResources, symbols: core.SymbolUtil) {
 	addBlocksSymbols(resources.blocks, symbols)
+	addFluidsSymbols(resources.fluids, symbols)
 	addRegistriesSymbols(resources.registries, symbols)
 }

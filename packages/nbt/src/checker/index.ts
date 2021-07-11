@@ -36,7 +36,7 @@ export function index(registry: nbtdoc.ResolvedRootRegistry, id: string, options
 
 export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
-		const states = core.checker.getStates(blocks, ctx)
+		const states = core.checker.getStates('block', blocks, ctx)
 		for (const { key: keyNode, value: valueNode } of node.children) {
 			if (!keyNode || !valueNode) {
 				continue

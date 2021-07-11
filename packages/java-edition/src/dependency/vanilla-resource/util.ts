@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { MajorVersion, RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from './type'
+import type { MajorVersion, RawVanillaBlocks, RawVanillaRegistries, VanillaStates, VanillaRegistries, VersionManifest } from './type'
 import { MajorVersions, VersionStatus } from './type'
 
 type LatestReleases = readonly { major: MajorVersion, latest: string }[]
@@ -102,14 +102,14 @@ const McdataDefaultBranch = 'master'
 /* istanbul ignore next */
 export function getMetadata(version: string, status: number): {
 	blocksUrl: string, commandsUrl: string, registriesUrl: string,
-	blocksTransformer: ((raw: RawVanillaBlocks) => VanillaBlocks) | ((raw: VanillaBlocks) => VanillaBlocks),
+	blocksTransformer: ((raw: RawVanillaBlocks) => VanillaStates) | ((raw: VanillaStates) => VanillaStates),
 	registriesTransformer: (raw: RawVanillaRegistries) => VanillaRegistries,
 } {
 	return {
 		blocksUrl: getBlocksUrl(version, status),
 		commandsUrl: getCommandsUrl(version, status),
 		registriesUrl: getRegistriesUrl(version, status),
-		blocksTransformer: (status & VersionStatus.ProcessedSimplifiedBlock) ? (v: VanillaBlocks) => v : transformBlocks,
+		blocksTransformer: (status & VersionStatus.ProcessedSimplifiedBlock) ? (v: VanillaStates) => v : transformBlocks,
 		registriesTransformer: transformRegistries,
 	}
 }
@@ -156,8 +156,8 @@ export function getRegistriesUrl(version: string, status: number): string {
 	return `${McdataBase}/${version}/generated/reports/registries.json`
 }
 
-export function transformBlocks(raw: RawVanillaBlocks): VanillaBlocks {
-	const ans: VanillaBlocks = {}
+export function transformBlocks(raw: RawVanillaBlocks): VanillaStates {
+	const ans: VanillaStates = {}
 	for (const blockId of Object.keys(raw)) {
 		ans[blockId] = {
 			properties: raw[blockId].properties ?? {},
@@ -182,22 +182,23 @@ const WikiBaseUri = 'https://minecraft.fandom.com/wiki'
 const shorten = (id: string): string => id.replace(/^minecraft:/, '')
 const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
 
-export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil) {
-	// Remove all related existing symbols.
-	symbols.clear({ contributor: 'default_library/block' })
+function addStatesSymbols(category: 'block' | 'fluid', states: VanillaStates, symbols: core.SymbolUtil): void {
+	const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<typeof category>
 
-	// Add blocks and block states to the symbol table.
-	symbols.contributeAs('default_library/block', () => {
-		for (const [id, block] of Object.entries(blocks)) {
+	// Remove all related existing symbols.
+	symbols.clear({ contributor: `default_library/${category}` })
+
+	// Add ids and states to the symbol table.
+	symbols.contributeAs(`default_library/${category}`, () => {
+		for (const [id, block] of Object.entries(states)) {
+			const pageName = id === 'minecraft:empty' ? 'Air' : getWikiPageName(id)
 			symbols
-				.query(`${WikiBaseUri}/${getWikiPageName(id)}`, 'block', id)
-				.enter({
-					usage: { type: 'declaration' },
-				})
+				.query(`${WikiBaseUri}/${pageName}`, category, id)
+				.enter({ usage: { type: 'declaration' } })
 				.onEach(Object.entries(block.properties), ([state, values], blockQuery) => {
 					const defaultValue = block.default[state]!
 
-					blockQuery.member(`${WikiBaseUri}/${getWikiPageName(id)}#Block_states`, state, stateQuery => {
+					blockQuery.member(`${WikiBaseUri}/${pageName}#${capitalizedCategory}_states`, state, stateQuery => {
 						stateQuery
 							.enter({
 								data: { subcategory: 'state' },
@@ -213,7 +214,7 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 										stateQuery.amend({
 											data: {
 												relations: {
-													default: { category: 'block', path: valueQuery.path },
+													default: { category, path: valueQuery.path },
 												},
 											},
 										})
@@ -226,9 +227,17 @@ export function addBlocksSymbols(blocks: VanillaBlocks, symbols: core.SymbolUtil
 	})
 }
 
+export function addBlocksSymbols(blocks: VanillaStates, symbols: core.SymbolUtil): void {
+	addStatesSymbols('block', blocks, symbols)
+}
+
+export function addFluidsSymbols(fluids: VanillaStates, symbols: core.SymbolUtil): void {
+	addStatesSymbols('fluid', fluids, symbols)
+}
+
 export function addRegistriesSymbols(registries: VanillaRegistries, symbols: core.SymbolUtil) {
 	const isCategory = (str: string): str is core.VanillaRegistryCategory => core.VanillaRegistryCategories.includes(str as any)
-	const getUri = (registryId: Exclude<core.VanillaRegistryCategory, 'block'>, longEntryId: string): string => {
+	const getUri = (registryId: Exclude<core.VanillaRegistryCategory, 'block' | 'fluid'>, longEntryId: string): string => {
 		/* istanbul ignore next */
 		switch (registryId) {
 			case 'attribute':
@@ -242,8 +251,6 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 			case 'item':
 			case 'mob_effect':
 				return `${WikiBaseUri}/${getWikiPageName(longEntryId)}`
-			case 'fluid':
-				return `${WikiBaseUri}/${longEntryId === 'minecraft:empty' ? 'Air' : getWikiPageName(longEntryId)}`
 			case 'game_event':
 				return `${WikiBaseUri}/Game_event`
 			case 'loot_condition_type':
@@ -282,7 +289,8 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 
 	for (const longRegistryId of Object.keys(registries)) {
 		const registryId = shorten(longRegistryId)
-		if (isCategory(registryId) && registryId !== 'block') { // We register blocks from the vanilla `blocks.json` files, instead of here.
+		// We register blocks and fluids at `addBlocksSymbols` and `addFluidsSymbols`, instead of here.
+		if (isCategory(registryId) && registryId !== 'block' && registryId !== 'fluid') {
 			// Remove all related existing symbols.
 			symbols.clear({ contributor: `default_library/${registryId}` })
 
@@ -300,4 +308,47 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 			})
 		}
 	}
+}
+
+export const VanillaFluidsData: VanillaStates = {
+	'minecraft:empty': {
+		properties: {},
+		default: {},
+	},
+	'minecraft:flowing_lava': {
+		properties: {
+			falling: ['false', 'true'],
+			level: ['1', '2', '3', '4', '5', '6', '7', '8'],
+		},
+		default: {
+			falling: 'false',
+			level: '1',
+		},
+	},
+	'minecraft:flowing_water': {
+		properties: {
+			falling: ['false', 'true'],
+			level: ['1', '2', '3', '4', '5', '6', '7', '8'],
+		},
+		default: {
+			falling: 'false',
+			level: '1',
+		},
+	},
+	'minecraft:lava': {
+		properties: {
+			falling: ['false', 'true'],
+		},
+		default: {
+			falling: 'false',
+		},
+	},
+	'minecraft:water': {
+		properties: {
+			falling: ['false', 'true'],
+		},
+		default: {
+			falling: 'false',
+		},
+	},
 }

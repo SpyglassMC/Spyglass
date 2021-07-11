@@ -89,15 +89,15 @@ export function registerCheckers(meta: MetaRegistry) {
 }
 
 /**
- * @param blocks An array of block IDs, with or without the namespace.
+ * @param ids An array of block/fluid IDs, with or without the namespace.
  * @returns A map from state names to the corresponding sets of values.
  */
-export function getStates(blocks: readonly string[], ctx: CheckerContext): Record<string, readonly string[]> {
+export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: CheckerContext): Record<string, readonly string[]> {
 	const ans: Record<string, string[]> = {}
-	blocks = blocks.map(ResourceLocation.lengthen)
-	for (const block of blocks) {
+	ids = ids.map(ResourceLocation.lengthen)
+	for (const id of ids) {
 		ctx.symbols
-			.query(ctx.doc, 'block', block)
+			.query(ctx.doc, category, id)
 			.forEachMember((state, stateQuery) => {
 				const values = Object.keys(stateQuery.visibleMembers)
 				const arr = ans[state] ??= []

@@ -1,10 +1,11 @@
 export interface VanillaResources {
-	blocks: VanillaBlocks,
+	blocks: VanillaStates,
 	commands: VanillaCommands,
+	fluids: VanillaStates,
 	registries: VanillaRegistries,
 }
 
-export interface VanillaBlocks {
+export interface VanillaStates {
 	[id: string]: {
 		properties: {
 			[name: string]: string[],

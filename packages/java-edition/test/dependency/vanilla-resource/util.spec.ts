@@ -4,12 +4,12 @@ import * as fse from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
-import type { RawVanillaBlocks, RawVanillaRegistries, VanillaBlocks, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
+import type { RawVanillaBlocks, RawVanillaRegistries, VanillaStates, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
 import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
 import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getLatestReleases, getRegistriesUrl, getVersionStatus, resolveVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
 
 const Fixtures = {
-	Blocks: fse.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaBlocks,
+	Blocks: fse.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaStates,
 	LatestReleases: [
 		{ major: '1.15', latest: '1.15.2' },
 		{ major: '1.16', latest: '1.16.2' },

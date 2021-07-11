@@ -96,7 +96,12 @@ export const block_state = as('block_state', dispatch(props => record({
 
 export const fluid_state = as('fluid_state', dispatch(props => record({
 	Name: resource('fluid'),
-	Properties: opt(blockStateMap(extract('Name', props), false, true)),
+	Properties: opt(blockStateMap({
+		category: 'fluid',
+		block: extract('Name', props),
+		mixedTypes: false,
+		requireAll: true,
+	})),
 })))
 
 export const vertical_anchor = as('vertical_anchor', any([

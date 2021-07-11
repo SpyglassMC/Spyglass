@@ -4,9 +4,10 @@ import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { getTagValues } from '../../../common'
 
 interface Options {
+	category?: 'block' | 'fluid',
 	block?: string | undefined,
 	blocks?: readonly string[] | undefined,
-	tag?: { category: core.TagFileCategory, id: string | undefined } | undefined,
+	tag?: string | undefined,
 	mixedTypes?: boolean,
 	requireAll?: boolean,
 }
@@ -15,16 +16,19 @@ export function blockStateMap(props: Options): JsonChecker
 export function blockStateMap(block?: string, mixedTypes?: boolean, requireAll?: boolean): JsonChecker
 export function blockStateMap(arg0?: string | Options, arg1?: boolean, arg2?: boolean): JsonChecker {
 	return (node, ctx) => {
+		let category: 'block' | 'fluid'
 		let blocks: readonly string[] | undefined
 		let mixedTypes: boolean | undefined
 		let requireAll: boolean | undefined
 		if (arg0 === undefined || typeof arg0 === 'string') {
 			blocks = arg0 ? [arg0] : []
+			category = 'block'
 			mixedTypes = arg1
 			requireAll = arg2
 		} else {
-			if (arg0.tag && arg0.tag.id) {
-				blocks = getTagValues(arg0.tag.category, arg0.tag.id, ctx)
+			category = arg0.category ?? 'block'
+			if (arg0.tag) {
+				blocks = getTagValues(`tag/${category}`, arg0.tag, ctx)
 			} else if (arg0.block) {
 				blocks = [arg0.block]
 			} else {
@@ -42,7 +46,7 @@ export function blockStateMap(arg0?: string | Options, arg1?: boolean, arg2?: bo
 			)(node, ctx)
 			return
 		}
-		const states = core.checker.getStates(blocks, ctx)
+		const states = core.checker.getStates(category, blocks, ctx)
 		object(
 			Object.keys(states),
 			(state) => {
@@ -69,7 +73,7 @@ export function blockStateList(block?: string): JsonChecker {
 			listOf(simpleString)(node, ctx)
 			return
 		}
-		const states = block ? Object.keys(core.checker.getStates([block], ctx)) : []
+		const states = block ? Object.keys(core.checker.getStates('block', [block], ctx)) : []
 		listOf(literal(states))(node, ctx)
 	}
 }
