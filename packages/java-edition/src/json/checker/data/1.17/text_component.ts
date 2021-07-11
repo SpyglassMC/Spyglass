@@ -61,7 +61,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 			keybind: literal(Keybinds),
 		},
 		nbt: () => ({
-			nbt: nbt(),
+			nbt: simpleString, // TODO: NBT path
 			...having(node, ctx, {
 				block: {
 					block: simpleString, // TODO: block pos
