@@ -2,15 +2,16 @@ import type { AstNode } from '../node'
 import { SequenceUtil } from '../node'
 import type { ParserContext } from '../service'
 import { ErrorReporter } from '../service'
-import type { ErrorSeverity, Source } from '../source'
+import type { ErrorSeverity, ReadonlySource, Source } from '../source'
 import { Range } from '../source'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser'
 import { Failure } from './Parser'
 
+type ExtractNodeType<P extends Parser<Returnable>> = P extends Parser<infer V> ? V : never
 /**
  * @template PA Parser array.
  */
-type ExtractNodeTypes<PA extends Parser<Returnable>[]> = PA[number] extends Parser<infer V> ? V : never
+type ExtractNodeTypes<PA extends Parser<Returnable>[]> = ExtractNodeType<PA[number]>
 
 export interface AttemptResult<N extends Returnable = AstNode> {
 	result: Result<N>,
@@ -57,7 +58,8 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 type SP<CN extends AstNode> = SIP<CN> | Parser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | undefined> }
 type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | undefined> }
 /**
- * @template CN Child node.
+ * @template GN Gap node.
+ * @template PA Parser array.
  * 
  * @param parseGap A parser that parses gaps between nodes in the sequence.
  * 
@@ -215,6 +217,23 @@ export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (
 			return ans
 		}
 		return result
+	}
+}
+
+type Case = { predicate?: (this: void, src: ReadonlySource) => boolean, parser: Parser<Returnable> }
+
+/**
+ * @template CA Case array.
+ */
+export function select<CA extends readonly Case[]>(cases: CA): Parser<ExtractNodeType<CA[number]['parser']>>
+export function select(cases: readonly Case[]): Parser<Returnable> {
+	return (src: Source, ctx: ParserContext): Result<Returnable> => {
+		for (const { predicate, parser } of cases) {
+			if (predicate?.(src) ?? true) {
+				return parser(src, ctx)
+			}
+		}
+		return Failure
 	}
 }
 

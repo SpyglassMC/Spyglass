@@ -320,14 +320,21 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 
 function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.Parser<MinecraftEntityArgumentNode> {
 	return core.map<core.StringNode | EntitySelectorNode | MinecraftUuidArgumentNode, MinecraftEntityArgumentNode>(
-		core.any([
-			validateLength<core.StringNode>(
-				core.brigadierString,
-				PlayerNameMaxLength,
-				'mcfunction.parser.entity-selector.player-name.too-long'
-			),
-			selector(),
-			uuid,
+		core.select([
+			{
+				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
+				parser: selector(),
+			},
+			{
+				parser: core.any([
+					validateLength<core.StringNode>(
+						core.brigadierString,
+						PlayerNameMaxLength,
+						'mcfunction.parser.entity-selector.player-name.too-long'
+					),
+					uuid,
+				]),
+			},
 		]),
 		(res, _src, ctx) => {
 			const ans: MinecraftEntityArgumentNode = {
@@ -514,28 +521,33 @@ function selector(): core.Parser<EntitySelectorNode> {
 														pair: {
 															key: core.resourceLocation({ category: 'advancement' }),
 															sep: '=',
-															value: core.any([
-																core.boolean,
-																core.map<core.TableNode<core.StringNode, core.BooleanNode>, EntitySelectorAdvancementsArgumentCriteriaNode>(
-																	core.table<core.StringNode, core.BooleanNode>({
-																		start: '{',
-																		pair: {
-																			key: unquotedString,
-																			sep: '=',
-																			value: core.boolean,
-																			end: ',',
-																			trailingEnd: true,
-																		},
-																		end: '}',
-																	}),
-																	res => {
-																		const ans: EntitySelectorAdvancementsArgumentCriteriaNode = {
-																			...res,
-																			type: 'mcfunction:entity_selector/arguments/advancements/criteria',
+															value: core.select([
+																{
+																	predicate: src => src.peek() === '{',
+																	parser: core.map<core.TableNode<core.StringNode, core.BooleanNode>, EntitySelectorAdvancementsArgumentCriteriaNode>(
+																		core.table<core.StringNode, core.BooleanNode>({
+																			start: '{',
+																			pair: {
+																				key: unquotedString,
+																				sep: '=',
+																				value: core.boolean,
+																				end: ',',
+																				trailingEnd: true,
+																			},
+																			end: '}',
+																		}),
+																		res => {
+																			const ans: EntitySelectorAdvancementsArgumentCriteriaNode = {
+																				...res,
+																				type: 'mcfunction:entity_selector/arguments/advancements/criteria',
+																			}
+																			return ans
 																		}
-																		return ans
-																	}
-																),
+																	),
+																},
+																{
+																	parser: core.boolean,
+																},
 															]),
 															end: ',',
 															trailingEnd: true,
@@ -819,9 +831,14 @@ export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<
 
 function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreHolderArgumentNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, MinecraftScoreHolderArgumentNode>(
-		core.any([
-			scoreHolderFakeName,
-			selector(),
+		core.select([
+			{
+				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
+				parser: selector(),
+			},
+			{
+				parser: scoreHolderFakeName,
+			},
 		]),
 		(res, _src, ctx) => {
 			const ans: MinecraftScoreHolderArgumentNode = {
