@@ -161,7 +161,7 @@ export const CommandArgumentTestSuites: Partial<Record<ArgumentTreeNode['parser'
 		{ content: ['0', '0b', '0l', '0.0', '"foo"', '{foo:bar}'] },
 	],
 	'minecraft:objective': [
-		{ content: ['foo', '*', '012'] },
+		{ content: ['foo', '012'] },
 	],
 	'minecraft:operation': [
 		{ content: ['=', '>', '<'] },
