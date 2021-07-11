@@ -19,7 +19,7 @@ export function blockStateMap(): JsonChecker {
 		let mixedTypes: boolean | undefined
 		let requireAll: boolean | undefined
 		if (arguments[0] === undefined || typeof arguments[0] === 'string') {
-			blocks = [arguments[0]];
+			blocks = arguments[0] ? [arguments[0]] : [];
 			[, mixedTypes, requireAll] = arguments
 		} else {
 			const props = arguments[0] as ComplexProperty
