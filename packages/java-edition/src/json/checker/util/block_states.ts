@@ -47,14 +47,16 @@ export function blockStateMap(): JsonChecker {
 			Object.keys(states),
 			(state) => {
 				const values = states[state] ?? []
+				const checkers: JsonChecker[] = [literal(values)]
 				if (mixedTypes && values.length) {
 					if (['true', 'false'].includes(values[0])) {
-						return opt(boolean)
+						checkers.push(boolean)
 					} else if (values[0].match(/^\d+$/)) {
-						return opt(intBounds(parseInt(values[0]), parseInt(values[values.length - 1])))
+						checkers.push(intBounds(parseInt(values[0]), parseInt(values[values.length - 1])))
 					}
 				}
-				return requireAll ? literal(values) : opt(literal(values))
+				const checker = checkers.length > 1 ? any(checkers) : checkers[0]
+				return requireAll ? checker : opt(checker)
 			},
 		)(node, ctx)
 	}
