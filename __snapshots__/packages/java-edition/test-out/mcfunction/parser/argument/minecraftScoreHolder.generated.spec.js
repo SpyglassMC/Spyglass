@@ -1,10 +1,66 @@
 exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"multiple"} 1'] = {
-  "node": "FAILURE",
+  "node": {
+    "type": "mcfunction:argument/minecraft:score_holder",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "name": "test",
+    "fakeName": {
+      "type": "symbol",
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "value": "*",
+      "symbol": {
+        "category": "score_holder",
+        "identifier": "*",
+        "path": [
+          "*"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
+    },
+    "hover": "<test: score_holder>"
+  },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"single"} 1'] = {
-  "node": "FAILURE",
+  "node": {
+    "type": "mcfunction:argument/minecraft:score_holder",
+    "range": {
+      "start": 0,
+      "end": 1
+    },
+    "name": "test",
+    "fakeName": {
+      "type": "symbol",
+      "range": {
+        "start": 0,
+        "end": 1
+      },
+      "value": "*",
+      "symbol": {
+        "category": "score_holder",
+        "identifier": "*",
+        "path": [
+          "*"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
+    },
+    "hover": "<test: score_holder>"
+  },
   "errors": []
 }
 
