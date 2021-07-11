@@ -64,11 +64,11 @@ export const predicate = as('predicate', dispatch('condition',
 				predicate: damage_source_predicate,
 			},
 			entity_properties: {
-				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+				entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
 				predicate: entity_predicate,
 			},
 			entity_scores: {
-				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+				entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
 				scores: object(
 					literal('objective'),
 					() => int_bounds
@@ -171,7 +171,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				skip_existing_chunks: opt(boolean, true),
 			},
 			fill_player_head: {
-				entity: literal(['this', 'killer', 'killer_player',  'direct_killer']),
+				entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
 			},
 			limit_count: {
 				limit: int_bounds,
@@ -184,6 +184,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				modifiers: listOf(record({
 					attribute: resource('attribute'),
 					name: simpleString,
+					operation: literal(['addition', 'multiply_base', 'multiply_total']),
 					id: opt(uuid),
 					amount: number_provider,
 					slot: any([
@@ -208,12 +209,12 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				seed: opt(int, 0),
 			},
 			set_lore: {
-				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
+				entity: opt(literal(['this', 'killer', 'killer_player', 'direct_killer'])),
 				lore: listOf(text_component),
 				replace: opt(boolean, false),
 			},
 			set_name: {
-				entity: opt(literal(['this', 'killer', 'killer_player',  'direct_killer'])),
+				entity: opt(literal(['this', 'killer', 'killer_player', 'direct_killer'])),
 				name: opt(text_component),
 			},
 			set_nbt: {
