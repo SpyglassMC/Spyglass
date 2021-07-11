@@ -21,6 +21,8 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 			parserErrors: [],
 		}
 
+		src.skipWhitespace()
+
 		const parser = ctx.meta.getParserFromLanguageId<AstNode>(ctx.doc.languageId)
 		const result = parser(src, ctx)
 		if (result && result !== Failure) {
