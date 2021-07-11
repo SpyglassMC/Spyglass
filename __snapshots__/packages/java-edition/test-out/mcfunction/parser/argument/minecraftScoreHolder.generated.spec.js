@@ -8978,16 +8978,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
     },
     "hover": "<test: score_holder>"
   },
-  "errors": [
-    {
-      "range": {
-        "start": 24,
-        "end": 28
-      },
-      "message": "“type” is not applicable here",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" with {"amount":"multiple"} 1'] = {
