@@ -1,9 +1,31 @@
-import type { Symbol } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { any, boolean, intRange, listOf, literal, object, opt, record, simpleString } from '@spyglassmc/json/lib/checker'
-import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker'
+import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 
-export function blockStateMap(block?: string, mixedTypes = false, requireAll = false): JsonChecker {
+interface ComplexProperty {
+	block?: string | undefined,
+	blocks?: readonly string[] | undefined,
+	tag?: string | undefined,
+	mixedTypes?: boolean,
+	requireAll?: boolean,
+}
+
+export function blockStateMap(props: ComplexProperty): JsonChecker
+export function blockStateMap(block?: string, mixedTypes?: boolean, requireAll?: boolean): JsonChecker
+export function blockStateMap(): JsonChecker {
 	return (node, ctx) => {
+		let blocks: readonly string[] | undefined
+		let mixedTypes: boolean | undefined
+		let requireAll: boolean | undefined
+		if (typeof arguments[0] === 'string') {
+			blocks = [arguments[0]];
+			[, mixedTypes, requireAll] = arguments
+		} else {
+			const props = arguments[0] as ComplexProperty
+			// TODO: Get blocks from tag?
+			blocks = props.block ? [props.block] : props.blocks;
+			({ mixedTypes, requireAll } = props)
+		}
 		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
 		if (!ctx.ensureChecked) {
 			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
@@ -13,14 +35,11 @@ export function blockStateMap(block?: string, mixedTypes = false, requireAll = f
 			)(node, ctx)
 			return
 		}
-		const states = block ? getStates(block, ctx) : []
+		const states = blocks ? core.checker.getStates(blocks, ctx) : {}
 		object(
-			states.map(s => s.identifier),
+			Object.keys(states),
 			(state) => {
-				const stateSymbol = states.find(s => s.identifier === state)
-				const values = Object.values(stateSymbol?.members ?? {})
-					.filter((m): m is Symbol => m?.subcategory === 'state_value')
-					.map(m => m.identifier)
+				const values = states[state] ?? []
 				if (mixedTypes && values.length) {
 					if (['true', 'false'].includes(values[0])) {
 						return opt(boolean)
@@ -41,16 +60,9 @@ export function blockStateList(block?: string): JsonChecker {
 			listOf(simpleString)(node, ctx)
 			return
 		}
-		const states = block ? getStates(block, ctx).map(s => s.identifier) : []
+		const states = block ? Object.keys(core.checker.getStates([block], ctx)) : []
 		listOf(literal(states))(node, ctx)
 	}
-}
-
-function getStates(block: string, ctx: JsonCheckerContext) {
-	const identifier = block.startsWith('minecraft:') ? block : `minecraft:${block}`
-	const symbol = ctx.symbols.query(ctx.doc, 'block', identifier).symbol
-	return Object.values(symbol?.members ?? {})
-		.filter((m): m is Symbol => m?.subcategory === 'state')
 }
 
 function intBounds(min: number | undefined = undefined, max: number | undefined = undefined): JsonChecker {

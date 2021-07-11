@@ -1,8 +1,7 @@
-import type { ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node'
-import type { AstNode } from '../../node'
+import { ResourceLocation } from '../../common'
+import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { CheckerContext, MetaRegistry } from '../../service'
-import { Operations } from '../../service'
-import { ErrorReporter } from '../../service'
+import { ErrorReporter, Operations } from '../../service'
 import { traversePreOrder } from '../util'
 import type { Checker, SyncChecker } from './Checker'
 
@@ -87,4 +86,27 @@ export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
 export function registerCheckers(meta: MetaRegistry) {
 	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerChecker<SymbolNode>('symbol', symbol)
+}
+
+/**
+ * @param blocks An array of block IDs, with or without the namespace.
+ * @returns A map from state names to the corresponding sets of values.
+ */
+export function getStates(blocks: readonly string[], ctx: CheckerContext): Record<string, readonly string[]> {
+	const ans: Record<string, string[]> = {}
+	blocks = blocks.map(ResourceLocation.lengthen)
+	for (const block of blocks) {
+		ctx.symbols
+			.query(ctx.doc, 'block', block)
+			.forEachMember((state, stateQuery) => {
+				const values = Object.keys(stateQuery.visibleMembers)
+				const arr = ans[state] ??= []
+				for (const value of values) {
+					if (!arr.includes(value)) {
+						arr.push(value)
+					}
+				}
+			})
+	}
+	return ans
 }

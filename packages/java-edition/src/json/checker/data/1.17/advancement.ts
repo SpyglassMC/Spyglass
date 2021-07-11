@@ -1,5 +1,5 @@
 import type { JsonStringNode } from '@spyglassmc/json'
-import { any, as, boolean, deprecated, dispatch, extract, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, boolean, deprecated, dispatch, extract, extractStringArray, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
 import { dissectUri } from '../../../../binder'
 import { blockStateMap, criterionReference, nbt } from '../../util'
 import { float_bounds, int_bounds, Slots } from './common'
@@ -71,13 +71,21 @@ export const block_predicate = as('block', dispatch(props => record({
 	blocks: opt(listOf(resource('block'))),
 	tag: opt(resource('tag/block')),
 	nbt: opt(nbt()), // TODO: block nbt
-	state: opt(blockStateMap(extract('block', props), true)),
+	state: opt(blockStateMap({
+		blocks: extractStringArray('blocks', props),
+		tag: extract('tag', props),
+		mixedTypes: true,
+	})),
 })))
 
 export const fluid_predicate = as('fluid', dispatch(props => record({
 	fluid: opt(resource('fluid')),
 	tag: opt(resource('tag/fluid')),
-	state: opt(blockStateMap(extract('fluid', props), true)),
+	state: opt(blockStateMap({
+		block: extract('fluid', props),
+		tag: extract('tag', props),
+		mixedTypes: true,
+	})),
 })))
 
 export const location_predicate = as('location', record({

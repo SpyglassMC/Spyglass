@@ -35,23 +35,8 @@ export function index(registry: nbtdoc.ResolvedRootRegistry, id: string, options
 }
 
 export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
-	function* getStates(blocks: string[], ctx: core.CheckerContext) {
-		const ans: Record<string, Set<string>> = {}
-		for (let block of blocks) {
-			block = block.includes(':') ? block : `minecraft:${block}`
-			const blockQuery = ctx.symbols.query(ctx.doc, 'block', block)
-			blockQuery.forEachMember((state, stateQuery) => {
-				const values = Object.keys(stateQuery.visibleMembers)
-				ans[state] = new Set([...ans[state] ?? [], ...values])
-			})
-			yield ans
-		}
-		return ans
-	}
-
 	return (node, ctx) => {
-		const statesIterator = getStates(blocks, ctx)
-		let statesResult = statesIterator.next()
+		const states = core.checker.getStates(blocks, ctx)
 		for (const { key: keyNode, value: valueNode } of node.children) {
 			if (!keyNode || !valueNode) {
 				continue
@@ -65,19 +50,10 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 				continue
 			}
 
-			while (!statesResult.done && !Object.keys(statesResult.value).includes(keyNode.value)) {
-				// Expand `statesResult` only if the current key cannot be found in it.
-				statesResult = statesIterator.next()
-			}
-
-			if (Object.keys(statesResult.value).includes(keyNode.value)) {
+			if (Object.keys(states).includes(keyNode.value)) {
 				// The current state exists. Check the value.
-				while (!statesResult.done && !statesResult.value[keyNode.value].has(keyNode.value)) {
-					// Expand `statesResult` only if the current value cannot be found in it.
-					statesResult = statesIterator.next()
-				}
-				const stateValues = statesResult.value[keyNode.value]
-				if (!stateValues.has(valueNode.value.toString())) {
+				const stateValues = states[keyNode.value]
+				if (!stateValues.includes(valueNode.value.toString())) {
 					ctx.err.report(localize('expected-got', stateValues, localeQuote(valueNode.value.toString())), valueNode, core.ErrorSeverity.Warning)
 				}
 			} else {

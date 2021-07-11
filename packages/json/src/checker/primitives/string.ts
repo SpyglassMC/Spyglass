@@ -12,15 +12,15 @@ export function resource(id: ResourceLocationCategory | string[], allowTag = fal
 	return string(id, core.resourceLocation(typeof id === 'string' ? { category: id as any, allowTag } : { pool: id }), core.checker.resourceLocation)
 }
 
-export function literal(value: AllCategory | string[]): JsonChecker {
+export function literal(value: AllCategory | readonly string[]): JsonChecker {
 	return typeof value === 'string'
 		? string(value, core.symbol(value))
 		: string(value, core.literal(...value))
 }
 
-export function string<T extends AstNode>(name: string | string[] | undefined, parser: Lazy<Parser<T>>, checker?: Lazy<Checker<T>>, expectation?: Partial<JsonExpectation>): JsonChecker
-export function string(name?: string | string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
-export function string(name?: string | string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
+export function string<T extends AstNode>(name: string | readonly string[] | undefined, parser: Lazy<Parser<T>>, checker?: Lazy<Checker<T>>, expectation?: Partial<JsonExpectation>): JsonChecker
+export function string(name?: string | readonly string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
+export function string(name?: string | readonly string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
 	return (node, ctx) => {
 		ctx.ops.set(node, 'expectation', [{ type: 'json:string', typedoc: typedoc(name), ...expectation }])
 		if (!JsonStringNode.is(node)) {
@@ -39,7 +39,7 @@ export function string(name?: string | string[], parser?: Lazy<Parser<AstNode>>,
 	}
 }
 
-function typedoc(id?: string | string[]) {
+function typedoc(id?: string | readonly string[]) {
 	if (!id) {
 		return 'String'
 	}

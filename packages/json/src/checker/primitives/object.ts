@@ -1,5 +1,5 @@
-import type { PairNode } from '@spyglassmc/core'
-import { ErrorSeverity, Range } from '@spyglassmc/core'
+import type { ItemNode, PairNode } from '@spyglassmc/core'
+import { ErrorSeverity, Range, ResourceLocation } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { JsonNode, JsonObjectExpectation, JsonStringNode } from '../../node'
 import { JsonObjectNode, JsonStringExpectation } from '../../node'
@@ -165,6 +165,13 @@ export function when(value: string | undefined, values: string[], properties: Ch
 export function extract(value: string, children: PairNode<JsonStringNode, JsonNode>[]) {
 	const node = children.find(p => p.key?.value === value)
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
+}
+
+export function extractStringArray(value: string, children: PairNode<JsonStringNode, JsonNode>[]): readonly string[] | undefined {
+	const node = children.find(p => p.key?.value === value)
+	return node?.value?.type === 'json:array' && node.value.children?.every((n): n is ItemNode<JsonStringNode> => n.value?.type === 'json:string')
+		? node.value.children.map(n => n.value!.value)
+		: undefined
 }
 
 export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<string, CheckerRecord | (() => CheckerRecord)>): CheckerRecord {
