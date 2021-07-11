@@ -697,10 +697,12 @@ function selector(): core.Parser<EntitySelectorNode> {
 															ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
 														} else if (typeLimited) {
 															ctx.err.report(localize('mcfunction.parser.entity-selector.arguments.not-applicable', localeQuote(key.value)), key)
-														} else if (!res.inverted && core.ResourceLocationNode.toString(res.value, 'short') === 'player') {
-															playersOnly = true
+														} else if (!res.inverted) {
+															typeLimited = true
+															if (core.ResourceLocationNode.toString(res.value, 'short') === 'player') {
+																playersOnly = true
+															}
 														}
-														typeLimited = true
 														return res
 													}
 												)
