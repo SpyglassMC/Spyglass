@@ -78,7 +78,7 @@ export namespace SpyglassUri {
 		export function get(archiveUri: string): RootUriString
 		export function get(archiveUri: string, pathInArchive: string): string
 		export function get(archiveUri: string, pathInArchive = '') {
-			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive}`
+			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
 		}
 
 		export function is(uri: Uri): boolean {
