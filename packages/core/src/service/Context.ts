@@ -11,9 +11,10 @@ import type { RootUriString } from './fileUtil'
 import type { Logger } from './Logger'
 import type { MetaRegistry } from './MetaRegistry'
 import { Operations } from './Operations'
-import type { ProjectLike } from './Project'
+import type { ProjectLike, DocAndNode } from './Project'
 
 export interface ContextBase {
+	getDocAndNode: (uri: string) => DocAndNode | undefined, 
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
@@ -22,6 +23,7 @@ export interface ContextBase {
 export namespace ContextBase {
 	export function create(project: ProjectLike): ContextBase {
 		return {
+			getDocAndNode: project.get.bind(project),
 			fs: project.fs,
 			logger: project.logger,
 			meta: project.meta,
@@ -89,7 +91,7 @@ export namespace CheckerContext {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
 			ops: opts.ops ?? new Operations(),
-			ensureChecked: project.ensureParsedAndChecked,
+			ensureChecked: project.ensureParsedAndChecked.bind(project),
 		}
 	}
 }

@@ -1,11 +1,12 @@
 import * as core from '@spyglassmc/core'
 import { any, boolean, intRange, listOf, literal, object, opt, record, simpleString } from '@spyglassmc/json/lib/checker'
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
+import { getTagValues } from '../../../common'
 
 interface ComplexProperty {
 	block?: string | undefined,
 	blocks?: readonly string[] | undefined,
-	tag?: string | undefined,
+	tag?: { category: core.TagFileCategory, id: string | undefined } | undefined,
 	mixedTypes?: boolean,
 	requireAll?: boolean,
 }
@@ -22,12 +23,18 @@ export function blockStateMap(): JsonChecker {
 			[, mixedTypes, requireAll] = arguments
 		} else {
 			const props = arguments[0] as ComplexProperty
-			// TODO: Get blocks from tag?
-			blocks = props.block ? [props.block] : props.blocks;
+			if (props.tag && props.tag.id) {
+				blocks = getTagValues(props.tag.category, props.tag.id, ctx)
+			} else if (props.block) {
+				blocks = [props.block]
+			} else {
+				blocks = props.blocks
+			}
 			({ mixedTypes, requireAll } = props)
 		}
-		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!ctx.ensureChecked) {
+		// Does not check if `blocks` is undefined or empty.
+		//                     FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+		if (!blocks?.length || !ctx.ensureChecked) {
 			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			object(
 				simpleString,
@@ -35,7 +42,7 @@ export function blockStateMap(): JsonChecker {
 			)(node, ctx)
 			return
 		}
-		const states = blocks ? core.checker.getStates(blocks, ctx) : {}
+		const states = core.checker.getStates(blocks, ctx)
 		object(
 			Object.keys(states),
 			(state) => {

@@ -35,7 +35,7 @@ interface Options {
 	symbols?: SymbolUtil,
 }
 
-interface DocAndNode {
+export interface DocAndNode {
 	doc: TextDocument,
 	node: FileNode<AstNode>,
 }
@@ -49,7 +49,7 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
+export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
 export namespace ProjectLike {
 	export function mock(data: Partial<ProjectLike> = {}): ProjectLike {
 		return {
@@ -57,6 +57,7 @@ export namespace ProjectLike {
 			config: data.config ?? VanillaConfig,
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
 			fs: data.fs ?? FileService.create(),
+			get: data.get ?? (() => undefined),
 			logger: data.logger ?? Logger.create(),
 			meta: data.meta ?? new MetaRegistry(),
 			projectRoot: data.projectRoot ?? 'file:///',
