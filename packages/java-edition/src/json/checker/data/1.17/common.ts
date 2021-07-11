@@ -20,7 +20,7 @@ export const MIN_Y = MAX_Y - Y_SIZE + 1
 export const number_provider = as('range', any([
 	float,
 	dispatch('type', (type) => record({
-		type: resource('loot_number_provider_type'),
+		type: opt(resource('loot_number_provider_type')),
 		...type === undefined ? {
 			min: number_provider,
 			max: number_provider,
