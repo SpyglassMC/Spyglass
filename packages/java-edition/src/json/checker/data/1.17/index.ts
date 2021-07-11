@@ -16,7 +16,7 @@ export const pack_mcmeta = as('pack', record({
 		pack_format: int,
 		description: text_component,
 	}),
-}))
+}, { allowUnknownProperties: true }))
 
 export const Checkers = new Map<FileCategory, JsonChecker>([
 	['advancement', advancement],

@@ -21,14 +21,18 @@ type CheckerProperty = JsonChecker | ComplexProperty
 
 type CheckerRecord = Record<string, CheckerProperty>
 
+type ObjectCheckerOptions = {
+	allowUnknownProperties?: boolean,
+}
+
 function isComplex(checker: CheckerProperty): checker is ComplexProperty {
 	return (checker as ComplexProperty)?.checker !== undefined
 }
 
 export function object(): JsonChecker
-export function object(keys: string[], values: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker
-export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker
-export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty): JsonChecker {
+export function object(keys: string[], values: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options?: ObjectCheckerOptions): JsonChecker
+export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options?: ObjectCheckerOptions): JsonChecker
+export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options: ObjectCheckerOptions = {}): JsonChecker {
 	return (node, ctx) => {
 		ctx.ops.set(node, 'expectation', [{ type: 'json:object', typedoc: 'Object' }])
 		if (!ctx.depth || ctx.depth <= 0) {
@@ -64,7 +68,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 			})
 			node.children.filter(p => p.key).forEach(prop => {
 				const key = prop.key!.value
-				if (!keys.includes(key)) {
+				if (!keys.includes(key) && !options.allowUnknownProperties) {
 					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
 				}
 				const value = values(key, ctx)
@@ -100,10 +104,11 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 	}
 }
 
-export function record(properties: CheckerRecord): JsonChecker {
+export function record(properties: CheckerRecord, options?: ObjectCheckerOptions): JsonChecker {
 	return object(
 		Object.keys(properties),
-		(key) => properties[key]
+		(key) => properties[key],
+		options
 	)
 }
 
