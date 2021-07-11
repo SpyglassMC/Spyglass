@@ -8973,8 +8973,8 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
         "Entity::isAlive"
       ],
       "single": false,
-      "typeLimited": true,
-      "hover": "**Performance**: 😅  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
     },
     "hover": "<test: score_holder>"
   },
