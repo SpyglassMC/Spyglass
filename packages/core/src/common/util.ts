@@ -82,7 +82,7 @@ export namespace SpyglassUri {
 		}
 
 		export function is(uri: Uri): boolean {
-			return uri.protocol === SpyglassUri.Protocol && uri.hostname === SpyglassUri.Archive.Hostname
+			return uri.protocol === Protocol && uri.hostname === Hostname
 		}
 
 		/**

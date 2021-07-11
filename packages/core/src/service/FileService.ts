@@ -184,7 +184,7 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 			try {
 				if (uri.startsWith('file:') && SpyglassUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await fsp.stat(new Uri(uri))).isFile()) {
 					const files = await decompress(fileUtil.fileUriToPath(uri), { strip: typeof info?.startDepth === 'number' ? info.startDepth : 0 })
-					entries.set(uri, new Map(files.map(f => [f.path, f])))
+					entries.set(uri, new Map(files.map(f => [f.path.replace(/\\/g, '/'), f])))
 				}
 			} catch (e) {
 				logger.error(`[SpyglassUriSupporter#create] Bad dependency “${uri}”`, e)
