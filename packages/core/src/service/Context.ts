@@ -91,7 +91,7 @@ export namespace CheckerContext {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
 			ops: opts.ops ?? new Operations(),
-			ensureChecked: project.ensureParsedAndChecked.bind(project),
+			ensureChecked: project.ensureParsedAndChecked?.bind(project),
 		}
 	}
 }
