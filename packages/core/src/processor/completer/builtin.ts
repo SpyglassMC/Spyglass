@@ -1,3 +1,4 @@
+import { ResourceLocation } from '../../common'
 import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { ResourceLocationNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
@@ -50,7 +51,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 
 	const getPool = (category: string) => optimizePool(Object.keys(ctx.symbols.getVisibleSymbols(ctx.doc.uri, category)))
 	const optimizePool = (pool: string[]) => {
-		const defaultNsPrefix = `${ResourceLocationNode.DefaultNamespace}${ResourceLocationNode.NamespacePathSep}`
+		const defaultNsPrefix = `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
 		const defaultNsIds: string[] = []
 		const otherIds: string[] = []
 		for (const id of pool) {
@@ -64,7 +65,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 			...otherIds,
 			...includeDefaultNamespace ? defaultNsIds : [],
 			...excludeDefaultNamespace ? defaultNsIds.map(id => id.slice(defaultNsPrefix.length)) : [],
-			...isEmptyNamespace ? defaultNsIds.map(id => id.slice(ResourceLocationNode.DefaultNamespace.length)) : [],
+			...isEmptyNamespace ? defaultNsIds.map(id => id.slice(ResourceLocation.DefaultNamespace.length)) : [],
 		]
 	}
 
@@ -74,7 +75,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 			...getPool(node.options.category),
 			...node.options.allowTag
 				? getPool(`tag/${node.options.category}` as TagFileCategory)
-					.map(v => `${ResourceLocationNode.TagPrefix}${v}`)
+					.map(v => `${ResourceLocation.TagPrefix}${v}`)
 				: [],
 		]
 

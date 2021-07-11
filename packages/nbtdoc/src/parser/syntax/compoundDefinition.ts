@@ -1,5 +1,5 @@
 import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
-import { any, FloatNode, IntegerNode, map, optional, repeat, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
+import { any, FloatNode, IntegerNode, map, optional, repeat, ResourceLocation, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
 import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
 import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IdRegistries, IntRangeNode, LiteralToken, RegistryIndexNode, RootRegistries, UnsignedRangeNode } from '../../node'
 import { fallibleFloat, fallibleInteger, float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
@@ -71,7 +71,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
 					// the registry names used by SPYGlass are supported here.
 					...IdRegistries,
-					...ResourceLocationCategories.map(v => `${ResourceLocationNode.DefaultNamespace}${ResourceLocationNode.NamespacePathSep}${v}`),
+					...ResourceLocationCategories.map(v => `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}${v}`),
 				])],
 			}), punctuation(')'),
 		]),

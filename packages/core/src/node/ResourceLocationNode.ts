@@ -1,3 +1,4 @@
+import { ResourceLocation } from '../common'
 import type { ResourceLocationCategory, SymbolAccessType, SymbolUsageType, TaggableResourceLocationCategory } from '../symbol'
 import type { AstNode } from './AstNode'
 
@@ -34,16 +35,16 @@ export namespace ResourceLocationNode {
 	/**
 	 * The prefix for tags.
 	 */
-	export const TagPrefix = '#'
+	const TagPrefix = ResourceLocation.TagPrefix
 	/**
 	 * The seperator of namespace and path.
 	 */
-	export const NamespacePathSep = ':'
+	const NamespacePathSep = ResourceLocation.NamespacePathSep
 	/**
 	 * The seperator between different path segments.
 	 */
-	export const PathSep = '/'
-	export const DefaultNamespace = 'minecraft'
+	const PathSep = ResourceLocation.PathSep
+	const DefaultNamespace = ResourceLocation.DefaultNamespace
 
 	/* istanbul ignore next */
 	export function is(obj: AstNode): obj is ResourceLocationNode {
@@ -54,9 +55,10 @@ export namespace ResourceLocationNode {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string
 		/* 
-		 * `node.namespace` has three statuses here:
+		 * `node.namespace` has four statuses here:
 		 * - `minecraft`
-		 * - `` (yes, empty)
+		 * - `` (yes, empty string)
+		 * - undefined
 		 * - any other namespaces.
 		 *
 		 * Whether `node.namespace !== undefined` or simply `node.namespace` is used in the condition is carefully selected.

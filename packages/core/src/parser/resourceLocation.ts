@@ -1,6 +1,6 @@
 import { arrayToMessage, localize } from '@spyglassmc/locales'
-import type { Mutable, ResourceLocationOptions } from '../node'
-import { ResourceLocationNode } from '../node'
+import { ResourceLocation } from '../common'
+import type { Mutable, ResourceLocationNode, ResourceLocationOptions } from '../node'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
@@ -19,7 +19,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			options,
 		}
 
-		if (src.trySkip(ResourceLocationNode.TagPrefix)) {
+		if (src.trySkip(ResourceLocation.TagPrefix)) {
 			ans.isTag = true
 		}
 
@@ -33,12 +33,12 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 		if (raw.length === 0) {
 			ctx.err.report(localize('expected', localize('resource-location')), ans)
 		} else {
-			const sepIndex = raw.indexOf(ResourceLocationNode.NamespacePathSep)
+			const sepIndex = raw.indexOf(ResourceLocation.NamespacePathSep)
 			if (sepIndex >= 0) {
 				ans.namespace = raw.slice(0, sepIndex)
 			}
 			const rawPath = raw.slice(sepIndex + 1)
-			ans.path = rawPath.split(ResourceLocationNode.PathSep)
+			ans.path = rawPath.split(ResourceLocation.PathSep)
 
 			// Check characters.
 			if (!raw.match(Pattern)) {

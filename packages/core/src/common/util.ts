@@ -104,6 +104,41 @@ export namespace SpyglassUri {
 		}
 	}
 }
+export interface ResourceLocation {
+	isTag: boolean,
+	namespace: string | undefined,
+	path: readonly string[],
+}
+export namespace ResourceLocation {
+	/**
+	 * The prefix for tags.
+	 */
+	export const TagPrefix = '#'
+	/**
+	 * The seperator of namespace and path.
+	 */
+	export const NamespacePathSep = ':'
+	/**
+	 * The seperator between different path segments.
+	 */
+	export const PathSep = '/'
+	export const DefaultNamespace = 'minecraft'
+
+	export function lengthen(value: string): string {
+		switch (value.indexOf(NamespacePathSep)) {
+			case -1:
+				return `${DefaultNamespace}${NamespacePathSep}${value}`
+			case 0:
+				return `${DefaultNamespace}${value}`
+			default:
+				return value
+		}
+	}
+
+	export function shorten(value: string): string {
+		return value.replace(/^(?:minecraft)?:/, '')
+	}
+}
 
 /**
  * @returns The string value decoded from the buffer according to UTF-8.

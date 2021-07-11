@@ -136,7 +136,7 @@ export function pick(value: string | undefined, cases: Record<string, CheckerRec
 	if (value === undefined) {
 		return {}
 	}
-	const properties = cases[value.replace(/^minecraft:/, '')]
+	const properties = cases[ResourceLocation.shorten(value)]
 	if (properties === undefined) {
 		return {}
 	}
@@ -146,7 +146,7 @@ export function pick(value: string | undefined, cases: Record<string, CheckerRec
 			checker: isComplex(p) ? p.checker : p,
 			opt: isComplex(p) ? p.opt : undefined,
 			deprecated: isComplex(p) ? p.deprecated : undefined,
-			context: value.replace(/^minecraft:/, ''),
+			context: ResourceLocation.shorten(value),
 		}
 	})
 	return properties
@@ -156,7 +156,7 @@ export function when(value: string | undefined, values: string[], properties: Ch
 	if (value === undefined) {
 		return {}
 	}
-	if (!values.includes(value.replace(/^minecraft:/, ''))) {
+	if (!values.includes(ResourceLocation.shorten(value))) {
 		return notProperties
 	}
 	return properties
