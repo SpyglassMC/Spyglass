@@ -151,7 +151,7 @@ const getMergedFieldData = (paths: core.SymbolPath[], node: NbtCompoundNode, key
  */
 export function compound(path: core.SymbolPath | core.SymbolPath[] | undefined, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
-		if (!path) {
+		if (!path || (Array.isArray(path) && path.length === 0)) {
 			return
 		}
 
