@@ -4,9 +4,9 @@ import * as fse from 'fs-extra'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
-import type { RawVanillaBlocks, RawVanillaRegistries, VanillaStates, VanillaRegistries, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
+import type { RawVanillaBlocks, RawVanillaRegistries, VanillaRegistries, VanillaStates, VersionManifest } from '../../../lib/dependency/vanilla-resource/type'
 import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
-import { addBlocksSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getLatestReleases, getRegistriesUrl, getVersionStatus, resolveVersion, transformBlocks, transformRegistries } from '../../../lib/dependency/vanilla-resource/util'
+import { addBlocksSymbols, addFluidsSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getLatestReleases, getRegistriesUrl, getVersionStatus, resolveVersion, transformBlocks, transformRegistries, VanillaFluidsData } from '../../../lib/dependency/vanilla-resource/util'
 
 const Fixtures = {
 	Blocks: fse.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaStates,
@@ -140,7 +140,7 @@ describe('vanilla-resource util', () => {
 		})
 	})
 
-	describe('addBlockSymbols()', () => {
+	describe('addBlocksSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
 			symbols.contributeAs('default_library/block', () => symbols
@@ -149,6 +149,19 @@ describe('vanilla-resource util', () => {
 			)
 
 			addBlocksSymbols(Fixtures.Blocks, symbols)
+			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
+		})
+	})
+
+	describe('addFluidsSymbols()', () => {
+		it('Should add correctly', () => {
+			const symbols = new SymbolUtil({})
+			symbols.contributeAs('default_library/fluid', () => symbols
+				.query('spyglassmc://vanilla-resource/fluids.json', 'fluid', 'oldExistingOne')
+				.enter({ usage: { type: 'declaration' } })
+			)
+
+			addFluidsSymbols(VanillaFluidsData, symbols)
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
