@@ -1,4 +1,6 @@
-const BlockItems: { [item: string]: string[] } = {
+import type * as core from '../../../core/lib'
+
+const BlockItems: { [item: string]: core.FullResourceLocation[] } = {
 	// Coral fans.
 	'minecraft:brain_coral_fan': [
 		'minecraft:brain_coral_fan',
@@ -114,11 +116,11 @@ const BlockItems: { [item: string]: string[] } = {
 	],
 }
 
-export function getBlockFromItem(item: string): string[] | undefined {
+export function getBlocksFromItem(item: core.FullResourceLocation): core.FullResourceLocation[] | undefined {
 	return BlockItems[item]
 }
 
-export function getEntityFromItem(item: string): string | undefined {
+export function getEntityFromItem(item: core.FullResourceLocation): core.FullResourceLocation | undefined {
 	if (item === 'minecraft:armor_stand') {
 		return item
 	}

@@ -218,7 +218,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				name: opt(text_component),
 			},
 			set_nbt: {
-				tag: nbt({ registry: 'item', id: 'minecraft:iron_ingot' }), // TODO
+				tag: nbt({ registry: 'item' }),
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({

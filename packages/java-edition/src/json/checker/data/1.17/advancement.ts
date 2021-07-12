@@ -162,7 +162,7 @@ export const player_predicate = as('player', record({
 
 export const entity_predicate = as('entity', dispatch(props => record({
 	type: opt(resource('entity_type', true)),
-	nbt: opt(nbt({ registry: 'entity_type', id: extract('type', props), tag: extract('type', props)})),
+	nbt: opt(nbt({ registry: 'entity_type', idOrTag: extract('type', props)})),
 	team: opt(literal('team')),
 	location: opt(location_predicate),
 	stepping_on: opt(location_predicate),

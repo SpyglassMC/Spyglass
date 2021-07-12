@@ -1,3 +1,4 @@
+import type { FullResourceLocation } from '../common'
 import { ResourceLocation } from '../common'
 import type { ResourceLocationCategory, SymbolAccessType, SymbolUsageType, TaggableResourceLocationCategory } from '../symbol'
 import type { AstNode } from './AstNode'
@@ -51,6 +52,8 @@ export namespace ResourceLocationNode {
 		return (obj as ResourceLocationNode).type === 'resource_location'
 	}
 
+	export function toString(node: ResourceLocationBaseNode, type?: 'full'): FullResourceLocation
+	export function toString(node: ResourceLocationBaseNode, type?: 'origin' | 'full' | 'short'): string
 	export function toString(node: ResourceLocationBaseNode, type: 'origin' | 'full' | 'short' = 'origin'): string {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string

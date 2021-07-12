@@ -104,6 +104,9 @@ export namespace SpyglassUri {
 		}
 	}
 }
+
+export type FullResourceLocation = `${string}:${string}`
+
 export interface ResourceLocation {
 	isTag: boolean,
 	namespace: string | undefined,
@@ -124,14 +127,14 @@ export namespace ResourceLocation {
 	export const PathSep = '/'
 	export const DefaultNamespace = 'minecraft'
 
-	export function lengthen(value: string): string {
+	export function lengthen(value: string): FullResourceLocation {
 		switch (value.indexOf(NamespacePathSep)) {
 			case -1:
 				return `${DefaultNamespace}${NamespacePathSep}${value}`
 			case 0:
-				return `${DefaultNamespace}${value}`
+				return `${DefaultNamespace}${value}` as unknown as FullResourceLocation
 			default:
-				return value
+				return value as FullResourceLocation
 		}
 	}
 

@@ -107,12 +107,19 @@ export const ExtendableRootRegistryMap = {
 	'minecraft:storage': 'storage',
 } as const
 export const ExtendableRootRegistries = Object.keys(ExtendableRootRegistryMap) as (keyof typeof ExtendableRootRegistryMap)[]
+export type ExtendableRootRegistry = (typeof ExtendableRootRegistryMap)[keyof typeof ExtendableRootRegistryMap]
 
-export const RootRegistryMap = {
-	...ExtendableRootRegistryMap,
+export const CustomRootRegistryMap = {
 	'custom:blockitemstates': 'custom:blockitemstates',
 	'custom:blockstates': 'custom:blockstates',
 	'custom:spawnitemtag': 'custom:spawnitemtag',
+} as const
+export const CustomRootRegistries = Object.keys(CustomRootRegistryMap) as (keyof typeof CustomRootRegistryMap)[]
+export type CustomRootRegistry = (typeof CustomRootRegistryMap)[keyof typeof CustomRootRegistryMap]
+
+export const RootRegistryMap = {
+	...ExtendableRootRegistryMap,
+	...CustomRootRegistryMap,
 } as const
 export const RootRegistries = Object.keys(RootRegistryMap) as (keyof typeof RootRegistryMap)[]
 export type ResolvedRootRegistry = (typeof RootRegistryMap)[keyof typeof RootRegistryMap]
