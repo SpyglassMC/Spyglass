@@ -33,10 +33,9 @@ export function activate(context: vsc.ExtensionContext) {
 	}
 
 	const documentSelector: lc.DocumentSelector = [
-		{ scheme: 'file', language: 'mcfunction' },
-		{ scheme: 'file', language: 'nbt' },
-		{ scheme: 'file', language: 'nbtdoc' },
-		// FIXME: The above three languages should be supported for other schemes as well.
+		{ language: 'mcfunction' },
+		{ language: 'nbt' },
+		{ language: 'nbtdoc' },
 		{ scheme: 'file', pattern: '**/pack.mcmeta' },
 		{ scheme: 'file', pattern: '**/data/*/*/**/*.json' },
 	]
