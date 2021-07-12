@@ -32,8 +32,8 @@ export function selectedNode(node: AstNode, offset: number): NodeResult {
 	let ans: NodeResult = { node: undefined, parents: [], map: IndexMap.DEFAULT }
 	// TODO: Binary search here.
 	traversePreOrder(node,
-		({ node, map }) => Range.contains(node.range, IndexMap.toInnerOffset(map, offset)),
-		({ node, map }) => Range.contains(node.range, IndexMap.toInnerOffset(map, offset)),
+		({ node, map }) => IndexMap.containsOuterOffset(node.range, offset, map),
+		({ node, map }) => IndexMap.containsOuterOffset(node.range, offset, map),
 		({ node, map, parents }) => ans = { node, map, parents: [...parents] },
 	)
 	return ans

@@ -82,4 +82,9 @@ export namespace IndexMap {
 			pairs: inner.pairs, // FIXME: Make this work when outer has pairs.
 		}
 	}
+
+	export function containsOuterOffset(range: Range, offset: number, map: IndexMap): boolean {
+		return Range.contains(map.outerRange, offset)
+			&& Range.contains(range, toInnerOffset(map, offset))
+	}
 }
