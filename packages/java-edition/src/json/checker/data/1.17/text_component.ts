@@ -1,4 +1,4 @@
-import { any, as, boolean, deprecated, dispatch, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, boolean, deprecated, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { nbt, stringColor, uuid } from '../../util'
 
 const Keybinds = [
@@ -100,11 +100,11 @@ const text_component_object = as('text_component', (node, ctx) => record({
 				},
 				show_item: {
 					value: deprecated(simpleString), // TODO: item nbt
-					contents: opt(record({
+					contents: opt(dispatch(props => record({
 						id: resource('item'),
 						count: opt(int),
-						tag: opt(nbt()), // TODO: item tag nbt
-					})),
+						tag: opt(nbt({ registry: 'item', id: extract('id', props) })),
+					}))),
 				},
 				show_entity: {
 					value: deprecated(record({

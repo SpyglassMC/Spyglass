@@ -54,23 +54,23 @@ const Triggers = [
 	'minecraft:voluntary_exile',
 ]
 
-export const item_predicate = as('item', record({
+export const item_predicate = as('item', dispatch(props => record({
 	items: opt(listOf(resource('item'))),
 	tag: opt(resource('tag/item')),
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
 	potion: opt(resource('potion')),
-	nbt: opt(nbt()), // TODO: item nbt
+	nbt: opt(nbt({ registry: 'item', ids: extractStringArray('items', props), tag: extract('tag', props)})),
 	enchantments: opt(listOf(record({
 		enchantment: opt(resource('enchantment')),
 		levels: opt(int_bounds),
 	}))),
-}))
+})))
 
 export const block_predicate = as('block', dispatch(props => record({
 	blocks: opt(listOf(resource('block'))),
 	tag: opt(resource('tag/block')),
-	nbt: opt(nbt()), // TODO: block nbt
+	nbt: opt(nbt({ registry: 'block', ids: extractStringArray('blocks', props), tag: extract('tag', props)})),
 	state: opt(blockStateMap({
 		ids: extractStringArray('blocks', props),
 		tag: extract('tag', props),
@@ -160,9 +160,9 @@ export const player_predicate = as('player', record({
 	looking_at: opt(ref(() => entity_predicate)),
 }))
 
-export const entity_predicate = as('entity', record({
+export const entity_predicate = as('entity', dispatch(props => record({
 	type: opt(resource('entity_type', true)),
-	nbt: opt(nbt()), // TODO: entity nbt
+	nbt: opt(nbt({ registry: 'entity_type', id: extract('type', props), tag: extract('type', props)})),
 	team: opt(literal('team')),
 	location: opt(location_predicate),
 	stepping_on: opt(location_predicate),
@@ -194,7 +194,7 @@ export const entity_predicate = as('entity', record({
 		in_open_water: opt(boolean),
 	})),
 	catType: opt(simpleString),
-}))
+})))
 
 export const damage_source_predicate = as('damage_source', record({
 	is_explosion: opt(boolean),
@@ -416,10 +416,10 @@ export const criterion = as('criterion', dispatch('trigger',
 
 export const advancement = as('advancement', record({
 	display: opt(record({
-		icon: record({
+		icon: dispatch(props => record({
 			item: resource('item'),
-			nbt: opt(nbt()), // TODO: item nbt
-		}),
+			nbt: opt(nbt({ registry: 'item', id: extract('item', props)})),
+		})),
 		title: text_component,
 		description: text_component,
 		background: opt(simpleString),

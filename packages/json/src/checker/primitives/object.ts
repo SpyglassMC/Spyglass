@@ -167,13 +167,20 @@ export function when(value: string | undefined, values: string[], properties: Ch
 	return properties
 }
 
-export function extract(value: string, children: PairNode<JsonStringNode, JsonNode>[]) {
-	const node = children.find(p => p.key?.value === value)
+export function extract(value: string, children: PairNode<JsonStringNode, JsonNode>[] | undefined) {
+	const node = children?.find(p => p.key?.value === value)
 	return node?.value?.type === 'json:string' ? node.value.value : undefined
 }
 
-export function extractStringArray(value: string, children: PairNode<JsonStringNode, JsonNode>[]): readonly string[] | undefined {
-	const node = children.find(p => p.key?.value === value)
+export function extractNested(wrap: string, value: string, children: PairNode<JsonStringNode, JsonNode>[] | undefined) {
+	const wrapper = children?.find(p => p.key?.value === wrap)
+	if (wrapper?.value?.type !== 'json:object') return undefined
+	const node = wrapper.children?.find(p => (p as unknown as PairNode<JsonStringNode, JsonNode>).key?.value === value)
+	return node?.type === 'json:string' ? node.value : undefined
+}
+
+export function extractStringArray(value: string, children?: PairNode<JsonStringNode, JsonNode>[] | undefined): readonly string[] | undefined {
+	const node = children?.find(p => p.key?.value === value)
 	return node?.value?.type === 'json:array' && node.value.children?.every((n): n is ItemNode<JsonStringNode> => n.value?.type === 'json:string')
 		? node.value.children.map(n => n.value!.value)
 		: undefined

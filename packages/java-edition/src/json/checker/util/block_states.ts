@@ -48,15 +48,20 @@ export function blockStateMap({ category, id, ids, tag, mixedTypes, requireAll }
 	}
 }
 
-export function blockStateList(block?: string): JsonChecker {
+export function blockStateList({ category, id, ids, tag }: Options): JsonChecker {
 	return (node, ctx) => {
+		if (tag) {
+			ids = getTagValues(`tag/${category ?? 'block'}`, tag, ctx)
+		} else if (id) {
+			ids = [id]
+		}
 		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!ctx.ensureChecked) {
+		if (!ids?.length || !ctx.ensureChecked) {
 			listOf(simpleString)(node, ctx)
 			return
 		}
-		const states = block ? Object.keys(core.checker.getStates('block', [block], ctx)) : []
-		listOf(literal(states))(node, ctx)
+		const states = core.checker.getStates(category ?? 'block', ids, ctx)
+		listOf(literal(Object.keys(states)))(node, ctx)
 	}
 }
 

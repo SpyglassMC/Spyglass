@@ -154,7 +154,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			copy_state: {
 				block: resource('block'),
-				properties: blockStateList(extract('block', props)),
+				properties: blockStateList({ id: extract('block', props) }),
 			},
 			enchant_randomly: {
 				enchantments: opt(listOf(resource('enchantment'))),
@@ -218,7 +218,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				name: opt(text_component),
 			},
 			set_nbt: {
-				tag: nbt(), // TODO: item nbt
+				tag: nbt({ registry: 'item', id: 'minecraft:iron_ingot' }), // TODO
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({

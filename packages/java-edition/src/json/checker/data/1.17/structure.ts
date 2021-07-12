@@ -1,4 +1,4 @@
-import { any, as, boolean, dispatch, float, floatRange, intRange, listOf, literal, opt, pick, record, resource, simpleString, when } from '@spyglassmc/json/lib/checker'
+import { any, as, boolean, dispatch, extractNested, float, floatRange, intRange, listOf, literal, opt, pick, record, resource, simpleString, when } from '@spyglassmc/json/lib/checker'
 import { nbt } from '../../util'
 import { block_state, HeightmapType, height_provider } from './common'
 import { configured_feature_ref } from './feature'
@@ -41,13 +41,13 @@ export const pos_rule_test = as('pos_rule_test', dispatch('predicate_type', type
 	}),
 })))
 
-const processor_rule = as('processor_rule', record({
+const processor_rule = as('processor_rule', dispatch(props => record({
 	position_predicate: opt(pos_rule_test, { predicate_type: 'always_true' }),
 	input_predicate: rule_test,
 	location_predicate: rule_test,
 	output_state: block_state,
-	output_nbt: opt(nbt()),
-}))
+	output_nbt: opt(nbt({ registry: 'block', id: extractNested('output_state', 'Name', props) })),
+})))
 
 const processor = as('processor', dispatch('processor_type', type => record({
 	processor_type: resource('worldgen/structure_processor'),
