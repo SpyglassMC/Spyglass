@@ -693,11 +693,13 @@ function selector(): core.Parser<EntitySelectorNode> {
 												return core.map<EntitySelectorInvertableArgumentValueNode<core.ResourceLocationNode>>(
 													invertable(core.resourceLocation({ category: 'entity_type', allowTag: true })),
 													(res, _, ctx) => {
-														if (res.inverted ? hasNonInvertedKey(key.value) : hasKey(key.value)) {
-															ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
-														} else if (typeLimited) {
-															ctx.err.report(localize('mcfunction.parser.entity-selector.arguments.not-applicable', localeQuote(key.value)), key)
-														} else if (!res.inverted) {
+														if (typeLimited) {
+															if (hasKey(key.value)) {
+																ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
+															} else {
+																ctx.err.report(localize('mcfunction.parser.entity-selector.arguments.not-applicable', localeQuote(key.value)), key)
+															}
+														} else if (!res.inverted && !res.value.isTag) {
 															typeLimited = true
 															if (core.ResourceLocationNode.toString(res.value, 'short') === 'player') {
 																playersOnly = true

@@ -8981,6 +8981,635 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
   "errors": []
 }
 
+exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , type = #tag2 , ]" with {"amount":"multiple"} 1'] = {
+  "node": {
+    "type": "mcfunction:argument/minecraft:score_holder",
+    "range": {
+      "start": 0,
+      "end": 35
+    },
+    "name": "test",
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 35
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@e"
+        },
+        {
+          "type": "mcfunction:entity_selector/arguments",
+          "range": {
+            "start": 2,
+            "end": 35
+          },
+          "children": [
+            {
+              "type": "pair",
+              "range": {
+                "start": 4,
+                "end": 18
+              },
+              "children": [
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "value": "type",
+                  "childrenMaps": [
+                    {
+                      "outerRange": {
+                        "start": 4,
+                        "end": 8
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 4
+                      },
+                      "pairs": []
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "literal",
+                      "range": {
+                        "start": 0,
+                        "end": 4
+                      },
+                      "value": "type"
+                    }
+                  ]
+                },
+                {
+                  "type": "mcfunction:entity_selector/arguments/value/invertable",
+                  "range": {
+                    "start": 11,
+                    "end": 16
+                  },
+                  "children": [
+                    {
+                      "type": "resource_location",
+                      "range": {
+                        "start": 11,
+                        "end": 16
+                      },
+                      "isTag": true,
+                      "path": [
+                        "tag1"
+                      ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 11,
+                      "end": 16
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag1"
+                    ]
+                  }
+                }
+              ],
+              "key": {
+                "type": "string",
+                "range": {
+                  "start": 4,
+                  "end": 8
+                },
+                "value": "type",
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              "sep": {
+                "start": 9,
+                "end": 10
+              },
+              "value": {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 11,
+                  "end": 16
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 11,
+                      "end": 16
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag1"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 11,
+                    "end": 16
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag1"
+                  ]
+                }
+              },
+              "end": {
+                "start": 17,
+                "end": 18
+              }
+            },
+            {
+              "type": "pair",
+              "range": {
+                "start": 19,
+                "end": 33
+              },
+              "children": [
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "value": "type",
+                  "childrenMaps": [
+                    {
+                      "outerRange": {
+                        "start": 19,
+                        "end": 23
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 4
+                      },
+                      "pairs": []
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "literal",
+                      "range": {
+                        "start": 0,
+                        "end": 4
+                      },
+                      "value": "type"
+                    }
+                  ]
+                },
+                {
+                  "type": "mcfunction:entity_selector/arguments/value/invertable",
+                  "range": {
+                    "start": 26,
+                    "end": 31
+                  },
+                  "children": [
+                    {
+                      "type": "resource_location",
+                      "range": {
+                        "start": 26,
+                        "end": 31
+                      },
+                      "isTag": true,
+                      "path": [
+                        "tag2"
+                      ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 26,
+                      "end": 31
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag2"
+                    ]
+                  }
+                }
+              ],
+              "key": {
+                "type": "string",
+                "range": {
+                  "start": 19,
+                  "end": 23
+                },
+                "value": "type",
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 19,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              "sep": {
+                "start": 24,
+                "end": 25
+              },
+              "value": {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 26,
+                  "end": 31
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 26,
+                      "end": 31
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag2"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 26,
+                    "end": 31
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag2"
+                  ]
+                }
+              },
+              "end": {
+                "start": 32,
+                "end": 33
+              }
+            }
+          ]
+        }
+      ],
+      "variable": "e",
+      "argument": {
+        "type": "mcfunction:entity_selector/arguments",
+        "range": {
+          "start": 2,
+          "end": 35
+        },
+        "children": [
+          {
+            "type": "pair",
+            "range": {
+              "start": 4,
+              "end": 18
+            },
+            "children": [
+              {
+                "type": "string",
+                "range": {
+                  "start": 4,
+                  "end": 8
+                },
+                "value": "type",
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 11,
+                  "end": 16
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 11,
+                      "end": 16
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag1"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 11,
+                    "end": 16
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag1"
+                  ]
+                }
+              }
+            ],
+            "key": {
+              "type": "string",
+              "range": {
+                "start": 4,
+                "end": 8
+              },
+              "value": "type",
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                }
+              ],
+              "children": [
+                {
+                  "type": "literal",
+                  "range": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "value": "type"
+                }
+              ]
+            },
+            "sep": {
+              "start": 9,
+              "end": 10
+            },
+            "value": {
+              "type": "mcfunction:entity_selector/arguments/value/invertable",
+              "range": {
+                "start": 11,
+                "end": 16
+              },
+              "children": [
+                {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 11,
+                    "end": 16
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag1"
+                  ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "resource_location",
+                "range": {
+                  "start": 11,
+                  "end": 16
+                },
+                "isTag": true,
+                "path": [
+                  "tag1"
+                ]
+              }
+            },
+            "end": {
+              "start": 17,
+              "end": 18
+            }
+          },
+          {
+            "type": "pair",
+            "range": {
+              "start": 19,
+              "end": 33
+            },
+            "children": [
+              {
+                "type": "string",
+                "range": {
+                  "start": 19,
+                  "end": 23
+                },
+                "value": "type",
+                "childrenMaps": [
+                  {
+                    "outerRange": {
+                      "start": 19,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 26,
+                  "end": 31
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 26,
+                      "end": 31
+                    },
+                    "isTag": true,
+                    "path": [
+                      "tag2"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 26,
+                    "end": 31
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag2"
+                  ]
+                }
+              }
+            ],
+            "key": {
+              "type": "string",
+              "range": {
+                "start": 19,
+                "end": 23
+              },
+              "value": "type",
+              "childrenMaps": [
+                {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                }
+              ],
+              "children": [
+                {
+                  "type": "literal",
+                  "range": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "value": "type"
+                }
+              ]
+            },
+            "sep": {
+              "start": 24,
+              "end": 25
+            },
+            "value": {
+              "type": "mcfunction:entity_selector/arguments/value/invertable",
+              "range": {
+                "start": 26,
+                "end": 31
+              },
+              "children": [
+                {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 26,
+                    "end": 31
+                  },
+                  "isTag": true,
+                  "path": [
+                    "tag2"
+                  ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "resource_location",
+                "range": {
+                  "start": 26,
+                  "end": 31
+                },
+                "isTag": true,
+                "path": [
+                  "tag2"
+                ]
+              }
+            },
+            "end": {
+              "start": 32,
+              "end": 33
+            }
+          }
+        ]
+      },
+      "currentEntity": false,
+      "playersOnly": false,
+      "predicates": [
+        "Entity::isAlive"
+      ],
+      "single": false,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+    },
+    "hover": "<test: score_holder>"
+  },
+  "errors": []
+}
+
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" with {"amount":"multiple"} 1'] = {
   "node": {
     "type": "mcfunction:argument/minecraft:score_holder",

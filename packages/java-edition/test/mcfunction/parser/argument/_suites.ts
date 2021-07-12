@@ -188,6 +188,7 @@ export const CommandArgumentTestSuites: Partial<Record<ArgumentTreeNode['parser'
 				'@a[ team = foo , team = bar , ]',
 				'@e[ type = ! skeleton , type = ! zombie , ]',
 				'@e[ type = skeleton , type = zombie , ]',
+				'@e[ type = #tag1 , type = #tag2 , ]',
 				'@e[ type = player ]',
 				'@a[ type = zombie ]',
 				'@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]',
