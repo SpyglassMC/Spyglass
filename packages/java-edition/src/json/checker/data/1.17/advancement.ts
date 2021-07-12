@@ -72,7 +72,7 @@ export const block_predicate = as('block', dispatch(props => record({
 	tag: opt(resource('tag/block')),
 	nbt: opt(nbt()), // TODO: block nbt
 	state: opt(blockStateMap({
-		blocks: extractStringArray('blocks', props),
+		ids: extractStringArray('blocks', props),
 		tag: extract('tag', props),
 		mixedTypes: true,
 	})),
@@ -83,7 +83,7 @@ export const fluid_predicate = as('fluid', dispatch(props => record({
 	tag: opt(resource('tag/fluid')),
 	state: opt(blockStateMap({
 		category: 'fluid',
-		block: extract('fluid', props),
+		id: extract('fluid', props),
 		tag: extract('tag', props),
 		mixedTypes: true,
 	})),
@@ -269,7 +269,7 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				enter_block: {
 					block: opt(resource('block')),
-					state: opt(blockStateMap(extract('block', props))),
+					state: opt(blockStateMap({ id: extract('block', props) })),
 				},
 				enchanted_item: {
 					levels: opt(int_bounds),
@@ -331,7 +331,7 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				placed_block: {
 					block: opt(resource('block')),
-					state: opt(blockStateMap(extract('block', props))),
+					state: opt(blockStateMap({ id: extract('block', props) })),
 					item: opt(item_predicate),
 					location: opt(location_predicate),
 				},

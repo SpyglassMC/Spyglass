@@ -12,10 +12,10 @@ function smallestEncompassingPowerOfTwo(n: number) {
 	return n + 1
 }
 
-const BITS_FOR_Y = 64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000)))
-export const Y_SIZE = (1 << BITS_FOR_Y) - 32
-export const MAX_Y = (Y_SIZE >> 1) - 1
-export const MIN_Y = MAX_Y - Y_SIZE + 1
+const BITS_FOR_Y = 64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000))) // 12
+export const Y_SIZE = (1 << BITS_FOR_Y) - 32 // 4064
+export const MAX_Y = (Y_SIZE >> 1) - 1 // 2031
+export const MIN_Y = MAX_Y - Y_SIZE + 1 // -2031
 
 export const number_provider = as('range', any([
 	float,
@@ -91,15 +91,17 @@ export const float_bounds = as('bounds', any([
 
 export const block_state = as('block_state', dispatch(props => record({
 	Name: resource('block'),
-	Properties: opt(blockStateMap(extract('Name', props), false, true)),
+	Properties: opt(blockStateMap({
+		id: extract('Name', props),
+		requireAll: true,
+	})),
 })))
 
 export const fluid_state = as('fluid_state', dispatch(props => record({
 	Name: resource('fluid'),
 	Properties: opt(blockStateMap({
+		id: extract('Name', props),
 		category: 'fluid',
-		block: extract('Name', props),
-		mixedTypes: false,
 		requireAll: true,
 	})),
 })))

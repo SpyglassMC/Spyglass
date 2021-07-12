@@ -58,7 +58,7 @@ export const predicate = as('predicate', dispatch('condition',
 			},
 			block_state_property: {
 				block: resource('block'),
-				properties: blockStateMap(extract('block', props)),
+				properties: blockStateMap({ id: extract('block', props) }),
 			},
 			damage_source_properties: {
 				predicate: damage_source_predicate,

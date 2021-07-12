@@ -1,4 +1,3 @@
-import type { JsonChecker } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource } from '@spyglassmc/json/lib/checker/primitives'
 import { block_state } from './common'
 
@@ -24,8 +23,7 @@ const noise_slide_settings = record({
 	offset: int,
 })
 
-export const noise_settings: JsonChecker = (node, ctx) => as('noise_settings', record({
-	...ctx.context && { name : resource('worldgen/noise_settings')},
+export const noise_settings = as('noise_settings', record({
 	bedrock_roof_position: int,
 	bedrock_floor_position: int,
 	sea_level: int,
@@ -59,7 +57,7 @@ export const noise_settings: JsonChecker = (node, ctx) => as('noise_settings', r
 		bottom_slide: noise_slide_settings,
 	}),
 	structures: structure_settings,
-}))(node, ctx)
+}))
 
 const noise_parameters = record({
 	firstOctave: int,
@@ -105,8 +103,7 @@ const biome_source = as('biome_source', dispatch('type', type => record({
 	}),
 })))
 
-export const dimension_type: JsonChecker = (node, ctx) => as('dimension_type', record({
-	...ctx.context && { name : resource('dimension_type')},
+export const dimension_type = as('dimension_type', record({
 	min_y: intRange(-2048, 2047), // TODO: validate
 	height: intRange(0, 4096),
 	logical_height: intRange(0, 4096),
@@ -123,7 +120,7 @@ export const dimension_type: JsonChecker = (node, ctx) => as('dimension_type', r
 	has_raids: boolean,
 	has_skylight: boolean,
 	has_ceiling: boolean,
-}))(node, ctx)
+}))
 
 export const dimension = as('dimension', record({
 	type: any([

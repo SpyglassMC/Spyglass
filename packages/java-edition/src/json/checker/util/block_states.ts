@@ -5,40 +5,22 @@ import { getTagValues } from '../../../common'
 
 interface Options {
 	category?: 'block' | 'fluid',
-	block?: string | undefined,
-	blocks?: readonly string[] | undefined,
+	id?: string | undefined,
+	ids?: readonly string[] | undefined,
 	tag?: string | undefined,
 	mixedTypes?: boolean,
 	requireAll?: boolean,
 }
 
-export function blockStateMap(props: Options): JsonChecker
-export function blockStateMap(block?: string, mixedTypes?: boolean, requireAll?: boolean): JsonChecker
-export function blockStateMap(arg0?: string | Options, arg1?: boolean, arg2?: boolean): JsonChecker {
+export function blockStateMap({ category, id, ids, tag, mixedTypes, requireAll }: Options): JsonChecker {
 	return (node, ctx) => {
-		let category: 'block' | 'fluid'
-		let blocks: readonly string[] | undefined
-		let mixedTypes: boolean | undefined
-		let requireAll: boolean | undefined
-		if (arg0 === undefined || typeof arg0 === 'string') {
-			blocks = arg0 ? [arg0] : []
-			category = 'block'
-			mixedTypes = arg1
-			requireAll = arg2
-		} else {
-			category = arg0.category ?? 'block'
-			if (arg0.tag) {
-				blocks = getTagValues(`tag/${category}`, arg0.tag, ctx)
-			} else if (arg0.block) {
-				blocks = [arg0.block]
-			} else {
-				blocks = arg0.blocks
-			}
-			({ mixedTypes, requireAll } = arg0)
+		if (tag) {
+			ids = getTagValues(`tag/${category ?? 'block'}`, tag, ctx)
+		} else if (id) {
+			ids = [id]
 		}
-		// Does not check if `blocks` is undefined or empty.
-		//                     FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!blocks?.length || !ctx.ensureChecked) {
+		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+		if (!ids?.length || !ctx.ensureChecked) {
 			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			object(
 				simpleString,
@@ -46,7 +28,7 @@ export function blockStateMap(arg0?: string | Options, arg1?: boolean, arg2?: bo
 			)(node, ctx)
 			return
 		}
-		const states = core.checker.getStates(category, blocks, ctx)
+		const states = core.checker.getStates(category ?? 'block', ids, ctx)
 		object(
 			Object.keys(states),
 			(state) => {

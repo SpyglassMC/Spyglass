@@ -2,7 +2,7 @@ import type { Symbol } from '@spyglassmc/core'
 import type { JsonNode } from '@spyglassmc/json'
 import { JsonArrayNode, JsonObjectNode } from '@spyglassmc/json'
 import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
-import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, Y_SIZE } from './common'
 import { processor_list_ref, rule_test } from './structure'
 
@@ -191,7 +191,7 @@ const OreConfig = {
 	discard_chance_on_air_exposure: floatRange(0, 1),
 	targets: listOf(record({
 		state: block_state,
-		target: object(), // TODO: rule test
+		target: rule_test,
 	})),
 }
 
@@ -419,11 +419,11 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		},
 		no_bonemeal_flower: RandomPatchConfig,
 		ore: OreConfig,
-		random_patch: RandomPatchConfig,
 		random_boolean_selector: {
 			feature_false: configured_feature_ref,
 			feature_true: configured_feature_ref,
 		},
+		random_patch: RandomPatchConfig,
 		random_selector: {
 			features: listOf(record({
 				chance: floatRange(0, 1),
