@@ -108,7 +108,7 @@ export const predicate = as('predicate', dispatch('condition',
 				period: opt(int),
 			},
 			weather_check: {
-				rainding: opt(boolean),
+				raining: opt(boolean),
 				thundering: opt(boolean),
 			},
 		}),
