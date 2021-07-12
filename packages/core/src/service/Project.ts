@@ -414,14 +414,11 @@ export class Project extends EventEmitter {
 	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		const checker = this.meta.getChecker(node.type)
 		const ctx = CheckerContext.create(this, { doc })
-		return new Promise<void>(rs => {
-			ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
-			ctx.symbols.contributeAs('checker', async () => {
-				await checker(node, ctx)
-				node.checkerErrors = ctx.err.dump()
-				this.cache(doc, node)
-				rs()
-			})
+		ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
+		ctx.symbols.contributeAsAsync('checker', async () => {
+			await checker(node, ctx)
+			node.checkerErrors = ctx.err.dump()
+			this.cache(doc, node)
 		})
 	}
 
@@ -465,7 +462,8 @@ export class Project extends EventEmitter {
 		uri = fileUtil.normalize(uri)
 		this.#clientManagedUris.add(uri)
 		const doc = TextDocument.create(uri, languageID, version, content)
-		this.parseAndCache(doc)
+		const { node } = this.parseAndCache(doc)
+		this.check(doc, node)
 	}
 
 	/**
@@ -479,7 +477,8 @@ export class Project extends EventEmitter {
 			throw new Error(`Document for “${uri}” is not cached. This should not happen. Did the language client send a didChange notification without sending a didOpen one?`)
 		}
 		TextDocument.update(result.doc, changes, version)
-		this.parseAndCache(result.doc)
+		const { node } = this.parseAndCache(result.doc)
+		this.check(result.doc, node)
 	}
 
 	/**

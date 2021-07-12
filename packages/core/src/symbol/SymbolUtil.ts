@@ -158,6 +158,22 @@ export class SymbolUtil extends EventEmitter {
 		return this
 	}
 
+	/**
+	 * This is an asynchronous version of {@link contributeAs}.
+	 */
+	async contributeAsAsync(contributor: SymbolLocationBuiltInContributor, fn: () => PromiseLike<unknown>): Promise<this>
+	async contributeAsAsync(contributor: string, fn: () => PromiseLike<unknown>): Promise<this>
+	async contributeAsAsync(contributor: string, fn: () => PromiseLike<unknown>): Promise<this> {
+		const originalValue = this.#currentContributor
+		this.#currentContributor = contributor
+		try {
+			await fn()
+		} finally {
+			this.#currentContributor = originalValue
+		}
+		return this
+	}
+
 	getStack(uri: string): SymbolStack {
 		if (!this.#stacks.has(uri)) {
 			this.#stacks.set(uri, [{}])
