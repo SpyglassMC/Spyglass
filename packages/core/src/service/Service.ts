@@ -90,16 +90,17 @@ export class Service extends EventEmitter {
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const { node, parents } = selectedNode(file, offset)
+		const { node, parents, map } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
 				const symbol = this.project.symbols.resolveAlias(n.symbol)
 				if (symbol) {
-					return Hover.create(n, `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : ''))
+					const hover = `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
+					return Hover.create(IndexMap.toOuterRange(map, n.range), hover)
 				}
 				if (n.hover) {
-					return Hover.create(n, n.hover)
+					return Hover.create(IndexMap.toOuterRange(map, n.range), n.hover)
 				}
 			}
 		}
@@ -114,7 +115,7 @@ export class Service extends EventEmitter {
 	 */
 	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | undefined {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
-		const { node, parents } = selectedNode(file, offset)
+		const { node, parents, map } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
@@ -128,7 +129,7 @@ export class Service extends EventEmitter {
 						}
 						locations.push(...locs)
 					}
-					return SymbolLocations.create(n, locations.length ? locations : undefined)
+					return SymbolLocations.create(IndexMap.toOuterRange(map, n.range), locations.length ? locations : undefined)
 				}
 			}
 		}
