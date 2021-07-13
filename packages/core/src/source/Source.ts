@@ -49,6 +49,15 @@ export class ReadonlySource {
 		return this.string.substr(this.cursor + offset, length)
 	}
 
+	/**
+	 * If the `expectedValue` is right after the cursor, returns `true`. Otherwise returns `false`.
+	 * 
+	 * @see {@link Source.trySkip}
+	 */
+	tryPeek(expectedValue: string): boolean {
+		return this.peek(expectedValue.length) === expectedValue
+	}
+
 	slice(rangeLike: RangeLike): string {
 		const range = Range.get(rangeLike)
 		return this.string.slice(range.start, range.end)
@@ -100,6 +109,8 @@ export class Source extends ReadonlySource {
 	 * 	// Do something here.
 	 * }
 	 * ```
+	 * 
+	 * @see {@link Source.tryPeek}
 	 */
 	trySkip(expectedValue: string): boolean {
 		if (this.peek(expectedValue.length) === expectedValue) {

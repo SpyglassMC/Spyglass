@@ -22,7 +22,7 @@ export type NbtNumberNode =
 	| NbtFloatAlikeNode
 export namespace NbtNumberNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is NbtIntegerAlikeNode {
+	export function is(node: core.AstNode): node is NbtNumberNode {
 		return NbtIntegerAlikeNode.is(node) || NbtFloatAlikeNode.is(node)
 	}
 }
@@ -190,3 +190,25 @@ export namespace NbtLongArrayNode {
 }
 //#endregion
 //#endregion
+
+export interface NbtPathNode extends core.AstNode {
+	type: 'nbt:path',
+	children: (core.StringNode | NbtCompoundNode | NbtPathIndexNode)[],
+}
+export namespace NbtPathNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtPathNode {
+		return (node as NbtPathNode).type === 'nbt:path'
+	}
+}
+
+export interface NbtPathIndexNode extends core.AstNode {
+	type: 'nbt:path/index',
+	children: [core.IntegerNode] | [NbtCompoundNode] | undefined,
+}
+export namespace NbtPathIndexNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtPathIndexNode {
+		return (node as NbtPathIndexNode).type === 'nbt:path/index'
+	}
+}

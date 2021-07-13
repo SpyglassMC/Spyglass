@@ -155,6 +155,8 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 			}))
 		case 'minecraft:nbt_compound_tag':
 			return wrap(nbt.parser.compound, true)
+		case 'minecraft:nbt_path':
+			return wrap(nbt.parser.path, true)
 		case 'minecraft:nbt_tag':
 			return wrap(nbt.parser.entry)
 		case 'minecraft:objective':
@@ -204,7 +206,6 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 			return wrap(vector(3))
 		case 'spyglassmc:tag':
 			return wrap(tag())
-		case 'minecraft:nbt_path':
 		case 'minecraft:objective_criteria':
 		case 'minecraft:particle':
 		default:
@@ -365,7 +366,7 @@ function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): co
 }
 
 const greedyString: core.InfallibleParser<core.StringNode> = core.string({
-	unquotable: /^[^\r\n]+$/,
+	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
 function item(isPredicate: false): core.InfallibleParser<MinecraftItemStackArgumentNode>
@@ -581,7 +582,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 											case 'gamemode':
 												return core.map<EntitySelectorInvertableArgumentValueNode<core.StringNode>>(
 													invertable(core.string({
-														unquotable: core.BrigadierUnquotablePattern,
+														unquotable: core.BrigadierUnquotableOption,
 														value: {
 															type: 'literal',
 															parser: core.literal('adventure', 'creative', 'spectator', 'survival'),
@@ -661,7 +662,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 											case 'sort':
 												return core.map<core.StringNode>(
 													core.string({
-														unquotable: core.BrigadierUnquotablePattern,
+														unquotable: core.BrigadierUnquotableOption,
 														value: {
 															type: 'literal',
 															parser: core.literal('arbitrary', 'furthest', 'nearest', 'random'),
@@ -909,7 +910,7 @@ const time: core.InfallibleParser<MinecraftTimeArgumentNode> = core.map(
 )
 
 const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
-	unquotable: core.BrigadierUnquotablePattern,
+	unquotable: core.BrigadierUnquotableOption,
 })
 
 const UuidPattern = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i

@@ -1,8 +1,3 @@
-exports['mcfunction argument minecraft:objective Parse "*" 1'] = {
-  "node": "FAILURE",
-  "errors": []
-}
-
 exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
   "node": {
     "type": "mcfunction:argument/minecraft:objective",
