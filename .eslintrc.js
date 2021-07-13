@@ -74,9 +74,9 @@ module.exports = {
 		"no-fallthrough": "warn",
 		"no-restricted-syntax": [
 			"warn",
+			// https://astexplorer.net/
+			// https://eslint.org/docs/developer-guide/selectors
 			{
-				// https://astexplorer.net/
-				// https://eslint.org/docs/developer-guide/selectors
 				"selector": `:matches(
 					TSNullKeyword,
 					:not(
@@ -84,7 +84,11 @@ module.exports = {
 					) > Literal[raw=null]
 				)`.replace(/\s/g, ''),
 				"message": "Use `undefined` instead of `null` when possible."
-			}
+			},
+			{
+				"selector": "ImportDeclaration > Literal[value=/^@spyglassmc.\\w+.src*/]",
+				"message": "Import from the `lib` dir instead of the `src` dir."
+			},
 		],
 		"prefer-const": "warn",
 		"prefer-object-spread": "warn",
