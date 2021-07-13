@@ -80,10 +80,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 
 			ans.childrenMaps[0].outerRange = Range.create(contentStart, contentEnd)
 		} else if (options.unquotable) {
-			while (src.canRead() && options.unquotable.test(ans.value + src.peek())) {
+			while (src.canRead() && isAllowedCharacter(src.peek(), options.unquotable)) {
 				ans.value += src.read()
 			}
-			if (!ans.value && !options.unquotable.test(ans.value)) {
+			if (!ans.value && !options.unquotable.allowEmpty) {
 				ctx.err.report(localize('expected', localize('string')), src)
 			}
 			ans.childrenMaps[0].outerRange = Range.create(start, src.cursor)
@@ -133,11 +133,16 @@ export const BrigadierUnquotableCharacters = Object.freeze([
 ] as const)
 export const BrigadierUnquotableCharacterSet = new Set(BrigadierUnquotableCharacters)
 export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]*$/
+export const BrigadierUnquotableOption = { allowEmpty: true, allowList: BrigadierUnquotableCharacterSet }
 
 export const BrigadierStringOptions: StringOptions = {
 	escapable: {},
 	quotes: ['"', "'"],
-	unquotable: BrigadierUnquotablePattern,
+	unquotable: BrigadierUnquotableOption,
 }
 
 export const brigadierString = string(BrigadierStringOptions)
+
+function isAllowedCharacter(c: string, options: Exclude<StringOptions['unquotable'], false | undefined>): boolean {
+	return options.allowList?.has(c) ?? !options.blockList?.has(c)
+}

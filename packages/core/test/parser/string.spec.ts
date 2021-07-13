@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { StringOptions } from '../../lib'
-import { string } from '../../lib'
+import { BrigadierUnquotableCharacterSet, string } from '../../lib'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('string()', () => {
@@ -36,7 +36,7 @@ describe('string()', () => {
 		},
 		{
 			title: 'unquoted_string()',
-			options: { unquotable: /^[a-zA-Z]+$/ },
+			options: { unquotable: { allowList: BrigadierUnquotableCharacterSet } },
 			contents: [
 				'',
 				'foo',

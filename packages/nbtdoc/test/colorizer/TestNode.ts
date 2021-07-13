@@ -1046,6 +1046,7 @@ export const TestNode: MainNode = {
 								start: 144,
 								end: 149,
 							},
+							options: {},
 							value: 'One',
 							childrenMaps: [
 								{
@@ -1085,6 +1086,7 @@ export const TestNode: MainNode = {
 							start: 144,
 							end: 149,
 						},
+						options: {},
 						value: 'One',
 						childrenMaps: [
 							{
@@ -1175,6 +1177,7 @@ export const TestNode: MainNode = {
 								end: 149,
 							},
 							value: 'One',
+							options: {},
 							childrenMaps: [
 								{
 									outerRange: {
@@ -1213,6 +1216,7 @@ export const TestNode: MainNode = {
 							start: 144,
 							end: 149,
 						},
+						options: {},
 						value: 'One',
 						childrenMaps: [
 							{

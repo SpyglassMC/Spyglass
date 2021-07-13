@@ -47,10 +47,10 @@ export interface StringOptions {
 	 */
 	quotes?: Quote[],
 	/**
-	 * Whether this string could be an unquoted string. If yes, specify the regex that the string has to satisfy.
-	 * Otherwise set this to `false`.
+	 * Whether this string could be an unquoted string. If yes, specify the list of allowed/disallowed characters that
+	 * the string can contain. Otherwise set this to `false`.
 	 */
-	unquotable?: RegExp | false,
+	unquotable?: { allowEmpty?: boolean, allowList?: Set<string>, blockList?: Set<string> } | false,
 	/**
 	 * An optional object describing the content of the string.
 	 */

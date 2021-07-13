@@ -65,7 +65,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 			result.map(token => toOuterColorToken(node.childrenMaps[0], token)),
 			node.range, node.options.colorTokenType ?? 'string')
 	} else {
-		return [ColorToken.create(node, 'string')]
+		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 	}
 }
 
