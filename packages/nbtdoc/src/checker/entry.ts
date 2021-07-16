@@ -102,10 +102,7 @@ async function compoundFields<N extends { fields: CompoundFieldNode[] }>(definit
 			definitionQuery.member(field.key.value, member => member
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.else(async () => {
-					const typeSymbol = field.fieldType.typeType === 'path'
-						? (await resolveIdentPath(field.fieldType.path, ctx))?.symbol
-						: undefined
-					const data = CompoundFieldNode.toSymbolData(field, typeSymbol)
+					const data = await CompoundFieldNode.toSymbolData(field, async n => (await resolveIdentPath(n, ctx))?.symbol)
 					member.enter({
 						data: { data, desc: field.doc.value, subcategory: 'compound_key' },
 						usage: { type: 'definition', node: field.key, fullRange: field },
@@ -125,10 +122,7 @@ const compoundDefinition = async (node: CompoundDefinitionNode, ctx: CheckerCont
 		return
 	}
 
-	const extendedSymbol = node.extends?.type === 'nbtdoc:ident_path'
-		? (await resolveIdentPath(node.extends, ctx))?.symbol
-		: undefined
-	const data = CompoundDefinitionNode.toSymbolData(node, extendedSymbol)
+	const data = await CompoundDefinitionNode.toSymbolData(node, async n => (await resolveIdentPath(n, ctx))?.symbol)
 	definitionQuery.amend({ data: { data } })
 
 	await compoundFields(definitionQuery, node, ctx)

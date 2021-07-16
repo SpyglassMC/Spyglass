@@ -3,6 +3,8 @@ import { ResourceLocationNode, StringNode, SymbolPath } from '@spyglassmc/core'
 import type { DocCommentsNode, ResolvedIdRegistry, ResolvedRootRegistry, SyntaxNode } from './misc'
 import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
 
+type ResolveIdentPathFunc = (identPath: IdentPathToken) => Promise<Symbol | undefined>
+
 export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 	type: 'nbtdoc:compound_definition',
 	doc: DocCommentsNode,
@@ -15,9 +17,9 @@ export namespace CompoundDefinitionNode {
 		extends?: CompoundExtendable.SymbolData,
 	}
 
-	export function toSymbolData(node: CompoundDefinitionNode, symbol?: Symbol): SymbolData {
+	export async function toSymbolData(node: CompoundDefinitionNode, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
 		return {
-			extends: node.extends ? CompoundExtendable.toSymbolData(node.extends, symbol) : undefined,
+			extends: node.extends ? await CompoundExtendable.toSymbolData(node.extends, resolveIdentPath) : undefined,
 		}
 	}
 }
@@ -60,10 +62,10 @@ export namespace CompoundExtendable {
 		| { type: 'index', index: RegistryIndexNode.SymbolData }
 		| { type: 'symbol', symbol: SymbolPath | undefined }
 
-	export function toSymbolData(node: CompoundExtendable, symbol?: Symbol): SymbolData {
+	export async function toSymbolData(node: CompoundExtendable, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
 		return RegistryIndexNode.is(node)
 			? { type: 'index', index: RegistryIndexNode.toSymbolData(node) }
-			: { type: 'symbol', symbol: SymbolPath.fromSymbol(symbol) }
+			: { type: 'symbol', symbol: SymbolPath.fromSymbol(await resolveIdentPath(node)) }
 	}
 }
 
@@ -82,9 +84,9 @@ export namespace CompoundFieldNode {
 		fieldType: CompoundFieldTypeNode.SymbolData
 	}
 
-	export function toSymbolData(node: CompoundFieldNode, symbol?: Symbol): SymbolData {
+	export async function toSymbolData(node: CompoundFieldNode, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
 		return {
-			fieldType: CompoundFieldTypeNode.toSymbolData(node.fieldType, symbol),
+			fieldType: await CompoundFieldTypeNode.toSymbolData(node.fieldType, resolveIdentPath),
 		}
 	}
 }
@@ -247,7 +249,7 @@ export namespace CompoundFieldTypeNode {
 	/**
 	 * @param symbol If `node.typeType === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
 	 */
-	export function toSymbolData(node: CompoundFieldTypeNode, symbol?: Symbol): SymbolData {
+	export async function toSymbolData(node: CompoundFieldTypeNode, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
 		switch (node.typeType) {
 			case 'boolean':
 			case 'string':
@@ -277,7 +279,7 @@ export namespace CompoundFieldTypeNode {
 			case 'list':
 				return {
 					type: 'list',
-					item: toSymbolData(node.item, symbol),
+					item: await toSymbolData(node.item, resolveIdentPath),
 					lengthRange: node.lengthRange ? UnsignedRangeNode.toSymbolData(node.lengthRange) : undefined,
 				}
 			case 'index':
@@ -294,6 +296,7 @@ export namespace CompoundFieldTypeNode {
 						: undefined,
 				}
 			case 'path':
+				const symbol = await resolveIdentPath(node.path)
 				return {
 					type: symbol?.subcategory === 'enum' ? 'enum' : 'compound',
 					symbol: SymbolPath.fromSymbol(symbol),
@@ -301,7 +304,7 @@ export namespace CompoundFieldTypeNode {
 			case 'union':
 				return {
 					type: 'union',
-					members: node.members.map(m => toSymbolData(m, symbol)),
+					members: await Promise.all(node.members.map(m => toSymbolData(m, resolveIdentPath))),
 				}
 		}
 	}
