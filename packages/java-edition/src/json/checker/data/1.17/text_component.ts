@@ -99,7 +99,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 					contents: opt(text_component),
 				},
 				show_item: {
-					value: deprecated(simpleString), // TODO: item nbt
+					value: deprecated(nbt({ definition: '::minecraft::util::invitem::InventoryItem' })),
 					contents: opt(dispatch(props => record({
 						id: resource('item'),
 						count: opt(int),
