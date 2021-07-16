@@ -1,10 +1,11 @@
 import type * as core from '@spyglassmc/core'
 import type { SpecialArgumentNode } from './argument'
+import type { LiteralNode } from './literal'
 
 /**
  * @template A Type of argument nodes of this command.
  */
-export interface CommandNode<A extends core.AstNode> extends core.SequenceNode<A | SpecialArgumentNode> {
+export interface CommandNode<A extends core.AstNode> extends core.SequenceNode<LiteralNode | A | SpecialArgumentNode> {
 	type: 'mcfunction:command',
 	slash?: core.Range,
 }
