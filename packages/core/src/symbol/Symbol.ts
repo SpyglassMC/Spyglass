@@ -193,6 +193,25 @@ export namespace SymbolPath {
 	}
 }
 
+export class SymbolPathCollector {
+	readonly #set = new Set<string>()
+
+	add(path: SymbolPath | undefined): void {
+		if (!path) {
+			return
+		}
+		this.#set.add(SymbolPath.toString(path))
+	}
+
+	has(path: SymbolPath): boolean {
+		return this.#set.has(SymbolPath.toString(path))
+	}
+
+	collect(): SymbolPath[] {
+		return [...this.#set].map(SymbolPath.fromString)
+	}
+}
+
 export interface SymbolMetadata {
 	/**
 	 * Custom information about this symbol that cannot be expressed by other fields.
