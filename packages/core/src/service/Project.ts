@@ -415,7 +415,7 @@ export class Project extends EventEmitter {
 		const checker = this.meta.getChecker(node.type)
 		const ctx = CheckerContext.create(this, { doc })
 		ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
-		ctx.symbols.contributeAsAsync('checker', async () => {
+		await ctx.symbols.contributeAsAsync('checker', async () => {
 			await checker(node, ctx)
 			node.checkerErrors = ctx.err.dump()
 			this.cache(doc, node)
