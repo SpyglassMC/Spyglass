@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { blockStateList, blockStateMap, nbt, uuid } from '../../util'
+import { blockStateList, blockStateMap, nbt, nbtPath, uuid } from '../../util'
 import { damage_source_predicate, entity_predicate, item_predicate, location_predicate } from './advancement'
 import { int_bounds, number_provider, Slots } from './common'
 import { text_component } from './text_component'
@@ -147,8 +147,8 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			copy_nbt: {
 				source: literal(['this', 'killer', 'killer_player', 'block_entity']),
 				ops: listOf(record({
-					source: simpleString, // TODO: nbt path
-					target: simpleString, // TODO: nbt path
+					source: nbtPath({ registry: 'entity_type' }), // FIXME: Use 'block' instead if `source` is `block_entity`.
+					target: nbtPath({ registry: 'item' }),
 					op: literal(['replace', 'append', 'merge']),
 				})),
 			},

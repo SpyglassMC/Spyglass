@@ -1,5 +1,5 @@
 import { any, as, boolean, deprecated, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { nbt, stringColor, uuid } from '../../util'
+import { nbt, nbtPath, stringColor, uuid } from '../../util'
 
 const Keybinds = [
 	'key.jump',
@@ -61,16 +61,18 @@ const text_component_object = as('text_component', (node, ctx) => record({
 			keybind: literal(Keybinds),
 		},
 		nbt: () => ({
-			nbt: simpleString, // TODO: NBT path
 			...having(node, ctx, {
 				block: {
 					block: simpleString, // TODO: block pos
+					nbt: nbtPath({ registry: 'block' }),
 				},
 				entity: {
 					entity: simpleString, // TODO: entity selector
+					nbt: nbtPath({ registry: 'entity_type' /* FIXME: import { getTypesFromEntity } from '../../../../mcfunction/checker'; ids: getTypesFromEntity(somehowGetTheNodeHere, ctx) */ }),
 				},
 				storage: {
 					storage: resource('storage'),
+					nbt: nbtPath({ registry: 'storage' /* FIXME:, id: extract('storage', props) */ }),
 				},
 			}),
 			interpret: opt(boolean, false),

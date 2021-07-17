@@ -1,7 +1,8 @@
+import type { FullResourceLocation } from '@spyglassmc/core'
 import { ResourceLocation } from '@spyglassmc/core'
 import { simpleString, string } from '@spyglassmc/json/lib/checker'
-import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
-import type { NbtCompoundNode } from '@spyglassmc/nbt'
+import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker'
+import type { NbtCompoundNode, NbtPathNode } from '@spyglassmc/nbt'
 import { checker as nbtChecker } from '@spyglassmc/nbt'
 import type { ExtendableRootRegistry } from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../../common'
@@ -27,7 +28,7 @@ export function nbt(options: Options): JsonChecker {
 	}
 }
 
-function isDefinitionOptions(options:Options): options is DefinitionOptions {
+function isDefinitionOptions(options: Options): options is DefinitionOptions {
 	return typeof (options as DefinitionOptions).definition === 'string'
 }
 
@@ -44,23 +45,42 @@ function definitionNbt({ definition }: DefinitionOptions): JsonChecker {
 	}
 }
 
-function registryNbt({ registry, id, idOrTag, ids, tag }: RegistryOptions): JsonChecker {
+function registryNbt(options: RegistryOptions): JsonChecker {
 	return (node, ctx) => {
-		if (idOrTag) {
-			idOrTag.startsWith('#') ? tag = idOrTag.slice(1) : id = idOrTag
-		}
-		if (tag && (registry === 'block' || registry === 'item' || registry === 'entity_type')) {
-			ids = getTagValues(`tag/${registry}`, tag, ctx)
-		} else if (id) {
-			ids = [id]
-		}
+		const ids = getIds(options, ctx)
 		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
 		if (!ctx.ensureChecked) {
 			simpleString(node, ctx)
 			return
 		}
-		const parser = ctx.meta.getParserLazily<NbtCompoundNode>('nbt:compound')
-		const checker = nbtChecker.index(registry, ids?.map(ResourceLocation.lengthen))
+		const parser = ctx.meta.getParser<NbtCompoundNode>('nbt:compound')
+		const checker = nbtChecker.index(options.registry, ids)
 		string('nbt', parser, checker)(node, ctx)
 	}
+}
+
+export function nbtPath(options: RegistryOptions): JsonChecker {
+	return (node, ctx) => {
+		const ids = getIds(options, ctx)
+		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+		if (!ctx.ensureChecked) {
+			simpleString(node, ctx)
+			return
+		}
+		const parser = ctx.meta.getParser<NbtPathNode>('nbt:path')
+		const checker = nbtChecker.path(options.registry, ids)
+		string('nbt_path', parser, checker)(node, ctx)
+	}
+}
+
+function getIds({ registry, id, idOrTag, ids, tag }: RegistryOptions, ctx: JsonCheckerContext): FullResourceLocation[] | undefined {
+	if (idOrTag) {
+		idOrTag.startsWith('#') ? tag = idOrTag.slice(1) : id = idOrTag
+	}
+	if (tag && (registry === 'block' || registry === 'item' || registry === 'entity_type')) {
+		ids = getTagValues(`tag/${registry}`, tag, ctx)
+	} else if (id) {
+		ids = [id]
+	}
+	return ids?.map(ResourceLocation.lengthen)
 }
