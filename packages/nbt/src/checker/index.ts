@@ -161,9 +161,8 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 	return (node, ctx) => {
 		type Data = { type: 'resolved_compound', data: ResolvedCompoundData } | Select<nbtdoc.CompoundFieldTypeNode.SymbolData, 'type', 'byte_array' | 'int_array' | 'long_array' | 'list' | 'union'> | undefined
 		const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
-		let data: Data = {
-			type: 'resolved_compound', data: resolveResult.value,
-		}
+		let data: Data = { type: 'resolved_compound', data: resolveResult.value }
+		let targetType: nbtdoc.CompoundFieldTypeNode.SymbolData | undefined = { type: 'compound', symbol: { category: 'nbtdoc', path: [] } }
 		const options: Options = { allowUnknownKey: resolveResult.allowUnknownKey, isPredicate: true }
 		let currentCompound: NbtCompoundNode | undefined
 		for (const child of node.children) {
@@ -192,14 +191,17 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 								data = undefined
 							}
 						}
+						targetType = fieldData.data
 					} else {
 						if (!options.allowUnknownKey) {
 							ctx.err.report(localize('unknown-key', localeQuote(child.value)), child, core.ErrorSeverity.Warning)
 						}
+						targetType = undefined
 						break
 					}
 				} else {
 					ctx.err.report(localize('nbt.checker.path.unexpected-key'), child, core.ErrorSeverity.Warning)
+					targetType = undefined
 					break
 				}
 				currentCompound = undefined
@@ -227,6 +229,7 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 							}
 							if (isUnexpectedFilter) {
 								ctx.err.report(localize('nbt.checker.path.unexpected-filter'), content, core.ErrorSeverity.Warning)
+								targetType = undefined
 								break
 							}
 							currentCompound = content
@@ -236,20 +239,27 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 					if (data.type === 'list') {
 						const { allowUnknownKey, value } = resolveSymbolData(data.item, ctx, currentCompound)
 						options.allowUnknownKey ||= allowUnknownKey
+						targetType = data.item
 						if (value) {
 							data = { type: 'resolved_compound', data: value }
 						} else {
 							data = undefined
 						}
 					} else {
+						targetType = {
+							type: data.type.split('_')[0] as 'byte' | 'int' | 'long',
+							valueRange: data.valueRange,
+						}
 						data = undefined
 					}
 				} else {
 					ctx.err.report(localize('nbt.checker.path.unexpected-index'), child, core.ErrorSeverity.Warning)
+					targetType = undefined
 					break
 				}
 			}
 		}
+		ctx.ops.set(node, 'targetType', targetType)
 	}
 }
 

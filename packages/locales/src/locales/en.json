@@ -111,6 +111,7 @@
   "nbtdoc.checker.module-declaration.non-existent": "Implementation of module %0% does not exist",
   "nbtdoc.checker.module-declaration.duplicated": "Module %0% has already been declared",
   "nbtdoc.checker.module-declaration.duplicated.related": "Module %0% is declared here",
+  "nbtdoc.checker.type-not-assignable": "Type %0% is not assignable to type %1%",
   "nbtdoc.parser.compound-definition.field-type": "a field type",
   "nbtdoc.parser.float.illegal": "Encountered illegal float number",
   "nbtdoc.parser.identifier": "an identifier",

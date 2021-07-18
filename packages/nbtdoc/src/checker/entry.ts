@@ -4,7 +4,7 @@ import { ErrorSeverity, Range, ResourceLocationNode, SymbolPath, SymbolUtil, Sym
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
-import type { DescribesClauseNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import type { CompoundFieldTypeNode, DescribesClauseNode, FloatRangeNode, IdentPathToken, InjectClauseNode, IntRangeNode, MainNode, ModuleDeclarationNode, UnsignedRangeNode, UseClauseNode } from '../node'
 import { CompoundDefinitionNode, CompoundFieldNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
@@ -383,4 +383,191 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 		}
 	}
 	return undefined
+}
+
+export const checkAssignability = ({ source, target }: { source: CompoundFieldTypeNode.SymbolData | undefined, target: CompoundFieldTypeNode.SymbolData | undefined }): {
+	isAssignable: boolean,
+	errorMessage?: string,
+} => {
+	if (source === undefined || target === undefined) {
+		return { isAssignable: true }
+	}
+
+	type RangeData = FloatRangeNode.SymbolData | IntRangeNode.SymbolData | UnsignedRangeNode.SymbolData | undefined
+	const areRangesMatch = (s: RangeData, t: RangeData): boolean => {
+		if (!t) {
+			return true
+		}
+		if (!s) {
+			return false
+		}
+		const [sMin, sMax] = s.value
+		const [tMin, tMax] = t.value
+		return (tMin === undefined || (sMin !== undefined && sMin >= tMin)) &&
+			(tMax === undefined || (sMax !== undefined && sMax <= tMax))
+	}
+
+	const rangeToString = (range: RangeData): string => {
+		if (!range) {
+			return ''
+		}
+		const [min, max] = range.value
+		return min === max ? ` @ ${min}` : ` @ ${min ?? ''}..${max ?? ''}`
+	}
+
+	enum CheckResult {
+		Nah = 0b00,
+		Assignable = 0b01,
+		StrictlyAssignable = 0b11,
+	}
+
+	const typeToString = (type: CompoundFieldTypeNode.SymbolData | undefined): string => {
+		if (type === undefined) {
+			return 'any'
+		}
+		switch (type.type) {
+			case 'boolean':
+				return 'boolean'
+			case 'byte':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'byte_array':
+				return `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'compound':
+				return type.symbol?.path.join('::') ?? 'compound'
+			case 'double':
+				return `double${rangeToString(type.valueRange)}`
+			case 'enum':
+				return type.symbol?.path.join('::') ?? 'enum'
+			case 'float':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'id':
+				return `id(${type.registry ?? 'spyglassmc:any'})`
+			case 'index':
+				return `${type.index.registry ?? 'spyglassmc:any'}[]`
+			case 'int':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'int_array':
+				return `int${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'list':
+				return `[${typeToString(type.item)}]${rangeToString(type.lengthRange)}`
+			case 'long':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'long_array':
+				return `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'short':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'string':
+				return 'string'
+			case 'union':
+				return `(${type.members.map(typeToString).join(' | ')})`
+		}
+	}
+
+	const flattenUnion = (union: CompoundFieldTypeNode.UnionSymbolData): CompoundFieldTypeNode.UnionSymbolData => {
+		const set = new Set<CompoundFieldTypeNode.SymbolData>()
+		const add = (data: CompoundFieldTypeNode.SymbolData): void => {
+			for (const existingMember of set) {
+				if ((check(data, existingMember) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
+					return
+				}
+				if ((check(existingMember, data) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
+					set.delete(existingMember)
+				}
+			}
+			set.add(data)
+		}
+		for (const member of union.members) {
+			if (member.type === 'union') {
+				flattenUnion(member).members.forEach(add)
+			} else {
+				add(member)
+			}
+		}
+		return {
+			type: 'union',
+			members: [...set],
+		}
+	}
+
+	const check = (s: CompoundFieldTypeNode.SymbolData, t: CompoundFieldTypeNode.SymbolData, errors: string[] = []): CheckResult => {
+		const strictlyAssignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.StrictlyAssignable : CheckResult.Nah
+		const assignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.Assignable : CheckResult.Nah
+		let ans: CheckResult
+		if (t.type === 'union') {
+			ans = assignableIfTrue(t.members.some(v => check(s, v)))
+		} else if (s.type === 'union') {
+			ans = assignableIfTrue(s.members.every(v => check(v, t, errors)))
+		} else if (s.type === 'boolean') {
+			ans = strictlyAssignableIfTrue(t.type === 'boolean' || t.type === 'byte')
+		} else if (s.type === 'byte') {
+			if (t.type === 'boolean') {
+				ans = check(s, { type: 'byte', valueRange: { value: [0, 1] } }, errors)
+			} else if (t.type === 'byte') {
+				ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
+			} else if (t.type === 'enum') {
+				ans = assignableIfTrue(!t.enumType || t.enumType === 'byte')
+			} else {
+				ans = CheckResult.Nah
+			}
+		} else if (s.type === 'byte_array' || s.type === 'int_array' || s.type === 'long_array') {
+			if (t.type === s.type) {
+				ans = strictlyAssignableIfTrue(areRangesMatch(s.lengthRange, t.lengthRange) && areRangesMatch(s.valueRange, t.valueRange))
+			} else {
+				ans = CheckResult.Nah
+			}
+		} else if (s.type === 'compound' || s.type === 'index') {
+			ans = assignableIfTrue(t.type === 'compound' || t.type === 'index')
+		} else if (s.type === 'enum') {
+			ans = assignableIfTrue((t.type === 'byte' || t.type === 'float' || t.type === 'double' || t.type === 'int' || t.type === 'long' || t.type === 'short' || t.type === 'string') && (!s.enumType || s.enumType === t.type))
+		} else if (s.type === 'float' || s.type === 'double' || s.type === 'int' || s.type === 'long' || s.type === 'short') {
+			if (t.type === s.type) {
+				ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
+			} else if (t.type === 'enum') {
+				ans = assignableIfTrue(!t.enumType || t.enumType === s.type)
+			} else {
+				ans = CheckResult.Nah
+			}
+		} else if (s.type === 'id') {
+			if (t.type === 'id' && s.registry === t.registry) {
+				ans = CheckResult.StrictlyAssignable
+			} else {
+				ans = assignableIfTrue(t.type === 'id' || t.type === 'string')
+			}
+		} else if (s.type === 'list') {
+			if (t.type === 'list' && areRangesMatch(s.lengthRange, t.lengthRange)) {
+				ans = check(s.item, t.item, errors)
+			} else {
+				ans = CheckResult.Nah
+			}
+		} else if (s.type === 'string') {
+			if (t.type === 'string') {
+				ans = CheckResult.StrictlyAssignable
+			} else {
+				ans = assignableIfTrue(t.type === 'enum' && (!t.enumType || t.enumType === 'string'))
+			}
+		} else {
+			ans = CheckResult.Nah
+		}
+
+		if (!ans) {
+			errors.push(localize('nbtdoc.checker.type-not-assignable', localeQuote(typeToString(s)), localeQuote(typeToString(t))))
+		}
+		return ans
+	}
+
+	if (source.type === 'union') {
+		flattenUnion(source)
+	}
+	if (target.type === 'union') {
+		flattenUnion(target)
+	}
+
+	const errors: string[] = []
+
+	check(source, target, errors)
+
+	return {
+		isAssignable: errors.length === 0,
+		...errors.length ? { errorMessage: errors.reverse().map((m, i) => `${'  '.repeat(i)}${m}`).join('\n') } : {},
+	}
 }

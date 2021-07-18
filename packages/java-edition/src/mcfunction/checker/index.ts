@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
-import type * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
+import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
-import type { ArgumentNode, CommandNode, EntitySelectorInvertableArgumentValueNode, MinecraftEntityArgumentNode } from '../node'
+import type { CommandNode, EntitySelectorInvertableArgumentValueNode, MinecraftEntityArgumentNode } from '../node'
 import { EntitySelectorArgumentsNode } from '../node'
 
 export const command: core.Checker<CommandNode> = (node, ctx) => {
@@ -17,10 +17,23 @@ const rootCommand = (nodes: CommandNode['children'], index: number, ctx: core.Ch
 			dataMergeTarget(nodes, index + 2, ctx)
 		} else if (nodes[index + 1]?.name === 'modify') {
 			nbtPath(nodes, index + 2, ctx)
-			// TODO: from <sourcePath: nbt_path>
-			// - Check if <sourcePath: nbt_path> matches <targetPath: nbt_path>
-			// TODO: value <value: nbt_tag>
-			// - Check if <value: nbt_tag> matches <targetPath: nbt_path>
+			const targetPath = nodes[index + 4]
+			const operation = nodes[index + 5]?.name
+			const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
+			if (nodes[sourceTypeIndex]?.name === 'from') {
+				// `from <$nbtPath$>`
+				nbtPath(nodes, sourceTypeIndex + 1, ctx)
+				const sourcePath = nodes[sourceTypeIndex + 3]
+				if (targetPath?.type === 'nbt:path' && sourcePath?.type === 'nbt:path') {
+					const { errorMessage } = nbtdoc.checker.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
+					if (errorMessage) {
+						ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
+					}
+				}
+			} else {
+				// TODO: `value <value: nbt_tag>`
+				// - Check if <value: nbt_tag> matches <targetPath: nbt_path>
+			}
 		} else if (nodes[index + 1]?.name === 'remove') {
 			nbtPath(nodes, index + 2, ctx)
 		}
@@ -150,10 +163,6 @@ export const getTypesFromEntity = (entity: MinecraftEntityArgumentNode, ctx: cor
 	}
 
 	return undefined
-}
-
-const isLiteral = (node: mcf.LiteralNode | ArgumentNode | mcf.SpecialArgumentNode | undefined, expectedLiteral: string): node is mcf.LiteralNode => {
-	return node?.type === 'mcfunction:literal' && node.name === expectedLiteral
 }
 
 export function register(meta: core.MetaRegistry) {

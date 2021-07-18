@@ -8,8 +8,10 @@
 		"dependencies": [
 			"core",
 			"json",
+			"locales",
 			"mcfunction",
-			"nbt"
+			"nbt",
+			"nbtdoc"
 		]
 	},
 	"json": {

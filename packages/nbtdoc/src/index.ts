@@ -5,6 +5,7 @@ import * as colorizer from './colorizer'
 import type { CompoundFieldTypeNode, IdentifierToken, LiteralToken, MainNode } from './node'
 import * as parser from './parser'
 
+export * as checker from './checker'
 export * as colorizer from './colorizer'
 export * from './node'
 export * from './parser'

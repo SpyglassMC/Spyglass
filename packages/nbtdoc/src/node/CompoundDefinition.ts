@@ -1,5 +1,6 @@
 import type { AstNode, FloatNode, IntegerNode, Symbol } from '@spyglassmc/core'
 import { ResourceLocationNode, StringNode, SymbolPath } from '@spyglassmc/core'
+import type { EnumDefinitionNode, EnumType } from './EnumDefinition'
 import type { DocCommentsNode, ResolvedIdRegistry, ResolvedRootRegistry, SyntaxNode } from './misc'
 import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
 
@@ -191,6 +192,10 @@ export namespace CompoundFieldTypeNode {
 		return (obj as CompoundFieldTypeNode).type === 'nbtdoc:compound_definition/field/type'
 	}
 
+	export type UnionSymbolData = {
+		type: 'union',
+		members: SymbolData[],
+	}
 	export type SymbolData = {
 		type: 'boolean',
 	} | {
@@ -227,7 +232,7 @@ export namespace CompoundFieldTypeNode {
 		valueRange?: FloatRangeNode.SymbolData,
 	} | {
 		type: 'list',
-		item: CompoundFieldTypeNode.SymbolData,
+		item: SymbolData,
 		lengthRange?: UnsignedRangeNode.SymbolData,
 	} | {
 		type: 'index',
@@ -240,11 +245,9 @@ export namespace CompoundFieldTypeNode {
 		symbol: SymbolPath | undefined,
 	} | {
 		type: 'enum',
+		enumType: EnumType | undefined,
 		symbol: SymbolPath | undefined,
-	} | {
-		type: 'union',
-		members: CompoundFieldTypeNode.SymbolData[],
-	}
+	} | UnionSymbolData
 
 	/**
 	 * @param symbol If `node.typeType === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
@@ -297,8 +300,15 @@ export namespace CompoundFieldTypeNode {
 				}
 			case 'path':
 				const symbol = await resolveIdentPath(node.path)
+				if (symbol?.subcategory === 'enum') {
+					return {
+						type: 'enum',
+						enumType: (symbol.data as EnumDefinitionNode.SymbolData | undefined)?.enumType,
+						symbol: SymbolPath.fromSymbol(symbol),
+					}
+				}
 				return {
-					type: symbol?.subcategory === 'enum' ? 'enum' : 'compound',
+					type: 'compound',
 					symbol: SymbolPath.fromSymbol(symbol),
 				}
 			case 'union':

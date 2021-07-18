@@ -9,10 +9,16 @@
 			"path": "../json"
 		},
 		{
+			"path": "../locales"
+		},
+		{
 			"path": "../mcfunction"
 		},
 		{
 			"path": "../nbt"
+		},
+		{
+			"path": "../nbtdoc"
 		},
 		{
 			"path": "src"
