@@ -307,11 +307,11 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 			case 'long_array':
 				node = node as NbtPrimitiveArrayNode
 				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange.value)) {
-					ctx.err.report(localize('nbt.checker.collection.length-between',
+					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
 						type.lengthRange.value[0] ?? '-∞',
 						type.lengthRange.value[1] ?? '+∞'
-					), node, core.ErrorSeverity.Warning)
+					)), node, core.ErrorSeverity.Warning)
 				}
 				if (type.valueRange) {
 					for (const { value: childNode } of node.children) {
@@ -357,11 +357,11 @@ function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Opti
 			case 'list':
 				node = node as NbtListNode
 				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange.value)) {
-					ctx.err.report(localize('nbt.checker.collection.length-between',
+					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
 						type.lengthRange.value[0] ?? '-∞',
 						type.lengthRange.value[1] ?? '+∞'
-					), node, core.ErrorSeverity.Warning)
+					)), node, core.ErrorSeverity.Warning)
 				}
 				for (const { value: childNode } of node.children) {
 					if (childNode) {
