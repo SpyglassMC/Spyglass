@@ -5,6 +5,12 @@ export type NbtNode =
 	| NbtPrimitiveNode
 	| NbtCompoundNode
 	| NbtCollectionNode
+export namespace NbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtNode {
+		return NbtPrimitiveNode.is(node) || NbtCompoundNode.is(node) || NbtCollectionNode.is(node)
+	}
+}
 
 //#region NbtPrimitiveNode
 export type NbtPrimitiveNode =

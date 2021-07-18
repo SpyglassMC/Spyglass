@@ -158,7 +158,7 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		case 'minecraft:nbt_path':
 			return wrap(nbt.parser.path, true)
 		case 'minecraft:nbt_tag':
-			return wrap(nbt.parser.entry)
+			return wrap(nbt.parser.entry, true)
 		case 'minecraft:objective':
 			return wrap(objective(core.SymbolUsageType.is(treeNode.properties?.usageType)
 				? treeNode.properties?.usageType

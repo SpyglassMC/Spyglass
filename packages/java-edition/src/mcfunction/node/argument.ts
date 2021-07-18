@@ -204,9 +204,7 @@ export interface MinecraftMobEffectArgumentNode extends ChildBaseNode, core.Reso
 }
 export interface MinecraftNbtCompoundTagArgumentNode extends nbt.NbtCompoundNode, ChildBaseExtender { }
 export interface MinecraftNbtPathArgumentNode extends nbt.NbtPathNode, ChildBaseExtender {}
-export interface MinecraftNbtTagArgumentNode extends ChildBaseNode {
-	type: 'mcfunction:argument/minecraft:nbt_tag',
-}
+export type MinecraftNbtTagArgumentNode = nbt.NbtNode & ChildBaseExtender
 export interface MinecraftObjectiveArgumentNode extends ChildBaseNode, core.SymbolBaseNode {
 	type: 'mcfunction:argument/minecraft:objective',
 }

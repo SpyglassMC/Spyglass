@@ -263,7 +263,7 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 	}
 }
 
-function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
+export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
 	const isInRange = (value: number, [min, max]: [number | undefined, number | undefined]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 

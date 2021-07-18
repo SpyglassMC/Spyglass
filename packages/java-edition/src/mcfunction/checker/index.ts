@@ -30,9 +30,12 @@ const rootCommand = (nodes: CommandNode['children'], index: number, ctx: core.Ch
 						ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
 					}
 				}
-			} else {
-				// TODO: `value <value: nbt_tag>`
-				// - Check if <value: nbt_tag> matches <targetPath: nbt_path>
+			} else if (nodes[sourceTypeIndex]?.name === 'value') {
+				// `value <value: nbt_tag>`
+				const valueNode = nodes[sourceTypeIndex + 1]
+				if (targetPath?.type === 'nbt:path' && targetPath.targetType && valueNode && nbt.NbtNode.is(valueNode)) {
+					nbt.checker.fieldValue(targetPath.targetType, { allowUnknownKey: true })(valueNode, ctx)
+				}
 			}
 		} else if (nodes[index + 1]?.name === 'remove') {
 			nbtPath(nodes, index + 2, ctx)
