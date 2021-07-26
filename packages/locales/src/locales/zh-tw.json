@@ -1,4 +1,5 @@
 {
+  "array": "一個陣列",
   "boolean": "一個布林值",
   "code-action.block-state-sort-keys": "將方塊狀態按鍵排序",
   "code-action.command-replaceitem": "將該指令升級到 /item ... replace",
