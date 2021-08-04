@@ -6361,6 +6361,233 @@ exports['compoundDefinition() Parse "compound Foo { Bar: short @ ..3 }" 1'] = {
   "errors": []
 }
 
+exports['compoundDefinition() Parse "compound Foo { Bar?: () }" 1'] = {
+  "node": {
+    "type": "nbtdoc:compound_definition",
+    "range": {
+      "start": 0,
+      "end": 25
+    },
+    "children": [
+      {
+        "type": "nbtdoc:doc_comments",
+        "range": {
+          "start": 0,
+          "end": 0
+        },
+        "children": [],
+        "value": ""
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 8
+        },
+        "value": "compound"
+      },
+      {
+        "type": "nbtdoc:identifier",
+        "range": {
+          "start": 9,
+          "end": 12
+        },
+        "value": "Foo"
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 13,
+          "end": 14
+        },
+        "value": "{"
+      },
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 23
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "value": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": "?"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 19,
+              "end": 20
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 21,
+              "end": 23
+            },
+            "typeType": "union",
+            "members": []
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "value": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 21,
+            "end": 23
+          },
+          "typeType": "union",
+          "members": []
+        }
+      },
+      {
+        "type": "nbtdoc:literal",
+        "range": {
+          "start": 24,
+          "end": 25
+        },
+        "value": "}"
+      }
+    ],
+    "doc": {
+      "type": "nbtdoc:doc_comments",
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "children": [],
+      "value": ""
+    },
+    "identifier": {
+      "type": "nbtdoc:identifier",
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "value": "Foo"
+    },
+    "fields": [
+      {
+        "type": "nbtdoc:compound_definition/field",
+        "range": {
+          "start": 15,
+          "end": 23
+        },
+        "children": [
+          {
+            "type": "nbtdoc:doc_comments",
+            "range": {
+              "start": 15,
+              "end": 15
+            },
+            "children": [],
+            "value": ""
+          },
+          {
+            "type": "nbtdoc:identifier",
+            "range": {
+              "start": 15,
+              "end": 18
+            },
+            "value": "Bar"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 18,
+              "end": 19
+            },
+            "value": "?"
+          },
+          {
+            "type": "nbtdoc:literal",
+            "range": {
+              "start": 19,
+              "end": 20
+            },
+            "value": ":"
+          },
+          {
+            "type": "nbtdoc:compound_definition/field/type",
+            "range": {
+              "start": 21,
+              "end": 23
+            },
+            "typeType": "union",
+            "members": []
+          }
+        ],
+        "doc": {
+          "type": "nbtdoc:doc_comments",
+          "range": {
+            "start": 15,
+            "end": 15
+          },
+          "children": [],
+          "value": ""
+        },
+        "key": {
+          "type": "nbtdoc:identifier",
+          "range": {
+            "start": 15,
+            "end": 18
+          },
+          "value": "Bar"
+        },
+        "fieldType": {
+          "type": "nbtdoc:compound_definition/field/type",
+          "range": {
+            "start": 21,
+            "end": 23
+          },
+          "typeType": "union",
+          "members": []
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['compoundDefinition() Parse "compound" 1'] = {
   "node": {
     "type": "nbtdoc:compound_definition",

@@ -24,6 +24,7 @@ describe('compoundDefinition()', () => {
 		{ content: 'compound Foo { Bar: [string] @ ..1 }' },
 		{ content: 'compound Foo { Bar: (boolean | int) }' },
 		{ content: 'compound Foo { "Bar": [(byte@0..1[] @ 8 | super::Other)] }' },
+		{ content: 'compound Foo { Bar?: () }' },
 		{
 			content: `/// Doc comment for the compound.
 compound Jigsaw extends super::BlockEntity {

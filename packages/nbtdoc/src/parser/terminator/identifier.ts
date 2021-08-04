@@ -10,7 +10,7 @@ interface Options {
 
 const Regex = /^[A-Za-z_][A-Za-z0-9_]*$/
 const HardSeparations = new Set([
-	'\r', '\n', ' ', ';', ':', '@', '/', ',', '{', '}', '[', ']', '(', ')', '.', '=',
+	'\r', '\n', ' ', ';', ':', '@', '/', ',', '{', '}', '[', ']', '(', ')', '.', '=', '?',
 ])
 
 export function identifier({ regex = Regex, allowEmpty = false }: Options = {}): InfallibleParser<IdentifierToken> {
