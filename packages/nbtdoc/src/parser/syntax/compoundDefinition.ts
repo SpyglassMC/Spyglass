@@ -68,6 +68,8 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 		syntax([
 			keyword('id'), punctuation('('), minecraftIdentifier({
 				pool: [...new Set([
+					// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
+					// the registry names used by SPYGlass are supported here.
 					...IdRegistries,
 					...ResourceLocationCategories.map(v => `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}${v}`),
 				])],
@@ -204,7 +206,6 @@ const compoundField: InfallibleParser<CompoundFieldNode> = map(
 		compoundFieldKey, optional(keyword('?')), punctuation(':'), compoundFieldType,
 	], true),
 	res => {
-		// TODO: No indication of optional fields. Might break formatter.
 		const ans: CompoundFieldNode = {
 			type: 'nbtdoc:compound_definition/field',
 			range: res.range,
