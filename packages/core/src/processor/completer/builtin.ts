@@ -1,9 +1,8 @@
 import { ResourceLocation } from '../../common'
-import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
-import { ResourceLocationNode } from '../../node'
+import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
-import type { CompleterContext, MetaRegistry } from '../../service'
-import { IndexMap, Range } from '../../source'
+import type { MetaRegistry } from '../../service'
+import { Range } from '../../source'
 import type { TagFileCategory } from '../../symbol'
 import { selectedNode } from '../util'
 import type { Completer } from './Completer'
@@ -91,10 +90,9 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 
 	// TODO: Complete when the cursor is outside the quotes.
 
-	if (node.children && Range.containsInclusive(node.childrenMaps[0].outerRange, ctx.offset)) {
+	if (node.children && Range.containsInclusive(node.valueMap.outerRange, ctx.offset)) {
 		const completer = ctx.meta.getCompleter(node.children[0].type)
-		const result = completer(node.children[0], toInnerCtx(ctx, node.childrenMaps[0]))
-		return toOuterItems(result, node.childrenMaps[0])
+		return completer(node.children[0], ctx)
 	}
 
 	return []
@@ -104,20 +102,6 @@ export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 	return Object
 		.keys(ctx.symbols.query(ctx.doc, node.options.category, ...node.options.parentPath ?? []).visibleMembers)
 		.map(v => CompletionItem.create(v, node, undefined, { kind: CompletionKind.Variable }))
-}
-
-function toOuterItems(items: readonly CompletionItem[], mapping: IndexMap): CompletionItem[] {
-	return items.map(item => ({
-		...item,
-		range: IndexMap.toOuterRange(mapping, item.range),
-	}))
-}
-
-function toInnerCtx(ctx: CompleterContext, mapping: IndexMap): CompleterContext {
-	return {
-		...ctx,
-		offset: IndexMap.toInnerOffset(mapping, ctx.offset),
-	}
 }
 
 export function registerCompleters(meta: MetaRegistry) {

@@ -37,51 +37,7 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
                 "end": 7
               },
               "value": "bar",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 7
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 8,
-                "end": 11
-              },
-              "value": "baz",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 8,
-                    "end": 11
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 4,
-              "end": 7
-            },
-            "value": "bar",
-            "childrenMaps": [
-              {
+              "valueMap": {
                 "outerRange": {
                   "start": 4,
                   "end": 7
@@ -92,7 +48,45 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
                 },
                 "pairs": []
               }
-            ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 8,
+                "end": 11
+              },
+              "value": "baz",
+              "valueMap": {
+                "outerRange": {
+                  "start": 8,
+                  "end": 11
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "value": "bar",
+            "valueMap": {
+              "outerRange": {
+                "start": 4,
+                "end": 7
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           "sep": {
             "start": 7,
@@ -105,19 +99,17 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
               "end": 11
             },
             "value": "baz",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 8,
-                  "end": 11
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 8,
+                "end": 11
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         }
       ]
@@ -213,51 +205,7 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
                 "end": 9
               },
               "value": "foo",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 6,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 10,
-                "end": 13
-              },
-              "value": "bar",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 10,
-                    "end": 13
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 6,
-              "end": 9
-            },
-            "value": "foo",
-            "childrenMaps": [
-              {
+              "valueMap": {
                 "outerRange": {
                   "start": 6,
                   "end": 9
@@ -268,7 +216,45 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
                 },
                 "pairs": []
               }
-            ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 10,
+                "end": 13
+              },
+              "value": "bar",
+              "valueMap": {
+                "outerRange": {
+                  "start": 10,
+                  "end": 13
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 6,
+              "end": 9
+            },
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 6,
+                "end": 9
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           "sep": {
             "start": 9,
@@ -281,19 +267,17 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
               "end": 13
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 10,
-                  "end": 13
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 10,
+                "end": 13
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         }
       ]

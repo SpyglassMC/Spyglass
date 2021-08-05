@@ -55,19 +55,17 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
           "end": 6
         },
         "value": "Hello ",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 6
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 6
+          },
+          "pairs": []
+        }
       },
       {
         "type": "mcfunction:entity_selector",
@@ -99,19 +97,17 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
           "end": 11
         },
         "value": " :)",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 8,
-              "end": 11
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 8,
+            "end": 11
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "hover": "<test: message>"
@@ -135,19 +131,17 @@ exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
           "end": 12
         },
         "value": "Hello world!",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 12
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 12
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 12
+          },
+          "pairs": []
+        }
       }
     ],
     "hover": "<test: message>"
@@ -171,19 +165,17 @@ exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "hover": "<test: message>"

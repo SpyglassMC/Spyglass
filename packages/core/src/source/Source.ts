@@ -1,3 +1,4 @@
+import { IndexMap } from '.'
 import type { RangeLike } from './Range'
 import { Range } from './Range'
 
@@ -30,14 +31,19 @@ export const LF = '\n'
 export const Whitespaces = Object.freeze([' ', '\n', '\r', '\t'] as const)
 
 export class ReadonlySource {
-	public cursor = 0
+	public innerCursor = 0
 
 	constructor(
-		public readonly string: string
+		public readonly string: string,
+		public readonly indexMap = IndexMap.DEFAULT,
 	) { }
 
+	get cursor() {
+		return IndexMap.toOuterOffset(this.indexMap, this.innerCursor)
+	}
+
 	get nextCharRange(): Range {
-		return Range.create(this, this.cursor + 1)
+		return IndexMap.toOuterRange(this.indexMap, Range.create(this.innerCursor, this.innerCursor + 1))
 	}
 
 	/**
@@ -46,7 +52,7 @@ export class ReadonlySource {
 	 * @param offset The index to offset from cursor. @default 0
 	 */
 	peek(length = 1, offset = 0) {
-		return this.string.substr(this.cursor + offset, length)
+		return this.string.substr(this.innerCursor + offset, length)
 	}
 
 	/**
@@ -66,19 +72,28 @@ export class ReadonlySource {
 
 export class Source extends ReadonlySource {
 	constructor(
-		public string: string
+		public string: string,
+		public indexMap = IndexMap.DEFAULT,
 	) {
-		super(string)
+		super(string, indexMap)
+	}
+
+	get cursor() {
+		return super.cursor
+	}
+
+	set cursor(cursor: number) {
+		this.innerCursor = IndexMap.toInnerOffset(this.indexMap, cursor)
 	}
 
 	clone(): Source {
-		const ans = new Source(this.string)
-		ans.cursor = this.cursor
+		const ans = new Source(this.string, this.indexMap)
+		ans.innerCursor = this.innerCursor
 		return ans
 	}
 
 	canRead(length = 1) {
-		return this.cursor + length <= this.string.length
+		return this.innerCursor + length <= this.string.length
 	}
 
 	canReadInLine() {
@@ -86,7 +101,7 @@ export class Source extends ReadonlySource {
 	}
 
 	read() {
-		return this.string.charAt(this.cursor++)
+		return this.string.charAt(this.innerCursor++)
 	}
 
 	/**
@@ -94,7 +109,7 @@ export class Source extends ReadonlySource {
 	 * @param step The step to skip. @default 1
 	 */
 	skip(step = 1): this {
-		this.cursor += step
+		this.innerCursor += step
 		return this
 	}
 
@@ -147,9 +162,9 @@ export class Source extends ReadonlySource {
 	}
 
 	readSpace() {
-		const start = this.cursor
+		const start = this.innerCursor
 		this.skipSpace()
-		return this.string.slice(start, this.cursor)
+		return this.string.slice(start, this.innerCursor)
 	}
 	skipSpace(): this {
 		while (this.canRead() && Source.isSpace(this.peek())) {
@@ -159,9 +174,9 @@ export class Source extends ReadonlySource {
 	}
 
 	readWhitespace() {
-		const start = this.cursor
+		const start = this.innerCursor
 		this.skipWhitespace()
-		return this.string.slice(start, this.cursor)
+		return this.string.slice(start, this.innerCursor)
 	}
 	skipWhitespace(): this {
 		while (this.canRead() && Source.isWhitespace(this.peek())) {
@@ -202,8 +217,8 @@ export class Source extends ReadonlySource {
 	}
 
 	readRemaining(): string {
-		const start = this.cursor
-		this.cursor = this.string.length
+		const start = this.innerCursor
+		this.innerCursor = this.string.length
 		return this.string.slice(start)
 	}
 	skipRemaining(): this {

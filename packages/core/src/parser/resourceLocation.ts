@@ -23,11 +23,11 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			ans.isTag = true
 		}
 
-		const start = src.cursor
+		const start = src.innerCursor
 		while (src.canReadInLine() && src.peek().match(AcceptableCharacter)) {
 			src.skip()
 		}
-		const raw = src.string.slice(start, src.cursor)
+		const raw = src.string.slice(start, src.innerCursor)
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {

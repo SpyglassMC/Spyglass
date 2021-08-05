@@ -84,51 +84,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
                 "end": 9
               },
               "value": "foo",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 6,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            },
-            {
-              "type": "string",
-              "range": {
-                "start": 10,
-                "end": 13
-              },
-              "value": "bar",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 10,
-                    "end": 13
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ]
-            }
-          ],
-          "key": {
-            "type": "string",
-            "range": {
-              "start": 6,
-              "end": 9
-            },
-            "value": "foo",
-            "childrenMaps": [
-              {
+              "valueMap": {
                 "outerRange": {
                   "start": 6,
                   "end": 9
@@ -139,7 +95,45 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
                 },
                 "pairs": []
               }
-            ]
+            },
+            {
+              "type": "string",
+              "range": {
+                "start": 10,
+                "end": 13
+              },
+              "value": "bar",
+              "valueMap": {
+                "outerRange": {
+                  "start": 10,
+                  "end": 13
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              }
+            }
+          ],
+          "key": {
+            "type": "string",
+            "range": {
+              "start": 6,
+              "end": 9
+            },
+            "value": "foo",
+            "valueMap": {
+              "outerRange": {
+                "start": 6,
+                "end": 9
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           "sep": {
             "start": 9,
@@ -152,19 +146,17 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
               "end": 13
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 10,
-                  "end": 13
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 10,
+                "end": 13
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         }
       ]

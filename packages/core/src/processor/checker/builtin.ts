@@ -63,9 +63,9 @@ export const noop: SyncChecker<AstNode> = () => { }
 export const fallback: Checker<AstNode> = async (node, ctx) => {
 	const promises: Promise<unknown>[] = []
 	traversePreOrder(node,
-		({ node }) => !ctx.meta.hasChecker(node.type),
-		({ node }) => ctx.meta.hasChecker(node.type),
-		({ node }) => {
+		node => !ctx.meta.hasChecker(node.type),
+		node => ctx.meta.hasChecker(node.type),
+		node => {
 			const checker = ctx.meta.getChecker(node.type)
 			const result = checker(node, ctx)
 			if (result instanceof Promise) {

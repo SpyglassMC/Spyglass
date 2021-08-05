@@ -41,30 +41,7 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -75,7 +52,26 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       },
       {
@@ -92,30 +88,7 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 10,
-            "end": 15
-          },
-          "value": "bar",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 11,
                 "end": 14
@@ -126,7 +99,26 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]
@@ -165,30 +157,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -199,7 +168,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -220,30 +208,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 10,
-            "end": 15
-          },
-          "value": "bar",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 11,
                 "end": 14
@@ -254,7 +219,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 16,
@@ -297,30 +281,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -331,7 +292,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -352,30 +332,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 10,
-            "end": 15
-          },
-          "value": "bar",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 11,
                 "end": 14
@@ -386,7 +343,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]
@@ -416,30 +392,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -450,7 +403,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -493,30 +465,7 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -527,7 +476,26 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]
@@ -568,30 +536,7 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
               "end": 9
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 5,
-                  "end": 8
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 4,
-            "end": 9
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 5,
                 "end": 8
@@ -602,7 +547,26 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 4,
+            "end": 9
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 5,
+              "end": 8
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]
@@ -715,30 +679,7 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -749,7 +690,26 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -770,30 +730,7 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 10,
-            "end": 15
-          },
-          "value": "bar",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 11,
                 "end": 14
@@ -804,7 +741,26 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 16,
@@ -838,30 +794,7 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -872,7 +805,26 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -893,30 +845,7 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 10,
-            "end": 15
-          },
-          "value": "bar",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 11,
                 "end": 14
@@ -927,7 +856,26 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 10,
+            "end": 15
+          },
+          "value": "bar",
+          "valueMap": {
+            "outerRange": {
+              "start": 11,
+              "end": 14
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]
@@ -957,30 +905,7 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -991,7 +916,26 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 8,
@@ -1025,30 +969,7 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 3,
-                  "end": 6
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 2,
-            "end": 7
-          },
-          "value": "foo",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 3,
                 "end": 6
@@ -1059,7 +980,26 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 2,
+            "end": 7
+          },
+          "value": "foo",
+          "valueMap": {
+            "outerRange": {
+              "start": 3,
+              "end": 6
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]

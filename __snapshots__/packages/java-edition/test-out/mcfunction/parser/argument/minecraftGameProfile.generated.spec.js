@@ -13,31 +13,7 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
           "end": 4
         },
         "value": "0123",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 4
-            },
-            "pairs": []
-          }
-        ]
-      }
-    ],
-    "name": "test",
-    "playerName": {
-      "type": "string",
-      "range": {
-        "start": 0,
-        "end": 4
-      },
-      "value": "0123",
-      "childrenMaps": [
-        {
+        "valueMap": {
           "outerRange": {
             "start": 0,
             "end": 4
@@ -48,7 +24,27 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
           },
           "pairs": []
         }
-      ]
+      }
+    ],
+    "name": "test",
+    "playerName": {
+      "type": "string",
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "value": "0123",
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: game_profile>"
   },
@@ -146,31 +142,7 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
           "end": 6
         },
         "value": "Player",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "pairs": []
-          }
-        ]
-      }
-    ],
-    "name": "test",
-    "playerName": {
-      "type": "string",
-      "range": {
-        "start": 0,
-        "end": 6
-      },
-      "value": "Player",
-      "childrenMaps": [
-        {
+        "valueMap": {
           "outerRange": {
             "start": 0,
             "end": 6
@@ -181,7 +153,27 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
           },
           "pairs": []
         }
-      ]
+      }
+    ],
+    "name": "test",
+    "playerName": {
+      "type": "string",
+      "range": {
+        "start": 0,
+        "end": 6
+      },
+      "value": "Player",
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: game_profile>"
   },

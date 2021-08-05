@@ -6,19 +6,17 @@ exports['string() Parse "" 1'] = {
       "end": 0
     },
     "value": "",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "pairs": []
+    }
   },
   "errors": [
     {
@@ -40,19 +38,17 @@ exports['string() Parse ""foo" 1'] = {
       "end": 4
     },
     "value": "foo",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 4
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 3
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 4
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 3
+      },
+      "pairs": []
+    }
   },
   "errors": [
     {
@@ -74,19 +70,17 @@ exports['string() Parse ""foo"" 1'] = {
       "end": 5
     },
     "value": "foo",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 4
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 3
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 4
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 3
+      },
+      "pairs": []
+    }
   },
   "errors": []
 }
@@ -99,19 +93,17 @@ exports['string() Parse ""fo↓o"" 1'] = {
       "end": 3
     },
     "value": "fo",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 3
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 2
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 3
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 2
+      },
+      "pairs": []
+    }
   },
   "errors": [
     {
@@ -133,30 +125,28 @@ exports['string() Parse ""fo⧵Ao"" 1'] = {
       "end": 7
     },
     "value": "foAo",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 6
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 4
-        },
-        "pairs": [
-          {
-            "inner": {
-              "start": 2,
-              "end": 3
-            },
-            "outer": {
-              "start": 3,
-              "end": 5
-            }
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 6
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 4
+      },
+      "pairs": [
+        {
+          "inner": {
+            "start": 2,
+            "end": 3
+          },
+          "outer": {
+            "start": 3,
+            "end": 5
           }
-        ]
-      }
-    ]
+        }
+      ]
+    }
   },
   "errors": [
     {
@@ -178,30 +168,28 @@ exports['string() Parse ""fo⧵no"" 1'] = {
       "end": 7
     },
     "value": "fo\no",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 6
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 4
-        },
-        "pairs": [
-          {
-            "inner": {
-              "start": 2,
-              "end": 3
-            },
-            "outer": {
-              "start": 3,
-              "end": 5
-            }
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 6
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 4
+      },
+      "pairs": [
+        {
+          "inner": {
+            "start": 2,
+            "end": 3
+          },
+          "outer": {
+            "start": 3,
+            "end": 5
           }
-        ]
-      }
-    ]
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -214,19 +202,17 @@ exports['string() Parse "foo" 1'] = {
       "end": 0
     },
     "value": "",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "pairs": []
+    }
   },
   "errors": [
     {

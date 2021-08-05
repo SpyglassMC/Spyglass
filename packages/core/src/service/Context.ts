@@ -11,7 +11,7 @@ import type { RootUriString } from './fileUtil'
 import type { Logger } from './Logger'
 import type { MetaRegistry } from './MetaRegistry'
 import { Operations } from './Operations'
-import type { ProjectLike, DocAndNode } from './Project'
+import type { DocAndNode, ProjectLike } from './Project'
 
 export interface ContextBase {
 	getDocAndNode: (uri: string) => DocAndNode | undefined, 

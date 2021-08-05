@@ -1,6 +1,6 @@
 import type { BooleanNode, CommentNode, ErrorNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { MetaRegistry } from '../../service'
-import { IndexMap, Range } from '../../source'
+import { Range } from '../../source'
 import { traversePreOrder } from '../util'
 import type { Colorizer, ColorTokenType } from './Colorizer'
 import { ColorToken } from './Colorizer'
@@ -11,12 +11,12 @@ import { ColorToken } from './Colorizer'
 export const fallback: Colorizer = (node, ctx) => {
 	const ans: ColorToken[] = []
 	traversePreOrder(node,
-		({ node, map }) => !ctx.meta.hasColorizer(node.type) && (!ctx.range || Range.intersects(node.range, IndexMap.toInnerRange(map, ctx.range))),
-		({ node }) => ctx.meta.hasColorizer(node.type),
-		({ node, map }) => {
+		node => !ctx.meta.hasColorizer(node.type) && (!ctx.range || Range.intersects(node.range, ctx.range)),
+		node => ctx.meta.hasColorizer(node.type),
+		node => {
 			const colorizer = ctx.meta.getColorizer(node.type)
 			const result = colorizer(node, ctx)
-			ans.push(...result.map(token => toOuterColorToken(map, token)))
+			ans.push(...result)
 		}
 	)
 	return Object.freeze(ans)
@@ -62,7 +62,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		const result = colorizer(node.children[0], ctx)
 		// TODO: Fill the gap between the last token and the ending quote with errors.
 		return ColorToken.fillGap(
-			result.map(token => toOuterColorToken(node.childrenMaps[0], token)),
+			result,
 			node.range, node.options.colorTokenType ?? 'string')
 	} else {
 		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
@@ -72,13 +72,6 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 export const symbol: Colorizer<SymbolBaseNode> = node => {
 	// TODO: Set the modifiers according to `node.symbol`.
 	return [ColorToken.create(node, 'variable')]
-}
-
-function toOuterColorToken(map: IndexMap, token: ColorToken) {
-	return {
-		...token,
-		range: IndexMap.toOuterRange(map, token.range),
-	}
 }
 
 export function registerColorizers(meta: MetaRegistry) {

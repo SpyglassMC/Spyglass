@@ -604,19 +604,17 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "end": 113
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 109,
-                  "end": 112
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 109,
+                "end": 112
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         ],
         "doc": {
@@ -660,19 +658,17 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "end": 113
           },
           "value": "foo",
-          "childrenMaps": [
-            {
-              "outerRange": {
-                "start": 109,
-                "end": 112
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
-          ]
+          "valueMap": {
+            "outerRange": {
+              "start": 109,
+              "end": 112
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       },
       {
@@ -775,19 +771,17 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "end": 113
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 109,
-                  "end": 112
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 109,
+                "end": 112
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           }
         ],
         "doc": {
@@ -831,19 +825,17 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "end": 113
           },
           "value": "foo",
-          "childrenMaps": [
-            {
-              "outerRange": {
-                "start": 109,
-                "end": 112
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
-          ]
+          "valueMap": {
+            "outerRange": {
+              "start": 109,
+              "end": 112
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         }
       }
     ]

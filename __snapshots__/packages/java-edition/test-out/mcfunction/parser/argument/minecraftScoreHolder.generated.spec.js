@@ -174,25 +174,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                     "end": 4
                   },
                   "value": "",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 4
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 0
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 4
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 4,
+                        "end": 4
                       },
                       "value": ""
                     }
@@ -206,25 +204,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                   "end": 4
                 },
                 "value": "",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 4
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 0
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 4
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 4,
+                      "end": 4
                     },
                     "value": ""
                   }
@@ -264,25 +260,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                   "end": 4
                 },
                 "value": "",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 4
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 0
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 4
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 4,
+                      "end": 4
                     },
                     "value": ""
                   }
@@ -296,25 +290,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                 "end": 4
               },
               "value": "",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 4
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 0
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 4
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 0
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 0
+                    "start": 4,
+                    "end": 4
                   },
                   "value": ""
                 }
@@ -403,25 +395,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                     "end": 10
                   },
                   "value": "scores",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 10
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 6
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 10
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 6
+                        "start": 4,
+                        "end": 10
                       },
                       "value": "scores"
                     }
@@ -561,25 +551,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                   "end": 10
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 10
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 10
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 4,
+                      "end": 10
                     },
                     "value": "scores"
                   }
@@ -745,25 +733,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                   "end": 10
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 10
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 10
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 4,
+                      "end": 10
                     },
                     "value": "scores"
                   }
@@ -903,25 +889,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                 "end": 10
               },
               "value": "scores",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 10
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 6
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 10
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 6
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 6
+                    "start": 4,
+                    "end": 10
                   },
                   "value": "scores"
                 }
@@ -1119,25 +1103,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                     "end": 10
                   },
                   "value": "scores",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 10
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 6
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 10
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 6
+                        "start": 4,
+                        "end": 10
                       },
                       "value": "scores"
                     }
@@ -1159,25 +1141,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "end": 10
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 10
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 10
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 4,
+                      "end": 10
                     },
                     "value": "scores"
                   }
@@ -1214,25 +1194,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                     "end": 25
                   },
                   "value": "scores",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 19,
-                        "end": 25
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 6
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 19,
+                      "end": 25
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 6
+                        "start": 19,
+                        "end": 25
                       },
                       "value": "scores"
                     }
@@ -1254,25 +1232,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "end": 25
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 25
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 25
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 19,
+                      "end": 25
                     },
                     "value": "scores"
                   }
@@ -1320,25 +1296,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "end": 10
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 10
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 10
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 4,
+                      "end": 10
                     },
                     "value": "scores"
                   }
@@ -1360,25 +1334,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "end": 10
               },
               "value": "scores",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 10
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 6
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 10
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 6
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 6
+                    "start": 4,
+                    "end": 10
                   },
                   "value": "scores"
                 }
@@ -1415,25 +1387,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "end": 25
                 },
                 "value": "scores",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 25
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 6
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 25
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 6
+                      "start": 19,
+                      "end": 25
                     },
                     "value": "scores"
                   }
@@ -1455,25 +1425,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "end": 25
               },
               "value": "scores",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 19,
-                    "end": 25
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 6
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 19,
+                  "end": 25
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 6
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 6
+                    "start": 19,
+                    "end": 25
                   },
                   "value": "scores"
                 }
@@ -1562,25 +1530,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                     "end": 8
                   },
                   "value": "sort",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "sort"
                     }
@@ -1593,25 +1559,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                     "end": 20
                   },
                   "value": "arbitrary",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 11,
-                        "end": 20
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 11,
+                      "end": 20
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 11,
+                        "end": 20
                       },
                       "value": "arbitrary"
                     }
@@ -1625,25 +1589,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "end": 8
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "sort"
                   }
@@ -1660,25 +1622,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "end": 20
                 },
                 "value": "arbitrary",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 11,
-                      "end": 20
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 11,
+                    "end": 20
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 11,
+                      "end": 20
                     },
                     "value": "arbitrary"
                   }
@@ -1714,25 +1674,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "end": 8
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "sort"
                   }
@@ -1745,25 +1703,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "end": 20
                 },
                 "value": "arbitrary",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 11,
-                      "end": 20
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 11,
+                    "end": 20
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 11,
+                      "end": 20
                     },
                     "value": "arbitrary"
                   }
@@ -1777,25 +1733,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "end": 8
               },
               "value": "sort",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "sort"
                 }
@@ -1812,25 +1766,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "end": 20
               },
               "value": "arbitrary",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 11,
-                    "end": 20
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 9
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 11,
+                  "end": 20
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 9
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 9
+                    "start": 11,
+                    "end": 20
                   },
                   "value": "arbitrary"
                 }
@@ -1898,25 +1850,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "end": 7
                   },
                   "value": "tag",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 7
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 3
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 7
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 3
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 3
+                        "start": 4,
+                        "end": 7
                       },
                       "value": "tag"
                     }
@@ -1980,25 +1930,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "end": 7
                 },
                 "value": "tag",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 4,
+                      "end": 7
                     },
                     "value": "tag"
                   }
@@ -2077,25 +2025,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "end": 19
                   },
                   "value": "tag",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 16,
-                        "end": 19
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 3
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 16,
+                      "end": 19
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 3
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 3
+                        "start": 16,
+                        "end": 19
                       },
                       "value": "tag"
                     }
@@ -2167,25 +2113,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "end": 19
                 },
                 "value": "tag",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 16,
-                      "end": 19
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 16,
+                    "end": 19
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 16,
+                      "end": 19
                     },
                     "value": "tag"
                   }
@@ -2283,25 +2227,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "end": 7
                 },
                 "value": "tag",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 4,
+                      "end": 7
                     },
                     "value": "tag"
                   }
@@ -2365,25 +2307,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "end": 7
               },
               "value": "tag",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 7
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 7
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 3
+                    "start": 4,
+                    "end": 7
                   },
                   "value": "tag"
                 }
@@ -2462,25 +2402,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "end": 19
                 },
                 "value": "tag",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 16,
-                      "end": 19
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 16,
+                    "end": 19
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 16,
+                      "end": 19
                     },
                     "value": "tag"
                   }
@@ -2552,25 +2490,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "end": 19
               },
               "value": "tag",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 16,
-                    "end": 19
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 16,
+                  "end": 19
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 3
+                    "start": 16,
+                    "end": 19
                   },
                   "value": "tag"
                 }
@@ -2700,25 +2636,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "end": 8
                   },
                   "value": "team",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "team"
                     }
@@ -2790,25 +2724,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "end": 8
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "team"
                   }
@@ -2895,25 +2827,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "end": 23
                   },
                   "value": "team",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 19,
-                        "end": 23
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 19,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 19,
+                        "end": 23
                       },
                       "value": "team"
                     }
@@ -2985,25 +2915,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "end": 23
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 23
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 19,
+                      "end": 23
                     },
                     "value": "team"
                   }
@@ -3101,25 +3029,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "end": 8
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "team"
                   }
@@ -3191,25 +3117,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "end": 8
               },
               "value": "team",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "team"
                 }
@@ -3296,25 +3220,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "end": 23
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 23
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 19,
+                      "end": 23
                     },
                     "value": "team"
                   }
@@ -3386,25 +3308,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "end": 23
               },
               "value": "team",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 19,
-                    "end": 23
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 19,
+                  "end": 23
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 19,
+                    "end": 23
                   },
                   "value": "team"
                 }
@@ -3534,25 +3454,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "end": 8
                   },
                   "value": "team",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "team"
                     }
@@ -3616,25 +3534,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "end": 8
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "team"
                   }
@@ -3713,25 +3629,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "end": 21
                   },
                   "value": "team",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 17,
-                        "end": 21
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 17,
+                      "end": 21
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 17,
+                        "end": 21
                       },
                       "value": "team"
                     }
@@ -3795,25 +3709,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "end": 21
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 17,
-                      "end": 21
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 17,
+                    "end": 21
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 17,
+                      "end": 21
                     },
                     "value": "team"
                   }
@@ -3903,25 +3815,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "end": 8
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "team"
                   }
@@ -3985,25 +3895,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "end": 8
               },
               "value": "team",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "team"
                 }
@@ -4082,25 +3990,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "end": 21
                 },
                 "value": "team",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 17,
-                      "end": 21
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 17,
+                    "end": 21
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 17,
+                      "end": 21
                     },
                     "value": "team"
                   }
@@ -4164,25 +4070,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "end": 21
               },
               "value": "team",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 17,
-                    "end": 21
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 17,
+                  "end": 21
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 17,
+                    "end": 21
                   },
                   "value": "team"
                 }
@@ -4313,25 +4217,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     "end": 8
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "type"
                     }
@@ -4375,25 +4277,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -4459,25 +4359,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -4521,25 +4419,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 "end": 8
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "type"
                 }
@@ -4646,25 +4542,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                     "end": 11
                   },
                   "value": "unknown",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 11
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 7
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 11
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 4,
+                        "end": 4
                       },
                       "value": ""
                     }
@@ -4678,25 +4572,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                   "end": 11
                 },
                 "value": "unknown",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 11
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 7
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 11
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 4,
+                      "end": 4
                     },
                     "value": ""
                   }
@@ -4736,25 +4628,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                   "end": 11
                 },
                 "value": "unknown",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 11
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 7
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 11
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 4,
+                      "end": 4
                     },
                     "value": ""
                   }
@@ -4768,25 +4658,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                 "end": 11
               },
               "value": "unknown",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 11
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 7
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 11
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 7
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 0
+                    "start": 4,
+                    "end": 4
                   },
                   "value": ""
                 }
@@ -4875,25 +4763,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                     "end": 5
                   },
                   "value": "x",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 5
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 1
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 5
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 1
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 1
+                        "start": 4,
+                        "end": 5
                       },
                       "value": "x"
                     }
@@ -4915,25 +4801,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 5
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 5
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 5
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 4,
+                      "end": 5
                     },
                     "value": "x"
                   }
@@ -4970,25 +4854,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                     "end": 15
                   },
                   "value": "x",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 14,
-                        "end": 15
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 1
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 1
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 1
+                        "start": 14,
+                        "end": 15
                       },
                       "value": "x"
                     }
@@ -5010,25 +4892,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 15
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 14,
-                      "end": 15
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 14,
+                    "end": 15
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 14,
+                      "end": 15
                     },
                     "value": "x"
                   }
@@ -5065,25 +4945,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                     "end": 26
                   },
                   "value": "dz",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 24,
-                        "end": 26
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 2
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 24,
+                      "end": 26
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 2
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 2
+                        "start": 24,
+                        "end": 26
                       },
                       "value": "dz"
                     }
@@ -5105,25 +4983,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 26
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 26
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 26
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 24,
+                      "end": 26
                     },
                     "value": "dz"
                   }
@@ -5160,25 +5036,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                     "end": 36
                   },
                   "value": "dz",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 34,
-                        "end": 36
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 2
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 34,
+                      "end": 36
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 2
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 2
+                        "start": 34,
+                        "end": 36
                       },
                       "value": "dz"
                     }
@@ -5200,25 +5074,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 36
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 34,
+                      "end": 36
                     },
                     "value": "dz"
                   }
@@ -5266,25 +5138,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 5
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 5
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 5
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 4,
+                      "end": 5
                     },
                     "value": "x"
                   }
@@ -5306,25 +5176,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "end": 5
               },
               "value": "x",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 5
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 1
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 5
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 1
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 1
+                    "start": 4,
+                    "end": 5
                   },
                   "value": "x"
                 }
@@ -5361,25 +5229,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 15
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 14,
-                      "end": 15
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 14,
+                    "end": 15
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 14,
+                      "end": 15
                     },
                     "value": "x"
                   }
@@ -5401,25 +5267,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "end": 15
               },
               "value": "x",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 14,
-                    "end": 15
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 1
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 14,
+                  "end": 15
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 1
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 1
+                    "start": 14,
+                    "end": 15
                   },
                   "value": "x"
                 }
@@ -5456,25 +5320,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 26
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 26
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 26
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 24,
+                      "end": 26
                     },
                     "value": "dz"
                   }
@@ -5496,25 +5358,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "end": 26
               },
               "value": "dz",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 24,
-                    "end": 26
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 2
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 24,
+                  "end": 26
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 2
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 2
+                    "start": 24,
+                    "end": 26
                   },
                   "value": "dz"
                 }
@@ -5551,25 +5411,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "end": 36
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 34,
+                      "end": 36
                     },
                     "value": "dz"
                   }
@@ -5591,25 +5449,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "end": 36
               },
               "value": "dz",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 34,
-                    "end": 36
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 2
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 34,
+                  "end": 36
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 2
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 2
+                    "start": 34,
+                    "end": 36
                   },
                   "value": "dz"
                 }
@@ -5708,25 +5564,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 5
                   },
                   "value": "x",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 5
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 1
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 5
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 1
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 1
+                        "start": 4,
+                        "end": 5
                       },
                       "value": "x"
                     }
@@ -5748,25 +5602,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 5
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 5
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 5
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 4,
+                      "end": 5
                     },
                     "value": "x"
                   }
@@ -5803,25 +5655,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 15
                   },
                   "value": "y",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 14,
-                        "end": 15
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 1
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 1
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 1
+                        "start": 14,
+                        "end": 15
                       },
                       "value": "y"
                     }
@@ -5843,25 +5693,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 15
                 },
                 "value": "y",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 14,
-                      "end": 15
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 14,
+                    "end": 15
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 14,
+                      "end": 15
                     },
                     "value": "y"
                   }
@@ -5898,25 +5746,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 25
                   },
                   "value": "z",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 24,
-                        "end": 25
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 1
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 24,
+                      "end": 25
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 1
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 1
+                        "start": 24,
+                        "end": 25
                       },
                       "value": "z"
                     }
@@ -5938,25 +5784,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 25
                 },
                 "value": "z",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 25
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 25
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 24,
+                      "end": 25
                     },
                     "value": "z"
                   }
@@ -5993,25 +5837,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 36
                   },
                   "value": "dx",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 34,
-                        "end": 36
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 2
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 34,
+                      "end": 36
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 2
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 2
+                        "start": 34,
+                        "end": 36
                       },
                       "value": "dx"
                     }
@@ -6033,25 +5875,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 36
                 },
                 "value": "dx",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 34,
+                      "end": 36
                     },
                     "value": "dx"
                   }
@@ -6088,25 +5928,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 47
                   },
                   "value": "dy",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 45,
-                        "end": 47
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 2
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 45,
+                      "end": 47
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 2
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 2
+                        "start": 45,
+                        "end": 47
                       },
                       "value": "dy"
                     }
@@ -6128,25 +5966,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 47
                 },
                 "value": "dy",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 45,
-                      "end": 47
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 45,
+                    "end": 47
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 45,
+                      "end": 47
                     },
                     "value": "dy"
                   }
@@ -6183,25 +6019,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                     "end": 58
                   },
                   "value": "dz",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 56,
-                        "end": 58
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 2
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 56,
+                      "end": 58
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 2
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 2
+                        "start": 56,
+                        "end": 58
                       },
                       "value": "dz"
                     }
@@ -6223,25 +6057,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 58
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 56,
-                      "end": 58
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 56,
+                    "end": 58
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 56,
+                      "end": 58
                     },
                     "value": "dz"
                   }
@@ -6289,25 +6121,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 5
                 },
                 "value": "x",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 5
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 5
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 4,
+                      "end": 5
                     },
                     "value": "x"
                   }
@@ -6329,25 +6159,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 5
               },
               "value": "x",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 5
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 1
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 5
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 1
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 1
+                    "start": 4,
+                    "end": 5
                   },
                   "value": "x"
                 }
@@ -6384,25 +6212,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 15
                 },
                 "value": "y",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 14,
-                      "end": 15
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 14,
+                    "end": 15
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 14,
+                      "end": 15
                     },
                     "value": "y"
                   }
@@ -6424,25 +6250,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 15
               },
               "value": "y",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 14,
-                    "end": 15
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 1
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 14,
+                  "end": 15
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 1
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 1
+                    "start": 14,
+                    "end": 15
                   },
                   "value": "y"
                 }
@@ -6479,25 +6303,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 25
                 },
                 "value": "z",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 25
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 1
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 25
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 1
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 1
+                      "start": 24,
+                      "end": 25
                     },
                     "value": "z"
                   }
@@ -6519,25 +6341,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 25
               },
               "value": "z",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 24,
-                    "end": 25
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 1
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 24,
+                  "end": 25
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 1
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 1
+                    "start": 24,
+                    "end": 25
                   },
                   "value": "z"
                 }
@@ -6574,25 +6394,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 36
                 },
                 "value": "dx",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 34,
+                      "end": 36
                     },
                     "value": "dx"
                   }
@@ -6614,25 +6432,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 36
               },
               "value": "dx",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 34,
-                    "end": 36
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 2
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 34,
+                  "end": 36
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 2
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 2
+                    "start": 34,
+                    "end": 36
                   },
                   "value": "dx"
                 }
@@ -6669,25 +6485,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 47
                 },
                 "value": "dy",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 45,
-                      "end": 47
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 45,
+                    "end": 47
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 45,
+                      "end": 47
                     },
                     "value": "dy"
                   }
@@ -6709,25 +6523,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 47
               },
               "value": "dy",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 45,
-                    "end": 47
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 2
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 45,
+                  "end": 47
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 2
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 2
+                    "start": 45,
+                    "end": 47
                   },
                   "value": "dy"
                 }
@@ -6764,25 +6576,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "end": 58
                 },
                 "value": "dz",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 56,
-                      "end": 58
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 2
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 56,
+                    "end": 58
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 2
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 2
+                      "start": 56,
+                      "end": 58
                     },
                     "value": "dz"
                   }
@@ -6804,25 +6614,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "end": 58
               },
               "value": "dz",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 56,
-                    "end": 58
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 2
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 56,
+                  "end": 58
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 2
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 2
+                    "start": 56,
+                    "end": 58
                   },
                   "value": "dz"
                 }
@@ -6904,25 +6712,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "end": 14
                   },
                   "value": "x_rotation",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 14
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 10
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 14
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 10
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 10
+                        "start": 4,
+                        "end": 14
                       },
                       "value": "x_rotation"
                     }
@@ -6974,25 +6780,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 14
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 14
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 14
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 4,
+                      "end": 14
                     },
                     "value": "x_rotation"
                   }
@@ -7059,25 +6863,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "end": 44
                   },
                   "value": "x_rotation",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 34,
-                        "end": 44
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 10
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 34,
+                      "end": 44
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 10
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 10
+                        "start": 34,
+                        "end": 44
                       },
                       "value": "x_rotation"
                     }
@@ -7129,25 +6931,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 44
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 44
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 44
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 34,
+                      "end": 44
                     },
                     "value": "x_rotation"
                   }
@@ -7225,25 +7025,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 14
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 14
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 14
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 4,
+                      "end": 14
                     },
                     "value": "x_rotation"
                   }
@@ -7295,25 +7093,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 14
               },
               "value": "x_rotation",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 14
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 10
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 14
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 10
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 10
+                    "start": 4,
+                    "end": 14
                   },
                   "value": "x_rotation"
                 }
@@ -7380,25 +7176,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 44
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 44
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 44
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 34,
+                      "end": 44
                     },
                     "value": "x_rotation"
                   }
@@ -7450,25 +7244,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 44
               },
               "value": "x_rotation",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 34,
-                    "end": 44
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 10
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 34,
+                  "end": 44
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 10
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 10
+                    "start": 34,
+                    "end": 44
                   },
                   "value": "x_rotation"
                 }
@@ -7587,25 +7379,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "end": 14
                   },
                   "value": "x_rotation",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 14
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 10
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 14
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 10
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 10
+                        "start": 4,
+                        "end": 14
                       },
                       "value": "x_rotation"
                     }
@@ -7657,25 +7447,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 14
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 14
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 14
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 4,
+                      "end": 14
                     },
                     "value": "x_rotation"
                   }
@@ -7742,25 +7530,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "end": 44
                   },
                   "value": "y_rotation",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 34,
-                        "end": 44
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 10
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 34,
+                      "end": 44
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 10
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 10
+                        "start": 34,
+                        "end": 44
                       },
                       "value": "y_rotation"
                     }
@@ -7812,25 +7598,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 44
                 },
                 "value": "y_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 44
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 44
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 34,
+                      "end": 44
                     },
                     "value": "y_rotation"
                   }
@@ -7908,25 +7692,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 14
                 },
                 "value": "x_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 14
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 14
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 4,
+                      "end": 14
                     },
                     "value": "x_rotation"
                   }
@@ -7978,25 +7760,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 14
               },
               "value": "x_rotation",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 14
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 10
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 14
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 10
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 10
+                    "start": 4,
+                    "end": 14
                   },
                   "value": "x_rotation"
                 }
@@ -8063,25 +7843,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "end": 44
                 },
                 "value": "y_rotation",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 34,
-                      "end": 44
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 10
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 34,
+                    "end": 44
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 10
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 10
+                      "start": 34,
+                      "end": 44
                     },
                     "value": "y_rotation"
                   }
@@ -8133,25 +7911,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 44
               },
               "value": "y_rotation",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 34,
-                    "end": 44
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 10
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 34,
+                  "end": 44
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 10
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 10
+                    "start": 34,
+                    "end": 44
                   },
                   "value": "y_rotation"
                 }
@@ -8348,25 +8124,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     "end": 8
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "type"
                     }
@@ -8418,25 +8192,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -8503,25 +8275,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     "end": 28
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 24,
-                        "end": 28
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 24,
+                      "end": 28
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 24,
+                        "end": 28
                       },
                       "value": "type"
                     }
@@ -8573,25 +8343,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "end": 28
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 28
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 28
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 24,
+                      "end": 28
                     },
                     "value": "type"
                   }
@@ -8669,25 +8437,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -8739,25 +8505,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "end": 8
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "type"
                 }
@@ -8824,25 +8588,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "end": 28
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 24,
-                      "end": 28
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 24,
+                    "end": 28
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 24,
+                      "end": 28
                     },
                     "value": "type"
                   }
@@ -8894,25 +8656,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "end": 28
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 24,
-                    "end": 28
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 24,
+                  "end": 28
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 24,
+                    "end": 28
                   },
                   "value": "type"
                 }
@@ -9025,25 +8785,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "end": 8
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "type"
                     }
@@ -9089,25 +8847,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -9168,25 +8924,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "end": 23
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 19,
-                        "end": 23
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 19,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 19,
+                        "end": 23
                       },
                       "value": "type"
                     }
@@ -9232,25 +8986,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "end": 23
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 23
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 19,
+                      "end": 23
                     },
                     "value": "type"
                   }
@@ -9322,25 +9074,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -9386,25 +9136,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "end": 8
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "type"
                 }
@@ -9465,25 +9213,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "end": 23
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 19,
-                      "end": 23
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 19,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 19,
+                      "end": 23
                     },
                     "value": "type"
                   }
@@ -9529,25 +9275,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "end": 23
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 19,
-                    "end": 23
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 19,
+                  "end": 23
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 19,
+                    "end": 23
                   },
                   "value": "type"
                 }
@@ -9654,25 +9398,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     "end": 8
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "type"
                     }
@@ -9716,25 +9458,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -9800,25 +9540,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -9862,25 +9600,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 "end": 8
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "type"
                 }
@@ -9981,25 +9717,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     "end": 8
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "type"
                     }
@@ -10043,25 +9777,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -10120,25 +9852,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     "end": 26
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 22,
-                        "end": 26
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 22,
+                      "end": 26
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 22,
+                        "end": 26
                       },
                       "value": "type"
                     }
@@ -10182,25 +9912,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "end": 26
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 22,
-                      "end": 26
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 22,
+                    "end": 26
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 22,
+                      "end": 26
                     },
                     "value": "type"
                   }
@@ -10270,25 +9998,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "end": 8
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "type"
                   }
@@ -10332,25 +10058,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "end": 8
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "type"
                 }
@@ -10409,25 +10133,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "end": 26
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 22,
-                      "end": 26
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 22,
+                    "end": 26
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 22,
+                      "end": 26
                     },
                     "value": "type"
                   }
@@ -10471,25 +10193,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "end": 26
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 22,
-                    "end": 26
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 22,
+                  "end": 26
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 22,
+                    "end": 26
                   },
                   "value": "type"
                 }
@@ -10603,25 +10323,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                     "end": 8
                   },
                   "value": "sort",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "sort"
                     }
@@ -10634,25 +10352,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                     "end": 20
                   },
                   "value": "arbitrary",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 11,
-                        "end": 20
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 11,
+                      "end": 20
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 11,
+                        "end": 20
                       },
                       "value": "arbitrary"
                     }
@@ -10666,25 +10382,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 8
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "sort"
                   }
@@ -10701,25 +10415,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 20
                 },
                 "value": "arbitrary",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 11,
-                      "end": 20
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 11,
+                    "end": 20
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 11,
+                      "end": 20
                     },
                     "value": "arbitrary"
                   }
@@ -10744,25 +10456,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                     "end": 27
                   },
                   "value": "sort",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 23,
-                        "end": 27
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 23,
+                      "end": 27
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 23,
+                        "end": 27
                       },
                       "value": "sort"
                     }
@@ -10775,25 +10485,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                     "end": 37
                   },
                   "value": "unknown",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 30,
-                        "end": 37
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 7
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 30,
+                      "end": 37
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 30,
+                        "end": 30
                       },
                       "value": ""
                     }
@@ -10807,25 +10515,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 27
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 23,
-                      "end": 27
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 23,
+                    "end": 27
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 23,
+                      "end": 27
                     },
                     "value": "sort"
                   }
@@ -10842,25 +10548,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 37
                 },
                 "value": "unknown",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 30,
-                      "end": 37
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 7
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 30,
+                    "end": 37
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 30,
+                      "end": 30
                     },
                     "value": ""
                   }
@@ -10896,25 +10600,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 8
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "sort"
                   }
@@ -10927,25 +10629,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 20
                 },
                 "value": "arbitrary",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 11,
-                      "end": 20
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 11,
+                    "end": 20
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 11,
+                      "end": 20
                     },
                     "value": "arbitrary"
                   }
@@ -10959,25 +10659,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "end": 8
               },
               "value": "sort",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "sort"
                 }
@@ -10994,25 +10692,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "end": 20
               },
               "value": "arbitrary",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 11,
-                    "end": 20
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 9
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 11,
+                  "end": 20
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 9
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 9
+                    "start": 11,
+                    "end": 20
                   },
                   "value": "arbitrary"
                 }
@@ -11037,25 +10733,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 27
                 },
                 "value": "sort",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 23,
-                      "end": 27
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 23,
+                    "end": 27
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 23,
+                      "end": 27
                     },
                     "value": "sort"
                   }
@@ -11068,25 +10762,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "end": 37
                 },
                 "value": "unknown",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 30,
-                      "end": 37
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 7
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 30,
+                    "end": 37
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 30,
+                      "end": 30
                     },
                     "value": ""
                   }
@@ -11100,25 +10792,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "end": 27
               },
               "value": "sort",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 23,
-                    "end": 27
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 23,
+                  "end": 27
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 23,
+                    "end": 27
                   },
                   "value": "sort"
                 }
@@ -11135,25 +10825,23 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "end": 37
               },
               "value": "unknown",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 30,
-                    "end": 37
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 7
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 30,
+                  "end": 37
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 7
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 0
+                    "start": 30,
+                    "end": 30
                   },
                   "value": ""
                 }

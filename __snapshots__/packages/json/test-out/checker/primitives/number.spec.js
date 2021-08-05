@@ -21,19 +21,17 @@ exports['JSON number float Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -238,19 +236,17 @@ exports['JSON number floatRange(-5, undefined) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -473,19 +469,17 @@ exports['JSON number floatRange(1, 2.4) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -744,19 +738,17 @@ exports['JSON number int Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -979,19 +971,17 @@ exports['JSON number intRange(-9, 0) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1250,19 +1240,17 @@ exports['JSON number intRange(1, 3) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1521,19 +1509,17 @@ exports['JSON number intRange(3, undefined) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",
@@ -1774,19 +1760,17 @@ exports['JSON number intRange(undefined, 3) Check ""5"" 1'] = {
       ]
     },
     "value": "5",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 2
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 1
-        },
-        "pairs": []
-      }
-    ],
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 2
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 1
+      },
+      "pairs": []
+    },
     "expectation": [
       {
         "type": "json:number",

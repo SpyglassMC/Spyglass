@@ -13,19 +13,17 @@ exports['mcfunction argument minecraft:entity Parse "0123" with {"amount":"multi
         "end": 4
       },
       "value": "0123",
-      "childrenMaps": [
-        {
-          "outerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "pairs": []
-        }
-      ]
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: entity>"
   },
@@ -47,19 +45,17 @@ exports['mcfunction argument minecraft:entity Parse "0123" with {"amount":"singl
         "end": 4
       },
       "value": "0123",
-      "childrenMaps": [
-        {
-          "outerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "pairs": []
-        }
-      ]
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 4
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: entity>"
   },
@@ -162,25 +158,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                     "end": 16
                   },
                   "value": "advancements",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 16
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 12
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 16
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 12
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 12
+                        "start": 4,
+                        "end": 16
                       },
                       "value": "advancements"
                     }
@@ -287,19 +281,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                     "end": 65
                                   },
                                   "value": "qux",
-                                  "childrenMaps": [
-                                    {
-                                      "outerRange": {
-                                        "start": 62,
-                                        "end": 65
-                                      },
-                                      "innerRange": {
-                                        "start": 0,
-                                        "end": 3
-                                      },
-                                      "pairs": []
-                                    }
-                                  ]
+                                  "valueMap": {
+                                    "outerRange": {
+                                      "start": 62,
+                                      "end": 65
+                                    },
+                                    "innerRange": {
+                                      "start": 0,
+                                      "end": 3
+                                    },
+                                    "pairs": []
+                                  }
                                 },
                                 {
                                   "type": "boolean",
@@ -317,19 +309,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                   "end": 65
                                 },
                                 "value": "qux",
-                                "childrenMaps": [
-                                  {
-                                    "outerRange": {
-                                      "start": 62,
-                                      "end": 65
-                                    },
-                                    "innerRange": {
-                                      "start": 0,
-                                      "end": 3
-                                    },
-                                    "pairs": []
-                                  }
-                                ]
+                                "valueMap": {
+                                  "outerRange": {
+                                    "start": 62,
+                                    "end": 65
+                                  },
+                                  "innerRange": {
+                                    "start": 0,
+                                    "end": 3
+                                  },
+                                  "pairs": []
+                                }
                               },
                               "sep": {
                                 "start": 66,
@@ -387,19 +377,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                   "end": 65
                                 },
                                 "value": "qux",
-                                "childrenMaps": [
-                                  {
-                                    "outerRange": {
-                                      "start": 62,
-                                      "end": 65
-                                    },
-                                    "innerRange": {
-                                      "start": 0,
-                                      "end": 3
-                                    },
-                                    "pairs": []
-                                  }
-                                ]
+                                "valueMap": {
+                                  "outerRange": {
+                                    "start": 62,
+                                    "end": 65
+                                  },
+                                  "innerRange": {
+                                    "start": 0,
+                                    "end": 3
+                                  },
+                                  "pairs": []
+                                }
                               },
                               {
                                 "type": "boolean",
@@ -417,19 +405,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             "sep": {
                               "start": 66,
@@ -465,25 +451,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                   "end": 16
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 16
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 16
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 4,
+                      "end": 16
                     },
                     "value": "advancements"
                   }
@@ -594,19 +578,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                   "end": 65
                                 },
                                 "value": "qux",
-                                "childrenMaps": [
-                                  {
-                                    "outerRange": {
-                                      "start": 62,
-                                      "end": 65
-                                    },
-                                    "innerRange": {
-                                      "start": 0,
-                                      "end": 3
-                                    },
-                                    "pairs": []
-                                  }
-                                ]
+                                "valueMap": {
+                                  "outerRange": {
+                                    "start": 62,
+                                    "end": 65
+                                  },
+                                  "innerRange": {
+                                    "start": 0,
+                                    "end": 3
+                                  },
+                                  "pairs": []
+                                }
                               },
                               {
                                 "type": "boolean",
@@ -624,19 +606,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             "sep": {
                               "start": 66,
@@ -694,19 +674,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             {
                               "type": "boolean",
@@ -724,19 +702,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 65
                             },
                             "value": "qux",
-                            "childrenMaps": [
-                              {
-                                "outerRange": {
-                                  "start": 62,
-                                  "end": 65
-                                },
-                                "innerRange": {
-                                  "start": 0,
-                                  "end": 3
-                                },
-                                "pairs": []
-                              }
-                            ]
+                            "valueMap": {
+                              "outerRange": {
+                                "start": 62,
+                                "end": 65
+                              },
+                              "innerRange": {
+                                "start": 0,
+                                "end": 3
+                              },
+                              "pairs": []
+                            }
                           },
                           "sep": {
                             "start": 66,
@@ -794,25 +770,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                   "end": 16
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 16
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 16
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 4,
+                      "end": 16
                     },
                     "value": "advancements"
                   }
@@ -919,19 +893,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                   "end": 65
                                 },
                                 "value": "qux",
-                                "childrenMaps": [
-                                  {
-                                    "outerRange": {
-                                      "start": 62,
-                                      "end": 65
-                                    },
-                                    "innerRange": {
-                                      "start": 0,
-                                      "end": 3
-                                    },
-                                    "pairs": []
-                                  }
-                                ]
+                                "valueMap": {
+                                  "outerRange": {
+                                    "start": 62,
+                                    "end": 65
+                                  },
+                                  "innerRange": {
+                                    "start": 0,
+                                    "end": 3
+                                  },
+                                  "pairs": []
+                                }
                               },
                               {
                                 "type": "boolean",
@@ -949,19 +921,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             "sep": {
                               "start": 66,
@@ -1019,19 +989,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             {
                               "type": "boolean",
@@ -1049,19 +1017,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 65
                             },
                             "value": "qux",
-                            "childrenMaps": [
-                              {
-                                "outerRange": {
-                                  "start": 62,
-                                  "end": 65
-                                },
-                                "innerRange": {
-                                  "start": 0,
-                                  "end": 3
-                                },
-                                "pairs": []
-                              }
-                            ]
+                            "valueMap": {
+                              "outerRange": {
+                                "start": 62,
+                                "end": 65
+                              },
+                              "innerRange": {
+                                "start": 0,
+                                "end": 3
+                              },
+                              "pairs": []
+                            }
                           },
                           "sep": {
                             "start": 66,
@@ -1097,25 +1063,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                 "end": 16
               },
               "value": "advancements",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 16
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 12
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 16
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 12
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 12
+                    "start": 4,
+                    "end": 16
                   },
                   "value": "advancements"
                 }
@@ -1226,19 +1190,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                                 "end": 65
                               },
                               "value": "qux",
-                              "childrenMaps": [
-                                {
-                                  "outerRange": {
-                                    "start": 62,
-                                    "end": 65
-                                  },
-                                  "innerRange": {
-                                    "start": 0,
-                                    "end": 3
-                                  },
-                                  "pairs": []
-                                }
-                              ]
+                              "valueMap": {
+                                "outerRange": {
+                                  "start": 62,
+                                  "end": 65
+                                },
+                                "innerRange": {
+                                  "start": 0,
+                                  "end": 3
+                                },
+                                "pairs": []
+                              }
                             },
                             {
                               "type": "boolean",
@@ -1256,19 +1218,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 65
                             },
                             "value": "qux",
-                            "childrenMaps": [
-                              {
-                                "outerRange": {
-                                  "start": 62,
-                                  "end": 65
-                                },
-                                "innerRange": {
-                                  "start": 0,
-                                  "end": 3
-                                },
-                                "pairs": []
-                              }
-                            ]
+                            "valueMap": {
+                              "outerRange": {
+                                "start": 62,
+                                "end": 65
+                              },
+                              "innerRange": {
+                                "start": 0,
+                                "end": 3
+                              },
+                              "pairs": []
+                            }
                           },
                           "sep": {
                             "start": 66,
@@ -1326,19 +1286,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                               "end": 65
                             },
                             "value": "qux",
-                            "childrenMaps": [
-                              {
-                                "outerRange": {
-                                  "start": 62,
-                                  "end": 65
-                                },
-                                "innerRange": {
-                                  "start": 0,
-                                  "end": 3
-                                },
-                                "pairs": []
-                              }
-                            ]
+                            "valueMap": {
+                              "outerRange": {
+                                "start": 62,
+                                "end": 65
+                              },
+                              "innerRange": {
+                                "start": 0,
+                                "end": 3
+                              },
+                              "pairs": []
+                            }
                           },
                           {
                             "type": "boolean",
@@ -1356,19 +1314,17 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                             "end": 65
                           },
                           "value": "qux",
-                          "childrenMaps": [
-                            {
-                              "outerRange": {
-                                "start": 62,
-                                "end": 65
-                              },
-                              "innerRange": {
-                                "start": 0,
-                                "end": 3
-                              },
-                              "pairs": []
-                            }
-                          ]
+                          "valueMap": {
+                            "outerRange": {
+                              "start": 62,
+                              "end": 65
+                            },
+                            "innerRange": {
+                              "start": 0,
+                              "end": 3
+                            },
+                            "pairs": []
+                          }
                         },
                         "sep": {
                           "start": 66,
@@ -1458,25 +1414,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                     "end": 16
                   },
                   "value": "advancements",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 16
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 12
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 16
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 12
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 12
+                        "start": 4,
+                        "end": 16
                       },
                       "value": "advancements"
                     }
@@ -1498,25 +1452,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "end": 16
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 16
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 16
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 4,
+                      "end": 16
                     },
                     "value": "advancements"
                   }
@@ -1553,25 +1505,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                     "end": 37
                   },
                   "value": "advancements",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 25,
-                        "end": 37
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 12
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 25,
+                      "end": 37
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 12
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 12
+                        "start": 25,
+                        "end": 37
                       },
                       "value": "advancements"
                     }
@@ -1593,25 +1543,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "end": 37
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 25,
-                      "end": 37
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 25,
+                    "end": 37
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 25,
+                      "end": 37
                     },
                     "value": "advancements"
                   }
@@ -1659,25 +1607,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "end": 16
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 16
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 16
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 4,
+                      "end": 16
                     },
                     "value": "advancements"
                   }
@@ -1699,25 +1645,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                 "end": 16
               },
               "value": "advancements",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 16
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 12
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 16
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 12
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 12
+                    "start": 4,
+                    "end": 16
                   },
                   "value": "advancements"
                 }
@@ -1754,25 +1698,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                   "end": 37
                 },
                 "value": "advancements",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 25,
-                      "end": 37
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 12
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 25,
+                    "end": 37
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 12
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 12
+                      "start": 25,
+                      "end": 37
                     },
                     "value": "advancements"
                   }
@@ -1794,25 +1736,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
                 "end": 37
               },
               "value": "advancements",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 25,
-                    "end": 37
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 12
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 25,
+                  "end": 37
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 12
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 12
+                    "start": 25,
+                    "end": 37
                   },
                   "value": "advancements"
                 }
@@ -1901,25 +1841,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                     "end": 12
                   },
                   "value": "distance",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 12
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 12
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 4,
+                        "end": 12
                       },
                       "value": "distance"
                     }
@@ -1963,25 +1901,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                   "end": 12
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "distance"
                   }
@@ -2040,25 +1976,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                     "end": 30
                   },
                   "value": "distance",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 22,
-                        "end": 30
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 22,
+                      "end": 30
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 22,
+                        "end": 30
                       },
                       "value": "distance"
                     }
@@ -2110,25 +2044,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                   "end": 30
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 22,
-                      "end": 30
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 22,
+                    "end": 30
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 22,
+                      "end": 30
                     },
                     "value": "distance"
                   }
@@ -2206,25 +2138,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                   "end": 12
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "distance"
                   }
@@ -2268,25 +2198,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                 "end": 12
               },
               "value": "distance",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 12
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 12
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 4,
+                    "end": 12
                   },
                   "value": "distance"
                 }
@@ -2345,25 +2273,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                   "end": 30
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 22,
-                      "end": 30
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 22,
+                    "end": 30
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 22,
+                      "end": 30
                     },
                     "value": "distance"
                   }
@@ -2415,25 +2341,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
                 "end": 30
               },
               "value": "distance",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 22,
-                    "end": 30
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 22,
+                  "end": 30
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 22,
+                    "end": 30
                   },
                   "value": "distance"
                 }
@@ -2562,25 +2486,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
                     "end": 12
                   },
                   "value": "distance",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 12
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 12
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 4,
+                        "end": 12
                       },
                       "value": "distance"
                     }
@@ -2624,25 +2546,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
                   "end": 12
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "distance"
                   }
@@ -2712,25 +2632,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
                   "end": 12
                 },
                 "value": "distance",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "distance"
                   }
@@ -2774,25 +2692,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
                 "end": 12
               },
               "value": "distance",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 12
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 12
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 4,
+                    "end": 12
                   },
                   "value": "distance"
                 }
@@ -2896,25 +2812,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 12
                   },
                   "value": "gamemode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 12
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 12
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 4,
+                        "end": 12
                       },
                       "value": "gamemode"
                     }
@@ -2942,25 +2856,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                         "end": 25
                       },
                       "value": "creative",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 17,
-                            "end": 25
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 8
-                          },
-                          "pairs": []
-                        }
-                      ],
+                      "valueMap": {
+                        "outerRange": {
+                          "start": 17,
+                          "end": 25
+                        },
+                        "innerRange": {
+                          "start": 0,
+                          "end": 8
+                        },
+                        "pairs": []
+                      },
                       "children": [
                         {
                           "type": "literal",
                           "range": {
-                            "start": 0,
-                            "end": 8
+                            "start": 17,
+                            "end": 25
                           },
                           "value": "creative"
                         }
@@ -2975,25 +2887,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 25
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 17,
-                          "end": 25
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 17,
+                        "end": 25
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 17,
+                          "end": 25
                         },
                         "value": "creative"
                       }
@@ -3008,25 +2918,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 12
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "gamemode"
                   }
@@ -3058,25 +2966,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 25
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 17,
-                          "end": 25
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 17,
+                        "end": 25
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 17,
+                          "end": 25
                         },
                         "value": "creative"
                       }
@@ -3091,25 +2997,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 25
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 17,
-                        "end": 25
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 17,
+                      "end": 25
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 17,
+                        "end": 25
                       },
                       "value": "creative"
                     }
@@ -3135,25 +3039,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 36
                   },
                   "value": "gamemode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 28,
-                        "end": 36
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 28,
+                      "end": 36
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 28,
+                        "end": 36
                       },
                       "value": "gamemode"
                     }
@@ -3181,25 +3083,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                         "end": 50
                       },
                       "value": "adventure",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 41,
-                            "end": 50
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 9
-                          },
-                          "pairs": []
-                        }
-                      ],
+                      "valueMap": {
+                        "outerRange": {
+                          "start": 41,
+                          "end": 50
+                        },
+                        "innerRange": {
+                          "start": 0,
+                          "end": 9
+                        },
+                        "pairs": []
+                      },
                       "children": [
                         {
                           "type": "literal",
                           "range": {
-                            "start": 0,
-                            "end": 9
+                            "start": 41,
+                            "end": 50
                           },
                           "value": "adventure"
                         }
@@ -3214,25 +3114,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 50
                     },
                     "value": "adventure",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 41,
-                          "end": 50
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 9
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 41,
+                        "end": 50
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 9
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 9
+                          "start": 41,
+                          "end": 50
                         },
                         "value": "adventure"
                       }
@@ -3247,25 +3145,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 36
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 28,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 28,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 28,
+                      "end": 36
                     },
                     "value": "gamemode"
                   }
@@ -3297,25 +3193,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 50
                     },
                     "value": "adventure",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 41,
-                          "end": 50
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 9
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 41,
+                        "end": 50
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 9
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 9
+                          "start": 41,
+                          "end": 50
                         },
                         "value": "adventure"
                       }
@@ -3330,25 +3224,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 50
                   },
                   "value": "adventure",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 41,
-                        "end": 50
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 41,
+                      "end": 50
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 41,
+                        "end": 50
                       },
                       "value": "adventure"
                     }
@@ -3385,25 +3277,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 12
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "gamemode"
                   }
@@ -3431,25 +3321,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 25
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 17,
-                          "end": 25
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 17,
+                        "end": 25
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 17,
+                          "end": 25
                         },
                         "value": "creative"
                       }
@@ -3464,25 +3352,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 25
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 17,
-                        "end": 25
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 17,
+                      "end": 25
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 17,
+                        "end": 25
                       },
                       "value": "creative"
                     }
@@ -3497,25 +3383,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                 "end": 12
               },
               "value": "gamemode",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 12
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 12
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 4,
+                    "end": 12
                   },
                   "value": "gamemode"
                 }
@@ -3547,25 +3431,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 25
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 17,
-                        "end": 25
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 17,
+                      "end": 25
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 17,
+                        "end": 25
                       },
                       "value": "creative"
                     }
@@ -3580,25 +3462,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 25
                 },
                 "value": "creative",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 17,
-                      "end": 25
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 17,
+                    "end": 25
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 17,
+                      "end": 25
                     },
                     "value": "creative"
                   }
@@ -3624,25 +3504,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 36
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 28,
-                      "end": 36
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 28,
+                    "end": 36
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 28,
+                      "end": 36
                     },
                     "value": "gamemode"
                   }
@@ -3670,25 +3548,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                       "end": 50
                     },
                     "value": "adventure",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 41,
-                          "end": 50
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 9
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 41,
+                        "end": 50
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 9
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 9
+                          "start": 41,
+                          "end": 50
                         },
                         "value": "adventure"
                       }
@@ -3703,25 +3579,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 50
                   },
                   "value": "adventure",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 41,
-                        "end": 50
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 41,
+                      "end": 50
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 41,
+                        "end": 50
                       },
                       "value": "adventure"
                     }
@@ -3736,25 +3610,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                 "end": 36
               },
               "value": "gamemode",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 28,
-                    "end": 36
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 28,
+                  "end": 36
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 28,
+                    "end": 36
                   },
                   "value": "gamemode"
                 }
@@ -3786,25 +3658,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                     "end": 50
                   },
                   "value": "adventure",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 41,
-                        "end": 50
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 41,
+                      "end": 50
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 41,
+                        "end": 50
                       },
                       "value": "adventure"
                     }
@@ -3819,25 +3689,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
                   "end": 50
                 },
                 "value": "adventure",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 41,
-                      "end": 50
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 41,
+                    "end": 50
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 41,
+                      "end": 50
                     },
                     "value": "adventure"
                   }
@@ -3906,25 +3774,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 12
                   },
                   "value": "gamemode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 12
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 12
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 4,
+                        "end": 12
                       },
                       "value": "gamemode"
                     }
@@ -3944,25 +3810,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                         "end": 23
                       },
                       "value": "creative",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 15,
-                            "end": 23
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 8
-                          },
-                          "pairs": []
-                        }
-                      ],
+                      "valueMap": {
+                        "outerRange": {
+                          "start": 15,
+                          "end": 23
+                        },
+                        "innerRange": {
+                          "start": 0,
+                          "end": 8
+                        },
+                        "pairs": []
+                      },
                       "children": [
                         {
                           "type": "literal",
                           "range": {
-                            "start": 0,
-                            "end": 8
+                            "start": 15,
+                            "end": 23
                           },
                           "value": "creative"
                         }
@@ -3977,25 +3841,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 23
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 15,
-                          "end": 23
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 15,
+                        "end": 23
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 15,
+                          "end": 23
                         },
                         "value": "creative"
                       }
@@ -4010,25 +3872,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 12
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "gamemode"
                   }
@@ -4052,25 +3912,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 23
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 15,
-                          "end": 23
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 15,
+                        "end": 23
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 15,
+                          "end": 23
                         },
                         "value": "creative"
                       }
@@ -4085,25 +3943,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 23
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 15,
-                        "end": 23
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 15,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 15,
+                        "end": 23
                       },
                       "value": "creative"
                     }
@@ -4129,25 +3985,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 34
                   },
                   "value": "gamemode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 26,
-                        "end": 34
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 26,
+                      "end": 34
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 26,
+                        "end": 34
                       },
                       "value": "gamemode"
                     }
@@ -4167,25 +4021,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                         "end": 44
                       },
                       "value": "unknown",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 37,
-                            "end": 44
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 7
-                          },
-                          "pairs": []
-                        }
-                      ],
+                      "valueMap": {
+                        "outerRange": {
+                          "start": 37,
+                          "end": 44
+                        },
+                        "innerRange": {
+                          "start": 0,
+                          "end": 7
+                        },
+                        "pairs": []
+                      },
                       "children": [
                         {
                           "type": "literal",
                           "range": {
-                            "start": 0,
-                            "end": 0
+                            "start": 37,
+                            "end": 37
                           },
                           "value": ""
                         }
@@ -4200,25 +4052,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 44
                     },
                     "value": "unknown",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 37,
-                          "end": 44
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 7
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 37,
+                        "end": 44
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 7
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 0
+                          "start": 37,
+                          "end": 37
                         },
                         "value": ""
                       }
@@ -4233,25 +4083,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 34
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 26,
-                      "end": 34
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 26,
+                    "end": 34
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 26,
+                      "end": 34
                     },
                     "value": "gamemode"
                   }
@@ -4275,25 +4123,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 44
                     },
                     "value": "unknown",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 37,
-                          "end": 44
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 7
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 37,
+                        "end": 44
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 7
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 0
+                          "start": 37,
+                          "end": 37
                         },
                         "value": ""
                       }
@@ -4308,25 +4154,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 44
                   },
                   "value": "unknown",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 37,
-                        "end": 44
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 7
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 37,
+                      "end": 44
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 37,
+                        "end": 37
                       },
                       "value": ""
                     }
@@ -4363,25 +4207,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 12
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 12
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 12
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 4,
+                      "end": 12
                     },
                     "value": "gamemode"
                   }
@@ -4401,25 +4243,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 23
                     },
                     "value": "creative",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 15,
-                          "end": 23
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 15,
+                        "end": 23
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 8
+                          "start": 15,
+                          "end": 23
                         },
                         "value": "creative"
                       }
@@ -4434,25 +4274,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 23
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 15,
-                        "end": 23
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 15,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 15,
+                        "end": 23
                       },
                       "value": "creative"
                     }
@@ -4467,25 +4305,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                 "end": 12
               },
               "value": "gamemode",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 12
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 12
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 4,
+                    "end": 12
                   },
                   "value": "gamemode"
                 }
@@ -4509,25 +4345,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 23
                   },
                   "value": "creative",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 15,
-                        "end": 23
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 15,
+                      "end": 23
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 8
+                        "start": 15,
+                        "end": 23
                       },
                       "value": "creative"
                     }
@@ -4542,25 +4376,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 23
                 },
                 "value": "creative",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 15,
-                      "end": 23
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 15,
+                    "end": 23
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 15,
+                      "end": 23
                     },
                     "value": "creative"
                   }
@@ -4586,25 +4418,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 34
                 },
                 "value": "gamemode",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 26,
-                      "end": 34
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 8
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 26,
+                    "end": 34
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 8
+                      "start": 26,
+                      "end": 34
                     },
                     "value": "gamemode"
                   }
@@ -4624,25 +4454,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                       "end": 44
                     },
                     "value": "unknown",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 37,
-                          "end": 44
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 7
-                        },
-                        "pairs": []
-                      }
-                    ],
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 37,
+                        "end": 44
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 7
+                      },
+                      "pairs": []
+                    },
                     "children": [
                       {
                         "type": "literal",
                         "range": {
-                          "start": 0,
-                          "end": 0
+                          "start": 37,
+                          "end": 37
                         },
                         "value": ""
                       }
@@ -4657,25 +4485,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 44
                   },
                   "value": "unknown",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 37,
-                        "end": 44
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 7
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 37,
+                      "end": 44
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 37,
+                        "end": 37
                       },
                       "value": ""
                     }
@@ -4690,25 +4516,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                 "end": 34
               },
               "value": "gamemode",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 26,
-                    "end": 34
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 8
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 26,
+                  "end": 34
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 8
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 8
+                    "start": 26,
+                    "end": 34
                   },
                   "value": "gamemode"
                 }
@@ -4732,25 +4556,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                     "end": 44
                   },
                   "value": "unknown",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 37,
-                        "end": 44
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 7
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 37,
+                      "end": 44
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 7
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 0
+                        "start": 37,
+                        "end": 37
                       },
                       "value": ""
                     }
@@ -4765,25 +4587,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
                   "end": 44
                 },
                 "value": "unknown",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 37,
-                      "end": 44
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 7
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 37,
+                    "end": 44
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 7
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 0
+                      "start": 37,
+                      "end": 37
                     },
                     "value": ""
                   }
@@ -4869,25 +4689,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                     "end": 9
                   },
                   "value": "level",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 9
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 9
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 4,
+                        "end": 9
                       },
                       "value": "level"
                     }
@@ -4923,25 +4741,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                   "end": 9
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "level"
                   }
@@ -4992,25 +4808,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                     "end": 22
                   },
                   "value": "level",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 17,
-                        "end": 22
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 17,
+                      "end": 22
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 17,
+                        "end": 22
                       },
                       "value": "level"
                     }
@@ -5046,25 +4860,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                   "end": 22
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 17,
-                      "end": 22
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 17,
+                    "end": 22
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 17,
+                      "end": 22
                     },
                     "value": "level"
                   }
@@ -5126,25 +4938,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                   "end": 9
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "level"
                   }
@@ -5180,25 +4990,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                 "end": 9
               },
               "value": "level",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 9
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 4,
+                    "end": 9
                   },
                   "value": "level"
                 }
@@ -5249,25 +5057,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                   "end": 22
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 17,
-                      "end": 22
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 17,
+                    "end": 22
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 17,
+                      "end": 22
                     },
                     "value": "level"
                   }
@@ -5303,25 +5109,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
                 "end": 22
               },
               "value": "level",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 17,
-                    "end": 22
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 17,
+                  "end": 22
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 17,
+                    "end": 22
                   },
                   "value": "level"
                 }
@@ -5440,25 +5244,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
                     "end": 9
                   },
                   "value": "level",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 9
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 9
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 4,
+                        "end": 9
                       },
                       "value": "level"
                     }
@@ -5502,25 +5304,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
                   "end": 9
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "level"
                   }
@@ -5590,25 +5390,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
                   "end": 9
                 },
                 "value": "level",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "level"
                   }
@@ -5652,25 +5450,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
                 "end": 9
               },
               "value": "level",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 9
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 4,
+                    "end": 9
                   },
                   "value": "level"
                 }
@@ -5772,25 +5568,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
                     "end": 9
                   },
                   "value": "limit",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 9
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 9
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 4,
+                        "end": 9
                       },
                       "value": "limit"
                     }
@@ -5812,25 +5606,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
                   "end": 9
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "limit"
                   }
@@ -5878,25 +5670,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
                   "end": 9
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "limit"
                   }
@@ -5918,25 +5708,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
                 "end": 9
               },
               "value": "limit",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 9
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 4,
+                    "end": 9
                   },
                   "value": "limit"
                 }
@@ -6016,25 +5804,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 8
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "name"
                     }
@@ -6062,31 +5848,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 23
                       },
                       "value": "SPGoding",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 14,
-                            "end": 22
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 8
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": true,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 13,
-                      "end": 23
-                    },
-                    "value": "SPGoding",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 14,
                           "end": 22
@@ -6097,7 +5859,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": true,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 13,
+                      "end": 23
+                    },
+                    "value": "SPGoding",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 14,
+                        "end": 22
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -6108,25 +5890,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 8
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "name"
                   }
@@ -6158,31 +5938,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 23
                     },
                     "value": "SPGoding",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 14,
-                          "end": 22
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 13,
-                    "end": 23
-                  },
-                  "value": "SPGoding",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 14,
                         "end": 22
@@ -6193,7 +5949,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 13,
+                    "end": 23
+                  },
+                  "value": "SPGoding",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 14,
+                      "end": 22
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -6215,25 +5991,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 32
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 27,
-                        "end": 31
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 27,
+                      "end": 31
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 27,
+                        "end": 31
                       },
                       "value": "name"
                     }
@@ -6261,31 +6035,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 43
                       },
                       "value": "Misode",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 37,
-                            "end": 43
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 6
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": true,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 37,
-                      "end": 43
-                    },
-                    "value": "Misode",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 37,
                           "end": 43
@@ -6296,7 +6046,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": true,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 37,
+                      "end": 43
+                    },
+                    "value": "Misode",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 37,
+                        "end": 43
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 6
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -6307,25 +6077,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 32
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 27,
-                      "end": 31
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 27,
+                    "end": 31
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 27,
+                      "end": 31
                     },
                     "value": "name"
                   }
@@ -6357,31 +6125,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 43
                     },
                     "value": "Misode",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 37,
-                          "end": 43
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 6
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 37,
-                    "end": 43
-                  },
-                  "value": "Misode",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 37,
                         "end": 43
@@ -6392,7 +6136,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 37,
+                    "end": 43
+                  },
+                  "value": "Misode",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 37,
+                      "end": 43
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -6414,25 +6178,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 52
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 47,
-                        "end": 51
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 47,
+                      "end": 51
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 47,
+                        "end": 51
                       },
                       "value": "name"
                     }
@@ -6460,31 +6222,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 57
                       },
                       "value": "",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 57,
-                            "end": 57
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 0
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": true,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 57,
-                      "end": 57
-                    },
-                    "value": "",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 57,
                           "end": 57
@@ -6495,7 +6233,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": true,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 57,
+                      "end": 57
+                    },
+                    "value": "",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 57,
+                        "end": 57
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -6506,25 +6264,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 52
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 47,
-                      "end": 51
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 47,
+                    "end": 51
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 47,
+                      "end": 51
                     },
                     "value": "name"
                   }
@@ -6556,31 +6312,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 57
                     },
                     "value": "",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 57,
-                          "end": 57
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 0
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 57,
-                    "end": 57
-                  },
-                  "value": "",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 57,
                         "end": 57
@@ -6591,7 +6323,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 57,
+                    "end": 57
+                  },
+                  "value": "",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 57,
+                      "end": 57
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -6624,25 +6376,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 8
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "name"
                   }
@@ -6670,31 +6420,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 23
                     },
                     "value": "SPGoding",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 14,
-                          "end": 22
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 13,
-                    "end": 23
-                  },
-                  "value": "SPGoding",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 14,
                         "end": 22
@@ -6705,7 +6431,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 13,
+                    "end": 23
+                  },
+                  "value": "SPGoding",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 14,
+                      "end": 22
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -6716,25 +6462,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                 "end": 8
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "name"
                 }
@@ -6766,31 +6510,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 23
                   },
                   "value": "SPGoding",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 14,
-                        "end": 22
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": true,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 13,
-                  "end": 23
-                },
-                "value": "SPGoding",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 14,
                       "end": 22
@@ -6801,7 +6521,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": true,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 13,
+                  "end": 23
+                },
+                "value": "SPGoding",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 14,
+                    "end": 22
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -6823,25 +6563,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 32
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 27,
-                      "end": 31
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 27,
+                    "end": 31
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 27,
+                      "end": 31
                     },
                     "value": "name"
                   }
@@ -6869,31 +6607,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 43
                     },
                     "value": "Misode",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 37,
-                          "end": 43
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 6
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 37,
-                    "end": 43
-                  },
-                  "value": "Misode",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 37,
                         "end": 43
@@ -6904,7 +6618,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 37,
+                    "end": 43
+                  },
+                  "value": "Misode",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 37,
+                      "end": 43
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -6915,25 +6649,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                 "end": 32
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 27,
-                    "end": 31
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 27,
+                  "end": 31
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 27,
+                    "end": 31
                   },
                   "value": "name"
                 }
@@ -6965,31 +6697,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 43
                   },
                   "value": "Misode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 37,
-                        "end": 43
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 6
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": true,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 37,
-                  "end": 43
-                },
-                "value": "Misode",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 37,
                       "end": 43
@@ -7000,7 +6708,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": true,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 37,
+                  "end": 43
+                },
+                "value": "Misode",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 37,
+                    "end": 43
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -7022,25 +6750,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   "end": 52
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 47,
-                      "end": 51
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 47,
+                    "end": 51
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 47,
+                      "end": 51
                     },
                     "value": "name"
                   }
@@ -7068,31 +6794,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 57
                     },
                     "value": "",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 57,
-                          "end": 57
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 0
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": true,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 57,
-                    "end": 57
-                  },
-                  "value": "",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 57,
                         "end": 57
@@ -7103,7 +6805,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": true,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 57,
+                    "end": 57
+                  },
+                  "value": "",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 57,
+                      "end": 57
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -7114,25 +6836,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                 "end": 52
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 47,
-                    "end": 51
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 47,
+                  "end": 51
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 47,
+                    "end": 51
                   },
                   "value": "name"
                 }
@@ -7164,31 +6884,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     "end": 57
                   },
                   "value": "",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 57,
-                        "end": 57
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 0
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": true,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 57,
-                  "end": 57
-                },
-                "value": "",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 57,
                       "end": 57
@@ -7199,7 +6895,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": true,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 57,
+                  "end": 57
+                },
+                "value": "",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 57,
+                    "end": 57
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -7264,25 +6980,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 8
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 4,
+                        "end": 8
                       },
                       "value": "name"
                     }
@@ -7302,31 +7016,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 21
                       },
                       "value": "SPGoding",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 12,
-                            "end": 20
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 8
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": false,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 11,
-                      "end": 21
-                    },
-                    "value": "SPGoding",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 12,
                           "end": 20
@@ -7337,7 +7027,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 11,
+                      "end": 21
+                    },
+                    "value": "SPGoding",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 12,
+                        "end": 20
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 8
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -7348,25 +7058,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 8
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "name"
                   }
@@ -7390,31 +7098,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 21
                     },
                     "value": "SPGoding",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 12,
-                          "end": 20
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 11,
-                    "end": 21
-                  },
-                  "value": "SPGoding",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 12,
                         "end": 20
@@ -7425,7 +7109,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 11,
+                    "end": 21
+                  },
+                  "value": "SPGoding",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 12,
+                      "end": 20
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -7447,25 +7151,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 30
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 25,
-                        "end": 29
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 25,
+                      "end": 29
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 25,
+                        "end": 29
                       },
                       "value": "name"
                     }
@@ -7485,31 +7187,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 39
                       },
                       "value": "Misode",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 33,
-                            "end": 39
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 6
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": false,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 33,
-                      "end": 39
-                    },
-                    "value": "Misode",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 33,
                           "end": 39
@@ -7520,7 +7198,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 33,
+                      "end": 39
+                    },
+                    "value": "Misode",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 33,
+                        "end": 39
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 6
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -7531,25 +7229,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 30
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 25,
-                      "end": 29
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 25,
+                    "end": 29
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 25,
+                      "end": 29
                     },
                     "value": "name"
                   }
@@ -7573,31 +7269,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 39
                     },
                     "value": "Misode",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 33,
-                          "end": 39
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 6
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 33,
-                    "end": 39
-                  },
-                  "value": "Misode",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 33,
                         "end": 39
@@ -7608,7 +7280,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 33,
+                    "end": 39
+                  },
+                  "value": "Misode",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 33,
+                      "end": 39
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -7630,25 +7322,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 48
                   },
                   "value": "name",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 43,
-                        "end": 47
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 43,
+                      "end": 47
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 43,
+                        "end": 47
                       },
                       "value": "name"
                     }
@@ -7668,31 +7358,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 51
                       },
                       "value": "",
-                      "childrenMaps": [
-                        {
-                          "outerRange": {
-                            "start": 51,
-                            "end": 51
-                          },
-                          "innerRange": {
-                            "start": 0,
-                            "end": 0
-                          },
-                          "pairs": []
-                        }
-                      ]
-                    }
-                  ],
-                  "inverted": false,
-                  "value": {
-                    "type": "string",
-                    "range": {
-                      "start": 51,
-                      "end": 51
-                    },
-                    "value": "",
-                    "childrenMaps": [
-                      {
+                      "valueMap": {
                         "outerRange": {
                           "start": 51,
                           "end": 51
@@ -7703,7 +7369,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         },
                         "pairs": []
                       }
-                    ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "string",
+                    "range": {
+                      "start": 51,
+                      "end": 51
+                    },
+                    "value": "",
+                    "valueMap": {
+                      "outerRange": {
+                        "start": 51,
+                        "end": 51
+                      },
+                      "innerRange": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "pairs": []
+                    }
                   }
                 }
               ],
@@ -7714,25 +7400,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 48
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 43,
-                      "end": 47
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 43,
+                    "end": 47
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 43,
+                      "end": 47
                     },
                     "value": "name"
                   }
@@ -7756,31 +7440,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 51
                     },
                     "value": "",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 51,
-                          "end": 51
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 0
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 51,
-                    "end": 51
-                  },
-                  "value": "",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 51,
                         "end": 51
@@ -7791,7 +7451,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 51,
+                    "end": 51
+                  },
+                  "value": "",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 51,
+                      "end": 51
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "pairs": []
+                  }
                 }
               },
               "end": {
@@ -7824,25 +7504,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 8
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 4,
+                      "end": 8
                     },
                     "value": "name"
                   }
@@ -7862,31 +7540,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 21
                     },
                     "value": "SPGoding",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 12,
-                          "end": 20
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 8
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 11,
-                    "end": 21
-                  },
-                  "value": "SPGoding",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 12,
                         "end": 20
@@ -7897,7 +7551,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 11,
+                    "end": 21
+                  },
+                  "value": "SPGoding",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 12,
+                      "end": 20
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 8
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -7908,25 +7582,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                 "end": 8
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 4,
+                    "end": 8
                   },
                   "value": "name"
                 }
@@ -7950,31 +7622,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 21
                   },
                   "value": "SPGoding",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 12,
-                        "end": 20
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 8
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": false,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 11,
-                  "end": 21
-                },
-                "value": "SPGoding",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 12,
                       "end": 20
@@ -7985,7 +7633,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 11,
+                  "end": 21
+                },
+                "value": "SPGoding",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 12,
+                    "end": 20
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 8
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -8007,25 +7675,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 30
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 25,
-                      "end": 29
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 25,
+                    "end": 29
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 25,
+                      "end": 29
                     },
                     "value": "name"
                   }
@@ -8045,31 +7711,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 39
                     },
                     "value": "Misode",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 33,
-                          "end": 39
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 6
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 33,
-                    "end": 39
-                  },
-                  "value": "Misode",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 33,
                         "end": 39
@@ -8080,7 +7722,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 33,
+                    "end": 39
+                  },
+                  "value": "Misode",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 33,
+                      "end": 39
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 6
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -8091,25 +7753,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                 "end": 30
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 25,
-                    "end": 29
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 25,
+                  "end": 29
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 25,
+                    "end": 29
                   },
                   "value": "name"
                 }
@@ -8133,31 +7793,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 39
                   },
                   "value": "Misode",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 33,
-                        "end": 39
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 6
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": false,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 33,
-                  "end": 39
-                },
-                "value": "Misode",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 33,
                       "end": 39
@@ -8168,7 +7804,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 33,
+                  "end": 39
+                },
+                "value": "Misode",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 33,
+                    "end": 39
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 6
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -8190,25 +7846,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   "end": 48
                 },
                 "value": "name",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 43,
-                      "end": 47
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 43,
+                    "end": 47
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 43,
+                      "end": 47
                     },
                     "value": "name"
                   }
@@ -8228,31 +7882,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 51
                     },
                     "value": "",
-                    "childrenMaps": [
-                      {
-                        "outerRange": {
-                          "start": 51,
-                          "end": 51
-                        },
-                        "innerRange": {
-                          "start": 0,
-                          "end": 0
-                        },
-                        "pairs": []
-                      }
-                    ]
-                  }
-                ],
-                "inverted": false,
-                "value": {
-                  "type": "string",
-                  "range": {
-                    "start": 51,
-                    "end": 51
-                  },
-                  "value": "",
-                  "childrenMaps": [
-                    {
+                    "valueMap": {
                       "outerRange": {
                         "start": 51,
                         "end": 51
@@ -8263,7 +7893,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       },
                       "pairs": []
                     }
-                  ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 51,
+                    "end": 51
+                  },
+                  "value": "",
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 51,
+                      "end": 51
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "pairs": []
+                  }
                 }
               }
             ],
@@ -8274,25 +7924,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                 "end": 48
               },
               "value": "name",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 43,
-                    "end": 47
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 43,
+                  "end": 47
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 43,
+                    "end": 47
                   },
                   "value": "name"
                 }
@@ -8316,31 +7964,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     "end": 51
                   },
                   "value": "",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 51,
-                        "end": 51
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 0
-                      },
-                      "pairs": []
-                    }
-                  ]
-                }
-              ],
-              "inverted": false,
-              "value": {
-                "type": "string",
-                "range": {
-                  "start": 51,
-                  "end": 51
-                },
-                "value": "",
-                "childrenMaps": [
-                  {
+                  "valueMap": {
                     "outerRange": {
                       "start": 51,
                       "end": 51
@@ -8351,7 +7975,27 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     },
                     "pairs": []
                   }
-                ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 51,
+                  "end": 51
+                },
+                "value": "",
+                "valueMap": {
+                  "outerRange": {
+                    "start": 51,
+                    "end": 51
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "pairs": []
+                }
               }
             },
             "end": {
@@ -8433,25 +8077,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                     "end": 7
                   },
                   "value": "nbt",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 7
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 3
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 7
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 3
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 3
+                        "start": 4,
+                        "end": 7
                       },
                       "value": "nbt"
                     }
@@ -8491,25 +8133,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                   "end": 7
                 },
                 "value": "nbt",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 4,
+                      "end": 7
                     },
                     "value": "nbt"
                   }
@@ -8575,25 +8215,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                   "end": 7
                 },
                 "value": "nbt",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 3
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 3
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 3
+                      "start": 4,
+                      "end": 7
                     },
                     "value": "nbt"
                   }
@@ -8633,25 +8271,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
                 "end": 7
               },
               "value": "nbt",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 7
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 7
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 3
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 3
+                    "start": 4,
+                    "end": 7
                   },
                   "value": "nbt"
                 }
@@ -8749,25 +8385,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "end": 13
                   },
                   "value": "predicate",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 13
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 13
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 4,
+                        "end": 13
                       },
                       "value": "predicate"
                     }
@@ -8813,25 +8447,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "end": 13
                 },
                 "value": "predicate",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 13
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 13
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 4,
+                      "end": 13
                     },
                     "value": "predicate"
                   }
@@ -8892,25 +8524,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "end": 40
                   },
                   "value": "predicate",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 31,
-                        "end": 40
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 9
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 31,
+                      "end": 40
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 9
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 9
+                        "start": 31,
+                        "end": 40
                       },
                       "value": "predicate"
                     }
@@ -8964,25 +8594,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "end": 40
                 },
                 "value": "predicate",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 31,
-                      "end": 40
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 31,
+                    "end": 40
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 31,
+                      "end": 40
                     },
                     "value": "predicate"
                   }
@@ -9062,25 +8690,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "end": 13
                 },
                 "value": "predicate",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 13
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 13
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 4,
+                      "end": 13
                     },
                     "value": "predicate"
                   }
@@ -9126,25 +8752,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                 "end": 13
               },
               "value": "predicate",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 13
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 9
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 13
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 9
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 9
+                    "start": 4,
+                    "end": 13
                   },
                   "value": "predicate"
                 }
@@ -9205,25 +8829,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "end": 40
                 },
                 "value": "predicate",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 31,
-                      "end": 40
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 9
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 31,
+                    "end": 40
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 9
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 9
+                      "start": 31,
+                      "end": 40
                     },
                     "value": "predicate"
                   }
@@ -9277,25 +8899,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                 "end": 40
               },
               "value": "predicate",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 31,
-                    "end": 40
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 9
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 31,
+                  "end": 40
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 9
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 9
+                    "start": 31,
+                    "end": 40
                   },
                   "value": "predicate"
                 }
@@ -9407,25 +9027,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
                     "end": 8
                   },
                   "value": "limit",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 3,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 3,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 3,
+                        "end": 8
                       },
                       "value": "limit"
                     }
@@ -9447,25 +9065,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
                   "end": 8
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 3,
+                      "end": 8
                     },
                     "value": "limit"
                   }
@@ -9509,25 +9125,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
                   "end": 8
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 3,
+                      "end": 8
                     },
                     "value": "limit"
                   }
@@ -9549,25 +9163,23 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
                 "end": 8
               },
               "value": "limit",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 3,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 3,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 3,
+                    "end": 8
                   },
                   "value": "limit"
                 }
@@ -9738,25 +9350,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
                     "end": 8
                   },
                   "value": "limit",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 3,
-                        "end": 8
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 3,
+                      "end": 8
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 3,
+                        "end": 8
                       },
                       "value": "limit"
                     }
@@ -9778,25 +9388,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
                   "end": 8
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 3,
+                      "end": 8
                     },
                     "value": "limit"
                   }
@@ -9840,25 +9448,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
                   "end": 8
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 8
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 8
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 3,
+                      "end": 8
                     },
                     "value": "limit"
                   }
@@ -9880,25 +9486,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
                 "end": 8
               },
               "value": "limit",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 3,
-                    "end": 8
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 3,
+                  "end": 8
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 3,
+                    "end": 8
                   },
                   "value": "limit"
                 }
@@ -9986,25 +9590,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                     "end": 7
                   },
                   "value": "type",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 3,
-                        "end": 7
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 4
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 3,
+                      "end": 7
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 4
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 4
+                        "start": 3,
+                        "end": 7
                       },
                       "value": "type"
                     }
@@ -10048,25 +9650,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                   "end": 7
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 3,
+                      "end": 7
                     },
                     "value": "type"
                   }
@@ -10132,25 +9732,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                   "end": 7
                 },
                 "value": "type",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 3,
-                      "end": 7
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 4
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 3,
+                    "end": 7
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 4
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 4
+                      "start": 3,
+                      "end": 7
                     },
                     "value": "type"
                   }
@@ -10194,25 +9792,23 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                 "end": 7
               },
               "value": "type",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 3,
-                    "end": 7
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 3,
+                  "end": 7
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 4
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 4
+                    "start": 3,
+                    "end": 7
                   },
                   "value": "type"
                 }
@@ -10349,25 +9945,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                     "end": 9
                   },
                   "value": "limit",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 4,
-                        "end": 9
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 4,
+                      "end": 9
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 4,
+                        "end": 9
                       },
                       "value": "limit"
                     }
@@ -10389,25 +9983,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                   "end": 9
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "limit"
                   }
@@ -10444,25 +10036,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                     "end": 21
                   },
                   "value": "limit",
-                  "childrenMaps": [
-                    {
-                      "outerRange": {
-                        "start": 16,
-                        "end": 21
-                      },
-                      "innerRange": {
-                        "start": 0,
-                        "end": 5
-                      },
-                      "pairs": []
-                    }
-                  ],
+                  "valueMap": {
+                    "outerRange": {
+                      "start": 16,
+                      "end": 21
+                    },
+                    "innerRange": {
+                      "start": 0,
+                      "end": 5
+                    },
+                    "pairs": []
+                  },
                   "children": [
                     {
                       "type": "literal",
                       "range": {
-                        "start": 0,
-                        "end": 5
+                        "start": 16,
+                        "end": 21
                       },
                       "value": "limit"
                     }
@@ -10484,25 +10074,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                   "end": 21
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 16,
-                      "end": 21
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 16,
+                    "end": 21
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 16,
+                      "end": 21
                     },
                     "value": "limit"
                   }
@@ -10550,25 +10138,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                   "end": 9
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 4,
-                      "end": 9
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 4,
+                    "end": 9
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 4,
+                      "end": 9
                     },
                     "value": "limit"
                   }
@@ -10590,25 +10176,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                 "end": 9
               },
               "value": "limit",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 4,
-                    "end": 9
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 4,
+                  "end": 9
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 4,
+                    "end": 9
                   },
                   "value": "limit"
                 }
@@ -10645,25 +10229,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                   "end": 21
                 },
                 "value": "limit",
-                "childrenMaps": [
-                  {
-                    "outerRange": {
-                      "start": 16,
-                      "end": 21
-                    },
-                    "innerRange": {
-                      "start": 0,
-                      "end": 5
-                    },
-                    "pairs": []
-                  }
-                ],
+                "valueMap": {
+                  "outerRange": {
+                    "start": 16,
+                    "end": 21
+                  },
+                  "innerRange": {
+                    "start": 0,
+                    "end": 5
+                  },
+                  "pairs": []
+                },
                 "children": [
                   {
                     "type": "literal",
                     "range": {
-                      "start": 0,
-                      "end": 5
+                      "start": 16,
+                      "end": 21
                     },
                     "value": "limit"
                   }
@@ -10685,25 +10267,23 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
                 "end": 21
               },
               "value": "limit",
-              "childrenMaps": [
-                {
-                  "outerRange": {
-                    "start": 16,
-                    "end": 21
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 5
-                  },
-                  "pairs": []
-                }
-              ],
+              "valueMap": {
+                "outerRange": {
+                  "start": 16,
+                  "end": 21
+                },
+                "innerRange": {
+                  "start": 0,
+                  "end": 5
+                },
+                "pairs": []
+              },
               "children": [
                 {
                   "type": "literal",
                   "range": {
-                    "start": 0,
-                    "end": 5
+                    "start": 16,
+                    "end": 21
                   },
                   "value": "limit"
                 }
@@ -10779,19 +10359,17 @@ exports['mcfunction argument minecraft:entity Parse "Player" with {"amount":"mul
         "end": 6
       },
       "value": "Player",
-      "childrenMaps": [
-        {
-          "outerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "pairs": []
-        }
-      ]
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: entity>"
   },
@@ -10813,19 +10391,17 @@ exports['mcfunction argument minecraft:entity Parse "Player" with {"amount":"sin
         "end": 6
       },
       "value": "Player",
-      "childrenMaps": [
-        {
-          "outerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "pairs": []
-        }
-      ]
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 6
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: entity>"
   },
@@ -10906,19 +10482,17 @@ exports['mcfunction argument minecraft:entity Parse "this_is_a_super_long_player
         "end": 32
       },
       "value": "this_is_a_super_long_player_name",
-      "childrenMaps": [
-        {
-          "outerRange": {
-            "start": 0,
-            "end": 32
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 32
-          },
-          "pairs": []
-        }
-      ]
+      "valueMap": {
+        "outerRange": {
+          "start": 0,
+          "end": 32
+        },
+        "innerRange": {
+          "start": 0,
+          "end": 32
+        },
+        "pairs": []
+      }
     },
     "hover": "<test: entity>"
   },
