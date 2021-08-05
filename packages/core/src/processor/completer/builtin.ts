@@ -88,13 +88,13 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 	const configStringQuote: boolean | null = null // TODO: Use real config.
 	const configStringQuoteType: QuoteTypeConfig | null = null // TODO: Use real config.
 
-	// TODO: Complete when the cursor is outside the quotes.
-
-	if (node.children && Range.containsInclusive(node.valueMap.outerRange, ctx.offset)) {
+	if (node.children?.length) {
 		const completer = ctx.meta.getCompleter(node.children[0].type)
+		// FIXME: Escape quotes/slashes in the result.
 		return completer(node.children[0], ctx)
 	}
 
+	// TODO: Complete quotes.
 	return []
 }
 

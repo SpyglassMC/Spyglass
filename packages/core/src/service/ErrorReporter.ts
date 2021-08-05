@@ -27,18 +27,8 @@ export class ErrorReporter {
 	 * Adds all errors from another reporter's error stack to the current reporter.
 	 * This method does not affect the passed-in reporter.
 	 */
-	absorb(reporter: ErrorReporter, mapping?: { map: IndexMap, doc: TextDocument }): void {
-		const incomingErrors = mapping ? reporter.errors.map(e => {
-			e.range = IndexMap.toOuterRange(mapping.map, e.range)
-			if (e.info?.related) {
-				e.info.related = e.info.related.map(v => ({
-					location: ErrorReporter.toOuterLocation(mapping.map, v.location, mapping.doc),
-					message: v.message,
-				}))
-			}
-			return e
-		}) : reporter.errors
-		this.errors.push(...incomingErrors)
+	absorb(reporter: ErrorReporter): void {
+		this.errors.push(...reporter.errors)
 	}
 
 	private static toOuterLocation(map: IndexMap, inner: Location, doc: TextDocument): Location {

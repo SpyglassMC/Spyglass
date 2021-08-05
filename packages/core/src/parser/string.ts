@@ -112,10 +112,9 @@ export function parseStringValue<T extends Returnable>(parser: Parser<T>, value:
 	const valueSrc = new Source(value, IndexMap.merge(src.indexMap, map))
 	const valueCtx = {
 		...ctx,
-		doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, value),
+		doc: TextDocument.create(ctx.doc.uri, ctx.doc.languageId, ctx.doc.version, value),
 	}
 	// TODO: Mark trailing string as errors.
-	// FIXME: Map symbol locations.
 	return parser(valueSrc, valueCtx)
 }
 
