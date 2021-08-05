@@ -33,7 +33,7 @@ export function stringColor(): JsonChecker {
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else {
-			const result = parseStringValue(parser, node.value, node.childrenMaps[0], ctx)
+			const result = parseStringValue(parser, node.value, node.valueMap, ctx.src, ctx)
 			if (result !== Failure) {
 				ctx.ops.set(node, 'color', {
 					value: result,

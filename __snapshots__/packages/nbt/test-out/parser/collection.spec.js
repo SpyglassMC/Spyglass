@@ -422,30 +422,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
               "end": 9
             },
             "value": "string",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 2,
-                  "end": 8
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 6
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 1,
-            "end": 9
-          },
-          "value": "string",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 2,
                 "end": 8
@@ -456,7 +433,26 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 1,
+            "end": 9
+          },
+          "value": "string",
+          "valueMap": {
+            "outerRange": {
+              "start": 2,
+              "end": 8
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 6
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 9,
@@ -525,30 +521,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
               "end": 9
             },
             "value": "string",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 2,
-                  "end": 8
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 6
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 1,
-            "end": 9
-          },
-          "value": "string",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 2,
                 "end": 8
@@ -559,7 +532,26 @@ exports['nbt list() Parse "["string"]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 1,
+            "end": 9
+          },
+          "value": "string",
+          "valueMap": {
+            "outerRange": {
+              "start": 2,
+              "end": 8
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 6
+            },
+            "pairs": []
+          }
         }
       }
     ],
@@ -748,30 +740,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               "end": 19
             },
             "value": "string",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 12,
-                  "end": 18
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 6
-                },
-                "pairs": []
-              }
-            ]
-          }
-        ],
-        "value": {
-          "type": "string",
-          "range": {
-            "start": 11,
-            "end": 19
-          },
-          "value": "string",
-          "childrenMaps": [
-            {
+            "valueMap": {
               "outerRange": {
                 "start": 12,
                 "end": 18
@@ -782,7 +751,26 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               },
               "pairs": []
             }
-          ]
+          }
+        ],
+        "value": {
+          "type": "string",
+          "range": {
+            "start": 11,
+            "end": 19
+          },
+          "value": "string",
+          "valueMap": {
+            "outerRange": {
+              "start": 12,
+              "end": 18
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 6
+            },
+            "pairs": []
+          }
         }
       }
     ]

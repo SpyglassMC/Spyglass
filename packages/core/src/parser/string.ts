@@ -4,7 +4,7 @@ import type { Mutable, Quote, StringNode, StringOptions } from '../node'
 import { EscapeChar, EscapeTable } from '../node'
 import type { InfallibleParser } from '../parser'
 import type { ParserContext } from '../service'
-import { ErrorReporter } from '../service'
+import type { ReadonlySource } from '../source'
 import { IndexMap, Range, Source } from '../source'
 import type { Parser, Result, Returnable } from './Parser'
 import { Failure } from './Parser'
@@ -17,7 +17,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			range: Range.create(src),
 			options,
 			value: '',
-			childrenMaps: [IndexMap.create()],
+			valueMap: IndexMap.create(),
 		}
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
@@ -29,7 +29,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				if (options.escapable && c === '\\') {
 					const c2 = src.read()
 					if (c2 === '\\' || c2 === currentQuote || EscapeChar.is(options.escapable.characters, c2)) {
-						ans.childrenMaps[0].pairs.push({
+						ans.valueMap.pairs.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(charStart, charStart + 2),
 						})
@@ -38,14 +38,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const hex = src.peek(4)
 						if (/^[0-9a-f]{4}$/i.test(hex)) {
 							src.skip(4)
-							ans.childrenMaps[0].pairs.push({
+							ans.valueMap.pairs.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(charStart, charStart + 6),
 							})
 							ans.value += String.fromCharCode(parseInt(hex, 16))
 						} else {
 							ctx.err.report(localize('parser.string.illegal-unicode-escape'), Range.create(src, src.cursor + 4))
-							ans.childrenMaps[0].pairs.push({
+							ans.valueMap.pairs.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(charStart, charStart + 2),
 							})
@@ -58,7 +58,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								Range.create(src, src.cursor + 1)
 							)
 						}
-						ans.childrenMaps[0].pairs.push({
+						ans.valueMap.pairs.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(charStart, charStart + 2),
 						})
@@ -78,7 +78,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				ctx.err.report(localize('parser.string.illegal-quote', options.quotes), ans)
 			}
 
-			ans.childrenMaps[0].outerRange = Range.create(contentStart, contentEnd)
+			ans.valueMap.outerRange = Range.create(contentStart, contentEnd)
 		} else if (options.unquotable) {
 			while (src.canRead() && isAllowedCharacter(src.peek(), options.unquotable)) {
 				ans.value += src.read()
@@ -86,16 +86,16 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			if (!ans.value && !options.unquotable.allowEmpty) {
 				ctx.err.report(localize('expected', localize('string')), src)
 			}
-			ans.childrenMaps[0].outerRange = Range.create(start, src.cursor)
+			ans.valueMap.outerRange = Range.create(start, src.cursor)
 		} else {
 			ctx.err.report(localize('expected', options.quotes!), src)
-			ans.childrenMaps[0].outerRange = Range.create(start, src.cursor)
+			ans.valueMap.outerRange = Range.create(start, src.cursor)
 		}
 
-		ans.childrenMaps[0].innerRange = Range.create(0, ans.value.length)
+		ans.valueMap.innerRange = Range.create(0, ans.value.length)
 
 		if (options.value?.parser) {
-			const valueResult = parseStringValue(options.value.parser, ans.value, ans.childrenMaps[0], ctx)
+			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, src, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
 				ans.children = [valueResult]
@@ -108,21 +108,15 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 	}
 }
 
-export function parseStringValue<T extends Returnable>(parser: Parser<T>, value: string, map: IndexMap, ctx: ParserContext): Result<T> {
-	const valueSrc = new Source(value)
+export function parseStringValue<T extends Returnable>(parser: Parser<T>, value: string, map: IndexMap, src: ReadonlySource, ctx: ParserContext): Result<T> {
+	const valueSrc = new Source(value, IndexMap.merge(src.indexMap, map))
 	const valueCtx = {
 		...ctx,
 		doc: TextDocument.create('spyglassmc://inner_string', 'plaintext', 0, value),
-		err: new ErrorReporter(),
-	}
-	const valueResult = parser(valueSrc, valueCtx)
-	/* istanbul ignore else */
-	if (valueResult !== Failure) {
-		ctx.err.absorb(valueCtx.err, { map, doc: ctx.doc })
 	}
 	// TODO: Mark trailing string as errors.
 	// FIXME: Map symbol locations.
-	return valueResult
+	return parser(valueSrc, valueCtx)
 }
 
 export const BrigadierUnquotableCharacters = Object.freeze([

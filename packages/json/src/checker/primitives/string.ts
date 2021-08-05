@@ -26,11 +26,11 @@ export function string(name?: string | readonly string[], parser?: Lazy<Parser<A
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (parser) {
-			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.childrenMaps[0], ctx)
+			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx.src, ctx)
 			if (result !== Failure) {
 				(node as Mutable<AstNode>).children = [result]
 				if (checker) {
-					core.checker.checkStringValue(Lazy.resolve(checker), result, node.childrenMaps[0], ctx)
+					core.checker.checkStringValue(Lazy.resolve(checker), result, node.valueMap, ctx)
 				}
 			}
 		} else if (checker) {

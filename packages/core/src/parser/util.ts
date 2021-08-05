@@ -48,7 +48,7 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 		endCursor: tmpSrc.cursor,
 		errorAmount: tmpCtx.err.errors.length,
 		updateSrcAndCtx: () => {
-			src.cursor = tmpSrc.cursor
+			src.innerCursor = tmpSrc.innerCursor
 			ctx.err.absorb(tmpCtx.err)
 			tmpCtx.symbols.applyDelayedEdits()
 		},

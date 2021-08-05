@@ -6,19 +6,17 @@ exports['nbt primitive() Parse "" 1'] = {
       "end": 0
     },
     "value": "",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 0
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 0
+      },
+      "pairs": []
+    }
   },
   "errors": []
 }
@@ -31,19 +29,17 @@ exports['nbt primitive() Parse ""quoted"" 1'] = {
       "end": 8
     },
     "value": "quoted",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 1,
-          "end": 7
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 6
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 1,
+        "end": 7
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 6
+      },
+      "pairs": []
+    }
   },
   "errors": []
 }
@@ -80,19 +76,17 @@ exports['nbt primitive() Parse "123456b" 1'] = {
       "end": 7
     },
     "value": "123456b",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 0,
-          "end": 7
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 7
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 7
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 7
+      },
+      "pairs": []
+    }
   },
   "errors": [
     {
@@ -198,19 +192,17 @@ exports['nbt primitive() Parse "unquoted" 1'] = {
       "end": 8
     },
     "value": "unquoted",
-    "childrenMaps": [
-      {
-        "outerRange": {
-          "start": 0,
-          "end": 8
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 8
-        },
-        "pairs": []
-      }
-    ]
+    "valueMap": {
+      "outerRange": {
+        "start": 0,
+        "end": 8
+      },
+      "innerRange": {
+        "start": 0,
+        "end": 8
+      },
+      "pairs": []
+    }
   },
   "errors": []
 }

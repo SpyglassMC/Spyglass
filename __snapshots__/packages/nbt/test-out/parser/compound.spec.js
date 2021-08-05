@@ -62,19 +62,17 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
               "end": 5
             },
             "value": "foo",
-            "childrenMaps": [
-              {
-                "outerRange": {
-                  "start": 2,
-                  "end": 5
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
-            ]
+            "valueMap": {
+              "outerRange": {
+                "start": 2,
+                "end": 5
+              },
+              "innerRange": {
+                "start": 0,
+                "end": 3
+              },
+              "pairs": []
+            }
           },
           {
             "type": "nbt:byte",
@@ -92,19 +90,17 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
             "end": 5
           },
           "value": "foo",
-          "childrenMaps": [
-            {
-              "outerRange": {
-                "start": 2,
-                "end": 5
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
-          ]
+          "valueMap": {
+            "outerRange": {
+              "start": 2,
+              "end": 5
+            },
+            "innerRange": {
+              "start": 0,
+              "end": 3
+            },
+            "pairs": []
+          }
         },
         "sep": {
           "start": 5,

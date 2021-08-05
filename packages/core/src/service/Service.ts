@@ -4,7 +4,6 @@ import type { AstNode, FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
-import { IndexMap } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
 import { ColorizerContext, CompleterContext } from './Context'
@@ -60,9 +59,9 @@ export class Service extends EventEmitter {
 	getColorInfo(node: FileNode<AstNode>, doc: TextDocument): ColorInfo[] {
 		this.debug(`Getting color info for '${doc.uri}' # ${doc.version}`)
 		const ans: ColorInfo[] = []
-		traversePreOrder(node, _ => true, ({ node }) => node.color, ({ node, map }) => ans.push({
+		traversePreOrder(node, _ => true, node => node.color, node => ans.push({
 			color: Array.isArray(node.color) ? node.color : node.color!.value,
-			range: IndexMap.toOuterRange(map, node.range),
+			range: node.range,
 		}))
 		return ans
 	}
@@ -90,17 +89,17 @@ export class Service extends EventEmitter {
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const { node, parents, map } = selectedNode(file, offset)
+		const { node, parents } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
 				const symbol = this.project.symbols.resolveAlias(n.symbol)
 				if (symbol) {
 					const hover = `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
-					return Hover.create(IndexMap.toOuterRange(map, n.range), hover)
+					return Hover.create(n.range, hover)
 				}
 				if (n.hover) {
-					return Hover.create(IndexMap.toOuterRange(map, n.range), n.hover)
+					return Hover.create(n.range, n.hover)
 				}
 			}
 		}
@@ -115,7 +114,7 @@ export class Service extends EventEmitter {
 	 */
 	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | undefined {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
-		const { node, parents, map } = selectedNode(file, offset)
+		const { node, parents } = selectedNode(file, offset)
 		if (node) {
 			const nodes = [node, ...parents]
 			for (const n of nodes) {
@@ -129,7 +128,7 @@ export class Service extends EventEmitter {
 						}
 						locations.push(...locs)
 					}
-					return SymbolLocations.create(IndexMap.toOuterRange(map, n.range), locations.length ? locations : undefined)
+					return SymbolLocations.create(n.range, locations.length ? locations : undefined)
 				}
 			}
 		}
