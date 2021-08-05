@@ -1,6 +1,6 @@
 import type { AllCategory, AstNode, Checker, Mutable, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { Failure, IndexMap, Lazy } from '@spyglassmc/core'
+import { Failure, Lazy } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { JsonExpectation } from '../../node'
 import { JsonStringNode } from '../../node'
@@ -30,11 +30,11 @@ export function string(name?: string | readonly string[], parser?: Lazy<Parser<A
 			if (result !== Failure) {
 				(node as Mutable<AstNode>).children = [result]
 				if (checker) {
-					core.checker.checkStringValue(Lazy.resolve(checker), result, node.valueMap, ctx)
+					Lazy.resolve(checker)(result, ctx)
 				}
 			}
 		} else if (checker) {
-			core.checker.checkStringValue(Lazy.resolve(checker), node, IndexMap.DEFAULT, ctx)
+			Lazy.resolve(checker)(node, ctx)
 		}
 	}
 }

@@ -1,4 +1,3 @@
-import type { IndexMap } from '../..'
 import { ResourceLocation } from '../../common'
 import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { CheckerContext, MetaRegistry } from '../../service'
@@ -110,16 +109,4 @@ export function getStates(category: 'block' | 'fluid', ids: readonly string[], c
 			})
 	}
 	return ans
-}
-
-export function checkStringValue<N extends AstNode>(checker: Checker<N>, node: N, map: IndexMap, ctx: CheckerContext): void {
-	const valueCtx = {
-		...ctx,
-		err: new ErrorReporter(),
-	}
-
-	// FIXME: await
-	checker(node, valueCtx)
-
-	ctx.err.absorb(valueCtx.err, { map, doc: ctx.doc })
 }
