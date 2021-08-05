@@ -30,19 +30,17 @@ exports['nbt path() Parse ""foo"" 1'] = {
           "end": 5
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 1,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 1,
+            "end": 4
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -64,19 +62,17 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
           "end": 5
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 1,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 1,
+            "end": 4
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -136,19 +132,17 @@ exports['nbt path() Parse "foo" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -170,19 +164,17 @@ exports['nbt path() Parse "foo.[ ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -211,19 +203,17 @@ exports['nbt path() Parse "foo.bar" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "string",
@@ -232,19 +222,17 @@ exports['nbt path() Parse "foo.bar" 1'] = {
           "end": 7
         },
         "value": "bar",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 4,
-              "end": 7
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 4,
+            "end": 7
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -266,19 +254,17 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:compound",
@@ -317,19 +303,17 @@ exports['nbt path() Parse "foo[ 0 ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -368,19 +352,17 @@ exports['nbt path() Parse "foo[ ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -409,19 +391,17 @@ exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -457,19 +437,17 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -485,19 +463,17 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
           "end": 10
         },
         "value": "bar",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 7,
-              "end": 10
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 7,
+            "end": 10
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -519,19 +495,17 @@ exports['nbt path() Parse "foo[ ][ ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -567,19 +541,17 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:path/index",
@@ -618,19 +590,17 @@ exports['nbt path() Parse "foo{ }" 1'] = {
           "end": 3
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       },
       {
         "type": "nbt:compound",
@@ -689,19 +659,17 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
           "end": 7
         },
         "value": "foo",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 4,
-              "end": 7
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 4,
+            "end": 7
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 3
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
@@ -723,19 +691,17 @@ exports['nbt path() Parse "文字" 1'] = {
           "end": 2
         },
         "value": "文字",
-        "childrenMaps": [
-          {
-            "outerRange": {
-              "start": 0,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 2
-            },
-            "pairs": []
-          }
-        ]
+        "valueMap": {
+          "outerRange": {
+            "start": 0,
+            "end": 2
+          },
+          "innerRange": {
+            "start": 0,
+            "end": 2
+          },
+          "pairs": []
+        }
       }
     ],
     "range": {
