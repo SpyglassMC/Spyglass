@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { IndexMap, Range } from '../../lib'
 
-describe.only('IndexMap', () => {
+describe('IndexMap', () => {
 	/*
 	 * Index Tens - 0000000000111111111122222222223
 	 * Index Ones - 0123456789012345678901234567890
