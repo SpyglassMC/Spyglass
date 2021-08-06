@@ -35,7 +35,7 @@ export class ReadonlySource {
 
 	constructor(
 		public readonly string: string,
-		public readonly indexMap = IndexMap.DEFAULT,
+		public readonly indexMap: IndexMap = [],
 	) { }
 
 	get cursor() {
@@ -73,7 +73,7 @@ export class ReadonlySource {
 export class Source extends ReadonlySource {
 	constructor(
 		public string: string,
-		public indexMap = IndexMap.DEFAULT,
+		public indexMap: IndexMap = [],
 	) {
 		super(string, indexMap)
 	}

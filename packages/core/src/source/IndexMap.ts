@@ -6,55 +6,55 @@ import { Range } from './Range'
 export type IndexMap = { outer: Range, inner: Range }[]
 
 export namespace IndexMap {
-	export const DEFAULT: IndexMap = []
+	type Side = 'start' | 'end'
 
-	export function toInnerOffset(map: IndexMap, offset: number): number {
+	function convertOffset(map: IndexMap, offset: number, from: 'inner' | 'outer', to: 'inner' | 'outer', isEndOffset: boolean): number {
 		let ans = offset
 
+		const comparableOffset = isEndOffset ? offset - 1 : offset
+
 		for (const pair of map) {
-			if (Range.endsBefore(pair.outer, offset)) {
-				ans = offset - pair.outer.end + pair.inner.end
-			} else if (Range.contains(pair.outer, offset)) {
-				return pair.inner.end - 1
+			if (Range.endsBefore(pair[from], comparableOffset)) {
+				ans = offset - pair[from].end + pair[to].end
+			} else if (Range.contains(pair[from], comparableOffset)) {
+				return isEndOffset ? pair[to].end : pair[to].start
 			} else {
 				break
 			}
 		}
 
 		return ans
+	}
+
+	export function toInnerOffset(map: IndexMap, offset: number): number {
+		return convertOffset(map, offset, 'outer', 'inner', false)
 	}
 
 	export function toInnerRange(map: IndexMap, outer: Range): Range {
 		return Range.create(
 			toInnerOffset(map, outer.start),
-			toInnerOffset(map, outer.end)
+			convertOffset(map, outer.end, 'outer', 'inner', true)
 		)
 	}
 
+	/**
+	 * @param side Which side to pick when `offset` is included in a pair of the `map`.
+	 */
 	export function toOuterOffset(map: IndexMap, offset: number): number {
-		let ans = offset
-
-		for (const pair of map) {
-			if (Range.endsBefore(pair.inner, offset)) {
-				ans = offset - pair.inner.end + pair.outer.end
-			} else if (Range.contains(pair.inner, offset)) {
-				return pair.outer.end - 1
-			} else {
-				break
-			}
-		}
-
-		return ans
+		return convertOffset(map, offset, 'inner', 'outer', false)
 	}
 
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
 		return Range.create(
 			toOuterOffset(map, inner.start),
-			toOuterOffset(map, inner.end)
+			convertOffset(map, inner.end, 'inner', 'outer', true)
 		)
 	}
 
-	export function merge(outer: IndexMap, inner: IndexMap): IndexMap {
-		return inner // FIXME: Make this work when outer has pairs.
+	export function merge(outerMap: IndexMap, innerMap: IndexMap): IndexMap {
+		return innerMap.map(p => ({
+			inner: p.inner,
+			outer: toOuterRange(outerMap, p.outer),
+		}))
 	}
 }
