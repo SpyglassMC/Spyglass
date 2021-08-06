@@ -475,13 +475,13 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
     "value": "\"foo\\\\bar\"",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -539,19 +539,19 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
       {
         "type": "string",
         "range": {
-          "start": 2,
+          "start": 1,
           "end": 20
         },
         "value": "foo\\bar",
         "valueMap": [
           {
-            "outer": {
-              "start": 8,
-              "end": 8
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 3,
+              "end": 3
             }
           },
           {
@@ -560,8 +560,8 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
               "end": 4
             },
             "outer": {
-              "start": 12,
-              "end": 14
+              "start": 11,
+              "end": 15
             }
           }
         ]
