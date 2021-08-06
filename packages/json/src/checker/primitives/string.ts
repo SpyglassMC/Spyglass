@@ -26,7 +26,7 @@ export function string(name?: string | readonly string[], parser?: Lazy<Parser<A
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (parser) {
-			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx.src, ctx)
+			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx)
 			if (result !== Failure) {
 				(node as Mutable<AstNode>).children = [result]
 				if (checker) {

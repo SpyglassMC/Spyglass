@@ -351,7 +351,7 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 					core.resourceLocation(type.registry
 						? { category: type.registry, isPredicate: options.isPredicate }
 						: { allowUnknown: true, pool: [], isPredicate: options.isPredicate }),
-					node.value, node.valueMap, ctx.src, ctx
+					node.value, node.valueMap, ctx
 				)
 				break
 			case 'list':
@@ -385,7 +385,7 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 					if (parserName) {
 						try {
 							const parser = ctx.meta.getParser(parserName)
-							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx.src, ctx)
+							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
 							if (result !== core.Failure) {
 								ctx.ops.set(node, 'children', [result])
 							}

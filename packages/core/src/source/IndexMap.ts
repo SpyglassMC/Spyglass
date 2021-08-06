@@ -9,13 +9,11 @@ export namespace IndexMap {
 	function convertOffset(map: IndexMap, offset: number, from: 'inner' | 'outer', to: 'inner' | 'outer', isEndOffset: boolean): number {
 		let ans = offset
 
-		const comparableOffset = isEndOffset ? offset - 1 : offset
-
 		for (const pair of map) {
-			if (Range.endsBefore(pair[from], comparableOffset)) {
-				ans = offset - pair[from].end + pair[to].end
-			} else if (Range.contains(pair[from], comparableOffset)) {
+			if (isEndOffset ? Range.containsInclusive(pair[from], offset) : Range.contains(pair[from], offset)) {
 				return isEndOffset ? pair[to].end : pair[to].start
+			} else if (Range.endsBefore(pair[from], offset)) {
+				ans = offset - pair[from].end + pair[to].end
 			} else {
 				break
 			}
