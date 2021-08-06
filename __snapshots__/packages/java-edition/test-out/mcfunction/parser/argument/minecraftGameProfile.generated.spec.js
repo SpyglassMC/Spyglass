@@ -13,17 +13,18 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
           "end": 4
         },
         "value": "0123",
-        "valueMap": {
-          "outerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 4
-          },
-          "pairs": []
-        }
+        "valueMap": [
+          {
+            "outer": {
+              "start": 0,
+              "end": 0
+            },
+            "inner": {
+              "start": 0,
+              "end": 0
+            }
+          }
+        ]
       }
     ],
     "name": "test",
@@ -34,17 +35,18 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
         "end": 4
       },
       "value": "0123",
-      "valueMap": {
-        "outerRange": {
-          "start": 0,
-          "end": 4
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 4
-        },
-        "pairs": []
-      }
+      "valueMap": [
+        {
+          "outer": {
+            "start": 0,
+            "end": 0
+          },
+          "inner": {
+            "start": 0,
+            "end": 0
+          }
+        }
+      ]
     },
     "hover": "<test: game_profile>"
   },
@@ -142,17 +144,18 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
           "end": 6
         },
         "value": "Player",
-        "valueMap": {
-          "outerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "innerRange": {
-            "start": 0,
-            "end": 6
-          },
-          "pairs": []
-        }
+        "valueMap": [
+          {
+            "outer": {
+              "start": 0,
+              "end": 0
+            },
+            "inner": {
+              "start": 0,
+              "end": 0
+            }
+          }
+        ]
       }
     ],
     "name": "test",
@@ -163,17 +166,18 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
         "end": 6
       },
       "value": "Player",
-      "valueMap": {
-        "outerRange": {
-          "start": 0,
-          "end": 6
-        },
-        "innerRange": {
-          "start": 0,
-          "end": 6
-        },
-        "pairs": []
-      }
+      "valueMap": [
+        {
+          "outer": {
+            "start": 0,
+            "end": 0
+          },
+          "inner": {
+            "start": 0,
+            "end": 0
+          }
+        }
+      ]
     },
     "hover": "<test: game_profile>"
   },

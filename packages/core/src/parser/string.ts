@@ -17,8 +17,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			range: Range.create(src),
 			options,
 			value: '',
-			valueMap: IndexMap.create(),
+			valueMap: [],
 		}
+		let outerStart: number
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
 			const currentQuote = src.read() as Quote
@@ -29,7 +30,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				if (options.escapable && c === '\\') {
 					const c2 = src.read()
 					if (c2 === '\\' || c2 === currentQuote || EscapeChar.is(options.escapable.characters, c2)) {
-						ans.valueMap.pairs.push({
+						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(charStart, charStart + 2),
 						})
@@ -38,14 +39,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						const hex = src.peek(4)
 						if (/^[0-9a-f]{4}$/i.test(hex)) {
 							src.skip(4)
-							ans.valueMap.pairs.push({
+							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(charStart, charStart + 6),
 							})
 							ans.value += String.fromCharCode(parseInt(hex, 16))
 						} else {
 							ctx.err.report(localize('parser.string.illegal-unicode-escape'), Range.create(src, src.cursor + 4))
-							ans.valueMap.pairs.push({
+							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(charStart, charStart + 2),
 							})
@@ -58,7 +59,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								Range.create(src, src.cursor + 1)
 							)
 						}
-						ans.valueMap.pairs.push({
+						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(charStart, charStart + 2),
 						})
@@ -69,7 +70,6 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				}
 			}
 
-			const contentEnd = src.cursor
 			if (!src.trySkip(currentQuote)) {
 				ctx.err.report(localize('expected', localeQuote(currentQuote)), src)
 			}
@@ -78,7 +78,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 				ctx.err.report(localize('parser.string.illegal-quote', options.quotes), ans)
 			}
 
-			ans.valueMap.outerRange = Range.create(contentStart, contentEnd)
+			outerStart = contentStart
 		} else if (options.unquotable) {
 			while (src.canRead() && isAllowedCharacter(src.peek(), options.unquotable)) {
 				ans.value += src.read()
@@ -86,13 +86,13 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			if (!ans.value && !options.unquotable.allowEmpty) {
 				ctx.err.report(localize('expected', localize('string')), src)
 			}
-			ans.valueMap.outerRange = Range.create(start, src.cursor)
+			outerStart = start
 		} else {
 			ctx.err.report(localize('expected', options.quotes!), src)
-			ans.valueMap.outerRange = Range.create(start, src.cursor)
+			outerStart = start
 		}
 
-		ans.valueMap.innerRange = Range.create(0, ans.value.length)
+		ans.valueMap.unshift({ outer: Range.create(outerStart), inner: Range.create(0) })
 
 		if (options.value?.parser) {
 			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, src, ctx)

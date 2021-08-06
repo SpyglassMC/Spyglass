@@ -1,40 +1,23 @@
 import { Range } from './Range'
 
-export interface IndexMap {
-	outerRange: Range,
-	innerRange: Range,
-	pairs: { outer: Range, inner: Range }[]
-}
+/**
+ * The pairs should be in ascending order.
+ */
+export type IndexMap = { outer: Range, inner: Range }[]
 
 export namespace IndexMap {
-	export const DEFAULT: IndexMap = {
-		outerRange: Range.create(0, Number.MAX_VALUE),
-		innerRange: Range.create(0, Number.MAX_VALUE),
-		pairs: [],
-	}
+	export const DEFAULT: IndexMap = []
 
-	export function create(partial: Partial<IndexMap> = {}): IndexMap {
-		return {
-			outerRange: partial.outerRange ?? Range.Beginning,
-			innerRange: partial.innerRange ?? Range.Beginning,
-			pairs: partial.pairs ?? [],
-		}
-	}
+	export function toInnerOffset(map: IndexMap, offset: number): number {
+		let ans = offset
 
-	export function toInnerOffset(map: IndexMap, outer: number): number {
-		const { innerRange, outerRange, pairs } = map
-		if (!Range.containsInclusive(outerRange, outer)) {
-			throw new Error(`Offset ${outer} is not in range ${Range.toString(outerRange)}`)
-		}
-
-		let ans = outer
-		ans += innerRange.start - outerRange.start
-
-		for (const pair of pairs) {
-			if (Range.contains(pair.outer, outer)) {
+		for (const pair of map) {
+			if (Range.endsBefore(pair.outer, offset)) {
+				ans = offset - pair.outer.end + pair.inner.end
+			} else if (Range.contains(pair.outer, offset)) {
 				return pair.inner.end - 1
-			} else if (Range.endsBefore(pair.outer, outer)) {
-				ans += Range.length(pair.inner) - Range.length(pair.outer)
+			} else {
+				break
 			}
 		}
 
@@ -48,20 +31,16 @@ export namespace IndexMap {
 		)
 	}
 
-	export function toOuterOffset(map: IndexMap, inner: number): number {
-		const { innerRange, outerRange, pairs } = map
-		if (!Range.containsInclusive(innerRange, inner)) {
-			throw new Error(`Offset ${inner} is not in range ${Range.toString(innerRange)}`)
-		}
+	export function toOuterOffset(map: IndexMap, offset: number): number {
+		let ans = offset
 
-		let ans = inner
-		ans += outerRange.start - innerRange.start
-
-		for (const pair of pairs) {
-			if (Range.contains(pair.inner, inner)) {
+		for (const pair of map) {
+			if (Range.endsBefore(pair.inner, offset)) {
+				ans = offset - pair.inner.end + pair.outer.end
+			} else if (Range.contains(pair.inner, offset)) {
 				return pair.outer.end - 1
-			} else if (Range.endsBefore(pair.inner, inner)) {
-				ans += Range.length(pair.outer) - Range.length(pair.inner)
+			} else {
+				break
 			}
 		}
 
@@ -76,10 +55,6 @@ export namespace IndexMap {
 	}
 
 	export function merge(outer: IndexMap, inner: IndexMap): IndexMap {
-		return {
-			outerRange: IndexMap.toOuterRange(outer, inner.outerRange),
-			innerRange: inner.innerRange,
-			pairs: inner.pairs, // FIXME: Make this work when outer has pairs.
-		}
+		return inner // FIXME: Make this work when outer has pairs.
 	}
 }

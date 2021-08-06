@@ -6,17 +6,18 @@ exports['nbt primitive() Parse "" 1'] = {
       "end": 0
     },
     "value": "",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 0,
+          "end": 0
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": []
 }
@@ -29,17 +30,18 @@ exports['nbt primitive() Parse ""quoted"" 1'] = {
       "end": 8
     },
     "value": "quoted",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 7
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 6
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": []
 }
@@ -76,17 +78,18 @@ exports['nbt primitive() Parse "123456b" 1'] = {
       "end": 7
     },
     "value": "123456b",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 7
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 7
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 0,
+          "end": 0
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": [
     {
@@ -192,17 +195,18 @@ exports['nbt primitive() Parse "unquoted" 1'] = {
       "end": 8
     },
     "value": "unquoted",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 8
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 8
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 0,
+          "end": 0
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": []
 }

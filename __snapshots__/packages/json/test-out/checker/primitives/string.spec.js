@@ -21,17 +21,18 @@ exports['JSON string string Check ""foo"" 1'] = {
       ]
     },
     "value": "foo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 4
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 3
-      },
-      "pairs": []
-    },
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ],
     "expectation": [
       {
         "type": "json:string",
@@ -66,17 +67,18 @@ exports['JSON string string Check ""foo"bar"" 1'] = {
       ]
     },
     "value": "foo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 4
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 3
-      },
-      "pairs": []
-    },
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ],
     "expectation": [
       {
         "type": "json:string",

@@ -248,17 +248,18 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "end": 209
             },
             "value": "name",
-            "valueMap": {
-              "outerRange": {
-                "start": 204,
-                "end": 208
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 4
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 204,
+                  "end": 204
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "nbtdoc:literal",
@@ -302,17 +303,18 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "end": 209
           },
           "value": "name",
-          "valueMap": {
-            "outerRange": {
-              "start": 204,
-              "end": 208
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 4
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 204,
+                "end": 204
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -538,17 +540,18 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
               "end": 209
             },
             "value": "name",
-            "valueMap": {
-              "outerRange": {
-                "start": 204,
-                "end": 208
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 4
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 204,
+                  "end": 204
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "nbtdoc:literal",
@@ -592,17 +595,18 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "end": 209
           },
           "value": "name",
-          "valueMap": {
-            "outerRange": {
-              "start": 204,
-              "end": 208
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 4
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 204,
+                "end": 204
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -682,17 +686,18 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 20
             },
             "value": "Bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "nbtdoc:literal",
@@ -853,17 +858,18 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 20
           },
           "value": "Bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",
@@ -1050,17 +1056,18 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
               "end": 20
             },
             "value": "Bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "nbtdoc:literal",
@@ -1221,17 +1228,18 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "end": 20
           },
           "value": "Bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "fieldType": {
           "type": "nbtdoc:compound_definition/field/type",

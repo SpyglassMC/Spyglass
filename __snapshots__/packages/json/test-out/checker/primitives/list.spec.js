@@ -69,17 +69,18 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 5
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:number",
@@ -110,17 +111,18 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 5
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:number",
@@ -162,17 +164,18 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 9,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 9,
+                  "end": 9
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:number",
@@ -203,17 +206,18 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 9,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 9,
+                "end": 9
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:number",
@@ -680,17 +684,18 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 5
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:array",
@@ -727,17 +732,18 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 5
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:array",
@@ -785,17 +791,18 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 9,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 9,
+                  "end": 9
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:array",
@@ -832,17 +839,18 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 9,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 9,
+                "end": 9
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:array",
@@ -1427,17 +1435,18 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 5
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -1468,17 +1477,18 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 5
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",
@@ -1520,17 +1530,18 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
               ]
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 9,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 9,
+                  "end": 9
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -1561,17 +1572,18 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
             ]
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 9,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 9,
+                "end": 9
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",

@@ -62,17 +62,18 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
                 "end": 10
               },
               "value": "foo",
-              "valueMap": {
-                "outerRange": {
-                  "start": 7,
-                  "end": 10
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 7,
+                    "end": 7
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             },
             {
               "type": "string",
@@ -81,17 +82,18 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
                 "end": 14
               },
               "value": "bar",
-              "valueMap": {
-                "outerRange": {
-                  "start": 11,
-                  "end": 14
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 11,
+                    "end": 11
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "key": {
@@ -101,17 +103,18 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
               "end": 10
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 7,
-                "end": 10
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 7,
+                  "end": 7
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           "sep": {
             "start": 10,
@@ -124,17 +127,18 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
               "end": 14
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         }
       ]

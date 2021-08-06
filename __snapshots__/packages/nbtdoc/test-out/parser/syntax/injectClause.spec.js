@@ -2943,17 +2943,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 69
                 },
                 "value": "Red",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 65,
-                    "end": 68
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 65,
+                      "end": 65
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -2989,17 +2990,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 69
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 65,
-                  "end": 68
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 65,
+                    "end": 65
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           },
           {
@@ -3058,17 +3060,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 107
                 },
                 "value": "Blue",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 102,
-                    "end": 106
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 102,
+                      "end": 102
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -3104,17 +3107,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 107
               },
               "value": "Blue",
-              "valueMap": {
-                "outerRange": {
-                  "start": 102,
-                  "end": 106
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 4
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 102,
+                    "end": 102
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           },
           {
@@ -3209,17 +3213,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 69
                 },
                 "value": "Red",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 65,
-                    "end": 68
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 65,
+                      "end": 65
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -3255,17 +3260,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 69
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 65,
-                  "end": 68
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 65,
+                    "end": 65
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           },
           {
@@ -3316,17 +3322,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 107
                 },
                 "value": "Blue",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 102,
-                    "end": 106
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 4
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 102,
+                      "end": 102
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -3362,17 +3369,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 107
               },
               "value": "Blue",
-              "valueMap": {
-                "outerRange": {
-                  "start": 102,
-                  "end": 106
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 4
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 102,
+                    "end": 102
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           }
         ]
@@ -3499,17 +3507,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 69
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 65,
-                  "end": 68
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 65,
+                    "end": 65
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -3545,17 +3554,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 69
             },
             "value": "Red",
-            "valueMap": {
-              "outerRange": {
-                "start": 65,
-                "end": 68
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 65,
+                  "end": 65
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         },
         {
@@ -3614,17 +3624,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 107
               },
               "value": "Blue",
-              "valueMap": {
-                "outerRange": {
-                  "start": 102,
-                  "end": 106
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 4
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 102,
+                    "end": 102
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -3660,17 +3671,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 107
             },
             "value": "Blue",
-            "valueMap": {
-              "outerRange": {
-                "start": 102,
-                "end": 106
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 4
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 102,
+                  "end": 102
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         },
         {
@@ -3765,17 +3777,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 69
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 65,
-                  "end": 68
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 65,
+                    "end": 65
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -3811,17 +3824,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 69
             },
             "value": "Red",
-            "valueMap": {
-              "outerRange": {
-                "start": 65,
-                "end": 68
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 65,
+                  "end": 65
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         },
         {
@@ -3872,17 +3886,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 107
               },
               "value": "Blue",
-              "valueMap": {
-                "outerRange": {
-                  "start": 102,
-                  "end": 106
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 4
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 102,
+                    "end": 102
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -3918,17 +3933,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 107
             },
             "value": "Blue",
-            "valueMap": {
-              "outerRange": {
-                "start": 102,
-                "end": 106
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 4
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 102,
+                  "end": 102
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         }
       ]
@@ -4074,17 +4090,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 66
                 },
                 "value": "Red",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 62,
-                    "end": 65
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 62,
+                      "end": 62
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -4120,17 +4137,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 66
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 62,
-                  "end": 65
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 62,
+                    "end": 62
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           },
           {
@@ -4225,17 +4243,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                   "end": 66
                 },
                 "value": "Red",
-                "valueMap": {
-                  "outerRange": {
-                    "start": 62,
-                    "end": 65
-                  },
-                  "innerRange": {
-                    "start": 0,
-                    "end": 3
-                  },
-                  "pairs": []
-                }
+                "valueMap": [
+                  {
+                    "outer": {
+                      "start": 62,
+                      "end": 62
+                    },
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    }
+                  }
+                ]
               }
             ],
             "doc": {
@@ -4271,17 +4290,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 66
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 62,
-                  "end": 65
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 62,
+                    "end": 62
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           }
         ]
@@ -4408,17 +4428,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 66
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 62,
-                  "end": 65
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 62,
+                    "end": 62
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -4454,17 +4475,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 66
             },
             "value": "Red",
-            "valueMap": {
-              "outerRange": {
-                "start": 62,
-                "end": 65
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 62,
+                  "end": 62
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         },
         {
@@ -4559,17 +4581,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
                 "end": 66
               },
               "value": "Red",
-              "valueMap": {
-                "outerRange": {
-                  "start": 62,
-                  "end": 65
-                },
-                "innerRange": {
-                  "start": 0,
-                  "end": 3
-                },
-                "pairs": []
-              }
+              "valueMap": [
+                {
+                  "outer": {
+                    "start": 62,
+                    "end": 62
+                  },
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  }
+                }
+              ]
             }
           ],
           "doc": {
@@ -4605,17 +4628,18 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
               "end": 66
             },
             "value": "Red",
-            "valueMap": {
-              "outerRange": {
-                "start": 62,
-                "end": 65
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 62,
+                  "end": 62
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         }
       ]
