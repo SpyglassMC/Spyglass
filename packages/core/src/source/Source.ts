@@ -104,6 +104,11 @@ export class Source extends ReadonlySource {
 		return this.string.charAt(this.innerCursor++)
 	}
 
+	readFrom(start: number) {
+		const innerStart = IndexMap.toInnerOffset(this.indexMap, start)
+		return this.string.slice(innerStart, this.innerCursor)
+	}
+
 	/**
 	 * Skips the current character.
 	 * @param step The step to skip. @default 1

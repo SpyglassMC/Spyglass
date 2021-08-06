@@ -30,7 +30,7 @@ export function comment({ singleLinePrefixes, includesEol }: Options): Parser<Co
 					src.skipLine()
 				}
 				ans.range.end = src.cursor
-				ans.comment = src.string.slice(start + prefix.length, src.cursor)
+				ans.comment = src.readFrom(start + prefix.length)
 				return ans
 			}
 		}
