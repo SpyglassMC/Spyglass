@@ -8,9 +8,9 @@ import type { ArgumentTreeNode } from '../tree'
  * @param name The name of the argument tree node.
  * @param treeNode The argument tree node.
  * 
- * @returns The parser corresponding to that tree node, or `null` / `undefined` if such parsers don't exist.
+ * @returns The parser corresponding to that tree node, or `undefined` if such parsers don't exist.
  */
-export type ArgumentParserGetter<A extends ChildBaseNode> = (name: string, treeNode: ArgumentTreeNode) => core.Parser<A | SpecialArgumentNode> | undefined | null
+export type ArgumentParserGetter<A extends ChildBaseNode> = (name: string, treeNode: ArgumentTreeNode) => core.Parser<A | SpecialArgumentNode> | undefined
 
 export function argumentTreeNodeToString(name: string, treeNode: ArgumentTreeNode): string {
 	const parserName = treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)

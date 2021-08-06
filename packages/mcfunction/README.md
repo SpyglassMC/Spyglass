@@ -27,8 +27,8 @@ const argument: mcf.parser.ArgumentParserGetter<ARGUMENT_NODES> = (name: string,
 		// ...
 		default:
 			// Unsupported parser.
-			// Just return `null` or `undefined`, of your choice.
-			return null
+			// Just return `undefined`.
+			return undefined
 	}
 }
 
