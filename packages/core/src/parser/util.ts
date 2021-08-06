@@ -286,7 +286,7 @@ export function stopBefore<N extends Returnable>(parser: Parser<N>, ...teminator
 		const tmpSrc = src.clone()
 		// Cut tmpSrc.string before the nearest terminator.
 		tmpSrc.string = tmpSrc.string.slice(0, flatTerminators.reduce((p, c) => {
-			const index = tmpSrc.string.indexOf(c, tmpSrc.cursor)
+			const index = tmpSrc.string.indexOf(c, tmpSrc.innerCursor)
 			return Math.min(p, index === -1 ? Infinity : index)
 		}, Infinity))
 
@@ -306,7 +306,7 @@ export function acceptOnly<N extends Returnable>(parser: Parser<N>, ...character
 	return (src, ctx): Result<N> => {
 		const tmpSrc = src.clone()
 		// Cut tmpSrc.string before the nearest unacceptable character.
-		for (let i = tmpSrc.cursor; i < tmpSrc.string.length; i++) {
+		for (let i = tmpSrc.innerCursor; i < tmpSrc.string.length; i++) {
 			if (!set.has(tmpSrc.string.charAt(i))) {
 				tmpSrc.string = tmpSrc.string.slice(0, i)
 				break
