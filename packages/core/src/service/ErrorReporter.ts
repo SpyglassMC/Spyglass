@@ -1,6 +1,5 @@
-import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageErrorInfo, RangeLike } from '../source'
-import { ErrorSeverity, IndexMap, LanguageError, Location, Range } from '../source'
+import { ErrorSeverity, LanguageError, Range } from '../source'
 
 export class ErrorReporter {
 	public errors: LanguageError[] = []
@@ -29,12 +28,5 @@ export class ErrorReporter {
 	 */
 	absorb(reporter: ErrorReporter): void {
 		this.errors.push(...reporter.errors)
-	}
-
-	private static toOuterLocation(map: IndexMap, inner: Location, doc: TextDocument): Location {
-		return Location.create(
-			doc,
-			IndexMap.toOuterRange(map, inner.range)
-		)
 	}
 }
