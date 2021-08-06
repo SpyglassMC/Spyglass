@@ -107,7 +107,7 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 		// Failed to parse as any arguments.
 		ctx.err.report(
 			localize('expected', treeNodeChildrenToString(children)),
-			core.Range.create(src.cursor)
+			core.Range.create(src)
 		)
 	}
 }
@@ -116,7 +116,7 @@ function unknown(name: string, treeNode: ArgumentTreeNode): core.InfallibleParse
 	return (src, ctx): SpyglassmcUnknownArgumentNode => {
 		const start = src.cursor
 		const value = src.readUntilLineEnd()
-		const range = core.Range.create(start, src.cursor)
+		const range = core.Range.create(start, src)
 		ctx.err.report(
 			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.parser)),
 			range,

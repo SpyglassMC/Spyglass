@@ -4,7 +4,7 @@ import { Range, Source } from '../../lib'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils'
 
 describe('Source', () => {
-	describe('nextCharRange()', () => {
+	describe('getCharRange()', () => {
 		const suites: { string: string, cursor: number, expected: Range }[] = [
 			{ string: 'foo', cursor: 0, expected: Range.create(0, 1) },
 			{ string: 'foo', cursor: 1, expected: Range.create(1, 2) },
@@ -14,7 +14,7 @@ describe('Source', () => {
 			it(`Should return '${Range.toString(expected)}' for ${markOffsetInString(string, cursor)}`, () => {
 				const src = new Source(string)
 				src.cursor = cursor
-				const actual = src.nextCharRange
+				const actual = src.getCharRange()
 				assert.deepStrictEqual(actual, expected)
 			})
 		}

@@ -12,7 +12,7 @@ export const sep: core.InfallibleParser<string> = (src, ctx): string => {
 	if (ans !== ' ') {
 		ctx.err.report(
 			localize('expected', localize('mcfunction.parser.sep', localeQuote(' '))),
-			core.Range.create(start, src.cursor)
+			core.Range.create(start, src)
 		)
 	}
 	return ans

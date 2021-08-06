@@ -24,14 +24,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const currentQuote = src.read() as Quote
 			const contentStart = src.cursor
 			while (src.canRead() && !['\n', '\r', currentQuote].includes(src.peek())) {
-				const charStart = src.cursor
+				const cStart = src.cursor
 				const c = src.read()
 				if (options.escapable && c === '\\') {
 					const c2 = src.read()
 					if (c2 === '\\' || c2 === currentQuote || EscapeChar.is(options.escapable.characters, c2)) {
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
-							outer: Range.create(charStart, src.cursor),
+							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
 					} else if (options.escapable.unicode && c2 === 'u') {
@@ -40,14 +40,14 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 							src.skip(4)
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
-								outer: Range.create(charStart, src.cursor),
+								outer: Range.create(cStart, src),
 							})
 							ans.value += String.fromCharCode(parseInt(hex, 16))
 						} else {
-							ctx.err.report(localize('parser.string.illegal-unicode-escape'), Range.create(src, src.cursor + 4))
+							ctx.err.report(localize('parser.string.illegal-unicode-escape'), Range.create(src, src.getCharRange(3).end))
 							ans.valueMap.push({
 								inner: Range.create(ans.value.length, ans.value.length + 1),
-								outer: Range.create(charStart, src.cursor),
+								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
 						}
@@ -55,12 +55,12 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (!options.escapable.allowUnknown) {
 							ctx.err.report(
 								localize('parser.string.illegal-escape', localeQuote(c2)),
-								Range.create(src, src.cursor + 1)
+								src.getCharRange(-1)
 							)
 						}
 						ans.valueMap.push({
 							inner: Range.create(ans.value.length, ans.value.length + 1),
-							outer: Range.create(charStart, src.cursor),
+							outer: Range.create(cStart, src),
 						})
 						ans.value += c2
 					}

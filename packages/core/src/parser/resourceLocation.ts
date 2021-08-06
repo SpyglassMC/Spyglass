@@ -27,7 +27,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 		while (src.canReadInLine() && src.peek().match(AcceptableCharacter)) {
 			src.skip()
 		}
-		const raw = src.readFrom(start)
+		const raw = src.sliceToCursor(start)
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {

@@ -155,8 +155,8 @@ exports['string() Parse ""fo⧵Ao"" 1'] = {
   "errors": [
     {
       "range": {
-        "start": 5,
-        "end": 6
+        "start": 4,
+        "end": 5
       },
       "message": "Unexpected escape character “A”",
       "severity": 3

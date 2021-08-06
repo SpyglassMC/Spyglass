@@ -273,16 +273,16 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
   "errors": [
     {
       "range": {
-        "start": 6,
-        "end": 7
+        "start": 5,
+        "end": 6
       },
       "message": "Unexpected escape character “u”",
       "severity": 3
     },
     {
       "range": {
-        "start": 12,
-        "end": 13
+        "start": 11,
+        "end": 12
       },
       "message": "Unexpected escape character “a”",
       "severity": 3

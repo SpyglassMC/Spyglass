@@ -1,5 +1,5 @@
 import { IndexMap } from '.'
-import type { RangeLike } from './Range'
+import type { RangeContainer } from './Range'
 import { Range } from './Range'
 
 type Digit =
@@ -42,14 +42,24 @@ export class ReadonlySource {
 		return IndexMap.toOuterOffset(this.indexMap, this.innerCursor)
 	}
 
-	get nextCharRange(): Range {
-		return IndexMap.toOuterRange(this.indexMap, Range.create(this.innerCursor, this.innerCursor + 1))
+	/**
+	 * @param offset The index to offset from cursor. Defaults to 0.
+	 * 
+	 * @returns The range of the specified character.
+	 * 
+	 * @example
+	 * getCharRange(-1) // Returns the range of the character before cursor.
+	 * getCharRange()   // Returns the range of the character at cursor.
+	 * getCharRange(1)  // Returns the range of the character after cursor.
+	 */
+	getCharRange(offset = 0): Range {
+		return IndexMap.toOuterRange(this.indexMap, Range.create(this.innerCursor + offset, this.innerCursor + offset + 1))
 	}
 
 	/**
 	 * Peeks a substring from the current cursor.
-	 * @param length The length of the substring. @default 1
-	 * @param offset The index to offset from cursor. @default 0
+	 * @param length The length of the substring. Defaults to 1
+	 * @param offset The index to offset from cursor. Defaults to 0
 	 */
 	peek(length = 1, offset = 0) {
 		return this.string.substr(this.innerCursor + offset, length)
@@ -64,9 +74,21 @@ export class ReadonlySource {
 		return this.peek(expectedValue.length) === expectedValue
 	}
 
-	slice(rangeLike: RangeLike): string {
-		const range = Range.get(rangeLike)
+	slice(start: number, end?: number): string
+	slice(rangeLike: Range | RangeContainer): string
+	slice(param0: Range | RangeContainer | number, end?: number): string {
+		if (typeof param0 === 'number') {
+			const innerStart = IndexMap.toInnerOffset(this.indexMap, param0)
+			const innerEnd = end !== undefined ? IndexMap.toInnerOffset(this.indexMap, end) : undefined
+			return this.string.slice(innerStart, innerEnd)
+		}
+		const range = IndexMap.toInnerRange(this.indexMap, Range.get(param0))
 		return this.string.slice(range.start, range.end)
+	}
+
+	sliceToCursor(start: number) {
+		const innerStart = IndexMap.toInnerOffset(this.indexMap, start)
+		return this.string.slice(innerStart, this.innerCursor)
 	}
 }
 
@@ -102,11 +124,6 @@ export class Source extends ReadonlySource {
 
 	read() {
 		return this.string.charAt(this.innerCursor++)
-	}
-
-	readFrom(start: number) {
-		const innerStart = IndexMap.toInnerOffset(this.indexMap, start)
-		return this.string.slice(innerStart, this.innerCursor)
 	}
 
 	/**

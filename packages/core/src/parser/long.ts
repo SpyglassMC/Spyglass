@@ -61,7 +61,7 @@ export function long(options: Options): Parser<LongNode> {
 		}
 
 		ans.range.end = src.cursor
-		const raw = src.readFrom(ans.range.start)
+		const raw = src.sliceToCursor(ans.range.start)
 
 		let isOnlySign = false
 		try {
