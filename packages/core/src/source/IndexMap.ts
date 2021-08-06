@@ -6,8 +6,6 @@ import { Range } from './Range'
 export type IndexMap = { outer: Range, inner: Range }[]
 
 export namespace IndexMap {
-	type Side = 'start' | 'end'
-
 	function convertOffset(map: IndexMap, offset: number, from: 'inner' | 'outer', to: 'inner' | 'outer', isEndOffset: boolean): number {
 		let ans = offset
 
@@ -37,9 +35,6 @@ export namespace IndexMap {
 		)
 	}
 
-	/**
-	 * @param side Which side to pick when `offset` is included in a pair of the `map`.
-	 */
 	export function toOuterOffset(map: IndexMap, offset: number): number {
 		return convertOffset(map, offset, 'inner', 'outer', false)
 	}
