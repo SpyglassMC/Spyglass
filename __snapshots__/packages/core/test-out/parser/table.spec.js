@@ -41,17 +41,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -60,17 +61,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -80,17 +82,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -103,17 +106,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       },
       {
@@ -130,17 +134,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -149,17 +154,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
               "end": 31
             },
             "value": "qux",
-            "valueMap": {
-              "outerRange": {
-                "start": 27,
-                "end": 30
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 27,
+                  "end": 27
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -169,17 +175,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -192,17 +199,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "end": 31
           },
           "value": "qux",
-          "valueMap": {
-            "outerRange": {
-              "start": 27,
-              "end": 30
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 27,
+                "end": 27
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -241,17 +249,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -260,17 +269,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -280,17 +290,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -303,17 +314,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -334,17 +346,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -353,17 +366,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 31
             },
             "value": "qux",
-            "valueMap": {
-              "outerRange": {
-                "start": 27,
-                "end": 30
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 27,
+                  "end": 27
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -373,17 +387,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -396,17 +411,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 31
           },
           "value": "qux",
-          "valueMap": {
-            "outerRange": {
-              "start": 27,
-              "end": 30
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 27,
+                "end": 27
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 32,
@@ -449,17 +465,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -468,17 +485,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -488,17 +506,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -511,17 +530,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -542,17 +562,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -561,17 +582,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
               "end": 31
             },
             "value": "qux",
-            "valueMap": {
-              "outerRange": {
-                "start": 27,
-                "end": 30
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 27,
+                  "end": 27
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -581,17 +603,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -604,17 +627,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "end": 31
           },
           "value": "qux",
-          "valueMap": {
-            "outerRange": {
-              "start": 27,
-              "end": 30
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 27,
+                "end": 27
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -644,17 +668,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -663,17 +688,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -683,17 +709,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -706,17 +733,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -737,17 +765,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -756,17 +785,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
               "end": 26
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 26,
-                "end": 26
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 26,
+                  "end": 26
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -776,17 +806,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -799,17 +830,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "end": 26
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 26,
-              "end": 26
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 26,
+                "end": 26
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -848,17 +880,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -867,17 +900,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -887,17 +921,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -910,17 +945,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -941,17 +977,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -960,17 +997,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
               "end": 24
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 24,
-                "end": 24
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 24,
+                  "end": 24
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -980,17 +1018,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "value": {
           "type": "string",
@@ -999,17 +1038,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "end": 24
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 24,
-              "end": 24
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 24,
+                "end": 24
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1056,17 +1096,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1075,17 +1116,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1095,17 +1137,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -1118,17 +1161,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -1171,17 +1215,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1190,17 +1235,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1210,17 +1256,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -1233,17 +1280,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1273,17 +1321,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1292,17 +1341,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
               "end": 10
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 10,
-                "end": 10
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 10,
+                  "end": 10
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1312,17 +1362,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -1335,17 +1386,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
             "end": 10
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 10,
-              "end": 10
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 10,
+                "end": 10
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1384,17 +1436,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1403,17 +1456,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
               "end": 8
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 8,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 8,
+                  "end": 8
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1423,17 +1477,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "value": {
           "type": "string",
@@ -1442,17 +1497,18 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
             "end": 8
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 8,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 8,
+                "end": 8
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1499,17 +1555,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
               "end": 2
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 2
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1518,17 +1575,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
               "end": 2
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 2
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1538,17 +1596,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "end": 2
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "value": {
           "type": "string",
@@ -1557,17 +1616,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "end": 2
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 2,
@@ -1588,17 +1648,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
               "end": 9
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 5,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 5,
+                  "end": 5
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1607,17 +1668,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
               "end": 17
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 13,
-                "end": 16
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 13,
+                  "end": 13
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1627,17 +1689,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "end": 9
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 5,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 5,
+                "end": 5
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 10,
@@ -1650,17 +1713,18 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "end": 17
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 13,
-              "end": 16
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 13,
+                "end": 13
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1715,17 +1779,18 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
               "end": 2
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 2
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1734,17 +1799,18 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
               "end": 9
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 5,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 5,
+                  "end": 5
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1754,17 +1820,18 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
             "end": 2
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 2,
@@ -1777,17 +1844,18 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
             "end": 9
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 5,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 5,
+                "end": 5
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1826,17 +1894,18 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
               "end": 2
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 2
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1845,17 +1914,18 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
               "end": 4
             },
             "value": "",
-            "valueMap": {
-              "outerRange": {
-                "start": 4,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 0
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 4,
+                  "end": 4
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1865,17 +1935,18 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
             "end": 2
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 2
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 2,
@@ -1888,17 +1959,18 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
             "end": 4
           },
           "value": "",
-          "valueMap": {
-            "outerRange": {
-              "start": 4,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 0
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 4,
+                "end": 4
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -1978,17 +2050,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -1997,17 +2070,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2017,17 +2091,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -2040,17 +2115,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -2071,17 +2147,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -2090,17 +2167,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
               "end": 31
             },
             "value": "qux",
-            "valueMap": {
-              "outerRange": {
-                "start": 27,
-                "end": 30
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 27,
+                  "end": 27
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2110,17 +2188,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -2133,17 +2212,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "end": 31
           },
           "value": "qux",
-          "valueMap": {
-            "outerRange": {
-              "start": 27,
-              "end": 30
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 27,
+                "end": 27
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 32,
@@ -2177,17 +2257,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -2196,17 +2277,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2216,17 +2298,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -2239,17 +2322,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -2270,17 +2354,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
               "end": 23
             },
             "value": "baz",
-            "valueMap": {
-              "outerRange": {
-                "start": 19,
-                "end": 22
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 19,
+                  "end": 19
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -2289,17 +2374,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
               "end": 31
             },
             "value": "qux",
-            "valueMap": {
-              "outerRange": {
-                "start": 27,
-                "end": 30
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 27,
+                  "end": 27
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2309,17 +2395,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "end": 23
           },
           "value": "baz",
-          "valueMap": {
-            "outerRange": {
-              "start": 19,
-              "end": 22
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 19,
+                "end": 19
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 24,
@@ -2332,17 +2419,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "end": 31
           },
           "value": "qux",
-          "valueMap": {
-            "outerRange": {
-              "start": 27,
-              "end": 30
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 27,
+                "end": 27
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -2372,17 +2460,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -2391,17 +2480,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2411,17 +2501,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -2434,17 +2525,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "end": {
           "start": 16,
@@ -2478,17 +2570,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "string",
@@ -2497,17 +2590,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2517,17 +2611,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -2540,17 +2635,18 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]

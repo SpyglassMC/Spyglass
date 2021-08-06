@@ -4,33 +4,18 @@ import snapshot from 'snap-shot-it'
 import { IndexMap, Range } from '../../lib'
 
 describe('IndexMap', () => {
-	describe('create()', () => {
-		it('Should create correctly', () => {
-			snapshot(
-				IndexMap.create,
-				undefined,
-				{},
-				{ innerRange: Range.Beginning, outerRange: Range.Beginning, pairs: [] },
-			)
-		})
-	})
-
 	/*
 	 * Index Tens - 0000000000111111111122222222223
 	 * Index Ones - 0123456789012345678901234567890
-	 * Outer (L1) -             "foo\"bar\u00a7qux"
-	 * Inner (L0) - foo"bar§qux
+	 * Outer      -             "foo\"bar\u00a7qux"
+	 * Inner      - foo"bar§qux
 	 */
-	const map = IndexMap.create({
-		outerRange: Range.create(13, 30),
-		innerRange: Range.create(0, 11),
-		pairs: [
-			{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
-			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
-		],
-	})
-	const toInnerCases: { input: number, expected: number | undefined }[] = [
-		{ input: 12, expected: undefined },
+	const map: IndexMap = [
+		{ outer: Range.create(13, 13), inner: Range.create(0, 0) },
+		{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
+		{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
+	]
+	const toInnerCases: { input: number, expected: number }[] = [
 		{ input: 13, expected: 0 },
 		{ input: 14, expected: 1 },
 		{ input: 15, expected: 2 },
@@ -49,9 +34,8 @@ describe('IndexMap', () => {
 		{ input: 28, expected: 9 },
 		{ input: 29, expected: 10 },
 		{ input: 30, expected: 11 },
-		{ input: 31, expected: undefined },
 	]
-	const toOuterCases: { input: number, expected: number | undefined }[] = [
+	const toOuterCases: { input: number, expected: number }[] = [
 		{ input: 0, expected: 13 },
 		{ input: 1, expected: 14 },
 		{ input: 2, expected: 15 },
@@ -64,27 +48,14 @@ describe('IndexMap', () => {
 		{ input: 9, expected: 28 },
 		{ input: 10, expected: 29 },
 		{ input: 11, expected: 30 },
-		{ input: 12, expected: undefined },
 	]
 	for (const method of ['toInnerOffset', 'toOuterOffset'] as const) {
 		describe(`${method}()`, () => {
 			for (const { input, expected } of (method === 'toInnerOffset' ? toInnerCases : toOuterCases)) {
-				if (expected !== undefined) {
-					it(`Should return ${expected} for ${input}`, () => {
-						const actual = IndexMap[method](map, input)
-						assert.strictEqual(actual, expected)
-					})
-				} else {
-					it(`Should throw error for ${input}`, () => {
-						try {
-							IndexMap[method](map, input)
-						} catch (e) {
-							snapshot((e as Error).message)
-							return
-						}
-						assert.fail('It should have thrown an error.')
-					})
-				}
+				it(`Should return ${expected} for ${input}`, () => {
+					const actual = IndexMap[method](map, input)
+					assert.strictEqual(actual, expected)
+				})
 			}
 		})
 	}
@@ -92,28 +63,20 @@ describe('IndexMap', () => {
 	/*
 	 * Index Tens - 0000000000111111111122222222223333333333
 	 * Index Ones - 0123456789012345678901234567890123456789
-	 * Outer (L2) -        [helloworld::"foo\"bar\u00a7qux"]
-	 * Middle(L1) - helloworld::"foo\"bar\u00a7qux"
-	 * Inner (L0) - foo"bar§qux
+	 * Outer      -        [helloworld::"foo\"bar\u00a7qux"]
+	 * Middle     - helloworld::"foo\"bar\u00a7qux"
+	 * Inner      - foo"bar§qux
 	 */
-	const outerMap = IndexMap.create({
-		outerRange: Range.create(8, 39),
-		innerRange: Range.create(0, 31),
-		pairs: [],
-	})
-	const innerMap = IndexMap.create({
-		outerRange: Range.create(13, 30),
-		innerRange: Range.create(0, 11),
-		pairs: [
-			{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
-			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
-		],
-	})
+	const outerMap: IndexMap = [{ outer: Range.create(8, 8), inner: Range.create(0, 0) }]
+	const innerMap: IndexMap = [
+		{ outer: Range.create(13, 13), inner: Range.create(0, 0) },
+		{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
+		{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
+	]
 	describe('merge()', () => {
-		it ('Should merge correctly', () => {
+		it('Should merge correctly', () => {
 			const mergedMap = IndexMap.merge(outerMap, innerMap)
 			snapshot(mergedMap)
 		})
-		
 	})
 })

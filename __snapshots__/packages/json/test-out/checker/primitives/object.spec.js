@@ -89,17 +89,18 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -132,17 +133,18 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 5,
@@ -206,17 +208,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -249,17 +252,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 5,
@@ -307,17 +311,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:string",
@@ -341,17 +346,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -376,17 +382,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 13,
@@ -414,17 +421,18 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ],
@@ -476,17 +484,18 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -519,17 +528,18 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 5,
@@ -672,17 +682,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -727,17 +738,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",
@@ -819,17 +831,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -874,17 +887,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",
@@ -944,17 +958,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -984,17 +999,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:number",
@@ -1025,17 +1041,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",
@@ -1069,17 +1086,18 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:number",
@@ -1152,17 +1170,18 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "expectation": [
               {
                 "type": "json:string",
@@ -1207,17 +1226,18 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "expectation": [
             {
               "type": "json:string",
@@ -1389,17 +1409,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -1439,17 +1460,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "hover": "```typescript\n.a: Number\n```"
         },
         "sep": {
@@ -1531,17 +1553,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -1581,17 +1604,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "hover": "```typescript\n.a: Number\n```"
         },
         "sep": {
@@ -1646,17 +1670,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:string",
@@ -1680,17 +1705,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -1715,17 +1741,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 13,
@@ -1753,17 +1780,18 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ],
@@ -1835,17 +1863,18 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -1878,17 +1907,18 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 5,
@@ -2085,17 +2115,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -2135,17 +2166,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "hover": "```typescript\n.a: Number\n```"
         },
         "sep": {
@@ -2228,17 +2260,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               ]
             },
             "value": "a",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            },
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ],
             "hover": "```typescript\n.a: Number\n```"
           },
           {
@@ -2278,17 +2311,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             ]
           },
           "value": "a",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          },
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ],
           "hover": "```typescript\n.a: Number\n```"
         },
         "sep": {
@@ -2343,17 +2377,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 12
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:string",
@@ -2377,17 +2412,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
               ]
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 16,
-                "end": 19
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 16,
+                  "end": 16
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "key": {
@@ -2412,17 +2448,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 12
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 13,
@@ -2450,17 +2487,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             ]
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 16,
-              "end": 19
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 16,
+                "end": 16
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ],
@@ -2533,17 +2571,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
               ]
             },
             "value": "b",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 4
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 1
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           },
           {
             "type": "json:number",
@@ -2576,17 +2615,18 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
             ]
           },
           "value": "b",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 4
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 1
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 5,

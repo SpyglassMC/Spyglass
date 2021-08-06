@@ -422,17 +422,18 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
               "end": 9
             },
             "value": "string",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 6
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -442,17 +443,18 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
             "end": 9
           },
           "value": "string",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 9,
@@ -521,17 +523,18 @@ exports['nbt list() Parse "["string"]" 1'] = {
               "end": 9
             },
             "value": "string",
-            "valueMap": {
-              "outerRange": {
-                "start": 2,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 6
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -541,17 +544,18 @@ exports['nbt list() Parse "["string"]" 1'] = {
             "end": 9
           },
           "value": "string",
-          "valueMap": {
-            "outerRange": {
-              "start": 2,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 2,
+                "end": 2
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ],
@@ -740,17 +744,18 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
               "end": 19
             },
             "value": "string",
-            "valueMap": {
-              "outerRange": {
-                "start": 12,
-                "end": 18
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 6
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 12,
+                  "end": 12
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -760,17 +765,18 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
             "end": 19
           },
           "value": "string",
-          "valueMap": {
-            "outerRange": {
-              "start": 12,
-              "end": 18
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 6
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 12,
+                "end": 12
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]

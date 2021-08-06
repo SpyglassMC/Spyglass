@@ -604,17 +604,18 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "end": 113
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 109,
-                "end": 112
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 109,
+                  "end": 109
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "doc": {
@@ -658,17 +659,18 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "end": 113
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 109,
-              "end": 112
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 109,
+                "end": 109
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       },
       {
@@ -771,17 +773,18 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
               "end": 113
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 109,
-                "end": 112
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 109,
+                  "end": 109
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "doc": {
@@ -825,17 +828,18 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "end": 113
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 109,
-              "end": 112
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 109,
+                "end": 109
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]

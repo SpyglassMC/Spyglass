@@ -41,17 +41,18 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -61,17 +62,18 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       },
       {
@@ -88,17 +90,18 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -108,17 +111,18 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -157,17 +161,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -177,17 +182,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -208,17 +214,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -228,17 +235,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 16,
@@ -281,17 +289,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -301,17 +310,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -332,17 +342,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -352,17 +363,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -392,17 +404,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -412,17 +425,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -465,17 +479,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -485,17 +500,18 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -536,17 +552,18 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
               "end": 9
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 5,
-                "end": 8
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 5,
+                  "end": 5
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -556,17 +573,18 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
             "end": 9
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 5,
-              "end": 8
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 5,
+                "end": 5
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -679,17 +697,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -699,17 +718,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -730,17 +750,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -750,17 +771,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 16,
@@ -794,17 +816,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -814,17 +837,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -845,17 +869,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
               "end": 15
             },
             "value": "bar",
-            "valueMap": {
-              "outerRange": {
-                "start": 11,
-                "end": 14
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 11,
+                  "end": 11
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -865,17 +890,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "end": 15
           },
           "value": "bar",
-          "valueMap": {
-            "outerRange": {
-              "start": 11,
-              "end": 14
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 11,
+                "end": 11
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]
@@ -905,17 +931,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -925,17 +952,18 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         },
         "sep": {
           "start": 8,
@@ -969,17 +997,18 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
               "end": 7
             },
             "value": "foo",
-            "valueMap": {
-              "outerRange": {
-                "start": 3,
-                "end": 6
-              },
-              "innerRange": {
-                "start": 0,
-                "end": 3
-              },
-              "pairs": []
-            }
+            "valueMap": [
+              {
+                "outer": {
+                  "start": 3,
+                  "end": 3
+                },
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ],
         "value": {
@@ -989,17 +1018,18 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
             "end": 7
           },
           "value": "foo",
-          "valueMap": {
-            "outerRange": {
-              "start": 3,
-              "end": 6
-            },
-            "innerRange": {
-              "start": 0,
-              "end": 3
-            },
-            "pairs": []
-          }
+          "valueMap": [
+            {
+              "outer": {
+                "start": 3,
+                "end": 3
+              },
+              "inner": {
+                "start": 0,
+                "end": 0
+              }
+            }
+          ]
         }
       }
     ]

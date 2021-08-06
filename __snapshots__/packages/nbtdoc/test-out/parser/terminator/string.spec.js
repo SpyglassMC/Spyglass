@@ -6,17 +6,18 @@ exports['string() Parse "" 1'] = {
       "end": 0
     },
     "value": "",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 0,
+          "end": 0
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": [
     {
@@ -38,17 +39,18 @@ exports['string() Parse ""foo" 1'] = {
       "end": 4
     },
     "value": "foo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 4
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 3
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": [
     {
@@ -70,17 +72,18 @@ exports['string() Parse ""foo"" 1'] = {
       "end": 5
     },
     "value": "foo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 4
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 3
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": []
 }
@@ -93,17 +96,18 @@ exports['string() Parse ""fo↓o"" 1'] = {
       "end": 3
     },
     "value": "fo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 3
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 2
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": [
     {
@@ -125,28 +129,28 @@ exports['string() Parse ""fo⧵Ao"" 1'] = {
       "end": 7
     },
     "value": "foAo",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 6
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 4
-      },
-      "pairs": [
-        {
-          "inner": {
-            "start": 2,
-            "end": 3
-          },
-          "outer": {
-            "start": 3,
-            "end": 5
-          }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
         }
-      ]
-    }
+      },
+      {
+        "inner": {
+          "start": 2,
+          "end": 3
+        },
+        "outer": {
+          "start": 3,
+          "end": 5
+        }
+      }
+    ]
   },
   "errors": [
     {
@@ -168,28 +172,28 @@ exports['string() Parse ""fo⧵no"" 1'] = {
       "end": 7
     },
     "value": "fo\no",
-    "valueMap": {
-      "outerRange": {
-        "start": 1,
-        "end": 6
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 4
-      },
-      "pairs": [
-        {
-          "inner": {
-            "start": 2,
-            "end": 3
-          },
-          "outer": {
-            "start": 3,
-            "end": 5
-          }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 1,
+          "end": 1
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
         }
-      ]
-    }
+      },
+      {
+        "inner": {
+          "start": 2,
+          "end": 3
+        },
+        "outer": {
+          "start": 3,
+          "end": 5
+        }
+      }
+    ]
   },
   "errors": []
 }
@@ -202,17 +206,18 @@ exports['string() Parse "foo" 1'] = {
       "end": 0
     },
     "value": "",
-    "valueMap": {
-      "outerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "innerRange": {
-        "start": 0,
-        "end": 0
-      },
-      "pairs": []
-    }
+    "valueMap": [
+      {
+        "outer": {
+          "start": 0,
+          "end": 0
+        },
+        "inner": {
+          "start": 0,
+          "end": 0
+        }
+      }
+    ]
   },
   "errors": [
     {
