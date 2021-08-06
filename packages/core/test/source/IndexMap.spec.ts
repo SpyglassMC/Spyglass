@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { IndexMap, Range } from '../../lib'
 
-describe('IndexMap', () => {
+describe.only('IndexMap', () => {
 	/*
 	 * Index Tens - 0000000000111111111122222222223
 	 * Index Ones - 0123456789012345678901234567890
@@ -39,11 +39,11 @@ describe('IndexMap', () => {
 		{ input: 0, expected: 13 },
 		{ input: 1, expected: 14 },
 		{ input: 2, expected: 15 },
-		{ input: 3, expected: 17 },
+		{ input: 3, expected: 16 },
 		{ input: 4, expected: 18 },
 		{ input: 5, expected: 19 },
 		{ input: 6, expected: 20 },
-		{ input: 7, expected: 26 },
+		{ input: 7, expected: 21 },
 		{ input: 8, expected: 27 },
 		{ input: 9, expected: 28 },
 		{ input: 10, expected: 29 },
@@ -60,21 +60,48 @@ describe('IndexMap', () => {
 		})
 	}
 
-	/*
-	 * Index Tens - 0000000000111111111122222222223333333333
-	 * Index Ones - 0123456789012345678901234567890123456789
-	 * Outer      -        [helloworld::"foo\"bar\u00a7qux"]
-	 * Middle     - helloworld::"foo\"bar\u00a7qux"
-	 * Inner      - foo"bar§qux
-	 */
-	const outerMap: IndexMap = [{ outer: Range.create(8, 8), inner: Range.create(0, 0) }]
-	const innerMap: IndexMap = [
-		{ outer: Range.create(13, 13), inner: Range.create(0, 0) },
-		{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
-		{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
-	]
 	describe('merge()', () => {
 		it('Should merge correctly', () => {
+			/*
+			 * Index Tens - 0000000000111111111122222222223333333333
+			 * Index Ones - 0123456789012345678901234567890123456789
+			 * Outer      -        [helloworld::"foo\"bar\u00a7qux"]
+			 * Middle     - helloworld::"foo\"bar\u00a7qux"
+			 * Inner      - foo"bar§qux
+			 */
+			const outerMap: IndexMap = [
+				{ inner: Range.create(0, 0), outer: Range.create(8, 8) },
+			]
+			const innerMap: IndexMap = [
+				{ inner: Range.create(0, 0), outer: Range.create(13, 13) },
+				{ inner: Range.create(3, 4), outer: Range.create(16, 18) },
+				{ inner: Range.create(7, 8), outer: Range.create(21, 27) },
+			]
+			const mergedMap = IndexMap.merge(outerMap, innerMap)
+			snapshot(mergedMap)
+		})
+		it('Should merge nested pairs correctly', () => {
+			/*
+			 * Index Tens - 0000000000111111111122222222223333333333
+			 * Index Ones - 0123456789012345678901234567890123456789
+			 * Outer      -        "{Command: \"say \\\"hi\\\"\"}"
+			 * Middle     - {Command: "say \"hi\""}
+			 * Inner      - say "hi"
+			 */
+			const outerMap: IndexMap = [
+				{ inner: Range.create(0, 0), outer: Range.create(8, 8) },
+				{ inner: Range.create(10, 11), outer: Range.create(18, 20) },
+				{ inner: Range.create(15, 16), outer: Range.create(24, 26) },
+				{ inner: Range.create(16, 17), outer: Range.create(26, 28) },
+				{ inner: Range.create(19, 20), outer: Range.create(30, 32) },
+				{ inner: Range.create(20, 21), outer: Range.create(32, 34) },
+				{ inner: Range.create(21, 22), outer: Range.create(34, 36) },
+			]
+			const innerMap: IndexMap = [
+				{ inner: Range.create(0, 0), outer: Range.create(11, 11) },
+				{ inner: Range.create(4, 5), outer: Range.create(15, 17) },
+				{ inner: Range.create(7, 8), outer: Range.create(19, 21) },
+			]
 			const mergedMap = IndexMap.merge(outerMap, innerMap)
 			snapshot(mergedMap)
 		})
