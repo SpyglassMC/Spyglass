@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extractNested, float, floatRange, intRange, listOf, literal, opt, pick, record, resource, simpleString, when } from '@spyglassmc/json/lib/checker'
-import { nbt } from '../../util'
+import { nbt } from '../util'
 import { block_state, HeightmapType, height_provider } from './common'
 import { configured_feature_ref } from './feature'
 

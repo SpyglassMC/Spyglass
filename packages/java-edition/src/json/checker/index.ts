@@ -2,7 +2,7 @@ import type { Checker, CheckerContext as CoreCheckerContext, MetaRegistry } from
 import type { JsonNode } from '@spyglassmc/json'
 import { dissectUri } from '../../binder'
 import type { MajorVersion } from '../../dependency'
-import { Checkers, pack_mcmeta } from './data/1.17'
+import { Checkers, pack_mcmeta } from './data'
 
 export const entry: Checker<JsonNode> = (node: JsonNode, ctx: CoreCheckerContext) => {
 	const parts = dissectUri(ctx.doc.uri, ctx.roots)

@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, record, resource, when } from '@spyglassmc/json/lib/checker/primitives'
-import { intColor } from '../../util'
+import { intColor } from '../util'
 import { block_state, floatProvider, height_provider, vertical_anchor } from './common'
 import { configured_feature_list_ref } from './feature'
 import { configured_structure_feature } from './structure'

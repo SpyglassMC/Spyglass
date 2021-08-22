@@ -1,6 +1,6 @@
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
 import { any, as, dispatch, extract, float, floatRange, int, intRange, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { blockStateMap } from '../../util'
+import { blockStateMap } from '../util'
 
 function smallestEncompassingPowerOfTwo(n: number) {
 	n = n - 1

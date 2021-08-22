@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { blockStateList, blockStateMap, nbt, nbtPath, uuid } from '../../util'
+import { blockStateList, blockStateMap, nbt, nbtPath, uuid } from '../util'
 import { damage_source_predicate, entity_predicate, item_predicate, location_predicate } from './advancement'
 import { int_bounds, number_provider, Slots } from './common'
 import { text_component } from './text_component'
