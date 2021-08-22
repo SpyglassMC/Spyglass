@@ -4,7 +4,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type { JsonNode, JsonObjectExpectation, JsonStringNode } from '../../node'
 import { JsonObjectNode, JsonStringExpectation } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
-import { expectation } from './util'
+import { any, expectation } from './util'
 
 // eslint-disable-next-line no-restricted-syntax
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue }
@@ -112,12 +112,16 @@ export function record(properties: CheckerRecord, options?: ObjectCheckerOptions
 	)
 }
 
-export function opt(checker: JsonChecker, defaultValue?: JsonValue): ComplexProperty {
-	return { checker: checker, opt: true, def: defaultValue }
+export function opt(checker: JsonChecker | ComplexProperty, defaultValue?: JsonValue): ComplexProperty {
+	return isComplex(checker)
+	 ? { ...checker, opt: true, def: defaultValue }
+	 : { checker, opt: true, def: defaultValue }
 }
 
-export function deprecated(checker: JsonChecker): ComplexProperty {
-	return { checker: checker, deprecated: true }
+export function deprecated(checker: JsonChecker | ComplexProperty): ComplexProperty {
+	return isComplex(checker)
+		? { ...checker, deprecated: true }
+		: { checker, deprecated: true }
 }
 
 export function dispatch(values: (children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
@@ -194,7 +198,7 @@ export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<st
 	if (key === undefined) {
 		ctx.err.report(localize('json.checker.property.missing', Object.keys(cases)), Range.create(node.range.start, node.range.start + 1))
 		return Object.fromEntries(Object.entries(cases)
-			.map(([k, v]) => [k, typeof v === 'function' ? v()[k] : v[k]])
+			.map(([k, v]) => [k, opt(typeof v === 'function' ? any() : v[k]?? any())])
 		)
 	}
 	const c = cases[key]

@@ -48,11 +48,11 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 	}
 }
 
-export function any(checkers: JsonChecker[]): JsonChecker {
-	if (checkers.length === 0) {
-		throw new Error('Expected at least one checker')
-	}
+export function any(checkers: JsonChecker[] = []): JsonChecker {
 	return (node, ctx) => {
+		if (checkers.length === 0) {
+			return
+		}
 		// TODO: somehow check the raw type first. https://discord.com/channels/666020457568403505/666037123450929163/847671251371819079
 		const attempts = checkers
 			.map(checker => attempt(checker, node, ctx))
