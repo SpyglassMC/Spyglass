@@ -1,4 +1,5 @@
 import { ErrorReporter, Operations, Range } from '@spyglassmc/core'
+import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { JsonExpectation, JsonNode } from '../../node'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker'
 
@@ -31,6 +32,7 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 
 	checker(node, tempCtx)
 
+	const tempExpectation = node.expectation
 	tempCtx.ops.undo()
 
 	const totalErrorSpan = tempCtx.err.errors
@@ -39,7 +41,7 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 
 	return {
 		totalErrorSpan,
-		expectation: node.expectation, // FIXME: use tempNode's expectation
+		expectation: tempExpectation,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
 			tempCtx.ops.redo()
@@ -53,12 +55,21 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 		if (checkers.length === 0) {
 			return
 		}
-		// TODO: somehow check the raw type first. https://discord.com/channels/666020457568403505/666037123450929163/847671251371819079
+
 		const attempts = checkers
 			.map(checker => attempt(checker, node, ctx))
 			.sort((a, b) => a.totalErrorSpan - b.totalErrorSpan)
-		attempts[0].updateNodeAndCtx()
-		ctx.ops.set(node, 'expectation', attempts.filter(a => a.expectation).flatMap(a => a.expectation!))
+		const sameTypeAttempts = attempts
+			.filter(a => a.expectation?.map<string>(e => e.type).includes(node.type))
+		const allExpectations = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)
+
+		if (sameTypeAttempts.length === 0) {
+			const allowedTypes = allExpectations.map(e => localize(e.type.slice(5)))
+			ctx.err.report(localize('expected', arrayToMessage(allowedTypes, false)), node)
+		} else {
+			sameTypeAttempts[0].updateNodeAndCtx()
+		}
+		ctx.ops.set(node, 'expectation', allExpectations)
 	}
 }
 
