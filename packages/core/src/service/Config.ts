@@ -17,15 +17,13 @@ export interface Config {
 	 */
 	formatter: FormatterConfig,
 	/**
-	 * Linter rules.
+	 *t Linter rules.
 	 */
 	linter: LinterConfig,
-	plugin?: string[],
 	/**
 	 * Code snippets.
 	 */
 	snippet: SnippetsConfig,
-	symbolChecker: SymbolCheckerConfig,
 }
 
 export interface EnvConfig {
@@ -53,6 +51,7 @@ export interface EnvConfig {
 	 */
 	language: string,
 	permissionLevel: 1 | 2 | 3 | 4,
+	plugins: string[],
 	vanillaResources: {
 		blocks?: string,
 		commands?: string,
@@ -71,19 +70,21 @@ export interface EnvConfig {
 type Arrayable<T> = T | readonly T[]
 
 type DiagnosticSeverityConfig =
-	| 'error'
-	| 'warning'
-	| 'information'
 	| 'hint'
+	| 'information'
+	| 'warning'
+	| 'error'
 
 type BracketSpacingConfig = any
 type SepSpacingConfig = any
 type DiagnosticConfig<T> = T extends boolean
 	? null | T | [DiagnosticSeverityConfig, T] | DiagnosticSeverityConfig
 	: null | T | [DiagnosticSeverityConfig, T]
-type NamingConventionConfig = any
-type QuoteTypeConfig = any
-type StrictCheckConfig = any
+type QuoteConfig = {
+	always?: boolean,
+	avoidEscape?: boolean,
+	type?: 'double' | 'single',
+}
 
 export interface FormatterConfig {
 	blockStateBracketSpacing: BracketSpacingConfig,
@@ -116,81 +117,54 @@ export interface FormatterConfig {
 }
 
 export interface LinterConfig {
-	defaultVisibility: string,
+	// Name convention.
+	nameOfNbtKey: DiagnosticConfig<string>,
+	nameOfObjective: DiagnosticConfig<string>,
+	nameOfScoreHolder: DiagnosticConfig<string>,
+	nameOfTag: DiagnosticConfig<string>,
+	nameOfTeam: DiagnosticConfig<string>,
+
+	// Quote.
+	commandStringQuote: DiagnosticConfig<QuoteConfig>,
+	nbtPathQuote: DiagnosticConfig<QuoteConfig>,
+	nbtStringQuote: DiagnosticConfig<QuoteConfig>,
+	selectorKeyQuote: DiagnosticConfig<QuoteConfig>,
+	nbtKeyQuote: DiagnosticConfig<QuoteConfig>,
+
+	// Sort key.
 	blockStateSortKeys: DiagnosticConfig<'alphabetically'>,
+	nbtCompoundSortKeys: DiagnosticConfig<'alphabetically'>,
+	selectorSortKeys: DiagnosticConfig<string[]>,
+
 	idOmitDefaultNamespace: DiagnosticConfig<boolean>,
-	nameOfObjectives: DiagnosticConfig<NamingConventionConfig>,
-	nameOfNbtCompoundTagKeys: DiagnosticConfig<NamingConventionConfig>,
-	nameOfTags: DiagnosticConfig<NamingConventionConfig>,
-	nameOfTeams: DiagnosticConfig<NamingConventionConfig>,
-	nameOfScoreHolders: DiagnosticConfig<NamingConventionConfig>,
 	nbtArrayLengthCheck: DiagnosticConfig<boolean>,
 	nbtBoolean: DiagnosticConfig<boolean>,
-	nbtCompoundKeyQuote: DiagnosticConfig<boolean>,
-	nbtCompoundKeyQuoteType: DiagnosticConfig<QuoteTypeConfig>,
-	nbtCompoundSortKeys: DiagnosticConfig<'alphabetically' | 'nbtdoc'>,
 	nbtListLengthCheck: DiagnosticConfig<boolean>,
-	nbtPathQuote: DiagnosticConfig<boolean>,
-	nbtPathQuoteType: DiagnosticConfig<'always double'>,
-	nbtStringQuote: DiagnosticConfig<boolean>,
-	nbtStringQuoteType: DiagnosticConfig<QuoteTypeConfig>,
 	nbtTypeCheck: DiagnosticConfig<'strictly' | 'loosely'>,
-	selectorSortKeys: DiagnosticConfig<string[]>,
-	selectorKeyQuote: DiagnosticConfig<boolean>,
-	selectorKeyQuoteType: DiagnosticConfig<QuoteTypeConfig>,
-
-	strictAdvancementCheck: DiagnosticConfig<true>,
-	strictBlockTagCheck: DiagnosticConfig<true>,
-	strictBossbarCheck: DiagnosticConfig<true>,
-	strictEntityTypeTagCheck: DiagnosticConfig<true>,
-	strictFluidTagCheck: DiagnosticConfig<true>,
-	strictFunctionCheck: DiagnosticConfig<true>,
-	strictFunctionTagCheck: DiagnosticConfig<true>,
-	strictItemTagCheck: DiagnosticConfig<true>,
-	strictLootTableCheck: DiagnosticConfig<true>,
-	strictObjectiveCheck: DiagnosticConfig<true>,
-	strictPredicateCheck: DiagnosticConfig<true>,
-	strictRecipeCheck: DiagnosticConfig<true>,
-	strictScoreHolderCheck: DiagnosticConfig<true>,
-	strictStorageCheck: DiagnosticConfig<true>,
-	strictTagCheck: DiagnosticConfig<true>,
-	strictTeamCheck: DiagnosticConfig<true>,
-	strictAttributeCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictBlockCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictDimensionTypeCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictEnchantmentCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictEntityTypeCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictFluidCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictItemCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictMobEffectCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictMotiveCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictParticleTypeCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictPotionCheck: DiagnosticConfig<StrictCheckConfig>,
-	strictSoundEventCheck: DiagnosticConfig<StrictCheckConfig>,
-
-	stringQuote: DiagnosticConfig<boolean>,
-	stringQuoteType: DiagnosticConfig<QuoteTypeConfig>,
+	undeclaredSymbol: SymbolLinterConfig,
 }
 
 export interface SnippetsConfig {
 	[label: string]: string,
 }
 
-type SymbolCheckerConfig = Arrayable<SymbolCheckerConfig.Config>
-declare namespace SymbolCheckerConfig {
-	export interface Config {
-		if?: Arrayable<IfClause>,
-		then?: Arrayable<ThenClause>,
-		override?: Arrayable<Config>,
+type SymbolLinterConfig =
+	| Arrayable<SymbolLinterConfig.Complex>
+	| SymbolLinterConfig.Action
+declare namespace SymbolLinterConfig {
+	export interface Complex {
+		if?: Arrayable<Condition>,
+		then?: Arrayable<Action>,
+		override?: Arrayable<Complex>,
 	}
-	export interface IfClause {
+	export interface Condition {
 		category?: Arrayable<string>,
 		pattern?: Arrayable<string>,
-		ignorePattern?: Arrayable<string>,
+		excludePattern?: Arrayable<string>,
 		namespace?: Arrayable<string>,
-		ignoreNamespace?: Arrayable<string>,
+		excludeNamespace?: Arrayable<string>,
 	}
-	export interface ThenClause {
+	export interface Action {
 		declare?: 'block' | 'file' | 'public' /* TODO: restricted */,
 		report?: DiagnosticSeverityConfig,
 	}
@@ -220,6 +194,7 @@ export const VanillaConfig: Config = {
 		},
 		language: 'Default',
 		permissionLevel: 2,
+		plugins: [],
 		vanillaResources: {},
 		version: 'Auto',
 	},
@@ -253,79 +228,47 @@ export const VanillaConfig: Config = {
 		timeOmitTickUnit: false,
 	},
 	linter: {
-		defaultVisibility: 'public',
 		blockStateSortKeys: null,
-		idOmitDefaultNamespace: null,
-		nameOfNbtCompoundTagKeys: null,
-		nameOfObjectives: null,
-		nameOfTags: null,
-		nameOfTeams: null,
-		nameOfScoreHolders: null,
-		nbtArrayLengthCheck: ['warning', true],
-		nbtBoolean: null,
-		nbtCompoundKeyQuote: null,
-		nbtCompoundKeyQuoteType: ['warning', 'prefer double'],
 		nbtCompoundSortKeys: null,
-		nbtListLengthCheck: null,
-		nbtPathQuote: null,
-		nbtPathQuoteType: ['warning', 'always double'],
-		nbtStringQuote: ['warning', true],
-		nbtStringQuoteType: ['warning', 'prefer double'],
-		nbtTypeCheck: ['warning', 'loosely'],
-		selectorKeyQuote: null,
-		selectorKeyQuoteType: null,
 		selectorSortKeys: null,
 
-		strictBossbarCheck: ['warning', true],
-		strictScoreHolderCheck: null,
-		strictStorageCheck: null,
-		strictObjectiveCheck: ['warning', true],
-		strictTagCheck: null,
-		strictTeamCheck: ['warning', true],
-		strictAdvancementCheck: null,
-		strictFunctionCheck: null,
-		strictLootTableCheck: null,
-		strictPredicateCheck: null,
-		strictRecipeCheck: null,
-		strictBlockTagCheck: null,
-		strictEntityTypeTagCheck: null,
-		strictFluidTagCheck: null,
-		strictFunctionTagCheck: null,
-		strictItemTagCheck: null,
-		strictAttributeCheck: ['error', 'only-default-namespace'],
-		strictBlockCheck: ['error', 'only-default-namespace'],
-		strictDimensionTypeCheck: ['error', 'only-default-namespace'],
-		strictEnchantmentCheck: ['error', 'only-default-namespace'],
-		strictEntityTypeCheck: ['error', 'only-default-namespace'],
-		strictFluidCheck: ['error', 'only-default-namespace'],
-		strictItemCheck: ['error', 'only-default-namespace'],
-		strictMobEffectCheck: ['error', 'only-default-namespace'],
-		strictMotiveCheck: ['warning', 'only-default-namespace'],
-		strictParticleTypeCheck: ['error', 'only-default-namespace'],
-		strictPotionCheck: ['warning', 'only-default-namespace'],
-		strictSoundEventCheck: ['warning', 'only-default-namespace'],
+		commandStringQuote: null,
+		nbtKeyQuote: null,
+		nbtPathQuote: null,
+		nbtStringQuote: null,
+		selectorKeyQuote: null,
 
-		stringQuote: ['warning', false],
-		stringQuoteType: ['warning', 'prefer double'],
+		idOmitDefaultNamespace: null,
+
+		nameOfNbtKey: null,
+		nameOfObjective: null,
+		nameOfScoreHolder: null,
+		nameOfTag: null,
+		nameOfTeam: null,
+
+		nbtArrayLengthCheck: true,
+		nbtBoolean: null,
+		nbtListLengthCheck: null,
+		nbtTypeCheck: 'loosely',
+
+		undeclaredSymbol: [
+			{
+				if: { category: VanillaRegistryCategories, namespace: 'minecraft' },
+				then: { report: 'warning' },
+			},
+			{
+				if: { category: ['bossbar', 'objective', 'team'] },
+				then: { report: 'warning' },
+			},
+			{
+				then: { declare: 'block' },
+			},
+		],
 	},
 	snippet: {
 		executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
 		summonAec: 'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}',
 	},
-	symbolChecker: [
-		{
-			if: { category: VanillaRegistryCategories, namespace: 'minecraft' },
-			then: { report: 'warning' },
-		},
-		{
-			if: { category: ['bossbar', 'objective', 'team'] },
-			then: { report: 'warning' },
-		},
-		{
-			if: { category: ['score_holder', 'storage', 'tag'] },
-			then: { declare: 'block' },
-		},
-	],
 }
 
 type ConfigEvent = { config: Config }
@@ -397,5 +340,3 @@ export class ConfigService extends EventEmitter {
 		return ans
 	}
 }
-
-// export type Linter =

@@ -1,3 +1,4 @@
+import { localize } from '@spyglassmc/locales'
 import type { LanguageErrorInfo, RangeLike } from '../source'
 import { ErrorSeverity, LanguageError, Range } from '../source'
 
@@ -28,5 +29,29 @@ export class ErrorReporter {
 	 */
 	absorb(reporter: ErrorReporter): void {
 		this.errors.push(...reporter.errors)
+	}
+}
+
+export class LinterErrorReporter extends ErrorReporter {
+	constructor(
+		public ruleName: string,
+		public ruleSeverity: ErrorSeverity
+	) {
+		super()
+	}
+
+	lint(message: string, range: RangeLike, info?: LanguageErrorInfo): void {
+		return this.report(
+			localize('linter.diagnostic-message-wrapper', message, this.ruleName),
+			range,
+			this.ruleSeverity,
+			info
+		)
+	}
+
+	static fromErrorReporter(reporter: ErrorReporter, ruleName: string, ruleSeverity: ErrorSeverity): LinterErrorReporter {
+		const ans = new LinterErrorReporter(ruleName, ruleSeverity)
+		ans.errors = reporter.errors
+		return ans
 	}
 }

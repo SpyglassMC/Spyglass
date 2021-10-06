@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type { LinterErrorReporter } from '.'
 import type { Range } from '../source'
 import { ReadonlySource } from '../source'
 import type { SymbolUtil } from '../symbol'
@@ -14,7 +15,7 @@ import { Operations } from './Operations'
 import type { DocAndNode, ProjectLike } from './Project'
 
 export interface ContextBase {
-	getDocAndNode: (uri: string) => DocAndNode | undefined, 
+	getDocAndNode: (uri: string) => DocAndNode | undefined,
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
@@ -92,6 +93,27 @@ export namespace CheckerContext {
 			err: opts.err ?? new ErrorReporter(),
 			ops: opts.ops ?? new Operations(),
 			ensureChecked: project.ensureParsedAndChecked?.bind(project),
+		}
+	}
+}
+
+export interface LinterContext extends CheckerContext {
+	err: LinterErrorReporter,
+	ruleName: string,
+	ruleValue: unknown,
+}
+interface LinterContextOptions extends CheckerContextOptions {
+	err: LinterErrorReporter,
+	ruleName: string,
+	ruleValue: unknown,
+}
+export namespace LinterContext {
+	export function create(project: ProjectLike, opts: LinterContextOptions): LinterContext {
+		return {
+			...CheckerContext.create(project, opts),
+			err: opts.err,
+			ruleName: opts.ruleName,
+			ruleValue: opts.ruleValue,
 		}
 	}
 }

@@ -2,6 +2,7 @@ import type { AstNode } from '../node'
 import type { Parser } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
 import { checker, colorizer, completer } from '../processor'
+import type { Linter } from '../processor/checker/Linter'
 import type { UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
 import type { FileExtension } from './fileUtil'
@@ -28,6 +29,7 @@ export class MetaRegistry {
 	readonly #colorizers = new Map<string, Colorizer<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
 	readonly #dependencyProviders = new Map<DependencyKey, DependencyProvider>()
+	readonly #linters = new Map<string, { linter: Linter<any>, predicate: (node: AstNode) => boolean }>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #uriBinders = new Set<UriBinder>()
 
@@ -123,6 +125,19 @@ export class MetaRegistry {
 	}
 	public registerDependencyProvider(key: DependencyKey, provider: DependencyProvider): void {
 		this.#dependencyProviders.set(key, provider)
+	}
+
+	public getLinters(node: AstNode): Linter<AstNode>[] {
+		const ans: Linter<AstNode>[] = []
+		for (const { linter, predicate } of this.#linters.values()) {
+			if (predicate(node)) {
+				ans.push(linter)
+			}
+		}
+		return ans
+	}
+	public registerLinter(ruleName: string, options: { linter: Linter<any>, predicate: (node: AstNode) => boolean }): void {
+		this.#linters.set(ruleName, options)
 	}
 
 	public hasParser<N extends AstNode>(type: N['type']): boolean {
