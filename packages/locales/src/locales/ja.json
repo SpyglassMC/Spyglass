@@ -30,7 +30,6 @@
   "conjunction.or_3+_1": "か ",
   "conjunction.or_3+_2": "もしくは ",
   "datafix.error.command-replaceitem": "/replaceitemは20w46a (1.17の2回目のスナップショット)で削除され、/itemに置き換わりました",
-  "diagnostic-rule": "%0% (規則: %1%)",
   "duplicate-key": "キー %0% は重複してます",
   "ending-quote": "文字列を閉じる引用符 %0%",
   "entity": "エンティティ",

@@ -33,7 +33,6 @@
   "conjunction.or_3+_1": ",",
   "conjunction.or_3+_2": ", ou",
   "datafix.error.command-replaceitem": "/replaceitem a été enlevé en 20w46a (la deuxième snapshot de la 1.17) en faveur de /item",
-  "diagnostic-rule": "%0% (règle : %1%)",
   "duplicate-key": "Clé duplique %0%",
   "ending-quote": "un guillemet de fermeture %0%",
   "entity": "une entité",

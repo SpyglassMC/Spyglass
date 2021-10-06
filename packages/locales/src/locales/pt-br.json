@@ -33,7 +33,6 @@
   "conjunction.or_3+_1": ",",
   "conjunction.or_3+_2": ", ou",
   "datafix.error.command-replaceitem": "/replaceitem foi removida na 20w46a (a segunda snapshot da 1.17) a favor de /item",
-  "diagnostic-rule": "%0% (regra: %1%)",
   "duplicate-key": "Duplicar chave %0%",
   "ending-quote": "uma citação final %0%",
   "entity": "uma entidade",

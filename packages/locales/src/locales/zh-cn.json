@@ -31,7 +31,6 @@
   "conjunction.or_3+_1": "、",
   "conjunction.or_3+_2": "或",
   "datafix.error.command-replaceitem": "/replaceitem 在 20w46a（1.17 的第二个快照）中被 /item 取代",
-  "diagnostic-rule": "%0%（规则：%1%）",
   "duplicate-key": "键%0%重复",
   "ending-quote": "一个半角引号%0%",
   "entity": "一个实体",

@@ -28,7 +28,6 @@
   "conjunction.or_2": "oder",
   "conjunction.or_3+_1": ",",
   "conjunction.or_3+_2": ", oder",
-  "diagnostic-rule": "%0% (Regel: %1%)",
   "duplicate-key": "Doppelter Schlüssel %0%",
   "ending-quote": "ein schließendes Anführungszeichen %0%",
   "entity": "ein Objekt",

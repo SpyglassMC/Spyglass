@@ -27,7 +27,6 @@
   "conjunction.or_2": "o",
   "conjunction.or_3+_1": ",",
   "conjunction.or_3+_2": ", o",
-  "diagnostic-rule": "%0% (regola: %1%)",
   "duplicate-key": "Chiave duplicate %0%",
   "ending-quote": "quotazione finale %0%",
   "entity": "un'entità",
