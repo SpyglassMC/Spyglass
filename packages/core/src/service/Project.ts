@@ -62,7 +62,7 @@ export namespace ProjectLike {
 			meta: data.meta ?? new MetaRegistry(),
 			projectRoot: data.projectRoot ?? 'file:///',
 			symbols: data.symbols ?? new SymbolUtil({}),
-			ctx: {},
+			ctx: data.ctx ?? {},
 		}
 	}
 }

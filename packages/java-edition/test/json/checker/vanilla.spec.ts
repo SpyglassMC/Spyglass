@@ -12,7 +12,7 @@ describe('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
 	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
 
-	const project = ProjectLike.mock({ allRoots: ['file:///'] })
+	const project = ProjectLike.mock({ allRoots: ['file:///'], ctx: { loadedVersion: '1.17' } })
 	nbt.initialize(project)
 
 	summary.forEach((files, i) => {
@@ -24,7 +24,7 @@ describe('Check vanilla files', async () => {
 			let passing = true
 			files.forEach(file => {
 				const text = fs.readFileSync(file, 'utf-8')
-				const result = testChecker(checker, text, { project, majorVersion: '1.17' })
+				const result = testChecker(checker, text, { project })
 				const errors = result.parserErrors.concat(result.checkerErrors)
 					.filter(e => !e.message.endsWith('does not exist'))
 				if (errors.length === 0) return

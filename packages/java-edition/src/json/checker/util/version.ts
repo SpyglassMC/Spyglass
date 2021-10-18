@@ -9,8 +9,6 @@ function getVersion(ctx: JsonCheckerContext) {
 }
 
 function cmpVersion(ctx: JsonCheckerContext, target: MajorVersion): number {
-	const a = MajorVersions.indexOf(getVersion(ctx))
-	const b = MajorVersions.indexOf(target)
 	return MajorVersions.indexOf(getVersion(ctx)) - MajorVersions.indexOf(target)
 }
 
