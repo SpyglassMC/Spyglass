@@ -1,10 +1,11 @@
+import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, record, resource, when } from '@spyglassmc/json/lib/checker/primitives'
-import { intColor } from '../util'
+import { intColor, versioned } from '../util'
 import { block_state, floatProvider, height_provider, vertical_anchor } from './common'
 import { configured_feature_list_ref } from './feature'
 import { configured_structure_feature } from './structure'
 
-const BiomeCategory = [
+const BiomeCategory = (ctx: JsonCheckerContext) => [
 	'beach',
 	'desert',
 	'extreme_hills',
@@ -22,16 +23,16 @@ const BiomeCategory = [
 	'swamp',
 	'taiga',
 	'the_end',
-	'underground',
+	...versioned(ctx, '1.17', ['underground']),
 ]
 
-const MobCategory = [
+const MobCategory = (ctx: JsonCheckerContext) => [
 	'monster',
 	'creature',
 	'ambient',
 	'water_creature',
 	'water_ambient',
-	'underground_water_creature',
+	...versioned(ctx, '1.17', ['underground_water_creature']),
 	'misc',
 ]
 
@@ -44,48 +45,50 @@ export const configured_surface_builder = as('surface_builder', record({
 	}),
 }))
 
-export const configured_carver = as('carver', dispatch('type', type => record({
+export const configured_carver = as('carver', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/carver'),
 	config: record({
 		probability: floatRange(0, 1),
-		y: height_provider,
-		yScale: floatProvider(),
-		lava_level: vertical_anchor,
-		aquifers_enabled: boolean,
-		debug_settings: opt(record({
-			debug_mode: opt(boolean),
-			air_state: opt(block_state),
-			water_state: opt(block_state),
-			lava_state: opt(block_state),
-			barrier_state: opt(block_state),
-		})),
-		...when(type, ['cave', 'nether_cave', 'underwater_cave'], {
-			horizontal_radius_multiplier: floatProvider(),
-			vertical_radius_multiplier: floatProvider(),
-			floor_level: floatProvider(-1, 1),
-		}),
-		...when(type, ['canyon', 'underwater_canyon'], {
-			vertical_rotation: floatProvider(),
-			shape: record({
-				distance_factor: floatProvider(),
-				thickness: floatProvider(),
-				width_smoothness: intRange(0, undefined),
-				horizontal_radius_factor: floatProvider(),
-				vertical_radius_default_factor: float,
-				vertical_radius_center_factor: float,
+		...versioned(ctx, '1.17', {
+			y: height_provider,
+			yScale: floatProvider(),
+			lava_level: vertical_anchor,
+			aquifers_enabled: boolean,
+			debug_settings: opt(record({
+				debug_mode: opt(boolean),
+				air_state: opt(block_state),
+				water_state: opt(block_state),
+				lava_state: opt(block_state),
+				barrier_state: opt(block_state),
+			})),
+			...when(type, ['cave', 'nether_cave', 'underwater_cave'], {
+				horizontal_radius_multiplier: floatProvider(),
+				vertical_radius_multiplier: floatProvider(),
+				floor_level: floatProvider(-1, 1),
+			}),
+			...when(type, ['canyon', 'underwater_canyon'], {
+				vertical_rotation: floatProvider(),
+				shape: record({
+					distance_factor: floatProvider(),
+					thickness: floatProvider(),
+					width_smoothness: intRange(0, undefined),
+					horizontal_radius_factor: floatProvider(),
+					vertical_radius_default_factor: float,
+					vertical_radius_center_factor: float,
+				}),
 			}),
 		}),
 	}),
 })))
 
-export const biome = as('biome', record({
+export const biome = as('biome', dispatch((props, ctx) => record({
 	depth: float,
 	scale: float,
 	downfall: float,
 	temperature: float,
 	temperature_modifier: opt(literal(['none', 'frozen'])),
 	precipitation: literal(['none', 'rain', 'snow']),
-	category: literal(BiomeCategory),
+	category: literal(BiomeCategory(ctx)),
 	effects: record({
 		sky_color: intColor(),
 		fog_color: intColor(),
@@ -121,7 +124,7 @@ export const biome = as('biome', record({
 	player_spawn_friendly: opt(boolean),
 	creature_spawn_probability: opt(floatRange(0, 0.9999999)),
 	spawners: object(
-		literal(MobCategory),
+		literal(MobCategory(ctx)),
 		() => listOf(record({
 			type: resource('entity_type'),
 			weight: int,
@@ -152,4 +155,4 @@ export const biome = as('biome', record({
 		listOf(configured_structure_feature),
 	]),
 	features: listOf(configured_feature_list_ref),
-}))
+})))

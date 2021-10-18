@@ -80,6 +80,9 @@ export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): Json
 		err: new ErrorReporter(),
 		depth: (ctx.depth ?? 0) + 1,
 	}
+	if (typeof checker !== 'function') {
+		console.error(`Failed to get expectation at ${ctx.context}`, checker)
+	}
 	checker(node, tempCtx)
 	return node.expectation
 }

@@ -22,7 +22,7 @@ import { MetaRegistry } from './MetaRegistry'
 
 export type ProjectInitializerContext = Pick<Project, 'config' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
 
-export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<void> | void
+export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
 
 interface Options {
 	fs?: FileService,
@@ -49,7 +49,7 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
+export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'symbols' | 'ctx'>
 export namespace ProjectLike {
 	export function mock(data: Partial<ProjectLike> = {}): ProjectLike {
 		return {
@@ -62,6 +62,7 @@ export namespace ProjectLike {
 			meta: data.meta ?? new MetaRegistry(),
 			projectRoot: data.projectRoot ?? 'file:///',
 			symbols: data.symbols ?? new SymbolUtil({}),
+			ctx: {},
 		}
 	}
 }
@@ -126,6 +127,14 @@ export class Project extends EventEmitter {
 		return this.#allRoots
 	}
 
+	#ctx?: Record<string, string>
+	get ctx() {
+		return this.#ctx ?? {}
+	}
+	private set ctx(val) {
+		this.#ctx = val
+	}
+
 	/**
 	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 * 
@@ -172,6 +181,7 @@ export class Project extends EventEmitter {
 		this.logger = logger
 		this.projectRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(projectPath))
 		this.symbols = symbols
+		this.#ctx = {}
 
 		this.#configService
 			.on('changed', ({ config }) => {
@@ -196,11 +206,22 @@ export class Project extends EventEmitter {
 				symbols: this.symbols,
 			}
 			const results = await Promise.allSettled(this.#initializers.map(init => init(initCtx)))
-			results.forEach((r, i) => {
+			let ctx: Record<string, string> = {}
+			results.forEach(async (r, i) => {
 				if (r.status === 'rejected') {
 					this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}”`, r.reason)
+				} else if (r.status === 'fulfilled') {
+					if (!(r.value instanceof Promise) && r.value) {
+						if (r.value.then) {
+							this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}” Result is a promise`)
+						} else {
+							const value = r.value as Record<string, string>
+							ctx = { ...value, ...ctx }
+						}
+					}
 				}
 			})
+			this.ctx = ctx
 		}
 		const getDependencies = async () => {
 			const ans: Dependency[] = []

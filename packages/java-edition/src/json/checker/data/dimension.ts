@@ -1,4 +1,5 @@
 import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource } from '@spyglassmc/json/lib/checker/primitives'
+import { versioned } from '../util'
 import { block_state } from './common'
 
 const structure_settings = as('structure_settings', record({
@@ -17,27 +18,29 @@ const structure_settings = as('structure_settings', record({
 	),
 }))
 
-const noise_slide_settings = record({
+const noise_slide_settings = dispatch((_, ctx) => record({
 	target: int,
-	size: intRange(0, undefined),
+	size: versioned(ctx, int, '1.17', intRange(0, undefined)),
 	offset: int,
-})
+}))
 
-export const noise_settings = as('noise_settings', record({
+export const noise_settings = as('noise_settings', dispatch((_, ctx) => record({
 	bedrock_roof_position: int,
 	bedrock_floor_position: int,
 	sea_level: int,
-	min_surface_level: int,
+	min_surface_level: versioned(ctx, '1.17', int),
 	disable_mob_generation: boolean,
-	aquifers_enabled: boolean,
-	noise_caves_enabled: boolean,
-	deepslate_enabled: boolean,
-	ore_veins_enabled: boolean,
-	noodle_caves_enabled: boolean,
+	...versioned(ctx, '1.17', {
+		noise_caves_enabled: boolean,
+		noodle_caves_enabled: boolean,
+		aquifers_enabled: boolean,
+		deepslate_enabled: boolean,
+		ore_veins_enabled: boolean,
+	}),
 	default_block: block_state,
 	default_fluid: block_state,
 	noise: record({
-		min_y: intRange(-2048, 2047), // TODO: validate
+		min_y: versioned(ctx, '1.17', intRange(-2048, 2047)), // TODO: validate
 		height: intRange(0, 4096),
 		size_horizontal: intRange(1, 4),
 		size_vertical: intRange(1, 4),
@@ -57,7 +60,7 @@ export const noise_settings = as('noise_settings', record({
 		bottom_slide: noise_slide_settings,
 	}),
 	structures: structure_settings,
-}))
+})))
 
 const noise_parameters = record({
 	firstOctave: int,
@@ -103,10 +106,10 @@ const biome_source = as('biome_source', dispatch('type', type => record({
 	}),
 })))
 
-export const dimension_type = as('dimension_type', record({
-	min_y: intRange(-2048, 2047), // TODO: validate
-	height: intRange(0, 4096),
-	logical_height: intRange(0, 4096),
+export const dimension_type = as('dimension_type', (node, ctx) => record({
+	min_y: versioned(ctx, '1.17', intRange(-2048, 2047)), // TODO: validate
+	height: versioned(ctx, '1.17', intRange(0, 4096)),
+	logical_height: intRange(0, versioned(ctx, '1.17') ? 4096 : 256),
 	coordinate_scale: floatRange(0.00001, 30000000),
 	ambient_light: float,
 	fixed_time: opt(int),
@@ -120,7 +123,7 @@ export const dimension_type = as('dimension_type', record({
 	has_raids: boolean,
 	has_skylight: boolean,
 	has_ceiling: boolean,
-}))
+})(node, ctx))
 
 export const dimension = as('dimension', record({
 	type: any([

@@ -3,7 +3,8 @@ import type { JsonNode } from '@spyglassmc/json'
 import { JsonArrayNode, JsonObjectNode } from '@spyglassmc/json'
 import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, Y_SIZE } from './common'
+import { renamed, versioned } from '../util'
+import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, uniformInt, Y_SIZE } from './common'
 import { processor_list_ref, rule_test } from './structure'
 
 function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerContext) {
@@ -70,11 +71,16 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 	}),
 })))
 
-const block_placer = as('block_placer', dispatch('type', type => record({
+const block_placer = as('block_placer', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/block_placer_type'),
 	...pick(type, {
 		column_placer: {
-			size: intProvider(0, undefined),
+			...versioned(ctx, {
+				min_size: int,
+				extra_size: int,
+			}, '1.17', {
+				size: intProvider(0, undefined),
+			}),
 		},
 	}),
 })))
@@ -111,10 +117,10 @@ const trunk_placer = as('trunk_placer', dispatch('type', type => record({
 	}),
 })))
 
-const foliage_placer = as('foliage_placer', dispatch('type', type => record({
+const foliage_placer = as('foliage_placer', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/foliage_placer_type'),
-	radius: intProvider(0, 16),
-	offset: intProvider(0, 16),
+	radius: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
+	offset: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
 	...pick(type, {
 		blob_foliage_placer: {
 			height: intRange(0, 16),
@@ -129,17 +135,17 @@ const foliage_placer = as('foliage_placer', dispatch('type', type => record({
 			height: intRange(0, 16),
 		},
 		mega_pine_foliage_placer: {
-			crown_height: intProvider(0, 24),
+			crown_height: versioned(ctx, uniformInt(0, 16, 8), '1.17', intProvider(0, 24)),
 		},
 		pine_foliage_placer: {
-			height: intProvider(0, 24),
+			height: versioned(ctx, uniformInt(0, 16, 8), '1.17', intProvider(0, 24)),
 		},
 		random_spread_foliage_placer: {
 			foliage_height: intProvider(1, 512),
 			leaf_placement_attempts: intRange(0, 256),
 		},
 		spruce_foliage_placer: {
-			trunk_height: intProvider(0, 24),
+			trunk_height: versioned(ctx, uniformInt(0, 16, 8), '1.17', intProvider(0, 24)),
 		},
 	}),
 })))
@@ -159,26 +165,36 @@ const tree_decorator = as('tree_decorator', dispatch('type', type => record({
 	}),
 })))
 
-const DiskConfig = {
+const DiskConfig = (ctx: JsonCheckerContext) => ({
 	state: block_state,
-	radius: intProvider(0, 8),
+	radius: versioned(ctx, uniformInt(0, 4, 4), '1.17', intProvider(0, 8)),
 	half_height: intRange(0, 4),
 	targets: listOf(block_state),
-}
+})
 
-const RandomPatchConfig = {
+const RandomPatchConfig = (ctx: JsonCheckerContext) => ({
 	state_provider: block_state_provider,
 	block_placer: block_placer,
 	whitelist: listOf(block_state),
 	blacklist: listOf(block_state),
-	tries: opt(intRange(1, undefined), 128),
-	xspread: opt(intRange(0, undefined), 7),
-	yspread: opt(intRange(0, undefined), 3),
-	zspread: opt(intRange(0, undefined), 7),
-	can_replace: opt(boolean, false),
-	project: opt(boolean, true),
-	need_water: opt(boolean, false),
-}
+	...versioned(ctx, {
+		tries: int,
+		xspread: int,
+		yspread: int,
+		zspread: int,
+		can_replace: boolean,
+		project: boolean,
+		need_water: boolean,
+	}, '1.17', {
+		tries: opt(intRange(1, undefined), 128),
+		xspread: opt(intRange(0, undefined), 7),
+		yspread: opt(intRange(0, undefined), 3),
+		zspread: opt(intRange(0, undefined), 7),
+		can_replace: opt(boolean, false),
+		project: opt(boolean, true),
+		need_water: opt(boolean, false),
+	}),
+})
 
 const HugeMushroomConfig = {
 	foliage_radius: opt(int, 2),
@@ -186,17 +202,29 @@ const HugeMushroomConfig = {
 	stem_provider: block_state_provider,
 }
 
-const OreConfig = {
+const OreConfig = (ctx: JsonCheckerContext) => ({
 	size: intRange(0, 64),
-	discard_chance_on_air_exposure: floatRange(0, 1),
-	targets: listOf(record({
+	...versioned(ctx, {
 		state: block_state,
 		target: rule_test,
-	})),
-}
+	}, '1.17', {
+		discard_chance_on_air_exposure: floatRange(0, 1),
+		targets: listOf(record({
+			state: block_state,
+			target: rule_test,
+		})),
+	}),
+})
 
-const CountConfig = {
-	count: intProvider(0, 256),
+const CountConfig = (ctx: JsonCheckerContext) => ({
+	count: versioned(ctx, uniformInt(-10, 128, 128), '1.17', intProvider(0, 256)),
+})
+
+// until 1.16
+const RangeConfig = {
+	maximum: int,
+	bottom_offset: int,
+	top_offset: int,
 }
 
 const VegetationPatchConfig = {
@@ -212,11 +240,12 @@ const VegetationPatchConfig = {
 	vegetation_feature: ref(() => configured_feature_ref),
 }
 
-export const configured_decorator = as('decorator', dispatch('type', type => record({
+export const configured_decorator = as('decorator', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/decorator'),
 	config: record(pick(type, {
 		carving_mask: {
 			step: literal(['air', 'liquid']),
+			probability: versioned(ctx, floatRange(0, 1), '1.16'),
 		},
 		cave_surface: {
 			surface: literal(['floor', 'ceiling']),
@@ -225,13 +254,13 @@ export const configured_decorator = as('decorator', dispatch('type', type => rec
 		chance: {
 			chance: int,
 		},
-		count: CountConfig,
+		count: CountConfig(ctx),
 		count_extra: {
 			count: int,
 			extra_chance: float,
 			extra_count: int,
 		},
-		count_multilayer: CountConfig,
+		count_multilayer: CountConfig(ctx),
 		count_noise: {
 			noise_level: float,
 			below_noise: int,
@@ -246,33 +275,46 @@ export const configured_decorator = as('decorator', dispatch('type', type => rec
 			outer: configured_decorator,
 			inner: configured_decorator,
 		},
+		depth_average: {
+			baseline: int,
+			spread: int,
+		},
+		fire: CountConfig(ctx),
+		glowstone: CountConfig(ctx),
 		heightmap: {
-			heightmap: literal(HeightmapType),
+			heightmap: versioned(ctx, '1.17', literal(HeightmapType)),
 		},
 		heightmap_spread_double: {
-			heightmap: literal(HeightmapType),
+			heightmap: versioned(ctx, '1.17', literal(HeightmapType)),
 		},
 		lava_lake: {
 			chance: int,
 		},
 		range: {
-			height: height_provider,
+			...versioned(ctx, RangeConfig, '1.17', {
+				height: height_provider,
+			}),
 		},
+		range_biased: RangeConfig,
+		range_very_biased: RangeConfig,
 		water_depth_threshold: {
 			max_water_depth: int,
+		},
+		water_lake: {
+			chance: int,
 		},
 	})),
 })))
 
-export const configured_feature = as('feature', dispatch('type', type => record({
+export const configured_feature = as('feature', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/feature'),
 	config: record(pick(type, {
 		bamboo: {
 			probability: floatRange(0, 1),
 		},
 		basalt_columns: {
-			reach: intProvider(0, 3),
-			height: intProvider(1, 10),
+			reach: versioned(ctx, uniformInt(0, 2, 1), '1.17', intProvider(0, 3)),
+			height: versioned(ctx, uniformInt(1, 5, 5), '1.17', intProvider(1, 10)),
 		},
 		block_pile: {
 			state_provider: block_state_provider,
@@ -284,10 +326,10 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		delta_feature: {
 			contents: block_state,
 			rim: block_state,
-			size: intProvider(0, 16),
-			rim_size: intProvider(0, 16),
+			size: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
+			rim_size: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
 		},
-		disk: DiskConfig,
+		disk: DiskConfig(ctx),
 		dripstone_cluster: {
 			floor_to_ceiling_search_range: intRange(1, 512),
 			height: intProvider(0, 128),
@@ -300,6 +342,10 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			chance_of_dripstone_column_at_max_distance_from_center: floatRange(0, 1),
 			max_distance_from_edge_affecting_chance_of_dripstone_column: intRange(1, 64),
 			max_distance_from_center_affecting_height_bias: intRange(1, 64),
+		},
+		emerald_ore: {
+			state: block_state,
+			target: block_state,
 		},
 		end_gateway: {
 			exit: opt(listOf(int)),
@@ -320,7 +366,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			height: intRange(0, Y_SIZE),
 			state: block_state,
 		},
-		flower: RandomPatchConfig,
+		flower: RandomPatchConfig(ctx),
 		forest_rock: {
 			state: block_state,
 		},
@@ -391,7 +437,7 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			valid_base_block: block_state,
 		},
 		huge_red_mushroom: HugeMushroomConfig,
-		ice_patch: DiskConfig,
+		ice_patch: DiskConfig(ctx),
 		iceberg: {
 			state: block_state,
 		},
@@ -413,17 +459,18 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			state_provider: block_state_provider,
 		},
 		netherrack_replace_blobs: {
-			radius: intProvider(0, 12),
+			radius: versioned(ctx, uniformInt(), '1.17', intProvider(0, 12)),
 			state: block_state,
 			target: block_state,
 		},
-		no_bonemeal_flower: RandomPatchConfig,
-		ore: OreConfig,
+		no_bonemeal_flower: RandomPatchConfig(ctx),
+		no_surface_ore: OreConfig(ctx),
+		ore: OreConfig(ctx),
 		random_boolean_selector: {
 			feature_false: configured_feature_ref,
 			feature_true: configured_feature_ref,
 		},
-		random_patch: RandomPatchConfig,
+		random_patch: RandomPatchConfig(ctx),
 		random_selector: {
 			features: listOf(record({
 				chance: floatRange(0, 1),
@@ -451,16 +498,23 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 			hanging_root_state_provider: block_state_provider,
 			feature: configured_feature_ref,
 		},
-		scattered_ore: OreConfig,
-		sea_pickle: CountConfig,
+		scattered_ore: OreConfig(ctx),
+		sea_pickle: CountConfig(ctx),
 		seagrass: {
 			probability: floatRange(0, 1),
 		},
 		simple_block: {
-			to_place: block_state_provider,
-			place_on: opt(listOf(block_state), []),
-			place_in: opt(listOf(block_state), []),
-			place_under: opt(listOf(block_state), []),
+			...versioned(ctx, {
+				to_place: block_state,
+				place_on: listOf(block_state),
+				place_in: listOf(block_state),
+				place_under: listOf(block_state),
+			}, '1.17', {
+				to_place: block_state_provider,
+				place_on: opt(listOf(block_state), []),
+				place_in: opt(listOf(block_state), []),
+				place_under: opt(listOf(block_state), []),
+			}),
 		},
 		simple_random_selector: {
 			features: configured_feature_list_ref,
@@ -480,12 +534,14 @@ export const configured_feature = as('feature', dispatch('type', type => record(
 		},
 		tree: {
 			ignore_vines: opt(boolean, false),
-			force_dirt: opt(boolean, false),
+			force_dirt: opt(versioned(ctx, '1.17', boolean), false),
+			max_water_depth: versioned(ctx, int, '1.17'),
+			heightmap: versioned(ctx, literal(HeightmapType), '1.17'),
 			minimum_size: feature_size,
-			dirt_provider: block_state_provider,
-			sapling_provider: block_state_provider,
+			dirt_provider: versioned(ctx, '1.17', block_state_provider),
+			sapling_provider: versioned(ctx, '1.17', block_state_provider),
 			trunk_provider: block_state_provider,
-			foliage_provider: block_state_provider,
+			...renamed(ctx, 'leaves_provider', '1.17', 'foliage_provider', block_state_provider),
 			trunk_placer: trunk_placer,
 			foliage_placer: foliage_placer,
 			decorators: listOf(tree_decorator),

@@ -1,12 +1,19 @@
-import type { FileCategory, RootUriString, UriBinder, UriBinderContext } from '@spyglassmc/core'
+import type { ContextBase, FileCategory, RootUriString, UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
+import type { MajorVersion } from '../dependency'
+import { MajorVersions } from '../dependency'
 
-export const Categories = new Map<string, { category: FileCategory, extname: string }>([
+export const Categories = new Map<string, {
+	category: FileCategory,
+	extname: string,
+	since?: MajorVersion,
+	until?: MajorVersion,
+}>([
 	['advancements', { category: 'advancement', extname: '.json' }],
 	['dimension', { category: 'dimension', extname: '.json' }],
 	['dimension_type', { category: 'dimension_type', extname: '.json' }],
 	['functions', { category: 'function', extname: '.mcfunction' }],
-	['item_modifiers', { category: 'item_modifier', extname: '.json' }],
+	['item_modifiers', { category: 'item_modifier', extname: '.json', since: '1.17' }],
 	['loot_tables', { category: 'loot_table', extname: '.json' }],
 	['predicates', { category: 'predicate', extname: '.json' }],
 	['recipes', { category: 'recipe', extname: '.json' }],
@@ -14,7 +21,7 @@ export const Categories = new Map<string, { category: FileCategory, extname: str
 	['tags/entity_types', { category: 'tag/entity_type', extname: '.json' }],
 	['tags/fluids', { category: 'tag/fluid', extname: '.json' }],
 	['tags/functions', { category: 'tag/function', extname: '.json' }],
-	['tags/game_events', { category: 'tag/game_event', extname: '.json' }],
+	['tags/game_events', { category: 'tag/game_event', extname: '.json', since: '1.17' }],
 	['tags/items', { category: 'tag/item', extname: '.json' }],
 	['worldgen/biome', { category: 'worldgen/biome', extname: '.json' }],
 	['worldgen/configured_carver', { category: 'worldgen/configured_carver', extname: '.json' }],
@@ -39,10 +46,10 @@ export function* getRels(uri: string, rootUris: readonly RootUriString[]): Gener
 	return undefined
 }
 
-export function dissectUri(uri: string, roots: readonly RootUriString[]) {
+export function dissectUri(uri: string, ctx: ContextBase) {
 	const regex = /^data\/([^\/]+)\/((?:tags\/|worldgen\/)?[a-z_]+)\/(.*)(\.(?:mcfunction|json))$/
 
-	const rels = getRels(uri, roots)
+	const rels = getRels(uri, ctx.roots)
 	for (const rel of rels) {
 		const match = rel.match(regex)
 		if (!match) {
@@ -50,6 +57,9 @@ export function dissectUri(uri: string, roots: readonly RootUriString[]) {
 		}
 		const def = Categories.get(match[2])
 		if (!def || def.extname !== match[4]) {
+			continue
+		}
+		if (!matchVersion(ctx.project['loadedVersion'], def.since, def.until)) {
 			continue
 		}
 		return {
@@ -64,7 +74,7 @@ export function dissectUri(uri: string, roots: readonly RootUriString[]) {
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
 	for (const uri of uris) {
-		const parts = dissectUri(uri, ctx.roots)
+		const parts = dissectUri(uri, ctx)
 		if (parts) {
 			ctx.symbols
 				.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`)
@@ -75,4 +85,11 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 				})
 		}
 	}
+}
+
+function matchVersion(target: string, since: MajorVersion | undefined, until: MajorVersion | undefined): boolean {
+	const targetIndex = MajorVersions.indexOf(target as MajorVersion)
+	if (since && targetIndex < MajorVersions.indexOf(since)) return false
+	if (until && targetIndex > MajorVersions.indexOf(until)) return false
+	return true
 }

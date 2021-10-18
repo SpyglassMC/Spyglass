@@ -1,5 +1,5 @@
 import { any, as, boolean, deprecated, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { nbt, nbtPath, stringColor, uuid } from '../util'
+import { nbt, nbtPath, stringColor, uuid, versioned } from '../util'
 
 const Keybinds = [
 	'key.jump',
@@ -49,6 +49,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 		},
 		selector: {
 			selector: simpleString, // TODO: entity selector
+			separator: opt(versioned(ctx, '1.17', text_component)),
 		},
 		score: {
 			score: record({
@@ -77,6 +78,7 @@ const text_component_object = as('text_component', (node, ctx) => record({
 				},
 			}),
 			interpret: opt(boolean, false),
+			separator: opt(versioned(ctx, '1.17', text_component)),
 		}),
 	}),
 	color: opt(stringColor()),

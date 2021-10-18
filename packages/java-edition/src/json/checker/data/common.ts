@@ -213,6 +213,15 @@ export const intProvider = (min: number | undefined = undefined, max: number | u
 	})),
 ]))
 
+// until 1.16
+export const uniformInt = (min?: number, max?: number, maxSpread?: number): JsonChecker => as('uniform_int', any([
+	intRange(min, max),
+	record({
+		base: intRange(min, max),
+		spread: intRange(0, maxSpread),
+	}),
+]))
+
 export const HeightmapType = [
 	'MOTION_BLOCKING',
 	'MOTION_BLOCKING_NO_LEAVES',

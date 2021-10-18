@@ -31,10 +31,10 @@ export const pos_rule_test = as('pos_rule_test', dispatch('predicate_type', type
 	...pick(type, {
 		axis_aligned_linear_pos: {
 			axis: literal(['x', 'y', 'z']),
-			min_dist: intRange(0, 255),
-			max_dist: intRange(0, 255),
-			min_chance: floatRange(0, 1),
-			max_chance: floatRange(0, 1),
+			min_dist: opt(intRange(0, 255)),
+			max_dist: opt(intRange(0, 255)),
+			min_chance: opt(floatRange(0, 1)),
+			max_chance: opt(floatRange(0, 1)),
 		},
 	}),
 	...when(type, ['axis_aligned_linear_pos', 'linear_pos'], {

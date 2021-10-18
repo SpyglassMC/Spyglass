@@ -7,16 +7,17 @@ import type { JsonChecker } from '../lib/checker/JsonChecker'
 import type { JsonNode } from '../lib/node'
 import { entry as parser } from '../lib/parser'
 
-export function testChecker(checker: JsonChecker, test: string, { project }: { project?: Partial<ProjectLike> } = {}): {
+export function testChecker(checker: JsonChecker, test: string, { project, majorVersion }: { project?: Partial<ProjectLike>, majorVersion?: string } = {}): {
 	node: JsonNode | 'FAILURE',
 	parserErrors: readonly LanguageError[],
 	checkerErrors: readonly LanguageError[],
 } {
 	const src = new Source(test)
-	const doc = TextDocument.create('', '', 0, test)
+	const doc = TextDocument.create('file:///', 'json', 0, test)
 	const symbols = new SymbolUtil({})
 	const parserCtx = ParserContext.create(ProjectLike.mock({ symbols, ...project }), { doc })
 	const checkerCtx = CheckerContext.create(ProjectLike.mock({ symbols, ...project }), { doc, src })
+	checkerCtx.project['loadedVersion'] = majorVersion ?? '1.17'
 	const result = parser(src, parserCtx)
 	if (result !== Failure) {
 		checker(result, { ...checkerCtx, context: '' })

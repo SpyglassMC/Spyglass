@@ -1,0 +1,52 @@
+import type { JsonChecker, JsonCheckerContext, record } from '@spyglassmc/json/lib/checker'
+import type { MajorVersion } from '../../../dependency'
+import { MajorVersions } from '../../../dependency'
+
+type CheckerRecord = Parameters<typeof record>[0]
+
+function getVersion(ctx: JsonCheckerContext) {
+	return ctx.project['loadedVersion'] as MajorVersion
+}
+
+function cmpVersion(ctx: JsonCheckerContext, target: MajorVersion): number {
+	const a = MajorVersions.indexOf(getVersion(ctx))
+	const b = MajorVersions.indexOf(target)
+	return MajorVersions.indexOf(getVersion(ctx)) - MajorVersions.indexOf(target)
+}
+
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion): boolean
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: string[]): string[]
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: JsonChecker): JsonChecker | undefined
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: CheckerRecord): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion, checker2?: string[]): string[]
+export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion, checker2?: JsonChecker): JsonChecker | undefined
+export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion, checker2?: CheckerRecord): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?: any): any {
+	if (typeof arg1 === 'string') {
+		const check = cmpVersion(ctx, arg1 as MajorVersion) >= 0
+		if (arg2 === undefined) {
+			return check
+		} else if (Array.isArray(arg2)) {
+			return check ? arg2 : []
+		} else {
+			return check ? arg2 : undefined
+		}
+	} else {
+		const check = cmpVersion(ctx, arg2 as MajorVersion) < 0
+		if (arg2 === undefined) {
+			return check
+		} else if (Array.isArray(arg1)) {
+			return check ? arg1 : (arg3 ?? [])
+		} else {
+			return check ? arg1 : (arg3 ?? undefined)
+		}
+	}
+}
+
+export function renamed(ctx: JsonCheckerContext, from: string, version: MajorVersion, to: string, checker: JsonChecker): CheckerRecord | undefined {
+	return versioned(ctx, {
+		[from]: checker,
+	}, version, {
+		[to]: checker,
+	})
+}

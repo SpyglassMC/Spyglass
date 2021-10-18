@@ -19,7 +19,7 @@ type ComplexProperty = {
 
 type CheckerProperty = JsonChecker | ComplexProperty
 
-type CheckerRecord = Record<string, CheckerProperty>
+type CheckerRecord = Record<string, CheckerProperty | undefined>
 
 type ObjectCheckerOptions = {
 	allowUnknownProperties?: boolean,
@@ -30,15 +30,16 @@ function isComplex(checker: CheckerProperty): checker is ComplexProperty {
 }
 
 export function object(): JsonChecker
-export function object(keys: string[], values: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options?: ObjectCheckerOptions): JsonChecker
-export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options?: ObjectCheckerOptions): JsonChecker
-export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty, options: ObjectCheckerOptions = {}): JsonChecker {
+export function object(keys: string[], values: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined, options?: ObjectCheckerOptions): JsonChecker
+export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined, options?: ObjectCheckerOptions): JsonChecker
+export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined, options: ObjectCheckerOptions = {}): JsonChecker {
 	return (node, ctx) => {
 		ctx.ops.set(node, 'expectation', [{ type: 'json:object', typedoc: 'Object' }])
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
-				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'fields', keys.map(key => {
-					const prop = values(key, ctx)
+				const fields = keys.map<[string, CheckerProperty]>(key =>
+					[key, values(key, ctx)!]).filter(([_, v]) => v !== undefined)
+				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'fields', fields.map(([key, prop]) => {
 					return {
 						key,
 						value: expectation(isComplex(prop) ? prop.checker : prop, ctx),
@@ -59,7 +60,7 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 			const givenKeys = node.children.map(n => n.key?.value)
 			keys.forEach(k => {
 				const value = values(k, ctx)
-				if (isComplex(value) && (value.opt || value.deprecated)) {
+				if (!value || isComplex(value) && (value.opt || value.deprecated)) {
 					return
 				}
 				if (!givenKeys.includes(k)) {
@@ -68,36 +69,37 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 			})
 			node.children.filter(p => p.key).forEach(prop => {
 				const key = prop.key!.value
-				if (!keys.includes(key) && !options.allowUnknownProperties) {
-					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
-				}
 				const value = values(key, ctx)
-				if (value) {
-					if (isComplex(value) && value.deprecated) {
-						ctx.err.report(localize('json.checker.property.deprecated', localeQuote(key)), prop.key!, ErrorSeverity.Hint, { deprecated: true })
-					}
-					const context = ctx.context + (isComplex(value) && value.context ? `.${value.context}` : '')
-					const doc = localize(`json.doc.${context}`)
-					const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
-					const checker = isComplex(value) ? value.checker : value
-					try {
-						checker(propNode, { ...ctx, context: `${context}.${key}` })
-					} catch (e) {
-						const pos = ctx.doc.positionAt(prop.range.start)
-						ctx.logger.error(`Checking "${key}" at ${pos.line}:${pos.character} in "${ctx.doc.uri}"`, e)
-					}
-					const defaultValue = isComplex(value) ? value.def : undefined
-					const typedoc = propNode.expectation?.map(e => e.typedoc).join(' | ')
-					prop.key!.hover = `\`\`\`typescript\n${context}.${key}: ${typedoc}\n\`\`\`${doc || defaultValue !== undefined ? '\n******\n ' : ''}${doc}${defaultValue !== undefined ? `\n\`@default\` ${JSON.stringify(defaultValue)}` : ''}`
+				if (!value || !keys.includes(key) && !options.allowUnknownProperties) {
+					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
+					return
 				}
+				if (isComplex(value) && value.deprecated) {
+					ctx.err.report(localize('json.checker.property.deprecated', localeQuote(key)), prop.key!, ErrorSeverity.Hint, { deprecated: true })
+				}
+				const context = ctx.context + (isComplex(value) && value.context ? `.${value.context}` : '')
+				const doc = localize(`json.doc.${context}`)
+				const propNode: JsonNode = prop.value !== undefined ? prop.value : { type: 'json:null', range: Range.create(0) }
+				const checker = isComplex(value) ? value.checker : value
+				try {
+					checker(propNode, { ...ctx, context: `${context}.${key}` })
+				} catch (e) {
+					const pos = ctx.doc.positionAt(prop.range.start)
+					ctx.logger.error(`Checking "${key}" at ${pos.line}:${pos.character} in "${ctx.doc.uri}"`, e)
+				}
+				const defaultValue = isComplex(value) ? value.def : undefined
+				const typedoc = propNode.expectation?.map(e => e.typedoc).join(' | ')
+				prop.key!.hover = `\`\`\`typescript\n${context}.${key}: ${typedoc}\n\`\`\`${doc || defaultValue !== undefined ? '\n******\n ' : ''}${doc}${defaultValue !== undefined ? `\n\`@default\` ${JSON.stringify(defaultValue)}` : ''}`
 			})
 		} else if (typeof keys === 'function' && values) {
 			node.children.filter(p => p.key).forEach(prop => {
 				keys(prop.key!, ctx)
 				if (prop.value !== undefined) {
 					const value = values(prop.key!.value, ctx)
-					const checker = isComplex(value) ? value.checker : value
-					checker(prop.value, ctx)
+					if (value) {
+						const checker = isComplex(value) ? value.checker : value
+						checker(prop.value, ctx)
+					}
 				}
 			})
 		}
@@ -112,7 +114,8 @@ export function record(properties: CheckerRecord, options?: ObjectCheckerOptions
 	)
 }
 
-export function opt(checker: JsonChecker | ComplexProperty, defaultValue?: JsonValue): ComplexProperty {
+export function opt(checker?: JsonChecker | ComplexProperty, defaultValue?: JsonValue): ComplexProperty | undefined {
+	if (checker === undefined) return undefined
 	return isComplex(checker)
 	 ? { ...checker, opt: true, def: defaultValue }
 	 : { checker, opt: true, def: defaultValue }
@@ -124,9 +127,9 @@ export function deprecated(checker: JsonChecker | ComplexProperty): ComplexPrope
 		: { checker, deprecated: true }
 }
 
-export function dispatch(values: (children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker): JsonChecker
+export function dispatch(values: (children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker
 export function dispatch(keyName: string, values: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker
-export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, JsonNode>[]) => JsonChecker), arg2?: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker {
+export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker), arg2?: (value: string | undefined, children: PairNode<JsonStringNode, JsonNode>[], ctx: JsonCheckerContext) => JsonChecker): JsonChecker {
 	return (node, ctx) => {
 		if (!JsonObjectNode.is(node)) {
 			ctx.err.report(localize('expected', localize('object')), node)
@@ -136,7 +139,7 @@ export function dispatch(arg1: string | ((children: PairNode<JsonStringNode, Jso
 			const value = dispatcher?.value?.type === 'json:string' ? dispatcher.value.value : undefined
 			arg2(value, node.children, ctx)(node, ctx)
 		} else {
-			(arg1 as Function)(node.children)(node, ctx)
+			(arg1 as Function)(node.children, ctx)(node, ctx)
 		}
 	}
 }
@@ -151,6 +154,7 @@ export function pick(value: string | undefined, cases: Record<string, CheckerRec
 	}
 	Object.keys(properties).forEach(key => {
 		const p = properties[key]
+		if (p === undefined) return
 		properties[key] = {
 			checker: isComplex(p) ? p.checker : p,
 			opt: isComplex(p) ? p.opt : undefined,

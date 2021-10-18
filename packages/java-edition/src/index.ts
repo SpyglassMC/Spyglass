@@ -56,7 +56,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	const resources = await getVanillaResources(version, status, logger, config.env.vanillaResources)
 	registerSymbols(resources, symbols)
 
-	jeJson.initialize(ctx, major)
+	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, resources.commands, major)
 	nbt.initialize(ctx)
+
+	return {
+		loadedVersion: major,
+	}
 }

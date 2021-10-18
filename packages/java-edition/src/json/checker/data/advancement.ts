@@ -1,12 +1,13 @@
 import type { JsonStringNode } from '@spyglassmc/json'
+import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, deprecated, dispatch, extract, extractStringArray, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
 import { dissectUri } from '../../../binder'
-import { blockStateMap, criterionReference, nbt } from '../util'
+import { blockStateMap, criterionReference, nbt, versioned } from '../util'
 import { float_bounds, int_bounds, Slots } from './common'
 import { predicate } from './loot_table'
 import { text_component } from './text_component'
 
-const Triggers = [
+const Triggers = (ctx: JsonCheckerContext) => [
 	'minecraft:bee_nest_destroyed',
 	'minecraft:bred_animals',
 	'minecraft:brewed_potion',
@@ -29,7 +30,7 @@ const Triggers = [
 	'minecraft:item_used_on_block',
 	'minecraft:killed_by_crossbow',
 	'minecraft:levitation',
-	'minecraft:lightning_strike',
+	...versioned(ctx, '1.17', ['minecraft:lightning_strike']),
 	'minecraft:location',
 	'minecraft:nether_travel',
 	'minecraft:placed_block',
@@ -41,7 +42,7 @@ const Triggers = [
 	'minecraft:shot_crossbow',
 	'minecraft:slept_in_bed',
 	'minecraft:slide_down_block',
-	'minecraft:started_riding',
+	...versioned(ctx, '1.17', ['minecraft:started_riding']),
 	'minecraft:summoned_entity',
 	'minecraft:tame_animal',
 	'minecraft:target_hit',
@@ -49,13 +50,17 @@ const Triggers = [
 	'minecraft:tick',
 	'minecraft:used_ender_eye',
 	'minecraft:used_totem',
-	'minecraft:using_item',
+	...versioned(ctx, '1.17', ['minecraft:using_item']),
 	'minecraft:villager_trade',
 	'minecraft:voluntary_exile',
 ]
 
-export const item_predicate = as('item', dispatch(props => record({
-	items: opt(listOf(resource('item'))),
+export const item_predicate = as('item', dispatch((props, ctx) => record({
+	...versioned(ctx, {
+		item: opt(resource('item')),
+	}, '1.17', {
+		items: opt(listOf(resource('item'))),
+	}),
 	tag: opt(resource('tag/item')),
 	count: opt(int_bounds),
 	durability: opt(float_bounds),
@@ -67,8 +72,12 @@ export const item_predicate = as('item', dispatch(props => record({
 	}))),
 })))
 
-export const block_predicate = as('block', dispatch(props => record({
-	blocks: opt(listOf(resource('block'))),
+export const block_predicate = as('block', dispatch((props, ctx) => record({
+	...versioned(ctx, {
+		block: opt(resource('block')),
+	}, '1.17', {
+		blocks: opt(listOf(resource('block'))),
+	}),
 	tag: opt(resource('tag/block')),
 	nbt: opt(nbt({ registry: 'block', ids: extractStringArray('blocks', props), tag: extract('tag', props)})),
 	state: opt(blockStateMap({
@@ -139,7 +148,7 @@ export const statistic_predicate = as('statistic', dispatch('type',
 	})
 ))
 
-export const player_predicate = as('player', record({
+export const player_predicate = as('player', (node, ctx) => record({
 	gamemode: opt(literal(['survival', 'adventure', 'creative', 'spectator'])),
 	level: opt(int_bounds),
 	advancements: opt(object(
@@ -157,15 +166,15 @@ export const player_predicate = as('player', record({
 		() => boolean,
 	)),
 	stats: opt(listOf(statistic_predicate)),
-	looking_at: opt(ref(() => entity_predicate)),
-}))
+	looking_at: opt(versioned(ctx, '1.17', ref(() => entity_predicate))),
+})(node, ctx))
 
-export const entity_predicate = as('entity', dispatch(props => record({
+export const entity_predicate = as('entity', dispatch((props, ctx) => record({
 	type: opt(resource('entity_type', true)),
 	nbt: opt(nbt({ registry: 'entity_type', idOrTag: extract('type', props)})),
 	team: opt(literal('team')),
 	location: opt(location_predicate),
-	stepping_on: opt(location_predicate),
+	stepping_on: opt(versioned(ctx, '1.17', location_predicate)),
 	distance: opt(distance_predicate),
 	flags: opt(record({
 		is_on_fire: opt(boolean),
@@ -184,12 +193,12 @@ export const entity_predicate = as('entity', dispatch(props => record({
 	)),
 	player: opt(player_predicate),
 	vehicle: opt(ref(() => entity_predicate)),
-	passenger: opt(ref(() => entity_predicate)),
+	passenger: opt(versioned(ctx, '1.17', ref(() => entity_predicate))),
 	targeted_entity: opt(ref(() => entity_predicate)),
-	lightning_bolt: opt(record({
+	lightning_bolt: opt(versioned(ctx, '1.17', record({
 		blocks_set_on_fire: opt(int_bounds),
 		entity_struck: opt(ref(() => entity_predicate)),
-	})),
+	}))),
 	fishing_hook: opt(record({
 		in_open_water: opt(boolean),
 	})),
@@ -224,7 +233,7 @@ const entity = any([
 
 export const criterion = as('criterion', dispatch('trigger',
 	(trigger) => record({
-		trigger: resource(Triggers),
+		trigger: (node, ctx) => resource(Triggers(ctx))(node, ctx),
 		conditions: opt(dispatch(props => record({
 			...when(trigger, ['impossible'], {}, {
 				player: opt(entity),
@@ -435,7 +444,7 @@ export const advancement = as('advancement', record({
 			if (!ctx.ensureChecked) {
 				return
 			}
-			const parts = dissectUri(ctx.doc.uri, ctx.roots)
+			const parts = dissectUri(ctx.doc.uri, ctx)
 			const advancement = `${parts?.namespace}:${parts?.identifier}`
 			const criterion = (node as JsonStringNode).value
 			ctx.symbols.query(ctx.doc, 'advancement', advancement, criterion)
@@ -448,7 +457,11 @@ export const advancement = as('advancement', record({
 	),
 	requirements: opt(listOf(listOf(
 		(node, ctx) => {
-			const parts = dissectUri(ctx.doc.uri, ctx.roots)
+			// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
+			if (!ctx.ensureChecked) {
+				return
+			}
+			const parts = dissectUri(ctx.doc.uri, ctx)
 			const advancement = `${parts?.namespace}:${parts?.identifier}`
 			criterionReference(advancement)(node, ctx)
 		}

@@ -1,5 +1,5 @@
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, object, opt, pick, record, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { blockStateList, blockStateMap, nbt, nbtPath, uuid } from '../util'
+import { blockStateList, blockStateMap, nbt, nbtPath, uuid, versioned } from '../util'
 import { damage_source_predicate, entity_predicate, item_predicate, location_predicate } from './advancement'
 import { int_bounds, number_provider, Slots } from './common'
 import { text_component } from './text_component'
@@ -121,7 +121,7 @@ export const predicate_list = any([
 ])
 
 export const item_modifier = as('item_modifier', dispatch('function',
-	(function_, props) => record({
+	(function_, props, ctx) => record({
 		function: resource('loot_function_type'),
 		...pick(function_, {
 			apply_bonus: {
@@ -198,11 +198,11 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			set_count: {
 				count: number_provider,
-				add: opt(boolean, false),
+				add: opt(versioned(ctx, '1.17', boolean), false),
 			},
 			set_damage: {
 				damage: number_provider,
-				add: opt(boolean, false),
+				add: opt(versioned(ctx, '1.17', boolean), false),
 			},
 			set_loot_table: {
 				name: resource('loot_table'),

@@ -20,6 +20,7 @@ export interface ContextBase {
 	logger: Logger,
 	meta: MetaRegistry,
 	roots: readonly RootUriString[],
+	project: Record<string, string>,
 }
 export namespace ContextBase {
 	export function create(project: ProjectLike): ContextBase {
@@ -29,6 +30,7 @@ export namespace ContextBase {
 			logger: project.logger,
 			meta: project.meta,
 			roots: project.allRoots,
+			project: project.ctx,
 		}
 	}
 }
