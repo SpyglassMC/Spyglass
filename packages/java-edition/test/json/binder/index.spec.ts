@@ -4,7 +4,7 @@ import snapshot from 'snap-shot-it'
 import { dissectUri } from '../../../lib/binder'
 
 describe('dissectUri()', () => {
-	const ctx = ContextBase.create(ProjectLike.mock({ allRoots: ['file:///'] }))
+	const ctx = ContextBase.create(ProjectLike.mock({ allRoots: ['file:///'], ctx: { loadedVersion: '1.17' } }))
 	const suites: { uri: string }[] = [
 		{ uri: 'file:///data/minecraft/loot_tables/foo.json' },
 		{ uri: 'file:///data/minecraft/tags/blocks/bar.json' },

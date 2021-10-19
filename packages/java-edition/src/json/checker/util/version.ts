@@ -1,4 +1,5 @@
 import type { JsonChecker, JsonCheckerContext, record } from '@spyglassmc/json/lib/checker'
+import { deprecate } from '@spyglassmc/json/lib/checker'
 import type { MajorVersion } from '../../../dependency'
 import { MajorVersions } from '../../../dependency'
 
@@ -16,9 +17,12 @@ export function versioned(ctx: JsonCheckerContext, version: MajorVersion): boole
 export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: string[]): string[]
 export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: JsonChecker): JsonChecker | undefined
 export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: CheckerRecord): CheckerRecord | undefined
-export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion, checker2?: string[]): string[]
-export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion, checker2?: JsonChecker): JsonChecker | undefined
-export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion, checker2?: CheckerRecord): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion): string[]
+export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion): JsonChecker | undefined
+export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion, checker2: string[]): string[]
+export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion, checker2: JsonChecker): JsonChecker
+export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion, checker2: CheckerRecord): CheckerRecord
 export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?: any): any {
 	if (typeof arg1 === 'string') {
 		const check = cmpVersion(ctx, arg1 as MajorVersion) >= 0
@@ -47,4 +51,11 @@ export function renamed(ctx: JsonCheckerContext, from: string, version: MajorVer
 	}, version, {
 		[to]: checker,
 	})
+}
+
+export function deprecated(ctx: JsonCheckerContext, version: MajorVersion, checker: JsonChecker | undefined) {
+	if (cmpVersion(ctx, version) < 0) {
+		return checker
+	}
+	return deprecate(checker)
 }

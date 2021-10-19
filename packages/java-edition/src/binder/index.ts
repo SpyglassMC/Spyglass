@@ -10,8 +10,8 @@ export const Categories = new Map<string, {
 	until?: MajorVersion,
 }>([
 	['advancements', { category: 'advancement', extname: '.json' }],
-	['dimension', { category: 'dimension', extname: '.json' }],
-	['dimension_type', { category: 'dimension_type', extname: '.json' }],
+	['dimension', { category: 'dimension', extname: '.json', since: '1.16' }],
+	['dimension_type', { category: 'dimension_type', extname: '.json', since: '1.16' }],
 	['functions', { category: 'function', extname: '.mcfunction' }],
 	['item_modifiers', { category: 'item_modifier', extname: '.json', since: '1.17' }],
 	['loot_tables', { category: 'loot_table', extname: '.json' }],
@@ -23,14 +23,14 @@ export const Categories = new Map<string, {
 	['tags/functions', { category: 'tag/function', extname: '.json' }],
 	['tags/game_events', { category: 'tag/game_event', extname: '.json', since: '1.17' }],
 	['tags/items', { category: 'tag/item', extname: '.json' }],
-	['worldgen/biome', { category: 'worldgen/biome', extname: '.json' }],
-	['worldgen/configured_carver', { category: 'worldgen/configured_carver', extname: '.json' }],
-	['worldgen/configured_feature', { category: 'worldgen/configured_feature', extname: '.json' }],
-	['worldgen/configured_structure_feature', { category: 'worldgen/configured_structure_feature', extname: '.json' }],
-	['worldgen/configured_surface_builder', { category: 'worldgen/configured_surface_builder', extname: '.json' }],
-	['worldgen/noise_settings', { category: 'worldgen/noise_settings', extname: '.json' }],
-	['worldgen/processor_list', { category: 'worldgen/processor_list', extname: '.json' }],
-	['worldgen/template_pool', { category: 'worldgen/template_pool', extname: '.json' }],
+	['worldgen/biome', { category: 'worldgen/biome', extname: '.json', since: '1.16' }],
+	['worldgen/configured_carver', { category: 'worldgen/configured_carver', extname: '.json', since: '1.16' }],
+	['worldgen/configured_feature', { category: 'worldgen/configured_feature', extname: '.json', since: '1.16' }],
+	['worldgen/configured_structure_feature', { category: 'worldgen/configured_structure_feature', extname: '.json', since: '1.16' }],
+	['worldgen/configured_surface_builder', { category: 'worldgen/configured_surface_builder', extname: '.json', since: '1.16' }],
+	['worldgen/noise_settings', { category: 'worldgen/noise_settings', extname: '.json', since: '1.16' }],
+	['worldgen/processor_list', { category: 'worldgen/processor_list', extname: '.json', since: '1.16' }],
+	['worldgen/template_pool', { category: 'worldgen/template_pool', extname: '.json', since: '1.16' }],
 ])
 
 export function* getRels(uri: string, rootUris: readonly RootUriString[]): Generator<string, undefined, unknown> {

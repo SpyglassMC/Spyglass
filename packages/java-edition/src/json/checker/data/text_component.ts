@@ -1,5 +1,5 @@
-import { any, as, boolean, deprecated, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
-import { nbt, nbtPath, stringColor, uuid, versioned } from '../util'
+import { any, as, boolean, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { deprecated, nbt, nbtPath, stringColor, uuid, versioned } from '../util'
 
 const Keybinds = [
 	'key.jump',
@@ -96,32 +96,32 @@ const text_component_object = as('text_component', (node, ctx) => record({
 		})
 	)),
 	hoverEvent: opt(dispatch('action',
-		(action) => record({
+		(action, _, ctx) => record({
 			action: literal(['show_text', 'show_item', 'show_entity']),
 			...pick(action, {
 				show_text: {
-					value: deprecated(text_component),
-					contents: opt(text_component),
+					value: deprecated(ctx, '1.16', text_component),
+					contents: opt(versioned(ctx, '1.16', text_component)),
 				},
 				show_item: {
-					value: deprecated(nbt({ definition: '::minecraft::util::invitem::InventoryItem' })),
-					contents: opt(dispatch(props => record({
+					value: deprecated(ctx, '1.16', nbt({ definition: '::minecraft::util::invitem::InventoryItem' })),
+					contents: opt(versioned(ctx, '1.16', dispatch(props => record({
 						id: resource('item'),
 						count: opt(int),
 						tag: opt(nbt({ registry: 'item', id: extract('id', props) })),
-					}))),
+					})))),
 				},
 				show_entity: {
-					value: deprecated(record({
+					value: deprecated(ctx, '1.16', record({
 						name: opt(simpleString),
 						type: opt(resource('entity_type')),
 						id: opt(uuid),
 					})),
-					contents: opt(record({
+					contents: opt(versioned(ctx, '1.16', record({
 						name: opt(text_component),
 						type: opt(resource('entity_type')),
 						id: opt(uuid),
-					})),
+					}))),
 				},
 			}),
 		})

@@ -1,8 +1,8 @@
 import type { JsonStringNode } from '@spyglassmc/json'
 import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
-import { any, as, boolean, deprecated, dispatch, extract, extractStringArray, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, boolean, dispatch, extract, extractStringArray, int, listOf, literal, object, opt, pick, record, ref, resource, simpleString, string, when } from '@spyglassmc/json/lib/checker/primitives'
 import { dissectUri } from '../../../binder'
-import { blockStateMap, criterionReference, nbt, versioned } from '../util'
+import { blockStateMap, criterionReference, deprecated, nbt, versioned } from '../util'
 import { float_bounds, int_bounds, Slots } from './common'
 import { predicate } from './loot_table'
 import { text_component } from './text_component'
@@ -27,27 +27,28 @@ const Triggers = (ctx: JsonCheckerContext) => [
 	'minecraft:impossible',
 	'minecraft:inventory_changed',
 	'minecraft:item_durability_changed',
-	'minecraft:item_used_on_block',
+	...versioned(ctx, '1.16', ['minecraft:item_used_on_block']),
 	'minecraft:killed_by_crossbow',
 	'minecraft:levitation',
 	...versioned(ctx, '1.17', ['minecraft:lightning_strike']),
 	'minecraft:location',
 	'minecraft:nether_travel',
 	'minecraft:placed_block',
-	'minecraft:player_generates_container_loot',
+	...versioned(ctx, '1.16', ['minecraft:player_generates_container_loot']),
 	'minecraft:player_hurt_entity',
-	'minecraft:player_interacted_with_entity',
+	...versioned(ctx, '1.16', ['minecraft:player_interacted_with_entity']),
 	'minecraft:player_killed_entity',
 	'minecraft:recipe_unlocked',
 	'minecraft:shot_crossbow',
+	...versioned(ctx, ['minecraft:safely_harvest_honey'], '1.16'),
 	'minecraft:slept_in_bed',
 	'minecraft:slide_down_block',
 	...versioned(ctx, '1.17', ['minecraft:started_riding']),
 	'minecraft:summoned_entity',
 	'minecraft:tame_animal',
-	'minecraft:target_hit',
-	'minecraft:thrown_item_picked_up_by_entity',
+	...versioned(ctx, '1.16', ['minecraft:target_hit']),
 	'minecraft:tick',
+	...versioned(ctx, '1.16', ['minecraft:thrown_item_picked_up_by_entity']),
 	'minecraft:used_ender_eye',
 	'minecraft:used_totem',
 	...versioned(ctx, '1.17', ['minecraft:using_item']),
@@ -98,7 +99,7 @@ export const fluid_predicate = as('fluid', dispatch(props => record({
 	})),
 })))
 
-export const location_predicate = as('location', record({
+export const location_predicate = as('location', dispatch((_, ctx) => record({
 	position: opt(record({
 		x: opt(float_bounds),
 		y: opt(float_bounds),
@@ -112,8 +113,8 @@ export const location_predicate = as('location', record({
 	light: opt(record({
 		light: int_bounds,
 	})),
-	smokey: opt(boolean),
-}))
+	smokey: opt(versioned(ctx, '1.16', boolean)),
+})))
 
 export const distance_predicate = as('distance', record({
 	x: opt(float_bounds),
@@ -148,7 +149,7 @@ export const statistic_predicate = as('statistic', dispatch('type',
 	})
 ))
 
-export const player_predicate = as('player', (node, ctx) => record({
+export const player_predicate = as('player', dispatch((_, ctx) => record({
 	gamemode: opt(literal(['survival', 'adventure', 'creative', 'spectator'])),
 	level: opt(int_bounds),
 	advancements: opt(object(
@@ -167,7 +168,7 @@ export const player_predicate = as('player', (node, ctx) => record({
 	)),
 	stats: opt(listOf(statistic_predicate)),
 	looking_at: opt(versioned(ctx, '1.17', ref(() => entity_predicate))),
-})(node, ctx))
+})))
 
 export const entity_predicate = as('entity', dispatch((props, ctx) => record({
 	type: opt(resource('entity_type', true)),
@@ -192,16 +193,16 @@ export const entity_predicate = as('entity', dispatch((props, ctx) => record({
 		() => mob_effect_predicate,
 	)),
 	player: opt(player_predicate),
-	vehicle: opt(ref(() => entity_predicate)),
+	vehicle: opt(versioned(ctx, '1.16', ref(() => entity_predicate))),
 	passenger: opt(versioned(ctx, '1.17', ref(() => entity_predicate))),
-	targeted_entity: opt(ref(() => entity_predicate)),
+	targeted_entity: opt(versioned(ctx, '1.16', ref(() => entity_predicate))),
 	lightning_bolt: opt(versioned(ctx, '1.17', record({
 		blocks_set_on_fire: opt(int_bounds),
 		entity_struck: opt(ref(() => entity_predicate)),
 	}))),
-	fishing_hook: opt(record({
+	fishing_hook: opt(versioned(ctx, '1.16', record({
 		in_open_water: opt(boolean),
-	})),
+	}))),
 	catType: opt(simpleString),
 })))
 
@@ -232,12 +233,12 @@ const entity = any([
 ])
 
 export const criterion = as('criterion', dispatch('trigger',
-	(trigger) => record({
-		trigger: (node, ctx) => resource(Triggers(ctx))(node, ctx),
+	(trigger, _, ctx) => record({
+		trigger: resource(Triggers(ctx)),
 		conditions: opt(dispatch(props => record({
-			...when(trigger, ['impossible'], {}, {
-				player: opt(entity),
-			}),
+			...versioned(ctx, '1.16', when(trigger, ['impossible'], {}, {
+				player: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+			})),
 			...pick(trigger, {
 				bee_nest_destroyed: {
 					block: opt(resource('block')),
@@ -245,9 +246,9 @@ export const criterion = as('criterion', dispatch('trigger',
 					num_bees_inside: opt(int),
 				},
 				bred_animals: {
-					parent: opt(entity),
-					partner: opt(entity),
-					child: opt(entity),
+					parent: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+					partner: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+					child: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				brewed_potion: {
 					potion: opt(resource('potion')),
@@ -257,7 +258,7 @@ export const criterion = as('criterion', dispatch('trigger',
 					to: opt(resource('dimension')),
 				},
 				channeled_lightning: {
-					victims: opt(listOf(entity)),
+					victims: opt(listOf(versioned(ctx, entity_predicate, '1.16', entity))),
 				},
 				construct_beacon: {
 					level: opt(int_bounds),
@@ -266,15 +267,15 @@ export const criterion = as('criterion', dispatch('trigger',
 					item: opt(item_predicate),
 				},
 				cured_zombie_villager: {
-					villager: opt(entity),
-					zombie: opt(entity),
+					villager: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+					zombie: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				effects_changed: {
 					effects: opt(object(
 						resource('mob_effect'),
 						() => mob_effect_predicate,
 					)),
-					source: opt(entity),
+					source: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				enter_block: {
 					block: opt(resource('block')),
@@ -288,18 +289,18 @@ export const criterion = as('criterion', dispatch('trigger',
 					damage: opt(damage_predicate),
 				},
 				entity_killed_player: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					killing_blow: opt(damage_source_predicate),
 				},
 				filled_bucket: {
 					item: opt(item_predicate),
 				},
 				fishing_rod_hooked: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					item: opt(item_predicate),
 				},
 				hero_of_the_village: {
-					location: opt(location_predicate),
+					location: opt(versioned(ctx, '1.16', location_predicate)),
 				},
 				inventory_changed: {
 					slots: opt(record({
@@ -320,18 +321,18 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				killed_by_crossbow: {
 					unique_entity_types: opt(int_bounds),
-					victims: opt(listOf(entity)),
+					victims: opt(listOf(versioned(ctx, entity_predicate, '1.16', entity))),
 				},
 				levitation: {
 					distance: opt(distance_predicate),
 					duration: opt(float_bounds),
 				},
 				lightning_strike: {
-					lightning: opt(entity),
-					bystander: opt(entity),
+					lightning: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+					bystander: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				location: {
-					location: opt(location_predicate),
+					location: opt(versioned(ctx, '1.16', location_predicate)),
 				},
 				nether_travel: {
 					distance: opt(distance_predicate),
@@ -349,21 +350,21 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				player_hurt_entity: {
 					damage: opt(damage_predicate),
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				player_interacted_with_entity: {
 					item: opt(item_predicate),
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				player_killed_entity: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					killing_blow: opt(damage_source_predicate),
 				},
 				recipe_unlocked: {
 					recipe: resource('recipe'),
 				},
 				slept_in_bed: {
-					location: opt(location_predicate),
+					location: opt(versioned(ctx, '1.16', location_predicate)),
 				},
 				slide_down_block: {
 					block: opt(resource('block')),
@@ -372,18 +373,18 @@ export const criterion = as('criterion', dispatch('trigger',
 					item: opt(item_predicate),
 				},
 				summoned_entity: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				tame_animal: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 				},
 				target_hit: {
-					projectile: opt(entity),
-					shooter: opt(entity),
+					projectile: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+					shooter: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					signal_strength: opt(int_bounds),
 				},
 				thrown_item_picked_up_by_entity: {
-					entity: opt(entity),
+					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					item: opt(item_predicate),
 				},
 				used_ender_eye: {
@@ -400,24 +401,24 @@ export const criterion = as('criterion', dispatch('trigger',
 					item: opt(item_predicate),
 				},
 				voluntary_exile: {
-					location: location_predicate,
+					location: opt(versioned(ctx, '1.16', location_predicate)),
 				},
 			}),
 			...when(trigger, ['hero_of_the_village', 'location', 'slept_in_bed', 'voluntary_exile'], {
-				position: deprecated(record({
+				position: opt(deprecated(ctx, '1.16', record({
 					x: opt(float_bounds),
 					y: opt(float_bounds),
 					z: opt(float_bounds),
-				})),
-				biome: deprecated(resource('worldgen/biome')),
-				feature: deprecated(simpleString), // TODO structure features
-				dimension: deprecated(resource('dimension')),
-				block: deprecated(block_predicate),
-				fluid: deprecated(fluid_predicate),
-				light: deprecated(record({
+				}))),
+				biome: opt(deprecated(ctx, '1.16', resource('worldgen/biome'))),
+				feature: opt(deprecated(ctx, '1.16', simpleString)), // TODO structure features
+				dimension: opt(deprecated(ctx, '1.16', resource('dimension'))),
+				block: opt(deprecated(ctx, '1.16', block_predicate)),
+				fluid: opt(deprecated(ctx, '1.16', fluid_predicate)),
+				light: opt(deprecated(ctx, '1.16', record({
 					light: int_bounds,
-				})),
-				smokey: deprecated(boolean),
+				}))),
+				smokey: opt(deprecated(ctx, '1.16', boolean)),
 			}),
 		}))),
 	})

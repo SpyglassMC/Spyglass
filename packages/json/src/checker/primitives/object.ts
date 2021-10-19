@@ -121,7 +121,8 @@ export function opt(checker?: JsonChecker | ComplexProperty, defaultValue?: Json
 	 : { checker, opt: true, def: defaultValue }
 }
 
-export function deprecated(checker: JsonChecker | ComplexProperty): ComplexProperty {
+export function deprecate(checker?: JsonChecker | ComplexProperty): ComplexProperty | undefined {
+	if (checker === undefined) return undefined
 	return isComplex(checker)
 		? { ...checker, deprecated: true }
 		: { checker, deprecated: true }

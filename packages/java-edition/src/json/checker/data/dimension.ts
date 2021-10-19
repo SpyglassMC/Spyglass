@@ -106,7 +106,7 @@ const biome_source = as('biome_source', dispatch('type', type => record({
 	}),
 })))
 
-export const dimension_type = as('dimension_type', (node, ctx) => record({
+export const dimension_type = as('dimension_type', dispatch((_, ctx) => record({
 	min_y: versioned(ctx, '1.17', intRange(-2048, 2047)), // TODO: validate
 	height: versioned(ctx, '1.17', intRange(0, 4096)),
 	logical_height: intRange(0, versioned(ctx, '1.17') ? 4096 : 256),
@@ -123,7 +123,7 @@ export const dimension_type = as('dimension_type', (node, ctx) => record({
 	has_raids: boolean,
 	has_skylight: boolean,
 	has_ceiling: boolean,
-})(node, ctx))
+})))
 
 export const dimension = as('dimension', record({
 	type: any([
