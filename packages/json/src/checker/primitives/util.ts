@@ -1,3 +1,4 @@
+import type { ErrorSeverity } from '@spyglassmc/core'
 import { ErrorReporter, Operations, Range } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { JsonExpectation, JsonNode } from '../../node'
@@ -17,6 +18,7 @@ export function as(context: string, checker: JsonChecker): JsonChecker {
 
 export type AttemptResult = {
 	totalErrorSpan: number,
+	maxSeverity: ErrorSeverity,
 	expectation?: JsonExpectation[],
 	updateNodeAndCtx: () => void,
 }
@@ -41,6 +43,7 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 
 	return {
 		totalErrorSpan,
+		maxSeverity: Math.max(...tempCtx.err.errors.map(e => e.severity)),
 		expectation: tempExpectation,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
@@ -58,7 +61,7 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 
 		const attempts = checkers
 			.map(checker => attempt(checker, node, ctx))
-			.sort((a, b) => a.totalErrorSpan - b.totalErrorSpan)
+			.sort((a, b) => a.maxSeverity - b.maxSeverity || a.totalErrorSpan - b.totalErrorSpan)
 		const sameTypeAttempts = attempts
 			.filter(a => a.expectation?.map<string>(e => e.type).includes(node.type))
 		const allExpectations = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)

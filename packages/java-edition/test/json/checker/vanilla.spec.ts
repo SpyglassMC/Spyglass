@@ -26,7 +26,7 @@ describe('Check vanilla files', async () => {
 				const text = fs.readFileSync(file, 'utf-8')
 				const result = testChecker(checker, text, { project })
 				const errors = result.parserErrors.concat(result.checkerErrors)
-					.filter(e => !e.message.endsWith('does not exist'))
+					.filter(e => !e.message.startsWith('Cannot find'))
 				if (errors.length === 0) return
 
 				passing = false
