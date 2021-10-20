@@ -1,15 +1,32 @@
 import type { TaggableResourceLocationCategory } from '@spyglassmc/core'
-import { any, boolean, listOf, opt, record, resource } from '@spyglassmc/json/lib/checker/primitives'
+import { ErrorSeverity, ResourceLocation } from '@spyglassmc/core'
+import { JsonObjectNode, JsonStringNode } from '@spyglassmc/json/lib'
+import { any, boolean, opt, record, resource, uniqueListOf } from '@spyglassmc/json/lib/checker/primitives'
+import { localize } from '@spyglassmc/locales/lib'
 
 const tag = (type: TaggableResourceLocationCategory) => record({
 	replace: opt(boolean, false),
-	values: listOf(any([
+	values: uniqueListOf(any([
 		resource(type, true),
 		record({
 			id: resource(type, true),
 			required: opt(boolean, true),
 		}),
-	])),
+	]), {
+		items: (node) => {
+			if (JsonStringNode.is(node)) {
+				return [ResourceLocation.shorten(node.value), node]
+			}
+			if (JsonObjectNode.is(node)) {
+				const id = node.children.find(c => c.key?.value === 'id')
+				if (id && id.value && JsonStringNode.is(id.value)) {
+					return [ResourceLocation.shorten(id.value.value), id.value]
+				}
+			}
+			return [undefined, node]
+		},
+		report: (node, ctx) => ctx.err.report(localize('json.checker.tag-entry.duplicate'), node, ErrorSeverity.Warning),
+	}),
 })
 
 export const block_tag = tag('block')
