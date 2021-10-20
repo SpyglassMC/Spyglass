@@ -47,7 +47,6 @@
   "json.checker.property.missing": "缺失属性 %0%",
   "json.checker.property.unknown": "未知属性 %0%",
   "json.checker.string.hex-color": "一个6位的十六进制数字",
-  "json.checker.string.undeclared": "%0% %1% 不存在",
   "json.doc.advancement.display": "进度的显示设置。如果存在，则该进度将在进度选项卡中可见。",
   "key-not-following-convention": "无效的键%0%，因为没有遵循%1%命名规范",
   "linter.diagnostic-message-wrapper": "%0%（规则：%1%）",

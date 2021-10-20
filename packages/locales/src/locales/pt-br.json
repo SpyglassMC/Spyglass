@@ -47,7 +47,6 @@
   "json.checker.property.missing": "Falta da propriedade %0%",
   "json.checker.property.unknown": "Propriedade desconhecida %0%",
   "json.checker.string.hex-color": "um número hexadecimal de 6-dígitos",
-  "json.checker.string.undeclared": "%0% %1% não existe",
   "json.doc.advancement.display": "Configurações de exibição de progressos. Se estiver presente, o progressos será visível nas guias de progressos.",
   "key-not-following-convention": "Chave inválida %0% que não segue a convenção %1%",
   "long": "uma long",
