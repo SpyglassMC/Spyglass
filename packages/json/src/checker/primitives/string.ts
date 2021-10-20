@@ -1,6 +1,6 @@
 import type { AllCategory, AstNode, Checker, Mutable, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { Failure, Lazy } from '@spyglassmc/core'
+import { Failure, Lazy, ResourceLocation } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { JsonExpectation } from '../../node'
 import { JsonStringNode } from '../../node'
@@ -9,7 +9,10 @@ import type { JsonChecker } from '../JsonChecker'
 export function resource(id: TaggableResourceLocationCategory, allowTag?: boolean): JsonChecker
 export function resource(id: ResourceLocationCategory | string[], allowTag?: false): JsonChecker
 export function resource(id: ResourceLocationCategory | string[], allowTag = false): JsonChecker {
-	return string(id, core.resourceLocation(typeof id === 'string' ? { category: id as any, allowTag } : { pool: id }), core.checker.resourceLocation)
+	return string(id, core.resourceLocation(typeof id === 'string'
+		? { category: id as any, allowTag }
+		: { pool: id.map(ResourceLocation.lengthen) }
+	), core.checker.resourceLocation)
 }
 
 export function literal(value: AllCategory | readonly string[]): JsonChecker {

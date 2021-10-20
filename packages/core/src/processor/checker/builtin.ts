@@ -1,7 +1,11 @@
+import { localeQuote, localize } from '../../../../locales/lib'
 import { ResourceLocation } from '../../common'
-import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node'
+import { ResourceLocationNode } from '../../node'
 import type { CheckerContext, MetaRegistry } from '../../service'
 import { ErrorReporter, Operations } from '../../service'
+import { ErrorSeverity } from '../../source'
+import { SymbolAccessType } from '../../symbol'
 import { traversePreOrder } from '../util'
 import type { Checker, SyncChecker } from './Checker'
 
@@ -75,8 +79,29 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 	await Promise.allSettled(promises)
 }
 
-export const resourceLocation: Checker<ResourceLocationNode> = (_node, _ctx) => {
-	// TODO
+export const resourceLocation: Checker<ResourceLocationNode> = (node, ctx) => {
+	const full = ResourceLocationNode.toString(node, 'full')
+	if (node.options.pool) {
+		if (!node.options.pool.includes(full)) {
+			ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
+		}
+		return
+	}
+	if (node.options.category && !node.options.allowUnknown) {
+		const path = node.isTag ? full.slice(1) : full
+		const category = node.isTag ? `tag/${node.options.category}` : node.options.category
+		if (category === 'structure') return
+		const query = ctx.symbols.query(ctx.doc, category, path)
+		if (node.options.accessType === SymbolAccessType.Write) {
+			query.enter({ usage: { type: 'definition', node } })
+		} else if (node.options.accessType === SymbolAccessType.Read) {
+			query.enter({ usage: { type: 'reference', node } })
+				.ifDeclared(() => {})
+				.else(() => {
+					ctx.err.report(localize('resource-location.undeclared', category, localeQuote(full)), node, ErrorSeverity.Warning)
+				})
+		}
+	}
 }
 
 export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
