@@ -1,11 +1,12 @@
 import type { AstNode } from '../node'
 import type { Parser } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
-import { checker, colorizer, completer } from '../processor'
-import type { Linter } from '../processor/checker/Linter'
+import { checker, colorizer, completer, linter } from '../processor'
+import type { Linter } from '../processor/linter/Linter'
 import type { UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
 import type { FileExtension } from './fileUtil'
+import type { Logger } from './Logger'
 
 export interface LanguageOptions {
 	/**
@@ -14,6 +15,12 @@ export interface LanguageOptions {
 	extensions: FileExtension[],
 	triggerCharacters?: string[],
 	parser: Parser<AstNode>,
+}
+
+interface LinterRegistration {
+	configValidator: (ruleValue: unknown, logger: Logger) => boolean,
+	linter: Linter<AstNode>,
+	nodePredicate: (node: AstNode) => boolean,
 }
 
 /* istanbul ignore next */
@@ -29,7 +36,7 @@ export class MetaRegistry {
 	readonly #colorizers = new Map<string, Colorizer<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
 	readonly #dependencyProviders = new Map<DependencyKey, DependencyProvider>()
-	readonly #linters = new Map<string, { linter: Linter<any>, predicate: (node: AstNode) => boolean }>()
+	readonly #linters = new Map<string, LinterRegistration>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #uriBinders = new Set<UriBinder>()
 
@@ -37,6 +44,7 @@ export class MetaRegistry {
 		checker.registerCheckers(this)
 		colorizer.registerColorizers(this)
 		completer.registerCompleters(this)
+		linter.registerLinters(this)
 	}
 
 	/**
@@ -127,16 +135,14 @@ export class MetaRegistry {
 		this.#dependencyProviders.set(key, provider)
 	}
 
-	public getLinters(node: AstNode): Linter<AstNode>[] {
-		const ans: Linter<AstNode>[] = []
-		for (const { linter, predicate } of this.#linters.values()) {
-			if (predicate(node)) {
-				ans.push(linter)
-			}
+	public getLinter(ruleName: string): LinterRegistration {
+		return this.#linters.get(ruleName) ?? {
+			configValidator: () => false,
+			linter: linter.noop,
+			nodePredicate: () => false,
 		}
-		return ans
 	}
-	public registerLinter(ruleName: string, options: { linter: Linter<any>, predicate: (node: AstNode) => boolean }): void {
+	public registerLinter(ruleName: string, options: LinterRegistration): void {
 		this.#linters.set(ruleName, options)
 	}
 

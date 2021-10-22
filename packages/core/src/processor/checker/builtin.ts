@@ -61,7 +61,7 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 export const noop: SyncChecker<AstNode> = () => { }
 
 /**
- * Use the shallowest children that have their own colorizers to provide the color tokens.
+ * Use the shallowest children that have their own checker to validate.
  */
 export const fallback: Checker<AstNode> = async (node, ctx) => {
 	const promises: Promise<unknown>[] = []

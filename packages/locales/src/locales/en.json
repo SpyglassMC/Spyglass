@@ -53,6 +53,8 @@
   "key-not-following-convention": "Invalid key %0% which doesn't follow %1% convention",
   "linter.diagnostic-message-wrapper": "%0% (rule: %1%)",
   "linter.name-convention.illegal": "Name %0% doesn't match the configured regular expression %1%",
+  "linter-config-validator.name-convention.type": "Expects a string that contains a regular expression describing the name",
+  "linter-config-validator.wrapper": "%0%. See [the documentation](%1) for more information",
   "long": "a long",
   "mcfunction.parser.entity-selector.arguments.not-applicable": "%0% is not applicable here",
   "mcfunction.parser.entity-selector.arguments.unknown": "Unknown entity selector argument %0%",

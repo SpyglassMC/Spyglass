@@ -1,6 +1,7 @@
 import EventEmitter from 'events'
 import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
+import { ErrorSeverity } from '..'
 import { bufferToString, Uri } from '../common/util'
 import { VanillaRegistryCategories } from '../symbol'
 import type { Project } from './Project'
@@ -69,21 +70,68 @@ export interface EnvConfig {
 
 type Arrayable<T> = T | readonly T[]
 
-type DiagnosticSeverityConfig =
+type LinterSeverity =
 	| 'hint'
 	| 'information'
 	| 'warning'
 	| 'error'
+namespace LinterSeverity {
+	export function is(value: unknown): value is LinterSeverity {
+		return value === 'hint' ||
+			value === 'information' ||
+			value === 'warning' ||
+			value === 'error'
+	}
+	export function toErrorSeverity(value: LinterSeverity): ErrorSeverity {
+		switch (value) {
+			case 'error':
+				return ErrorSeverity.Error
+			case 'hint':
+				return ErrorSeverity.Hint
+			case 'information':
+				return ErrorSeverity.Information
+			case 'warning':
+				return ErrorSeverity.Warning
+		}
+	}
+}
 
 type BracketSpacingConfig = any
 type SepSpacingConfig = any
-type DiagnosticConfig<T> = T extends boolean
-	? null | T | [DiagnosticSeverityConfig, T] | DiagnosticSeverityConfig
-	: null | T | [DiagnosticSeverityConfig, T]
 type QuoteConfig = {
 	always?: boolean,
 	avoidEscape?: boolean,
 	type?: 'double' | 'single',
+}
+
+type LinterConfigValue<T> = T extends boolean
+	? null | T | [LinterSeverity, T] | LinterSeverity
+	: null | T | [LinterSeverity, T]
+export namespace LinterConfigValue {
+	export function destruct(value: LinterConfigValue<boolean | string | number | object>): { ruleSeverity: ErrorSeverity, ruleValue: boolean | string | number | object } | undefined {
+		if (value === null || value === undefined) {
+			return undefined
+		}
+
+		if (LinterSeverity.is(value)) {
+			return {
+				ruleSeverity: LinterSeverity.toErrorSeverity(value),
+				ruleValue: true,
+			}
+		}
+
+		if (Array.isArray(value) && LinterSeverity.is(value[0])) {
+			return {
+				ruleSeverity: LinterSeverity.toErrorSeverity(value[0]),
+				ruleValue: value[1],
+			}
+		}
+
+		return {
+			ruleSeverity: ErrorSeverity.Warning,
+			ruleValue: value,
+		}
+	}
 }
 
 export interface FormatterConfig {
@@ -118,29 +166,29 @@ export interface FormatterConfig {
 
 export interface LinterConfig {
 	// Name convention.
-	nameOfNbtKey: DiagnosticConfig<string>,
-	nameOfObjective: DiagnosticConfig<string>,
-	nameOfScoreHolder: DiagnosticConfig<string>,
-	nameOfTag: DiagnosticConfig<string>,
-	nameOfTeam: DiagnosticConfig<string>,
+	nameOfNbtKey: LinterConfigValue<string>,
+	nameOfObjective: LinterConfigValue<string>,
+	nameOfScoreHolder: LinterConfigValue<string>,
+	nameOfTag: LinterConfigValue<string>,
+	nameOfTeam: LinterConfigValue<string>,
 
 	// Quote.
-	commandStringQuote: DiagnosticConfig<QuoteConfig>,
-	nbtPathQuote: DiagnosticConfig<QuoteConfig>,
-	nbtStringQuote: DiagnosticConfig<QuoteConfig>,
-	selectorKeyQuote: DiagnosticConfig<QuoteConfig>,
-	nbtKeyQuote: DiagnosticConfig<QuoteConfig>,
+	commandStringQuote: LinterConfigValue<QuoteConfig>,
+	nbtPathQuote: LinterConfigValue<QuoteConfig>,
+	nbtStringQuote: LinterConfigValue<QuoteConfig>,
+	selectorKeyQuote: LinterConfigValue<QuoteConfig>,
+	nbtKeyQuote: LinterConfigValue<QuoteConfig>,
 
 	// Sort key.
-	blockStateSortKeys: DiagnosticConfig<'alphabetically'>,
-	nbtCompoundSortKeys: DiagnosticConfig<'alphabetically'>,
-	selectorSortKeys: DiagnosticConfig<string[]>,
+	blockStateSortKeys: LinterConfigValue<'alphabetically'>,
+	nbtCompoundSortKeys: LinterConfigValue<'alphabetically'>,
+	selectorSortKeys: LinterConfigValue<string[]>,
 
-	idOmitDefaultNamespace: DiagnosticConfig<boolean>,
-	nbtArrayLengthCheck: DiagnosticConfig<boolean>,
-	nbtBoolean: DiagnosticConfig<boolean>,
-	nbtListLengthCheck: DiagnosticConfig<boolean>,
-	nbtTypeCheck: DiagnosticConfig<'strictly' | 'loosely'>,
+	idOmitDefaultNamespace: LinterConfigValue<boolean>,
+	nbtArrayLengthCheck: LinterConfigValue<boolean>,
+	nbtBoolean: LinterConfigValue<boolean>,
+	nbtListLengthCheck: LinterConfigValue<boolean>,
+	nbtTypeCheck: LinterConfigValue<'strictly' | 'loosely'>,
 	undeclaredSymbol: SymbolLinterConfig,
 }
 
@@ -166,7 +214,7 @@ declare namespace SymbolLinterConfig {
 	}
 	export interface Action {
 		declare?: 'block' | 'file' | 'public' /* TODO: restricted */,
-		report?: DiagnosticSeverityConfig,
+		report?: LinterSeverity,
 	}
 }
 

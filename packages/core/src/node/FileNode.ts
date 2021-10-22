@@ -9,4 +9,8 @@ export interface FileNode<CN extends AstNode> extends AstNode {
 	 * Only exists when the file has been checked.
 	 */
 	checkerErrors?: readonly LanguageError[],
+	/**
+	 * Only exists when the file has been checked.
+	 */
+	linterErrors?: readonly LanguageError[],
 }

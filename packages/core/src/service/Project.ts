@@ -3,6 +3,8 @@ import EventEmitter from 'events'
 import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { LinterConfigValue, LinterContext, LinterErrorReporter } from '.'
+import { traversePreOrder } from '..'
 import { bufferToString, CachePromise } from '../common'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
@@ -440,6 +442,7 @@ export class Project extends EventEmitter {
 			await checker(node, ctx)
 			node.checkerErrors = ctx.err.dump()
 			this.cache(doc, node)
+			this.ensureLinted(doc, node)
 		})
 	}
 
@@ -450,6 +453,54 @@ export class Project extends EventEmitter {
 				return this.check(doc, node)
 			} catch (e) {
 				this.logger.error(`[Project] [ensuredChecked] Failed for “${doc.uri}” #${doc.version}`, e)
+			}
+		}
+	}
+
+	private lint(doc: TextDocument, node: FileNode<AstNode>): void {
+		for (const [ruleName, rawValue] of Object.entries(this.config.linter)) {
+			const result = LinterConfigValue.destruct(rawValue)
+			if (!result) {
+				// Rule is disabled (i.e. set to `null`) in the config.
+				continue
+			}
+
+			const { ruleSeverity, ruleValue } = result
+			const { configValidator, linter, nodePredicate } = this.meta.getLinter(ruleName)
+			if (!configValidator(ruleValue, this.logger)) {
+				// Config value is invalid.
+				continue
+			}
+
+			const ctx = LinterContext.create(this, {
+				doc,
+				err: new LinterErrorReporter(ruleName, ruleSeverity),
+				ruleName,
+				ruleValue,
+			})
+
+			traversePreOrder(
+				node,
+				() => true,
+				() => true,
+				node => {
+					if (nodePredicate(node)) {
+						linter(node, ctx)
+					}
+				}
+			)
+
+			node.linterErrors = ctx.err.dump()
+			this.cache(doc, node)
+		}
+	}
+
+	ensureLinted(doc: TextDocument, node: FileNode<AstNode>): void {
+		if (!node.linterErrors) {
+			try {
+				this.lint(doc, node)
+			} catch (e) {
+				this.logger.error(`[Project] [ensureLinted] Failed for “${doc.uri}” #${doc.version}`, e)
 			}
 		}
 	}
