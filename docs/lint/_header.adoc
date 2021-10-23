@@ -1,0 +1,17 @@
+// Input Attributes:
+// * :rule-name:   <string>
+// * :summary:     <string>
+// * :description: <string>
+// * :fixable:
+
+= {summary} (`{rule-name}`)
+
+ifdef::fixable[]
+🔧 *Fixable*: violations of this rule can be auto-fixed by Code Actions.
+endif::[]
+
+ifdef::description[]
+== Description
+
+{description}
+endif::[]

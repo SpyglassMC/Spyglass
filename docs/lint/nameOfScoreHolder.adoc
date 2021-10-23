@@ -3,7 +3,37 @@
 :summary: Enforce a naming convention for score holders
 :description: This rule enforces a consistent naming convention for score holder names (fake names).
 
-include::_template.adoc[]
+include::_header.adoc[]
+
+include::_pre-json-format.adoc[]
+
+.Snake case
+====
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": "^[a-z]+(_[a-z]+)*$"
+	}
+}
+----
+
+.👍 Good
+[source,mcfunction]
+----
+execute if score foo objective matches 1 run say hello world!
+execute if score foo_bar objective matches 1 run say hello world!
+----
+
+.👎 Bad
+[source,mcfunction]
+----
+execute if score FooBar objective matches 1 run say hello world!
+----
+====
+
+include::_post-json-format.adoc[]
 
 == History
 

@@ -1,0 +1,35 @@
+// Input Attributes:
+// * :rule-name:   <string>
+// * :no-severity:
+
+ifndef::no-severity[]
+=== Severity
+
+All diagnostics provided by this linter will be of `warning` severity by default. You can wrap the
+config value in a tuple like this to change the severity to one of `error`, `warning`,
+`information`, or `hint`:
+
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": ["error", <value>]
+	}
+}
+----
+endif::no-severity[]
+
+=== To Disable
+
+If you do not wish to utilize this rule, simply set it to `null`:
+
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": null
+	}
+}
+----

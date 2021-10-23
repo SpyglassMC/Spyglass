@@ -1,0 +1,8 @@
+// Input Attributes:
+// * :linter:      <string>
+
+== JSON Format
+
+ifdef::linter[]
+include::_json-formats/{linter}.adoc[]
+endif::[]
