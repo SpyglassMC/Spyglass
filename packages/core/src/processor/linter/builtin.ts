@@ -8,7 +8,7 @@ export const noop: Linter<AstNode> = () => { }
 export function nameConvention(key: string): Linter<AstNode> {
 	return (node, ctx) => {
 		if (typeof (node as any)[key] !== 'string') {
-			throw new Error(`Trying to access property ${key} at ${JSON.stringify(node)}`)
+			throw new Error(`Trying to access property "${key}" of node type "${node.type}"`)
 		}
 		const name: string = (node as any)[key]
 
@@ -62,7 +62,7 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('nameOfNbtKey', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.type === 'string' && n.parent?.type === 'pair' && n.parent.parent?.type === 'nbt:compound',
+		nodePredicate: n => n.parent?.parent?.type === 'nbt:compound' && n.parent.type === 'pair' && n.type === 'string',
 	})
 	meta.registerLinter('nameOfObjective', {
 		configValidator: configValidator.nameConvention,
@@ -72,7 +72,7 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('nameOfScoreHolder', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.type === 'mcfunction:argument/minecraft:score_holder',
+		nodePredicate: n => n.parent?.type === 'mcfunction:argument/minecraft:score_holder' && n.type === 'symbol',
 	})
 	meta.registerLinter('nameOfTag', {
 		configValidator: configValidator.nameConvention,

@@ -331,7 +331,7 @@ export class Project extends EventEmitter {
 			.on('documentUpdated', ({ doc, node }) => {
 				this.emit('documentErrorred', {
 					doc,
-					errors: [...node.checkerErrors ?? [], ...node.parserErrors],
+					errors: [...node.checkerErrors ?? [], ...node.linterErrors ?? [], ...node.parserErrors],
 					node,
 				})
 			})
@@ -458,6 +458,8 @@ export class Project extends EventEmitter {
 	}
 
 	private lint(doc: TextDocument, node: FileNode<AstNode>): void {
+		node.linterErrors = []
+
 		for (const [ruleName, rawValue] of Object.entries(this.config.linter)) {
 			const result = LinterConfigValue.destruct(rawValue)
 			if (!result) {
@@ -488,11 +490,12 @@ export class Project extends EventEmitter {
 						linter(node, ctx)
 					}
 				}
-			)
+			);
 
-			node.linterErrors = ctx.err.dump()
-			this.cache(doc, node)
+			(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 		}
+
+		this.cache(doc, node)
 	}
 
 	ensureLinted(doc: TextDocument, node: FileNode<AstNode>): void {
