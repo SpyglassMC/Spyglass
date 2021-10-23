@@ -9,6 +9,10 @@ import { addBlocksSymbols, addFluidsSymbols, addRegistriesSymbols, getMetadata, 
 
 export * from './type'
 
+const GitHubApiDownloadOptions: download.DownloadOptions = {
+	headers: { Accept: 'application/vnd.github.v3+json' },
+}
+
 const cacheRoot = envPaths('spyglassmc').cache
 
 /* istanbul ignore next */
@@ -81,7 +85,7 @@ async function invalidateGitTagCache(user: string, repo: string, refs: string, c
 	try {
 		// Get the latest sha of the commit corresponding to the refs.
 		const tagUrl = `https://api.github.com/repos/${user}/${repo}/git/${refs}`
-		const tagResponse = await fetchJson<GitHubRefResponse>(tagUrl)
+		const tagResponse = await fetchJson<GitHubRefResponse>(tagUrl, GitHubApiDownloadOptions)
 		if (Array.isArray(tagResponse)) {
 			latestSha = tagResponse.find(v => v.ref === refs)?.object.sha
 		} else if (tagResponse.message === undefined) {
@@ -145,7 +149,9 @@ async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status,
 		logger,
 		`https://api.github.com/repos/${user}/${repo}/tarball/${refs}`,
 		cachePathArray,
-		!shouldRefresh, buffer => buffer
+		!shouldRefresh,
+		buffer => buffer,
+		GitHubApiDownloadOptions
 	)
 
 	return core.fileUtil.pathToFileUri(cachePath)
@@ -203,8 +209,8 @@ export async function getVanillaDatapack(version: string, status: VersionStatus,
 
 const jsonTransformer = (buffer: Buffer) => JSON.parse(core.bufferToString(buffer))
 
-async function fetchJson<T = any>(url: string): Promise<T> {
-	return jsonTransformer(await download(url))
+async function fetchJson<T = any>(url: string, downloadOptions?: download.DownloadOptions): Promise<T> {
+	return jsonTransformer(await download(url, undefined, downloadOptions))
 }
 
 async function downloadJson<T extends object>(logger: core.Logger, url: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v): Promise<T> {
@@ -215,7 +221,7 @@ async function downloadJson<T extends object>(logger: core.Logger, url: string, 
 /**
  * @throws Network/file system errors.
  */
-async function downloadData<T extends object>(logger: core.Logger, url: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T): Promise<T> {
+async function downloadData<T extends object>(logger: core.Logger, url: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions): Promise<T> {
 	let error: Error
 
 	const cacheParent = path.join(cacheRoot, ...cachePaths.slice(0, -1))
@@ -224,21 +230,21 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 
 	const downloadAndCache = async (): Promise<T | undefined> => {
 		try {
-			const buffer = await download(url)
+			const buffer = await download(url, undefined, downloadOptions)
 			const ans = transformer(buffer)
 			try {
 				await fse.ensureDir(cacheParent)
 				await fse.writeFile(cacheFilePath, buffer)
 			} catch (e) {
 				// Cache failed.
-				error = e
+				error = e as Error
 				logger.error(`[dependency] [download] Caching to “${cacheFilePath}”`, e)
 			}
 			logger.info(`[dependency] [download] Downloaded from “${url}”`)
 			return ans
 		} catch (e) {
 			// Download failed.
-			error = e
+			error = e as Error
 			logger.error(`[dependency] [download] Downloading from “${url}”`, e)
 		}
 		return undefined
@@ -258,7 +264,7 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 		return ans
 	} catch (e) {
 		// Read cache failed.
-		error = e
+		error = e as Error
 		if (preferCache) {
 			const ans = await downloadAndCache()
 			if (ans) {
