@@ -1,0 +1,2 @@
+* (string) A regex specifying the pattern of the name. The name will be considered valid if any
+part of it matches the regex, so use `^` and `$` if you want the full name to be tested.

@@ -1,0 +1,24 @@
+=== Example
+
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": "^[a-z]+(_[a-z]+)*$"
+	}
+}
+----
+
+.👍 Good
+[source,mcfunction]
+----
+team add foo
+team add foo_bar
+----
+
+.👎 Bad
+[source,mcfunction]
+----
+team add FooBar
+----

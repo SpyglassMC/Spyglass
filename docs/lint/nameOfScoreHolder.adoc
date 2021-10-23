@@ -1,0 +1,16 @@
+:rule-name: nameOfScoreHolder
+:linter: nameConvention
+:summary: Enforce a naming convention for score holders
+:description: This rule enforces a consistent naming convention for score holder names (fake names).
+
+include::_template.adoc[]
+
+== History
+
+|===
+|Version |Description
+
+| 1.0.0
+| Added lint rule `{rule-name}`.
+
+|===

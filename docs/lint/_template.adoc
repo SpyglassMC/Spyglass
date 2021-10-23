@@ -1,0 +1,59 @@
+// Input Attributes:
+// * :rule-name:   <string>
+// * :linter:      <string>
+// * :summary:     <string>
+// * :description: <string>
+// * :fixable:
+// * :no-severity:
+
+= {summary} (`{rule-name}`)
+
+ifdef::fixable[]
+🔧 *Fixable*: violations of this rule can be auto-fixed by Code Actions.
+endif::[]
+
+ifdef::description[]
+== Description
+
+{description}
+endif::[]
+
+== JSON Format
+
+ifdef::linter[]
+include::_json-formats/{linter}.adoc[]
+endif::[]
+
+ifdef::rule-name[]
+include::_examples/{rule-name}.adoc[]
+endif::[]
+
+ifndef::no-severity[]
+=== Severity
+
+All diagnostics provided by this linter will be of `warning` severity by default. You can wrap the
+config value in a tuple like this to change the severity to one of `error`, `warning`,
+`information`, or `hint`:
+
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": ["error", <value>]
+	}
+}
+----
+endif::[]
+
+=== To Disable
+
+If you do not wish to utilize this rule, simply set it to `null` in your config file:
+
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": null
+	}
+}
+----

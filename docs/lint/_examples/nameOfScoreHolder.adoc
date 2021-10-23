@@ -1,0 +1,24 @@
+=== Example
+
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": "^[a-z]+(_[a-z]+)*$"
+	}
+}
+----
+
+.👍 Good
+[source,mcfunction]
+----
+execute if score foo objective matches 1 run say hello world!
+execute if score foo_bar objective matches 1 run say hello world!
+----
+
+.👎 Bad
+[source,mcfunction]
+----
+execute if score FooBar objective matches 1 run say hello world!
+----
