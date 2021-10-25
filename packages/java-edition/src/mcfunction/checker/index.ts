@@ -1,4 +1,6 @@
 import * as core from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales/lib'
+import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
@@ -6,6 +8,9 @@ import type { CommandNode, EntitySelectorInvertableArgumentValueNode, MinecraftE
 import { EntitySelectorArgumentsNode } from '../node'
 
 export const command: core.Checker<CommandNode> = (node, ctx) => {
+	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
+		ctx.err.report(localize('unexpected-leading-slash'), node.slash)
+	}
 	rootCommand(node.children, 0, ctx)
 }
 

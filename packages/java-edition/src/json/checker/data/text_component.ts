@@ -1,4 +1,5 @@
-import { any, as, boolean, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { integer } from '@spyglassmc/core'
+import { any, as, boolean, dispatch, extract, having, int, listOf, literal, opt, pick, record, ref, resource, simpleString, string } from '@spyglassmc/json/lib/checker/primitives'
 import { deprecated, nbt, nbtPath, stringColor, uuid, versioned } from '../util'
 
 const Keybinds = [
@@ -92,7 +93,15 @@ const text_component_object = as('text_component', (node, ctx) => record({
 	clickEvent: opt(dispatch('action',
 		(action) => record({
 			action: literal(['open_url', 'open_file', 'run_command', 'suggest_command', 'change_page', 'copy_to_clipboard']),
-			value: simpleString, // TODO: validation
+			value: simpleString,
+			...pick(action, {
+				run_command: {
+					value: string('command', ctx.meta.getParserLazily('mcfunction:command'), ctx.meta.getChecker('mcfunction:command')),
+				},
+				change_page: {
+					value: string('number', integer({ pattern: /\d+/, min: 0 })),
+				},
+			}),
 		})
 	)),
 	hoverEvent: opt(dispatch('action',

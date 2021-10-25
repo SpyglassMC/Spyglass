@@ -19,6 +19,11 @@ export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: A
 			children: [],
 		}
 
+		const start = src.cursor
+		if (src.trySkip('/')) {
+			ans.slash = core.Range.create(start, src.cursor)
+		}
+
 		dispatch<A>(ans.children, src, ctx, tree, tree, argument)
 
 		if (src.canReadInLine()) {
