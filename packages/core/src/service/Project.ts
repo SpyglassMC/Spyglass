@@ -90,6 +90,7 @@ export interface Project extends EventEmitter {
 	emit(event: 'documentRemoved', data: FileEvent): boolean
 	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
 	emit(event: 'ready', data: EmptyEvent): boolean
+	close(): Promise<void>
 }
 
 /* istanbul ignore next */
@@ -369,6 +370,10 @@ export class Project extends EventEmitter {
 	async ready(): Promise<this> {
 		await this.#readyPromise
 		return this
+	}
+
+	async close(): Promise<void> {
+		await this.#watcher.close()
 	}
 
 	/**
