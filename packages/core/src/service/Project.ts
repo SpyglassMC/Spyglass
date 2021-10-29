@@ -35,6 +35,7 @@ interface Options {
 	 */
 	projectPath: string,
 	symbols?: SymbolUtil,
+	watchOpts?: Partial<chokidar.WatchOptions>
 }
 
 export interface DocAndNode {
@@ -174,6 +175,7 @@ export class Project extends EventEmitter {
 		logger = Logger.create(),
 		projectPath,
 		symbols = new SymbolUtil({}),
+		watchOpts = {},
 	}: Options) {
 		super()
 
@@ -193,7 +195,7 @@ export class Project extends EventEmitter {
 			.on('error', ({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error))
 
 		this.#watcher = chokidar
-			.watch(projectPath, { ignoreInitial: false })
+			.watch(projectPath, { ...watchOpts, ignoreInitial: false })
 
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
