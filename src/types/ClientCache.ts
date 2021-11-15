@@ -25,6 +25,7 @@ export const TagFileTypes = [
     'tag/entity_type',
     'tag/fluid',
     'tag/function',
+    'tag/game_event',
     'tag/item'
 ] as const
 export const WorldgenFileTypes = [
@@ -34,7 +35,9 @@ export const WorldgenFileTypes = [
     'worldgen/configured_feature',
     'worldgen/configured_structure_feature',
     'worldgen/configured_surface_builder',
+    'worldgen/noise',
     'worldgen/noise_settings',
+    'worldgen/placed_feature',
     'worldgen/processor_list',
     'worldgen/template_pool'
 ] as const

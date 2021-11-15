@@ -20,6 +20,7 @@ export type JsonSchemaType =
     | 'entity_type_tag'
     | 'fluid_tag'
     | 'function_tag'
+    | 'game_event_tag'
     | 'item_tag'
     /* worldgen */
     | 'biome'
@@ -28,7 +29,9 @@ export type JsonSchemaType =
     | 'configured_feature'
     | 'configured_structure_feature'
     | 'configured_surface_builder'
+    | 'noise_parameters'
     | 'noise_settings'
+    | 'placed_feature'
     | 'processor_list'
     | 'template_pool'
     /* misc */
@@ -48,6 +51,7 @@ const globPatterns: Record<JsonSchemaType, string> = {
     entity_type_tag: PathPatterns['tag/entity_type'],
     fluid_tag: PathPatterns['tag/fluid'],
     function_tag: PathPatterns['tag/function'],
+    game_event_tag: PathPatterns['tag/game_event'],
     item_tag: PathPatterns['tag/item'],
     /* worldgen */
     biome: PathPatterns['worldgen/biome'],
@@ -56,7 +60,9 @@ const globPatterns: Record<JsonSchemaType, string> = {
     configured_feature: PathPatterns['worldgen/configured_feature'],
     configured_structure_feature: PathPatterns['worldgen/configured_structure_feature'],
     configured_surface_builder: PathPatterns['worldgen/configured_surface_builder'],
+    noise_parameters: PathPatterns['worldgen/noise'],
     noise_settings: PathPatterns['worldgen/noise_settings'],
+    placed_feature: PathPatterns['worldgen/placed_feature'],
     processor_list: PathPatterns['worldgen/processor_list'],
     template_pool: PathPatterns['worldgen/template_pool'],
     /* misc */
