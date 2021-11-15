@@ -1137,6 +1137,20 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        jfr: {
+            parser: new LiteralArgumentParser('jfr'),
+            permission: 4,
+            children: {
+                start: {
+                    parser: new LiteralArgumentParser('start'),
+                    executable: true
+                },
+                stop: {
+                    parser: new LiteralArgumentParser('stop'),
+                    executable: true
+                }
+            }
+        },
         kick: {
             parser: new LiteralArgumentParser('kick'),
             permission: 3,
