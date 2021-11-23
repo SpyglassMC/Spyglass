@@ -15,7 +15,8 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
     readonly identity = 'objective'
 
     constructor(
-        private readonly isDefinition = false
+        private readonly isDefinition = false,
+        private readonly noLengthLimit = false
     ) {
         super()
     }
@@ -91,7 +92,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
                     getDiagnosticSeverity(severity)
                 ))
             }
-            if (value.length > 16) {
+            if (!this.noLengthLimit && value.length > 16) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + value.length },
                     locale('too-long', locale('punc.quote', value), locale('objective'), 16)
