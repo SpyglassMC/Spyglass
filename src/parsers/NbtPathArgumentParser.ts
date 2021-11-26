@@ -36,20 +36,20 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             helper = new NbtdocHelper(ctx.nbtdoc)
         }
 
-        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.resolveRegistryCompound(this.category, this.id as string | null) : null, ['filter', 'key', 'index'], false)
+        this.parseSpecifiedTypes(ans, reader, ctx, helper, helper ? helper.resolveRegistryCompound(this.category, this.id as string | null) : null, ['filter', 'key', 'index'], false, false)
 
         ans.data[NodeRange] = { start, end: reader.cursor }
 
         return ans
     }
 
-    private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean): void {
+    private parseSpecifiedTypes(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, types: ('key' | 'filter' | 'index')[], allowEmpty: boolean, allowUnknownKeys: boolean): void {
         let isKey = false
 
         if (NbtdocHelper.isOrDoc(doc)) {
             return NbtdocHelper.forEachOrDoc(
                 ans, reader, doc,
-                (ans, reader, doc) => this.parseSpecifiedTypes(ans, reader, ctx, helper, doc, types, allowEmpty)
+                (ans, reader, doc) => this.parseSpecifiedTypes(ans, reader, ctx, helper, doc, types, allowEmpty, allowUnknownKeys)
             )
         }
 
@@ -58,7 +58,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             let range: TextRange = { start: reader.cursor, end: reader.cursor }
             if (this.canParseKey(reader)) {
                 isKey = true
-                range = this.parseKey(ans, reader, ctx, helper, NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null)[NodeRange]
+                range = this.parseKey(ans, reader, ctx, helper, NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null, allowUnknownKeys)[NodeRange]
                 //#region Schema errors.
                 if (helper && doc && !NbtdocHelper.isCompoundOrIndexDoc(doc)) {
                     ans.errors.push(new ParsingError(
@@ -96,7 +96,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         ))
                     }
                 }
-                this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null)
+                this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null, allowUnknownKeys)
             } else if (types.includes('index') && this.canParseIndex(reader)) {
                 if (helper && doc) {
                     if (!(
@@ -112,7 +112,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                         ))
                     }
                 }
-                this.parseIndex(ans, reader, ctx, helper, doc)
+                this.parseIndex(ans, reader, ctx, helper, doc, allowUnknownKeys)
             } else {
                 if (!allowEmpty) {
                     ans.errors.push(new ParsingError(
@@ -127,7 +127,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
         }
     }
 
-    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: CompoundDoc | IndexDoc | null) {
+    private parseKey(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: CompoundDoc | IndexDoc | null, allowUnknownKeys: boolean) {
         const start = reader.cursor
         let key: string = ''
         const out: { mapping: IndexMapping } = { mapping: {} }
@@ -166,32 +166,37 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             const compoundDoc = helper.readCompound(helper.resolveCompoundOrIndexDoc(doc, null, ctx))
             const field = helper.readField(compoundDoc, key, null)
             if (!field && !helper.canHaveArbitraryTags(compoundDoc, null)) {
-                ans.errors.push(new ParsingError(
-                    { start, end: reader.cursor },
-                    locale('unknown-key', locale('punc.quote', key)),
-                    true, DiagnosticSeverity.Warning
-                ))
+                if (!allowUnknownKeys) {
+                    ans.errors.push(new ParsingError(
+                        { start, end: reader.cursor },
+                        locale('unknown-key', locale('punc.quote', key)),
+                        true, DiagnosticSeverity.Warning
+                    ))
+                }
             } else if (field) {
                 keyNode[NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
                 childDoc = field.nbttype
+                if (helper.isAnyCompound(key, field)) {
+                    allowUnknownKeys = true
+                }
             }
         }
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['key', 'index'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['key', 'index'], false, allowUnknownKeys)
         } else {
-            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['filter', 'index'], true)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper, childDoc, ['filter', 'index'], true, allowUnknownKeys)
         }
 
         return keyNode
     }
 
-    private parseCompoundFilter(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: CompoundDoc | IndexDoc | null) {
+    private parseCompoundFilter(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: CompoundDoc | IndexDoc | null, allowUnknownKeys: boolean) {
         if (NbtdocHelper.isOrDoc(doc)) {
             NbtdocHelper.forEachOrDoc(
                 ans, reader, doc,
-                (ans, reader, doc) => this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null)
+                (ans, reader, doc) => this.parseCompoundFilter(ans, reader, ctx, helper, doc && NbtdocHelper.isCompoundOrIndexDoc(doc) ? doc : null, allowUnknownKeys)
             )
         } else {
             const result = new ctx.parsers.Nbt(
@@ -203,11 +208,11 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
         if (this.canParseSep(reader)) {
             this.parseSep(ans, reader)
-            this.parseSpecifiedTypes(ans, reader, ctx, helper, doc, ['key'], false)
+            this.parseSpecifiedTypes(ans, reader, ctx, helper, doc, ['key'], false, allowUnknownKeys)
         }
     }
 
-    private parseIndex(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null) {
+    private parseIndex(ans: ArgumentParserResult<NbtPathNode>, reader: StringReader, ctx: ParsingContext, helper: NbtdocHelper | undefined, doc: nbtdoc.NbtValue | null, allowUnknownKeys: boolean) {
         this.parseIndexBegin(ans, reader)
         reader.skipWhiteSpace()
 
@@ -229,7 +234,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
             this.parseCompoundFilter(
                 ans, reader, ctx, helper,
                 /* istanbul ignore next */
-                isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null
+                isListDoc(doc) && NbtdocHelper.isCompoundDoc(doc.List.value_type) ? doc.List.value_type : null, allowUnknownKeys
             )
         } else if (this.canParseIndexNumber(reader)) {
             this.parseIndexNumber(ans, reader, ctx)
@@ -245,13 +250,13 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 ans, reader, ctx, helper,
                 /* istanbul ignore next */
                 isListDoc(doc) ? doc.List.value_type : null,
-                ['key', 'index'], false
+                ['key', 'index'], false, allowUnknownKeys
             )
         } else {
             this.parseSpecifiedTypes(ans, reader, ctx, helper,
                 /* istanbul ignore next */
                 isListDoc(doc) ? doc.List.value_type : null,
-                ['index'], true
+                ['index'], true, allowUnknownKeys
             )
         }
     }

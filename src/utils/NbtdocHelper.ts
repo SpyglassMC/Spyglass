@@ -516,7 +516,7 @@ export class NbtdocHelper {
         if (!doc) {
             return false
         }
-        if (doc.fields.hasOwnProperty('CustomModelData') || doc.fields.hasOwnProperty('data')) {
+        if (doc.fields.hasOwnProperty('CustomModelData')) {
             return true
         }
         const superDoc = this.getSupers(doc.supers, node)
@@ -524,6 +524,10 @@ export class NbtdocHelper {
             this.readCompound(superDoc ? superDoc.Compound : null),
             node ? node[SuperNode] : null
         )
+    }
+
+    isAnyCompound(key: string, field: nbtdoc.Field | null): boolean {
+        return field?.description.includes('data stored in this marker') || key === 'filtered_pages'
     }
 
     private validateCompoundDoc(ans: LegacyValidateResult, ctx: ParsingContext, node: NbtCompoundNode, doc: nbtdoc.CompoundTag | null, isPredicate: boolean) {
@@ -534,7 +538,9 @@ export class NbtdocHelper {
                 if (field) {
                     // Hover information.
                     node[Keys][key][NodeDescription] = NbtdocHelper.getKeyDescription(field.nbttype, field.description)
-                    this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
+                    if (!this.isAnyCompound(key, field)) {
+                        this.validateField(ans, ctx, childNode, field.nbttype, isPredicate, NbtdocHelper.handleDescription(field.description))
+                    }
                 } else {
                     // Errors.
                     if (!this.canHaveArbitraryTags(doc, node/* [SuperNode] */)) {
