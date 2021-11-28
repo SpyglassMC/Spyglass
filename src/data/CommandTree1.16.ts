@@ -1658,7 +1658,13 @@ export const CommandTree: ICommandTree = {
             children: {
                 pos: {
                     parser: new VectorArgumentParser(3, 'integer'),
-                    executable: true
+                    executable: true,
+                    children: {
+                        angle: {
+                            parser: new VectorArgumentParser(1, 'float', false),
+                            executable: true
+                        }
+                    }
                 }
             }
         },

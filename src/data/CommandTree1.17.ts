@@ -37,7 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 20w46a commands.
+ * Command tree of Minecraft Java Edition 1.17.1 commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1762,7 +1762,13 @@ export const CommandTree: ICommandTree = {
             children: {
                 pos: {
                     parser: new VectorArgumentParser(3, 'integer'),
-                    executable: true
+                    executable: true,
+                    children: {
+                        angle: {
+                            parser: new VectorArgumentParser(1, 'float', false),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
