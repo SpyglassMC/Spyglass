@@ -37,7 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 20w46a commands.
+ * Command tree of Minecraft Java Edition 1.18 commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1547,7 +1547,7 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('add'),
                             children: {
                                 objective: {
-                                    parser: new ObjectiveArgumentParser(true, true),
+                                    parser: new ObjectiveArgumentParser(true),
                                     children: {
                                         criterion: {
                                             parser: new ObjectiveCriterionArgumentParser(),
@@ -1571,7 +1571,7 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('modify'),
                             children: {
                                 objective: {
-                                    parser: new ObjectiveArgumentParser(false, true),
+                                    parser: new ObjectiveArgumentParser(false),
                                     children: {
                                         displayname: {
                                             parser: new LiteralArgumentParser('displayname'),
@@ -1599,7 +1599,7 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('remove'),
                             children: {
                                 objective: {
-                                    parser: new ObjectiveArgumentParser(false, true),
+                                    parser: new ObjectiveArgumentParser(false),
                                     executable: true
                                 }
                             }
@@ -1612,7 +1612,7 @@ export const CommandTree: ICommandTree = {
                                     executable: true,
                                     children: {
                                         objective: {
-                                            parser: new ObjectiveArgumentParser(false, true),
+                                            parser: new ObjectiveArgumentParser(false),
                                             executable: true
                                         }
                                     }
@@ -1721,11 +1721,11 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('reset'),
                             children: {
                                 targets: {
-                                    parser: new EntityArgumentParser('multiple', 'entities', true, true),
+                                    parser: new EntityArgumentParser('multiple', 'entities', true),
                                     executable: true,
                                     children: {
                                         objective: {
-                                            parser: new ObjectiveArgumentParser(false, true),
+                                            parser: new ObjectiveArgumentParser(false),
                                             executable: true
                                         }
                                     }
@@ -1988,7 +1988,7 @@ export const CommandTree: ICommandTree = {
                             executable: true,
                             children: {
                                 members: {
-                                    parser: new EntityArgumentParser('multiple', 'entities', true, true),
+                                    parser: new EntityArgumentParser('multiple', 'entities', true),
                                     executable: true
                                 }
                             }
@@ -1999,7 +1999,7 @@ export const CommandTree: ICommandTree = {
                     parser: new LiteralArgumentParser('leave'),
                     children: {
                         members: {
-                            parser: new EntityArgumentParser('multiple', 'entities', true, true),
+                            parser: new EntityArgumentParser('multiple', 'entities', true),
                             executable: true
                         }
                     }
@@ -2240,7 +2240,7 @@ export const CommandTree: ICommandTree = {
             permission: 0,
             children: {
                 objective: {
-                    parser: new ObjectiveArgumentParser(false, true),
+                    parser: new ObjectiveArgumentParser(false),
                     executable: true,
                     children: {
                         add_set: {
@@ -2626,18 +2626,18 @@ export const CommandTree: ICommandTree = {
             }
         },
         multiple_score: {
-            parser: new EntityArgumentParser('multiple', 'entities', true, true),
+            parser: new EntityArgumentParser('multiple', 'entities', true),
             children: {
                 objective: {
-                    parser: new ObjectiveArgumentParser(false, true)
+                    parser: new ObjectiveArgumentParser(false)
                 }
             }
         },
         single_score: {
-            parser: new EntityArgumentParser('single', 'entities', true, true),
+            parser: new EntityArgumentParser('single', 'entities', true),
             children: {
                 objective: {
-                    parser: new ObjectiveArgumentParser(false, true)
+                    parser: new ObjectiveArgumentParser(false)
                 }
             }
         }

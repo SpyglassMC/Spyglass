@@ -6,7 +6,7 @@ import { IsMapSorted, Keys, UnsortedKeys } from '../nodes/MapNode'
 import { NumberNode } from '../nodes/NumberNode'
 import { NumberRangeNode } from '../nodes/NumberRangeNode'
 import { EntitySelectorNodeChars, SelectorAdvancementsNode, SelectorArgumentKey, SelectorArgumentKeys, SelectorArgumentNodeChars, SelectorArgumentsNode, SelectorCriteriaNode, SelectorScoresNode, SelectorSortMethod } from '../nodes/SelectorArgumentsNode'
-import { checkNamingConvention, getConventionNames } from '../types'
+import { checkNamingConvention, getConventionNames, isBefore118 } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult, combineArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -27,8 +27,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
     constructor(
         private readonly amount: 'single' | 'multiple',
         private readonly type: 'players' | 'entities',
-        private readonly isScoreHolder = false,
-        private readonly noLengthLimit = false
+        private readonly isScoreHolder = false
     ) { super() }
 
     parse(reader: StringReader, ctx: ParsingContext): ArgumentParserResult<EntityNode> {
@@ -77,7 +76,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
             ))
         }
         if (this.isScoreHolder && plain !== '*') {
-            if (!this.noLengthLimit && plain.length > 40) {
+            if (plain.length > 40 && isBefore118(ctx.config.env.cmdVersion)) {
                 ans.errors.push(
                     new ParsingError(
                         { start, end: start + plain.length },
@@ -106,7 +105,7 @@ export class EntityArgumentParser extends ArgumentParser<EntityNode> {
                     getDiagnosticSeverity(ctx.config.lint.strictScoreHolderCheck![0])
                 ))
             }
-        } else if (!this.isScoreHolder && !this.noLengthLimit && plain.length > 16 && !EntityArgumentParser.UuidPattern.test(plain)) {
+        } else if (!this.isScoreHolder && plain.length > 16 && isBefore118(ctx.config.env.cmdVersion) && !EntityArgumentParser.UuidPattern.test(plain)) {
             ans.errors.push(
                 new ParsingError(
                     { start, end: start + plain.length },

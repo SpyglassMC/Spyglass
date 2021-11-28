@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { locale } from '../locales'
-import { checkNamingConvention, getConventionNames, getDiagnosticSeverity } from '../types'
+import { checkNamingConvention, getConventionNames, getDiagnosticSeverity, isBefore118 } from '../types'
 import { getCompletions, getSafeCategory } from '../types/ClientCache'
 import { ArgumentParserResult } from '../types/Parser'
 import { ParsingContext } from '../types/ParsingContext'
@@ -15,8 +15,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
     readonly identity = 'objective'
 
     constructor(
-        private readonly isDefinition = false,
-        private readonly noLengthLimit = false
+        private readonly isDefinition = false
     ) {
         super()
     }
@@ -92,7 +91,7 @@ export class ObjectiveArgumentParser extends ArgumentParser<string> {
                     getDiagnosticSeverity(severity)
                 ))
             }
-            if (!this.noLengthLimit && value.length > 16) {
+            if (value.length > 16 && isBefore118(ctx.config.env.cmdVersion)) {
                 ans.errors.push(new ParsingError(
                     { start, end: start + value.length },
                     locale('too-long', locale('punc.quote', value), locale('objective'), 16)
