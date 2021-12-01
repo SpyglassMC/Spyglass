@@ -265,4 +265,8 @@ export namespace toLS {
 		])
 		return map.get(category) ?? UltimateFallback
 	}
+
+	export function textEdit(range: core.Range, text: string, doc: TextDocument) {
+		return ls.TextEdit.replace(toLS.range(range, doc), text)
+	}
 }

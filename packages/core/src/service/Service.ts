@@ -6,7 +6,7 @@ import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../
 import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
-import { ColorizerContext, CompleterContext } from './Context'
+import { ColorizerContext, CompleterContext, FormatterContext } from './Context'
 import { FileService } from './FileService'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
@@ -133,5 +133,11 @@ export class Service extends EventEmitter {
 			}
 		}
 		return undefined
+	}
+
+	format(node: FileNode<AstNode>, doc: TextDocument, tabSize: number, insertSpaces: boolean) {
+		this.debug(`Formatting '${doc.uri}' # ${doc.version}`)
+		const formatter = this.project.meta.getFormatter(node.type)
+		return formatter(node, FormatterContext.create(this.project, { doc, tabSize, insertSpaces }))
 	}
 }

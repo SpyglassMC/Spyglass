@@ -2,6 +2,7 @@
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LinterErrorReporter } from '.'
+import { formatterContextIndentation } from '../processor'
 import type { Range } from '../source'
 import { ReadonlySource } from '../source'
 import type { SymbolUtil } from '../symbol'
@@ -116,6 +117,29 @@ export namespace LinterContext {
 			err: opts.err,
 			ruleName: opts.ruleName,
 			ruleValue: opts.ruleValue,
+		}
+	}
+}
+
+export interface FormatterContext extends ProcessorContext {
+	tabSize: number,
+	insertSpaces: boolean,
+	indentLevel: number,
+	indent: (additionalLevels?: number) => string,
+}
+interface FormatterContextOptions extends ProcessorContextOptions {
+	tabSize: number,
+	insertSpaces: boolean,
+}
+export namespace FormatterContext {
+	export function create(project: ProjectLike, opts: FormatterContextOptions): FormatterContext {
+		return {
+			...ProcessorContext.create(project, opts),
+			...opts,
+			indentLevel: 0,
+			indent(additionalLevels) {
+				return formatterContextIndentation(this, additionalLevels)
+			},
 		}
 	}
 }

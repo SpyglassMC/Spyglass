@@ -77,6 +77,7 @@ connection.onInitialize(async params => {
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
+			documentFormattingProvider: {},
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
@@ -267,6 +268,19 @@ connection.onWorkspaceSymbol(({ query }) => {
 		service.project.symbols.global, query,
 		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
 	)
+})
+
+connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	let text = service.format(node, doc, options.tabSize, options.insertSpaces)
+	if (options.insertFinalNewline && text.slice(-1) !== '\n') {
+		text += '\n'
+	}
+	return [toLS.textEdit(node.range, text, doc)]
 })
 
 connection.listen()

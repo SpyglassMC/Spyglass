@@ -3,10 +3,12 @@
 import type * as core from '@spyglassmc/core'
 import * as colorizer from './colorizer'
 import * as completer from './completer'
+import * as formatter from './formatter'
 import * as parser from './parser'
 
 export * as checker from './checker'
 export * as colorizer from './colorizer'
+export * as formatter from './formatter'
 export * from './node'
 export * as parser from './parser'
 
@@ -21,4 +23,5 @@ export const initialize: core.ProjectInitializer = ({ meta }) => {
 
 	colorizer.register(meta)
 	completer.register(meta)
+	formatter.register(meta)
 }

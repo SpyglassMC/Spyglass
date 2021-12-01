@@ -90,9 +90,8 @@ export namespace JsonNumberNode {
 export interface JsonBooleanExpectation extends JsonBaseExpectation {
 	readonly type: 'json:boolean'
 }
-export interface JsonBooleanNode extends core.AstNode, JsonBaseAstNode {
+export interface JsonBooleanNode extends core.BooleanBaseNode, JsonBaseAstNode {
 	readonly type: 'json:boolean'
-	readonly value: boolean
 }
 export namespace JsonBooleanNode {
 	/* istanbul ignore next */

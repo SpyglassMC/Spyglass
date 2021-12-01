@@ -1,7 +1,8 @@
 import type { AstNode } from '../node'
 import type { Parser } from '../parser'
 import type { Checker, Colorizer, Completer } from '../processor'
-import { checker, colorizer, completer, linter } from '../processor'
+import { checker, colorizer, completer, formatter, linter } from '../processor'
+import type { Formatter } from '../processor/formatter'
 import type { Linter } from '../processor/linter/Linter'
 import type { UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
@@ -37,6 +38,7 @@ export class MetaRegistry {
 	readonly #completers = new Map<string, Completer<any>>()
 	readonly #dependencyProviders = new Map<DependencyKey, DependencyProvider>()
 	readonly #linters = new Map<string, LinterRegistration>()
+	readonly #formatters = new Map<string, Formatter<any>>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #uriBinders = new Set<UriBinder>()
 
@@ -45,6 +47,7 @@ export class MetaRegistry {
 		colorizer.registerColorizers(this)
 		completer.registerCompleters(this)
 		linter.registerLinters(this)
+		formatter.registerFormatters(this)
 	}
 
 	/**
@@ -144,6 +147,16 @@ export class MetaRegistry {
 	}
 	public registerLinter(ruleName: string, options: LinterRegistration): void {
 		this.#linters.set(ruleName, options)
+	}
+
+	public hasFormatter<N extends AstNode>(type: N['type']): boolean {
+		return this.#formatters.has(type)
+	}
+	public getFormatter<N extends AstNode>(type: N['type']): Formatter<N> {
+		return this.#formatters.get(type) ?? formatter.fallback
+	}
+	public registerFormatter<N extends AstNode>(type: N['type'], formatter: Formatter<N>): void {
+		this.#formatters.set(type, formatter)
 	}
 
 	public hasParser<N extends AstNode>(type: N['type']): boolean {
