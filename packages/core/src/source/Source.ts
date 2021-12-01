@@ -62,7 +62,7 @@ export class ReadonlySource {
 	 * @param offset The index to offset from cursor. Defaults to 0
 	 */
 	peek(length = 1, offset = 0) {
-		return this.string.substr(this.innerCursor + offset, length)
+		return this.string.slice(this.innerCursor + offset, this.innerCursor + offset + length)
 	}
 
 	/**

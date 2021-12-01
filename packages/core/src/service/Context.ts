@@ -99,6 +99,27 @@ export namespace CheckerContext {
 	}
 }
 
+export interface LinterContext extends ProcessorContext {
+	err: LinterErrorReporter,
+	ruleName: string,
+	ruleValue: unknown,
+}
+interface LinterContextOptions extends ProcessorContextOptions {
+	err: LinterErrorReporter,
+	ruleName: string,
+	ruleValue: unknown,
+}
+export namespace LinterContext {
+	export function create(project: ProjectLike, opts: LinterContextOptions): LinterContext {
+		return {
+			...ProcessorContext.create(project, opts),
+			err: opts.err,
+			ruleName: opts.ruleName,
+			ruleValue: opts.ruleValue,
+		}
+	}
+}
+
 export interface ColorizerContext extends ProcessorContext {
 	range?: Range,
 }
@@ -140,35 +161,6 @@ export namespace UriBinderContext {
 		return {
 			...ContextBase.create(project),
 			symbols: project.symbols,
-		}
-	}
-}
-
-export interface LinterContext extends ContextBase {
-	config: Config,
-	doc: TextDocument,
-	err: LinterErrorReporter,
-	ruleName: string,
-	ruleValue: unknown,
-	src: ReadonlySource,
-}
-interface LinterContextOptions {
-	doc: TextDocument,
-	err: LinterErrorReporter,
-	ruleName: string,
-	ruleValue: unknown,
-	src?: ReadonlySource,
-}
-export namespace LinterContext {
-	export function create(project: ProjectLike, opts: LinterContextOptions): LinterContext {
-		return {
-			...ContextBase.create(project),
-			config: project.config,
-			doc: opts.doc,
-			err: opts.err,
-			ruleName: opts.ruleName,
-			ruleValue: opts.ruleValue,
-			src: opts.src ?? new ReadonlySource(opts.doc.getText()),
 		}
 	}
 }

@@ -133,6 +133,6 @@ export const BrigadierStringOptions: StringOptions = {
 
 export const brigadierString = string(BrigadierStringOptions)
 
-function isAllowedCharacter(c: string, options: Exclude<StringOptions['unquotable'], false | undefined>): boolean {
+export function isAllowedCharacter(c: string, options: Exclude<StringOptions['unquotable'], false | undefined>): boolean {
 	return options.allowList?.has(c) ?? !options.blockList?.has(c)
 }

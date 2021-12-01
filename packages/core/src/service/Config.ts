@@ -16,11 +16,11 @@ export interface Config {
 	/**
 	 * Formatter rules.
 	 */
-	formatter: FormatterConfig,
+	format: FormatterConfig,
 	/**
 	 *t Linter rules.
 	 */
-	linter: LinterConfig,
+	lint: LinterConfig,
 	/**
 	 * Code snippets.
 	 */
@@ -98,9 +98,9 @@ namespace LinterSeverity {
 
 type BracketSpacingConfig = any
 type SepSpacingConfig = any
-type QuoteConfig = {
+export type QuoteConfig = {
 	always?: boolean,
-	avoidEscape?: boolean,
+	avoidEscape?: boolean | null,
 	type?: 'double' | 'single',
 }
 
@@ -165,6 +165,20 @@ export interface FormatterConfig {
 }
 
 export interface LinterConfig {
+	// Sort key.
+	blockStateSortKeys: LinterConfigValue<'alphabetically'>,
+	nbtCompoundSortKeys: LinterConfigValue<'alphabetically'>,
+	selectorSortKeys: LinterConfigValue<string[]>,
+
+	// Quote.
+	commandStringQuote: LinterConfigValue<QuoteConfig>,
+	nbtKeyQuote: LinterConfigValue<QuoteConfig>,
+	nbtPathQuote: LinterConfigValue<QuoteConfig>,
+	nbtStringQuote: LinterConfigValue<QuoteConfig>,
+	selectorKeyQuote: LinterConfigValue<QuoteConfig>,
+
+	idOmitDefaultNamespace: LinterConfigValue<boolean>,
+
 	// Name convention.
 	nameOfNbtKey: LinterConfigValue<string>,
 	nameOfObjective: LinterConfigValue<string>,
@@ -172,24 +186,13 @@ export interface LinterConfig {
 	nameOfTag: LinterConfigValue<string>,
 	nameOfTeam: LinterConfigValue<string>,
 
-	// Quote.
-	commandStringQuote: LinterConfigValue<QuoteConfig>,
-	nbtPathQuote: LinterConfigValue<QuoteConfig>,
-	nbtStringQuote: LinterConfigValue<QuoteConfig>,
-	selectorKeyQuote: LinterConfigValue<QuoteConfig>,
-	nbtKeyQuote: LinterConfigValue<QuoteConfig>,
-
-	// Sort key.
-	blockStateSortKeys: LinterConfigValue<'alphabetically'>,
-	nbtCompoundSortKeys: LinterConfigValue<'alphabetically'>,
-	selectorSortKeys: LinterConfigValue<string[]>,
-
-	idOmitDefaultNamespace: LinterConfigValue<boolean>,
+	// NBT.
 	nbtArrayLengthCheck: LinterConfigValue<boolean>,
 	nbtBoolean: LinterConfigValue<boolean>,
 	nbtListLengthCheck: LinterConfigValue<boolean>,
 	nbtTypeCheck: LinterConfigValue<'strictly' | 'loosely'>,
-	undeclaredSymbol: SymbolLinterConfig,
+
+	undeclaredSymbol: LinterConfigValue<SymbolLinterConfig>,
 }
 
 export interface SnippetsConfig {
@@ -214,7 +217,7 @@ declare namespace SymbolLinterConfig {
 	}
 	export interface Action {
 		declare?: 'block' | 'file' | 'public' /* TODO: restricted */,
-		report?: LinterSeverity,
+		report?: LinterSeverity | 'default',
 	}
 }
 
@@ -246,7 +249,7 @@ export const VanillaConfig: Config = {
 		vanillaResources: {},
 		version: 'Auto',
 	},
-	formatter: {
+	format: {
 		blockStateBracketSpacing: { inside: 0 },
 		blockStateCommaSpacing: { before: 0, after: 1 },
 		blockStateEqualSpacing: { before: 0, after: 0 },
@@ -275,7 +278,7 @@ export const VanillaConfig: Config = {
 		selectorTrailingComma: false,
 		timeOmitTickUnit: false,
 	},
-	linter: {
+	lint: {
 		blockStateSortKeys: null,
 		nbtCompoundSortKeys: null,
 		selectorSortKeys: null,
@@ -302,11 +305,11 @@ export const VanillaConfig: Config = {
 		undeclaredSymbol: [
 			{
 				if: { category: VanillaRegistryCategories, namespace: 'minecraft' },
-				then: { report: 'warning' },
+				then: { declare: 'block', report: 'warning' },
 			},
 			{
 				if: { category: ['bossbar', 'objective', 'team'] },
-				then: { report: 'warning' },
+				then: { declare: 'block', report: 'warning' },
 			},
 			{
 				then: { declare: 'block' },
@@ -381,7 +384,7 @@ export class ConfigService extends EventEmitter {
 		// FIXME
 		const ans = rfdc()(base)
 		for (const override of overrides) {
-			for (const key of ['env', 'formatter', 'linter', 'snippet'] as const) {
+			for (const key of ['env', 'format', 'lint', 'snippet'] as const) {
 				ans[key] = { ...ans[key], ...override[key] } as any
 			}
 		}

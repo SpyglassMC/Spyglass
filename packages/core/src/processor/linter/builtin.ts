@@ -1,6 +1,7 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { AstNode } from '../../node'
-import type { Logger, MetaRegistry } from '../../service'
+import type { AstNode, StringBaseNode } from '../../node'
+import { isAllowedCharacter } from '../../parser'
+import type { Logger, MetaRegistry, QuoteConfig } from '../../service'
 import type { Linter } from './Linter'
 
 export const noop: Linter<AstNode> = () => { }
@@ -21,6 +22,28 @@ export function nameConvention(key: string): Linter<AstNode> {
 		} catch (e) {
 			ctx.logger.error(`[nameConvention linter] The value “${ctx.ruleValue}” set for rule “${ctx.ruleName}” is not a valid regular expression.`, e)
 		}
+	}
+}
+
+export const quote: Linter<StringBaseNode> = (node, ctx) => {
+	const config = ctx.ruleValue as QuoteConfig
+	const mustValueBeQuoted = node.options.unquotable
+		? [...node.value].some(c => !isAllowedCharacter(c, node.options.unquotable as any))
+		: true
+	const isQuoteRequired = config.always || mustValueBeQuoted
+	const isQuoteProhibited = config.always === false && !mustValueBeQuoted
+	const firstChar = ctx.src.slice(node.range.start, node.range.start + 1)
+	const isFirstCharQuote = !!node.options.quotes?.includes(firstChar as any)
+	if (isQuoteRequired) {
+		if (isFirstCharQuote) {
+			// TODO: Check type
+			config.avoidEscape
+			config.type
+		} else {
+			// TODO: Error quote expected
+		}
+	} else if (isQuoteProhibited && isFirstCharQuote) {
+		// TODO: Error no quote expected
 	}
 }
 

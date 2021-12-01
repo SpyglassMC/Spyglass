@@ -331,7 +331,7 @@ export class Project extends EventEmitter {
 			.on('documentUpdated', ({ doc, node }) => {
 				this.emit('documentErrorred', {
 					doc,
-					errors: [...node.checkerErrors ?? [], ...node.linterErrors ?? [], ...node.parserErrors],
+					errors: [...node.parserErrors, ...node.checkerErrors ?? [], ...node.linterErrors ?? []],
 					node,
 				})
 			})
@@ -460,7 +460,7 @@ export class Project extends EventEmitter {
 	private lint(doc: TextDocument, node: FileNode<AstNode>): void {
 		node.linterErrors = []
 
-		for (const [ruleName, rawValue] of Object.entries(this.config.linter)) {
+		for (const [ruleName, rawValue] of Object.entries(this.config.lint)) {
 			const result = LinterConfigValue.destruct(rawValue)
 			if (!result) {
 				// Rule is disabled (i.e. set to `null`) in the config.
