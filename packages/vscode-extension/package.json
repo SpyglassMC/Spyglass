@@ -15,7 +15,7 @@
     "watch": "webpack --watch --mode=\"development\""
   },
   "devDependencies": {
-    "@types/vscode": "1.44.0",
+    "@types/vscode": "1.52.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-test": "^1.5.2"
   },
@@ -28,7 +28,7 @@
     "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
   },
   "engines": {
-    "vscode": "^1.44.0"
+    "vscode": "^1.52.0"
   },
   "displayName": "%datapack.displayName%",
   "description": "%datapack.description%",
