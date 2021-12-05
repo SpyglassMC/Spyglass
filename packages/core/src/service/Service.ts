@@ -1,7 +1,8 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import { ProcessorContext } from '.'
 import type { AstNode, FileNode } from '../node'
-import type { Color, ColorInfo, ColorToken } from '../processor'
+import type { Color, ColorInfo, ColorToken, InlayHint } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
@@ -104,6 +105,17 @@ export class Service extends EventEmitter {
 			}
 		}
 		return undefined
+	}
+
+	getInlayHints(node: FileNode<AstNode>, doc: TextDocument, range?: Range): InlayHint[] {
+		// TODO: `range` argument is not used.
+		this.debug(`Getting inlay hints for '${doc.uri}' # ${doc.version}`)
+		const ans: InlayHint[] = []
+		const ctx = ProcessorContext.create(this.project, { doc })
+		for (const provider of this.project.meta.inlayHintProviders) {
+			ans.push(...provider(node, ctx))
+		}
+		return ans
 	}
 
 	/**

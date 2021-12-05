@@ -3,8 +3,11 @@
  * https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-sample/client/src/extension.ts
  * ------------------------------------------------------------------------------------------*/
 
+/// <reference path="./vscode.proposed.inlayHints.d.ts"/>
+
+import type * as server from '@spyglassmc/language-server'
 import path from 'path'
-import type * as vsc from 'vscode'
+import * as vsc from 'vscode'
 import * as lc from 'vscode-languageclient/node'
 
 let client: lc.LanguageClient
@@ -58,7 +61,28 @@ export function activate(context: vsc.ExtensionContext) {
 	// Start the client. This will also launch the server
 	client.start()
 
-	client.onReady().then(() => { })
+	client.onReady().then(() => {
+		if (vsc.languages.registerInlayHintsProvider && client.initializeResult?.capabilities.experimental?.spyglassmc?.inlayHints) {
+			vsc.languages.registerInlayHintsProvider(documentSelector, {
+				async provideInlayHints(model, range): Promise<vsc.InlayHint[]> {
+					try {
+						const params: server.MyLsInlayHintRequestParams = {
+							textDocument: { uri: model.uri.toString() },
+							range: {
+								start: { line: range.start.line, character: range.start.character },
+								end: { line: range.end.line, character: range.end.character },
+							},
+						}
+						const response: server.MyLsInlayHint[] = await client.sendRequest('spyglassmc/inlayHints', params)
+						return response.map(v => new vsc.InlayHint(v.text, new vsc.Position(v.position.line, v.position.character), vsc.InlayHintKind.Parameter))
+					} catch (e) {
+						console.error('[client#provideInlayHints]', e)
+					}
+					return []
+				},
+			})
+		}
+	})
 }
 
 export function deactivate(): Thenable<void> | undefined {

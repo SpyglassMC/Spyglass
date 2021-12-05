@@ -1,6 +1,9 @@
 {
   "name": "datapack-language-server",
   "version": "4.0.0",
+  "enabledApiProposals": [
+    "inlayHints"
+  ],
   "main": "dist/extension.js",
   "author": "SPGoding",
   "publisher": "SPGoding",
@@ -12,7 +15,7 @@
     "watch": "webpack --watch --mode=\"development\""
   },
   "devDependencies": {
-    "@types/vscode": "^1.44.0",
+    "@types/vscode": "1.44.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-test": "^1.5.2"
   },

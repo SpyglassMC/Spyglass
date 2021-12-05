@@ -4,7 +4,10 @@ import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
+import type { MyLsInlayHint, MyLsInlayHintRequestParams } from './util'
 import { toCore, toLS } from './util'
+
+export * from './util/types'
 
 if (process.argv.length === 2) {
 	// When the server is launched from the cmd script, the process arguments
@@ -69,6 +72,9 @@ connection.onInitialize(async params => {
 	}
 
 	const ans: ls.InitializeResult = {
+		serverInfo: {
+			name: 'SPYGlass Language Server',
+		},
 		capabilities: {
 			colorProvider: {},
 			completionProvider: {
@@ -96,6 +102,12 @@ connection.onInitialize(async params => {
 				openClose: true,
 			},
 			workspaceSymbolProvider: {},
+
+			experimental: {
+				spyglassmc: {
+					inlayHints: true,
+				},
+			},
 		},
 	}
 
@@ -244,6 +256,16 @@ connection.onHover(async ({ textDocument: { uri }, position }) => {
 	return ans ? toLS.hover(ans, doc) : undefined
 })
 
+connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, range }: MyLsInlayHintRequestParams): Promise<MyLsInlayHint[]> => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return []
+	}
+	const { doc, node } = docAndNode
+	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
+	return toLS.inlayHints(hints, doc)
+})
+
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureParsedAndChecked(uri)
 	if (!docAndNode) {
@@ -259,7 +281,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 		return { data: [] }
 	}
 	const { doc, node } = docAndNode
-	const tokens = service.colorize(node, doc, toCore.range(range, doc),)
+	const tokens = service.colorize(node, doc, toCore.range(range, doc))
 	return toLS.semanticTokens(tokens, doc)
 })
 

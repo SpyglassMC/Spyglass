@@ -1,0 +1,13 @@
+== Custom Server Capabilities
+
+=== `experimental.spyglassmc.inlayHints`
+
+Request sent from client: `spyglassmc/inlayHints`
+
+.Parameters
+* `textDocument`
+** `uri`
+* `range`
+
+.Response
+`InlayHint[]`

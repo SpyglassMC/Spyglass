@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import * as ls from 'vscode-languageserver/node'
 import { InsertTextFormat } from 'vscode-languageserver/node'
+import type { MyLsInlayHint } from './types'
 
 /**
  * A series of functions that can transform `@spyglassmc/core` types to `vscode-languageserver` types.
@@ -121,6 +122,17 @@ export namespace toLS {
 			range: range(hover.range, doc),
 		}
 		return ans
+	}
+
+	export function inlayHint(hint: core.InlayHint, doc: TextDocument): MyLsInlayHint {
+		return {
+			position: doc.positionAt(hint.offset),
+			text: hint.text,
+		}
+	}
+
+	export function inlayHints(hints: core.InlayHint[], doc: TextDocument): MyLsInlayHint[] {
+		return hints.map(h => inlayHint(h, doc))
 	}
 
 	export function completionItem(completion: core.CompletionItem, doc: TextDocument, requestedOffset: number, insertReplaceSupport: boolean | undefined): ls.CompletionItem {

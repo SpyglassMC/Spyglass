@@ -4,6 +4,7 @@ import * as mcf from '@spyglassmc/mcfunction'
 import type { MajorVersion, VanillaCommands } from '../dependency'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
+import { inlayHintProvider } from './inlayHintProvider'
 import type { CommandNode, MinecraftBlockPredicateArgumentNode } from './node'
 import * as parser from './parser'
 import { Tree1_15, Tree1_16, Tree1_17 } from './tree'
@@ -39,4 +40,6 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Vanill
 
 	checker.register(meta)
 	colorizer.register(meta)
+
+	meta.registerInlayHintProvider(inlayHintProvider)
 }

@@ -51,9 +51,9 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 | `minecraft:item_stack`         | `MinecraftItemStack`         |
 | `minecraft:message`            | `MinecraftMessage`           |
 | `minecraft:mob_effect`         | `MinecraftMobEffect`         |
-| `minecraft:nbt_compound_tag`   | `MinecraftNbtCompoundTag`    |
-| `minecraft:nbt_path`           | `MinecraftNbtPath`           |
-| `minecraft:nbt_tag`            | `MinecraftNbtTag`            |
+| `minecraft:nbt_compound_tag`\* | `MinecraftNbtCompoundTag`    |
+| `minecraft:nbt_path`\*         | `MinecraftNbtPath`           |
+| `minecraft:nbt_tag`\*          | `MinecraftNbtTag`            |
 | `minecraft:objective`          | `MinecraftObjective`         |
 | `minecraft:objective_criteria` | `MinecraftObjectiveCriteria` |
 | `minecraft:operation`          | `MinecraftOperation`         |
@@ -69,10 +69,12 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 | `minecraft:vec2`               | `MinecraftVec2`              |
 | `minecraft:vec3`               | `MinecraftVec3`              |
 | `spyglassmc:tag`               | `SpyglassmcTag`              |
-| `spyglassmc:trailing`\*        | `SpyglassmcTrailing`         |
-| `spyglassmc:unknown`\*\*       | `SpyglassmcUnknown`          |
+| `spyglassmc:trailing`\*\*      | `SpyglassmcTrailing`         |
+| `spyglassmc:unknown`\*\*\*     | `SpyglassmcUnknown`          |
 
-\* This parser is responsible for parsing trailing string after a command.  \
-\*\* All parsers that are not listed in the table will be treated as `spyglassmc:unknown`.
+\* These nodes are from the `nbt` package, so unlike other argument nodes, their types do not follow the format of
+`mcfunction:argument/${parser_identifier}`  \
+\*\* This parser is responsible for parsing trailing string after a command.  \
+\*\*\* All parsers that are not listed in the table will be treated as `spyglassmc:unknown`.
 
 [mcfunction]: https://minecraft.fandom.com/Java_Edition

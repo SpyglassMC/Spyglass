@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import type { ChildBaseExtender, ChildBaseNode } from '@spyglassmc/mcfunction/lib/node'
-import type * as nbt from '@spyglassmc/nbt'
+import * as nbt from '@spyglassmc/nbt'
 
 export interface BlockStatesNode extends core.TableNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
@@ -323,3 +323,9 @@ export type ArgumentNode =
 	| SpyglassmcTagArgumentNode
 	| SpyglassmcTrailingArgumentNode
 	| SpyglassmcUnknownArgumentNode
+
+export namespace ArgumentNode {
+	export function is(node: core.AstNode): node is ArgumentNode {
+		return node.type.startsWith('mcfunction:argument/') || nbt.NbtNode.is(node) || nbt.NbtPathNode.is(node)
+	}
+}
