@@ -328,4 +328,14 @@ export namespace ArgumentNode {
 	export function is(node: core.AstNode): node is ArgumentNode {
 		return node.type.startsWith('mcfunction:argument/') || nbt.NbtNode.is(node) || nbt.NbtPathNode.is(node)
 	}
+
+	export function getParserId(node: ArgumentNode): string {
+		if (nbt.NbtNode.is(node)) {
+			return 'minecraft:nbt_tag'
+		} else if (nbt.NbtPathNode.is(node)) {
+			return 'minecraft:nbt_path'
+		} else {
+			return node.type.slice('mcfunction:argument/'.length)
+		}
+	}
 }

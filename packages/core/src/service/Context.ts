@@ -80,6 +80,36 @@ export namespace ProcessorContext {
 	}
 }
 
+interface ProcessorWithRangeContext extends ProcessorContext {
+	range?: Range,
+}
+interface ProcessorWithRangeContextOptions extends ProcessorContextOptions {
+	range?: Range,
+}
+namespace ProcessorWithRangeContext {
+	export function create(project: ProjectLike, opts: ProcessorWithRangeContextOptions): ProcessorWithRangeContext {
+		return {
+			...ProcessorContext.create(project, opts),
+			range: opts.range,
+		}
+	}
+}
+
+interface ProcessorWithOffsetContext extends ProcessorContext {
+	offset: number,
+}
+interface ProcessorWithOffsetContextOptions extends ProcessorContextOptions {
+	offset: number,
+}
+namespace ProcessorWithOffsetContext {
+	export function create(project: ProjectLike, opts: ProcessorWithOffsetContextOptions): ProcessorWithOffsetContext {
+		return {
+			...ProcessorContext.create(project, opts),
+			offset: opts.offset,
+		}
+	}
+}
+
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
 	ops: Operations,
@@ -144,18 +174,11 @@ export namespace FormatterContext {
 	}
 }
 
-export interface ColorizerContext extends ProcessorContext {
-	range?: Range,
-}
-export interface ColorizerContextOptions extends ProcessorContextOptions {
-	range?: Range,
-}
+export interface ColorizerContext extends ProcessorWithRangeContext {}
+export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
 export namespace ColorizerContext {
 	export function create(project: ProjectLike, opts: ColorizerContextOptions): ColorizerContext {
-		return {
-			...ProcessorContext.create(project, opts),
-			range: opts.range,
-		}
+		return ProcessorWithRangeContext.create(project, opts)
 	}
 }
 
@@ -174,6 +197,14 @@ export namespace CompleterContext {
 			offset: opts.offset,
 			triggerCharacter: opts.triggerCharacter,
 		}
+	}
+}
+
+export interface SignatureHelpProviderContext extends ProcessorWithOffsetContext {}
+export interface SignatureHelpProviderContextOptions extends ProcessorWithOffsetContextOptions {}
+export namespace SignatureHelpProviderContext {
+	export function create(project: ProjectLike, opts: SignatureHelpProviderContextOptions): SignatureHelpProviderContext {
+		return ProcessorWithOffsetContext.create(project, opts)
 	}
 }
 

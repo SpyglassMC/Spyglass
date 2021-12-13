@@ -1,13 +1,13 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { ProcessorContext } from '.'
+import { SignatureHelpProviderContext } from '.'
 import type { AstNode, FileNode } from '../node'
-import type { Color, ColorInfo, ColorToken, InlayHint } from '../processor'
+import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
-import { ColorizerContext, CompleterContext, FormatterContext } from './Context'
+import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext } from './Context'
 import { FileService } from './FileService'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
@@ -116,6 +116,18 @@ export class Service extends EventEmitter {
 			ans.push(...provider(node, ctx))
 		}
 		return ans
+	}
+
+	getSignatureHelp(node: FileNode<AstNode>, doc: TextDocument, offset: number): SignatureHelp | undefined {
+		this.debug(`Getting signature help for '${doc.uri}' # ${doc.version} @ ${offset}`)
+		const ctx = SignatureHelpProviderContext.create(this.project, { doc, offset })
+		for (const provider of this.project.meta.signatureHelpProviders) {
+			const result = provider(node, ctx)
+			if (result) {
+				return result
+			}
+		}
+		return undefined
 	}
 
 	/**

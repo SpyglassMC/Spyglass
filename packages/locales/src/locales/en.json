@@ -73,6 +73,7 @@
   "mcfunction.parser.uuid.invalid": "Invalid UUID format",
   "mcfunction.parser.vector.local-disallowed": "Local coordinates disallowed",
   "mcfunction.parser.vector.mixed": "Cannot mix local coordinates and world coordinates together",
+  "mcfunction.signature-help.command-documentation": "[View the Minecraft Wiki page](https://minecraft.fandom.com/wiki/Commands/%0%)",
   "missing-key": "Missing key %0%",
   "nbt.checker.block-states.fake-boolean": "Boolean block state values should be quoted",
   "nbt.checker.block-states.unexpected-value-type": "Block state values should be either a string or an int",

@@ -97,6 +97,9 @@ connection.onInitialize(async params => {
 				full: { delta: false },
 				range: true,
 			},
+			signatureHelpProvider: {
+				triggerCharacters: [' '],
+			},
 			textDocumentSync: {
 				change: ls.TextDocumentSyncKind.Incremental,
 				openClose: true,
@@ -283,6 +286,16 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc, toCore.range(range, doc))
 	return toLS.semanticTokens(tokens, doc)
+})
+
+connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
+	const docAndNode = await service.project.ensureParsedAndChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	const help = service.getSignatureHelp(node, doc, toCore.offset(position, doc))
+	return toLS.signatureHelp(help)
 })
 
 connection.onWorkspaceSymbol(({ query }) => {

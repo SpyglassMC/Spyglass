@@ -115,10 +115,7 @@ export namespace toLS {
 
 	export function hover(hover: core.Hover, doc: TextDocument): ls.Hover {
 		const ans: ls.Hover = {
-			contents: {
-				kind: ls.MarkupKind.Markdown,
-				value: hover.markdown,
-			},
+			contents: markupContent(hover.markdown),
 			range: range(hover.range, doc),
 		}
 		return ans
@@ -182,6 +179,13 @@ export namespace toLS {
 			: undefined
 	}
 
+	export function markupContent(value: string): ls.MarkupContent {
+		return {
+			kind: ls.MarkupKind.Markdown,
+			value: value,
+		}
+	}
+
 	export function position(offset: number, doc: TextDocument): ls.Position {
 		return doc.positionAt(offset)
 	}
@@ -226,6 +230,33 @@ export namespace toLS {
 
 	export function semanticTokenType(type: core.ColorTokenType): number {
 		return core.ColorTokenTypes.indexOf(type)
+	}
+
+	export function signatureHelp(help: core.SignatureHelp | undefined): ls.SignatureHelp | undefined {
+		if (!help || help.signatures.length === 0) {
+			return undefined
+		}
+		return {
+			signatures: help.signatures.map(signatureInformation),
+			activeParameter: help.signatures[help.activeSignature].activeParameter,
+			activeSignature: help.activeSignature,
+		}
+	}
+
+	export function signatureInformation(info: core.SignatureInfo): ls.SignatureInformation {
+		return {
+			label: info.label,
+			activeParameter: info.activeParameter,
+			documentation: info.documentation ? markupContent(info.documentation) : undefined,
+			parameters: info.parameters.map(parameterInformation),
+		}
+	}
+
+	export function parameterInformation(info: core.ParameterInfo): ls.ParameterInformation {
+		return {
+			label: info.label,
+			documentation: info.documentation ? markupContent(info.documentation) : undefined,
+		}
 	}
 
 	export function symbolInformation(symbol: core.Symbol, symLoc: core.SymbolLocation, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation {

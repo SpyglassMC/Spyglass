@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { ChildBaseNode, CommandNode, LiteralNode, SpecialArgumentNode, SpyglassmcUnknownArgumentNode } from '../node'
-import { redirect } from '../tree'
+import { resolveTreeNode } from '../tree'
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
 import type { ArgumentParserGetter } from './argument'
 import { argumentTreeNodeToString } from './argument'
@@ -52,13 +52,7 @@ export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: A
 function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgumentNode)[], src: core.Source, ctx: core.ParserContext, rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter<A>): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
-	const parent = parentTreeNode.redirect
-		? redirect(rootTreeNode, parentTreeNode.redirect)
-		: (parentTreeNode.children || parentTreeNode.executable)
-			? parentTreeNode
-			// The `execute.run` literal tree node doesn't have any property.
-			// We should use children from the root tree node in this case.
-			: rootTreeNode
+	const parent = resolveTreeNode(parentTreeNode, rootTreeNode)
 
 	const children = parent?.children
 	if (!children) {
@@ -157,15 +151,24 @@ function categorize(children: Exclude<TreeNode['children'], undefined>): { liter
 	return ans
 }
 
-function treeNodeChildrenToString(children: Exclude<TreeNode['children'], undefined>): string {
+function wrapWithBrackets(syntax: string, executable: boolean): string {
+	return executable ? `[${syntax}]` : syntax
+}
+
+export function treeNodeChildrenToStringArray(children: Exclude<TreeNode['children'], undefined>, executable = false): string[] {
 	const entries = Object.entries(children)
-		.map(([name, treeNode]) => treeNodeToString(name, treeNode))
+		.map(([name, treeNode]) => wrapWithBrackets(treeNodeToString(name, treeNode), executable))
+	return entries
+}
+
+export function treeNodeChildrenToString(children: Exclude<TreeNode['children'], undefined>): string {
+	const entries = treeNodeChildrenToStringArray(children)
 	return entries.length > 5
 		? `${entries.slice(0, 3).join('|')}|...|${entries.slice(-2).join('|')}`
 		: entries.join('|')
 }
 
-function treeNodeToString(name: string, treeNode: TreeNode): string {
+export function treeNodeToString(name: string, treeNode: TreeNode): string {
 	if (treeNode.type === 'argument') {
 		return argumentTreeNodeToString(name, treeNode)
 	} else {

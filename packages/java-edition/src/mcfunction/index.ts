@@ -7,6 +7,7 @@ import * as colorizer from './colorizer'
 import { inlayHintProvider } from './inlayHintProvider'
 import type { CommandNode, MinecraftBlockPredicateArgumentNode } from './node'
 import * as parser from './parser'
+import { signatureHelpProvider } from './signatureHelpProvider'
 import { Tree1_15, Tree1_16, Tree1_17 } from './tree'
 
 export * as checker from './checker'
@@ -42,4 +43,5 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Vanill
 	colorizer.register(meta)
 
 	meta.registerInlayHintProvider(inlayHintProvider)
+	meta.registerSignatureHelpProvider(signatureHelpProvider(majorVersion))
 }

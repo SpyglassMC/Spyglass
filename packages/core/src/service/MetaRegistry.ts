@@ -4,6 +4,7 @@ import type { Checker, Colorizer, Completer, InlayHintProvider } from '../proces
 import { checker, colorizer, completer, formatter, linter } from '../processor'
 import type { Formatter } from '../processor/formatter'
 import type { Linter } from '../processor/linter/Linter'
+import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider'
 import type { UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
 import type { FileExtension } from './fileUtil'
@@ -41,6 +42,7 @@ export class MetaRegistry {
 	readonly #inlayHintProviders = new Set<InlayHintProvider<any>>()
 	readonly #linters = new Map<string, LinterRegistration>()
 	readonly #parsers = new Map<string, Parser<any>>()
+	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
 	readonly #uriBinders = new Set<UriBinder>()
 
 	constructor() {
@@ -152,7 +154,7 @@ export class MetaRegistry {
 	public registerInlayHintProvider(provider: InlayHintProvider<any>): void {
 		this.#inlayHintProviders.add(provider)
 	}
-	public get inlayHintProviders(): Set<InlayHintProvider> {
+	public get inlayHintProviders(): Set<InlayHintProvider<any>> {
 		return this.#inlayHintProviders
 	}
 
@@ -195,6 +197,13 @@ export class MetaRegistry {
 			return this.#languages.get(languageID)!.parser as Parser<N>
 		}
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
+	}
+
+	public registerSignatureHelpProvider(provider: SignatureHelpProvider<any>): void {
+		this.#signatureHelpProviders.add(provider)
+	}
+	public get signatureHelpProviders(): Set<SignatureHelpProvider<any>> {
+		return this.#signatureHelpProviders
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {
