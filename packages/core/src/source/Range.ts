@@ -99,6 +99,59 @@ export namespace Range {
 	export function length(range: Range) {
 		return range.end - range.start
 	}
+
+	/**
+	 * @returns Negative when `a` is before `b`, `0` if they intersect, and positive if it's after.
+	 */
+	export function compare(a: Range, b: Range): number {
+		if (a.end <= b.start) {
+			return -1
+		} else if (a.start >= b.end) {
+			return 1
+		} else {
+			return 0
+		}
+	}
+
+	/**
+	 * @returns Negative when `a` is before `b`, `0` if they intersect, and positive if it's after. The `end` of a range is
+	 * treated inclusive.
+	 */
+	export function compareInclusive(a: Range, b: Range): number {
+		if (a.end < b.start) {
+			return -1
+		} else if (a.start > b.end) {
+			return 1
+		} else {
+			return 0
+		}
+	}
+
+	/**
+	 * @returns Negative when `range` is before `offset`, `0` if it {@link contains} `offset`, and positive if it's after.
+	 */
+	export function compareOffset(range: Range, offset: number): number {
+		if (range.end <= offset) {
+			return -1
+		} else if (range.start > offset) {
+			return 1
+		} else {
+			return 0
+		}
+	}
+
+	/**
+	 * @returns Negative when `range` is before `offset`, `0` if it {@link containsInclusive} `offset`, and positive if it's after.
+	 */
+	export function compareOffsetInclusive(range: Range, offset: number): number {
+		if (range.end < offset) {
+			return -1
+		} else if (range.start > offset) {
+			return 1
+		} else {
+			return 0
+		}
+	}
 }
 
 export interface RangeContainer {

@@ -1,3 +1,4 @@
+import binarySearch from 'binary-search'
 import type { AstNode } from '../node'
 import { Range } from '../source'
 
@@ -40,7 +41,24 @@ export function findNode(node: AstNode, range: Range): NodeResult {
 	traversePreOrder(node,
 		(node) => ans.node === undefined && Range.intersects(node.range, range),
 		(node) => Range.equals(node.range, range),
-		(node, parents ) => ans = { node, parents: [...parents] },
+		(node, parents) => ans = { node, parents: [...parents] },
 	)
 	return ans
+}
+
+/**
+ * @param endInclusive Defaults to `false`.
+ */
+export function findChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
+	if (!node.children) {
+		return -1
+	}
+	const comparator = typeof needle === 'number'
+		? endInclusive ? Range.compareOffsetInclusive : Range.compareOffset
+		: endInclusive ? Range.compareInclusive : Range.compare
+	return binarySearch(node.children, needle, (a, b) => comparator(a.range, b as number & Range))
+}
+
+export function findChild(node: AstNode, needle: number | Range, endInclusive = false): AstNode | undefined {
+	return node.children?.[findChildIndex(node, needle, endInclusive)]
 }

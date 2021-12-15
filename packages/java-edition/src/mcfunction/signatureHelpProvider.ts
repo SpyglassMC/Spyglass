@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import type { CommandNode, McfunctionNode } from './node'
 
@@ -12,11 +11,25 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 
 	return (fileNode, ctx) => {
 		if (fileNode.children[0]?.type !== 'mcfunction:entry') {
+			// Not mcfunction.
 			return undefined
 		}
 
 		const node = getSelectedCommandNode(fileNode, ctx.offset)
 		if (!node) {
+			// No selected command node.
+			return undefined
+		}
+
+		const options = getOptions(rootTreeNode, node)
+		if (options.length === 0) {
+			// Not matching any syntax at all.
+			return undefined
+		}
+
+		const selectedIndex = core.findChildIndex(node, ctx.offset, true)
+		if (selectedIndex < 0 || selectedIndex >= options[0].length) {
+			// No matching syntax for the selected argument node.
 			return undefined
 		}
 
@@ -25,57 +38,31 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 			signatures: [],
 		}
 
-		const options = getOptions(rootTreeNode, node)
-		// FIXME
-		if (options.options.length > 0) {
-			ans.signatures = options.options.map(v => {
-				const label = [...options.current, v].join(' ')
-				return {
-					label,
-					activeParameter: 0,
-					parameters: [
-						{
-							label: [0, label.length],
-							documentation: localize('mcfunction.signature-help.command-documentation', 'advancement'),
-						},
-						// FIXME
-					],
-				}
-			})
-		} else {
-			const label = options.current.join(' ')
-			ans.signatures = [{
+		ans.signatures = options.map(v => {
+			const part1 = v[selectedIndex]
+			const part2 = selectedIndex + 1 < v.length ? ` ${v[selectedIndex + 1]}` : ''
+			const label = `${part1}${part2}`
+			return {
 				label,
 				activeParameter: 0,
+				// documentation: localize('mcfunction.signature-help.command-documentation', v[0]),
 				parameters: [
-					{
-						label: [0, label.length],
-						documentation: localize('mcfunction.signature-help.command-documentation', 'advancement'),
-					},
-					// FIXME
+					{ label: [0, part1.length] },
+					{ label: [part1.length, label.length] },
 				],
-			}]
-		}
+			}
+		})
 
 		return ans
 	}
 }
 
 function getSelectedCommandNode(fileNode: core.FileNode<McfunctionNode>, offset: number): CommandNode | undefined {
-	let { node } = core.selectedNode(fileNode, offset)
-
-	while (node && !mcf.CommandNode.is(node)) {
-		node = node.parent
-	}
-
-	return node
+	return core.findChild(fileNode.children[0], offset, true) as CommandNode | undefined
 }
 
-function getOptions(rootTreeNode: mcf.RootTreeNode, node: CommandNode): { current: string[], options: string[] } {
-	const ans: ReturnType<typeof getOptions> = {
-		current: [],
-		options: [],
-	}
+function getOptions(rootTreeNode: mcf.RootTreeNode, node: CommandNode): string[][] {
+	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode
 
 	for (const childNode of node.children) {
@@ -83,15 +70,15 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, node: CommandNode): { curren
 		if (!treeNode) {
 			break
 		}
-		ans.current.push(mcf.parser.treeNodeToString(childNode.name, treeNode))
+		current.push(mcf.parser.treeNodeToString(childNode.name, treeNode))
 	}
 
 	if (treeNode) {
-		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)!
-		ans.options = treeNode.children
-			? mcf.parser.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable)
-			: []
+		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)
+		if (treeNode?.children) {
+			return mcf.parser.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map(v => [...current, v])
+		}
 	}
 
-	return ans
+	return current.length ? [current] : []
 }
