@@ -77,6 +77,9 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 		ans.push(result)
 
 		const childTreeNode = children[result.name]
+		if (!childTreeNode) {
+			return
+		}
 
 		const requiredPermissionLevel = childTreeNode.permission ?? 2
 		if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
