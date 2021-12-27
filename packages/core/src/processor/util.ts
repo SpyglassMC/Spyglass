@@ -59,6 +59,9 @@ export function findChildIndex(node: AstNode, needle: number | Range, endInclusi
 	return binarySearch(node.children, needle, (a, b) => comparator(a.range, b as number & Range))
 }
 
+/**
+ * @param endInclusive Defaults to `false`.
+ */
 export function findChild(node: AstNode, needle: number | Range, endInclusive = false): AstNode | undefined {
 	return node.children?.[findChildIndex(node, needle, endInclusive)]
 }

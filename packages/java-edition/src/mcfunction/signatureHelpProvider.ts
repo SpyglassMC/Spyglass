@@ -16,19 +16,23 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 		}
 
 		const node = getSelectedCommandNode(fileNode, ctx.offset)
-		if (!node) {
-			// No selected command node.
-			return undefined
-		}
+		const argumentNodes = node ? node.children : []
 
-		const options = getOptions(rootTreeNode, node)
+		const options = getOptions(rootTreeNode, argumentNodes)
 		if (options.length === 0) {
 			// Not matching any syntax at all.
 			return undefined
 		}
 
-		const selectedIndex = core.findChildIndex(node, ctx.offset, true)
-		if (selectedIndex < 0 || selectedIndex >= options[0].length) {
+		let selectedIndex = 0
+		for (const child of argumentNodes) {
+			if (ctx.offset > child.range.end) {
+				selectedIndex += 1
+			} else {
+				break
+			}
+		}
+		if (selectedIndex >= options[0].length) {
 			// No matching syntax for the selected argument node.
 			return undefined
 		}
@@ -61,16 +65,16 @@ function getSelectedCommandNode(fileNode: core.FileNode<McfunctionNode>, offset:
 	return core.findChild(fileNode.children[0], offset, true) as CommandNode | undefined
 }
 
-function getOptions(rootTreeNode: mcf.RootTreeNode, node: CommandNode): string[][] {
+function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: CommandNode['children']): string[][] {
 	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode
 
-	for (const childNode of node.children) {
-		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)?.children?.[childNode.name]
+	for (const argumentNode of argumentNodes) {
+		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)?.children?.[argumentNode.name]
 		if (!treeNode) {
 			break
 		}
-		current.push(mcf.parser.treeNodeToString(childNode.name, treeNode))
+		current.push(mcf.parser.treeNodeToString(argumentNode.name, treeNode))
 	}
 
 	if (treeNode) {
