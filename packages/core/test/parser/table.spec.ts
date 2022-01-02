@@ -18,7 +18,7 @@ describe('table()', () => {
 				'{ : }',
 				'{ : "bar" }',
 				'{ , "foo" : "bar" }',
-				'{ "foo" }', // https://github.com/SPYGlassMC/SPYGlass/issues/771
+				'{ "foo" }', // https://github.com/SpyglassMC/Spyglass/issues/771
 				'{ "foo" : }',
 				'{ "foo" : "bar" }',
 				'{ "foo" : "bar" , }',

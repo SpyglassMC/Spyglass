@@ -1,4 +1,4 @@
-![banner](https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png)
+![banner](https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png)
 
 This file documents the interaction with vanilla resources.
 

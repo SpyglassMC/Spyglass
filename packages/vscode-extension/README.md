@@ -1,1 +1,1 @@
-# SPYGlass VS Code Extension
+# Spyglass VS Code Extension

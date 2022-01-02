@@ -50,10 +50,10 @@
 	],
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/SPYGlassMC/SPYGlass.git"
+		"url": "https://github.com/SpyglassMC/Spyglass.git"
 	},
 	"homepage": "https://spyglassmc.com",
 	"bugs": {
-		"url": "https://github.com/SPYGlassMC/SPYGlass/issues"
+		"url": "https://github.com/SpyglassMC/Spyglass/issues"
 	}
 }

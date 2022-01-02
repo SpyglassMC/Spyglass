@@ -69,7 +69,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 			keyword('id'), punctuation('('), minecraftIdentifier({
 				pool: [...new Set([
 					// Both the weird NBTDoc registry names like `minecraft:entity` (versus `minecraft:entity_type`) and
-					// the registry names used by SPYGlass are supported here.
+					// the registry names used by Spyglass are supported here.
 					...IdRegistries,
 					...ResourceLocationCategories.map(v => `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}${v}`),
 				])],

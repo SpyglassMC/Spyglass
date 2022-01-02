@@ -21,11 +21,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SPYGlassMC/SPYGlass.git"
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
   },
   "homepage": "https://spyglassmc.com",
   "bugs": {
-    "url": "https://github.com/SPYGlassMC/SPYGlass/issues"
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "engines": {
     "vscode": "^1.52.0"
@@ -156,7 +156,7 @@
       ]
     },
     "configuration": {
-      "title": "SPYGlass",
+      "title": "Spyglass",
       "properties": {
         "spyglassmc.trace.server": {
           "type": "string",

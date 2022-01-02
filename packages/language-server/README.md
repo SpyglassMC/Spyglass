@@ -1,10 +1,10 @@
 # `@spyglassmc/language-server`
 
-![banner](https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png)
+![banner](https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png)
 
 [![npm](https://img.shields.io/npm/v/datapack-language-server.svg?logo=npm&style=flat-square)](https://npmjs.com/package/datapack-language-server)
 
-This is a [language server][lsp] wrapped around some other SPYGlass packages.
+This is a [language server][lsp] wrapped around some other Spyglass packages.
 
 - [Installation](#installation)
 	- [For Use](#for-use)

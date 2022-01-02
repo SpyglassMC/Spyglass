@@ -25,7 +25,7 @@ export namespace Logger {
 	/**
 	 * @returns The built-in `console`.
 	 * Do **not** use this implementation in language servers, as some clients cannot handle
-	 * non-LSP stdout. (https://github.com/SPYGlassMC/SPYGlass/issues/845)
+	 * non-LSP stdout. (https://github.com/SpyglassMC/Spyglass/issues/845)
 	 */
 	export function create(): Logger {
 		return console

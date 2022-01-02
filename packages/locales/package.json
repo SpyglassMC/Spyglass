@@ -1,7 +1,7 @@
 {
   "name": "@spyglassmc/locales",
   "version": "0.1.0",
-  "description": "Locales for the SPYGlass Project",
+  "description": "Locales for the Spyglass Project",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "license": "MIT",
@@ -10,6 +10,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SPYGlassMC/SPYGlass.git"
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
   }
 }

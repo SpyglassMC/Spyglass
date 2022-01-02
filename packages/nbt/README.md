@@ -1,6 +1,6 @@
 # `@spyglassmc/nbt`
 
-![banner](https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png)
+![banner](https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png)
 
 [![npm](https://img.shields.io/npm/v/@spyglassmc/nbt.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/nbt)
 

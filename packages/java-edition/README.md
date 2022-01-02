@@ -1,6 +1,6 @@
 # `@spyglassmc/java-edition`
 
-![banner](https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png)
+![banner](https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png)
 
 [![npm](https://img.shields.io/npm/v/@spyglassmc/java-edition.svg?logo=npm&style=flat-square)](https://npmjs.com/package/@spyglassmc/java-edition)
 

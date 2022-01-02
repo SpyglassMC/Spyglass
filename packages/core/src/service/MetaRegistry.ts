@@ -27,7 +27,7 @@ interface LinterRegistration {
 
 /* istanbul ignore next */
 /**
- * The meta registry of SPYGlass. You can register new parsers, processors, and languages here.
+ * The meta registry of Spyglass. You can register new parsers, processors, and languages here.
  */
 export class MetaRegistry {
 	/**

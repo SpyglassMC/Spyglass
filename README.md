@@ -1,6 +1,6 @@
-# SPYGlass
+# Spyglass
 
-<div align="center"><img src="https://raw.githubusercontent.com/SPYGlassMC/logo/main/banner.png" height="256px"></div>
+<div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png" height="256px"></div>
 
 🚧 Under construction 🚧
 
@@ -14,7 +14,7 @@
 ## Contributing
 
 1. ```shell
-	$ git clone https://github.com/SPYGlassMC/SPYGlass.git
+	$ git clone https://github.com/SpyglassMC/Spyglass.git
 	```
 2. Make sure you're using an npm version higher than or equal to 7.0.0, as this repository utilizes npm@7's workspaces feature.
    ```shell
@@ -25,7 +25,7 @@
 	$ npm i && npm run build
 	```
 
-If you're using VS Code to develop SPYGlass:
+If you're using VS Code to develop Spyglass:
 
 - Install the recommended [ESLint extension][eslint-extension]. Make a copy of `.vscode/settings.template.json` and rename it to `.vscode/settings.json`.
   Now your VS Code should automatically fix all linting errors every time you save the file.

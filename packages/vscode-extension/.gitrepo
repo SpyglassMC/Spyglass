@@ -4,7 +4,7 @@
 ; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
 ;
 [subrepo]
-	remote = https://github.com/SPYGlassMC/vscode-datapack.git
+	remote = https://github.com/SpyglassMC/vscode-datapack.git
 	branch = master
 	commit = bc48e33639c1b4e4655a4aaa81fe87bccb068441
 	parent = ea936512f9c806b3c9dfa1982baf808489f6ff9d

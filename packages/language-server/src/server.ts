@@ -73,7 +73,7 @@ connection.onInitialize(async params => {
 
 	const ans: ls.InitializeResult = {
 		serverInfo: {
-			name: 'SPYGlass Language Server',
+			name: 'Spyglass Language Server',
 		},
 		capabilities: {
 			colorProvider: {},
@@ -88,7 +88,7 @@ connection.onInitialize(async params => {
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
 			documentSymbolProvider: {
-				label: 'SPYGlass',
+				label: 'Spyglass',
 			},
 			hoverProvider: {},
 			semanticTokensProvider: {
