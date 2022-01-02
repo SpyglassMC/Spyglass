@@ -149,7 +149,7 @@ export namespace ResourceLocation {
  */
 export function bufferToString(buffer: Buffer): string {
 	const ans = buffer.toString('utf-8')
-	if (ans.startsWith('\uFEFF')) {
+	if (ans.charAt(0) === '\uFEFF') {
 		return ans.slice(1)
 	}
 	return ans
