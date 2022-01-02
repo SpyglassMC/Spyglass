@@ -1,6 +1,7 @@
 import chokidar from 'chokidar'
 import EventEmitter from 'events'
 import pLimit from 'p-limit'
+import { performance } from 'perf_hooks'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { LinterConfigValue, LinterContext, LinterErrorReporter } from '.'
@@ -297,31 +298,31 @@ export class Project extends EventEmitter {
 			this.updateAllRoots()
 		}
 		const ready = async () => {
-			/* Profile */ const date0 = new Date()
+			/* Profile */ const time0 = performance.now()
 			/* Profile */ this.logger.info('[Project] [init] Starting...')
 			await this.init()
 
 			const allFiles = this.getAllFiles() // FIXME: nbtdoc files might need to be parsed and checked before others.
-			/* Profile */ const date1 = new Date()
-			/* Profile */ this.logger.info(`[Project] [init] List URIs - ${date1.getTime() - date0.getTime()} ms`)
+			/* Profile */ const time1 = performance.now()
+			/* Profile */ this.logger.info(`[Project] [init] List URIs - ${time1 - time0} ms`)
 			this.bind(allFiles)
 
 			const limit = pLimit(8)
 
-			/* Profile */ const date2 = new Date()
-			/* Profile */ this.logger.info(`[Project] [init] Bind URIs - ${date2.getTime() - date1.getTime()} ms`)
+			/* Profile */ const time2 = performance.now()
+			/* Profile */ this.logger.info(`[Project] [init] Bind URIs - ${time2 - time1} ms`)
 			const ensureParsed = this.ensureParsed.bind(this)
 			const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
 
-			/* Profile */ const date3 = new Date()
-			/* Profile */ this.logger.info(`[Project] [init] Parse all - ${date3.getTime() - date2.getTime()} ms`)
+			/* Profile */ const time3 = performance.now()
+			/* Profile */ this.logger.info(`[Project] [init] Parse all - ${time3 - time2} ms`)
 			const ensureChecked = this.ensureChecked.bind(this)
 			await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
 
 			this.emit('ready', {})
-			/* Profile */ const date4 = new Date()
-			/* Profile */ this.logger.info(`[Project] [init] Check all - ${date4.getTime() - date3.getTime()} ms`)
-			/* Profile */ this.logger.info(`[Project] [init] Total     - ${date4.getTime() - date0.getTime()} ms`)
+			/* Profile */ const time4 = performance.now()
+			/* Profile */ this.logger.info(`[Project] [init] Check all - ${time4 - time3} ms`)
+			/* Profile */ this.logger.info(`[Project] [init] Total     - ${time4 - time0} ms`)
 		}
 
 		this.#initPromise = init()
