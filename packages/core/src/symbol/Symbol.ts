@@ -1,3 +1,4 @@
+import rfdc from 'rfdc'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { RangeLike } from '../source'
 import { Location, PositionRange, Range } from '../source'
@@ -357,4 +358,97 @@ export interface SymbolMap {
 
 export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined,
+}
+
+export interface UnlinkedSymbol extends Omit<Symbol, 'members' | 'parentMap' | 'parentSymbol'> {
+	members?: UnlinkedSymbolMap,
+	parentMap?: undefined,
+	parentSymbol?: undefined,
+}
+
+export interface UnlinkedSymbolMap {
+	[identifier: string]: UnlinkedSymbol,
+}
+
+export interface UnlinkedSymbolTable extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
+	[category: string]: UnlinkedSymbolMap | undefined,
+}
+
+export namespace SymbolTable {
+	/**
+	 * The passed-in parameter `table` won't be mutated.
+	 * 
+	 * @returns An identical symbol table where each Symbol's `parentMap` and `parentSymbol` properties
+	 * are set properly.
+	 */
+	export function link(table: UnlinkedSymbolTable): SymbolTable {
+		const linkSymbol = (symbol: Symbol, parentMap: SymbolMap, parentSymbol: Symbol | undefined) => {
+			symbol.parentMap = parentMap
+			if (parentSymbol) {
+				symbol.parentSymbol = parentSymbol
+			}
+			if (symbol.members) {
+				linkSymbolMap(symbol.members, symbol)
+			}
+		}
+
+		const linkSymbolMap = (map: SymbolMap, parentSymbol: Symbol | undefined) => {
+			for (const childSymbol of Object.values(map)) {
+				linkSymbol(childSymbol, map, parentSymbol)
+			}
+		}
+
+		const ans = rfdc()(table) as SymbolTable
+
+		for (const map of Object.values(ans)) {
+			linkSymbolMap(map!, undefined)
+		}
+
+		return ans
+	}
+
+	/**
+	 * The passed-in parameter `table` won't be mutated.
+	 * 
+	 * @returns An identical symbol table where each Symbol's `parentMap` and `parentSymbol` properties
+	 * are deleted.
+	 */
+	export function unlink(table: SymbolTable): UnlinkedSymbolTable {
+		const unlinkSymbol = (symbol: UnlinkedSymbol) => {
+			delete symbol.parentMap
+			delete symbol.parentSymbol
+			if (symbol.members) {
+				unlinkSymbolMap(symbol.members)
+			}
+		}
+
+		const unlinkSymbolMap = (map: UnlinkedSymbolMap) => {
+			for (const childSymbol of Object.values(map)) {
+				unlinkSymbol(childSymbol)
+			}
+		}
+
+		const ans = rfdc({ circles: true })(table) as UnlinkedSymbolTable
+
+		for (const map of Object.values(ans)) {
+			unlinkSymbolMap(map!)
+		}
+
+		return ans
+	}
+
+	/**
+	 * @returns A serialized string representation of this symbol table. It can be turned back into
+	 * a symbol table through the {@link deserialize} method.
+	 */
+	export function serialize(table: SymbolTable): string {
+		return JSON.stringify(unlink(table))
+	}
+
+	/**
+	 * @returns The symbol table represented by the string returned by the {@link serialize} method.
+	 */
+	export function deserialize(json: string): SymbolTable {
+		return link(JSON.parse(json))
+	}
 }
