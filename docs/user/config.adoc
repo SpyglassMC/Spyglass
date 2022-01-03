@@ -1,0 +1,9 @@
+= Config
+
+The config file can be put under the root of your data pack project
+(i.e. the same level as your `pack.mcmeta` file).
+
+* `.spyglassconfig`
+* `.spyglassconfig.json`
+* `.spyglassrc`
+* `.spyglassrc.json`
