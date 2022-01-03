@@ -278,6 +278,10 @@ exports['vanilla-resource util getLatestReleases() Should return correctly 1'] =
   {
     "major": "1.17",
     "latest": "1.17"
+  },
+  {
+    "major": "1.18",
+    "latest": "1.18"
   }
 ]
 
