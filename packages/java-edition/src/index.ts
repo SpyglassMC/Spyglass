@@ -22,9 +22,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	const autoVersionResolver = async (): Promise<string> => {
 		const versions = {
-			5: latestReleases[0].latest,
-			6: latestReleases[1].latest,
-			7: latestReleases[2].latest,
+			// DOCS: Update here when format_version is changed.
+			5: latestReleases[0].latest, // 1.15
+			6: latestReleases[1].latest, // 1.16
+			7: latestReleases[2].latest, // 1.17
+			8: latestReleases[3].latest, // 1.18
 		} as const
 
 		const uri = `${projectRoot}pack.mcmeta`

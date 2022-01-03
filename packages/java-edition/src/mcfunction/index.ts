@@ -8,16 +8,18 @@ import { inlayHintProvider } from './inlayHintProvider'
 import type { CommandNode, MinecraftBlockPredicateArgumentNode } from './node'
 import * as parser from './parser'
 import { signatureHelpProvider } from './signatureHelpProvider'
-import { Tree1_15, Tree1_16, Tree1_17 } from './tree'
+import { Tree1_15, Tree1_16, Tree1_17, Tree1_18 } from './tree'
 
 export * as checker from './checker'
 export * as colorizer from './colorizer'
 export * as parser from './parser'
 
+// DOCS: Update here when a new major version of Minecraft is released.
 const Trees: Record<MajorVersion, PartialRootTreeNode> = {
 	1.15: Tree1_15,
 	1.16: Tree1_16,
 	1.17: Tree1_17,
+	1.18: Tree1_18,
 }
 
 /* istanbul ignore next */
@@ -33,10 +35,11 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Vanill
 	})
 
 	meta.registerParser<MinecraftBlockPredicateArgumentNode>('mcfunction:argument/minecraft:block_predicate', parser.blockPredicate)
-	// TODO: 'mcfunction:argument/minecraft:component'
+	meta.registerParser('mcfunction:argument/minecraft:component' as any, parser.component)
 	// TODO: 'mcfunction:argument/minecraft:particle'
-	// TODO: 'mcfunction:argument/minecraft:team'
-	// TODO: 'mcfunction:argument/spyglassmc:tag'
+	// TODO: Uncomment in `SpecialStrings` in `nbtdocUtil.ts` as well.
+	meta.registerParser<core.SymbolNode>('mcfunction:argument/minecraft:team' as any, parser.team())
+	meta.registerParser<core.SymbolNode>('mcfunction:argument/spyglassmc:tag' as any, parser.tag())
 	meta.registerParser<CommandNode>('mcfunction:command', mcf.parser.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
 
 	checker.register(meta)

@@ -1,58 +1,6 @@
-import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
+import type { PartialRootTreeNode } from '@spyglassmc/mcfunction'
 import { merge } from '@spyglassmc/mcfunction'
 import { Tree1_16 } from './1.16'
-
-const ItemOperation: PartialTreeNode = {
-	children: {
-		modify: {
-			children: {
-				modifier: {
-					properties: {
-						category: 'item_modifier',
-					},
-				},
-			},
-		},
-		copy: {
-			children: {
-				block: {
-					children: {
-						source: {
-							children: {
-								sourceSlot: {
-									children: {
-										modifier: {
-											properties: {
-												category: 'item_modifier',
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-				entity: {
-					children: {
-						source: {
-							children: {
-								sourceSlot: {
-									children: {
-										modifier: {
-											properties: {
-												category: 'item_modifier',
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	},
-}
 
 /**
  * Patch for Minecraft: Java Edition 1.17.1

@@ -103,5 +103,6 @@ export const enum VersionStatus {
 	Latest = 1 << 4,
 }
 
-export const MajorVersions = Object.freeze(['1.15', '1.16', '1.17'] as const)
+// DOCS: Update here when a new major version of Minecraft is released.
+export const MajorVersions = Object.freeze(['1.15', '1.16', '1.17', '1.18'] as const)
 export type MajorVersion = typeof MajorVersions[number]
