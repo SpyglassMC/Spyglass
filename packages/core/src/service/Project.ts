@@ -211,15 +211,8 @@ export class Project extends EventEmitter {
 			results.forEach(async (r, i) => {
 				if (r.status === 'rejected') {
 					this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}”`, r.reason)
-				} else if (r.status === 'fulfilled') {
-					if (!(r.value instanceof Promise) && r.value) {
-						if (r.value.then) {
-							this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}” Result is a promise`)
-						} else {
-							const value = r.value as Record<string, string>
-							ctx = { ...value, ...ctx }
-						}
-					}
+				} else if (r.value) {
+					ctx = { ...ctx, ...r.value }
 				}
 			})
 			this.ctx = ctx
