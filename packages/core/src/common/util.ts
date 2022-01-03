@@ -78,7 +78,7 @@ export namespace SpyglassUri {
 		export function get(archiveUri: string): RootUriString
 		export function get(archiveUri: string, pathInArchive: string): string
 		export function get(archiveUri: string, pathInArchive = '') {
-			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
+			return `${Protocol}//${Hostname}/${stringToBase64(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
 		}
 
 		export function is(uri: Uri): boolean {
@@ -95,10 +95,10 @@ export namespace SpyglassUri {
 			if (uri.hostname !== Hostname) {
 				throw new Error(`Expected hostname “${Hostname}” in “${uri.toString()}”`)
 			}
-			// Ex. `pathname`: `/C%3A%5Ca.tar.gz/foo/bar.json`
+			// Ex. `pathname`: `/QzpcYS50YXIuZ3o=/foo/bar.json`
 			const paths = uri.pathname.split('/')
 			return {
-				archiveUri: decodeURIComponent(paths[1]),
+				archiveUri: base64ToString(paths[1]),
 				pathInArchive: paths.slice(2).join('/'),
 			}
 		}
@@ -149,8 +149,15 @@ export namespace ResourceLocation {
  */
 export function bufferToString(buffer: Buffer): string {
 	const ans = buffer.toString('utf-8')
-	if (ans.charAt(0) === '\uFEFF') {
+	if (ans.charCodeAt(0) === 0xFEFF) {
 		return ans.slice(1)
 	}
 	return ans
+}
+
+export function stringToBase64(str: string): string {
+	return Buffer.from(str).toString('base64')
+}
+export function base64ToString(base64: string): string {
+	return Buffer.from(base64, 'base64').toString('utf-8')
 }
