@@ -49,24 +49,35 @@ export interface EnvConfig {
 		signatures: boolean,
 	},
 	/**
-	 * Locale language for error messages.
+	 * - `Auto` (case-insensitive): Auto infer from `pack.mcmeta`.
+	 * - `Latest release` (case-insensitive)
+	 * - `Latest snapshot` (case-insensitive)
+	 * - A version identifier found in [`version_manifest.json`](https://launchermeta.mojang.com/mc/game/version_manifest.json) that is `1.15` or later (case-sensitive).
+	 */
+	gameVersion: string,
+	/**
+	 * Locale language for error messages and other texts provided by Spyglass.
 	 */
 	language: string,
 	permissionLevel: 1 | 2 | 3 | 4,
 	plugins: string[],
-	vanillaResources: {
+	/**
+	 * Use custom files as vanilla resources.
+	 * 
+	 * // TODO: Support file paths relative to the project root.
+	 */
+	vanillaResourceOverrides: {
 		blocks?: string,
 		commands?: string,
 		fluids?: string,
 		registries?: string,
 	},
 	/**
-	 * - `Auto`: Auto infer from `pack.mcmeta`.
-	 * - `Latest release`
-	 * - `Latest snapshot`
-	 * - A version identifier found in [`version_manifest.json`](https://launchermeta.mojang.com/mc/game/version_manifest.json).
+	 * Where to download vanilla resources from.
+	 * 
+	 * Set to `jsDelivr` if your local authorities have blocked `raw.githubusercontent.com`.
 	 */
-	version: string,
+	vanillaResourceSource: 'GitHub' | 'jsDelivr',
 }
 
 type Arrayable<T> = T | readonly T[]
@@ -255,11 +266,12 @@ export const VanillaConfig: Config = {
 			selectionRanges: true,
 			signatures: true,
 		},
+		gameVersion: 'Auto',
 		language: 'Default',
 		permissionLevel: 2,
 		plugins: [],
-		vanillaResources: {},
-		version: 'Auto',
+		vanillaResourceOverrides: {},
+		vanillaResourceSource: 'GitHub',
 	},
 	format: {
 		blockStateBracketSpacing: { inside: 0 },

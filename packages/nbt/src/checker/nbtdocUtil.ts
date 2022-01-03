@@ -144,7 +144,8 @@ const SpecialStrings: { [path: string]: string } = {
 	'::minecraft::block::sign::Sign.Text2': 'mcfunction:argument/minecraft:component',
 	'::minecraft::block::sign::Sign.Text3': 'mcfunction:argument/minecraft:component',
 	'::minecraft::block::sign::Sign.Text4': 'mcfunction:argument/minecraft:component',
-	'::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:argument/minecraft:particle',
+	// TODO
+	// '::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:argument/minecraft:particle',
 	'::minecraft::entity::minecart::CommandMinecart.Command': 'mcfunction:command',
 	'::minecraft::entity::mob::LivingEntity.Team': 'mcfunction:argument/minecraft:team',
 	'::minecraft::entity::EntityBase.Tags[]': 'mcfunction:argument/spyglassmc:tag',

@@ -43,7 +43,7 @@ describe('uriBinder()', () => {
 	]
 	for (const { uris } of suites) {
 		it(`Bind ${JSON.stringify(uris.map(u => u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u))}`, () => {
-			const ctx = UriBinderContext.create(ProjectLike.mock({ allRoots: ['file:///root/'] }))
+			const ctx = UriBinderContext.create(ProjectLike.mock({ roots: ['file:///root/'] }))
 			uriBinder(uris, ctx)
 			snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
 		})

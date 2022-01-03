@@ -6,6 +6,9 @@ type LatestReleases = readonly { major: MajorVersion, latest: string }[]
 
 type AutoVersionResolver = () => Promise<string>
 
+/**
+ * @returns The first element in the array represents the major release `1.15`.
+ */
 export function getLatestReleases(manifest: VersionManifest): LatestReleases {
 	return MajorVersions.map(major => ({
 		major,

@@ -679,7 +679,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 													}
 												)
 											case 'tag':
-												return invertable(tag('[', '=', ',', ']', '{', '}'))
+												return invertable(tag(['[', '=', ',', ']', '{', '}']))
 											case 'team':
 												return core.map<EntitySelectorInvertableArgumentValueNode<core.SymbolNode>>(
 													invertable(team('reference', ['[', '=', ',', ']', '{', '}'])),
@@ -868,28 +868,28 @@ function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreH
 	)
 }
 
-function symbol(options: core.AllCategory | core.SymbolOptions, ...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
+function symbol(options: core.AllCategory | core.SymbolOptions, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
 	return core.stopBefore(core.symbol(options as never), core.Whitespaces, terminators)
 }
 
 function objective(usageType?: core.SymbolUsageType, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
 	return validateLength(
-		unquotableSymbol({ category: 'objective', usageType }, ...terminators),
+		unquotableSymbol({ category: 'objective', usageType }, terminators),
 		ObjectiveMaxLength,
 		'mcfunction.parser.objective.too-long'
 	)
 }
 
-function tag(...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
-	return unquotableSymbol('tag', ...terminators)
+export function tag(terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol('tag', terminators)
 }
 
-function team(usageType?: core.SymbolUsageType, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
-	return unquotableSymbol({ category: 'team', usageType }, ...terminators)
+export function team(usageType?: core.SymbolUsageType, terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol({ category: 'team', usageType }, terminators)
 }
 
-function unquotableSymbol(options: core.AllCategory | core.SymbolOptions, ...terminators: string[]): core.InfallibleParser<core.SymbolNode> {
-	return validateUnquotable(symbol(options, ...terminators))
+function unquotableSymbol(options: core.AllCategory | core.SymbolOptions, terminators: string[]): core.InfallibleParser<core.SymbolNode> {
+	return validateUnquotable(symbol(options, terminators))
 }
 
 const time: core.InfallibleParser<MinecraftTimeArgumentNode> = core.map(

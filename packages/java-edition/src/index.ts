@@ -50,12 +50,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		}
 	}
 
-	const { major, version, status } = await resolveVersion(config.env.version, manifest, latestReleases, autoVersionResolver, logger)
+	const { major, version, status } = await resolveVersion(config.env.gameVersion, manifest, latestReleases, autoVersionResolver, logger)
 
 	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(version, status, logger))
 	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, logger))
 
-	const resources = await getVanillaResources(version, status, logger, config.env.vanillaResources)
+	const resources = await getVanillaResources(version, status, logger, config.env.vanillaResourceOverrides)
 	registerSymbols(resources, symbols)
 
 	jeJson.initialize(ctx)

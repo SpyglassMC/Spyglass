@@ -1,22 +1,21 @@
 import chokidar from 'chokidar'
 import EventEmitter from 'events'
-import pLimit from 'p-limit'
 import { performance } from 'perf_hooks'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { LinterConfigValue, LinterContext, LinterErrorReporter } from '.'
-import { traversePreOrder } from '..'
-import { bufferToString, CachePromise } from '../common'
+import { bufferToString, CachePromise, SpyglassUri } from '../common'
 import type { AstNode, FileNode } from '../node'
 import { file } from '../parser'
+import { traversePreOrder } from '../processor'
 import type { LanguageError } from '../source'
 import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
 import type { Config } from './Config'
-import { ConfigService, VanillaConfig } from './Config'
-import { CheckerContext, ParserContext, UriBinderContext } from './Context'
+import { ConfigService, LinterConfigValue, VanillaConfig } from './Config'
+import { CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context'
 import type { Dependency } from './Dependency'
 import { DependencyKey } from './Dependency'
+import { LinterErrorReporter } from './ErrorReporter'
 import { FileService, FileUriSupporter, SpyglassUriSupporter } from './FileService'
 import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
@@ -52,11 +51,10 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectLike = Pick<Project, 'allRoots' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'symbols' | 'ctx'>
+export type ProjectLike = Pick<Project, 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 export namespace ProjectLike {
 	export function mock(data: Partial<ProjectLike> = {}): ProjectLike {
 		return {
-			allRoots: data.allRoots ?? [],
 			config: data.config ?? VanillaConfig,
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
 			fs: data.fs ?? FileService.create(),
@@ -64,6 +62,7 @@ export namespace ProjectLike {
 			logger: data.logger ?? Logger.create(),
 			meta: data.meta ?? new MetaRegistry(),
 			projectRoot: data.projectRoot ?? 'file:///',
+			roots: data.roots ?? [],
 			symbols: data.symbols ?? new SymbolUtil({}),
 			ctx: data.ctx ?? {},
 		}
@@ -125,9 +124,18 @@ export class Project extends EventEmitter {
 	#dependencyRoots!: Set<RootUriString>
 	#dependencyFiles!: Set<string>
 
-	#allRoots!: readonly RootUriString[]
-	get allRoots(): readonly RootUriString[] {
-		return this.#allRoots
+	#roots!: readonly RootUriString[]
+	/**
+	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
+	 * 
+	 * Includes the roots of all dependencies, the project root, and all data pack roots identified
+	 * by `pack.mcmeta` files.
+	 * 
+	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
+	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
+	 */
+	get roots(): readonly RootUriString[] {
+		return this.#roots
 	}
 
 	#ctx?: Record<string, string>
@@ -138,26 +146,16 @@ export class Project extends EventEmitter {
 		this.#ctx = val
 	}
 
-	/**
-	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
-	 * 
-	 * Some URIs in the array may overlap with each other. In such cases, the deeper ones are guaranteed to come
-	 * before the shallower ones (e.g. `file:///foo/bar/` will come before `file:///foo/`).
-	 */
-	private getAllRoots(): readonly RootUriString[] {
-		const rawRoots = [...this.#dependencyRoots, this.projectRoot].map(fileUtil.ensureEndingSlash)
-		const ans = new Set<RootUriString>(rawRoots)
+	private updateRoots(): void {
+		const rawRoots = [...this.#dependencyRoots, this.projectRoot]
+		const ans = new Set(rawRoots)
 		// Identify roots indicated by `pack.mcmeta`.
 		for (const file of this.getAllFiles()) {
 			if (file.endsWith(Project.RootSuffix) && rawRoots.some(r => file.startsWith(r))) {
 				ans.add(file.slice(0, 1 - Project.RootSuffix.length) as RootUriString)
 			}
 		}
-		return [...ans].sort((a, b) => b.length - a.length)
-	}
-
-	private updateAllRoots(): void {
-		this.#allRoots = this.getAllRoots()
+		this.#roots =  [...ans].sort((a, b) => b.length - a.length)
 	}
 
 	/**
@@ -254,8 +252,8 @@ export class Project extends EventEmitter {
 			const dependencies = await getDependencies()
 			this.#fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
 			this.#spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger)
-			this.fs.register(this.#fileUriSupporter)
-			this.fs.register(this.#spyglassUriSupporter)
+			this.fs.register('file:', this.#fileUriSupporter)
+			this.fs.register(SpyglassUri.Protocol, this.#spyglassUriSupporter)
 		}
 		const loadProjectFiles = () => new Promise<void>(resolve => this.#watcher
 			.once('ready', () => {
@@ -295,7 +293,7 @@ export class Project extends EventEmitter {
 			this.#dependencyFiles = new Set(this.fs.listFiles())
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
-			this.updateAllRoots()
+			this.updateRoots()
 		}
 		const ready = async () => {
 			/* Profile */ const time0 = performance.now()
@@ -307,17 +305,19 @@ export class Project extends EventEmitter {
 			/* Profile */ this.logger.info(`[Project] [init] List URIs - ${time1 - time0} ms`)
 			this.bind(allFiles)
 
-			const limit = pLimit(8)
+			// const limit = pLimit(8)
 
 			/* Profile */ const time2 = performance.now()
 			/* Profile */ this.logger.info(`[Project] [init] Bind URIs - ${time2 - time1} ms`)
 			const ensureParsed = this.ensureParsed.bind(this)
-			const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
+			// const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
+			const docAndNodes = (await Promise.all(allFiles.map(ensureParsed))).filter((r): r is DocAndNode => !!r)
 
 			/* Profile */ const time3 = performance.now()
 			/* Profile */ this.logger.info(`[Project] [init] Parse all - ${time3 - time2} ms`)
 			const ensureChecked = this.ensureChecked.bind(this)
-			await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
+			// await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
+			await Promise.all(docAndNodes.map(({ doc, node }) => ensureChecked(doc, node)))
 
 			this.emit('ready', {})
 			/* Profile */ const time4 = performance.now()
@@ -339,7 +339,7 @@ export class Project extends EventEmitter {
 			.on('fileCreated', async ({ uri }) => {
 				this.#watchedFiles.add(uri)
 				if (uri.endsWith(Project.RootSuffix)) {
-					this.updateAllRoots()
+					this.updateRoots()
 				}
 				this.bind(uri)
 				return this.ensureParsedAndChecked(uri)
@@ -353,7 +353,7 @@ export class Project extends EventEmitter {
 			.on('fileDeleted', ({ uri }) => {
 				this.#watchedFiles.delete(uri)
 				if (uri.endsWith(Project.RootSuffix)) {
-					this.updateAllRoots()
+					this.updateRoots()
 				}
 				this.symbols.clear({ uri })
 				this.tryClearingCache(uri)
@@ -368,6 +368,10 @@ export class Project extends EventEmitter {
 	async ready(): Promise<this> {
 		await this.#readyPromise
 		return this
+	}
+
+	async close(): Promise<void> {
+		await this.#watcher.close()
 	}
 
 	/**

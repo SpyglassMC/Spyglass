@@ -30,7 +30,7 @@ export namespace ContextBase {
 			fs: project.fs,
 			logger: project.logger,
 			meta: project.meta,
-			roots: project.allRoots,
+			roots: project.roots,
 			project: project.ctx,
 		}
 	}

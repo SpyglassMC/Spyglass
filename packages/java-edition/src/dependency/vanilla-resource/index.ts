@@ -24,11 +24,13 @@ const cacheRoot = envPaths('spyglassmc').cache
  * @throws Network/file system errors.
  */
 export async function getVersionManifest(logger: core.Logger): Promise<VersionManifest> {
-	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', ['mc_je', 'version_manifest.json'])
+	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', ['mc-je', 'version_manifest.json'])
 }
 
 /* istanbul ignore next */
 /**
+ * Get vanilla resources, including block definitions, fluid definitions, command tree, and registries.
+ * 
  * @throws Network/file system errors.
  */
 export async function getVanillaResources(version: string, status: VersionStatus, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
@@ -40,10 +42,12 @@ export async function getVanillaResources(version: string, status: VersionStatus
 		status,
 		version,
 	})
-	const cachedShaPath = path.join(cacheRoot, 'mc_je', version, 'mcdata.json')
+	const cachedShaParentPath = path.join(cacheRoot, 'mc-je', version)
+	const cachedShaPath = path.join(cachedShaParentPath, 'mcdata.json')
 	const { latestSha, shouldRefresh } = await invalidateGitTagCache('Arcensoth', 'mcdata', refs, cachedShaPath, logger)
 	// Save the sha of commit for future cache invalidation.
 	try {
+		await fse.ensureDir(cachedShaParentPath)
 		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
 		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
@@ -61,7 +65,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	}
 
 	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
-		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, ['mc_je', version, fileName], !shouldRefresh, transformer), transformer)
+		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, ['mc-je', version, fileName], !shouldRefresh, transformer), transformer)
 	}
 
 	const [blocks, commands, fluids, registries] = await Promise.all([
@@ -132,14 +136,16 @@ async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status,
 	user: string,
 	version: string,
 }): Promise<string> {
-	const cachePathArray = ['mc_je', version, `${repo}.tar.gz`] as const
+	const cachePathArray = ['mc-je', version, `${repo}.tar.gz`] as const
 	const cachePath = path.join(cacheRoot, ...cachePathArray)
-	const cachedShaPath = path.join(cacheRoot, 'mc_je', version, `${repo}.json`)
+	const cachedShaParentPath = path.join(cacheRoot, 'mc-je', version)
+	const cachedShaPath = path.join(cachedShaParentPath, `${repo}.json`)
 	const refs = getRefs({ defaultBranch, getTag, status, version })
 
 	const { latestSha, shouldRefresh } = await invalidateGitTagCache(user, repo, refs, cachedShaPath, logger)
 	// Save the sha of commit for future cache invalidation.
 	try {
+		await fse.ensureDir(cachedShaParentPath)
 		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
 	} catch (e) {
 		logger.error(`[dependency] [repo] Failed writing sha for ${user}/${repo}`, e)
