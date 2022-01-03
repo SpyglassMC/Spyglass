@@ -1,7 +1,8 @@
 /* istanbul ignore file */
 
+import crypto from 'crypto'
 import decompress from 'decompress'
-import { promises as fsp } from 'fs'
+import fs, { promises as fsp } from 'fs'
 import globby from 'globby'
 import { SpyglassUri, Uri } from '../common'
 import type { Dependency } from './Dependency'
@@ -9,12 +10,21 @@ import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
 import type { Logger } from './Logger'
 
-export interface FileService {
-	register(supporter: UriProtocolSupporter): void
+const HashAlgorithm = 'sha1'
+
+export interface UriProtocolSupporter {
+	/**
+	 * @throws
+	 * 
+	 * @returns A hash created from the content of the item at `uri`. This hash is used by the cache invalidation
+	 * mechanism to check if an item has been modified, therefore it doesn't need to use a super duper secure hash
+	 * algorithm. Algorithms like SHA-1 or MD5 should be good enough.
+	 */
+	hash(uri: string): Promise<string>
 
 	/**
 	 * @param uri A file URI.
-	 * @returns The UTF-8 decoded content of the file at `uri`.
+	 * @returns The content of the file at `uri`.
 	 * @throws If the URI doesn't exist in the file system.
 	 */
 	readFile(uri: string): Promise<Buffer>
@@ -24,8 +34,15 @@ export interface FileService {
 	 * Each URI in this array must end with a slash (`/`).
 	 */
 	listRoots(): Iterable<RootUriString>
+}
 
-	// stat(uri: string): Promise<FileStats>
+export interface FileService extends UriProtocolSupporter {
+	/**
+	 * @param protocol A protocol of URI, including the colon. e.g. `file:`.
+	 * @param supporter The supporter for that `protocol`.
+	 * @throws `protocol` is already registered.
+	 */
+	register(protocol: `${string}:`, supporter: UriProtocolSupporter): void
 }
 
 export namespace FileService {
@@ -39,25 +56,39 @@ export namespace FileService {
 export class FileServiceImpl implements FileService {
 	private readonly supporters = new Map<string, UriProtocolSupporter>()
 
-	/**
-	 * @param protocol A protocol of URI, including the colon. e.g. `file:`.
-	 * @throws `protocol` is already registered.
-	 */
-	register(supporter: UriProtocolSupporter): void {
-		if (this.supporters.has(supporter.protocol)) {
-			throw new Error(`The protocol “${supporter.protocol}” is already associated with another supporter.`)
+	register(protocol: string, supporter: UriProtocolSupporter): void {
+		if (this.supporters.has(protocol)) {
+			throw new Error(`The protocol “${protocol}” is already associated with another supporter.`)
 		}
-		this.supporters.set(supporter.protocol, supporter)
+		this.supporters.set(protocol, supporter)
+	}
+
+	/**
+	 * @throws If the protocol of `uri` isn't supported.
+	 * 
+	 * @returns The protocol if it's supported.
+	 */
+	private getSupportedProtocol(uri: string): string {
+		const protocol = new Uri(uri).protocol
+		if (!this.supporters.has(protocol)) {
+			throw new Error(`The protocol “${protocol}” is unsupported.`)
+		}
+		return protocol
+	}
+
+	/**
+	 * @throws
+	 */
+	async hash(uri: string): Promise<string> {
+		const protocol = this.getSupportedProtocol(uri)
+		return this.supporters.get(protocol)!.hash(uri)
 	}
 
 	/**
 	 * @throws
 	 */
 	readFile(uri: string): Promise<Buffer> {
-		const protocol = uri.slice(0, uri.indexOf(':') + 1)
-		if (!this.supporters.has(protocol)) {
-			throw new Error(`The protocol “${protocol}” is unsupported.`)
-		}
+		const protocol = this.getSupportedProtocol(uri)
 		return this.supporters.get(protocol)!.readFile(uri)
 	}
 
@@ -72,21 +103,6 @@ export class FileServiceImpl implements FileService {
 			yield* supporter.listRoots()
 		}
 	}
-
-	// async stat(uri: string): Promise<FileStats> {
-	// 	return fsp.stat(new Uri(uri), { bigint: true })
-	// }
-}
-
-export interface UriProtocolSupporter {
-	readonly protocol: string
-
-	readFile(uri: string): Promise<Buffer>
-	listFiles(): Iterable<string>
-	/**
-	 * Each URI in this array must end with a slash (`/`).
-	 */
-	listRoots(): Iterable<RootUriString>
 }
 
 export class FileUriSupporter implements UriProtocolSupporter {
@@ -96,6 +112,10 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		private readonly roots: RootUriString[],
 		private readonly files: Map<string, string[]>
 	) { }
+
+	async hash(uri: string): Promise<string> {
+		return hashFile(uri)
+	}
 
 	readFile(uri: string) {
 		return fsp.readFile(new Uri(uri))
@@ -147,8 +167,28 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 		private readonly entries: Map<string, Map<string, decompress.File>>
 	) { }
 
+	async hash(uri: string): Promise<string> {
+		const { archiveUri, pathInArchive } = SpyglassUri.Archive.decode(new Uri(uri))
+		if (!pathInArchive) {
+			// Hash the archive itself.
+			return hashFile(archiveUri)
+		} else {
+			// Hash the corresponding file.
+			const hash = crypto.createHash(HashAlgorithm)
+			hash.update(await this.getDataInArchive(archiveUri, pathInArchive))
+			return hash.digest('hex')
+		}
+	}
+
 	async readFile(uri: string): Promise<Buffer> {
 		const { archiveUri, pathInArchive } = SpyglassUri.Archive.decode(new Uri(uri))
+		return this.getDataInArchive(archiveUri, pathInArchive)
+	}
+
+	/**
+	 * @throws
+	 */
+	private async getDataInArchive(archiveUri: string, pathInArchive: string): Promise<Buffer> {
 		const entries = this.entries.get(archiveUri)
 		if (!entries) {
 			throw new Error(`Archive “${archiveUri}” has not been loaded into the memory`)
@@ -193,4 +233,14 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 
 		return new SpyglassUriSupporter(entries)
 	}
+}
+
+async function hashFile(uri: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const hash = crypto.createHash(HashAlgorithm)
+		fs.createReadStream(new Uri(uri))
+			.on('data', chunk => hash.update(chunk))
+			.on('end', () => resolve(hash.digest('hex')))
+			.on('error', reject)
+	})
 }
