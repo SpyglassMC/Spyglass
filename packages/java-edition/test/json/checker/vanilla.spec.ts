@@ -1,4 +1,4 @@
-import { ProjectLike } from '@spyglassmc/core'
+import { ProjectData } from '@spyglassmc/core'
 import { testChecker } from '@spyglassmc/json/test-out/utils'
 import * as nbt from '@spyglassmc/nbt'
 import { strict as assert } from 'assert'
@@ -12,7 +12,7 @@ describe('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
 	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
 
-	const project = ProjectLike.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } })
+	const project = ProjectData.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } })
 	nbt.initialize(project)
 
 	summary.forEach((files, i) => {

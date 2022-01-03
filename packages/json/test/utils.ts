@@ -1,5 +1,5 @@
 import type { LanguageError } from '@spyglassmc/core'
-import { CheckerContext, Failure, ParserContext, ProjectLike, Source, SymbolUtil } from '@spyglassmc/core'
+import { CheckerContext, Failure, ParserContext, ProjectData, Source, SymbolUtil } from '@spyglassmc/core'
 import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
@@ -7,7 +7,7 @@ import type { JsonChecker } from '../lib/checker/JsonChecker'
 import type { JsonNode } from '../lib/node'
 import { entry as parser } from '../lib/parser'
 
-export function testChecker(checker: JsonChecker, test: string, { project }: { project?: Partial<ProjectLike> } = {}): {
+export function testChecker(checker: JsonChecker, test: string, { project }: { project?: Partial<ProjectData> } = {}): {
 	node: JsonNode | 'FAILURE',
 	parserErrors: readonly LanguageError[],
 	checkerErrors: readonly LanguageError[],
@@ -15,8 +15,8 @@ export function testChecker(checker: JsonChecker, test: string, { project }: { p
 	const src = new Source(test)
 	const doc = TextDocument.create('file:///', 'json', 0, test)
 	const symbols = new SymbolUtil({})
-	const parserCtx = ParserContext.create(ProjectLike.mock({ symbols, ...project }), { doc })
-	const checkerCtx = CheckerContext.create(ProjectLike.mock({ symbols, ...project }), { doc, src })
+	const parserCtx = ParserContext.create(ProjectData.mock({ symbols, ...project }), { doc })
+	const checkerCtx = CheckerContext.create(ProjectData.mock({ symbols, ...project }), { doc, src })
 	const result = parser(src, parserCtx)
 	if (result !== Failure) {
 		checker(result, { ...checkerCtx, context: '' })

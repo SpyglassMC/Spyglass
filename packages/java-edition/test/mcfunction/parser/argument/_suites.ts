@@ -3,7 +3,7 @@ import * as json from '@spyglassmc/json'
 import type { ArgumentTreeNode } from '@spyglassmc/mcfunction/lib/tree'
 import * as nbt from '@spyglassmc/nbt'
 
-const project = core.ProjectLike.mock()
+const project = core.ProjectData.mock()
 
 json.initialize(project)
 nbt.initialize(project)

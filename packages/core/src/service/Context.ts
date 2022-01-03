@@ -13,7 +13,7 @@ import type { RootUriString } from './fileUtil'
 import type { Logger } from './Logger'
 import type { MetaRegistry } from './MetaRegistry'
 import { Operations } from './Operations'
-import type { DocAndNode, ProjectLike } from './Project'
+import type { DocAndNode, ProjectData } from './Project'
 
 export interface ContextBase {
 	getDocAndNode: (uri: string) => DocAndNode | undefined,
@@ -24,7 +24,7 @@ export interface ContextBase {
 	project: Record<string, string>,
 }
 export namespace ContextBase {
-	export function create(project: ProjectLike): ContextBase {
+	export function create(project: ProjectData): ContextBase {
 		return {
 			getDocAndNode: project.get.bind(project),
 			fs: project.fs,
@@ -47,7 +47,7 @@ interface ParserContextOptions {
 	err?: ErrorReporter,
 }
 export namespace ParserContext {
-	export function create(project: ProjectLike, opts: ParserContextOptions): ParserContext {
+	export function create(project: ProjectData, opts: ParserContextOptions): ParserContext {
 		return {
 			...ContextBase.create(project),
 			config: project.config,
@@ -69,7 +69,7 @@ interface ProcessorContextOptions {
 	src?: ReadonlySource,
 }
 export namespace ProcessorContext {
-	export function create(project: ProjectLike, opts: ProcessorContextOptions): ProcessorContext {
+	export function create(project: ProjectData, opts: ProcessorContextOptions): ProcessorContext {
 		return {
 			...ContextBase.create(project),
 			config: project.config,
@@ -87,7 +87,7 @@ interface ProcessorWithRangeContextOptions extends ProcessorContextOptions {
 	range?: Range,
 }
 namespace ProcessorWithRangeContext {
-	export function create(project: ProjectLike, opts: ProcessorWithRangeContextOptions): ProcessorWithRangeContext {
+	export function create(project: ProjectData, opts: ProcessorWithRangeContextOptions): ProcessorWithRangeContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			range: opts.range,
@@ -102,7 +102,7 @@ interface ProcessorWithOffsetContextOptions extends ProcessorContextOptions {
 	offset: number,
 }
 namespace ProcessorWithOffsetContext {
-	export function create(project: ProjectLike, opts: ProcessorWithOffsetContextOptions): ProcessorWithOffsetContext {
+	export function create(project: ProjectData, opts: ProcessorWithOffsetContextOptions): ProcessorWithOffsetContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			offset: opts.offset,
@@ -120,7 +120,7 @@ interface CheckerContextOptions extends ProcessorContextOptions {
 	ops?: Operations,
 }
 export namespace CheckerContext {
-	export function create(project: ProjectLike, opts: CheckerContextOptions): CheckerContext {
+	export function create(project: ProjectData, opts: CheckerContextOptions): CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
@@ -141,7 +141,7 @@ interface LinterContextOptions extends ProcessorContextOptions {
 	ruleValue: unknown,
 }
 export namespace LinterContext {
-	export function create(project: ProjectLike, opts: LinterContextOptions): LinterContext {
+	export function create(project: ProjectData, opts: LinterContextOptions): LinterContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err,
@@ -162,7 +162,7 @@ interface FormatterContextOptions extends ProcessorContextOptions {
 	insertSpaces: boolean,
 }
 export namespace FormatterContext {
-	export function create(project: ProjectLike, opts: FormatterContextOptions): FormatterContext {
+	export function create(project: ProjectData, opts: FormatterContextOptions): FormatterContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			...opts,
@@ -177,7 +177,7 @@ export namespace FormatterContext {
 export interface ColorizerContext extends ProcessorWithRangeContext {}
 export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
 export namespace ColorizerContext {
-	export function create(project: ProjectLike, opts: ColorizerContextOptions): ColorizerContext {
+	export function create(project: ProjectData, opts: ColorizerContextOptions): ColorizerContext {
 		return ProcessorWithRangeContext.create(project, opts)
 	}
 }
@@ -191,7 +191,7 @@ interface CompleterContextOptions extends ProcessorContextOptions {
 	triggerCharacter?: string,
 }
 export namespace CompleterContext {
-	export function create(project: ProjectLike, opts: CompleterContextOptions): CompleterContext {
+	export function create(project: ProjectData, opts: CompleterContextOptions): CompleterContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			offset: opts.offset,
@@ -203,7 +203,7 @@ export namespace CompleterContext {
 export interface SignatureHelpProviderContext extends ProcessorWithOffsetContext {}
 export interface SignatureHelpProviderContextOptions extends ProcessorWithOffsetContextOptions {}
 export namespace SignatureHelpProviderContext {
-	export function create(project: ProjectLike, opts: SignatureHelpProviderContextOptions): SignatureHelpProviderContext {
+	export function create(project: ProjectData, opts: SignatureHelpProviderContextOptions): SignatureHelpProviderContext {
 		return ProcessorWithOffsetContext.create(project, opts)
 	}
 }
@@ -212,7 +212,7 @@ export interface UriBinderContext extends ContextBase {
 	symbols: SymbolUtil,
 }
 export namespace UriBinderContext {
-	export function create(project: ProjectLike): UriBinderContext {
+	export function create(project: ProjectData): UriBinderContext {
 		return {
 			...ContextBase.create(project),
 			symbols: project.symbols,

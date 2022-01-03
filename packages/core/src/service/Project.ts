@@ -51,9 +51,9 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectLike = Pick<Project, 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
-export namespace ProjectLike {
-	export function mock(data: Partial<ProjectLike> = {}): ProjectLike {
+export type ProjectData = Pick<Project, 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export namespace ProjectData {
+	export function mock(data: Partial<ProjectData> = {}): ProjectData {
 		return {
 			config: data.config ?? VanillaConfig,
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
@@ -155,11 +155,11 @@ export class Project extends EventEmitter {
 				ans.add(file.slice(0, 1 - Project.RootSuffix.length) as RootUriString)
 			}
 		}
-		this.#roots =  [...ans].sort((a, b) => b.length - a.length)
+		this.#roots = [...ans].sort((a, b) => b.length - a.length)
 	}
 
 	/**
-	 * All files that are tracked and supported by this service.
+	 * All files that are tracked and supported.
 	 */
 	private getAllFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()

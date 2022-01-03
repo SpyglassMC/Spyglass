@@ -1,10 +1,10 @@
-import { ContextBase, ProjectLike } from '@spyglassmc/core'
+import { ContextBase, ProjectData } from '@spyglassmc/core'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { dissectUri } from '../../../lib/binder'
 
 describe('dissectUri()', () => {
-	const ctx = ContextBase.create(ProjectLike.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } }))
+	const ctx = ContextBase.create(ProjectData.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } }))
 	const suites: { uri: string }[] = [
 		{ uri: 'file:///data/minecraft/loot_tables/foo.json' },
 		{ uri: 'file:///data/minecraft/tags/blocks/bar.json' },
