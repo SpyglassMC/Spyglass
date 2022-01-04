@@ -16,6 +16,7 @@ import { Project } from './Project'
 import { SymbolLocations } from './SymbolLocations'
 
 interface Options {
+	cacheRoot: string,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
@@ -31,6 +32,7 @@ export class Service extends EventEmitter {
 	readonly project: Project
 
 	constructor({
+		cacheRoot,
 		fs = FileService.create(),
 		initializers = [],
 		isDebugging = false,
@@ -42,7 +44,7 @@ export class Service extends EventEmitter {
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
-		this.project = new Project({ fs, initializers, logger, projectPath })
+		this.project = new Project({ cacheRoot, fs, initializers, logger, projectPath })
 	}
 
 	private debug(message: string): void {

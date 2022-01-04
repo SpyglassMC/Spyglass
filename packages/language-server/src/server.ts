@@ -4,6 +4,7 @@ import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
+import envPaths from 'env-paths'
 import type { MyLsInlayHint, MyLsInlayHintRequestParams } from './util'
 import { toCore, toLS } from './util'
 
@@ -15,6 +16,8 @@ if (process.argv.length === 2) {
 	// Therefore, we push a '--stdio' if the argument list is too short.
 	process.argv.push('--stdio')
 }
+
+const { cache: cacheRoot } = envPaths('spyglassmc')
 
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
@@ -47,6 +50,7 @@ connection.onInitialize(async params => {
 
 	try {
 		service = new core.Service({
+			cacheRoot,
 			initializers: [
 				nbtdoc.initialize,
 				je.initialize,

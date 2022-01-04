@@ -10,6 +10,7 @@ import { traversePreOrder } from '../processor'
 import type { LanguageError } from '../source'
 import { Source } from '../source'
 import { SymbolUtil } from '../symbol'
+import { CacheService } from './CacheService'
 import type { Config } from './Config'
 import { ConfigService, LinterConfigValue, VanillaConfig } from './Config'
 import { CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context'
@@ -22,11 +23,12 @@ import { fileUtil } from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 
-export type ProjectInitializerContext = Pick<Project, 'config' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
+export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
 
 export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
 
 interface Options {
+	cacheRoot: string,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	logger?: Logger,
@@ -51,11 +53,13 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectData = Pick<Project, 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 export namespace ProjectData {
 	export function mock(data: Partial<ProjectData> = {}): ProjectData {
 		return {
+			cacheRoot: data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist',
 			config: data.config ?? VanillaConfig,
+			ctx: data.ctx ?? {},
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
 			fs: data.fs ?? FileService.create(),
 			get: data.get ?? (() => undefined),
@@ -64,7 +68,6 @@ export namespace ProjectData {
 			projectRoot: data.projectRoot ?? 'file:///',
 			roots: data.roots ?? [],
 			symbols: data.symbols ?? new SymbolUtil({}),
-			ctx: data.ctx ?? {},
 		}
 	}
 }
@@ -103,8 +106,9 @@ export class Project extends EventEmitter {
 	 * URI of files that are currently managed by the language client.
 	 */
 	readonly #clientManagedUris = new Set<string>()
-	readonly #configService!: ConfigService
-	readonly #initializers!: readonly ProjectInitializer[]
+	readonly #cacheService: CacheService
+	readonly #configService: ConfigService
+	readonly #initializers: readonly ProjectInitializer[]
 	readonly #initPromise: Promise<void>
 	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new Set<string>()
@@ -112,11 +116,11 @@ export class Project extends EventEmitter {
 	#watcherReady = false
 
 	config!: Config
-	readonly fs!: FileService
-	readonly logger!: Logger
+	readonly fs: FileService
+	readonly logger: Logger
 	readonly meta = new MetaRegistry()
-	readonly projectRoot!: RootUriString
-	readonly symbols!: SymbolUtil
+	readonly projectRoot: RootUriString
+	readonly symbols: SymbolUtil
 
 	#fileUriSupporter!: FileUriSupporter
 	#spyglassUriSupporter!: SpyglassUriSupporter
@@ -138,12 +142,20 @@ export class Project extends EventEmitter {
 		return this.#roots
 	}
 
-	#ctx?: Record<string, string>
+	#ctx!: Record<string, string>
+	/**
+	 * Arbitrary information that will be included in the `project` property of all `Context`s.
+	 */
 	get ctx() {
-		return this.#ctx ?? {}
+		return this.#ctx
 	}
-	private set ctx(val) {
-		this.#ctx = val
+
+	#cacheRoot: string
+	/**
+	 * File path to a directory where all cache files of Spyglass should be stored.
+	 */
+	get cacheRoot(): string {
+		return this.#cacheRoot
 	}
 
 	private updateRoots(): void {
@@ -168,6 +180,7 @@ export class Project extends EventEmitter {
 	}
 
 	constructor({
+		cacheRoot,
 		fs = FileService.create(),
 		initializers = [],
 		logger = Logger.create(),
@@ -176,6 +189,8 @@ export class Project extends EventEmitter {
 	}: Options) {
 		super()
 
+		this.#cacheRoot = cacheRoot
+		this.#cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this)
 		this.fs = fs
 		this.#initializers = initializers
@@ -183,6 +198,8 @@ export class Project extends EventEmitter {
 		this.projectRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(projectPath))
 		this.symbols = symbols
 		this.#ctx = {}
+
+		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
 
 		this.#configService
 			.on('changed', ({ config }) => {
@@ -200,6 +217,7 @@ export class Project extends EventEmitter {
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
+				cacheRoot: this.cacheRoot,
 				config: this.config,
 				logger: this.logger,
 				meta: this.meta,
@@ -215,7 +233,7 @@ export class Project extends EventEmitter {
 					ctx = { ...ctx, ...r.value }
 				}
 			})
-			this.ctx = ctx
+			this.#ctx = ctx
 		}
 		const getDependencies = async () => {
 			const ans: Dependency[] = []
@@ -224,7 +242,6 @@ export class Project extends EventEmitter {
 					const provider = this.meta.getDependencyProvider(dependency)
 					if (provider) {
 						try {
-							this.logger.info(`[Project] [getDependencies] Executing provider “${dependency}”...`)
 							ans.push(await provider())
 							this.logger.info(`[Project] [getDependencies] Executed provider “${dependency}”`)
 						} catch (e) {

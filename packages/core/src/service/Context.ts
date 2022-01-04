@@ -20,8 +20,8 @@ export interface ContextBase {
 	fs: FileService,
 	logger: Logger,
 	meta: MetaRegistry,
-	roots: readonly RootUriString[],
 	project: Record<string, string>,
+	roots: readonly RootUriString[],
 }
 export namespace ContextBase {
 	export function create(project: ProjectData): ContextBase {

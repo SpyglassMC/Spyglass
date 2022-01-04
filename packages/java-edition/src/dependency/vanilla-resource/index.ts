@@ -1,6 +1,5 @@
 import * as core from '@spyglassmc/core'
 import download from 'download'
-import envPaths from 'env-paths'
 import * as fse from 'fs-extra'
 import * as path from 'path'
 import type { VanillaCommands, VanillaRegistries, VanillaResources, VanillaStates, VersionManifest } from './type'
@@ -13,8 +12,6 @@ const GitHubApiDownloadOptions: download.DownloadOptions = {
 	headers: { Accept: 'application/vnd.github.v3+json' },
 }
 
-const cacheRoot = envPaths('spyglassmc').cache
-
 /* istanbul ignore next */
 /**
  * Return the deserialized [`version_manifest.json`][manifest].
@@ -23,8 +20,8 @@ const cacheRoot = envPaths('spyglassmc').cache
  * 
  * @throws Network/file system errors.
  */
-export async function getVersionManifest(logger: core.Logger): Promise<VersionManifest> {
-	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', ['mc-je', 'version_manifest.json'])
+export async function getVersionManifest(logger: core.Logger, cacheRoot: string): Promise<VersionManifest> {
+	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', cacheRoot, ['mc-je', 'version_manifest.json'])
 }
 
 /* istanbul ignore next */
@@ -33,7 +30,7 @@ export async function getVersionManifest(logger: core.Logger): Promise<VersionMa
  * 
  * @throws Network/file system errors.
  */
-export async function getVanillaResources(version: string, status: VersionStatus, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
+export async function getVanillaResources(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
 	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
 	const refs = getRefs({
@@ -65,7 +62,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	}
 
 	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
-		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, ['mc-je', version, fileName], !shouldRefresh, transformer), transformer)
+		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, cacheRoot, ['mc-je', version, fileName], !shouldRefresh, transformer), transformer)
 	}
 
 	const [blocks, commands, fluids, registries] = await Promise.all([
@@ -127,7 +124,8 @@ function getRefs({ defaultBranch, getTag, status, version }: {
 /**
  * @returns The URI to the `.tar.gz` file.
  */
-async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status, user, version }: {
+async function downloadGitHubRepo({ cacheRoot, defaultBranch, getTag, logger, repo, status, user, version }: {
+	cacheRoot: string,
 	defaultBranch: string,
 	getTag: (version: string) => string,
 	logger: core.Logger,
@@ -154,6 +152,7 @@ async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status,
 	await downloadData(
 		logger,
 		`https://api.github.com/repos/${user}/${repo}/tarball/${refs}`,
+		cacheRoot,
 		cachePathArray,
 		!shouldRefresh,
 		buffer => buffer,
@@ -173,10 +172,11 @@ async function downloadGitHubRepo({ defaultBranch, getTag, logger, repo, status,
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getMcNbtdoc(version: string, status: VersionStatus, logger: core.Logger): Promise<core.Dependency> {
+export async function getMcNbtdoc(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger): Promise<core.Dependency> {
 	return {
 		info: { startDepth: 1 },
 		uri: await downloadGitHubRepo({
+			cacheRoot,
 			defaultBranch: 'master',
 			getTag: v => v,
 			logger,
@@ -198,10 +198,11 @@ export async function getMcNbtdoc(version: string, status: VersionStatus, logger
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getVanillaDatapack(version: string, status: VersionStatus, logger: core.Logger): Promise<core.Dependency> {
+export async function getVanillaDatapack(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger): Promise<core.Dependency> {
 	return {
 		info: { startDepth: 1 },
 		uri: await downloadGitHubRepo({
+			cacheRoot,
 			defaultBranch: 'data',
 			getTag: v => `${v}-data`,
 			logger,
@@ -219,15 +220,15 @@ async function fetchJson<T = any>(url: string, downloadOptions?: download.Downlo
 	return jsonTransformer(await download(url, undefined, downloadOptions))
 }
 
-async function downloadJson<T extends object>(logger: core.Logger, url: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v): Promise<T> {
-	return downloadData(logger, url, cachePaths, preferCache, buffer => transformer(jsonTransformer(buffer)))
+async function downloadJson<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v): Promise<T> {
+	return downloadData(logger, url, cacheRoot, cachePaths, preferCache, buffer => transformer(jsonTransformer(buffer)))
 }
 
 /* istanbul ignore next */
 /**
  * @throws Network/file system errors.
  */
-async function downloadData<T extends object>(logger: core.Logger, url: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions): Promise<T> {
+async function downloadData<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions): Promise<T> {
 	let error: Error
 
 	const cacheParent = path.join(cacheRoot, ...cachePaths.slice(0, -1))

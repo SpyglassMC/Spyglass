@@ -12,11 +12,11 @@ export * as json from './json'
 export * as mcf from './mcfunction'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
-	const { config, logger, meta, projectRoot, symbols } = ctx
+	const { cacheRoot, config, logger, meta, projectRoot, symbols } = ctx
 
 	meta.registerUriBinder(uriBinder)
 
-	const manifest = await getVersionManifest(logger)
+	const manifest = await getVersionManifest(logger, cacheRoot)
 
 	const latestReleases = getLatestReleases(manifest)
 
@@ -41,7 +41,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			}
 			return versions[format as unknown as keyof typeof versions]
 		} catch (e) {
-			if (!(e instanceof Error && (e as any).code === 'ENOENT')) {
+			if (!core.isEnoent(e)) {
 				// `pack.mcmeta` exists but broken. Log an error.
 				logger.error(`[je.initialize] Failed inferring game version from “${uri}”`, e)
 			}
@@ -52,10 +52,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	const { major, version, status } = await resolveVersion(config.env.gameVersion, manifest, latestReleases, autoVersionResolver, logger)
 
-	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(version, status, logger))
-	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, logger))
+	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(version, status, cacheRoot, logger))
+	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, cacheRoot, logger))
 
-	const resources = await getVanillaResources(version, status, logger, config.env.vanillaResourceOverrides)
+	const resources = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides)
 	registerSymbols(resources, symbols)
 
 	jeJson.initialize(ctx)
