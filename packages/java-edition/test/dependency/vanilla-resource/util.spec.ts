@@ -1,6 +1,6 @@
 import { Logger, SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import { strict as assert } from 'assert'
-import * as fse from 'fs-extra'
+import * as fs from 'fs'
 import { describe, it } from 'mocha'
 import * as path from 'path'
 import snapshot from 'snap-shot-it'
@@ -8,16 +8,20 @@ import type { RawVanillaBlocks, RawVanillaRegistries, VanillaRegistries, Vanilla
 import { VersionStatus } from '../../../lib/dependency/vanilla-resource/type'
 import { addBlocksSymbols, addFluidsSymbols, addRegistriesSymbols, getBlocksUrl, getCommandsUrl, getLatestReleases, getRegistriesUrl, getVersionStatus, resolveVersion, transformBlocks, transformRegistries, VanillaFluidsData } from '../../../lib/dependency/vanilla-resource/util'
 
+function readJsonSync<T>(path: string): T {
+	return JSON.parse(fs.readFileSync(path, 'utf-8'))
+}
+
 const Fixtures = {
-	Blocks: fse.readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as VanillaStates,
+	Blocks: readJsonSync<VanillaStates>(path.join(__dirname, 'fixture/blocks.json')),
 	LatestReleases: [
 		{ major: '1.15', latest: '1.15.2' },
 		{ major: '1.16', latest: '1.16.2' },
 		{ major: '1.17', latest: '1.17.1' },
 	] as const,
-	Registries: fse.readJsonSync(path.join(__dirname, 'fixture/registries.json')) as VanillaRegistries,
-	VersionManifest: fse.readJsonSync(path.join(__dirname, 'fixture/version_manifest.json')) as VersionManifest,
-	Versions: fse.readJsonSync(path.join(__dirname, 'fixture/versions.json')) as string[],
+	Registries: readJsonSync<VanillaRegistries>(path.join(__dirname, 'fixture/registries.json')),
+	VersionManifest: readJsonSync<VersionManifest>(path.join(__dirname, 'fixture/version_manifest.json')),
+	Versions: readJsonSync<string[]>(path.join(__dirname, 'fixture/versions.json')),
 }
 
 const VersionStatuses: { version: string, status: number }[] = [

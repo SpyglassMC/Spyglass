@@ -1,6 +1,5 @@
 import * as core from '@spyglassmc/core'
 import * as nbt from '@spyglassmc/nbt'
-import * as fse from 'fs-extra'
 import { uriBinder } from './binder'
 import { getMcNbtdoc, getVanillaDatapack, getVanillaResources, getVersionManifest, registerSymbols } from './dependency'
 import { getLatestReleases, resolveVersion } from './dependency/vanilla-resource/util'
@@ -31,7 +30,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 		const uri = `${projectRoot}pack.mcmeta`
 		try {
-			const data = (await fse.readJson(core.fileUtil.fileUriToPath(uri)))
+			const data = (await core.fileUtil.readJson(new core.Uri(uri)))
 			const format: string | undefined = data?.pack?.pack_format?.toString()
 			if (!format) {
 				throw new Error('“pack.pack_format” undefined')

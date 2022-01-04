@@ -1,8 +1,16 @@
-import url, { URL as Url } from 'url'
+import type fs from 'fs'
+import { promises as fsp } from 'fs'
+import { resolve } from 'path'
+import url, { URL as Uri } from 'url'
 
 export type RootUriString = `${string}/`
 
 export type FileExtension = `.${string}`
+
+/**
+ * A string file path, string file URI, or a file URI object.
+ */
+export type PathLike = string | Uri
 
 export namespace fileUtil {
 	/**
@@ -54,7 +62,7 @@ export namespace fileUtil {
 	 * @throws If `uri` is not a valid URI.
 	 */
 	export function isFileUri(uri: string): boolean {
-		return new Url(uri).protocol === 'file:'
+		return uri.startsWith('file:')
 	}
 
 	/**
@@ -72,7 +80,7 @@ export namespace fileUtil {
 	 * @throws If the URI is not a file schema URI.
 	 */
 	export function fileUriToPath(fileUri: string): string {
-		return url.fileURLToPath(new Url(fileUri))
+		return url.fileURLToPath(new Uri(fileUri))
 	}
 
 	/* istanbul ignore next */
@@ -87,9 +95,91 @@ export namespace fileUtil {
 	/* istanbul ignore next */
 	export function normalize(uri: string): string {
 		try {
-			return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : new Url(uri).toString()
+			return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : new Uri(uri).toString()
 		} catch {
 			return uri
 		}
+	}
+
+	/**
+	 * @param path A string file path, string file URI, or a file URI object.
+	 * 
+	 * @returns A {@link fs.PathLike}.
+	 */
+	function toFsPathLike(path: PathLike): fs.PathLike {
+		if (typeof path === 'string' && isFileUri(path)) {
+			return new Uri(path)
+		}
+		return path
+	}
+
+	/* istanbul ignore next */
+	export function getParentOfFile(path: PathLike): PathLike {
+		if (path instanceof Uri || isFileUri(path)) {
+			return new Uri('.', path)
+		} else {
+			return resolve(path, '..')
+		}
+	}
+
+	/* istanbul ignore next */
+	/**
+	 * @throws
+	 * 
+	 * @param mode Default to `0o666` (`rw-rw-rw-`)
+	 */
+	export async function ensureDir(path: PathLike, mode: fs.Mode = 0o666): Promise<void> {
+		try {
+			await fsp.mkdir(toFsPathLike(path), { mode, recursive: true })
+		} catch (e) {
+			if (!(e instanceof Error && (e as any).code === 'EEXIST')) {
+				throw e
+			}
+		}
+	}
+
+	/* istanbul ignore next */
+	/**
+	 * @throws
+	 * 
+	 * Ensures the parent directory of the path exists.
+	 * 
+	 * @param mode Default to `0o666` (`rw-rw-rw-`)
+	 */
+	export async function ensureParentOfFile(path: PathLike, mode: fs.Mode = 0o666): Promise<void> {
+		return ensureDir(getParentOfFile(path), mode)
+	}
+
+	/* istanbul ignore next */
+	/**
+	 * @throws
+	 * 
+	 * The directory of the file will be created recursively if it doesn'texist.
+	 * 
+	 * * Encoding: `utf-8`
+	 * * Mode: `0o666` (`rw-rw-rw-`)
+	 * * Flag: `w`
+	 */
+	export async function writeFile(path: PathLike, data: Buffer | string): Promise<void> {
+		await ensureParentOfFile(path)
+		return fsp.writeFile(toFsPathLike(path), data)
+	}
+
+	/* istanbul ignore next */
+	/**
+	 * @throws
+	 */
+	export async function readJson<T = any>(path: PathLike): Promise<T> {
+		return JSON.parse(await fsp.readFile(toFsPathLike(path), 'utf-8'))
+	}
+
+	/* istanbul ignore next */
+	/**
+	 * @throws
+	 * 
+	 * @see {@link writeFile}
+	 */
+	export async function writeJson(path: PathLike, data: any): Promise<void> {
+		return writeFile(path, JSON.stringify(data))
 	}
 }

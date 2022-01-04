@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import download from 'download'
-import * as fse from 'fs-extra'
+import { promises as fsp } from 'fs'
 import * as path from 'path'
 import type { VanillaCommands, VanillaRegistries, VanillaResources, VanillaStates, VersionManifest } from './type'
 import { VersionStatus } from './type'
@@ -44,8 +44,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	const { latestSha, shouldRefresh } = await invalidateGitTagCache('Arcensoth', 'mcdata', refs, cachedShaPath, logger)
 	// Save the sha of commit for future cache invalidation.
 	try {
-		await fse.ensureDir(cachedShaParentPath)
-		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
+		await core.fileUtil.writeJson(cachedShaPath, { sha: latestSha })
 	} catch (e) {
 		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
 	}
@@ -53,7 +52,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	const wrap = async <T extends object>(overridePath: string | undefined, fallback: () => PromiseLike<T> | T, transformer: (value: any) => T = v => v) => {
 		if (overridePath) {
 			try {
-				return transformer(await fse.readJson(overridePath))
+				return transformer(await core.fileUtil.readJson(overridePath))
 			} catch (e) {
 				logger.error(`[dependency] [vanillaResource] Failed loading customized vanilla resource “${overridePath}”`, e)
 			}
@@ -95,7 +94,7 @@ async function invalidateGitTagCache(user: string, repo: string, refs: string, c
 
 		if (latestSha) {
 			try {
-				const cachedSha: string = (await fse.readJson(cachedShaPath, { encoding: 'utf-8' })).sha
+				const cachedSha: string = (await core.fileUtil.readJson(cachedShaPath)).sha
 				if (cachedSha && latestSha !== cachedSha) {
 					shouldRefresh = true
 					logger.info(`[dependency] [invalidateCache] Cache ${cachedSha} for ${user}/${repo} is different than the latest ${latestSha}`)
@@ -143,8 +142,7 @@ async function downloadGitHubRepo({ cacheRoot, defaultBranch, getTag, logger, re
 	const { latestSha, shouldRefresh } = await invalidateGitTagCache(user, repo, refs, cachedShaPath, logger)
 	// Save the sha of commit for future cache invalidation.
 	try {
-		await fse.ensureDir(cachedShaParentPath)
-		await fse.writeJson(cachedShaPath, { sha: latestSha }, { encoding: 'utf-8' })
+		await core.fileUtil.writeJson(cachedShaPath, { sha: latestSha })
 	} catch (e) {
 		logger.error(`[dependency] [repo] Failed writing sha for ${user}/${repo}`, e)
 	}
@@ -240,8 +238,7 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 			const buffer = await download(url, undefined, downloadOptions)
 			const ans = transformer(buffer)
 			try {
-				await fse.ensureDir(cacheParent)
-				await fse.writeFile(cacheFilePath, buffer)
+				await core.fileUtil.writeFile(cacheFilePath, buffer)
 			} catch (e) {
 				// Cache failed.
 				error = e as Error
@@ -265,7 +262,7 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 	}
 
 	try {
-		const buffer = await fse.readFile(cacheFilePath)
+		const buffer = await fsp.readFile(cacheFilePath)
 		const ans = transformer(buffer)
 		logger.info(`[dependency] [download] Read cache from “${cacheFilePath}”`)
 		return ans
