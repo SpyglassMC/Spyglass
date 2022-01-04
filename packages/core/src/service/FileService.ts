@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import decompress from 'decompress'
 import fs, { promises as fsp } from 'fs'
 import globby from 'globby'
-import { SpyglassUri, Uri } from '../common'
+import { getSha1, SpyglassUri, Uri } from '../common'
 import type { Dependency } from './Dependency'
 import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
@@ -174,9 +174,7 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 			return hashFile(archiveUri)
 		} else {
 			// Hash the corresponding file.
-			const hash = crypto.createHash(HashAlgorithm)
-			hash.update(await this.getDataInArchive(archiveUri, pathInArchive))
-			return hash.digest('hex')
+			return getSha1(await this.getDataInArchive(archiveUri, pathInArchive))
 		}
 	}
 

@@ -1,8 +1,8 @@
 import EventEmitter from 'events'
 import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
-import { ErrorSeverity } from '..'
-import { bufferToString, Uri } from '../common/util'
+import { bufferToString, isEnoent, Uri } from '../common'
+import { ErrorSeverity } from '../source'
 import { VanillaRegistryCategories } from '../symbol'
 import type { Project } from './Project'
 /* eslint-disable no-restricted-syntax */
@@ -389,7 +389,7 @@ export class ConfigService extends EventEmitter {
 			try {
 				ans = JSON.parse(bufferToString(await fsp.readFile(uri)))
 			} catch (e) {
-				if (e instanceof Error && (e as any).code === 'ENOENT') {
+				if (isEnoent(e)) {
 					// File doesn't exist.
 					continue
 				}

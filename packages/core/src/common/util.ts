@@ -1,3 +1,4 @@
+import crypto from 'crypto'
 import type { URL as Uri } from 'url'
 import type { RootUriString } from '../service'
 
@@ -160,4 +161,17 @@ export function stringToBase64(str: string): string {
 }
 export function base64ToString(base64: string): string {
 	return Buffer.from(base64, 'base64').toString('utf-8')
+}
+
+/**
+ * @throws
+ */
+export function getSha1(data: string | Buffer): string {
+	const hash = crypto.createHash('sha1')
+	hash.update(data)
+	return hash.digest('hex')
+}
+
+export function isEnoent(e: unknown): boolean {
+	return e instanceof Error && (e as any).code === 'ENOENT'
 }
