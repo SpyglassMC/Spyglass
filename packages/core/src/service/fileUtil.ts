@@ -127,9 +127,9 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 * 
-	 * @param mode Default to `0o666` (`rw-rw-rw-`)
+	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureDir(path: PathLike, mode: fs.Mode = 0o666): Promise<void> {
+	export async function ensureDir(path: PathLike, mode: fs.Mode = 0o777): Promise<void> {
 		try {
 			await fsp.mkdir(toFsPathLike(path), { mode, recursive: true })
 		} catch (e) {
@@ -145,9 +145,9 @@ export namespace fileUtil {
 	 * 
 	 * Ensures the parent directory of the path exists.
 	 * 
-	 * @param mode Default to `0o666` (`rw-rw-rw-`)
+	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureParentOfFile(path: PathLike, mode: fs.Mode = 0o666): Promise<void> {
+	export async function ensureParentOfFile(path: PathLike, mode: fs.Mode = 0o777): Promise<void> {
 		return ensureDir(getParentOfFile(path), mode)
 	}
 
