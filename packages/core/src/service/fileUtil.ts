@@ -2,6 +2,7 @@ import type fs from 'fs'
 import { promises as fsp } from 'fs'
 import { resolve } from 'path'
 import url, { URL as Uri } from 'url'
+import { bufferToString } from '../common'
 
 export type RootUriString = `${string}/`
 
@@ -170,7 +171,7 @@ export namespace fileUtil {
 	 * @throws
 	 */
 	export async function readJson<T = any>(path: PathLike): Promise<T> {
-		return JSON.parse(await fsp.readFile(toFsPathLike(path), 'utf-8'))
+		return JSON.parse(bufferToString(await fsp.readFile(toFsPathLike(path))))
 	}
 
 	/* istanbul ignore next */
