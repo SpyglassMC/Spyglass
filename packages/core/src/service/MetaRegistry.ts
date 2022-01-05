@@ -5,7 +5,7 @@ import { checker, colorizer, completer, formatter, linter } from '../processor'
 import type { Formatter } from '../processor/formatter'
 import type { Linter } from '../processor/linter/Linter'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider'
-import type { UriBinder } from '../symbol'
+import type { SymbolUtil, UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
 import type { FileExtension } from './fileUtil'
 import type { Logger } from './Logger'
@@ -25,6 +25,8 @@ interface LinterRegistration {
 	nodePredicate: (node: AstNode) => boolean,
 }
 
+type SymbolRegistrar = (this: void, symbols: SymbolUtil) => void
+
 /* istanbul ignore next */
 /**
  * The meta registry of Spyglass. You can register new parsers, processors, and languages here.
@@ -43,6 +45,7 @@ export class MetaRegistry {
 	readonly #linters = new Map<string, LinterRegistration>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
+	readonly #symbolRegistrars = new Set<SymbolRegistrar>()
 	readonly #uriBinders = new Set<UriBinder>()
 
 	constructor() {
@@ -204,6 +207,13 @@ export class MetaRegistry {
 	}
 	public get signatureHelpProviders(): Set<SignatureHelpProvider<any>> {
 		return this.#signatureHelpProviders
+	}
+
+	public registerSymbolRegistrar(registrar: SymbolRegistrar): void {
+		this.#symbolRegistrars.add(registrar)
+	}
+	public get symbolRegistrars(): Set<SymbolRegistrar> {
+		return this.#symbolRegistrars
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

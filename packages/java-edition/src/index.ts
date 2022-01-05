@@ -11,7 +11,7 @@ export * as json from './json'
 export * as mcf from './mcfunction'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
-	const { cacheRoot, config, logger, meta, projectRoot, symbols } = ctx
+	const { cacheRoot, config, logger, meta, projectRoot } = ctx
 
 	meta.registerUriBinder(uriBinder)
 
@@ -30,7 +30,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 		const uri = `${projectRoot}pack.mcmeta`
 		try {
-			const data = (await core.fileUtil.readJson(new core.Uri(uri)))
+			const data = await core.fileUtil.readJson(uri)
 			const format: string | undefined = data?.pack?.pack_format?.toString()
 			if (!format) {
 				throw new Error('“pack.pack_format” undefined')
@@ -55,7 +55,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, cacheRoot, logger))
 
 	const resources = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides)
-	registerSymbols(resources, symbols)
+	meta.registerSymbolRegistrar(registerSymbols.bind(undefined, resources))
 
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, resources.commands, major)

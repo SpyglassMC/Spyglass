@@ -1,0 +1,5 @@
+= Meta Registry
+
+== Symbol Registrar
+
+A function that will be called after the symbol table is loaded from cache.
