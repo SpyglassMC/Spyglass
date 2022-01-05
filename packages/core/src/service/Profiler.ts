@@ -1,11 +1,6 @@
 import { performance } from 'perf_hooks'
 import { Logger } from './Logger'
 
-export type ProfilerId =
-	| 'cache#load'
-	| 'cache#save'
-	| 'project#init'
-
 /**
  * @example
  * ```typescript
@@ -41,7 +36,7 @@ class ProfilerImpl implements Profiler {
 	#longestTaskNameLength = 0
 
 	constructor(
-		private readonly id: ProfilerId,
+		private readonly id: string,
 		private readonly logger: Logger
 	) {
 		this.#startTime = this.#lastTime = performance.now()
@@ -74,16 +69,16 @@ class NoopImpl implements Profiler {
 }
 
 export class ProfilerFactory {
-	readonly #enabledProfilers: Set<ProfilerId>
+	readonly #enabledProfilers: Set<string>
 
 	constructor(
 		private readonly logger: Logger,
-		enabledProfilers: ProfilerId[]
+		enabledProfilers: string[]
 	) {
 		this.#enabledProfilers = new Set(enabledProfilers)
 	}
 
-	get(id: ProfilerId): Profiler {
+	get(id: string): Profiler {
 		if (this.#enabledProfilers.has(id)) {
 			return new ProfilerImpl(id, this.logger)
 		} else {

@@ -2,9 +2,9 @@ import * as core from '@spyglassmc/core'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
+import envPaths from 'env-paths'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
-import envPaths from 'env-paths'
 import type { MyLsInlayHint, MyLsInlayHintRequestParams } from './util'
 import { toCore, toLS } from './util'
 
@@ -60,7 +60,7 @@ connection.onInitialize(async params => {
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
 				'cache#save',
-				'project#init',
+				'project#ready',
 			]),
 			projectPath: core.fileUtil.fileUriToPath(workspaceFolders[0].uri),
 		})
