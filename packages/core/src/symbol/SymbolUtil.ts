@@ -116,6 +116,8 @@ export class SymbolUtil extends EventEmitter {
 				const path = SymbolPath.toString(symbol)
 				this.#trimmableSymbols.add(path)
 			})
+
+		// FIXME: Emit events for existing symbols on global
 	}
 
 	/**
