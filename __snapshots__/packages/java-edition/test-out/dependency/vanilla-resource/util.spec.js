@@ -2,228 +2,228 @@ exports['vanilla-resource util addBlocksSymbols() Should add correctly 1'] = `
 CATEGORY block
 + SYMBOL minecraft:stone {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Stone","contributor":"default_library/block"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Stone","contributor":"vanilla_resource/block"}
 + ------------
 + SYMBOL minecraft:grass_block {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block","contributor":"default_library/block"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block","contributor":"vanilla_resource/block"}
 + + members:
 + + + SYMBOL minecraft:grass_block.snowy {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library/block"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"vanilla_resource/block"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:grass_block","snowy","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:grass_block.snowy.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library/block"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"vanilla_resource/block"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:grass_block.snowy.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"default_library/block"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Grass_Block#Block_states","contributor":"vanilla_resource/block"}
 `
 
 exports['vanilla-resource util addFluidsSymbols() Should add correctly 1'] = `
 CATEGORY fluid
 + SYMBOL minecraft:empty {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"default_library/fluid"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"vanilla_resource/fluid"}
 + ------------
 + SYMBOL minecraft:flowing_lava {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava","contributor":"default_library/fluid"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava","contributor":"vanilla_resource/fluid"}
 + + members:
 + + + SYMBOL minecraft:flowing_lava.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_lava","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_lava.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + ------------
 + + + SYMBOL minecraft:flowing_lava.level {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_lava","level","1"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_lava.level.1 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.2 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.3 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.4 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.5 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.6 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.7 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.8 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + ------------
 + SYMBOL minecraft:flowing_water {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water","contributor":"default_library/fluid"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water","contributor":"vanilla_resource/fluid"}
 + + members:
 + + + SYMBOL minecraft:flowing_water.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_water","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_water.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + ------------
 + + + SYMBOL minecraft:flowing_water.level {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_water","level","1"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_water.level.1 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.2 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.3 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.4 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.5 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.6 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.7 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.8 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + ------------
 + SYMBOL minecraft:lava {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Lava","contributor":"default_library/fluid"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Lava","contributor":"vanilla_resource/fluid"}
 + + members:
 + + + SYMBOL minecraft:lava.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:lava","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:lava.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:lava.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states","contributor":"vanilla_resource/fluid"}
 + ------------
 + SYMBOL minecraft:water {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Water","contributor":"default_library/fluid"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Water","contributor":"vanilla_resource/fluid"}
 + + members:
 + + + SYMBOL minecraft:water.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:water","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:water.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:water.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"default_library/fluid"}
++ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states","contributor":"vanilla_resource/fluid"}
 `
 
 exports['vanilla-resource util addRegistriesSymbols() Should add correctly 1'] = `
 CATEGORY attribute
 + SYMBOL minecraft:generic.max_health {attribute} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes","contributor":"default_library/attribute"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes","contributor":"vanilla_resource/attribute"}
 ------------
 CATEGORY activity
 + SYMBOL minecraft:core {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library/activity"}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"vanilla_resource/activity"}
 + ------------
 + SYMBOL minecraft:idle {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library/activity"}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"vanilla_resource/activity"}
 + ------------
 + SYMBOL minecraft:work {activity} [Public]
 + + declaration:
-+ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"default_library/activity"}
++ + + {"uri":"spyglassmc://vanilla-resource/registries.json","contributor":"vanilla_resource/activity"}
 ------------
 CATEGORY block_entity_type
 + SYMBOL minecraft:furnace {block_entity_type} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Furnace#Block_data","contributor":"default_library/block_entity_type"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Furnace#Block_data","contributor":"vanilla_resource/block_entity_type"}
 ------------
 CATEGORY custom_stat
 + SYMBOL minecraft:leave_game {custom_stat} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names","contributor":"default_library/custom_stat"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Statistics#List_of_custom_statistic_names","contributor":"vanilla_resource/custom_stat"}
 ------------
 CATEGORY enchantment
 + SYMBOL minecraft:protection {enchantment} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Protection","contributor":"default_library/enchantment"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Protection","contributor":"vanilla_resource/enchantment"}
 ------------
 CATEGORY entity_type
 + SYMBOL minecraft:area_effect_cloud {entity_type} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Area_Effect_Cloud","contributor":"default_library/entity_type"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Area_Effect_Cloud","contributor":"vanilla_resource/entity_type"}
 ------------
 CATEGORY item
 + SYMBOL minecraft:air {item} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"default_library/item"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Air","contributor":"vanilla_resource/item"}
 ------------
 CATEGORY recipe_serializer
 + SYMBOL minecraft:crafting_shaped {recipe_serializer} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Recipe#crafting_shaped","contributor":"default_library/recipe_serializer"}
++ + + {"uri":"https://minecraft.fandom.com/wiki/Recipe#crafting_shaped","contributor":"vanilla_resource/recipe_serializer"}
 ------------
 CATEGORY sound_event
 + SYMBOL minecraft:ambient.cave {sound_event} [Public]
 + + declaration:
-+ + + {"uri":"https://misode.github.io/sounds/?sound=ambient.cave","contributor":"default_library/sound_event"}
++ + + {"uri":"https://misode.github.io/sounds/?sound=ambient.cave","contributor":"vanilla_resource/sound_event"}
 `
 
 exports['vanilla-resource util getBlocksUrl() Should return the correct url for "1.14" (1) 1'] = `
