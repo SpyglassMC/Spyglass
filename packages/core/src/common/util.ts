@@ -79,7 +79,7 @@ export namespace SpyglassUri {
 		export function get(archiveUri: string): RootUriString
 		export function get(archiveUri: string, pathInArchive: string): string
 		export function get(archiveUri: string, pathInArchive = '') {
-			return `${Protocol}//${Hostname}/${stringToBase64(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
+			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
 		}
 
 		export function is(uri: Uri): boolean {
@@ -99,7 +99,7 @@ export namespace SpyglassUri {
 			// Ex. `pathname`: `/QzpcYS50YXIuZ3o=/foo/bar.json`
 			const paths = uri.pathname.split('/')
 			return {
-				archiveUri: base64ToString(paths[1]),
+				archiveUri: decodeURIComponent(paths[1]),
 				pathInArchive: paths.slice(2).join('/'),
 			}
 		}
@@ -172,6 +172,10 @@ export function getSha1(data: string | Buffer): string {
 	return hash.digest('hex')
 }
 
+export function isErrorCode(e: unknown, code: string): boolean {
+	return e instanceof Error && (e as any).code === code
+}
+
 export function isEnoent(e: unknown): boolean {
-	return e instanceof Error && (e as any).code === 'ENOENT'
+	return isErrorCode(e, 'ENOENT')
 }
