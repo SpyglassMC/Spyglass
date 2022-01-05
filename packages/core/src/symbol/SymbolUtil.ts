@@ -190,7 +190,7 @@ export class SymbolUtil extends EventEmitter {
 
 	/**
 	 * @param
-	 * 	- `contributor` - clear symbol locations contributed by this contributor. Pass in the string value `"undefined"`
+	 * 	- `contributor` - clear symbol locations contributed by this contributor. Pass in `undefined`
 	 * 	to select all symbol locations that don't have a contributor.
 	 * 	- `uri` - clear symbol locations associated with this URI.
 	 * 	- `predicate` - clear symbol locations matching this predicate

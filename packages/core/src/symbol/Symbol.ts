@@ -285,9 +285,9 @@ export interface SymbolLocationMetadata {
 
 /**
  * - `checker`: Contributed by checkers.
- * - `default_library/${category}`: Contributed by default library for the specific category (i.e. [mc-data][mc-data], [mc-nbtdoc][mc-nbtdoc], or [vanilla-datapack][vanilla-datapack]).
  * - `parser`: Contributed by parsers.
  * - `uri_binder`: Contributed by URI binders.
+ * - `vanilla_resource/${registry}`: Contributed by vanilla resources.
  * 
  * [mc-data]: https://github.com/Arcensoth/mc-data
  * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
@@ -295,9 +295,9 @@ export interface SymbolLocationMetadata {
  */
 export type SymbolLocationBuiltInContributor =
 	| 'checker'
-	| `default_library/${string}`
 	| 'parser'
 	| 'uri_binder'
+	| `vanilla_resource/${string}`
 
 export interface SymbolLocation extends SymbolLocationMetadata {
 	uri: string,

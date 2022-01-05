@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { MajorVersion, RawVanillaBlocks, RawVanillaRegistries, VanillaStates, VanillaRegistries, VersionManifest } from './type'
+import type { MajorVersion, RawVanillaBlocks, RawVanillaRegistries, VanillaRegistries, VanillaStates, VersionManifest } from './type'
 import { MajorVersions, VersionStatus } from './type'
 
 type LatestReleases = readonly { major: MajorVersion, latest: string }[]
@@ -189,10 +189,10 @@ function addStatesSymbols(category: 'block' | 'fluid', states: VanillaStates, sy
 	const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<typeof category>
 
 	// Remove all related existing symbols.
-	symbols.clear({ contributor: `default_library/${category}` })
+	symbols.clear({ contributor: `vanilla_resource/${category}` })
 
 	// Add ids and states to the symbol table.
-	symbols.contributeAs(`default_library/${category}`, () => {
+	symbols.contributeAs(`vanilla_resource/${category}`, () => {
 		for (const [id, block] of Object.entries(states)) {
 			const pageName = id === 'minecraft:empty' ? 'Air' : getWikiPageName(id)
 			symbols
@@ -295,9 +295,9 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		// We register blocks and fluids at `addBlocksSymbols` and `addFluidsSymbols`, instead of here.
 		if (isCategory(registryId) && registryId !== 'block' && registryId !== 'fluid') {
 			// Remove all related existing symbols.
-			symbols.clear({ contributor: `default_library/${registryId}` })
+			symbols.clear({ contributor: `vanilla_resource/${registryId}` })
 
-			symbols.contributeAs(`default_library/${registryId}`, () => {
+			symbols.contributeAs(`vanilla_resource/${registryId}`, () => {
 				// Add resource locations from the registry to the symbol table.
 				for (const longEntryId of registries[longRegistryId]) {
 					symbols

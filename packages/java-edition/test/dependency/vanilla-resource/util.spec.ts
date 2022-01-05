@@ -147,7 +147,7 @@ describe('vanilla-resource util', () => {
 	describe('addBlocksSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols.contributeAs('default_library/block', () => symbols
+			symbols.contributeAs('vanilla_resource/block', () => symbols
 				.query('spyglassmc://vanilla-resource/blocks.json', 'block', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
@@ -160,7 +160,7 @@ describe('vanilla-resource util', () => {
 	describe('addFluidsSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols.contributeAs('default_library/fluid', () => symbols
+			symbols.contributeAs('vanilla_resource/fluid', () => symbols
 				.query('spyglassmc://vanilla-resource/fluids.json', 'fluid', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
@@ -173,7 +173,7 @@ describe('vanilla-resource util', () => {
 	describe('addRegistriesSymbols()', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
-			symbols.contributeAs('default_library/attribute', () => symbols
+			symbols.contributeAs('vanilla_resource/attribute', () => symbols
 				.query('spyglassmc://vanilla-resource/registries.json', 'attribute', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
