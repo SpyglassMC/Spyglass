@@ -1,6 +1,6 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { SignatureHelpProviderContext } from '.'
+import { SignatureHelpProviderContext } from './Context'
 import type { AstNode, FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
@@ -14,6 +14,7 @@ import { Logger } from './Logger'
 import type { ProjectInitializer } from './Project'
 import { Project } from './Project'
 import { SymbolLocations } from './SymbolLocations'
+import { ProfilerFactory } from './Profiler'
 
 interface Options {
 	cacheRoot: string,
@@ -21,6 +22,7 @@ interface Options {
 	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
 	logger?: Logger,
+	profilers?: ProfilerFactory,
 	projectPath: string,
 }
 
@@ -29,6 +31,7 @@ export class Service extends EventEmitter {
 	readonly fs: FileService
 	readonly isDebugging: boolean
 	readonly logger: Logger
+	readonly profilers: ProfilerFactory
 	readonly project: Project
 
 	constructor({
@@ -37,6 +40,7 @@ export class Service extends EventEmitter {
 		initializers = [],
 		isDebugging = false,
 		logger = Logger.create(),
+		profilers = ProfilerFactory.noop(),
 		projectPath,
 	}: Options) {
 		super()
@@ -44,7 +48,8 @@ export class Service extends EventEmitter {
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
-		this.project = new Project({ cacheRoot, fs, initializers, logger, projectPath })
+		this.profilers = profilers
+		this.project = new Project({ cacheRoot, fs, initializers, logger, profilers, projectPath })
 	}
 
 	private debug(message: string): void {

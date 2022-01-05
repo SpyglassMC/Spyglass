@@ -1,6 +1,5 @@
 import chokidar from 'chokidar'
 import EventEmitter from 'events'
-import { performance } from 'perf_hooks'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { bufferToString, CachePromise, SpyglassUri } from '../common'
@@ -22,6 +21,7 @@ import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
+import { ProfilerFactory } from './Profiler'
 
 export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'logger' | 'meta' | 'projectRoot' | 'symbols'>
 
@@ -32,6 +32,7 @@ interface Options {
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	logger?: Logger,
+	profilers?: ProfilerFactory,
 	/**
 	 * A file path to the root of this project.
 	 */
@@ -53,7 +54,7 @@ interface FileEvent {
 }
 interface EmptyEvent { }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 export namespace ProjectData {
 	export function mock(data: Partial<ProjectData> = {}): ProjectData {
 		return {
@@ -65,6 +66,7 @@ export namespace ProjectData {
 			get: data.get ?? (() => undefined),
 			logger: data.logger ?? Logger.create(),
 			meta: data.meta ?? new MetaRegistry(),
+			profilers: data.profilers ?? ProfilerFactory.noop(),
 			projectRoot: data.projectRoot ?? 'file:///',
 			roots: data.roots ?? [],
 			symbols: data.symbols ?? new SymbolUtil({}),
@@ -119,6 +121,7 @@ export class Project extends EventEmitter {
 	readonly fs: FileService
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
+	readonly profilers: ProfilerFactory
 	readonly projectRoot: RootUriString
 	readonly symbols: SymbolUtil
 
@@ -184,6 +187,7 @@ export class Project extends EventEmitter {
 		fs = FileService.create(),
 		initializers = [],
 		logger = Logger.create(),
+		profilers = ProfilerFactory.noop(),
 		projectPath,
 		symbols = new SymbolUtil({}),
 	}: Options) {
@@ -195,6 +199,7 @@ export class Project extends EventEmitter {
 		this.fs = fs
 		this.#initializers = initializers
 		this.logger = logger
+		this.profilers = profilers
 		this.projectRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(projectPath))
 		this.symbols = symbols
 		this.#ctx = {}
@@ -306,33 +311,26 @@ export class Project extends EventEmitter {
 			this.updateRoots()
 		}
 		const ready = async () => {
-			/* Profile */ const time0 = performance.now()
-			/* Profile */ this.logger.info('[Project] [init] Starting...')
+			const __profiler = this.profilers.get('project#init')
+
 			await this.init()
-
 			const allFiles = this.getAllFiles() // FIXME: nbtdoc files might need to be parsed and checked before others.
-			/* Profile */ const time1 = performance.now()
-			/* Profile */ this.logger.info(`[Project] [init] List URIs - ${time1 - time0} ms`)
+			__profiler.task('List URIs')
+
 			this.bind(allFiles)
-
 			// const limit = pLimit(8)
+			__profiler.task('Bind URIs')
 
-			/* Profile */ const time2 = performance.now()
-			/* Profile */ this.logger.info(`[Project] [init] Bind URIs - ${time2 - time1} ms`)
 			const ensureParsed = this.ensureParsed.bind(this)
 			// const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
 			const docAndNodes = (await Promise.all(allFiles.map(ensureParsed))).filter((r): r is DocAndNode => !!r)
+			__profiler.task('Parse all')
 
-			/* Profile */ const time3 = performance.now()
-			/* Profile */ this.logger.info(`[Project] [init] Parse all - ${time3 - time2} ms`)
 			const ensureChecked = this.ensureChecked.bind(this)
 			// await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
 			await Promise.all(docAndNodes.map(({ doc, node }) => ensureChecked(doc, node)))
-
 			this.emit('ready', {})
-			/* Profile */ const time4 = performance.now()
-			/* Profile */ this.logger.info(`[Project] [init] Check all - ${time4 - time3} ms`)
-			/* Profile */ this.logger.info(`[Project] [init] Total     - ${time4 - time0} ms`)
+			__profiler.task('Check all').finalize()
 		}
 
 		this.#initPromise = init()
