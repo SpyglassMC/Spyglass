@@ -115,8 +115,13 @@ export class SymbolUtil extends EventEmitter {
 				const path = SymbolPath.toString(symbol)
 				this.#trimmableSymbols.add(path)
 			})
+	}
 
-		SymbolUtil.forEachSymbol(global, symbol => {
+	/**
+	 * Build the internal cache of the SymbolUtil according to the current global symbol table.
+	 */
+	buildCache(): void {
+		SymbolUtil.forEachSymbol(this.global, symbol => {
 			this.emit('symbolCreated', { symbol })
 			SymbolUtil.forEachLocationOfSymbol(symbol, ({ type, location }) => {
 				this.emit('symbolLocationCreated', { symbol, type, location })

@@ -328,6 +328,7 @@ export class Project extends EventEmitter {
 
 			const { symbols } = await this.#cacheService.load()
 			this.symbols = new SymbolUtil(symbols)
+			this.symbols.buildCache()
 			const { addedFiles, changedFiles, removedFiles } = await this.#cacheService.validate()
 			for (const uri of removedFiles) {
 				this.symbols.clear({ uri })
