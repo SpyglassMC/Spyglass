@@ -148,7 +148,7 @@ describe('vanilla-resource util', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
 			symbols.contributeAs('vanilla_resource/block', () => symbols
-				.query('spyglassmc://vanilla-resource/blocks.json', 'block', 'oldExistingOne')
+				.query('https://minecraft.fandom.com/wiki/oldExistingOne', 'block', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
 
@@ -161,7 +161,7 @@ describe('vanilla-resource util', () => {
 		it('Should add correctly', () => {
 			const symbols = new SymbolUtil({})
 			symbols.contributeAs('vanilla_resource/fluid', () => symbols
-				.query('spyglassmc://vanilla-resource/fluids.json', 'fluid', 'oldExistingOne')
+				.query('https://minecraft.fandom.com/wiki/oldExistingOne', 'fluid', 'oldExistingOne')
 				.enter({ usage: { type: 'declaration' } })
 			)
 
