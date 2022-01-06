@@ -61,6 +61,7 @@ connection.onInitialize(async params => {
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
 				'cache#save',
+				'project#init',
 				'project#ready',
 			]),
 			projectPath: core.fileUtil.fileUriToPath(workspaceFolders[0].uri),

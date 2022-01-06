@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder'
-import { getMcNbtdoc, getVanillaDatapack, getVanillaResources, getVersionManifest, registerSymbols } from './dependency'
+import { getMcNbtdoc, getVanillaDatapack, getVanillaResources, getVersionManifest, symbolRegistrar } from './dependency'
 import { getLatestReleases, resolveVersion } from './dependency/vanilla-resource/util'
 import * as jeJson from './json'
 import * as jeMcf from './mcfunction'
@@ -55,7 +55,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, cacheRoot, logger))
 
 	const resources = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides)
-	meta.registerSymbolRegistrar(registerSymbols.bind(undefined, resources))
+	meta.registerSymbolRegistrar('vanilla-resource', symbolRegistrar(resources, resources.checksum))
 
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, resources.commands, major)

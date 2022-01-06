@@ -215,12 +215,23 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 		}
 	}
 
-	static async create(dependencies: readonly Dependency[], logger: Logger): Promise<SpyglassUriSupporter> {
+	static async create(dependencies: readonly Dependency[], logger: Logger, checksums: Record<RootUriString, string>): Promise<SpyglassUriSupporter> {
 		const entries = new Map<string, Map<string, decompress.File>>()
 
 		for (const { uri, info } of dependencies) {
 			try {
 				if (uri.startsWith('file:') && SpyglassUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await fsp.stat(new Uri(uri))).isFile()) {
+					const rootUri = SpyglassUri.Archive.get(uri)
+					const cachedChecksum: string | undefined = checksums[rootUri]
+					if (cachedChecksum !== undefined) {
+						const checksum = await hashFile(uri)
+						if (cachedChecksum === checksum) {
+							// The dependency has not changed since last cache.
+							logger.info(`[SpyglassUriSupporter#create] Skipped decompressing “${uri}” thanks to cache ${checksum}`)
+							continue
+						}
+					}
+
 					const files = await decompress(fileUtil.fileUriToPath(uri), { strip: typeof info?.startDepth === 'number' ? info.startDepth : 0 })
 					entries.set(uri, new Map(files.map(f => [f.path.replace(/\\/g, '/'), f])))
 				}

@@ -23,13 +23,17 @@ export async function getVersionManifest(logger: core.Logger, cacheRoot: string)
 	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', cacheRoot, ['mc-je', 'version_manifest.json'])
 }
 
+interface GetVanillaResourcesResult extends VanillaResources {
+	checksum: string | undefined,
+}
+
 /* istanbul ignore next */
 /**
  * Get vanilla resources, including block definitions, fluid definitions, command tree, and registries.
  * 
  * @throws Network/file system errors.
  */
-export async function getVanillaResources(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<VanillaResources> {
+export async function getVanillaResources(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<GetVanillaResourcesResult> {
 	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
 
 	const refs = getRefs({
@@ -70,7 +74,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 		getResource<VanillaRegistries>(registriesUrl, 'registries.json.gz', overridePaths.registries, registriesTransformer),
 	])
 
-	return { blocks, commands, fluids, registries }
+	return { blocks, commands, fluids, registries, checksum: latestSha }
 }
 
 type GitHubRefResponse =
@@ -292,8 +296,16 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 }
 
 /* istanbul ignore next */
-export function registerSymbols(resources: VanillaResources, symbols: core.SymbolUtil) {
-	addBlocksSymbols(resources.blocks, symbols)
-	addFluidsSymbols(resources.fluids, symbols)
-	addRegistriesSymbols(resources.registries, symbols)
+export function symbolRegistrar(resources: VanillaResources, checksum: string | undefined): core.SymbolRegistrar {
+	return (symbols, ctx) => {
+		if (ctx.cacheChecksum === undefined || checksum !== ctx.cacheChecksum) {
+			addBlocksSymbols(resources.blocks, symbols)
+			addFluidsSymbols(resources.fluids, symbols)
+			addRegistriesSymbols(resources.registries, symbols)
+		} else {
+			ctx.logger.info(`[vanilla-resource] Skipped symbol registrar thanks to cache ${checksum}`)
+		}
+
+		return { checksum }
+	}
 }

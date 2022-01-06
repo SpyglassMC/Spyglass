@@ -18,12 +18,14 @@ export const LatestCacheVersion = 1
 interface Checksums {
 	files: Record<string, string>,
 	roots: Record<RootUriString, string>,
+	symbolRegistrars: Record<string, string>,
 }
 namespace Checksums {
 	export function create(): Checksums {
 		return {
 			files: {},
 			roots: {},
+			symbolRegistrars: {},
 		}
 	}
 }
@@ -54,7 +56,7 @@ interface ValidateResult {
 }
 
 export class CacheService {
-	#checksums = Checksums.create()
+	checksums = Checksums.create()
 
 	/**
 	 * @param cacheRoot File path to the directory where cache files by Spyglass should be stored.
@@ -66,7 +68,7 @@ export class CacheService {
 	) {
 		this.project.on('documentUpdated', ({ doc }) => {
 			try {
-				this.#checksums.files[doc.uri] = getSha1(doc.getText())
+				this.checksums.files[doc.uri] = getSha1(doc.getText())
 			} catch (e) {
 				if (!isErrorCode(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -74,15 +76,19 @@ export class CacheService {
 			}
 		})
 		this.project.on('rootsUpdated', async ({ roots }) => {
-			this.#checksums.roots = {}
 			for (const root of roots) {
 				try {
-					this.#checksums.roots[root] = await this.project.fs.hash(root)
+					this.checksums.roots[root] = await this.project.fs.hash(root)
 				} catch (e) {
 					if (!isErrorCode(e, 'EISDIR')) {
 						this.project.logger.error(`[CacheService#hash-root] ${root}`)
 					}
 				}
+			}
+		})
+		this.project.on('symbolRegistrarExecuted', ({ id, result: { checksum } }) => {
+			if (checksum !== undefined) {
+				this.checksums.symbolRegistrars[id] = checksum
 			}
 		})
 	}
@@ -99,15 +105,15 @@ export class CacheService {
 
 	async load(): Promise<LoadResult> {
 		const __profiler = this.project.profilers.get('cache#load')
+		const ans: LoadResult = { symbols: {} }
 		let filePath: string | undefined
-		let symbols: SymbolTable = {}
 		try {
 			filePath = this.getCacheFilePath()
 			const cache = await fileUtil.readGzippedJson<CacheFile>(filePath)
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
-				this.#checksums = cache.checksums
-				symbols = SymbolTable.link(cache.symbols)
+				this.checksums = cache.checksums
+				ans.symbols = SymbolTable.link(cache.symbols)
 				__profiler.task('Link Symbols')
 			} else {
 				this.project.logger.info(`[CacheService#load] Unsupported cache format ${cache.version}; expected ${LatestCacheVersion}`)
@@ -118,7 +124,7 @@ export class CacheService {
 			}
 		}
 		__profiler.finalize()
-		return { symbols }
+		return ans
 	}
 
 	async validate(): Promise<ValidateResult> {
@@ -130,7 +136,7 @@ export class CacheService {
 		}
 
 		const unchangedRoots: string[] = []
-		for (const [uri, checksum] of Object.entries(this.#checksums.roots)) {
+		for (const [uri, checksum] of Object.entries(this.checksums.roots)) {
 			try {
 				const hash = await this.project.fs.hash(uri)
 				if (hash === checksum) {
@@ -144,7 +150,7 @@ export class CacheService {
 			}
 		}
 
-		for (const [uri, checksum] of Object.entries(this.#checksums.files)) {
+		for (const [uri, checksum] of Object.entries(this.checksums.files)) {
 			if (unchangedRoots.some(root => uri.startsWith(root))) {
 				ans.unchangedFiles.push(uri)
 				continue
@@ -168,8 +174,8 @@ export class CacheService {
 			}
 		}
 
-		for (const uri of this.project.getAllFiles()) {
-			if (!(uri in this.#checksums.files)) {
+		for (const uri of this.project.getTrackedFiles()) {
+			if (!(uri in this.checksums.files)) {
 				ans.addedFiles.push(uri)
 			}
 		}
@@ -186,7 +192,7 @@ export class CacheService {
 		try {
 			filePath = this.getCacheFilePath()
 			const cache: CacheFile = {
-				checksums: this.#checksums,
+				checksums: this.checksums,
 				projectRoot: this.project.projectRoot,
 				symbols: SymbolTable.unlink(this.project.symbols.global),
 				version: LatestCacheVersion,

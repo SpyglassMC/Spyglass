@@ -57,6 +57,7 @@ class ProfilerImpl implements Profiler {
 		this.#finalized = true
 		this.#tasks.push([TotalTaskName, this.#lastTime - this.#startTime])
 		this.#longestTaskNameLength = Math.max(this.#longestTaskNameLength, TotalTaskName.length)
+		this.logger.info(`[Profiler: ${this.id}] == Summary ==`)
 		for (const [name, time] of this.#tasks) {
 			this.logger.info(`[Profiler: ${this.id}] ${name}${' '.repeat(this.#longestTaskNameLength - name.length)} - ${time} ms`)
 		}

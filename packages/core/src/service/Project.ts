@@ -1,5 +1,6 @@
 import chokidar from 'chokidar'
 import EventEmitter from 'events'
+import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { bufferToString, CachePromise, SpyglassUri } from '../common'
@@ -22,6 +23,7 @@ import { fileUtil } from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 import { ProfilerFactory } from './Profiler'
+import type { SymbolRegistrarResult } from './SymbolRegistrar'
 
 const CacheSaverInterval = 60_000
 
@@ -57,6 +59,10 @@ interface EmptyEvent { }
 interface RootsEvent {
 	roots: readonly RootUriString[]
 }
+interface SymbolRegistrarEvent {
+	id: string,
+	result: SymbolRegistrarResult,
+}
 
 export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 export namespace ProjectData {
@@ -87,6 +93,7 @@ export interface Project extends EventEmitter {
 	on(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
 	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
+	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 
 	once(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
 	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
@@ -94,6 +101,7 @@ export interface Project extends EventEmitter {
 	once(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
 	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
+	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 
 	emit(event: 'documentErrorred', data: DocumentErrorEvent): boolean
 	emit(event: 'documentUpdated', data: DocumentEvent): boolean
@@ -101,6 +109,7 @@ export interface Project extends EventEmitter {
 	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
 	emit(event: 'ready', data: EmptyEvent): boolean
 	emit(event: 'rootsUpdated', data: RootsEvent): boolean
+	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
 }
 
 /* istanbul ignore next */
@@ -110,7 +119,6 @@ export interface Project extends EventEmitter {
 export class Project extends EventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
-	readonly #cache = new Map<string, { doc: TextDocument, node: FileNode<AstNode> }>()
 	readonly #cacheSaverIntervalId: NodeJS.Timeout
 	readonly #cacheService: CacheService
 	/**
@@ -118,11 +126,12 @@ export class Project extends EventEmitter {
 	 */
 	readonly #clientManagedUris = new Set<string>()
 	readonly #configService: ConfigService
+	readonly #docAndNodes = new Map<string, DocAndNode>()
 	readonly #initializers: readonly ProjectInitializer[]
 	readonly #initPromise: Promise<void>
 	readonly #readyPromise: Promise<void>
 	readonly #watchedFiles = new Set<string>()
-	readonly #watcher: chokidar.FSWatcher
+	#watcher!: chokidar.FSWatcher
 	#watcherReady = false
 
 	config!: Config
@@ -132,9 +141,6 @@ export class Project extends EventEmitter {
 	readonly profilers: ProfilerFactory
 	readonly projectRoot: RootUriString
 	symbols: SymbolUtil
-
-	#fileUriSupporter!: FileUriSupporter
-	#spyglassUriSupporter!: SpyglassUriSupporter
 
 	#dependencyRoots!: Set<RootUriString>
 	#dependencyFiles!: Set<string>
@@ -173,7 +179,7 @@ export class Project extends EventEmitter {
 		const rawRoots = [...this.#dependencyRoots, this.projectRoot]
 		const ans = new Set(rawRoots)
 		// Identify roots indicated by `pack.mcmeta`.
-		for (const file of this.getAllFiles()) {
+		for (const file of this.getTrackedFiles()) {
 			if (file.endsWith(Project.RootSuffix) && rawRoots.some(r => file.startsWith(r))) {
 				ans.add(file.slice(0, 1 - Project.RootSuffix.length) as RootUriString)
 			}
@@ -183,9 +189,12 @@ export class Project extends EventEmitter {
 	}
 
 	/**
-	 * All files that are tracked and supported.
+	 * Get all files that are tracked and supported.
+	 * 
+	 * Files in cached archives may not show up in the result as those files
+	 * are not loaded into the memory.
 	 */
-	getAllFiles(): string[] {
+	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
 		return [...this.#dependencyFiles, ...this.#watchedFiles]
 			.filter(file => extensions.includes(fileUtil.extname(file) ?? ''))
@@ -221,12 +230,8 @@ export class Project extends EventEmitter {
 			})
 			.on('error', ({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error))
 
-		this.#watcher = chokidar
-			.watch(projectPath, { ignoreInitial: false })
-
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
-			this.logger.info('[Project] [Config] Loaded')
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
@@ -269,44 +274,58 @@ export class Project extends EventEmitter {
 			return ans
 		}
 		const listDependencyFiles = async () => {
-			await loadConfig()
-			await callIntializers()
 			const dependencies = await getDependencies()
-			this.#fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
-			this.#spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger)
-			this.fs.register('file:', this.#fileUriSupporter)
-			this.fs.register(SpyglassUri.Protocol, this.#spyglassUriSupporter)
+			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
+			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.#cacheService.checksums.roots)
+			this.fs.register('file:', fileUriSupporter)
+			this.fs.register(SpyglassUri.Protocol, spyglassUriSupporter)
 		}
-		const listProjectFiles = () => new Promise<void>(resolve => this.#watcher
-			.once('ready', () => {
-				this.#watcherReady = true
-				resolve()
-			})
-			.on('add', path => {
-				const uri = fileUtil.pathToFileUri(path)
-				this.#watchedFiles.add(uri)
-				if (this.#watcherReady) {
-					this.emit('fileCreated', { uri })
-				}
-			})
-			.on('change', path => {
-				const uri = fileUtil.pathToFileUri(path)
-				if (this.#watcherReady) {
-					this.emit('fileModified', { uri })
-				}
-			})
-			.on('unlink', path => {
-				const uri = fileUtil.pathToFileUri(path)
-				this.#watchedFiles.delete(uri)
-				if (this.#watcherReady) {
-					this.emit('fileDeleted', { uri })
-				}
-			})
-			.on('error', e => {
-				this.logger.error('[Project] [chokidar]', e)
-			})
+		const listProjectFiles = () => new Promise<void>(resolve => {
+			this.#watcher = chokidar
+				.watch(projectPath, { ignoreInitial: false })
+				.once('ready', () => {
+					this.#watcherReady = true
+					resolve()
+				})
+				.on('add', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					this.#watchedFiles.add(uri)
+					if (this.#watcherReady) {
+						this.emit('fileCreated', { uri })
+					}
+				})
+				.on('change', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					if (this.#watcherReady) {
+						this.emit('fileModified', { uri })
+					}
+				})
+				.on('unlink', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					this.#watchedFiles.delete(uri)
+					if (this.#watcherReady) {
+						this.emit('fileDeleted', { uri })
+					}
+				})
+				.on('error', e => {
+					this.logger.error('[Project] [chokidar]', e)
+				})
+		}
 		)
 		const init = async () => {
+			const __profiler = this.profilers.get('project#init')
+
+			const { symbols } = await this.#cacheService.load()
+			this.symbols = new SymbolUtil(symbols)
+			this.symbols.buildCache()
+			__profiler.task('Load Cache')
+
+			await loadConfig()
+			__profiler.task('Load Config')
+
+			await callIntializers()
+			__profiler.task('Initialize')
+
 			await Promise.all([
 				listDependencyFiles(),
 				listProjectFiles(),
@@ -316,29 +335,30 @@ export class Project extends EventEmitter {
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
 			this.updateRoots()
+			__profiler.task('List Files').finalize()
 		}
 		const ready = async () => {
+			await this.init()
+
 			const __profiler = this.profilers.get('project#ready')
-			// const limit = pLimit(8)
+			const limit = pLimit(8)
 			const ensureParsed = this.ensureParsed.bind(this)
 			const ensureChecked = this.ensureChecked.bind(this)
 
-			await this.init()
-			__profiler.task('List Files')
+			for (const [id, registrar] of this.meta.symbolRegistrars) {
+				const result = registrar(this.symbols, {
+					cacheChecksum: this.#cacheService.checksums.symbolRegistrars[id],
+					logger,
+				})
+				this.emit('symbolRegistrarExecuted', { id, result })
+			}
+			__profiler.task('Register Symbols')
 
-			const { symbols } = await this.#cacheService.load()
-			this.symbols = new SymbolUtil(symbols)
-			this.symbols.buildCache()
 			const { addedFiles, changedFiles, removedFiles } = await this.#cacheService.validate()
 			for (const uri of removedFiles) {
 				this.symbols.clear({ uri })
 			}
 			__profiler.task('Validate Cache')
-
-			for (const registrar of this.meta.symbolRegistrars) {
-				registrar(this.symbols)
-			}
-			__profiler.task('Register Symbols')
 
 			if (addedFiles.length > 0) {
 				this.bind(addedFiles)
@@ -346,7 +366,7 @@ export class Project extends EventEmitter {
 			__profiler.task('Bind URIs')
 
 			// FIXME: nbtdoc files might need to be parsed and checked before others.
-			// const docAndNodes = (await Promise.all(allFiles.map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
+			// const docAndNodes = (await Promise.all([...addedFiles, ...changedFiles].map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
 			const docAndNodes = (await Promise.all([...addedFiles, ...changedFiles].map(ensureParsed))).filter((r): r is DocAndNode => !!r)
 			__profiler.task('Parse Files')
 
@@ -379,7 +399,7 @@ export class Project extends EventEmitter {
 			})
 			.on('fileModified', async ({ uri }) => {
 				if (this.isOnlyWatched(uri)) {
-					this.#cache.delete(uri)
+					this.#docAndNodes.delete(uri)
 					await this.ensureParsedAndChecked(uri)
 				}
 			})
@@ -422,7 +442,7 @@ export class Project extends EventEmitter {
 	 */
 	get(uri: string): DocAndNode | undefined {
 		uri = fileUtil.normalize(uri)
-		return this.#cache.get(uri)
+		return this.#docAndNodes.get(uri)
 	}
 
 	/**
@@ -432,8 +452,8 @@ export class Project extends EventEmitter {
 	async ensureParsed(uri: string): Promise<DocAndNode | undefined> {
 		uri = fileUtil.normalize(uri)
 
-		if (this.#cache.has(uri)) {
-			return this.#cache.get(uri)!
+		if (this.#docAndNodes.has(uri)) {
+			return this.#docAndNodes.get(uri)!
 		}
 
 		const languageID = this.getLanguageID(uri)
@@ -467,7 +487,7 @@ export class Project extends EventEmitter {
 
 	private cache(doc: TextDocument, node: FileNode<AstNode>): DocAndNode {
 		const data: DocAndNode = { doc, node }
-		this.#cache.set(doc.uri, data)
+		this.#docAndNodes.set(doc.uri, data)
 		this.emit('documentUpdated', data)
 		return data
 	}
@@ -606,7 +626,7 @@ export class Project extends EventEmitter {
 
 	private tryClearingCache(uri: string): void {
 		if (this.shouldRemove(uri)) {
-			this.#cache.delete(uri)
+			this.#docAndNodes.delete(uri)
 			this.emit('documentRemoved', { uri })
 		}
 	}

@@ -5,10 +5,11 @@ import { checker, colorizer, completer, formatter, linter } from '../processor'
 import type { Formatter } from '../processor/formatter'
 import type { Linter } from '../processor/linter/Linter'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider'
-import type { SymbolUtil, UriBinder } from '../symbol'
+import type { UriBinder } from '../symbol'
 import type { DependencyKey, DependencyProvider } from './Dependency'
 import type { FileExtension } from './fileUtil'
 import type { Logger } from './Logger'
+import type { SymbolRegistrar } from './SymbolRegistrar'
 
 export interface LanguageOptions {
 	/**
@@ -24,8 +25,6 @@ interface LinterRegistration {
 	linter: Linter<AstNode>,
 	nodePredicate: (node: AstNode) => boolean,
 }
-
-type SymbolRegistrar = (this: void, symbols: SymbolUtil) => void
 
 /* istanbul ignore next */
 /**
@@ -45,7 +44,7 @@ export class MetaRegistry {
 	readonly #linters = new Map<string, LinterRegistration>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
-	readonly #symbolRegistrars = new Set<SymbolRegistrar>()
+	readonly #symbolRegistrars = new Map<string, SymbolRegistrar>()
 	readonly #uriBinders = new Set<UriBinder>()
 
 	constructor() {
@@ -209,10 +208,10 @@ export class MetaRegistry {
 		return this.#signatureHelpProviders
 	}
 
-	public registerSymbolRegistrar(registrar: SymbolRegistrar): void {
-		this.#symbolRegistrars.add(registrar)
+	public registerSymbolRegistrar(id: string, registrar: SymbolRegistrar): void {
+		this.#symbolRegistrars.set(id, registrar)
 	}
-	public get symbolRegistrars(): Set<SymbolRegistrar> {
+	public get symbolRegistrars(): Map<string, SymbolRegistrar> {
 		return this.#symbolRegistrars
 	}
 
