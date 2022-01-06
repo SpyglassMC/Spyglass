@@ -41,6 +41,7 @@ connection.onInitialize(async params => {
 
 	// TODO: Remove this. This is to give the debugger time to attach.
 	await new Promise(resolve => setTimeout(resolve, 7000))
+	logger.warn('Delayed 7 seconds manually. If you see this in production, it means SPGoding messed up.')
 
 	try {
 		await locales.loadLocale(params.locale)

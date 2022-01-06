@@ -1,6 +1,5 @@
 import { strict as assert } from 'assert'
 import EventEmitter from 'events'
-import rfdc from 'rfdc'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode } from '../node'
 import type { RangeLike } from '../source'
@@ -117,7 +116,12 @@ export class SymbolUtil extends EventEmitter {
 				this.#trimmableSymbols.add(path)
 			})
 
-		// FIXME: Emit events for existing symbols on global
+		SymbolUtil.forEachSymbol(global, symbol => {
+			this.emit('symbolCreated', { symbol })
+			SymbolUtil.forEachLocationOfSymbol(symbol, ({ type, location }) => {
+				this.emit('symbolLocationCreated', { symbol, type, location })
+			})
+		})
 	}
 
 	/**
@@ -623,13 +627,10 @@ export class SymbolUtil extends EventEmitter {
 		}
 	}
 
-	static toJson(table: SymbolTable): string {
-		const clone = rfdc({ circles: true })(table)
-		this.forEachSymbol(clone, symbol => {
-			delete (symbol as any).parentMap
-			delete symbol.parentSymbol
-		})
-		return JSON.stringify(clone)
+	static forEachLocationOfSymbol(symbol: Symbol, fn: (data: { type: SymbolUsageType, location: SymbolLocation }) => unknown): void {
+		for (const type of SymbolUsageTypes) {
+			symbol[type]?.forEach(location => fn({ type, location }))
+		}
 	}
 }
 

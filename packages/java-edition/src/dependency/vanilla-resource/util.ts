@@ -182,6 +182,12 @@ const RegistriesSpyglassUri = 'spyglassmc://vanilla-resource/registries.json'
 const SoundsBaseUri = 'https://misode.github.io/sounds/'
 const WikiBaseUri = 'https://minecraft.fandom.com/wiki'
 
+const isRelevantSymbolLocation = ({ location }: { location: core.SymbolLocation }) => {
+	return location.uri.startsWith(WikiBaseUri) ||
+		location.uri.startsWith(SoundsBaseUri) ||
+		location.uri === RegistriesSpyglassUri
+}
+
 const shorten = (id: string): string => id.replace(/^minecraft:/, '')
 const getWikiPageName = (id: string): string => shorten(id).split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
 
@@ -189,7 +195,7 @@ function addStatesSymbols(category: 'block' | 'fluid', states: VanillaStates, sy
 	const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<typeof category>
 
 	// Remove all related existing symbols.
-	symbols.clear({ contributor: `vanilla_resource/${category}` })
+	symbols.clear({ contributor: `vanilla_resource/${category}`, predicate: isRelevantSymbolLocation })
 
 	// Add ids and states to the symbol table.
 	symbols.contributeAs(`vanilla_resource/${category}`, () => {
@@ -295,7 +301,7 @@ export function addRegistriesSymbols(registries: VanillaRegistries, symbols: cor
 		// We register blocks and fluids at `addBlocksSymbols` and `addFluidsSymbols`, instead of here.
 		if (isCategory(registryId) && registryId !== 'block' && registryId !== 'fluid') {
 			// Remove all related existing symbols.
-			symbols.clear({ contributor: `vanilla_resource/${registryId}` })
+			symbols.clear({ contributor: `vanilla_resource/${registryId}`, predicate: isRelevantSymbolLocation })
 
 			symbols.contributeAs(`vanilla_resource/${registryId}`, () => {
 				// Add resource locations from the registry to the symbol table.
