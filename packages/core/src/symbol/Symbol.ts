@@ -360,10 +360,13 @@ export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined,
 }
 
-export interface UnlinkedSymbol extends Omit<Symbol, 'members' | 'parentMap' | 'parentSymbol'> {
+export interface UnlinkedSymbol extends Omit<Symbol, 'category' | 'identifier' | 'members' | 'parentMap' | 'parentSymbol' | 'path'> {
+	category?: undefined,
+	identifier?: undefined,
 	members?: UnlinkedSymbolMap,
 	parentMap?: undefined,
 	parentSymbol?: undefined,
+	path?: undefined,
 }
 
 export interface UnlinkedSymbolMap {
@@ -382,26 +385,29 @@ export namespace SymbolTable {
 	 * are set properly.
 	 */
 	export function link(table: UnlinkedSymbolTable): SymbolTable {
-		const linkSymbol = (symbol: Symbol, parentMap: SymbolMap, parentSymbol: Symbol | undefined) => {
+		const linkSymbol = (symbol: Symbol, parentMap: SymbolMap, parentSymbol: Symbol | undefined, category: string, path: string[]) => {
+			symbol.category = category
+			symbol.identifier = path[path.length - 1]
+			symbol.path = path
 			symbol.parentMap = parentMap
 			if (parentSymbol) {
 				symbol.parentSymbol = parentSymbol
 			}
 			if (symbol.members) {
-				linkSymbolMap(symbol.members, symbol)
+				linkSymbolMap(symbol.members, symbol, category, path)
 			}
 		}
 
-		const linkSymbolMap = (map: SymbolMap, parentSymbol: Symbol | undefined) => {
-			for (const childSymbol of Object.values(map)) {
-				linkSymbol(childSymbol, map, parentSymbol)
+		const linkSymbolMap = (map: SymbolMap, parentSymbol: Symbol | undefined, category: string, path: string[]) => {
+			for (const [identifier, childSymbol] of Object.entries(map)) {
+				linkSymbol(childSymbol, map, parentSymbol, category, [...path, identifier])
 			}
 		}
 
 		const ans = rfdc()(table) as SymbolTable
 
-		for (const map of Object.values(ans)) {
-			linkSymbolMap(map!, undefined)
+		for (const [category, map] of Object.entries(ans)) {
+			linkSymbolMap(map!, undefined, category, [])
 		}
 
 		return ans
@@ -415,8 +421,11 @@ export namespace SymbolTable {
 	 */
 	export function unlink(table: SymbolTable): UnlinkedSymbolTable {
 		const unlinkSymbol = (symbol: UnlinkedSymbol) => {
+			delete symbol.category
+			delete symbol.identifier
 			delete symbol.parentMap
 			delete symbol.parentSymbol
+			delete symbol.path
 			if (symbol.members) {
 				unlinkSymbolMap(symbol.members)
 			}
