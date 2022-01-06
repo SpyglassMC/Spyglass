@@ -94,7 +94,7 @@ export class CacheService {
 	 * @returns `${cacheRoot}/symbols/${sha1(projectRoot)}.json`
 	 */
 	private getCacheFilePath(): string {
-		return this.#cacheFilePath ??= path.join(this.cacheRoot, 'symbols', `${getSha1(this.project.projectRoot)}.json`)
+		return this.#cacheFilePath ??= path.join(this.cacheRoot, 'symbols', `${getSha1(this.project.projectRoot)}.json.gz`)
 	}
 
 	async load(): Promise<LoadResult> {
@@ -103,7 +103,7 @@ export class CacheService {
 		let symbols: SymbolTable = {}
 		try {
 			filePath = this.getCacheFilePath()
-			const cache = await fileUtil.readJson<CacheFile>(filePath)
+			const cache = await fileUtil.readGzippedJson<CacheFile>(filePath)
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.#checksums = cache.checksums
@@ -193,7 +193,7 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeJson(filePath, cache)
+			await fileUtil.writeGzippedJson(filePath, cache)
 			__profiler.task('Write File').finalize()
 
 			return true

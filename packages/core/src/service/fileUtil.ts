@@ -2,7 +2,9 @@ import type fs from 'fs'
 import { promises as fsp } from 'fs'
 import { resolve } from 'path'
 import url, { URL as Uri } from 'url'
-import { bufferToString } from '../common'
+import { promisify } from 'util'
+import zlib from 'zlib'
+import { bufferToString, isErrorCode } from '../common'
 
 export type RootUriString = `${string}/`
 
@@ -133,7 +135,7 @@ export namespace fileUtil {
 		try {
 			await fsp.mkdir(toFsPathLike(path), { mode, recursive: true })
 		} catch (e) {
-			if (!(e instanceof Error && (e as any).code === 'EEXIST')) {
+			if (!isErrorCode(e, 'EEXIST')) {
 				throw e
 			}
 		}
@@ -149,6 +151,10 @@ export namespace fileUtil {
 	 */
 	export async function ensureParentOfFile(path: PathLike, mode: fs.Mode = 0o777): Promise<void> {
 		return ensureDir(getParentOfFile(path), mode)
+	}
+
+	export async function readFile(path: PathLike): Promise<Buffer> {
+		return fsp.readFile(toFsPathLike(path))
 	}
 
 	/* istanbul ignore next */
@@ -171,7 +177,7 @@ export namespace fileUtil {
 	 * @throws
 	 */
 	export async function readJson<T = any>(path: PathLike): Promise<T> {
-		return JSON.parse(bufferToString(await fsp.readFile(toFsPathLike(path))))
+		return JSON.parse(bufferToString(await readFile(path)))
 	}
 
 	/* istanbul ignore next */
@@ -182,5 +188,35 @@ export namespace fileUtil {
 	 */
 	export async function writeJson(path: PathLike, data: any): Promise<void> {
 		return writeFile(path, JSON.stringify(data))
+	}
+
+	/**
+	 * @throws
+	 */
+	export async function readGzippedFile(path: PathLike): Promise<Buffer> {
+		const unzip = promisify(zlib.gunzip)
+		return unzip(await readFile(path))
+	}
+
+	/**
+	 * @throws
+	 */
+	export async function writeGzippedFile(path: PathLike, buffer: Buffer | string): Promise<void> {
+		const zip = promisify(zlib.gzip)
+		return writeFile(path, await zip(buffer))
+	}
+
+	/**
+	 * @throws
+	 */
+	export async function readGzippedJson<T = any>(path: PathLike): Promise<T> {
+		return JSON.parse(bufferToString(await readGzippedFile(path)))
+	}
+
+	/**
+	 * @throws
+	 */
+	export async function writeGzippedJson(path: PathLike, data: any): Promise<void> {
+		return writeGzippedFile(path, JSON.stringify(data))
 	}
 }

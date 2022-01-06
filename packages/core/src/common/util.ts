@@ -173,7 +173,7 @@ export function getSha1(data: string | Buffer): string {
 }
 
 export function isErrorCode(e: unknown, code: string): boolean {
-	return e instanceof Error && (e as any).code === code
+	return e instanceof Error && (e as NodeJS.ErrnoException).code === code
 }
 
 export function isEnoent(e: unknown): boolean {

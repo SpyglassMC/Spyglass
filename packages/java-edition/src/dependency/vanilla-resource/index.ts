@@ -1,6 +1,5 @@
 import * as core from '@spyglassmc/core'
 import download from 'download'
-import { promises as fsp } from 'fs'
 import * as path from 'path'
 import type { VanillaCommands, VanillaRegistries, VanillaResources, VanillaStates, VersionManifest } from './type'
 import { VersionStatus } from './type'
@@ -49,7 +48,7 @@ export async function getVanillaResources(version: string, status: VersionStatus
 		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
 	}
 
-	const wrap = async <T extends object>(overridePath: string | undefined, fallback: () => PromiseLike<T> | T, transformer: (value: any) => T = v => v) => {
+	const handleOverride = async <T extends object>(overridePath: string | undefined, fallback: () => PromiseLike<T> | T, transformer: (value: any) => T = v => v) => {
 		if (overridePath) {
 			try {
 				return transformer(await core.fileUtil.readJson(overridePath))
@@ -61,14 +60,14 @@ export async function getVanillaResources(version: string, status: VersionStatus
 	}
 
 	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
-		return wrap<T>(overridePath, () => downloadJson<T>(logger, url, cacheRoot, ['mc-je', version, fileName], !shouldRefresh, transformer), transformer)
+		return handleOverride<T>(overridePath, () => downloadJson<T>(logger, url, cacheRoot, ['mc-je', version, fileName], !shouldRefresh, transformer, true), transformer)
 	}
 
 	const [blocks, commands, fluids, registries] = await Promise.all([
-		getResource<VanillaStates>(blocksUrl, 'blocks.json', overridePaths.blocks, blocksTransformer),
-		getResource<VanillaCommands>(commandsUrl, 'commands.json', overridePaths.commands),
-		wrap<VanillaStates>(overridePaths.fluids, () => VanillaFluidsData),
-		getResource<VanillaRegistries>(registriesUrl, 'registries.json', overridePaths.registries, registriesTransformer),
+		getResource<VanillaStates>(blocksUrl, 'blocks.json.gz', overridePaths.blocks, blocksTransformer),
+		getResource<VanillaCommands>(commandsUrl, 'commands.json.gz', overridePaths.commands),
+		handleOverride<VanillaStates>(overridePaths.fluids, () => VanillaFluidsData),
+		getResource<VanillaRegistries>(registriesUrl, 'registries.json.gz', overridePaths.registries, registriesTransformer),
 	])
 
 	return { blocks, commands, fluids, registries }
@@ -218,15 +217,15 @@ async function fetchJson<T = any>(url: string, downloadOptions?: download.Downlo
 	return jsonTransformer(await download(url, undefined, downloadOptions))
 }
 
-async function downloadJson<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v): Promise<T> {
-	return downloadData(logger, url, cacheRoot, cachePaths, preferCache, buffer => transformer(jsonTransformer(buffer)))
+async function downloadJson<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v, shouldZip = false): Promise<T> {
+	return downloadData(logger, url, cacheRoot, cachePaths, preferCache, buffer => transformer(jsonTransformer(buffer)), undefined, shouldZip)
 }
 
 /* istanbul ignore next */
 /**
  * @throws Network/file system errors.
  */
-async function downloadData<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions): Promise<T> {
+async function downloadData<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions, shouldZip = false): Promise<T> {
 	let error: Error
 
 	const cacheParent = path.join(cacheRoot, ...cachePaths.slice(0, -1))
@@ -238,7 +237,11 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 			const buffer = await download(url, undefined, downloadOptions)
 			const ans = transformer(buffer)
 			try {
-				await core.fileUtil.writeFile(cacheFilePath, buffer)
+				if (shouldZip) {
+					await core.fileUtil.writeGzippedFile(cacheFilePath, buffer)
+				} else {
+					await core.fileUtil.writeFile(cacheFilePath, buffer)
+				}
 			} catch (e) {
 				// Cache failed.
 				error = e as Error
@@ -262,12 +265,20 @@ async function downloadData<T extends object>(logger: core.Logger, url: string, 
 	}
 
 	try {
-		const buffer = await fsp.readFile(cacheFilePath)
+		let buffer: Buffer
+		if (shouldZip) {
+			buffer = await core.fileUtil.readGzippedFile(cacheFilePath)
+		} else {
+			buffer = await core.fileUtil.readFile(cacheFilePath)
+		}
 		const ans = transformer(buffer)
 		logger.info(`[dependency] [download] Read cache from “${cacheFilePath}”`)
 		return ans
 	} catch (e) {
 		// Read cache failed.
+		if (!core.isEnoent(e)) {
+			logger.error(`[dependency] [download] Read cache from “${cacheFilePath}”`, e)
+		}
 		error = e as Error
 		if (preferCache) {
 			const ans = await downloadAndCache()
