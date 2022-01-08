@@ -21,6 +21,7 @@ const Triggers = (ctx: JsonCheckerContext) => [
 	'minecraft:enter_block',
 	'minecraft:entity_hurt_player',
 	'minecraft:entity_killed_player',
+	...versioned(ctx, '1.18', ['minecraft:fall_from_height']),
 	'minecraft:filled_bucket',
 	'minecraft:fishing_rod_hooked',
 	'minecraft:hero_of_the_village',
@@ -39,6 +40,7 @@ const Triggers = (ctx: JsonCheckerContext) => [
 	...versioned(ctx, '1.16', ['minecraft:player_interacted_with_entity']),
 	'minecraft:player_killed_entity',
 	'minecraft:recipe_unlocked',
+	...versioned(ctx, '1.18', ['minecraft:ride_entity_in_lava']),
 	'minecraft:shot_crossbow',
 	...versioned(ctx, ['minecraft:safely_harvest_honey'], '1.16'),
 	'minecraft:slept_in_bed',
@@ -292,6 +294,10 @@ export const criterion = as('criterion', dispatch('trigger',
 					entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
 					killing_blow: opt(damage_source_predicate),
 				},
+				fall_from_height: {
+					start_position: opt(location_predicate),
+					distance: opt(distance_predicate),
+				},
 				filled_bucket: {
 					item: opt(item_predicate),
 				},
@@ -335,9 +341,13 @@ export const criterion = as('criterion', dispatch('trigger',
 					location: opt(versioned(ctx, '1.16', location_predicate)),
 				},
 				nether_travel: {
+					...versioned(ctx, {
+						entered: opt(location_predicate),
+					}, '1.18', {
+						start_position: opt(location_predicate),
+					}),
+					exited: opt(versioned(ctx, location_predicate, '1.18')),
 					distance: opt(distance_predicate),
-					entered: opt(location_predicate),
-					exited: opt(location_predicate),
 				},
 				placed_block: {
 					block: opt(resource('block')),
@@ -362,6 +372,10 @@ export const criterion = as('criterion', dispatch('trigger',
 				},
 				recipe_unlocked: {
 					recipe: resource('recipe'),
+				},
+				ride_entity_in_lava: {
+					start_position: opt(location_predicate),
+					distance: opt(distance_predicate),
 				},
 				slept_in_bed: {
 					location: opt(versioned(ctx, '1.16', location_predicate)),

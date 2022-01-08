@@ -4,10 +4,14 @@ import { JsonArrayNode, JsonObjectNode } from '@spyglassmc/json'
 import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, extract, float, floatRange, int, intRange, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { renamed, versioned } from '../util'
-import { block_state, floatProvider, fluid_state, HeightmapType, height_provider, intProvider, uniformInt, Y_SIZE } from './common'
+import { block_state, Direction, floatProvider, fluid_state, HeightmapType, height_provider, inclusiveRange, intProvider, noise_parameters, uniformInt, Y_SIZE } from './common'
 import { processor_list_ref, rule_test } from './structure'
 
-function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerContext) {
+function intersection(...values: string[][]) {
+	return [...new Set(([] as string[]).concat(...values).filter(e => values.every(a => a.includes(e))))]
+}
+
+function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerContext): string[] {
 	if (node && JsonObjectNode.is(node)) {
 		let block = extract('Name', node.children)
 		if (block) {
@@ -19,6 +23,11 @@ function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerCon
 				.filter(m => Object.keys(m.members ?? {})[0]?.match(/^\d+$/))
 				.map(m => m.identifier)
 		}
+	} else if (node && JsonArrayNode.is(node)) {
+		const values = node.children.map(item => item.value)
+			.filter(n => n)
+			.map(n => blockStateIntProperties(n as JsonNode, ctx))
+		return intersection(...values)
 	}
 	return []
 }
@@ -26,6 +35,14 @@ function blockStateIntProperties(node: JsonNode | undefined, ctx: JsonCheckerCon
 function blockProviderProperties(node: JsonNode | undefined, ctx: JsonCheckerContext): string[] {
 	if (!node || !JsonObjectNode.is(node)) return []
 	switch (extract('type', node.children)?.replace(/^minecraft:/, '')) {
+		case 'dual_noise_provider':
+		case 'noise_provider':
+			const states = node.children.find(p => p.key?.value === 'states')?.value
+			return blockStateIntProperties(states, ctx)
+		case 'noise_threshold':
+			const lowStates = node.children.find(p => p.key?.value === 'low_states')?.value
+			const highStates = node.children.find(p => p.key?.value === 'high_states')?.value
+			return intersection(blockStateIntProperties(lowStates, ctx), blockStateIntProperties(highStates, ctx))
 		case 'randomized_int_state_provider':
 			const source = node.children.find(p => p.key?.value === 'source')?.value
 			return blockProviderProperties(source, ctx)
@@ -41,15 +58,40 @@ function blockProviderProperties(node: JsonNode | undefined, ctx: JsonCheckerCon
 						n.value.children.find(p => p.key?.value === 'data')?.value)
 					.filter(n => n)
 					.map(n => blockStateIntProperties(n as JsonNode, ctx))
-				return [...new Set(([] as string[]).concat(...values).filter(e => values.every(a => a.includes(e))))]
+				return intersection(...values)
 			}
 	}
 	return []
 }
 
+const noiseProvider = {
+	seed: int,
+	noise: noise_parameters,
+	scale: floatRange(0, undefined), // TODO: disallow 0
+}
+
 const block_state_provider = as('block_state_provider', dispatch('type', (type, props, ctx) => record({
 	type: resource('worldgen/block_state_provider_type'),
 	...pick(type, {
+		dual_noise_provider: {
+			...noiseProvider,
+			variety: inclusiveRange(1, 64),
+			slow_noise: noise_parameters,
+			slow_scale: floatRange(0, undefined), // TODO: disallow 0
+			states: listOf(block_state),
+		},
+		noise_threshold_provider: {
+			...noiseProvider,
+			threshold: floatRange(-1, 1),
+			high_chance: floatRange(0, 1),
+			default_state: block_state,
+			low_states: listOf(block_state),
+			high_states: listOf(block_state),
+		},
+		noise_provider: {
+			...noiseProvider,
+			states: listOf(block_state),
+		},
 		randomized_int_state_provider: {
 			// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
 			property: (ctx.ensureChecked) ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
@@ -67,6 +109,48 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 				weight: intRange(1, undefined),
 				data: block_state,
 			})),
+		},
+	}),
+})))
+
+const blockPredicateOffset = {
+	offset: listOf(intRange(-16, 16)),
+}
+
+const block_predicate_worldgen = as('block_predicate_worldgen', dispatch('type', type => record({
+	type: resource('block_predicate_type'),
+	...pick(type, {
+		all_of: {
+			predicates: listOf(block_predicate_worldgen),
+		},
+		any_of: {
+			predicates: listOf(block_predicate_worldgen),
+		},
+		has_sturdy_face: {
+			...blockPredicateOffset,
+			direction: literal(Direction),
+		},
+		inside_world_bounds: {
+			...blockPredicateOffset,
+		},
+		matching_block_tag: {
+			...blockPredicateOffset,
+			tag: resource('tag/block'),
+		},
+		matching_blocks: {
+			...blockPredicateOffset,
+			blocks: listOf(resource('block')),
+		},
+		matching_fluids: {
+			...blockPredicateOffset,
+			fluids: listOf(resource('fluid')),
+		},
+		not: {
+			predicate: block_predicate_worldgen,
+		},
+		would_survive: {
+			...blockPredicateOffset,
+			state: block_state,
 		},
 	}),
 })))
@@ -172,7 +256,7 @@ const DiskConfig = (ctx: JsonCheckerContext) => ({
 	targets: listOf(block_state),
 })
 
-const RandomPatchConfig = (ctx: JsonCheckerContext) => ({
+const RandomPatchConfig = (ctx: JsonCheckerContext) => versioned(ctx, {
 	state_provider: block_state_provider,
 	block_placer: block_placer,
 	whitelist: listOf(block_state),
@@ -194,6 +278,10 @@ const RandomPatchConfig = (ctx: JsonCheckerContext) => ({
 		project: opt(boolean, true),
 		need_water: opt(boolean, false),
 	}),
+}, '1.18', {
+	xz_spread: opt(intRange(0, undefined)),
+	y_spread: opt(intRange(0, undefined)),
+	feature: placed_feature_ref,
 })
 
 const HugeMushroomConfig = {
@@ -227,7 +315,7 @@ const RangeConfig = {
 	top_offset: int,
 }
 
-const VegetationPatchConfig = {
+const VegetationPatchConfig = (ctx: JsonCheckerContext) => ({
 	surface: literal(['floor', 'ceiling']),
 	depth: intProvider(1, 128),
 	vertical_range: intRange(1, 256),
@@ -237,9 +325,11 @@ const VegetationPatchConfig = {
 	xz_radius: intProvider(),
 	replaceable: resource('tag/block'),
 	ground_state: block_state_provider,
-	vegetation_feature: ref(() => configured_feature_ref),
-}
+	vegetation_feature: versioned(ctx, ref(() => configured_feature_ref),
+		'1.18', ref(() => placed_feature_ref)),
+})
 
+// until 1.17
 export const configured_decorator = as('decorator', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/decorator'),
 	config: record(pick(type, {
@@ -306,6 +396,61 @@ export const configured_decorator = as('decorator', dispatch('type', (type, _, c
 	})),
 })))
 
+export const placement_modifier = as('placement_modifier', dispatch('type', type => record({
+	type: resource('worldgen/placement_modifier_type'),
+	...pick(type, {
+		block_predicate_filter: {
+			predicate: block_predicate_worldgen,
+		},
+		carving_mask: {
+			step: literal(['air', 'liquid']),
+		},
+		rarity_filter: {
+			chance: intRange(1, undefined),
+		},
+		count: {
+			count: intProvider(0, 256),
+		},
+		count_on_every_layer: {
+			count: intProvider(0, 256),
+		},
+		noise_threshold_count: {
+			noise_level: float,
+			below_noise: int,
+			above_noise: int,
+		},
+		noise_based_count: {
+			noise_to_count_ratio: int,
+			noise_factor: float,
+			noise_offset: opt(float),
+		},
+		environment_scan: {
+			direction_of_search: literal(['up', 'down']),
+			max_steps: intRange(1, 32),
+			target_condition: block_predicate_worldgen,
+			allowed_search_condition: opt(block_predicate_worldgen),
+		},
+		heightmap: {
+			heightmap: literal(HeightmapType),
+		},
+		height_range: {
+			height: height_provider,
+		},
+		random_offset: {
+			xz_spread: intProvider(-16, 16),
+			y_spread: intProvider(-16, 16),
+		},
+		surface_relative_threshold_filter: {
+			heigtmap: literal(HeightmapType),
+			min_inclusive: opt(int),
+			max_inclusive: opt(int),
+		},
+		surface_water_depth_filter: {
+			max_water_depth: int,
+		},
+	}),
+})))
+
 export const configured_feature = as('feature', dispatch('type', (type, _, ctx) => record({
 	type: resource('worldgen/feature'),
 	config: record(pick(type, {
@@ -315,6 +460,15 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 		basalt_columns: {
 			reach: versioned(ctx, uniformInt(0, 2, 1), '1.17', intProvider(0, 3)),
 			height: versioned(ctx, uniformInt(1, 5, 5), '1.17', intProvider(1, 10)),
+		},
+		block_column: {
+			direction: literal(Direction),
+			allowed_placement: block_predicate_worldgen,
+			prioritize_tip: boolean,
+			layers: listOf(record({
+				height: intProvider(0, undefined),
+				provider: block_state_provider,
+			})),
 		},
 		block_pile: {
 			state_provider: block_state_provider,
@@ -416,10 +570,10 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 			can_place_on_floor: opt(boolean, false),
 			can_place_on_wall: opt(boolean, false),
 			can_place_on_ceiling: opt(boolean, false),
-			can_be_placed_on: listOf(block_state),
+			can_be_placed_on: listOf(versioned(ctx, block_state, '1.18', resource('block'))),
 		},
 		growing_plant: {
-			direction: literal(['up', 'down', 'north', 'east', 'south', 'west']),
+			direction: literal(Direction),
 			allow_water: boolean,
 			height_distribution: listOf(record({
 				weight: int,
@@ -441,9 +595,12 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 		iceberg: {
 			state: block_state,
 		},
-		lake: {
+		lake: versioned(ctx, {
 			state: block_state,
-		},
+		}, '1.18', {
+			fluid: block_state_provider,
+			barrier: block_state_provider,
+		}),
 		large_dripstone: {
 			floor_to_ceiling_search_range: opt(intRange(1, 512), 30),
 			column_radius: intProvider(0, 20),
@@ -457,6 +614,10 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 		},
 		nether_forest_vegetation: {
 			state_provider: block_state_provider,
+			...versioned(ctx, '1.18', {
+				spread_width: intRange(1, undefined),
+				spread_height: intProvider(1, undefined),
+			}),
 		},
 		netherrack_replace_blobs: {
 			radius: versioned(ctx, uniformInt(), '1.17', intProvider(0, 12)),
@@ -466,17 +627,23 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 		no_bonemeal_flower: RandomPatchConfig(ctx),
 		no_surface_ore: OreConfig(ctx),
 		ore: OreConfig(ctx),
+		pointed_dripstone: {
+			chance_of_taller_dripstone: floatRange(0, 1),
+			chance_of_directional_spread: floatRange(0, 1),
+			chance_of_spread_radius2: floatRange(0, 1),
+			chance_of_spread_radius3: floatRange(0, 1),
+		},
 		random_boolean_selector: {
-			feature_false: configured_feature_ref,
-			feature_true: configured_feature_ref,
+			feature_false: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
+			feature_true: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
 		},
 		random_patch: RandomPatchConfig(ctx),
 		random_selector: {
 			features: listOf(record({
 				chance: floatRange(0, 1),
-				feature: configured_feature_ref,
+				feature: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
 			})),
-			default: configured_feature_ref,
+			default: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
 		},
 		replace_single_block: {
 			targets: listOf(record({
@@ -496,7 +663,8 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 			root_replaceable: resource('tag/block'),
 			root_state_provider: block_state_provider,
 			hanging_root_state_provider: block_state_provider,
-			feature: configured_feature_ref,
+			allowed_tree_position: versioned(ctx, '1.18', block_predicate_worldgen),
+			feature: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
 		},
 		scattered_ore: OreConfig(ctx),
 		sea_pickle: CountConfig(ctx),
@@ -504,7 +672,7 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 			probability: floatRange(0, 1),
 		},
 		simple_block: {
-			...versioned(ctx, {
+			...versioned(ctx, versioned(ctx, {
 				to_place: block_state,
 				place_on: listOf(block_state),
 				place_in: listOf(block_state),
@@ -514,10 +682,12 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 				place_on: opt(listOf(block_state), []),
 				place_in: opt(listOf(block_state), []),
 				place_under: opt(listOf(block_state), []),
+			}), '1.18', {
+				to_place: block_state_provider,
 			}),
 		},
 		simple_random_selector: {
-			features: configured_feature_list_ref,
+			features: versioned(ctx, configured_feature_list_ref, '1.18', placed_feature_list_ref),
 		},
 		small_dripstone: {
 			max_placements: opt(intRange(0, 100), 5),
@@ -539,20 +709,25 @@ export const configured_feature = as('feature', dispatch('type', (type, _, ctx) 
 			heightmap: versioned(ctx, literal(HeightmapType), '1.17'),
 			minimum_size: feature_size,
 			dirt_provider: versioned(ctx, '1.17', block_state_provider),
-			sapling_provider: versioned(ctx, '1.17', block_state_provider),
+			sapling_provider: versioned(ctx, '1.17', versioned(ctx, block_state_provider, '1.18')),
 			trunk_provider: block_state_provider,
 			...renamed(ctx, 'leaves_provider', '1.17', 'foliage_provider', block_state_provider),
 			trunk_placer: trunk_placer,
 			foliage_placer: foliage_placer,
 			decorators: listOf(tree_decorator),
 		},
+		twisting_vines: versioned(ctx, {}, '1.18', {
+			spread_width: intRange(1, undefined),
+			spread_height: intRange(1, undefined),
+			max_height: intRange(1, undefined),
+		}),
 		underwater_magma: {
 			floor_search_range: intRange(0, 512),
 			placement_radius_around_floor: intRange(0, 64),
 			placement_probability_per_valid_position: floatRange(0, 1),
 		},
-		vegetation_patch: VegetationPatchConfig,
-		waterlogged_vegetation_patch: VegetationPatchConfig,
+		vegetation_patch: VegetationPatchConfig(ctx),
+		waterlogged_vegetation_patch: VegetationPatchConfig(ctx),
 	})),
 })))
 
@@ -564,4 +739,19 @@ export const configured_feature_ref = any([
 export const configured_feature_list_ref = any([
 	listOf(resource('worldgen/configured_feature')),
 	listOf(configured_feature),
+])
+
+export const placed_feature = as('placed_feature', record({
+	feature: configured_feature_ref,
+	placement: listOf(placement_modifier),
+}))
+
+export const placed_feature_ref = any([
+	resource('worldgen/placed_feature'),
+	placed_feature,
+])
+
+export const placed_feature_list_ref = any([
+	listOf(resource('worldgen/placed_feature')),
+	listOf(placed_feature),
 ])

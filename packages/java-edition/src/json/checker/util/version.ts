@@ -13,13 +13,14 @@ function cmpVersion(ctx: JsonCheckerContext, target: MajorVersion): number {
 	return MajorVersions.indexOf(getVersion(ctx)) - MajorVersions.indexOf(target)
 }
 
-export function versioned(ctx: JsonCheckerContext, version: MajorVersion): boolean
 export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: string[]): string[]
-export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: JsonChecker): JsonChecker | undefined
-export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: CheckerRecord): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: JsonChecker | undefined): JsonChecker | undefined
+export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: CheckerRecord | undefined): CheckerRecord | undefined
+
 export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion): string[]
-export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion): JsonChecker | undefined
-export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion): CheckerRecord | undefined
+export function versioned(ctx: JsonCheckerContext, checker: JsonChecker | undefined, version: MajorVersion): JsonChecker | undefined
+export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord | undefined, version: MajorVersion): CheckerRecord | undefined
+
 export function versioned(ctx: JsonCheckerContext, checker: string[], version: MajorVersion, checker2: string[]): string[]
 export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: MajorVersion, checker2: JsonChecker): JsonChecker
 export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: MajorVersion, checker2: CheckerRecord): CheckerRecord
@@ -27,7 +28,7 @@ export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?:
 	if (typeof arg1 === 'string') {
 		const check = cmpVersion(ctx, arg1 as MajorVersion) >= 0
 		if (arg2 === undefined) {
-			return check
+			return arg1
 		} else if (Array.isArray(arg2)) {
 			return check ? arg2 : []
 		} else {
@@ -35,8 +36,8 @@ export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?:
 		}
 	} else {
 		const check = cmpVersion(ctx, arg2 as MajorVersion) < 0
-		if (arg2 === undefined) {
-			return check
+		if (arg1 === undefined) {
+			return arg1
 		} else if (Array.isArray(arg1)) {
 			return check ? arg1 : (arg3 ?? [])
 		} else {

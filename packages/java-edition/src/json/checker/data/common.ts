@@ -1,5 +1,5 @@
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker'
-import { any, as, dispatch, extract, float, floatRange, int, intRange, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
+import { any, as, dispatch, extract, float, floatRange, int, intRange, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives'
 import { blockStateMap } from '../util'
 
 function smallestEncompassingPowerOfTwo(n: number) {
@@ -222,6 +222,19 @@ export const uniformInt = (min?: number, max?: number, maxSpread?: number): Json
 	}),
 ]))
 
+export const inclusiveRange = (min?: number | undefined, max?: number | undefined) => as('inclusive_range', any([
+	record({
+		min_inclusive: intRange(min, max),
+		max_inclusive: intRange(min, max),
+	}),
+	listOf(intRange(min, max)),
+]))
+
+export const noise_parameters = record({
+	firstOctave: int,
+	amplitudes: listOf(float),
+})
+
 export const HeightmapType = [
 	'MOTION_BLOCKING',
 	'MOTION_BLOCKING_NO_LEAVES',
@@ -238,4 +251,13 @@ export const Slots = [
 	'chest',
 	'legs',
 	'feet',
+]
+
+export const Direction = [
+	'up',
+	'down',
+	'north',
+	'east',
+	'south',
+	'west',
 ]

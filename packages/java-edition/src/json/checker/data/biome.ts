@@ -2,7 +2,7 @@ import type { JsonCheckerContext } from '@spyglassmc/json/lib/checker'
 import { any, as, boolean, dispatch, float, floatRange, int, intRange, listOf, literal, object, opt, record, resource, when } from '@spyglassmc/json/lib/checker/primitives'
 import { intColor, versioned } from '../util'
 import { block_state, floatProvider, height_provider, vertical_anchor } from './common'
-import { configured_feature_list_ref } from './feature'
+import { configured_feature_list_ref, placed_feature_list_ref } from './feature'
 import { configured_structure_feature } from './structure'
 
 const BiomeCategory = (ctx: JsonCheckerContext) => [
@@ -13,6 +13,7 @@ const BiomeCategory = (ctx: JsonCheckerContext) => [
 	'icy',
 	'jungle',
 	'mesa',
+	...versioned(ctx, '1.18', ['mountain']),
 	'mushroom',
 	'nether',
 	'none',
@@ -27,6 +28,7 @@ const BiomeCategory = (ctx: JsonCheckerContext) => [
 ]
 
 const MobCategory = (ctx: JsonCheckerContext) => [
+	...versioned(ctx, '1.18', ['axolotls']),
 	'monster',
 	'creature',
 	'ambient',
@@ -82,8 +84,10 @@ export const configured_carver = as('carver', dispatch('type', (type, _, ctx) =>
 })))
 
 export const biome = as('biome', dispatch((props, ctx) => record({
-	depth: float,
-	scale: float,
+	...versioned(ctx, {
+		depth: float,
+		scale: float,
+	}, '1.18'),
 	downfall: float,
 	temperature: float,
 	temperature_modifier: opt(literal(['none', 'frozen'])),
@@ -121,7 +125,7 @@ export const biome = as('biome', dispatch((props, ctx) => record({
 			replace_current_music: boolean,
 		})),
 	}),
-	player_spawn_friendly: opt(boolean),
+	player_spawn_friendly: opt(versioned(ctx, boolean, '1.18')),
 	creature_spawn_probability: opt(floatRange(0, 0.9999999)),
 	spawners: object(
 		literal(MobCategory(ctx)),
@@ -139,10 +143,10 @@ export const biome = as('biome', dispatch((props, ctx) => record({
 			charge: float,
 		})
 	),
-	surface_builder: any([
+	surface_builder: versioned(ctx, any([
 		resource('worldgen/configured_surface_builder'),
 		configured_surface_builder,
-	]),
+	]), '1.18'),
 	carvers: object(
 		['air', 'liquid'],
 		() => opt(any([
@@ -150,9 +154,10 @@ export const biome = as('biome', dispatch((props, ctx) => record({
 			listOf(configured_carver),
 		]))
 	),
-	starts: any([
+	starts: versioned(ctx, any([
 		listOf(resource('worldgen/configured_structure_feature')),
 		listOf(configured_structure_feature),
-	]),
-	features: listOf(configured_feature_list_ref),
+	]), '1.18'),
+	features: listOf(versioned(ctx, configured_feature_list_ref,
+		'1.18', placed_feature_list_ref)),
 })))

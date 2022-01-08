@@ -1,7 +1,7 @@
 import { any, as, boolean, dispatch, extractNested, float, floatRange, intRange, listOf, literal, opt, pick, record, resource, simpleString, when } from '@spyglassmc/json/lib/checker'
-import { nbt } from '../util'
+import { nbt, versioned } from '../util'
 import { block_state, HeightmapType, height_provider } from './common'
-import { configured_feature_ref } from './feature'
+import { configured_feature_ref, placed_feature_ref } from './feature'
 
 export const rule_test = as('rule_test', dispatch('predicate_type', type => record({
 	predicate_type: resource('rule_test'),
@@ -85,14 +85,14 @@ export const processor_list_ref = as('processor_list', any([
 	processor_list,
 ]))
 
-const template_element = as('template_element', dispatch('element_type', type => record({
+const template_element = as('template_element', dispatch('element_type', (type, _, ctx) => record({
 	element_type: resource('worldgen/structure_pool_element'),
 	...when(type, ['empty_pool_element'], {}, {
 		projection: literal(['rigid', 'terrain_matching']),
 	}),
 	...pick(type, {
 		feature_pool_element: {
-			feature: configured_feature_ref,
+			feature: versioned(ctx, configured_feature_ref, '1.18', placed_feature_ref),
 		},
 		legacy_single_pool_element: {
 			location: resource('structure'),
