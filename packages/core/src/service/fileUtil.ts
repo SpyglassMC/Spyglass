@@ -1,6 +1,8 @@
+import cp from 'child_process'
 import type fs from 'fs'
 import { promises as fsp } from 'fs'
 import { resolve } from 'path'
+import process from 'process'
 import url, { URL as Uri } from 'url'
 import { promisify } from 'util'
 import zlib from 'zlib'
@@ -218,5 +220,30 @@ export namespace fileUtil {
 	 */
 	export async function writeGzippedJson(path: PathLike, data: any): Promise<void> {
 		return writeGzippedFile(path, JSON.stringify(data))
+	}
+
+	/**
+	 * Show the file/directory in the platform-specific explorer program.
+	 * 
+	 * Should not be called with unsanitized user-input path due to the possibility of
+	 * arbitrary code execution.
+	 * 
+	 * @returns The `stdout` from the spawned child process.
+	 */
+	export async function showFile(path: string): Promise<{ stdout: string, stderr: string }> {
+		const execFile = promisify(cp.execFile)
+		let command: string
+		switch (process.platform) {
+			case 'darwin':
+				command = 'open'
+				break
+			case 'win32':
+				command = 'explorer'
+				break
+			default:
+				command = 'xdg-open'
+				break
+		}
+		return execFile(command, [path])
 	}
 }

@@ -5,7 +5,7 @@ import * as nbtdoc from '@spyglassmc/nbtdoc'
 import envPaths from 'env-paths'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
-import type { MyLsInlayHint, MyLsInlayHintRequestParams } from './util'
+import type { CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util'
 import { toCore, toLS } from './util'
 
 export * from './util/types'
@@ -22,6 +22,7 @@ const { cache: cacheRoot } = envPaths('spyglassmc')
 const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
+let hasShutdown = false
 
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
@@ -82,6 +83,12 @@ connection.onInitialize(async params => {
 		logger.error('[new Service]', e)
 	}
 
+	const customCapabilities: CustomServerCapabilities = {
+		dataHackPubify: true,
+		inlayHints: true,
+		showCacheRoot: true,
+	}
+
 	const ans: ls.InitializeResult = {
 		serverInfo: {
 			name: 'Spyglass Language Server',
@@ -116,11 +123,8 @@ connection.onInitialize(async params => {
 				openClose: true,
 			},
 			workspaceSymbolProvider: {},
-
 			experimental: {
-				spyglassmc: {
-					inlayHints: true,
-				},
+				spyglassmc: customCapabilities,
 			},
 		},
 	}
@@ -188,6 +192,10 @@ connection.onCompletion(async ({ textDocument: { uri }, position, context }) => 
 	const offset = toCore.offset(position, doc)
 	const items = service.complete(node, doc, offset, context?.triggerCharacter)
 	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
+})
+
+connection.onRequest('spyglassmc/dataHackPubify', ({ initialism }: MyLspDataHackPubifyRequestParams) => {
+	return service.dataHackPubify(initialism)
 })
 
 connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
@@ -270,7 +278,7 @@ connection.onHover(async ({ textDocument: { uri }, position }) => {
 	return ans ? toLS.hover(ans, doc) : undefined
 })
 
-connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, range }: MyLsInlayHintRequestParams): Promise<MyLsInlayHint[]> => {
+connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, range }: MyLspInlayHintRequestParams): Promise<MyLspInlayHint[]> => {
 	const docAndNode = await service.project.ensureParsedAndChecked(uri)
 	if (!docAndNode) {
 		return []
@@ -278,6 +286,10 @@ connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, ra
 	const { doc, node } = docAndNode
 	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
 	return toLS.inlayHints(hints, doc)
+})
+
+connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
+	return service.project.showCacheRoot()
 })
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
@@ -323,28 +335,22 @@ connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
 	}
 	const { doc, node } = docAndNode
 	let text = service.format(node, doc, options.tabSize, options.insertSpaces)
-	if (options.insertFinalNewline && text.slice(-1) !== '\n') {
+	if (options.insertFinalNewline && text.charAt(text.length - 1) !== '\n') {
 		text += '\n'
 	}
 	return [toLS.textEdit(node.range, text, doc)]
 })
 
-connection.listen()
-
-let isUp = true
-function exit() {
-	if (!isUp) {
-		return
-	}
-	isUp = false
-	process.exit()
-}
-
-for (const sig of ['exit', 'SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'] as const) {
-	process.on(sig, exit)
-}
-
-process.on('uncaughtException', e => {
-	console.error('[uncaughtException] the language server will be terminated: ', e.stack)
-	exit()
+connection.onShutdown(async (): Promise<void> => {
+	await service.project.close()
+	hasShutdown = true
 })
+connection.onExit((): void => {
+	connection.dispose()
+	if (!hasShutdown) {
+		console.error('The server has not finished the shutdown request before receiving the exit request.')
+		process.exitCode = 1
+	}
+})
+
+connection.listen()

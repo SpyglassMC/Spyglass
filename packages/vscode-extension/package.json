@@ -30,8 +30,8 @@
   "engines": {
     "vscode": "^1.52.0"
   },
-  "displayName": "%datapack.displayName%",
-  "description": "%datapack.description%",
+  "displayName": "%spyglassmc.displayName%",
+  "description": "%spyglassmc.description%",
   "icon": "icon.png",
   "categories": [
     "Formatters",
@@ -61,24 +61,6 @@
           "data/minecraft/*.json"
         ],
         "url": "./resource/empty-object.json"
-      }
-    ],
-    "keybindings": [
-      {
-        "command": "datapack.createFile",
-        "key": "Alt+Shift+D Alt+Shift+C"
-      },
-      {
-        "command": "datapack.evaludateJavaScript",
-        "key": "Alt+Shift+D Alt+Shift+E"
-      },
-      {
-        "command": "datapack.redownloadData",
-        "key": "Alt+Shift+D Alt+Shift+D"
-      },
-      {
-        "command": "datapack.regenerateCache",
-        "key": "Alt+Shift+D Alt+Shift+G"
       }
     ],
     "languages": [
@@ -116,42 +98,43 @@
     ],
     "commands": [
       {
-        "command": "datapack.createFile",
-        "title": "%datapack.commands.createFile.title%",
-        "category": "Datapack",
+        "command": "spyglassmc.createFile",
+        "title": "%spyglassmc.commands.createFile.title%",
+        "category": "Spyglass",
         "enablement": "workspaceFolderCount != 0"
       },
       {
-        "command": "datapack.evaludateJavaScript",
-        "title": "%datapack.commands.evaludateJavaScript.title%",
-        "category": "Datapack",
-        "enablement": "editorLangId == mcfunction && editorHasSelection"
+        "command": "spyglassmc.dataHackPubify",
+        "title": "%spyglassmc.commands.dataHackPubify.title%",
+        "category": "Spyglass"
       },
       {
-        "command": "datapack.redownloadData",
-        "title": "%datapack.commands.redownloadData.title%",
-        "category": "Datapack"
-      },
-      {
-        "command": "datapack.regenerateCache",
-        "title": "%datapack.commands.regenerateCache.title%",
-        "category": "Datapack",
+        "command": "spyglassmc.resetProjectCache",
+        "title": "%spyglassmc.commands.resetProjectCache.title%",
+        "category": "Spyglass",
         "enablement": "workspaceFolderCount != 0"
+      },
+      {
+        "command": "spyglassmc.showCacheRoot",
+        "title": "%spyglassmc.commands.showCacheRoot.title%",
+        "category": "Spyglass"
       }
     ],
     "menus": {
       "commandPalette": [
         {
-          "command": "datapack.createFile",
+          "command": "spyglassmc.createFile",
           "when": "workspaceFolderCount != 0"
         },
         {
-          "command": "datapack.evaludateJavaScript",
-          "when": "editorLangId == mcfunction"
+          "command": "spyglassmc.dataHackPubify"
         },
         {
-          "command": "datapack.regenerateCache",
+          "command": "spyglassmc.resetProjectCache",
           "when": "workspaceFolderCount != 0"
+        },
+        {
+          "command": "spyglassmc.showCacheRoot"
         }
       ]
     },
@@ -217,9 +200,9 @@
     "workspaceContains:**/*.nbtdoc",
     "onLanguage:mcfunction",
     "onLanguage:nbtdoc",
-    "onCommand:datapack.createFile",
-    "onCommand:datapack.evaludateJavaScript",
-    "onCommand:datapack.redownloadData",
-    "onCommand:datapack.regenerateCache"
+    "onCommand:spyglassmc.createFile",
+    "onCommand:spyglassmc.dataHackPubify",
+    "onCommand:spyglassmc.regenerateCache",
+    "onCommand:spyglassmc.showCacheRoot"
   ]
 }

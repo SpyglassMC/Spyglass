@@ -51,8 +51,8 @@ export class MetaRegistry {
 		checker.registerCheckers(this)
 		colorizer.registerColorizers(this)
 		completer.registerCompleters(this)
-		linter.registerLinters(this)
 		formatter.registerFormatters(this)
+		linter.registerLinters(this)
 	}
 
 	/**

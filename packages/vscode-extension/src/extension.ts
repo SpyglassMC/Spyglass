@@ -62,18 +62,19 @@ export function activate(context: vsc.ExtensionContext) {
 	client.start()
 
 	client.onReady().then(() => {
-		if (vsc.languages.registerInlayHintsProvider && client.initializeResult?.capabilities.experimental?.spyglassmc?.inlayHints) {
+		const customCapabilities: server.CustomServerCapabilities | undefined = client.initializeResult?.capabilities.experimental?.spyglassmc
+		if (customCapabilities?.inlayHints && vsc.languages.registerInlayHintsProvider) {
 			vsc.languages.registerInlayHintsProvider(documentSelector, {
 				async provideInlayHints(model, range): Promise<vsc.InlayHint[]> {
 					try {
-						const params: server.MyLsInlayHintRequestParams = {
+						const params: server.MyLspInlayHintRequestParams = {
 							textDocument: { uri: model.uri.toString() },
 							range: {
 								start: { line: range.start.line, character: range.start.character },
 								end: { line: range.end.line, character: range.end.character },
 							},
 						}
-						const response: server.MyLsInlayHint[] = await client.sendRequest('spyglassmc/inlayHints', params)
+						const response: server.MyLspInlayHint[] = await client.sendRequest('spyglassmc/inlayHints', params)
 						return response.map(v => new vsc.InlayHint(v.text, new vsc.Position(v.position.line, v.position.character), vsc.InlayHintKind.Parameter))
 					} catch (e) {
 						console.error('[client#provideInlayHints]', e)
@@ -81,6 +82,39 @@ export function activate(context: vsc.ExtensionContext) {
 					return []
 				},
 			})
+		}
+
+		if (customCapabilities?.dataHackPubify) {
+			context.subscriptions.push(vsc.commands.registerCommand('spyglassmc.dataHackPubify',
+				async (): Promise<void> => {
+					try {
+						const initialism = await vsc.window.showInputBox({ placeHolder: 'DHP' })
+						if (!initialism) {
+							return
+						}
+
+						const params: server.MyLspDataHackPubifyRequestParams = {
+							initialism,
+						}
+						const response: string = await client.sendRequest('spyglassmc/dataHackPubify', params)
+						await vsc.window.showInformationMessage(response)
+					} catch (e) {
+						console.error('[client#dataHackPubify]', e)
+					}
+				}
+			))
+		}
+
+		if (customCapabilities?.showCacheRoot) {
+			context.subscriptions.push(vsc.commands.registerCommand('spyglassmc.showCacheRoot',
+				async (): Promise<void> => {
+					try {
+						await client.sendRequest('spyglassmc/showCacheRoot')
+					} catch (e) {
+						console.error('[client#showCacheRoot]', e)
+					}
+				}
+			))
 		}
 	})
 }

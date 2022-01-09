@@ -2,7 +2,6 @@ import { ResourceLocation } from '../../common'
 import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
-import { Range } from '../../source'
 import type { TagFileCategory } from '../../symbol'
 import { selectedNode } from '../util'
 import type { Completer } from './Completer'
@@ -12,14 +11,13 @@ import { CompletionItem, CompletionKind } from './Completer'
  * Uses the deepest selected node that has its own completer to provide the completion items.
  */
 export const fallback: Completer<AstNode> = (root, ctx) => {
-	const { node, parents } = selectedNode(root, ctx.offset)
-	if (node) {
-		for (const n of [node, ...parents]) {
-			if (ctx.meta.hasCompleter(n.type)) {
-				const completer = ctx.meta.getCompleter(n.type)
-				return completer(n, ctx)
-			}
+	let { node } = selectedNode(root, ctx.offset)
+	while (node) {
+		if (ctx.meta.hasCompleter(node.type)) {
+			const completer = ctx.meta.getCompleter(node.type)
+			return completer(node, ctx)
 		}
+		node = node.parent
 	}
 	return []
 }

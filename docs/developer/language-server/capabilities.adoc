@@ -1,5 +1,15 @@
 == Custom Server Capabilities
 
+=== `experimental.spyglassmc.dataHackPubify`
+
+Request sent from client: `spyglassmc/dataHackPubify`
+
+.Parameters
+* `initialism`: (`string`)
+
+.Response
+`string`
+
 === `experimental.spyglassmc.inlayHints`
 
 Request sent from client: `spyglassmc/inlayHints`
@@ -11,3 +21,13 @@ Request sent from client: `spyglassmc/inlayHints`
 
 .Response
 `InlayHint[]`
+
+=== `experimental.spyglassmc.showCacheRoot`
+
+Request sent from client: `spyglassmc/showCacheRoot`
+
+.Parameters
+None.
+
+.Response
+`void`

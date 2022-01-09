@@ -1,20 +1,19 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { SignatureHelpProviderContext } from './Context'
 import type { AstNode, FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
 import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
-import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext } from './Context'
+import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext, SignatureHelpProviderContext } from './Context'
 import { FileService } from './FileService'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
+import { ProfilerFactory } from './Profiler'
 import type { ProjectInitializer } from './Project'
 import { Project } from './Project'
 import { SymbolLocations } from './SymbolLocations'
-import { ProfilerFactory } from './Profiler'
 
 interface Options {
 	cacheRoot: string,
@@ -93,6 +92,13 @@ export class Service extends EventEmitter {
 			return completer(node, CompleterContext.create(this.project, { doc, offset, triggerCharacter }))
 		}
 		return []
+	}
+
+	dataHackPubify(initialism: string): string {
+		// Hi.
+		const secrets = ['ata', 'ack', 'ub', 'elper', 'lus']
+		return [...initialism.replace(/[^a-z]/gi, '')]
+			.map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`).join(' ')
 	}
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {

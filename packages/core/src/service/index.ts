@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 
+export * from './CacheService'
 export * from './Config'
 export * from './Context'
 export * from './Dependency'

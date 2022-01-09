@@ -424,8 +424,9 @@ export class Project extends EventEmitter {
 	}
 
 	async close(): Promise<void> {
-		await this.#watcher.close()
 		clearInterval(this.#cacheSaverIntervalId)
+		await this.#watcher.close()
+		await this.#cacheService.save()
 	}
 
 	/**
@@ -622,6 +623,14 @@ export class Project extends EventEmitter {
 		uri = fileUtil.normalize(uri)
 		this.#clientManagedUris.delete(uri)
 		this.tryClearingCache(uri)
+	}
+
+	async showCacheRoot(): Promise<void> {
+		try {
+			await fileUtil.showFile(this.#cacheRoot)
+		} catch (e) {
+			this.logger.error('[Service#showCacheRoot]', e)
+		}
 	}
 
 	private tryClearingCache(uri: string): void {
