@@ -207,6 +207,7 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				})),
 			},
 			set_contents: {
+				type: versioned(ctx, '1.18', resource('block_entity_type')),
 				entries: listOf(loot_entry),
 			},
 			set_count: {
@@ -232,6 +233,9 @@ export const item_modifier = as('item_modifier', dispatch('function',
 			},
 			set_nbt: {
 				tag: nbt({ registry: 'item' }),
+			},
+			set_potion: {
+				id: resource('potion'),
 			},
 			set_stew_effect: {
 				effects: opt(listOf(record({

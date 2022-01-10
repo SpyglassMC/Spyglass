@@ -3,7 +3,7 @@ import { versioned } from '../util'
 import { block_state, noise_parameters, vertical_anchor } from './common'
 
 const material_condition = as('material_condition', dispatch('type', type => record({
-	type: resource('worldgen/material_rule'),
+	type: resource('worldgen/material_condition'),
 	...pick(type, {
 		biome: {
 			biome_is: listOf(resource('worldgen/biome')),
@@ -85,7 +85,7 @@ const structure_settings = as('structure_settings', record({
 }))
 
 const noise_slide_settings = dispatch((_, ctx) => record({
-	target: int,
+	target: float,
 	size: versioned(ctx, int, '1.17', intRange(0, undefined)),
 	offset: int,
 }))

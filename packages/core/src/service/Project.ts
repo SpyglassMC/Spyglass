@@ -414,10 +414,12 @@ export class Project extends EventEmitter {
 			__profiler.task('Bind URIs')
 
 			const files = [...addedFiles, ...changedFiles]// FIXME: nbtdoc files might need to be parsed and checked before others.
-			const docAndNodes = (await Promise.all(files.map(uri => limit(ensureParsed, uri)))).filter((r): r is DocAndNode => !!r)
+			// const docAndNodes = (await Promise.all(files.map(uri => limit(ensureParsed, uri)))).filter((r): r is DocAndNode => !!r)
+			const docAndNodes = (await Promise.all(files.map(uri => ensureParsed(uri)))).filter((r): r is DocAndNode => !!r)
 			__profiler.task('Parse Files')
 
-			await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
+			// await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
+			await Promise.all(docAndNodes.map(({ doc, node }) => ensureChecked(doc, node)))
 			__profiler.task('Check Files').finalize()
 
 			this.emit('ready', {})

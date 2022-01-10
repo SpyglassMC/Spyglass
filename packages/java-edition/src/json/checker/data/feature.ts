@@ -279,6 +279,7 @@ const RandomPatchConfig = (ctx: JsonCheckerContext) => versioned(ctx, {
 		need_water: opt(boolean, false),
 	}),
 }, '1.18', {
+	tries: opt(intRange(1, undefined), 128),
 	xz_spread: opt(intRange(0, undefined)),
 	y_spread: opt(intRange(0, undefined)),
 	feature: placed_feature_ref,
