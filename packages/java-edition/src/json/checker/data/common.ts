@@ -145,6 +145,12 @@ export const height_provider = as('height_provider', any([
 				max_inclusive: vertical_anchor,
 				plateau: opt(int, 0),
 			},
+			weighted_list: {
+				distribution: listOf(record({
+					data: ref(() => height_provider),
+					weight: int,
+				})),
+			},
 		}),
 	})),
 ]))
@@ -208,6 +214,20 @@ export const intProvider = (min: number | undefined = undefined, max: number | u
 					max_inclusive: intRange(min, max),
 					source: ref(() => intProvider()),
 				}),
+			},
+			clamped_normal: {
+				value: record({
+					mean: float,
+					deviation: float,
+					min_inclusive: intRange(min, max),
+					max_inclusive: intRange(min, max),
+				}),
+			},
+			weighted_list: {
+				distribution: listOf(record({
+					data: ref(() => intProvider()),
+					weight: int,
+				})),
 			},
 		}),
 	})),
