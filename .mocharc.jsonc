@@ -4,6 +4,6 @@
 	],
 	"inlineDiffs": true,
 	"color": true,
-	"timeout": 10000,
+	"timeout": 30000,
 	"spec": "packages/*/test-out/**/*.spec.js"
 }
