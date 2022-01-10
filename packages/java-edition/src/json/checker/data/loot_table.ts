@@ -145,9 +145,22 @@ export const item_modifier = as('item_modifier', dispatch('function',
 				source: literal(['this', 'killer', 'killer_player', 'block_entity']),
 			},
 			copy_nbt: {
-				source: literal(['this', 'killer', 'killer_player', 'block_entity']),
+				source: any(([
+					literal(['this', 'killer', 'killer_player', 'block_entity']),
+					dispatch('type', type => record({
+						type: literal(['context', 'storage']),
+						...pick(type, {
+							context: {
+								target: literal(['this', 'killer', 'killer_player', 'block_entity']),
+							},
+							storage: {
+								source: resource('storage'),
+							},
+						}),
+					})),
+				])),
 				ops: listOf(record({
-					source: nbtPath({ registry: 'entity_type' }), // FIXME: Use 'block' instead if `source` is `block_entity`.
+					source: nbtPath({ registry: 'entity_type' }), // FIXME: Use 'block' instead if `source` is `block_entity`; use 'storage' if `source` is `storage`.
 					target: nbtPath({ registry: 'item' }),
 					op: literal(['replace', 'append', 'merge']),
 				})),

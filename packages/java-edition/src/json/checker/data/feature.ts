@@ -114,7 +114,7 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 })))
 
 const blockPredicateOffset = {
-	offset: listOf(intRange(-16, 16)),
+	offset: opt(listOf(intRange(-16, 16))),
 }
 
 const block_predicate_worldgen = as('block_predicate_worldgen', dispatch('type', type => record({
