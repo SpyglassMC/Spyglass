@@ -12,7 +12,7 @@ describe('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
 	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
 
-	const project = ProjectData.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } })
+	const project = ProjectData.mock({ roots: ['file:///'], ctx: { loadedVersion: '1.18' } })
 	nbt.initialize(project)
 
 	summary.forEach((files, i) => {
