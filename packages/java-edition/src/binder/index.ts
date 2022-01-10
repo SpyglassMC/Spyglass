@@ -29,6 +29,7 @@ export const Categories = new Map<string, {
 	['worldgen/configured_structure_feature', { category: 'worldgen/configured_structure_feature', extname: '.json', since: '1.16' }],
 	['worldgen/configured_surface_builder', { category: 'worldgen/configured_surface_builder', extname: '.json', since: '1.16' }],
 	['worldgen/noise_settings', { category: 'worldgen/noise_settings', extname: '.json', since: '1.16' }],
+	['worldgen/placed_feature', { category: 'worldgen/placed_feature', extname: '.json', since: '1.18' }],
 	['worldgen/processor_list', { category: 'worldgen/processor_list', extname: '.json', since: '1.16' }],
 	['worldgen/template_pool', { category: 'worldgen/template_pool', extname: '.json', since: '1.16' }],
 ])
