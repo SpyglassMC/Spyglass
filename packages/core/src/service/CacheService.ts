@@ -68,6 +68,7 @@ export class CacheService {
 	) {
 		this.project.on('documentUpdated', ({ doc }) => {
 			try {
+				// TODO: Don't update this for every single change.
 				this.checksums.files[doc.uri] = getSha1(doc.getText())
 			} catch (e) {
 				if (!isErrorCode(e, 'EISDIR')) {
@@ -207,5 +208,9 @@ export class CacheService {
 			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
 		}
 		return false
+	}
+
+	reset(): void {
+		this.checksums = Checksums.create()
 	}
 }

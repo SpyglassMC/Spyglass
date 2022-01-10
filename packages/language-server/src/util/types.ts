@@ -3,6 +3,7 @@ import type * as ls from 'vscode-languageserver/node'
 export interface CustomServerCapabilities {
 	dataHackPubify?: boolean,
 	inlayHints?: boolean,
+	resetProjectCache?: boolean,
 	showCacheRoot?: boolean,
 }
 

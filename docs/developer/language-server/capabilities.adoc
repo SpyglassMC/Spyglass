@@ -22,6 +22,16 @@ Request sent from client: `spyglassmc/inlayHints`
 .Response
 `InlayHint[]`
 
+=== `experimental.spyglassmc.resetProjectCache`
+
+Request sent from client: `spyglassmc/resetProjectCache`
+
+.Parameters
+None.
+
+.Response
+`void`
+
 === `experimental.spyglassmc.showCacheRoot`
 
 Request sent from client: `spyglassmc/showCacheRoot`

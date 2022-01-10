@@ -36,13 +36,21 @@ export interface UriProtocolSupporter {
 	listRoots(): Iterable<RootUriString>
 }
 
+type Protocol = `${string}:`
+
 export interface FileService extends UriProtocolSupporter {
 	/**
 	 * @param protocol A protocol of URI, including the colon. e.g. `file:`.
 	 * @param supporter The supporter for that `protocol`.
-	 * @throws `protocol` is already registered.
+	 * @param force If the protocol is already supported, whether to override it or not.
+	 * 
+	 * @throws If `protocol` is already registered, unless `force` is set to `true`.
 	 */
-	register(protocol: `${string}:`, supporter: UriProtocolSupporter): void
+	register(protocol: Protocol, supporter: UriProtocolSupporter, force?: boolean): void
+	/**
+	 * Unregister the supported associated with `protocol`. Nothing happens if the `protocol` isn't supported.
+	 */
+	unregister(protocol: Protocol): void
 }
 
 export namespace FileService {
@@ -54,13 +62,17 @@ export namespace FileService {
 }
 
 export class FileServiceImpl implements FileService {
-	private readonly supporters = new Map<string, UriProtocolSupporter>()
+	private readonly supporters = new Map<Protocol, UriProtocolSupporter>()
 
-	register(protocol: string, supporter: UriProtocolSupporter): void {
-		if (this.supporters.has(protocol)) {
+	register(protocol: Protocol, supporter: UriProtocolSupporter, force = false): void {
+		if (!force && this.supporters.has(protocol)) {
 			throw new Error(`The protocol “${protocol}” is already associated with another supporter.`)
 		}
 		this.supporters.set(protocol, supporter)
+	}
+
+	unregister(protocol: Protocol): void {
+		this.supporters.delete(protocol)
 	}
 
 	/**
@@ -68,8 +80,8 @@ export class FileServiceImpl implements FileService {
 	 * 
 	 * @returns The protocol if it's supported.
 	 */
-	private getSupportedProtocol(uri: string): string {
-		const protocol = new Uri(uri).protocol
+	private getSupportedProtocol(uri: string): Protocol {
+		const protocol = new Uri(uri).protocol as Protocol
 		if (!this.supporters.has(protocol)) {
 			throw new Error(`The protocol “${protocol}” is unsupported.`)
 		}

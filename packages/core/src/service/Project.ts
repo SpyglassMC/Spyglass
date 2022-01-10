@@ -25,7 +25,7 @@ import { MetaRegistry } from './MetaRegistry'
 import { ProfilerFactory } from './Profiler'
 import type { SymbolRegistrarResult } from './SymbolRegistrar'
 
-const CacheSaverInterval = 60_000
+const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
 export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'logger' | 'meta' | 'projectRoot'>
 export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
@@ -56,6 +56,11 @@ interface FileEvent {
 	uri: string,
 }
 interface EmptyEvent { }
+interface ProgressEvent {
+	currentUri: string,
+	processedFiles: number,
+	totalFiles: number,
+}
 interface RootsEvent {
 	roots: readonly RootUriString[]
 }
@@ -128,8 +133,8 @@ export class Project extends EventEmitter {
 	readonly #configService: ConfigService
 	readonly #docAndNodes = new Map<string, DocAndNode>()
 	readonly #initializers: readonly ProjectInitializer[]
-	readonly #initPromise: Promise<void>
-	readonly #readyPromise: Promise<void>
+	#initPromise!: Promise<void>
+	#readyPromise!: Promise<void>
 	readonly #watchedFiles = new Set<string>()
 	#watcher!: chokidar.FSWatcher
 	#watcherReady = false
@@ -139,6 +144,7 @@ export class Project extends EventEmitter {
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
+	readonly projectPath: string
 	readonly projectRoot: RootUriString
 	symbols: SymbolUtil
 
@@ -217,6 +223,7 @@ export class Project extends EventEmitter {
 		this.#initializers = initializers
 		this.logger = logger
 		this.profilers = profilers
+		this.projectPath = projectPath
 		this.projectRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(projectPath))
 		this.symbols = new SymbolUtil({})
 		this.#ctx = {}
@@ -230,156 +237,9 @@ export class Project extends EventEmitter {
 			})
 			.on('error', ({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error))
 
-		const loadConfig = async () => {
-			this.config = await this.#configService.load()
-		}
-		const callIntializers = async () => {
-			const initCtx: ProjectInitializerContext = {
-				cacheRoot: this.cacheRoot,
-				config: this.config,
-				logger: this.logger,
-				meta: this.meta,
-				projectRoot: this.projectRoot,
-			}
-			const results = await Promise.allSettled(this.#initializers.map(init => init(initCtx)))
-			let ctx: Record<string, string> = {}
-			results.forEach(async (r, i) => {
-				if (r.status === 'rejected') {
-					this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}”`, r.reason)
-				} else if (r.value) {
-					ctx = { ...ctx, ...r.value }
-				}
-			})
-			this.#ctx = ctx
-		}
-		const getDependencies = async () => {
-			const ans: Dependency[] = []
-			for (const dependency of this.config.env.dependencies) {
-				if (DependencyKey.is(dependency)) {
-					const provider = this.meta.getDependencyProvider(dependency)
-					if (provider) {
-						try {
-							ans.push(await provider())
-							this.logger.info(`[Project] [getDependencies] Executed provider “${dependency}”`)
-						} catch (e) {
-							this.logger.error(`[Project] [getDependencies] Bad provider “${dependency}”`, e)
-						}
-					} else {
-						this.logger.error(`[Project] [getDependencies] Bad dependency “${dependency}”: no associated provider`)
-					}
-				} else {
-					ans.push({ uri: dependency })
-				}
-			}
-			return ans
-		}
-		const listDependencyFiles = async () => {
-			const dependencies = await getDependencies()
-			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
-			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.#cacheService.checksums.roots)
-			this.fs.register('file:', fileUriSupporter)
-			this.fs.register(SpyglassUri.Protocol, spyglassUriSupporter)
-		}
-		const listProjectFiles = () => new Promise<void>(resolve => {
-			this.#watcher = chokidar
-				.watch(projectPath, { ignoreInitial: false })
-				.once('ready', () => {
-					this.#watcherReady = true
-					resolve()
-				})
-				.on('add', path => {
-					const uri = fileUtil.pathToFileUri(path)
-					this.#watchedFiles.add(uri)
-					if (this.#watcherReady) {
-						this.emit('fileCreated', { uri })
-					}
-				})
-				.on('change', path => {
-					const uri = fileUtil.pathToFileUri(path)
-					if (this.#watcherReady) {
-						this.emit('fileModified', { uri })
-					}
-				})
-				.on('unlink', path => {
-					const uri = fileUtil.pathToFileUri(path)
-					this.#watchedFiles.delete(uri)
-					if (this.#watcherReady) {
-						this.emit('fileDeleted', { uri })
-					}
-				})
-				.on('error', e => {
-					this.logger.error('[Project] [chokidar]', e)
-				})
-		}
-		)
-		const init = async () => {
-			const __profiler = this.profilers.get('project#init')
-
-			const { symbols } = await this.#cacheService.load()
-			this.symbols = new SymbolUtil(symbols)
-			this.symbols.buildCache()
-			__profiler.task('Load Cache')
-
-			await loadConfig()
-			__profiler.task('Load Config')
-
-			await callIntializers()
-			__profiler.task('Initialize')
-
-			await Promise.all([
-				listDependencyFiles(),
-				listProjectFiles(),
-			])
-
-			this.#dependencyFiles = new Set(this.fs.listFiles())
-			this.#dependencyRoots = new Set(this.fs.listRoots())
-
-			this.updateRoots()
-			__profiler.task('List Files').finalize()
-		}
-		const ready = async () => {
-			await this.init()
-
-			const __profiler = this.profilers.get('project#ready')
-			const limit = pLimit(8)
-			const ensureParsed = this.ensureParsed.bind(this)
-			const ensureChecked = this.ensureChecked.bind(this)
-
-			for (const [id, registrar] of this.meta.symbolRegistrars) {
-				const result = registrar(this.symbols, {
-					cacheChecksum: this.#cacheService.checksums.symbolRegistrars[id],
-					logger,
-				})
-				this.emit('symbolRegistrarExecuted', { id, result })
-			}
-			__profiler.task('Register Symbols')
-
-			const { addedFiles, changedFiles, removedFiles } = await this.#cacheService.validate()
-			for (const uri of removedFiles) {
-				this.symbols.clear({ uri })
-			}
-			__profiler.task('Validate Cache')
-
-			if (addedFiles.length > 0) {
-				this.bind(addedFiles)
-			}
-			__profiler.task('Bind URIs')
-
-			// FIXME: nbtdoc files might need to be parsed and checked before others.
-			// const docAndNodes = (await Promise.all([...addedFiles, ...changedFiles].map(f => limit(ensureParsed, f)))).filter((r): r is DocAndNode => !!r)
-			const docAndNodes = (await Promise.all([...addedFiles, ...changedFiles].map(ensureParsed))).filter((r): r is DocAndNode => !!r)
-			__profiler.task('Parse Files')
-
-			// await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
-			await Promise.all(docAndNodes.map(({ doc, node }) => ensureChecked(doc, node)))
-			__profiler.task('Check Files').finalize()
-
-			this.emit('ready', {})
-		}
-
-		this.#initPromise = init()
-		this.#readyPromise = ready()
-		this.#cacheSaverIntervalId = setInterval(() => this.#cacheService.save(), CacheSaverInterval)
+		this.setInitPromise()
+		this.setReadyPromise()
+		this.#cacheSaverIntervalId = setInterval(() => this.#cacheService.save(), CacheAutoSaveInterval)
 
 		this
 			.on('documentUpdated', ({ doc, node }) => {
@@ -413,6 +273,158 @@ export class Project extends EventEmitter {
 			})
 	}
 
+	private setInitPromise(): void {
+		const loadConfig = async () => {
+			this.config = await this.#configService.load()
+		}
+		const callIntializers = async () => {
+			const initCtx: ProjectInitializerContext = {
+				cacheRoot: this.cacheRoot,
+				config: this.config,
+				logger: this.logger,
+				meta: this.meta,
+				projectRoot: this.projectRoot,
+			}
+			const results = await Promise.allSettled(this.#initializers.map(init => init(initCtx)))
+			let ctx: Record<string, string> = {}
+			results.forEach(async (r, i) => {
+				if (r.status === 'rejected') {
+					this.logger.error(`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}”`, r.reason)
+				} else if (r.value) {
+					ctx = { ...ctx, ...r.value }
+				}
+			})
+			this.#ctx = ctx
+		}
+		const init = async () => {
+			const __profiler = this.profilers.get('project#init')
+
+			const { symbols } = await this.#cacheService.load()
+			this.symbols = new SymbolUtil(symbols)
+			this.symbols.buildCache()
+			__profiler.task('Load Cache')
+
+			await loadConfig()
+			__profiler.task('Load Config')
+
+			await callIntializers()
+			__profiler.task('Initialize').finalize()
+		}
+		this.#initPromise = init()
+	}
+
+	private setReadyPromise(): void {
+		const getDependencies = async () => {
+			const ans: Dependency[] = []
+			for (const dependency of this.config.env.dependencies) {
+				if (DependencyKey.is(dependency)) {
+					const provider = this.meta.getDependencyProvider(dependency)
+					if (provider) {
+						try {
+							ans.push(await provider())
+							this.logger.info(`[Project] [getDependencies] Executed provider “${dependency}”`)
+						} catch (e) {
+							this.logger.error(`[Project] [getDependencies] Bad provider “${dependency}”`, e)
+						}
+					} else {
+						this.logger.error(`[Project] [getDependencies] Bad dependency “${dependency}”: no associated provider`)
+					}
+				} else {
+					ans.push({ uri: dependency })
+				}
+			}
+			return ans
+		}
+		const listDependencyFiles = async () => {
+			const dependencies = await getDependencies()
+			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
+			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.#cacheService.checksums.roots)
+			this.fs.register('file:', fileUriSupporter, true)
+			this.fs.register(SpyglassUri.Protocol, spyglassUriSupporter, true)
+		}
+		const listProjectFiles = () => new Promise<void>(resolve => {
+			this.#watcherReady = false
+			this.#watcher = chokidar
+				.watch(this.projectPath, { ignoreInitial: false })
+				.once('ready', () => {
+					this.#watcherReady = true
+					resolve()
+				})
+				.on('add', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					this.#watchedFiles.add(uri)
+					if (this.#watcherReady) {
+						this.emit('fileCreated', { uri })
+					}
+				})
+				.on('change', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					if (this.#watcherReady) {
+						this.emit('fileModified', { uri })
+					}
+				})
+				.on('unlink', path => {
+					const uri = fileUtil.pathToFileUri(path)
+					this.#watchedFiles.delete(uri)
+					if (this.#watcherReady) {
+						this.emit('fileDeleted', { uri })
+					}
+				})
+				.on('error', e => {
+					this.logger.error('[Project] [chokidar]', e)
+				})
+		})
+		const ready = async () => {
+			await this.init()
+
+			const __profiler = this.profilers.get('project#ready')
+			const limit = pLimit(8)
+			const ensureParsed = this.ensureParsed.bind(this)
+			const ensureChecked = this.ensureChecked.bind(this)
+
+			await Promise.all([
+				listDependencyFiles(),
+				listProjectFiles(),
+			])
+
+			this.#dependencyFiles = new Set(this.fs.listFiles())
+			this.#dependencyRoots = new Set(this.fs.listRoots())
+
+			this.updateRoots()
+			__profiler.task('List Files')
+
+			for (const [id, registrar] of this.meta.symbolRegistrars) {
+				const result = registrar(this.symbols, {
+					cacheChecksum: this.#cacheService.checksums.symbolRegistrars[id],
+					logger: this.logger,
+				})
+				this.emit('symbolRegistrarExecuted', { id, result })
+			}
+			__profiler.task('Register Symbols')
+
+			const { addedFiles, changedFiles, removedFiles } = await this.#cacheService.validate()
+			for (const uri of removedFiles) {
+				this.symbols.clear({ uri })
+			}
+			__profiler.task('Validate Cache')
+
+			if (addedFiles.length > 0) {
+				this.bind(addedFiles)
+			}
+			__profiler.task('Bind URIs')
+
+			const files = [...addedFiles, ...changedFiles]// FIXME: nbtdoc files might need to be parsed and checked before others.
+			const docAndNodes = (await Promise.all(files.map(uri => limit(ensureParsed, uri)))).filter((r): r is DocAndNode => !!r)
+			__profiler.task('Parse Files')
+
+			await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
+			__profiler.task('Check Files').finalize()
+
+			this.emit('ready', {})
+		}
+		this.#readyPromise = ready()
+	}
+
 	async init(): Promise<this> {
 		await this.#initPromise
 		return this
@@ -423,10 +435,27 @@ export class Project extends EventEmitter {
 		return this
 	}
 
+	/**
+	 * Behavior of the `Project` instance is undefined after this function has settled.
+	 */
 	async close(): Promise<void> {
 		clearInterval(this.#cacheSaverIntervalId)
 		await this.#watcher.close()
 		await this.#cacheService.save()
+	}
+
+	async restart(): Promise<void> {
+		try {
+			await this.#watcher.close()
+			this.setReadyPromise()
+			await this.ready()
+		} catch (e) {
+			this.logger.error('[Project#reset]', e)
+		}
+	}
+
+	resetCache(): void {
+		return this.#cacheService.reset()
 	}
 
 	/**

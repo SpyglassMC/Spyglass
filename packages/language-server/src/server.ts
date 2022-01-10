@@ -23,6 +23,7 @@ const connection = ls.createConnection()
 let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
 let hasShutdown = false
+let progressReporter: ls.WorkDoneProgressReporter | undefined
 
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
@@ -43,6 +44,11 @@ connection.onInitialize(async params => {
 	// TODO: Remove this. This is to give the debugger time to attach.
 	await new Promise(resolve => setTimeout(resolve, 7000))
 	logger.warn('Delayed 7 seconds manually. If you see this in production, it means SPGoding messed up.')
+
+	if (params.workDoneToken) {
+		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
+		progressReporter.begin(locales.localize('server.progress.preparing.title'))
+	}
 
 	try {
 		await locales.loadLocale(params.locale)
@@ -78,6 +84,9 @@ connection.onInitialize(async params => {
 			.on('documentRemoved', ({ uri }) => {
 				connection.sendDiagnostics({ uri, diagnostics: [] })
 			})
+			.on('ready', () => {
+				progressReporter?.done()
+			})
 		await service.project.init()
 	} catch (e) {
 		logger.error('[new Service]', e)
@@ -86,6 +95,7 @@ connection.onInitialize(async params => {
 	const customCapabilities: CustomServerCapabilities = {
 		dataHackPubify: true,
 		inlayHints: true,
+		resetProjectCache: true,
 		showCacheRoot: true,
 	}
 
@@ -286,6 +296,11 @@ connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, ra
 	const { doc, node } = docAndNode
 	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
 	return toLS.inlayHints(hints, doc)
+})
+
+connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
+	service.project.resetCache()
+	return service.project.restart()
 })
 
 connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {

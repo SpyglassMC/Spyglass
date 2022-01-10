@@ -105,6 +105,18 @@ export function activate(context: vsc.ExtensionContext) {
 			))
 		}
 
+		if (customCapabilities?.resetProjectCache) {
+			context.subscriptions.push(vsc.commands.registerCommand('spyglassmc.resetProjectCache',
+				async (): Promise<void> => {
+					try {
+						await client.sendRequest('spyglassmc/resetProjectCache')
+					} catch (e) {
+						console.error('[client#resetProjectCache]', e)
+					}
+				}
+			))
+		}
+
 		if (customCapabilities?.showCacheRoot) {
 			context.subscriptions.push(vsc.commands.registerCommand('spyglassmc.showCacheRoot',
 				async (): Promise<void> => {
