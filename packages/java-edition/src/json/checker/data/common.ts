@@ -61,6 +61,21 @@ export const score_provider = any([
 	})),
 ])
 
+export const nbt_provider = any([
+	literal(['this', 'killer', 'killer_player', 'block_entity']),
+	dispatch('type', type => record({
+		type: literal(['context', 'storage']),
+		...pick(type, {
+			context: {
+				target: literal(['this', 'killer', 'killer_player', 'block_entity']),
+			},
+			storage: {
+				source: resource('storage'),
+			},
+		}),
+	})),
+])
+
 export const int_bounds = as('bounds', any([
 	int,
 	any([

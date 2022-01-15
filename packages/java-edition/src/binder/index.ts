@@ -27,7 +27,7 @@ export const Categories = new Map<string, {
 	['worldgen/configured_carver', { category: 'worldgen/configured_carver', extname: '.json', since: '1.16' }],
 	['worldgen/configured_feature', { category: 'worldgen/configured_feature', extname: '.json', since: '1.16' }],
 	['worldgen/configured_structure_feature', { category: 'worldgen/configured_structure_feature', extname: '.json', since: '1.16' }],
-	['worldgen/configured_surface_builder', { category: 'worldgen/configured_surface_builder', extname: '.json', since: '1.16' }],
+	['worldgen/configured_surface_builder', { category: 'worldgen/configured_surface_builder', extname: '.json', since: '1.16', until: '1.17' }],
 	['worldgen/noise', { category: 'worldgen/noise', extname: '.json', since: '1.18' }],
 	['worldgen/noise_settings', { category: 'worldgen/noise_settings', extname: '.json', since: '1.16' }],
 	['worldgen/placed_feature', { category: 'worldgen/placed_feature', extname: '.json', since: '1.18' }],

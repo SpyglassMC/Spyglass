@@ -55,7 +55,7 @@ export const configured_carver = as('carver', dispatch('type', (type, _, ctx) =>
 			y: height_provider,
 			yScale: floatProvider(),
 			lava_level: vertical_anchor,
-			aquifers_enabled: opt(boolean),
+			aquifers_enabled: versioned(ctx, boolean, '1.18'),
 			debug_settings: opt(record({
 				debug_mode: opt(boolean),
 				air_state: opt(block_state),
