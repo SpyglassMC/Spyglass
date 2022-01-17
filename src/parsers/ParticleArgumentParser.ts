@@ -116,6 +116,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     break
                 }
                 case 'minecraft:block':
+                case 'minecraft:block_marker':
                 case 'minecraft:falling_dust':
                     reader
                         .expect(' ')
