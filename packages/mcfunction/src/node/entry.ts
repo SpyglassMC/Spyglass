@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import type { CommandNode } from './command'
 
-export interface McfunctionNode<A extends core.AstNode> extends core.SequenceNode<CommandNode<A> | core.CommentNode> {
+export interface McfunctionNode<A extends core.AstNode> extends core.SequenceNode<CommandNode | core.CommentNode> {
 	type: 'mcfunction:entry',
 }
 export namespace McfunctionNode {

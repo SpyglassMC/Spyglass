@@ -41,7 +41,7 @@ const PlayerNameMaxLength = 16
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: string, rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | undefined => {
+export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>, noTypeOverride = false): core.Parser<ArgumentNode> => core.map(
@@ -49,8 +49,8 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (name: st
 		res => ({
 			...res,
 			...noTypeOverride ? {} : { type: `mcfunction:argument/${treeNode.parser}` },
-			name,
-			hover: `${mcf.parser.argumentTreeNodeToString(name, treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
+			'// FIXME',
+			hover: `${mcf.parser.argumentTreeNodeToString('// FIXME', treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
 		} as ArgumentNode)
 	)
 

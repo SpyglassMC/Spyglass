@@ -1,13 +1,13 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { LiteralNode } from '../node'
+import type { LiteralCommandChildNode } from '../node'
 
-export function literal(names: string[], isRoot = false): core.Parser<LiteralNode> {
+export function literal(names: string[], isRoot = false): core.Parser<LiteralCommandChildNode> {
 	const options: core.LiteralOptions = {
 		pool: names,
 		colorTokenType: isRoot ? 'keyword' : 'literal',
 	}
-	return (src, ctx): core.Result<LiteralNode> => {
+	return (src, ctx): core.Result<LiteralCommandChildNode> => {
 		const start = src.cursor
 		const value = src.readUntil(' ', '\r', '\n')
 
@@ -15,11 +15,10 @@ export function literal(names: string[], isRoot = false): core.Parser<LiteralNod
 			return core.Failure
 		}
 
-		const ans: core.Mutable<LiteralNode> = {
-			type: 'mcfunction:literal',
+		const ans: core.Mutable<LiteralCommandChildNode> = {
+			type: 'mcfunction:command_child/literal',
 			range: core.Range.create(start, src),
 			options,
-			name: value,
 			value,
 		}
 

@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { ChildBaseNode, CommandNode, LiteralNode, SpecialArgumentNode, SpyglassmcUnknownArgumentNode } from '../node'
+import type { CommandChildNode, CommandNode, LiteralCommandChildNode, TrailingCommandChildNode, UnknownCommandChildNode } from '../node'
 import { resolveTreeNode } from '../tree'
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
 import type { ArgumentParserGetter } from './argument'
@@ -11,9 +11,9 @@ import { literal } from './literal'
 /**
  * @returns A parser that always takes a whole line (excluding line turn characters) and tries to parse it as a command.
  */
-export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: ArgumentParserGetter<A>): core.InfallibleParser<CommandNode<A>> {
-	return (src, ctx): CommandNode<A> => {
-		const ans: CommandNode<A> = {
+export function command(tree: RootTreeNode, argument: ArgumentParserGetter): core.InfallibleParser<CommandNode> {
+	return (src, ctx): CommandNode => {
+		const ans: CommandNode = {
 			type: 'mcfunction:command',
 			range: core.Range.create(src),
 			children: [],
@@ -24,18 +24,17 @@ export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: A
 			ans.slash = core.Range.create(start, src.cursor)
 		}
 
-		dispatch<A>(ans.children, src, ctx, tree, tree, argument)
+		dispatch(ans.children, src, ctx, [], tree, tree, argument)
 
 		if (src.canReadInLine()) {
 			// There is trailing string after the command.
-			const start = src.cursor
-			const value = src.readUntilLineEnd()
-			const range = core.Range.create(start, src)
+			const node = trailing(src, ctx)
 			ans.children.push({
-				type: 'mcfunction:argument/spyglassmc:trailing',
-				name: '', range, value,
+				type: 'mcfunction:command_child',
+				range: node.range,
+				children: [node],
+				path: undefined,
 			})
-			ctx.err.report(localize('mcfunction.parser.trailing'), range)
 		}
 
 		ans.range.end = src.cursor
@@ -49,7 +48,7 @@ export function command<A extends ChildBaseNode>(tree: RootTreeNode, argument: A
  * 
  * @param ans An array where child nodes will be pushed into.
  */
-function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgumentNode)[], src: core.Source, ctx: core.ParserContext, rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter<A>): void {
+function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserContext, path: string[], rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
 	const parent = resolveTreeNode(parentTreeNode, rootTreeNode)
@@ -61,22 +60,35 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 
 	const { literalTreeNodes, argumentTreeNodes } = categorize(children)
 
-	const argumentParsers = argumentTreeNodes.map(([name, treeNode]) => argument(name, treeNode) ?? unknown(name, treeNode))
+
+	const argumentParsers: { name: string, parser: core.Parser }[] = argumentTreeNodes.map(([name, treeNode]) => ({
+		name,
+		parser: argument(treeNode) ?? unknown(treeNode),
+	}))
 	const literalParser = literalTreeNodes.length
 		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent!.type === 'root')
 		: undefined
 
-	const parsers: core.Parser<LiteralNode | A | SpecialArgumentNode>[] = [
-		...argumentParsers,
+	const parsers: core.Parser[] = [
+		...argumentParsers.map(v => v.parser),
 		...literalParser ? [literalParser] : [],
 	]
 
-	const result = core.any(parsers)(src, ctx)
+	const out: core.AnyOutObject = { index: NaN }
+	const result = core.any(parsers, out)(src, ctx)
 
 	if (result !== core.Failure) {
-		ans.push(result)
+		const takenName = argumentParsers[out.index]?.name ?? (result as LiteralCommandChildNode).value
+		const childPath = [...path, takenName]
 
-		const childTreeNode = children[result.name]
+		ans.push({
+			type: 'mcfunction:command_child',
+			range: result.range,
+			children: [result],
+			path: childPath,
+		})
+
+		const childTreeNode = children[takenName]
 		if (!childTreeNode) {
 			return
 		}
@@ -89,7 +101,7 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 			)
 		}
 
-		if (result.type === 'mcfunction:argument/spyglassmc:unknown') {
+		if ((result as UnknownCommandChildNode).type === 'mcfunction:command_child/unknown') {
 			// Encountered an unsupported parser. Stop parsing this command.
 			return
 		}
@@ -98,7 +110,7 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 			// Skip command argument separation (a space).
 			sep(src, ctx)
 			// Recursive dispatch for the child tree node.
-			dispatch<A>(ans, src, ctx, rootTreeNode, childTreeNode, argument)
+			dispatch(ans, src, ctx, childPath, rootTreeNode, childTreeNode, argument)
 		} else {
 			// End-of-command.
 			if (!childTreeNode.executable) {
@@ -114,8 +126,8 @@ function dispatch<A extends ChildBaseNode>(ans: (LiteralNode | A | SpecialArgume
 	}
 }
 
-function unknown(name: string, treeNode: ArgumentTreeNode): core.InfallibleParser<SpyglassmcUnknownArgumentNode> {
-	return (src, ctx): SpyglassmcUnknownArgumentNode => {
+function unknown(treeNode: ArgumentTreeNode): core.InfallibleParser<UnknownCommandChildNode> {
+	return (src, ctx): UnknownCommandChildNode => {
 		const start = src.cursor
 		const value = src.readUntilLineEnd()
 		const range = core.Range.create(start, src)
@@ -125,13 +137,25 @@ function unknown(name: string, treeNode: ArgumentTreeNode): core.InfallibleParse
 			core.ErrorSeverity.Hint
 		)
 		return {
-			type: 'mcfunction:argument/spyglassmc:unknown',
+			type: 'mcfunction:command_child/unknown',
 			range,
-			name,
 			value,
 		}
 	}
 }
+
+const trailing: core.InfallibleParser<TrailingCommandChildNode> = (src, ctx): TrailingCommandChildNode => {
+	const start = src.cursor
+	const value = src.readUntilLineEnd()
+	const range = core.Range.create(start, src)
+	ctx.err.report(localize('mcfunction.parser.trailing'), range)
+	return {
+		type: 'mcfunction:command_child/trailing',
+		range,
+		value,
+	}
+}
+
 
 /**
  * Categorize command tree children to literal entries and argument entries.

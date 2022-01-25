@@ -1,26 +1,41 @@
 import type * as core from '@spyglassmc/core'
-import type { SpecialArgumentNode } from './argument'
-import type { LiteralNode } from './literal'
 
-/**
- * @template A Type of argument nodes of this command.
- */
-export interface CommandNode<A extends core.AstNode> extends core.SequenceNode<LiteralNode | A | SpecialArgumentNode> {
+export interface CommandNode extends core.SequenceNode<CommandChildNode> {
 	type: 'mcfunction:command',
 	slash?: core.Range,
 }
 export namespace CommandNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is CommandNode<any> {
-		return (node as CommandNode<any>).type === 'mcfunction:command'
+	export function is(node: core.AstNode): node is CommandNode {
+		return (node as CommandNode).type === 'mcfunction:command'
 	}
 }
 
-export interface ChildBaseExtender {
+export interface CommandChildNode extends core.AstNode {
+	type: 'mcfunction:command_child',
 	/**
-	 * The name of this node in the command tree.
+	 * The path of this node in the command tree. Undefined if the current node does not correspond to an actual tree node.
 	 */
-	name: string,
+	path: string[] | undefined,
+	children: [core.AstNode],
 }
 
-export interface ChildBaseNode extends core.AstNode, ChildBaseExtender {}
+export interface TrailingCommandChildNode extends core.AstNode {
+	type: 'mcfunction:command_child/trailing',
+	value: string,
+}
+
+export interface UnknownCommandChildNode extends core.AstNode {
+	type: 'mcfunction:command_child/unknown',
+	value: string,
+}
+
+export interface LiteralCommandChildNode extends core.LiteralBaseNode {
+	type: 'mcfunction:command_child/literal',
+}
+export namespace CommandChildNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is CommandChildNode {
+		return (node as CommandChildNode).type === 'mcfunction:command_child'
+	}
+}

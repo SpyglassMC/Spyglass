@@ -143,26 +143,40 @@ export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>
 	}
 }
 
+export interface AnyOutObject {
+	/**
+	 * The index of the parser in the provided `parsers` array that was ultimately taken. `-1` if all parsers failed.
+	 */
+	index: number,
+}
 /**
+ * @param out An optional object that will be modified with additional information if provided.
+ * 
  * @returns A parser that returns the result of the passed-in parser which produces the least amount of error.
  * If there are more than one `parsers` produced the same amount of errors, it then takes the parser that went the furthest in `Source`.
  * If there is still a tie, it takes the one closer to the beginning of the `parsers` array.
  * 
  * `Failure` when all of the `parsers` failed.
  */
-export function any<PA extends [...Parser<Returnable>[], InfallibleParser<Returnable>]>(parsers: PA): InfallibleParser<ExtractNodeTypes<PA>>
-export function any<PA extends Parser<Returnable>[]>(parsers: PA): Parser<ExtractNodeTypes<PA>>
-export function any(parsers: Parser<Returnable>[]): Parser<Returnable> {
+export function any<PA extends [...Parser<Returnable>[], InfallibleParser<Returnable>]>(parsers: PA, out?: AnyOutObject): InfallibleParser<ExtractNodeTypes<PA>>
+export function any<PA extends Parser<Returnable>[]>(parsers: PA, out?: AnyOutObject): Parser<ExtractNodeTypes<PA>>
+export function any(parsers: Parser<Returnable>[], out?: AnyOutObject): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
-		const attempts: AttemptResult<Returnable>[] = parsers
-			.map(parser => attempt(parser, src, ctx))
-			.filter(att => att.result !== Failure)
-			.sort((a, b) => (b.endCursor - a.endCursor) || (a.errorAmount - b.errorAmount))
-		if (attempts.length === 0) {
+		const results: { attempt: AttemptResult<Returnable>, index: number }[] = parsers
+			.map((parser, i) => ({ attempt: attempt(parser, src, ctx), index: i }))
+			.filter(({ attempt }) => attempt.result !== Failure)
+			.sort((a, b) => (b.attempt.endCursor - a.attempt.endCursor) || (a.attempt.errorAmount - b.attempt.errorAmount))
+		if (results.length === 0) {
+			if (out) {
+				out.index = -1
+			}
 			return Failure
 		}
-		attempts[0].updateSrcAndCtx()
-		return attempts[0].result
+		results[0].attempt.updateSrcAndCtx()
+		if (out) {
+			out.index = results[0].index
+		}
+		return results[0].attempt.result
 	}
 }
 
