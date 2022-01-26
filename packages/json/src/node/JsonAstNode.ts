@@ -2,6 +2,18 @@ import type * as core from '@spyglassmc/core'
 import type { PairNode } from '@spyglassmc/core'
 
 export type JsonNode = JsonObjectNode | JsonArrayNode | JsonStringNode | JsonNumberNode | JsonBooleanNode | JsonNullNode
+export namespace JsonNode {
+	export function is(node: core.AstNode): node is JsonNode {
+		return (
+			JsonObjectNode.is(node) ||
+			JsonArrayNode.is(node) ||
+			JsonStringNode.is(node) ||
+			JsonNumberNode.is(node) ||
+			JsonBooleanNode.is(node) ||
+			JsonNullNode.is(node)
+		)
+	}
+}
 
 interface JsonBaseAstNode {
 	expectation?: JsonExpectation[]

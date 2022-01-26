@@ -1,9 +1,11 @@
 import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales/lib'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
+import { text_component } from '../../json/checker/data/text_component'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node'
 import { EntityNode, EntitySelectorArgumentsNode } from '../node'
 
@@ -62,6 +64,12 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 		}
 	} else if (getName(nodes, index) === 'summon') {
 		summonNbt(nodes, index + 1, ctx)
+	}
+
+	for (const { children: [node] } of nodes) {
+		if (json.JsonNode.is(node)) {
+			text_component(node, { ...ctx, context: '' })
+		}
 	}
 }
 
