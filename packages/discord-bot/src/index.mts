@@ -1,11 +1,12 @@
 import { SlashCommandBuilder, SlashCommandStringOption } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
-import type { ColorToken, ColorTokenType, DocAndNode } from '@spyglassmc/core'
-import { fileUtil, ProfilerFactory, Service } from '@spyglassmc/core'
+import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
+import { ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service } from '@spyglassmc/core'
 import * as je from '@spyglassmc/java-edition'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { Routes } from 'discord-api-types/rest/v9'
-import { Client, Intents } from 'discord.js'
+import type { Snowflake } from 'discord.js'
+import { Client, Intents, MessageActionRow, MessageButton } from 'discord.js'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -39,26 +40,43 @@ const service = new Service({
 	projectPath,
 	profilers,
 })
+const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
 
-client.on('interactionCreate', async interaction => {
-	if (!interaction.isCommand()) {
-		return
-	}
+interface InteractionInfo {
+	content: string,
+	errors: LanguageError[],
+	activeErrorIndex: number,
+	tokens: readonly ColorToken[],
+}
+const activeInteractions = new Map<Snowflake, InteractionInfo>()
 
+client.on('interactionCreate', async i => {
 	try {
-		switch (interaction.commandName) {
-			case 'ping':
-				await interaction.reply({ content: `Pong! Bot to Discord ping ${client.ws.ping} ms`, ephemeral: true })
-				break
-			case 'spy':
-				const command = interaction.options.getString('command', true)
-				const docAndNode = await getDocAndNode(command)
-				if (docAndNode) {
-					const { node, doc } = docAndNode
-					const tokens = service.colorize(node, doc)
-					await interaction.reply({ content: getAnsiCodeBlock(command, tokens) })
-				}
-				break
+		if (i.isButton()) {
+			const info = activeInteractions.get(i.message.id)
+			if (!info) {
+				await i.update({ content: 'This interaction has expired!' })
+				return
+			}
+
+			if (i.customId === 'p') {
+				info.activeErrorIndex--
+			} else if (i.customId === 'n') {
+				info.activeErrorIndex++
+			}
+			await i.update(getReplyOptions(info))
+		} else if (i.isCommand()) {
+			switch (i.commandName) {
+				case 'ping':
+					await i.reply({ content: `Pong! Bot to Discord ping ${client.ws.ping} ms`, ephemeral: true })
+					break
+				case 'spy':
+					const command = i.options.getString('command', true)
+					const info = await getInteractionInfo(command)
+					const reply = await i.reply(getReplyOptions(info))
+					activeInteractions.set(reply.id, info)
+					break
+			}
 		}
 	} catch (e) {
 		console.error('[interactionCreate]', e)
@@ -115,18 +133,46 @@ async function registerCommands(): Promise<unknown> {
 	return rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), { body: [pingCommand, spyCommand] })
 }
 
-async function getDocAndNode(content: string): Promise<DocAndNode | undefined> {
-	const uri = 'spyglassmc://discord-bot/file.mcfunction'
-	service.project.onDidOpen(uri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureParsedAndChecked(uri)
-	service.project.onDidClose(uri)
-	return docAndNode
+async function getInteractionInfo(content: string): Promise<InteractionInfo> {
+	if (activeInteractions.has(content)) {
+		return activeInteractions.get(content)!
+	}
+
+	service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
+	const docAndNode = await service.project.ensureParsedAndChecked(DocumentUri)
+	service.project.onDidClose(DocumentUri)
+	if (!docAndNode) {
+		throw new Error('docAndNode is undefined')
+	}
+
+	const { node, doc } = docAndNode
+	const errors = FileNode.getErrors(node)
+	const tokens = service.colorize(node, doc)
+	const activeErrorIndex = errors.length ? 0 : -1
+
+	return {
+		content,
+		errors,
+		activeErrorIndex,
+		tokens,
+	}
+}
+
+function getReplyOptions(info: InteractionInfo): { content: string, components: MessageActionRow[], fetchReply: true } {
+	return {
+		content: getReplyContent(info),
+		components: info.errors.length > 1 ? [new MessageActionRow().addComponents(
+			new MessageButton().setCustomId('p').setLabel('Previous Error').setStyle('PRIMARY').setDisabled(info.activeErrorIndex <= 0),
+			new MessageButton().setCustomId('n').setLabel('Next Error').setStyle('PRIMARY').setDisabled(info.activeErrorIndex >= info.errors.length - 1)
+		)] : [],
+		fetchReply: true,
+	}
 }
 
 const AnsiColorMap: Record<ColorTokenType, `${number}`> = {
 	comment: '32',
-	enum: '36',
-	enumMember: '36',
+	enum: '37',
+	enumMember: '37',
 	error: '31',
 	function: '33',
 	keyword: '35',
@@ -137,11 +183,11 @@ const AnsiColorMap: Record<ColorTokenType, `${number}`> = {
 	property: '36',
 	resourceLocation: '33',
 	string: '32',
-	struct: '36',
-	type: '36',
-	variable: '36',
+	struct: '37',
+	type: '37',
+	variable: '37',
 }
-function getAnsiCodeBlock(content: string, tokens: readonly ColorToken[]): string {
+function getReplyContent({ content, tokens, errors, activeErrorIndex }: InteractionInfo): string {
 	let ansiCode = ''
 	let lastOffset = 0
 	for (const { type, range } of tokens) {
@@ -150,5 +196,22 @@ function getAnsiCodeBlock(content: string, tokens: readonly ColorToken[]): strin
 	}
 	ansiCode += content.slice(lastOffset)
 
-	return `\`\`\`ansi\n${ansiCode}\n\`\`\``
+	const activeError: LanguageError | undefined = errors[activeErrorIndex]
+
+	return `\`\`\`ansi\n${ansiCode}\n\`\`\`${activeError
+		? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)} ${activeError.message}\``
+		: ''}`
+}
+
+function errorSeverityToChar(severity: ErrorSeverity): string {
+	switch (severity) {
+		case ErrorSeverity.Hint:
+			return 'H'
+		case ErrorSeverity.Information:
+			return 'I'
+		case ErrorSeverity.Warning:
+			return 'W'
+		case ErrorSeverity.Error:
+			return 'E'
+	}
 }
