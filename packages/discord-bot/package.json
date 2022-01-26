@@ -1,0 +1,34 @@
+{
+  "name": "@spyglassmc/discord-bot",
+  "version": "0.1.0",
+  "main": "lib/index.mjs",
+  "types": "lib/index.d.mts",
+  "author": "SPGoding",
+  "license": "MIT",
+  "directories": {
+    "test": "test/"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^0.3.0",
+    "discord.js": "^13.6.0",
+    "discord-api-types": "^0.26.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node lib/index.mjs"
+  },
+  "engines": {
+    "node": ">=16.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}
