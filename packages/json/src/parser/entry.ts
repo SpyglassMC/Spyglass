@@ -7,16 +7,22 @@ import { number } from './number'
 import { object } from './object'
 import { string } from './string'
 
-export const entry: core.Parser<JsonNode> = (src, ctx) => {
-	const result = core.any([
-		string,
-		number,
-		boolean,
-		null_,
-		object,
-		array,
-	])(src, ctx)
+export function json(dumpErrors = false): core.Parser<JsonNode> {
+	return (src, ctx) => {
+		const result = core.any([
+			string,
+			number,
+			boolean,
+			null_,
+			object,
+			array,
+		])(src, ctx)
 
-	ctx.err.dump()
-	return result
+		if (dumpErrors) {
+			ctx.err.dump()
+		}
+		return result
+	}
 }
+
+export const entry: core.Parser<JsonNode> = json(true)

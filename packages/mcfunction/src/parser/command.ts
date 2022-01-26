@@ -74,8 +74,9 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		...literalParser ? [literalParser] : [],
 	]
 
-	const out: core.AnyOutObject = { index: NaN }
-	const result = core.any(parsers, out)(src, ctx)
+	const out: core.AnyOutObject = { index: 0 }
+	const parser = parsers.length > 1 ? core.any(parsers, out) : parsers[0]
+	const result = parser(src, ctx)
 
 	if (result !== core.Failure) {
 		const takenName = argumentParsers[out.index]?.name ?? (result as LiteralCommandChildNode).value

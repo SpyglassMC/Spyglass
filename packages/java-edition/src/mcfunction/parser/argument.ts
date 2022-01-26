@@ -44,7 +44,7 @@ const PlayerNameMaxLength = 16
 export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
-	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser => core.failOnEmpty<T>(parser)
+	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser => core.failOnEmpty<T>(core.stopBefore(parser, '\r', '\n'))
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
@@ -248,7 +248,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-export const component = json.parser.entry
+export const component = json.parser.json()
 
 function double(min = DoubleMin, max = DoubleMax): core.InfallibleParser<core.FloatNode> {
 	return core.float({
