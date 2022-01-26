@@ -4,7 +4,8 @@ import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { bufferToString, CachePromise, SpyglassUri } from '../common'
-import type { AstNode, FileNode } from '../node'
+import type { AstNode } from '../node'
+import { FileNode } from '../node'
 import { file } from '../parser'
 import { traversePreOrder } from '../processor'
 import type { LanguageError } from '../source'
@@ -245,7 +246,7 @@ export class Project extends EventEmitter {
 			.on('documentUpdated', ({ doc, node }) => {
 				this.emit('documentErrorred', {
 					doc,
-					errors: [...node.parserErrors, ...node.checkerErrors ?? [], ...node.linterErrors ?? []],
+					errors: FileNode.getErrors(node),
 					node,
 				})
 			})

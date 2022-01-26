@@ -14,3 +14,8 @@ export interface FileNode<CN extends AstNode> extends AstNode {
 	 */
 	linterErrors?: readonly LanguageError[],
 }
+export namespace FileNode {
+	export function getErrors(node: FileNode<any>): LanguageError[] {
+		return [...node.parserErrors, ...node.checkerErrors ?? [], ...node.linterErrors ?? []]
+	}
+}
