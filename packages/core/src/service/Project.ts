@@ -125,7 +125,7 @@ export class Project extends EventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
 	readonly #cacheSaverIntervalId: NodeJS.Timeout
-	readonly #cacheService: CacheService
+	readonly cacheService: CacheService
 	/**
 	 * URI of files that are currently managed by the language client.
 	 */
@@ -217,7 +217,7 @@ export class Project extends EventEmitter {
 		super()
 
 		this.#cacheRoot = cacheRoot
-		this.#cacheService = new CacheService(cacheRoot, this)
+		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this)
 		this.fs = fs
 		this.#initializers = initializers
@@ -239,7 +239,7 @@ export class Project extends EventEmitter {
 
 		this.setInitPromise()
 		this.setReadyPromise()
-		this.#cacheSaverIntervalId = setInterval(() => this.#cacheService.save(), CacheAutoSaveInterval)
+		this.#cacheSaverIntervalId = setInterval(() => this.cacheService.save(), CacheAutoSaveInterval)
 
 		this
 			.on('documentUpdated', ({ doc, node }) => {
@@ -299,7 +299,7 @@ export class Project extends EventEmitter {
 		const init = async () => {
 			const __profiler = this.profilers.get('project#init')
 
-			const { symbols } = await this.#cacheService.load()
+			const { symbols } = await this.cacheService.load()
 			this.symbols = new SymbolUtil(symbols)
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
@@ -338,7 +338,7 @@ export class Project extends EventEmitter {
 		const listDependencyFiles = async () => {
 			const dependencies = await getDependencies()
 			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
-			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.#cacheService.checksums.roots)
+			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.cacheService.checksums.roots)
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(SpyglassUri.Protocol, spyglassUriSupporter, true)
 		}
@@ -395,14 +395,14 @@ export class Project extends EventEmitter {
 
 			for (const [id, registrar] of this.meta.symbolRegistrars) {
 				const result = registrar(this.symbols, {
-					cacheChecksum: this.#cacheService.checksums.symbolRegistrars[id],
+					cacheChecksum: this.cacheService.checksums.symbolRegistrars[id],
 					logger: this.logger,
 				})
 				this.emit('symbolRegistrarExecuted', { id, result })
 			}
 			__profiler.task('Register Symbols')
 
-			const { addedFiles, changedFiles, removedFiles } = await this.#cacheService.validate()
+			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
 			for (const uri of removedFiles) {
 				this.symbols.clear({ uri })
 			}
@@ -433,6 +433,7 @@ export class Project extends EventEmitter {
 	}
 
 	async ready(): Promise<this> {
+		await this.#initPromise
 		await this.#readyPromise
 		return this
 	}
@@ -443,7 +444,7 @@ export class Project extends EventEmitter {
 	async close(): Promise<void> {
 		clearInterval(this.#cacheSaverIntervalId)
 		await this.#watcher.close()
-		await this.#cacheService.save()
+		await this.cacheService.save()
 	}
 
 	async restart(): Promise<void> {
@@ -457,7 +458,7 @@ export class Project extends EventEmitter {
 	}
 
 	resetCache(): void {
-		return this.#cacheService.reset()
+		return this.cacheService.reset()
 	}
 
 	/**
@@ -657,6 +658,10 @@ export class Project extends EventEmitter {
 	}
 
 	async showCacheRoot(): Promise<void> {
+		if (!this.#cacheRoot) {
+			return
+		}
+
 		try {
 			await fileUtil.showFile(this.#cacheRoot)
 		} catch (e) {
