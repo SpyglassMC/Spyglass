@@ -6,7 +6,7 @@ import * as je from '@spyglassmc/java-edition'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { Routes } from 'discord-api-types/rest/v9'
 import type { Snowflake } from 'discord.js'
-import { Client, Intents, MessageActionRow, MessageButton } from 'discord.js'
+import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -55,7 +55,10 @@ client.on('interactionCreate', async i => {
 		if (i.isButton()) {
 			const info = activeInteractions.get(i.message.id)
 			if (!info) {
-				await i.update({ content: 'This interaction has expired!' })
+				await i.update({
+					embeds: [new MessageEmbed().setDescription('The interaction has expired!')],
+					components: [],
+				})
 				return
 			}
 
