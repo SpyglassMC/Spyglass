@@ -151,7 +151,7 @@ export class Project extends EventEmitter {
 	#dependencyRoots!: Set<RootUriString>
 	#dependencyFiles!: Set<string>
 
-	#roots!: readonly RootUriString[]
+	#roots: readonly RootUriString[] = []
 	/**
 	 * All tracked root URIs. Each URI in this array is guaranteed to end with a slash (`/`).
 	 * 
