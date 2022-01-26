@@ -4,59 +4,63 @@ import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
-import type { CommandNode, EntitySelectorInvertableArgumentValueNode, MinecraftEntityArgumentNode } from '../node'
-import { EntitySelectorArgumentsNode } from '../node'
+import type { EntitySelectorInvertableArgumentValueNode } from '../node'
+import { EntityNode, EntitySelectorArgumentsNode } from '../node'
 
-export const command: core.Checker<CommandNode> = (node, ctx) => {
+export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
 		ctx.err.report(localize('unexpected-leading-slash'), node.slash)
 	}
 	rootCommand(node.children, 0, ctx)
 }
 
-const rootCommand = (nodes: CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	if (nodes[index]?.name === 'data') {
-		if (nodes[index + 1]?.name === 'get') {
+const getName = (nodes: mcf.CommandNode['children'], index: number): string | undefined => {
+	return nodes[index].path[nodes[index].path.length - 1]
+}
+
+const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+	if (getName(nodes, index) === 'data') {
+		if (getName(nodes, index + 1) === 'get') {
 			nbtPath(nodes, index + 2, ctx)
-		} else if (nodes[index + 1]?.name === 'merge') {
+		} else if (getName(nodes, index + 1) === 'merge') {
 			dataMergeTarget(nodes, index + 2, ctx)
-		} else if (nodes[index + 1]?.name === 'modify') {
+		} else if (getName(nodes, index + 1) === 'modify') {
 			nbtPath(nodes, index + 2, ctx)
-			const targetPath = nodes[index + 4]
-			const operation = nodes[index + 5]?.name
+			const targetPath = nodes[index + 4]?.children[0]
+			const operation = getName(nodes, index + 5)
 			const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
-			if (nodes[sourceTypeIndex]?.name === 'from') {
+			if (getName(nodes, sourceTypeIndex) === 'from') {
 				// `from <$nbtPath$>`
 				nbtPath(nodes, sourceTypeIndex + 1, ctx)
-				const sourcePath = nodes[sourceTypeIndex + 3]
-				if (targetPath?.type === 'nbt:path' && sourcePath?.type === 'nbt:path') {
+				const sourcePath = nodes[sourceTypeIndex + 3]?.children[0]
+				if (nbt.NbtPathNode.is(targetPath) && nbt.NbtPathNode.is(sourcePath)) {
 					const { errorMessage } = nbtdoc.checker.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
 					if (errorMessage) {
 						ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
 					}
 				}
-			} else if (nodes[sourceTypeIndex]?.name === 'value') {
+			} else if (getName(nodes, sourceTypeIndex) === 'value') {
 				// `value <value: nbt_tag>`
-				const valueNode = nodes[sourceTypeIndex + 1]
-				if (targetPath?.type === 'nbt:path' && targetPath.targetType && valueNode && nbt.NbtNode.is(valueNode)) {
+				const valueNode = nodes[sourceTypeIndex + 1]?.children[0]
+				if (nbt.NbtPathNode.is(targetPath) && targetPath.targetType && valueNode && nbt.NbtNode.is(valueNode)) {
 					nbt.checker.fieldValue(targetPath.targetType, { allowUnknownKey: true })(valueNode, ctx)
 				}
 			}
-		} else if (nodes[index + 1]?.name === 'remove') {
+		} else if (getName(nodes, index + 1) === 'remove') {
 			nbtPath(nodes, index + 2, ctx)
 		}
-	} else if (nodes[index]?.name === 'execute') {
+	} else if (getName(nodes, index) === 'execute') {
 		for (let i = index + 1; i < nodes.length; i++) {
-			if ((nodes[i].name === 'if' || nodes[i].name === 'unless') && nodes[i + 1]?.name === 'data') {
+			if ((getName(nodes, i) === 'if' || getName(nodes, i) === 'unless') && getName(nodes, i + 1) === 'data') {
 				// `if|unless data <$nbtPath$>`
 				nbtPath(nodes, i + 2, ctx)
 				i += 2
-			} else if (nodes[i].name === 'run') {
+			} else if (getName(nodes, i) === 'run') {
 				rootCommand(nodes, i + 1, ctx)
 				break
 			}
 		}
-	} else if (nodes[index]?.name === 'summon') {
+	} else if (getName(nodes, index) === 'summon') {
 		summonNbt(nodes, index + 1, ctx)
 	}
 }
@@ -66,29 +70,29 @@ const rootCommand = (nodes: CommandNode['children'], index: number, ctx: core.Ch
  * - `entity <target: entity> <nbt: nbt_compound_tag>`
  * - `storage <target: resource_location> <nbt: nbt_compound_tag>`
  */
-const dataMergeTarget = (nodes: CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	const registry = nodes[index]?.name
+const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
-			const nbtNode = nodes[index + 2]
-			if (nbtNode?.type === 'nbt:compound') {
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (nbt.NbtCompoundNode.is(nbtNode)) {
 				nbt.checker.index('block', undefined)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'entity': {
-			const entityNode = nodes[index + 1]
-			const nbtNode = nodes[index + 2]
-			if (entityNode?.type === 'mcfunction:argument/minecraft:entity' && nbtNode?.type === 'nbt:compound') {
+			const entityNode = nodes[index + 1]?.children[0]
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (EntityNode.is(entityNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 				const types = getTypesFromEntity(entityNode, ctx)
 				nbt.checker.index('entity_type', types)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'storage': {
-			const idNode = nodes[index + 1]
-			const nbtNode = nodes[index + 2]
-			if (idNode?.type === 'mcfunction:argument/minecraft:resource_location' && nbtNode?.type === 'nbt:compound') {
+			const idNode = nodes[index + 1]?.children[0]
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (core.ResourceLocationNode.is(idNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 				nbt.checker.index('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
 			}
 			break
@@ -101,29 +105,29 @@ const dataMergeTarget = (nodes: CommandNode['children'], index: number, ctx: cor
  * - `entity <entity> <nbt_path>`
  * - `storage <resource_location> <nbt_path>`
  */
-const nbtPath = (nodes: CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	const registry = nodes[index]?.name
+const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
-			const nbtNode = nodes[index + 2]
-			if (nbtNode?.type === 'nbt:path') {
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (nbt.NbtPathNode.is(nbtNode)) {
 				nbt.checker.path('block', undefined)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'entity': {
-			const entityNode = nodes[index + 1]
-			const nbtNode = nodes[index + 2]
-			if (entityNode?.type === 'mcfunction:argument/minecraft:entity' && nbtNode?.type === 'nbt:path') {
+			const entityNode = nodes[index + 1]?.children[0]
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (EntityNode.is(entityNode) && nbt.NbtPathNode.is(nbtNode)) {
 				const types = getTypesFromEntity(entityNode, ctx)
 				nbt.checker.path('entity_type', types)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'storage': {
-			const idNode = nodes[index + 1]
-			const nbtNode = nodes[index + 2]
-			if (idNode?.type === 'mcfunction:argument/minecraft:resource_location' && nbtNode?.type === 'nbt:path') {
+			const idNode = nodes[index + 1]?.children[0]
+			const nbtNode = nodes[index + 2]?.children[0]
+			if (core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)) {
 				nbt.checker.path('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
 			}
 			break
@@ -134,15 +138,15 @@ const nbtPath = (nodes: CommandNode['children'], index: number, ctx: core.Checke
 /**
  * - `<entity: entity_summon> [<pos: vec3>] [<nbt: nbt_compound_tag>]`
  */
-const summonNbt = (nodes: CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	const typeNode = nodes[index]
-	const nbtNode = nodes[index + 2]
-	if (typeNode?.type === 'mcfunction:argument/minecraft:entity_summon' && nbtNode?.type === 'nbt:compound') {
+const summonNbt = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+	const typeNode = nodes[index]?.children[0]
+	const nbtNode = nodes[index + 2]?.children[0]
+	if (core.ResourceLocationNode.is(typeNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 		nbt.checker.index('entity_type', core.ResourceLocationNode.toString(typeNode, 'full'))(nbtNode, ctx)
 	}
 }
 
-export const getTypesFromEntity = (entity: MinecraftEntityArgumentNode, ctx: core.CheckerContext): core.FullResourceLocation[] | undefined => {
+export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext): core.FullResourceLocation[] | undefined => {
 	if (entity.playerName !== undefined || entity.selector?.playersOnly) {
 		return ['minecraft:player']
 	} else if (entity.selector) {
@@ -174,5 +178,5 @@ export const getTypesFromEntity = (entity: MinecraftEntityArgumentNode, ctx: cor
 }
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerChecker<CommandNode>('mcfunction:command', command)
+	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 }

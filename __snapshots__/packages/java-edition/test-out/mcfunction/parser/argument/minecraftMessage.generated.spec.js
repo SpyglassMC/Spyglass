@@ -5,7 +5,6 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
       "start": 0,
       "end": 0
     },
-    "name": "test",
     "children": [
       {
         "type": "mcfunction:entity_selector",
@@ -33,8 +32,7 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
         "typeLimited": false,
         "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
       }
-    ],
-    "hover": "<test: message>"
+    ]
   },
   "errors": []
 }
@@ -46,7 +44,6 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
       "start": 0,
       "end": 0
     },
-    "name": "test",
     "children": [
       {
         "type": "string",
@@ -57,11 +54,11 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "value": "Hello ",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -100,19 +97,18 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "value": " :)",
         "valueMap": [
           {
-            "outer": {
-              "start": 8,
-              "end": 8
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 8,
+              "end": 8
             }
           }
         ]
       }
-    ],
-    "hover": "<test: message>"
+    ]
   },
   "errors": []
 }
@@ -124,7 +120,6 @@ exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
       "start": 0,
       "end": 0
     },
-    "name": "test",
     "children": [
       {
         "type": "string",
@@ -135,19 +130,18 @@ exports['mcfunction argument minecraft:message Parse "Hello world!" 1'] = {
         "value": "Hello world!",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
           }
         ]
       }
-    ],
-    "hover": "<test: message>"
+    ]
   },
   "errors": []
 }
@@ -159,7 +153,6 @@ exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
       "start": 0,
       "end": 0
     },
-    "name": "test",
     "children": [
       {
         "type": "string",
@@ -170,19 +163,18 @@ exports['mcfunction argument minecraft:message Parse "foo" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
           }
         ]
       }
-    ],
-    "hover": "<test: message>"
+    ]
   },
   "errors": []
 }

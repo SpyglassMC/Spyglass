@@ -1,11 +1,10 @@
 exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 1
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -25,20 +24,18 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"mu
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"single"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 1
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -58,20 +55,18 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"si
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 4
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -91,20 +86,18 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":"single"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 4
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -124,20 +117,18 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 11
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -176,13 +167,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                   "value": "",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -207,13 +198,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                 "value": "",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -264,13 +255,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
                 "value": "",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -295,13 +286,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
               "value": "",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -332,8 +323,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -357,12 +347,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 1.. , } , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 32
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -401,13 +390,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                   "value": "scores",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -457,7 +446,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           }
                         },
                         {
-                          "type": "mcfunction:argument/minecraft:int_range",
+                          "type": "mcfunction:int_range",
                           "range": {
                             "start": 21,
                             "end": 24
@@ -480,7 +469,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                               "value": ".."
                             }
                           ],
-                          "name": "",
                           "value": [
                             1,
                             null
@@ -512,7 +500,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "end": 20
                       },
                       "value": {
-                        "type": "mcfunction:argument/minecraft:int_range",
+                        "type": "mcfunction:int_range",
                         "range": {
                           "start": 21,
                           "end": 24
@@ -535,7 +523,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                             "value": ".."
                           }
                         ],
-                        "name": "",
                         "value": [
                           1,
                           null
@@ -558,13 +545,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -618,7 +605,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         }
                       },
                       {
-                        "type": "mcfunction:argument/minecraft:int_range",
+                        "type": "mcfunction:int_range",
                         "range": {
                           "start": 21,
                           "end": 24
@@ -641,7 +628,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                             "value": ".."
                           }
                         ],
-                        "name": "",
                         "value": [
                           1,
                           null
@@ -673,7 +659,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       "end": 20
                     },
                     "value": {
-                      "type": "mcfunction:argument/minecraft:int_range",
+                      "type": "mcfunction:int_range",
                       "range": {
                         "start": 21,
                         "end": 24
@@ -696,7 +682,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "value": ".."
                         }
                       ],
-                      "name": "",
                       "value": [
                         1,
                         null
@@ -741,13 +726,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -797,7 +782,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         }
                       },
                       {
-                        "type": "mcfunction:argument/minecraft:int_range",
+                        "type": "mcfunction:int_range",
                         "range": {
                           "start": 21,
                           "end": 24
@@ -820,7 +805,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                             "value": ".."
                           }
                         ],
-                        "name": "",
                         "value": [
                           1,
                           null
@@ -852,7 +836,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       "end": 20
                     },
                     "value": {
-                      "type": "mcfunction:argument/minecraft:int_range",
+                      "type": "mcfunction:int_range",
                       "range": {
                         "start": 21,
                         "end": 24
@@ -875,7 +859,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "value": ".."
                         }
                       ],
-                      "name": "",
                       "value": [
                         1,
                         null
@@ -898,13 +881,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
               "value": "scores",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -958,7 +941,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       }
                     },
                     {
-                      "type": "mcfunction:argument/minecraft:int_range",
+                      "type": "mcfunction:int_range",
                       "range": {
                         "start": 21,
                         "end": 24
@@ -981,7 +964,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "value": ".."
                         }
                       ],
-                      "name": "",
                       "value": [
                         1,
                         null
@@ -1013,7 +995,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                     "end": 20
                   },
                   "value": {
-                    "type": "mcfunction:argument/minecraft:int_range",
+                    "type": "mcfunction:int_range",
                     "range": {
                       "start": 21,
                       "end": 24
@@ -1036,7 +1018,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "value": ".."
                       }
                     ],
-                    "name": "",
                     "value": [
                       1,
                       null
@@ -1061,20 +1042,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , scores = { } , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 35
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -1113,13 +1092,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "value": "scores",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -1152,13 +1131,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -1206,13 +1185,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                   "value": "scores",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 19,
-                        "end": 19
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 19,
+                        "end": 19
                       }
                     }
                   ],
@@ -1245,13 +1224,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -1310,13 +1289,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -1349,13 +1328,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
               "value": "scores",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -1403,13 +1382,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
                 "value": "scores",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -1442,13 +1421,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
               "value": "scores",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 19,
-                    "end": 19
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 19,
+                    "end": 19
                   }
                 }
               ],
@@ -1487,8 +1466,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -1504,12 +1482,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 24
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -1548,13 +1525,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "value": "sort",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -1578,13 +1555,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                   "value": "arbitrary",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 11,
-                        "end": 11
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 11,
+                        "end": 11
                       }
                     }
                   ],
@@ -1609,13 +1586,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -1643,13 +1620,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "value": "arbitrary",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 11,
-                      "end": 11
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 11,
+                      "end": 11
                     }
                   }
                 ],
@@ -1696,13 +1673,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -1726,13 +1703,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
                 "value": "arbitrary",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 11,
-                      "end": 11
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 11,
+                      "end": 11
                     }
                   }
                 ],
@@ -1757,13 +1734,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
               "value": "sort",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -1791,13 +1768,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
               "value": "arbitrary",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 11,
-                    "end": 11
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 11,
+                    "end": 11
                   }
                 }
               ],
@@ -1824,20 +1801,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag = ! bar , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 31
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -1876,13 +1851,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "value": "tag",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -1957,13 +1932,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "value": "tag",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -2053,13 +2028,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "value": "tag",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 16,
-                        "end": 16
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 16,
+                        "end": 16
                       }
                     }
                   ],
@@ -2142,13 +2117,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "value": "tag",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 16,
-                      "end": 16
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 16,
+                      "end": 16
                     }
                   }
                 ],
@@ -2257,13 +2232,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "value": "tag",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -2338,13 +2313,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
               "value": "tag",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -2434,13 +2409,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                 "value": "tag",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 16,
-                      "end": 16
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 16,
+                      "end": 16
                     }
                   }
                 ],
@@ -2523,13 +2498,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
               "value": "tag",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 16,
-                    "end": 16
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 16,
+                    "end": 16
                   }
                 }
               ],
@@ -2618,20 +2593,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , team = ! bar , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 35
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -2670,13 +2643,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "value": "team",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -2759,13 +2732,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -2863,13 +2836,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "value": "team",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 19,
-                        "end": 19
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 19,
+                        "end": 19
                       }
                     }
                   ],
@@ -2952,13 +2925,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -3067,13 +3040,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -3156,13 +3129,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
               "value": "team",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -3260,13 +3233,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -3349,13 +3322,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
               "value": "team",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 19,
-                    "end": 19
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 19,
+                    "end": 19
                   }
                 }
               ],
@@ -3444,20 +3417,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team = bar , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 31
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -3496,13 +3467,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "value": "team",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -3577,13 +3548,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -3673,13 +3644,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "value": "team",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 17,
-                        "end": 17
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 17,
+                        "end": 17
                       }
                     }
                   ],
@@ -3754,13 +3725,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 17,
-                      "end": 17
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 17,
+                      "end": 17
                     }
                   }
                 ],
@@ -3861,13 +3832,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -3942,13 +3913,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
               "value": "team",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -4038,13 +4009,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                 "value": "team",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 17,
-                      "end": 17
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 17,
+                      "end": 17
                     }
                   }
                 ],
@@ -4119,13 +4090,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
               "value": "team",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 17,
-                    "end": 17
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 17,
+                    "end": 17
                   }
                 }
               ],
@@ -4206,8 +4177,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -4223,12 +4193,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 19
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -4267,13 +4236,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -4328,13 +4297,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -4411,13 +4380,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -4472,13 +4441,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -4535,8 +4504,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -4552,12 +4520,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 19
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -4596,13 +4563,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                   "value": "unknown",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -4627,13 +4594,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                 "value": "unknown",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -4684,13 +4651,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
                 "value": "unknown",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -4715,13 +4682,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
               "value": "unknown",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -4752,8 +4719,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -4777,12 +4743,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0 , dz = 0.0, dz = 0.0 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 46
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -4821,13 +4786,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "value": "x",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -4860,13 +4825,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -4914,13 +4879,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "value": "x",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 14,
-                        "end": 14
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 14,
+                        "end": 14
                       }
                     }
                   ],
@@ -4953,13 +4918,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 14,
-                      "end": 14
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 14,
+                      "end": 14
                     }
                   }
                 ],
@@ -5007,13 +4972,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "value": "dz",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 24,
-                        "end": 24
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 24,
+                        "end": 24
                       }
                     }
                   ],
@@ -5046,13 +5011,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -5100,13 +5065,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                   "value": "dz",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 34,
-                        "end": 34
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 34,
+                        "end": 34
                       }
                     }
                   ],
@@ -5139,13 +5104,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -5204,13 +5169,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -5243,13 +5208,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
               "value": "x",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -5297,13 +5262,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 14,
-                      "end": 14
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 14,
+                      "end": 14
                     }
                   }
                 ],
@@ -5336,13 +5301,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
               "value": "x",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 14,
-                    "end": 14
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 14,
+                    "end": 14
                   }
                 }
               ],
@@ -5390,13 +5355,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -5429,13 +5394,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
               "value": "dz",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 24,
-                    "end": 24
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 24,
+                    "end": 24
                   }
                 }
               ],
@@ -5483,13 +5448,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -5522,13 +5487,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
               "value": "dz",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 34,
-                    "end": 34
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 34,
+                    "end": 34
                   }
                 }
               ],
@@ -5569,8 +5534,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Great  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -5594,12 +5558,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0 , z = 0.0 , dx = 0.0 , dy = 0.0 , dz = 0.0 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 68
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -5638,13 +5601,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "x",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -5677,13 +5640,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -5731,13 +5694,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "y",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 14,
-                        "end": 14
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 14,
+                        "end": 14
                       }
                     }
                   ],
@@ -5770,13 +5733,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "y",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 14,
-                      "end": 14
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 14,
+                      "end": 14
                     }
                   }
                 ],
@@ -5824,13 +5787,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "z",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 24,
-                        "end": 24
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 24,
+                        "end": 24
                       }
                     }
                   ],
@@ -5863,13 +5826,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "z",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -5917,13 +5880,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "dx",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 34,
-                        "end": 34
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 34,
+                        "end": 34
                       }
                     }
                   ],
@@ -5956,13 +5919,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dx",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -6010,13 +5973,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "dy",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 45,
-                        "end": 45
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 45,
+                        "end": 45
                       }
                     }
                   ],
@@ -6049,13 +6012,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dy",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 45,
-                      "end": 45
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 45,
+                      "end": 45
                     }
                   }
                 ],
@@ -6103,13 +6066,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                   "value": "dz",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 56,
-                        "end": 56
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 56,
+                        "end": 56
                       }
                     }
                   ],
@@ -6142,13 +6105,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 56,
-                      "end": 56
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 56,
+                      "end": 56
                     }
                   }
                 ],
@@ -6207,13 +6170,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "x",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -6246,13 +6209,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "x",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -6300,13 +6263,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "y",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 14,
-                      "end": 14
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 14,
+                      "end": 14
                     }
                   }
                 ],
@@ -6339,13 +6302,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "y",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 14,
-                    "end": 14
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 14,
+                    "end": 14
                   }
                 }
               ],
@@ -6393,13 +6356,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "z",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -6432,13 +6395,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "z",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 24,
-                    "end": 24
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 24,
+                    "end": 24
                   }
                 }
               ],
@@ -6486,13 +6449,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dx",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -6525,13 +6488,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "dx",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 34,
-                    "end": 34
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 34,
+                    "end": 34
                   }
                 }
               ],
@@ -6579,13 +6542,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dy",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 45,
-                      "end": 45
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 45,
+                      "end": 45
                     }
                   }
                 ],
@@ -6618,13 +6581,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "dy",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 45,
-                    "end": 45
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 45,
+                    "end": 45
                   }
                 }
               ],
@@ -6672,13 +6635,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
                 "value": "dz",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 56,
-                      "end": 56
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 56,
+                      "end": 56
                     }
                   }
                 ],
@@ -6711,13 +6674,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
               "value": "dz",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 56,
-                    "end": 56
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 56,
+                    "end": 56
                   }
                 }
               ],
@@ -6758,20 +6721,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Great  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.9..-179.9 ,  x_rotation = 179.9..-179.9 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 64
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -6810,13 +6771,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": "x_rotation",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -6832,7 +6793,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   ]
                 },
                 {
-                  "type": "mcfunction:argument/minecraft:float_range",
+                  "type": "mcfunction:float_range",
                   "range": {
                     "start": 17,
                     "end": 30
@@ -6863,7 +6824,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                       "value": -179.9
                     }
                   ],
-                  "name": "",
                   "value": [
                     179.9,
                     -179.9
@@ -6879,13 +6839,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -6905,7 +6865,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 16
               },
               "value": {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 17,
                   "end": 30
@@ -6936,7 +6896,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -6963,13 +6922,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": "x_rotation",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 34,
-                        "end": 34
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 34,
+                        "end": 34
                       }
                     }
                   ],
@@ -6985,7 +6944,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   ]
                 },
                 {
-                  "type": "mcfunction:argument/minecraft:float_range",
+                  "type": "mcfunction:float_range",
                   "range": {
                     "start": 47,
                     "end": 60
@@ -7016,7 +6975,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                       "value": -179.9
                     }
                   ],
-                  "name": "",
                   "value": [
                     179.9,
                     -179.9
@@ -7032,13 +6990,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -7058,7 +7016,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 46
               },
               "value": {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 47,
                   "end": 60
@@ -7089,7 +7047,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7127,13 +7084,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -7149,7 +7106,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 ]
               },
               {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 17,
                   "end": 30
@@ -7180,7 +7137,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7196,13 +7152,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "value": "x_rotation",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -7222,7 +7178,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 16
             },
             "value": {
-              "type": "mcfunction:argument/minecraft:float_range",
+              "type": "mcfunction:float_range",
               "range": {
                 "start": 17,
                 "end": 30
@@ -7253,7 +7209,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": -179.9
                 }
               ],
-              "name": "",
               "value": [
                 179.9,
                 -179.9
@@ -7280,13 +7235,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -7302,7 +7257,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 ]
               },
               {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 47,
                   "end": 60
@@ -7333,7 +7288,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7349,13 +7303,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "value": "x_rotation",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 34,
-                    "end": 34
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 34,
+                    "end": 34
                   }
                 }
               ],
@@ -7375,7 +7329,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 46
             },
             "value": {
-              "type": "mcfunction:argument/minecraft:float_range",
+              "type": "mcfunction:float_range",
               "range": {
                 "start": 47,
                 "end": 60
@@ -7406,7 +7360,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": -179.9
                 }
               ],
-              "name": "",
               "value": [
                 179.9,
                 -179.9
@@ -7424,8 +7377,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -7441,12 +7393,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
 
 exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.9..-179.9 ,  y_rotation = 179.9..-179.9 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 64
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -7485,13 +7436,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": "x_rotation",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -7507,7 +7458,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   ]
                 },
                 {
-                  "type": "mcfunction:argument/minecraft:float_range",
+                  "type": "mcfunction:float_range",
                   "range": {
                     "start": 17,
                     "end": 30
@@ -7538,7 +7489,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                       "value": -179.9
                     }
                   ],
-                  "name": "",
                   "value": [
                     179.9,
                     -179.9
@@ -7554,13 +7504,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -7580,7 +7530,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 16
               },
               "value": {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 17,
                   "end": 30
@@ -7611,7 +7561,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7638,13 +7587,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": "y_rotation",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 34,
-                        "end": 34
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 34,
+                        "end": 34
                       }
                     }
                   ],
@@ -7660,7 +7609,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   ]
                 },
                 {
-                  "type": "mcfunction:argument/minecraft:float_range",
+                  "type": "mcfunction:float_range",
                   "range": {
                     "start": 47,
                     "end": 60
@@ -7691,7 +7640,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                       "value": -179.9
                     }
                   ],
-                  "name": "",
                   "value": [
                     179.9,
                     -179.9
@@ -7707,13 +7655,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "y_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -7733,7 +7681,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "end": 46
               },
               "value": {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 47,
                   "end": 60
@@ -7764,7 +7712,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7802,13 +7749,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "x_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -7824,7 +7771,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 ]
               },
               {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 17,
                   "end": 30
@@ -7855,7 +7802,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -7871,13 +7817,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "value": "x_rotation",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -7897,7 +7843,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 16
             },
             "value": {
-              "type": "mcfunction:argument/minecraft:float_range",
+              "type": "mcfunction:float_range",
               "range": {
                 "start": 17,
                 "end": 30
@@ -7928,7 +7874,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": -179.9
                 }
               ],
-              "name": "",
               "value": [
                 179.9,
                 -179.9
@@ -7955,13 +7900,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 "value": "y_rotation",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 34,
-                      "end": 34
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 34,
+                      "end": 34
                     }
                   }
                 ],
@@ -7977,7 +7922,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                 ]
               },
               {
-                "type": "mcfunction:argument/minecraft:float_range",
+                "type": "mcfunction:float_range",
                 "range": {
                   "start": 47,
                   "end": 60
@@ -8008,7 +7953,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                     "value": -179.9
                   }
                 ],
-                "name": "",
                 "value": [
                   179.9,
                   -179.9
@@ -8024,13 +7968,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "value": "y_rotation",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 34,
-                    "end": 34
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 34,
+                    "end": 34
                   }
                 }
               ],
@@ -8050,7 +7994,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
               "end": 46
             },
             "value": {
-              "type": "mcfunction:argument/minecraft:float_range",
+              "type": "mcfunction:float_range",
               "range": {
                 "start": 47,
                 "end": 60
@@ -8081,7 +8025,6 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
                   "value": -179.9
                 }
               ],
-              "name": "",
               "value": [
                 179.9,
                 -179.9
@@ -8099,20 +8042,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 2
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -8138,20 +8079,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"m
       "single": false,
       "typeLimited": false,
       "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"single"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 2
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -8177,8 +8116,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"s
       "single": false,
       "typeLimited": false,
       "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -8194,12 +8132,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e" with {"amount":"s
 
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton , type = ! zombie , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 43
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -8238,13 +8175,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -8307,13 +8244,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -8391,13 +8328,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 24,
-                        "end": 24
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 24,
+                        "end": 24
                       }
                     }
                   ],
@@ -8460,13 +8397,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -8555,13 +8492,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -8624,13 +8561,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -8708,13 +8645,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 24,
-                      "end": 24
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 24,
+                      "end": 24
                     }
                   }
                 ],
@@ -8777,13 +8714,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 24,
-                    "end": 24
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 24,
+                    "end": 24
                   }
                 }
               ],
@@ -8855,20 +8792,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
       "single": false,
       "typeLimited": false,
       "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , type = #tag2 , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 35
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -8907,13 +8842,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -8970,13 +8905,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -9048,13 +8983,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 19,
-                        "end": 19
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 19,
+                        "end": 19
                       }
                     }
                   ],
@@ -9111,13 +9046,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -9200,13 +9135,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -9263,13 +9198,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -9341,13 +9276,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 19,
-                      "end": 19
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
                     }
                   }
                 ],
@@ -9404,13 +9339,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 19,
-                    "end": 19
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 19,
+                    "end": 19
                   }
                 }
               ],
@@ -9476,20 +9411,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
       "single": false,
       "typeLimited": false,
       "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 19
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -9528,13 +9461,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -9589,13 +9522,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -9672,13 +9605,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -9733,13 +9666,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -9799,20 +9732,18 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton , type = zombie , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 39
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -9851,13 +9782,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -9912,13 +9843,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -9988,13 +9919,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   "value": "type",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 22,
-                        "end": 22
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 22,
+                        "end": 22
                       }
                     }
                   ],
@@ -10049,13 +9980,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 22,
-                      "end": 22
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 22,
+                      "end": 22
                     }
                   }
                 ],
@@ -10136,13 +10067,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -10197,13 +10128,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -10273,13 +10204,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 "value": "type",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 22,
-                      "end": 22
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 22,
+                      "end": 22
                     }
                   }
                 ],
@@ -10334,13 +10265,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
               "value": "type",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 22,
-                    "end": 22
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 22,
+                    "end": 22
                   }
                 }
               ],
@@ -10404,8 +10335,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
       "single": false,
       "typeLimited": true,
       "hover": "**Performance**: 😅  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -10421,12 +10351,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
 
 exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary , sort = unknown , ]" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 41
     },
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -10465,13 +10394,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "value": "sort",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 4,
-                        "end": 4
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 4,
+                        "end": 4
                       }
                     }
                   ],
@@ -10495,13 +10424,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "value": "arbitrary",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 11,
-                        "end": 11
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 11,
+                        "end": 11
                       }
                     }
                   ],
@@ -10526,13 +10455,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -10560,13 +10489,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "arbitrary",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 11,
-                      "end": 11
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 11,
+                      "end": 11
                     }
                   }
                 ],
@@ -10602,13 +10531,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "value": "sort",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 23,
-                        "end": 23
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 23,
+                        "end": 23
                       }
                     }
                   ],
@@ -10632,13 +10561,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                   "value": "unknown",
                   "valueMap": [
                     {
-                      "outer": {
-                        "start": 30,
-                        "end": 30
-                      },
                       "inner": {
                         "start": 0,
                         "end": 0
+                      },
+                      "outer": {
+                        "start": 30,
+                        "end": 30
                       }
                     }
                   ],
@@ -10663,13 +10592,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 23,
-                      "end": 23
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 23,
+                      "end": 23
                     }
                   }
                 ],
@@ -10697,13 +10626,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "unknown",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 30,
-                      "end": 30
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 30,
+                      "end": 30
                     }
                   }
                 ],
@@ -10750,13 +10679,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 4,
-                      "end": 4
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 4,
+                      "end": 4
                     }
                   }
                 ],
@@ -10780,13 +10709,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "arbitrary",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 11,
-                      "end": 11
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 11,
+                      "end": 11
                     }
                   }
                 ],
@@ -10811,13 +10740,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
               "value": "sort",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ],
@@ -10845,13 +10774,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
               "value": "arbitrary",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 11,
-                    "end": 11
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 11,
+                    "end": 11
                   }
                 }
               ],
@@ -10887,13 +10816,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "sort",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 23,
-                      "end": 23
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 23,
+                      "end": 23
                     }
                   }
                 ],
@@ -10917,13 +10846,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
                 "value": "unknown",
                 "valueMap": [
                   {
-                    "outer": {
-                      "start": 30,
-                      "end": 30
-                    },
                     "inner": {
                       "start": 0,
                       "end": 0
+                    },
+                    "outer": {
+                      "start": 30,
+                      "end": 30
                     }
                   }
                 ],
@@ -10948,13 +10877,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
               "value": "sort",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 23,
-                    "end": 23
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 23,
+                    "end": 23
                   }
                 }
               ],
@@ -10982,13 +10911,13 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
               "value": "unknown",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 30,
-                    "end": 30
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 30,
+                    "end": 30
                   }
                 }
               ],
@@ -11015,8 +10944,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
       "single": true,
       "typeLimited": false,
       "hover": "**Performance**: 😌👌  \n- `currentEntity`: `true`"
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": [
     {
@@ -11056,12 +10984,11 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
 
 exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount":"multiple"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 6
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -11081,20 +11008,18 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount":"single"} 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:score_holder",
+    "type": "mcfunction:score_holder",
     "range": {
       "start": 0,
       "end": 6
     },
-    "name": "test",
     "fakeName": {
       "type": "symbol",
       "range": {
@@ -11114,8 +11039,7 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
           }
         ]
       }
-    },
-    "hover": "<test: score_holder>"
+    }
   },
   "errors": []
 }

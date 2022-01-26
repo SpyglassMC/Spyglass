@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:component Parse """" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:component",
+    "type": "json:string",
     "range": {
       "start": 0,
       "end": 2
@@ -8,25 +8,23 @@ exports['mcfunction argument minecraft:component Parse """" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: component>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:component",
+    "type": "json:string",
     "range": {
       "start": 0,
       "end": 13
@@ -34,25 +32,23 @@ exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
     "value": "hello world",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: component>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:component",
+    "type": "json:array",
     "range": {
       "start": 0,
       "end": 4
@@ -74,13 +70,13 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -95,28 +91,26 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: component>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:component",
+    "type": "json:object",
     "range": {
       "start": 0,
       "end": 22
@@ -138,13 +132,13 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
             "value": "text",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -158,13 +152,13 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
             "value": "hello world",
             "valueMap": [
               {
-                "outer": {
-                  "start": 9,
-                  "end": 9
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 9,
+                  "end": 9
                 }
               }
             ]
@@ -179,13 +173,13 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
           "value": "text",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -203,21 +197,19 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
           "value": "hello world",
           "valueMap": [
             {
-              "outer": {
-                "start": 9,
-                "end": 9
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 9,
+                "end": 9
               }
             }
           ]
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: component>"
+    ]
   },
   "errors": []
 }

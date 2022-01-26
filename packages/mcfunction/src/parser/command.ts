@@ -33,7 +33,7 @@ export function command(tree: RootTreeNode, argument: ArgumentParserGetter): cor
 				type: 'mcfunction:command_child',
 				range: node.range,
 				children: [node],
-				path: undefined,
+				path: [],
 			})
 		}
 

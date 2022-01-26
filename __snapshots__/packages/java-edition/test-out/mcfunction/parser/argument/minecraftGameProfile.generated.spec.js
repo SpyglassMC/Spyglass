@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:game_profile",
+    "type": "mcfunction:entity",
     "range": {
       "start": 0,
       "end": 4
@@ -15,11 +15,11 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
         "value": "0123",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -27,7 +27,6 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
         ]
       }
     ],
-    "name": "test",
     "playerName": {
       "type": "string",
       "range": {
@@ -37,25 +36,24 @@ exports['mcfunction argument minecraft:game_profile Parse "0123" 1'] = {
       "value": "0123",
       "valueMap": [
         {
-          "outer": {
+          "inner": {
             "start": 0,
             "end": 0
           },
-          "inner": {
+          "outer": {
             "start": 0,
             "end": 0
           }
         }
       ]
-    },
-    "hover": "<test: game_profile>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:game_profile",
+    "type": "mcfunction:entity",
     "range": {
       "start": 0,
       "end": 2
@@ -88,7 +86,6 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
         "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
       }
     ],
-    "name": "test",
     "selector": {
       "type": "mcfunction:entity_selector",
       "range": {
@@ -114,8 +111,7 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
       "single": false,
       "typeLimited": false,
       "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
-    },
-    "hover": "<test: game_profile>"
+    }
   },
   "errors": [
     {
@@ -131,7 +127,7 @@ exports['mcfunction argument minecraft:game_profile Parse "@e" 1'] = {
 
 exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:game_profile",
+    "type": "mcfunction:entity",
     "range": {
       "start": 0,
       "end": 6
@@ -146,11 +142,11 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
         "value": "Player",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -158,7 +154,6 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
         ]
       }
     ],
-    "name": "test",
     "playerName": {
       "type": "string",
       "range": {
@@ -168,57 +163,52 @@ exports['mcfunction argument minecraft:game_profile Parse "Player" 1'] = {
       "value": "Player",
       "valueMap": [
         {
-          "outer": {
+          "inner": {
             "start": 0,
             "end": 0
           },
-          "inner": {
+          "outer": {
             "start": 0,
             "end": 0
           }
         }
       ]
-    },
-    "hover": "<test: game_profile>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:game_profile Parse "dd12be42-52a9-4a91-a8a1-11c01849e498" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:game_profile",
+    "type": "mcfunction:entity",
     "range": {
       "start": 0,
       "end": 36
     },
     "children": [
       {
-        "type": "mcfunction:argument/minecraft:uuid",
+        "type": "mcfunction:uuid",
         "range": {
           "start": 0,
           "end": 36
         },
-        "name": "",
         "bits": [
           "-2516740049682740591",
           "-6295731287348353896"
         ]
       }
     ],
-    "name": "test",
     "uuid": {
-      "type": "mcfunction:argument/minecraft:uuid",
+      "type": "mcfunction:uuid",
       "range": {
         "start": 0,
         "end": 36
       },
-      "name": "",
       "bits": [
         "-2516740049682740591",
         "-6295731287348353896"
       ]
-    },
-    "hover": "<test: game_profile>"
+    }
   },
   "errors": [
     {

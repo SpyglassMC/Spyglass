@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -35,16 +35,14 @@ exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -79,9 +77,7 @@ exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 0
   },
   "errors": [
     {
@@ -121,7 +117,7 @@ exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
 
 exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -156,16 +152,14 @@ exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 1,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 1
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -200,16 +194,14 @@ exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 1,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 1
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -244,16 +236,14 @@ exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -288,9 +278,7 @@ exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: block_pos>"
+    "system": 0
   },
   "errors": []
 }

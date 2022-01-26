@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
-import type { LiteralNode, SpyglassmcTrailingArgumentNode } from '../node'
+import type { LiteralCommandChildNode, TrailingCommandChildNode } from '../node'
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerColorizer<LiteralNode>('mcfunction:literal', core.colorizer.literal)
-	meta.registerColorizer<SpyglassmcTrailingArgumentNode>('mcfunction:argument/spyglassmc:trailing', core.colorizer.error)
+	meta.registerColorizer<LiteralCommandChildNode>('mcfunction:command_child/literal', core.colorizer.literal)
+	meta.registerColorizer<TrailingCommandChildNode>('mcfunction:command_child/trailing', core.colorizer.error)
 }

@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:rotation",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -26,16 +26,14 @@ exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: rotation>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:rotation",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -61,16 +59,14 @@ exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: rotation>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:rotation",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -96,9 +92,7 @@ exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: rotation>"
+    "system": 0
   },
   "errors": []
 }

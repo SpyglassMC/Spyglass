@@ -15,7 +15,7 @@ describe('mcfunction argument minecraft:entity', () => {
 		}
 		for (const string of content) {
 			it(`Parse "${showWhitespaceGlyph(string)}"${properties ? ` with ${JSON.stringify(properties)}` : ''}`, () => {
-				snapshot(testParser(argument('test', treeNode)!, string, { project: { meta }, removeTopLevelChildren: true }))
+				snapshot(testParser(argument(treeNode)!, string, { project: { meta }, removeTopLevelChildren: true }))
 			})
 		}
 	}

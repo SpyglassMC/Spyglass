@@ -171,24 +171,32 @@ export class MetaRegistry {
 		this.#linters.set(ruleName, options)
 	}
 
-	public hasParser<N extends AstNode>(type: N['type']): boolean {
-		return this.#parsers.has(type)
+	public hasParser<N extends AstNode>(id: N['type']): boolean
+	public hasParser(id: string): boolean
+	public hasParser(id: string): boolean {
+		return this.#parsers.has(id)
 	}
 	/**
 	 * @throws When no parser is registered for the node type.
 	 */
-	public getParser<N extends AstNode>(type: N['type']): Parser<N> {
-		const ans = this.#parsers.get(type)
+	public getParser<N extends AstNode>(id: N['type']): Parser<N>
+	public getParser<N extends AstNode>(id: string): Parser<N>
+	public getParser<N extends AstNode>(id: string): Parser<N> {
+		const ans = this.#parsers.get(id)
 		if (!ans) {
-			throw new Error(`There is no parser registered for node type '${type}'`)
+			throw new Error(`There is no parser '${id}'`)
 		}
 		return ans
 	}
-	public getParserLazily<N extends AstNode>(type: N['type']): UnresolvedLazy<Parser<N>> {
-		return Lazy.create(() => this.getParser(type))
+	public getParserLazily<N extends AstNode>(id: N['type']): UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(id: string): UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(id: string): UnresolvedLazy<Parser<N>> {
+		return Lazy.create(() => this.getParser(id))
 	}
-	public registerParser<N extends AstNode>(type: N['type'], parser: Parser<N>): void {
-		this.#parsers.set(type, parser)
+	public registerParser<N extends AstNode>(id: N['type'], parser: Parser<N>): void
+	public registerParser(id: string, parser: Parser): void
+	public registerParser(id: string, parser: Parser): void {
+		this.#parsers.set(id, parser)
 	}
 	/**
 	 * @returns The corresponding `Parser` for the language ID.

@@ -14,9 +14,9 @@ export namespace CommandNode {
 export interface CommandChildNode extends core.AstNode {
 	type: 'mcfunction:command_child',
 	/**
-	 * The path of this node in the command tree. Undefined if the current node does not correspond to an actual tree node.
+	 * The path of this node in the command tree. Empty if the current node does not correspond to an actual tree node.
 	 */
-	path: string[] | undefined,
+	path: string[],
 	children: [core.AstNode],
 }
 

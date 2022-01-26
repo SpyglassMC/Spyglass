@@ -1,19 +1,17 @@
 import * as core from '@spyglassmc/core'
-import type { McfunctionNode } from './node'
-import { ArgumentNode } from './node'
+import * as mcf from '@spyglassmc/mcfunction'
 
-export const inlayHintProvider: core.InlayHintProvider<core.FileNode<McfunctionNode>> = (node, ctx) => {
+export const inlayHintProvider: core.InlayHintProvider<core.FileNode<mcf.McfunctionNode>> = (node, ctx) => {
 	if (node.children[0]?.type !== 'mcfunction:entry') {
 		return []
 	}
 	const ans: core.InlayHint[] = []
-	core.traversePreOrder(node, _ => true, ArgumentNode.is,
+	core.traversePreOrder(node, _ => true, mcf.CommandChildNode.is,
 		n => {
-			const node = n as ArgumentNode
+			const node = n as mcf.CommandChildNode
 			const config = ctx.config.env.feature.inlayHint
-			const parser = ArgumentNode.getParserId(node)
-			if (config === true || (typeof config === 'object' && config.enabledParsers.includes(parser))) {
-				ans.push({ offset: node.range.start, text: `${node.name}:` })
+			if (config === true || (typeof config === 'object' && config.enabledNodes.includes(node.type))) {
+				ans.push({ offset: node.range.start, text: `${node.path[node.path.length - 1]}:` })
 			}
 		}
 	)

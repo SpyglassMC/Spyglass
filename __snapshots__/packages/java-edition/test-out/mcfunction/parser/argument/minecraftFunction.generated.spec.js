@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:function Parse "#foo" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:function",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 4
@@ -8,32 +8,28 @@ exports['mcfunction argument minecraft:function Parse "#foo" 1'] = {
     "isTag": true,
     "path": [
       "foo"
-    ],
-    "name": "test",
-    "hover": "<test: function>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:function Parse "foo" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:function",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 3
     },
     "path": [
       "foo"
-    ],
-    "name": "test",
-    "hover": "<test: function>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:function Parse "foo:bar" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:function",
+    "type": "resource_location",
     "range": {
       "start": 0,
       "end": 7
@@ -41,9 +37,7 @@ exports['mcfunction argument minecraft:function Parse "foo:bar" 1'] = {
     "namespace": "foo",
     "path": [
       "bar"
-    ],
-    "name": "test",
-    "hover": "<test: function>"
+    ]
   },
   "errors": []
 }

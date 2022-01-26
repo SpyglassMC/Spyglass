@@ -1,11 +1,10 @@
 exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_state",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 12
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -39,13 +38,13 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
               "value": "bar",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 4,
-                    "end": 4
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 4,
+                    "end": 4
                   }
                 }
               ]
@@ -59,13 +58,13 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
               "value": "baz",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 8,
-                    "end": 8
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 8,
+                    "end": 8
                   }
                 }
               ]
@@ -80,13 +79,13 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 4,
-                  "end": 4
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 4,
+                  "end": 4
                 }
               }
             ]
@@ -104,33 +103,31 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 8,
-                  "end": 8
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 8,
+                  "end": 8
                 }
               }
             ]
           }
         }
       ]
-    },
-    "hover": "<test: block_state>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_state",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 15
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -141,20 +138,18 @@ exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] =
       "path": [
         "stone"
       ]
-    },
-    "hover": "<test: block_state>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_state Parse "stone" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_state",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 5
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -164,20 +159,18 @@ exports['mcfunction argument minecraft:block_state Parse "stone" 1'] = {
       "path": [
         "stone"
       ]
-    },
-    "hover": "<test: block_state>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_state",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 14
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -211,13 +204,13 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
               "value": "foo",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 6,
-                    "end": 6
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 6,
+                    "end": 6
                   }
                 }
               ]
@@ -231,13 +224,13 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
               "value": "bar",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 10,
-                    "end": 10
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 10,
+                    "end": 10
                   }
                 }
               ]
@@ -252,13 +245,13 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 6,
-                  "end": 6
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 6,
+                  "end": 6
                 }
               }
             ]
@@ -276,21 +269,20 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 10,
-                  "end": 10
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 10,
+                  "end": 10
                 }
               }
             ]
           }
         }
       ]
-    },
-    "hover": "<test: block_state>"
+    }
   },
   "errors": []
 }

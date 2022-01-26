@@ -1,27 +1,23 @@
 exports['mcfunction argument brigadier:bool Parse "false" 1'] = {
   "node": {
-    "type": "mcfunction:argument/brigadier:bool",
+    "type": "boolean",
     "range": {
       "start": 0,
       "end": 5
     },
-    "value": false,
-    "name": "test",
-    "hover": "<test: bool>"
+    "value": false
   },
   "errors": []
 }
 
 exports['mcfunction argument brigadier:bool Parse "true" 1'] = {
   "node": {
-    "type": "mcfunction:argument/brigadier:bool",
+    "type": "boolean",
     "range": {
       "start": 0,
       "end": 4
     },
-    "value": true,
-    "name": "test",
-    "hover": "<test: bool>"
+    "value": true
   },
   "errors": []
 }

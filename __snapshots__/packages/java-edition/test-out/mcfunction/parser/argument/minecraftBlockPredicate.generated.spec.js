@@ -1,11 +1,10 @@
 exports['mcfunction argument minecraft:block_predicate Parse "#stone" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_predicate",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 6
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -16,20 +15,18 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone" 1'] = {
       "path": [
         "stone"
       ]
-    },
-    "hover": "<test: block_predicate>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{baz:nbt}" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_predicate",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 24
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -64,13 +61,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "value": "foo",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 7,
-                    "end": 7
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 7,
+                    "end": 7
                   }
                 }
               ]
@@ -84,13 +81,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "value": "bar",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 11,
-                    "end": 11
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 11,
+                    "end": 11
                   }
                 }
               ]
@@ -105,13 +102,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 7,
-                  "end": 7
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 7,
+                  "end": 7
                 }
               }
             ]
@@ -129,13 +126,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -166,13 +163,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "value": "baz",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 16,
-                    "end": 16
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 16,
+                    "end": 16
                   }
                 }
               ]
@@ -186,13 +183,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               "value": "nbt",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 20,
-                    "end": 20
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 20,
+                    "end": 20
                   }
                 }
               ]
@@ -207,13 +204,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -231,33 +228,31 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             "value": "nbt",
             "valueMap": [
               {
-                "outer": {
-                  "start": 20,
-                  "end": 20
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 20,
+                  "end": 20
                 }
               }
             ]
           }
         }
       ]
-    },
-    "hover": "<test: block_predicate>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_predicate Parse "minecraft:stone" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_predicate",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 15
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -268,20 +263,18 @@ exports['mcfunction argument minecraft:block_predicate Parse "minecraft:stone" 1
       "path": [
         "stone"
       ]
-    },
-    "hover": "<test: block_predicate>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_predicate Parse "stone" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_predicate",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 5
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -291,20 +284,18 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone" 1'] = {
       "path": [
         "stone"
       ]
-    },
-    "hover": "<test: block_predicate>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:block_predicate",
+    "type": "mcfunction:block",
     "range": {
       "start": 0,
       "end": 14
     },
-    "name": "test",
     "id": {
       "type": "resource_location",
       "range": {
@@ -338,13 +329,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
               "value": "foo",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 6,
-                    "end": 6
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 6,
+                    "end": 6
                   }
                 }
               ]
@@ -358,13 +349,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
               "value": "bar",
               "valueMap": [
                 {
-                  "outer": {
-                    "start": 10,
-                    "end": 10
-                  },
                   "inner": {
                     "start": 0,
                     "end": 0
+                  },
+                  "outer": {
+                    "start": 10,
+                    "end": 10
                   }
                 }
               ]
@@ -379,13 +370,13 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 6,
-                  "end": 6
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 6,
+                  "end": 6
                 }
               }
             ]
@@ -403,21 +394,20 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 10,
-                  "end": 10
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 10,
+                  "end": 10
                 }
               }
             ]
           }
         }
       ]
-    },
-    "hover": "<test: block_predicate>"
+    }
   },
   "errors": []
 }

@@ -5,7 +5,6 @@ import type { MajorVersion, VanillaCommands } from '../dependency'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
 import { inlayHintProvider } from './inlayHintProvider'
-import type { CommandNode, MinecraftBlockPredicateArgumentNode } from './node'
 import * as parser from './parser'
 import { signatureHelpProvider } from './signatureHelpProvider'
 import { Tree1_15, Tree1_16, Tree1_17, Tree1_18 } from './tree'
@@ -34,13 +33,13 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Vanill
 		parser: mcf.parser.entry(majorVersion, parser.argument),
 	})
 
-	meta.registerParser<MinecraftBlockPredicateArgumentNode>('mcfunction:argument/minecraft:block_predicate', parser.blockPredicate)
-	meta.registerParser('mcfunction:argument/minecraft:component' as any, parser.component)
+	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)
+	meta.registerParser('mcfunction:component', parser.component)
 	// TODO: 'mcfunction:argument/minecraft:particle'
 	// TODO: Uncomment in `SpecialStrings` in `nbtdocUtil.ts` as well.
-	meta.registerParser<core.SymbolNode>('mcfunction:argument/minecraft:team' as any, parser.team())
-	meta.registerParser<core.SymbolNode>('mcfunction:argument/spyglassmc:tag' as any, parser.tag())
-	meta.registerParser<CommandNode>('mcfunction:command', mcf.parser.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
+	meta.registerParser('mcfunction:tag', parser.tag())
+	meta.registerParser('mcfunction:team', parser.team())
+	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.parser.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
 
 	checker.register(meta)
 	colorizer.register(meta)

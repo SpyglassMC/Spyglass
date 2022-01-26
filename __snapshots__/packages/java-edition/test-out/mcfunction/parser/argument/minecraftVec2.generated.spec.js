@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:vec2 Parse "0 0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec2",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -26,16 +26,14 @@ exports['mcfunction argument minecraft:vec2 Parse "0 0" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec2>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec2 Parse "0.1 -0.5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec2",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -61,16 +59,14 @@ exports['mcfunction argument minecraft:vec2 Parse "0.1 -0.5" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec2>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec2 Parse "~ ~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec2",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -96,16 +92,14 @@ exports['mcfunction argument minecraft:vec2 Parse "~ ~" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec2>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec2 Parse "~1 ~-2" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec2",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -131,9 +125,7 @@ exports['mcfunction argument minecraft:vec2 Parse "~1 ~-2" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec2>"
+    "system": 0
   },
   "errors": []
 }

@@ -8,18 +8,16 @@ exports['mcfunction argument minecraft:nbt_tag Parse ""foo"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    ]
   },
   "errors": []
 }
@@ -31,9 +29,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "0" 1'] = {
       "start": 0,
       "end": 1
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    "value": 0
   },
   "errors": []
 }
@@ -45,9 +41,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "0.0" 1'] = {
       "start": 0,
       "end": 3
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    "value": 0
   },
   "errors": []
 }
@@ -59,9 +53,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "0b" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    "value": 0
   },
   "errors": []
 }
@@ -73,9 +65,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "0l" 1'] = {
       "start": 0,
       "end": 2
     },
-    "value": "0",
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    "value": "0"
   },
   "errors": []
 }
@@ -104,13 +94,13 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 1,
-                  "end": 1
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 1,
+                  "end": 1
                 }
               }
             ]
@@ -124,13 +114,13 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 5,
-                  "end": 5
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 5,
+                  "end": 5
                 }
               }
             ]
@@ -145,13 +135,13 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 1,
-                "end": 1
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 1,
+                "end": 1
               }
             }
           ]
@@ -169,21 +159,19 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 5,
-                "end": 5
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 5,
+                "end": 5
               }
             }
           ]
         }
       }
-    ],
-    "name": "test",
-    "hover": "<test: nbt_tag>"
+    ]
   },
   "errors": []
 }

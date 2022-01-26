@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:objective",
+    "type": "symbol",
     "range": {
       "start": 0,
       "end": 3
@@ -17,16 +17,14 @@ exports['mcfunction argument minecraft:objective Parse "012" 1'] = {
           "uri": ""
         }
       ]
-    },
-    "name": "test",
-    "hover": "<test: objective>"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:objective Parse "foo" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:objective",
+    "type": "symbol",
     "range": {
       "start": 0,
       "end": 3
@@ -43,9 +41,7 @@ exports['mcfunction argument minecraft:objective Parse "foo" 1'] = {
           "uri": ""
         }
       ]
-    },
-    "name": "test",
-    "hover": "<test: objective>"
+    }
   },
   "errors": []
 }

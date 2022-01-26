@@ -1,12 +1,11 @@
 import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
-import type { CommandNode, McfunctionNode } from './node'
 
 /**
  * Only command options that can be satisfied by the current command node will be listed in `signatures`.
  * Only parameters at and immediately after the `offset` will be listed in `parameters`.
  */
-export function signatureHelpProvider(commandTreeName: string): core.SignatureHelpProvider<core.FileNode<McfunctionNode>> {
+export function signatureHelpProvider(commandTreeName: string): core.SignatureHelpProvider<core.FileNode<mcf.McfunctionNode>> {
 	const rootTreeNode = mcf.CommandTreeRegistry.instance.get(commandTreeName)
 
 	return (fileNode, ctx) => {
@@ -61,20 +60,24 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 	}
 }
 
-function getSelectedCommandNode(fileNode: core.FileNode<McfunctionNode>, offset: number): CommandNode | undefined {
-	return core.findChild(fileNode.children[0], offset, true) as CommandNode | undefined
+function getSelectedCommandNode(fileNode: core.FileNode<mcf.McfunctionNode>, offset: number): mcf.CommandNode | undefined {
+	return core.findChild(fileNode.children[0], offset, true) as mcf.CommandNode | undefined
 }
 
-function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: CommandNode['children']): string[][] {
+function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNode['children']): string[][] {
 	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode
 
 	for (const argumentNode of argumentNodes) {
-		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)?.children?.[argumentNode.name]
+		const name = argumentNode.path[argumentNode.path.length - 1]
+		if (!name) {
+			break
+		}
+		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)?.children?.[name]
 		if (!treeNode) {
 			break
 		}
-		current.push(mcf.parser.treeNodeToString(argumentNode.name, treeNode))
+		current.push(mcf.parser.treeNodeToString(name, treeNode))
 	}
 
 	if (treeNode) {

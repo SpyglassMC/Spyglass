@@ -132,26 +132,26 @@ export function getEntityFromItem(item: core.FullResourceLocation): core.FullRes
 }
 
 const SpecialStrings: { [path: string]: string } = {
-	'::minecraft::block::banner::Banner.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::brewingstand::BrewingStand.CustomName': 'mcfunction:argument/minecraft:component',
+	'::minecraft::block::banner::Banner.CustomName': 'mcfunction:component',
+	'::minecraft::block::brewingstand::BrewingStand.CustomName': 'mcfunction:component',
 	'::minecraft::block::commandblock::CommandBlock.Command': 'mcfunction:command',
-	'::minecraft::block::commandblock::CommandBlock.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::container::ContainerBase.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::enchantingtable::EnchantingTable.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::furnace::Furnace.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::hopper::Hopper.CustomName': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::sign::Sign.Text1': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::sign::Sign.Text2': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::sign::Sign.Text3': 'mcfunction:argument/minecraft:component',
-	'::minecraft::block::sign::Sign.Text4': 'mcfunction:argument/minecraft:component',
+	'::minecraft::block::commandblock::CommandBlock.CustomName': 'mcfunction:component',
+	'::minecraft::block::container::ContainerBase.CustomName': 'mcfunction:component',
+	'::minecraft::block::enchantingtable::EnchantingTable.CustomName': 'mcfunction:component',
+	'::minecraft::block::furnace::Furnace.CustomName': 'mcfunction:component',
+	'::minecraft::block::hopper::Hopper.CustomName': 'mcfunction:component',
+	'::minecraft::block::sign::Sign.Text1': 'mcfunction:component',
+	'::minecraft::block::sign::Sign.Text2': 'mcfunction:component',
+	'::minecraft::block::sign::Sign.Text3': 'mcfunction:component',
+	'::minecraft::block::sign::Sign.Text4': 'mcfunction:component',
 	// TODO
-	// '::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:argument/minecraft:particle',
+	// '::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:particle',
 	'::minecraft::entity::minecart::CommandMinecart.Command': 'mcfunction:command',
-	'::minecraft::entity::mob::LivingEntity.Team': 'mcfunction:argument/minecraft:team',
-	'::minecraft::entity::EntityBase.Tags[]': 'mcfunction:argument/spyglassmc:tag',
-	'::minecraft::item::blockitem::BlockItem.CanPlaceOn[]': 'mcfunction:argument/minecraft:block_predicate',
-	'::minecraft::item::book::WrittenBook.pages[]': 'mcfunction:argument/minecraft:component',
-	'::minecraft::item::ItemBase.CanDestroy[]': 'mcfunction:argument/minecraft:block_predicate',
+	'::minecraft::entity::mob::LivingEntity.Team': 'mcfunction:team',
+	'::minecraft::entity::EntityBase.Tags[]': 'mcfunction:tag',
+	'::minecraft::item::blockitem::BlockItem.CanPlaceOn[]': 'mcfunction:block_predicate',
+	'::minecraft::item::book::WrittenBook.pages[]': 'mcfunction:component',
+	'::minecraft::item::ItemBase.CanDestroy[]': 'mcfunction:block_predicate',
 }
 
 export function getSpecialStringParser(nbtdocPath: string): string | undefined {

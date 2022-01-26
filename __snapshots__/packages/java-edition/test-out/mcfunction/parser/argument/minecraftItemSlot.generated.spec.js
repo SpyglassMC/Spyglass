@@ -1,27 +1,23 @@
 exports['mcfunction argument minecraft:item_slot Parse "container.5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:item_slot",
+    "type": "literal",
     "range": {
       "start": 0,
       "end": 11
     },
-    "value": "container.5",
-    "name": "test",
-    "hover": "<test: item_slot>"
+    "value": "container.5"
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:item_slot Parse "weapon" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:item_slot",
+    "type": "literal",
     "range": {
       "start": 0,
       "end": 6
     },
-    "value": "weapon",
-    "name": "test",
-    "hover": "<test: item_slot>"
+    "value": "weapon"
   },
   "errors": []
 }

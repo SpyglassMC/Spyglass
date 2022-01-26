@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:int_range Parse "-100.." 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:int_range",
+    "type": "mcfunction:int_range",
     "range": {
       "start": 0,
       "end": 6
@@ -23,19 +23,17 @@ exports['mcfunction argument minecraft:int_range Parse "-100.." 1'] = {
         "value": ".."
       }
     ],
-    "name": "test",
     "value": [
       -100,
       null
-    ],
-    "hover": "<test: int_range>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:int_range Parse "-5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:int_range",
+    "type": "mcfunction:int_range",
     "range": {
       "start": 0,
       "end": 2
@@ -50,12 +48,10 @@ exports['mcfunction argument minecraft:int_range Parse "-5" 1'] = {
         "value": -5
       }
     ],
-    "name": "test",
     "value": [
       -5,
       -5
-    ],
-    "hover": "<test: int_range>"
+    ]
   },
   "errors": []
 }
@@ -67,7 +63,7 @@ exports['mcfunction argument minecraft:int_range Parse ".." 1'] = {
 
 exports['mcfunction argument minecraft:int_range Parse "..100" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:int_range",
+    "type": "mcfunction:int_range",
     "range": {
       "start": 0,
       "end": 5
@@ -90,19 +86,17 @@ exports['mcfunction argument minecraft:int_range Parse "..100" 1'] = {
         "value": 100
       }
     ],
-    "name": "test",
     "value": [
       null,
       100
-    ],
-    "hover": "<test: int_range>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:int_range Parse "0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:int_range",
+    "type": "mcfunction:int_range",
     "range": {
       "start": 0,
       "end": 1
@@ -117,19 +111,17 @@ exports['mcfunction argument minecraft:int_range Parse "0" 1'] = {
         "value": 0
       }
     ],
-    "name": "test",
     "value": [
       0,
       0
-    ],
-    "hover": "<test: int_range>"
+    ]
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:int_range Parse "0..5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:int_range",
+    "type": "mcfunction:int_range",
     "range": {
       "start": 0,
       "end": 4
@@ -160,12 +152,10 @@ exports['mcfunction argument minecraft:int_range Parse "0..5" 1'] = {
         "value": 5
       }
     ],
-    "name": "test",
     "value": [
       0,
       5
-    ],
-    "hover": "<test: int_range>"
+    ]
   },
   "errors": []
 }

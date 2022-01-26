@@ -1,29 +1,25 @@
 exports['mcfunction argument minecraft:angle Parse "0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:angle",
+    "type": "mcfunction:coordinate",
     "notation": "",
     "range": {
       "start": 0,
       "end": 1
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: angle>"
+    "value": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:angle Parse "^" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:angle",
+    "type": "mcfunction:coordinate",
     "notation": "^",
     "range": {
       "start": 0,
       "end": 1
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: angle>"
+    "value": 0
   },
   "errors": [
     {
@@ -39,30 +35,26 @@ exports['mcfunction argument minecraft:angle Parse "^" 1'] = {
 
 exports['mcfunction argument minecraft:angle Parse "~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:angle",
+    "type": "mcfunction:coordinate",
     "notation": "~",
     "range": {
       "start": 0,
       "end": 1
     },
-    "value": 0,
-    "name": "test",
-    "hover": "<test: angle>"
+    "value": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:angle Parse "~-0.5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:angle",
+    "type": "mcfunction:coordinate",
     "notation": "~",
     "range": {
       "start": 0,
       "end": 5
     },
-    "value": -0.5,
-    "name": "test",
-    "hover": "<test: angle>"
+    "value": -0.5
   },
   "errors": []
 }

@@ -15,7 +15,7 @@ describe('mcfunction argument minecraft:team', () => {
 		}
 		for (const string of content) {
 			it(`Parse "${showWhitespaceGlyph(string)}"${properties ? ` with ${JSON.stringify(properties)}` : ''}`, () => {
-				snapshot(testParser(argument('test', treeNode)!, string, { project: { meta } }))
+				snapshot(testParser(argument(treeNode)!, string, { project: { meta } }))
 			})
 		}
 	}

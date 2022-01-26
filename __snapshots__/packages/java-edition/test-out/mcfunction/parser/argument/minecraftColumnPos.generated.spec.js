@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:column_pos Parse "0 0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:column_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -26,16 +26,14 @@ exports['mcfunction argument minecraft:column_pos Parse "0 0" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: column_pos>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:column_pos Parse "~ ~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:column_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -61,16 +59,14 @@ exports['mcfunction argument minecraft:column_pos Parse "~ ~" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: column_pos>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:column_pos Parse "~1 ~-2" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:column_pos",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -96,9 +92,7 @@ exports['mcfunction argument minecraft:column_pos Parse "~1 ~-2" 1'] = {
       }
     ],
     "dimension": 2,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: column_pos>"
+    "system": 0
   },
   "errors": []
 }

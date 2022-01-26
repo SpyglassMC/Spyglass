@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:time Parse "0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:time",
+    "type": "mcfunction:time",
     "range": {
       "start": 0,
       "end": 1
@@ -15,16 +15,14 @@ exports['mcfunction argument minecraft:time Parse "0" 1'] = {
         "value": 0
       }
     ],
-    "name": "test",
-    "value": 0,
-    "hover": "<test: time>"
+    "value": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:time Parse "0d" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:time",
+    "type": "mcfunction:time",
     "range": {
       "start": 0,
       "end": 2
@@ -47,17 +45,15 @@ exports['mcfunction argument minecraft:time Parse "0d" 1'] = {
         "value": "d"
       }
     ],
-    "name": "test",
     "value": 0,
-    "unit": "d",
-    "hover": "<test: time>"
+    "unit": "d"
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:time Parse "0foo" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:time",
+    "type": "mcfunction:time",
     "range": {
       "start": 0,
       "end": 1
@@ -72,16 +68,14 @@ exports['mcfunction argument minecraft:time Parse "0foo" 1'] = {
         "value": 0
       }
     ],
-    "name": "test",
-    "value": 0,
-    "hover": "<test: time>"
+    "value": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:time Parse "0s" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:time",
+    "type": "mcfunction:time",
     "range": {
       "start": 0,
       "end": 2
@@ -104,17 +98,15 @@ exports['mcfunction argument minecraft:time Parse "0s" 1'] = {
         "value": "s"
       }
     ],
-    "name": "test",
     "value": 0,
-    "unit": "s",
-    "hover": "<test: time>"
+    "unit": "s"
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:time Parse "0t" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:time",
+    "type": "mcfunction:time",
     "range": {
       "start": 0,
       "end": 2
@@ -137,10 +129,8 @@ exports['mcfunction argument minecraft:time Parse "0t" 1'] = {
         "value": "t"
       }
     ],
-    "name": "test",
     "value": 0,
-    "unit": "t",
-    "hover": "<test: time>"
+    "unit": "t"
   },
   "errors": []
 }

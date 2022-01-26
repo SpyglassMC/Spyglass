@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:vec3 Parse "0 0 0" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -35,16 +35,14 @@ exports['mcfunction argument minecraft:vec3 Parse "0 0 0" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec3 Parse "0.1 -0.5 .9" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -79,16 +77,14 @@ exports['mcfunction argument minecraft:vec3 Parse "0.1 -0.5 .9" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec3 Parse "^ ^ ^" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -123,16 +119,14 @@ exports['mcfunction argument minecraft:vec3 Parse "^ ^ ^" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 1,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 1
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec3 Parse "^1 ^ ^-5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -167,16 +161,14 @@ exports['mcfunction argument minecraft:vec3 Parse "^1 ^ ^-5" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 1,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 1
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec3 Parse "~ ~ ~" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -211,16 +203,14 @@ exports['mcfunction argument minecraft:vec3 Parse "~ ~ ~" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 0
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:vec3 Parse "~0.5 ~1 ~-5" 1'] = {
   "node": {
-    "type": "mcfunction:argument/minecraft:vec3",
+    "type": "mcfunction:vector",
     "range": {
       "start": 0,
       "end": 0
@@ -255,9 +245,7 @@ exports['mcfunction argument minecraft:vec3 Parse "~0.5 ~1 ~-5" 1'] = {
       }
     ],
     "dimension": 3,
-    "system": 0,
-    "name": "test",
-    "hover": "<test: vec3>"
+    "system": 0
   },
   "errors": []
 }

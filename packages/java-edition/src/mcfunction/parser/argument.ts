@@ -3,8 +3,8 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
-import type { ArgumentNode, CoordinateNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, MinecraftBlockPredicateArgumentNode, MinecraftBlockStateArgumentNode, MinecraftEntityArgumentNode, MinecraftFloatRangeArgumentNode, MinecraftIntRangeArgumentNode, MinecraftItemPredicateArgumentNode, MinecraftItemStackArgumentNode, MinecraftMessageArgumentNode, MinecraftScoreHolderArgumentNode, MinecraftUuidArgumentNode, VectorBaseNode } from '../node'
-import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, MinecraftTimeArgumentNode } from '../node'
+import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
+import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
 
 const IntegerPattern = /^-?\d+$/
@@ -41,18 +41,10 @@ const PlayerNameMaxLength = 16
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser<ArgumentNode> | undefined => {
+export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
-	const wrap = <T extends core.AstNode>(parser: core.Parser<T>, noTypeOverride = false): core.Parser<ArgumentNode> => core.map(
-		core.failOnEmpty<T>(parser),
-		res => ({
-			...res,
-			...noTypeOverride ? {} : { type: `mcfunction:argument/${treeNode.parser}` },
-			'// FIXME',
-			hover: `${mcf.parser.argumentTreeNodeToString('// FIXME', treeNode)}${res.hover ? `\n\n------\n\n${res.hover}` : ''}`,
-		} as ArgumentNode)
-	)
+	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser => core.failOnEmpty<T>(parser)
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
@@ -154,11 +146,11 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (rawTreeN
 				category: 'mob_effect',
 			}))
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbt.parser.compound, true)
+			return wrap(nbt.parser.compound)
 		case 'minecraft:nbt_path':
-			return wrap(nbt.parser.path, true)
+			return wrap(nbt.parser.path)
 		case 'minecraft:nbt_tag':
-			return wrap(nbt.parser.entry, true)
+			return wrap(nbt.parser.entry)
 		case 'minecraft:objective':
 			return wrap(objective(core.SymbolUsageType.is(treeNode.properties?.usageType)
 				? treeNode.properties?.usageType
@@ -214,10 +206,8 @@ export const argument: mcf.parser.ArgumentParserGetter<ArgumentNode> = (rawTreeN
 	}
 }
 
-function block(isPredicate: false): core.InfallibleParser<MinecraftBlockStateArgumentNode>
-function block(isPredicate: true): core.InfallibleParser<MinecraftBlockPredicateArgumentNode>
-function block(isPredicate: boolean): core.InfallibleParser<MinecraftBlockPredicateArgumentNode | MinecraftBlockStateArgumentNode> {
-	return core.map<core.SequenceUtil<core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode>, MinecraftBlockPredicateArgumentNode | MinecraftBlockStateArgumentNode>(
+function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
+	return core.map<core.SequenceUtil<core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode>, BlockNode>(
 		core.sequence([
 			core.resourceLocation({ category: 'block', allowTag: isPredicate }),
 			core.optional(core.map<core.TableNode<core.StringNode, core.StringNode>, BlockStatesNode>(
@@ -243,11 +233,10 @@ function block(isPredicate: boolean): core.InfallibleParser<MinecraftBlockPredic
 			core.optional(core.failOnEmpty(nbt.parser.compound)),
 		]),
 		res => {
-			const ans: MinecraftBlockPredicateArgumentNode | MinecraftBlockStateArgumentNode = {
-				type: isPredicate ? 'mcfunction:argument/minecraft:block_predicate' : 'mcfunction:argument/minecraft:block_state',
+			const ans: BlockNode = {
+				type: 'mcfunction:block',
 				range: res.range,
 				children: res.children,
-				name: '',
 				id: res.children.find(core.ResourceLocationNode.is)!,
 				states: res.children.find(BlockStatesNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
@@ -256,8 +245,8 @@ function block(isPredicate: boolean): core.InfallibleParser<MinecraftBlockPredic
 		}
 	)
 }
-const blockState: core.InfallibleParser<MinecraftBlockStateArgumentNode> = block(false)
-export const blockPredicate: core.InfallibleParser<MinecraftBlockPredicateArgumentNode> = block(true)
+const blockState: core.InfallibleParser<BlockNode> = block(false)
+export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
 export const component = json.parser.entry
 
@@ -319,8 +308,8 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 	}
 }
 
-function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.Parser<MinecraftEntityArgumentNode> {
-	return core.map<core.StringNode | EntitySelectorNode | MinecraftUuidArgumentNode, MinecraftEntityArgumentNode>(
+function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): core.Parser<EntityNode> {
+	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([
 			{
 				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
@@ -338,11 +327,10 @@ function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): co
 			},
 		]),
 		(res, _src, ctx) => {
-			const ans: MinecraftEntityArgumentNode = {
-				type: 'mcfunction:argument/minecraft:entity',
+			const ans: EntityNode = {
+				type: 'mcfunction:entity',
 				range: res.range,
 				children: [res],
-				name: '',
 			}
 
 			if (core.StringNode.is(res)) {
@@ -369,20 +357,19 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item(isPredicate: false): core.InfallibleParser<MinecraftItemStackArgumentNode>
-function item(isPredicate: true): core.InfallibleParser<MinecraftItemPredicateArgumentNode>
-function item(isPredicate: boolean): core.InfallibleParser<MinecraftItemPredicateArgumentNode | MinecraftItemStackArgumentNode> {
-	return core.map<core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>, MinecraftItemPredicateArgumentNode | MinecraftItemStackArgumentNode>(
+function item(isPredicate: false): core.InfallibleParser<ItemNode>
+function item(isPredicate: true): core.InfallibleParser<ItemNode>
+function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
+	return core.map<core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>, ItemNode>(
 		core.sequence([
 			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
 			core.optional(core.failOnEmpty(nbt.parser.compound)),
 		]),
 		res => {
-			const ans: MinecraftItemPredicateArgumentNode | MinecraftItemStackArgumentNode = {
-				type: isPredicate ? 'mcfunction:argument/minecraft:item_predicate' : 'mcfunction:argument/minecraft:item_stack',
+			const ans: ItemNode = {
+				type: 'mcfunction:item',
 				range: res.range,
 				children: res.children,
-				name: '',
 				id: res.children.find(core.ResourceLocationNode.is)!,
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
 			}
@@ -390,14 +377,13 @@ function item(isPredicate: boolean): core.InfallibleParser<MinecraftItemPredicat
 		}
 	)
 }
-const itemStack: core.InfallibleParser<MinecraftItemStackArgumentNode> = item(false)
-const itemPredicate: core.InfallibleParser<MinecraftItemPredicateArgumentNode> = item(true)
+const itemStack: core.InfallibleParser<ItemNode> = item(false)
+const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
 
-const message: core.InfallibleParser<MinecraftMessageArgumentNode> = (src, ctx) => {
-	const ans: MinecraftMessageArgumentNode = {
+const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
+	const ans: MessageNode = {
 		type: 'mcfunction:argument/minecraft:message',
 		range: core.Range.create(src),
-		name: '',
 		children: [],
 	}
 
@@ -412,14 +398,14 @@ const message: core.InfallibleParser<MinecraftMessageArgumentNode> = (src, ctx) 
 	return ans
 }
 
-function range(type: 'float', min?: number, max?: number, cycleable?: boolean): core.Parser<MinecraftFloatRangeArgumentNode>
-function range(type: 'integer', min?: number, max?: number, cycleable?: boolean): core.Parser<MinecraftIntRangeArgumentNode>
-function range(type: 'float' | 'integer', min?: number, max?: number, cycleable?: boolean): core.Parser<MinecraftFloatRangeArgumentNode | MinecraftIntRangeArgumentNode> {
+function range(type: 'float', min?: number, max?: number, cycleable?: boolean): core.Parser<FloatRangeNode>
+function range(type: 'integer', min?: number, max?: number, cycleable?: boolean): core.Parser<IntRangeNode>
+function range(type: 'float' | 'integer', min?: number, max?: number, cycleable?: boolean): core.Parser<FloatRangeNode | IntRangeNode> {
 	const number: core.Parser<core.FloatNode | core.IntegerNode> = type === 'float' ? float(min, max) : integer(min, max)
 	const low = core.failOnEmpty(core.stopBefore(number, '..'))
 	const sep = core.failOnEmpty(core.literal({ pool: ['..'], colorTokenType: 'keyword' }))
 	const high = core.failOnEmpty(number)
-	return core.map<core.SequenceUtil<core.FloatNode | core.IntegerNode | core.LiteralNode>, MinecraftFloatRangeArgumentNode | MinecraftIntRangeArgumentNode>(
+	return core.map<core.SequenceUtil<core.FloatNode | core.IntegerNode | core.LiteralNode>, FloatRangeNode | IntRangeNode>(
 		core.any([
 			/* exactly */ core.sequence([low]),
 			/* atLeast */ core.sequence([low, sep]),
@@ -431,11 +417,10 @@ function range(type: 'float' | 'integer', min?: number, max?: number, cycleable?
 				? res.children.filter(core.FloatNode.is)
 				: res.children.filter(core.IntegerNode.is)
 			const sepNode = res.children.find(core.LiteralNode.is)
-			const ans: MinecraftFloatRangeArgumentNode | MinecraftIntRangeArgumentNode = {
-				type: type === 'float' ? 'mcfunction:argument/minecraft:float_range' : 'mcfunction:argument/minecraft:int_range',
+			const ans: FloatRangeNode | IntRangeNode = {
+				type: type === 'float' ? 'mcfunction:float_range' : 'mcfunction:int_range',
 				range: res.range,
 				children: res.children as any,
-				name: '',
 				value: sepNode
 					? valueNodes.length === 2
 						? [valueNodes[0].value, valueNodes[1].value]
@@ -567,7 +552,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 													}
 												)
 											case 'distance':
-												return core.map<MinecraftFloatRangeArgumentNode>(
+												return core.map<FloatRangeNode>(
 													range('float', 0),
 													(res, _, ctx) => {
 														dimensionLimited = true
@@ -611,7 +596,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 													}
 												)
 											case 'level':
-												return core.map<MinecraftIntRangeArgumentNode>(
+												return core.map<IntRangeNode>(
 													range('integer', 0),
 													(res, _, ctx) => {
 														playersOnly = true
@@ -636,8 +621,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 											case 'predicate':
 												return invertable(core.resourceLocation({ category: 'predicate' }))
 											case 'scores':
-												return core.map<core.TableNode<core.SymbolNode, MinecraftIntRangeArgumentNode>, EntitySelectorScoresArgumentNode>(
-													core.table<core.SymbolNode, MinecraftIntRangeArgumentNode>({
+												return core.map<core.TableNode<core.SymbolNode, IntRangeNode>, EntitySelectorScoresArgumentNode>(
+													core.table<core.SymbolNode, IntRangeNode>({
 														start: '{',
 														pair: {
 															key: objective('reference', ['[', '=', ',', ']', '{', '}']),
@@ -738,7 +723,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 												)
 											case 'x_rotation':
 											case 'y_rotation':
-												return core.map<MinecraftFloatRangeArgumentNode>(
+												return core.map<FloatRangeNode>(
 													range('float', undefined, undefined, true),
 													(res, _, ctx) => {
 														if (hasKey(key.value)) {
@@ -834,8 +819,8 @@ export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<
 	'mcfunction.parser.score_holder.fake-name.too-long',
 )
 
-function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreHolderArgumentNode> {
-	return core.map<core.SymbolNode | EntitySelectorNode, MinecraftScoreHolderArgumentNode>(
+function scoreHolder(amount: 'multiple' | 'single'): core.Parser<ScoreHolderNode> {
+	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
 			{
 				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
@@ -846,11 +831,10 @@ function scoreHolder(amount: 'multiple' | 'single'): core.Parser<MinecraftScoreH
 			},
 		]),
 		(res, _src, ctx) => {
-			const ans: MinecraftScoreHolderArgumentNode = {
-				type: 'mcfunction:argument/minecraft:score_holder',
+			const ans: ScoreHolderNode = {
+				type: 'mcfunction:score_holder',
 				range: res.range,
 				children: [res],
-				name: '',
 			}
 
 			if (core.SymbolNode.is(res)) {
@@ -892,16 +876,15 @@ function unquotableSymbol(options: core.AllCategory | core.SymbolOptions, termin
 	return validateUnquotable(symbol(options, terminators))
 }
 
-const time: core.InfallibleParser<MinecraftTimeArgumentNode> = core.map(
-	core.sequence([float(0, undefined), core.optional(core.failOnEmpty(core.literal(...MinecraftTimeArgumentNode.Units)))]),
+const time: core.InfallibleParser<TimeNode> = core.map(
+	core.sequence([float(0, undefined), core.optional(core.failOnEmpty(core.literal(...TimeNode.Units)))]),
 	res => {
 		const valueNode = res.children.find(core.FloatNode.is)!
 		const unitNode = res.children.find(core.LiteralNode.is)
-		const ans: MinecraftTimeArgumentNode = {
-			type: 'mcfunction:argument/minecraft:time',
+		const ans: TimeNode = {
+			type: 'mcfunction:time',
 			range: res.range,
 			children: res.children,
-			name: '',
 			value: valueNode.value,
 			unit: unitNode?.value,
 		}
@@ -915,11 +898,10 @@ const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 
 const UuidPattern = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i
 
-const uuid: core.InfallibleParser<MinecraftUuidArgumentNode> = (src, ctx): MinecraftUuidArgumentNode => {
-	const ans: MinecraftUuidArgumentNode = {
-		type: 'mcfunction:argument/minecraft:uuid',
+const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
+	const ans: UuidNode = {
+		type: 'mcfunction:uuid',
 		range: core.Range.create(src),
-		name: '',
 		bits: [0n, 0n],
 	}
 
@@ -979,10 +961,10 @@ function validateUnquotable(parser: core.InfallibleParser<core.SymbolNode>): cor
 	)
 }
 
-function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.InfallibleParser<VectorBaseNode> {
-	return (src, ctx): VectorBaseNode => {
-		const ans: VectorBaseNode = {
-			type: '',
+function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.InfallibleParser<VectorNode> {
+	return (src, ctx): VectorNode => {
+		const ans: VectorNode = {
+			type: 'mcfunction:vector',
 			range: core.Range.create(src),
 			children: [],
 			dimension,
