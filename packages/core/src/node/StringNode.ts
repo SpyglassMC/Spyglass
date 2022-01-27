@@ -77,7 +77,7 @@ export interface StringNode extends StringBaseNode {
 }
 export namespace StringNode {
 	/* istanbul ignore next */
-	export function is(obj: object): obj is StringNode {
-		return (obj as StringNode).type === 'string'
+	export function is(obj: object | undefined): obj is StringNode {
+		return (obj as StringNode | undefined)?.type === 'string'
 	}
 }

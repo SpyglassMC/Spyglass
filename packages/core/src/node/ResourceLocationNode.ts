@@ -48,8 +48,8 @@ export namespace ResourceLocationNode {
 	const DefaultNamespace = ResourceLocation.DefaultNamespace
 
 	/* istanbul ignore next */
-	export function is(obj: AstNode): obj is ResourceLocationNode {
-		return (obj as ResourceLocationNode).type === 'resource_location'
+	export function is(obj: AstNode | undefined): obj is ResourceLocationNode {
+		return (obj as ResourceLocationNode | undefined)?.type === 'resource_location'
 	}
 
 	export function toString(node: ResourceLocationBaseNode, type?: 'full'): FullResourceLocation

@@ -6,7 +6,7 @@ export interface McfunctionNode extends core.SequenceNode<CommandNode | core.Com
 }
 export namespace McfunctionNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is McfunctionNode {
-		return (node as McfunctionNode).type === 'mcfunction:entry'
+	export function is(node: core.AstNode | undefined): node is McfunctionNode {
+		return (node as McfunctionNode | undefined)?.type === 'mcfunction:entry'
 	}
 }

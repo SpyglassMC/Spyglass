@@ -19,6 +19,9 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 const getName = (nodes: mcf.CommandNode['children'], index: number): string | undefined => {
 	return nodes[index]?.path[nodes[index].path.length - 1]
 }
+const getNode = (nodes: mcf.CommandNode['children'], index: number): core.AstNode | undefined => {
+	return nodes[index]?.children[0]
+}
 
 const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
 	if (getName(nodes, index) === 'data') {
@@ -28,13 +31,13 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 			dataMergeTarget(nodes, index + 2, ctx)
 		} else if (getName(nodes, index + 1) === 'modify') {
 			nbtPath(nodes, index + 2, ctx)
-			const targetPath = nodes[index + 4]?.children[0]
+			const targetPath = getNode(nodes, index + 4)
 			const operation = getName(nodes, index + 5)
 			const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
 			if (getName(nodes, sourceTypeIndex) === 'from') {
 				// `from <$nbtPath$>`
 				nbtPath(nodes, sourceTypeIndex + 1, ctx)
-				const sourcePath = nodes[sourceTypeIndex + 3]?.children[0]
+				const sourcePath = getNode(nodes, sourceTypeIndex + 3)
 				if (nbt.NbtPathNode.is(targetPath) && nbt.NbtPathNode.is(sourcePath)) {
 					const { errorMessage } = nbtdoc.checker.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
 					if (errorMessage) {
@@ -43,8 +46,8 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 				}
 			} else if (getName(nodes, sourceTypeIndex) === 'value') {
 				// `value <value: nbt_tag>`
-				const valueNode = nodes[sourceTypeIndex + 1]?.children[0]
-				if (nbt.NbtPathNode.is(targetPath) && targetPath.targetType && valueNode && nbt.NbtNode.is(valueNode)) {
+				const valueNode = getNode(nodes, sourceTypeIndex + 1)
+				if (nbt.NbtPathNode.is(targetPath) && targetPath.targetType && nbt.NbtNode.is(valueNode)) {
 					nbt.checker.fieldValue(targetPath.targetType, { allowUnknownKey: true })(valueNode, ctx)
 				}
 			}
@@ -82,15 +85,15 @@ const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx:
 	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
-			const nbtNode = nodes[index + 2]?.children[0]
+			const nbtNode = getNode(nodes, index + 2)
 			if (nbt.NbtCompoundNode.is(nbtNode)) {
 				nbt.checker.index('block', undefined)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'entity': {
-			const entityNode = nodes[index + 1]?.children[0]
-			const nbtNode = nodes[index + 2]?.children[0]
+			const entityNode = getNode(nodes, index + 1)
+			const nbtNode = getNode(nodes, index + 2)
 			if (EntityNode.is(entityNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 				const types = getTypesFromEntity(entityNode, ctx)
 				nbt.checker.index('entity_type', types)(nbtNode, ctx)
@@ -98,8 +101,8 @@ const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx:
 			break
 		}
 		case 'storage': {
-			const idNode = nodes[index + 1]?.children[0]
-			const nbtNode = nodes[index + 2]?.children[0]
+			const idNode = getNode(nodes, index + 1)
+			const nbtNode = getNode(nodes, index + 2)
 			if (core.ResourceLocationNode.is(idNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 				nbt.checker.index('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
 			}
@@ -117,15 +120,15 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
 	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
-			const nbtNode = nodes[index + 2]?.children[0]
+			const nbtNode = getNode(nodes, index + 2)
 			if (nbt.NbtPathNode.is(nbtNode)) {
 				nbt.checker.path('block', undefined)(nbtNode, ctx)
 			}
 			break
 		}
 		case 'entity': {
-			const entityNode = nodes[index + 1]?.children[0]
-			const nbtNode = nodes[index + 2]?.children[0]
+			const entityNode = getNode(nodes, index + 1)
+			const nbtNode = getNode(nodes, index + 2)
 			if (EntityNode.is(entityNode) && nbt.NbtPathNode.is(nbtNode)) {
 				const types = getTypesFromEntity(entityNode, ctx)
 				nbt.checker.path('entity_type', types)(nbtNode, ctx)
@@ -133,8 +136,8 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
 			break
 		}
 		case 'storage': {
-			const idNode = nodes[index + 1]?.children[0]
-			const nbtNode = nodes[index + 2]?.children[0]
+			const idNode = getNode(nodes, index + 1)
+			const nbtNode = getNode(nodes, index + 2)
 			if (core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)) {
 				nbt.checker.path('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
 			}
@@ -147,8 +150,8 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
  * - `<entity: entity_summon> [<pos: vec3>] [<nbt: nbt_compound_tag>]`
  */
 const summonNbt = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	const typeNode = nodes[index]?.children[0]
-	const nbtNode = nodes[index + 2]?.children[0]
+	const typeNode = getNode(nodes, index)
+	const nbtNode = getNode(nodes, index + 2)
 	if (core.ResourceLocationNode.is(typeNode) && nbt.NbtCompoundNode.is(nbtNode)) {
 		nbt.checker.index('entity_type', core.ResourceLocationNode.toString(typeNode, 'full'))(nbtNode, ctx)
 	}
