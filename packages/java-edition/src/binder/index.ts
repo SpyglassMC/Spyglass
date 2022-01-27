@@ -1,7 +1,6 @@
 import type { ContextBase, FileCategory, RootUriString, UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
-import type { MajorVersion } from '../dependency'
-import { MajorVersions } from '../dependency'
+import { MajorVersion } from '../dependency'
 
 export const Categories = new Map<string, {
 	category: FileCategory,
@@ -61,7 +60,7 @@ export function dissectUri(uri: string, ctx: ContextBase) {
 		if (!def || def.extname !== match[4]) {
 			continue
 		}
-		if (!matchVersion(ctx.project['loadedVersion'], def.since, def.until)) {
+		if (!matchVersion(ctx.project['loadedVersion'] as MajorVersion, def.since, def.until)) {
 			continue
 		}
 		return {
@@ -89,9 +88,8 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 	}
 }
 
-function matchVersion(target: string, since: MajorVersion | undefined, until: MajorVersion | undefined): boolean {
-	const targetIndex = MajorVersions.indexOf(target as MajorVersion)
-	if (since && targetIndex < MajorVersions.indexOf(since)) return false
-	if (until && targetIndex > MajorVersions.indexOf(until)) return false
+function matchVersion(target: MajorVersion, since: MajorVersion | undefined, until: MajorVersion | undefined): boolean {
+	if (since && MajorVersion.cmp(target, since) < 0) return false
+	if (until && MajorVersion.cmp(until, target) < 0) return false
 	return true
 }

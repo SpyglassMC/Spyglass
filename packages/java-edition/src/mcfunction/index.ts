@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import type { PartialRootTreeNode } from '@spyglassmc/mcfunction'
 import * as mcf from '@spyglassmc/mcfunction'
-import type { MajorVersion, VanillaCommands } from '../dependency'
+import type { MajorVersion, McmetaCommands } from '../dependency'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
 import { inlayHintProvider } from './inlayHintProvider'
@@ -22,7 +22,7 @@ const Trees: Record<MajorVersion, PartialRootTreeNode> = {
 }
 
 /* istanbul ignore next */
-export const initialize = (ctx: core.ProjectInitializerContext, commands: VanillaCommands, majorVersion: MajorVersion) => {
+export const initialize = (ctx: core.ProjectInitializerContext, commands: McmetaCommands, majorVersion: MajorVersion) => {
 	const { meta } = ctx
 
 	mcf.initialize(ctx)

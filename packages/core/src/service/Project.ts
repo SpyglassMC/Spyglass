@@ -24,7 +24,6 @@ import { fileUtil } from './fileUtil'
 import { Logger } from './Logger'
 import { MetaRegistry } from './MetaRegistry'
 import { ProfilerFactory } from './Profiler'
-import type { SymbolRegistrarResult } from './SymbolRegistrar'
 
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
@@ -67,7 +66,7 @@ interface RootsEvent {
 }
 interface SymbolRegistrarEvent {
 	id: string,
-	result: SymbolRegistrarResult,
+	checksum: string,
 }
 
 export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
@@ -394,12 +393,17 @@ export class Project extends EventEmitter {
 			this.updateRoots()
 			__profiler.task('List Files')
 
-			for (const [id, registrar] of this.meta.symbolRegistrars) {
-				const result = registrar(this.symbols, {
-					cacheChecksum: this.cacheService.checksums.symbolRegistrars[id],
-					logger: this.logger,
-				})
-				this.emit('symbolRegistrarExecuted', { id, result })
+			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
+				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
+				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
+					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
+					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
+						registrar(this.symbols, { logger: this.logger })
+					})
+					this.emit('symbolRegistrarExecuted', { id, checksum })
+				} else {
+					this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
+				}
 			}
 			__profiler.task('Register Symbols')
 

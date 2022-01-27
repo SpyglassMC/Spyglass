@@ -4,6 +4,5 @@ This document is intended for maintainers of the Spyglass project.
 
 .Searchable comments
 ```
-// DOCS: Update here when a new major version of Minecraft is released.
 // DOCS: Update here when format_version is changed.
 ```

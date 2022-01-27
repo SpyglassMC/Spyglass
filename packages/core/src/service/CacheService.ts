@@ -87,7 +87,7 @@ export class CacheService {
 				}
 			}
 		})
-		this.project.on('symbolRegistrarExecuted', ({ id, result: { checksum } }) => {
+		this.project.on('symbolRegistrarExecuted', ({ id, checksum }) => {
 			if (checksum !== undefined) {
 				this.checksums.symbolRegistrars[id] = checksum
 			}

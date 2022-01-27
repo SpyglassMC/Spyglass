@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder'
-import { getMcNbtdoc, getVanillaDatapack, getVanillaResources, getVersionManifest, symbolRegistrar } from './dependency'
-import { getLatestReleases, resolveVersion } from './dependency/vanilla-resource/util'
+import type { McmetaSummary, McmetaVersions } from './dependency'
+import { getMcNbtdoc, getVanillaResources, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
 import * as jeJson from './json'
 import * as jeMcf from './mcfunction'
 
@@ -11,51 +11,38 @@ export * as json from './json'
 export * as mcf from './mcfunction'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
+	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
+		let ans: PackMcmeta | undefined
+		const uri = `${projectRoot}pack.mcmeta`
+		try {
+			const data = await core.fileUtil.readJson(uri)
+			PackMcmeta.assert(data)
+			ans = data
+		} catch (e) {
+			if (!core.isEnoent(e)) {
+				// `pack.mcmeta` exists but broken. Log an error.
+				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
+			}
+		}
+		return ans
+	}
+
 	const { cacheRoot, config, logger, meta, projectRoot } = ctx
 
 	meta.registerUriBinder(uriBinder)
 
-	const manifest = await getVersionManifest(logger, cacheRoot)
+	const versions: McmetaVersions = '// FIXME' as any
 
-	const latestReleases = getLatestReleases(manifest)
-
-	const autoVersionResolver = async (): Promise<string> => {
-		const versions = {
-			// DOCS: Update here when format_version is changed.
-			5: latestReleases[0].latest, // 1.15
-			6: latestReleases[1].latest, // 1.16
-			7: latestReleases[2].latest, // 1.17
-			8: latestReleases[3].latest, // 1.18
-		} as const
-
-		const uri = `${projectRoot}pack.mcmeta`
-		try {
-			const data = await core.fileUtil.readJson(uri)
-			const format: string | undefined = data?.pack?.pack_format?.toString()
-			if (!format) {
-				throw new Error('“pack.pack_format” undefined')
-			}
-			if (!Object.keys(versions).includes(format)) {
-				throw new Error(`Unknown pack_format “${format}”`)
-			}
-			return versions[format as unknown as keyof typeof versions]
-		} catch (e) {
-			if (!core.isEnoent(e)) {
-				// `pack.mcmeta` exists but broken. Log an error.
-				logger.error(`[je.initialize] Failed inferring game version from “${uri}”`, e)
-			}
-			// Fall back to latest release.
-			return manifest.latest.release
-		}
-	}
-
-	const { major, version, status } = await resolveVersion(config.env.gameVersion, manifest, latestReleases, autoVersionResolver, logger)
+	const packMcmeta = await getPackMcmeta()
+	const { major, id: version } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
 	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(version, status, cacheRoot, logger))
-	meta.registerDependencyProvider('@vanilla-datapack', () => getVanillaDatapack(version, status, cacheRoot, logger))
 
-	const resources = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides)
-	meta.registerSymbolRegistrar('vanilla-resource', symbolRegistrar(resources, resources.checksum))
+	const resources: McmetaSummary = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides) as any
+	meta.registerSymbolRegistrar('mcmeta-summary', {
+		checksum: resources.checksum,
+		registrar: symbolRegistrar(resources),
+	})
 
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, resources.commands, major)

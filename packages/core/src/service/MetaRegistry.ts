@@ -26,6 +26,11 @@ interface LinterRegistration {
 	nodePredicate: (node: AstNode) => unknown,
 }
 
+interface SymbolRegistrarRegistration {
+	registrar: SymbolRegistrar,
+	checksum: string,
+}
+
 /* istanbul ignore next */
 /**
  * The meta registry of Spyglass. You can register new parsers, processors, and languages here.
@@ -44,7 +49,7 @@ export class MetaRegistry {
 	readonly #linters = new Map<string, LinterRegistration>()
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
-	readonly #symbolRegistrars = new Map<string, SymbolRegistrar>()
+	readonly #symbolRegistrars = new Map<string, SymbolRegistrarRegistration>()
 	readonly #uriBinders = new Set<UriBinder>()
 
 	constructor() {
@@ -216,10 +221,10 @@ export class MetaRegistry {
 		return this.#signatureHelpProviders
 	}
 
-	public registerSymbolRegistrar(id: string, registrar: SymbolRegistrar): void {
+	public registerSymbolRegistrar(id: string, registrar: SymbolRegistrarRegistration): void {
 		this.#symbolRegistrars.set(id, registrar)
 	}
-	public get symbolRegistrars(): Map<string, SymbolRegistrar> {
+	public get symbolRegistrars(): Map<string, SymbolRegistrarRegistration> {
 		return this.#symbolRegistrars
 	}
 

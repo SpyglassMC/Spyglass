@@ -1,7 +1,6 @@
 import type { JsonChecker, JsonCheckerContext, record } from '@spyglassmc/json/lib/checker'
 import { deprecate } from '@spyglassmc/json/lib/checker'
-import type { MajorVersion } from '../../../dependency'
-import { MajorVersions } from '../../../dependency'
+import { MajorVersion } from '../../../dependency'
 
 type CheckerRecord = Parameters<typeof record>[0]
 
@@ -10,7 +9,7 @@ function getVersion(ctx: JsonCheckerContext) {
 }
 
 function cmpVersion(ctx: JsonCheckerContext, target: MajorVersion): number {
-	return MajorVersions.indexOf(getVersion(ctx)) - MajorVersions.indexOf(target)
+	return MajorVersion.cmp(getVersion(ctx), target)
 }
 
 export function versioned(ctx: JsonCheckerContext, version: MajorVersion, checker: string[]): string[]

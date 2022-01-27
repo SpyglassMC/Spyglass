@@ -20,8 +20,8 @@ export const WorldgenFileCategories = Object.freeze([
 	'worldgen/configured_feature',
 	'worldgen/configured_structure_feature',
 	'worldgen/configured_surface_builder',
-	'worldgen/noise_settings',
 	'worldgen/noise',
+	'worldgen/noise_settings',
 	'worldgen/placed_feature',
 	'worldgen/processor_list',
 	'worldgen/template_pool',
@@ -69,8 +69,8 @@ export const NbtdocCategories = Object.freeze([
 export type NbtdocCategory = typeof NbtdocCategories[number]
 //#endregion
 
-//#region Vanilla Registry Categories
-export const VanillaRegistryCategories = Object.freeze([
+//#region Registry Categories
+export const RegistryCategories = Object.freeze([
 	'activity',
 	'attribute',
 	'block',
@@ -111,7 +111,7 @@ export const VanillaRegistryCategories = Object.freeze([
 	'villager_profession',
 	'villager_type',
 	'worldgen/biome_source',
-	'worldgen/block_placer_type',
+	'worldgen/block_placer_type', // Removed from Minecraft at some point. Still used by JSON checkers.
 	'worldgen/block_state_provider_type',
 	'worldgen/carver',
 	'worldgen/chunk_generator',
@@ -126,17 +126,17 @@ export const VanillaRegistryCategories = Object.freeze([
 	'worldgen/structure_piece',
 	'worldgen/structure_pool_element',
 	'worldgen/structure_processor',
-	'worldgen/surface_builder',
+	'worldgen/surface_builder', // Removed from Minecraft at some point. Still used by JSON checkers.
 	'worldgen/tree_decorator_type',
 	'worldgen/trunk_placer_type',
 ] as const)
-export type VanillaRegistryCategory = typeof VanillaRegistryCategories[number]
+export type RegistryCategory = typeof RegistryCategories[number]
 //#endregion
 
 export const AllCategories = Object.freeze([
 	...DatapackCategories,
 	...NbtdocCategories,
-	...VanillaRegistryCategories,
+	...RegistryCategories,
 ] as const)
 export type AllCategory = typeof AllCategories[number]
 
@@ -144,7 +144,7 @@ export const ResourceLocationCategories = Object.freeze([
 	'bossbar',
 	'storage',
 	...FileCategories,
-	...VanillaRegistryCategories,
+	...RegistryCategories,
 ] as const)
 export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
 export namespace ResourceLocationCategory {
@@ -292,17 +292,13 @@ export interface SymbolLocationMetadata {
  * - `checker`: Contributed by checkers.
  * - `parser`: Contributed by parsers.
  * - `uri_binder`: Contributed by URI binders.
- * - `vanilla_resource/${registry}`: Contributed by vanilla resources.
- * 
- * [mc-data]: https://github.com/Arcensoth/mc-data
- * [mc-nbtdoc]: https://github.com/Yurihaia/mc-nbtdoc
- * [vanilla-datapack]: https://github.com/SPGoding/vanilla-datapack
+ * - `symbol_registrar/${id}`: Contributed by symbol registrars.
  */
 export type SymbolLocationBuiltInContributor =
 	| 'checker'
 	| 'parser'
 	| 'uri_binder'
-	| `vanilla_resource/${string}`
+	| `symbol_registrar/${string}`
 
 export interface SymbolLocation extends SymbolLocationMetadata {
 	uri: string,

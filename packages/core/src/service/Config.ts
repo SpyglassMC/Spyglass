@@ -3,7 +3,7 @@ import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
 import { Arrayable, bufferToString, isEnoent, TypePredicates, Uri } from '../common'
 import { ErrorSeverity } from '../source'
-import { FileCategories, VanillaRegistryCategories } from '../symbol'
+import { FileCategories, RegistryCategories } from '../symbol'
 import type { Project } from './Project'
 /* eslint-disable no-restricted-syntax */
 
@@ -29,9 +29,15 @@ export interface Config {
 
 export interface EnvConfig {
 	/**
+	 * Where to download data like `mcmeta` or `mc-nbtdoc` from (case-insensitive).
+	 * 
+	 * * `GitHub`
+	 * * `jsDelivr`: Not recommended as files from there can be outdated. Only use this if you have trouble connecting to `raw.githubusercontent.com`.
+	 */
+	dataSource: string,
+	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
-	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@mc-nbtdoc` and
-	 * `@vanilla`.
+	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@mc-nbtdoc`.
 	 */
 	dependencies: string[],
 	feature: {
@@ -49,35 +55,26 @@ export interface EnvConfig {
 		signatures: boolean,
 	},
 	/**
-	 * - `Auto` (case-insensitive): Auto infer from `pack.mcmeta`.
-	 * - `Latest release` (case-insensitive)
-	 * - `Latest snapshot` (case-insensitive)
-	 * - A version identifier found in [`version_manifest.json`](https://launchermeta.mojang.com/mc/game/version_manifest.json) that is `1.15` or later (case-sensitive).
+	 * This field is case-insensitive.
+	 * 
+	 * - `Auto`: Auto infer from `pack.mcmeta`.
+	 * - `Latest release`
+	 * - `Latest snapshot`
+	 * - A version identifier or name found in [mcmeta's version data](https://github.com/misode/mcmeta/blob/summary/versions/data.json) that is older than `1.15` (inclusive).
 	 */
 	gameVersion: string,
 	/**
 	 * Locale language for error messages and other texts provided by Spyglass.
 	 */
 	language: string,
-	permissionLevel: 1 | 2 | 3 | 4,
-	plugins: string[],
 	/**
-	 * Use custom files as vanilla resources.
+	 * Use custom files as mcmeta summaries.
 	 * 
 	 * // TODO: Support file paths relative to the project root.
 	 */
-	vanillaResourceOverrides: {
-		blocks?: string,
-		commands?: string,
-		fluids?: string,
-		registries?: string,
-	},
-	/**
-	 * Where to download vanilla resources from.
-	 * 
-	 * Set to `jsDelivr` if your local authorities have blocked `raw.githubusercontent.com`.
-	 */
-	vanillaResourceSource: 'GitHub' | 'jsDelivr',
+	mcmetaSummaryOverrides: Partial<Record<'blocks' | 'commands' | 'fluids' | 'registries', { path: string, replace?: boolean }>>,
+	permissionLevel: 1 | 2 | 3 | 4,
+	plugins: string[],
 }
 
 export type LinterSeverity =
@@ -291,8 +288,8 @@ export namespace SymbolLinterConfig {
 */
 export const VanillaConfig: Config = {
 	env: {
+		dataSource: 'GitHub',
 		dependencies: [
-			'@vanilla-datapack',
 			'@mc-nbtdoc',
 		],
 		feature: {
@@ -322,8 +319,7 @@ export const VanillaConfig: Config = {
 		language: 'Default',
 		permissionLevel: 2,
 		plugins: [],
-		vanillaResourceOverrides: {},
-		vanillaResourceSource: 'GitHub',
+		mcmetaSummaryOverrides: {},
 	},
 	format: {
 		blockStateBracketSpacing: { inside: 0 },
@@ -381,7 +377,7 @@ export const VanillaConfig: Config = {
 		undeclaredSymbol: [
 			{
 				if: [
-					{ category: VanillaRegistryCategories, namespace: 'minecraft' },
+					{ category: RegistryCategories, namespace: 'minecraft' },
 					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
 				],
 				then: { report: 'warning' },
