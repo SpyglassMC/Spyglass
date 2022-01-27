@@ -380,16 +380,11 @@ export const VanillaConfig: Config = {
 
 		undeclaredSymbol: [
 			{
-				if: { category: VanillaRegistryCategories, namespace: 'minecraft' },
+				if: [
+					{ category: VanillaRegistryCategories, namespace: 'minecraft' },
+					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+				],
 				then: { report: 'warning' },
-			},
-			{
-				if: { category: FileCategories },
-				then: { report: 'warning' },
-			},
-			{
-				if: { category: ['bossbar', 'objective', 'team'] },
-				then: { declare: 'block', report: 'warning' },
 			},
 			{
 				then: { declare: 'block' },

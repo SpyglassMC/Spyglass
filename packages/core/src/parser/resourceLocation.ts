@@ -60,7 +60,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 
 			if (options.category) {
 				ctx.symbols
-					.query(ctx.doc, options.category, ResourceLocation.lengthen(raw))
+					.query(ctx.doc, ans.isTag ? `tag/${options.category}` : options.category, ResourceLocation.lengthen(raw))
 					.enter({ usage: { type: options.usageType, node: ans, accessType: options.accessType } })
 			}
 		}

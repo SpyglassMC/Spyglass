@@ -5,21 +5,23 @@ import type { AstNode } from './AstNode'
 
 export type ResourceLocationOptions = {
 	accessType?: SymbolAccessType,
-	allowUnknown?: boolean,
 	isPredicate?: boolean,
 	usageType?: SymbolUsageType,
 } & ({
 	category: ResourceLocationCategory,
 	pool?: undefined,
 	allowTag?: false,
+	allowUnknown?: false,
 } | {
 	category: TaggableResourceLocationCategory,
 	pool?: undefined,
 	allowTag?: boolean,
+	allowUnknown?: false,
 } | {
 	category?: undefined,
 	pool: string[],
 	allowTag?: false,
+	allowUnknown?: boolean,
 })
 
 export interface ResourceLocationBaseNode extends AstNode {

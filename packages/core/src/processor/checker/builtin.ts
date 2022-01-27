@@ -87,22 +87,6 @@ export const resourceLocation: Checker<ResourceLocationNode> = (node, ctx) => {
 		}
 		return
 	}
-	if (node.options.category) {
-		const path = node.isTag ? full.slice(1) : full
-		const category = node.isTag ? `tag/${node.options.category}` : node.options.category
-		if (category === 'structure') return
-		const query = ctx.symbols.query(ctx.doc, category, path)
-		if (node.options.accessType === SymbolAccessType.Write) {
-			query.enter({ usage: { type: 'definition', node } })
-		} else {
-			query.enter({ usage: { type: 'reference', node } })
-			if (!node.options.allowUnknown) {
-				query.ifDeclared(() => {}).else(() => {
-					ctx.err.report(localize('resource-location.undeclared', category, localeQuote(full)), node, ErrorSeverity.Warning)
-				})
-			}
-		}
-	}
 }
 
 export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {

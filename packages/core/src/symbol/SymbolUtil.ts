@@ -504,7 +504,7 @@ export class SymbolUtil extends EventEmitter {
 				if (symbol.visibility === addition.visibility || (inGlobalTable(symbol.visibility) && inGlobalTable(addition.visibility))) {
 					symbol.visibility = addition.visibility
 				} else {
-					throw new Error(`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${JSON.stringify(symbol)}`)
+					throw new Error(`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`)
 				}
 			}
 			if (addition.visibilityRestriction?.length) {
@@ -614,7 +614,7 @@ export class SymbolUtil extends EventEmitter {
 	 * @throws If the symbol does not have any declarations or definitions.
 	 */
 	static getDeclaredLocation(symbol: Symbol): SymbolLocation {
-		return symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => { throw new Error(`Cannot get declared location of ${JSON.stringify(symbol)}`) })()
+		return symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => { throw new Error(`Cannot get declared location of ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`) })()
 	}
 
 	static forEachSymbolInMap(map: SymbolMap, fn: (symbol: Symbol) => unknown): void {

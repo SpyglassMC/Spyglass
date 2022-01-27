@@ -102,8 +102,8 @@ export interface EntityNode extends core.AstNode {
 	uuid?: UuidNode,
 }
 export namespace EntityNode {
-	export function is(node: core.AstNode): node is EntityNode {
-		return (node as EntityNode).type === 'mcfunction:entity'
+	export function is(node: core.AstNode | undefined): node is EntityNode {
+		return (node as EntityNode | undefined)?.type === 'mcfunction:entity'
 	}
 }
 
