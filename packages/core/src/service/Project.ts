@@ -562,7 +562,7 @@ export class Project extends EventEmitter {
 
 			const { ruleSeverity, ruleValue } = result
 			const { configValidator, linter, nodePredicate } = this.meta.getLinter(ruleName)
-			if (!configValidator(ruleValue, this.logger)) {
+			if (!configValidator(ruleName, ruleValue, this.logger)) {
 				// Config value is invalid.
 				continue
 			}

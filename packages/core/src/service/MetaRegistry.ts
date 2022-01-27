@@ -21,9 +21,9 @@ export interface LanguageOptions {
 }
 
 interface LinterRegistration {
-	configValidator: (ruleValue: unknown, logger: Logger) => boolean,
+	configValidator: (ruleName: string, ruleValue: unknown, logger: Logger) => unknown,
 	linter: Linter<AstNode>,
-	nodePredicate: (node: AstNode) => boolean,
+	nodePredicate: (node: AstNode) => unknown,
 }
 
 /* istanbul ignore next */

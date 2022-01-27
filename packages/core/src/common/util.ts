@@ -179,3 +179,22 @@ export function isErrorCode(e: unknown, code: string): boolean {
 export function isEnoent(e: unknown): boolean {
 	return isErrorCode(e, 'ENOENT')
 }
+
+export type Arrayable<T> = T | readonly T[]
+export namespace Arrayable {
+	export function is<T>(value: unknown, isT: (value: unknown) => value is T): value is Arrayable<T> {
+		return Array.isArray(value)
+			? value.every(e => isT(e))
+			: isT(value)
+	}
+
+	export function toArray<T>(value: Arrayable<T>): T[] {
+		return Array.isArray(value) ? value : [value]
+	}
+}
+
+export namespace TypePredicates {
+	export function isString(value: unknown): value is string {
+		return typeof value === 'string'
+	}
+}

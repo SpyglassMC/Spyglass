@@ -1,9 +1,9 @@
 import EventEmitter from 'events'
 import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
-import { bufferToString, isEnoent, Uri } from '../common'
+import { Arrayable, bufferToString, isEnoent, TypePredicates, Uri } from '../common'
 import { ErrorSeverity } from '../source'
-import { VanillaRegistryCategories } from '../symbol'
+import { FileCategories, VanillaRegistryCategories } from '../symbol'
 import type { Project } from './Project'
 /* eslint-disable no-restricted-syntax */
 
@@ -80,14 +80,12 @@ export interface EnvConfig {
 	vanillaResourceSource: 'GitHub' | 'jsDelivr',
 }
 
-type Arrayable<T> = T | readonly T[]
-
-type LinterSeverity =
+export type LinterSeverity =
 	| 'hint'
 	| 'information'
 	| 'warning'
 	| 'error'
-namespace LinterSeverity {
+export namespace LinterSeverity {
 	export function is(value: unknown): value is LinterSeverity {
 		return value === 'hint' ||
 			value === 'information' ||
@@ -211,15 +209,36 @@ export interface SnippetsConfig {
 	[label: string]: string,
 }
 
-type SymbolLinterConfig =
+export type SymbolLinterConfig =
 	| Arrayable<SymbolLinterConfig.Complex>
 	| SymbolLinterConfig.Action
-declare namespace SymbolLinterConfig {
+export namespace SymbolLinterConfig {
+	export function is(value: unknown): value is SymbolLinterConfig {
+		return Arrayable.is(value, Complex.is) || Action.is(value)
+	}
+
 	export interface Complex {
+		/**
+		 * {@link Condition}s in this array are connected with OR.
+		 */
 		if?: Arrayable<Condition>,
-		then?: Arrayable<Action>,
+		then?: Action,
 		override?: Arrayable<Complex>,
 	}
+	export namespace Complex {
+		export function is(v: unknown): v is Complex {
+			if (!v || typeof v !== 'object') {
+				return false
+			}
+			const value = v as Complex
+			return (
+				(value.if === undefined || Arrayable.is(value.if, Condition.is)) &&
+				(value.then === undefined || Action.is(value.then)) &&
+				(value.override === undefined || Arrayable.is(value.override, Complex.is))
+			)
+		}
+	}
+
 	export interface Condition {
 		category?: Arrayable<string>,
 		pattern?: Arrayable<string>,
@@ -227,9 +246,43 @@ declare namespace SymbolLinterConfig {
 		namespace?: Arrayable<string>,
 		excludeNamespace?: Arrayable<string>,
 	}
-	export interface Action {
-		declare?: 'block' | 'file' | 'public' /* TODO: restricted */,
-		report?: LinterSeverity | 'default',
+	export namespace Condition {
+		export function is(v: unknown): v is Condition {
+			if (!v || typeof v !== 'object') {
+				return false
+			}
+			const value = v as Condition
+			return (
+				(value.category === undefined || Arrayable.is(value.category, TypePredicates.isString)) &&
+				(value.pattern === undefined || Arrayable.is(value.pattern, TypePredicates.isString)) &&
+				(value.excludePattern === undefined || Arrayable.is(value.excludePattern, TypePredicates.isString)) &&
+				(value.namespace === undefined || Arrayable.is(value.namespace, TypePredicates.isString)) &&
+				(value.excludeNamespace === undefined || Arrayable.is(value.excludeNamespace, TypePredicates.isString))
+			)
+		}
+	}
+
+	export interface DeclareAction {
+		declare: 'block' | 'file' | 'public',
+	}
+	export interface ReportAction {
+		report: LinterSeverity | 'default',
+	}
+	export type Action = DeclareAction | ReportAction
+	export namespace Action {
+		export function isDeclare(value: Action | undefined): value is DeclareAction {
+			return value !== undefined && ['block', 'file', 'public'].includes((value as DeclareAction).declare)
+		}
+		export function isReport(value: Action | undefined): value is ReportAction {
+			return value !== undefined && ['default', 'hint', 'information', 'warning', 'error'].includes((value as ReportAction).report)
+		}
+		export function is(v: unknown): v is Action {
+			if (!v || typeof v !== 'object') {
+				return false
+			}
+			const value = v as Action
+			return isDeclare(value) || isReport(value)
+		}
 	}
 }
 
@@ -328,7 +381,11 @@ export const VanillaConfig: Config = {
 		undeclaredSymbol: [
 			{
 				if: { category: VanillaRegistryCategories, namespace: 'minecraft' },
-				then: { declare: 'block', report: 'warning' },
+				then: { report: 'warning' },
+			},
+			{
+				if: { category: FileCategories },
+				then: { report: 'warning' },
 			},
 			{
 				if: { category: ['bossbar', 'objective', 'team'] },

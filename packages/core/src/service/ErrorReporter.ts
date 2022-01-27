@@ -40,11 +40,11 @@ export class LinterErrorReporter extends ErrorReporter {
 		super()
 	}
 
-	lint(message: string, range: RangeLike, info?: LanguageErrorInfo): void {
+	lint(message: string, range: RangeLike, info?: LanguageErrorInfo, severityOverride?: ErrorSeverity): void {
 		return this.report(
 			localize('linter.diagnostic-message-wrapper', message, this.ruleName),
 			range,
-			this.ruleSeverity,
+			severityOverride ?? this.ruleSeverity,
 			info
 		)
 	}

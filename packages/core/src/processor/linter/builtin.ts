@@ -2,10 +2,16 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AstNode, StringBaseNode } from '../../node'
 import { isAllowedCharacter } from '../../parser'
 import type { Logger, MetaRegistry, QuoteConfig } from '../../service'
+import { SymbolLinterConfig } from '../../service'
+import { NbtdocCategories } from '../../symbol'
+import { undeclaredSymbol } from './builtin/undeclaredSymbol'
 import type { Linter } from './Linter'
 
 export const noop: Linter<AstNode> = () => { }
 
+/**
+ * @param key The name of the key on the {@link AstNode} that contains the value to be validated.
+ */
 export function nameConvention(key: string): Linter<AstNode> {
 	return (node, ctx) => {
 		if (typeof (node as any)[key] !== 'string') {
@@ -49,16 +55,16 @@ export const quote: Linter<StringBaseNode> = (node, ctx) => {
 
 export namespace configValidator {
 	function getDocLink(name: string): string {
-		return `https://spyglassmc.com/doc/linter/${name}`
+		return `https://spyglassmc.com/user/lint/${name}`
 	}
 
-	function wrapError(source: string, msg: string): string {
-		return `[Invalid Linter Config] [${source}] ${localize('linter-config-validator.wrapper', msg, getDocLink(source))}`
+	function wrapError(name: string, msg: string): string {
+		return `[Invalid Linter Config] [${name}] ${localize('linter-config-validator.wrapper', msg, getDocLink(name))}`
 	}
 
-	export function nameConvention(val: unknown, logger: Logger): boolean {
+	export function nameConvention(name: string, val: unknown, logger: Logger): boolean {
 		if (typeof val !== 'string') {
-			logger.error(wrapError('name-convention',
+			logger.error(wrapError(name,
 				localize('linter-config-validator.name-convention.type')
 			))
 			return false
@@ -69,8 +75,8 @@ export namespace configValidator {
 			new RegExp(val)
 		} catch (e) {
 			logger.error(
-				wrapError('name-convention',
-					localize('')
+				wrapError(name,
+					localize('') // FIXME
 				),
 				e
 			)
@@ -78,6 +84,10 @@ export namespace configValidator {
 		}
 
 		return true
+	}
+
+	export function symbolLinterConfig(_name: string, value: unknown, _logger: Logger): boolean {
+		return SymbolLinterConfig.is(value)
 	}
 }
 
@@ -90,21 +100,26 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('nameOfObjective', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.type === 'mcfunction:argument/minecraft:objective',
+		nodePredicate: n => n.symbol && n.symbol.category === 'objective',
 	})
 	meta.registerLinter('nameOfScoreHolder', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.parent?.type === 'mcfunction:argument/minecraft:score_holder' && n.type === 'symbol',
+		nodePredicate: n => n.symbol && n.symbol.category === 'score_holder',
 	})
 	meta.registerLinter('nameOfTag', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.type === 'mcfunction:argument/spyglassmc:tag',
+		nodePredicate: n => n.symbol && n.symbol.category === 'tag',
 	})
 	meta.registerLinter('nameOfTeam', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.type === 'mcfunction:argument/minecraft:team',
+		nodePredicate: n => n.symbol && n.symbol.category === 'team',
+	})
+	meta.registerLinter('undeclaredSymbol', {
+		configValidator: configValidator.symbolLinterConfig,
+		linter: undeclaredSymbol,
+		nodePredicate: n => n.symbol && !NbtdocCategories.includes(n.symbol.category as any),
 	})
 }

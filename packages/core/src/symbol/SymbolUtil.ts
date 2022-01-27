@@ -582,7 +582,7 @@ export class SymbolUtil extends EventEmitter {
 	/**
 	 * @returns If the symbol has declarations or definitions.
 	 */
-	static isDeclared(symbol: Symbol | undefined): symbol is Symbol {
+	static isDeclared(symbol: Symbol | undefined): boolean {
 		return !!(symbol?.declaration?.length || symbol?.definition?.length)
 	}
 	/**
@@ -824,7 +824,7 @@ export class SymbolQuery {
 	 * Calls `fn` if the queried symbol has declarations or definitions.
 	 */
 	ifDeclared(fn: QueryCallback<Symbol>): this {
-		return this.if(SymbolUtil.isDeclared, fn)
+		return this.if((s): s is Symbol => SymbolUtil.isDeclared(s), fn)
 	}
 
 	/**

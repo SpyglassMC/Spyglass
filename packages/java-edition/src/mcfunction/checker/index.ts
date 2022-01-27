@@ -17,7 +17,7 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 }
 
 const getName = (nodes: mcf.CommandNode['children'], index: number): string | undefined => {
-	return nodes[index].path[nodes[index].path.length - 1]
+	return nodes[index]?.path[nodes[index].path.length - 1]
 }
 
 const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {

@@ -58,7 +58,11 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
 			}
 
-			// TODO: SymbolTable
+			if (options.category) {
+				ctx.symbols
+					.query(ctx.doc, options.category, ResourceLocation.lengthen(raw))
+					.enter({ usage: { type: options.usageType, node: ans, accessType: options.accessType } })
+			}
 		}
 
 		return ans
