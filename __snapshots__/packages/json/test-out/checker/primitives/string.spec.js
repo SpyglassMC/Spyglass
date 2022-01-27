@@ -23,13 +23,13 @@ exports['JSON string string Check ""foo"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -69,13 +69,13 @@ exports['JSON string string Check ""foo"bar"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],

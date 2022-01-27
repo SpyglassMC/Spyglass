@@ -43,13 +43,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -63,13 +63,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -84,13 +84,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -108,13 +108,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -136,13 +136,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -156,13 +156,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
             "value": "qux",
             "valueMap": [
               {
-                "outer": {
-                  "start": 27,
-                  "end": 27
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 27,
+                  "end": 27
                 }
               }
             ]
@@ -177,13 +177,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -201,13 +201,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
           "value": "qux",
           "valueMap": [
             {
-              "outer": {
-                "start": 27,
-                "end": 27
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 27,
+                "end": 27
               }
             }
           ]
@@ -251,13 +251,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -271,13 +271,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -292,13 +292,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -316,13 +316,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -348,13 +348,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -368,13 +368,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "qux",
             "valueMap": [
               {
-                "outer": {
-                  "start": 27,
-                  "end": 27
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 27,
+                  "end": 27
                 }
               }
             ]
@@ -389,13 +389,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -413,13 +413,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "qux",
           "valueMap": [
             {
-              "outer": {
-                "start": 27,
-                "end": 27
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 27,
+                "end": 27
               }
             }
           ]
@@ -467,13 +467,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -487,13 +487,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -508,13 +508,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -532,13 +532,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -564,13 +564,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -584,13 +584,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
             "value": "qux",
             "valueMap": [
               {
-                "outer": {
-                  "start": 27,
-                  "end": 27
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 27,
+                  "end": 27
                 }
               }
             ]
@@ -605,13 +605,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -629,13 +629,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
           "value": "qux",
           "valueMap": [
             {
-              "outer": {
-                "start": 27,
-                "end": 27
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 27,
+                "end": 27
               }
             }
           ]
@@ -670,13 +670,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -690,13 +690,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -711,13 +711,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -735,13 +735,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -767,13 +767,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -787,13 +787,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 26,
-                  "end": 26
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 26,
+                  "end": 26
                 }
               }
             ]
@@ -808,13 +808,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -832,13 +832,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 26,
-                "end": 26
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 26,
+                "end": 26
               }
             }
           ]
@@ -882,13 +882,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -902,13 +902,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -923,13 +923,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -947,13 +947,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -979,13 +979,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -999,13 +999,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 24,
-                  "end": 24
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 24,
+                  "end": 24
                 }
               }
             ]
@@ -1020,13 +1020,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -1040,13 +1040,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 24,
-                "end": 24
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 24,
+                "end": 24
               }
             }
           ]
@@ -1098,13 +1098,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1118,13 +1118,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -1139,13 +1139,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -1163,13 +1163,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -1217,13 +1217,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1237,13 +1237,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -1258,13 +1258,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -1282,13 +1282,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -1323,13 +1323,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1343,13 +1343,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 10,
-                  "end": 10
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 10,
+                  "end": 10
                 }
               }
             ]
@@ -1364,13 +1364,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -1388,13 +1388,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 10,
-                "end": 10
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 10,
+                "end": 10
               }
             }
           ]
@@ -1438,13 +1438,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1458,13 +1458,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 8,
-                  "end": 8
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 8,
+                  "end": 8
                 }
               }
             ]
@@ -1479,13 +1479,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -1499,13 +1499,13 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 8,
-                "end": 8
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 8,
+                "end": 8
               }
             }
           ]
@@ -1557,13 +1557,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -1577,13 +1577,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -1598,13 +1598,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -1618,13 +1618,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -1650,13 +1650,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 5,
-                  "end": 5
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 5,
+                  "end": 5
                 }
               }
             ]
@@ -1670,13 +1670,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 13,
-                  "end": 13
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 13,
+                  "end": 13
                 }
               }
             ]
@@ -1691,13 +1691,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 5,
-                "end": 5
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 5,
+                "end": 5
               }
             }
           ]
@@ -1715,13 +1715,13 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 13,
-                "end": 13
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 13,
+                "end": 13
               }
             }
           ]
@@ -1781,13 +1781,13 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -1801,13 +1801,13 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 5,
-                  "end": 5
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 5,
+                  "end": 5
                 }
               }
             ]
@@ -1822,13 +1822,13 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -1846,13 +1846,13 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 5,
-                "end": 5
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 5,
+                "end": 5
               }
             }
           ]
@@ -1896,13 +1896,13 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -1916,13 +1916,13 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
             "value": "",
             "valueMap": [
               {
-                "outer": {
-                  "start": 4,
-                  "end": 4
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 4,
+                  "end": 4
                 }
               }
             ]
@@ -1937,13 +1937,13 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -1961,13 +1961,13 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
           "value": "",
           "valueMap": [
             {
-              "outer": {
-                "start": 4,
-                "end": 4
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 4,
+                "end": 4
               }
             }
           ]
@@ -2052,13 +2052,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -2072,13 +2072,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -2093,13 +2093,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -2117,13 +2117,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -2149,13 +2149,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -2169,13 +2169,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
             "value": "qux",
             "valueMap": [
               {
-                "outer": {
-                  "start": 27,
-                  "end": 27
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 27,
+                  "end": 27
                 }
               }
             ]
@@ -2190,13 +2190,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -2214,13 +2214,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
           "value": "qux",
           "valueMap": [
             {
-              "outer": {
-                "start": 27,
-                "end": 27
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 27,
+                "end": 27
               }
             }
           ]
@@ -2259,13 +2259,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -2279,13 +2279,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -2300,13 +2300,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -2324,13 +2324,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -2356,13 +2356,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "value": "baz",
             "valueMap": [
               {
-                "outer": {
-                  "start": 19,
-                  "end": 19
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 19,
+                  "end": 19
                 }
               }
             ]
@@ -2376,13 +2376,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
             "value": "qux",
             "valueMap": [
               {
-                "outer": {
-                  "start": 27,
-                  "end": 27
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 27,
+                  "end": 27
                 }
               }
             ]
@@ -2397,13 +2397,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
           "value": "baz",
           "valueMap": [
             {
-              "outer": {
-                "start": 19,
-                "end": 19
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 19,
+                "end": 19
               }
             }
           ]
@@ -2421,13 +2421,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
           "value": "qux",
           "valueMap": [
             {
-              "outer": {
-                "start": 27,
-                "end": 27
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 27,
+                "end": 27
               }
             }
           ]
@@ -2462,13 +2462,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -2482,13 +2482,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -2503,13 +2503,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -2527,13 +2527,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -2572,13 +2572,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -2592,13 +2592,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -2613,13 +2613,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -2637,13 +2637,13 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]

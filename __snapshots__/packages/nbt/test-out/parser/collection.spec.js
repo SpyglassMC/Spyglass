@@ -424,13 +424,13 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
             "value": "string",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -445,13 +445,13 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
           "value": "string",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -525,13 +525,13 @@ exports['nbt list() Parse "["string"]" 1'] = {
             "value": "string",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -546,13 +546,13 @@ exports['nbt list() Parse "["string"]" 1'] = {
           "value": "string",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]
@@ -746,13 +746,13 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
             "value": "string",
             "valueMap": [
               {
-                "outer": {
-                  "start": 12,
-                  "end": 12
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 12,
+                  "end": 12
                 }
               }
             ]
@@ -767,13 +767,13 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
           "value": "string",
           "valueMap": [
             {
-              "outer": {
-                "start": 12,
-                "end": 12
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 12,
+                "end": 12
               }
             }
           ]

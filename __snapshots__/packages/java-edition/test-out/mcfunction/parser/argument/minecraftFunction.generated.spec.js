@@ -8,7 +8,19 @@ exports['mcfunction argument minecraft:function Parse "#foo" 1'] = {
     "isTag": true,
     "path": [
       "foo"
-    ]
+    ],
+    "symbol": {
+      "category": "tag/function",
+      "identifier": "minecraft:foo",
+      "path": [
+        "minecraft:foo"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -22,7 +34,19 @@ exports['mcfunction argument minecraft:function Parse "foo" 1'] = {
     },
     "path": [
       "foo"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo",
+      "path": [
+        "minecraft:foo"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -37,7 +61,19 @@ exports['mcfunction argument minecraft:function Parse "foo:bar" 1'] = {
     "namespace": "foo",
     "path": [
       "bar"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "foo:bar",
+      "path": [
+        "foo:bar"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }

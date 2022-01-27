@@ -250,13 +250,13 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "value": "name",
             "valueMap": [
               {
-                "outer": {
-                  "start": 204,
-                  "end": 204
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 204,
+                  "end": 204
                 }
               }
             ]
@@ -305,13 +305,13 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "value": "name",
           "valueMap": [
             {
-              "outer": {
-                "start": 204,
-                "end": 204
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 204,
+                "end": 204
               }
             }
           ]
@@ -542,13 +542,13 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
             "value": "name",
             "valueMap": [
               {
-                "outer": {
-                  "start": 204,
-                  "end": 204
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 204,
+                  "end": 204
                 }
               }
             ]
@@ -597,13 +597,13 @@ exports['compoundDefinition() Parse "/// Doc comment for the compound.↓compoun
           "value": "name",
           "valueMap": [
             {
-              "outer": {
-                "start": 204,
-                "end": 204
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 204,
+                "end": 204
               }
             }
           ]
@@ -688,13 +688,13 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "value": "Bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -860,13 +860,13 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "value": "Bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ]
@@ -1058,13 +1058,13 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
             "value": "Bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -1230,13 +1230,13 @@ exports['compoundDefinition() Parse "compound Foo { "Bar": [(byte@0..1[] @ 8 | s
           "value": "Bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ]

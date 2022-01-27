@@ -28,7 +28,19 @@ exports['resourceLocation() Parse "#tick" with function, false 1'] = {
     "isTag": true,
     "path": [
       "tick"
-    ]
+    ],
+    "symbol": {
+      "category": "tag/function",
+      "identifier": "minecraft:tick",
+      "path": [
+        "minecraft:tick"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": [
     {
@@ -52,7 +64,19 @@ exports['resourceLocation() Parse "#tick" with function, true 1'] = {
     "isTag": true,
     "path": [
       "tick"
-    ]
+    ],
+    "symbol": {
+      "category": "tag/function",
+      "identifier": "minecraft:tick",
+      "path": [
+        "minecraft:tick"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -67,7 +91,19 @@ exports['resourceLocation() Parse ":" with function, undefined 1'] = {
     "namespace": "",
     "path": [
       ""
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:",
+      "path": [
+        "minecraft:"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -83,7 +119,19 @@ exports['resourceLocation() Parse ":/" with function, undefined 1'] = {
     "path": [
       "",
       ""
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:/",
+      "path": [
+        "minecraft:/"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -98,7 +146,19 @@ exports['resourceLocation() Parse ":foo" with function, undefined 1'] = {
     "namespace": "",
     "path": [
       "foo"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo",
+      "path": [
+        "minecraft:foo"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -114,7 +174,19 @@ exports['resourceLocation() Parse ":foo/bar" with function, undefined 1'] = {
     "path": [
       "foo",
       "bar"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo/bar",
+      "path": [
+        "minecraft:foo/bar"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -128,7 +200,19 @@ exports['resourceLocation() Parse "foo # can you stop before here?" with functio
     },
     "path": [
       "foo"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo",
+      "path": [
+        "minecraft:foo"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -142,7 +226,19 @@ exports['resourceLocation() Parse "foo" with function, undefined 1'] = {
     },
     "path": [
       "foo"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo",
+      "path": [
+        "minecraft:foo"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -157,7 +253,19 @@ exports['resourceLocation() Parse "foo/bar" with function, undefined 1'] = {
     "path": [
       "foo",
       "bar"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo/bar",
+      "path": [
+        "minecraft:foo/bar"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -173,7 +281,19 @@ exports['resourceLocation() Parse "minecraft:foo/bar" with function, undefined 1
     "path": [
       "foo",
       "bar"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "minecraft:foo/bar",
+      "path": [
+        "minecraft:foo/bar"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -190,7 +310,19 @@ exports['resourceLocation() Parse "spg/:foo:qux/H/42" with function, undefined 1
       "foo:qux",
       "H",
       "42"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "spg/:foo:qux/H/42",
+      "path": [
+        "spg/:foo:qux/H/42"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": [
     {
@@ -215,7 +347,19 @@ exports['resourceLocation() Parse "spgoding:foo/bar" with function, undefined 1'
     "path": [
       "foo",
       "bar"
-    ]
+    ],
+    "symbol": {
+      "category": "function",
+      "identifier": "spgoding:foo/bar",
+      "path": [
+        "spgoding:foo/bar"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }

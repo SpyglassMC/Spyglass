@@ -8,11 +8,11 @@ exports['string() Parse "" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -41,13 +41,13 @@ exports['string() Parse ""foo" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -74,13 +74,13 @@ exports['string() Parse ""foo"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -98,13 +98,13 @@ exports['string() Parse ""fo↓o"" 1'] = {
     "value": "fo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -131,13 +131,13 @@ exports['string() Parse ""fo⧵Ao"" 1'] = {
     "value": "foAo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -174,13 +174,13 @@ exports['string() Parse ""fo⧵no"" 1'] = {
     "value": "fo\no",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -208,11 +208,11 @@ exports['string() Parse "foo" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }

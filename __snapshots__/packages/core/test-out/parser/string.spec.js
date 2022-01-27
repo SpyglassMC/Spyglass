@@ -8,13 +8,13 @@ exports['string() quoted_string(", ⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
     "value": "foou00a7abar",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -52,11 +52,11 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -85,13 +85,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -118,13 +118,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -142,13 +142,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -175,13 +175,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵nbar⧵t⧵"⧵⧵qux
     "value": "foo\nbar\t\"\\qux",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -239,13 +239,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
     "value": "foou00a7abar",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -300,13 +300,13 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "\'foo\'" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -333,13 +333,13 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = 
     "value": "foo§abar",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -377,13 +377,13 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""⧵uggez"" 1'] = {
     "value": "uggez",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       },
       {
@@ -420,13 +420,13 @@ exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -440,13 +440,13 @@ exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
         "value": "",
         "valueMap": [
           {
-            "outer": {
-              "start": 1,
-              "end": 1
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
             }
           }
         ]
@@ -581,11 +581,11 @@ exports['string() unquoted_string() Parse "" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -614,11 +614,11 @@ exports['string() unquoted_string() Parse ""foo"" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -647,11 +647,11 @@ exports['string() unquoted_string() Parse "$$$" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -680,11 +680,11 @@ exports['string() unquoted_string() Parse "foo" 1'] = {
     "value": "foo",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }

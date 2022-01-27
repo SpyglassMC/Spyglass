@@ -23,13 +23,13 @@ exports['JSON boolean boolean Check ""true"" 1'] = {
     "value": "true",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -125,11 +125,11 @@ exports['JSON boolean boolean Check "tru" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }

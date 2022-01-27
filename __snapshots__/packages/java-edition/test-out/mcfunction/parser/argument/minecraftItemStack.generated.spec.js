@@ -14,7 +14,19 @@ exports['mcfunction argument minecraft:item_stack Parse "minecraft:stick" 1'] = 
       "namespace": "minecraft",
       "path": [
         "stick"
-      ]
+      ],
+      "symbol": {
+        "category": "item",
+        "identifier": "minecraft:stick",
+        "path": [
+          "minecraft:stick"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     }
   },
   "errors": []
@@ -35,7 +47,19 @@ exports['mcfunction argument minecraft:item_stack Parse "stick" 1'] = {
       },
       "path": [
         "stick"
-      ]
+      ],
+      "symbol": {
+        "category": "item",
+        "identifier": "minecraft:stick",
+        "path": [
+          "minecraft:stick"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     }
   },
   "errors": []
@@ -56,7 +80,19 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
       },
       "path": [
         "stick"
-      ]
+      ],
+      "symbol": {
+        "category": "item",
+        "identifier": "minecraft:stick",
+        "path": [
+          "minecraft:stick"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     },
     "nbt": {
       "type": "nbt:compound",

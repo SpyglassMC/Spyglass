@@ -23,13 +23,13 @@ exports['JSON number float Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -239,13 +239,13 @@ exports['JSON number floatRange(-5, undefined) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -473,13 +473,13 @@ exports['JSON number floatRange(1, 2.4) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -743,13 +743,13 @@ exports['JSON number int Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -977,13 +977,13 @@ exports['JSON number intRange(-9, 0) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -1247,13 +1247,13 @@ exports['JSON number intRange(1, 3) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -1517,13 +1517,13 @@ exports['JSON number intRange(3, undefined) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],
@@ -1769,13 +1769,13 @@ exports['JSON number intRange(undefined, 3) Check ""5"" 1'] = {
     "value": "5",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ],

@@ -606,13 +606,13 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 109,
-                  "end": 109
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 109,
+                  "end": 109
                 }
               }
             ]
@@ -661,13 +661,13 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 109,
-                "end": 109
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 109,
+                "end": 109
               }
             }
           ]
@@ -775,13 +775,13 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 109,
-                  "end": 109
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 109,
+                  "end": 109
                 }
               }
             ]
@@ -830,13 +830,13 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 109,
-                "end": 109
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 109,
+                "end": 109
               }
             }
           ]

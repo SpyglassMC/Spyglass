@@ -71,13 +71,13 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ],
@@ -113,13 +113,13 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ],
@@ -166,13 +166,13 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 9,
-                  "end": 9
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 9,
+                  "end": 9
                 }
               }
             ],
@@ -208,13 +208,13 @@ exports['JSON list listOf(int) Check "["foo", "bar"]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 9,
-                "end": 9
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 9,
+                "end": 9
               }
             }
           ],
@@ -686,13 +686,13 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ],
@@ -734,13 +734,13 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ],
@@ -793,13 +793,13 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 9,
-                  "end": 9
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 9,
+                  "end": 9
                 }
               }
             ],
@@ -841,13 +841,13 @@ exports['JSON list listOf(listOf(int)) Check "["foo", "bar"]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 9,
-                "end": 9
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 9,
+                "end": 9
               }
             }
           ],
@@ -1437,13 +1437,13 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ],
@@ -1479,13 +1479,13 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ],
@@ -1532,13 +1532,13 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 9,
-                  "end": 9
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 9,
+                  "end": 9
                 }
               }
             ],
@@ -1574,13 +1574,13 @@ exports['JSON list listOf(string) Check "["foo", "bar"]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 9,
-                "end": 9
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 9,
+                "end": 9
               }
             }
           ],

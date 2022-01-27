@@ -4272,7 +4272,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                       },
                       "path": [
                         "zombie"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:zombie",
+                        "path": [
+                          "minecraft:zombie"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -4284,7 +4296,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -4337,7 +4361,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -4349,7 +4385,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -4416,7 +4464,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -4428,7 +4488,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -4481,7 +4553,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -4493,7 +4577,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 },
                 "path": [
                   "zombie"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:zombie",
+                  "path": [
+                    "minecraft:zombie"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             }
           }
@@ -8219,7 +8315,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                       },
                       "path": [
                         "skeleton"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:skeleton",
+                        "path": [
+                          "minecraft:skeleton"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": true,
@@ -8231,7 +8339,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -8292,7 +8412,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": true,
@@ -8304,7 +8436,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -8372,7 +8516,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                       },
                       "path": [
                         "zombie"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:zombie",
+                        "path": [
+                          "minecraft:zombie"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": true,
@@ -8384,7 +8540,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -8445,7 +8613,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": true,
@@ -8457,7 +8637,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -8536,7 +8728,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": true,
@@ -8548,7 +8752,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -8609,7 +8825,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": true,
@@ -8621,7 +8849,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 },
                 "path": [
                   "skeleton"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:skeleton",
+                  "path": [
+                    "minecraft:skeleton"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {
@@ -8689,7 +8929,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": true,
@@ -8701,7 +8953,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -8762,7 +9026,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": true,
@@ -8774,7 +9050,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 },
                 "path": [
                   "zombie"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:zombie",
+                  "path": [
+                    "minecraft:zombie"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {
@@ -8879,7 +9167,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                       "isTag": true,
                       "path": [
                         "tag1"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "tag/entity_type",
+                        "identifier": "minecraft:tag1",
+                        "path": [
+                          "minecraft:tag1"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -8892,7 +9192,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag1",
+                      "path": [
+                        "minecraft:tag1"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -8946,7 +9258,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag1",
+                      "path": [
+                        "minecraft:tag1"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -8959,7 +9283,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag1",
+                    "path": [
+                      "minecraft:tag1"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -9020,7 +9356,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                       "isTag": true,
                       "path": [
                         "tag2"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "tag/entity_type",
+                        "identifier": "minecraft:tag2",
+                        "path": [
+                          "minecraft:tag2"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -9033,7 +9381,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag2",
+                      "path": [
+                        "minecraft:tag2"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -9087,7 +9447,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag2",
+                      "path": [
+                        "minecraft:tag2"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9100,7 +9472,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag2",
+                    "path": [
+                      "minecraft:tag2"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -9172,7 +9556,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag1",
+                      "path": [
+                        "minecraft:tag1"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9185,7 +9581,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag1",
+                    "path": [
+                      "minecraft:tag1"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -9239,7 +9647,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag1",
+                    "path": [
+                      "minecraft:tag1"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -9252,7 +9672,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "isTag": true,
                 "path": [
                   "tag1"
-                ]
+                ],
+                "symbol": {
+                  "category": "tag/entity_type",
+                  "identifier": "minecraft:tag1",
+                  "path": [
+                    "minecraft:tag1"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {
@@ -9313,7 +9745,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "tag/entity_type",
+                      "identifier": "minecraft:tag2",
+                      "path": [
+                        "minecraft:tag2"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9326,7 +9770,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag2",
+                    "path": [
+                      "minecraft:tag2"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -9380,7 +9836,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "tag/entity_type",
+                    "identifier": "minecraft:tag2",
+                    "path": [
+                      "minecraft:tag2"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -9393,7 +9861,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "isTag": true,
                 "path": [
                   "tag2"
-                ]
+                ],
+                "symbol": {
+                  "category": "tag/entity_type",
+                  "identifier": "minecraft:tag2",
+                  "path": [
+                    "minecraft:tag2"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {
@@ -9497,7 +9977,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                       },
                       "path": [
                         "player"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:player",
+                        "path": [
+                          "minecraft:player"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -9509,7 +10001,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:player",
+                      "path": [
+                        "minecraft:player"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -9562,7 +10066,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:player",
+                      "path": [
+                        "minecraft:player"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9574,7 +10090,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:player",
+                    "path": [
+                      "minecraft:player"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             }
@@ -9641,7 +10169,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:player",
+                      "path": [
+                        "minecraft:player"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9653,7 +10193,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:player",
+                    "path": [
+                      "minecraft:player"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -9706,7 +10258,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:player",
+                    "path": [
+                      "minecraft:player"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -9718,7 +10282,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 },
                 "path": [
                   "player"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:player",
+                  "path": [
+                    "minecraft:player"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             }
           }
@@ -9818,7 +10394,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                       },
                       "path": [
                         "skeleton"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:skeleton",
+                        "path": [
+                          "minecraft:skeleton"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -9830,7 +10418,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -9883,7 +10483,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -9895,7 +10507,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -9955,7 +10579,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                       },
                       "path": [
                         "zombie"
-                      ]
+                      ],
+                      "symbol": {
+                        "category": "entity_type",
+                        "identifier": "minecraft:zombie",
+                        "path": [
+                          "minecraft:zombie"
+                        ],
+                        "reference": [
+                          {
+                            "uri": ""
+                          }
+                        ]
+                      }
                     }
                   ],
                   "inverted": false,
@@ -9967,7 +10603,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 }
               ],
@@ -10020,7 +10668,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -10032,7 +10692,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               },
               "end": {
@@ -10103,7 +10775,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:skeleton",
+                      "path": [
+                        "minecraft:skeleton"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -10115,7 +10799,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -10168,7 +10864,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:skeleton",
+                    "path": [
+                      "minecraft:skeleton"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -10180,7 +10888,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 },
                 "path": [
                   "skeleton"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:skeleton",
+                  "path": [
+                    "minecraft:skeleton"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {
@@ -10240,7 +10960,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ]
+                    ],
+                    "symbol": {
+                      "category": "entity_type",
+                      "identifier": "minecraft:zombie",
+                      "path": [
+                        "minecraft:zombie"
+                      ],
+                      "reference": [
+                        {
+                          "uri": ""
+                        }
+                      ]
+                    }
                   }
                 ],
                 "inverted": false,
@@ -10252,7 +10984,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               }
             ],
@@ -10305,7 +11049,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ]
+                  ],
+                  "symbol": {
+                    "category": "entity_type",
+                    "identifier": "minecraft:zombie",
+                    "path": [
+                      "minecraft:zombie"
+                    ],
+                    "reference": [
+                      {
+                        "uri": ""
+                      }
+                    ]
+                  }
                 }
               ],
               "inverted": false,
@@ -10317,7 +11073,19 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 },
                 "path": [
                   "zombie"
-                ]
+                ],
+                "symbol": {
+                  "category": "entity_type",
+                  "identifier": "minecraft:zombie",
+                  "path": [
+                    "minecraft:zombie"
+                  ],
+                  "reference": [
+                    {
+                      "uri": ""
+                    }
+                  ]
+                }
               }
             },
             "end": {

@@ -32,13 +32,13 @@ exports['nbt path() Parse ""foo"" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
-              "start": 1,
-              "end": 1
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
             }
           }
         ]
@@ -65,13 +65,13 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
-              "start": 1,
-              "end": 1
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 1,
+              "end": 1
             }
           }
         ]
@@ -136,11 +136,11 @@ exports['nbt path() Parse "foo" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -169,11 +169,11 @@ exports['nbt path() Parse "foo.[ ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -209,11 +209,11 @@ exports['nbt path() Parse "foo.bar" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -229,13 +229,13 @@ exports['nbt path() Parse "foo.bar" 1'] = {
         "value": "bar",
         "valueMap": [
           {
-            "outer": {
-              "start": 4,
-              "end": 4
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 4,
+              "end": 4
             }
           }
         ]
@@ -262,11 +262,11 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -312,11 +312,11 @@ exports['nbt path() Parse "foo[ 0 ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -362,11 +362,11 @@ exports['nbt path() Parse "foo[ ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -402,11 +402,11 @@ exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -449,11 +449,11 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -476,13 +476,13 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
         "value": "bar",
         "valueMap": [
           {
-            "outer": {
-              "start": 7,
-              "end": 7
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 7,
+              "end": 7
             }
           }
         ]
@@ -509,11 +509,11 @@ exports['nbt path() Parse "foo[ ][ ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -556,11 +556,11 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -606,11 +606,11 @@ exports['nbt path() Parse "foo{ }" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }
@@ -676,13 +676,13 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
         "value": "foo",
         "valueMap": [
           {
-            "outer": {
-              "start": 4,
-              "end": 4
-            },
             "inner": {
               "start": 0,
               "end": 0
+            },
+            "outer": {
+              "start": 4,
+              "end": 4
             }
           }
         ]
@@ -709,11 +709,11 @@ exports['nbt path() Parse "文字" 1'] = {
         "value": "文字",
         "valueMap": [
           {
-            "outer": {
+            "inner": {
               "start": 0,
               "end": 0
             },
-            "inner": {
+            "outer": {
               "start": 0,
               "end": 0
             }

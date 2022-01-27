@@ -64,13 +64,13 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 2,
-                  "end": 2
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
                 }
               }
             ]
@@ -93,13 +93,13 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 2,
-                "end": 2
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
               }
             }
           ]

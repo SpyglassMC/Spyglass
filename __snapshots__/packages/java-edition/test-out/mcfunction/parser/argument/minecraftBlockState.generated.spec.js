@@ -13,7 +13,19 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
       },
       "path": [
         "foo"
-      ]
+      ],
+      "symbol": {
+        "category": "block",
+        "identifier": "minecraft:foo",
+        "path": [
+          "minecraft:foo"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     },
     "nbt": {
       "type": "nbt:compound",
@@ -137,7 +149,19 @@ exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] =
       "namespace": "minecraft",
       "path": [
         "stone"
-      ]
+      ],
+      "symbol": {
+        "category": "block",
+        "identifier": "minecraft:stone",
+        "path": [
+          "minecraft:stone"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     }
   },
   "errors": []
@@ -158,7 +182,19 @@ exports['mcfunction argument minecraft:block_state Parse "stone" 1'] = {
       },
       "path": [
         "stone"
-      ]
+      ],
+      "symbol": {
+        "category": "block",
+        "identifier": "minecraft:stone",
+        "path": [
+          "minecraft:stone"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     }
   },
   "errors": []
@@ -179,7 +215,19 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
       },
       "path": [
         "stone"
-      ]
+      ],
+      "symbol": {
+        "category": "block",
+        "identifier": "minecraft:stone",
+        "path": [
+          "minecraft:stone"
+        ],
+        "reference": [
+          {
+            "uri": ""
+          }
+        ]
+      }
     },
     "states": {
       "type": "mcfunction:block/states",

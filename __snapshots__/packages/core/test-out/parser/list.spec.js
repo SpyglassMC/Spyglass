@@ -43,13 +43,13 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -64,13 +64,13 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -92,13 +92,13 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -113,13 +113,13 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -163,13 +163,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -184,13 +184,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -216,13 +216,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -237,13 +237,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -291,13 +291,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -312,13 +312,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -344,13 +344,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -365,13 +365,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -406,13 +406,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -427,13 +427,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -481,13 +481,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -502,13 +502,13 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -554,13 +554,13 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 5,
-                  "end": 5
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 5,
+                  "end": 5
                 }
               }
             ]
@@ -575,13 +575,13 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 5,
-                "end": 5
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 5,
+                "end": 5
               }
             }
           ]
@@ -699,13 +699,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -720,13 +720,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -752,13 +752,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -773,13 +773,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -818,13 +818,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -839,13 +839,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -871,13 +871,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
             "value": "bar",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -892,13 +892,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
           "value": "bar",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -933,13 +933,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -954,13 +954,13 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -999,13 +999,13 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1020,13 +1020,13 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]

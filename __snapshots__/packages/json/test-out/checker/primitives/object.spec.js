@@ -91,13 +91,13 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -135,13 +135,13 @@ exports['JSON object object() Check "{ "a": 1 }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -210,13 +210,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -254,13 +254,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -313,13 +313,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -348,13 +348,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -384,13 +384,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -423,13 +423,13 @@ exports['JSON object object() Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ]
@@ -486,13 +486,13 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -530,13 +530,13 @@ exports['JSON object object() Check "{ "b": 6 }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -684,13 +684,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -740,13 +740,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 1 }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -833,13 +833,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -889,13 +889,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -960,13 +960,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ],
@@ -1001,13 +1001,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ],
@@ -1043,13 +1043,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ],
@@ -1088,13 +1088,13 @@ exports['JSON object object(string, () => int) Check "{ "a": 3, "b": "foo" }" 1'
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ],
@@ -1172,13 +1172,13 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -1228,13 +1228,13 @@ exports['JSON object object(string, () => int) Check "{ "b": 6 }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -1411,13 +1411,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -1462,13 +1462,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 1 }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -1555,13 +1555,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -1606,13 +1606,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -1672,13 +1672,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -1707,13 +1707,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -1743,13 +1743,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -1782,13 +1782,13 @@ exports['JSON object record({ a: int }) Check "{ "a": 3, "b": "foo" }" 1'] = {
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ]
@@ -1865,13 +1865,13 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -1909,13 +1909,13 @@ exports['JSON object record({ a: int }) Check "{ "b": 6 }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]
@@ -2117,13 +2117,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -2168,13 +2168,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 1 }" 1'] = {
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -2262,13 +2262,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "value": "a",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ],
@@ -2313,13 +2313,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "value": "a",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ],
@@ -2379,13 +2379,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 11,
-                  "end": 11
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 11,
+                  "end": 11
                 }
               }
             ]
@@ -2414,13 +2414,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
             "value": "foo",
             "valueMap": [
               {
-                "outer": {
-                  "start": 16,
-                  "end": 16
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 16,
+                  "end": 16
                 }
               }
             ]
@@ -2450,13 +2450,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 11,
-                "end": 11
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 11,
+                "end": 11
               }
             }
           ]
@@ -2489,13 +2489,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "a": 3, "b": "foo" }" 1'] 
           "value": "foo",
           "valueMap": [
             {
-              "outer": {
-                "start": 16,
-                "end": 16
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 16,
+                "end": 16
               }
             }
           ]
@@ -2573,13 +2573,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
             "value": "b",
             "valueMap": [
               {
-                "outer": {
-                  "start": 3,
-                  "end": 3
-                },
                 "inner": {
                   "start": 0,
                   "end": 0
+                },
+                "outer": {
+                  "start": 3,
+                  "end": 3
                 }
               }
             ]
@@ -2617,13 +2617,13 @@ exports['JSON object record({ a: opt(int) }) Check "{ "b": 6 }" 1'] = {
           "value": "b",
           "valueMap": [
             {
-              "outer": {
-                "start": 3,
-                "end": 3
-              },
               "inner": {
                 "start": 0,
                 "end": 0
+              },
+              "outer": {
+                "start": 3,
+                "end": 3
               }
             }
           ]

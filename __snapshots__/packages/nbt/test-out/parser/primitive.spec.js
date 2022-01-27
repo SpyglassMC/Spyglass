@@ -8,11 +8,11 @@ exports['nbt primitive() Parse "" 1'] = {
     "value": "",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -32,13 +32,13 @@ exports['nbt primitive() Parse ""quoted"" 1'] = {
     "value": "quoted",
     "valueMap": [
       {
-        "outer": {
-          "start": 1,
-          "end": 1
-        },
         "inner": {
           "start": 0,
           "end": 0
+        },
+        "outer": {
+          "start": 1,
+          "end": 1
         }
       }
     ]
@@ -80,11 +80,11 @@ exports['nbt primitive() Parse "123456b" 1'] = {
     "value": "123456b",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }
@@ -197,11 +197,11 @@ exports['nbt primitive() Parse "unquoted" 1'] = {
     "value": "unquoted",
     "valueMap": [
       {
-        "outer": {
+        "inner": {
           "start": 0,
           "end": 0
         },
-        "inner": {
+        "outer": {
           "start": 0,
           "end": 0
         }

@@ -7,7 +7,19 @@ exports['mcfunction argument minecraft:mob_effect Parse "effect" 1'] = {
     },
     "path": [
       "effect"
-    ]
+    ],
+    "symbol": {
+      "category": "mob_effect",
+      "identifier": "minecraft:effect",
+      "path": [
+        "minecraft:effect"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }
@@ -21,7 +33,19 @@ exports['mcfunction argument minecraft:mob_effect Parse "spooky" 1'] = {
     },
     "path": [
       "spooky"
-    ]
+    ],
+    "symbol": {
+      "category": "mob_effect",
+      "identifier": "minecraft:spooky",
+      "path": [
+        "minecraft:spooky"
+      ],
+      "reference": [
+        {
+          "uri": ""
+        }
+      ]
+    }
   },
   "errors": []
 }

@@ -600,7 +600,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -658,7 +670,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[minecraft:stone];
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       }
     ]
   },
@@ -727,7 +751,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -746,7 +782,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "grass_block"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:grass_block",
+          "path": [
+            "minecraft:grass_block"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -819,7 +867,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "resource_location",
@@ -830,7 +890,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "grass_block"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:grass_block",
+          "path": [
+            "minecraft:grass_block"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "resource_location",
@@ -915,7 +987,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -934,7 +1018,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "grass_block"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:grass_block",
+          "path": [
+            "minecraft:grass_block"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "nbtdoc:literal",
@@ -992,7 +1088,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "stone"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:stone",
+          "path": [
+            "minecraft:stone"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       },
       {
         "type": "resource_location",
@@ -1003,7 +1111,19 @@ exports['describesClause() Parse "Foo describes minecraft:item[↓⮀minecraft:s
         "namespace": "minecraft",
         "path": [
           "grass_block"
-        ]
+        ],
+        "symbol": {
+          "category": "item",
+          "identifier": "minecraft:grass_block",
+          "path": [
+            "minecraft:grass_block"
+          ],
+          "reference": [
+            {
+              "uri": ""
+            }
+          ]
+        }
       }
     ]
   },
