@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import stream from 'stream'
 import type { URL as Uri } from 'url'
 import type { RootUriString } from '../service'
 
@@ -197,4 +198,14 @@ export namespace TypePredicates {
 	export function isString(value: unknown): value is string {
 		return typeof value === 'string'
 	}
+}
+
+export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner: (chunks: T[]) => U): Promise<U> {
+	return (async () => {
+		const chunks: T[] = []
+		for await (const chunk of iterable) {
+			chunks.push(chunk)
+		}
+		return joiner(chunks)
+	})()
 }
