@@ -1,6 +1,10 @@
+import { promises as fsp } from 'fs'
 import http from 'http'
 import https from 'https'
-import { promisifyAsyncIterable } from '../common'
+import path from 'path'
+import { bufferToString, isEnoent, promisifyAsyncIterable } from '../common'
+import { fileUtil } from './fileUtil'
+import type { Logger } from './Logger'
 
 type RemoteProtocol = 'http:' | 'https:'
 export type RemoteUriString = `${RemoteProtocol}${string}`
@@ -12,15 +16,109 @@ export namespace RemoteUriString {
 
 export class Downloader {
 	constructor(
-		private readonly lld: LowLevelDownloader,
+		private readonly cacheRoot: string,
+		private readonly logger: Logger,
+		private readonly lld = LowLevelDownloader.create(),
 	) { }
 
-	download(job: Job) {
-		throw new Error()
+	async download<R>(job: Job<R>): Promise<R | undefined> {
+		const { id, cache, uri, options, transformer } = job
+		let checksum: string | undefined
+		let cachePath: string | undefined
+		let cacheChecksumPath: string | undefined
+		if (cache) {
+			const { checksumJob, checksumExtension } = cache
+			cachePath = path.join(this.cacheRoot, 'downloader', id)
+			cacheChecksumPath = path.join(this.cacheRoot, 'downloader', id + checksumExtension)
+			try {
+				checksum = await this.download(checksumJob)
+				try {
+					const cacheChecksum = bufferToString(await fileUtil.readFile(fileUtil.pathToFileUri(cacheChecksumPath)))
+						.slice(0, -1) // Remove ending newline
+					if (checksum === cacheChecksum) {
+						try {
+							const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
+							const deserializer = cache.deserializer ?? (b => b)
+							const ans = transformer(deserializer(cachedBuffer))
+							this.logger.info(`[Downloader] [${id}] Skipped downloading thanks to cache ${cacheChecksum}`)
+							return ans
+						} catch (e) {
+							this.logger.error(`[Downloader] [${id}] Loading cached file`, e)
+							if (isEnoent(e)) {
+								// Cache checksum exists, but cached file doesn't.
+								// Remove the invalid cache checksum.
+								try {
+									await fsp.unlink(cacheChecksumPath)
+								} catch (e) {
+									this.logger.error(`[Downloader] [${id}] Removing invalid cache checksum`, e)
+								}
+							}
+						}
+					}
+				} catch (e) {
+					if (!isEnoent(e)) {
+						this.logger.error(`[Downloader] [${id}] Loading cache checksum`, e)
+					}
+				}
+			} catch (e) {
+				this.logger.error(`[Downloader] [${id}] Fetching latest checksum`, e)
+			}
+		}
+
+		try {
+			const buffer = await this.lld.get(uri, options)
+			if (cache && cachePath && cacheChecksumPath) {
+				if (checksum) {
+					try {
+						await fileUtil.writeFile(fileUtil.pathToFileUri(cacheChecksumPath), `${checksum}\n`)
+					} catch (e) {
+						this.logger.error(`[Downloader] [${id}] Saving cache checksum`, e)
+					}
+				}
+				try {
+					const serializer = cache.serializer ?? (b => b)
+					await fileUtil.writeFile(fileUtil.pathToFileUri(cachePath), serializer(buffer))
+				} catch (e) {
+					this.logger.error(`[Downloader] [${id}] Caching file`, e)
+				}
+			}
+			return job.transformer(buffer)
+		} catch (e) {
+			this.logger.error(`[Downloader] [${id}] Downloading`, e)
+			if (cache && cachePath) {
+				try {
+					const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
+					const deserializer = cache.deserializer ?? (b => b)
+					const ans = transformer(deserializer(cachedBuffer))
+					return ans
+				} catch (e) {
+					this.logger.error(`[Downloader] [${id}] Fallback: loading cached file`, e)
+				}
+			}
+		}
+
+		return undefined
 	}
 }
 
-interface Job {
+interface Job<R> {
+	/**
+	 * A unique ID for the cache.
+	 * 
+	 * It also determines where the file is cached. Use slashes (`/`) to create directories.
+	 */
+	id: string,
+	uri: RemoteUriString,
+	cache?: {
+		/**
+		 * A download {@link Job} that will return a checksum of the latest remote data.
+		 */
+		checksumJob: Omit<Job<string>, 'cache'>,
+		checksumExtension: `.${string}`,
+		serializer?: (data: Buffer) => Buffer,
+		deserializer?: (cache: Buffer) => Buffer,
+	},
+	transformer: (data: Buffer) => R,
 	options: LowLevelDownloadOptions,
 }
 
@@ -89,4 +187,7 @@ class LowLevelDownloaderMock implements LowLevelDownloader {
 			return Buffer.from(JSON.stringify(fixture), 'utf-8')
 		}
 	}
+}
+function pathToFileUri(pathToFileUri: any) {
+	throw new Error('Function not implemented.')
 }
