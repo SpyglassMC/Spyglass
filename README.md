@@ -1,15 +1,25 @@
+🚧 Under Heavy Construction 🚧
+
+This project is undergoing a complete rewrite. We're almost there.
+
+For the legacy VS Code extension known as [Data-pack Helper Plus](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server), check out
+* [Branch `release/3.3.0`](https://github.com/SpyglassMC/Spyglass/tree/release/3.3.0) for server-side code;
+* [SpyglassMC/vscode-extension](https://github.com/SpyglassMC/vscode-datapack/tree/release/3.3.0) for client-side code;
+* [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server) for use.
+
 # Spyglass
 
 <div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png" height="256px"></div>
 
-🚧 Under construction 🚧
+Spyglass aims at improving users' editing experience of Minecraft data packs by providing IntelliSense features like
+real-time error reporting, auto-completion, semantic coloring, code navigation tools, and refactor utilities.
 
-## Packages
+![](https://github.com/SpyglassMC/vscode-datapack/blob/master/img/nbt-tag-completions.gif?raw=true)  \
+_Sample image is from the legacy version of the project_
 
-- `@spyglassmc/core`: The core package containing plugin API and general framework.
-- `@spyglassmc/nbtdoc`: The package providing language features for [nbtdoc][nbtdoc].
-- `@spyglassmc/language-server`: The language server wrapped around other packages.
-- `@spyglassmc/vscode-extension`: The VS Code extension implemented based on the language server.
+## Documentation
+
+WIP under the [`docs` directory](https://github.com/SpyglassMC/Spyglass/tree/main/docs).
 
 ## Contributing
 
@@ -44,5 +54,3 @@ Or if you prefer the command line interface:
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
 [eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
-[misode]: https://github.com/misode
-[nbtdoc]: https://github.com/Yurihaia/nbtdoc-rs
