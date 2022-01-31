@@ -1,6 +1,8 @@
 import crypto from 'crypto'
-import stream from 'stream'
+import rfdc from 'rfdc'
 import type { URL as Uri } from 'url'
+import { promisify } from 'util'
+import zlib from 'zlib'
 import type { RootUriString } from '../service'
 
 export { URL as Uri } from 'url'
@@ -208,4 +210,29 @@ export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner:
 		}
 		return joiner(chunks)
 	})()
+}
+
+export const unzip: (buffer: Buffer) => Promise<Buffer> = promisify(zlib.gunzip)
+export const zip: (buffer: Buffer) => Promise<Buffer> = promisify(zlib.gzip)
+
+export async function parseGzippedJson<T>(buffer: Buffer): Promise<T> {
+	return JSON.parse(bufferToString(await unzip(buffer)))
+}
+
+export function isObject(value: unknown): value is Exclude<object, Array<any>> {
+	return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
+export function merge<T extends Record<string, any>>(a: T, b: Record<string, any>): T {
+	const ans = rfdc()(a)
+	for (const [key, value] of Object.entries(b) as [keyof typeof ans, any][]) {
+		if (isObject(ans[key]) && isObject(value)) {
+			ans[key] = merge(ans[key], value)
+		} else if (value === undefined) {
+			delete ans[key]
+		} else {
+			ans[key] = value
+		}
+	}
+	return ans
 }

@@ -7,6 +7,7 @@ import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
 import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext, SignatureHelpProviderContext } from './Context'
+import { Downloader } from './Downloader'
 import { FileService } from './FileService'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
@@ -17,6 +18,7 @@ import { SymbolLocations } from './SymbolLocations'
 
 interface Options {
 	cacheRoot: string,
+	downloader?: Downloader,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
@@ -27,6 +29,7 @@ interface Options {
 
 /* istanbul ignore next */
 export class Service extends EventEmitter {
+	readonly downloader: Downloader
 	readonly fs: FileService
 	readonly isDebugging: boolean
 	readonly logger: Logger
@@ -35,6 +38,7 @@ export class Service extends EventEmitter {
 
 	constructor({
 		cacheRoot,
+		downloader,
 		fs = FileService.create(),
 		initializers = [],
 		isDebugging = false,
@@ -44,11 +48,12 @@ export class Service extends EventEmitter {
 	}: Options) {
 		super()
 
+		this.downloader = (downloader ??= new Downloader(cacheRoot, logger))
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
-		this.project = new Project({ cacheRoot, fs, initializers, logger, profilers, projectPath })
+		this.project = new Project({ cacheRoot, downloader, fs, initializers, logger, profilers, projectPath })
 	}
 
 	private debug(message: string): void {

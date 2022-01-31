@@ -3,6 +3,7 @@ import EventEmitter from 'events'
 import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { LowLevelDownloader } from '.'
 import { bufferToString, CachePromise, SpyglassUri } from '../common'
 import type { AstNode } from '../node'
 import { FileNode } from '../node'
@@ -17,6 +18,7 @@ import { ConfigService, LinterConfigValue, VanillaConfig } from './Config'
 import { CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context'
 import type { Dependency } from './Dependency'
 import { DependencyKey } from './Dependency'
+import { Downloader } from './Downloader'
 import { LinterErrorReporter } from './ErrorReporter'
 import { FileService, FileUriSupporter, SpyglassUriSupporter } from './FileService'
 import type { RootUriString } from './fileUtil'
@@ -27,11 +29,12 @@ import { ProfilerFactory } from './Profiler'
 
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
-export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'logger' | 'meta' | 'projectRoot'>
+export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'logger' | 'meta' | 'projectRoot'>
 export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
 
 interface Options {
 	cacheRoot: string,
+	downloader?: Downloader,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	logger?: Logger,
@@ -56,30 +59,29 @@ interface FileEvent {
 	uri: string,
 }
 interface EmptyEvent { }
-interface ProgressEvent {
-	currentUri: string,
-	processedFiles: number,
-	totalFiles: number,
-}
 interface RootsEvent {
 	roots: readonly RootUriString[]
 }
 interface SymbolRegistrarEvent {
 	id: string,
-	checksum: string,
+	checksum: string | undefined,
 }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 export namespace ProjectData {
 	export function mock(data: Partial<ProjectData> = {}): ProjectData {
+		const cacheRoot = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist'
+		const logger = data.logger ?? Logger.create()
+		const downloader = data.downloader ?? new Downloader(cacheRoot, logger, LowLevelDownloader.mock({ fixtures: {} }))
 		return {
-			cacheRoot: data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist',
+			cacheRoot,
 			config: data.config ?? VanillaConfig,
 			ctx: data.ctx ?? {},
+			downloader,
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
 			fs: data.fs ?? FileService.create(),
 			get: data.get ?? (() => undefined),
-			logger: data.logger ?? Logger.create(),
+			logger,
 			meta: data.meta ?? new MetaRegistry(),
 			profilers: data.profilers ?? ProfilerFactory.noop(),
 			projectRoot: data.projectRoot ?? 'file:///',
@@ -140,6 +142,7 @@ export class Project extends EventEmitter {
 	#watcherReady = false
 
 	config!: Config
+	readonly downloader: Downloader
 	readonly fs: FileService
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
@@ -208,6 +211,7 @@ export class Project extends EventEmitter {
 
 	constructor({
 		cacheRoot,
+		downloader,
 		fs = FileService.create(),
 		initializers = [],
 		logger = Logger.create(),
@@ -219,6 +223,7 @@ export class Project extends EventEmitter {
 		this.#cacheRoot = cacheRoot
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this)
+		this.downloader = downloader ?? new Downloader(cacheRoot, logger)
 		this.fs = fs
 		this.#initializers = initializers
 		this.logger = logger
@@ -281,6 +286,7 @@ export class Project extends EventEmitter {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
 				config: this.config,
+				downloader: this.downloader,
 				logger: this.logger,
 				meta: this.meta,
 				projectRoot: this.projectRoot,

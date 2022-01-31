@@ -2,26 +2,25 @@ export * from './common'
 export * from './mcmeta'
 
 import * as core from '@spyglassmc/core'
-import download from 'download'
-import * as path from 'path'
-
-const GitHubApiDownloadOptions: download.DownloadOptions = {
-	headers: { Accept: 'application/vnd.github.v3+json' },
-}
+import type { McmetaCommands, McmetaRegistries, McmetaStates, McmetaSummary, McmetaVersions } from './mcmeta'
+import { Fluids, getMcmetaSummaryUris } from './mcmeta'
 
 /* istanbul ignore next */
 /**
- * Return the deserialized [`version_manifest.json`][manifest].
+ * Return the deserialized [`versions.json`][versions.json].
  * 
- * [manifest]: https://launchermeta.mojang.com/mc/game/version_manifest.json
- * 
- * @throws Network/file system errors.
+ * [versions.json]: https://github.com/misode/mcmeta/blob/summary/versions/data.json
  */
-export async function getVersionManifest(logger: core.Logger, cacheRoot: string): Promise<VersionManifest> {
-	return downloadJson<VersionManifest>(logger, 'https://launchermeta.mojang.com/mc/game/version_manifest.json', cacheRoot, ['mc-je', 'version_manifest.json'])
+export async function getVersions(downloader: core.Downloader): Promise<McmetaVersions | undefined> {
+	return downloader.download<McmetaVersions>({
+		id: 'mc-je/versions.json.gz',
+		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
+		transformer: buffer => core.parseGzippedJson<McmetaVersions>(buffer),
+		cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
+	})
 }
 
-interface GetVanillaResourcesResult extends VanillaResources {
+interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
 	checksum: string | undefined,
 }
 
@@ -31,48 +30,53 @@ interface GetVanillaResourcesResult extends VanillaResources {
  * 
  * @throws Network/file system errors.
  */
-export async function getVanillaResources(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger, overridePaths: Partial<Record<keyof VanillaResources, string>> = {}): Promise<GetVanillaResourcesResult> {
-	const { blocksUrl, commandsUrl, registriesUrl, blocksTransformer, registriesTransformer } = getMetadata(version, status)
-
-	const refs = getRefs({
-		defaultBranch: 'master',
-		getTag: v => v,
-		status,
+export async function getMcmetaSummary(downloader: core.Downloader, logger: core.Logger, version: string, isLatest: boolean, source: string, overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {}): Promise<GetMcmetaSummaryResult> {
+	type OverrideConfig = core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
+	const ref = getGitRef({
+		defaultBranch: 'summary',
+		getTag: v => `${v}-summary`,
+		isLatest,
 		version,
 	})
-	const cachedShaParentPath = path.join(cacheRoot, 'mc-je', version)
-	const cachedShaPath = path.join(cachedShaParentPath, 'mcdata.json')
-	const { latestSha, shouldRefresh } = await invalidateGitTagCache('Arcensoth', 'mcdata', refs, cachedShaPath, logger)
-	// Save the sha of commit for future cache invalidation.
-	try {
-		await core.fileUtil.writeJson(cachedShaPath, { sha: latestSha })
-	} catch (e) {
-		logger.error('[dependency] [vanillaResource] Failed writing sha', e)
-	}
+	const uris = getMcmetaSummaryUris(version, isLatest, source)
+	let checksum: string | undefined
 
-	const handleOverride = async <T extends object>(overridePath: string | undefined, fallback: () => PromiseLike<T> | T, transformer: (value: any) => T = v => v) => {
-		if (overridePath) {
+	const handleOverride = async <T>(currentValue: T, overrideConfig: OverrideConfig) => {
+		if (overrideConfig) {
 			try {
-				return transformer(await core.fileUtil.readJson(overridePath))
+				const override = await core.fileUtil.readJson(core.fileUtil.pathToFileUri(overrideConfig.path))
+				if (overrideConfig.replace) {
+					return override
+				} else {
+					return core.merge(currentValue, override)
+				}
 			} catch (e) {
-				logger.error(`[dependency] [vanillaResource] Failed loading customized vanilla resource “${overridePath}”`, e)
+				logger.error(`[je] [mcmeta-overrides] Failed loading customized mcmeta summary file “${overrideConfig.path}”`, e)
 			}
 		}
-		return fallback()
+		return currentValue
 	}
 
-	const getResource = async <T extends object>(url: string, fileName: string, overridePath: string | undefined, transformer: (value: any) => T = v => v) => {
-		return handleOverride<T>(overridePath, () => downloadJson<T>(logger, url, cacheRoot, ['mc-je', version, fileName], !shouldRefresh, transformer, true), transformer)
+	const getResource = async <T extends object>(type: 'blocks' | 'commands' | 'registries', overrideConfig: OverrideConfig): Promise<T | undefined> => {
+		const out: core.DownloaderDownloadOut = {}
+		const data = await downloader.download<T>({
+			id: `mc-je/${version}/${type}.json.gz`,
+			uri: uris[type],
+			transformer: buffer => core.parseGzippedJson<T>(buffer),
+			cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
+		}, out)
+		checksum ||= out.checksum
+		return handleOverride(data, overrideConfig)
 	}
 
 	const [blocks, commands, fluids, registries] = await Promise.all([
-		getResource<VanillaStates>(blocksUrl, 'blocks.json.gz', overridePaths.blocks, blocksTransformer),
-		getResource<VanillaCommands>(commandsUrl, 'commands.json.gz', overridePaths.commands),
-		handleOverride<VanillaStates>(overridePaths.fluids, () => VanillaFluidsData),
-		getResource<VanillaRegistries>(registriesUrl, 'registries.json.gz', overridePaths.registries, registriesTransformer),
+		getResource<McmetaStates>('blocks', overridePaths.blocks),
+		getResource<McmetaCommands>('commands', overridePaths.commands),
+		handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
+		getResource<McmetaRegistries>('registries', overridePaths.registries),
 	])
 
-	return { blocks, commands, fluids, registries, checksum: latestSha }
+	return { blocks, commands, fluids, registries, checksum }
 }
 
 type GitHubRefResponse =
@@ -80,85 +84,66 @@ type GitHubRefResponse =
 	| { message?: undefined, ref: string, object: { sha: string } }
 	| { message?: undefined, ref: string, object: { sha: string } }[]
 
-async function invalidateGitTagCache(user: string, repo: string, refs: string, cachedShaPath: string, logger: core.Logger): Promise<{ latestSha: string | undefined, shouldRefresh: boolean }> {
-	let latestSha: string | undefined
-	let shouldRefresh = false
-	try {
-		// Get the latest sha of the commit corresponding to the refs.
-		const tagUrl = `https://api.github.com/repos/${user}/${repo}/git/${refs}`
-		const tagResponse = await fetchJson<GitHubRefResponse>(tagUrl, GitHubApiDownloadOptions)
-		if (Array.isArray(tagResponse)) {
-			latestSha = tagResponse.find(v => v.ref === refs)?.object.sha
-		} else if (tagResponse.message === undefined) {
-			latestSha = tagResponse.object.sha
-		}
-
-		if (latestSha) {
-			try {
-				const cachedSha: string = (await core.fileUtil.readJson(cachedShaPath)).sha
-				if (cachedSha && latestSha !== cachedSha) {
-					shouldRefresh = true
-					logger.info(`[dependency] [invalidateCache] Cache ${cachedSha} for ${user}/${repo} is different than the latest ${latestSha}`)
-				} else {
-					logger.info(`[dependency] [invalidateCache] Cache ${cachedSha} for ${user}/${repo} is up to date`)
-				}
-			} catch {
-				// File doesn't exist. Ignored.
-			}
-		}
-	} catch (e) {
-		logger.error('[dependency] [invalidateCache]', e)
-	}
-	return { latestSha, shouldRefresh }
-}
-
-function getRefs({ defaultBranch, getTag, status, version }: {
+function getGitRef({ defaultBranch, getTag, isLatest, version }: {
 	defaultBranch: string,
 	getTag: (version: string) => string,
-	status: VersionStatus,
+	isLatest: boolean,
 	version: string,
 }): string {
-	return (status & VersionStatus.Latest) ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
+	return isLatest ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
+}
+
+const GitHubApiDownloadOptions = {
+	headers: {
+		Accept: 'application/vnd.github.v3+json',
+		'User-Agent': 'SpyglassMC',
+	},
+}
+
+function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref: string) {
+	return {
+		checksumExtension: '.commit-sha' as const,
+		checksumJob: {
+			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
+			transformer: (buffer: Buffer) => {
+				const response = JSON.parse(core.bufferToString(buffer)) as GitHubRefResponse
+				if (Array.isArray(response)) {
+					return response[0].object.sha
+				} else if (response.message === undefined) {
+					return response.object.sha
+				} else {
+					throw new Error(response.message)
+				}
+			},
+			options: GitHubApiDownloadOptions,
+		},
+	}
 }
 
 /**
  * @returns The URI to the `.tar.gz` file.
  */
-async function downloadGitHubRepo({ cacheRoot, defaultBranch, getTag, logger, repo, status, user, version }: {
-	cacheRoot: string,
+async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isLatest, owner, version }: {
 	defaultBranch: string,
+	downloader: core.Downloader,
 	getTag: (version: string) => string,
-	logger: core.Logger,
+	owner: string,
 	repo: string,
-	status: VersionStatus,
-	user: string,
+	isLatest: boolean,
 	version: string,
 }): Promise<string> {
-	const cachePathArray = ['mc-je', version, `${repo}.tar.gz`] as const
-	const cachePath = path.join(cacheRoot, ...cachePathArray)
-	const cachedShaParentPath = path.join(cacheRoot, 'mc-je', version)
-	const cachedShaPath = path.join(cachedShaParentPath, `${repo}.json`)
-	const refs = getRefs({ defaultBranch, getTag, status, version })
+	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
 
-	const { latestSha, shouldRefresh } = await invalidateGitTagCache(user, repo, refs, cachedShaPath, logger)
-	// Save the sha of commit for future cache invalidation.
-	try {
-		await core.fileUtil.writeJson(cachedShaPath, { sha: latestSha })
-	} catch (e) {
-		logger.error(`[dependency] [repo] Failed writing sha for ${user}/${repo}`, e)
-	}
+	const out: core.DownloaderDownloadOut = {}
+	await downloader.download<Buffer>({
+		id: `mc-je/${version}/${repo}.tar.gz`,
+		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
+		transformer: b => b,
+		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: GitHubApiDownloadOptions,
+	}, out)
 
-	await downloadData(
-		logger,
-		`https://api.github.com/repos/${user}/${repo}/tarball/${refs}`,
-		cacheRoot,
-		cachePathArray,
-		!shouldRefresh,
-		buffer => buffer,
-		GitHubApiDownloadOptions
-	)
-
-	return core.fileUtil.pathToFileUri(cachePath)
+	return core.fileUtil.pathToFileUri(out.cachePath!)
 }
 
 /* istanbul ignore next */
@@ -171,98 +156,17 @@ async function downloadGitHubRepo({ cacheRoot, defaultBranch, getTag, logger, re
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getMcNbtdoc(version: string, status: VersionStatus, cacheRoot: string, logger: core.Logger): Promise<core.Dependency> {
+export async function getMcNbtdoc(downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
 	return {
 		info: { startDepth: 1 },
 		uri: await downloadGitHubRepo({
-			cacheRoot,
 			defaultBranch: 'master',
+			downloader,
 			getTag: v => v,
-			logger,
+			isLatest,
+			owner: 'Yurihaia',
 			repo: 'mc-nbtdoc',
-			status,
-			user: 'Yurihaia',
 			version,
 		}),
 	}
-}
-
-const jsonTransformer = (buffer: Buffer) => JSON.parse(core.bufferToString(buffer))
-
-async function fetchJson<T = any>(url: string, downloadOptions?: download.DownloadOptions): Promise<T> {
-	return jsonTransformer(await download(url, undefined, downloadOptions))
-}
-
-async function downloadJson<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (value: any) => T = v => v, shouldZip = false): Promise<T> {
-	return downloadData(logger, url, cacheRoot, cachePaths, preferCache, buffer => transformer(jsonTransformer(buffer)), undefined, shouldZip)
-}
-
-/* istanbul ignore next */
-/**
- * @throws Network/file system errors.
- */
-async function downloadData<T extends object>(logger: core.Logger, url: string, cacheRoot: string, cachePaths: readonly [string, string, ...string[]], preferCache = false, transformer: (buffer: Buffer) => T, downloadOptions?: download.DownloadOptions, shouldZip = false): Promise<T> {
-	let error: Error
-
-	const cacheParent = path.join(cacheRoot, ...cachePaths.slice(0, -1))
-	const cacheFileName = cachePaths[cachePaths.length - 1]
-	const cacheFilePath = path.join(cacheParent, cacheFileName)
-
-	const downloadAndCache = async (): Promise<T | undefined> => {
-		try {
-			const buffer = await download(url, undefined, downloadOptions)
-			const ans = transformer(buffer)
-			try {
-				if (shouldZip) {
-					await core.fileUtil.writeGzippedFile(cacheFilePath, buffer)
-				} else {
-					await core.fileUtil.writeFile(cacheFilePath, buffer)
-				}
-			} catch (e) {
-				// Cache failed.
-				error = e as Error
-				logger.error(`[dependency] [download] Caching to “${cacheFilePath}”`, e)
-			}
-			logger.info(`[dependency] [download] Downloaded from “${url}”`)
-			return ans
-		} catch (e) {
-			// Download failed.
-			error = e as Error
-			logger.error(`[dependency] [download] Downloading from “${url}”`, e)
-		}
-		return undefined
-	}
-
-	if (!preferCache) {
-		const ans = await downloadAndCache()
-		if (ans) {
-			return ans
-		}
-	}
-
-	try {
-		let buffer: Buffer
-		if (shouldZip) {
-			buffer = await core.fileUtil.readGzippedFile(cacheFilePath)
-		} else {
-			buffer = await core.fileUtil.readFile(cacheFilePath)
-		}
-		const ans = transformer(buffer)
-		logger.info(`[dependency] [download] Read cache from “${cacheFilePath}”`)
-		return ans
-	} catch (e) {
-		// Read cache failed.
-		if (!core.isEnoent(e)) {
-			logger.error(`[dependency] [download] Read cache from “${cacheFilePath}”`, e)
-		}
-		error = e as Error
-		if (preferCache) {
-			const ans = await downloadAndCache()
-			if (ans) {
-				return ans
-			}
-		}
-	}
-
-	throw error
 }

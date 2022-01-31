@@ -28,7 +28,7 @@ interface LinterRegistration {
 
 interface SymbolRegistrarRegistration {
 	registrar: SymbolRegistrar,
-	checksum: string,
+	checksum: string | undefined,
 }
 
 /* istanbul ignore next */

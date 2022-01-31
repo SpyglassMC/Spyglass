@@ -1,5 +1,5 @@
 import type { PartialRootTreeNode, RootTreeNode } from './type'
-import { merge } from './util'
+import { merge } from '@spyglassmc/core'
 
 /* istanbul ignore next */
 /**

@@ -1,5 +1,5 @@
 import type { PartialRootTreeNode } from '@spyglassmc/mcfunction'
-import { merge } from '@spyglassmc/mcfunction'
+import { merge } from '@spyglassmc/core'
 import { Tree1_17 } from './1.17'
 
 export const Tree1_18: PartialRootTreeNode = merge(Tree1_17, {

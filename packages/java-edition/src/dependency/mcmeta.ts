@@ -49,19 +49,19 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 	return toVersionInfo(versions.findIndex(v => inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()))
 }
 
-export function getMcmetaSummaryUrls(version: string, isLatest: boolean, source: string): { blocks: string, commands: string, registries: string } {
+export function getMcmetaSummaryUris(version: string, isLatest: boolean, source: string): { blocks: core.RemoteUriString, commands: core.RemoteUriString, registries: core.RemoteUriString } {
 	const tag = isLatest ? 'summary' : `${version}-summay`
 
-	function getUrl(path: string) {
+	function getUri(path: string): core.RemoteUriString {
 		return source.toLowerCase() === 'jsdelivr'
 			? `https://raw.githubusercontent.com/misode/mcmeta/${tag}/${path}`
 			: `https://cdn.jsdelivr.net/gh/misode/mcmeta@${tag}/${path}`
 	}
 
 	return {
-		blocks: getUrl('blocks/data.json.gz'),
-		commands: getUrl('commands/data.json.gz'),
-		registries: getUrl('registries/data.json.gz'),
+		blocks: getUri('blocks/data.json.gz'),
+		commands: getUri('commands/data.json.gz'),
+		registries: getUri('registries/data.json.gz'),
 	}
 }
 
@@ -72,10 +72,12 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 
 	const getWikiPageName = (id: string): string => id === 'empty' ? 'Air' : id.split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
 
+	/**
+	 * Add states of blocks or fluids to the symbol table.
+	 */
 	function addStatesSymbols(category: 'block' | 'fluid', states: McmetaStates, symbols: core.SymbolUtil): void {
 		const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<typeof category>
 
-		// Add ids and states to the symbol table.
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
 			const uri = `${WikiBaseUri}${getWikiPageName(id)}`
 			symbols
@@ -169,7 +171,6 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		}
 
 		for (const [registryId, registry] of Object.entries(registries)) {
-			// We register blocks and fluids at `addBlocksSymbols` and `addFluidsSymbols` respectively, instead of here.
 			if (isCategory(registryId)) {
 				for (const entryId of registry) {
 					symbols

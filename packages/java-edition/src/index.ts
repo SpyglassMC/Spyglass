@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder'
-import type { McmetaSummary, McmetaVersions } from './dependency'
-import { getMcNbtdoc, getVanillaResources, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
+import type { McmetaSummary } from './dependency'
+import { getMcmetaSummary, getMcNbtdoc, getVersions, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
 import * as jeJson from './json'
 import * as jeMcf from './mcfunction'
 
@@ -27,25 +27,34 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return ans
 	}
 
-	const { cacheRoot, config, logger, meta, projectRoot } = ctx
+	const { config, downloader, logger, meta, projectRoot } = ctx
 
 	meta.registerUriBinder(uriBinder)
 
-	const versions: McmetaVersions = '// FIXME' as any
+	const versions = await getVersions(ctx.downloader)
+	if (!versions) {
+		ctx.logger.error('[je-initialize] Failed loading game version list. Expect everything to be broken.')
+		return
+	}
 
 	const packMcmeta = await getPackMcmeta()
-	const { major, id: version } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
+	const { major, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
-	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(version, status, cacheRoot, logger))
+	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(downloader, version, isLatest))
 
-	const resources: McmetaSummary = await getVanillaResources(version, status, cacheRoot, logger, config.env.vanillaResourceOverrides) as any
+	const summary = await getMcmetaSummary(downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
+	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
+		ctx.logger.error('[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.')
+		return
+	}
+
 	meta.registerSymbolRegistrar('mcmeta-summary', {
-		checksum: resources.checksum,
-		registrar: symbolRegistrar(resources),
+		checksum: summary.checksum,
+		registrar: symbolRegistrar(summary as McmetaSummary),
 	})
 
 	jeJson.initialize(ctx)
-	jeMcf.initialize(ctx, resources.commands, major)
+	jeMcf.initialize(ctx, summary.commands, major)
 	nbt.initialize(ctx)
 
 	return {

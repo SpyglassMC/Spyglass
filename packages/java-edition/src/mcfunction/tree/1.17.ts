@@ -1,5 +1,5 @@
 import type { PartialRootTreeNode } from '@spyglassmc/mcfunction'
-import { merge } from '@spyglassmc/mcfunction'
+import { merge } from '@spyglassmc/core'
 import { Tree1_16 } from './1.16'
 
 /**
