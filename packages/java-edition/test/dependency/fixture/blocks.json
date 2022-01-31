@@ -1,0 +1,5 @@
+{
+	"acacia_button":[{"face":["floor","wall","ceiling"],"facing":["north","south","west","east"],"powered":["true","false"]},{"face":"wall","facing":"north","powered":"false"}],
+	"acacia_door":[{"facing":["north","south","west","east"],"half":["upper","lower"],"hinge":["left","right"],"open":["true","false"],"powered":["true","false"]},{"facing":"north","half":"lower","hinge":"left","open":"false","powered":"false"}],
+	"acacia_fence":[{"east":["true","false"],"north":["true","false"],"south":["true","false"],"waterlogged":["true","false"],"west":["true","false"]},{"east":"false","north":"false","south":"false","waterlogged":"false","west":"false"}]
+}

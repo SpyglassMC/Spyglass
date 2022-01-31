@@ -87,6 +87,7 @@ export class Downloader {
 					this.logger.error(`[Downloader] [${id}] Caching file “${cachePath}”`, e)
 				}
 			}
+			this.logger.info(`[Downloader] [${id}] Downloaded from “${uri}”`)
 			return await transformer(buffer)
 		} catch (e) {
 			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
@@ -95,6 +96,7 @@ export class Downloader {
 					const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
 					const deserializer = cache.deserializer ?? (b => b)
 					const ans = await transformer(deserializer(cachedBuffer))
+					this.logger.warn(`[Downloader] [${id}] Fell back to cached file “${cachePath}”`)
 					return ans
 				} catch (e) {
 					this.logger.error(`[Downloader] [${id}] Fallback: loading cached file “${cachePath}”`, e)
@@ -151,18 +153,32 @@ export namespace LowLevelDownloader {
 	}
 }
 
+declare module 'follow-redirects' {
+	export interface RedirectScheme<Options, Request extends WrappableRequest, Response> {
+		get(
+			url: string | URL,
+			options: Options & FollowOptions<Options>,
+			callback?: (res: Response & FollowResponse) => void
+		): RedirectableRequest<Request, Response>;
+	}
+}
+
 class LowLevelDownloaderImpl implements LowLevelDownloader {
 	get(uri: RemoteUriString, options: LowLevelDownloadOptions = {}): Promise<Buffer> {
 		const protocol = RemoteUriString.getProtocol(uri)
-		const backend = protocol === 'http:' ? http : https
 		return new Promise((resolve, reject) => {
-			(backend.get as any)(uri, options, (res: IncomingMessage) => {
+			const callback = (res: IncomingMessage) => {
 				if (res.statusCode !== 200) {
 					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
 				} else {
 					resolve(promisifyAsyncIterable(res, chunks => Buffer.concat(chunks)))
 				}
-			})
+			}
+			if (protocol === 'http:') {
+				http.get(uri, options, callback)
+			} else {
+				https.get(uri, options, callback)
+			}
 		})
 	}
 }

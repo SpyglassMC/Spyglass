@@ -1,0 +1,8 @@
+{
+	"activity":["admire_item","avoid","celebrate"],
+	"advancement":["adventure/adventuring_time","adventure/arbalistic","adventure/bullseye","adventure/fall_from_world_height"],
+	"attribute":["generic.armor","generic.armor_toughness","generic.attack_damage"],
+	"block":["acacia_button","acacia_door","acacia_fence","acacia_fence_gate"],
+	"fluid":["empty","flowing_lava","flowing_water","lava","water"],
+	"worldgen/tree_decorator_type":["alter_ground","beehive","cocoa","leave_vine","trunk_vine"]
+}

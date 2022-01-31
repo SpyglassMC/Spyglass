@@ -54,8 +54,8 @@ export function getMcmetaSummaryUris(version: string, isLatest: boolean, source:
 
 	function getUri(path: string): core.RemoteUriString {
 		return source.toLowerCase() === 'jsdelivr'
-			? `https://raw.githubusercontent.com/misode/mcmeta/${tag}/${path}`
-			: `https://cdn.jsdelivr.net/gh/misode/mcmeta@${tag}/${path}`
+			? `https://cdn.jsdelivr.net/gh/misode/mcmeta@${tag}/${path}`
+			: `https://raw.githubusercontent.com/misode/mcmeta/${tag}/${path}`
 	}
 
 	return {
@@ -81,7 +81,7 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
 			const uri = `${WikiBaseUri}${getWikiPageName(id)}`
 			symbols
-				.query(uri, category, id)
+				.query(uri, category, core.ResourceLocation.lengthen(id))
 				.onEach(Object.entries(properties), ([state, values], blockQuery) => {
 					const defaultValue = defaults[state]!
 
