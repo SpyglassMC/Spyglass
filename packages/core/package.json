@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@types/decompress": "^4.2.3",
-    "@types/follow-redirects": "^1.13.1"
+    "@types/follow-redirects": "^1.14.0"
   },
   "publishConfig": {
     "access": "public"

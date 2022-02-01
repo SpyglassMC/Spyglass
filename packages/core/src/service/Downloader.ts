@@ -153,16 +153,6 @@ export namespace LowLevelDownloader {
 	}
 }
 
-declare module 'follow-redirects' {
-	export interface RedirectScheme<Options, Request extends WrappableRequest, Response> {
-		get(
-			url: string | URL,
-			options: Options & FollowOptions<Options>,
-			callback?: (res: Response & FollowResponse) => void
-		): RedirectableRequest<Request, Response>;
-	}
-}
-
 class LowLevelDownloaderImpl implements LowLevelDownloader {
 	get(uri: RemoteUriString, options: LowLevelDownloadOptions = {}): Promise<Buffer> {
 		const protocol = RemoteUriString.getProtocol(uri)
