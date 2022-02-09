@@ -176,7 +176,9 @@ export class IdentityNode extends ArgumentNode {
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
     toRel(category: FileType, side: 'assets' | 'data' = 'data') {
-        const datapackCategory = category.split('/').map(v => `${v}s`).join(sep)
+        const datapackCategory = category === 'dimension' || category === 'dimension_type' || category.startsWith('worldgen')
+            ? category.split('/').map(v => `${v}s`).join(sep)
+            : category
         let ext: string
         if (category === 'function') {
             ext = '.mcfunction'
