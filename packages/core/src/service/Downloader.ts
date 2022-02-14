@@ -157,18 +157,14 @@ class LowLevelDownloaderImpl implements LowLevelDownloader {
 	get(uri: RemoteUriString, options: LowLevelDownloadOptions = {}): Promise<Buffer> {
 		const protocol = RemoteUriString.getProtocol(uri)
 		return new Promise((resolve, reject) => {
-			const callback = (res: IncomingMessage) => {
+			const backend = protocol === 'http:' ? http : https
+			backend.get(uri, options, (res: IncomingMessage) => {
 				if (res.statusCode !== 200) {
 					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
 				} else {
 					resolve(promisifyAsyncIterable(res, chunks => Buffer.concat(chunks)))
 				}
-			}
-			if (protocol === 'http:') {
-				http.get(uri, options, callback)
-			} else {
-				https.get(uri, options, callback)
-			}
+			})
 		})
 	}
 }
