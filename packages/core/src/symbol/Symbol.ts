@@ -3,64 +3,6 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { RangeLike } from '../source'
 import { Location, PositionRange, Range } from '../source'
 
-//#region Data Pack Categories
-export const TagFileCategories = Object.freeze([
-	'tag/block',
-	'tag/entity_type',
-	'tag/fluid',
-	'tag/function',
-	'tag/game_event',
-	'tag/item',
-] as const)
-export type TagFileCategory = typeof TagFileCategories[number]
-
-export const WorldgenFileCategories = Object.freeze([
-	'worldgen/biome',
-	'worldgen/configured_carver',
-	'worldgen/configured_feature',
-	'worldgen/configured_structure_feature',
-	'worldgen/configured_surface_builder',
-	'worldgen/noise',
-	'worldgen/noise_settings',
-	'worldgen/placed_feature',
-	'worldgen/processor_list',
-	'worldgen/template_pool',
-] as const)
-export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
-
-export const FileCategories = Object.freeze([
-	'advancement',
-	'dimension',
-	'dimension_type',
-	'function',
-	'item_modifier',
-	'loot_table',
-	'predicate',
-	'recipe',
-	'structure',
-	...TagFileCategories,
-	...WorldgenFileCategories,
-] as const)
-export type FileCategory = typeof FileCategories[number]
-
-export const MiscCategories = Object.freeze([
-	'attribute_modifier_uuid',
-	'bossbar',
-	'objective',
-	'score_holder',
-	'storage',
-	'tag',
-	'team',
-] as const)
-export type MiscCategory = typeof MiscCategories[number]
-
-export const DatapackCategories = Object.freeze([
-	...FileCategories,
-	...MiscCategories,
-] as const)
-export type DatapackCategory = typeof DatapackCategories[number]
-//#endregion
-
 //#region NBTDoc Categories
 export const NbtdocCategories = Object.freeze([
 	'nbtdoc',
@@ -70,6 +12,7 @@ export type NbtdocCategory = typeof NbtdocCategories[number]
 //#endregion
 
 //#region Registry Categories
+// Data in `java-edition/src/binder/index.ts` may need to be updated when this section is changed.
 export const RegistryCategories = Object.freeze([
 	'activity',
 	'attribute',
@@ -131,6 +74,60 @@ export const RegistryCategories = Object.freeze([
 	'worldgen/trunk_placer_type',
 ] as const)
 export type RegistryCategory = typeof RegistryCategories[number]
+//#endregion
+
+//#region Data Pack Categories
+export const TagFileCategories = Object.freeze([
+	...RegistryCategories.map(key => `tag/${key}` as const),
+	'tag/function',
+] as const)
+export type TagFileCategory = typeof TagFileCategories[number]
+
+export const WorldgenFileCategories = Object.freeze([
+	'worldgen/biome',
+	'worldgen/configured_carver',
+	'worldgen/configured_feature',
+	'worldgen/configured_structure_feature',
+	'worldgen/configured_surface_builder',
+	'worldgen/noise',
+	'worldgen/noise_settings',
+	'worldgen/placed_feature',
+	'worldgen/processor_list',
+	'worldgen/template_pool',
+] as const)
+export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
+
+export const FileCategories = Object.freeze([
+	'advancement',
+	'dimension',
+	'dimension_type',
+	'function',
+	'item_modifier',
+	'loot_table',
+	'predicate',
+	'recipe',
+	'structure',
+	...TagFileCategories,
+	...WorldgenFileCategories,
+] as const)
+export type FileCategory = typeof FileCategories[number]
+
+export const MiscCategories = Object.freeze([
+	'attribute_modifier_uuid',
+	'bossbar',
+	'objective',
+	'score_holder',
+	'storage',
+	'tag',
+	'team',
+] as const)
+export type MiscCategory = typeof MiscCategories[number]
+
+export const DatapackCategories = Object.freeze([
+	...FileCategories,
+	...MiscCategories,
+] as const)
+export type DatapackCategory = typeof DatapackCategories[number]
 //#endregion
 
 export const AllCategories = Object.freeze([
