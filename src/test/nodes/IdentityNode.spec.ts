@@ -158,6 +158,11 @@ describe('IdentityNode Tests', () => {
             const actual = id.toRel('tag/entity_type')
             assert(actual === ['data', 'spgoding', 'tags', 'entity_types', 'foo', 'bar.json'].join(path.sep))
         })
+        it('Should return correctly for worldgen tags', () => {
+            const id = new IdentityNode('spgoding', ['foo', 'bar'])
+            const actual = id.toRel('tag/worldgen/biome')
+            assert(actual === ['data', 'spgoding', 'tags', 'worldgen', 'biome', 'foo', 'bar.json'].join(path.sep))
+        })
         it('Should return correctly for other tags', () => {
             const id = new IdentityNode('spgoding', ['foo', 'bar'])
             const actual = id.toRel('tag/block')
@@ -180,6 +185,24 @@ describe('IdentityNode Tests', () => {
             assert(id.toString() === 'spgoding:foo/bar')
             assert(side === 'data')
             assert(category === 'function')
+        })
+        it('Should return tag correctly', async () => {
+            const { id, side, category } = IdentityNode.fromRel('data/spgoding/tags/functions/foo/bar.json') as any
+            assert(id.toString() === 'spgoding:foo/bar')
+            assert(side === 'data')
+            assert(category === 'tag/function')
+        })
+        it('Should return worldgen correctly', async () => {
+            const { id, side, category } = IdentityNode.fromRel('data/spgoding/worldgen/biome/foo/bar.json') as any
+            assert(id.toString() === 'spgoding:foo/bar')
+            assert(side === 'data')
+            assert(category === 'worldgen/biome')
+        })
+        it('Should return worldgen tag correctly', async () => {
+            const { id, side, category } = IdentityNode.fromRel('data/spgoding/tags/worldgen/biome/foo/bar.json') as any
+            assert(id.toString() === 'spgoding:foo/bar')
+            assert(side === 'data')
+            assert(category === 'tag/worldgen/biome')
         })
     })
     describe('static fromString() Tests', () => {

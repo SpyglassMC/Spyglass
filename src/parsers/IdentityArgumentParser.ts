@@ -21,7 +21,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     readonly identity = 'identity'
 
     /**
-     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`). 
+     * @param type A type in the registry, or a type in cache if beginning with the dollar sign (`$`). 
      * Alternatively, an array with all possible values.
      * @param registries The registries.
      */

@@ -176,9 +176,11 @@ export class IdentityNode extends ArgumentNode {
      * @param side Is the ID serverside or clientside. Values: `assets` and `data`. Defaults to `data`.
      */
     toRel(category: FileType, side: 'assets' | 'data' = 'data') {
-        const datapackCategory = category === 'dimension' || category === 'dimension_type' || category.startsWith('worldgen')
-            ? category.split('/').map(v => `${v}s`).join(sep)
-            : category
+        const datapackCategory = category === 'dimension' || category === 'dimension_type' || category.startsWith('worldgen/')
+            ? category.replace(/\//g, sep)
+            : category.startsWith('tag/') && !(['tag/block', 'tag/entity_type', 'tag/fluid', 'tag/function', 'tag/game_event', 'tag/item'].includes(category))
+                ? `tags/${category.split('/').slice(1).join(sep)}`
+                : category.split('/').map(v => `${v}s`).join(sep)
         let ext: string
         if (category === 'function') {
             ext = '.mcfunction'
@@ -188,14 +190,6 @@ export class IdentityNode extends ArgumentNode {
             ext = '.json'
         }
         return `${side}${sep}${this.getNamespace()}${sep}${datapackCategory}${sep}${this.path.join(sep)}${ext}`
-    }
-
-    /**
-     * - `$1`: Namespace.
-     * - `$2`
-     */
-    static readonly RelativePathPatterns = {
-        File: 'data/*/*'
     }
 
     /**
@@ -222,7 +216,12 @@ export class IdentityNode extends ArgumentNode {
                     if (isTagFileType(fileType)) {
                         // data/<namespace>/tags/<tag type>/**/*.json
                         minimumSegsLength = 5
-                        category = `tag/${segs[3].slice(0, -1)}` as TagFileType
+                        category = `tag/${['blocks', 'entity_types', 'fluids', 'functions', 'game_events', 'items'].includes(segs[3]) ? segs[3].slice(0, -1) : segs[3]}` as TagFileType
+                        if (segs[3] === 'worldgen') {
+                            // data/<namespace>/tags/worldgen/<worldgen tag type>/**/*.json
+                            minimumSegsLength = 6
+                            category = category + `/${segs[4]}` as TagFileType
+                        }
                     } else if (isWorldgenRegistryFileType(fileType)) {
                         // data/<namespace>/worldgen/<worldgen type>/**/*.json
                         minimumSegsLength = 5
@@ -261,7 +260,7 @@ export class IdentityNode extends ArgumentNode {
 
     /**
      * Get the tag cache type.
-     * @param type A type in the registry, or a type in cache if beginning with the dolar sign (`$`).
+     * @param type A type in the registry, or a type in cache if beginning with the dollar sign (`$`).
      */
     static getTagType(type: string): TagFileType | undefined {
         /* istanbul ignore next */
@@ -277,6 +276,9 @@ export class IdentityNode extends ArgumentNode {
             case '$function':
                 return 'tag/function'
             default:
+                if (type.startsWith('$worldgen/')) {
+                    return `tag/${type.slice(1)}` as TagFileType
+                }
                 return undefined
         }
     }

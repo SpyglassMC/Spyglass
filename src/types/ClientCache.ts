@@ -20,14 +20,6 @@ export interface CacheFile {
     version: number
 }
 
-export const TagFileTypes = [
-    'tag/block',
-    'tag/entity_type',
-    'tag/fluid',
-    'tag/function',
-    'tag/game_event',
-    'tag/item'
-] as const
 export const WorldgenFileTypes = [
     'worldgen/biome',
     'worldgen/configured_carver',
@@ -40,6 +32,28 @@ export const WorldgenFileTypes = [
     'worldgen/placed_feature',
     'worldgen/processor_list',
     'worldgen/template_pool'
+] as const
+export const TagFileTypes = [
+    'tag/block',
+    'tag/entity_type',
+    'tag/fluid',
+    'tag/function',
+    'tag/game_event',
+    'tag/item',
+    // Worldgen
+    'tag/worldgen/biome',
+    'tag/worldgen/configured_carver',
+    'tag/worldgen/configured_decorator',
+    'tag/worldgen/configured_feature',
+    'tag/worldgen/configured_structure_feature',
+    'tag/worldgen/configured_surface_builder',
+    'tag/worldgen/noise',
+    'tag/worldgen/noise_settings',
+    'tag/worldgen/placed_feature',
+    'tag/worldgen/processor_list',
+    'tag/worldgen/template_pool'
+    // Registry
+    // Nah I give up.
 ] as const
 export const FileTypes = [
     'advancement',

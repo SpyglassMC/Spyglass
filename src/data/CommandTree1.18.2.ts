@@ -37,7 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 1.18.1 commands.
+ * Command tree of Minecraft Java Edition 1.18.2 commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1192,7 +1192,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('locatebiome'),
             children: {
                 type: {
-                    parser: new IdentityArgumentParser('$worldgen/biome'),
+                    parser: new IdentityArgumentParser('$worldgen/biome', true),
                     executable: true
                 }
             }
@@ -1201,7 +1201,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('locate'),
             children: {
                 type: {
-                    parser: new IdentityArgumentParser('minecraft:worldgen/structure_feature'),
+                    parser: new IdentityArgumentParser('minecraft:worldgen/configured_structure_feature', true),
                     executable: true
                 }
             }
@@ -1340,6 +1340,21 @@ export const CommandTree: ICommandTree = {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        placefeature: {
+            parser: new LiteralArgumentParser('placefeature'),
+            children: {
+                id: {
+                    parser: new IdentityArgumentParser('$worldgen/configured_feature'),
+                    executable: true,
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3),
+                            executable: true
                         }
                     }
                 }
@@ -1840,7 +1855,7 @@ export const CommandTree: ICommandTree = {
                                             parser: new LiteralArgumentParser('under'),
                                             children: {
                                                 maxHeight: {
-                                                    parser: new NumberArgumentParser('integer', 0),
+                                                    parser: new NumberArgumentParser('integer'),
                                                     children: {
                                                         respectTeams: {
                                                             template: 'templates.boolean',
