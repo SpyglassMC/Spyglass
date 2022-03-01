@@ -27,10 +27,12 @@ export const WorldgenFileTypes = [
     'worldgen/configured_feature',
     'worldgen/configured_structure_feature',
     'worldgen/configured_surface_builder',
+    'worldgen/density_function',
     'worldgen/noise',
     'worldgen/noise_settings',
     'worldgen/placed_feature',
     'worldgen/processor_list',
+    'worldgen/structure_set',
     'worldgen/template_pool'
 ] as const
 export const TagFileTypes = [
@@ -47,10 +49,12 @@ export const TagFileTypes = [
     'tag/worldgen/configured_feature',
     'tag/worldgen/configured_structure_feature',
     'tag/worldgen/configured_surface_builder',
+    'tag/worldgen/density_function',
     'tag/worldgen/noise',
     'tag/worldgen/noise_settings',
     'tag/worldgen/placed_feature',
     'tag/worldgen/processor_list',
+    'tag/worldgen/structure_set',
     'tag/worldgen/template_pool'
     // Registry
     // Nah I give up.
