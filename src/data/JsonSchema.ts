@@ -42,10 +42,12 @@ export type JsonSchemaType =
     | 'configured_feature_tag'
     | 'configured_structure_feature_tag'
     | 'configured_surface_builder_tag'
+    | 'density_function_tag'
     | 'noise_tag'
     | 'noise_settings_tag'
     | 'placed_feature_tag'
     | 'processor_list_tag'
+    | 'structure_set_tag'
     | 'template_pool_tag'
     /* misc */
     | 'pack_mcmeta'
@@ -86,10 +88,12 @@ const globPatterns: Record<JsonSchemaType, string> = {
     configured_feature_tag: PathPatterns['tag/worldgen/configured_feature'],
     configured_structure_feature_tag: PathPatterns['tag/worldgen/configured_structure_feature'],
     configured_surface_builder_tag: PathPatterns['tag/worldgen/configured_surface_builder'],
+    density_function_tag: PathPatterns['tag/worldgen/density_function'],
     noise_tag: PathPatterns['tag/worldgen/noise'],
     noise_settings_tag: PathPatterns['tag/worldgen/noise_settings'],
     placed_feature_tag: PathPatterns['tag/worldgen/placed_feature'],
     processor_list_tag: PathPatterns['tag/worldgen/processor_list'],
+    structure_set_tag: PathPatterns['tag/worldgen/structure_set'],
     template_pool_tag: PathPatterns['tag/worldgen/template_pool'],
     /* misc */
     pack_mcmeta: 'pack.mcmeta',
