@@ -29,11 +29,24 @@ export type JsonSchemaType =
     | 'configured_feature'
     | 'configured_structure_feature'
     | 'configured_surface_builder'
+    | 'density_function'
     | 'noise_parameters'
     | 'noise_settings'
     | 'placed_feature'
     | 'processor_list'
+    | 'structure_set'
     | 'template_pool'
+    | 'biome_tag'
+    | 'configured_carver_tag'
+    | 'configured_decorator_tag'
+    | 'configured_feature_tag'
+    | 'configured_structure_feature_tag'
+    | 'configured_surface_builder_tag'
+    | 'noise_tag'
+    | 'noise_settings_tag'
+    | 'placed_feature_tag'
+    | 'processor_list_tag'
+    | 'template_pool_tag'
     /* misc */
     | 'pack_mcmeta'
     | 'text_component'
@@ -60,11 +73,24 @@ const globPatterns: Record<JsonSchemaType, string> = {
     configured_feature: PathPatterns['worldgen/configured_feature'],
     configured_structure_feature: PathPatterns['worldgen/configured_structure_feature'],
     configured_surface_builder: PathPatterns['worldgen/configured_surface_builder'],
+    density_function: PathPatterns['worldgen/density_function'],
     noise_parameters: PathPatterns['worldgen/noise'],
     noise_settings: PathPatterns['worldgen/noise_settings'],
     placed_feature: PathPatterns['worldgen/placed_feature'],
     processor_list: PathPatterns['worldgen/processor_list'],
+    structure_set: PathPatterns['worldgen/structure_set'],
     template_pool: PathPatterns['worldgen/template_pool'],
+    biome_tag: PathPatterns['tag/worldgen/biome'],
+    configured_carver_tag: PathPatterns['tag/worldgen/configured_carver'],
+    configured_decorator_tag: PathPatterns['tag/worldgen/configured_decorator'],
+    configured_feature_tag: PathPatterns['tag/worldgen/configured_feature'],
+    configured_structure_feature_tag: PathPatterns['tag/worldgen/configured_structure_feature'],
+    configured_surface_builder_tag: PathPatterns['tag/worldgen/configured_surface_builder'],
+    noise_tag: PathPatterns['tag/worldgen/noise'],
+    noise_settings_tag: PathPatterns['tag/worldgen/noise_settings'],
+    placed_feature_tag: PathPatterns['tag/worldgen/placed_feature'],
+    processor_list_tag: PathPatterns['tag/worldgen/processor_list'],
+    template_pool_tag: PathPatterns['tag/worldgen/template_pool'],
     /* misc */
     pack_mcmeta: 'pack.mcmeta',
     text_component: 'text_component.json'
