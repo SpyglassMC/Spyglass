@@ -1,4 +1,6 @@
+import type { RegistryCategory, WorldgenFileCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
+import { ResourceLocation } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
@@ -160,6 +162,12 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 			return wrap(core.literal({
 				pool: ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><'],
 				colorTokenType: 'operator',
+			}))
+		case 'minecraft:resource':
+		case 'minecraft:resource_or_tag':
+			return wrap(core.resourceLocation({
+				category: ResourceLocation.shorten(treeNode.properties.registry) as RegistryCategory | WorldgenFileCategory,
+				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
 			}))
 		case 'minecraft:resource_location':
 			return wrap(core.resourceLocation(treeNode.properties ?? {

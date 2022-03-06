@@ -127,9 +127,21 @@ export interface MinecraftOperationArgumentTreeNode extends mcf.ArgumentTreeNode
 export interface MinecraftParticleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:particle',
 }
+export interface MinecraftResourceArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:resource',
+	properties: {
+		registry: string,
+	},
+}
 export interface MinecraftResourceLocationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource_location',
 	properties?: core.ResourceLocationOptions,
+}
+export interface MinecraftResourceOrTagArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:resource_or_tag',
+	properties: {
+		registry: string,
+	},
 }
 export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:rotation',
@@ -202,7 +214,9 @@ export type ArgumentTreeNode =
 	| MinecraftObjectiveCriteriaArgumentTreeNode
 	| MinecraftOperationArgumentTreeNode
 	| MinecraftParticleArgumentTreeNode
+	| MinecraftResourceArgumentTreeNode
 	| MinecraftResourceLocationArgumentTreeNode
+	| MinecraftResourceOrTagArgumentTreeNode
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode

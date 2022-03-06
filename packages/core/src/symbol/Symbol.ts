@@ -77,12 +77,6 @@ export type RegistryCategory = typeof RegistryCategories[number]
 //#endregion
 
 //#region Data Pack Categories
-export const TagFileCategories = Object.freeze([
-	...RegistryCategories.map(key => `tag/${key}` as const),
-	'tag/function',
-] as const)
-export type TagFileCategory = typeof TagFileCategories[number]
-
 export const WorldgenFileCategories = Object.freeze([
 	'worldgen/biome',
 	'worldgen/configured_carver',
@@ -96,6 +90,18 @@ export const WorldgenFileCategories = Object.freeze([
 	'worldgen/template_pool',
 ] as const)
 export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
+
+export const TaggableResourceLocationCategories = Object.freeze([
+	'function',
+	...RegistryCategories,
+	...WorldgenFileCategories,
+] as const)
+export type TaggableResourceLocationCategory = typeof TaggableResourceLocationCategories[number]
+
+export const TagFileCategories = Object.freeze(
+	TaggableResourceLocationCategories.map(key => `tag/${key}` as const)
+)
+export type TagFileCategory = typeof TagFileCategories[number]
 
 export const FileCategories = Object.freeze([
 	'advancement',
@@ -149,16 +155,6 @@ export namespace ResourceLocationCategory {
 		return ResourceLocationCategories.includes(category as ResourceLocationCategory)
 	}
 }
-
-export const TaggableResourceLocationCategories = Object.freeze([
-	'block',
-	'entity_type',
-	'fluid',
-	'function',
-	'game_event',
-	'item',
-] as const)
-export type TaggableResourceLocationCategory = typeof TaggableResourceLocationCategories[number]
 
 export const enum SymbolAccessType {
 	Read,
