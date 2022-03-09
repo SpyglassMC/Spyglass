@@ -1,5 +1,6 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import * as colorizer from './colorizer'
+import type { LiteralCommandChildNode } from './node'
 
 export * as colorizer from './colorizer'
 export * from './node'
@@ -9,4 +10,5 @@ export * from './tree'
 /* istanbul ignore next */
 export const initialize: core.ProjectInitializer = ({ meta }) => {
 	colorizer.register(meta)
+	meta.registerCompleter<LiteralCommandChildNode>('mcfunction:command_child/literal', core.completer.literal)
 }
