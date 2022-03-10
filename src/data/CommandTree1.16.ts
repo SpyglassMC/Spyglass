@@ -2605,7 +2605,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('insert'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3)
+                    parser: new VectorArgumentParser(3, 'integer')
                 }
             }
         }
