@@ -195,6 +195,3 @@ class LowLevelDownloaderMock implements LowLevelDownloader {
 		}
 	}
 }
-function pathToFileUri(pathToFileUri: any) {
-	throw new Error('Function not implemented.')
-}
