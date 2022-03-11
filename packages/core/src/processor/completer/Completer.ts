@@ -51,12 +51,11 @@ export interface CompletionItem {
 }
 export namespace CompletionItem {
 	/* istanbul ignore next */
-	export function create(label: string, range: RangeLike, text?: string, other?: Partial<CompletionItem>): CompletionItem {
+	export function create(label: string, range: RangeLike, other?: Partial<CompletionItem>): CompletionItem {
 		return {
 			...other,
 			label,
 			range: Range.get(range),
-			insertText: text,
 		}
 	}
 }

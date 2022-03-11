@@ -1,7 +1,8 @@
 import { ResourceLocation } from '../../common'
-import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, QuoteTypeConfig, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
+import { LinterConfigValue } from '../../service'
 import type { TagFileCategory } from '../../symbol'
 import { selectedNode } from '../util'
 import type { Completer } from './Completer'
@@ -22,15 +23,15 @@ export const fallback: Completer<AstNode> = (root, ctx) => {
 	return []
 }
 
-export const boolean: Completer<BooleanBaseNode> = node => {
+export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
 	return [
-		CompletionItem.create('false', node, undefined, { kind: CompletionKind.Keyword }),
-		CompletionItem.create('true', node, undefined, { kind: CompletionKind.Keyword }),
+		CompletionItem.create('false', node, { kind: CompletionKind.Keyword }),
+		CompletionItem.create('true', node, { kind: CompletionKind.Keyword }),
 	]
 }
 
 export const literal: Completer<LiteralBaseNode> = node => {
-	return node.options.pool.map(v => CompletionItem.create(v, node, undefined, { kind: CompletionKind.Constant }))
+	return node.options.pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Constant })) ?? []
 }
 
 export const number: Completer<FloatBaseNode | IntegerBaseNode | LongBaseNode> = node => {
@@ -38,13 +39,13 @@ export const number: Completer<FloatBaseNode | IntegerBaseNode | LongBaseNode> =
 }
 
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
-	const configIdOmitDefaultNamespace: boolean | null = null // TODO: Use real config.
+	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
 
 	const lengthBeforeCursor = ctx.offset - node.range.start
 
 	const isEmptyNamespace = lengthBeforeCursor > 0 && node.namespace === ''
-	const includeDefaultNamespace = !isEmptyNamespace && configIdOmitDefaultNamespace !== true
-	const excludeDefaultNamespace = !isEmptyNamespace && configIdOmitDefaultNamespace !== false
+	const includeDefaultNamespace = node.options.isPredicate || (!isEmptyNamespace && config?.ruleValue !== true)
+	const excludeDefaultNamespace = !node.options.isPredicate && !isEmptyNamespace && config?.ruleValue !== false
 
 	const getPool = (category: string) => optimizePool(Object.keys(ctx.symbols.getVisibleSymbols(ctx.doc.uri, category)))
 	const optimizePool = (pool: string[]) => {
@@ -69,23 +70,18 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	const pool = node.options.pool
 		? optimizePool(node.options.pool)
 		: [
-			...getPool(node.options.category),
+			...getPool(node.options.category!),
 			...node.options.allowTag
 				? getPool(`tag/${node.options.category}` as TagFileCategory)
 					.map(v => `${ResourceLocation.TagPrefix}${v}`)
 				: [],
 		]
 
-	return pool.map(v => CompletionItem.create(
-		v, node, v,
-		{ kind: CompletionKind.Function }
-	))
+	return pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Function }))
 }
 
-export const string: Completer<StringBaseNode> = (node, ctx) => {
-	const configStringQuote: boolean | null = null // TODO: Use real config.
-	const configStringQuoteType: QuoteTypeConfig | null = null // TODO: Use real config.
 
+export const string: Completer<StringBaseNode> = (node, ctx) => {
 	if (node.children?.length) {
 		const completer = ctx.meta.getCompleter(node.children[0].type)
 		// FIXME: Escape quotes/slashes in the result.
@@ -99,7 +95,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 	return Object
 		.keys(ctx.symbols.query(ctx.doc, node.options.category, ...node.options.parentPath ?? []).visibleMembers)
-		.map(v => CompletionItem.create(v, node, undefined, { kind: CompletionKind.Variable }))
+		.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Variable }))
 }
 
 export function registerCompleters(meta: MetaRegistry) {

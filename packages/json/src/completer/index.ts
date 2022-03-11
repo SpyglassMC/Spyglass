@@ -73,13 +73,13 @@ function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: J
 
 function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation['fields'], undefined>[number], insertValue: boolean): CompletionItem {
 	const value = field.value?.[0] ? SIMPLE_SNIPPETS[field.value[0].type] : ''
-	const text = `"${field.key}"${insertValue ? `: ${value}` : ''}`
-	return CompletionItem.create(field.key, range, text, {
+	return CompletionItem.create(field.key, range, {
 		kind: CompletionKind.Property,
 		detail: field.value?.map(e => e.typedoc).join(' | '),
 		sortText: `${field.deprecated ? 2 : field.opt ? 1 : 0}${field.key}`,
 		deprecated: field.deprecated,
 		filterText: `"${field.key}"`,
+		insertText: `"${field.key}"${insertValue ? `: ${value}` : ''}`,
 	})
 }
 
@@ -101,17 +101,19 @@ function valueCompletion(range: RangeLike, expectation: JsonExpectation[], ctx: 
 
 function stringCompletion(range: RangeLike, expectation: JsonStringExpectation, ctx: CompleterContext): CompletionItem[] {
 	if (Array.isArray(expectation.pool)) {
-		return expectation.pool.map(v => CompletionItem.create(v, range, `"${v}"`, {
+		return expectation.pool.map(v => CompletionItem.create(v, range, {
 			kind: CompletionKind.Value,
 			filterText: `"${v}"`,
+			insertText: `"${v}"`,
 		}))
 	}
 	return [simpleCompletion(range, SIMPLE_SNIPPETS[expectation.type])]
 }
 
 function simpleCompletion(range: RangeLike, value: string): CompletionItem {
-	return CompletionItem.create(value.replace('$1', ''), range, `${value}`, {
+	return CompletionItem.create(value.replace('$1', ''), range, {
 		kind: CompletionKind.Value,
+		insertText: `${value}`,
 	})
 }
 
