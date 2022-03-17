@@ -11,6 +11,7 @@ export interface AstNode {
 	readonly children?: AstNode[],
 	readonly parent?: AstNode,
 	symbol?: Symbol,
+	symbolArenaId?: number,
 	hover?: string,
 	/**
 	 * An actual color that this node represents.
@@ -29,6 +30,16 @@ export namespace AstNode {
 			(child as Mutable<AstNode>).parent = node
 			setParents(child)
 		}
+	}
+
+	export function getSymbolArenaId(node: AstNode | undefined): number | undefined {
+		while (node) {
+			if (node.symbolArenaId !== undefined) {
+				return node.symbolArenaId
+			}
+			node = node.parent
+		}
+		return undefined
 	}
 }
 

@@ -56,7 +56,8 @@ type UriSymbolCache = Record<string, Set<string>>
 
 export class SymbolUtil extends EventEmitter {
 	#global: SymbolTable
-	#stacks: Map<string, SymbolStack>
+	#arenas: Map<string, SymbolArena>
+	#currentArenaId = 0
 
 	#trimmableSymbols = new Set<string>()
 	#cache: {
@@ -77,14 +78,14 @@ export class SymbolUtil extends EventEmitter {
 	get global() {
 		return this.#global
 	}
-	get stacks() {
-		return this.#stacks
+	get arenas() {
+		return this.#arenas
 	}
 
 	constructor(
 		global: SymbolTable,
 		/** @internal */
-		_stacks = new Map<string, SymbolStack>(),
+		_arenas = new Map<string, SymbolArena>(),
 		/** @internal */
 		_currentContributor?: string,
 		/** @internal */
@@ -93,7 +94,7 @@ export class SymbolUtil extends EventEmitter {
 		super()
 
 		this.#global = global
-		this.#stacks = _stacks
+		this.#arenas = _arenas
 		this.#currentContributor = _currentContributor
 		this._inDelayMode = _inDelayMode
 
@@ -133,11 +134,11 @@ export class SymbolUtil extends EventEmitter {
 	 * @returns A clone of this SymbolUtil that is in delay mode: changes to the symbol table happened in the clone will
 	 * not take effect until the {@link SymbolUtil.applyDelayedEdits} method is called on that clone.
 	 * 
-	 * The clone shares the same reference of the global symbol table and symbol stacks, meaning that after
+	 * The clone shares the same reference of the global symbol table and symbol arenas, meaning that after
 	 * `applyDelayedEdits` is called, the original SymbolUtil will also be modified.
 	 */
 	clone(): SymbolUtil {
-		return new SymbolUtil(this.#global, this.#stacks, this.#currentContributor, true)
+		return new SymbolUtil(this.#global, this.#arenas, this.#currentContributor, true)
 	}
 
 	/**
@@ -185,18 +186,18 @@ export class SymbolUtil extends EventEmitter {
 		return this
 	}
 
-	getStack(uri: string): SymbolStack {
-		if (!this.#stacks.has(uri)) {
-			this.#stacks.set(uri, [{}])
+	getArena(uri: string): SymbolArena {
+		if (!this.#arenas.has(uri)) {
+			this.#arenas.set(uri, [{ table: {} }])
 		}
-		return this.#stacks.get(uri)!
+		return this.#arenas.get(uri)!
 	}
 
 	/**
 	 * @internal This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
 	 */
-	_setStack(uri: string, stack: SymbolStack) {
-		this.#stacks.set(uri, stack)
+	_setArena(uri: string, arena: SymbolArena) {
+		this.#arenas.set(uri, arena)
 	}
 
 	/**
@@ -224,8 +225,8 @@ export class SymbolUtil extends EventEmitter {
 		}
 		const getTables = (): SymbolTable[] => {
 			return uri
-				? [this.#global, ...this.getStack(uri)]
-				: [this.global, ...[...this.stacks.values()].flat()]
+				? [this.#global, ...this.getArena(uri).map(v => v.table)]
+				: [this.global, ...[...this.arenas.values()].flat().map(v => v.table)]
 		}
 		const paths = getPaths()
 		const tables = getTables()
@@ -245,15 +246,15 @@ export class SymbolUtil extends EventEmitter {
 	}
 
 	/**
-	 * @param uri Optional. The corresponding {@link SymbolStack} of the file will also be looked up if this is specified.
+	 * @param uri Optional. The corresponding {@link SymbolArena} of the file will also be looked up if this is specified.
 	 * 
 	 * @returns A {@link LookupResult}
 	 */
 	lookup(category: AllCategory, path: readonly string[], uri?: string): LookupResult
 	lookup(category: string, path: readonly string[], uri?: string): LookupResult
 	lookup(category: string, path: readonly string[], uri?: string): LookupResult {
-		const stack = uri ? this.getStack(uri) : []
-		return SymbolUtil.lookupTables([this.global, ...stack], category, path)
+		const tables = uri ? SymbolUtil.getTablesFromArena(this.getArena(uri), this.#currentArenaId) : []
+		return SymbolUtil.lookupTables([...tables, this.global], category, path)
 	}
 
 	/**
@@ -267,17 +268,15 @@ export class SymbolUtil extends EventEmitter {
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery {
 		const uri = SymbolUtil.toUri(doc)
-		const stack = this.getStack(uri)
+		const arena = this.getArena(uri)
 		const { parentSymbol, parentMap, symbol } = this.lookup(category, path, uri)
-		const createMap = path.length === 1
-			? (addition: SymbolAddition) => SymbolUtil.getTable(stack, this.global, addition.data?.visibility)[category] ??= {}
-			: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : undefined
 		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : undefined
 		return new SymbolQuery({
+			arena,
 			category,
-			createMap,
-			doc,
 			contributor: this.#currentContributor,
+			doc,
+			global: this.global,
 			map: visible ? parentMap : undefined,
 			parentSymbol: parentSymbol,
 			path,
@@ -301,21 +300,40 @@ export class SymbolUtil extends EventEmitter {
 	/**
 	 * Executes the specified {@link callbackFn} in a new block.
 	 * 
-	 * ~~We're not using blockchain technique here, unfortunately.~~
+	 * ~~We're not using blockchain technology here, unfortunately.~~
+	 * 
+	 * @param arenaId To specify the ID of an arena node to use. If `undefined` or unspecified, a new node will be created.
+	 * 
+	 * @returns The ID of the arena node that was used.
 	 */
-	block(uri: string, callbackFn: (this: void) => unknown): void {
-		const stack = this.getStack(uri)
-		stack.push({})
+	block(uri: string, callbackFn: (this: void, arenaId: number) => unknown): number
+	block(uri: string, arenaId: number | undefined, callbackFn: (this: void, arenaId: number) => unknown): number
+	block(): number {
+		// eslint-disable-next-line prefer-const
+		let [uri, arenaId, callbackFn]: [string, number | undefined, (this: void, arenaId: number) => unknown] = arguments.length === 3
+			? arguments as any
+			: [arguments[0], undefined, arguments[1]]
+		const arena = this.getArena(uri)
+		const originalArenaId = this.#currentArenaId
+		if (arenaId === undefined) {
+			arena.push({
+				parent: originalArenaId,
+				table: {},
+			})
+			arenaId = arena.length - 1
+		}
+
+		this.#currentArenaId = arenaId
+
 		try {
-			callbackFn()
+			callbackFn(arenaId)
 		} catch (e) {
 			throw e
 		} finally {
-			if (stack.length <= 1) {
-				throw new Error('Unable to pop a block out as it is the last element in this stack')
-			}
-			stack.pop()
+			this.#currentArenaId = originalArenaId
 		}
+
+		return arenaId
 	}
 
 	static toUri(uri: TextDocument | string): string {
@@ -358,24 +376,6 @@ export class SymbolUtil extends EventEmitter {
 				}
 				return result
 			}, [])
-		}
-	}
-
-	/**
-	 * @param visibility `undefined` will be seen as `Public`.
-	 * 
-	 * @returns The `SymbolTable` that should be used to insert the `Symbol` with the given `visibility`.
-	 */
-	static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable {
-		switch (visibility) {
-			case SymbolVisibility.Block:
-				return stack[stack.length - 1]
-			case SymbolVisibility.File:
-				return stack[0]
-			case SymbolVisibility.Public:
-			case SymbolVisibility.Restricted:
-			default:
-				return global
 		}
 	}
 
@@ -435,7 +435,7 @@ export class SymbolUtil extends EventEmitter {
 	}
 
 	/**
-	 * @param tables Should be ordered from global to the toppest block.
+	 * @param tables Should be ordered from the toppest block to global.
 	 * 
 	 * @returns A {@link LookupResult}
 	 */
@@ -445,9 +445,7 @@ export class SymbolUtil extends EventEmitter {
 		let parentMap: SymbolMap | undefined
 		let parentSymbol: Symbol | undefined
 
-		// Traverse from the last table to the first one.
-		for (let i = tables.length - 1; i >= 0; i--) {
-			const table = tables[i]
+		for (const table of tables) {
 			const result = this.lookupTable(table, category, path)
 			if (result.symbol) {
 				return result
@@ -459,6 +457,16 @@ export class SymbolUtil extends EventEmitter {
 		}
 
 		return { parentSymbol, parentMap, symbol: undefined }
+	}
+
+	static getTablesFromArena(arena: SymbolArena, id: number): SymbolTable[] {
+		const ans: SymbolTable[] = []
+		let node: SymbolArenaNode | undefined = arena[id]
+		while (node) {
+			ans.push(node.table)
+			node = node.parent ? arena[node.parent] : undefined
+		}
+		return ans
 	}
 
 	createSymbol(category: string, parentSymbol: Symbol | undefined, parentMap: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
@@ -561,7 +569,7 @@ export class SymbolUtil extends EventEmitter {
 	/**
 	 * @returns
 	 * - For `Block` and `File` visibilities, always `true` as `Symbol`s of these visibilities are validated at the
-	 * `SymbolStack` level, instead of here.
+	 * `SymbolArena` level, instead of here.
 	 * - For `Public` visibility, also always `true`, obviously.
 	 * - For `Restricted` visibility, // TODO: roots.
 	 */
@@ -709,18 +717,22 @@ namespace SymbolAdditionUsageWithNode {
 }
 
 /**
- * A stack of {@link SymbolTable}s. The first element represents the `File` visibility scope,
- * which is accessible by any later elements but not saved to the global `SymbolTable`.
- * Later elements represent different levels of `Block` visibility scopes.
+ * An regional allocation of {@link SymbolTable}s.
  */
-export type SymbolStack = [SymbolTable, ...SymbolTable[]]
+type SymbolArena = SymbolArenaNode[]
+interface SymbolArenaNode {
+	parent?: number | undefined,
+	table: SymbolTable,
+}
 
 type QueryCallback<S extends Symbol | undefined = Symbol | undefined> = (this: SymbolQuery, symbol: S, query: SymbolQuery) => unknown
 type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 
 /* istanbul ignore next */
 export class SymbolQuery {
+	readonly arena: SymbolArena
 	readonly category: string
+	readonly global: SymbolTable
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
 	/**
@@ -729,12 +741,6 @@ export class SymbolQuery {
 	 * If this is `true`, {@link SymbolAdditionUsageWithRange.range} is ignored and treated as `[0, 0)` when entering symbols through this class.
 	 */
 	readonly #createdWithUri?: boolean
-	/**
-	 * A function that returns the symbol map where the queried symbol should be in when creating it.
-	 * 
-	 * This is only called if {@link #map} is `undefined`.
-	 */
-	readonly #createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | undefined
 	readonly #currentContributor: string | undefined
 	#hasTriggeredIf = false
 	/**
@@ -759,27 +765,29 @@ export class SymbolQuery {
 		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
 	}
 
-	constructor({ category, contributor, createMap, doc, map, parentSymbol, path, symbol, util }: {
+	constructor({ arena, category, contributor, doc, global, map, parentSymbol, path, symbol, util }: {
+		arena: SymbolArena,
 		category: string,
 		contributor: string | undefined,
-		createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | undefined,
 		doc: TextDocument | string,
+		global: SymbolTable,
 		map: SymbolMap | undefined,
 		parentSymbol: Symbol | undefined,
 		path: readonly string[],
 		symbol: Symbol | undefined,
 		util: SymbolUtil,
 	}) {
+		this.arena = arena
 		this.category = category
+		this.global = global
 		this.path = path
 
-		this.#createMap = createMap
 		if (typeof doc === 'string') {
 			doc = TextDocument.create(doc, '', 0, '')
 			this.#createdWithUri = true
 		}
-		this.#doc = doc
 		this.#currentContributor = contributor
+		this.#doc = doc
 		this.#map = map
 		this.#parentSymbol = parentSymbol
 		this.#symbol = symbol
@@ -883,20 +891,41 @@ export class SymbolQuery {
 
 	@DelayModeSupport((self: SymbolQuery) => self.util)
 	private _enter(addition: SymbolAddition): void {
-		if (!this.#createMap) {
-			throw new Error(`Cannot enter the symbol at path “${this.path.join('.')}” as its parent doesn't exist`)
-		}
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
 		if (this.#createdWithUri && SymbolAdditionUsageWithRange.is(addition.usage)) {
 			addition.usage.range = Range.create(0, 0)
 		}
 
-		this.#map ??= this.#createMap(addition)
+		this.#map ??= this.createMap(addition)
 		this.#symbol = this.util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#currentContributor)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
 		}
+	}
+
+	private createMap(addition: SymbolAddition): SymbolMap | undefined {
+		/**
+		 * @param visibility `undefined` will be seen as `Public`.
+		 * 
+		 * @returns The `SymbolTable` that should be used to insert the `Symbol` with the given `visibility`.
+		 */
+		const getTable = (arena: SymbolArena, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable => {
+			switch (visibility) {
+				case SymbolVisibility.Block:
+					return arena[this.#currentArenaId].table
+				case SymbolVisibility.File:
+					return arena[0].table
+				case SymbolVisibility.Public:
+				case SymbolVisibility.Restricted:
+				default:
+					return global
+			}
+		}
+
+		return this.path.length === 1
+			? getTable(this.arena, this.global, addition.data?.visibility)[this.category] ??= {}
+			: this.#parentSymbol ? this.#parentSymbol.parentSymbol!.members ??= {} : undefined
 	}
 
 	/**
@@ -975,9 +1004,10 @@ export class SymbolQuery {
 		const memberMap = this.#symbol.members
 		const memberSymbol = memberMap?.[identifier]
 		const memberQueryResult = new SymbolQuery({
+			arena: this.arena,
 			category: this.category,
-			createMap: () => this.#symbol!.members ??= {},
 			doc: memberDoc,
+			global: this.global,
 			contributor: this.#currentContributor,
 			map: memberMap,
 			parentSymbol: this.#symbol,
@@ -1016,8 +1046,8 @@ export class SymbolQuery {
 export namespace SymbolFormatter {
 	const IndentChar = '+ '
 
-	export function stringifySymbolStack(stack: SymbolStack): string {
-		return stack.map(table => stringifySymbolTable(table)).join('\n------------\n')
+	export function stringifySymbolArena(arena: SymbolArena): string {
+		return arena.map((arena, i) => `====== ARENA ${i} ======\n${stringifySymbolTable(arena.table)}\n-> ${arena.parent}`).join('\n')
 	}
 
 	export function stringifySymbolTable(table: SymbolTable, indent = ''): string {

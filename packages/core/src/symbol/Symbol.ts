@@ -350,6 +350,7 @@ export interface SymbolMap {
 	[identifier: string]: Symbol,
 }
 
+export const Parent = Symbol('Parent')
 export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined,
 }

@@ -64,17 +64,22 @@ CATEGORY test
 + + + {"uri":"spyglassmc://test_file","contributor":"uri_binder"}
 `
 
-exports['SymbolUtil getStack() Should create a new stack 1'] = `
+exports['SymbolUtil getArena() Should create a new arena 1'] = `
+====== ARENA 0 ======
 EMPTY TABLE
+-> undefined
 `
 
-exports['SymbolUtil getStack() Should get the existing stack 1'] = `
+exports['SymbolUtil getArena() Should get the existing arena 1'] = `
+====== ARENA 0 ======
 EMPTY TABLE
-------------
+-> undefined
+====== ARENA 1 ======
 CATEGORY advancement
 + SYMBOL Foo {advancement} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
+-> 0
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Qux.Xer” 1'] = `
@@ -158,7 +163,7 @@ symbol:
 exports['SymbolUtil lookup() Should return correctly for “Foo.Baz.Xer” 1'] = `
 parentSymbol:
 + SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 parentMap:
@@ -170,22 +175,22 @@ undefined
 exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 parentMap:
 + SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 symbol:
 + SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 `
@@ -193,17 +198,17 @@ symbol:
 exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 parentMap:
 + SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 symbol:
@@ -215,22 +220,22 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 `
@@ -240,12 +245,12 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
@@ -257,12 +262,12 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
++ + description: ARENA
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
 + + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + + description: ARENA
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
