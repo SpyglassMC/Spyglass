@@ -31,11 +31,12 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
 		parser: mcf.parser.entry(majorVersion, parser.argument),
+		completer: mcf.completer.entry(majorVersion),
 	})
 
 	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)
 	meta.registerParser('mcfunction:component', parser.component)
-	// TODO: 'mcfunction:argument/minecraft:particle'
+	// TODO: 'mcfunction:particle'
 	// TODO: Uncomment in `SpecialStrings` in `nbtdocUtil.ts` as well.
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())

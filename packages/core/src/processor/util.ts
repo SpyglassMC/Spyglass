@@ -1,4 +1,3 @@
-import binarySearch from 'binary-search'
 import type { AstNode } from '../node'
 import { Range } from '../source'
 
@@ -24,12 +23,12 @@ function traversePreOrderImpl(node: AstNode, shouldContinue: Callback<unknown>, 
 
 type NodeResult = { node: AstNode | undefined, parents: AstNode[] }
 
-export function selectedNode(node: AstNode, offset: number): NodeResult {
+export function selectedNode(node: AstNode, offset: number, endInclusive = false): NodeResult {
 	let ans: NodeResult = { node: undefined, parents: [] }
 	// TODO: Binary search here.
 	traversePreOrder(node,
-		(node) => Range.contains(node.range, offset),
-		(node) => Range.contains(node.range, offset),
+		(node) => Range.contains(node.range, offset, endInclusive),
+		(node) => Range.contains(node.range, offset, endInclusive),
 		(node, parents) => ans = { node, parents: [...parents] },
 	)
 	return ans
@@ -44,24 +43,4 @@ export function findNode(node: AstNode, range: Range): NodeResult {
 		(node, parents) => ans = { node, parents: [...parents] },
 	)
 	return ans
-}
-
-/**
- * @param endInclusive Defaults to `false`.
- */
-export function findChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
-	if (!node.children) {
-		return -1
-	}
-	const comparator = typeof needle === 'number'
-		? endInclusive ? Range.compareOffsetInclusive : Range.compareOffset
-		: endInclusive ? Range.compareInclusive : Range.compare
-	return binarySearch(node.children, needle, (a, b) => comparator(a.range, b as number & Range))
-}
-
-/**
- * @param endInclusive Defaults to `false`.
- */
-export function findChild(node: AstNode, needle: number | Range, endInclusive = false): AstNode | undefined {
-	return node.children?.[findChildIndex(node, needle, endInclusive)]
 }

@@ -1,3 +1,4 @@
+import { Lazy } from '../common'
 import type { AstNode } from '../node'
 import type { Parser } from '../parser'
 import type { Checker, Colorizer, Completer, InlayHintProvider } from '../processor'
@@ -18,6 +19,7 @@ export interface LanguageOptions {
 	extensions: FileExtension[],
 	triggerCharacters?: string[],
 	parser: Parser<AstNode>,
+	completer?: Completer<any>,
 }
 
 interface LinterRegistration {
@@ -140,6 +142,9 @@ export class MetaRegistry {
 		const language = this.#languages.get(languageID)
 		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
 	}
+	public getCompleterFromLanguageID(languageID: string): Completer<any> | undefined {
+		return this.#languages.get(languageID)?.completer
+	}
 
 	public getDependencyProvider(key: DependencyKey): DependencyProvider | undefined {
 		return this.#dependencyProviders.get(key)
@@ -193,9 +198,9 @@ export class MetaRegistry {
 		}
 		return ans
 	}
-	public getParserLazily<N extends AstNode>(id: N['type']): UnresolvedLazy<Parser<N>>
-	public getParserLazily<N extends AstNode>(id: string): UnresolvedLazy<Parser<N>>
-	public getParserLazily<N extends AstNode>(id: string): UnresolvedLazy<Parser<N>> {
+	public getParserLazily<N extends AstNode>(id: N['type']): Lazy.UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(id: string): Lazy.UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(id: string): Lazy.UnresolvedLazy<Parser<N>> {
 		return Lazy.create(() => this.getParser(id))
 	}
 	public registerParser<N extends AstNode>(id: N['type'], parser: Parser<N>): void
@@ -233,39 +238,5 @@ export class MetaRegistry {
 	}
 	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
-	}
-}
-
-const LazyDiscriminator = Symbol('LazyDiscriminator')
-
-type UnresolvedLazy<T> = {
-	discriminator: typeof LazyDiscriminator,
-	getter: (this: void) => T,
-}
-type ResolvedLazy<T> = {
-	discriminator: typeof LazyDiscriminator,
-	getter: (this: void) => T,
-	value: T,
-}
-type ComplexLazy<T> = ResolvedLazy<T> | UnresolvedLazy<T>
-export type Lazy<T> = T | ComplexLazy<T>
-export namespace Lazy {
-	export function create<T>(getter: (this: void) => T): UnresolvedLazy<T> {
-		return {
-			discriminator: LazyDiscriminator,
-			getter,
-		}
-	}
-
-	export function isComplex<T = any>(lazy: any): lazy is ComplexLazy<T> {
-		return lazy?.discriminator === LazyDiscriminator
-	}
-
-	export function isUnresolved<T = any>(lazy: any): lazy is UnresolvedLazy<T> {
-		return isComplex(lazy) && !('value' in lazy)
-	}
-
-	export function resolve<T>(lazy: Lazy<T>): T {
-		return isUnresolved(lazy) ? (lazy as ResolvedLazy<T>).value = lazy.getter() : lazy
 	}
 }

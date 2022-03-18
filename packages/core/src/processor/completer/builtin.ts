@@ -1,5 +1,5 @@
 import { ResourceLocation } from '../../common'
-import type { AstNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { AstNode, FileNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
 import { LinterConfigValue } from '../../service'
@@ -12,7 +12,7 @@ import { CompletionItem, CompletionKind } from './Completer'
  * Uses the deepest selected node that has its own completer to provide the completion items.
  */
 export const fallback: Completer<AstNode> = (root, ctx) => {
-	let { node } = selectedNode(root, ctx.offset)
+	let { node } = selectedNode(root, ctx.offset, true)
 	while (node) {
 		if (ctx.meta.hasCompleter(node.type)) {
 			const completer = ctx.meta.getCompleter(node.type)
@@ -28,6 +28,14 @@ export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
 		CompletionItem.create('false', node, { kind: CompletionKind.Keyword }),
 		CompletionItem.create('true', node, { kind: CompletionKind.Keyword }),
 	]
+}
+
+/**
+ * Dispatches to the corresponding file for the language.
+ */
+export const file: Completer<FileNode<AstNode>> = (node, ctx) => {
+	const completer = ctx.meta.getCompleterFromLanguageID(ctx.doc.languageId) ?? fallback
+	return completer(node.children[0], ctx)
 }
 
 export const literal: Completer<LiteralBaseNode> = node => {

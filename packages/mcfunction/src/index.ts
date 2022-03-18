@@ -3,6 +3,7 @@ import * as colorizer from './colorizer'
 import type { LiteralCommandChildNode } from './node'
 
 export * as colorizer from './colorizer'
+export * as completer from './completer'
 export * from './node'
 export * as parser from './parser'
 export * from './tree'

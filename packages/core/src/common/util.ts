@@ -236,3 +236,37 @@ export function merge<T extends Record<string, any>>(a: T, b: Record<string, any
 	}
 	return ans
 }
+
+export type Lazy<T> = T | Lazy.ComplexLazy<T>
+export namespace Lazy {
+	const LazyDiscriminator = Symbol('LazyDiscriminator')
+	export type UnresolvedLazy<T> = {
+		discriminator: typeof LazyDiscriminator,
+		getter: (this: void) => T,
+	}
+	export type ResolvedLazy<T> = {
+		discriminator: typeof LazyDiscriminator,
+		getter: (this: void) => T,
+		value: T,
+	}
+	export type ComplexLazy<T> = ResolvedLazy<T> | UnresolvedLazy<T>
+
+	export function create<T>(getter: (this: void) => T): UnresolvedLazy<T> {
+		return {
+			discriminator: LazyDiscriminator,
+			getter,
+		}
+	}
+
+	export function isComplex<T = any>(lazy: any): lazy is ComplexLazy<T> {
+		return lazy?.discriminator === LazyDiscriminator
+	}
+
+	export function isUnresolved<T = any>(lazy: any): lazy is UnresolvedLazy<T> {
+		return isComplex(lazy) && !('value' in lazy)
+	}
+
+	export function resolve<T>(lazy: Lazy<T>): T {
+		return isUnresolved(lazy) ? (lazy as ResolvedLazy<T>).value = lazy.getter() : lazy
+	}
+}

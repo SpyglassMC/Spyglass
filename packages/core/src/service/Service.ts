@@ -2,7 +2,7 @@ import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
-import { ColorPresentation, findNode, selectedNode, traversePreOrder } from '../processor'
+import { ColorPresentation, completer, findNode, selectedNode, traversePreOrder } from '../processor'
 import type { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
@@ -93,8 +93,7 @@ export class Service extends EventEmitter {
 		this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
 		const shouldComplete = this.project.meta.shouldComplete(doc.languageId, triggerCharacter)
 		if (shouldComplete) {
-			const completer = this.project.meta.getCompleter(node.type)
-			return completer(node, CompleterContext.create(this.project, { doc, offset, triggerCharacter }))
+			return completer.file(node, CompleterContext.create(this.project, { doc, offset, triggerCharacter }))
 		}
 		return []
 	}

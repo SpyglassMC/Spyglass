@@ -10,7 +10,7 @@ export namespace IndexMap {
 		let ans = offset
 
 		for (const pair of map) {
-			if (isEndOffset ? Range.containsInclusive(pair[from], offset) : Range.contains(pair[from], offset)) {
+			if (Range.contains(pair[from], offset, isEndOffset)) {
 				return isEndOffset ? pair[to].end : pair[to].start
 			} else if (Range.endsBefore(pair[from], offset)) {
 				ans = offset - pair[from].end + pair[to].end

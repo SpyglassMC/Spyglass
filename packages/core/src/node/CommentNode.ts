@@ -9,7 +9,7 @@ export interface CommentNode extends AstNode {
 }
 
 export namespace CommentNode {
-	export function is(obj: AstNode): obj is CommentNode {
-		return (obj as CommentNode).type === 'comment'
+	export function is(obj: AstNode | undefined): obj is CommentNode {
+		return (obj as CommentNode | undefined)?.type === 'comment'
 	}
 }

@@ -76,12 +76,8 @@ export namespace Range {
 		return `[${range.start}, ${range.end})`
 	}
 
-	export function contains(range: Range, offset: number): boolean {
-		return range.start <= offset && offset < range.end
-	}
-
-	export function containsInclusive(range: Range, offset: number): boolean {
-		return range.start <= offset && offset <= range.end
+	export function contains(range: Range, offset: number, endInclusive = false): boolean {
+		return range.start <= offset && (endInclusive ? offset <= range.end : offset < range.end)
 	}
 
 	export function intersects(a: Range, b: Range): boolean {
@@ -103,24 +99,10 @@ export namespace Range {
 	/**
 	 * @returns Negative when `a` is before `b`, `0` if they intersect, and positive if it's after.
 	 */
-	export function compare(a: Range, b: Range): number {
-		if (a.end <= b.start) {
+	export function compare(a: Range, b: Range, endInclusive = false): number {
+		if (endInclusive ? a.end < b.start : a.end <= b.start) {
 			return -1
-		} else if (a.start >= b.end) {
-			return 1
-		} else {
-			return 0
-		}
-	}
-
-	/**
-	 * @returns Negative when `a` is before `b`, `0` if they intersect, and positive if it's after. The `end` of a range is
-	 * treated inclusive.
-	 */
-	export function compareInclusive(a: Range, b: Range): number {
-		if (a.end < b.start) {
-			return -1
-		} else if (a.start > b.end) {
+		} else if (endInclusive ? a.start > b.end : a.start >= b.end) {
 			return 1
 		} else {
 			return 0
@@ -130,21 +112,8 @@ export namespace Range {
 	/**
 	 * @returns Negative when `range` is before `offset`, `0` if it {@link contains} `offset`, and positive if it's after.
 	 */
-	export function compareOffset(range: Range, offset: number): number {
-		if (range.end <= offset) {
-			return -1
-		} else if (range.start > offset) {
-			return 1
-		} else {
-			return 0
-		}
-	}
-
-	/**
-	 * @returns Negative when `range` is before `offset`, `0` if it {@link containsInclusive} `offset`, and positive if it's after.
-	 */
-	export function compareOffsetInclusive(range: Range, offset: number): number {
-		if (range.end < offset) {
+	export function compareOffset(range: Range, offset: number, endInclusive = false): number {
+		if (endInclusive ? range.end < offset : range.end <= offset) {
 			return -1
 		} else if (range.start > offset) {
 			return 1

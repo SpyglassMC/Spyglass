@@ -1,3 +1,4 @@
+import binarySearch from 'binary-search'
 import type { Color, FormattableColor } from '../processor'
 import { Range } from '../source'
 import type { Symbol } from '../symbol'
@@ -29,6 +30,24 @@ export namespace AstNode {
 			(child as Mutable<AstNode>).parent = node
 			setParents(child)
 		}
+	}
+
+	/**
+	 * @param endInclusive Defaults to `false`.
+	 */
+	export function findChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
+		if (!node.children) {
+			return -1
+		}
+		const comparator = typeof needle === 'number' ? Range.compareOffset : Range.compare
+		return binarySearch(node.children, needle, (a, b) => comparator(a.range, b as number & Range, endInclusive))
+	}
+
+	/**
+	 * @param endInclusive Defaults to `false`.
+	 */
+	export function findChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
+		return node.children?.[findChildIndex(node, needle, endInclusive)] as any
 	}
 }
 
