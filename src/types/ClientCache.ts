@@ -54,6 +54,7 @@ export const TagFileTypes = [
     'tag/worldgen/noise_settings',
     'tag/worldgen/placed_feature',
     'tag/worldgen/processor_list',
+    'tag/worldgen/structure',
     'tag/worldgen/structure_set',
     'tag/worldgen/template_pool'
     // Registry

@@ -29,6 +29,7 @@ export const PathPatterns: Record<FileType, string> = {
     'tag/worldgen/noise_settings': 'data/*/tags/worldgen/noise_settings/**/*.json',
     'tag/worldgen/placed_feature': 'data/*/tags/worldgen/placed_feature/**/*.json',
     'tag/worldgen/processor_list': 'data/*/tags/worldgen/processor_list/**/*.json',
+    'tag/worldgen/structure': 'data/*/tags/worldgen/structure/**/*.json',
     'tag/worldgen/structure_set': 'data/*/tags/worldgen/structure_set/**/*.json',
     'tag/worldgen/template_pool': 'data/*/tags/worldgen/template_pool/**/*.json',
     'worldgen/biome': 'data/*/worldgen/biome/**/*.json',
