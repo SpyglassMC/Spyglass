@@ -44,6 +44,7 @@ export const PathPatterns: Record<FileType, string> = {
     'worldgen/noise_settings': 'data/*/worldgen/noise_settings/**/*.json',
     'worldgen/placed_feature': 'data/*/worldgen/placed_feature/**/*.json',
     'worldgen/processor_list': 'data/*/worldgen/processor_list/**/*.json',
+    'worldgen/structure': 'data/*/worldgen/structure/**/*.json',
     'worldgen/structure_set': 'data/*/worldgen/structure_set/**/*.json',
     'worldgen/template_pool': 'data/*/worldgen/template_pool/**/*.json',
     'worldgen/world_preset': 'data/*/worldgen/world_preset/**/*.json'

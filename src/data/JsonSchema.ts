@@ -35,6 +35,7 @@ export type JsonSchemaType =
     | 'noise_settings'
     | 'placed_feature'
     | 'processor_list'
+    | 'structure'
     | 'structure_set'
     | 'template_pool'
     | 'world_preset'
@@ -84,9 +85,11 @@ const globPatterns: Record<JsonSchemaType, string> = {
     noise_settings: PathPatterns['worldgen/noise_settings'],
     placed_feature: PathPatterns['worldgen/placed_feature'],
     processor_list: PathPatterns['worldgen/processor_list'],
+    structure: PathPatterns['worldgen/structure'],
     structure_set: PathPatterns['worldgen/structure_set'],
     template_pool: PathPatterns['worldgen/template_pool'],
     world_preset: PathPatterns['worldgen/world_preset'],
+    /* worldgen tag */
     biome_tag: PathPatterns['tag/worldgen/biome'],
     configured_carver_tag: PathPatterns['tag/worldgen/configured_carver'],
     configured_decorator_tag: PathPatterns['tag/worldgen/configured_decorator'],

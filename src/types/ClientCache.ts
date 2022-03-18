@@ -33,6 +33,7 @@ export const WorldgenFileTypes = [
     'worldgen/noise_settings',
     'worldgen/placed_feature',
     'worldgen/processor_list',
+    'worldgen/structure',
     'worldgen/structure_set',
     'worldgen/template_pool',
     'worldgen/world_preset'
