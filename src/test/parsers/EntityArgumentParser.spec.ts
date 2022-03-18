@@ -84,28 +84,6 @@ describe('EntityArgumentParser Tests', () => {
                 assert.deepStrictEqual(actual.data, $(new EntityNode('foo'), [0, 3]))
                 assert.deepStrictEqual(actual.errors, [])
             })
-            it('Should errors when the entity is too long', () => {
-                const parser = new EntityArgumentParser('multiple', 'entities', false)
-                const actual = parser.parse(new StringReader('12345678901234567'), ctx)
-                assert.deepStrictEqual(actual.data, $(new EntityNode('12345678901234567'), [0, 17]))
-                assert.deepStrictEqual(actual.errors, [
-                    new ParsingError(
-                        { start: 0, end: 17 },
-                        '“12345678901234567” exceeds the max length of an entity, which is 16'
-                    )
-                ])
-            })
-            it('Should errors when the score holder is too long', () => {
-                const parser = new EntityArgumentParser('multiple', 'entities', true)
-                const actual = parser.parse(new StringReader('12345678901234567890123456789012345678901'), ctx)
-                assert.deepStrictEqual(actual.data, $(new EntityNode('12345678901234567890123456789012345678901'), [0, 41]))
-                assert.deepStrictEqual(actual.errors, [
-                    new ParsingError(
-                        { start: 0, end: 41 },
-                        '“12345678901234567890123456789012345678901” exceeds the max length of a score holder, which is 40'
-                    )
-                ])
-            })
             it('Should return completions', async () => {
                 const ctx = constructContext({ cache, cursor: 0 })
                 const parser = new EntityArgumentParser('multiple', 'entities')

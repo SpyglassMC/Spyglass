@@ -60,14 +60,6 @@ describe('ObjectiveArgumentParser Tests', () => {
                 new ParsingError({ start: 0, end: 1 }, 'Expected an objective but got nothing', false)
             ])
         })
-        it('Should return error when the input is too long', () => {
-            const parser = new ObjectiveArgumentParser()
-            const actual = parser.parse(new StringReader('123456789012345678'), ctx)
-            assert.deepStrictEqual(actual.data, '123456789012345678')
-            assert.deepStrictEqual(actual.errors, [
-                new ParsingError({ start: 0, end: 18 }, '“123456789012345678” exceeds the max length of an objective, which is 16')
-            ])
-        })
         it('Should report errors for object that do not follow the convention', () => {
             const config = constructConfig({ lint: { nameOfObjectives: ['warning', 'PascalCase'] } })
             const ctx = constructContext({ cache, config })
