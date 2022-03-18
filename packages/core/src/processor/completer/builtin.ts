@@ -1,5 +1,5 @@
 import { ResourceLocation } from '../../common'
-import type { AstNode, FileNode, FloatBaseNode, FloatNode, IntegerBaseNode, IntegerNode, LiteralBaseNode, LiteralNode, LongBaseNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { AstNode, CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
 import { LinterConfigValue } from '../../service'
@@ -9,16 +9,17 @@ import type { Completer } from './Completer'
 import { CompletionItem, CompletionKind } from './Completer'
 
 /**
- * Uses the deepest selected node that has its own completer to provide the completion items.
+ * Uses the shallowest selected node that has its own completer to provide the completion items.
  */
 export const fallback: Completer<AstNode> = (root, ctx) => {
-	let { node } = selectedNode(root, ctx.offset, true)
-	while (node) {
+	const { parents } = selectedNode(root, ctx.offset, true)
+	parents.unshift(root)
+	for (let i = parents.length - 1; i >= 0; i--) {
+		const node = parents[i]
 		if (ctx.meta.hasCompleter(node.type)) {
 			const completer = ctx.meta.getCompleter(node.type)
 			return completer(node, ctx)
 		}
-		node = node.parent
 	}
 	return []
 }
@@ -34,17 +35,15 @@ export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
  * Dispatches to the corresponding file for the language.
  */
 export const file: Completer<FileNode<AstNode>> = (node, ctx) => {
-	const completer = ctx.meta.getCompleterFromLanguageID(ctx.doc.languageId) ?? fallback
+	const completer = ctx.meta.getCompleterForLanguageID(ctx.doc.languageId)
 	return completer(node.children[0], ctx)
 }
 
 export const literal: Completer<LiteralBaseNode> = node => {
-	return node.options.pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Constant })) ?? []
+	return node.options.pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Keyword })) ?? []
 }
 
-export const number: Completer<FloatBaseNode | IntegerBaseNode | LongBaseNode> = node => {
-	return []
-}
+export const noop: Completer<AstNode> = () => []
 
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
@@ -108,9 +107,10 @@ export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 
 export function registerCompleters(meta: MetaRegistry) {
 	meta.registerCompleter<BooleanNode>('boolean', boolean)
-	meta.registerCompleter<FloatNode>('float', number)
-	meta.registerCompleter<IntegerNode>('integer', number)
-	meta.registerCompleter<LongNode>('long', number)
+	meta.registerCompleter<CommentNode>('comment', noop)
+	meta.registerCompleter<FloatNode>('float', noop)
+	meta.registerCompleter<IntegerNode>('integer', noop)
+	meta.registerCompleter<LongNode>('long', noop)
 	meta.registerCompleter<LiteralNode>('literal', literal)
 	meta.registerCompleter<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerCompleter<StringNode>('string', string)

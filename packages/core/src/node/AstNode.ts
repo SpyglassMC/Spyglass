@@ -49,6 +49,34 @@ export namespace AstNode {
 	export function findChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
 		return node.children?.[findChildIndex(node, needle, endInclusive)] as any
 	}
+
+	/**
+	 * Returns the index of the last child node that ends before the `needle`.
+	 * 
+	 * @param endInclusive Defaults to `false`.
+	 */
+	export function findLastChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
+		if (!node.children) {
+			return -1
+		}
+
+		let ans = -1
+		for (const [i, childNode] of node.children.entries()) {
+			if (Range.endsBefore(childNode.range, needle, endInclusive)) {
+				ans = i
+			} else {
+				break
+			}
+		}
+		return ans
+	}
+
+	/**
+	 * @param endInclusive Defaults to `false`.
+	 */
+	export function findLastChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
+		return node.children?.[findLastChildIndex(node, needle, endInclusive)] as any
+	}
 }
 
 export type Mutable<N> = N extends AstNode ? {

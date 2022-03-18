@@ -3,7 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { literal } from '../../lib/parser'
 
-describe('mcfunction literal()', () => {
+describe('mcfunction parser literal()', () => {
 	const options = ['advancement', 'tell', 'tellraw']
 	const cases: { content: string }[] = [
 		{ content: '' },

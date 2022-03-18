@@ -73,7 +73,7 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNo
 		if (!name) {
 			break
 		}
-		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)?.children?.[name]
+		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode?.children?.[name]
 		if (!treeNode) {
 			break
 		}
@@ -81,7 +81,7 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNo
 	}
 
 	if (treeNode) {
-		treeNode = mcf.resolveTreeNode(treeNode, rootTreeNode)
+		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
 		if (treeNode?.children) {
 			return mcf.parser.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map(v => [...current, v])
 		}

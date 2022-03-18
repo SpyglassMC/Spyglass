@@ -4,7 +4,6 @@ import type { ArgumentTreeNode } from '../tree'
 /**
  * A function that returns a parser for the provided tree node.
  * 
- * @param name The name of the argument tree node.
  * @param treeNode The argument tree node.
  * 
  * @returns The parser corresponding to that tree node, or `undefined` if such parser doesn't exist.

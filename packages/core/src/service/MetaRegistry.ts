@@ -142,8 +142,8 @@ export class MetaRegistry {
 		const language = this.#languages.get(languageID)
 		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
 	}
-	public getCompleterFromLanguageID(languageID: string): Completer<any> | undefined {
-		return this.#languages.get(languageID)?.completer
+	public getCompleterForLanguageID(languageID: string): Completer<any> {
+		return this.#languages.get(languageID)?.completer ?? completer.fallback
 	}
 
 	public getDependencyProvider(key: DependencyKey): DependencyProvider | undefined {
@@ -212,7 +212,7 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParserFromLanguageId<N extends AstNode>(languageID: string): Parser<N> {
+	public getParserForLanguageId<N extends AstNode>(languageID: string): Parser<N> {
 		if (this.#languages.has(languageID)) {
 			return this.#languages.get(languageID)!.parser as Parser<N>
 		}

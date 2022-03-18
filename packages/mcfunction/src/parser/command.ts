@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { CommandChildNode, CommandNode, LiteralCommandChildNode, TrailingCommandChildNode, UnknownCommandChildNode } from '../node'
-import { resolveTreeNode } from '../tree'
+import { redirect, resolveParentTreeNode } from '../tree'
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
 import type { ArgumentParserGetter } from './argument'
 import { argumentTreeNodeToString } from './argument'
@@ -51,7 +51,8 @@ export function command(tree: RootTreeNode, argument: ArgumentParserGetter): cor
 function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserContext, path: string[], rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
-	const parent = resolveTreeNode(parentTreeNode, rootTreeNode)
+	const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(parentTreeNode, rootTreeNode, path)
+	path = resolvedPath
 
 	const children = parent?.children
 	if (!children) {
@@ -66,7 +67,7 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		parser: argument(treeNode) ?? unknown(treeNode),
 	}))
 	const literalParser = literalTreeNodes.length
-		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent!.type === 'root')
+		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
 		: undefined
 
 	const parsers: core.Parser[] = [

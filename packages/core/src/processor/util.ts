@@ -21,7 +21,13 @@ function traversePreOrderImpl(node: AstNode, shouldContinue: Callback<unknown>, 
 	}
 }
 
-type NodeResult = { node: AstNode | undefined, parents: AstNode[] }
+interface NodeResult {
+	node: AstNode | undefined,
+	/**
+	 * Ordered from the closest parent to the root node.
+	 */
+	parents: AstNode[],
+}
 
 export function selectedNode(node: AstNode, offset: number, endInclusive = false): NodeResult {
 	let ans: NodeResult = { node: undefined, parents: [] }

@@ -1,9 +1,9 @@
-exports['mcfunction literal() Parse "" 1'] = {
+exports['mcfunction parser literal() Parse "" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['mcfunction literal() Parse "advancement grant @s everything" 1'] = {
+exports['mcfunction parser literal() Parse "advancement grant @s everything" 1'] = {
   "node": {
     "type": "mcfunction:command_child/literal",
     "range": {
@@ -15,7 +15,7 @@ exports['mcfunction literal() Parse "advancement grant @s everything" 1'] = {
   "errors": []
 }
 
-exports['mcfunction literal() Parse "tell @p Hello!" 1'] = {
+exports['mcfunction parser literal() Parse "tell @p Hello!" 1'] = {
   "node": {
     "type": "mcfunction:command_child/literal",
     "range": {
@@ -27,7 +27,7 @@ exports['mcfunction literal() Parse "tell @p Hello!" 1'] = {
   "errors": []
 }
 
-exports['mcfunction literal() Parse "tellraw @a "World!"" 1'] = {
+exports['mcfunction parser literal() Parse "tellraw @a "World!"" 1'] = {
   "node": {
     "type": "mcfunction:command_child/literal",
     "range": {
