@@ -267,20 +267,13 @@ export class SymbolUtil extends EventEmitter {
 	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQuery
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery
 	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery {
-		const uri = SymbolUtil.toUri(doc)
-		const arena = this.getArena(uri)
-		const { parentSymbol, parentMap, symbol } = this.lookup(category, path, uri)
-		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : undefined
 		return new SymbolQuery({
-			arena,
+			arena: this.getArena(SymbolUtil.toUri(doc)),
 			category,
 			contributor: this.#currentContributor,
 			doc,
 			global: this.global,
-			map: visible ? parentMap : undefined,
-			parentSymbol: parentSymbol,
 			path,
-			symbol: visible ? symbol : undefined,
 			util: this,
 		})
 	}
@@ -380,34 +373,6 @@ export class SymbolUtil extends EventEmitter {
 	}
 
 	/**
-	 * Enters a symbol into a symbol map. If there is already a symbol with the specified identifier under the map,
-	 * it will be amended with the information provided in `addition`. Otherwise, a new symbol with that identifier
-	 * will be created.
-	 * 
-	 * @param map The map where this symbol will be entered into.
-	 * @param category The category of this symbol.
-	 * @param identifier The identifier of this symbol.
-	 * @param addition The metadata and usage that will be amended onto this symbol if it already exists, or
-	 * to create the symbol if it doesn't exist yet.
-	 * @param doc The `TextDocument` where this symbol belongs to.
-	 * @param isUriBinding Whether this entering is done by a URI binder or not.
-	 * 
-	 * @returns The created/amended symbol.
-	 */
-	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
-	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
-	enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
-		let ans = map[identifier]
-		if (ans) {
-			this.amendSymbol(ans, addition, doc, contributor)
-		} else {
-			ans = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, contributor)
-		}
-		this.emit('symbolAmended', { symbol: ans })
-		return ans
-	}
-
-	/**
 	 * @returns A {@link LookupResult}
 	 */
 	static lookupTable(table: SymbolTable, category: AllCategory, path: readonly string[]): LookupResult
@@ -467,78 +432,6 @@ export class SymbolUtil extends EventEmitter {
 			node = node.parent ? arena[node.parent] : undefined
 		}
 		return ans
-	}
-
-	createSymbol(category: string, parentSymbol: Symbol | undefined, parentMap: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
-		const ans = parentMap[identifier] = {
-			category,
-			identifier,
-			...parentSymbol ? { parentSymbol } : {},
-			parentMap,
-			path,
-			...addition.data,
-		}
-		this.emit('symbolCreated', { symbol: ans })
-		this.amendSymbolUsage(ans, addition.usage, doc, contributor)
-		return ans
-	}
-
-	amendSymbol(symbol: Symbol, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): void {
-		this.amendSymbolMetadata(symbol, addition.data)
-		this.amendSymbolUsage(symbol, addition.usage, doc, contributor)
-	}
-
-	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']): void {
-		if (addition) {
-			if ('data' in addition) {
-				symbol.data = addition.data
-			}
-			if ('desc' in addition) {
-				symbol.desc = addition.desc
-			}
-			if (addition.relations && Object.keys(addition.relations).length) {
-				symbol.relations ??= {}
-				for (const relationship of Object.keys(addition.relations)) {
-					symbol.relations[relationship] = addition.relations[relationship]
-				}
-			}
-			if ('subcategory' in addition) {
-				symbol.subcategory = addition.subcategory
-			}
-			if ('visibility' in addition) {
-				// Visibility changes are only accepted if the change wouldn't result in the
-				// symbol being stored in a different symbol table.
-				const inGlobalTable = (v: SymbolVisibility | undefined) => v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
-				if (symbol.visibility === addition.visibility || (inGlobalTable(symbol.visibility) && inGlobalTable(addition.visibility))) {
-					symbol.visibility = addition.visibility
-				} else {
-					throw new Error(`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`)
-				}
-			}
-			if (addition.visibilityRestriction?.length) {
-				symbol.visibilityRestriction = (symbol.visibilityRestriction ?? []).concat(addition.visibilityRestriction)
-			}
-		}
-	}
-
-	private amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, contributor: string | undefined): void {
-		if (addition) {
-			const type = addition.type ?? 'reference'
-			const arr = symbol[type] ??= []
-			const range = Range.get((SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0)
-			const location = SymbolLocation.create(doc, range, addition.fullRange, contributor, {
-				accessType: addition.accessType,
-				skipRenaming: addition.skipRenaming,
-			})
-			if (!doc.uri.startsWith('file:')) {
-				delete location.range
-				delete location.posRange
-				delete location.fullRange
-				delete location.fullPosRange
-			}
-			arr.push(location)
-			this.emit('symbolLocationCreated', { symbol, type, location })
-		}
 	}
 
 	/**
@@ -744,11 +637,6 @@ export class SymbolQuery {
 	readonly #currentContributor: string | undefined
 	#hasTriggeredIf = false
 	/**
-	 * The map where the queried symbol is stored. `undefined` if the map hasn't been created yet. 
-	 */
-	#map: SymbolMap | undefined
-	#parentSymbol: Symbol | undefined
-	/**
 	 * The queried symbol. `undefined` if the symbol hasn't been created yet.
 	 */
 	#symbol: Symbol | undefined
@@ -765,16 +653,13 @@ export class SymbolQuery {
 		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
 	}
 
-	constructor({ arena, category, contributor, doc, global, map, parentSymbol, path, symbol, util }: {
+	constructor({ arena, category, contributor, doc, global, path, util }: {
 		arena: SymbolArena,
 		category: string,
 		contributor: string | undefined,
 		doc: TextDocument | string,
 		global: SymbolTable,
-		map: SymbolMap | undefined,
-		parentSymbol: Symbol | undefined,
 		path: readonly string[],
-		symbol: Symbol | undefined,
 		util: SymbolUtil,
 	}) {
 		this.arena = arena
@@ -788,9 +673,6 @@ export class SymbolQuery {
 		}
 		this.#currentContributor = contributor
 		this.#doc = doc
-		this.#map = map
-		this.#parentSymbol = parentSymbol
-		this.#symbol = symbol
 		this.util = util
 	}
 
@@ -891,13 +773,14 @@ export class SymbolQuery {
 
 	@DelayModeSupport((self: SymbolQuery) => self.util)
 	private _enter(addition: SymbolAddition): void {
+		addition.data.
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
 		if (this.#createdWithUri && SymbolAdditionUsageWithRange.is(addition.usage)) {
 			addition.usage.range = Range.create(0, 0)
 		}
 
-		this.#map ??= this.createMap(addition)
+		const map = this.createMap(addition)
 		this.#symbol = this.util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#currentContributor)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
@@ -967,7 +850,6 @@ export class SymbolQuery {
 				throw new Error('The current symbol points to an non-existent symbol.')
 			}
 			this.#symbol = result
-			this.#map = result.parentMap
 		}
 		return this
 	}
@@ -1036,6 +918,108 @@ export class SymbolQuery {
 			Object.keys(this.visibleMembers),
 			identifier => this.member(identifier, query => fn(identifier, query))
 		)
+	}
+
+
+
+	/**
+	 * Enters a symbol into a symbol map. If there is already a symbol with the specified identifier under the map,
+	 * it will be amended with the information provided in `addition`. Otherwise, a new symbol with that identifier
+	 * will be created.
+	 * 
+	 * @param map The map where this symbol will be entered into.
+	 * @param category The category of this symbol.
+	 * @param identifier The identifier of this symbol.
+	 * @param addition The metadata and usage that will be amended onto this symbol if it already exists, or
+	 * to create the symbol if it doesn't exist yet.
+	 * @param doc The `TextDocument` where this symbol belongs to.
+	 * @param isUriBinding Whether this entering is done by a URI binder or not.
+	 * 
+	 * @returns The created/amended symbol.
+	 */
+	private enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: AllCategory, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
+	private enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol
+	private enterMap(parentSymbol: Symbol | undefined, map: SymbolMap, category: string, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
+		let ans = map[identifier]
+		if (ans) {
+			this.amendSymbol(ans, addition, doc, contributor)
+		} else {
+			ans = this.createSymbol(category, parentSymbol, map, path, identifier, addition, doc, contributor)
+		}
+		this.util.emit('symbolAmended', { symbol: ans })
+		return ans
+	}
+
+	private createSymbol(category: string, parentSymbol: Symbol | undefined, parentMap: SymbolMap, path: readonly string[], identifier: string, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): Symbol {
+		const ans = parentMap[identifier] = {
+			category,
+			identifier,
+			...parentSymbol ? { parentSymbol } : {},
+			parentMap,
+			path,
+			...addition.data,
+		}
+		this.util.emit('symbolCreated', { symbol: ans })
+		this.amendSymbolUsage(ans, addition.usage, doc, contributor)
+		return ans
+	}
+
+	private amendSymbol(symbol: Symbol, addition: SymbolAddition, doc: TextDocument, contributor: string | undefined): void {
+		this.amendSymbolMetadata(symbol, addition.data)
+		this.amendSymbolUsage(symbol, addition.usage, doc, contributor)
+	}
+
+	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']): void {
+		if (addition) {
+			if ('data' in addition) {
+				symbol.data = addition.data
+			}
+			if ('desc' in addition) {
+				symbol.desc = addition.desc
+			}
+			if (addition.relations && Object.keys(addition.relations).length) {
+				symbol.relations ??= {}
+				for (const relationship of Object.keys(addition.relations)) {
+					symbol.relations[relationship] = addition.relations[relationship]
+				}
+			}
+			if ('subcategory' in addition) {
+				symbol.subcategory = addition.subcategory
+			}
+			if ('visibility' in addition) {
+				// Visibility changes are only accepted if the change wouldn't result in the
+				// symbol being stored in a different symbol table.
+				const inGlobalTable = (v: SymbolVisibility | undefined) => v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
+				if (symbol.visibility === addition.visibility || (inGlobalTable(symbol.visibility) && inGlobalTable(addition.visibility))) {
+					symbol.visibility = addition.visibility
+				} else {
+					throw new Error(`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`)
+				}
+			}
+			if (addition.visibilityRestriction?.length) {
+				symbol.visibilityRestriction = (symbol.visibilityRestriction ?? []).concat(addition.visibilityRestriction)
+			}
+		}
+	}
+
+	private amendSymbolUsage(symbol: Symbol, addition: SymbolAddition['usage'], doc: TextDocument, contributor: string | undefined): void {
+		if (addition) {
+			const type = addition.type ?? 'reference'
+			const arr = symbol[type] ??= []
+			const range = Range.get((SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0)
+			const location = SymbolLocation.create(doc, range, addition.fullRange, contributor, {
+				accessType: addition.accessType,
+				skipRenaming: addition.skipRenaming,
+			})
+			if (!doc.uri.startsWith('file:')) {
+				delete location.range
+				delete location.posRange
+				delete location.fullRange
+				delete location.fullPosRange
+			}
+			arr.push(location)
+			this.util.emit('symbolLocationCreated', { symbol, type, location })
+		}
 	}
 }
 
