@@ -3,7 +3,7 @@ import snapshot from 'snap-shot-it'
 import type { SymbolTable } from '../../lib'
 import { SymbolFormatter, SymbolUtil } from '../../lib'
 
-describe.only('SymbolUtil', () => {
+describe('SymbolUtil', () => {
 	const fileUri = 'spyglassmc://test_file'
 	const anotherFileUri = 'spyglassmc://another_test_file'
 	describe('contributeAs', () => {
@@ -17,25 +17,25 @@ describe.only('SymbolUtil', () => {
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
-	describe('getArena()', () => {
-		it('Should create a new arena', () => {
+	describe('getStack()', () => {
+		it('Should create a new stack', () => {
 			const symbols = new SymbolUtil({})
-			const result = symbols.getArena(fileUri)
-			snapshot(SymbolFormatter.stringifySymbolArena(result))
+			const result = symbols.getStack(fileUri)
+			snapshot(SymbolFormatter.stringifySymbolStack(result))
 		})
-		it('Should get the existing arena', () => {
-			// Set up the symbol table and symbol arena.
+		it('Should get the existing stack', () => {
+			// Set up the symbol table and symbol stack.
 			const symbols = new SymbolUtil({})
-			const arenaSymbols = new SymbolUtil({})
-			arenaSymbols
+			const stackSymbols = new SymbolUtil({})
+			stackSymbols
 				.query(fileUri, 'advancement', 'Foo')
 				.enter({ usage: { type: 'definition' } })
-			const arena = symbols.getArena(fileUri)
-			arena.push({ parent: 0, table: arenaSymbols.global })
+			const stack = symbols.getStack(fileUri)
+			stack.push(stackSymbols.global)
 
-			const actual = symbols.getArena(fileUri)
+			const actual = symbols.getStack(fileUri)
 
-			snapshot(SymbolFormatter.stringifySymbolArena(actual))
+			snapshot(SymbolFormatter.stringifySymbolStack(actual))
 		})
 	})
 	describe('clear()', () => {
@@ -79,7 +79,7 @@ describe.only('SymbolUtil', () => {
 		})
 	})
 	describe('lookup()', () => {
-		// Set up the symbol table and symbol arena.
+		// Set up the symbol table and symbol stack.
 		const symbols = new SymbolUtil({})
 		symbols
 			.query(fileUri, 'advancement', 'Foo')
@@ -90,20 +90,20 @@ describe.only('SymbolUtil', () => {
 					.enter({ usage: { type: 'definition' } })
 				)
 			)
-		const arenaSymbols = new SymbolUtil({})
-		arenaSymbols
+		const stackSymbols = new SymbolUtil({})
+		stackSymbols
 			.query(fileUri, 'advancement', 'Foo')
 			.enter({
-				data: { desc: 'ARENA' },
+				data: { desc: 'STACK' },
 				usage: { type: 'definition' },
 			})
 			.member('Baz', member => member
 				.enter({
-					data: { desc: 'ARENA' },
+					data: { desc: 'STACK' },
 					usage: { type: 'definition' },
 				})
 			)
-		symbols._setArena(fileUri, [{ table: arenaSymbols.global }])
+		symbols._setStack(fileUri, [stackSymbols.global])
 
 		const paths: string[][] = [
 			[],

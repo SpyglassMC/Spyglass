@@ -1,6 +1,6 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { Arrayable, ResourceLocation } from '../../../common'
-import { AstNode } from '../../../node'
+import type { AstNode } from '../../../node'
 import type { LinterContext } from '../../../service'
 import { LinterSeverity, SymbolLinterConfig as Config } from '../../../service'
 import type { Symbol } from '../../../symbol'
@@ -14,8 +14,6 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 
 	const action = getAction(ctx.ruleValue as Config, node.symbol, ctx)
 	if (Config.Action.isDeclare(action)) {
-		const arenaId = AstNode.getSymbolArenaId(node)
-		ctx.symbols.block(ctx.doc.uri, arenaId, )
 		ctx.symbols
 			.query(ctx.doc, node.symbol.category, ...node.symbol.path)
 			.amend({
