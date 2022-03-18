@@ -130,6 +130,7 @@ function unique(completions: CompletionItem[]) {
 }
 
 export function register(meta: MetaRegistry): void {
+	meta.registerCompleter('json:entry', entry)
 	meta.registerCompleter<JsonBooleanNode>('json:boolean', entry)
 	meta.registerCompleter<JsonNullNode>('json:null', entry)
 	meta.registerCompleter<JsonNumberNode>('json:number', entry)

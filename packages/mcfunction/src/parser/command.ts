@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { CommandChildNode, CommandNode, LiteralCommandChildNode, TrailingCommandChildNode, UnknownCommandChildNode } from '../node'
-import { redirect, resolveParentTreeNode } from '../tree'
+import { categorizeTreeChildren, redirect, resolveParentTreeNode } from '../tree'
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
 import type { ArgumentParserGetter } from './argument'
 import { argumentTreeNodeToString } from './argument'
@@ -59,8 +59,7 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		return
 	}
 
-	const { literalTreeNodes, argumentTreeNodes } = categorize(children)
-
+	const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(children)
 
 	const argumentParsers: { name: string, parser: core.Parser }[] = argumentTreeNodes.map(([name, treeNode]) => ({
 		name,
@@ -156,28 +155,6 @@ const trailing: core.InfallibleParser<TrailingCommandChildNode> = (src, ctx): Tr
 		range,
 		value,
 	}
-}
-
-
-/**
- * Categorize command tree children to literal entries and argument entries.
- */
-function categorize(children: Exclude<TreeNode['children'], undefined>): { literalTreeNodes: [string, LiteralTreeNode][], argumentTreeNodes: [string, ArgumentTreeNode][] } {
-	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
-
-	const ans = {
-		literalTreeNodes: [] as [string, LiteralTreeNode][],
-		argumentTreeNodes: [] as [string, ArgumentTreeNode][],
-	}
-	for (const e of Object.entries(children)) {
-		/* istanbul ignore else */
-		if (e[1].type === 'literal') {
-			ans.literalTreeNodes.push(e as [string, LiteralTreeNode])
-		} else if (e[1].type === 'argument') {
-			ans.argumentTreeNodes.push(e as [string, ArgumentTreeNode])
-		}
-	}
-	return ans
 }
 
 function wrapWithBrackets(syntax: string, executable: boolean): string {

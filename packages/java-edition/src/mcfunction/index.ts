@@ -4,6 +4,7 @@ import * as mcf from '@spyglassmc/mcfunction'
 import type { MajorVersion, McmetaCommands } from '../dependency'
 import * as checker from './checker'
 import * as colorizer from './colorizer'
+import * as completer from './completer'
 import { inlayHintProvider } from './inlayHintProvider'
 import * as parser from './parser'
 import { signatureHelpProvider } from './signatureHelpProvider'
@@ -11,6 +12,7 @@ import { Tree1_15, Tree1_16, Tree1_17, Tree1_18 } from './tree'
 
 export * as checker from './checker'
 export * as colorizer from './colorizer'
+export * as completer from './completer'
 export * as parser from './parser'
 
 // DOCS: Update here when a new major version of Minecraft is released.
@@ -31,7 +33,7 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
 		parser: mcf.parser.entry(majorVersion, parser.argument),
-		completer: mcf.completer.entry(majorVersion, new Map()),
+		completer: mcf.completer.entry(majorVersion, completer.argument),
 		triggerCharacters: [' ', '[', '=', '!', ',', '{', ':', '/', '.', '"', "'"],
 	})
 

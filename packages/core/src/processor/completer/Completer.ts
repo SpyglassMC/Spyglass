@@ -14,6 +14,10 @@ export namespace StartableCompleter {
 	export function create<N = AstNode>(func: (node: N | undefined, ctx: CompleterContext) => readonly CompletionItem[]): StartableCompleter<N> {
 		return Object.assign(func, { [Startable]: true as const })
 	}
+
+	export function is<N = AstNode>(completer: Completer<N>): completer is StartableCompleter<N> {
+		return (completer as StartableCompleter<N>)[Startable]
+	}
 }
 
 // Built-in LSP completion item kinds: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_completion

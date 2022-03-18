@@ -131,7 +131,7 @@ export interface IntRangeNode extends core.AstNode {
 	value: [number | undefined, number | undefined],
 }
 export interface MessageNode extends core.AstNode {
-	type: 'mcfunction:argument/minecraft:message',
+	type: 'mcfunction:message',
 	children: (core.StringNode | EntitySelectorNode)[],
 }
 export interface ScoreHolderNode extends core.AstNode {

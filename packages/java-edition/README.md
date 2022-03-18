@@ -20,6 +20,10 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 ```
 2. // TODO
 
+## Supported Minecraft Parsers
+
+See `ParsersToNodes` at `src/mcfunction/parser/argument.ts`.
+
 ## Exported Parsers
 
 - `mcfunction:block_predicate`

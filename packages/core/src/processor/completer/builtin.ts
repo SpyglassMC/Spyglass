@@ -6,7 +6,7 @@ import { LinterConfigValue } from '../../service'
 import type { TagFileCategory } from '../../symbol'
 import { selectedNode } from '../util'
 import type { Completer } from './Completer'
-import { CompletionItem, CompletionKind } from './Completer'
+import { CompletionItem, CompletionKind, StartableCompleter } from './Completer'
 
 /**
  * Uses the shallowest selected node that has its own completer to provide the completion items.
@@ -24,12 +24,12 @@ export const fallback: Completer<AstNode> = (root, ctx) => {
 	return []
 }
 
-export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
+export const boolean = StartableCompleter.create<BooleanBaseNode>((node, ctx) => {
 	return [
-		CompletionItem.create('false', node, { kind: CompletionKind.Keyword }),
-		CompletionItem.create('true', node, { kind: CompletionKind.Keyword }),
+		CompletionItem.create('false', node ?? ctx.offset, { kind: CompletionKind.Constant }),
+		CompletionItem.create('true', node ?? ctx.offset, { kind: CompletionKind.Constant }),
 	]
-}
+})
 
 /**
  * Dispatches to the corresponding file for the language.
@@ -43,7 +43,7 @@ export const literal: Completer<LiteralBaseNode> = node => {
 	return node.options.pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Keyword })) ?? []
 }
 
-export const noop: Completer<AstNode> = () => []
+export const noop = StartableCompleter.create(() => [])
 
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)

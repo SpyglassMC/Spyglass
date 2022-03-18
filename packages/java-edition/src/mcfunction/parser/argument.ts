@@ -5,6 +5,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
+import { ColorArgumentValues, SwizzleArgumentValues } from '../common'
 import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
 import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
@@ -83,10 +84,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 			return wrap(blockState)
 		case 'minecraft:color':
 			return wrap(core.map(
-				core.literal(
-					...core.Color.ColorNames,
-					'reset'
-				),
+				core.literal(...ColorArgumentValues),
 				res => ({
 					...res,
 					color: core.Color.NamedColors.has(res.value)
@@ -186,11 +184,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 				...core.Color.ColorNames.map(n => `sidebar.team.${n}`),
 			))
 		case 'minecraft:swizzle':
-			return wrap(core.literal(
-				'x', 'xy', 'xz', 'xyz', 'xzy',
-				'y', 'yx', 'yz', 'yxz', 'yzx',
-				'z', 'zx', 'zy', 'zxy', 'zyx',
-			))
+			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
 			return wrap(team(core.SymbolUsageType.is(treeNode.properties?.usageType)
 				? treeNode.properties?.usageType
@@ -390,7 +384,7 @@ const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
-		type: 'mcfunction:argument/minecraft:message',
+		type: 'mcfunction:message',
 		range: core.Range.create(src),
 		children: [],
 	}

@@ -135,7 +135,9 @@ export class MetaRegistry {
 	public getCompleter<N extends AstNode>(type: N['type']): Completer<N> {
 		return this.#completers.get(type) ?? completer.fallback
 	}
-	public registerCompleter<N extends AstNode>(type: N['type'], completer: Completer<N>): void {
+	public registerCompleter<N extends AstNode>(type: N['type'], completer: Completer<N>): void
+	public registerCompleter(type: string, completer: Completer<any>): void
+	public registerCompleter(type: string, completer: Completer<any>): void {
 		this.#completers.set(type, completer)
 	}
 	public shouldComplete(languageID: string, triggerCharacter?: string): boolean {

@@ -1,4 +1,4 @@
-import type { RootTreeNode, TreeNode } from './type'
+import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from './type'
 
 export function redirect(rootTreeNode: TreeNode, path: readonly string[]): TreeNode | undefined {
 	return path.reduce<TreeNode | undefined>((p, c) => p?.children?.[c], rootTreeNode)
@@ -19,4 +19,23 @@ export function resolveParentTreeNode(parentTreeNode: TreeNode | undefined, root
 	} else {
 		return { treeNode: parentTreeNode, path: parentPath }
 	}
+}
+
+/**
+ * Categorize command tree children to literal entries and argument entries.
+ */
+export function categorizeTreeChildren(children: Exclude<TreeNode['children'], undefined>): { literalTreeNodes: [string, LiteralTreeNode][], argumentTreeNodes: [string, ArgumentTreeNode][] } {
+	const ans = {
+		literalTreeNodes: [] as [string, LiteralTreeNode][],
+		argumentTreeNodes: [] as [string, ArgumentTreeNode][],
+	}
+	for (const e of Object.entries(children)) {
+		/* istanbul ignore else */
+		if (e[1].type === 'literal') {
+			ans.literalTreeNodes.push(e as [string, LiteralTreeNode])
+		} else if (e[1].type === 'argument') {
+			ans.argumentTreeNodes.push(e as [string, ArgumentTreeNode])
+		}
+	}
+	return ans
 }
