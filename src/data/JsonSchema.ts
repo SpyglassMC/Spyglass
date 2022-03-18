@@ -30,12 +30,14 @@ export type JsonSchemaType =
     | 'configured_structure_feature'
     | 'configured_surface_builder'
     | 'density_function'
+    | 'flat_level_generator_preset'
     | 'noise_parameters'
     | 'noise_settings'
     | 'placed_feature'
     | 'processor_list'
     | 'structure_set'
     | 'template_pool'
+    | 'world_preset'
     | 'biome_tag'
     | 'configured_carver_tag'
     | 'configured_decorator_tag'
@@ -77,12 +79,14 @@ const globPatterns: Record<JsonSchemaType, string> = {
     configured_structure_feature: PathPatterns['worldgen/configured_structure_feature'],
     configured_surface_builder: PathPatterns['worldgen/configured_surface_builder'],
     density_function: PathPatterns['worldgen/density_function'],
+    flat_level_generator_preset: PathPatterns['worldgen/flat_level_generator_preset'],
     noise_parameters: PathPatterns['worldgen/noise'],
     noise_settings: PathPatterns['worldgen/noise_settings'],
     placed_feature: PathPatterns['worldgen/placed_feature'],
     processor_list: PathPatterns['worldgen/processor_list'],
     structure_set: PathPatterns['worldgen/structure_set'],
     template_pool: PathPatterns['worldgen/template_pool'],
+    world_preset: PathPatterns['worldgen/world_preset'],
     biome_tag: PathPatterns['tag/worldgen/biome'],
     configured_carver_tag: PathPatterns['tag/worldgen/configured_carver'],
     configured_decorator_tag: PathPatterns['tag/worldgen/configured_decorator'],
