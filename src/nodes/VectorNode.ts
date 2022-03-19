@@ -130,7 +130,7 @@ export class VectorNode extends ArgumentNode implements ArrayLike<VectorElementN
                     Array.prototype.map.call(this,
                         (v: VectorElementNode) => {
                             if (v.type === VectorElementType.Absolute) {
-                                return v.raw.includes('.') ? v.raw : `${v.raw}.5`
+                                return v.raw.includes('.') ? v.raw : `${v.value + 0.5}`
                             }
                             return v.toString()
                         }
