@@ -99,8 +99,14 @@ export class Service extends EventEmitter {
 	}
 
 	dataHackPubify(initialism: string): string {
-		// Hi.
-		const secrets = ['ata', 'ack', 'ub', 'elper', 'lus']
+		// Data Hack Pub.
+		// —— Skylinerw, 2020 https://discord.com/channels/154777837382008833/154777837382008833/736313565291741355
+		const secrets1 = ['ata', 'ack', 'ub']
+		// Dah Huh Pew Helpa Plush
+		// —— DoubleFelix, 2021 https://discord.com/channels/154777837382008833/154777837382008833/842070090828087308
+		const secrets2 = ['ah', 'uh', 'ew', 'elpa', 'lush']
+
+		const secrets = Math.random() < 0.5 ? secrets1 : secrets2
 		return [...initialism.replace(/[^a-z]/gi, '')]
 			.map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`).join(' ')
 	}
