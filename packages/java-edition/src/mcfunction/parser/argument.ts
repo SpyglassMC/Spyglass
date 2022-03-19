@@ -1,11 +1,9 @@
-import type { RegistryCategory, WorldgenFileCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { ResourceLocation } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
-import { ColorArgumentValues, SwizzleArgumentValues } from '../common'
+import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, SwizzleArgumentValues } from '../common'
 import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
 import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
@@ -77,7 +75,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 				localize('mcfunction.parser.vector.local-disallowed')
 			))
 		case 'minecraft:block_pos':
-			return wrap(vector(3, true))
+			return wrap(vector({ dimension: 3, integersOnly: true }))
 		case 'minecraft:block_predicate':
 			return wrap(blockPredicate)
 		case 'minecraft:block_state':
@@ -93,7 +91,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 				})
 			))
 		case 'minecraft:column_pos':
-			return wrap(vector(2, true))
+			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(component)
 		case 'minecraft:dimension':
@@ -103,7 +101,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 		case 'minecraft:entity':
 			return wrap(entity(treeNode.properties.amount, treeNode.properties.type))
 		case 'minecraft:entity_anchor':
-			return wrap(core.literal('feet', 'eyes'))
+			return wrap(core.literal(...EntityAnchorArgumentValues))
 		case 'minecraft:entity_summon':
 			return wrap(core.resourceLocation({
 				category: 'entity_type',
@@ -126,17 +124,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap(core.literal(
-				...[...Array(54).keys()].map(n => `container.${n}`),
-				...[...Array(27).keys()].map(n => `enderchest.${n}`),
-				...[...Array(15).keys()].map(n => `horse.${n}`),
-				...[...Array(9).keys()].map(n => `hotbar.${n}`),
-				...[...Array(27).keys()].map(n => `inventory.${n}`),
-				...[...Array(8).keys()].map(n => `villager.${n}`),
-				'armor.chest', 'armor.feet', 'armor.head', 'armor.legs',
-				'horse.armor', 'horse.chest', 'horse.saddle',
-				'weapon', 'weapon.mainhand', 'weapon.offhand',
-			))
+			return wrap(core.literal(...ItemSlotArgumentValues))
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:message':
@@ -158,13 +146,13 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 			))
 		case 'minecraft:operation':
 			return wrap(core.literal({
-				pool: ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><'],
+				pool: OperationArgumentValues,
 				colorTokenType: 'operator',
 			}))
 		case 'minecraft:resource':
 		case 'minecraft:resource_or_tag':
 			return wrap(core.resourceLocation({
-				category: ResourceLocation.shorten(treeNode.properties.registry) as RegistryCategory | WorldgenFileCategory,
+				category: core.ResourceLocation.shorten(treeNode.properties.registry) as core.RegistryCategory | core.WorldgenFileCategory,
 				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
 			}))
 		case 'minecraft:resource_location':
@@ -173,7 +161,7 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 				allowUnknown: true,
 			}))
 		case 'minecraft:rotation':
-			return wrap(vector(2, undefined, true))
+			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
 			return wrap(scoreHolder(treeNode.properties.amount))
 		case 'minecraft:scoreboard_slot':
@@ -195,9 +183,9 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 		case 'minecraft:uuid':
 			return wrap(uuid)
 		case 'minecraft:vec2':
-			return wrap(vector(2, undefined, true))
+			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:vec3':
-			return wrap(vector(3))
+			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:tag':
 			return wrap(tag())
 		case 'minecraft:objective_criteria':
@@ -963,13 +951,13 @@ function validateUnquotable(parser: core.InfallibleParser<core.SymbolNode>): cor
 	)
 }
 
-function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.InfallibleParser<VectorNode> {
+function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> {
 	return (src, ctx): VectorNode => {
 		const ans: VectorNode = {
 			type: 'mcfunction:vector',
 			range: core.Range.create(src),
 			children: [],
-			dimension,
+			options,
 			system: CoordinateSystem.World,
 		}
 
@@ -977,11 +965,11 @@ function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.In
 			ans.system = CoordinateSystem.Local
 		}
 
-		for (let i = 0; i < dimension; i++) {
+		for (let i = 0; i < options.dimension; i++) {
 			if (i > 0) {
 				mcf.parser.sep(src, ctx)
 			}
-			const coord = integerOnly ? coordinate(integerOnly)(src, ctx) : coordinate(integerOnly)(src, ctx)
+			const coord = options.integersOnly ? coordinate(options.integersOnly)(src, ctx) : coordinate(options.integersOnly)(src, ctx)
 			ans.children.push(coord as never)
 
 			if ((ans.system === CoordinateSystem.Local) !== (coord.notation === '^')) {
@@ -989,7 +977,7 @@ function vector(dimension: 2 | 3, integerOnly = false, noLocal = false): core.In
 			}
 		}
 
-		if (noLocal && ans.system === CoordinateSystem.Local) {
+		if (options.noLocal && ans.system === CoordinateSystem.Local) {
 			ctx.err.report(localize('mcfunction.parser.vector.local-disallowed'), ans)
 		}
 

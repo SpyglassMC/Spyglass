@@ -4,9 +4,10 @@ import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
 import { LinterConfigValue } from '../../service'
 import type { TagFileCategory } from '../../symbol'
+import type { ColorTokenType } from '../colorizer'
 import { selectedNode } from '../util'
 import type { Completer } from './Completer'
-import { CompletionItem, CompletionKind, StartableCompleter } from './Completer'
+import { CompletionItem, CompletionKind } from './Completer'
 
 /**
  * Uses the shallowest selected node that has its own completer to provide the completion items.
@@ -24,12 +25,12 @@ export const fallback: Completer<AstNode> = (root, ctx) => {
 	return []
 }
 
-export const boolean = StartableCompleter.create<BooleanBaseNode>((node, ctx) => {
+export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
 	return [
-		CompletionItem.create('false', node ?? ctx.offset, { kind: CompletionKind.Constant }),
-		CompletionItem.create('true', node ?? ctx.offset, { kind: CompletionKind.Constant }),
+		CompletionItem.create('false', node, { kind: CompletionKind.Constant }),
+		CompletionItem.create('true', node, { kind: CompletionKind.Constant }),
 	]
-})
+}
 
 /**
  * Dispatches to the corresponding file for the language.
@@ -40,10 +41,22 @@ export const file: Completer<FileNode<AstNode>> = (node, ctx) => {
 }
 
 export const literal: Completer<LiteralBaseNode> = node => {
-	return node.options.pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Keyword })) ?? []
+	const kind = new Map<ColorTokenType, CompletionKind>([
+		['enum', CompletionKind.Enum],
+		['enumMember', CompletionKind.EnumMember],
+		['function', CompletionKind.Function],
+		['keyword', CompletionKind.Keyword],
+		['literal', CompletionKind.Keyword],
+		['number', CompletionKind.Constant],
+		['operator', CompletionKind.Operator],
+		['property', CompletionKind.Property],
+		['resourceLocation', CompletionKind.File],
+		['variable', CompletionKind.Variable],
+	]).get(node.options.colorTokenType ?? 'keyword') ?? CompletionKind.Keyword
+	return node.options.pool.map(v => CompletionItem.create(v, node, { kind })) ?? []
 }
 
-export const noop = StartableCompleter.create(() => [])
+export const noop: Completer<any> = () => []
 
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)

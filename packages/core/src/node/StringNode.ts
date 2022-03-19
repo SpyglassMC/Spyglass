@@ -1,6 +1,7 @@
 import type { Parser } from '../parser'
 import type { ColorTokenType } from '../processor'
-import type { IndexMap } from '../source'
+import type { IndexMap, RangeLike } from '../source'
+import { Range } from '../source'
 import type { AstNode } from './AstNode'
 
 export const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 't'] as const
@@ -79,5 +80,16 @@ export namespace StringNode {
 	/* istanbul ignore next */
 	export function is(obj: object | undefined): obj is StringNode {
 		return (obj as StringNode | undefined)?.type === 'string'
+	}
+
+	export function mock(range: RangeLike, options: StringOptions): StringNode {
+		range = Range.get(range)
+		return {
+			type: 'string',
+			range,
+			options,
+			value: '',
+			valueMap: [{ inner: Range.create(0), outer: Range.create(range.start) }],
+		}
 	}
 }

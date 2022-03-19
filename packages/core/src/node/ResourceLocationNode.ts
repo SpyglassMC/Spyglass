@@ -1,5 +1,7 @@
 import type { FullResourceLocation } from '../common'
 import { ResourceLocation } from '../common'
+import type { RangeLike } from '../source'
+import { Range } from '../source'
 import type { ResourceLocationCategory, SymbolAccessType, SymbolUsageType, TaggableResourceLocationCategory } from '../symbol'
 import type { AstNode } from './AstNode'
 
@@ -52,6 +54,14 @@ export namespace ResourceLocationNode {
 	/* istanbul ignore next */
 	export function is(obj: AstNode | undefined): obj is ResourceLocationNode {
 		return (obj as ResourceLocationNode | undefined)?.type === 'resource_location'
+	}
+
+	export function mock(range: RangeLike, options: ResourceLocationOptions): ResourceLocationNode {
+		return {
+			type: 'resource_location',
+			range: Range.get(range),
+			options,
+		}
 	}
 
 	export function toString(node: ResourceLocationBaseNode, type?: 'full'): FullResourceLocation

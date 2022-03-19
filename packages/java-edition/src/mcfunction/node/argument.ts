@@ -1,4 +1,4 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
 
 export interface BlockStatesNode extends core.TableNode<core.StringNode, core.StringNode> {
@@ -116,8 +116,25 @@ export interface ItemNode extends core.AstNode {
 
 export interface VectorNode extends core.SequenceNode<CoordinateNode> {
 	type: 'mcfunction:vector',
-	dimension: 2 | 3,
+	options: VectorNode.Options,
 	system: CoordinateSystem,
+}
+export namespace VectorNode {
+	export interface Options {
+		dimension: 2 | 3,
+		integersOnly?: boolean,
+		noLocal?: boolean,
+	}
+
+	export function mock(range: core.RangeLike, options: Options): VectorNode {
+		return {
+			type: 'mcfunction:vector',
+			range: core.Range.get(range),
+			children: [],
+			options,
+			system: CoordinateSystem.World,
+		}
+	}
 }
 
 export interface FloatRangeNode extends core.AstNode {

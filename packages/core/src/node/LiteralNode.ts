@@ -1,4 +1,6 @@
 import type { ColorTokenType } from '../processor'
+import type { RangeLike } from '../source'
+import { Range } from '../source'
 import type { AstNode } from './AstNode'
 
 export interface LiteralOptions {
@@ -18,5 +20,14 @@ export namespace LiteralNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is LiteralNode {
 		return (obj as LiteralNode).type === 'literal'
+	}
+
+	export function mock(range: RangeLike, options: LiteralOptions): LiteralNode {
+		return {
+			type: 'literal',
+			range: Range.get(range),
+			options,
+			value: '',
+		}
 	}
 }

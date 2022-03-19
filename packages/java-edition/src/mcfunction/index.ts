@@ -47,6 +47,7 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 
 	checker.register(meta)
 	colorizer.register(meta)
+	completer.register(meta)
 
 	meta.registerInlayHintProvider(inlayHintProvider)
 	meta.registerSignatureHelpProvider(signatureHelpProvider(majorVersion))

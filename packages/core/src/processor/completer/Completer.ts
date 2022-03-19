@@ -5,21 +5,6 @@ import { Range } from '../../source'
 
 export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionItem[]
 
-export const Startable = Symbol('Startable')
-/**
- * A {@link Completer} that could still work if `node` is `undefined`.
- */
-export type StartableCompleter<N = AstNode> = ((node: N | undefined, ctx: CompleterContext) => readonly CompletionItem[]) & { [Startable]: true }
-export namespace StartableCompleter {
-	export function create<N = AstNode>(func: (node: N | undefined, ctx: CompleterContext) => readonly CompletionItem[]): StartableCompleter<N> {
-		return Object.assign(func, { [Startable]: true as const })
-	}
-
-	export function is<N = AstNode>(completer: Completer<N>): completer is StartableCompleter<N> {
-		return (completer as StartableCompleter<N>)[Startable]
-	}
-}
-
 // Built-in LSP completion item kinds: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_completion
 
 export const enum CompletionKind {

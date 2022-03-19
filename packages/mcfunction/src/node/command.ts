@@ -1,4 +1,4 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 
 export interface CommandNode extends core.SequenceNode<CommandChildNode> {
 	type: 'mcfunction:command',
@@ -8,6 +8,14 @@ export namespace CommandNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode): node is CommandNode {
 		return (node as CommandNode).type === 'mcfunction:command'
+	}
+
+	export function mock(range: core.RangeLike): CommandNode {
+		return {
+			type: 'mcfunction:command',
+			range: core.Range.get(range),
+			children: [],
+		}
 	}
 }
 

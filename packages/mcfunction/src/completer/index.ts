@@ -1,40 +1,29 @@
 import * as core from '@spyglassmc/core'
-import type { CommandNode, McfunctionNode } from '../node'
+import type { McfunctionNode } from '../node'
+import { CommandNode } from '../node'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree'
 import { categorizeTreeChildren, CommandTreeRegistry, redirect, resolveParentTreeNode } from '../tree'
 
-/**
- * A function that returns a completer for the provided tree node.
- * 
- * @param treeNode The argument tree node.
- * 
- * @returns The completer corresponding to that tree node, or `undefined` if such completer doesn't exist.
- */
-export type ArgumentCompleterGetter = (treeNode: ArgumentTreeNode) => core.StartableCompleter | undefined
+export type ArgumentSuggester = (treeNode: ArgumentTreeNode, ctx: core.CompleterContext) => readonly core.CompletionItem[]
 
 /**
  * @param parsersToNodes A map from Minecraft command argument parser IDs (e.g. `brigadier:boolean`) to Spyglass AST node
  * types (e.g. `boolean`).
  */
-export function entry(commandTreeName: string, argument: ArgumentCompleterGetter): core.Completer<McfunctionNode> {
+export function entry(commandTreeName: string, argument: ArgumentSuggester): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
 		const tree = CommandTreeRegistry.instance.get(commandTreeName)
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
 		if (core.CommentNode.is(childNode)) {
 			return []
 		} else {
-			return command(tree, argument)(childNode, ctx)
+			return command(tree, argument)(childNode ?? CommandNode.mock(ctx.offset), ctx)
 		}
 	}
 }
 
-export function command(tree: RootTreeNode, argument: ArgumentCompleterGetter): core.StartableCompleter<CommandNode> {
-	return core.StartableCompleter.create((node, ctx) => {
-		if (!node) {
-			return Object
-				.keys(tree.children ?? {})
-				.map(v => core.CompletionItem.create(v, ctx.offset, { kind: core.CompletionKind.Keyword }))
-		}
+export function command(tree: RootTreeNode, argument: ArgumentSuggester): core.Completer<CommandNode> {
+	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
 		const selectedChildNode: core.AstNode | undefined = node.children[index]?.children[0]
 		if (selectedChildNode) {
@@ -43,7 +32,9 @@ export function command(tree: RootTreeNode, argument: ArgumentCompleterGetter): 
 
 		const lastChildNode = core.AstNode.findLastChild(node, ctx.offset)
 		if (!lastChildNode) {
-			return []
+			return Object
+				.keys(tree.children ?? {})
+				.map(v => core.CompletionItem.create(v, ctx.offset, { kind: core.CompletionKind.Keyword }))
 		}
 
 		const treePath = lastChildNode.path
@@ -60,15 +51,11 @@ export function command(tree: RootTreeNode, argument: ArgumentCompleterGetter): 
 			),
 			...argumentTreeNodes.map(
 				([_name, treeNode]) => {
-					const completer = argument(treeNode)
-					if (completer) {
-						return completer(undefined, ctx)
-					}
-					return []
+					return argument(treeNode, ctx)
 				}
 			).flat()
 		)
 
 		return ans
-	})
+	}
 }

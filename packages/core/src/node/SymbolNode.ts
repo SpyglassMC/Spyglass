@@ -1,3 +1,5 @@
+import type { RangeLike } from '../source'
+import { Range } from '../source'
 import type { SymbolAccessType, SymbolUsageType } from '../symbol'
 import type { AstNode } from './AstNode'
 
@@ -20,5 +22,14 @@ export namespace SymbolNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is SymbolNode {
 		return (obj as SymbolNode).type === 'symbol'
+	}
+
+	export function mock(range: RangeLike, options: SymbolOptions): SymbolNode {
+		return {
+			type: 'symbol',
+			range: Range.get(range),
+			options,
+			value: '',
+		}
 	}
 }
