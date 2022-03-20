@@ -113,7 +113,7 @@ function stringCompletion(range: RangeLike, expectation: JsonStringExpectation, 
 function simpleCompletion(range: RangeLike, value: string): CompletionItem {
 	return CompletionItem.create(value.replace('$1', ''), range, {
 		kind: CompletionKind.Value,
-		insertText: `${value}`,
+		insertText: value,
 	})
 }
 

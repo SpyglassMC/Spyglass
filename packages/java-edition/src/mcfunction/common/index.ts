@@ -18,6 +18,11 @@ export const ItemSlotArgumentValues = [
 
 export const OperationArgumentValues = ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><']
 
+export const ScoreboardSlotArgumentValues = [
+	'belowName', 'list', 'sidebar',
+	...core.Color.ColorNames.map(n => `sidebar.team.${n}`),
+]
+
 export const SwizzleArgumentValues = [
 	'x', 'xy', 'xz', 'xyz', 'xzy',
 	'y', 'yx', 'yz', 'yxz', 'yzx',

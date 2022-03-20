@@ -1,5 +1,6 @@
-import type * as core from '@spyglassmc/core'
 import type { PairNode } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
+import { JsonStringOptions } from '../parser'
 
 export type JsonNode = JsonObjectNode | JsonArrayNode | JsonStringNode | JsonNumberNode | JsonBooleanNode | JsonNullNode
 export namespace JsonNode {
@@ -43,6 +44,14 @@ export namespace JsonObjectNode {
 	export function is(obj: object): obj is JsonObjectNode {
 		return (obj as JsonObjectNode).type === 'json:object'
 	}
+
+	export function mock(range: core.RangeLike): JsonObjectNode {
+		return {
+			type: 'json:object',
+			range: core.Range.get(range),
+			children: [],
+		}
+	}
 }
 export type JsonPairNode = PairNode<JsonStringNode, JsonNode>
 export namespace JsonPairNode {
@@ -63,6 +72,14 @@ export namespace JsonArrayNode {
 	export function is(obj: object): obj is JsonArrayNode {
 		return (obj as JsonArrayNode).type === 'json:array'
 	}
+
+	export function mock(range: core.RangeLike): JsonArrayNode {
+		return {
+			type: 'json:array',
+			range: core.Range.get(range),
+			children: [],
+		}
+	}
 }
 
 export interface JsonStringExpectation extends JsonBaseExpectation {
@@ -82,6 +99,13 @@ export namespace JsonStringNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonStringNode {
 		return (obj as JsonStringNode).type === 'json:string'
+	}
+
+	export function mock(range: core.RangeLike): JsonStringNode {
+		return {
+			...core.StringNode.mock(range, JsonStringOptions),
+			type: 'json:string',
+		}
 	}
 }
 

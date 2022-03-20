@@ -104,11 +104,17 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
 	if (node.children?.length) {
 		const completer = ctx.meta.getCompleter(node.children[0].type)
-		// FIXME: Escape quotes/slashes in the result.
+		// FIXME: Escape quotes/slashes in the result. Note that `\`, `$`, and `}` have to be escaped due to TextMate syntax.
 		return completer(node.children[0], ctx)
 	}
 
-	// TODO: Complete quotes.
+	if (node.options.quotes && node.value === '') {
+		return node.options.quotes.map(q => CompletionItem.create(`${q}${q}`, node, {
+			insertText: `${q}$1${q}`,
+			kind: CompletionKind.Value,
+		}))
+	}
+
 	return []
 }
 

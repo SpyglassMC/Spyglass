@@ -1,59 +1,10 @@
 import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import type * as mcf from '@spyglassmc/mcfunction'
-import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, SwizzleArgumentValues } from '../common'
-import { VectorNode } from '../node'
+import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
+import type { EntityNode} from '../node'
+import { IntRangeNode, VectorNode } from '../node'
 import type { ArgumentTreeNode } from '../tree'
-
-/** @deprecated */
-const ParsersToNodes = new Map<core.FullResourceLocation, string>([
-	['brigadier:bool', 'boolean'],
-	['brigadier:double', 'float'],
-	['brigadier:float', 'float'],
-	['brigadier:integer', 'integer'],
-	['brigadier:long', 'long'],
-	['brigadier:string', 'string'],
-	['minecraft:angle', 'mcfunction:coordinate'],
-	['minecraft:block_pos', 'mcfunction:vector'],
-	['minecraft:block_predicate', 'mcfunction:block'],
-	['minecraft:block_state', 'mcfunction:block'],
-	['minecraft:color', 'literal'],
-	['minecraft:column_pos', 'mcfunction:vector'],
-	['minecraft:component', 'json:entry'],
-	['minecraft:dimension', 'resource_location'],
-	['minecraft:entity', 'mcfunction:entity'],
-	['minecraft:entity_anchor', 'literal'],
-	['minecraft:entity_summon', 'resource_location'],
-	['minecraft:float_range', 'mcfunction:float_range'],
-	['minecraft:function', 'resource_location'],
-	['minecraft:game_profile', 'mcfunction:entity'],
-	['minecraft:int_range', 'mcfunction:int_range'],
-	['minecraft:item_enchantment', 'resource_location'],
-	['minecraft:item_predicate', 'mcfunction:item'],
-	['minecraft:item_slot', 'literal'],
-	['minecraft:item_stack', 'mcfunction:item'],
-	['minecraft:message', 'mcfunction:message'],
-	['minecraft:mob_effect', 'resource_location'],
-	['minecraft:nbt_compound_tag', 'nbt:compound'],
-	['minecraft:nbt_path', 'nbt:path'],
-	['minecraft:nbt_tag', 'nbt:entry'],
-	['minecraft:objective', 'symbol'],
-	['minecraft:objective_criteria', ''], // TODO
-	['minecraft:operation', 'literal'],
-	['minecraft:particle', ''], // TODO
-	['minecraft:resource', 'resource_location'],
-	['minecraft:resource_location', 'resource_location'],
-	['minecraft:resource_or_tag', 'resource_location'],
-	['minecraft:rotation', 'mcfunction:vector'],
-	['minecraft:score_holder', 'mcfunction:score_holder'],
-	['minecraft:scoreboard_slot', 'literal'],
-	['minecraft:swizzle', 'literal'],
-	['minecraft:team', 'symbol'],
-	['minecraft:time', 'mcfunction:time'],
-	['minecraft:uuid', 'mcfunction:uuid'],
-	['minecraft:vec2', 'mcfunction:vector'],
-	['minecraft:vec3', 'mcfunction:vector'],
-	['spyglassmc:tag', 'symbol'],
-])
 
 export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): readonly core.CompletionItem[] => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
@@ -72,11 +23,9 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 		case 'minecraft:uuid':
 			return []
 		case 'brigadier:string':
-			// FIXME ?
-			return [
-				core.CompletionItem.create('""', offset),
-				core.CompletionItem.create("''", offset),
-			]
+			return treeNode.properties.type === 'phrase'
+				? core.completer.string(core.StringNode.mock(offset, core.BrigadierStringOptions), ctx)
+				: []
 		case 'minecraft:angle':
 			// FIXME ?
 			return [core.CompletionItem.create('~', offset)]
@@ -94,6 +43,12 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 				dimension: 2,
 				integersOnly: true,
 			}), ctx)
+		case 'minecraft:component':
+			return [
+				...json.completer.entry(json.JsonArrayNode.mock(offset), ctx),
+				...json.completer.entry(json.JsonObjectNode.mock(offset), ctx),
+				...json.completer.entry(json.JsonStringNode.mock(offset), ctx),
+			]
 		case 'minecraft:dimension':
 			return core.completer.resourceLocation(core.ResourceLocationNode.mock(offset, {
 				category: 'dimension',
@@ -111,8 +66,7 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 				category: 'function',
 			}), ctx)
 		case 'minecraft:int_range':
-			// FIXME ?
-			return [core.CompletionItem.create('-2147483648..2147483647', offset, { kind: core.CompletionKind.Constant })]
+			return intRange(IntRangeNode.mock(offset), ctx)
 		case 'minecraft:item_enchantment':
 			return core.completer.resourceLocation(core.ResourceLocationNode.mock(offset, {
 				category: 'enchantment',
@@ -150,6 +104,10 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 				dimension: 2,
 				noLocal: true,
 			}), ctx)
+		case 'minecraft:scoreboard_slot':
+			return core.completer.literal(core.LiteralNode.mock(offset, {
+				pool: ScoreboardSlotArgumentValues,
+			}), ctx)
 		case 'minecraft:swizzle':
 			return core.completer.literal(core.LiteralNode.mock(offset, {
 				pool: SwizzleArgumentValues,
@@ -174,7 +132,6 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 		//
 		case 'minecraft:block_predicate':
 		case 'minecraft:block_state':
-		case 'minecraft:component':
 		case 'minecraft:entity':
 		case 'minecraft:game_profile':
 		case 'minecraft:item_predicate':
@@ -185,23 +142,35 @@ export const argument: mcf.completer.ArgumentSuggester = (rawTreeNode, ctx): rea
 		case 'minecraft:objective_criteria':
 		case 'minecraft:particle':
 		case 'minecraft:score_holder':
-		case 'minecraft:scoreboard_slot':
 		default:
 			// Unknown parser.
 			return []
 	}
 }
 
+const entity: core.Completer<EntityNode> = (node, ctx) => {
+	return []
+}
+
+const intRange: core.Completer<IntRangeNode> = (node, _ctx) => {
+	return [core.CompletionItem.create('-2147483648..2147483647', node, { kind: core.CompletionKind.Constant })]
+}
+
 const vector: core.Completer<VectorNode> = (node, _ctx) => {
-	const createText = (notation: '~' | '^') => new Array(node.options.dimension).fill(notation).join(' ')
+	const createCompletion = (coordinate: '~' | '^' | '0.0', sortText: string) => core.CompletionItem.create(
+		new Array(node.options.dimension).fill(coordinate).join(' '),
+		node,
+		{ sortText },
+	)
 
-	const ans: string[] = []
-	ans.push(createText('~'))
+	const ans: core.CompletionItem[] = []
+	ans.push(createCompletion('~', 'a'))
 	if (!node.options.noLocal) {
-		ans.push(createText('^'))
+		ans.push(createCompletion('^', 'b'))
 	}
+	ans.push(createCompletion('0.0', 'c'))
 
-	return ans.map(v => core.CompletionItem.create(v, node))
+	return ans
 }
 
 export function register(meta: core.MetaRegistry) {

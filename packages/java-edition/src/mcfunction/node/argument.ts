@@ -142,21 +142,35 @@ export interface FloatRangeNode extends core.AstNode {
 	children: (core.FloatNode | core.LiteralNode)[],
 	value: [number | undefined, number | undefined],
 }
+
 export interface IntRangeNode extends core.AstNode {
 	type: 'mcfunction:int_range',
 	children: (core.IntegerNode | core.LiteralNode)[],
 	value: [number | undefined, number | undefined],
 }
+export namespace IntRangeNode {
+	export function mock(range: core.RangeLike): IntRangeNode {
+		return {
+			type: 'mcfunction:int_range',
+			range: core.Range.get(range),
+			children: [],
+			value: [undefined, undefined],
+		}
+	}
+}
+
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message',
 	children: (core.StringNode | EntitySelectorNode)[],
 }
+
 export interface ScoreHolderNode extends core.AstNode {
 	type: 'mcfunction:score_holder',
 	children: (core.SymbolNode | EntitySelectorNode)[],
 	fakeName?: core.SymbolNode,
 	selector?: EntitySelectorNode,
 }
+
 export interface TimeNode extends core.AstNode {
 	type: 'mcfunction:time',
 	children: (core.FloatNode | core.LiteralNode)[],
@@ -172,6 +186,7 @@ export namespace TimeNode {
 	])
 	export const Units = [...UnitToTicks.keys()]
 }
+
 export interface UuidNode extends core.AstNode {
 	type: 'mcfunction:uuid',
 	bits: [bigint, bigint],

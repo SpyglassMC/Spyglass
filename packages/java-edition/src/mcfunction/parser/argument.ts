@@ -3,7 +3,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
-import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, SwizzleArgumentValues } from '../common'
+import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
 import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
 import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
@@ -165,12 +165,9 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 		case 'minecraft:score_holder':
 			return wrap(scoreHolder(treeNode.properties.amount))
 		case 'minecraft:scoreboard_slot':
-			// `BeLOWnaME` and `sidebar.team.R--.+++e----__d` are also legal slots.
+			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
-			return wrap(core.literal(
-				'belowName', 'list', 'sidebar',
-				...core.Color.ColorNames.map(n => `sidebar.team.${n}`),
-			))
+			return wrap(core.literal(...ScoreboardSlotArgumentValues))
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
