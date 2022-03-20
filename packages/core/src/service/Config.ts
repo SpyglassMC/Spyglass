@@ -303,11 +303,6 @@ export const VanillaConfig: Config = {
 			hover: true,
 			inlayHint: {
 				enabledNodes: [
-					'boolean',
-					'float',
-					'integer',
-					'long',
-					'string',
 					'mcfunction:command_child/unknown',
 				],
 			},
