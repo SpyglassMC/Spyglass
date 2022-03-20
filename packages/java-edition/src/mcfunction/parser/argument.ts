@@ -4,6 +4,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
+import { MajorVersion } from '../../dependency'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
 import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ParticleNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
 import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, ObjectiveCriteriaNode, TimeNode } from '../node'
@@ -38,12 +39,16 @@ const LongMin = -9223372036854775808n
 const FakeNameMaxLength = 40
 const ObjectiveMaxLength = 16
 const PlayerNameMaxLength = 16
+function shouldValidateLength(ctx: core.ParserContext) {
+	const major = ctx.project['loadedVersion'] as MajorVersion | undefined
+	return !major || MajorVersion.cmp(major, '1.18') < 0
+}
 
 /**
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.ArgumentParserGetter = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser | undefined => {
+export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser => core.failOnEmpty<T>(core.stopBefore(parser, '\r', '\n'))
@@ -996,15 +1001,21 @@ const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 }
 
 function validateLength<T extends core.AstNode & { value: string }>(parser: core.InfallibleParser<T>, maxLength: number, localeKey: `${string}.too-long`): core.InfallibleParser<T> {
-	return core.map<T, T>(
-		parser,
-		(res, _src, ctx) => {
-			if (res.value.length > maxLength) {
-				ctx.err.report(localize(localeKey, maxLength), res)
-			}
-			return res
+	return (src, ctx) => {
+		if (!shouldValidateLength(ctx)) {
+			return parser(src, ctx)
 		}
-	)
+
+		return core.map<T, T>(
+			parser,
+			(res, _src, ctx) => {
+				if (res.value.length > maxLength) {
+					ctx.err.report(localize(localeKey, maxLength), res)
+				}
+				return res
+			}
+		)(src, ctx)
+	}
 }
 
 function validateUnquotable(parser: core.InfallibleParser<core.SymbolNode>): core.InfallibleParser<core.SymbolNode> {

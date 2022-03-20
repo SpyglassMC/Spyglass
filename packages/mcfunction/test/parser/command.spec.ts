@@ -37,7 +37,6 @@ describe('mcfunction parser command()', () => {
 			},
 		},
 	}
-	const options = ['advancement', 'tell', 'tellraw']
 	const cases: { content: string }[] = [
 		{ content: '' },
 		{ content: 's' },

@@ -122,7 +122,7 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
 		case 'block': {
 			const nbtNode = getNode(nodes, index + 2)
 			if (nbt.NbtPathNode.is(nbtNode)) {
-				nbt.checker.path('block_entity_type', undefined)(nbtNode, ctx)
+				nbt.checker.path('block', undefined)(nbtNode, ctx)
 			}
 			break
 		}
