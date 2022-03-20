@@ -25,7 +25,6 @@ exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []
@@ -58,7 +57,6 @@ exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []
@@ -91,7 +89,6 @@ exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
         "value": 5
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []

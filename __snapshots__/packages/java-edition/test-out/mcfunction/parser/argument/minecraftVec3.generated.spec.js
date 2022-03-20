@@ -34,7 +34,6 @@ exports['mcfunction argument minecraft:vec3 Parse "0 0 0" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
@@ -76,7 +75,6 @@ exports['mcfunction argument minecraft:vec3 Parse "0.1 -0.5 .9" 1'] = {
         "value": 0.9
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
@@ -118,7 +116,6 @@ exports['mcfunction argument minecraft:vec3 Parse "^ ^ ^" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 1
   },
   "errors": []
@@ -160,7 +157,6 @@ exports['mcfunction argument minecraft:vec3 Parse "^1 ^ ^-5" 1'] = {
         "value": -5
       }
     ],
-    "dimension": 3,
     "system": 1
   },
   "errors": []
@@ -202,7 +198,6 @@ exports['mcfunction argument minecraft:vec3 Parse "~ ~ ~" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
@@ -244,7 +239,6 @@ exports['mcfunction argument minecraft:vec3 Parse "~0.5 ~1 ~-5" 1'] = {
         "value": -5
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []

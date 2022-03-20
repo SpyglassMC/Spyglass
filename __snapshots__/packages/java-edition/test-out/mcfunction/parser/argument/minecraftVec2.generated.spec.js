@@ -25,7 +25,6 @@ exports['mcfunction argument minecraft:vec2 Parse "0 0" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []
@@ -58,7 +57,6 @@ exports['mcfunction argument minecraft:vec2 Parse "0.1 -0.5" 1'] = {
         "value": -0.5
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []
@@ -91,7 +89,6 @@ exports['mcfunction argument minecraft:vec2 Parse "~ ~" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []
@@ -124,7 +121,6 @@ exports['mcfunction argument minecraft:vec2 Parse "~1 ~-2" 1'] = {
         "value": -2
       }
     ],
-    "dimension": 2,
     "system": 0
   },
   "errors": []

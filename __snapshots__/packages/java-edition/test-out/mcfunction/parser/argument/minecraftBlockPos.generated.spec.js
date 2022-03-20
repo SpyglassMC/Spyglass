@@ -34,7 +34,6 @@ exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
@@ -76,7 +75,6 @@ exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": [
@@ -151,7 +149,6 @@ exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 1
   },
   "errors": []
@@ -193,7 +190,6 @@ exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
         "value": -5
       }
     ],
-    "dimension": 3,
     "system": 1
   },
   "errors": []
@@ -235,7 +231,6 @@ exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
         "value": 0
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
@@ -277,7 +272,6 @@ exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
         "value": -5
       }
     ],
-    "dimension": 3,
     "system": 0
   },
   "errors": []
