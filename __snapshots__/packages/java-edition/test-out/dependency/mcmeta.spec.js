@@ -3,15 +3,15 @@ exports['mcmeta getMajorVersion() Should return correctly 1'] = `
 `
 
 exports['mcmeta getMcmetaSummaryUris() Should return correctly for "1.17" (false) from "GitHub" 1'] = {
-  "blocks": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summay/blocks/data.json.gz",
-  "commands": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summay/commands/data.json.gz",
-  "registries": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summay/registries/data.json.gz"
+  "blocks": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summary/blocks/data.json.gz",
+  "commands": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summary/commands/data.json.gz",
+  "registries": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summary/registries/data.json.gz"
 }
 
 exports['mcmeta getMcmetaSummaryUris() Should return correctly for "1.17" (false) from "jsDelivr" 1'] = {
-  "blocks": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summay/blocks/data.json.gz",
-  "commands": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summay/commands/data.json.gz",
-  "registries": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summay/registries/data.json.gz"
+  "blocks": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summary/blocks/data.json.gz",
+  "commands": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summary/commands/data.json.gz",
+  "registries": "https://cdn.jsdelivr.net/gh/misode/mcmeta@1.17-summary/registries/data.json.gz"
 }
 
 exports['mcmeta getMcmetaSummaryUris() Should return correctly for "22w03a" (true) from "GitHub" 1'] = {

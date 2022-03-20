@@ -50,7 +50,7 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 }
 
 export function getMcmetaSummaryUris(version: string, isLatest: boolean, source: string): { blocks: core.RemoteUriString, commands: core.RemoteUriString, registries: core.RemoteUriString } {
-	const tag = isLatest ? 'summary' : `${version}-summay`
+	const tag = isLatest ? 'summary' : `${version}-summary`
 
 	function getUri(path: string): core.RemoteUriString {
 		return source.toLowerCase() === 'jsdelivr'
