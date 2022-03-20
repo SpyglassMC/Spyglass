@@ -18,7 +18,7 @@ export const dispatch: Completer<AstNode> = (root, ctx) => {
 		if (node && ctx.meta.hasCompleter(node.type)) {
 			return ctx.meta.getCompleter(node.type)(node, ctx)
 		}
-		node = AstNode.findChild(root, ctx.offset, true)
+		node = AstNode.findChild(node, ctx.offset, true)
 	}
 	return []
 }
