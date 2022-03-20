@@ -3,7 +3,7 @@ exports['mcfunction argument minecraft:rotation Parse "0 0" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 3
     },
     "children": [
       {
@@ -35,7 +35,7 @@ exports['mcfunction argument minecraft:rotation Parse "~ ~" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 3
     },
     "children": [
       {
@@ -67,7 +67,7 @@ exports['mcfunction argument minecraft:rotation Parse "~-5 ~5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 6
     },
     "children": [
       {

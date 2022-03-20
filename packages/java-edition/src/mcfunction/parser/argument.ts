@@ -1,11 +1,12 @@
 import * as core from '@spyglassmc/core'
+import { sequence } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
-import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
-import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, TimeNode } from '../node'
+import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ParticleNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
+import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, ObjectiveCriteriaNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
 
 const IntegerPattern = /^-?\d+$/
@@ -42,7 +43,7 @@ const PlayerNameMaxLength = 16
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser | undefined => {
+export const argument: mcf.ArgumentParserGetter = (rawTreeNode: mcf.ArgumentTreeNode): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser => core.failOnEmpty<T>(core.stopBefore(parser, '\r', '\n'))
@@ -144,11 +145,15 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 				? treeNode.properties?.usageType
 				: undefined
 			))
+		case 'minecraft:objective_criteria':
+			return wrap(objectiveCriteria)
 		case 'minecraft:operation':
 			return wrap(core.literal({
 				pool: OperationArgumentValues,
 				colorTokenType: 'operator',
 			}))
+		case 'minecraft:particle':
+			return wrap(particle)
 		case 'minecraft:resource':
 		case 'minecraft:resource_or_tag':
 			return wrap(core.resourceLocation({
@@ -185,8 +190,6 @@ export const argument: mcf.parser.ArgumentParserGetter = (rawTreeNode: mcf.Argum
 			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:tag':
 			return wrap(tag())
-		case 'minecraft:objective_criteria':
-		case 'minecraft:particle':
 		default:
 			// Unknown parser.
 			return undefined
@@ -384,6 +387,41 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 
 	return ans
 }
+
+const particle: core.InfallibleParser<ParticleNode> = (() => {
+	type CN = Exclude<ParticleNode['children'], undefined>[number]
+	const sep = core.map(mcf.sep, () => [])
+	const vec = vector({ dimension: 3 })
+	const map = new Map<string, core.InfallibleParser<CN | core.SequenceUtil<CN>>>([
+		['block', blockState],
+		['block_marker', blockState],
+		['dust', sequence([vec, float()], sep)],
+		['dust_color_transition', sequence([vec, float(), vec], sep)],
+		['falling_dust', blockState],
+		['item', itemStack],
+		['sculk_charge', float()],
+		['vibration', sequence([vec, vec, integer()], sep)],
+	])
+	return core.map(
+		sequence([
+			core.resourceLocation({ category: 'particle_type' }),
+			{
+				get: res => {
+					return map.get(core.ResourceLocationNode.toString(res.children[0] as core.ResourceLocationNode, 'short'))
+				},
+			},
+		], sep),
+		res => {
+			const ans: ParticleNode = {
+				type: 'mcfunction:particle',
+				range: res.range,
+				children: res.children,
+				id: res.children.find(core.ResourceLocationNode.is)!,
+			}
+			return ans
+		}
+	)
+})()
 
 function range(type: 'float', min?: number, max?: number, cycleable?: boolean): core.Parser<FloatRangeNode>
 function range(type: 'integer', min?: number, max?: number, cycleable?: boolean): core.Parser<IntRangeNode>
@@ -851,6 +889,39 @@ function objective(usageType?: core.SymbolUsageType, terminators: string[] = [])
 	)
 }
 
+const objectiveCriteria: core.InfallibleParser<ObjectiveCriteriaNode> = core.map(
+	core.any([
+		core.sequence([
+			core.stopBefore(core.resourceLocation({ category: 'stat_type', namespacePathSep: '.' }), ':'),
+			core.failOnEmpty(core.literal(':')),
+			{
+				get: res => {
+					if (core.ResourceLocationNode.is(res.children[0])) {
+						const category = ObjectiveCriteriaNode.ComplexCategories.get(core.ResourceLocationNode.toString(res.children[0], 'short'))
+						if (category) {
+							return core.resourceLocation({ category, namespacePathSep: '.' })
+						}
+					}
+					return core.resourceLocation({ pool: [], allowUnknown: true, namespacePathSep: '.' })
+				},
+			},
+		]),
+		core.literal(...ObjectiveCriteriaNode.SimpleValues),
+	]),
+	res => {
+		const ans: ObjectiveCriteriaNode = {
+			type: 'mcfunction:objective_criteria',
+			range: res.range,
+		}
+		if (core.LiteralNode.is(res)) {
+			ans.simpleValue = res.value
+		} else {
+			ans.children = res.children.filter(core.ResourceLocationNode.is) as typeof ans['children']
+		}
+		return ans
+	}
+)
+
 export function tag(terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
 	return unquotableSymbol('tag', terminators)
 }
@@ -964,7 +1035,7 @@ function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> 
 
 		for (let i = 0; i < options.dimension; i++) {
 			if (i > 0) {
-				mcf.parser.sep(src, ctx)
+				mcf.sep(src, ctx)
 			}
 			const coord = options.integersOnly ? coordinate(options.integersOnly)(src, ctx) : coordinate(options.integersOnly)(src, ctx)
 			ans.children.push(coord as never)
@@ -977,6 +1048,8 @@ function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> 
 		if (options.noLocal && ans.system === CoordinateSystem.Local) {
 			ctx.err.report(localize('mcfunction.parser.vector.local-disallowed'), ans)
 		}
+
+		ans.range.end = src.cursor
 
 		return ans
 	}

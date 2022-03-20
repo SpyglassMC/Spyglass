@@ -9,6 +9,7 @@ export type ResourceLocationOptions = {
 	accessType?: SymbolAccessType,
 	isPredicate?: boolean,
 	usageType?: SymbolUsageType,
+	namespacePathSep?: ':' | '.',
 } & ({
 	category: ResourceLocationCategory,
 	pool?: undefined,

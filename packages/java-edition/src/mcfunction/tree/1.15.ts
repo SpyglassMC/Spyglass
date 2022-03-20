@@ -413,6 +413,7 @@ export const Tree1_15: PartialRootTreeNode = {
 						add: {
 							children: {
 								objective: {
+									parser: 'minecraft:objective',
 									properties: {
 										usageType: 'definition',
 									},

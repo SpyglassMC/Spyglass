@@ -5,7 +5,7 @@ import { CommandArgumentTestSuites } from './_suites'
 // Generates test files for each command argument parser with test suites from `./suites.ts`.
 // It is super laggy to have a giant 80k-line snapshot file, hence why we separated the tests to multiple files.
 
-const ShouldGenerate = true // Prevent from mis-triggering.
+const ShouldGenerate = false // Prevent from mis-triggering.
 
 const ProduceExtraChildren = [
 	'minecraft:block_predicate',

@@ -1,8 +1,8 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { CommandChildNode, CommandNode, LiteralCommandChildNode, TrailingCommandChildNode, UnknownCommandChildNode } from '../node'
-import { categorizeTreeChildren, redirect, resolveParentTreeNode } from '../tree'
-import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from '../tree/type'
+import { categorizeTreeChildren, resolveParentTreeNode } from '../tree'
+import type { ArgumentTreeNode, RootTreeNode, TreeNode } from '../tree/type'
 import type { ArgumentParserGetter } from './argument'
 import { argumentTreeNodeToString } from './argument'
 import { sep } from './common'
@@ -149,7 +149,7 @@ const trailing: core.InfallibleParser<TrailingCommandChildNode> = (src, ctx): Tr
 	const start = src.cursor
 	const value = src.readUntilLineEnd()
 	const range = core.Range.create(start, src)
-	ctx.err.report(localize('mcfunction.parser.trailing'), range)
+	ctx.err.report(localize('mcfunction.parser.trailing', localeQuote(value)), range)
 	return {
 		type: 'mcfunction:command_child/trailing',
 		range,

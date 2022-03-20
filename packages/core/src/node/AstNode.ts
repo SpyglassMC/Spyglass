@@ -46,7 +46,7 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
+	export function findChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): Exclude<N['children'], undefined>[number] | undefined {
 		return node.children?.[findChildIndex(node, needle, endInclusive)] as any
 	}
 

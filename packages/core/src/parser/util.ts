@@ -55,8 +55,8 @@ export function attempt<N extends Returnable = AstNode>(parser: Parser<N>, src: 
 	}
 }
 
-type SP<CN extends AstNode> = SIP<CN> | Parser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | undefined> }
-type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | undefined> }
+type SP<CN extends AstNode> = SIP<CN> | Parser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | undefined> | undefined }
+type SIP<CN extends AstNode> = InfallibleParser<CN | SequenceUtil<CN> | undefined> | { get: (result: SequenceUtil<CN>) => InfallibleParser<CN | SequenceUtil<CN> | undefined> | undefined }
 /**
  * @template GN Gap node.
  * @template PA Parser array.
@@ -77,12 +77,17 @@ export function sequence(parsers: SP<AstNode>[], parseGap?: InfallibleParser<Ast
 			range: Range.create(src),
 		}
 
-		for (const parser of parsers) {
-			if (parseGap) {
+		for (const [i, p] of parsers.entries()) {
+			const parser = typeof p === 'function' ? p : p.get(ans)
+			if (parser === undefined) {
+				continue
+			}
+
+			if (i > 0 && parseGap) {
 				ans.children.push(...parseGap(src, ctx))
 			}
 
-			const result = (typeof parser === 'function' ? parser : parser.get(ans))(src, ctx)
+			const result = parser(src, ctx)
 			if (result === Failure) {
 				return Failure
 			} else if (result === undefined) {

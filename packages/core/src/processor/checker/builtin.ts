@@ -1,11 +1,9 @@
-import { localeQuote, localize } from '../../../../locales/lib'
-import { ResourceLocation } from '../../common'
+import { localize } from '../../../../locales/lib'
 import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { ResourceLocationNode } from '../../node'
 import type { CheckerContext, MetaRegistry } from '../../service'
 import { ErrorReporter, Operations } from '../../service'
 import { ErrorSeverity } from '../../source'
-import { SymbolAccessType } from '../../symbol'
 import { traversePreOrder } from '../util'
 import type { Checker, SyncChecker } from './Checker'
 
@@ -96,27 +94,4 @@ export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
 export function registerCheckers(meta: MetaRegistry) {
 	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerChecker<SymbolNode>('symbol', symbol)
-}
-
-/**
- * @param ids An array of block/fluid IDs, with or without the namespace.
- * @returns A map from state names to the corresponding sets of values.
- */
-export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: CheckerContext): Record<string, readonly string[]> {
-	const ans: Record<string, string[]> = {}
-	ids = ids.map(ResourceLocation.lengthen)
-	for (const id of ids) {
-		ctx.symbols
-			.query(ctx.doc, category, id)
-			.forEachMember((state, stateQuery) => {
-				const values = Object.keys(stateQuery.visibleMembers)
-				const arr = ans[state] ??= []
-				for (const value of values) {
-					if (!arr.includes(value)) {
-						arr.push(value)
-					}
-				}
-			})
-	}
-	return ans
 }

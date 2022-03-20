@@ -69,7 +69,7 @@ export function definition(identifier: `::${string}::${string}`, options: Option
 
 export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
-		const states = core.checker.getStates('block', blocks, ctx)
+		const states = core.getStates('block', blocks, ctx)
 		for (const { key: keyNode, value: valueNode } of node.children) {
 			if (!keyNode || !valueNode) {
 				continue
@@ -85,7 +85,7 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 
 			if (Object.keys(states).includes(keyNode.value)) {
 				// The current state exists. Check the value.
-				const stateValues = states[keyNode.value]
+				const stateValues = states[keyNode.value]!
 				if (!stateValues.includes(valueNode.value.toString())) {
 					ctx.err.report(localize('expected-got', stateValues, localeQuote(valueNode.value.toString())), valueNode, core.ErrorSeverity.Warning)
 				}

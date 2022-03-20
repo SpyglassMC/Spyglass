@@ -63,6 +63,7 @@ export const ColorTokenTypes = Object.freeze([
 	'literal',
 	'operator',
 	'resourceLocation',
+	'vector',
 ] as const)
 export type ColorTokenType = typeof ColorTokenTypes[number]
 

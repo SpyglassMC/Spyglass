@@ -77,13 +77,13 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNo
 		if (!treeNode) {
 			break
 		}
-		current.push(mcf.parser.treeNodeToString(name, treeNode))
+		current.push(mcf.treeNodeToString(name, treeNode))
 	}
 
 	if (treeNode) {
 		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
 		if (treeNode?.children) {
-			return mcf.parser.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map(v => [...current, v])
+			return mcf.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map(v => [...current, v])
 		}
 	}
 

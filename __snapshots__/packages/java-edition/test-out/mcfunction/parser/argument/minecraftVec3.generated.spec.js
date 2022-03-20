@@ -3,7 +3,7 @@ exports['mcfunction argument minecraft:vec3 Parse "0 0 0" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -44,7 +44,7 @@ exports['mcfunction argument minecraft:vec3 Parse "0.1 -0.5 .9" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 11
     },
     "children": [
       {
@@ -85,7 +85,7 @@ exports['mcfunction argument minecraft:vec3 Parse "^ ^ ^" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -126,7 +126,7 @@ exports['mcfunction argument minecraft:vec3 Parse "^1 ^ ^-5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 8
     },
     "children": [
       {
@@ -167,7 +167,7 @@ exports['mcfunction argument minecraft:vec3 Parse "~ ~ ~" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -208,7 +208,7 @@ exports['mcfunction argument minecraft:vec3 Parse "~0.5 ~1 ~-5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 11
     },
     "children": [
       {

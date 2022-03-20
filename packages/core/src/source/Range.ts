@@ -76,7 +76,8 @@ export namespace Range {
 		return `[${range.start}, ${range.end})`
 	}
 
-	export function contains(range: Range, offset: number, endInclusive = false): boolean {
+	export function contains(range: RangeLike, offset: number, endInclusive = false): boolean {
+		range = get(range)
 		return range.start <= offset && (endInclusive ? offset <= range.end : offset < range.end)
 	}
 
@@ -121,6 +122,19 @@ export namespace Range {
 			return 1
 		} else {
 			return 0
+		}
+	}
+
+	/**
+	 * @param startOffset The number to offset the start of the `range`.
+	 * @param endOffset The number to offset the end of the `range`. Default: `startOffset`.
+	 * @returns A copy of `range`.
+	 */
+	export function translate(range: RangeLike, startOffset: number, endOffset = startOffset): Range {
+		range = get(range)
+		return {
+			start: range.start + startOffset,
+			end: range.end + endOffset,
 		}
 	}
 }

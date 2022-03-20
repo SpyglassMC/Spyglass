@@ -28,7 +28,7 @@ export function blockStateMap({ category, id, ids, tag, mixedTypes, requireAll }
 			)(node, ctx)
 			return
 		}
-		const states = core.checker.getStates(category ?? 'block', ids, ctx)
+		const states = core.getStates(category ?? 'block', ids, ctx)
 		object(
 			Object.keys(states),
 			(state) => {
@@ -60,7 +60,7 @@ export function blockStateList({ category, id, ids, tag }: Options): JsonChecker
 			listOf(simpleString)(node, ctx)
 			return
 		}
-		const states = core.checker.getStates(category ?? 'block', ids, ctx)
+		const states = core.getStates(category ?? 'block', ids, ctx)
 		listOf(literal(Object.keys(states)))(node, ctx)
 	}
 }

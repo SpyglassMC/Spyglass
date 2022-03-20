@@ -4,30 +4,30 @@ import { CommandNode } from '../node'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree'
 import { categorizeTreeChildren, CommandTreeRegistry, redirect, resolveParentTreeNode } from '../tree'
 
-export type ArgumentSuggester = (treeNode: ArgumentTreeNode, ctx: core.CompleterContext) => readonly core.CompletionItem[]
+export type MockNodesGetter = (treeNode: ArgumentTreeNode, range: core.RangeLike) => core.Arrayable<core.AstNode>
 
 /**
- * @param parsersToNodes A map from Minecraft command argument parser IDs (e.g. `brigadier:boolean`) to Spyglass AST node
- * types (e.g. `boolean`).
+ * @param getMockNodes A function that returns a mock AST Node from given {@link ArgumentTreeNode}. These mock nodes
+ * will be used for completing the argument.
  */
-export function entry(commandTreeName: string, argument: ArgumentSuggester): core.Completer<McfunctionNode> {
+export function entry(commandTreeName: string, getMockNodes: MockNodesGetter): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
 		const tree = CommandTreeRegistry.instance.get(commandTreeName)
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
 		if (core.CommentNode.is(childNode)) {
 			return []
 		} else {
-			return command(tree, argument)(childNode ?? CommandNode.mock(ctx.offset), ctx)
+			return command(tree, getMockNodes)(childNode ?? CommandNode.mock(ctx.offset), ctx)
 		}
 	}
 }
 
-export function command(tree: RootTreeNode, argument: ArgumentSuggester): core.Completer<CommandNode> {
+export function command(tree: RootTreeNode, getMockNodes: MockNodesGetter): core.Completer<CommandNode> {
 	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
 		const selectedChildNode: core.AstNode | undefined = node.children[index]?.children[0]
 		if (selectedChildNode) {
-			return core.completer.fallback(selectedChildNode, ctx)
+			return core.completer.dispatch(selectedChildNode, ctx)
 		}
 
 		const lastChildNode = core.AstNode.findLastChild(node, ctx.offset)
@@ -43,19 +43,16 @@ export function command(tree: RootTreeNode, argument: ArgumentSuggester): core.C
 			return []
 		}
 
-		const ans: core.CompletionItem[] = []
 		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(parentTreeNode.children)
-		ans.push(
+
+		return [
 			...literalTreeNodes.map(
 				([name]) => core.CompletionItem.create(name, ctx.offset, { kind: core.CompletionKind.Keyword })
 			),
-			...argumentTreeNodes.map(
-				([_name, treeNode]) => {
-					return argument(treeNode, ctx)
-				}
-			).flat()
-		)
-
-		return ans
+			...argumentTreeNodes.flatMap(
+				([_name, treeNode]) => core.Arrayable.toArray(getMockNodes(treeNode, ctx.offset))
+					.flatMap(n => core.completer.dispatch(n, ctx))
+			),
+		]
 	}
 }

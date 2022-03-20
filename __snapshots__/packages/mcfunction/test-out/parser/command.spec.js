@@ -413,7 +413,7 @@ exports['mcfunction parser command() Parse "say hi garbage text" 1'] = {
         "start": 7,
         "end": 19
       },
-      "message": "Trailing data encountered",
+      "message": "Trailing data encountered: “garbage text”",
       "severity": 3
     }
   ]

@@ -163,12 +163,34 @@ export const CommandArgumentTestSuites: Partial<Record<ArgumentTreeNode['parser'
 	'minecraft:objective': [
 		{ content: ['foo', '012'] },
 	],
+	'minecraft:objective_criteria': [
+		{ content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'] },
+	],
 	'minecraft:operation': [
 		{ content: ['=', '>', '<'] },
+	],
+	'minecraft:particle': [
+		{
+			content: [
+				'block stone',
+				'cloud',
+				'dust 0.2 0.4 0.6 0.8',
+				'dust_color_transition 0.1 0.2 0.3 0.4 0.5 0.6 0.7',
+				'item carrot_on_a_stick',
+				'sculk_charge 4.2',
+				'vibration 0.1 0.2 0.3 0.4 0.5 0.6 40',
+			],
+		},
+	],
+	'minecraft:resource': [
+		{ properties: { registry: 'bossbar' }, content: ['foo', 'foo:bar', '012'] },
 	],
 	'minecraft:resource_location': [
 		{ content: ['foo', 'foo:bar', '012'] },
 		{ properties: { category: 'bossbar' }, content: ['foo', 'foo:bar', '012'] },
+	],
+	'minecraft:resource_or_tag': [
+		{ properties: { registry: 'bossbar' }, content: ['foo', 'foo:bar', '012', '#skeletons', '#minecraft:skeletons'] },
 	],
 	'minecraft:rotation': [
 		{ content: ['0 0', '~ ~', '~-5 ~5'] },

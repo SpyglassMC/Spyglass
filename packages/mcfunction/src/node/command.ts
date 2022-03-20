@@ -27,6 +27,11 @@ export interface CommandChildNode extends core.AstNode {
 	path: string[],
 	children: [core.AstNode],
 }
+export namespace CommandChildNode {
+	export function is(node: core.AstNode): node is CommandChildNode {
+		return (node as CommandChildNode).type === 'mcfunction:command_child'
+	}
+}
 
 export interface TrailingCommandChildNode extends core.AstNode {
 	type: 'mcfunction:command_child/trailing',
@@ -41,9 +46,8 @@ export interface UnknownCommandChildNode extends core.AstNode {
 export interface LiteralCommandChildNode extends core.LiteralBaseNode {
 	type: 'mcfunction:command_child/literal',
 }
-export namespace CommandChildNode {
-	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is CommandChildNode {
-		return (node as CommandChildNode).type === 'mcfunction:command_child'
+export namespace LiteralCommandChildNode {
+	export function is(node: core.AstNode | undefined): node is LiteralCommandChildNode {
+		return (node as LiteralCommandChildNode | undefined)?.type === 'mcfunction:command_child/literal'
 	}
 }

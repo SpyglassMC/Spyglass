@@ -3,7 +3,7 @@ exports['mcfunction argument minecraft:block_pos Parse "0 0 0" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -44,7 +44,7 @@ exports['mcfunction argument minecraft:block_pos Parse "0.5 0 0.5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 1
     },
     "children": [
       {
@@ -118,7 +118,7 @@ exports['mcfunction argument minecraft:block_pos Parse "^ ^ ^" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -159,7 +159,7 @@ exports['mcfunction argument minecraft:block_pos Parse "^1 ^ ^-5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 8
     },
     "children": [
       {
@@ -200,7 +200,7 @@ exports['mcfunction argument minecraft:block_pos Parse "~ ~ ~" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 5
     },
     "children": [
       {
@@ -241,7 +241,7 @@ exports['mcfunction argument minecraft:block_pos Parse "~0.5 ~1 ~-5" 1'] = {
     "type": "mcfunction:vector",
     "range": {
       "start": 0,
-      "end": 0
+      "end": 11
     },
     "children": [
       {

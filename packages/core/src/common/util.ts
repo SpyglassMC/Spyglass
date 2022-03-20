@@ -3,7 +3,7 @@ import rfdc from 'rfdc'
 import type { URL as Uri } from 'url'
 import { promisify } from 'util'
 import zlib from 'zlib'
-import type { RootUriString } from '../service'
+import type { ProcessorContext, RootUriString } from '../service'
 
 export { URL as Uri } from 'url'
 
@@ -269,4 +269,27 @@ export namespace Lazy {
 	export function resolve<T>(lazy: Lazy<T>): T {
 		return isUnresolved(lazy) ? (lazy as ResolvedLazy<T>).value = lazy.getter() : lazy
 	}
+}
+
+/**
+ * @param ids An array of block/fluid IDs, with or without the namespace.
+ * @returns A map from state names to the corresponding sets of values.
+ */
+export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: ProcessorContext): Record<string, readonly string[] | undefined> {
+	const ans: Record<string, string[]> = {}
+	ids = ids.map(ResourceLocation.lengthen)
+	for (const id of ids) {
+		ctx.symbols
+			.query(ctx.doc, category, id)
+			.forEachMember((state, stateQuery) => {
+				const values = Object.keys(stateQuery.visibleMembers)
+				const arr = ans[state] ??= []
+				for (const value of values) {
+					if (!arr.includes(value)) {
+						arr.push(value)
+					}
+				}
+			})
+	}
+	return ans
 }

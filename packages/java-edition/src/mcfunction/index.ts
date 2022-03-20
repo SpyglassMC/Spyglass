@@ -32,8 +32,8 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.parser.entry(majorVersion, parser.argument),
-		completer: mcf.completer.entry(majorVersion, completer.argument),
+		parser: mcf.entry(majorVersion, parser.argument),
+		completer: mcf.completer.entry(majorVersion, completer.getMockNodes),
 		triggerCharacters: [' ', '[', '=', '!', ',', '{', ':', '/', '.', '"', "'"],
 	})
 
@@ -43,7 +43,7 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 	// TODO: Uncomment in `SpecialStrings` in `nbtdocUtil.ts` as well.
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())
-	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.parser.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
+	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))
 
 	checker.register(meta)
 	colorizer.register(meta)

@@ -8,7 +8,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument'
 import { Categories } from '../../../lib/binder'
 import { Checkers } from '../../../lib/json/checker/data'
 
-describe('Check vanilla files', async () => {
+describe.skip('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
 	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
 

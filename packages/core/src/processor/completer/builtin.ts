@@ -1,29 +1,28 @@
 import { ResourceLocation } from '../../common'
-import type { AstNode, CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import { AstNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
 import type { MetaRegistry } from '../../service'
 import { LinterConfigValue } from '../../service'
 import type { TagFileCategory } from '../../symbol'
 import type { ColorTokenType } from '../colorizer'
-import { selectedNode } from '../util'
 import type { Completer } from './Completer'
 import { CompletionItem, CompletionKind } from './Completer'
 
 /**
  * Uses the shallowest selected node that has its own completer to provide the completion items.
  */
-export const fallback: Completer<AstNode> = (root, ctx) => {
-	const { parents } = selectedNode(root, ctx.offset, true)
-	parents.unshift(root)
-	for (let i = parents.length - 1; i >= 0; i--) {
-		const node = parents[i]
-		if (ctx.meta.hasCompleter(node.type)) {
-			const completer = ctx.meta.getCompleter(node.type)
-			return completer(node, ctx)
+export const dispatch: Completer<AstNode> = (root, ctx) => {
+	let node: AstNode | undefined = root
+	while (node) {
+		if (node && ctx.meta.hasCompleter(node.type)) {
+			return ctx.meta.getCompleter(node.type)(node, ctx)
 		}
+		node = AstNode.findChild(root, ctx.offset, true)
 	}
 	return []
 }
+export const fallback = dispatch
 
 export const boolean: Completer<BooleanBaseNode> = (node, ctx) => {
 	return [
@@ -61,11 +60,9 @@ export const noop: Completer<any> = () => []
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
 
-	const lengthBeforeCursor = ctx.offset - node.range.start
-
-	const isEmptyNamespace = lengthBeforeCursor > 0 && node.namespace === ''
-	const includeDefaultNamespace = node.options.isPredicate || (!isEmptyNamespace && config?.ruleValue !== true)
-	const excludeDefaultNamespace = !node.options.isPredicate && !isEmptyNamespace && config?.ruleValue !== false
+	const includeEmptyNamespace = !node.options.isPredicate && node.namespace === ''
+	const includeDefaultNamespace = node.options.isPredicate || config?.ruleValue !== true
+	const excludeDefaultNamespace = !node.options.isPredicate && config?.ruleValue !== false
 
 	const getPool = (category: string) => optimizePool(Object.keys(ctx.symbols.getVisibleSymbols(ctx.doc.uri, category)))
 	const optimizePool = (pool: string[]) => {
@@ -79,12 +76,16 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 				otherIds.push(id)
 			}
 		}
-		return [
+		const ans = [
 			...otherIds,
 			...includeDefaultNamespace ? defaultNsIds : [],
 			...excludeDefaultNamespace ? defaultNsIds.map(id => id.slice(defaultNsPrefix.length)) : [],
-			...isEmptyNamespace ? defaultNsIds.map(id => id.slice(ResourceLocation.DefaultNamespace.length)) : [],
+			...includeEmptyNamespace ? defaultNsIds.map(id => id.slice(ResourceLocation.DefaultNamespace.length)) : [],
 		]
+		if (node.options.namespacePathSep === '.') {
+			return ans.map(v => v.replace(ResourceLocation.NamespacePathSep, '.'))
+		}
+		return ans
 	}
 
 	const pool = node.options.pool
@@ -99,7 +100,6 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 
 	return pool.map(v => CompletionItem.create(v, node, { kind: CompletionKind.Function }))
 }
-
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
 	if (node.children?.length) {

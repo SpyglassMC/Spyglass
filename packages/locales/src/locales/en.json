@@ -69,7 +69,7 @@
   "mcfunction.parser.range.min>max": "The minimum value %0% is larger than the maximum value %1%",
   "mcfunction.parser.score_holder.fake-name.too-long": "Fake names cannot be longer than %0% characters",
   "mcfunction.parser.sep": "a space (%0%)",
-  "mcfunction.parser.trailing": "Trailing data encountered",
+  "mcfunction.parser.trailing": "Trailing data encountered: %0%",
   "mcfunction.parser.unknown-parser": "Parser %0% hasn't been supported yet",
   "mcfunction.parser.uuid.invalid": "Invalid UUID format",
   "mcfunction.parser.vector.local-disallowed": "Local coordinates disallowed",

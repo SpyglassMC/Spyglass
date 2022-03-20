@@ -6,10 +6,12 @@ import type { Source } from '../source'
 import { Range } from '../source'
 import type { InfallibleParser } from './Parser'
 
-const AcceptableCharacter = /^[_\-a-z0-9:/.]$/i
-const Pattern = /^(?:[_\-a-z0-9.]*:)?[_\-a-z0-9/.]*$/g
-const IllegalNamespacePattern = /[^_\-a-z0-9.]/g
-const IllegalPathPattern = /[^_\-a-z0-9/.]/g
+const Terminators = new Set([' ', '\r', '\n', '=', ',', '"', "'", '{', '}', '[', ']', '(', ')', ';'])
+const LegalCharacters = new Set([
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-', '.',
+])
 
 export function resourceLocation(options: ResourceLocationOptions): InfallibleParser<ResourceLocationNode> {
 	return (src: Source, ctx: ParserContext): ResourceLocationNode => {
@@ -24,7 +26,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 		}
 
 		const start = src.cursor
-		while (src.canReadInLine() && src.peek().match(AcceptableCharacter)) {
+		while (src.canReadInLine() && !Terminators.has(src.peek())) {
 			src.skip()
 		}
 		const raw = src.sliceToCursor(start)
@@ -33,7 +35,7 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 		if (raw.length === 0) {
 			ctx.err.report(localize('expected', localize('resource-location')), ans)
 		} else {
-			const sepIndex = raw.indexOf(ResourceLocation.NamespacePathSep)
+			const sepIndex = raw.indexOf(options.namespacePathSep ?? ResourceLocation.NamespacePathSep)
 			if (sepIndex >= 0) {
 				ans.namespace = raw.slice(0, sepIndex)
 			}
@@ -41,13 +43,13 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			ans.path = rawPath.split(ResourceLocation.PathSep)
 
 			// Check characters.
-			if (!raw.match(Pattern)) {
-				/* istanbul ignore next */
-				const chars = [...new Set([
-					...ans.namespace?.matchAll(IllegalNamespacePattern) ?? [],
-					...rawPath.matchAll(IllegalPathPattern),
-				].map(v => v[0]))]
-				ctx.err.report(localize('parser.resource-location.illegal', arrayToMessage(chars, true, 'and')), ans)
+			/* istanbul ignore next */
+			const illegalChars = [...new Set([
+				...[...ans.namespace ?? []].filter(c => !LegalCharacters.has(c)),
+				...[...rawPath].filter(c => c !== '/' && !LegalCharacters.has(c)),
+			])]
+			if (illegalChars.length) {
+				ctx.err.report(localize('parser.resource-location.illegal', arrayToMessage(illegalChars, true, 'and')), ans)
 			}
 
 			if (ans.isTag && !options.allowTag) {
@@ -59,8 +61,12 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			}
 
 			if (options.category) {
+				const fullRaw = ResourceLocation.lengthen(options.namespacePathSep === '.'
+					? raw.replace('.', ResourceLocation.NamespacePathSep)
+					: raw
+				)
 				ctx.symbols
-					.query(ctx.doc, ans.isTag ? `tag/${options.category}` : options.category, ResourceLocation.lengthen(raw))
+					.query(ctx.doc, ans.isTag ? `tag/${options.category}` : options.category, fullRaw)
 					.enter({ usage: { type: options.usageType, node: ans, accessType: options.accessType } })
 			}
 		}

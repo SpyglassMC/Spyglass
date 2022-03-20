@@ -4,14 +4,13 @@ import * as json from '@spyglassmc/json'
 /**
  * @returns An array of URIs corresponding to the specified resource.
  */
-export function getUris(category: core.FileCategory, id: string, ctx: core.CheckerContext): readonly string[] {
+export function getUris(category: core.FileCategory, id: string, ctx: core.ProcessorContext): readonly string[] {
 	return ctx.symbols
 		.query(ctx.doc, category, core.ResourceLocation.lengthen(id))
 		.symbol?.definition?.map(v => v.uri) ?? []
 }
 
-
-export function getTagValues(category: core.TagFileCategory, id: string, ctx: core.CheckerContext): readonly core.FullResourceLocation[] {
+export function getTagValues(category: core.TagFileCategory, id: string, ctx: core.ProcessorContext): readonly core.FullResourceLocation[] {
 	type ValueNode = json.JsonStringNode | json.JsonObjectNode
 	const resolveValueNode = (node: ValueNode): string => json.JsonStringNode.is(node)
 		? node.value

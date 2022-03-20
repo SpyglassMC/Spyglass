@@ -17,6 +17,21 @@ export interface BlockNode extends core.AstNode {
 	states?: BlockStatesNode,
 	nbt?: nbt.NbtCompoundNode,
 }
+export namespace BlockNode {
+	export function is(node: core.AstNode | undefined): node is BlockNode {
+		return (node as BlockNode | undefined)?.type === 'mcfunction:block'
+	}
+
+	export function mock(range: core.RangeLike, isPredicate: boolean): BlockNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'block', allowTag: isPredicate })
+		return {
+			type: 'mcfunction:block',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+		}
+	}
+}
 
 export const CoordinateNotations = ['', '~', '^'] as const
 export type CoordinateNodeNotation = typeof CoordinateNotations[number]
@@ -26,6 +41,15 @@ export interface CoordinateNode extends core.FloatBaseNode {
 	notation: CoordinateNodeNotation,
 }
 export namespace CoordinateNode {
+	export function mock(range: core.RangeLike): CoordinateNode {
+		return {
+			type: 'mcfunction:coordinate',
+			range: core.Range.get(range),
+			notation: '',
+			value: 0,
+		}
+	}
+
 	/**
 	 * @returns A number in the range `[-180.0, 180.0)`.
 	 */
@@ -107,40 +131,28 @@ export namespace EntityNode {
 	}
 }
 
+export interface FloatRangeNode extends core.AstNode {
+	type: 'mcfunction:float_range',
+	children: (core.FloatNode | core.LiteralNode)[],
+	value: [number | undefined, number | undefined],
+}
+
 export interface ItemNode extends core.AstNode {
 	type: 'mcfunction:item',
 	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[],
 	id: core.ResourceLocationNode,
 	nbt?: nbt.NbtCompoundNode,
 }
-
-export interface VectorNode extends core.SequenceNode<CoordinateNode> {
-	type: 'mcfunction:vector',
-	options: VectorNode.Options,
-	system: CoordinateSystem,
-}
-export namespace VectorNode {
-	export interface Options {
-		dimension: 2 | 3,
-		integersOnly?: boolean,
-		noLocal?: boolean,
-	}
-
-	export function mock(range: core.RangeLike, options: Options): VectorNode {
+export namespace ItemNode {
+	export function mock(range: core.RangeLike, isPredicate: boolean): ItemNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'item', allowTag: isPredicate })
 		return {
-			type: 'mcfunction:vector',
+			type: 'mcfunction:item',
 			range: core.Range.get(range),
-			children: [],
-			options,
-			system: CoordinateSystem.World,
+			children: [id],
+			id,
 		}
 	}
-}
-
-export interface FloatRangeNode extends core.AstNode {
-	type: 'mcfunction:float_range',
-	children: (core.FloatNode | core.LiteralNode)[],
-	value: [number | undefined, number | undefined],
 }
 
 export interface IntRangeNode extends core.AstNode {
@@ -162,6 +174,54 @@ export namespace IntRangeNode {
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message',
 	children: (core.StringNode | EntitySelectorNode)[],
+}
+
+export interface ObjectiveCriteriaNode extends core.AstNode {
+	type: 'mcfunction:objective_criteria',
+	children?: [core.ResourceLocationNode, core.ResourceLocationNode],
+	simpleValue?: string,
+}
+export namespace ObjectiveCriteriaNode {
+	export const SimpleValues = [
+		'air', 'armor', 'deathCount', 'dummy', 'food', 'health', 'level',
+		'playerKillCount', 'totalKillCount', 'trigger', 'xp',
+	]
+	export const ComplexCategories = new Map<string, core.RegistryCategory>([
+		['broken', 'item'],
+		['crafted', 'item'],
+		['custom', 'custom_stat'],
+		['dropped', 'item'],
+		['killed', 'entity_type'],
+		['killed_by', 'entity_type'],
+		['mined', 'block'],
+		['picked_up', 'item'],
+		['used', 'item'],
+	])
+	export const ComplexSep = ':'
+
+	export function mock(range: core.RangeLike): ObjectiveCriteriaNode {
+		return {
+			type: 'mcfunction:objective_criteria',
+			range: core.Range.get(range),
+		}
+	}
+}
+
+export interface ParticleNode extends core.AstNode {
+	type: 'mcfunction:particle',
+	children?: (core.FloatNode | core.IntegerNode |core.ResourceLocationNode | BlockNode | ItemNode | VectorNode)[],
+	id: core.ResourceLocationNode,
+}
+export namespace ParticleNode {
+	export function mock(range: core.RangeLike): ParticleNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'particle_type' })
+		return {
+			type: 'mcfunction:particle',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+		}
+	}
 }
 
 export interface ScoreHolderNode extends core.AstNode {
@@ -190,4 +250,27 @@ export namespace TimeNode {
 export interface UuidNode extends core.AstNode {
 	type: 'mcfunction:uuid',
 	bits: [bigint, bigint],
+}
+
+export interface VectorNode extends core.SequenceNode<CoordinateNode> {
+	type: 'mcfunction:vector',
+	options: VectorNode.Options,
+	system: CoordinateSystem,
+}
+export namespace VectorNode {
+	export interface Options {
+		dimension: 2 | 3,
+		integersOnly?: boolean,
+		noLocal?: boolean,
+	}
+
+	export function mock(range: core.RangeLike, options: Options): VectorNode {
+		return {
+			type: 'mcfunction:vector',
+			range: core.Range.get(range),
+			children: [],
+			options,
+			system: CoordinateSystem.World,
+		}
+	}
 }
