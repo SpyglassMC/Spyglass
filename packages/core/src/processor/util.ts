@@ -40,12 +40,15 @@ export function selectedNode(node: AstNode, offset: number, endInclusive = false
 	return ans
 }
 
+/**
+ * @returns The shallowest node that is fully contained within `range`.
+ */
 export function findNode(node: AstNode, range: Range): NodeResult {
 	let ans: NodeResult = { node: undefined, parents: [] }
 	// TODO: Binary search here.
 	traversePreOrder(node,
 		(node) => ans.node === undefined && Range.intersects(node.range, range),
-		(node) => Range.equals(node.range, range),
+		(node) => Range.containsRange(range, node.range),
 		(node, parents) => ans = { node, parents: [...parents] },
 	)
 	return ans

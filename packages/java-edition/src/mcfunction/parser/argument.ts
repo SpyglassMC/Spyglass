@@ -397,10 +397,13 @@ const particle: core.InfallibleParser<ParticleNode> = (() => {
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })
-	const color = core.map(vec, res => ({
+	const color = core.map<VectorNode, VectorNode>(vec, res => ({
 		...res,
 		color: res.children.length === 3
-			? core.Color.fromDecRGB(res.children[0].value, res.children[1].value, res.children[2].value)
+			? {
+				value: core.Color.fromDecRGB(res.children[0].value, res.children[1].value, res.children[2].value),
+				format: [core.ColorFormat.DecRGB],
+			}
 			: undefined,
 	}))
 	const map = new Map<string, core.InfallibleParser<CN | core.SequenceUtil<CN>>>([

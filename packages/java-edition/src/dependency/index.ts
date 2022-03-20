@@ -73,12 +73,12 @@ export async function getMcmetaSummary(downloader: core.Downloader, logger: core
 		return handleOverride(data, overrideConfig)
 	}
 
-	const [blocks, commands, fluids, registries] = await Promise.all([
-		getResource<McmetaStates>('blocks', overridePaths.blocks),
-		getResource<McmetaCommands>('commands', overridePaths.commands),
-		handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
-		getResource<McmetaRegistries>('registries', overridePaths.registries),
-	])
+	const [blocks, commands, fluids, registries] = [
+		await getResource<McmetaStates>('blocks', overridePaths.blocks),
+		await getResource<McmetaCommands>('commands', overridePaths.commands),
+		await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
+		await getResource<McmetaRegistries>('registries', overridePaths.registries),
+	]
 
 	return { blocks, commands, fluids, registries, checksum }
 }

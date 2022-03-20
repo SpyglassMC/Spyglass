@@ -81,6 +81,12 @@ export namespace Range {
 		return range.start <= offset && (endInclusive ? offset <= range.end : offset < range.end)
 	}
 
+	export function containsRange(a: RangeLike, b: RangeLike, endInclusive = false): boolean {
+		a = get(a)
+		b = get(b)
+		return contains(a, b.start, endInclusive) && contains(a, b.end, true)
+	}
+
 	export function intersects(a: Range, b: Range): boolean {
 		return Range.contains(a, b.start) || Range.contains(b, a.start)
 	}

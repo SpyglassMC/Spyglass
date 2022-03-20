@@ -137,15 +137,16 @@ export namespace ColorPresentation {
 	}
 
 	function colorPresentation(format: ColorFormat, color: Color): string {
+		const round = (num: number) => parseFloat(num.toFixed(3))
 		switch (format) {
 			case ColorFormat.DecRGBA:
-				return `${color[0]} ${color[1]} ${color[2]} ${color[3]}`
+				return color.map(c => round(c)).join(' ')
 			case ColorFormat.DecRGB:
-				return `${color[0]} ${color[1]} ${color[2]}`
+				return color.slice(0, 3).map(c => round(c)).join(' ')
 			case ColorFormat.IntRGBA:
-				return `${Math.round(color[0] * 255)} ${Math.round(color[1] * 255)} ${Math.round(color[2] * 255)} ${Math.round(color[3] * 255)}`
+				return color.map(c => Math.round(c * 255)).join(' ')
 			case ColorFormat.IntRGB:
-				return `${Math.round(color[0] * 255)} ${Math.round(color[1] * 255)} ${Math.round(color[2] * 255)}`
+				return color.slice(0, 3).map(c => Math.round(c * 255)).join(' ')
 			case ColorFormat.HexRGBA:
 				return `#${Math.round((color[0] * 255 << 24) + (color[1] * 255 << 16) + (color[2] * 255) << 8 + color[3] * 255).toString(16).padStart(8, '0')}`
 			case ColorFormat.HexRGB:

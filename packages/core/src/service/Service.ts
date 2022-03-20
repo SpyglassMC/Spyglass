@@ -2,8 +2,8 @@ import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { AstNode, FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
-import { ColorPresentation, completer, findNode, selectedNode, traversePreOrder } from '../processor'
-import type { Range } from '../source'
+import { ColorPresentation, completer, selectedNode, traversePreOrder } from '../processor'
+import { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
 import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext, SignatureHelpProviderContext } from './Context'
@@ -73,18 +73,21 @@ export class Service extends EventEmitter {
 		const ans: ColorInfo[] = []
 		traversePreOrder(node, _ => true, node => node.color, node => ans.push({
 			color: Array.isArray(node.color) ? node.color : node.color!.value,
-			range: node.range,
+			range: Array.isArray(node.color) ? node.range : (node.color!.range ?? node.range),
 		}))
 		return ans
 	}
 
 	getColorPresentation(file: FileNode<AstNode>, doc: TextDocument, range: Range, color: Color): ColorPresentation[] {
-		this.debug(`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${range.start}-${range.end}`)
-		const { node } = findNode(file, range)
-		const nodeColor = node?.color
-		if (nodeColor && !Array.isArray(nodeColor)) {
-			const colorRange = nodeColor.range ?? node!.range
-			return nodeColor.format.map(format => ColorPresentation.fromColorFormat(format, color, colorRange))
+		this.debug(`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${Range.toString(range)}`)
+		let node: AstNode | undefined = selectedNode(file, range.start).node
+		while (node) {
+			const nodeColor = node.color
+			if (nodeColor && !Array.isArray(nodeColor)) {
+				const colorRange = nodeColor.range ?? node.range
+				return nodeColor.format.map(format => ColorPresentation.fromColorFormat(format, color, colorRange))
+			}
+			node = node.parent
 		}
 		return []
 	}
