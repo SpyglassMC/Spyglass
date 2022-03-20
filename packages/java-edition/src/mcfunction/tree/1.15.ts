@@ -485,6 +485,7 @@ export const Tree1_15: PartialRootTreeNode = {
 				add: {
 					children: {
 						team: {
+							parser: 'minecraft:team',
 							properties: {
 								usageType: 'definition',
 							},
