@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type * as nbtdoc from '@spyglassmc/nbtdoc'
+import * as nbtdoc from '@spyglassmc/nbtdoc'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'
 import { localeQuote, localize } from '../../../locales/lib'
 import type { NbtByteNode, NbtNode, NbtNumberNode, NbtPathNode, NbtPrimitiveArrayNode } from '../node'
@@ -159,10 +159,10 @@ type Select<T, K extends keyof T, V> = T extends { [k in K]: V } ? T : never
  */
 export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
-		type Data = { type: 'resolved_compound', data: ResolvedCompoundData } | Select<nbtdoc.CompoundFieldTypeNode.SymbolData, 'type', 'byte_array' | 'int_array' | 'long_array' | 'list' | 'union'> | undefined
+		type Data = { type: 'resolved_compound', data: ResolvedCompoundData } | Select<nbtdoc.NbtdocType, 'type', 'byte_array' | 'int_array' | 'long_array' | 'list' | 'union'> | undefined
 		const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
 		let data: Data = { type: 'resolved_compound', data: resolveResult.value }
-		let targetType: nbtdoc.CompoundFieldTypeNode.SymbolData | undefined = { type: 'compound', symbol: { category: 'nbtdoc', path: [] } }
+		let targetType: nbtdoc.NbtdocType | undefined = { type: 'compound', symbol: { category: 'nbtdoc', path: [] } }
 		const options: Options = { allowUnknownKey: resolveResult.allowUnknownKey, isPredicate: true }
 		let currentCompound: NbtCompoundNode | undefined
 		for (const child of node.children) {
@@ -213,7 +213,7 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 						const [content] = child.children
 						if (content.type === 'integer') {
 							const absIndex = content.value < 0 ? -1 - content.value : content.value
-							const [, maxLength] = data.lengthRange?.value ?? [undefined, undefined]
+							const [, maxLength] = data.lengthRange ?? [undefined, undefined]
 							if (maxLength !== undefined && absIndex >= maxLength) {
 								ctx.err.report(localize('nbt.checker.path.index-out-of-bound', content.value, maxLength), content, core.ErrorSeverity.Warning)
 							}
@@ -263,11 +263,11 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 	}
 }
 
-export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, options: Options): core.SyncChecker<NbtNode> {
+export function fieldValue(type: nbtdoc.NbtdocType, options: Options): core.SyncChecker<NbtNode> {
 	const isInRange = (value: number, [min, max]: [number | undefined, number | undefined]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 
-	const ExpectedTypes: Record<Exclude<nbtdoc.CompoundFieldTypeNode.SymbolData['type'], 'enum' | 'union'>, NbtNode['type']> = {
+	const ExpectedTypes: Record<Exclude<nbtdoc.NbtdocType['type'], 'enum' | 'union'>, NbtNode['type']> = {
 		boolean: 'nbt:byte',
 		byte: 'nbt:byte',
 		byte_array: 'nbt:byte_array',
@@ -306,19 +306,19 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 			case 'int_array':
 			case 'long_array':
 				node = node as NbtPrimitiveArrayNode
-				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange.value)) {
+				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
 					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
-						type.lengthRange.value[0] ?? '-∞',
-						type.lengthRange.value[1] ?? '+∞'
+						type.lengthRange[0] ?? '-∞',
+						type.lengthRange[1] ?? '+∞'
 					)), node, core.ErrorSeverity.Warning)
 				}
 				if (type.valueRange) {
 					for (const { value: childNode } of node.children) {
-						if (childNode && !isInRange(Number(childNode.value), type.valueRange.value)) {
+						if (childNode && !isInRange(Number(childNode.value), type.valueRange)) {
 							ctx.err.report(localize('number.between',
-								type.valueRange.value[0] ?? '-∞',
-								type.valueRange.value[1] ?? '+∞'
+								type.valueRange[0] ?? '-∞',
+								type.valueRange[1] ?? '+∞'
 							), node, core.ErrorSeverity.Warning)
 						}
 					}
@@ -331,10 +331,10 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 			case 'float':
 			case 'double':
 				node = node as NbtNumberNode
-				if (type.valueRange && !isInRange(Number(node.value), type.valueRange.value)) {
+				if (type.valueRange && !isInRange(Number(node.value), type.valueRange)) {
 					ctx.err.report(localize('number.between',
-						type.valueRange.value[0] ?? '-∞',
-						type.valueRange.value[1] ?? '+∞'
+						type.valueRange[0] ?? '-∞',
+						type.valueRange[1] ?? '+∞'
 					), node, core.ErrorSeverity.Warning)
 				}
 				break
@@ -356,11 +356,12 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 				break
 			case 'list':
 				node = node as NbtListNode
-				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange.value)) {
+				type = nbtdoc.simplifyListType(type)
+				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
 					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
-						type.lengthRange.value[0] ?? '-∞',
-						type.lengthRange.value[1] ?? '+∞'
+						type.lengthRange[0] ?? '-∞',
+						type.lengthRange[1] ?? '+∞'
 					)), node, core.ErrorSeverity.Warning)
 				}
 				for (const { value: childNode } of node.children) {
@@ -407,6 +408,7 @@ export function fieldValue(type: nbtdoc.CompoundFieldTypeNode.SymbolData, option
 				enum_(type.symbol, options)(node, ctx)
 				break
 			case 'union':
+				type = nbtdoc.flattenUnionType(type)
 				if (type.members.length === 0) {
 					ctx.err.report(
 						localize('nbt.checker.compound.field.union-empty-members'),
@@ -447,7 +449,7 @@ function resolveFieldPath(compound: core.AstNode | undefined, fieldPath: (string
 }
 
 type ResolvedCompoundData = Record<string, {
-	data: nbtdoc.CompoundFieldTypeNode.SymbolData,
+	data: nbtdoc.NbtdocType,
 	query?: core.SymbolQuery,
 }>
 
@@ -523,8 +525,8 @@ function resolveSymbolPaths(paths: core.SymbolPath[], ctx: core.CheckerContext, 
 		}
 	}
 
-	const getPathsFromSuper = (extendable: nbtdoc.CompoundExtendable.SymbolData): Result<core.SymbolPath[]> => {
-		if (extendable.type === 'symbol') {
+	const getPathsFromSuper = (extendable: nbtdoc.RegistryIndexType | nbtdoc.CompoundType): Result<core.SymbolPath[]> => {
+		if (extendable.type === 'compound') {
 			return { allowUnknownKey: false, value: extendable.symbol ? [extendable.symbol] : [] }
 		} else {
 			const id = resolveFieldPath(compound, extendable.index.path)
@@ -599,7 +601,7 @@ function resolveRootRegistry(registry: ResolvedRootRegistry | undefined, inputId
 	return { allowUnknownKey: out.allowUnknownKey, value: data }
 }
 
-function resolveSymbolData(data: nbtdoc.CompoundFieldTypeNode.SymbolData, ctx: core.CheckerContext, compound: NbtCompoundNode | undefined): Result<ResolvedCompoundData | undefined> {
+function resolveSymbolData(data: nbtdoc.NbtdocType, ctx: core.CheckerContext, compound: NbtCompoundNode | undefined): Result<ResolvedCompoundData | undefined> {
 	const out: Out = { allowUnknownKey: false }
 	const unwrap = getUnwrapper(out)
 
@@ -613,11 +615,11 @@ function resolveSymbolData(data: nbtdoc.CompoundFieldTypeNode.SymbolData, ctx: c
 	return { allowUnknownKey: out.allowUnknownKey, value: ans }
 }
 
-function getPathsFromSymbolData(data: nbtdoc.CompoundFieldTypeNode.SymbolData, ctx: core.CheckerContext, compound: NbtCompoundNode | undefined): Result<core.SymbolPath[] | undefined> {
+function getPathsFromSymbolData(data: nbtdoc.NbtdocType, ctx: core.CheckerContext, compound: NbtCompoundNode | undefined): Result<core.SymbolPath[] | undefined> {
 	const collector = new core.SymbolPathCollector()
 	const out: Out = { allowUnknownKey: false }
 	const unwrap = getUnwrapper(out)
-	const iterate = (data: nbtdoc.CompoundFieldTypeNode.SymbolData): boolean => {
+	const iterate = (data: nbtdoc.NbtdocType): boolean => {
 		if (data.type === 'compound') {
 			collector.add(data.symbol)
 			return true

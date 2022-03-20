@@ -201,7 +201,7 @@ export namespace NbtLongArrayNode {
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path',
 	children: (core.StringNode | NbtCompoundNode | NbtPathIndexNode)[],
-	targetType?: nbtdoc.CompoundFieldTypeNode.SymbolData | undefined,
+	targetType?: nbtdoc.NbtdocType | undefined,
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */

@@ -1,10 +1,9 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { checkAssignability } from '../../lib/checker/entry'
-import { CompoundFieldTypeNode } from '../../lib/node/CompoundDefinition'
+import { checkAssignability, NbtdocType } from '../../lib/type'
 
-describe('nbtdoc checker/entry.ts', () => {
-	const cases: { source: CompoundFieldTypeNode.SymbolData, target: CompoundFieldTypeNode.SymbolData }[] = [
+describe('nbtdoc checker/type.ts', () => {
+	const cases: { source: NbtdocType, target: NbtdocType }[] = [
 		{
 			source: { type: 'string' },
 			target: { type: 'string' },
@@ -33,10 +32,18 @@ describe('nbtdoc checker/entry.ts', () => {
 			source: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
 			target: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] },
 		},
+		{
+			source: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] } } },
+			target: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] } } },
+		},
+		{
+			source: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] } } },
+			target: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] } } },
+		},
 	]
 	describe('checkAssignability()', () => {
 		for (const { source, target } of cases) {
-			it(`Assign '${CompoundFieldTypeNode.symbolDataToString(source)}' to '${CompoundFieldTypeNode.symbolDataToString(target)}'`, () => {
+			it(`Assign '${NbtdocType.toString(source)}' to '${NbtdocType.toString(target)}'`, () => {
 				snapshot(checkAssignability({ source, target }))
 			})
 		}

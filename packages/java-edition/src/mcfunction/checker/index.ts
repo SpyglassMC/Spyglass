@@ -39,7 +39,7 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 				nbtPath(nodes, sourceTypeIndex + 1, ctx)
 				const sourcePath = getNode(nodes, sourceTypeIndex + 3)
 				if (nbt.NbtPathNode.is(targetPath) && nbt.NbtPathNode.is(sourcePath)) {
-					const { errorMessage } = nbtdoc.checker.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
+					const { errorMessage } = nbtdoc.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
 					if (errorMessage) {
 						ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
 					}

@@ -4,8 +4,8 @@ import { ErrorSeverity, Range, ResourceLocationNode, SymbolPath, SymbolUtil, Sym
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
-import type { DescribesClauseNode, FloatRangeNode, IdentPathToken, InjectClauseNode, IntRangeNode, MainNode, ModuleDeclarationNode, UnsignedRangeNode, UseClauseNode } from '../node'
-import { CompoundDefinitionNode, CompoundFieldNode, CompoundFieldTypeNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
+import type { CompoundFieldNode, DescribesClauseNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import { CompoundDefinitionNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -102,9 +102,13 @@ async function compoundFields<N extends { fields: CompoundFieldNode[] }>(definit
 			definitionQuery.member(field.key.value, member => member
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.else(async () => {
-					const data = await CompoundFieldNode.toSymbolData(field, async n => (await resolveIdentPath(n, ctx))?.symbol)
+					// const data = await CompoundFieldNode.toSymbolData(field, async n => (await resolveIdentPath(n, ctx))?.symbol)
+					// member.enter({
+					// 	data: { data, desc: field.doc.value, subcategory: 'compound_key' },
+					// 	usage: { type: 'definition', node: field.key, fullRange: field },
+					// })
 					member.enter({
-						data: { data, desc: field.doc.value, subcategory: 'compound_key' },
+						data: { desc: field.doc.value, subcategory: 'compound_key' },
 						usage: { type: 'definition', node: field.key, fullRange: field },
 					})
 					resolve()
@@ -383,151 +387,4 @@ async function resolveIdentPath(identPath: IdentPathToken, ctx: CheckerContext):
 		}
 	}
 	return undefined
-}
-
-export const checkAssignability = ({ source, target }: { source: CompoundFieldTypeNode.SymbolData | undefined, target: CompoundFieldTypeNode.SymbolData | undefined }): {
-	isAssignable: boolean,
-	errorMessage?: string,
-} => {
-	if (source === undefined || target === undefined) {
-		return { isAssignable: true }
-	}
-
-	type TypeData = CompoundFieldTypeNode.SymbolData
-	type RangeData = FloatRangeNode.SymbolData | IntRangeNode.SymbolData | UnsignedRangeNode.SymbolData | undefined
-	const areRangesMatch = (s: RangeData, t: RangeData): boolean => {
-		if (!t) {
-			return true
-		}
-		if (!s) {
-			return false
-		}
-		const [sMin, sMax] = s.value
-		const [tMin, tMax] = t.value
-		return (tMin === undefined || (sMin !== undefined && sMin >= tMin)) &&
-			(tMax === undefined || (sMax !== undefined && sMax <= tMax))
-	}
-
-	enum CheckResult {
-		Nah = 0b00,
-		Assignable = 0b01,
-		StrictlyAssignable = 0b11,
-	}
-
-	const flattenUnion = (union: CompoundFieldTypeNode.UnionSymbolData): CompoundFieldTypeNode.UnionSymbolData => {
-		const set = new Set<TypeData>()
-		const add = (data: TypeData): void => {
-			for (const existingMember of set) {
-				if ((check(data, existingMember) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
-					return
-				}
-				if ((check(existingMember, data) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
-					set.delete(existingMember)
-				}
-			}
-			set.add(data)
-		}
-		for (const member of union.members) {
-			if (member.type === 'union') {
-				flattenUnion(member).members.forEach(add)
-			} else {
-				add(member)
-			}
-		}
-		return {
-			type: 'union',
-			members: [...set],
-		}
-	}
-
-	const simplifyUnion = (data: TypeData): TypeData => {
-		if (data.type === 'union') {
-			data = flattenUnion(data)
-			if (data.members.length === 1) {
-				return data.members[0]
-			}
-		}
-		return data
-	}
-
-	const check = (s: TypeData, t: TypeData, errors: string[] = []): CheckResult => {
-		const strictlyAssignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.StrictlyAssignable : CheckResult.Nah
-		const assignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.Assignable : CheckResult.Nah
-		let ans: CheckResult
-		if (s.type === 'union') {
-			ans = assignableIfTrue(s.members.every(v => check(v, t, errors)))
-		} else if (t.type === 'union') {
-			ans = assignableIfTrue(t.members.some(v => check(s, v)))
-		} else if (s.type === 'boolean') {
-			ans = strictlyAssignableIfTrue(t.type === 'boolean' || t.type === 'byte')
-		} else if (s.type === 'byte') {
-			if (t.type === 'boolean') {
-				ans = check(s, { type: 'byte', valueRange: { value: [0, 1] } }, errors)
-			} else if (t.type === 'byte') {
-				ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
-			} else if (t.type === 'enum') {
-				ans = assignableIfTrue(!t.enumType || t.enumType === 'byte')
-			} else {
-				ans = CheckResult.Nah
-			}
-		} else if (s.type === 'byte_array' || s.type === 'int_array' || s.type === 'long_array') {
-			if (t.type === s.type) {
-				ans = strictlyAssignableIfTrue(areRangesMatch(s.lengthRange, t.lengthRange) && areRangesMatch(s.valueRange, t.valueRange))
-			} else {
-				ans = CheckResult.Nah
-			}
-		} else if (s.type === 'compound' || s.type === 'index') {
-			ans = assignableIfTrue(t.type === 'compound' || t.type === 'index')
-		} else if (s.type === 'enum') {
-			ans = assignableIfTrue((t.type === 'byte' || t.type === 'float' || t.type === 'double' || t.type === 'int' || t.type === 'long' || t.type === 'short' || t.type === 'string') && (!s.enumType || s.enumType === t.type))
-		} else if (s.type === 'float' || s.type === 'double' || s.type === 'int' || s.type === 'long' || s.type === 'short') {
-			if (t.type === s.type) {
-				ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
-			} else if (t.type === 'enum') {
-				ans = assignableIfTrue(!t.enumType || t.enumType === s.type)
-			} else {
-				ans = CheckResult.Nah
-			}
-		} else if (s.type === 'id') {
-			if (t.type === 'id' && s.registry === t.registry) {
-				ans = CheckResult.StrictlyAssignable
-			} else {
-				ans = assignableIfTrue(t.type === 'id' || t.type === 'string')
-			}
-		} else if (s.type === 'list') {
-			if (t.type === 'list' && areRangesMatch(s.lengthRange, t.lengthRange)) {
-				ans = check(s.item, t.item, errors)
-			} else {
-				ans = CheckResult.Nah
-			}
-		} else if (s.type === 'string') {
-			if (t.type === 'string') {
-				ans = CheckResult.StrictlyAssignable
-			} else {
-				ans = assignableIfTrue(t.type === 'enum' && (!t.enumType || t.enumType === 'string'))
-			}
-		} else {
-			ans = CheckResult.Nah
-		}
-
-		if (!ans) {
-			errors.push(localize('nbtdoc.checker.type-not-assignable',
-				localeQuote(CompoundFieldTypeNode.symbolDataToString(s)),
-				localeQuote(CompoundFieldTypeNode.symbolDataToString(t))
-			))
-		}
-		return ans
-	}
-
-	source = simplifyUnion(source)
-	target = simplifyUnion(target)
-
-	const errors: string[] = []
-
-	check(source, target, errors)
-
-	return {
-		isAssignable: errors.length === 0,
-		...errors.length ? { errorMessage: errors.reverse().map((m, i) => `${'  '.repeat(i)}${m}`).join('\n') } : {},
-	}
 }

@@ -9,6 +9,7 @@ export * as checker from './checker'
 export * as colorizer from './colorizer'
 export * from './node'
 export * from './parser'
+export * from './type'
 
 /* istanbul ignore next */
 export const initialize: core.ProjectInitializer = ({ meta }) => {
