@@ -20,6 +20,8 @@ export interface DownloaderDownloadOut {
 }
 
 export class Downloader {
+	#memoryCache = new Map<string, { buffer: Buffer, time: number }>()
+
 	constructor(
 		private readonly cacheRoot: string,
 		private readonly logger: Logger,
@@ -27,7 +29,16 @@ export class Downloader {
 	) { }
 
 	async download<R>(job: Job<R>, out: DownloaderDownloadOut = {}): Promise<R | undefined> {
-		const { id, cache, uri, options, transformer } = job
+		const { id, cache, uri, options, transformer, ttl } = job
+		if (ttl && this.#memoryCache.has(uri)) {
+			const { buffer, time } = this.#memoryCache.get(uri)!
+			if (time <= performance.now() + ttl) {
+				this.logger.info(`[Downloader] [${id}] Skipped thanks to valid cache in memory`)
+				return await transformer(buffer)
+			} else {
+				this.#memoryCache.delete(uri)
+			}
+		}
 		let checksum: string | undefined
 		let cachePath: string | undefined
 		let cacheChecksumPath: string | undefined
@@ -43,6 +54,9 @@ export class Downloader {
 					if (checksum === cacheChecksum) {
 						try {
 							const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
+							if (ttl) {
+								this.#memoryCache.set(uri, { buffer: cachedBuffer, time: performance.now() })
+							}
 							const deserializer = cache.deserializer ?? (b => b)
 							const ans = await transformer(deserializer(cachedBuffer))
 							this.logger.info(`[Downloader] [${id}] Skipped downloading thanks to cache ${cacheChecksum}`)
@@ -72,6 +86,9 @@ export class Downloader {
 
 		try {
 			const buffer = await this.lld.get(uri, options)
+			if (ttl) {
+				this.#memoryCache.set(uri, { buffer, time: performance.now() })
+			}
 			if (cache && cachePath && cacheChecksumPath) {
 				if (checksum) {
 					try {
@@ -127,6 +144,7 @@ interface Job<R> {
 	},
 	transformer: (data: Buffer) => PromiseLike<R> | R,
 	options?: LowLevelDownloadOptions,
+	ttl?: number,
 }
 
 interface LowLevelDownloadOptions {

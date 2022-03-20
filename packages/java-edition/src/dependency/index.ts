@@ -5,6 +5,8 @@ import * as core from '@spyglassmc/core'
 import type { McmetaCommands, McmetaRegistries, McmetaStates, McmetaSummary, McmetaVersions } from './mcmeta'
 import { Fluids, getMcmetaSummaryUris } from './mcmeta'
 
+const DownloaderTtl = 15_000
+
 /* istanbul ignore next */
 /**
  * Return the deserialized [`versions.json`][versions.json].
@@ -17,6 +19,7 @@ export async function getVersions(downloader: core.Downloader): Promise<McmetaVe
 		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
 		transformer: buffer => core.parseGzippedJson<McmetaVersions>(buffer),
 		cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
+		ttl: DownloaderTtl,
 	})
 }
 
@@ -64,6 +67,7 @@ export async function getMcmetaSummary(downloader: core.Downloader, logger: core
 			uri: uris[type],
 			transformer: buffer => core.parseGzippedJson<T>(buffer),
 			cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
+			ttl: DownloaderTtl,
 		}, out)
 		checksum ||= out.checksum
 		return handleOverride(data, overrideConfig)
@@ -116,6 +120,7 @@ function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref:
 				}
 			},
 			options: GitHubApiDownloadOptions,
+			ttl: DownloaderTtl,
 		},
 	}
 }
@@ -141,6 +146,7 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
 		transformer: b => b,
 		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
 		options: GitHubApiDownloadOptions,
+		ttl: DownloaderTtl,
 	}, out)
 
 	return core.fileUtil.pathToFileUri(out.cachePath!)
