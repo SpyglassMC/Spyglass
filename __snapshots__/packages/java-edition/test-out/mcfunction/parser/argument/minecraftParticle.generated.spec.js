@@ -230,7 +230,13 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1']
             "value": 0.6
           }
         ],
-        "system": 0
+        "system": 0,
+        "color": [
+          0.2,
+          0.4,
+          0.6,
+          1
+        ]
       },
       {
         "type": "float",
@@ -332,7 +338,13 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
             "value": 0.3
           }
         ],
-        "system": 0
+        "system": 0,
+        "color": [
+          0.1,
+          0.2,
+          0.3,
+          1
+        ]
       },
       {
         "type": "float",
@@ -377,7 +389,13 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
             "value": 0.7
           }
         ],
-        "system": 0
+        "system": 0,
+        "color": [
+          0.5,
+          0.6,
+          0.7,
+          1
+        ]
       }
     ],
     "id": {

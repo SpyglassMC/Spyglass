@@ -397,11 +397,17 @@ const particle: core.InfallibleParser<ParticleNode> = (() => {
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })
+	const color = core.map(vec, res => ({
+		...res,
+		color: res.children.length === 3
+			? core.Color.fromDecRGB(res.children[0].value, res.children[1].value, res.children[2].value)
+			: undefined,
+	}))
 	const map = new Map<string, core.InfallibleParser<CN | core.SequenceUtil<CN>>>([
 		['block', blockState],
 		['block_marker', blockState],
-		['dust', sequence([vec, float()], sep)],
-		['dust_color_transition', sequence([vec, float(), vec], sep)],
+		['dust', sequence([color, float()], sep)],
+		['dust_color_transition', sequence([color, float(), color], sep)],
 		['falling_dust', blockState],
 		['item', itemStack],
 		['sculk_charge', float()],
