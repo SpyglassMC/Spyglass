@@ -70,8 +70,10 @@ export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx
 			node.children.filter(p => p.key).forEach(prop => {
 				const key = prop.key!.value
 				const value = values(key, ctx)
-				if (!value || !keys.includes(key) && !options.allowUnknownProperties) {
-					ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
+				if (!value || !keys.includes(key)) {
+					if (!options.allowUnknownProperties) {
+						ctx.err.report(localize('json.checker.property.unknown', localeQuote(key)), prop.key!, ErrorSeverity.Warning)
+					}
 					return
 				}
 				if (isComplex(value) && value.deprecated) {
