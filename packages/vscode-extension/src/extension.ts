@@ -3,8 +3,6 @@
  * https://github.com/microsoft/vscode-extension-samples/blob/master/lsp-sample/client/src/extension.ts
  * ------------------------------------------------------------------------------------------*/
 
-/// <reference path="./vscode.proposed.inlayHints.d.ts"/>
-
 import type * as server from '@spyglassmc/language-server'
 import path from 'path'
 import * as vsc from 'vscode'
@@ -75,7 +73,7 @@ export function activate(context: vsc.ExtensionContext) {
 							},
 						}
 						const response: server.MyLspInlayHint[] = await client.sendRequest('spyglassmc/inlayHints', params)
-						return response.map(v => new vsc.InlayHint(v.text, new vsc.Position(v.position.line, v.position.character), vsc.InlayHintKind.Parameter))
+						return response.map(v => new vsc.InlayHint(new vsc.Position(v.position.line, v.position.character), v.text, vsc.InlayHintKind.Parameter))
 					} catch (e) {
 						console.error('[client#provideInlayHints]', e)
 					}

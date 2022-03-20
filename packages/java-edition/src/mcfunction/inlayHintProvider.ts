@@ -10,7 +10,7 @@ export const inlayHintProvider: core.InlayHintProvider<core.FileNode<mcf.Mcfunct
 		n => {
 			const node = n as mcf.CommandChildNode
 			const config = ctx.config.env.feature.inlayHint
-			if (config === true || (typeof config === 'object' && config.enabledNodes.includes(node.type))) {
+			if (config === true || (typeof config === 'object' && config.enabledNodes.includes(node.children[0].type))) {
 				ans.push({ offset: node.range.start, text: `${node.path[node.path.length - 1]}:` })
 			}
 		}

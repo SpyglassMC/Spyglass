@@ -1,9 +1,6 @@
 {
   "name": "datapack-language-server",
   "version": "4.0.0",
-  "enabledApiProposals": [
-    "inlayHints"
-  ],
   "main": "dist/extension.js",
   "author": "SPGoding",
   "publisher": "SPGoding",
@@ -15,7 +12,7 @@
     "watch": "webpack --watch --mode=\"development\""
   },
   "devDependencies": {
-    "@types/vscode": "1.52.0",
+    "@types/vscode": "1.65.0",
     "vscode-languageclient": "^7.0.0",
     "vscode-test": "^1.5.2"
   },
@@ -162,6 +159,13 @@
       },
       "[mcfunction]": {
         "editor.semanticHighlighting.enabled": true
+      },
+      "editor.semanticTokenColorCustomizations": {
+        "rules": {
+          "vector": {
+            "underline": true
+          }
+        }
       }
     },
     "semanticTokenTypes": [
@@ -170,8 +174,20 @@
         "description": "An error."
       },
       {
+        "id": "literal",
+        "description": "A literal."
+      },
+      {
+        "id": "operator",
+        "description": "An operator."
+      },
+      {
         "id": "resourceLocation",
         "description": "A resource location."
+      },
+      {
+        "id": "vector",
+        "description": "A vector."
       }
     ],
     "semanticTokenModifiers": [],
@@ -189,6 +205,9 @@
           ],
           "resourceLocation": [
             "entity.name.function"
+          ],
+          "vector": [
+            "constant.numeric"
           ]
         }
       }
