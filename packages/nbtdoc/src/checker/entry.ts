@@ -4,8 +4,8 @@ import { ErrorSeverity, Range, ResourceLocationNode, SymbolPath, SymbolUtil, Sym
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
-import type { CompoundFieldTypeNode, DescribesClauseNode, FloatRangeNode, IdentPathToken, InjectClauseNode, IntRangeNode, MainNode, ModuleDeclarationNode, UnsignedRangeNode, UseClauseNode } from '../node'
-import { CompoundDefinitionNode, CompoundFieldNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
+import type { DescribesClauseNode, FloatRangeNode, IdentPathToken, InjectClauseNode, IntRangeNode, MainNode, ModuleDeclarationNode, UnsignedRangeNode, UseClauseNode } from '../node'
+import { CompoundDefinitionNode, CompoundFieldNode, CompoundFieldTypeNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -393,6 +393,7 @@ export const checkAssignability = ({ source, target }: { source: CompoundFieldTy
 		return { isAssignable: true }
 	}
 
+	type TypeData = CompoundFieldTypeNode.SymbolData
 	type RangeData = FloatRangeNode.SymbolData | IntRangeNode.SymbolData | UnsignedRangeNode.SymbolData | undefined
 	const areRangesMatch = (s: RangeData, t: RangeData): boolean => {
 		if (!t) {
@@ -407,65 +408,15 @@ export const checkAssignability = ({ source, target }: { source: CompoundFieldTy
 			(tMax === undefined || (sMax !== undefined && sMax <= tMax))
 	}
 
-	const rangeToString = (range: RangeData): string => {
-		if (!range) {
-			return ''
-		}
-		const [min, max] = range.value
-		return min === max ? ` @ ${min}` : ` @ ${min ?? ''}..${max ?? ''}`
-	}
-
 	enum CheckResult {
 		Nah = 0b00,
 		Assignable = 0b01,
 		StrictlyAssignable = 0b11,
 	}
 
-	const typeToString = (type: CompoundFieldTypeNode.SymbolData | undefined): string => {
-		if (type === undefined) {
-			return 'any'
-		}
-		switch (type.type) {
-			case 'boolean':
-				return 'boolean'
-			case 'byte':
-				return `byte${rangeToString(type.valueRange)}`
-			case 'byte_array':
-				return `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
-			case 'compound':
-				return type.symbol?.path.join('::') ?? 'compound'
-			case 'double':
-				return `double${rangeToString(type.valueRange)}`
-			case 'enum':
-				return type.symbol?.path.join('::') ?? 'enum'
-			case 'float':
-				return `byte${rangeToString(type.valueRange)}`
-			case 'id':
-				return `id(${type.registry ?? 'spyglassmc:any'})`
-			case 'index':
-				return `${type.index.registry ?? 'spyglassmc:any'}[]`
-			case 'int':
-				return `byte${rangeToString(type.valueRange)}`
-			case 'int_array':
-				return `int${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
-			case 'list':
-				return `[${typeToString(type.item)}]${rangeToString(type.lengthRange)}`
-			case 'long':
-				return `byte${rangeToString(type.valueRange)}`
-			case 'long_array':
-				return `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
-			case 'short':
-				return `byte${rangeToString(type.valueRange)}`
-			case 'string':
-				return 'string'
-			case 'union':
-				return `(${type.members.map(typeToString).join(' | ')})`
-		}
-	}
-
 	const flattenUnion = (union: CompoundFieldTypeNode.UnionSymbolData): CompoundFieldTypeNode.UnionSymbolData => {
-		const set = new Set<CompoundFieldTypeNode.SymbolData>()
-		const add = (data: CompoundFieldTypeNode.SymbolData): void => {
+		const set = new Set<TypeData>()
+		const add = (data: TypeData): void => {
 			for (const existingMember of set) {
 				if ((check(data, existingMember) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
 					return
@@ -489,14 +440,24 @@ export const checkAssignability = ({ source, target }: { source: CompoundFieldTy
 		}
 	}
 
-	const check = (s: CompoundFieldTypeNode.SymbolData, t: CompoundFieldTypeNode.SymbolData, errors: string[] = []): CheckResult => {
+	const simplifyUnion = (data: TypeData): TypeData => {
+		if (data.type === 'union') {
+			data = flattenUnion(data)
+			if (data.members.length === 1) {
+				return data.members[0]
+			}
+		}
+		return data
+	}
+
+	const check = (s: TypeData, t: TypeData, errors: string[] = []): CheckResult => {
 		const strictlyAssignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.StrictlyAssignable : CheckResult.Nah
 		const assignableIfTrue = (value: boolean): CheckResult => value ? CheckResult.Assignable : CheckResult.Nah
 		let ans: CheckResult
-		if (t.type === 'union') {
-			ans = assignableIfTrue(t.members.some(v => check(s, v)))
-		} else if (s.type === 'union') {
+		if (s.type === 'union') {
 			ans = assignableIfTrue(s.members.every(v => check(v, t, errors)))
+		} else if (t.type === 'union') {
+			ans = assignableIfTrue(t.members.some(v => check(s, v)))
 		} else if (s.type === 'boolean') {
 			ans = strictlyAssignableIfTrue(t.type === 'boolean' || t.type === 'byte')
 		} else if (s.type === 'byte') {
@@ -550,17 +511,16 @@ export const checkAssignability = ({ source, target }: { source: CompoundFieldTy
 		}
 
 		if (!ans) {
-			errors.push(localize('nbtdoc.checker.type-not-assignable', localeQuote(typeToString(s)), localeQuote(typeToString(t))))
+			errors.push(localize('nbtdoc.checker.type-not-assignable',
+				localeQuote(CompoundFieldTypeNode.symbolDataToString(s)),
+				localeQuote(CompoundFieldTypeNode.symbolDataToString(t))
+			))
 		}
 		return ans
 	}
 
-	if (source.type === 'union') {
-		flattenUnion(source)
-	}
-	if (target.type === 'union') {
-		flattenUnion(target)
-	}
+	source = simplifyUnion(source)
+	target = simplifyUnion(target)
 
 	const errors: string[] = []
 

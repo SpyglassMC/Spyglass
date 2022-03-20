@@ -41,8 +41,8 @@ connection.onInitialize(async params => {
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
 
-	// await new Promise(resolve => setTimeout(resolve, 7000))
-	// logger.warn('Delayed 7 seconds manually. If you see this in production, it means SPGoding messed up.')
+	await new Promise(resolve => setTimeout(resolve, 5000))
+	logger.warn('Delayed 5 seconds manually. If you see this in production, it means SPGoding messed up.')
 
 	if (params.workDoneToken) {
 		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)

@@ -318,6 +318,58 @@ export namespace CompoundFieldTypeNode {
 				}
 		}
 	}
+
+	export function symbolDataToString(type: SymbolData | undefined): string {
+		type RangeData = FloatRangeNode.SymbolData | IntRangeNode.SymbolData | UnsignedRangeNode.SymbolData | undefined
+
+		const rangeToString = (range: RangeData): string => {
+			if (!range) {
+				return ''
+			}
+			const [min, max] = range.value
+			return min === max ? ` @ ${min}` : ` @ ${min ?? ''}..${max ?? ''}`
+		}
+
+		if (type === undefined) {
+			return 'any'
+		}
+		switch (type.type) {
+			case 'boolean':
+				return 'boolean'
+			case 'byte':
+				return `byte${rangeToString(type.valueRange)}`
+			case 'byte_array':
+				return `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'compound':
+				return type.symbol?.path.join('::') ?? 'compound'
+			case 'double':
+				return `double${rangeToString(type.valueRange)}`
+			case 'enum':
+				return type.symbol?.path.join('::') ?? 'enum'
+			case 'float':
+				return `float${rangeToString(type.valueRange)}`
+			case 'id':
+				return `id(${type.registry ?? 'spyglassmc:any'})`
+			case 'index':
+				return `${type.index.registry ?? 'spyglassmc:any'}[]`
+			case 'int':
+				return `int${rangeToString(type.valueRange)}`
+			case 'int_array':
+				return `int${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'list':
+				return `[${symbolDataToString(type.item)}]${rangeToString(type.lengthRange)}`
+			case 'long':
+				return `long${rangeToString(type.valueRange)}`
+			case 'long_array':
+				return `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'short':
+				return `short${rangeToString(type.valueRange)}`
+			case 'string':
+				return 'string'
+			case 'union':
+				return `(${type.members.map(symbolDataToString).join(' | ')})`
+		}
+	}
 }
 
 export interface IntRangeNode extends SyntaxNode<LiteralToken | IntegerNode> {
