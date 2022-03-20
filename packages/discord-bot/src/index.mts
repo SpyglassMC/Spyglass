@@ -228,6 +228,7 @@ const ColorTokenTypeLegend: Record<ColorTokenType, Set<RenderFormat>> = {
 	string: new Set(['foreground_green']),
 	struct: new Set(['foreground_white']),
 	type: new Set(['foreground_white']),
+	vector: new Set(['foreground_green', 'underline']),
 	variable: new Set(['foreground_white']),
 }
 
