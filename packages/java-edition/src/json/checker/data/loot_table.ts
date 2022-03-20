@@ -107,6 +107,10 @@ export const predicate = as('predicate', dispatch('condition',
 				value: int_bounds,
 				period: opt(int),
 			},
+			value_check: {
+				value: number_provider,
+				range: int_bounds,
+			},
 			weather_check: {
 				raining: opt(boolean),
 				thundering: opt(boolean),
