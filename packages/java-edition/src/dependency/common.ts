@@ -23,6 +23,8 @@ export const PackVersionMap: Record<number, MajorVersion | undefined> = {
 	6: '1.16',
 	7: '1.17',
 	8: '1.18',
+	9: '1.18',
+	10: '1.19',
 }
 
 export interface PackMcmeta {
