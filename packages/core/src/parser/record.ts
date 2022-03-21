@@ -1,6 +1,6 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AstNode } from '../node'
-import type { TableNode } from '../node/TableNode'
+import type { RecordNode } from '../node/RecordNode'
 import type { ParserContext } from '../service'
 import type { Source } from '../source'
 import { Range } from '../source'
@@ -15,7 +15,7 @@ export interface Options<K extends AstNode, V extends AstNode> {
 		key: Parser<K>,
 		sep: string,
 		value: Parser<V> | {
-			get: (tableResult: TableNode<K, V>, keyResult: K | undefined) => Parser<V>,
+			get: (recordResult: RecordNode<K, V>, keyResult: K | undefined) => Parser<V>,
 		},
 		end: string,
 		trailingEnd: boolean,
@@ -26,10 +26,10 @@ export interface Options<K extends AstNode, V extends AstNode> {
 /**
  * @returns A parser that parses something coming in a key-value pair form. e.g. SNBT objects, entity selector arguments.
  */
-export function table<K extends AstNode, V extends AstNode>({ start, pair, end }: Options<K, V>): InfallibleParser<TableNode<K, V>> {
-	return (src: Source, ctx: ParserContext): TableNode<K, V> => {
-		const ans: TableNode<K, V> = {
-			type: 'table',
+export function record<K extends AstNode, V extends AstNode>({ start, pair, end }: Options<K, V>): InfallibleParser<RecordNode<K, V>> {
+	return (src: Source, ctx: ParserContext): RecordNode<K, V> => {
+		const ans: RecordNode<K, V> = {
+			type: 'record',
 			range: Range.create(src),
 			children: [],
 		}
@@ -54,7 +54,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				const { result: keyResult, updateSrcAndCtx: updateForKey, endCursor: keyEnd } = attempt(pair.key, src, ctx)
 				if (keyResult === Failure || (keyEnd - keyStart === 0 && ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))) {
 					ctx.err.report(
-						localize('expected', localize('parser.table.key')),
+						localize('expected', localize('parser.record.key')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
 					)
 				} else {
@@ -78,7 +78,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 				const { result: valueResult, updateSrcAndCtx: updateForValue, endCursor: valueEnd } = attempt(valueParser, src, ctx)
 				if (valueResult === Failure || (valueEnd - valueStart === 0 && ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))) {
 					ctx.err.report(
-						localize('expected', localize('parser.table.value')),
+						localize('expected', localize('parser.record.value')),
 						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'))
 					)
 				} else {
@@ -110,7 +110,7 @@ export function table<K extends AstNode, V extends AstNode>({ start, pair, end }
 
 			// Trailing pair end.
 			if (hasPairEnd && !pair.trailingEnd) {
-				ctx.err.report(localize('parser.table.trailing-end'), ans.children[ans.children.length - 1].end!)
+				ctx.err.report(localize('parser.record.trailing-end'), ans.children[ans.children.length - 1].end!)
 			}
 
 			// End.

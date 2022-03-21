@@ -122,7 +122,7 @@ export namespace NbtDoubleNode {
 //#endregion
 //#endregion
 
-export interface NbtCompoundNode extends core.TableNode<core.StringNode, NbtNode> {
+export interface NbtCompoundNode extends core.RecordBaseNode<core.StringNode, NbtNode> {
 	readonly type: 'nbt:compound'
 }
 export namespace NbtCompoundNode {

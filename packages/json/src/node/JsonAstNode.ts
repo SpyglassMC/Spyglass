@@ -56,7 +56,7 @@ export interface JsonObjectExpectation extends JsonBaseExpectation {
 	}[]
 	keys?: JsonStringExpectation[]
 }
-export interface JsonObjectNode extends core.TableNode<JsonStringNode, JsonNode>, JsonBaseAstNode {
+export interface JsonObjectNode extends core.RecordBaseNode<JsonStringNode, JsonNode>, JsonBaseAstNode {
 	readonly type: 'json:object'
 }
 export namespace JsonObjectNode {

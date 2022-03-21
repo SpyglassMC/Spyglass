@@ -1,6 +1,6 @@
-exports['table() table(no trailing comma) Parse "" 1'] = {
+exports['record() record(no trailing comma) Parse "" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 0
@@ -19,9 +19,9 @@ exports['table() table(no trailing comma) Parse "" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 33
@@ -227,9 +227,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qux"
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 35
@@ -443,9 +443,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 33
@@ -646,9 +646,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux"
   "errors": []
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 27
@@ -858,9 +858,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 1'
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 25
@@ -1074,9 +1074,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'] 
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 19
@@ -1193,9 +1193,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 17
@@ -1299,9 +1299,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
   "errors": []
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" : }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 11
@@ -1414,9 +1414,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" : }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ "foo" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 9
@@ -1533,9 +1533,9 @@ exports['table() table(no trailing comma) Parse "{ "foo" }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 19
@@ -1757,9 +1757,9 @@ exports['table() table(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ : "bar" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 11
@@ -1872,9 +1872,9 @@ exports['table() table(no trailing comma) Parse "{ : "bar" }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ : }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 5
@@ -1995,9 +1995,9 @@ exports['table() table(no trailing comma) Parse "{ : }" 1'] = {
   ]
 }
 
-exports['table() table(no trailing comma) Parse "{ }" 1'] = {
+exports['record() record(no trailing comma) Parse "{ }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 3
@@ -2007,9 +2007,9 @@ exports['table() table(no trailing comma) Parse "{ }" 1'] = {
   "errors": []
 }
 
-exports['table() table(no trailing comma) Parse "{" 1'] = {
+exports['record() record(no trailing comma) Parse "{" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 1
@@ -2028,9 +2028,9 @@ exports['table() table(no trailing comma) Parse "{" 1'] = {
   ]
 }
 
-exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , }" 1'] = {
+exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 35
@@ -2235,9 +2235,9 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" , 
   "errors": []
 }
 
-exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }" 1'] = {
+exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 33
@@ -2438,9 +2438,9 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" }"
   "errors": []
 }
 
-exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
+exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 19
@@ -2548,9 +2548,9 @@ exports['table() table(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
   "errors": []
 }
 
-exports['table() table(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
+exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
   "node": {
-    "type": "table",
+    "type": "record",
     "range": {
       "start": 0,
       "end": 17

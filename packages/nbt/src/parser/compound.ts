@@ -3,7 +3,7 @@ import type { NbtCompoundNode } from '../node'
 import { entry } from './entry'
 
 export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
-	const parser = core.table({
+	return core.setType('nbt:compound', core.record({
 		start: '{',
 		pair: {
 			key: core.failOnEmpty(core.string({ ...core.BrigadierStringOptions, colorTokenType: 'property' })),
@@ -13,8 +13,5 @@ export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
 			trailingEnd: false,
 		},
 		end: '}',
-	})
-	const ans = parser(src, ctx) as core.Mutable<NbtCompoundNode>
-	ans.type = 'nbt:compound'
-	return ans
+	}))(src, ctx)
 }

@@ -274,6 +274,18 @@ export function map<NA extends Returnable, NB extends Returnable = NA>(parser: P
 	}
 }
 
+export function setType<N extends AstNode, T extends string>(type: T, parser: InfallibleParser<N>): InfallibleParser<Omit<N, 'type'> & { type: T }>
+export function setType<N extends AstNode, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }>
+export function setType<N extends AstNode, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }> {
+	return map(
+		parser,
+		res => ({
+			...res,
+			type,
+		})
+	)
+}
+
 /**
  * Checks if the result of `parser` is valid, and reports an error if it's not.
  * 

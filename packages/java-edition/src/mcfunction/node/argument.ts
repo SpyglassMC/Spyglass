@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
 
-export interface BlockStatesNode extends core.TableNode<core.StringNode, core.StringNode> {
+export interface BlockStatesNode extends core.RecordBaseNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
 }
 export namespace BlockStatesNode {
@@ -67,13 +67,13 @@ export const enum CoordinateSystem {
 	Local = 1,
 }
 
-export interface EntitySelectorAdvancementsArgumentCriteriaNode extends core.TableNode<core.StringNode, core.BooleanNode> {
+export interface EntitySelectorAdvancementsArgumentCriteriaNode extends core.RecordBaseNode<core.StringNode, core.BooleanNode> {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
-export interface EntitySelectorAdvancementsArgumentNode extends core.TableNode<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode> {
+export interface EntitySelectorAdvancementsArgumentNode extends core.RecordBaseNode<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode> {
 	type: 'mcfunction:entity_selector/arguments/advancements'
 }
-export interface EntitySelectorScoresArgumentNode extends core.TableNode<core.SymbolNode, IntRangeNode> {
+export interface EntitySelectorScoresArgumentNode extends core.RecordBaseNode<core.SymbolNode, IntRangeNode> {
 	type: 'mcfunction:entity_selector/arguments/scores'
 }
 export interface EntitySelectorInvertableArgumentValueNode<T extends core.AstNode> extends core.SequenceNode<core.LiteralNode | T> {
@@ -81,7 +81,7 @@ export interface EntitySelectorInvertableArgumentValueNode<T extends core.AstNod
 	value: T,
 	inverted: boolean,
 }
-export interface EntitySelectorArgumentsNode extends core.TableNode<core.StringNode, any> {
+export interface EntitySelectorArgumentsNode extends core.RecordBaseNode<core.StringNode, any> {
 	type: 'mcfunction:entity_selector/arguments'
 }
 export namespace EntitySelectorArgumentsNode {

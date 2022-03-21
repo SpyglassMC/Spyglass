@@ -205,8 +205,8 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 	return core.map<core.SequenceUtil<core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode>, BlockNode>(
 		core.sequence([
 			core.resourceLocation({ category: 'block', allowTag: isPredicate }),
-			core.optional(core.map<core.TableNode<core.StringNode, core.StringNode>, BlockStatesNode>(
-				core.failOnEmpty(core.table<core.StringNode, core.StringNode>({
+			core.optional(core.map<core.RecordNode<core.StringNode, core.StringNode>, BlockStatesNode>(
+				core.failOnEmpty(core.record<core.StringNode, core.StringNode>({
 					start: '[',
 					pair: {
 						key: core.string({
@@ -522,8 +522,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 
 					const keys = ['advancements', 'distance', 'gamemode', 'level', 'limit', 'name', 'nbt', 'predicate', 'scores', 'sort', 'tag', 'team', 'type', 'x', 'y', 'z', 'dx', 'dy', 'dz', 'x_rotation', 'y_rotation']
 
-					return core.optional(core.map<core.TableNode<core.StringNode, core.AstNode>, EntitySelectorArgumentsNode>(
-						core.failOnEmpty(core.table({
+					return core.optional(core.map<core.RecordNode<core.StringNode, core.AstNode>, EntitySelectorArgumentsNode>(
+						core.failOnEmpty(core.record({
 							start: '[',
 							pair: {
 								key: core.string({
@@ -535,13 +535,13 @@ function selector(): core.Parser<EntitySelectorNode> {
 								}),
 								sep: '=',
 								value: {
-									get: (table, key) => {
-										const hasKey = (key: string): boolean => !!table.children.find(p => p.key?.value === key)
-										const hasNonInvertedKey = (key: string): boolean => !!table.children.find(p => p.key?.value === key && !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted)
+									get: (record, key) => {
+										const hasKey = (key: string): boolean => !!record.children.find(p => p.key?.value === key)
+										const hasNonInvertedKey = (key: string): boolean => !!record.children.find(p => p.key?.value === key && !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted)
 										switch (key?.value) {
 											case 'advancements':
-												return core.map<core.TableNode<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode>, EntitySelectorAdvancementsArgumentNode>(
-													core.table<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode>({
+												return core.map<core.RecordNode<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode>, EntitySelectorAdvancementsArgumentNode>(
+													core.record<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode>({
 														start: '{',
 														pair: {
 															key: core.resourceLocation({ category: 'advancement' }),
@@ -549,8 +549,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 															value: core.select([
 																{
 																	predicate: src => src.peek() === '{',
-																	parser: core.map<core.TableNode<core.StringNode, core.BooleanNode>, EntitySelectorAdvancementsArgumentCriteriaNode>(
-																		core.table<core.StringNode, core.BooleanNode>({
+																	parser: core.map<core.RecordNode<core.StringNode, core.BooleanNode>, EntitySelectorAdvancementsArgumentCriteriaNode>(
+																		core.record<core.StringNode, core.BooleanNode>({
 																			start: '{',
 																			pair: {
 																				key: unquotedString,
@@ -660,8 +660,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 											case 'predicate':
 												return invertable(core.resourceLocation({ category: 'predicate' }))
 											case 'scores':
-												return core.map<core.TableNode<core.SymbolNode, IntRangeNode>, EntitySelectorScoresArgumentNode>(
-													core.table<core.SymbolNode, IntRangeNode>({
+												return core.map<core.RecordNode<core.SymbolNode, IntRangeNode>, EntitySelectorScoresArgumentNode>(
+													core.record<core.SymbolNode, IntRangeNode>({
 														start: '{',
 														pair: {
 															key: objective('reference', ['[', '=', ',', ']', '{', '}']),
