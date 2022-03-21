@@ -1,10 +1,11 @@
-import type { LanguageError } from '@spyglassmc/core'
-import { CheckerContext, Failure, ParserContext, ProjectData, Source, SymbolUtil } from '@spyglassmc/core'
-import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils'
+import type { Completer, CompletionItem, LanguageError } from '@spyglassmc/core'
+import { AstNode } from '@spyglassmc/core'
+import { CheckerContext, CompleterContext, Failure, ParserContext, ProjectData, Source, SymbolUtil } from '@spyglassmc/core'
+import { markOffsetInString, showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { JsonChecker } from '../lib/checker/JsonChecker'
-import type { JsonNode } from '../lib/node'
+import type { JsonExpectation, JsonNode } from '../lib/node'
 import { entry as parser } from '../lib/parser'
 
 export function testChecker(checker: JsonChecker, test: string, { project }: { project?: Partial<ProjectData> } = {}): {
@@ -38,5 +39,31 @@ export function testGrid(suites: { content: string }[], checkers: { name: string
 				})
 			}
 		})
+	}
+}
+
+export function testCompleter(completer: Completer<any>, text: string, expectation: JsonExpectation[] | undefined, offset: number, { project, symbols = new SymbolUtil({}) }: { project?: Partial<ProjectData>, symbols?: SymbolUtil } = {}): {
+	completions: readonly CompletionItem[],
+} {
+	const src = new Source(text)
+	const doc = TextDocument.create('file:///', 'json', 0, text)
+	const parserCtx = ParserContext.create(ProjectData.mock({ symbols, ...project }), { doc })
+	const node = parser(src, parserCtx) as JsonNode
+	AstNode.setParents(node)
+	node.expectation = expectation
+
+	const completerCtx = CompleterContext.create(ProjectData.mock({ symbols, ...project }), { doc, offset })
+	const result = completer(node, completerCtx)
+
+	return { completions: result }
+}
+
+export function completerTestGrid(completer: Completer<any>, cases: { text: string, expectation?: JsonExpectation[], offsets: number[] }[]) {
+	for (const { text, expectation, offsets } of cases) {
+		for (const offset of offsets) {
+			it(`Complete ${markOffsetInString(text, offset)}`, () => {
+				snapshot(testCompleter(completer, text, expectation, offset))
+			})
+		}
 	}
 }

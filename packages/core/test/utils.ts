@@ -22,7 +22,7 @@ export function showWhitespaceGlyph(string: string) {
 
 export function markOffsetInString(string: string, offset: number) {
 	string = showWhitespaceGlyph(string)
-	return "'" + string.slice(0, offset) + `|${string.charAt(offset)}` + string.slice(offset + 1) + "'"
+	return `'${string.slice(0, offset)}|${string.slice(offset)}'`
 }
 
 function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean): void {
