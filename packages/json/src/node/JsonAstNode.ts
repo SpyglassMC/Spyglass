@@ -1,8 +1,9 @@
-import type { PairNode } from '@spyglassmc/core'
+import type { ItemNode, PairNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { JsonStringOptions } from '../parser'
 
 export type JsonNode = JsonObjectNode | JsonArrayNode | JsonStringNode | JsonNumberNode | JsonBooleanNode | JsonNullNode
+export type JsonRelatedNode = JsonNode | JsonPairNode | JsonItemNode
 export namespace JsonNode {
 	export function is(node: core.AstNode): node is JsonNode {
 		return (
@@ -14,6 +15,14 @@ export namespace JsonNode {
 			JsonNullNode.is(node)
 		)
 	}
+
+	export function isRelated(node: core.AstNode): node is JsonRelatedNode {
+		return (
+			JsonNode.is(node) ||
+			JsonPairNode.is(node) ||
+			JsonItemNode.is(node)
+		)
+	}
 }
 
 interface JsonBaseAstNode {
@@ -21,6 +30,17 @@ interface JsonBaseAstNode {
 }
 
 export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation
+export namespace JsonExpectation {
+	export function isArray(e: JsonExpectation): e is JsonArrayExpectation {
+		return (e as JsonArrayExpectation).type === 'json:array'
+	}
+	export function isObject(e: JsonExpectation): e is JsonObjectExpectation {
+		return (e as JsonObjectExpectation).type === 'json:object'
+	}
+	export function isString(e: JsonExpectation): e is JsonStringExpectation {
+		return (e as JsonStringExpectation).type === 'json:string'
+	}
+}
 
 interface JsonBaseExpectation {
 	typedoc: string
@@ -79,6 +99,13 @@ export namespace JsonArrayNode {
 			range: core.Range.get(range),
 			children: [],
 		}
+	}
+}
+export type JsonItemNode = ItemNode<JsonNode>
+export namespace JsonItemNode {
+	/* istanbul ignore next */
+	export function is(obj: object): obj is JsonItemNode {
+		return (obj as JsonItemNode).type === 'item'
 	}
 }
 
