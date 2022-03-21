@@ -1,6 +1,6 @@
 import type { CompleterContext, MetaRegistry, RangeLike } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import { AstNode, CompletionItem, CompletionKind } from '@spyglassmc/core'
+import { AstNode, CompletionItem, CompletionKind, Range } from '@spyglassmc/core'
 import type { JsonBooleanNode, JsonNullNode, JsonNumberNode, JsonObjectExpectation, JsonStringExpectation } from '../node'
 import { JsonArrayNode, JsonExpectation, JsonNode, JsonObjectNode, JsonPairNode, JsonStringNode } from '../node'
 
@@ -18,6 +18,7 @@ export function entry(root: JsonNode, ctx: CompleterContext): readonly Completio
 	const result = AstNode.findDeepestChild({
 		node: root,
 		needle: ctx.offset,
+		endInclusive: true,
 		predicate: JsonNode.isRelated,
 	})
 	if (result) {
@@ -25,7 +26,7 @@ export function entry(root: JsonNode, ctx: CompleterContext): readonly Completio
 
 		// Object properties
 		// { "foo": 1, | }
-		if (JsonObjectNode.is(n0) && n0.expectation) {
+		if (JsonObjectNode.is(n0) && n0.expectation && Range.contains(Range.translate(n0, 1, -1), ctx.offset, true)) {
 			return unique(n0.expectation.filter(JsonExpectation.isObject)
 				.flatMap(e => objectCompletion(ctx.offset, n0, e, ctx, true, undefined)))
 		}
@@ -56,7 +57,7 @@ export function entry(root: JsonNode, ctx: CompleterContext): readonly Completio
 
 		// Values in an array
 		// { "foo": [|] }
-		if (JsonArrayNode.is(n0) && n0.expectation) {
+		if (JsonArrayNode.is(n0) && n0.expectation && Range.contains(Range.translate(n0, 1, -1), ctx.offset, true)) {
 			return unique(n0.expectation.filter(JsonExpectation.isArray)
 				.filter(e => e.items)
 				.flatMap(e => valueCompletion(ctx.offset, e.items!, ctx)))
