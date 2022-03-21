@@ -1,7 +1,6 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import type { AstNode } from '../../lib'
-import { findNode, Range, traversePreOrder } from '../../lib'
+import { AstNode, Range } from '../../lib'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',
@@ -63,56 +62,44 @@ const DiscontinuousTestNode: AstNode = {
 	],
 }
 
-describe('processor/util.ts', () => {
-	describe('traversePreOrder()', () => {
-		it('Should traverse nodes that match the predicates', () => {
-			traversePreOrder(
-				TestNode,
-				_ => true,
-				node => node.type === 'leaf_1' || node.type === 'not_leaf_3',
-				(node, parents) => snapshot({
-					node: node.type,
-					parents: parents.map(p => p.type),
-				})
-			)
-		})
-	})
-
-	describe('findNode()', () => {
+describe('AstNode', () => {
+	describe('findDeepestChild', () => {
 		describe('continuous', () => {
-			const suites: Range[] = [
-				Range.create(0, 10),
-				Range.create(5, 6),
-				Range.create(9, 10),
+			const suites: number[] = [
+				0,
+				1,
+				5,
+				7,
+				9,
+				12,
 			]
 			for (const suite of suites) {
-				it(`Should return the node at ${Range.toString(suite)}`, () => {
-					const { node, parents } = findNode(
-						TestNode,
-						suite,
-					)
+				it(`Should return the node at ${suite}`, () => {
+					const node = AstNode.findDeepestChild({
+						node: TestNode,
+						needle: suite,
+					})
 					snapshot(node ? {
 						node: node.type,
-						parents: parents.map(p => p.type),
 					} : 'undefined')
 				})
 			}
 		})
 		describe('discontinuous', () => {
-			const suites: Range[] = [
-				Range.create(0, 10),
-				Range.create(0, 2),
-				Range.create(9, 10),
+			const suites: number[] = [
+				0,
+				3,
+				7,
+				12,
 			]
 			for (const suite of suites) {
-				it(`Should return the node at ${Range.toString(suite)}`, () => {
-					const { node, parents } = findNode(
-						DiscontinuousTestNode,
-						suite,
-					)
+				it(`Should return the node at ${suite}`, () => {
+					const node = AstNode.findDeepestChild({
+						node: DiscontinuousTestNode,
+						needle: suite,
+					})
 					snapshot(node ? {
 						node: node.type,
-						parents: parents.map(p => p.type),
 					} : 'undefined')
 				})
 			}

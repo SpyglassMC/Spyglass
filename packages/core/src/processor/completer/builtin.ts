@@ -12,15 +12,16 @@ import { CompletionItem, CompletionKind } from './Completer'
 /**
  * Uses the shallowest selected node that has its own completer to provide the completion items.
  */
-export const dispatch: Completer<AstNode> = (root, ctx) => {
-	let node: AstNode | undefined = root
-	while (node) {
-		if (node && ctx.meta.hasCompleter(node.type)) {
-			return ctx.meta.getCompleter(node.type)(node, ctx)
-		}
-		node = AstNode.findChild(node, ctx.offset, true)
-	}
-	return []
+export const dispatch: Completer<AstNode> = (node, ctx) => {
+	const child = AstNode.findShallowestChild({
+		node,
+		needle: ctx.offset,
+		endInclusive: true,
+		predicate: n => ctx.meta.hasCompleter(n.type),
+	})
+	return child
+		? ctx.meta.getCompleter(child.type)(child, ctx)
+		: []
 }
 export const fallback = dispatch
 
@@ -103,9 +104,8 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
 	if (node.children?.length) {
-		const completer = ctx.meta.getCompleter(node.children[0].type)
 		// FIXME: Escape quotes/slashes in the result. Note that `\`, `$`, and `}` have to be escaped due to TextMate syntax.
-		return completer(node.children[0], ctx)
+		return dispatch(node.children[0], ctx)
 	}
 
 	if (node.options.quotes && node.value === '') {

@@ -29,17 +29,6 @@ interface NodeResult {
 	parents: AstNode[],
 }
 
-export function selectedNode(node: AstNode, offset: number, endInclusive = false): NodeResult {
-	let ans: NodeResult = { node: undefined, parents: [] }
-	// TODO: Binary search here.
-	traversePreOrder(node,
-		(node) => Range.contains(node.range, offset, endInclusive),
-		(node) => Range.contains(node.range, offset, endInclusive),
-		(node, parents) => ans = { node, parents: [...parents] },
-	)
-	return ans
-}
-
 /**
  * @returns The shallowest node that is fully contained within `range`.
  */

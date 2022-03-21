@@ -1,8 +1,9 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import type { AstNode, FileNode } from '../node'
+import { AstNode } from '../node'
+import type { FileNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
-import { ColorPresentation, completer, selectedNode, traversePreOrder } from '../processor'
+import { ColorPresentation, completer, traversePreOrder } from '../processor'
 import { Range } from '../source'
 import type { SymbolLocation, SymbolUsageType } from '../symbol'
 import { SymbolUsageTypes } from '../symbol'
@@ -80,7 +81,7 @@ export class Service extends EventEmitter {
 
 	getColorPresentation(file: FileNode<AstNode>, doc: TextDocument, range: Range, color: Color): ColorPresentation[] {
 		this.debug(`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${Range.toString(range)}`)
-		let node: AstNode | undefined = selectedNode(file, range.start).node
+		let node = AstNode.findDeepestChild({ node: file, needle: range.start })
 		while (node) {
 			const nodeColor = node.color
 			if (nodeColor && !Array.isArray(nodeColor)) {
@@ -116,19 +117,17 @@ export class Service extends EventEmitter {
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
-		const { node, parents } = selectedNode(file, offset)
-		if (node) {
-			const nodes = [node, ...parents]
-			for (const n of nodes) {
-				const symbol = this.project.symbols.resolveAlias(n.symbol)
-				if (symbol) {
-					const hover = `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
-					return Hover.create(n.range, hover)
-				}
-				if (n.hover) {
-					return Hover.create(n.range, n.hover)
-				}
+		let node = AstNode.findDeepestChild({ node: file, needle: offset })
+		while (node) {
+			const symbol = this.project.symbols.resolveAlias(node.symbol)
+			if (symbol) {
+				const hover = `\`\`\`typescript\n(${symbol.category}${symbol.subcategory ? `/${symbol.subcategory}` : ''}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
+				return Hover.create(node.range, hover)
 			}
+			if (node.hover) {
+				return Hover.create(node.range, node.hover)
+			}
+			node = node.parent
 		}
 		return undefined
 	}
@@ -164,23 +163,21 @@ export class Service extends EventEmitter {
 	 */
 	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | undefined {
 		this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
-		const { node, parents } = selectedNode(file, offset)
-		if (node) {
-			const nodes = [node, ...parents]
-			for (const n of nodes) {
-				const symbol = this.project.symbols.resolveAlias(n.symbol)
-				if (symbol) {
-					const locations: SymbolLocation[] = []
-					for (const usage of searchedUsages) {
-						let locs = symbol[usage] ?? []
-						if (currentFileOnly) {
-							locs = locs.filter(l => l.uri === doc.uri)
-						}
-						locations.push(...locs)
+		let node = AstNode.findDeepestChild({ node: file, needle: offset })
+		while (node) {
+			const symbol = this.project.symbols.resolveAlias(node.symbol)
+			if (symbol) {
+				const locations: SymbolLocation[] = []
+				for (const usage of searchedUsages) {
+					let locs = symbol[usage] ?? []
+					if (currentFileOnly) {
+						locs = locs.filter(l => l.uri === doc.uri)
 					}
-					return SymbolLocations.create(n.range, locations.length ? locations : undefined)
+					locations.push(...locs)
 				}
+				return SymbolLocations.create(node.range, locations.length ? locations : undefined)
 			}
+			node = node.parent
 		}
 		return undefined
 	}

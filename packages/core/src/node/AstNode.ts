@@ -77,6 +77,40 @@ export namespace AstNode {
 	export function findLastChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
 		return node.children?.[findLastChildIndex(node, needle, endInclusive)] as any
 	}
+
+	interface FindRecursivelyOptions<P = (node: AstNode) => boolean> {
+		node: AstNode,
+		needle: number,
+		endInclusive?: boolean,
+		predicate?: P,
+	}
+	/**
+	 * @returns The deepest node that both contains `needle` and satisfies the `predicate`.
+	 */
+	export function findDeepestChild<N extends AstNode>(options: FindRecursivelyOptions<(node: AstNode) => node is N>): N | undefined
+	export function findDeepestChild(options: FindRecursivelyOptions): AstNode | undefined
+	export function findDeepestChild({ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions): AstNode | undefined {
+		let last: AstNode | undefined
+		let head = Range.contains(node, needle, endInclusive) ? node : undefined
+		while (head && predicate(head)) {
+			last = head
+			head = findChild(head, needle, endInclusive)
+		}
+		return last
+	}
+
+	/**
+	 * @returns The shallowest node that both contains `needle` and satisfies the `predicate`.
+	 */
+	export function findShallowestChild<N extends AstNode>(options: FindRecursivelyOptions<(node: AstNode) => node is N>): N | undefined
+	export function findShallowestChild(options: FindRecursivelyOptions): AstNode | undefined
+	export function findShallowestChild({ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions): AstNode | undefined {
+		let head = Range.contains(node, needle, endInclusive) ? node : undefined
+		while (head && !predicate(head)) {
+			head = findChild(head, needle, endInclusive)
+		}
+		return head
+	}
 }
 
 export type Mutable<N> = N extends AstNode ? {
