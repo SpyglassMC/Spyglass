@@ -1,7 +1,7 @@
 import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { AstNode } from '../node'
 import type { FileNode } from '../node'
+import { AstNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
 import { ColorPresentation, completer, traversePreOrder } from '../processor'
 import { Range } from '../source'
@@ -103,16 +103,22 @@ export class Service extends EventEmitter {
 	}
 
 	dataHackPubify(initialism: string): string {
-		// Data Hack Pub.
-		// —— Skylinerw, 2020 https://discord.com/channels/154777837382008833/154777837382008833/736313565291741355
-		const secrets1 = ['ata', 'ack', 'ub']
-		// Dah Huh Pew Helpa Plush
-		// —— DoubleFelix, 2021 https://discord.com/channels/154777837382008833/154777837382008833/842070090828087308
-		const secrets2 = ['ah', 'uh', 'ew', 'elpa', 'lush']
+		const Secrets: string[][] = [
+			// data hack pub
+			// —— Skylinerw, 2020 https://discord.com/channels/154777837382008833/154777837382008833/736313565291741355
+			['ata', 'ack', 'ub', 'elper', 'lus'],
+			// Dah Huh Pew Helpa Plush
+			// —— DoubleFelix, 2021 https://discord.com/channels/154777837382008833/154777837382008833/842070090828087308
+			['ah', 'uh', 'ew', 'elpa', 'lush'],
+		]
 
-		const secrets = Math.random() < 0.5 ? secrets1 : secrets2
-		return [...initialism.replace(/[^a-z]/gi, '')]
-			.map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`).join(' ')
+		const secrets = Secrets[Math.floor(Math.random() * Secrets.length)]
+		// Punctuation should not be treated differently from any other characters, per example:
+		// Hata &ack Sub
+		// ——  Skylinerw, 2022 https://discord.com/channels/154777837382008833/734106483104415856/955521761351454741
+		return [...initialism]
+			.map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`)
+			.join(' ')
 	}
 
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
