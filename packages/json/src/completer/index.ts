@@ -34,8 +34,11 @@ export function entry(root: JsonNode, ctx: CompleterContext): CompletionItem[] {
 		// Inside a string
 		// { "foo": "|" }
 		if (JsonStringNode.is(n0) && n0.expectation) {
-			return unique(n0.expectation.filter(e => e.type === 'json:string')
-				.flatMap(e => stringCompletion(n0, e as JsonStringExpectation, ctx)))
+			if (n0.children?.length) {
+				return core.completer.string(n0, ctx)
+			}
+			return unique(n0.expectation.filter(JsonExpectation.isString)
+				.flatMap(e => stringCompletion(n0, e, ctx)))
 		}
 
 		// Values after an object property
