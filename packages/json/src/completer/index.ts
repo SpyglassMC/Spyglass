@@ -27,12 +27,12 @@ export function entry(root: JsonNode, ctx: CompleterContext): readonly Completio
 		// { "foo": 1, | }
 		if (JsonObjectNode.is(n0) && n0.expectation) {
 			return unique(n0.expectation.filter(JsonExpectation.isObject)
-				.flatMap(e => objectCompletion(ctx.offset, n0, e, ctx, true)))
+				.flatMap(e => objectCompletion(ctx.offset, n0, e, ctx, true, undefined)))
 		}
 		// { "foo": 1, "|" }
 		if (JsonStringNode.is(n0) && JsonPairNode.is(n1) && n1.key === n0 && JsonObjectNode.is(n2) && n2.expectation) {
 			return unique(n2.expectation.filter(JsonExpectation.isObject)
-				.flatMap(e => objectCompletion(n0, n2, e, ctx, n1.value === undefined)))
+				.flatMap(e => objectCompletion(n0, n2, e, ctx, n1.value === undefined, n0.value)))
 		}
 
 		// Inside a string
@@ -65,10 +65,10 @@ export function entry(root: JsonNode, ctx: CompleterContext): readonly Completio
 	return []
 }
 
-function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext, insertValue: boolean): CompletionItem[] {
+function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext, insertValue: boolean, selectedKey: string | undefined): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
-			.filter(f => !node.children.find(p => f.key === p.key?.value))
+			.filter(f => f.key === selectedKey || !node.children.find(p => f.key === p.key?.value))
 			.map(f => fieldCompletion(range, f, insertValue))
 	} else if (expectation.keys) {
 		return expectation.keys.flatMap(e => stringCompletion(range, e, ctx)
