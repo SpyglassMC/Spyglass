@@ -404,9 +404,7 @@ export interface ConfigService {
 
 export class ConfigService extends EventEmitter {
 	static readonly ConfigFileNames = Object.freeze([
-		'.spyglassconfig',
-		'.spyglassconfig.json',
-		'.spyglassrc',
+		'spyglass.json',
 		'.spyglassrc.json',
 	] as const)
 
