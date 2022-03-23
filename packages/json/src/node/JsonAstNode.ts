@@ -61,8 +61,8 @@ export interface JsonObjectNode extends core.RecordBaseNode<JsonStringNode, Json
 }
 export namespace JsonObjectNode {
 	/* istanbul ignore next */
-	export function is(obj: object): obj is JsonObjectNode {
-		return (obj as JsonObjectNode).type === 'json:object'
+	export function is(obj: object | undefined): obj is JsonObjectNode {
+		return (obj as JsonObjectNode | undefined)?.type === 'json:object'
 	}
 
 	export function mock(range: core.RangeLike): JsonObjectNode {
@@ -89,8 +89,8 @@ export interface JsonArrayNode extends core.ListNode<JsonNode>, JsonBaseAstNode 
 	readonly type: 'json:array'
 }
 export namespace JsonArrayNode {
-	export function is(obj: object): obj is JsonArrayNode {
-		return (obj as JsonArrayNode).type === 'json:array'
+	export function is(obj: object | undefined): obj is JsonArrayNode {
+		return (obj as JsonArrayNode | undefined)?.type === 'json:array'
 	}
 
 	export function mock(range: core.RangeLike): JsonArrayNode {
@@ -124,8 +124,8 @@ export interface JsonStringNode extends core.StringBaseNode, JsonBaseAstNode {
 }
 export namespace JsonStringNode {
 	/* istanbul ignore next */
-	export function is(obj: object): obj is JsonStringNode {
-		return (obj as JsonStringNode).type === 'json:string'
+	export function is(obj: object | undefined): obj is JsonStringNode {
+		return (obj as JsonStringNode | undefined)?.type === 'json:string'
 	}
 
 	export function mock(range: core.RangeLike): JsonStringNode {

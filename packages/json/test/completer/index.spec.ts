@@ -1,13 +1,18 @@
 import { describe } from 'mocha'
-import { entry } from '../../lib/completer'
+import { boolean, object } from '../../lib/completer'
 import { completerTestGrid } from '../utils'
 
-describe('JSON completer entry', () => {
-	completerTestGrid(entry, [
+describe('JSON completer boolean', () => {
+	completerTestGrid(boolean, [
 		{
 			text: 'true',
-			offsets: [0, 1, 2, 3, 4],
+			offsets: [0, 1, 4],
 		},
+	])
+})
+
+describe('JSON completer object', () => {
+	completerTestGrid(object, [
 		{
 			text: '{ "foo": true, "bar": , : false, }',
 			expectation: [{

@@ -1,3 +1,4 @@
+import externalBinarySearch from 'binary-search'
 import crypto from 'crypto'
 import rfdc from 'rfdc'
 import type { URL as Uri } from 'url'
@@ -293,3 +294,5 @@ export function getStates(category: 'block' | 'fluid', ids: readonly string[], c
 	}
 	return ans
 }
+
+export const binarySearch = externalBinarySearch

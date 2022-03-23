@@ -202,7 +202,7 @@ exports['JSON completer object Complete \'{ "foo": true, "bar": ,| : false, }\' 
       "detail": "",
       "sortText": "0baz",
       "filterText": "\"baz\"",
-      "insertText": "\"baz\": ${1|false,true|}",
+      "insertText": "\"baz\": ${1|false,true|},",
       "label": "baz",
       "range": {
         "start": 23,
@@ -214,7 +214,7 @@ exports['JSON completer object Complete \'{ "foo": true, "bar": ,| : false, }\' 
       "detail": "",
       "sortText": "0qux",
       "filterText": "\"qux\"",
-      "insertText": "\"qux\": ${1|false,true|}",
+      "insertText": "\"qux\": ${1|false,true|},",
       "label": "qux",
       "range": {
         "start": 23,
@@ -225,7 +225,26 @@ exports['JSON completer object Complete \'{ "foo": true, "bar": ,| : false, }\' 
 }
 
 exports['JSON completer object Complete \'{ "foo": true, "bar": |, : false, }\' 1'] = {
-  "completions": []
+  "completions": [
+    {
+      "kind": 12,
+      "insertText": "false",
+      "label": "false",
+      "range": {
+        "start": 22,
+        "end": 22
+      }
+    },
+    {
+      "kind": 12,
+      "insertText": "true",
+      "label": "true",
+      "range": {
+        "start": 22,
+        "end": 22
+      }
+    }
+  ]
 }
 
 exports['JSON completer object Complete \'{ "foo": true, "bar":| , : false, }\' 1'] = {
@@ -317,7 +336,7 @@ exports['JSON completer object Complete \'{ "foo": true,| "bar": , : false, }\' 
       "detail": "",
       "sortText": "0baz",
       "filterText": "\"baz\"",
-      "insertText": "\"baz\": ${1|false,true|}",
+      "insertText": "\"baz\": ${1|false,true|},",
       "label": "baz",
       "range": {
         "start": 14,
@@ -329,7 +348,7 @@ exports['JSON completer object Complete \'{ "foo": true,| "bar": , : false, }\' 
       "detail": "",
       "sortText": "0qux",
       "filterText": "\"qux\"",
-      "insertText": "\"qux\": ${1|false,true|}",
+      "insertText": "\"qux\": ${1|false,true|},",
       "label": "qux",
       "range": {
         "start": 14,
@@ -641,7 +660,7 @@ exports['JSON completer object Complete \'{| "foo": true, "bar": , : false, }\' 
       "detail": "",
       "sortText": "0baz",
       "filterText": "\"baz\"",
-      "insertText": "\"baz\": ${1|false,true|}",
+      "insertText": "\"baz\": ${1|false,true|},",
       "label": "baz",
       "range": {
         "start": 1,
@@ -653,7 +672,7 @@ exports['JSON completer object Complete \'{| "foo": true, "bar": , : false, }\' 
       "detail": "",
       "sortText": "0qux",
       "filterText": "\"qux\"",
-      "insertText": "\"qux\": ${1|false,true|}",
+      "insertText": "\"qux\": ${1|false,true|},",
       "label": "qux",
       "range": {
         "start": 1,

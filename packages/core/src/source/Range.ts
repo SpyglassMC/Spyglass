@@ -101,6 +101,11 @@ export namespace Range {
 			: range.end <= Range.get(target).start
 	}
 
+	export function isEmpty(range: RangeLike): boolean {
+		range = get(range)
+		return range.start === range.end
+	}
+
 	export function length(range: Range) {
 		return range.end - range.start
 	}

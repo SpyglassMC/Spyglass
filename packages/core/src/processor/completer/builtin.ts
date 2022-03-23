@@ -1,9 +1,12 @@
+import binarySearch from 'binary-search'
 import { ResourceLocation } from '../../common'
-import type { CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
+import type { CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, PairNode, RecordBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node'
 import { AstNode } from '../../node'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode'
-import type { MetaRegistry } from '../../service'
+import type { CompleterContext, MetaRegistry } from '../../service'
 import { LinterConfigValue } from '../../service'
+import type { RangeLike } from '../../source'
+import { Range } from '../../source'
 import type { TagFileCategory } from '../../symbol'
 import type { ColorTokenType } from '../colorizer'
 import type { Completer } from './Completer'
@@ -57,6 +60,51 @@ export const literal: Completer<LiteralBaseNode> = node => {
 }
 
 export const noop: Completer<any> = () => []
+
+interface RecordOptions<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>> {
+	key: (record: N, pair: PairNode<K, V> | undefined, ctx: CompleterContext, range: RangeLike, insertValue: boolean, insertPairEnd: boolean, existingKeys: K[]) => readonly CompletionItem[],
+	value: (record: N, pair: PairNode<K, V>, ctx: CompleterContext) => readonly CompletionItem[],
+}
+export function record<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>>(o: RecordOptions<K, V, N>): Completer<N> {
+	return (node, ctx) => {
+		if (!Range.contains(Range.translate(node, 1, -1), ctx.offset, true)) {
+			return []
+		}
+
+		const completeKeys = (pair: PairNode<K, V> | undefined) => o.key(node, pair, ctx, pair?.key ?? ctx.offset, false, false, existingKeys)
+		const completePairs = (pair: PairNode<K, V> | undefined) => o.key(node, pair, ctx, pair ?? ctx.offset, true, hasNextPair || !!pair?.end, existingKeys)
+		const existingKeys = node.children
+			.filter((n): n is Omit<PairNode<K, V>, 'key'> & { key: K } => !!n.key)
+			.map(n => n.key)
+		const index = binarySearch(node.children, ctx.offset, (n, o) => n.end
+			? Range.compareOffset(Range.translate(n, 0, -1), o, true)
+			: Range.compareOffset(n.range, o, true)
+		)
+		const pair = index >= 0 ? node.children[index] : undefined
+		const hasNextPair = !!node.children.find(n => n.range.start > ctx.offset)
+		if (!pair) {
+			return completePairs(undefined)
+		}
+
+		const { key, sep, value } = pair
+		if (!key && !sep && !value) {
+			return completePairs(undefined)
+		}
+		if ((key && Range.contains(key, ctx.offset, true)) || (sep && ctx.offset <= sep.start) || (value && ctx.offset < value.range.start)) {
+			// Selected key.
+			if (!value || Range.isEmpty(value.range)) {
+				return completePairs(pair)
+			}
+			return completeKeys(pair)
+		}
+		if ((value && Range.contains(value, ctx.offset, true)) || (sep && ctx.offset >= sep.end) || (key && ctx.offset > key.range.end)) {
+			// Selected value.
+			return o.value(node, pair, ctx)
+		}
+
+		return []
+	}
+}
 
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
