@@ -6,8 +6,8 @@ import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { MajorVersion } from '../../dependency'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
-import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ParticleNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
-import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariables, EntitySelectorNode, ObjectiveCriteriaNode, TimeNode } from '../node'
+import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, EntitySelectorVariable, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ParticleNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
+import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariable, EntitySelectorAtVariables, EntitySelectorNode, ObjectiveCriteriaNode, TimeNode } from '../node'
 import type { ArgumentTreeNode } from '../tree/argument'
 
 const IntegerPattern = /^-?\d+$/
@@ -307,7 +307,7 @@ function entity(amount: 'multiple' | 'single', type: 'entities' | 'players'): co
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([
 			{
-				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
+				predicate: src => EntitySelectorAtVariable.is(src.peek(2)),
 				parser: selector(),
 			},
 			{
@@ -383,7 +383,7 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (EntitySelectorAtVariables.includes(src.peek(2))) {
+		if (EntitySelectorAtVariable.is(src.peek(2))) {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(core.stopBefore(greedyString, ...EntitySelectorAtVariables)(src, ctx))
@@ -520,8 +520,6 @@ function selector(): core.Parser<EntitySelectorNode> {
 						)
 					}
 
-					const keys = ['advancements', 'distance', 'gamemode', 'level', 'limit', 'name', 'nbt', 'predicate', 'scores', 'sort', 'tag', 'team', 'type', 'x', 'y', 'z', 'dx', 'dy', 'dz', 'x_rotation', 'y_rotation']
-
 					return core.optional(core.map<core.RecordNode<core.StringNode, core.AstNode>, EntitySelectorArgumentsNode>(
 						core.failOnEmpty(core.record({
 							start: '[',
@@ -529,7 +527,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 								key: core.string({
 									...core.BrigadierStringOptions,
 									value: {
-										parser: core.literal({ pool: keys, colorTokenType: 'property' }),
+										parser: core.literal({ pool: [...EntitySelectorNode.ArgumentKeys], colorTokenType: 'property' }),
 										type: 'literal',
 									},
 								}),
@@ -697,7 +695,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 															ctx.err.report(localize('duplicate-key', localeQuote(key.value)), key)
 														}
 														if (currentEntity) {
-															ctx.err.report(localize('mcfunction.parser.entity-selector.arguments.not-@s', localeQuote(key.value)), key)
+															ctx.err.report(localize('mcfunction.parser.entity-selector.arguments.not-applicable', localeQuote(key.value)), key)
 														}
 														return res
 													}
@@ -803,9 +801,9 @@ function selector(): core.Parser<EntitySelectorNode> {
 			const ans: EntitySelectorNode = {
 				type: 'mcfunction:entity_selector',
 				range: res.range,
-				children: res.children,
-				variable: res.children.find(core.LiteralNode.is)?.value.slice(1),
-				argument: res.children.find(EntitySelectorArgumentsNode.is),
+				children: res.children as EntitySelectorNode['children'],
+				variable: res.children.find(core.LiteralNode.is)!.value.slice(1) as EntitySelectorVariable,
+				arguments: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
 				currentEntity,
 				dimensionLimited,
@@ -862,7 +860,7 @@ function scoreHolder(amount: 'multiple' | 'single'): core.Parser<ScoreHolderNode
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
 			{
-				predicate: src => EntitySelectorAtVariables.includes(src.peek(2)),
+				predicate: src => EntitySelectorAtVariable.is(src.peek(2)),
 				parser: selector(),
 			},
 			{

@@ -90,20 +90,27 @@ export namespace EntitySelectorArgumentsNode {
 		return (node as EntitySelectorArgumentsNode).type === 'mcfunction:entity_selector/arguments'
 	}
 }
-export const EntitySelectorVariables = ['p', 'a', 'r', 's', 'e']
+export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's'] as const
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
-export const EntitySelectorAtVariables = ['@p', '@a', '@r', '@s', '@e']
-export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */
 	export function is(value: string): value is EntitySelectorVariable {
-		return EntitySelectorVariables.includes(value)
+		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-export interface EntitySelectorNode extends core.SequenceNode<core.LiteralNode | EntitySelectorArgumentsNode> {
+export const EntitySelectorAtVariables = EntitySelectorVariables.map(v => `@${v}` as const)
+export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
+export namespace EntitySelectorAtVariable {
+	/* istanbul ignore next */
+	export function is(value: string): value is EntitySelectorAtVariable {
+		return EntitySelectorAtVariables.includes(value as EntitySelectorAtVariable)
+	}
+}
+export interface EntitySelectorNode extends core.AstNode {
 	type: 'mcfunction:entity_selector',
-	variable?: EntitySelectorVariable,
-	argument?: EntitySelectorArgumentsNode,
+	children: [core.LiteralNode, ...[] | [EntitySelectorArgumentsNode]]
+	variable: EntitySelectorVariable,
+	arguments?: EntitySelectorArgumentsNode,
 	currentEntity?: boolean,
 	dimensionLimited?: boolean,
 	playersOnly?: boolean,
@@ -114,13 +121,73 @@ export interface EntitySelectorNode extends core.SequenceNode<core.LiteralNode |
 }
 export namespace EntitySelectorNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is EntitySelectorNode {
-		return (node as EntitySelectorNode).type === 'mcfunction:entity_selector'
+	export function is(node: core.AstNode | undefined): node is EntitySelectorNode {
+		return (node as EntitySelectorNode | undefined)?.type === 'mcfunction:entity_selector'
+	}
+
+	export function mock(range: core.RangeLike): EntitySelectorNode {
+		const literal = core.LiteralNode.mock(range, { pool: EntitySelectorAtVariables, colorTokenType: 'keyword' })
+		return {
+			type: 'mcfunction:entity_selector',
+			range: core.Range.get(range),
+			children: [literal],
+			variable: 'e',
+		}
+	}
+
+	export const ArgumentKeys = new Set([
+		'advancements', 'distance', 'gamemode', 'level', 'limit', 'name',
+		'nbt', 'predicate', 'scores', 'sort', 'tag', 'team', 'type',
+		'x', 'y', 'z', 'dx', 'dy', 'dz', 'x_rotation', 'y_rotation',
+	] as const)
+	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T> ? T : undefined
+
+	export const enum Result {
+		Ok,
+		Duplicated,
+		NotApplicable,
+	}
+	export function canKeyExist(selector: EntitySelectorNode, argument: EntitySelectorArgumentsNode, key: string): Result {
+		const hasKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key)
+		const hasNonInvertedKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key && !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted)
+		switch (key) {
+			case 'advancements':
+			case 'distance':
+			case 'level':
+			case 'scores':
+			case 'x':
+			case 'y':
+			case 'z':
+			case 'dx':
+			case 'dy':
+			case 'dz':
+			case 'x_rotation':
+			case 'y_rotation':
+				return hasKey(key) ? Result.Duplicated : Result.NotApplicable
+			case 'gamemode':
+			case 'name':
+			case 'team':
+				return hasNonInvertedKey(key) ? Result.Duplicated : Result.NotApplicable
+			case 'limit':
+			case 'sort':
+				return selector.currentEntity
+					? Result.NotApplicable
+					: hasKey(key)
+						? Result.Duplicated
+						: Result.Ok
+			case 'type':
+				return selector.typeLimited
+					? hasKey(key)
+						? Result.Duplicated
+						: Result.NotApplicable
+					: Result.Ok
+		}
+		return Result.Ok
 	}
 }
 export interface EntityNode extends core.AstNode {
 	type: 'mcfunction:entity',
-	children: (core.StringNode | EntitySelectorNode | UuidNode)[],
+	children: [core.StringNode | EntitySelectorNode | UuidNode],
 	playerName?: core.StringNode,
 	selector?: EntitySelectorNode,
 	uuid?: UuidNode,
@@ -241,7 +308,7 @@ export namespace ParticleNode {
 
 export interface ScoreHolderNode extends core.AstNode {
 	type: 'mcfunction:score_holder',
-	children: (core.SymbolNode | EntitySelectorNode)[],
+	children: [core.SymbolNode | EntitySelectorNode],
 	fakeName?: core.SymbolNode,
 	selector?: EntitySelectorNode,
 }

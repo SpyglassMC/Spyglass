@@ -7,7 +7,7 @@ import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
 import { text_component } from '../../json/checker/data/text_component'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node'
-import { EntityNode, EntitySelectorArgumentsNode } from '../node'
+import { EntityNode } from '../node'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -161,7 +161,7 @@ export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext)
 	if (entity.playerName !== undefined || entity.selector?.playersOnly) {
 		return ['minecraft:player']
 	} else if (entity.selector) {
-		const argumentsNode = entity.selector.children.find(EntitySelectorArgumentsNode.is)
+		const argumentsNode = entity.selector.arguments
 		if (!argumentsNode) {
 			return undefined
 		}

@@ -5,8 +5,8 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
-import type { BlockStatesNode, EntityNode, ScoreHolderNode } from '../node'
-import { BlockNode, CoordinateNode, IntRangeNode, ItemNode, ObjectiveCriteriaNode, ParticleNode, VectorNode } from '../node'
+import type { BlockStatesNode, EntitySelectorArgumentsNode, ScoreHolderNode } from '../node'
+import { BlockNode, CoordinateNode, EntitySelectorNode, IntRangeNode, ItemNode, ObjectiveCriteriaNode, ParticleNode, VectorNode } from '../node'
 import type { ArgumentTreeNode } from '../tree'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range): Arrayable<AstNode> => {
@@ -48,6 +48,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range):
 			]
 		case 'minecraft:dimension':
 			return ResourceLocationNode.mock(range, { category: 'dimension' })
+		case 'minecraft:entity':
+		case 'minecraft:game_profile':
+			return EntitySelectorNode.mock(range)
 		case 'minecraft:entity_anchor':
 			return LiteralNode.mock(range, { pool: EntityAnchorArgumentValues })
 		case 'minecraft:entity_summon':
@@ -97,8 +100,6 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range):
 		case 'spyglassmc:tag':
 			return SymbolNode.mock(range, { category: 'tag' })
 		// ==== Unimplemented ====
-		case 'minecraft:entity':
-		case 'minecraft:game_profile':
 		case 'minecraft:nbt_compound_tag':
 		case 'minecraft:nbt_path':
 		case 'minecraft:nbt_tag':
@@ -163,10 +164,6 @@ const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
 	return [CompletionItem.create('~', node)]
 }
 
-const entity: Completer<EntityNode> = (node, ctx) => {
-	return []
-}
-
 const item: Completer<ItemNode> = (node, ctx) => {
 	const ans: CompletionItem[] = []
 	if (Range.contains(node.id, ctx.offset, true)) {
@@ -220,6 +217,32 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 	return []
 }
 
+const selector: Completer<EntitySelectorNode> = (node, ctx) => {
+	if (Range.contains(node.children[0], ctx.offset, true)) {
+		return completer.literal(node.children[0], ctx)
+	}
+	if (node.arguments && Range.contains(Range.translate(node.arguments, 1, -1), ctx.offset, true)) {
+		return selectorArguments(node.arguments, ctx)
+	}
+	return []
+}
+
+const selectorArguments: Completer<EntitySelectorArgumentsNode> = (node, ctx) => {
+	const parent = node.parent
+	if (!EntitySelectorNode.is(parent)) {
+		return []
+	}
+
+	return completer.record<StringNode, any, EntitySelectorArgumentsNode>({
+		key: (_record, pair, _ctx, range, insertValue, insertComma, existingKeys) => {
+			return []
+		},
+		value: (_record, pair, ctx) => {
+			return []
+		},
+	})(node, ctx)
+}
+
 const intRange: Completer<IntRangeNode> = (node, _ctx) => {
 	return [CompletionItem.create('-2147483648..2147483647', node, { kind: CompletionKind.Constant })]
 }
@@ -244,11 +267,12 @@ const vector: Completer<VectorNode> = (node, _ctx) => {
 export function register(meta: MetaRegistry) {
 	meta.registerCompleter<BlockNode>('mcfunction:block', block)
 	meta.registerCompleter<CoordinateNode>('mcfunction:coordinate', coordinate)
-	meta.registerCompleter<EntityNode>('mcfunction:entity', entity)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
 	meta.registerCompleter<ItemNode>('mcfunction:item', item)
 	meta.registerCompleter<ObjectiveCriteriaNode>('mcfunction:objective_criteria', objectiveCriteria)
 	meta.registerCompleter<ParticleNode>('mcfunction:particle', particle)
 	meta.registerCompleter<ScoreHolderNode>('mcfunction:score_holder', scoreHolder)
+	meta.registerCompleter<EntitySelectorNode>('mcfunction:entity_selector', selector)
+	meta.registerCompleter<EntitySelectorArgumentsNode>('mcfunction:entity_selector/arguments', selectorArguments)
 	meta.registerCompleter<VectorNode>('mcfunction:vector', vector)
 }

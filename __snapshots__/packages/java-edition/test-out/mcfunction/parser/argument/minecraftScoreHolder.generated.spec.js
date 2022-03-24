@@ -232,7 +232,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -703,7 +703,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -1266,7 +1266,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -1650,7 +1650,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -2209,7 +2209,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -3017,7 +3017,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -3809,7 +3809,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -4405,7 +4405,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -4724,7 +4724,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -5242,7 +5242,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -6243,7 +6243,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -7157,7 +7157,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -7822,7 +7822,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -8661,7 +8661,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -9496,7 +9496,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -10110,7 +10110,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -10716,7 +10716,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -11424,7 +11424,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
         }
       ],
       "variable": "s",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -11720,7 +11720,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
         "start": 4,
         "end": 8
       },
-      "message": "",
+      "message": "“sort” is not applicable here",
       "severity": 3
     },
     {
@@ -11744,7 +11744,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@s[ sort = arbitrary 
         "start": 23,
         "end": 27
       },
-      "message": "",
+      "message": "“sort” is not applicable here",
       "severity": 3
     }
   ]

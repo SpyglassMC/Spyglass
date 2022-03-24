@@ -92,7 +92,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ ]" with {"amount":"mult
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -850,7 +850,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -1795,7 +1795,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -2328,7 +2328,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -2820,7 +2820,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -3475,7 +3475,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -4427,7 +4427,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -5168,7 +5168,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -5618,7 +5618,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -5898,7 +5898,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -6622,7 +6622,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -7784,7 +7784,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -8513,7 +8513,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -9088,7 +9088,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -9623,7 +9623,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
         }
       ],
       "variable": "a",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -9944,7 +9944,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -10278,7 +10278,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
         }
       ],
       "variable": "e",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
@@ -10734,7 +10734,7 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
         }
       ],
       "variable": "s",
-      "argument": {
+      "arguments": {
         "type": "mcfunction:entity_selector/arguments",
         "range": {
           "start": 2,
