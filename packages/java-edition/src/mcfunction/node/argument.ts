@@ -163,11 +163,11 @@ export namespace EntitySelectorNode {
 			case 'dz':
 			case 'x_rotation':
 			case 'y_rotation':
-				return hasKey(key) ? Result.Duplicated : Result.NotApplicable
+				return hasKey(key) ? Result.Duplicated : Result.Ok
 			case 'gamemode':
 			case 'name':
 			case 'team':
-				return hasNonInvertedKey(key) ? Result.Duplicated : Result.NotApplicable
+				return hasNonInvertedKey(key) ? Result.Duplicated : Result.Ok
 			case 'limit':
 			case 'sort':
 				return selector.currentEntity
@@ -311,6 +311,17 @@ export interface ScoreHolderNode extends core.AstNode {
 	children: [core.SymbolNode | EntitySelectorNode],
 	fakeName?: core.SymbolNode,
 	selector?: EntitySelectorNode,
+}
+export namespace ScoreHolderNode {
+	export function mock(range: core.RangeLike): ScoreHolderNode {
+		const fakeName = core.SymbolNode.mock(range, { category: 'score_holder' })
+		return {
+			type: 'mcfunction:score_holder',
+			range: core.Range.get(range),
+			children: [fakeName],
+			fakeName,
+		}
+	}
 }
 
 export interface TimeNode extends core.AstNode {

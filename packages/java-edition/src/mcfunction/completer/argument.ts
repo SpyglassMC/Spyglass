@@ -5,8 +5,8 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
-import type { BlockStatesNode, EntitySelectorArgumentsNode, ScoreHolderNode } from '../node'
-import { BlockNode, CoordinateNode, EntitySelectorNode, IntRangeNode, ItemNode, ObjectiveCriteriaNode, ParticleNode, VectorNode } from '../node'
+import type { BlockStatesNode, EntitySelectorArgumentsNode } from '../node'
+import { BlockNode, CoordinateNode, EntitySelectorNode, IntRangeNode, ItemNode, ObjectiveCriteriaNode, ParticleNode, ScoreHolderNode, VectorNode } from '../node'
 import type { ArgumentTreeNode } from '../tree'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range): Arrayable<AstNode> => {
@@ -89,6 +89,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range):
 			return VectorNode.mock(range, { dimension: 2, noLocal: true })
 		case 'minecraft:scoreboard_slot':
 			return LiteralNode.mock(range, { pool: ScoreboardSlotArgumentValues })
+		case 'minecraft:score_holder':
+			return ScoreHolderNode.mock(range)
 		case 'minecraft:swizzle':
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
@@ -103,7 +105,6 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (rawTreeNode, range):
 		case 'minecraft:nbt_compound_tag':
 		case 'minecraft:nbt_path':
 		case 'minecraft:nbt_tag':
-		case 'minecraft:score_holder':
 		default:
 			// Unknown parser.
 			return []
@@ -140,10 +141,7 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 					detail: localize('mcfunction.completer.block.states.default-value', localeQuote(states[k][0])),
 					insertText: new InsertTextBuilder()
 						.literal(k)
-						.if(insertValue, b => b
-							.literal('=')
-							.placeholder(...states[k])
-						)
+						.if(insertValue, b => b.literal('=').placeholder(...states[k]))
 						.if(insertComma, b => b.literal(','))
 						.build(),
 				}))
@@ -214,7 +212,17 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 }
 
 const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
-	return []
+	let ans: CompletionItem[]
+	if (node.selector && Range.contains(node.selector, ctx.offset, true)) {
+		ans = selector(node.selector, ctx)
+		if (Range.contains(node.children[0], ctx.offset, true)) {
+			ans.push(...completer.symbol(SymbolNode.mock(node, { category: 'score_holder' }), ctx))
+		}
+	} else {
+		ans = completer.symbol(node.fakeName ?? SymbolNode.mock(node, { category: 'score_holder' }), ctx)
+		ans.push(...selector(EntitySelectorNode.mock(node), ctx))
+	}
+	return ans
 }
 
 const selector: Completer<EntitySelectorNode> = (node, ctx) => {
@@ -228,16 +236,28 @@ const selector: Completer<EntitySelectorNode> = (node, ctx) => {
 }
 
 const selectorArguments: Completer<EntitySelectorArgumentsNode> = (node, ctx) => {
-	const parent = node.parent
-	if (!EntitySelectorNode.is(parent)) {
+	const selector = node.parent
+	if (!EntitySelectorNode.is(selector)) {
 		return []
 	}
 
 	return completer.record<StringNode, any, EntitySelectorArgumentsNode>({
-		key: (_record, pair, _ctx, range, insertValue, insertComma, existingKeys) => {
-			return []
+		key: (record, pair, _ctx, range, insertValue, insertComma) => {
+			return [...EntitySelectorNode.ArgumentKeys]
+				.filter(k => EntitySelectorNode.canKeyExist(selector, record, k) === EntitySelectorNode.Result.Ok)
+				.map(k => CompletionItem.create(k, range, {
+					kind: CompletionKind.Property,
+					insertText: new InsertTextBuilder()
+						.literal(k)
+						.if(insertValue, b => b.literal('=').placeholder()) // TODO
+						.if(insertComma, b => b.literal(','))
+						.build(),
+				}))
 		},
 		value: (_record, pair, ctx) => {
+			if (pair.value) {
+				return completer.dispatch(pair.value, ctx)
+			}
 			return []
 		},
 	})(node, ctx)
@@ -267,12 +287,12 @@ const vector: Completer<VectorNode> = (node, _ctx) => {
 export function register(meta: MetaRegistry) {
 	meta.registerCompleter<BlockNode>('mcfunction:block', block)
 	meta.registerCompleter<CoordinateNode>('mcfunction:coordinate', coordinate)
+	meta.registerCompleter<EntitySelectorNode>('mcfunction:entity_selector', selector)
+	meta.registerCompleter<EntitySelectorArgumentsNode>('mcfunction:entity_selector/arguments', selectorArguments)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
 	meta.registerCompleter<ItemNode>('mcfunction:item', item)
 	meta.registerCompleter<ObjectiveCriteriaNode>('mcfunction:objective_criteria', objectiveCriteria)
 	meta.registerCompleter<ParticleNode>('mcfunction:particle', particle)
 	meta.registerCompleter<ScoreHolderNode>('mcfunction:score_holder', scoreHolder)
-	meta.registerCompleter<EntitySelectorNode>('mcfunction:entity_selector', selector)
-	meta.registerCompleter<EntitySelectorArgumentsNode>('mcfunction:entity_selector/arguments', selectorArguments)
 	meta.registerCompleter<VectorNode>('mcfunction:vector', vector)
 }

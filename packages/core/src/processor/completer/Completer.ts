@@ -3,7 +3,7 @@ import type { CompleterContext } from '../../service'
 import type { RangeLike } from '../../source'
 import { Range } from '../../source'
 
-export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => readonly CompletionItem[]
+export type Completer<N = AstNode> = (node: N, ctx: CompleterContext) => CompletionItem[]
 
 // Built-in LSP completion item kinds: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_completion
 

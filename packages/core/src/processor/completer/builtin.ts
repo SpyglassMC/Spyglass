@@ -62,8 +62,8 @@ export const literal: Completer<LiteralBaseNode> = node => {
 export const noop: Completer<any> = () => []
 
 interface RecordOptions<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>> {
-	key: (record: N, pair: PairNode<K, V> | undefined, ctx: CompleterContext, range: RangeLike, insertValue: boolean, insertPairEnd: boolean, existingKeys: K[]) => readonly CompletionItem[],
-	value: (record: N, pair: PairNode<K, V>, ctx: CompleterContext) => readonly CompletionItem[],
+	key: (record: N, pair: PairNode<K, V> | undefined, ctx: CompleterContext, range: RangeLike, insertValue: boolean, insertPairEnd: boolean, existingKeys: K[]) => CompletionItem[],
+	value: (record: N, pair: PairNode<K, V>, ctx: CompleterContext) => CompletionItem[],
 }
 export function record<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>>(o: RecordOptions<K, V, N>): Completer<N> {
 	return (node, ctx) => {
