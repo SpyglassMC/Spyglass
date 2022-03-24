@@ -209,10 +209,25 @@ export namespace ObjectiveCriteriaNode {
 
 export interface ParticleNode extends core.AstNode {
 	type: 'mcfunction:particle',
-	children?: (core.FloatNode | core.IntegerNode |core.ResourceLocationNode | BlockNode | ItemNode | VectorNode)[],
+	children?: (core.FloatNode | core.IntegerNode | core.ResourceLocationNode | BlockNode | ItemNode | VectorNode)[],
 	id: core.ResourceLocationNode,
 }
 export namespace ParticleNode {
+	const SpecialTypes = new Set([
+		'block',
+		'block_marker',
+		'dust',
+		'dust_color_transition',
+		'falling_dust',
+		'item',
+		'sculk_charge',
+		'vibration',
+	] as const)
+	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined
+	export function isSpecialType(type: string | undefined): type is SpecialType {
+		return SpecialTypes.has(type as SpecialType)
+	}
+
 	export function mock(range: core.RangeLike): ParticleNode {
 		const id = core.ResourceLocationNode.mock(range, { category: 'particle_type' })
 		return {

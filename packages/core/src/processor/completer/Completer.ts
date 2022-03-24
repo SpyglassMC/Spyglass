@@ -53,7 +53,7 @@ export namespace CompletionItem {
 	/* istanbul ignore next */
 	/**
 	 * If no `insertText` is provided in `other`, the value of `label` will be escaped for TextMate purposes
-	 * (@see {@link escapeForTextMate}) and used as the insert text.
+	 * (@see {@link escape}) and used as the insert text.
 	 * 
 	 * @example
 	 * create('foo', range) // insertText = 'foo'
@@ -61,26 +61,62 @@ export namespace CompletionItem {
 	 * create('foo', range, { insertText: '\\ $ }' }) // insertText = '\\ $ }'
 	 */
 	export function create(label: string, range: RangeLike, other?: Partial<CompletionItem>): CompletionItem {
-		const shouldEscape = other?.insertText === undefined && needsEscapeForTextMate(label)
+		const shouldEscape = other?.insertText === undefined && needsEscape(label)
 		return {
 			...other,
 			label,
 			range: Range.get(range),
-			...shouldEscape ? { insertText: escapeForTextMate(label) } : {},
+			...shouldEscape ? { insertText: escape(label) } : {},
 		}
 	}
 
 	/**
 	 * Returns if `textToInsert` contains any characters that need to be escaped for TextMate (`$`, `\`, or `}`)
 	 */
-	export function needsEscapeForTextMate(textToInsert: string): boolean {
+	export function needsEscape(textToInsert: string): boolean {
 		return /[\\$}]/.test(textToInsert)
 	}
 
 	/**
 	 * Escape `$`, `\`, and `}` in `textToInsert`
 	 */
-	export function escapeForTextMate(textToInsert: string): string {
+	export function escape(textToInsert: string): string {
 		return textToInsert.replace(/([\\$}])/g, '\\$1')
+	}
+}
+
+export class InsertTextBuilder {
+	#ans = ''
+	#nextPlaceholder = 1
+
+	literal(str: string): this {
+		this.#ans += CompletionItem.escape(str)
+		return this
+	}
+
+	placeholder(defaultValue?: string): this {
+		if (defaultValue) {
+			this.#ans += `\${${this.#nextPlaceholder}:${CompletionItem.escape(defaultValue)}}`
+		} else {
+			this.#ans += `\${${this.#nextPlaceholder}}`
+		}
+		this.#nextPlaceholder += 1
+		return this
+	}
+
+	exitPlace(): this {
+		this.#ans += '$0'
+		return this
+	}
+
+	build(): string {
+		return this.#ans
+	}
+
+	if(condition: boolean, callback: (b: this) => unknown): this {
+		if (condition) {
+			callback(this)
+		}
+		return this
 	}
 }

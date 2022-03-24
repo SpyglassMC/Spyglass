@@ -274,25 +274,28 @@ export namespace Lazy {
 
 /**
  * @param ids An array of block/fluid IDs, with or without the namespace.
- * @returns A map from state names to the corresponding sets of values.
+ * @returns A map from state names to the corresponding sets of values. The first element in the value array is the default
+ * value for that state.
  */
-export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: ProcessorContext): Record<string, readonly string[] | undefined> {
-	const ans: Record<string, string[]> = {}
+export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: ProcessorContext): Record<string, string[]> {
+	const ans: Record<string, Set<string>> = {}
 	ids = ids.map(ResourceLocation.lengthen)
 	for (const id of ids) {
 		ctx.symbols
 			.query(ctx.doc, category, id)
 			.forEachMember((state, stateQuery) => {
 				const values = Object.keys(stateQuery.visibleMembers)
-				const arr = ans[state] ??= []
+				const set = ans[state] ??= new Set()
+				const defaultValue = stateQuery.symbol?.relations?.default
+				if (defaultValue) {
+					set.add(defaultValue.path[defaultValue.path.length - 1])
+				}
 				for (const value of values) {
-					if (!arr.includes(value)) {
-						arr.push(value)
-					}
+					set.add(value)
 				}
 			})
 	}
-	return ans
+	return Object.fromEntries(Object.entries(ans).map(([k, v]) => [k, [...v]]))
 }
 
 export const binarySearch = externalBinarySearch

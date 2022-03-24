@@ -57,6 +57,7 @@
   "linter-config-validator.name-convention.type": "Expects a string that contains a regular expression describing the name",
   "linter-config-validator.wrapper": "%0%. See [the documentation](%1) for more information",
   "long": "a long",
+  "mcfunction.completer.block.states.default-value": "Default: %0%",
   "mcfunction.parser.entity-selector.arguments.not-applicable": "%0% is not applicable here",
   "mcfunction.parser.entity-selector.arguments.unknown": "Unknown entity selector argument %0%",
   "mcfunction.parser.entity-selector.entities-disallowed": "The selector contains non-player entities",

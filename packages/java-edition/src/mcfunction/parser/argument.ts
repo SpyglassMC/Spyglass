@@ -406,22 +406,22 @@ const particle: core.InfallibleParser<ParticleNode> = (() => {
 			}
 			: undefined,
 	}))
-	const map = new Map<string, core.InfallibleParser<CN | core.SequenceUtil<CN>>>([
-		['block', blockState],
-		['block_marker', blockState],
-		['dust', sequence([color, float()], sep)],
-		['dust_color_transition', sequence([color, float(), color], sep)],
-		['falling_dust', blockState],
-		['item', itemStack],
-		['sculk_charge', float()],
-		['vibration', sequence([vec, vec, integer()], sep)],
-	])
+	const map: Record<ParticleNode.SpecialType, core.InfallibleParser<CN | core.SequenceUtil<CN>>> = {
+		block: blockState,
+		block_marker: blockState,
+		dust: sequence([color, float()], sep),
+		dust_color_transition: sequence([color, float(), color], sep),
+		falling_dust: blockState,
+		item: itemStack,
+		sculk_charge: float(),
+		vibration: sequence([vec, vec, integer()], sep),
+	}
 	return core.map(
 		sequence([
 			core.resourceLocation({ category: 'particle_type' }),
 			{
 				get: res => {
-					return map.get(core.ResourceLocationNode.toString(res.children[0] as core.ResourceLocationNode, 'short'))
+					return map[core.ResourceLocationNode.toString(res.children[0] as core.ResourceLocationNode, 'short') as ParticleNode.SpecialType] as typeof map[keyof typeof map] | undefined
 				},
 			},
 		], sep),

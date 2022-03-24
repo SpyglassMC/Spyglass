@@ -1,6 +1,7 @@
 import type { Arrayable, Completer, MetaRegistry, RegistryCategory, WorldgenFileCategory } from '@spyglassmc/core'
-import { AstNode, BooleanNode, BrigadierStringOptions, completer, CompletionItem, CompletionKind, getStates, LiteralNode, Range, ResourceLocation, ResourceLocationNode, StringNode, SymbolNode } from '@spyglassmc/core'
+import { AstNode, BooleanNode, BrigadierStringOptions, completer, CompletionItem, CompletionKind, FloatNode, getStates, InsertTextBuilder, IntegerNode, LiteralNode, Range, ResourceLocation, ResourceLocationNode, StringNode, SymbolNode } from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
@@ -128,14 +129,34 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 	const id = ResourceLocationNode.toString(idNode, 'full')
 	const blocks = idNode.isTag ? getTagValues('tag/block', id, ctx) : [id]
 	const states = getStates('block', blocks, ctx)
-	const pairNode = AstNode.findChild(node, ctx.offset)
-	// FIXME: Find selected PairNode more accurately.
-	if (!pairNode || (pairNode.key && Range.contains(pairNode.key, ctx.offset, true))) {
-		return Object.keys(states).map(v => CompletionItem.create(v, pairNode?.key ?? ctx.offset, { kind: CompletionKind.Property }))
-	} else if (pairNode.key && pairNode.value && Range.contains(pairNode.value, ctx.offset, true)) {
-		return states[pairNode.key.value]?.map(v => CompletionItem.create(v, pairNode.value ?? ctx.offset, { kind: CompletionKind.Value })) ?? []
-	}
-	return []
+
+	return completer.record<StringNode, StringNode, BlockStatesNode>({
+		key: (_record, pair, _ctx, range, insertValue, insertComma, existingKeys) => {
+			return Object.keys(states)
+				.filter(k => pair?.key?.value === k || !existingKeys.some(ek => ek.value === k))
+				.map(k => CompletionItem.create(k, range, {
+					kind: CompletionKind.Property,
+					detail: localize('mcfunction.completer.block.states.default-value', localeQuote(states[k][0])),
+					insertText: new InsertTextBuilder()
+						.literal(k)
+						.if(insertValue, b => b
+							.literal('=')
+							.placeholder(states[k][0])
+						)
+						.if(insertComma, b => b.literal(','))
+						.build(),
+				}))
+		},
+		value: (_record, pair, ctx) => {
+			if (pair.key && states[pair.key.value]) {
+				return states[pair.key.value].map(v => CompletionItem.create(v, pair.value ?? ctx.offset, {
+					kind: CompletionKind.Value,
+				}))
+			}
+
+			return []
+		},
+	})(node, ctx)
 }
 
 const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
@@ -168,6 +189,30 @@ const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
 }
 
 const particle: Completer<ParticleNode> = (node, ctx) => {
+	const child = AstNode.findChild(node, ctx.offset, true)
+	if (child) {
+		return completer.dispatch(child, ctx)
+	}
+
+	const id = ResourceLocationNode.toString(node.id, 'short')
+	const map: Record<ParticleNode.SpecialType, AstNode[]> = {
+		block: [BlockNode.mock(ctx.offset, false)],
+		block_marker: [BlockNode.mock(ctx.offset, false)],
+		dust: [VectorNode.mock(ctx.offset, { dimension: 3 }), FloatNode.mock(ctx.offset)],
+		dust_color_transition: [VectorNode.mock(ctx.offset, { dimension: 3 }), FloatNode.mock(ctx.offset), VectorNode.mock(ctx.offset, { dimension: 3 })],
+		falling_dust: [BlockNode.mock(ctx.offset, false)],
+		item: [ItemNode.mock(ctx.offset, false)],
+		sculk_charge: [FloatNode.mock(ctx.offset)],
+		vibration: [VectorNode.mock(ctx.offset, { dimension: 3 }), VectorNode.mock(ctx.offset, { dimension: 3 }), IntegerNode.mock(ctx.offset)],
+	}
+	if (ParticleNode.isSpecialType(id)) {
+		const numParamsBefore = node.children?.slice(1).filter(n => n.range.end < ctx.offset).length ?? 0
+		const mock = map[id][numParamsBefore] as typeof map[keyof typeof map][number] | undefined
+		if (mock) {
+			return completer.dispatch(mock, ctx)
+		}
+	}
+
 	return []
 }
 
