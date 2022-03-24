@@ -272,7 +272,7 @@ export class SymbolUtil extends EventEmitter {
 		const createMap = path.length === 1
 			? (addition: SymbolAddition) => SymbolUtil.getTable(stack, this.global, addition.data?.visibility)[category] ??= {}
 			: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : undefined
-		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : undefined
+		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : true
 		return new SymbolQuery({
 			category,
 			createMap,
@@ -756,7 +756,10 @@ export class SymbolQuery {
 	}
 
 	get visibleMembers(): SymbolMap {
-		return SymbolUtil.filterVisibleSymbols(this.#doc.uri, this.#symbol?.members)
+		return SymbolUtil.filterVisibleSymbols(
+			this.#doc.uri,
+			this.path.length === 0 ? this.#map : this.#symbol?.members
+		)
 	}
 
 	constructor({ category, contributor, createMap, doc, map, parentSymbol, path, symbol, util }: {
