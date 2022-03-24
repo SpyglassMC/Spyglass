@@ -141,7 +141,7 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 						.literal(k)
 						.if(insertValue, b => b
 							.literal('=')
-							.placeholder(states[k][0])
+							.placeholder(...states[k])
 						)
 						.if(insertComma, b => b.literal(','))
 						.build(),

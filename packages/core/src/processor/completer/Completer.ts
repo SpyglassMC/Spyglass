@@ -94,11 +94,13 @@ export class InsertTextBuilder {
 		return this
 	}
 
-	placeholder(defaultValue?: string): this {
-		if (defaultValue) {
-			this.#ans += `\${${this.#nextPlaceholder}:${CompletionItem.escape(defaultValue)}}`
+	placeholder(...defaultValues: string[]): this {
+		if (defaultValues.length === 0) {
+			this.#ans += `$\{${this.#nextPlaceholder}}`
+		} else if (defaultValues.length === 1) {
+			this.#ans += `$\{${this.#nextPlaceholder}:${CompletionItem.escape(defaultValues[0])}}`
 		} else {
-			this.#ans += `\${${this.#nextPlaceholder}}`
+			this.#ans += `$\{${this.#nextPlaceholder}|${defaultValues.map(v => v.replace(/([\\$},|])/g, '\\$1')).join(',')}|}`
 		}
 		this.#nextPlaceholder += 1
 		return this
