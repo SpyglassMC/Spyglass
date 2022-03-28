@@ -86,7 +86,7 @@ module.exports = {
 				"message": "Use `undefined` instead of `null` when possible."
 			},
 			{
-				"selector": "ImportDeclaration > Literal[value=/^@spyglassmc.\\w+.src*/]",
+				"selector": 'ImportDeclaration > Literal[value=/src/]',
 				"message": "Import from the `lib` dir instead of the `src` dir."
 			},
 		],
