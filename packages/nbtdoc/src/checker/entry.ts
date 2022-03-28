@@ -17,7 +17,7 @@ export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.Checker
 		ctx.err.report(localize('nbtdoc.checker.entry.empty-mod-seg'), 0, ErrorSeverity.Warning)
 	}
 	const modIdentifier = segToIdentifier(modSeg)
-	const modSymbol = ctx.symbols.lookup('nbtdoc', [modIdentifier], ctx.doc.uri).symbol!
+	const modSymbol = ctx.symbols.query(ctx.doc, 'nbtdoc', modIdentifier).symbol!
 
 	const hoistingNodes: (CompoundDefinitionNode | EnumDefinitionNode | ModuleDeclarationNode | UseClauseNode)[] = []
 	const checkingNodes: (CompoundDefinitionNode | EnumDefinitionNode | DescribesClauseNode | InjectClauseNode)[] = []
@@ -276,7 +276,7 @@ const useClause = async (node: UseClauseNode, ctx: CheckerContext): Promise<void
 	if (usedSymbol) {
 		const lastToken = node.path.children[node.path.children.length - 1]
 		ctx.symbols
-			.query(ctx.doc, 'nbtdoc', ctx.modIdentifier, usedSymbol.identifier)
+			.query({ doc: ctx.doc, node }, 'nbtdoc', ctx.modIdentifier, usedSymbol.identifier)
 			.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, lastToken))
 			.elseEnter({
 				data: {

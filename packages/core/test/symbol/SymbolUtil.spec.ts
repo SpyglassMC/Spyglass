@@ -17,27 +17,6 @@ describe('SymbolUtil', () => {
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
 	})
-	describe('getStack()', () => {
-		it('Should create a new stack', () => {
-			const symbols = new SymbolUtil({})
-			const result = symbols.getStack(fileUri)
-			snapshot(SymbolFormatter.stringifySymbolStack(result))
-		})
-		it('Should get the existing stack', () => {
-			// Set up the symbol table and symbol stack.
-			const symbols = new SymbolUtil({})
-			const stackSymbols = new SymbolUtil({})
-			stackSymbols
-				.query(fileUri, 'advancement', 'Foo')
-				.enter({ usage: { type: 'definition' } })
-			const stack = symbols.getStack(fileUri)
-			stack.push(stackSymbols.global)
-
-			const actual = symbols.getStack(fileUri)
-
-			snapshot(SymbolFormatter.stringifySymbolStack(actual))
-		})
-	})
 	describe('clear()', () => {
 		it('Should clear all', () => {
 			// Set up the symbol table.
@@ -79,7 +58,7 @@ describe('SymbolUtil', () => {
 		})
 	})
 	describe('lookup()', () => {
-		// Set up the symbol table and symbol stack.
+		// Set up the symbol table.
 		const symbols = new SymbolUtil({})
 		symbols
 			.query(fileUri, 'advancement', 'Foo')
@@ -90,20 +69,20 @@ describe('SymbolUtil', () => {
 					.enter({ usage: { type: 'definition' } })
 				)
 			)
-		const stackSymbols = new SymbolUtil({})
-		stackSymbols
-			.query(fileUri, 'advancement', 'Foo')
-			.enter({
-				data: { desc: 'STACK' },
-				usage: { type: 'definition' },
-			})
-			.member('Baz', member => member
-				.enter({
-					data: { desc: 'STACK' },
-					usage: { type: 'definition' },
-				})
-			)
-		symbols._setStack(fileUri, [stackSymbols.global])
+		// const stackSymbols = new SymbolUtil({})
+		// stackSymbols
+		// 	.query(fileUri, 'advancement', 'Foo')
+		// 	.enter({
+		// 		data: { desc: 'STACK' },
+		// 		usage: { type: 'definition' },
+		// 	})
+		// 	.member('Baz', member => member
+		// 		.enter({
+		// 			data: { desc: 'STACK' },
+		// 			usage: { type: 'definition' },
+		// 		})
+		// 	)
+		// symbols._setStack(fileUri, [stackSymbols.global])
 
 		const paths: string[][] = [
 			[],
@@ -119,7 +98,7 @@ describe('SymbolUtil', () => {
 		]
 		for (const path of paths) {
 			it(`Should return correctly for “${path.join('.')}”`, () => {
-				const actual = symbols.lookup('advancement', path, fileUri)
+				const actual = symbols.lookup('advancement', path)
 
 				snapshot(SymbolFormatter.stringifyLookupResult(actual))
 			})

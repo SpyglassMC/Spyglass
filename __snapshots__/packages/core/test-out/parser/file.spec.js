@@ -15,6 +15,7 @@ exports['file() Parse "" 1'] = {
         "value": ""
       }
     ],
+    "locals": {},
     "parserErrors": []
   },
   "errors": []
@@ -37,6 +38,7 @@ exports['file() Parse "{test content}" 1'] = {
         "value": "{test content}"
       }
     ],
+    "locals": {},
     "parserErrors": []
   },
   "errors": []
@@ -66,6 +68,7 @@ exports['file() Parse "{test content}↓Whoops errors!" 1'] = {
         }
       }
     ],
+    "locals": {},
     "parserErrors": [
       {
         "range": {
@@ -97,6 +100,7 @@ exports['file() Parse "{test content}↓⮀" 1'] = {
         "value": "{test content}"
       }
     ],
+    "locals": {},
     "parserErrors": []
   },
   "errors": []

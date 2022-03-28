@@ -15,7 +15,7 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 	const action = getAction(ctx.ruleValue as Config, node.symbol, ctx)
 	if (Config.Action.isDeclare(action)) {
 		ctx.symbols
-			.query(ctx.doc, node.symbol.category, ...node.symbol.path)
+			.query({ doc: ctx.doc, node }, node.symbol.category, ...node.symbol.path)
 			.amend({
 				data: { visibility: getVisibility(action.declare) },
 				usage: { type: 'declaration', node },

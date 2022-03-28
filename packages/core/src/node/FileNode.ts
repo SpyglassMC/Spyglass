@@ -1,9 +1,11 @@
 import type { AstNode } from '../node'
 import type { LanguageError } from '../source'
+import type { SymbolTable } from '../symbol'
 
 export interface FileNode<CN extends AstNode> extends AstNode {
 	readonly type: 'file',
 	readonly children: CN[],
+	locals: SymbolTable,
 	readonly parserErrors: readonly LanguageError[],
 	/**
 	 * Only exists when the file has been checked.

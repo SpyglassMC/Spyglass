@@ -268,9 +268,9 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 	if (!docAndNode) {
 		return undefined
 	}
-	const { doc } = docAndNode
+	const { doc, node } = docAndNode
 	return toLS.documentSymbolsFromTables(
-		[service.project.symbols.global, ...service.project.symbols.getStack(doc.uri)],
+		[service.project.symbols.global, ...core.AstNode.getLocalsToLeaves(node)],
 		doc,
 		capabilities.textDocument?.documentSymbol?.hierarchicalDocumentSymbolSupport,
 		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet

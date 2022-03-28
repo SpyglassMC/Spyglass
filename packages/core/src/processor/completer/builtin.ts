@@ -113,7 +113,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	const includeDefaultNamespace = node.options.isPredicate || config?.ruleValue !== true
 	const excludeDefaultNamespace = !node.options.isPredicate && config?.ruleValue !== false
 
-	const getPool = (category: string) => optimizePool(Object.keys(ctx.symbols.getVisibleSymbols(ctx.doc.uri, category)))
+	const getPool = (category: string) => optimizePool(Object.keys(ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)))
 	const optimizePool = (pool: string[]) => {
 		const defaultNsPrefix = `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
 		const defaultNsIds: string[] = []

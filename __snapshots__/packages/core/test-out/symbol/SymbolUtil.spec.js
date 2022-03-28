@@ -64,19 +64,6 @@ CATEGORY test
 + + + {"uri":"spyglassmc://test_file","contributor":"uri_binder"}
 `
 
-exports['SymbolUtil getStack() Should create a new stack 1'] = `
-EMPTY TABLE
-`
-
-exports['SymbolUtil getStack() Should get the existing stack 1'] = `
-EMPTY TABLE
-------------
-CATEGORY advancement
-+ SYMBOL Foo {advancement} [Public]
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
-`
-
 exports['SymbolUtil lookup() Should return correctly for “Foo.Bar.Qux.Xer” 1'] = `
 parentSymbol:
 + SYMBOL Foo.Bar.Qux {advancement} [Public]
@@ -157,10 +144,7 @@ symbol:
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Baz.Xer” 1'] = `
 parentSymbol:
-+ SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
+undefined
 parentMap:
 undefined
 symbol:
@@ -170,42 +154,49 @@ undefined
 exports['SymbolUtil lookup() Should return correctly for “Foo.Baz” 1'] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 parentMap:
-+ SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ SYMBOL Foo.Bar {advancement} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
++ + members:
++ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + definition:
++ + + + + {"uri":"spyglassmc://test_file"}
 symbol:
-+ SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
-+ + definition:
-+ + + {"uri":"spyglassmc://test_file"}
+undefined
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Foo.Unknown” 1'] = `
 parentSymbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 parentMap:
-+ SYMBOL Foo.Baz {advancement} [Public]
-+ + description: STACK
++ SYMBOL Foo.Bar {advancement} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
++ + members:
++ + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + definition:
++ + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
 `
@@ -215,24 +206,28 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 `
 
 exports['SymbolUtil lookup() Should return correctly for “Unknown” 1'] = `
@@ -240,14 +235,16 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
 `
@@ -257,14 +254,16 @@ parentSymbol:
 undefined
 parentMap:
 + SYMBOL Foo {advancement} [Public]
-+ + description: STACK
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL Foo.Baz {advancement} [Public]
-+ + + + description: STACK
++ + + SYMBOL Foo.Bar {advancement} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
++ + + + members:
++ + + + + SYMBOL Foo.Bar.Qux {advancement} [Public]
++ + + + + + definition:
++ + + + + + + {"uri":"spyglassmc://test_file"}
 symbol:
 undefined
 `
@@ -423,7 +422,7 @@ undefined
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 2'] = `
-Error: Cannot enter the symbol at path “Foo.Baz.Xer” as its parent doesn't exist
+Error: Cannot create the symbol map for “advancement.Foo/Baz/Xer”
 `
 
 exports['SymbolUtil query() Should return correctly for “Foo.Baz.Xer” 3'] = `

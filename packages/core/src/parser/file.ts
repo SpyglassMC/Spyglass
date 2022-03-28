@@ -18,6 +18,7 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 			type: 'file',
 			range: fullRange,
 			children: [],
+			locals: Object.create(null),
 			parserErrors: [],
 		}
 

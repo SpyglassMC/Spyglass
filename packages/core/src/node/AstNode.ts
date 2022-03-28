@@ -1,7 +1,7 @@
 import binarySearch from 'binary-search'
 import type { Color, FormattableColor } from '../processor'
 import { Range } from '../source'
-import type { Symbol } from '../symbol'
+import type { Symbol, SymbolTable } from '../symbol'
 
 export interface AstNode {
 	readonly type: string,
@@ -11,6 +11,7 @@ export interface AstNode {
 	 */
 	readonly children?: AstNode[],
 	readonly parent?: AstNode,
+	locals?: SymbolTable,
 	symbol?: Symbol,
 	hover?: string,
 	/**
@@ -110,6 +111,25 @@ export namespace AstNode {
 			head = findChild(head, needle, endInclusive)
 		}
 		return head
+	}
+
+	export function* getLocalsToRoot(node: AstNode): Generator<SymbolTable> {
+		let head: AstNode | undefined = node
+		while (head) {
+			if (head.locals) {
+				yield head.locals
+			}
+			head = node.parent
+		}
+	}
+
+	export function* getLocalsToLeaves(node: AstNode): Generator<SymbolTable> {
+		if (node.locals) {
+			yield node.locals
+		}
+		for (const child of node.children ?? []) {
+			yield* getLocalsToLeaves(child)
+		}
 	}
 }
 

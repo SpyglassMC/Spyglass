@@ -53,10 +53,13 @@ export interface SymbolUtil {
 }
 
 type UriSymbolCache = Record<string, Set<string>>
+interface DocAndNode {
+	doc: TextDocument,
+	node: AstNode,
+}
 
 export class SymbolUtil extends EventEmitter {
 	#global: SymbolTable
-	#stacks: Map<string, SymbolStack>
 
 	#trimmableSymbols = new Set<string>()
 	#cache: {
@@ -77,14 +80,9 @@ export class SymbolUtil extends EventEmitter {
 	get global() {
 		return this.#global
 	}
-	get stacks() {
-		return this.#stacks
-	}
 
 	constructor(
 		global: SymbolTable,
-		/** @internal */
-		_stacks = new Map<string, SymbolStack>(),
 		/** @internal */
 		_currentContributor?: string,
 		/** @internal */
@@ -93,7 +91,6 @@ export class SymbolUtil extends EventEmitter {
 		super()
 
 		this.#global = global
-		this.#stacks = _stacks
 		this.#currentContributor = _currentContributor
 		this._inDelayMode = _inDelayMode
 
@@ -137,7 +134,7 @@ export class SymbolUtil extends EventEmitter {
 	 * `applyDelayedEdits` is called, the original SymbolUtil will also be modified.
 	 */
 	clone(): SymbolUtil {
-		return new SymbolUtil(this.#global, this.#stacks, this.#currentContributor, true)
+		return new SymbolUtil(this.#global, this.#currentContributor, true)
 	}
 
 	/**
@@ -185,20 +182,6 @@ export class SymbolUtil extends EventEmitter {
 		return this
 	}
 
-	getStack(uri: string): SymbolStack {
-		if (!this.#stacks.has(uri)) {
-			this.#stacks.set(uri, [{}])
-		}
-		return this.#stacks.get(uri)!
-	}
-
-	/**
-	 * @internal This is only exposed for testing purpose. You might want to use {@link SymbolUtil.block} instead.
-	 */
-	_setStack(uri: string, stack: SymbolStack) {
-		this.#stacks.set(uri, stack)
-	}
-
 	/**
 	 * @param
 	 * 	- `contributor` - clear symbol locations contributed by this contributor. Pass in `undefined`
@@ -224,8 +207,8 @@ export class SymbolUtil extends EventEmitter {
 		}
 		const getTables = (): SymbolTable[] => {
 			return uri
-				? [this.#global, ...this.getStack(uri)]
-				: [this.global, ...[...this.stacks.values()].flat()]
+				? [this.#global]
+				: [this.#global]
 		}
 		const paths = getPaths()
 		const tables = getTables()
@@ -249,11 +232,10 @@ export class SymbolUtil extends EventEmitter {
 	 * 
 	 * @returns A {@link LookupResult}
 	 */
-	lookup(category: AllCategory, path: readonly string[], uri?: string): LookupResult
-	lookup(category: string, path: readonly string[], uri?: string): LookupResult
-	lookup(category: string, path: readonly string[], uri?: string): LookupResult {
-		const stack = uri ? this.getStack(uri) : []
-		return SymbolUtil.lookupTables([this.global, ...stack], category, path)
+	lookup(category: AllCategory, path: readonly string[], node?: AstNode): LookupResult
+	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult
+	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult {
+		return SymbolUtil.lookupTable(this.global, category, path)
 	}
 
 	/**
@@ -263,19 +245,14 @@ export class SymbolUtil extends EventEmitter {
 	 * 
 	 * @throws When the queried symbol belongs to another non-existent symbol, or when no contributor is specified.
 	 */
-	query(doc: TextDocument | string, category: AllCategory, ...path: string[]): SymbolQuery
-	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery
-	query(doc: TextDocument | string, category: string, ...path: string[]): SymbolQuery {
+	query(doc: DocAndNode | TextDocument | string, category: AllCategory, ...path: string[]): SymbolQuery
+	query(doc: DocAndNode | TextDocument | string, category: string, ...path: string[]): SymbolQuery
+	query(doc: DocAndNode | TextDocument | string, category: string, ...path: string[]): SymbolQuery {
 		const uri = SymbolUtil.toUri(doc)
-		const stack = this.getStack(uri)
-		const { parentSymbol, parentMap, symbol } = this.lookup(category, path, uri)
-		const createMap = path.length === 1
-			? (addition: SymbolAddition) => SymbolUtil.getTable(stack, this.global, addition.data?.visibility)[category] ??= {}
-			: parentSymbol ? ((_: SymbolAddition) => parentSymbol!.members ??= {}) : undefined
+		const { parentSymbol, parentMap, symbol } = this.lookup(category, path, isDocAndNode(doc) ? doc.node : undefined)
 		const visible = symbol ? SymbolUtil.isVisible(symbol, uri) : true
 		return new SymbolQuery({
 			category,
-			createMap,
 			doc,
 			contributor: this.#currentContributor,
 			map: visible ? parentMap : undefined,
@@ -286,40 +263,22 @@ export class SymbolUtil extends EventEmitter {
 		})
 	}
 
-	getVisibleSymbols(category: AllCategory): SymbolMap
-	getVisibleSymbols(category: string): SymbolMap
-	getVisibleSymbols(uri: string, category: AllCategory): SymbolMap
-	getVisibleSymbols(uri: string, category: string): SymbolMap
-	getVisibleSymbols(param1: string, param2?: string): SymbolMap {
-		const [uri, category] = param2 ? [param1, param2] : [undefined, param1]
-
-		const map = this.lookup(category, [], uri).parentMap ?? undefined
+	getVisibleSymbols(category: AllCategory, uri?: string): SymbolMap
+	getVisibleSymbols(category: string, uri?: string): SymbolMap
+	getVisibleSymbols(category: string, uri?: string): SymbolMap {
+		const map = this.lookup(category, [], undefined).parentMap ?? undefined
 
 		return SymbolUtil.filterVisibleSymbols(uri, map)
 	}
 
-	/**
-	 * Executes the specified {@link callbackFn} in a new block.
-	 * 
-	 * ~~We're not using blockchain technique here, unfortunately.~~
-	 */
-	block(uri: string, callbackFn: (this: void) => unknown): void {
-		const stack = this.getStack(uri)
-		stack.push({})
-		try {
-			callbackFn()
-		} catch (e) {
-			throw e
-		} finally {
-			if (stack.length <= 1) {
-				throw new Error('Unable to pop a block out as it is the last element in this stack')
-			}
-			stack.pop()
+	static toUri(uri: DocAndNode | TextDocument | string): string {
+		if (typeof uri === 'string') {
+			return uri
 		}
-	}
-
-	static toUri(uri: TextDocument | string): string {
-		return typeof uri === 'string' ? uri : uri.uri
+		if (isDocAndNode(uri)) {
+			return uri.doc.uri
+		}
+		return uri.uri
 	}
 
 	/**
@@ -358,24 +317,6 @@ export class SymbolUtil extends EventEmitter {
 				}
 				return result
 			}, [])
-		}
-	}
-
-	/**
-	 * @param visibility `undefined` will be seen as `Public`.
-	 * 
-	 * @returns The `SymbolTable` that should be used to insert the `Symbol` with the given `visibility`.
-	 */
-	static getTable(stack: SymbolStack, global: SymbolTable, visibility: SymbolVisibility | undefined): SymbolTable {
-		switch (visibility) {
-			case SymbolVisibility.Block:
-				return stack[stack.length - 1]
-			case SymbolVisibility.File:
-				return stack[0]
-			case SymbolVisibility.Public:
-			case SymbolVisibility.Restricted:
-			default:
-				return global
 		}
 	}
 
@@ -637,6 +578,18 @@ export class SymbolUtil extends EventEmitter {
 			symbol[type]?.forEach(location => fn({ type, location }))
 		}
 	}
+
+	static isVisibilityInGlobal(v: SymbolVisibility | undefined) {
+		return v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
+	}
+
+	static areVisibilitiesCompatible(v1: SymbolVisibility | undefined, v2: SymbolVisibility | undefined) {
+		return (
+			(this.isVisibilityInGlobal(v1) && this.isVisibilityInGlobal(v2)) ||
+			(v1 === SymbolVisibility.Block && v2 === SymbolVisibility.Block) ||
+			(v1 === SymbolVisibility.File && v2 === SymbolVisibility.File)
+		)
+	}
 }
 
 interface SymbolAddition {
@@ -723,18 +676,13 @@ export class SymbolQuery {
 	readonly category: string
 	readonly path: readonly string[]
 	readonly #doc: TextDocument
+	readonly #node: AstNode | undefined
 	/**
 	 * If only a string URI (instead of a {@link TextDocument}) is provided when constructing this class.
 	 * 
 	 * If this is `true`, {@link SymbolAdditionUsageWithRange.range} is ignored and treated as `[0, 0)` when entering symbols through this class.
 	 */
 	readonly #createdWithUri?: boolean
-	/**
-	 * A function that returns the symbol map where the queried symbol should be in when creating it.
-	 * 
-	 * This is only called if {@link #map} is `undefined`.
-	 */
-	readonly #createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | undefined
 	readonly #currentContributor: string | undefined
 	#hasTriggeredIf = false
 	/**
@@ -762,11 +710,10 @@ export class SymbolQuery {
 		)
 	}
 
-	constructor({ category, contributor, createMap, doc, map, parentSymbol, path, symbol, util }: {
+	constructor({ category, contributor, doc, map, parentSymbol, path, symbol, util }: {
 		category: string,
 		contributor: string | undefined,
-		createMap: ((this: void, addition: SymbolAddition) => SymbolMap) | undefined,
-		doc: TextDocument | string,
+		doc: DocAndNode | TextDocument | string,
 		map: SymbolMap | undefined,
 		parentSymbol: Symbol | undefined,
 		path: readonly string[],
@@ -776,10 +723,12 @@ export class SymbolQuery {
 		this.category = category
 		this.path = path
 
-		this.#createMap = createMap
 		if (typeof doc === 'string') {
 			doc = TextDocument.create(doc, '', 0, '')
 			this.#createdWithUri = true
+		} else if (isDocAndNode(doc)) {
+			this.#node = doc.node
+			doc = doc.doc
 		}
 		this.#doc = doc
 		this.#currentContributor = contributor
@@ -886,8 +835,56 @@ export class SymbolQuery {
 
 	@DelayModeSupport((self: SymbolQuery) => self.util)
 	private _enter(addition: SymbolAddition): void {
-		if (!this.#createMap) {
-			throw new Error(`Cannot enter the symbol at path “${this.path.join('.')}” as its parent doesn't exist`)
+		const getMap = (addition: SymbolAddition): SymbolMap => {
+			if (this.#map && SymbolUtil.areVisibilitiesCompatible(addition.data?.visibility, this.#symbol?.visibility)) {
+				return this.#map
+			}
+			if (this.path.length > 1) {
+				if (this.#parentSymbol) {
+					if (!SymbolUtil.areVisibilitiesCompatible(addition.data?.visibility, this.#parentSymbol.visibility)) {
+						throw new Error(`Cannot enter member “${this.getPath()}” of ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility to parent of ${SymbolFormatter.stringifyVisibility(this.#parentSymbol.visibility)} visibility`)
+					}
+					return this.#parentSymbol.members ??= {}
+				}
+			} else {
+				let table: SymbolTable | undefined
+				if (SymbolUtil.isVisibilityInGlobal(addition.data?.visibility)) {
+					table = this.util.global
+				} else if (addition.data?.visibility === SymbolVisibility.File) {
+					if (!this.#node) {
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node is supplied`)
+					}
+					let node: AstNode | undefined = this.#node
+					while (node) {
+						if (node.type === 'file') {
+							table = node.locals
+							break
+						}
+						node = node.parent
+					}
+					if (!table) {
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no file node is supplied`)
+					}
+				} else {
+					if (!this.#node) {
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node is supplied`)
+					}
+					let node: AstNode | undefined = this.#node
+					while (node) {
+						if (node.locals) {
+							table = node.locals
+							break
+						}
+						node = node.parent
+					}
+					if (!table) {
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node with locals is supplied`)
+					}
+				}
+				// TODO: Move part of symbol from global to table.
+				return table[this.category] ??= {}
+			}
+			throw new Error(`Cannot create the symbol map for “${this.getPath()}”`)
 		}
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
@@ -895,7 +892,7 @@ export class SymbolQuery {
 			addition.usage.range = Range.create(0, 0)
 		}
 
-		this.#map ??= this.#createMap(addition)
+		this.#map = getMap(addition)
 		this.#symbol = this.util.enterMap(this.#parentSymbol, this.#map, this.category, this.path, this.path[this.path.length - 1], addition, this.#doc, this.#currentContributor)
 		if (addition.usage?.node) {
 			addition.usage.node.symbol = this.#symbol
@@ -979,7 +976,6 @@ export class SymbolQuery {
 		const memberSymbol = memberMap?.[identifier]
 		const memberQueryResult = new SymbolQuery({
 			category: this.category,
-			createMap: () => this.#symbol!.members ??= {},
 			doc: memberDoc,
 			contributor: this.#currentContributor,
 			map: memberMap,
@@ -1009,6 +1005,10 @@ export class SymbolQuery {
 			Object.keys(this.visibleMembers),
 			identifier => this.member(identifier, query => fn(identifier, query))
 		)
+	}
+
+	private getPath() {
+		return `${this.category}.${this.path.join('/')}`
 	}
 }
 
@@ -1076,7 +1076,7 @@ export namespace SymbolFormatter {
 		return ans.map(v => `${indent}${v}`).join('\n')
 	}
 
-	export function stringifyVisibility(visibility: SymbolVisibility | undefined, visibilityRestriction: string[] | undefined) {
+	export function stringifyVisibility(visibility: SymbolVisibility | undefined, visibilityRestriction?: string[]) {
 		let stringVisibility: string
 		// Const enums cannot be indexed even if `--preserveConstEnums` is on: https://github.com/microsoft/TypeScript/issues/31353
 		switch (visibility) {
@@ -1126,4 +1126,8 @@ function DelayModeSupport(getUtil: (self: any) => SymbolUtil = self => self): Me
 		}
 		return descripter
 	}
+}
+
+function isDocAndNode(doc: string | TextDocument | DocAndNode): doc is DocAndNode {
+	return !!(doc as DocAndNode).doc
 }
