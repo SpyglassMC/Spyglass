@@ -5,7 +5,7 @@ import type { LinterErrorReporter } from '.'
 import { formatterContextIndentation } from '../processor'
 import type { Range } from '../source'
 import { ReadonlySource } from '../source'
-import type { SymbolUtil } from '../symbol'
+import type { SymbolTable, SymbolUtil } from '../symbol'
 import type { Config } from './Config'
 import { ErrorReporter } from './ErrorReporter'
 import type { FileService } from './FileService'
@@ -16,8 +16,9 @@ import { Operations } from './Operations'
 import type { DocAndNode, ProjectData } from './Project'
 
 export interface ContextBase {
-	getDocAndNode: (uri: string) => DocAndNode | undefined,
 	fs: FileService,
+	getDocAndNode: (uri: string) => DocAndNode | undefined,
+	global: SymbolTable,
 	logger: Logger,
 	meta: MetaRegistry,
 	project: Record<string, string>,
@@ -26,8 +27,9 @@ export interface ContextBase {
 export namespace ContextBase {
 	export function create(project: ProjectData): ContextBase {
 		return {
-			getDocAndNode: project.get.bind(project),
 			fs: project.fs,
+			getDocAndNode: project.get.bind(project),
+			global: project.symbols.global,
 			logger: project.logger,
 			meta: project.meta,
 			roots: project.roots,
@@ -40,6 +42,7 @@ export interface ParserContext extends ContextBase {
 	config: Config,
 	doc: TextDocument,
 	err: ErrorReporter,
+	/** @deprecated */
 	symbols: SymbolUtil,
 }
 interface ParserContextOptions {
@@ -62,6 +65,7 @@ export interface ProcessorContext extends ContextBase {
 	config: Config,
 	doc: TextDocument,
 	src: ReadonlySource,
+	/** @deprecated */
 	symbols: SymbolUtil,
 }
 interface ProcessorContextOptions {
@@ -209,6 +213,7 @@ export namespace SignatureHelpProviderContext {
 }
 
 export interface UriBinderContext extends ContextBase {
+	/** @deprecated */
 	symbols: SymbolUtil,
 }
 export namespace UriBinderContext {

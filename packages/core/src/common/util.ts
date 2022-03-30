@@ -299,3 +299,7 @@ export function getStates(category: 'block' | 'fluid', ids: readonly string[], c
 }
 
 export const binarySearch = externalBinarySearch
+
+export function isIterable(value: unknown): value is Iterable<unknown> {
+	return !!(value as Iterable<unknown>)[Symbol.iterator]
+}

@@ -1,5 +1,7 @@
 import rfdc from 'rfdc'
+// import { TypedEmitter } from 'tiny-typed-emitter'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import { isIterable } from '../common'
 import type { RangeLike } from '../source'
 import { Location, PositionRange, Range } from '../source'
 
@@ -269,6 +271,24 @@ export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, 
 	parentSymbol?: Symbol,
 	path: readonly string[],
 }
+export namespace Symbol {
+	export function get(table: SymbolTable | Iterable<SymbolTable>, category: AllCategory, ...path: [string, ...string[]]): Symbol | undefined {
+		if (isIterable(table)) {
+			for (const t of table) {
+				const result = get(t, category, ...path)
+				if (result) {
+					return result
+				}
+			}
+			return undefined
+		}
+		const map = table[category]
+		for (const p of path) {
+			
+		}
+		return undefined
+	}
+}
 
 export interface SymbolLocationMetadata {
 	/**
@@ -455,3 +475,22 @@ export namespace SymbolTable {
 		return link(JSON.parse(json))
 	}
 }
+
+// interface SymbolEvent {
+// 	symbol: Symbol,
+// }
+// interface SymbolLocationEvent extends SymbolEvent {
+// 	type: SymbolUsageType,
+// 	location: SymbolLocation,
+// }
+// export class CachedSymbolTable extends TypedEmitter<{
+// 	symbolCreated: (e: SymbolEvent) => unknown,
+// 	symbolAmended: (e: SymbolEvent) => unknown,
+// 	symbolRemoved: (e: SymbolEvent) => unknown,
+// 	symbolLocationCreated: (e: SymbolLocationEvent) => unknown,
+// 	symbolLocationRemoved: (e: SymbolLocationEvent) => unknown,
+// }> {
+// 	constructor(public readonly table: SymbolTable) {
+// 		super()
+// 	}
+// }
