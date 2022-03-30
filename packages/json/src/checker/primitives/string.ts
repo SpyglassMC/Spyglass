@@ -31,7 +31,8 @@ export function string(name?: string | readonly string[], parser?: Lazy<Parser<A
 		} else if (parser) {
 			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx)
 			if (result !== Failure) {
-				(node as Mutable<AstNode>).children = [result]
+				(node as Mutable<AstNode>).children = [result];
+				(result as Mutable<AstNode>).parent = node
 				if (checker) {
 					Lazy.resolve(checker)(result, ctx)
 				}

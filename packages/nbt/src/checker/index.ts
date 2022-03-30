@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
-import * as nbtdoc from '@spyglassmc/nbtdoc'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'
+import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { localeQuote, localize } from '../../../locales/lib'
 import type { NbtByteNode, NbtNode, NbtNumberNode, NbtPathNode, NbtPrimitiveArrayNode } from '../node'
 import { NbtCompoundNode, NbtListNode, NbtPrimitiveNode } from '../node'
@@ -388,7 +388,8 @@ export function fieldValue(type: nbtdoc.NbtdocType, options: Options): core.Sync
 							const parser = ctx.meta.getParser(parserName)
 							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
 							if (result !== core.Failure) {
-								ctx.ops.set(node, 'children', [result])
+								ctx.ops.set(node, 'children', [result]);
+								(result as core.Mutable<core.AstNode>).parent = node
 							}
 						} catch (e) {
 							ctx.logger.error('[nbt.checker.fieldValue#string]', e)
