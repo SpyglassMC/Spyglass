@@ -26,12 +26,9 @@ WIP under the [`docs` directory](https://github.com/SpyglassMC/Spyglass/tree/mai
 1. ```shell
 	$ git clone https://github.com/SpyglassMC/Spyglass.git
 	```
-2. Make sure you're using an npm version higher than or equal to 7.0.0, as this repository utilizes npm@7's workspaces feature.
-   ```shell
-	$ npm -v
-	$ npm i -g npm@7 # Run this to update it if it's not already 7.x.x.
-	```
-3. ```shell
+2. Make sure you have npm >= 7.0.0 installed. See [npm documentation][npm-doc] for more information.
+3. Make sure you have poetry installed. See [poetry documentation][poetry-doc] for more information.
+4. ```shell
 	$ npm i && npm run build
 	```
 
@@ -54,3 +51,5 @@ Or if you prefer the command line interface:
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
 [eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
+[npm-doc]: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
+[poetry-doc]: https://python-poetry.org/docs/master/

@@ -9,6 +9,7 @@
 		"clean": "tsc -b packages --clean",
 		"commit": "gitmoji -c",
 		"con": "cd contributors && all-contributors generate && cd ..",
+		"postinstall": "cd packages/java-edition && npm run postinstall && cd ../..",
 		"lint": "eslint packages/*/{src,test}/**/*.ts",
 		"lint:fix": "eslint --fix packages/*/{src,test}/**/*.ts",
 		"start-discord-bot": "node packages/discord-bot/lib/index.mjs",

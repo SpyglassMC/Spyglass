@@ -8,10 +8,11 @@
     "Misode"
   ],
   "license": "MIT",
+  "scripts": {
+    "postinstall": "cd src/comp-layer/beet/bolt/parser && poetry install && cd ../../../../.."
+  },
   "directories": {
     "test": "test/"
-  },
-  "dependencies": {
   },
   "devDependencies": {
     "fast-glob": "^3.2.5",

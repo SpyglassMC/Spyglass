@@ -3,6 +3,7 @@
 **/.nyc_output
 **/*.cpuprofile
 **/*.tsbuildinfo
+**/__pycache__
 
 /.vscode/settings.json
 /.mocharc.local.jsonc

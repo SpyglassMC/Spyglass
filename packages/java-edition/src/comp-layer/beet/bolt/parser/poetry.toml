@@ -1,0 +1,2 @@
+[virtualenvs]
+path = "../../../../../../.." # Root of workspace
