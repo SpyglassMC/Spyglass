@@ -14,7 +14,7 @@ Locales[language] = Locales.en
 
 /* istanbul ignore next */
 export function locale(key: string, ...params: any[]) {
-    const value: string | undefined = Locales[language][key] ?? Locales.en[key]
+    const value: string | undefined = Locales[language]?.[key] ?? Locales.en[key]
 
     return resolveLocalePlaceholders(value, params) ?? (
         console.error(new Error(`Unknown locale key “${key}”`)),
@@ -45,12 +45,17 @@ export function segmentedLocale(segments: string[], params?: string[], depth = 5
 }
 
 async function setupLanguage(code: string) {
-    const locale = await import(`./${code}.json`)
-    const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
-    Locales[code] = { ...addJsonPrefix(jsonLocale), ...locale }
-    language = code
+    try {
+        const locale = await import(`./${code}.json`)
+        const jsonLocale = await import(`@mcschema/locales/src/${code}.json`)
+        Locales[code] = { ...addJsonPrefix(jsonLocale), ...locale }
+        language = code
 
-    console.info(`[I18N] Set to “${code}”.`)
+        console.info(`[I18N] Set to “${code}”.`)
+    } catch (e) {
+        console.warn(`[I18N] Failed setting language to “${code}”.`, e)
+        language = 'en'
+    }
 }
 
 function addJsonPrefix(jsonLocale: any) {
