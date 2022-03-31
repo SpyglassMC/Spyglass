@@ -6,12 +6,14 @@ export class Operations {
 		const oldValue = obj[key]
 		const op = () => { obj[key] = value }
 		this.redoOps.push(op)
-		this.undoOps.unshift(() => { obj[key] = oldValue })
+		this.undoOps.push(() => { obj[key] = oldValue })
 		op()
 	}
 
 	undo(): void {
-		this.undoOps.forEach(f => f())
+		for (let i = this.undoOps.length - 1; i >= 0; i--) {
+			this.undoOps[i]()
+		}
 	}
 	redo(): void {
 		this.redoOps.forEach(f => f())
