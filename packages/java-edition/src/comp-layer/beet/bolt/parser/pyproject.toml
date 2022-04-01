@@ -5,8 +5,8 @@ description = ""
 authors = ["SPGoding <15277496+SPGoding@users.noreply.github.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
 mecha = "0.43.1"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
 # pytest = "^5.2"
