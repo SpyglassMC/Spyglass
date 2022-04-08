@@ -1,7 +1,7 @@
 {
     "name": "@spgoding/datapack-language-server",
     "description": "A language server for Minecraft: Java Edition datapacks",
-    "version": "3.3.24",
+    "version": "3.3.25",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
     "bin": {
@@ -31,13 +31,13 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.12.31",
-        "@mcschema/java-1.16": "^0.6.6",
-        "@mcschema/java-1.17": "^0.2.25",
-        "@mcschema/java-1.18": "^0.3.1",
-        "@mcschema/java-1.18.2": "^0.1.5",
-        "@mcschema/java-1.19": "^0.1.7",
-        "@mcschema/locales": "^0.1.53",
+        "@mcschema/core": "^0.12.33",
+        "@mcschema/java-1.16": "^0.6.7",
+        "@mcschema/java-1.17": "^0.2.26",
+        "@mcschema/java-1.18": "^0.3.3",
+        "@mcschema/java-1.18.2": "^0.1.8",
+        "@mcschema/java-1.19": "^0.1.18",
+        "@mcschema/locales": "^0.1.58",
         "appdata-path": "^1.0.0",
         "clone": "^2.1.2",
         "fast-deep-equal": "^3.1.3",
