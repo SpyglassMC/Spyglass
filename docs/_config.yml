@@ -2,13 +2,12 @@ title: Spyglass documentation
 description: >-
   Development tools for vanilla Minecraft: Java Edition data pack developers. 
 baseurl: ""
-url: "https://spyglassmc.github.io/Spyglass"
+url: "https://spyglassmc.com"
 github_username:  SpyglassMC
 
 # Build settings
 plugins:
   - jekyll-asciidoc
-  - jekyll-feed
 
 exclude:
   - .sass-cache/
@@ -26,6 +25,8 @@ exclude:
 asciidoc: {}
 asciidoctor:
   safe: unsafe
+  attributes:
+  - source-highlighter=rouge
 
 # Theme
 theme: just-the-docs

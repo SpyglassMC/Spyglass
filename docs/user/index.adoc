@@ -1,4 +1,8 @@
-:page-layout: page
+:page-layout: default
+:page-title: Home
+:page-has_children: true
+:page-nav_order: 1
+:page-permalink: /
 
 :link-github-repo: https://github.com/SpyglassMC/Spyglass
 :link-l10n: https://l10n.spgoding.com/projects/spyglass/locales/

@@ -1,4 +1,7 @@
-= Meta Registry
+:page-layout: default
+:page-title: Meta Registry
+:page-parent: Developer Guides
+:page-nav_order: 2
 
 == Symbol Registrar
 

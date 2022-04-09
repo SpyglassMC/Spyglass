@@ -1,6 +1,9 @@
-== Custom Server Capabilities
+:page-layout: default
+:page-title: Custom Server Capabilities
+:page-parent: Developer Guides
+:page-nav_order: 1
 
-=== `experimental.spyglassmc.dataHackPubify`
+== `experimental.spyglassmc.dataHackPubify`
 
 Request sent from client: `spyglassmc/dataHackPubify`
 
@@ -10,7 +13,7 @@ Request sent from client: `spyglassmc/dataHackPubify`
 .Response
 `string`
 
-=== `experimental.spyglassmc.inlayHints`
+== `experimental.spyglassmc.inlayHints`
 
 Request sent from client: `spyglassmc/inlayHints`
 
@@ -22,7 +25,7 @@ Request sent from client: `spyglassmc/inlayHints`
 .Response
 `InlayHint[]`
 
-=== `experimental.spyglassmc.resetProjectCache`
+== `experimental.spyglassmc.resetProjectCache`
 
 Request sent from client: `spyglassmc/resetProjectCache`
 
@@ -32,7 +35,7 @@ None.
 .Response
 `void`
 
-=== `experimental.spyglassmc.showCacheRoot`
+== `experimental.spyglassmc.showCacheRoot`
 
 Request sent from client: `spyglassmc/showCacheRoot`
 

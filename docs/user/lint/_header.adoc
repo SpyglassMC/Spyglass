@@ -1,10 +1,10 @@
 // Input Attributes:
 // * :rule-name:   <string>
-// * :summary:     <string>
 // * :description: <string>
 // * :fixable:
-
-= {summary} (`{rule-name}`)
+:page-title: {rule-name}
+:page-parent: Config
+:page-grand_parent: Home
 
 ifdef::fixable[]
 🔧 *Fixable*: violations of this rule can be auto-fixed by Code Actions.

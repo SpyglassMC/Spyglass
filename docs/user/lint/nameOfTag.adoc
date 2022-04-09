@@ -1,8 +1,6 @@
 :rule-name: nameOfTag
 :linter: nameConvention
-:summary: Enforce a naming convention for tags
 :description: This rule enforces a consistent naming convention for tags managed by the `/tag` command.
-
 include::user/lint/_header.adoc[]
 
 include::user/lint/_pre-json-format.adoc[]

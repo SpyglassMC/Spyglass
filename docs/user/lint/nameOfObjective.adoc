@@ -1,8 +1,6 @@
 :rule-name: nameOfObjective
 :linter: nameConvention
-:summary: Enforce a naming convention for scoreboard objectives
 :description: This rule enforces a consistent naming convention for scoreboard objectives.
-
 include::user/lint/_header.adoc[]
 
 include::user/lint/_pre-json-format.adoc[]

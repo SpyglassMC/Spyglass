@@ -1,4 +1,8 @@
-= Config
+:page-layout: default
+:page-title: Config
+:page-parent: Home
+:page-has_children: true
+:page-nav_order: 1
 
 The config file can be put under the root of your workspace with either of the following names.
 

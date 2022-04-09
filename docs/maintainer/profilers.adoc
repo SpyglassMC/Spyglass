@@ -1,4 +1,7 @@
-= Profilers
+:page-layout: default
+:page-title: Profilers
+:page-parent: Maintainer Guides
+:page-nav_order: 1
 
 Profiler IDs
 

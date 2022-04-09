@@ -1,8 +1,6 @@
 :rule-name: undeclaredSymbol
 :linter: undeclaredSymbol
-:summary: Specifies actions to take when encounterred undeclared symbols
 :description: This rule specifies what actions should be done when there are undeclared symbols.
-
 include::user/lint/_header.adoc[]
 
 include::user/lint/_pre-json-format.adoc[]
