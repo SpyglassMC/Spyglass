@@ -1,4 +1,5 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
+import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { command } from '../../lib/parser'
@@ -53,4 +54,13 @@ describe('mcfunction parser command()', () => {
 			snapshot(testParser(parser, content))
 		})
 	}
+	it('Should not exceed max call stack', () => {
+		const content = `execute ${'if true '.repeat(10000)}run `
+		const parser = command(tree, () => undefined)
+		try {
+			snapshot({ node: 'OMITTED', errors: testParser(parser, content).errors })
+		} catch (e) {
+			fail((e as Error).stack?.slice(0, 500))
+		}
+	})
 })

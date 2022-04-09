@@ -51,79 +51,87 @@ export function command(tree: RootTreeNode, argument: ArgumentParserGetter): cor
 function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserContext, path: string[], rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
-	const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(parentTreeNode, rootTreeNode, path)
-	path = resolvedPath
+	function _dispatch(path: string[], parentTreeNode: TreeNode): false | { childPath: string[], childTreeNode: TreeNode } {
+		const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(parentTreeNode, rootTreeNode, path)
+		path = resolvedPath
 
-	const children = parent?.children
-	if (!children) {
-		return
-	}
-
-	const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(children)
-
-	const argumentParsers: { name: string, parser: core.Parser }[] = argumentTreeNodes.map(([name, treeNode]) => ({
-		name,
-		parser: argument(treeNode) ?? unknown(treeNode),
-	}))
-	const literalParser = literalTreeNodes.length
-		? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
-		: undefined
-
-	const parsers: core.Parser[] = [
-		...literalParser ? [literalParser] : [],
-		...argumentParsers.map(v => v.parser),
-	]
-
-	const out: core.AnyOutObject = { index: 0 }
-	const parser = parsers.length > 1 ? core.any(parsers, out) : parsers[0]
-	const result = parser(src, ctx)
-
-	if (result !== core.Failure) {
-		const takenName = argumentParsers[out.index]?.name ?? (result as LiteralCommandChildNode).value
-		const childPath = [...path, takenName]
-
-		ans.push({
-			type: 'mcfunction:command_child',
-			range: result.range,
-			children: [result],
-			path: childPath,
-		})
-
-		const childTreeNode = children[takenName]
-		if (!childTreeNode) {
-			return
+		const children = parent?.children
+		if (!children) {
+			return false
 		}
 
-		const requiredPermissionLevel = childTreeNode.permission ?? 2
-		if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
+		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(children)
+
+		const argumentParsers: { name: string, parser: core.Parser }[] = argumentTreeNodes.map(([name, treeNode]) => ({
+			name,
+			parser: argument(treeNode) ?? unknown(treeNode),
+		}))
+		const literalParser = literalTreeNodes.length
+			? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
+			: undefined
+
+		const parsers: core.Parser[] = [
+			...literalParser ? [literalParser] : [],
+			...argumentParsers.map(v => v.parser),
+		]
+
+		const out: core.AnyOutObject = { index: 0 }
+		const parser = parsers.length > 1 ? core.any(parsers, out) : parsers[0]
+		const result = parser(src, ctx)
+
+		if (result !== core.Failure) {
+			const takenName = argumentParsers[out.index]?.name ?? (result as LiteralCommandChildNode).value
+			const childPath = [...path, takenName]
+
+			ans.push({
+				type: 'mcfunction:command_child',
+				range: result.range,
+				children: [result],
+				path: childPath,
+			})
+
+			const childTreeNode = children[takenName]
+			if (!childTreeNode) {
+				return false
+			}
+
+			const requiredPermissionLevel = childTreeNode.permission ?? 2
+			if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
+				ctx.err.report(
+					localize('mcfunction.parser.no-permission', requiredPermissionLevel, ctx.config.env.permissionLevel),
+					result
+				)
+			}
+
+			if ((result as UnknownCommandChildNode).type === 'mcfunction:command_child/unknown') {
+				// Encountered an unsupported parser. Stop parsing this command.
+				return false
+			}
+
+			if (src.canReadInLine()) {
+				// Skip command argument separation (a space).
+				sep(src, ctx)
+				return { childPath, childTreeNode }
+			} else {
+				// End-of-command.
+				if (!childTreeNode.executable) {
+					ctx.err.report(localize('mcfunction.parser.eoc-unexpected'), src)
+				}
+			}
+		} else {
+			// Failed to parse as any arguments.
 			ctx.err.report(
-				localize('mcfunction.parser.no-permission', requiredPermissionLevel, ctx.config.env.permissionLevel),
-				result
+				localize('expected', treeNodeChildrenToString(children)),
+				core.Range.create(src)
 			)
 		}
 
-		if ((result as UnknownCommandChildNode).type === 'mcfunction:command_child/unknown') {
-			// Encountered an unsupported parser. Stop parsing this command.
-			return
-		}
+		return false
+	}
 
-		if (src.canReadInLine()) {
-			// Skip command argument separation (a space).
-			sep(src, ctx)
-			// Recursive dispatch for the child tree node.
-			dispatch(ans, src, ctx, childPath, rootTreeNode, childTreeNode, argument)
-		} else {
-			// End-of-command.
-			if (!childTreeNode.executable) {
-				ctx.err.report(localize('mcfunction.parser.eoc-unexpected'), src)
-			}
-		}
-	} else {
-		// Failed to parse as any arguments.
-		ctx.err.report(
-			localize('expected', treeNodeChildrenToString(children)),
-			core.Range.create(src)
-		)
+	let result = _dispatch(path, parentTreeNode)
+	while (result) {
+		result = _dispatch(result.childPath, result.childTreeNode)
 	}
 }
 

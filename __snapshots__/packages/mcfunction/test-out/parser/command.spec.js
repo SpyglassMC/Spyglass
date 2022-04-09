@@ -514,3 +514,17 @@ exports['mcfunction parser command() Parse "say" 1'] = {
     }
   ]
 }
+
+exports['mcfunction parser command() Should not exceed max call stack 1'] = {
+  "node": "OMITTED",
+  "errors": [
+    {
+      "range": {
+        "start": 80012,
+        "end": 80012
+      },
+      "message": "Expected execute|say",
+      "severity": 3
+    }
+  ]
+}
