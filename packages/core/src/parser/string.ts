@@ -23,7 +23,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
 			const currentQuote = src.read() as Quote
 			const contentStart = src.cursor
-			while (src.canRead() && !['\n', '\r', currentQuote].includes(src.peek())) {
+			while (src.canRead() && src.peek() !== currentQuote) {
 				const cStart = src.cursor
 				const c = src.read()
 				if (options.escapable && c === '\\') {

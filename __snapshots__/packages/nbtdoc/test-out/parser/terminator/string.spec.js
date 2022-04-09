@@ -93,9 +93,9 @@ exports['string() Parse ""fo↓o"" 1'] = {
     "type": "string",
     "range": {
       "start": 0,
-      "end": 3
+      "end": 6
     },
-    "value": "fo",
+    "value": "fo\no",
     "valueMap": [
       {
         "inner": {
@@ -109,16 +109,7 @@ exports['string() Parse ""fo↓o"" 1'] = {
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 3,
-        "end": 3
-      },
-      "message": "Expected “\"”",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['string() Parse ""fo⧵Ao"" 1'] = {

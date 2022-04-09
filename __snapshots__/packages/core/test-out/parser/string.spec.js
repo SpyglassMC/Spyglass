@@ -137,9 +137,9 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
     "type": "string",
     "range": {
       "start": 0,
-      "end": 4
+      "end": 5
     },
-    "value": "foo",
+    "value": "foo\n",
     "valueMap": [
       {
         "inner": {
@@ -156,8 +156,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
   "errors": [
     {
       "range": {
-        "start": 4,
-        "end": 4
+        "start": 5,
+        "end": 5
       },
       "message": "Expected “\"”",
       "severity": 3
