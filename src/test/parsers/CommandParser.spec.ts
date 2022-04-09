@@ -698,5 +698,20 @@ describe('CommandParser Tests', () => {
                 )
             })
         })
+        it('Should not crash on thousand command children', async () => {
+            const input = 'foo '.repeat(1000) + 'foo'
+            const tree: CommandTree = {
+                commands: {
+                    foo: {
+                        parser: new TestArgumentParser(),
+                        redirect: 'commands'
+                    }
+                }
+            }
+            const ctx = constructContext({ commandTree: tree })
+            const parser = new CommandParser()
+            const line = CommandComponent.create()
+            parser.parseSingle(new StringReader(input), ctx, 'test', tree.commands.foo, line)
+        })
     })
 })

@@ -85,7 +85,11 @@ export class CommandParser implements Parser<CommandComponent> {
         //#endregion
 
         if (shouldContinue) {
-            this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
+            try {
+                this.parseChildren(reader, ctx, ctx.commandTree[this.entryPoint], node, false, true)
+            } catch (e) {
+                console.error('Failed parsing a command', e)
+            }
         }
 
         node.range = { start, end: reader.cursor }
