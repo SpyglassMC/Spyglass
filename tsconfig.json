@@ -15,6 +15,7 @@
         "alwaysStrict": true,
         "strictNullChecks": true,
         "declaration": true,
+        "incremental": true,
         "newLine": "LF",
         "resolveJsonModule": true
     },

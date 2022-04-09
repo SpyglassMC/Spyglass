@@ -3,3 +3,4 @@
 /node_modules
 /.datapack
 /.nyc_output
+*.tsbuildinfo
