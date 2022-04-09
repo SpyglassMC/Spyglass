@@ -15,7 +15,7 @@
 			"script": "watch",
 			"group": "build",
 			"isBackground": true,
-			"path": "packages/vscode-extension/",
+			"path": "packages/vscode-extension",
 			"dependsOn": "npm: watch",
 			"problemMatcher": {
 				"owner": "Webpack (Dev, Continuous)",
