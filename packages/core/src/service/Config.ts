@@ -263,7 +263,7 @@ export namespace SymbolLinterConfig {
 		declare: 'block' | 'file' | 'public',
 	}
 	export interface ReportAction {
-		report: LinterSeverity | 'default',
+		report: LinterSeverity | 'inherit',
 	}
 	export type Action = DeclareAction | ReportAction
 	export namespace Action {
@@ -271,7 +271,7 @@ export namespace SymbolLinterConfig {
 			return value !== undefined && ['block', 'file', 'public'].includes((value as DeclareAction).declare)
 		}
 		export function isReport(value: Action | undefined): value is ReportAction {
-			return value !== undefined && ['default', 'hint', 'information', 'warning', 'error'].includes((value as ReportAction).report)
+			return value !== undefined && ['inherit', 'hint', 'information', 'warning', 'error'].includes((value as ReportAction).report)
 		}
 		export function is(v: unknown): v is Action {
 			if (!v || typeof v !== 'object') {

@@ -18,6 +18,7 @@ export interface VersionInfo {
 	isLatest: boolean,
 }
 
+// DOCS: Update here when format_version is changed.
 export const PackVersionMap: Record<number, MajorVersion | undefined> = {
 	5: '1.15',
 	6: '1.16',

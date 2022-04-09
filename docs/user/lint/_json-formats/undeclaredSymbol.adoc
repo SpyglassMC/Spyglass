@@ -1,0 +1,17 @@
+Either a simple `Action` object:
+
+* (object) An action to take when encounterred undeclared symbols
+** Either `declare`: declares the symbol at the specified scope. Allowed values: `"block"`, `"file"`, or `"public"`.
+** Or `report`: reports a diagnostic with the specified severity. Allowed values: `"inherit"`, `"hint"`, `"information"`, `"warning"`, or `"error"`.
+
+Or a more `Complex` structure with conditions:
+
+* (object)
+** `if`: (object)
+*** `category`: (string | string[])
+*** `pattern`: (string | string[])
+*** `excludePattern`: (string | string[])
+*** `namespace`: (string | string[])
+*** `excludeNamespace`: (string | string[])
+** `then`: (`Action`)
+** `override`: (`Complex | Complex[]`)

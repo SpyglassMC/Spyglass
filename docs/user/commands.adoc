@@ -17,5 +17,3 @@ Reset the symbols cache for the current project.
 === `spyglassmc.dataHackPubify`
 
 Data Hack Pubify a string.
-
-== History

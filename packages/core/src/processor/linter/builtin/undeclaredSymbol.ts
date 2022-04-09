@@ -22,7 +22,7 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 			})
 	}
 	if (Config.Action.isReport(action)) {
-		const severityOverride = action.report === 'default' ? undefined : LinterSeverity.toErrorSeverity(action.report)
+		const severityOverride = action.report === 'inherit' ? undefined : LinterSeverity.toErrorSeverity(action.report)
 		ctx.err.lint(
 			localize('linter.undeclared-symbol.message',
 				node.symbol.category,

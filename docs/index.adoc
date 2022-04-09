@@ -1,0 +1,30 @@
+:page-layout: page
+
+:link-github-repo: https://github.com/SpyglassMC/Spyglass
+:link-l10n: https://l10n.spgoding.com/projects/spyglass/locales/
+
+= Spyglass documentation
+
+Welcome to the work-in-progress documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real time diagnostics, semantic coloring and such.
+
+The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server[the VS Code Marketplace].
+
+== Getting Started
+
+TODO
+
+== Customization
+
+Main article: link:./user/config[Config]
+
+== Plugins
+
+The cake is a lie. ALL LIES.
+
+== Contributing
+
+Ew so many things to write.
+
+* {link-github-repo}/issues/new/choose[Create an issue]
+* {link-github-repo}[GitHub Repository]
+* {link-l10n}[Localization]

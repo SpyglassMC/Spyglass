@@ -3,9 +3,9 @@
 :summary: Enforce a naming convention for tags
 :description: This rule enforces a consistent naming convention for tags managed by the `/tag` command.
 
-include::_header.adoc[]
+include::user/lint/_header.adoc[]
 
-include::_pre-json-format.adoc[]
+include::user/lint/_pre-json-format.adoc[]
 
 .Snake case
 ====
@@ -33,14 +33,4 @@ tag add FooBar
 ----
 ====
 
-include::_post-json-format.adoc[]
-
-== History
-
-|===
-|Version |Description
-
-| 1.0.0
-| Added lint rule `{rule-name}`.
-
-|===
+include::user/lint/_post-json-format.adoc[]

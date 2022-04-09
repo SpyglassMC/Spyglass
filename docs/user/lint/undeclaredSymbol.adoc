@@ -1,0 +1,46 @@
+:rule-name: undeclaredSymbol
+:linter: undeclaredSymbol
+:summary: Specifies actions to take when encounterred undeclared symbols
+:description: This rule specifies what actions should be done when there are undeclared symbols.
+
+include::user/lint/_header.adoc[]
+
+include::user/lint/_pre-json-format.adoc[]
+
+.Example
+====
+.Config
+[source,json,subs="attributes+"]
+----
+{
+	"lint": {
+		"{rule-name}": [
+			{
+				"if": [
+					{ "category": ["block", "entity_type", "item"], "namespace": "minecraft" },
+					{ "category": ["advancement", "bossbar", "objective", "team"] },
+				],
+				"then": { "report": "warning" },
+			},
+			{
+				"then": { "declare": "block" },
+			},
+		]
+	}
+}
+----
+
+.👍 Good
+[source,mcfunction]
+----
+tag @s add foo
+----
+
+.👎 Bad
+[source,mcfunction]
+----
+setblock ~ ~ ~ minecraft:foo
+----
+====
+
+include::user/lint/_post-json-format.adoc[]

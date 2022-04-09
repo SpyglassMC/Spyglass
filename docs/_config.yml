@@ -1,0 +1,39 @@
+title: Spyglass documentation
+description: >-
+  Development tools for vanilla Minecraft: Java Edition data pack developers. 
+baseurl: ""
+url: "https://spyglassmc.github.io/Spyglass"
+github_username:  SpyglassMC
+
+# Build settings
+plugins:
+  - jekyll-asciidoc
+  - jekyll-feed
+
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# AsciiDoc
+asciidoc: {}
+asciidoctor:
+  safe: unsafe
+
+# Theme
+theme: just-the-docs
+color_scheme: black
+## Footer
+gh_edit_link: true
+gh_edit_link_text: View the page source on GitHub.
+gh_edit_repository: https://github.com/SpyglassMC/Spyglass
+gh_edit_branch: main
+gh_edit_source: docs
+gh_edit_view_mode: tree

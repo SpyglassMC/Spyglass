@@ -53,4 +53,8 @@ Or if you prefer the command line interface:
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
+### Test docs locally
+
+See [Jekyll's documentation](https://jekyllrb.com/docs/#instructions).
+
 [eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
