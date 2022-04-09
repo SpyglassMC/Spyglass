@@ -4,8 +4,8 @@ import { ErrorSeverity, Range, ResourceLocationNode, SymbolPath, SymbolUtil, Sym
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { Segments } from '../binder'
 import { identifierToSeg, segToIdentifier } from '../binder'
-import type { CompoundFieldNode, DescribesClauseNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
-import { CompoundDefinitionNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
+import type { DescribesClauseNode, IdentPathToken, InjectClauseNode, MainNode, ModuleDeclarationNode, UseClauseNode } from '../node'
+import { CompoundDefinitionNode, CompoundFieldNode, EnumDefinitionNode, EnumFieldNode, ExtendableRootRegistryMap } from '../node'
 import type { CheckerContext } from './CheckerContext'
 
 export const entry: Checker<MainNode> = async (node: MainNode, ctx: core.CheckerContext): Promise<void> => {
@@ -102,13 +102,9 @@ async function compoundFields<N extends { fields: CompoundFieldNode[] }>(definit
 			definitionQuery.member(field.key.value, member => member
 				.ifDeclared(symbol => reportDuplicatedDeclaration('nbtdoc.checker.duplicated-identifier', ctx, symbol, field.key))
 				.else(async () => {
-					// const data = await CompoundFieldNode.toSymbolData(field, async n => (await resolveIdentPath(n, ctx))?.symbol)
-					// member.enter({
-					// 	data: { data, desc: field.doc.value, subcategory: 'compound_key' },
-					// 	usage: { type: 'definition', node: field.key, fullRange: field },
-					// })
+					const data = await CompoundFieldNode.toSymbolData(field, async n => (await resolveIdentPath(n, ctx))?.symbol)
 					member.enter({
-						data: { desc: field.doc.value, subcategory: 'compound_key' },
+						data: { data, desc: field.doc.value, subcategory: 'compound_key' },
 						usage: { type: 'definition', node: field.key, fullRange: field },
 					})
 					resolve()
