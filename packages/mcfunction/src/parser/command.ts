@@ -70,8 +70,8 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		: undefined
 
 	const parsers: core.Parser[] = [
-		...argumentParsers.map(v => v.parser),
 		...literalParser ? [literalParser] : [],
+		...argumentParsers.map(v => v.parser),
 	]
 
 	const out: core.AnyOutObject = { index: 0 }
