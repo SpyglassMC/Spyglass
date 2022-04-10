@@ -211,6 +211,10 @@ export interface ItemNode extends core.AstNode {
 	nbt?: nbt.NbtCompoundNode,
 }
 export namespace ItemNode {
+	export function is(node: core.AstNode | undefined): node is ItemNode {
+		return (node as ItemNode | undefined)?.type === 'mcfunction:item'
+	}
+
 	export function mock(range: core.RangeLike, isPredicate: boolean): ItemNode {
 		const id = core.ResourceLocationNode.mock(range, { category: 'item', allowTag: isPredicate })
 		return {
@@ -293,6 +297,10 @@ export namespace ParticleNode {
 	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined
 	export function isSpecialType(type: string | undefined): type is SpecialType {
 		return SpecialTypes.has(type as SpecialType)
+	}
+
+	export function is(node: core.AstNode | undefined): node is ParticleNode {
+		return (node as ParticleNode | undefined)?.type === 'mcfunction:particle'
 	}
 
 	export function mock(range: core.RangeLike): ParticleNode {

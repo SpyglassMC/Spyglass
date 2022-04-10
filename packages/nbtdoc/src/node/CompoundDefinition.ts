@@ -1,6 +1,7 @@
 import type { AstNode, FloatNode, IntegerNode, Symbol } from '@spyglassmc/core'
 import { ResourceLocationNode, StringNode, SymbolPath } from '@spyglassmc/core'
 import type { CompoundType, NbtdocType, RegistryIndexData, RegistryIndexType, ValueRange } from '../type'
+import { simplifyType } from '../type'
 import type { EnumDefinitionNode } from './EnumDefinition'
 import type { DocCommentsNode, SyntaxNode } from './misc'
 import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
@@ -79,7 +80,7 @@ export namespace CompoundFieldNode {
 
 	export async function toSymbolData(node: CompoundFieldNode, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
 		return {
-			fieldType: await CompoundFieldTypeNode.toType(node.fieldType, resolveIdentPath),
+			fieldType: simplifyType(await CompoundFieldTypeNode.toType(node.fieldType, resolveIdentPath)),
 		}
 	}
 }

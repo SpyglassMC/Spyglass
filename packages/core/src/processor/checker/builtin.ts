@@ -77,6 +77,15 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 	await Promise.allSettled(promises)
 }
 
+export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
+	for (const child of node.children ?? []) {
+		if (ctx.meta.hasChecker(child.type)) {
+			const checker = ctx.meta.getChecker(child.type)
+			checker(child, ctx)
+		}
+	}
+}
+
 export const resourceLocation: Checker<ResourceLocationNode> = (node, ctx) => {
 	const full = ResourceLocationNode.toString(node, 'full')
 	if (node.options.pool) {

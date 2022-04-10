@@ -1,13 +1,13 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localize } from '@spyglassmc/locales/lib'
+import { localeQuote, localize } from '@spyglassmc/locales/lib'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
 import { text_component } from '../../json/checker/data/text_component'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node'
-import { EntityNode } from '../node'
+import { BlockNode, EntityNode, ItemNode, ParticleNode } from '../node'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -24,6 +24,20 @@ const getNode = (nodes: mcf.CommandNode['children'], index: number): core.AstNod
 }
 
 const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+	for (const { children: [node] } of nodes) {
+		if (BlockNode.is(node)) {
+			block(node, ctx)
+		} else if (EntityNode.is(node)) {
+			entity(node, ctx)
+		} else if (ItemNode.is(node)) {
+			item(node, ctx)
+		} else if (ParticleNode.is(node)) {
+			particle(node, ctx)
+		} else if (json.JsonNode.is(node)) {
+			text_component(node, { ...ctx, context: '' })
+		}
+	}
+
 	if (getName(nodes, index) === 'data') {
 		if (getName(nodes, index + 1) === 'get') {
 			nbtPath(nodes, index + 2, ctx)
@@ -32,23 +46,56 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 		} else if (getName(nodes, index + 1) === 'modify') {
 			nbtPath(nodes, index + 2, ctx)
 			const targetPath = getNode(nodes, index + 4)
-			const operation = getName(nodes, index + 5)
-			const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
-			if (getName(nodes, sourceTypeIndex) === 'from') {
-				// `from <$nbtPath$>`
-				nbtPath(nodes, sourceTypeIndex + 1, ctx)
-				const sourcePath = getNode(nodes, sourceTypeIndex + 3)
-				if (nbt.NbtPathNode.is(targetPath) && nbt.NbtPathNode.is(sourcePath)) {
-					const { errorMessage } = nbtdoc.checkAssignability({ source: sourcePath.targetType, target: targetPath.targetType })
-					if (errorMessage) {
-						ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
+			if (nbt.NbtPathNode.is(targetPath)) {
+				const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
+				const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
+				let targetNbtdocType: nbtdoc.NbtdocType | undefined = targetPath.targetType ? nbtdoc.simplifyType(targetPath.targetType) : undefined
+				const isType = (type: nbtdoc.NbtdocType['type']) => targetNbtdocType?.type === type || (targetNbtdocType?.type === 'union' && targetNbtdocType.members.some(m => m.type === type))
+				if (operation === 'merge') {
+					if (!(isType('compound') || isType('index'))) {
+						ctx.err.report(
+							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.compound'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
+							targetPath, core.ErrorSeverity.Warning,
+						)
+						targetNbtdocType = undefined
+					}
+				} else if (operation === 'append' || operation === 'insert' || operation === 'prepend') {
+					if (isType('list') || isType('byte_array') || isType('int_array') || isType('long_array')) {
+						if (targetNbtdocType?.type === 'list') {
+							targetNbtdocType = targetNbtdocType.item
+						} else if (targetNbtdocType?.type === 'byte_array') {
+							targetNbtdocType = { type: 'byte', valueRange: targetNbtdocType.valueRange }
+						} else if (targetNbtdocType?.type === 'int_array') {
+							targetNbtdocType = { type: 'int', valueRange: targetNbtdocType.valueRange }
+						} else if (targetNbtdocType?.type === 'long_array') {
+							targetNbtdocType = { type: 'long', valueRange: targetNbtdocType.valueRange }
+						}
+					} else {
+						ctx.err.report(
+							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.list'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
+							targetPath, core.ErrorSeverity.Warning
+						)
+						targetNbtdocType = undefined
 					}
 				}
-			} else if (getName(nodes, sourceTypeIndex) === 'value') {
-				// `value <value: nbt_tag>`
-				const valueNode = getNode(nodes, sourceTypeIndex + 1)
-				if (nbt.NbtPathNode.is(targetPath) && targetPath.targetType && nbt.NbtNode.is(valueNode)) {
-					nbt.checker.fieldValue(targetPath.targetType, { allowUnknownKey: true })(valueNode, ctx)
+				if (targetNbtdocType) {
+					if (getName(nodes, sourceTypeIndex) === 'from') {
+						// `from <$nbtPath$>`
+						nbtPath(nodes, sourceTypeIndex + 1, ctx)
+						const sourcePath = getNode(nodes, sourceTypeIndex + 3)
+						if (nbt.NbtPathNode.is(sourcePath)) {
+							const { errorMessage } = nbtdoc.checkAssignability({ source: sourcePath.targetType, target: targetNbtdocType })
+							if (errorMessage) {
+								ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
+							}
+						}
+					} else if (getName(nodes, sourceTypeIndex) === 'value') {
+						// `value <value: nbt_tag>`
+						const valueNode = getNode(nodes, sourceTypeIndex + 1)
+						if (nbt.NbtNode.is(valueNode)) {
+							nbt.checker.fieldValue(targetNbtdocType, { allowUnknownKey: true })(valueNode, ctx)
+						}
+					}
 				}
 			}
 		} else if (getName(nodes, index + 1) === 'remove') {
@@ -68,14 +115,42 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 	} else if (getName(nodes, index) === 'summon') {
 		summonNbt(nodes, index + 1, ctx)
 	}
-
-	for (const { children: [node] } of nodes) {
-		if (json.JsonNode.is(node)) {
-			text_component(node, { ...ctx, context: '' })
-		}
-	}
 }
 
+//#region Checkers for argument nodes
+const block: core.Checker<BlockNode> = (node, ctx) => {
+	if (!node.nbt) {
+		return
+	}
+
+	nbt.checker.index('block', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
+}
+
+const entity: core.Checker<EntityNode> = (node, ctx) => {
+	const nbtPair = node.selector?.arguments?.children.find(pair => pair.key?.value === 'nbt')
+	if (!nbtPair) {
+		return
+	}
+
+	const types = getTypesFromEntity(node, ctx)
+	const nbtValue = nbtPair.value as nbt.NbtCompoundNode
+	nbt.checker.index('entity_type', types)(nbtValue, ctx)
+}
+
+const item: core.Checker<ItemNode> = (node, ctx) => {
+	if (!node.nbt) {
+		return
+	}
+
+	nbt.checker.index('item', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
+}
+
+const particle: core.Checker<ParticleNode> = (node, ctx) => {
+	core.checker.dispatchSync(node, ctx)
+}
+//#endregion
+
+//#region Checkers for command argument structure.
 /**
  * - `block <targetPos: block_pos> <nbt: nbt_compound_tag>`
  * - `entity <target: entity> <nbt: nbt_compound_tag>`
@@ -156,6 +231,7 @@ const summonNbt = (nodes: mcf.CommandNode['children'], index: number, ctx: core.
 		nbt.checker.index('entity_type', core.ResourceLocationNode.toString(typeNode, 'full'))(nbtNode, ctx)
 	}
 }
+//#endregion
 
 export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext): core.FullResourceLocation[] | undefined => {
 	if (entity.playerName !== undefined || entity.selector?.playersOnly) {
@@ -190,4 +266,8 @@ export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext)
 
 export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
+	meta.registerChecker<BlockNode>('mcfunction:block', block)
+	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
+	meta.registerChecker<ItemNode>('mcfunction:item', item)
+	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }
