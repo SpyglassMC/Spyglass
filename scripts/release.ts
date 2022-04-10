@@ -48,7 +48,7 @@ async function getRootVersion(): Promise<string> {
 }
 
 async function getPackageCommits(name: string): Promise<Commit[]> {
-	const result = await shell('git', ['log', '--format=format:%H %s', `packages/${name}`], path.join(__dirname, '..'))
+	const result = await execFile('git', ['log', '--format=format:%H %s', '--', `packages/${name}`], { cwd: path.join(__dirname, '..') })
 	return result.stdout.split(/\r?\n/).map(line => {
 		const [hash, ...messageParts] = line.split(' ')
 		const message = messageParts.join(' ').trimStart()
