@@ -247,7 +247,7 @@ exports['mcfunction parser command() Parse "say " 1'] = {
     "type": "mcfunction:command",
     "range": {
       "start": 0,
-      "end": 3
+      "end": 4
     },
     "children": [
       {
@@ -275,10 +275,10 @@ exports['mcfunction parser command() Parse "say " 1'] = {
   "errors": [
     {
       "range": {
-        "start": 3,
-        "end": 3
+        "start": 4,
+        "end": 4
       },
-      "message": "Expected more arguments",
+      "message": "Expected hi",
       "severity": 3
     }
   ]
@@ -289,7 +289,7 @@ exports['mcfunction parser command() Parse "say hi " 1'] = {
     "type": "mcfunction:command",
     "range": {
       "start": 0,
-      "end": 6
+      "end": 7
     },
     "children": [
       {
@@ -520,10 +520,10 @@ exports['mcfunction parser command() Should not exceed max call stack 1'] = {
   "errors": [
     {
       "range": {
-        "start": 80011,
-        "end": 80011
+        "start": 80012,
+        "end": 80012
       },
-      "message": "Expected more arguments",
+      "message": "Expected execute|say",
       "severity": 3
     }
   ]

@@ -48,10 +48,9 @@ async function getRootVersion(): Promise<string> {
 }
 
 async function getPackageCommits(name: string): Promise<Commit[]> {
-	const result = await execFile('git', ['log', '--format=format:%H %s', '--', `packages/${name}`], { cwd: path.join(__dirname, '..') })
-	console.log(`\tgit log output for ${name}`)
+	const result = await shell('git', ['log', '--format=format:%H %s', '--', `packages/${name}`], path.join(__dirname, '..'))
 	return result.stdout.split(/\r?\n/).map(line => {
-		console.log(`\t\t${line}`)
+		console.log(`\t${line}`)
 		const [hash, ...messageParts] = line.split(' ')
 		const message = messageParts.join(' ').trimStart()
 		const emoji = message.startsWith(':') ? message.slice(0, message.indexOf(':', 1) + 1) : message.charAt(0)
@@ -104,13 +103,14 @@ function setPackageJsons(infos: PackagesInfo) {
 	}
 }
 
-async function shell(file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<void> {
-	console.log(`Running ${file} with ${JSON.stringify(args)}...`)
+async function shell(file: string, args: readonly string[], cwd: string, env?: Record<string, string>) {
+	console.log(`Running ${file} with ${JSON.stringify(args)} at ${cwd}...`)
 	const result = await execFile(file, args, { cwd, env })
 	console.log(result.stdout.split(/\r?\n/).map(v => `\t${v}`).join('\n'))
 	if (result.stderr) {
 		console.error(result.stderr.split(/\r?\n/).map(v => `\t${v}`).join('\n'))
 	}
+	return result
 }
 
 async function main(): Promise<void> {
