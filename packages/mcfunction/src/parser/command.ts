@@ -80,7 +80,7 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		const result = parser(src, ctx)
 
 		if (result !== core.Failure) {
-			const takenName = argumentParsers[out.index]?.name ?? (result as LiteralCommandChildNode).value
+			const takenName = argumentParsers[out.index - (literalParser ? 1 : 0)]?.name ?? (result as LiteralCommandChildNode).value
 			const childPath = [...path, takenName]
 
 			ans.push({
