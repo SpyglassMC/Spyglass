@@ -393,7 +393,7 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	return ans
 }
 
-const particle: core.InfallibleParser<ParticleNode> = (() => {
+export const particle: core.InfallibleParser<ParticleNode> = (() => {
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })

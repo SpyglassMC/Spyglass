@@ -44,8 +44,7 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 
 	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)
 	meta.registerParser('mcfunction:component', parser.component)
-	// TODO: 'mcfunction:particle'
-	// TODO: Uncomment in `SpecialStrings` in `nbtdocUtil.ts` as well.
+	meta.registerParser('mcfunction:particle', parser.particle)
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())
 	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.command(mcf.CommandTreeRegistry.instance.get(majorVersion), parser.argument))

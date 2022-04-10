@@ -144,8 +144,7 @@ const SpecialStrings: { [path: string]: string } = {
 	'::minecraft::block::sign::Sign.Text2': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text3': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text4': 'mcfunction:component',
-	// TODO
-	// '::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:particle',
+	'::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:particle',
 	'::minecraft::entity::minecart::CommandMinecart.Command': 'mcfunction:command',
 	'::minecraft::entity::mob::LivingEntity.Team': 'mcfunction:team',
 	'::minecraft::entity::EntityBase.Tags[]': 'mcfunction:tag',
@@ -161,6 +160,8 @@ export function getSpecialStringParser(nbtdocPath: string): string | undefined {
 const ExpandableCompounds: string[] = [
 	'::minecraft::item::ItemBase',
 	'::minecraft::entity::marker::Any',
+	'::minecraft::util::any::Any',
+	'::minecraft::util::Any',
 ]
 
 /**
