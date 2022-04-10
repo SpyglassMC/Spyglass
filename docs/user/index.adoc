@@ -13,6 +13,11 @@ Welcome to the work-in-progress documentation site for Spyglass, a project that 
 
 The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server[the VS Code Marketplace].
 
+== User Testimonials
+
+> By far, by a huge margin, the best extension I've found for it.
+> -- slicedlime, https://clips.twitch.tv/TangibleRelentlessGarlicBatChest-wgU7qjHVVmj4Sn5J[Twitch stream]
+
 == Getting Started
 
 TODO
