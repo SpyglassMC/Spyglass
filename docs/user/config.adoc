@@ -13,8 +13,6 @@ There's no support for multiple config files or inheriting/overriding config fil
 
 == Example File
 
-NOTE: _I know this isn't JSON at all because I copied it straight from the code. But at least the structure is correct_
-
 [source,json]
 ----
 {
