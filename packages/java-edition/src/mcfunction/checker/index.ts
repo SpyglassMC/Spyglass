@@ -47,6 +47,7 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 			nbtPath(nodes, index + 2, ctx)
 			const targetPath = getNode(nodes, index + 4)
 			if (nbt.NbtPathNode.is(targetPath)) {
+				const operationNode = getNode(nodes, index + 5)
 				const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
 				const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
 				let targetNbtdocType: nbtdoc.NbtdocType | undefined = targetPath.targetType ? nbtdoc.simplifyType(targetPath.targetType) : undefined
@@ -55,7 +56,8 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 					if (!(isType('compound') || isType('index'))) {
 						ctx.err.report(
 							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.compound'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
-							targetPath, core.ErrorSeverity.Warning,
+							core.Range.span(targetPath, operationNode!),
+							core.ErrorSeverity.Warning
 						)
 						targetNbtdocType = undefined
 					}
@@ -73,7 +75,8 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 					} else {
 						ctx.err.report(
 							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.list'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
-							targetPath, core.ErrorSeverity.Warning
+							core.Range.span(targetPath, operationNode!),
+							core.ErrorSeverity.Warning
 						)
 						targetNbtdocType = undefined
 					}
