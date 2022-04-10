@@ -1,5 +1,6 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AstNode, StringBaseNode } from '../../node'
+import { PairNode } from '../../node'
 import { isAllowedCharacter } from '../../parser'
 import type { Logger, MetaRegistry, QuoteConfig } from '../../service'
 import { SymbolLinterConfig } from '../../service'
@@ -95,7 +96,7 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('nameOfNbtKey', {
 		configValidator: configValidator.nameConvention,
 		linter: nameConvention('value'),
-		nodePredicate: n => n.parent?.parent?.type === 'nbt:compound' && n.parent.type === 'pair' && n.type === 'string',
+		nodePredicate: n => n.parent?.parent?.type === 'nbt:compound' && PairNode.is(n.parent) && n.type === 'string' && n.parent.key === n,
 	})
 	meta.registerLinter('nameOfObjective', {
 		configValidator: configValidator.nameConvention,
