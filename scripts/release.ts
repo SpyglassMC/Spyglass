@@ -145,13 +145,16 @@ async function main(): Promise<void> {
 	for (const [key, info] of Object.entries(packagesInfo)) {
 		maxPackageNameLength = Math.max(maxPackageNameLength, key.length)
 		const commits = await getPackageCommits(key)
+		console.log(`${key}: analyzing commits...`)
 		if (!info.released) {
 			info.released = { commit: commits[0].hash, version: '0.1.-1' }
 			console.log(`${key}: set initial version`)
 			addPackageToBump(key, BumpType.Patch)
 		} else {
 			let type: BumpType | undefined
+			console.log(`\treleased ${info.released.commit}`)
 			for (const commit of commits) {
+				console.log(`\tanalyzing ${commit.hash}...`)
 				if (commit.hash === info.released.commit) {
 					break
 				}
@@ -159,7 +162,7 @@ async function main(): Promise<void> {
 			}
 			if (type !== undefined) {
 				info.released.commit = commits[0].hash
-				console.log(`${key}: ${bumpTypeToString(type)} bump due to commits`)
+				console.log(`\t${bumpTypeToString(type)} bump due to commits`)
 				addPackageToBump(key, type)
 			}
 		}
