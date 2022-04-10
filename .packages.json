@@ -2,7 +2,11 @@
 	"core": {
 		"dependencies": [
 			"locales"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"discord-bot": {
 		"dependencies": [
@@ -10,7 +14,11 @@
 			"java-edition",
 			"locales",
 			"nbtdoc"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"java-edition": {
 		"dependencies": [
@@ -20,13 +28,21 @@
 			"mcfunction",
 			"nbt",
 			"nbtdoc"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"json": {
 		"dependencies": [
 			"core",
 			"locales"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"language-server": {
 		"dependencies": [
@@ -34,31 +50,56 @@
 			"java-edition",
 			"locales",
 			"nbtdoc"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
-	"locales": {},
+	"locales": {
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
+	},
 	"mcfunction": {
 		"dependencies": [
 			"core",
 			"locales"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"nbt": {
 		"dependencies": [
 			"core",
 			"locales",
 			"nbtdoc"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"nbtdoc": {
 		"dependencies": [
 			"core",
 			"locales"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	},
 	"vscode-extension": {
 		"devDependencies": [
 			"language-server"
-		]
+		],
+		"released": {
+			"commit": "10b28f54db381fd5f25858144747946b9cb42241",
+			"version": "0.1.0"
+		}
 	}
 }
