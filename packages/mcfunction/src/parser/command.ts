@@ -26,7 +26,7 @@ export function command(tree: RootTreeNode, argument: ArgumentParserGetter): cor
 
 		dispatch(ans.children, src, ctx, [], tree, tree, argument)
 
-		if (src.canReadInLine()) {
+		if (src.hasNonSpaceAheadInLine()) {
 			// There is trailing string after the command.
 			const node = trailing(src, ctx)
 			ans.children.push({
@@ -108,7 +108,7 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 				return false
 			}
 
-			if (src.canReadInLine()) {
+			if (src.hasNonSpaceAheadInLine()) {
 				// Skip command argument separation (a space).
 				sep(src, ctx)
 				return { childPath, childTreeNode }

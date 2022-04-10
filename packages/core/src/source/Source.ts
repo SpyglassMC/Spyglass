@@ -74,6 +74,36 @@ export class ReadonlySource {
 		return this.peek(expectedValue.length) === expectedValue
 	}
 
+	peekUntil(...terminators: string[]): string {
+		let ans = ''
+		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
+			const c = this.string.charAt(cursor)
+			if (terminators.includes(c)) {
+				return ans
+			} else {
+				ans += c
+			}
+		}
+		return ans
+	}
+
+	peekLine(): string {
+		return this.peekUntil(CR, LF)
+	}
+
+	hasNonSpaceAheadInLine(): boolean {
+		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
+			const c = this.string.charAt(cursor)
+			if (c === CR || c === LF) {
+				break
+			}
+			if (!(c === ' ' || c === '\t')) {
+				return true
+			}
+		}
+		return false
+	}
+
 	slice(start: number, end?: number): string
 	slice(rangeLike: Range | RangeContainer): string
 	slice(param0: Range | RangeContainer | number, end?: number): string {

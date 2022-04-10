@@ -49,7 +49,9 @@ async function getRootVersion(): Promise<string> {
 
 async function getPackageCommits(name: string): Promise<Commit[]> {
 	const result = await execFile('git', ['log', '--format=format:%H %s', '--', `packages/${name}`], { cwd: path.join(__dirname, '..') })
+	console.log(`\tgit log output for ${name}`)
 	return result.stdout.split(/\r?\n/).map(line => {
+		console.log(`\t\t${line}`)
 		const [hash, ...messageParts] = line.split(' ')
 		const message = messageParts.join(' ').trimStart()
 		const emoji = message.startsWith(':') ? message.slice(0, message.indexOf(':', 1) + 1) : message.charAt(0)
