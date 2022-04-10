@@ -1,8 +1,8 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { string, record } from '../../lib'
+import type { StringNode } from '../../lib'
+import { record, string } from '../../lib'
 import type { Options } from '../../lib/parser/record'
-import type { StringNode } from '../../src'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('record()', () => {

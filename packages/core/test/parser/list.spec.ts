@@ -1,9 +1,9 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
+import type { StringNode } from '../../lib'
 import { string } from '../../lib'
 import type { Options } from '../../lib/parser/list'
 import { list } from '../../lib/parser/list'
-import type { StringNode } from '../../src'
 import { showWhitespaceGlyph, testParser } from '../utils'
 
 describe('list()', () => {
