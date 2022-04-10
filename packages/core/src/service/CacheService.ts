@@ -117,6 +117,7 @@ export class CacheService {
 		let filePath: string | undefined
 		try {
 			filePath = this.getCacheFilePath()
+			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
 			const cache = await fileUtil.readGzippedJson<CacheFile>(filePath)
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
@@ -128,7 +129,7 @@ export class CacheService {
 			}
 		} catch (e) {
 			if (!isEnoent(e)) {
-				this.project.logger.error(`[CacheService#load] path = “${filePath}”`, e)
+				this.project.logger.error('[CacheService#load] ', e)
 			}
 		}
 		__profiler.finalize()
