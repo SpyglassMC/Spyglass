@@ -197,7 +197,7 @@ async function main(): Promise<void> {
 		await shell('git', ['restore', 'packages/'], RepoRoot)
 
 		console.log('Committing changes...')
-		const commitMessage = `🔖 v${rootVersion}`
+		const commitMessage = `🔖 v${rootVersion} [ci skip]`
 		if (isDryRun) {
 			console.log(`[Dry run mode] Would have committed with message ${commitMessage}\n\n${versionSummary}.`)
 			console.log(`[Dry run mode] Would have tagged HEAD with v${rootVersion}.`)
