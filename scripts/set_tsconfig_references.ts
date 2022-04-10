@@ -1,7 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { readPackagesInfo } from './common'
 
-const packages: Record<string, { dependencies?: string[]; devDependencies?: string[] }> = JSON.parse(fs.readFileSync(path.join(__dirname, '../.packages.json'), 'utf-8'))
+const packages = readPackagesInfo()
 const packageNames = Object.keys(packages).sort()
 
 function getPackagePath(id: string): string {

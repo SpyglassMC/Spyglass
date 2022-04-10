@@ -1,6 +1,6 @@
 {
   "name": "@spyglassmc/language-server",
-  "version": "0.1.0",
+  "version": "0.1.0-PLACEHOLDER",
   "main": "lib/server.js",
   "types": "lib/server.d.ts",
   "author": "SPGoding",
@@ -11,6 +11,10 @@
   },
   "bin": {
     "spyglassmc-language-server": "./bin/server"
+  },
+  "scripts": {
+    "release": "npm publish",
+    "release:dry": "npm publish --dry-run"
   },
   "dependencies": {
     "env-paths": "^2.2.1",

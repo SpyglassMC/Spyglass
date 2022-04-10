@@ -9,6 +9,8 @@
     "build": "tsc -b && webpack",
     "build:dev": "webpack --mode=\"development\"",
     "build:profile": "webpack --profile --json > dist/stats.json",
+    "release": "echo \"DO NOT PUBLISH\"",
+    "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
     "watch": "webpack --watch --mode=\"development\""
   },
   "devDependencies": {

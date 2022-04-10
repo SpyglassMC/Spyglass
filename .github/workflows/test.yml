@@ -12,7 +12,7 @@ on:
       - "docs/**"
 env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
   GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -39,38 +39,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # - name: Cache tsc build
-      #   uses: actions/cache@v2
-      #   with:
-      #     path: |
-      #       packages/*/lib
-      #       packages/*/out
-      #       packages/*/test-out
-      #     key: ${{ runner.os }}-tsc-build-${{ hashFiles('**/*.ts') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-tsc-build-
-
-      # https://github.community/t/accessing-commit-message-in-pull-request-event/17158/8
-      - name: Get commit message (push)
-        if: github.event_name == 'push'
-        run: |
-          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "$(git log --format=%B -n 1 HEAD)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      - name: Get commit message (pull request)
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "$(git log --format=%B -n 1 HEAD^2)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      # - run: npm run clean
-      #   if: "contains(env.COMMIT_MESSAGE, '[ci clean]') || contains(env.GITHUB_ENV, '[clean ci]')"
-
       - run: npm ci
 
-      - run: npm run build
+      - run: npm run build:all
 
       - run: npm test
 
       - run: npm run lint
+
+      - run: npm run release:dry

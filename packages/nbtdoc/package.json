@@ -1,12 +1,16 @@
 {
   "name": "@spyglassmc/nbtdoc",
-  "version": "0.1.0",
+  "version": "0.1.0-PLACEHOLDER",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "SPGoding",
   "license": "MIT",
   "directories": {
     "test": "test/"
+  },
+  "scripts": {
+    "release": "npm publish",
+    "release:dry": "npm publish --dry-run"
   },
   "publishConfig": {
     "access": "public"
