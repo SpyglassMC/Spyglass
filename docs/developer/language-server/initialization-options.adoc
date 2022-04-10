@@ -4,5 +4,5 @@
 
 The extension may provide optional initialization options to the language server on the `initialize` request.
 
-- (`object`) The `initializationOptions`
-	`inDevelopmentMode`: (`boolean`) If the language server is launched under development mode. If set to `true`, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process.
+* (`object`) The `initializationOptions`
+** `inDevelopmentMode`: (`boolean`) If the language server is launched under development mode. If set to `true`, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process.
