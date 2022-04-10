@@ -57,6 +57,7 @@ interface ValidateResult {
 
 export class CacheService {
 	checksums = Checksums.create()
+	#hasValidatedFiles = false
 
 	/**
 	 * @param cacheRoot File path to the directory where cache files by Spyglass should be stored.
@@ -67,6 +68,9 @@ export class CacheService {
 		private readonly project: Project,
 	) {
 		this.project.on('documentUpdated', ({ doc }) => {
+			if (!this.#hasValidatedFiles) {
+				return
+			}
 			try {
 				// TODO: Don't update this for every single change.
 				this.checksums.files[doc.uri] = getSha1(doc.getText())
@@ -77,6 +81,9 @@ export class CacheService {
 			}
 		})
 		this.project.on('rootsUpdated', async ({ roots }) => {
+			if (!this.#hasValidatedFiles) {
+				return
+			}
 			for (const root of roots) {
 				try {
 					this.checksums.roots[root] = await this.project.fs.hash(root)
@@ -180,6 +187,8 @@ export class CacheService {
 				ans.addedFiles.push(uri)
 			}
 		}
+
+		this.#hasValidatedFiles = true
 
 		return ans
 	}

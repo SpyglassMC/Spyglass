@@ -141,6 +141,11 @@ export class Project extends EventEmitter {
 	#watcher!: chokidar.FSWatcher
 	#watcherReady = false
 
+	#isReady = false
+	get isReady(): boolean {
+		return this.#isReady
+	}
+
 	config!: Config
 	readonly downloader: Downloader
 	readonly fs: FileService
@@ -248,6 +253,9 @@ export class Project extends EventEmitter {
 
 		this
 			.on('documentUpdated', ({ doc, node }) => {
+				if (!this.#isReady) {
+					return
+				}
 				this.emit('documentErrorred', {
 					doc,
 					errors: FileNode.getErrors(node),
@@ -255,7 +263,6 @@ export class Project extends EventEmitter {
 				})
 			})
 			.on('fileCreated', async ({ uri }) => {
-				this.#watchedFiles.add(uri)
 				if (uri.endsWith(Project.RootSuffix)) {
 					this.updateRoots()
 				}
@@ -269,12 +276,23 @@ export class Project extends EventEmitter {
 				}
 			})
 			.on('fileDeleted', ({ uri }) => {
-				this.#watchedFiles.delete(uri)
 				if (uri.endsWith(Project.RootSuffix)) {
 					this.updateRoots()
 				}
 				this.symbols.clear({ uri })
 				this.tryClearingCache(uri)
+			})
+			.on('ready', () => {
+				this.#isReady = true
+				// Recheck client managed files.
+				const promises: Promise<unknown>[] = []
+				for (const uri of this.#clientManagedUris) {
+					const result = this.#docAndNodes.get(uri)
+					if (result) {
+						promises.push(this.check(result.doc, result.node))
+					}
+				}
+				Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after ready', e))
 			})
 	}
 
@@ -444,7 +462,6 @@ export class Project extends EventEmitter {
 	}
 
 	async ready(): Promise<this> {
-		await this.#initPromise
 		await this.#readyPromise
 		return this
 	}
@@ -620,11 +637,20 @@ export class Project extends EventEmitter {
 		return result
 	}
 
+	@CachePromise()
+	async ensureParsedAndCheckedOnlyWhenReady(uri: string): Promise<DocAndNode | undefined> {
+		const result = await this.ensureParsed(uri)
+		if (this.#isReady && result) {
+			await this.ensureChecked(result.doc, result.node)
+		}
+		return result
+	}
+
 	private bind(param: string | string[]): void {
 		const ctx = UriBinderContext.create(this)
-		// Remove all symbol locations contributed by URI binders if the parameter is an array.
-		// Otherwise only remove the ones associated with the specified URI.
-		ctx.symbols.clear({ contributor: 'uri_binder', uri: Array.isArray(param) ? undefined : param })
+		if (typeof param === 'string') {
+			ctx.symbols.clear({ contributor: 'uri_binder', uri: param })
+		}
 		ctx.symbols.contributeAs('uri_binder', () => {
 			const uris = Array.isArray(param) ? param : [param]
 			for (const binder of this.meta.uriBinders) {
@@ -641,7 +667,9 @@ export class Project extends EventEmitter {
 		this.#clientManagedUris.add(uri)
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const { node } = this.parseAndCache(doc)
-		this.check(doc, node)
+		if (this.#isReady) {
+			this.check(doc, node)
+		}
 	}
 
 	/**
@@ -656,7 +684,9 @@ export class Project extends EventEmitter {
 		}
 		TextDocument.update(result.doc, changes, version)
 		const { node } = this.parseAndCache(result.doc)
-		this.check(result.doc, node)
+		if (this.#isReady) {
+			this.check(result.doc, node)
+		}
 	}
 
 	/**
