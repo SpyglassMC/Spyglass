@@ -18,105 +18,98 @@ NOTE: _I know this isn't JSON at all because I copied it straight from the code.
 [source,json]
 ----
 {
-	env: {
-		dataSource: 'GitHub',
-		dependencies: [
-			'@mc-nbtdoc',
+	"env": {
+		"dataSource": "GitHub",
+		"dependencies": [
+			"@mc-nbtdoc"
 		],
-		feature: {
-			codeActions: true,
-			colors: true,
-			completions: true,
-			documentHighlighting: true,
-			documentLinks: true,
-			foldingRanges: true,
-			formatting: true,
-			hover: true,
-			inlayHint: {
-				enabledNodes: [
-					'mcfunction:command_child/unknown',
-				],
+		"feature": {
+			"codeActions": true,
+			"colors": true,
+			"completions": true,
+			"documentHighlighting": true,
+			"documentLinks": true,
+			"foldingRanges": true,
+			"formatting": true,
+			"hover": true,
+			"inlayHint": {
+				"enabledNodes": [
+					"mcfunction:command_child/unknown"
+				]
 			},
-			semanticColoring: true,
-			selectionRanges: true,
-			signatures: true,
+			"semanticColoring": true,
+			"selectionRanges": true,
+			"signatures": true
 		},
-		gameVersion: 'Auto',
-		language: 'Default',
-		permissionLevel: 2,
-		plugins: [],
-		mcmetaSummaryOverrides: {},
+		"gameVersion": "Auto",
+		"language": "Default",
+		"permissionLevel": 2,
+		"plugins": [],
+		"mcmetaSummaryOverrides": {}
 	},
-	format: {
-		blockStateBracketSpacing: { inside: 0 },
-		blockStateCommaSpacing: { before: 0, after: 1 },
-		blockStateEqualSpacing: { before: 0, after: 0 },
-		blockStateTrailingComma: false,
-		eol: 'auto',
-		nbtArrayBracketSpacing: { inside: 0 },
-		nbtArrayCommaSpacing: { before: 0, after: 1 },
-		nbtArraySemicolonSpacing: { after: 1 },
-		nbtArrayTrailingComma: false,
-		nbtByteSuffix: 'b',
-		nbtCompoundBracketSpacing: { inside: 0 },
-		nbtCompoundColonSpacing: { before: 0, after: 1 },
-		nbtCompoundCommaSpacing: { before: 0, after: 1 },
-		nbtCompoundTrailingComma: false,
-		nbtDoubleOmitSuffix: false,
-		nbtDoubleSuffix: 'd',
-		nbtFloatSuffix: 'f',
-		nbtListBracketSpacing: { inside: 0 },
-		nbtListCommaSpacing: { before: 0, after: 1 },
-		nbtListTrailingComma: false,
-		nbtLongSuffix: 'L',
-		nbtShortSuffix: 's',
-		selectorBracketSpacing: { inside: 0 },
-		selectorCommaSpacing: { before: 0, after: 1 },
-		selectorEqualSpacing: { before: 0, after: 0 },
-		selectorTrailingComma: false,
-		timeOmitTickUnit: false,
+	"format": {
+		"blockStateBracketSpacing": { "inside": 0 },
+		"blockStateCommaSpacing": { "before": 0, "after": 1 },
+		"blockStateEqualSpacing": { "before": 0, "after": 0 },
+		"blockStateTrailingComma": false,
+		"eol": "auto",
+		"nbtArrayBracketSpacing": { "inside": 0 },
+		"nbtArrayCommaSpacing": { "before": 0, "after": 1 },
+		"nbtArraySemicolonSpacing": { "after": 1 },
+		"nbtArrayTrailingComma": false,
+		"nbtByteSuffix": "b",
+		"nbtCompoundBracketSpacing": { "inside": 0 },
+		"nbtCompoundColonSpacing": { "before": 0, "after": 1 },
+		"nbtCompoundCommaSpacing": { "before": 0, "after": 1 },
+		"nbtCompoundTrailingComma": false,
+		"nbtDoubleOmitSuffix": false,
+		"nbtDoubleSuffix": "d",
+		"nbtFloatSuffix": "f",
+		"nbtListBracketSpacing": { "inside": 0 },
+		"nbtListCommaSpacing": { "before": 0, "after": 1 },
+		"nbtListTrailingComma": false,
+		"nbtLongSuffix": "L",
+		"nbtShortSuffix": "s",
+		"selectorBracketSpacing": { "inside": 0 },
+		"selectorCommaSpacing": { "before": 0, "after": 1 },
+		"selectorEqualSpacing": { "before": 0, "after": 0 },
+		"selectorTrailingComma": false,
+		"timeOmitTickUnit": false
 	},
-	lint: {
-		blockStateSortKeys: null,
-		nbtCompoundSortKeys: null,
-		selectorSortKeys: null,
+	"lint": {
+		"blockStateSortKeys": null,
+		"nbtCompoundSortKeys": null,
+		"selectorSortKeys": null,
 
-		commandStringQuote: null,
-		nbtKeyQuote: null,
-		nbtPathQuote: null,
-		nbtStringQuote: null,
-		selectorKeyQuote: null,
+		"commandStringQuote": null,
+		"nbtKeyQuote": null,
+		"nbtPathQuote": null,
+		"nbtStringQuote": null,
+		"selectorKeyQuote": null,
 
-		idOmitDefaultNamespace: null,
+		"idOmitDefaultNamespace": null,
 
-		nameOfNbtKey: null,
-		nameOfObjective: null,
-		nameOfScoreHolder: null,
-		nameOfTag: null,
-		nameOfTeam: null,
+		"nameOfNbtKey": null,
+		"nameOfObjective": null,
+		"nameOfScoreHolder": null,
+		"nameOfTag": null,
+		"nameOfTeam": null,
 
-		nbtArrayLengthCheck: true,
-		nbtBoolean: null,
-		nbtListLengthCheck: null,
-		nbtTypeCheck: 'loosely',
+		"nbtArrayLengthCheck": true,
+		"nbtBoolean": null,
+		"nbtListLengthCheck": null,
+		"nbtTypeCheck": "loosely",
 
-		undeclaredSymbol: [
+		"undeclaredSymbol": [
 			{
-				if: [
-					{ category: RegistryCategories, namespace: 'minecraft' },
-					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
-				],
-				then: { report: 'warning' },
-			},
-			{
-				then: { declare: 'block' },
-			},
-		],
+				"then": { "declare": "block" }
+			}
+		]
 	},
-	snippet: {
-		executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
-		summonAec: 'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}',
-	},
+	"snippet": {
+		"executeIfScoreSet": "execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0",
+		"summonAec": "summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: [\"${1:tag}\"]}"
+	}
 }
 ----
 
