@@ -1,5 +1,9 @@
 import type * as ls from 'vscode-languageserver/node'
 
+export interface CustomInitializationOptions {
+	inDevelopmentMode?: boolean,
+}
+
 export interface CustomServerCapabilities {
 	dataHackPubify?: boolean,
 	inlayHints?: boolean,

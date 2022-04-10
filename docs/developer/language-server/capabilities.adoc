@@ -1,7 +1,6 @@
 :page-layout: default
 :page-title: Custom Server Capabilities
 :page-parent: Developer Guides
-:page-nav_order: 1
 
 == `experimental.spyglassmc.dataHackPubify`
 

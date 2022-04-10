@@ -41,10 +41,14 @@ export function activate(context: vsc.ExtensionContext) {
 		{ scheme: 'file', pattern: '**/data/*/*/**/*.json' },
 	]
 
+	const initializationOptions: server.CustomInitializationOptions = {
+		inDevelopmentMode: context.extensionMode === vsc.ExtensionMode.Development,
+	}
+
 	// Options to control the language client
 	const clientOptions: lc.LanguageClientOptions = {
 		documentSelector,
-		initializationOptions: {},
+		initializationOptions,
 		progressOnInitialization: true,
 	}
 

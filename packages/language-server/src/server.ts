@@ -5,7 +5,7 @@ import * as nbtdoc from '@spyglassmc/nbtdoc'
 import envPaths from 'env-paths'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
-import type { CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util'
+import type { CustomInitializationOptions, CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util'
 import { toCore, toLS } from './util'
 
 export * from './util/types'
@@ -34,15 +34,19 @@ const logger: core.Logger = {
 let service!: core.Service
 
 connection.onInitialize(async params => {
+	const initializationOptions = params.initializationOptions as CustomInitializationOptions | undefined
+
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
 	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`)
-	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(params.initializationOptions)}`)
+	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
 
-	await new Promise(resolve => setTimeout(resolve, 3000))
-	logger.warn('Delayed 3 seconds manually. If you see this in production, it means SPGoding messed up.')
+	if (initializationOptions?.inDevelopmentMode) {
+		await new Promise(resolve => setTimeout(resolve, 3000))
+		logger.warn('Delayed 3 seconds manually. If you see this in production, it means SPGoding messed up.')
+	}
 
 	if (params.workDoneToken) {
 		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
