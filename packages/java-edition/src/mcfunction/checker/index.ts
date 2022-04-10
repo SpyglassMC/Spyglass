@@ -50,7 +50,7 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 				const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
 				const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
 				let targetNbtdocType: nbtdoc.NbtdocType | undefined = targetPath.targetType ? nbtdoc.simplifyType(targetPath.targetType) : undefined
-				const isType = (type: nbtdoc.NbtdocType['type']) => targetNbtdocType?.type === type || (targetNbtdocType?.type === 'union' && targetNbtdocType.members.some(m => m.type === type))
+				const isType = (type: nbtdoc.NbtdocType['type']) => !targetNbtdocType || targetNbtdocType.type === type || (targetNbtdocType.type === 'union' && targetNbtdocType.members.some(m => m.type === type))
 				if (operation === 'merge') {
 					if (!(isType('compound') || isType('index'))) {
 						ctx.err.report(
