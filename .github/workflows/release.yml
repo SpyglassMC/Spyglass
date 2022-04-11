@@ -1,15 +1,12 @@
-name: Test & Release
+name: Release
 on:
-  push:
-    branches:
-      - released
+  workflow_dispatch:
 env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
   GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-  VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 jobs:
   test-and-release:
     name: Test & Release
@@ -25,7 +22,8 @@ jobs:
 
       - run: npm i -g npm@7
 
-      - uses: actions/cache@v2
+      - name: Cache node modules
+        uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -34,8 +32,10 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run build
+      - run: npm run build:all
 
       - run: npm test
+
+      - run: npm run lint
 
       - run: npm run release
