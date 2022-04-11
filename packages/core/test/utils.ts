@@ -50,12 +50,14 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	uri = '',
 	languageID = '',
 	keepOptions = false,
+	noNodeReturn = false,
 	project = {},
 	removeTopLevelChildren = false,
 }: {
 	uri?: string,
 	languageID?: string,
 	keepOptions?: boolean,
+	noNodeReturn?: boolean,
 	project?: Partial<ProjectData>,
 	removeTopLevelChildren?: boolean,
 } = {}): {
@@ -71,7 +73,9 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 		}
 	)
 	const result: any = parser(src, ctx)
-	removeExtraProperties(result, keepOptions, removeTopLevelChildren)
+	if (!noNodeReturn) {
+		removeExtraProperties(result, keepOptions, removeTopLevelChildren)
+	}
 	return {
 		node: result === Failure ? 'FAILURE' :
 			result === undefined ? 'undefined' : result,

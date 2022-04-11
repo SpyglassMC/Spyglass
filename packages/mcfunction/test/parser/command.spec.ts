@@ -58,7 +58,7 @@ describe('mcfunction parser command()', () => {
 		const content = `execute ${'if true '.repeat(10000)}run `
 		const parser = command(tree, () => undefined)
 		try {
-			snapshot({ node: 'OMITTED', errors: testParser(parser, content).errors })
+			snapshot({ node: 'OMITTED', errors: testParser(parser, content, { noNodeReturn: true }).errors })
 		} catch (e) {
 			fail((e as Error).stack?.slice(0, 500))
 		}
