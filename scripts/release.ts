@@ -208,7 +208,7 @@ async function main(): Promise<void> {
 			console.log('[Dry run mode] Would have pushed changes to remote repository.')
 		} else {
 			await shell('git', ['add', '.'], RepoRoot)
-			await shell('git', ['commit', `-m ${commitMessage}`, `-m ${versionSummary}`], RepoRoot, {
+			await shell('git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, {
 				GIT_AUTHOR_NAME: 'actions-user',
 				GIT_AUTHOR_EMAIL: 'action@github.com',
 				GIT_COMMITTER_NAME: 'actions-user',
