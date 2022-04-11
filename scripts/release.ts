@@ -155,10 +155,10 @@ async function main(): Promise<void> {
 			let type: BumpType | undefined
 			console.log(`\treleased ${info.released.commit}`)
 			for (const commit of commits) {
-				console.log(`\tanalyzing ${commit.hash}...`)
 				if (commit.hash === info.released.commit) {
 					break
 				}
+				console.log(`\tanalyzing ${commit.hash}...`)
 				type = type === undefined ? commit.type : Math.max(type, commit.type)
 			}
 			if (type !== undefined) {
