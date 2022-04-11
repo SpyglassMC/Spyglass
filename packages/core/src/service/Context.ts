@@ -13,6 +13,7 @@ import type { RootUriString } from './fileUtil'
 import type { Logger } from './Logger'
 import type { MetaRegistry } from './MetaRegistry'
 import { Operations } from './Operations'
+import type { ProfilerFactory } from './Profiler'
 import type { DocAndNode, ProjectData } from './Project'
 
 export interface ContextBase {
@@ -21,6 +22,7 @@ export interface ContextBase {
 	global: SymbolTable,
 	logger: Logger,
 	meta: MetaRegistry,
+	profilers: ProfilerFactory,
 	project: Record<string, string>,
 	roots: readonly RootUriString[],
 }
@@ -32,6 +34,7 @@ export namespace ContextBase {
 			global: project.symbols.global,
 			logger: project.logger,
 			meta: project.meta,
+			profilers: project.profilers,
 			roots: project.roots,
 			project: project.ctx,
 		}
@@ -178,8 +181,8 @@ export namespace FormatterContext {
 	}
 }
 
-export interface ColorizerContext extends ProcessorWithRangeContext {}
-export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
+export interface ColorizerContext extends ProcessorWithRangeContext { }
+export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions { }
 export namespace ColorizerContext {
 	export function create(project: ProjectData, opts: ColorizerContextOptions): ColorizerContext {
 		return ProcessorWithRangeContext.create(project, opts)
@@ -204,8 +207,8 @@ export namespace CompleterContext {
 	}
 }
 
-export interface SignatureHelpProviderContext extends ProcessorWithOffsetContext {}
-export interface SignatureHelpProviderContextOptions extends ProcessorWithOffsetContextOptions {}
+export interface SignatureHelpProviderContext extends ProcessorWithOffsetContext { }
+export interface SignatureHelpProviderContextOptions extends ProcessorWithOffsetContextOptions { }
 export namespace SignatureHelpProviderContext {
 	export function create(project: ProjectData, opts: SignatureHelpProviderContextOptions): SignatureHelpProviderContext {
 		return ProcessorWithOffsetContext.create(project, opts)
