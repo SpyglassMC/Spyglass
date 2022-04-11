@@ -26,11 +26,7 @@ WIP under the [`docs` directory](https://github.com/SpyglassMC/Spyglass/tree/mai
 1. ```shell
 	$ git clone https://github.com/SpyglassMC/Spyglass.git
 	```
-2. Make sure you're using an npm version higher than or equal to 7.0.0, as this repository utilizes npm@7's workspaces feature.
-   ```shell
-	$ npm -v
-	$ npm i -g npm@7 # Run this to update it if it's not already 7.x.x.
-	```
+2. Install [Node.js LTS](https://nodejs.org/en/).
 3. ```shell
 	$ npm i && npm run build
 	```
