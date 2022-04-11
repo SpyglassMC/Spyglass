@@ -25,8 +25,8 @@ export interface IdentifierToken extends AstNode {
 	value: string,
 }
 export namespace IdentifierToken {
-	export function is(obj: object): obj is IdentifierToken {
-		return (obj as IdentifierToken).type === 'nbtdoc:identifier'
+	export function is(obj: object | undefined): obj is IdentifierToken {
+		return (obj as IdentifierToken | undefined)?.type === 'nbtdoc:identifier'
 	}
 }
 
@@ -108,6 +108,11 @@ export const ExtendableRootRegistryMap = {
 } as const
 export const ExtendableRootRegistries = Object.keys(ExtendableRootRegistryMap) as (keyof typeof ExtendableRootRegistryMap)[]
 export type ExtendableRootRegistry = (typeof ExtendableRootRegistryMap)[keyof typeof ExtendableRootRegistryMap]
+export namespace ExtendableRootRegistry {
+	export function is(str: string): str is ExtendableRootRegistry {
+		return Object.values(ExtendableRootRegistryMap).includes(str as ExtendableRootRegistry)
+	}
+}
 
 export const CustomRootRegistryMap = {
 	'custom:blockitemstates': 'custom:blockitemstates',

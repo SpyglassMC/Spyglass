@@ -166,6 +166,24 @@ export const flattenUnionType = (union: UnionType): UnionType => {
 	}
 }
 
+export const unionTypes = (a: NbtdocType, b: NbtdocType): NbtdocType => {
+	if ((check(a, b) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
+		return b
+	}
+	if ((check(b, a) & CheckResult.StrictlyAssignable) === CheckResult.StrictlyAssignable) {
+		return a
+	}
+
+	const ans: UnionType = {
+		type: 'union',
+		members: [
+			...a.type === 'union' ? a.members : [a],
+			...b.type === 'union' ? b.members : [b],
+		],
+	}
+	return ans
+}
+
 export const simplifyUnionType = (union: UnionType): NbtdocType => {
 	union = flattenUnionType(union)
 	if (union.members.length === 1) {

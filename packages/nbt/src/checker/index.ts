@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import type { ResolvedRootRegistry } from '@spyglassmc/nbtdoc'
 import * as nbtdoc from '@spyglassmc/nbtdoc'
+import { ExtendableRootRegistry } from '@spyglassmc/nbtdoc'
 import { localeQuote, localize } from '../../../locales/lib'
 import type { NbtByteNode, NbtNode, NbtNumberNode, NbtPathNode, NbtPrimitiveArrayNode } from '../node'
 import { NbtCompoundNode, NbtListNode, NbtPrimitiveNode } from '../node'
@@ -112,7 +113,7 @@ export function compound(data: ResolvedCompoundData, options: Options = {}): cor
 			const key = keyNode.value
 			const fieldData = data[key]
 			if (fieldData) {
-				fieldData.query?.enter({ usage: { type: 'reference', node: keyNode } })
+				fieldData.query.enter({ usage: { type: 'reference', node: keyNode } })
 				fieldValue(fieldData.data, options)(valueNode, ctx)
 			} else if (!options.allowUnknownKey) {
 				ctx.err.report(localize('unknown-key', localeQuote(key)), keyNode, core.ErrorSeverity.Warning)
@@ -162,7 +163,7 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 		type Data = { type: 'resolved_compound', data: ResolvedCompoundData } | Select<nbtdoc.NbtdocType, 'type', 'byte_array' | 'int_array' | 'long_array' | 'list' | 'union'> | undefined
 		const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
 		let data: Data = { type: 'resolved_compound', data: resolveResult.value }
-		let targetType: nbtdoc.NbtdocType | undefined = { type: 'compound', symbol: { category: 'nbtdoc', path: [] } }
+		let targetType: nbtdoc.NbtdocType | undefined = { type: 'index', index: { registry, path: [] } }
 		const options: Options = { allowUnknownKey: resolveResult.allowUnknownKey, isPredicate: true }
 		let currentCompound: NbtCompoundNode | undefined
 		for (const child of node.children) {
@@ -179,7 +180,7 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 				if (data?.type === 'resolved_compound') {
 					const fieldData: ResolvedCompoundData[string] = data.data[child.value]
 					if (fieldData) {
-						fieldData.query?.enter({ usage: { type: 'reference', node: child } })
+						fieldData.query.enter({ usage: { type: 'reference', node: child } })
 						if (fieldData.data.type === 'byte_array' || fieldData.data.type === 'int_array' || fieldData.data.type === 'long_array' || fieldData.data.type === 'list') {
 							data = fieldData.data
 						} else {
@@ -341,8 +342,12 @@ export function fieldValue(type: nbtdoc.NbtdocType, options: Options): core.Sync
 			case 'index':
 				node = node as NbtCompoundNode
 				const id = resolveFieldPath(node.parent?.parent, type.index.path)
-				if (type.index.registry && id) {
-					index(type.index.registry, core.ResourceLocation.lengthen(id), options)(node, ctx)
+				if (type.index.registry) {
+					if (ExtendableRootRegistry.is(type.index.registry)) {
+						index(type.index.registry, id ? core.ResourceLocation.lengthen(id) : undefined, options)(node, ctx)
+					} else if (id) {
+						index(type.index.registry, core.ResourceLocation.lengthen(id), options)(node, ctx)
+					}
 				}
 				break
 			case 'id':
@@ -451,7 +456,7 @@ function resolveFieldPath(compound: core.AstNode | undefined, fieldPath: (string
 
 type ResolvedCompoundData = Record<string, {
 	data: nbtdoc.NbtdocType,
-	query?: core.SymbolQuery,
+	query: core.SymbolQuery,
 }>
 
 type Out = { allowUnknownKey: boolean }
@@ -573,13 +578,7 @@ function resolveSymbolPaths(paths: core.SymbolPath[], ctx: core.CheckerContext, 
 				return
 			}
 			if (ans[key]) {
-				delete ans[key].query
-				const existingData = ans[key].data
-				if (existingData.type === 'union') {
-					existingData.members.push(data.fieldType)
-				} else {
-					ans[key].data = { type: 'union', members: [existingData, data.fieldType] }
-				}
+				ans[key].data = nbtdoc.unionTypes(ans[key].data, data.fieldType)
 			} else {
 				ans[key] = { data: data.fieldType, query: keyQuery }
 			}

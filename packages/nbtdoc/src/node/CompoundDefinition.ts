@@ -70,8 +70,8 @@ export interface CompoundFieldNode extends SyntaxNode<CompoundFieldChild> {
 	fieldType: CompoundFieldTypeNode,
 }
 export namespace CompoundFieldNode {
-	export function is(obj: object): obj is CompoundFieldNode {
-		return (obj as CompoundFieldNode).type === 'nbtdoc:compound_definition/field'
+	export function is(obj: object | undefined): obj is CompoundFieldNode {
+		return (obj as CompoundFieldNode | undefined)?.type === 'nbtdoc:compound_definition/field'
 	}
 
 	export interface SymbolData {
@@ -91,7 +91,7 @@ export type CompoundFieldChild =
 
 export type CompoundFieldKey = IdentifierToken | StringNode
 export namespace CompoundFieldKey {
-	export function is(obj: object): obj is CompoundFieldKey {
+	export function is(obj: object | undefined): obj is CompoundFieldKey {
 		return IdentifierToken.is(obj) || StringNode.is(obj)
 	}
 }
