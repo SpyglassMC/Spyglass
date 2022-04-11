@@ -109,368 +109,368 @@ CATEGORY advancement
 CATEGORY attribute
 + SYMBOL minecraft:generic.armor {attribute} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + ------------
 + SYMBOL minecraft:generic.armor_toughness {attribute} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + ------------
 + SYMBOL minecraft:generic.attack_damage {attribute} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Attribute#Attributes"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 ------------
 CATEGORY block
 + SYMBOL minecraft:acacia_button {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:acacia_button.face {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_button","face","wall"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_button.face.floor {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.face.wall {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.face.ceiling {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_button.facing {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_button","facing","north"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_button.facing.north {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.facing.south {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.facing.west {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.facing.east {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_button.powered {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_button","powered","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_button.powered.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_button.powered.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Button#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + ------------
 + SYMBOL minecraft:acacia_door {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:acacia_door.facing {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_door","facing","north"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_door.facing.north {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.facing.south {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.facing.west {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.facing.east {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_door.half {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_door","half","lower"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_door.half.upper {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.half.lower {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_door.hinge {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_door","hinge","left"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_door.hinge.left {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.hinge.right {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_door.open {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_door","open","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_door.open.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.open.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_door.powered {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_door","powered","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_door.powered.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_door.powered.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Door#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + ------------
 + SYMBOL minecraft:acacia_fence {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:acacia_fence.east {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_fence","east","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_fence.east.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_fence.east.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_fence.north {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_fence","north","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_fence.north.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_fence.north.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_fence.south {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_fence","south","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_fence.south.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_fence.south.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_fence.waterlogged {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_fence","waterlogged","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_fence.waterlogged.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_fence.waterlogged.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + ------------
 + + + SYMBOL minecraft:acacia_fence.west {block (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + relations: {"default":{"category":"block","path":["minecraft:acacia_fence","west","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:acacia_fence.west.true {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:acacia_fence.west.false {block (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence#Block_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Block_states"}
 + ------------
 + SYMBOL minecraft:acacia_fence_gate {block} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Acacia_Fence_Gate"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 ------------
 CATEGORY fluid
 + SYMBOL minecraft:empty {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Air"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + ------------
 + SYMBOL minecraft:flowing_lava {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:flowing_lava.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_lava","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_lava.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + ------------
 + + + SYMBOL minecraft:flowing_lava.level {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_lava","level","1"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_lava.level.1 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.2 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.3 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.4 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.5 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.6 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.7 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_lava.level.8 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + ------------
 + SYMBOL minecraft:flowing_water {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:flowing_water.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_water","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_water.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + ------------
 + + + SYMBOL minecraft:flowing_water.level {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:flowing_water","level","1"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:flowing_water.level.1 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.2 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.3 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.4 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.5 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.6 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.7 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:flowing_water.level.8 {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Flowing_Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + ------------
 + SYMBOL minecraft:lava {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Lava"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:lava.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:lava","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:lava.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:lava.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Lava#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + ------------
 + SYMBOL minecraft:water {fluid} [Public]
 + + declaration:
-+ + + {"uri":"https://minecraft.fandom.com/wiki/Water"}
++ + + {"uri":"mcmeta://summary/registries.json"}
 + + members:
 + + + SYMBOL minecraft:water.falling {fluid (state)} [Public]
 + + + + declaration:
-+ + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states"}
++ + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + relations: {"default":{"category":"fluid","path":["minecraft:water","falling","false"]}}
 + + + + members:
 + + + + + SYMBOL minecraft:water.falling.false {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 + + + + + ------------
 + + + + + SYMBOL minecraft:water.falling.true {fluid (state_value)} [Public]
 + + + + + + declaration:
-+ + + + + + + {"uri":"https://minecraft.fandom.com/wiki/Water#Fluid_states"}
++ + + + + + + {"uri":"mcmeta://summary/registries.json#Fluid_states"}
 ------------
 CATEGORY worldgen/tree_decorator_type
 + SYMBOL minecraft:alter_ground {worldgen/tree_decorator_type} [Public]
