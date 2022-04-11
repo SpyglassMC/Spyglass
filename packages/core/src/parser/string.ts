@@ -24,9 +24,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			const currentQuote = src.read() as Quote
 			const contentStart = src.cursor
 			while (src.canRead() && src.peek() !== currentQuote) {
-				const cStart = src.cursor
 				const c = src.read()
 				if (options.escapable && c === '\\') {
+					const cStart = src.cursor
 					const c2 = src.read()
 					if (c2 === '\\' || c2 === currentQuote || EscapeChar.is(options.escapable.characters, c2)) {
 						ans.valueMap.push({
