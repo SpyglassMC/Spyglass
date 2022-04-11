@@ -67,10 +67,6 @@ export function getMcmetaSummaryUris(version: string, isLatest: boolean, source:
 
 export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 	const McmetaSummaryUri = 'mcmeta://summary/registries.json'
-	const SoundsBaseUri = 'https://misode.github.io/sounds/'
-	const WikiBaseUri = 'https://minecraft.fandom.com/wiki/'
-
-	const getWikiPageName = (id: string): string => id === 'empty' ? 'Air' : id.split('_').map(v => `${v.charAt(0).toUpperCase()}${v.slice(1)}`).join('_')
 
 	/**
 	 * Add states of blocks or fluids to the symbol table.
@@ -79,7 +75,7 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<typeof category>
 
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
-			const uri = `${WikiBaseUri}${getWikiPageName(id)}`
+			const uri = McmetaSummaryUri
 			symbols
 				.query(uri, category, core.ResourceLocation.lengthen(id))
 				.onEach(Object.entries(properties), ([state, values], blockQuery) => {
@@ -118,63 +114,12 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		function isCategory(str: string): str is Category {
 			return (core.FileCategories.includes(str as any) || core.RegistryCategories.includes(str as any))
 		}
-		const getUri = (registryId: Category, entryId: string): string => {
-			/* istanbul ignore next */
-			switch (registryId) {
-				case 'attribute':
-					return `${WikiBaseUri}Attribute#Attributes`
-				case 'block':
-				case 'enchantment':
-				case 'entity_type':
-				case 'fluid':
-				case 'item':
-				case 'mob_effect':
-					return `${WikiBaseUri}${getWikiPageName(entryId)}`
-				case 'block_entity_type':
-					return `${WikiBaseUri}${getWikiPageName(entryId)}#Block_data`
-				case 'custom_stat':
-					return `${WikiBaseUri}Statistics#List_of_custom_statistic_names`
-				case 'game_event':
-					return `${WikiBaseUri}Game_event`
-				case 'loot_condition_type':
-					return `${WikiBaseUri}Predicate#JSON_structure`
-				case 'loot_function_type':
-					return `${WikiBaseUri}Item_modifier#JSON_structure`
-				case 'loot_number_provider_type':
-				case 'loot_score_provider_type':
-					return `${WikiBaseUri}Loot_table#Number_Providers`
-				case 'loot_pool_entry_type':
-					return `${WikiBaseUri}Loot_table#Tags`
-				case 'motive':
-					return `${WikiBaseUri}Painting#Canvases`
-				case 'potion':
-					return `${WikiBaseUri}Potion#Item_data`
-				case 'particle_type':
-					return `${WikiBaseUri}Java_Edition_data_values#Particles`
-				case 'recipe_serializer':
-					return `${WikiBaseUri}Recipe#${entryId}`
-				case 'sound_event':
-					return `${SoundsBaseUri}?sound=${entryId}`
-				case 'stat_type':
-					return `${WikiBaseUri}Statistics#Statistic_types_and_names`
-				case 'villager_profession':
-					return `${WikiBaseUri}Villager#Villager_profession`
-				case 'villager_type':
-					return `${WikiBaseUri}Villager#Villager_type`
-				case 'worldgen/biome_source':
-					return `${WikiBaseUri}Java_Edition_data_values#Biome_sources`
-				case 'worldgen/chunk_generator':
-					return `${WikiBaseUri}Java_Edition_data_values#Chunk_generators`
-				default:
-					return McmetaSummaryUri
-			}
-		}
 
 		for (const [registryId, registry] of Object.entries(registries)) {
 			if (isCategory(registryId)) {
 				for (const entryId of registry) {
 					symbols
-						.query(getUri(registryId, entryId), registryId, core.ResourceLocation.lengthen(entryId))
+						.query(McmetaSummaryUri, registryId, core.ResourceLocation.lengthen(entryId))
 						.enter({ usage: { type: 'declaration' } })
 				}
 			}
