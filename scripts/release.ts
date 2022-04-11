@@ -135,7 +135,8 @@ async function main(): Promise<void> {
 		} else {
 			packagesToBump.set(name, type)
 			for (const [key, info] of Object.entries(packagesInfo)) {
-				if (info.dependencies?.includes(name) && !packagesToBump.has(key)) {
+				const dependencies = [...info.dependencies ?? [], ...info.devDependencies ?? []]
+				if (dependencies.includes(name) && !packagesToBump.has(key)) {
 					console.log(`${key}: patch bump due to its dependency on ${name}`)
 					addPackageToBump(key, BumpType.Patch)
 				}
