@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as nbt from '@spyglassmc/nbt'
+import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { uriBinder } from './binder'
 import type { McmetaSummary } from './dependency'
 import { getMcmetaSummary, getMcNbtdoc, getVersions, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
@@ -51,6 +52,19 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerSymbolRegistrar('mcmeta-summary', {
 		checksum: summary.checksum,
 		registrar: symbolRegistrar(summary as McmetaSummary),
+	})
+
+	meta.registerLinter('nameOfNbtKey', {
+		configValidator: core.linter.configValidator.nameConvention,
+		linter: core.linter.nameConvention('value'),
+		nodePredicate: n => (
+			// nbt compound keys without nbtdoc definition.
+			(!n.symbol && n.parent?.parent?.type === 'nbt:compound' && core.PairNode.is(n.parent) && n.type === 'string' && n.parent.key === n) ||
+			// nbt path keys without nbtdoc definition.
+			(!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') ||
+			// nbtdoc compound key definition outside of `::minecraft` modules.
+			(nbtdoc.CompoundFieldNode.is(n.parent) && nbtdoc.CompoundFieldKey.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
+		),
 	})
 
 	jeJson.initialize(ctx)
