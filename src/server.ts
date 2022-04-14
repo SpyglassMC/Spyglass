@@ -454,12 +454,16 @@ async function updateRoots(roots: Uri[]) {
         const uri = service.parseRootUri(uriString)
         const path = uri.fsPath
         rootCandidatePaths.add(path)
-        const config = await service.getConfig(uri)
-        await walkRoot(
-            uri, path,
-            abs => rootCandidatePaths.add(abs),
-            config.env.detectionDepth
-        )
+        try {
+            const config = await service.getConfig(uri)
+            await walkRoot(
+                uri, path,
+                abs => rootCandidatePaths.add(abs),
+                config.env.detectionDepth
+            )
+        } catch (e) {
+            console.error(`[updateRoots] Failed walking ${workspaceRootUriStrings[i]}`, e)
+        }
     }
     for (const candidatePath of rootCandidatePaths) {
         const dataPath = path.join(candidatePath, 'data')
