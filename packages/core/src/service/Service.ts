@@ -40,7 +40,7 @@ export class Service extends EventEmitter {
 	constructor({
 		cacheRoot,
 		downloader,
-		fs = FileService.create(),
+		fs = FileService.create(cacheRoot),
 		initializers = [],
 		isDebugging = false,
 		logger = Logger.create(),
@@ -139,6 +139,17 @@ export class Service extends EventEmitter {
 			.join(' ')
 	}
 
+	format(node: FileNode<AstNode>, doc: TextDocument, tabSize: number, insertSpaces: boolean) {
+		try {
+			this.debug(`Formatting '${doc.uri}' # ${doc.version}`)
+			const formatter = this.project.meta.getFormatter(node.type)
+			return formatter(node, FormatterContext.create(this.project, { doc, tabSize, insertSpaces }))
+		} catch (e) {
+			this.logger.error(`[Service] [format] Failed for “${doc.uri}” #${doc.version}`, e)
+			throw e
+		}
+	}
+
 	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		try {
 			this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
@@ -198,20 +209,27 @@ export class Service extends EventEmitter {
 	 * 
 	 * @returns Symbol locations of the selected symbol at `offset`, or `undefined` if there's no symbol at `offset`.
 	 */
-	getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): SymbolLocations | undefined {
+	async getSymbolLocations(file: FileNode<AstNode>, doc: TextDocument, offset: number, searchedUsages: readonly SymbolUsageType[] = SymbolUsageTypes, currentFileOnly = false): Promise<SymbolLocations | undefined> {
 		try {
 			this.debug(`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {
 				const symbol = this.project.symbols.resolveAlias(node.symbol)
 				if (symbol) {
-					const locations: SymbolLocation[] = []
+					const rawLocations: SymbolLocation[] = []
 					for (const usage of searchedUsages) {
 						let locs = symbol[usage] ?? []
 						if (currentFileOnly) {
 							locs = locs.filter(l => l.uri === doc.uri)
 						}
-						locations.push(...locs)
+						rawLocations.push(...locs)
+					}
+					const locations: SymbolLocation[] = []
+					for (const loc of rawLocations) {
+						const mappedUri = await this.project.fs.mapToDisk(loc.uri)
+						if (mappedUri) {
+							locations.push({ ...loc, uri: mappedUri })
+						}
 					}
 					return SymbolLocations.create(node.range, locations.length ? locations : undefined)
 				}
@@ -221,16 +239,5 @@ export class Service extends EventEmitter {
 			this.logger.error(`[Service] [getSymbolLocations] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return undefined
-	}
-
-	format(node: FileNode<AstNode>, doc: TextDocument, tabSize: number, insertSpaces: boolean) {
-		try {
-			this.debug(`Formatting '${doc.uri}' # ${doc.version}`)
-			const formatter = this.project.meta.getFormatter(node.type)
-			return formatter(node, FormatterContext.create(this.project, { doc, tabSize, insertSpaces }))
-		} catch (e) {
-			this.logger.error(`[Service] [format] Failed for “${doc.uri}” #${doc.version}`, e)
-			throw e
-		}
 	}
 }

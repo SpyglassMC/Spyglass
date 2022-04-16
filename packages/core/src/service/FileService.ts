@@ -4,7 +4,9 @@ import crypto from 'crypto'
 import decompress from 'decompress'
 import fs, { promises as fsp } from 'fs'
 import globby from 'globby'
-import { getSha1, SpyglassUri, Uri } from '../common'
+import path from 'path'
+import { getSha1, Uri } from '../common'
+import { TwoWayMap } from '../common/TwoWayMap'
 import type { Dependency } from './Dependency'
 import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
@@ -51,18 +53,34 @@ export interface FileService extends UriProtocolSupporter {
 	 * Unregister the supported associated with `protocol`. Nothing happens if the `protocol` isn't supported.
 	 */
 	unregister(protocol: Protocol): void
+
+	/**
+	 * Map the item at `uri` to physical disk.
+	 * 
+	 * @returns The `file:` URI of the mapped file, or `undefined` if it cannot be mapped.
+	 */
+	mapToDisk(uri: string): Promise<string | undefined>
+	/**
+	 * Map the item at `uri` from physical disk back to a (virtual) URI used by Spyglass internally.
+	 */
+	mapFromDisk(uri: string): string
 }
 
 export namespace FileService {
-	let instance: FileService | undefined
-
-	export function create(): FileService {
-		return instance ?? (instance = new FileServiceImpl())
+	export function create(cacheRoot: string): FileService {
+		const virtualUrisRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(path.join(cacheRoot, 'virtual-uris')))
+		return new FileServiceImpl(virtualUrisRoot)
 	}
 }
 
 export class FileServiceImpl implements FileService {
 	private readonly supporters = new Map<Protocol, UriProtocolSupporter>()
+	/**
+	 * A two-way map from mapped physical URIs to virtual URIs.
+	 */
+	private readonly map = new TwoWayMap<string, string>()
+
+	constructor(private readonly virtualUrisRoot?: RootUriString) { }
 
 	register(protocol: Protocol, supporter: UriProtocolSupporter, force = false): void {
 		if (!force && this.supporters.has(protocol)) {
@@ -115,6 +133,35 @@ export class FileServiceImpl implements FileService {
 			yield* supporter.listRoots()
 		}
 	}
+
+	async mapToDisk(virtualUri: string): Promise<string | undefined> {
+		if (virtualUri.startsWith('file:')) {
+			return virtualUri
+		}
+		if (!this.virtualUrisRoot) {
+			return undefined
+		}
+		try {
+			let mappedUri = this.map.getKey(virtualUri)
+			if (mappedUri === undefined) {
+				mappedUri = `${this.virtualUrisRoot}${getSha1(virtualUri)}${fileUtil.extname(virtualUri)}`
+				const buffer = await this.readFile(virtualUri)
+				await fileUtil.writeFile(mappedUri, buffer)
+				this.map.set(mappedUri, virtualUri)
+			}
+			return mappedUri
+		} catch (e) {
+			// Ignored.
+		}
+		return undefined
+	}
+
+	mapFromDisk(mappedUri: string): string {
+		if (!this.virtualUrisRoot) {
+			return mappedUri
+		}
+		return this.map.get(mappedUri) ?? mappedUri
+	}
 }
 
 export class FileUriSupporter implements UriProtocolSupporter {
@@ -143,6 +190,10 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		return this.roots
 	}
 
+	async mapToDisk(uri: string): Promise<string | undefined> {
+		return uri
+	}
+
 	private static rootUriToGlob(root: string): string {
 		return fileUtil.fileUriToPath(root) + '**/*'
 	}
@@ -167,38 +218,48 @@ export class FileUriSupporter implements UriProtocolSupporter {
 	}
 }
 
-export class SpyglassUriSupporter implements UriProtocolSupporter {
-	readonly protocol = SpyglassUri.Protocol
+// namespace ArchiveUri {
 
+// export function is(uri: Uri): boolean {
+// 	return uri.protocol === Protocol && uri.hostname === Hostname
+// }
+
+
+// }
+
+export class ArchiveUriSupporter implements UriProtocolSupporter {
+	readonly protocol = ArchiveUriSupporter.Protocol
+
+	public static readonly Protocol = 'archive:'
 	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip']
 
 	/**
 	 * @param entries A map from archive URIs to unzipped entries.
 	 */
 	private constructor(
-		private readonly entries: Map<string, Map<string, decompress.File>>
+		private readonly entries: Map<string, Map<string, decompress.File>>,
 	) { }
 
 	async hash(uri: string): Promise<string> {
-		const { archiveUri, pathInArchive } = SpyglassUri.Archive.decode(new Uri(uri))
+		const { archiveUri, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		if (!pathInArchive) {
 			// Hash the archive itself.
 			return hashFile(archiveUri)
 		} else {
 			// Hash the corresponding file.
-			return getSha1(await this.getDataInArchive(archiveUri, pathInArchive))
+			return getSha1(this.getDataInArchive(archiveUri, pathInArchive))
 		}
 	}
 
 	async readFile(uri: string): Promise<Buffer> {
-		const { archiveUri, pathInArchive } = SpyglassUri.Archive.decode(new Uri(uri))
+		const { archiveUri, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		return this.getDataInArchive(archiveUri, pathInArchive)
 	}
 
 	/**
 	 * @throws
 	 */
-	private async getDataInArchive(archiveUri: string, pathInArchive: string): Promise<Buffer> {
+	private getDataInArchive(archiveUri: string, pathInArchive: string): Buffer {
 		const entries = this.entries.get(archiveUri)
 		if (!entries) {
 			throw new Error(`Archive “${archiveUri}” has not been loaded into the memory`)
@@ -216,24 +277,43 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 	*listFiles() {
 		for (const [archiveUri, files] of this.entries.entries()) {
 			for (const file of files.values()) {
-				yield SpyglassUri.Archive.get(archiveUri, file.path)
+				yield ArchiveUriSupporter.getUri(archiveUri, file.path)
 			}
 		}
 	}
 
 	*listRoots() {
 		for (const archiveUri of this.entries.keys()) {
-			yield SpyglassUri.Archive.get(archiveUri)
+			yield ArchiveUriSupporter.getUri(archiveUri)
 		}
 	}
 
-	static async create(dependencies: readonly Dependency[], logger: Logger, checksums: Record<RootUriString, string>): Promise<SpyglassUriSupporter> {
+	private static getUri(archiveUri: string): RootUriString
+	private static getUri(archiveUri: string, pathInArchive: string): string
+	private static getUri(archiveUri: string, pathInArchive = '') {
+		return `${ArchiveUriSupporter.Protocol}//${encodeURIComponent(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
+	}
+
+	/**
+	 * @throws When `uri` has the wrong protocol or hostname.
+	 */
+	private static decodeUri(uri: Uri): { archiveUri: string, pathInArchive: string } {
+		if (uri.protocol !== ArchiveUriSupporter.Protocol) {
+			throw new Error(`Expected protocol “${ArchiveUriSupporter.Protocol}” in “${uri}”`)
+		}
+		return {
+			archiveUri: decodeURIComponent(uri.hostname),
+			pathInArchive: uri.pathname.charAt(0) === '/' ? uri.pathname.slice(1) : uri.pathname,
+		}
+	}
+
+	static async create(dependencies: readonly Dependency[], logger: Logger, checksums: Record<RootUriString, string>): Promise<ArchiveUriSupporter> {
 		const entries = new Map<string, Map<string, decompress.File>>()
 
 		for (const { uri, info } of dependencies) {
 			try {
-				if (uri.startsWith('file:') && SpyglassUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await fsp.stat(new Uri(uri))).isFile()) {
-					const rootUri = SpyglassUri.Archive.get(uri)
+				if (uri.startsWith('file:') && ArchiveUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await fsp.stat(new Uri(uri))).isFile()) {
+					const rootUri = ArchiveUriSupporter.getUri(uri)
 					const cachedChecksum: string | undefined = checksums[rootUri]
 					if (cachedChecksum !== undefined) {
 						const checksum = await hashFile(uri)
@@ -252,7 +332,7 @@ export class SpyglassUriSupporter implements UriProtocolSupporter {
 			}
 		}
 
-		return new SpyglassUriSupporter(entries)
+		return new ArchiveUriSupporter(entries)
 	}
 }
 

@@ -4,7 +4,7 @@ import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import { LowLevelDownloader } from '.'
-import { bufferToString, CachePromise, SpyglassUri } from '../common'
+import { bufferToString, CachePromise } from '../common'
 import type { AstNode } from '../node'
 import { FileNode } from '../node'
 import { file } from '../parser'
@@ -20,7 +20,7 @@ import type { Dependency } from './Dependency'
 import { DependencyKey } from './Dependency'
 import { Downloader } from './Downloader'
 import { LinterErrorReporter } from './ErrorReporter'
-import { FileService, FileUriSupporter, SpyglassUriSupporter } from './FileService'
+import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService'
 import type { RootUriString } from './fileUtil'
 import { fileUtil } from './fileUtil'
 import { Logger } from './Logger'
@@ -79,7 +79,7 @@ export namespace ProjectData {
 			ctx: data.ctx ?? {},
 			downloader,
 			ensureParsedAndChecked: data.ensureParsedAndChecked!,
-			fs: data.fs ?? FileService.create(),
+			fs: data.fs ?? FileService.create('file:///cache/'),
 			get: data.get ?? (() => undefined),
 			logger,
 			meta: data.meta ?? new MetaRegistry(),
@@ -217,7 +217,7 @@ export class Project extends EventEmitter {
 	constructor({
 		cacheRoot,
 		downloader,
-		fs = FileService.create(),
+		fs = FileService.create(cacheRoot),
 		initializers = [],
 		logger = Logger.create(),
 		profilers = ProfilerFactory.noop(),
@@ -362,9 +362,9 @@ export class Project extends EventEmitter {
 		const listDependencyFiles = async () => {
 			const dependencies = await getDependencies()
 			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
-			const spyglassUriSupporter = await SpyglassUriSupporter.create(dependencies, this.logger, this.cacheService.checksums.roots)
+			const archiveUriSupporter = await ArchiveUriSupporter.create(dependencies, this.logger, this.cacheService.checksums.roots)
 			this.fs.register('file:', fileUriSupporter, true)
-			this.fs.register(SpyglassUri.Protocol, spyglassUriSupporter, true)
+			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
 		const listProjectFiles = () => new Promise<void>(resolve => {
 			this.#watcherReady = false
@@ -489,11 +489,15 @@ export class Project extends EventEmitter {
 		return this.cacheService.reset()
 	}
 
+	normalizeUri(uri: string): string {
+		return this.fs.mapFromDisk(fileUtil.normalize(uri))
+	}
+
 	/**
 	 * @returns The language ID of the file, or the file extension without the leading dot.
 	 */
 	private getLanguageID(uri: string): string {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
 		const ext = fileUtil.extname(uri) ?? '.plaintext'
 		return this.meta.getLanguageID(ext) ?? ext.slice(1)
 	}
@@ -502,7 +506,7 @@ export class Project extends EventEmitter {
 	 * @returns The cached `TextDocument` and `AstNode` for the URI, or `undefined` when such data isn't available in cache.
 	 */
 	get(uri: string): DocAndNode | undefined {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
 		return this.#docAndNodes.get(uri)
 	}
 
@@ -511,7 +515,7 @@ export class Project extends EventEmitter {
 	 */
 	@CachePromise()
 	async ensureParsed(uri: string): Promise<DocAndNode | undefined> {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
 
 		if (this.#docAndNodes.has(uri)) {
 			return this.#docAndNodes.get(uri)!
@@ -663,7 +667,10 @@ export class Project extends EventEmitter {
 	 * Notify that a new document was opened in the editor.
 	 */
 	onDidOpen(uri: string, languageID: string, version: number, content: string): void {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
+		if (!fileUtil.isFileUri(uri)) {
+			return // We only accept `file:` scheme for client-managed URIs.
+		}
 		this.#clientManagedUris.add(uri)
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const { node } = this.parseAndCache(doc)
@@ -677,7 +684,10 @@ export class Project extends EventEmitter {
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
 	onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): void {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
+		if (!fileUtil.isFileUri(uri)) {
+			return // We only accept `file:` scheme for client-managed URIs.
+		}
 		const result = this.get(uri)
 		if (!result) {
 			throw new Error(`Document for “${uri}” is not cached. This should not happen. Did the language client send a didChange notification without sending a didOpen one?`)
@@ -693,7 +703,10 @@ export class Project extends EventEmitter {
 	 * Notify that an existing document was closed in the editor.
 	 */
 	onDidClose(uri: string): void {
-		uri = fileUtil.normalize(uri)
+		uri = this.normalizeUri(uri)
+		if (!fileUtil.isFileUri(uri)) {
+			return // We only accept `file:` scheme for client-managed URIs.
+		}
 		this.#clientManagedUris.delete(uri)
 		this.tryClearingCache(uri)
 	}

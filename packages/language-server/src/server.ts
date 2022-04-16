@@ -217,7 +217,7 @@ connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
 })
 connection.onDefinition(async ({ textDocument: { uri }, position }) => {
@@ -226,7 +226,7 @@ connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
 connection.onImplementation(async ({ textDocument: { uri }, position }) => {
@@ -235,7 +235,7 @@ connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
 })
 connection.onReferences(async ({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
@@ -244,7 +244,7 @@ connection.onReferences(async ({ textDocument: { uri }, position, context: { inc
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
 	return toLS.locationLink(ans, doc, false)
 })
 connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
@@ -253,7 +253,7 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
 })
 
@@ -263,7 +263,7 @@ connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
 	return toLS.documentHighlight(ans)
 })
 

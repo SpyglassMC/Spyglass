@@ -74,42 +74,6 @@ export function Delay(ms: number, getKey: (args: any[]) => any = args => args[0]
 	}
 }
 
-export namespace SpyglassUri {
-	export const Protocol = 'spyglassmc:'
-	export namespace Archive {
-		export const Hostname = 'archive'
-
-
-		export function get(archiveUri: string): RootUriString
-		export function get(archiveUri: string, pathInArchive: string): string
-		export function get(archiveUri: string, pathInArchive = '') {
-			return `${Protocol}//${Hostname}/${encodeURIComponent(archiveUri)}/${pathInArchive.replace(/\\/g, '/')}`
-		}
-
-		export function is(uri: Uri): boolean {
-			return uri.protocol === Protocol && uri.hostname === Hostname
-		}
-
-		/**
-		 * @throws When `uri` has the wrong protocol or hostname.
-		 */
-		export function decode(uri: Uri): { archiveUri: string, pathInArchive: string } {
-			if (uri.protocol !== Protocol) {
-				throw new Error(`Expected protocol “${Protocol}” in “${uri.toString()}”`)
-			}
-			if (uri.hostname !== Hostname) {
-				throw new Error(`Expected hostname “${Hostname}” in “${uri.toString()}”`)
-			}
-			// Ex. `pathname`: `/QzpcYS50YXIuZ3o=/foo/bar.json`
-			const paths = uri.pathname.split('/')
-			return {
-				archiveUri: decodeURIComponent(paths[1]),
-				pathInArchive: paths.slice(2).join('/'),
-			}
-		}
-	}
-}
-
 export type FullResourceLocation = `${string}:${string}`
 
 export interface ResourceLocation {
