@@ -1,7 +1,3 @@
-exports['mcmeta getMajorVersion() Should return correctly 1'] = `
-1.18
-`
-
 exports['mcmeta getMcmetaSummaryUris() Should return correctly for "1.17" (false) from "GitHub" 1'] = {
   "blocks": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summary/blocks/data.json.gz",
   "commands": "https://raw.githubusercontent.com/misode/mcmeta/1.17-summary/commands/data.json.gz",
@@ -29,49 +25,49 @@ exports['mcmeta getMcmetaSummaryUris() Should return correctly for "22w03a" (tru
 exports['mcmeta resolveConfiguredVersion() Should resolve "1.16.5" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
-  "major": "1.16",
+  "release": "1.16.5",
   "isLatest": false
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "20w06a" 1'] = {
   "id": "20w06a",
   "name": "Snapshot 20w06a",
-  "major": "1.16",
+  "release": "1.16",
   "isLatest": false
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "22w03a" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
-  "major": "1.18",
+  "release": "1.18.2",
   "isLatest": true
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Auto" 1'] = {
   "id": "1.16.5",
   "name": "1.16.5",
-  "major": "1.16",
+  "release": "1.16.5",
   "isLatest": false
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Release" 1'] = {
   "id": "1.18.1",
   "name": "1.18.1",
-  "major": "1.18",
+  "release": "1.18.1",
   "isLatest": false
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "Latest Snapshot" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
-  "major": "1.18",
+  "release": "1.18.2",
   "isLatest": true
 }
 
 exports['mcmeta resolveConfiguredVersion() Should resolve "unknown" 1'] = {
   "id": "22w03a",
   "name": "22w03a",
-  "major": "1.18",
+  "release": "1.18.2",
   "isLatest": true
 }
 

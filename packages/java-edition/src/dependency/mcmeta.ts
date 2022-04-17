@@ -1,11 +1,6 @@
 import * as core from '@spyglassmc/core'
-import type { MajorVersion, PackMcmeta, VersionInfo } from './common'
+import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common'
 import { PackVersionMap } from './common'
-
-export function getMajorVersion(version: McmetaVersion): MajorVersion {
-	const dotIndex = version.release_target.indexOf('.', 2)
-	return (dotIndex > 2 ? version.release_target.slice(0, dotIndex) : version.release_target) as MajorVersion
-}
 
 /**
  * @param inputVersion {@link Config.env.gameVersion}
@@ -22,7 +17,7 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 		return {
 			id: version.id,
 			name: version.name,
-			major: getMajorVersion(version),
+			release: version.release_target as ReleaseVersion,
 			isLatest: index === 0,
 		}
 	}
@@ -35,9 +30,9 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	if (inputVersion === 'auto') {
 		if (packMcmeta) {
-			const major = PackVersionMap[packMcmeta.pack.pack_format]
-			if (major) {
-				return toVersionInfo(versions.findIndex(v => getMajorVersion(v) === major))
+			const regex = PackVersionMap[packMcmeta.pack.pack_format]
+			if (regex) {
+				return toVersionInfo(versions.findIndex(v => regex.test(v.release_target)))
 			}
 		}
 		return toVersionInfo(0)

@@ -1,6 +1,6 @@
 import type { ContextBase, FileCategory, RegistryCategory, RootUriString, TagFileCategory, UriBinder, UriBinderContext } from '@spyglassmc/core'
 import { fileUtil, RegistryCategories } from '@spyglassmc/core'
-import { MajorVersion } from '../dependency'
+import { ReleaseVersion } from '../dependency'
 
 export const Categories = (() => {
 	const NonTaggableRegistries = new Set<RegistryCategory>([
@@ -11,8 +11,8 @@ export const Categories = (() => {
 	const ans = new Map<string, {
 		category: FileCategory,
 		extname: string,
-		since?: MajorVersion,
-		until?: MajorVersion,
+		since?: ReleaseVersion,
+		until?: ReleaseVersion,
 	}>([
 		['advancements', { category: 'advancement', extname: '.json' }],
 		['dimension', { category: 'dimension', extname: '.json', since: '1.16' }],
@@ -76,7 +76,7 @@ export function dissectUri(uri: string, ctx: ContextBase) {
 		if (!def || def.extname !== match[4]) {
 			continue
 		}
-		if (!matchVersion(ctx.project['loadedVersion'] as MajorVersion, def.since, def.until)) {
+		if (!matchVersion(ctx.project['loadedVersion'] as ReleaseVersion, def.since, def.until)) {
 			continue
 		}
 		return {
@@ -104,8 +104,8 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 	}
 }
 
-function matchVersion(target: MajorVersion, since: MajorVersion | undefined, until: MajorVersion | undefined): boolean {
-	if (since && MajorVersion.cmp(target, since) < 0) return false
-	if (until && MajorVersion.cmp(until, target) < 0) return false
+function matchVersion(target: ReleaseVersion, since: ReleaseVersion | undefined, until: ReleaseVersion | undefined): boolean {
+	if (since && ReleaseVersion.cmp(target, since) < 0) return false
+	if (until && ReleaseVersion.cmp(until, target) < 0) return false
 	return true
 }

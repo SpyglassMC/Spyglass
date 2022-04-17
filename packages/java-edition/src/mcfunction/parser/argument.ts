@@ -4,7 +4,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
-import { MajorVersion } from '../../dependency'
+import { ReleaseVersion } from '../../dependency'
 import { ColorArgumentValues, EntityAnchorArgumentValues, ItemSlotArgumentValues, OperationArgumentValues, ScoreboardSlotArgumentValues, SwizzleArgumentValues } from '../common'
 import type { BlockNode, CoordinateNode, EntityNode, EntitySelectorAdvancementsArgumentCriteriaNode, EntitySelectorAdvancementsArgumentNode, EntitySelectorInvertableArgumentValueNode, EntitySelectorScoresArgumentNode, EntitySelectorVariable, FloatRangeNode, IntRangeNode, ItemNode, MessageNode, ParticleNode, ScoreHolderNode, UuidNode, VectorNode } from '../node'
 import { BlockStatesNode, CoordinateSystem, EntitySelectorArgumentsNode, EntitySelectorAtVariable, EntitySelectorAtVariables, EntitySelectorNode, ObjectiveCriteriaNode, TimeNode } from '../node'
@@ -40,8 +40,8 @@ const FakeNameMaxLength = 40
 const ObjectiveMaxLength = 16
 const PlayerNameMaxLength = 16
 function shouldValidateLength(ctx: core.ParserContext) {
-	const major = ctx.project['loadedVersion'] as MajorVersion | undefined
-	return !major || MajorVersion.cmp(major, '1.18') < 0
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	return !release || ReleaseVersion.cmp(release, '1.18') < 0
 }
 
 /**

@@ -5,7 +5,7 @@ import * as path from 'path'
 import snapshot from 'snap-shot-it'
 import type { PackMcmeta } from '../../lib/dependency/common'
 import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta'
-import { Fluids, getMajorVersion, getMcmetaSummaryUris, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta'
+import { Fluids, getMcmetaSummaryUris, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta'
 
 function readJsonSync(path: string): unknown {
 	return JSON.parse(fs.readFileSync(path, 'utf-8'))
@@ -18,13 +18,6 @@ const Fixtures = {
 }
 
 describe('mcmeta', () => {
-	describe('getMajorVersion()', () => {
-		it('Should return correctly', async () => {
-			const actual = getMajorVersion(Fixtures.Versions[0])
-			snapshot(actual)
-		})
-	})
-
 	describe('resolveConfiguredVersion()', () => {
 		const suites: { version: string, packMcmeta?: PackMcmeta | undefined }[] = [
 			{ version: 'Auto', packMcmeta: { pack: { pack_format: 6 } } },

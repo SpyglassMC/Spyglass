@@ -39,7 +39,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	const packMcmeta = await getPackMcmeta()
-	const { major, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
+	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
 	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(downloader, version, isLatest))
 
@@ -68,10 +68,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	})
 
 	jeJson.initialize(ctx)
-	jeMcf.initialize(ctx, summary.commands, major)
+	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
 
 	return {
-		loadedVersion: major,
+		loadedVersion: release,
 	}
 }
