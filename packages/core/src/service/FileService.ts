@@ -135,7 +135,7 @@ export class FileServiceImpl implements FileService {
 	}
 
 	async mapToDisk(virtualUri: string): Promise<string | undefined> {
-		if (virtualUri.startsWith('file:')) {
+		if (fileUtil.isFileUri(virtualUri)) {
 			return virtualUri
 		}
 		if (!this.virtualUrisRoot) {
@@ -144,9 +144,9 @@ export class FileServiceImpl implements FileService {
 		try {
 			let mappedUri = this.map.getKey(virtualUri)
 			if (mappedUri === undefined) {
-				mappedUri = `${this.virtualUrisRoot}${getSha1(virtualUri)}${fileUtil.extname(virtualUri)}`
+				mappedUri = `${this.virtualUrisRoot}${getSha1(virtualUri)}/${fileUtil.basename(virtualUri)}`
 				const buffer = await this.readFile(virtualUri)
-				await fileUtil.writeFile(mappedUri, buffer)
+				await fileUtil.writeFile(mappedUri, buffer, 0o444)
 				this.map.set(mappedUri, virtualUri)
 			}
 			return mappedUri

@@ -6,7 +6,7 @@ import process from 'process'
 import url, { URL as Uri } from 'url'
 import { promisify } from 'util'
 import zlib from 'zlib'
-import { bufferToString, isErrorCode } from '../common'
+import { bufferToString, isEnoent, isErrorCode } from '../common'
 
 export type RootUriString = `${string}/`
 
@@ -78,6 +78,14 @@ export namespace fileUtil {
 		return i >= 0 ? value.slice(i) as FileExtension : undefined
 	}
 
+	/**
+	 * @returns The part from the last `/` to the end of the URI.
+	 */
+	export function basename(uri: string): string {
+		const i = uri.lastIndexOf('/')
+		return i >= 0 ? uri.slice(i + 1) : uri
+	}
+
 	/* istanbul ignore next */
 	/**
 	 * @param fileUri A file URI.
@@ -133,7 +141,7 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureDir(path: PathLike, mode: fs.Mode = 0o777): Promise<void> {
+	export async function ensureDir(path: PathLike, mode: number = 0o777): Promise<void> {
 		try {
 			await fsp.mkdir(toFsPathLike(path), { mode, recursive: true })
 		} catch (e) {
@@ -151,8 +159,26 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureParentOfFile(path: PathLike, mode: fs.Mode = 0o777): Promise<void> {
+	export async function ensureParentOfFile(path: PathLike, mode: number = 0o777): Promise<void> {
 		return ensureDir(getParentOfFile(path), mode)
+	}
+
+	export async function chmod(path: PathLike, mode: number): Promise<void> {
+		return fsp.chmod(toFsPathLike(path), mode)
+	}
+
+	export async function ensureWritable(path: PathLike): Promise<void> {
+		try {
+			await chmod(path, 0o666)
+		} catch (e) {
+			if (!isEnoent(e)) {
+				throw e
+			}
+		}
+	}
+
+	export async function markReadOnly(path: PathLike): Promise<void> {
+		return chmod(path, 0o444)
 	}
 
 	export async function readFile(path: PathLike): Promise<Buffer> {
@@ -163,15 +189,19 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 * 
-	 * The directory of the file will be created recursively if it doesn'texist.
+	 * The directory of the file will be created recursively if it doesn't exist.
+	 * 
+	 * The target file will be given permission `0o666` (`rw-rw-rw-`) before being written into, and changed back to the
+	 * specified `mode`.
 	 * 
 	 * * Encoding: `utf-8`
 	 * * Mode: `0o666` (`rw-rw-rw-`)
 	 * * Flag: `w`
 	 */
-	export async function writeFile(path: PathLike, data: Buffer | string): Promise<void> {
+	export async function writeFile(path: PathLike, data: Buffer | string, mode: number = 0o666): Promise<void> {
 		await ensureParentOfFile(path)
-		return fsp.writeFile(toFsPathLike(path), data)
+		await ensureWritable(path)
+		return fsp.writeFile(toFsPathLike(path), data, { mode })
 	}
 
 	/* istanbul ignore next */

@@ -10,6 +10,7 @@ import { SymbolUsageTypes } from '../symbol'
 import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext, SignatureHelpProviderContext } from './Context'
 import { Downloader } from './Downloader'
 import { FileService } from './FileService'
+import { fileUtil } from './fileUtil'
 import { Hover } from './Hover'
 import { Logger } from './Logger'
 import { ProfilerFactory } from './Profiler'
@@ -226,7 +227,9 @@ export class Service extends EventEmitter {
 					}
 					const locations: SymbolLocation[] = []
 					for (const loc of rawLocations) {
-						const mappedUri = await this.project.fs.mapToDisk(loc.uri)
+						const mappedUri = fileUtil.isFileUri(loc.uri)
+							? loc.uri
+							: await this.project.fs.mapToDisk(loc.uri)
 						if (mappedUri) {
 							locations.push({ ...loc, uri: mappedUri })
 						}
