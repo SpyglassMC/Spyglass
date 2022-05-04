@@ -2722,7 +2722,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('spawn'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3, 'integer')
+                    parser: new VectorArgumentParser(3)
                 }
             }
         },
@@ -2738,7 +2738,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('insert'),
             children: {
                 pos: {
-                    parser: new VectorArgumentParser(3)
+                    parser: new VectorArgumentParser(3, 'integer')
                 }
             }
         }
