@@ -1345,16 +1345,61 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-        placefeature: {
-            parser: new LiteralArgumentParser('placefeature'),
+        place: {
+            parser: new LiteralArgumentParser('place'),
             children: {
-                id: {
-                    parser: new IdentityArgumentParser('$worldgen/configured_feature'),
-                    executable: true,
+                feature: {
+                    parser: new LiteralArgumentParser('feature'),
                     children: {
-                        pos: {
-                            parser: new VectorArgumentParser(3),
-                            executable: true
+                        feature: {
+                            parser: new IdentityArgumentParser('$worldgen/configured_feature'),
+                            executable: true,
+                            children: {
+                                pos: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                jigsaw: {
+                    parser: new LiteralArgumentParser('jigsaw'),
+                    children: {
+                        pool: {
+                            parser: new IdentityArgumentParser('$worldgen/template_pool'),
+                            children: {
+                                target: {
+                                    parser: new IdentityArgumentParser([], false, false, true),
+                                    children: {
+                                        max_depth: {
+                                            parser: new NumberArgumentParser('integer', 1, 7),
+                                            executable: true,
+                                            children: {
+                                                position: {
+                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                structure: {
+                    parser: new LiteralArgumentParser('structure'),
+                    children: {
+                        structure: {
+                            parser: new IdentityArgumentParser('$worldgen/structure'),
+                            executable: true,
+                            children: {
+                                pos: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    executable: true
+                                }
+                            }
                         }
                     }
                 }
