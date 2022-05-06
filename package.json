@@ -31,12 +31,12 @@
         "watch": "tsc -w"
     },
     "dependencies": {
-        "@mcschema/core": "^0.12.33",
+        "@mcschema/core": "^0.12.34",
         "@mcschema/java-1.16": "^0.6.8",
         "@mcschema/java-1.17": "^0.2.27",
         "@mcschema/java-1.18": "^0.3.4",
         "@mcschema/java-1.18.2": "^0.1.9",
-        "@mcschema/java-1.19": "^0.1.21",
+        "@mcschema/java-1.19": "^0.1.24",
         "@mcschema/locales": "^0.1.60",
         "appdata-path": "^1.0.0",
         "clone": "^2.1.2",
