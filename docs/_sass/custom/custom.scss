@@ -90,6 +90,9 @@ a {
 .verseblock pre {
   color: var(--white);
 }
+pre {
+  color: var(--white)
+}
 .quoteblock blockquote, .quoteblock blockquote p {
   color: var(--white);
 }
@@ -108,3 +111,6 @@ a {
 #header .details span.email a {
   color: var(--linkcoloralternate);
 }
+
+.highlight .p { color: #b9caca; }
+.highlight .nl { color: #fffd; }
