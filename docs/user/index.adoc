@@ -14,8 +14,10 @@ The project is under a complete rewrite and is planned to support multiple text 
 
 == User Testimonials
 
-> By far, by a huge margin, the best extension I've found for it.
-> -- slicedlime, https://clips.twitch.tv/TangibleRelentlessGarlicBatChest-wgU7qjHVVmj4Sn5J[Twitch stream]
+[quote,slicedlime,'during his https://clips.twitch.tv/TangibleRelentlessGarlicBatChest-wgU7qjHVVmj4Sn5J[Twitch stream]']
+____
+By far, by a huge margin, the best extension I've found for it.
+____
 
 == Getting Started
 
@@ -40,6 +42,10 @@ Main article: link:./user/config[Config]
 == Plugins
 
 The cake is a lie. ALL LIES.
+
+== Mcdoc Specification
+
+Main article: link:./user/mcdoc[Mcdoc]
 
 == Contributing
 

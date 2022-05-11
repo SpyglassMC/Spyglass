@@ -42,75 +42,87 @@ td{background-color: var(--maincolor);color: var(--linkcoloralternate) !importan
 
 /* Responsiveness fixes */
 video {
-  max-width: 100%;
+	max-width: 100%;
 }
 
 @media all and (max-width: 600px) {
-  table {
-    width: 55vw!important;
-    font-size: 3vw;
-  }
+	table {
+		width: 55vw!important;
+		font-size: 3vw;
+	}
 }
 
 .exampleblock > .content {
-  background-color: var(--maincolor);
+	background-color: var(--maincolor);
 }
 
 a {
-  color: var(--secondarycolor);
+	color: var(--secondarycolor);
 }
 
 .admonitionblock td.icon .icon-tip::before {
-  text-shadow: none;
-  color: var(--white);
+	text-shadow: none;
+	color: var(--white);
 }
 .admonitionblock td.icon .icon-note::before {
-  color: var(--tertiarycolor);
+	color: var(--tertiarycolor);
 }
 .admonitionblock td.icon .icon-important::before {
-  color: var(--linkcolor);
+	color: var(--linkcolor);
 }
 /*.admonitionblock td.icon .icon-caution::before {
-  color: var(--linkcoloralternate);
+	color: var(--linkcoloralternate);
 }*/
 .admonitionblock td.icon .icon-warning::before {
-  color: var(--primarycolor);
+	color: var(--primarycolor);
 }
 
 #preamble > .sectionbody > .paragraph:first-of-type p {
-  color: var(--white);
+	color: var(--white);
 }
 
 .quoteblock blockquote::before {
-  color: var(--primarycolor);
+	color: var(--primarycolor);
 }
 .quoteblock .attribution cite, .verseblock .attribution cite {
-  color: var(--white);
+	color: var(--white);
 }
 .verseblock pre {
-  color: var(--white);
+	color: var(--white);
 }
 pre {
-  color: var(--white)
+	color: var(--white)
 }
 .quoteblock blockquote, .quoteblock blockquote p {
-  color: var(--white);
+	color: var(--white);
 }
 
 .sidebarblock {
-  background: var(--sidebarbackground);
+	background: var(--sidebarbackground);
 }
 .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint {
-  background: var(--sidebarbackground);
-  color: var(--white);
+	background: var(--sidebarbackground);
+	color: var(--white);
 }
 
 #header .details {
-  color: var(--white);
+	color: var(--white);
 }
 #header .details span.email a {
-  color: var(--linkcoloralternate);
+	color: var(--linkcoloralternate);
 }
 
+// Fix highlight on dark background
 .highlight .p { color: #b9caca; }
 .highlight .nl { color: #fffd; }
+
+// Callout numbers
+.conum[data-value] {
+	color: var(--maincolor) !important;
+	background-color: var(--primarycolor);
+}
+
+// Top margin fix
+.sidebarblock > .content > :first-child > :first-child {
+	margin-top: 0;
+}

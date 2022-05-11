@@ -26,7 +26,8 @@ asciidoc: {}
 asciidoctor:
   safe: unsafe
   attributes:
-  - source-highlighter=rouge
+    icons: font
+    source-highlighter: rouge
 
 # Theme
 theme: just-the-docs

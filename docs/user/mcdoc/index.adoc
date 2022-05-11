@@ -1,0 +1,224 @@
+:page-layout: default
+:page-title: Mcdoc
+:page-parent: Home
+:page-nav_order: 1
+
+Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
+
+== Project Structure
+
+The root folder of a mcdoc project must contain a `pack.mcmeta` file and a `mcdoc` folder, where all mcdoc files are stored.
+The file content of `pack.mcmeta` is not concerned by the mcdoc specification.
+
+.File structure
+====
+[source]
+----
+Root/
+	mcdoc/
+		bar/
+			mod.mcdoc
+			qux.mcdoc
+		foo.mcdoc
+	pack.mcmeta
+----
+====
+
+== Syntax
+
+=== Struct
+
+A **struct** defines the schema of a dictionary-like structure containing key-value pairs, like a JSON object or an NBT compound tag.
+Inside the body of the struct definition block, each field is defined in a `Key: <<type,Type>>` format, with commas (`,`) separating fields.
+Trailing commas are allowed.
+If a key is duplicated, only the latest type will be used.
+An optional question mark (`?`) can be added between the key and the colon (`:`) to signal that this field is optional.
+
+.Data pack tag struct
+====
+[source,mcdoc]
+----
+struct Tag {
+	replace?: boolean,
+	values: [string],
+}
+----
+====
+
+The **spread operator** (three dots, `...`) followed by a struct type can be used to reuse fields from another struct.
+When there are multiple types provided for the same key, the latest definition will be used.
+
+.Spread syntax
+====
+[source,mcdoc]
+----
+struct Player {
+	...Mob,
+	abilities: Abilities,
+	CustomName: (), // Overrides `CustomName` from the `Mob` struct.
+}
+----
+====
+
+A pair of angle brackets (`<` and `>`) can be put after the struct identifier to declare **type parameters**.
+
+.Type parameter
+====
+[source,mcdoc]
+----
+struct Tag<V extends string> {
+	replace?: boolean,
+	values: [V],
+}
+----
+====
+
+=== Type
+
+****
+**SYNTAX**
+
+[[syn-type,_Type_]]
+_Type_:: <<syn-attribute>>^?^ <<syn-unattributed-type>>
+
+[[syn-unattributed-type,_UnattributedType_]]
+_UnattributedType_::
+	<<syn-simple-type>> | +
+	<<syn-numeric-type>> | +
+	<<syn-primitive-array-type>> | +
+	<<syn-list-type>> | +
+	<<syn-reference-type>> | +
+	<<syn-indexed-type>> | +
+	<<syn-inline-type>> | +
+	<<syn-union-type>>
+
+[[syn-simple-type,_SimpleType_]]
+_SimpleType_::
+	`any` | +
+	`boolean` | +
+	`string`
+
+[[syn-numeric-type,_NumericType_]]
+_NumericType_::
+	`byte` (`+#+` _IntRange_)^?^ | +
+	`short` (`+#+` _IntRange_)^?^ | +
+	`int` (`+#+` _IntRange_)^?^ | +
+	`long` (`+#+` _IntRange_)^?^ | +
+	`float` (`+#+` _FloatRange_)^?^ | +
+	`double` (`+#+` _FloatRange_)^?^ +
+	The optional range defines the range the value must be in.
+
+[[syn-primitive-array-type,_PrimitiveArrayType_]]
+_PrimitiveArrayType_::
+	`byte` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
+	`int` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
+	`long` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ +
+	The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the array.
+
+[[syn-list-type,_ListType_]]
+_ListType_::
+	`[` <<syn-type>> `]` (`+#+` _UnsignedIntRange_)^?^ +
+	The optional range defines the range of the size of the list.
+
+[[syn-reference-type,_ReferenceType_]]
+_ReferenceType_:: PATH
+
+[[syn-indexed-type,_IndexedType_]]
+_IndexedType_:: (PATH | RESOURCE_LOCATION) <<syn-index>> 
+
+[[syn-index,_Index_]]
+_Index_:: (<<syn-static-index>> | <<syn-dynamic-index>>) <<syn-index>>^?^
+
+[[syn-static-index,_StaticIndex_]]
+_StaticIndex_:: `@` (IDENTIFIER | STRING | RESOURCE_LOCATION)
+
+[[syn-dynamic-index,_DynamicIndex_]]
+_DynamicIndex_:: `@` `[` <<tok-accessor>> `]`
+
+[[syn-inline-type,_InlineType_]]
+_InlineType_::
+	_EnumDefinition_ | +
+	_StructDefinition_
+
+[[syn-union-type,_UnionType_]]
+_UnionType_::
+	`(` `)` | +
+	`(` <<syn-type>> (`|` <<syn-type>>)^*^ `)` +
+	A pair of empty parentheses removes this field definition from the struct.
+
+'''
+
+**SYNTAX (TOKEN)**
+
+[[tok-accessor,ACCESSOR]]
+ACCESSOR:: <<tok-accessor-key>> (`.` <<tok-accessor-key>>)^*^
+
+[[tok-accessor-key,ACCESSOR_KEY]]
+ACCESSOR_KEY:: IDENTIFIER | STRING | `super` | `key`
+
+'''
+
+Indexed types can access a type from a registry or get a field type from an existing struct, both statically (i.e. the writer provides the key literally in the mcdoc file) and dynamically (i.e. the writer specifies a way to get the key from the given data structure at runtime).
+
+.Indices
+====
+[source,mcdoc]
+----
+struct Foo {
+	id: string,
+	cow_data: minecraft:entity@cow, // <1>
+	dynamic_entity_data: minecraft:entity@[id], // <2>
+	command: minecraft:block@command_block@Command, // <3>
+	dynamic_memories: minecraft:entity@[id]@Brain@memories, // <4>
+}
+----
+<1> Static index on a registry.
+<2> Dynamic index on a registry.
+<3> Static index on a registry, followed by a static index on a struct.
+<4> Dynamic index on a registry, followed by two static indices on two structs.
+====
+
+****
+
+
+.Inlined types
+* _EnumDefinition_
+* _StructDefinition_
+
+=== Attribute
+
+****
+**SYNTAX**
+
+[[syn-attribute,_Attribute_]]
+_Attribute_::
+	`+#[+` IDENTIFIER `=` <<syn-attribute-value>> `]` | +
+	`+#[+` IDENTIFIER <<syn-attribute-complex-value>> `]`
+
+[[syn-attribute-value,_Value_]]
+_Value_:: STRING | <<syn-attribute-complex-value>>
+
+[[syn-attribute-complex-value,_ComplexValue_]]
+_ComplexValue_::
+	`(` `)` | +
+	`(` <<syn-attribute-positional-values>> `,`^?^ `)` | +
+	`(` <<syn-attribute-named-values>> `,`^?^ `)` | +
+	`(` <<syn-attribute-positional-values>> `,` <<syn-attribute-named-values>> `,`^?^ `)`
+
+[[syn-attribute-positional-values,_PositionalValues_]]
+_PositionalValues_:: <<syn-attribute-value>> (`,` <<syn-attribute-value>>)^*^
+
+[[syn-attribute-named-values,_NamedValues_]]
+_NamedValues_:: <<syn-attribute-named-value>> (`,` <<syn-attribute-named-value>>)^*^
+
+[[syn-attribute-named-value,_NamedValue_]]
+_NamedValue_:: (IDENTIFIER | STRING) `=` <<syn-attribute-value>>
+****
+
+== Branding
+
+"Mcdoc" is a common noun and should only have its first letter capitalized when it's grammatically required to.
+
+== Credits
+
+The mcdoc format takes heavy inspiration from the https://github.com/Yurihaia/nbtdoc-rs[nbtdoc format] created by https://github.com/Yurihaia[Yurihaia], licensed under the https://github.com/Yurihaia/nbtdoc-rs/blob/master/LICENSE-MIT[MIT License].
