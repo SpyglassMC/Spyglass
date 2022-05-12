@@ -49,8 +49,17 @@ Or if you prefer the command line interface:
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
 
+### Code style
+
+Tabs for indents, spaces for alignment. Except do not align things because the available tooling is unfortunately terrible.
+
 ### Test docs locally
 
 See [Jekyll's documentation](https://jekyllrb.com/docs/#instructions).
+
+## Credits
+
+The original Spyglass logo was provided by [BlackNight0315](https://github.com/BlackNight0315).
+The current logo is provided by [asd988](https://github.com/asd988).
 
 [eslint-extension]: https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint
