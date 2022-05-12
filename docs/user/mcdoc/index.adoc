@@ -88,7 +88,7 @@ _UnattributedType_::
 	<<syn-primitive-array-type>> | +
 	<<syn-list-type>> | +
 	<<syn-reference-type>> | +
-	<<syn-indexed-type>> | +
+	<<syn-registry-index-type>> | +
 	<<syn-inline-type>> | +
 	<<syn-union-type>>
 
@@ -121,19 +121,19 @@ _ListType_::
 	The optional range defines the range of the size of the list.
 
 [[syn-reference-type,_ReferenceType_]]
-_ReferenceType_:: PATH
+_ReferenceType_:: PATH <<syn-index>>^?^
 
-[[syn-indexed-type,_IndexedType_]]
-_IndexedType_:: (PATH | RESOURCE_LOCATION) <<syn-index>> 
+[[syn-registry-index-type,_RegistryIndexType_]]
+_RegistryIndexType_:: RESOURCE_LOCATION <<syn-index>> 
 
 [[syn-index,_Index_]]
-_Index_:: (<<syn-static-index>> | <<syn-dynamic-index>>) <<syn-index>>^?^
+_Index_:: `@` (<<syn-static-index>> | <<syn-dynamic-index>>) <<syn-index>>^?^
 
 [[syn-static-index,_StaticIndex_]]
-_StaticIndex_:: `@` (IDENTIFIER | STRING | RESOURCE_LOCATION)
+_StaticIndex_:: IDENTIFIER | STRING | RESOURCE_LOCATION
 
 [[syn-dynamic-index,_DynamicIndex_]]
-_DynamicIndex_:: `@` `[` <<tok-accessor>> `]`
+_DynamicIndex_:: `[` <<tok-accessor>> `]`
 
 [[syn-inline-type,_InlineType_]]
 _InlineType_::
@@ -158,7 +158,7 @@ ACCESSOR_KEY:: IDENTIFIER | STRING | `super` | `key`
 
 '''
 
-Indexed types can access a type from a registry or get a field type from an existing struct, both statically (i.e. the writer provides the key literally in the mcdoc file) and dynamically (i.e. the writer specifies a way to get the key from the given data structure at runtime).
+Indices can access a type from a registry or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
 
 .Indices
 ====
@@ -179,11 +179,6 @@ struct Foo {
 ====
 
 ****
-
-
-.Inlined types
-* _EnumDefinition_
-* _StructDefinition_
 
 === Attribute
 

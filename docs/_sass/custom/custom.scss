@@ -126,3 +126,14 @@ pre {
 .sidebarblock > .content > :first-child > :first-child {
 	margin-top: 0;
 }
+
+// Link hover fix
+a:focus {
+	color: var(--linkcolor);
+}
+a:hover {
+	color: var(--linkcolor);
+}
+p a > code:hover {
+	color: var(--linkcolor);
+}
