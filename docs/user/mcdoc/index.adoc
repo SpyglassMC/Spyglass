@@ -284,6 +284,7 @@ _UnattributedType_::
 	<<s-numeric-type>> | +
 	<<s-primitive-array-type>> | +
 	<<s-list-type>> | +
+	<<s-tuple-type>> | +
 	<<s-reference-type>> | +
 	<<s-dispatcher-type>> | +
 	<<s-inline-type>> | +
@@ -321,6 +322,11 @@ _PrimitiveArrayType_::
 _ListType_::
 	`[` <<s-type>> `]` (`+#+` _UnsignedIntRange_)^?^ +
 	The optional range defines the range of the size of the list.
+
+[[s-tuple-type,_TupleType_]]
+_TupleType_::
+	`[` <<s-type>> `,` `]` +
+	`[` <<s-type>> (`,` <<s-type>>)^+^ `,`^?^ `]`
 
 [[s-reference-type,_ReferenceType_]]
 _ReferenceType_:: <<t-path>> <<s-index>>^*^
