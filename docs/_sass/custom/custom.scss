@@ -137,3 +137,9 @@ a:hover {
 p a > code:hover {
 	color: var(--linkcolor);
 }
+
+// Code block word wrapping fix
+pre > code {
+	overflow-x: auto;
+	white-space: pre;
+}
