@@ -121,7 +121,7 @@ RESOURCE_LOCATION::
 	A colon (`:`) must exist to disambiguate this from <<t-ident>>. (e.g. `minecraft:foo`, `:foo`)
 
 [[t-res-loc-char,RES_LOC_CHAR]]
-RES_LOC_CHAR:: ++[++`a`-`z` `-` `+_+` `.`++]++
+RES_LOC_CHAR:: ++[++`a`-`z` `0`-`9` `-` `+_+` `.`++]++
 
 [[t-string,STRING]]
 STRING:: `"` ++(++~not~++[++`"` `+\+` <<t-unicode-cc>>++]++ | ++(++`+\+` ++[++`b` `f` `n` `r` `t` `+\+` `"`++]++++))++{star} `"`
@@ -145,9 +145,11 @@ _DispatchStatement_:: `dispatch` <<t-res-loc>> <<s-static-index>>^?^ `to` <<s-ty
 ****
 
 A **dispatcher** can be used to dispatch to a specific type from a given index.
-It is declared by a <<s-dispatch>> and referenced by a <<s-dispatcher-type>>.
+Each case of a dispatcher can be declared by a <<s-dispatch>> and referenced by a <<s-dispatcher-type>>.
 
-Dispatchers are named after <<t-res-loc>>s, so unlike other values in mcdoc that are named after <<t-ident>>s which requires <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
+Dispatchers are named after <<t-res-loc>>s, so unlike other values in mcdoc that are named after <<t-ident>>s which require <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
+When an index is not provided, it refers to the fallback case of the dispatcher, which will be used when a non-existing index is used in a <<s-dispatcher-type>>.
+The default value of the fallback case is `any`.
 
 === Enum
 
@@ -184,6 +186,11 @@ ENUM_VALUE:: <<t-integer>> | <<t-float>> | <<t-string>>
 [[s-struct,_Struct_]]
 _Struct_:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-type-parameter-block>>^?^ <<s-struct-block>>
 
+[[s-type-parameter-block,_TypeParameterBlock_]]
+_TypeParameterBlock_::
+	`<` `>` | +
+	`<` <<t-ident>> (`,` <<t-ident>>){star} `,`^?^ `>`
+
 [[s-struct-block,_StructBlock_]]
 _StructBlock_::
 	`{` `}` | +
@@ -192,7 +199,7 @@ _StructBlock_::
 [[s-struct-field,_StructField_]]
 _StructField_::
 	<<s-prelim>> <<s-struct-key>> `?`^?^ `:` <<s-type>> | +
-	`pass:[...]` <<s-struct-resolvable>>
+	`+...+` <<s-struct-resolvable>>
 
 [[s-struct-key,_StructKey_]]
 _StructKey_::
@@ -204,11 +211,6 @@ _StructKey_::
 _StructResolvable_::
 	<<t-ident>> | +
 	<<s-dispatcher-type>>
-
-[[s-type-parameter-block,_TypeParameterBlock_]]
-_TypeParameterBlock_::
-	`<` `>` | +
-	`<` <<t-ident>> (`,` <<t-ident>>){star} `,`^?^ `>`
 
 ****
 
@@ -227,7 +229,7 @@ struct Tag {
 ----
 ====
 
-The **spread operator** (three dots, `...`) followed by a struct resolvable can be used to reuse fields from another struct.
+The **spread operator** (three dots, `+...+`) followed by a struct resolvable can be used to reuse fields from another struct.
 When there are multiple types provided for the same key, the latest definition will be used.
 
 .Spread syntax
