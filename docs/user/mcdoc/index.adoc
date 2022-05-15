@@ -26,13 +26,136 @@ Root/
 
 == Syntax
 
+=== File Structure
+
+****
+**SYNTAX**
+
+[[s-file,_File_]]
+_File_:: (<<s-dispatch>> | <<s-enum>> | <<s-struct>> | <<s-type-alias>> | <<s-use>> | <<s-inject>>)^*^
+
+****
+
+=== Common Syntax
+
+****
+**SYNTAX**
+
+[[s-doc-comments,_DocComments_]]
+_DocComments_:: <<t-doc-comment>>^*^
+
+[[s-prelim,_Prelim_]]
+_Prelim_:: <<s-doc-comments>> <<s-attributes>>
+
+'''
+**SYNTAX (TOKEN)**
+
+[[t-doc-comment,DOC_COMMENT]]
+DOC_COMMENT:: TBD (e.g. `/// Foo`)
+
+[[t-float,FLOAT]]
+FLOAT:: TBD (e.g. `1`, `1.2`, `1.2e3`)
+
+[[t-empty,EMPTY]]
+EMPTY:: ()
+
+[[t-ident,IDENTIFIER]]
+IDENTIFIER:: TBD (e.g. `Foo`)
+
+[[t-integer,INTEGER]]
+INTEGER:: TBD (e.g. `1`)
+
+[[t-path,PATH]]
+PATH:: TBD (e.g. `Foo`, `super::Foo`, `::root::Foo`)
+
+[[t-resource-location,RESOURCE_LOCATION]]
+RESOURCE_LOCATION:: TBD a colon `:` must exist to disambiguate this from <<t-ident>>. (e.g. `minecraft:foo`, `:foo`)
+
+[[t-string,STRING]]
+STRING:: TBD quoted string (e.g. `"foo"`)
+
+[[t-typed-number,TYPED_NUMBER]]
+TYPED_NUMBER:: TBD (e.g. `1b`, `1s`)
+
+****
+
+=== Dispatcher
+
+****
+**SYNTAX**
+
+[[s-dispatch,_DispatchStatement_]]
+_DispatchStatement_:: `dispatch` <<t-resource-location>> <<s-static-index>>^?^ `to` <<s-type>>
+
+****
+
+
+=== Enum
+
+****
+**SYNTAX**
+
+[[s-enum,_Enum_]]
+_Enum_:: <<s-prelim>> `enum` `(` <<t-enum-type>> `)` <<t-ident>>^?^ <<s-enum-block>>
+
+[[s-enum-block,_EnumBlock_]]
+_EnumBlock_::
+	`{` `}` | +
+	`{` <<s-enum-field>> (`,` <<s-enum-field>>)^*^ `,`^?^ `}`
+
+[[s-enum-field,_EnumField_]]
+_EnumField_:: <<s-prelim>> <<t-ident>> `=` <<t-enum-value>>
+
+'''
+**SYNTAX (TOKEN)**
+
+[[t-enum-type,ENUM_TYPE]]
+ENUM_TYPE:: `byte` | `short` | `int` | `long` | `string` | `float` | `double`
+
+[[t-enum-value,ENUM_VALUE]]
+ENUM_VALUE:: <<t-integer>> | <<t-float>> | <<t-string>>
+
+****
+
 === Struct
 
-A **struct** defines the schema of a dictionary-like structure containing key-value pairs, like a JSON object or an NBT compound tag.
-Inside the body of the struct definition block, each field is defined in a `Key: <<type,Type>>` format, with commas (`,`) separating fields.
-Trailing commas are allowed.
-If a key is duplicated, only the latest type will be used.
-An optional question mark (`?`) can be added between the key and the colon (`:`) to signal that this field is optional.
+****
+**SYNTAX**
+
+[[s-struct,_Struct_]]
+_Struct_:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-type-parameter-block>>^?^ <<s-struct-block>>
+
+[[s-struct-block,_StructBlock_]]
+_StructBlock_::
+	`{` `}` | +
+	`{` <<s-struct-field>> (`,` <<s-struct-field>>)^*^ `,`^?^ `}`
+
+[[s-struct-field,_StructField_]]
+_StructField_::
+	<<s-prelim>> <<s-struct-key>> `?`^?^ `:` <<s-type>> | +
+	`...` <<s-struct-resolvable>>
+
+[[s-struct-key,_StructKey_]]
+_StructKey_::
+	<<t-string>> | +
+	<<t-ident>> | +
+	`[` <<s-type>> `]`
+
+[[s-struct-resolvable,_StructResolvable_]]
+_StructResolvable_::
+	<<t-ident>> | +
+	<<s-dispatcher-type>>
+
+[[s-type-parameter-block,_TypeParameterBlock_]]
+_TypeParameterBlock_::
+	`<` `>` | +
+	`<` <<t-ident>> (`,` <<t-ident>>)^*^ `,`^?^ `>`
+
+****
+
+A **struct** defines the schema of a dictionary-like structure consisting of key-value pairs, like a JSON object or an NBT compound tag.
+If a key is duplicated, the type of the later one will override that of the former one.
+The optional question mark (`?`) between the key and the colon (`:`) can be added to signal that this field is optional.
 
 .Data pack tag struct
 ====
@@ -45,7 +168,7 @@ struct Tag {
 ----
 ====
 
-The **spread operator** (three dots, `...`) followed by a struct type can be used to reuse fields from another struct.
+The **spread operator** (three dots, `...`) followed by a struct resolvable can be used to reuse fields from another struct.
 When there are multiple types provided for the same key, the latest definition will be used.
 
 .Spread syntax
@@ -73,32 +196,111 @@ struct Tag<V extends string> {
 ----
 ====
 
+=== Type Alias
+
+****
+**SYNTAX**
+[[s-type-alias,_TypeAlias_]]
+_TypeAlias_:: <<s-prelim>> `type` <<t-ident>> <<s-type-parameter-block>>^?^ `=` <<s-type>>
+****
+
+=== Use Statement
+
+****
+**SYNTAX**
+[[s-use,_UseStatement_]]
+_UseStatement_:: `export`^?^ `use` <<t-path>> (`as` <<t-ident>>)^?^
+
+****
+
+=== Injection
+
+****
+**SYNTAX**
+[[s-inject,_Injection_]]
+_Injection_:: `inject` (<<s-enum-inject>> | <<s-struct-inject>>)
+
+[[s-enum-inject,_EnumInjection_]]
+_EnumInjection_:: `enum` `(` <<t-enum-type>> `)` <<t-path>> <<s-enum-block>>
+
+[[s-struct-inject,_StructInjection_]]
+_StructInjection_::
+	`struct` <<t-path>> <<s-type-parameter-block>>^?^ <<s-struct-block>> +
+	The type parameter block must be the same as the one on the original definition of the injected struct.
+
+****
+
+=== Attribute
+
+****
+**SYNTAX**
+
+[[s-attributes,_Attributes_]]
+_Attributes_:: <<s-attribute>>^*^
+
+[[s-attribute,_Attribute_]]
+_Attribute_::
+	`+#[+` <<t-ident>> `]` | +
+	`+#[+` <<t-ident>> `=` <<s-type>> `]` | +
+	`+#[+` <<t-ident>> <<s-attribute-tree-value>> `]`
+
+[[s-attribute-value,_Value_]]
+_Value_:: <<s-type>> | <<s-attribute-tree-value>>
+
+[[s-attribute-tree-value,_TreeValue_]]
+_TreeValue_::
+	`(` <<s-attribute-tree-body>>^?^ `)` | +
+	`[` <<s-attribute-tree-body>>^?^ `]` | +
+	`{` <<s-attribute-tree-body>>^?^ `}`
+
+[[s-attribute-tree-body,_TreeBody_]]
+_TreeBody_::
+	<<s-attribute-positional-values>> `,`^?^ | +
+	<<s-attribute-named-values>> `,`^?^ | +
+	<<s-attribute-positional-values>> `,` <<s-attribute-named-values>> `,`^?^
+
+[[s-attribute-positional-values,_PositionalValues_]]
+_PositionalValues_:: <<s-attribute-value>> (`,` <<s-attribute-value>>)^*^
+
+[[s-attribute-named-values,_NamedValues_]]
+_NamedValues_:: <<s-attribute-named-value>> (`,` <<s-attribute-named-value>>)^*^
+
+[[s-attribute-named-value,_NamedValue_]]
+_NamedValue_:: (<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>>
+****
+
 === Type
 
 ****
 **SYNTAX**
 
-[[syn-type,_Type_]]
-_Type_:: <<syn-attribute>>^?^ <<syn-unattributed-type>>
+[[s-type,_Type_]]
+_Type_:: <<s-attribute>>^?^ <<s-unattributed-type>>
 
-[[syn-unattributed-type,_UnattributedType_]]
+[[s-unattributed-type,_UnattributedType_]]
 _UnattributedType_::
-	<<syn-simple-type>> | +
-	<<syn-numeric-type>> | +
-	<<syn-primitive-array-type>> | +
-	<<syn-list-type>> | +
-	<<syn-reference-type>> | +
-	<<syn-registry-index-type>> | +
-	<<syn-inline-type>> | +
-	<<syn-union-type>>
+	<<s-keyword-type>> | +
+	<<s-literal-type>> | +
+	<<s-numeric-type>> | +
+	<<s-primitive-array-type>> | +
+	<<s-list-type>> | +
+	<<s-reference-type>> | +
+	<<s-dispatcher-type>> | +
+	<<s-inline-type>> | +
+	<<s-union-type>>
 
-[[syn-simple-type,_SimpleType_]]
-_SimpleType_::
+[[s-keyword-type,_KeywordType_]]
+_KeywordType_::
 	`any` | +
 	`boolean` | +
 	`string`
 
-[[syn-numeric-type,_NumericType_]]
+[[s-literal-type,_LiteralType_]]
+_LiteralType_::
+	<<t-string>> |
+	<<t-typed-number>>
+
+[[s-numeric-type,_NumericType_]]
 _NumericType_::
 	`byte` (`+#+` _IntRange_)^?^ | +
 	`short` (`+#+` _IntRange_)^?^ | +
@@ -108,57 +310,67 @@ _NumericType_::
 	`double` (`+#+` _FloatRange_)^?^ +
 	The optional range defines the range the value must be in.
 
-[[syn-primitive-array-type,_PrimitiveArrayType_]]
+[[s-primitive-array-type,_PrimitiveArrayType_]]
 _PrimitiveArrayType_::
 	`byte` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
 	`int` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
 	`long` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ +
 	The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the array.
 
-[[syn-list-type,_ListType_]]
+[[s-list-type,_ListType_]]
 _ListType_::
-	`[` <<syn-type>> `]` (`+#+` _UnsignedIntRange_)^?^ +
+	`[` <<s-type>> `]` (`+#+` _UnsignedIntRange_)^?^ +
 	The optional range defines the range of the size of the list.
 
-[[syn-reference-type,_ReferenceType_]]
-_ReferenceType_:: PATH <<syn-index>>^?^
+[[s-reference-type,_ReferenceType_]]
+_ReferenceType_:: <<t-path>> <<s-index>>^*^
 
-[[syn-registry-index-type,_RegistryIndexType_]]
-_RegistryIndexType_:: RESOURCE_LOCATION <<syn-index>> 
+[[s-dispatcher-type,_DispatcherType_]]
+_DispatcherType_:: <<t-resource-location>> <<s-index>>^*^
 
-[[syn-index,_Index_]]
-_Index_:: `@` (<<syn-static-index>> | <<syn-dynamic-index>>) <<syn-index>>^?^
+[[s-index,_Index_]]
+_Index_:: <<s-static-index>> | <<s-dynamic-index>>
 
-[[syn-static-index,_StaticIndex_]]
-_StaticIndex_:: IDENTIFIER | STRING | RESOURCE_LOCATION
+[[s-static-index,_StaticIndex_]]
+_StaticIndex_::
+	`[` <<t-static-index-key>> (`,` <<t-static-index-key>>)^*^ `]` +
+	Multiple keys can be put inside the brackets to access multiple types from the target.
++
+.Access multiple types from a dispatcher
+====
+`minecraft:entity[ender_dragon, wither]` -> Produces a union of the type for the Ender Dragon and the type for the Wither.
+====
 
-[[syn-dynamic-index,_DynamicIndex_]]
-_DynamicIndex_:: `[` <<tok-accessor>> `]`
+[[s-dynamic-index,_DynamicIndex_]]
+_DynamicIndex_:: `[[` <<t-accessor>> `]]`
 
-[[syn-inline-type,_InlineType_]]
+[[s-inline-type,_InlineType_]]
 _InlineType_::
-	_EnumDefinition_ | +
-	_StructDefinition_
+	<<s-enum>> | +
+	<<s-struct>>
 
-[[syn-union-type,_UnionType_]]
+[[s-union-type,_UnionType_]]
 _UnionType_::
-	`(` `)` | +
-	`(` <<syn-type>> (`|` <<syn-type>>)^*^ `)` +
+	`(` `)` <<s-index>>^\*^ | +
+	`(` <<s-type>> (`|` <<s-type>>)^*^ `)` <<s-index>>^*^ +
 	A pair of empty parentheses removes this field definition from the struct.
 
 '''
 
 **SYNTAX (TOKEN)**
 
-[[tok-accessor,ACCESSOR]]
-ACCESSOR:: <<tok-accessor-key>> (`.` <<tok-accessor-key>>)^*^
+[[t-static-index-key,STATIC_INDEX_KEY]]
+STATIC_INDEX_KEY:: <<t-ident>> | <<t-string>> | <<t-resource-location>>
 
-[[tok-accessor-key,ACCESSOR_KEY]]
-ACCESSOR_KEY:: IDENTIFIER | STRING | `super` | `key`
+[[t-accessor,ACCESSOR]]
+ACCESSOR:: <<t-accessor-key>> (`.` <<t-accessor-key>>)^*^
+
+[[t-accessor-key,ACCESSOR_KEY]]
+ACCESSOR_KEY:: <<t-ident>> | <<t-string>> | `super` | `key`
 
 '''
 
-Indices can access a type from a registry or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
+Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
 
 .Indices
 ====
@@ -166,48 +378,18 @@ Indices can access a type from a registry or get a field type from an existing s
 ----
 struct Foo {
 	id: string,
-	cow_data: minecraft:entity@cow, // <1>
-	dynamic_entity_data: minecraft:entity@[id], // <2>
-	command: minecraft:block@command_block@Command, // <3>
-	dynamic_memories: minecraft:entity@[id]@Brain@memories, // <4>
+	cow_data: minecraft:entity[cow], // <1>
+	dynamic_entity_data: minecraft:entity[[id]], // <2>
+	command: minecraft:block[command_block][Command], // <3>
+	dynamic_memories: minecraft:entity[[id]][Brain][memories], // <4>
 }
 ----
-<1> Static index on a registry.
-<2> Dynamic index on a registry.
-<3> Static index on a registry, followed by a static index on a struct.
-<4> Dynamic index on a registry, followed by two static indices on two structs.
+<1> Static index on a dispatcher.
+<2> Dynamic index on a dispatcher.
+<3> Static index on a dispatcher, followed by a static index on a struct.
+<4> Dynamic index on a dispatcher, followed by two static indices on two structs.
 ====
 
-****
-
-=== Attribute
-
-****
-**SYNTAX**
-
-[[syn-attribute,_Attribute_]]
-_Attribute_::
-	`+#[+` IDENTIFIER `=` <<syn-attribute-value>> `]` | +
-	`+#[+` IDENTIFIER <<syn-attribute-complex-value>> `]`
-
-[[syn-attribute-value,_Value_]]
-_Value_:: STRING | <<syn-attribute-complex-value>>
-
-[[syn-attribute-complex-value,_ComplexValue_]]
-_ComplexValue_::
-	`(` `)` | +
-	`(` <<syn-attribute-positional-values>> `,`^?^ `)` | +
-	`(` <<syn-attribute-named-values>> `,`^?^ `)` | +
-	`(` <<syn-attribute-positional-values>> `,` <<syn-attribute-named-values>> `,`^?^ `)`
-
-[[syn-attribute-positional-values,_PositionalValues_]]
-_PositionalValues_:: <<syn-attribute-value>> (`,` <<syn-attribute-value>>)^*^
-
-[[syn-attribute-named-values,_NamedValues_]]
-_NamedValues_:: <<syn-attribute-named-value>> (`,` <<syn-attribute-named-value>>)^*^
-
-[[syn-attribute-named-value,_NamedValue_]]
-_NamedValue_:: (IDENTIFIER | STRING) `=` <<syn-attribute-value>>
 ****
 
 == Branding
