@@ -89,6 +89,10 @@ _DispatchStatement_:: `dispatch` <<t-resource-location>> <<s-static-index>>^?^ `
 
 ****
 
+A **dispatcher** can be used to dispatch to a specific type from a given index.
+It is declared by a <<s-dispatch>> and referenced by a <<s-dispatcher-type>>.
+
+Dispatchers are named after <<t-resource-location>>s, so unlike other values in mcdoc that are named after <<t-ident>>s which requires <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
 
 === Enum
 
@@ -159,7 +163,7 @@ The optional question mark (`?`) between the key and the colon (`:`) can be adde
 
 .Data pack tag struct
 ====
-[source,mcdoc]
+[source,rust]
 ----
 struct Tag {
 	replace?: boolean,
@@ -173,7 +177,7 @@ When there are multiple types provided for the same key, the latest definition w
 
 .Spread syntax
 ====
-[source,mcdoc]
+[source,rust]
 ----
 struct Player {
 	...Mob,
@@ -187,7 +191,7 @@ A pair of angle brackets (`<` and `>`) can be put after the struct identifier to
 
 .Type parameter
 ====
-[source,mcdoc]
+[source,rust]
 ----
 struct Tag<V extends string> {
 	replace?: boolean,
@@ -268,6 +272,39 @@ _NamedValues_:: <<s-attribute-named-value>> (`,` <<s-attribute-named-value>>)^*^
 [[s-attribute-named-value,_NamedValue_]]
 _NamedValue_:: (<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>>
 ****
+
+.Attribute examples (non-final)
+====
+All following examples are *syntactically* legal under the current attribute proposal.
+Which ones should be *semantically* legal, however, is still under debate.
+[source,rust]
+----
+struct Foo {
+	#[id=item]
+	id1: string,
+	id2: #[id=item] string,
+	// id1 and id2 will likely both be supported and have equivalent effects.
+
+	blockStateValue1: (
+		#[serializable] string |
+		byte | short | int | long | float | double
+	),
+	#[serialize_to=string]
+	blockStateValue2: (string | byte | short | int | long | float | double),
+
+	evilUUID1: (
+		#[until("1.16", uuid_string_to_compound)] #[parser=uuid] string |
+		#[until("1.17", uuid_compound_to_array)] MostLeastCompound |
+		int[] # 4
+	),
+	#[history{
+		(#[parser=uuid] string, until="1.16", updater=uuid_string_to_compound),
+		(MostLeastCompound, until="1.17", updater=uuid_compound_to_array),
+	}]
+	evilUUID2: int[] # 4
+}
+----
+====
 
 === Type
 
@@ -380,7 +417,7 @@ Indices can access a type from a dispatcher or get a field type from an existing
 
 .Indices
 ====
-[source,mcdoc]
+[source,rust]
 ----
 struct Foo {
 	id: string,
