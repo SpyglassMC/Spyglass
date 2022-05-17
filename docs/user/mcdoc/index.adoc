@@ -6,31 +6,19 @@
 Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
 
 This document defines:
+
 * The syntax and semantics of the mcdoc format.
 * How mcdoc should be used to validate JSON and NBT values. For NBT values, this document further specifies how they should be validated strictly and loosely.
 
 Although mcdocs may technically be able to describe the format of a lot of other languages, how those languages should be validated by mcdoc is not concerned by this document.
 
-== Project Structure
+== Project root
 
-The upmost folder of a mcdoc project must contain a `pack.mcmeta` file and a `mcdoc` folder, under which all mcdoc files are stored.
-The file content of `pack.mcmeta` is not concerned by the mcdoc specification, although it is typically used by Minecraft: Java Edition to store metadata for resource packs and data packs.
+Normally, the **workspace** (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the **root** of a mcdoc project.
 
-.File structure
-====
-[source]
-----
-Workspace/
-	mcdoc/
-		bar/
-			mod.mcdoc
-			qux.mcdoc
-		foo.mcdoc
-	pack.mcmeta
-----
-====
+If, however, there exists both a file named `pack.mcmeta` and a folder named `mcdoc` under the workspace, the `mcdoc` folder will be considered as the root instead.
 
-== Syntax Syntax
+== Syntax syntax
 
 :plus: pass:n[^pass:[+]^]
 :star: pass:n[^+*+^]
@@ -134,7 +122,7 @@ The text content of a doc comment block should be treated as a MarkDown content,
 /// External tools, like VS Code, may show this block of text when the user hovers over the name "Foo".
 struct Foo {
 	/// This is another doc comment describing the field "Bar".
-	Bar: boolean, // This is just a regular comment because it only starts with two slashes. It won't be shown by VS Code.
+	Bar: boolean, // This is just a regular comment because it only starts with two slashes.
 }
 ----
 ====
@@ -373,10 +361,10 @@ struct *Foo* { // `Foo` is an identifier.
 A path is used to locate a type definition across the mcdoc project.
 A sequence of two colons (`::`) is used as the *path separater*.
 
-If a path starts with the path separater, it is an *absolute path* and will be resolved from the root of all mcdoc files (the `mcdoc` folder -- see also <<project-structure>>).
+If a path starts with the path separater, it is an *absolute path* and will be resolved from the <<project-root>>.
 Otherwise it is a *relative path* and will be resolved from the absolute path of the current file.
 
-The absolute path of a file is determined by connecting the names of all its parent folders and its own name (excluding the `.mcdoc` file extension) with the path separater, prepended by the path separater, with a special case for all files named `mod.mcdoc` -- they will not be part of their path.
+The absolute path of a file is determined by connecting the names of all its parent folders up until the root and the file's own name (excluding the `.mcdoc` file extension) with the path separater, prepended by the path separater, with a special case for files named `mod.mcdoc` -- they will not be part of their paths.
 
 The absolute path of a type definition is the absolute path of the file where it resides joined with the identifier of the type definition by the path separater.
 
@@ -388,20 +376,18 @@ For relative paths, the keyword `super` may be used to move up one level from th
 ====
 [source]
 ----
-Workspace/
-	mcdoc/
-		foo.mcdoc <1>
-		foo/
-			bar.mcdoc <2>
-			mod.mcdoc <3>
-		qux.mcdoc <4>
-	pack.mcmeta
+/
+	foo.mcdoc <1>
+	foo/
+		bar.mcdoc <2>
+		mod.mcdoc <3>
+	qux.mcdoc <4>
 ----
 <1> The absolute path of this file is `::foo`.
 <2> The absolute path of this file is `::foo::bar`.
-<3> The absolute path of this file is `::foo`, as files named `mod.mcdoc` are special. This has the same path as <1>, and as <1> is shallower in the file structure, it is loaded first, meaning <3> is ignored in favor of <1> and a warning should be given.
+<3> The absolute path of this file is `::foo` instead of `::foo::mod`, as files named `mod.mcdoc` are special. This has the same path as <1>, and as <1> is shallower in the file structure, it is loaded first, meaning <3> is ignored in favor of <1> and a warning should be given.
 
-If the content of `Workspace/mcdoc/foo/bar.mcdoc` is
+If the content of `/foo/bar.mcdoc` is
 
 [source,rust]
 ----
@@ -413,12 +399,12 @@ type Bar = super::super::qux::Something <2>
 <2> The absolute path for type alias `Bar` is `::foo::bar::Bar`. +
 The relative path is interpreted as follows:
 +
-. Absolute path of the residing file (`Workspace/mcdoc/foo/bar.mcdoc`) is `::foo::bar`. Given relative path is `super::super::qux::Something`
-. Encounters keyword `super`, moves one level up to `::foo`. Remaining relative path is `super::qux::Something`
+. Absolute path of the residing file (`/foo/bar.mcdoc`) is `::foo::bar`. The given relative path is `super::super::qux::Something`.
+. Encounters keyword `super`, moves one level up to `::foo`. Remaining relative path is `super::qux::Something`.
 . Encounters keyword `super`, moves one level up to `::`. Remaining relative path is `qux::Something`.
 . Encounters identifier `qux`, moves down to `::qux`. Remaining relative path is `Something`.
 . Encounters identifier `Something`, moves down to `::qux::Something`. Relative path has been resolved.
-. The type alias `Bar` therefore points to the type definition named `Something` in file `Workspace/mcdoc/qux.mcdoc`.
+. The type alias `Bar` therefore points to the type definition named `Something` in file `/qux.mcdoc`.
 ====
 
 == File Structure
@@ -826,25 +812,32 @@ NOTE: Under this section, <<procedures,`PascalCase`>> represents a type in the p
 === <<p-Boolean>>
 A boolean value. Either `false` or `true`.
 
+[[p-String,`String`]]
+=== <<p-String>>
+A string value.
+
 [[p-None,`None`]]
 === <<p-None>>
 An abstract representation of an empty value (`null` / `undefined` / `None` / `nil` / `Nothing`, etc.).
 
 [[p-Option,`Option`]]
 === <<p-Option>><``T``>
-An abstract representation of empty value handling for this specification.
+An abstract representation of empty value handling.
 Implementations are free to choose their way of handling empty values.
 
-For the purpose of this specification, an <<p-Option>> is either <<p-None>> or an instance of `T`.
-All operations done on an <<p-Option>> is assumed to be done only when it is an instance of `T`.
+For the purpose of this specification, an <<p-Option>><``T``> is either <<p-None>> or an instance of `T`.
+All operations done on an <<p-Option>><``T``> is assumed to be done only when it is an instance of `T`.
 Its value is kept as <<p-None>> if it's already a <<p-None>>.
 
 === <<t-ident>>
-* [[p-ident-asString,`asString`]] <<t-ident>>.<<p-ident-asString>>(): <<t-string>>. Returns the string representation of the identifier.
+* [[p-ident-asString,`asString`]] <<t-ident>>.<<p-ident-asString>>(): <<p-String>>. Returns the string value of the identifier token.
+
+=== <<t-string>>
+* [[p-string-asString,`asString`]] <<t-string>>.<<p-string-asString>>(): <<p-String>>. Returns the string value of the string token.
 
 === <<t-res-loc>>
-* [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<t-string>>. Returns the full string representation of the resource location. The namespace part should be complete under all circumstances.
-* [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<t-string>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
+* [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<p-String>>. Returns the full string representation of the resource location. The namespace part should always be kept.
+* [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<p-String>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
 
 [[p-DereferencedType,`DereferencedType`]]
 === <<p-DereferencedType>>
@@ -857,10 +850,10 @@ It could be a deserialized JSON data or a deserialized NBT data, for example.
 
 It should support the following basic operations, but it is up to implementations to determine how those operations should work exactly for a specific type of a runtime value:
 
-* [[p-RuntimeValue-asString,`asString`]] <<p-RuntimeValue>>.<<p-RuntimeValue-asString>>(): <<p-Option>><<<t-string>>>. Returns the string value of this runtime value if applicable. Otherwise returns <<p-None>>.
+* [[p-RuntimeValue-asString,`asString`]] <<p-RuntimeValue>>.<<p-RuntimeValue-asString>>(): <<p-Option>><<<p-String>>>. Returns the string value (not the string representation) of this runtime value if applicable. Otherwise returns <<p-None>>.
 * [[p-RuntimeValue-getKeyOnParent,`getKeyOnParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getKeyOnParent>>(): <<p-Option>><<<p-RuntimeValue>>>. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns <<p-None>>.
 * [[p-RuntimeValue-getParent,`getParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getParent>>(): <<p-Option>><<<p-RuntimeValue>>>. Returns the value's parent value if applicable. Otherwise returns <<p-None>>.
-* [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<t-string>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
+* [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<p-String>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
 
 [[p-dereference,`dereference`]]
 === <<p-dereference>> (`_type_`: <<s-type>>): <<p-DereferencedType>>
@@ -878,7 +871,7 @@ This procedure dereferences a <<s-type>>.
 . Destruct `_attributes_`: <<s-attributes>>, `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~, and `_indices_`: <<s-index>>{star} from `_type_`.
 . If `_indices_` is empty, returns `_type_`.
 . For each `_index_`: <<s-index>> of `_indices_`,
-.. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<s-static-index>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
+.. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<t-static-index-key>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
 .. Pattern match `_unattributedType_`, and stores the result to `_resultType_`: <<s-type>>:
 ... <<t-res-loc>> -> TBD
 ... <<s-struct>> -> The type of the field corresponding to key `_index_` on struct `_type_` or an empty union if the field doesn't exist, attributed by `_attributes_`.
@@ -893,7 +886,7 @@ This procedure dereferences a <<s-type>>.
 . Return `_type_`.
 
 [[p-resolveDynamicIndex,`resolveDynamicIndex`]]
-=== <<p-resolveDynamicIndex>> (`_index_`: <<s-dynamic-index>>, `_value_`: <<p-RuntimeValue>>): <<p-Option>><<<t-string>>>
+=== <<p-resolveDynamicIndex>> (`_index_`: <<s-dynamic-index>>, `_value_`: <<p-RuntimeValue>>): <<p-Option>><<<p-String>>>
 . Destruct `_accessor_`: <<t-accessor>> from `_index_`.
 . Destruct `_keys_`: <<t-accessor-key>>{plus} from `_accessor_`.
 . Let `_v_`: <<p-Option>><<<p-RuntimeValue>>> be `_value_`.
@@ -903,7 +896,7 @@ This procedure dereferences a <<s-type>>.
 ... `super` -> set `_v_` to `_v_`.<<p-RuntimeValue-getParent>>().
 ... `key` -> set `_v_` to `_v_`.<<p-RuntimeValue-getKeyOnParent>>().
 ... <<t-ident>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-ident-asString>>()).
-... <<t-string>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`).
+... <<t-string>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-string-asString>>()).
 . Return `_v_`.<<p-RuntimeValue-asString>>().
 
 == Branding
