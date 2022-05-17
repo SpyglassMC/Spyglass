@@ -24,7 +24,6 @@ If, however, there exists both a file named `pack.mcmeta` and a folder named `mc
 :star: pass:n[^+*+^]
 
 Here is the syntax used by this document to describe the syntax of mcdoc -- syntax syntax, if you want to call it that.
-You can safely ignore this section and all blocks titled "`**SYNTAX**`" if you are not interested in writing a parser for the mcdoc language.
 
 [[tb-syntax-syntax]]
 .Syntax syntax
@@ -52,6 +51,8 @@ A token rule syntax cannot have any whitespaces (spaces, tabs, CRs, or LFs) or t
 
 [[parser-rule,parser rule]]
 A parser rule syntax can have whitespaces and <<t-comments>> in between.
+
+All syntax rules should be greedy (i.e. consume as many characters as possible).
 
 == Comments
 
@@ -320,19 +321,16 @@ spyglassmc:bar
 **SYNTAX (TOKEN)**
 
 [[t-ident,IDENTIFIER]]
-<<t-ident>>:: (++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star})~pass:n[except: <<t-keywords>>]~
+<<t-ident>>:: (++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star})~pass:n[except: <<t-reserved-words>>]~
 
-[[t-keywords,KEYWORDS]]
-<<t-keywords>>:: `key` | `super`
+[[t-reserved-words,RESERVED_WORDS]]
+<<t-reserved-words>>:: `any` | `boolean` | `byte` | `double` | `enum` | `false` | `float` | `int` | `key` | `long` | `short` | `string` | `struct` | `super` | `true`
 ****
 
 An identifier is a name given to a type definition in mcdoc.
 It can contain any alphanumeric characters and the underscore (`_`), but must not start with a numeric character (`0`-`9`).
 
-It also must not be named after a list of keywords:
-
-* `key`
-* `super`
+It also must not be named after a list of <<t-reserved-words,reserved words>>.
 
 NOTE: We might extend supported characters for identifiers to any character in the Unicode categories "`Uppercase letter (Lu)`", "`Lowercase letter (Ll)`", "`Titlecase letter (Lt)`", "`Modifier letter (Lm)`", "`Other letter (Lo)`", or "`Letter number (Nl)`" in the future.
 
@@ -407,37 +405,277 @@ The relative path is interpreted as follows:
 . The type alias `Bar` therefore points to the type definition named `Something` in file `/qux.mcdoc`.
 ====
 
-== File Structure
+== Type
 
 ****
 **SYNTAX**
 
-[[s-file,_File_]]
-<<s-file>>:: (<<s-dispatch>> | <<s-enum>> | <<s-struct>> | <<s-type-alias>> | <<s-use>> | <<s-inject>>){star}
+[[s-type,_Type_]]
+<<s-type>>::
+	<<s-attributes>> <<s-unattributed-type>> <<s-index-body>>{star}
 
+[[s-unattributed-type,_UnattributedType_]]
+<<s-unattributed-type>>::
+	<<s-keyword-type>> | +
+	<<s-literal-type>> | +
+	<<s-numeric-type>> | +
+	<<s-primitive-array-type>> | +
+	<<s-list-type>> | +
+	<<s-tuple-type>> | +
+	<<s-enum>> | +
+	<<s-struct>> | +
+	<<t-path>> | +
+	<<s-dispatcher-type>> | +
+	<<s-union-type>>
 ****
 
-An mcdoc is made of dispatch statements, enum definitions, struct definitions, type aliases, use statements, and injections.
+A type is an essential component of the mcdoc format.
+It defines a schema that the actual data value must fit in to be valid.
 
-== Dispatcher
+NOTE: Mcdoc may be used to describe the format of a wide range of data.
+This section will only define how JSON data and SNBT data should be validated.
+
+NOTE: For SNBT validation, a strict mode, a loose mode, and a technically-compliant mode ("`te-co`" for short 🌮) are documented. +
+The strict mode is used when an SNBT value is used as a predicate (e.g. in entity selectors, loot function conditions, etc.). +
+The loose mode is used when an SNBT value is provided for deserialization (e.g. in `/setblock` or `/summon` commands).
+Although some values are technically allowed for a given type (e.g. a compound tag means `false` when it's read as a boolean),
+such cases are beyond a sane person's reasonable expectations and will not be allowed under the loose mode. +
+The te-co mode, however, allows such bizarre values.
+
+=== `any` type
 
 ****
 **SYNTAX**
 
-[[s-dispatch,_DispatchStatement_]]
-<<s-dispatch>>:: `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
-
+[[s-keyword-type,_KeywordType_]]
+<<s-keyword-type>>::
+	`any` | +
+	`boolean` | +
+	`string`
 ****
 
-A **dispatcher** can be used to dispatch to a specific type from a given index.
-Each case of a dispatcher can be declared by a <<s-dispatch>>.
+The `any` type serves as the top type of mcdoc's type system.
+Any another types, including `any` itself, are assignable to `any`.
+`any` can only be assigned to `any`.
 
-Dispatchers are named after <<t-res-loc>>s, so unlike other values in mcdoc that are named after <<t-ident>>s which require <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
+.Valid values for the `any` type
+|===
+|Format |Valid values
 
-When a non-existing index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a fallback case at runtime.
-The union is marked with the "nonexhaustive" metadata.
+|JSON |Any values
+|SNBT (all modes) |Any values
+|===
 
-== Enum
+=== `boolean` type
+
+The `boolean` type indicates a boolean value (`false` or `true`) is expected.
+
+.Valid values for the `boolean` type
+|===
+|Format |Valid values |Notes
+
+|JSON |`false`, `true` |-
+|SNBT (strict) |`false`, `true`, `0b`, `1b` |NBT doesn't have real boolean values -- it uses byte numbers for that purpose instead. `false` and `true` are simply aliases for `0b` and `1b`, respectively.
+|SNBT (loose) |Any numeric values of `0` or `1` |-
+|SNBT (te-co) |Any values |[[x-NbtCompound-getBoolean]] Per method `net/minecraft/nbt/NbtCompound#getBoolean` (yarn mappings), any NBT values can be read as a boolean. A non-numeric value is equivalent to `false`, while a numeric value is false if and only if it is a `0` after being converted to a byte number.
+|===
+
+=== `string` type
+
+The `string` type indicates a string value is expected.
+
+.Valid values for the `boolean` type
+|===
+|Format |Valid values |Notes
+
+|JSON |String values |-
+|SNBT (strict and loose) |String values |-
+|SNBT (te-co) |Any values |[[x-NbtElement-asString]] Per method `net/minecraft/nbt/NbtElement-asString` (yarn mappings), any NBT values can be read as a string. String tags have their string values as the result, while other tags have their string representation as the result.
+|===
+
+=== Literal boolean type
+
+****
+**SYNTAX**
+
+[[s-literal-type,_LiteralType_]]
+<<s-literal-type>>:: `false` | `true` | <<t-string>> | <<t-typed-number>>
+****
+
+A literal boolean type is one of the two boolean values (`false` and `true`) that the data must match to be valid.
+
+.Literal string types
+====
+[source,rust]
+----
+false
+true
+----
+====
+
+.Valid values for a literal boolean type
+|===
+|Format |Valid values
+
+|JSON |`false` if the type is `false`; `true` is the type is `true`
+|SNBT (strict) |`false` or `0b` if the type is `false`; `true` or `1b` if the type is `true`
+|SNBT (loose) |Any numeric values of `0` if the type is `false`; any numeric values of `1` if the type is `true`
+|SNBT (te-co) |Any values that match the type after being <<x-NbtCompound-getBoolean,converted to a boolean>>
+|===
+
+=== Literal string type
+
+A literal string type is a string value the data must match literally to be valid.
+
+.Literal string types
+====
+[source,rust]
+----
+""
+"foobar"
+----
+====
+
+.Valid values for a literal string type
+|===
+|Format |Valid values
+
+|JSON |String values that have the same value as the string literal
+|SNBT (strict and loose) |String values that have the same value as the string literal
+|SNBT (te-co) |Any values that when <<x-NbtElement-asString,converted to string>> is the same as the string literal
+|===
+
+=== Literal number type
+
+A literal number type includes a numeric value and a type the data must match literally to be valid.
+
+.Literal number types
+====
+[source,rust]
+----
+-1
+1.2f
+42L
+----
+====
+
+.Valid values for a literal number type
+|===
+|Format |Valid values |Notes
+
+|JSON |Number values that have the same numeric value as the number literal |JSON only has one number type, so the type part of a literal number type is not checked.
+|SNBT (strict) |Number values that have the same numeric value and the same type as the number literal |-
+|SNBT (loose) |Number values that have the same numeric value as the number literal |-
+|SNBT (te-co) |Actually I gave up on documenting this mode. Good luck |-
+|===
+
+=== Numeric type
+
+****
+**SYNTAX**
+
+[[s-numeric-type,_NumericType_]]
+<<s-numeric-type>>::
+	`byte` (`+#+` <<t-int-range>>)^?^ | +
+	`short` (`+#+` <<t-int-range>>)^?^ | +
+	`int` (`+#+` <<t-int-range>>)^?^ | +
+	`long` (`+#+` <<t-int-range>>)^?^ | +
+	`float` (`+#+` <<t-float-range>>)^?^ | +
+	`double` (`+#+` <<t-float-range>>)^?^
+****
+
+A numeric type indicates the data must be of that type to be valid.
+If the optional <<number-range,range>> is provided, then the data must also fit into that range.
+
+.Numeric types
+====
+[source,rust]
+----
+byte
+short#1..
+float # 4.2..9.1
+----
+====
+
+=== Primitive array type
+
+****
+**SYNTAX**
+
+[[s-primitive-array-type,_PrimitiveArrayType_]]
+<<s-primitive-array-type>>::
+	`byte` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
+	`int` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
+	`long` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^
+****
+
+A primitive array type indicates the data must be a collection of certain numeric values.
+The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the collection.
+
+.Primitive array types
+====
+[source,rust]
+----
+byte[]              // A collection of bytes.
+byte#0..1[]         // A collection of bytes 0 or 1.
+int[] # 4           // A collection of 4 integers.
+long#0..[] # 3..    // A collection of 3 or more non-negative longs.
+----
+====
+
+=== List type
+
+****
+**SYNTAX**
+
+[[s-list-type,_ListType_]]
+<<s-list-type>>:: `[` <<s-type>> `]` (`+#+` <<t-int-range>>)^?^
+****
+
+A list type indicates the data must be a collection of a certain other type.
+The optional range defines the range of the size of the collection.
+
+.List types
+====
+[source,rust]
+----
+[byte]          // A collection of bytes.
+[[string]]      // A collection of collections of strings.
+[struct Foo {}] // A collection of structs.
+----
+====
+
+NOTE: Unlike NBT, JSON doesn't distinguish between primitive arrays and lists -- it only has an array type.
+Therefore, `byte[]` and `[byte]` means essentially the same thing for JSON validation.
+
+=== Tuple type
+
+****
+**SYNTAX**
+
+[[s-tuple-type,_TupleType_]]
+<<s-tuple-type>>::
+	`[` <<s-type>> `,` `]` +
+	`[` <<s-type>> (`,` <<s-type>>){plus} `,`^?^ `]`
+****
+
+A tuple type indicates the data must be a collection of certain other types arranged in a specified order.
+
+To distinguish a tuple type containing only one element from a list type, a trailing comma (`,`) needs to be added after the type.
+Alternatively, you can also use a list type with size `1` to represent a tuple with one element (e.g. `[byte] # 1`).
+
+.Tuple types
+====
+[source,rust]
+----
+[byte,]             // A tuple of a byte.
+[string, boolean]   // A tuple of a string followed by a boolean.
+----
+====
+
+NOTE: Tuple types are generally not useful for NBT structures, as NBT doesn't have collections of mixed types.
+
+=== Enum
 
 ****
 **SYNTAX**
@@ -463,21 +701,25 @@ The union is marked with the "nonexhaustive" metadata.
 <<t-enum-value>>::
 	<<t-typed-number>> | <<t-string>> +
 	Although <<t-typed-number>> is expected as the value for enums, the user can write the numbers without the proper suffixes as the mcdoc interpreter is able to infer the proper type from the enum definition.
-
 ****
 
-== Struct
+TODO
+
+=== Struct
 
 ****
 **SYNTAX**
 
 [[s-struct,_Struct_]]
-<<s-struct>>:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-type-parameter-block>>^?^ <<s-struct-block>>
+<<s-struct>>:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-type-param-block>>^?^ <<s-struct-block>>
 
-[[s-type-parameter-block,_TypeParameterBlock_]]
-<<s-type-parameter-block>>::
+[[s-type-param-block,_TypeParamBlock_]]
+<<s-type-param-block>>::
 	`<` `>` | +
-	`<` <<t-ident>> (`,` <<t-ident>>){star} `,`^?^ `>`
+	`<` <<s-type-param>> (`,` <<s-type-param>>){star} `,`^?^ `>`
+
+[[s-type-param,_TypeParam_]]
+<<s-type-param>>:: <<t-ident>> (`extends` <<t-path>>)^?^
 
 [[s-struct-block,_StructBlock_]]
 <<s-struct-block>>::
@@ -495,12 +737,11 @@ The union is marked with the "nonexhaustive" metadata.
 	<<t-string>> | +
 	<<t-ident>> | +
 	`[` <<s-type>> `]`
-
 ****
 
 A **struct** defines the schema of a dictionary-like structure consisting of key-value pairs, like a JSON object or an NBT compound tag.
 If a key is duplicated, the type of the later one will override that of the former one.
-The optional question mark (`?`) between the key and the colon (`:`) can be added to signal that this field is optional.
+A question mark (`?`) can be added between the key and the colon (`:`) to indicate an optional field.
 
 .Data pack tag struct
 ====
@@ -513,22 +754,21 @@ struct Tag {
 ----
 ====
 
-The **spread operator** (three dots, `+...+`) followed by a struct resolvable can be used to reuse fields from another struct.
-When there are multiple types provided for the same key, the latest definition will be used.
+The **spread operator** (three dots, `+...+`) followed by a struct type can be used to reuse fields from another struct.
 
 .Spread syntax
 ====
-[source,rust]
+[source,rust,subs="+quotes"]
 ----
 struct Player {
-	...Mob,
+	...Mob, // Reuse fields from the `Mob` struct here.
 	abilities: Abilities,
-	CustomName: (), // Overrides `CustomName` from the `Mob` struct.
+	CustomName: (), // Overrides `CustomName` from the `Mob` struct to an empty union.
 }
 ----
 ====
 
-A pair of angle brackets (`<` and `>`) can be put after the struct identifier to declare **type parameters**.
+A pair of angle brackets (`<` and `>`) can be put after the struct identifier to declare **type parameters**, which should be passed in when the struct is referenced.
 
 .Type parameter
 ====
@@ -538,16 +778,127 @@ struct Tag<V extends string> {
 	replace?: boolean,
 	values: [V],
 }
+
+type BlockTag = Tag<#[id=block] string>
+type EntityTypeTag = Tag<#[id=entity_type] string>
+type FunctionTag = Tag<#[id=function] string>
+type ItemTag = Tag<#[id=item] string>
 ----
 ====
+
+=== Dispatcher type
+
+****
+**SYNTAX**
+
+[[s-dispatcher-type,_DispatcherType_]]
+<<s-dispatcher-type>>:: <<t-res-loc>> <<s-index-body>>^?^
+****
+
+TODO
+
+The <<dispatcher-fallback-case,fallback case>> is used when the index is omitted.
+
+=== Union type
+
+****
+**SYNTAX**
+
+[[s-union-type,_UnionType_]]
+<<s-union-type>>::
+	`(` `)` | +
+	`(` <<s-type>> (`|` <<s-type>>){star} `|`^?^ `)` +
+	A pair of empty parentheses removes this field definition from the struct.kk
+****
+
+TODO
+
+=== Indexing on a type
+
+****
+**SYNTAX**
+
+[[s-index-body,_IndexBody_]]
+<<s-index-body>>:: `[` <<s-index>> (`,` <<s-index>>){star} `,`^?^ `]` +
+Multiple indices can be put inside the brackets to access multiple types from the target.
++
+.Access multiple types from a dispatcher
+====
+`minecraft:entity[ender_dragon, wither]` -> Produces a union of the type for the ender dragon and the type for the wither.
+
+`minecraft:entity[[id], allay]` -> Produces a union of the type for the entity at `id` dynamically and the allay.
+====
+
+[[s-index,_Index_]]
+<<s-index>>:: <<t-static-index-key>> | <<s-dynamic-index>> +
+
+[[s-dynamic-index,_DynamicIndex_]]
+<<s-dynamic-index>>:: `[` <<t-accessor>> `]`
+
+'''
+
+**SYNTAX (TOKEN)**
+
+[[t-static-index-key,STATIC_INDEX_KEY]]
+<<t-static-index-key>>:: `()` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
+
+[[t-accessor,ACCESSOR]]
+<<t-accessor>>:: <<t-accessor-key>> (`.` <<t-accessor-key>>){star}
+
+[[t-accessor-key,ACCESSOR_KEY]]
+<<t-accessor-key>>:: <<t-ident>> | <<t-string>> | `super` | `key`
+****
+
+Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
+
+.Indices
+====
+[source,rust]
+----
+struct Foo {
+	id: string,
+	cow_data: minecraft:entity[cow], // <1>
+	dynamic_entity_data: minecraft:entity[[id]], // <2>
+	command: minecraft:block[command_block][Command], // <3>
+	dynamic_memories: minecraft:entity[[id]][Brain][memories], // <4>
+}
+----
+<1> Static index on a dispatcher.
+<2> Dynamic index on a dispatcher.
+<3> Static index on a dispatcher, followed by a static index on a struct.
+<4> Dynamic index on a dispatcher, followed by two static indices on two structs.
+====
+
+TODO
+
+=== Assignability
+
+The assignability of types are detailed by <<p-isAssignable>>.
+
+In short, types in mcdoc can be think of as sets. `any` is the largest set that contains all other types, and an empty union (`()`) is the empty set.
+
+== File Structure
+
+****
+**SYNTAX**
+
+[[s-file,_File_]]
+<<s-file>>:: (<<s-struct>> | <<s-enum>> | <<s-type-alias>> | <<s-use>> | <<s-inject>> | <<s-dispatch>>){star}
+
+****
+
+An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliases>>, <<use-statement,use statements>>, <<injection,injections>>, and <<dispatch-statement,dispatch statements>>.
 
 == Type Alias
 
 ****
 **SYNTAX**
+
 [[s-type-alias,_TypeAlias_]]
-<<s-type-alias>>:: <<s-prelim>> `type` <<t-ident>> <<s-type-parameter-block>>^?^ `=` <<s-type>>
+<<s-type-alias>>:: <<s-prelim>> `type` <<t-ident>> <<s-type-param-block>>^?^ `=` <<s-type>>
 ****
+
+TODO
 
 == Use Statement
 
@@ -555,8 +906,9 @@ struct Tag<V extends string> {
 **SYNTAX**
 [[s-use,_UseStatement_]]
 <<s-use>>:: `export`^?^ `use` <<t-path>> (`as` <<t-ident>>)^?^
-
 ****
+
+TODO
 
 == Injection
 
@@ -570,10 +922,32 @@ struct Tag<V extends string> {
 
 [[s-struct-inject,_StructInjection_]]
 <<s-struct-inject>>::
-	`struct` <<t-path>> <<s-type-parameter-block>>^?^ <<s-struct-block>> +
+	`struct` <<t-path>> <<s-type-param-block>>^?^ <<s-struct-block>> +
 	The type parameter block must be the same as the one on the original definition of the injected struct.
+****
+
+TODO
+
+== Dispatcher
 
 ****
+**SYNTAX**
+
+[[s-dispatch,_DispatchStatement_]]
+<<s-dispatch>>:: `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
+****
+
+A **dispatcher** can be used to dispatch to a specific type from a given index.
+Each case of a dispatcher can be declared by a <<s-dispatch>> and accessed by a <<s-dispatcher-type>>.
+
+Dispatchers are named after <<resource-location>>s, so unlike other values in mcdoc that are named after <<identifier>>s which require <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
+
+[[dispatcher-fallback-case]]
+.Fallback case
+When an unknown index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a **fallback case** at runtime.
+The union is marked with the "nonexhaustive" metadata.
+
+TODO
 
 == Attribute
 
@@ -646,163 +1020,6 @@ struct Foo {
 }
 ----
 ====
-
-== Type
-
-A type is an essential part of the mcdoc format.
-It defines a schema that the actual data value must fit in to be valid.
-
-NOTE: Mcdoc may be used to describe the format of a wide range of data.
-This section will only define how JSON data and SNBT data should be validated.
-
-****
-**SYNTAX**
-
-[[s-type,_Type_]]
-<<s-type>>::
-	<<s-attributes>> <<s-unattributed-type>> <<s-index-body>>{star}
-
-[[s-unattributed-type,_UnattributedType_]]
-<<s-unattributed-type>>::
-	<<s-keyword-type>> | +
-	<<s-literal-type>> | +
-	<<s-numeric-type>> | +
-	<<s-primitive-array-type>> | +
-	<<s-list-type>> | +
-	<<s-tuple-type>> | +
-	<<t-path>> | +
-	<<t-res-loc>> | +
-	<<s-inline-type>> | +
-	<<s-union-type>>
-****
-
-=== `boolean` type
-****
-**SYNTAX**
-
-[[s-keyword-type,_KeywordType_]]
-<<s-keyword-type>>::
-	`any` | +
-	`boolean` | +
-	`string`
-****
-
-The `boolean` type indicates a boolean value (`false` or `true`) is expected.
-
-.Valid values for the `boolean` type
-|===
-|Format |Examples |Notes
-
-|JSON |`false`, `true` |-
-|SNBT (strict) |`false`, `true`, `0b`, `1b` |NBT doesn't have real boolean values -- it uses byte numbers for that purpose instead. `false` and `true` are simply aliases for `0b` and `1b`, respectively.
-|SNBT (loose) |`false`, `true`, `0b`, `1b`, `0`, `1`, `2s`, `1.7` ... |Per method `net/minecraft/nbt/NbtCompound#getBoolean` (yarn mappings), any NBT values can be read as a boolean. A non-numeric value is equivalent to `false`, while a numeric value is false if and only if it is a `0` after being converted to a byte number.
-|===
-
-=== Indexing on a type
-
-****
-**SYNTAX**
-
-[[s-index-body,_IndexBody_]]
-<<s-index-body>>:: `[` <<s-index>> (`,` <<s-index>>){star} `,`^?^ `]` +
-Multiple indices can be put inside the brackets to access multiple types from the target.
-+
-.Access multiple types from a dispatcher
-====
-`minecraft:entity[ender_dragon, wither]` -> Produces a union of the type for the ender dragon and the type for the wither.
-
-`minecraft:entity[[id], allay]` -> Produces a union of the type for the entity at `id` dynamically and the allay.
-====
-
-[[s-index,_Index_]]
-<<s-index>>:: <<t-static-index-key>> | <<s-dynamic-index>> +
-
-[[s-dynamic-index,_DynamicIndex_]]
-<<s-dynamic-index>>:: `[` <<t-accessor>> `]`
-
-'''
-
-**SYNTAX (TOKEN)**
-
-[[t-static-index-key,STATIC_INDEX_KEY]]
-<<t-static-index-key>>:: <<t-ident>> | <<t-string>> | <<t-res-loc>>
-
-[[t-accessor,ACCESSOR]]
-<<t-accessor>>:: <<t-accessor-key>> (`.` <<t-accessor-key>>){star}
-
-[[t-accessor-key,ACCESSOR_KEY]]
-<<t-accessor-key>>:: <<t-ident>> | <<t-string>> | `super` | `key`
-****
-
-****
-**SYNTAX**
-
-[[s-literal-type,_LiteralType_]]
-<<s-literal-type>>::
-	<<t-string>> |
-	<<t-typed-number>>
-
-[[s-numeric-type,_NumericType_]]
-<<s-numeric-type>>::
-	`byte` (`+#+` <<t-int-range>>)^?^ | +
-	`short` (`+#+` <<t-int-range>>)^?^ | +
-	`int` (`+#+` <<t-int-range>>)^?^ | +
-	`long` (`+#+` <<t-int-range>>)^?^ | +
-	`float` (`+#+` <<t-float-range>>)^?^ | +
-	`double` (`+#+` <<t-float-range>>)^?^ +
-	The optional range defines the range the value must be in.
-
-[[s-primitive-array-type,_PrimitiveArrayType_]]
-<<s-primitive-array-type>>::
-	`byte` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
-	`int` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
-	`long` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ +
-	The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the array.
-
-[[s-list-type,_ListType_]]
-<<s-list-type>>::
-	`[` <<s-type>> `]` (`+#+` <<t-int-range>>)^?^ +
-	The optional range defines the range of the size of the list.
-
-[[s-tuple-type,_TupleType_]]
-<<s-tuple-type>>::
-	`[` <<s-type>> `,` `]` +
-	`[` <<s-type>> (`,` <<s-type>>){plus} `,`^?^ `]`
-
-[[s-inline-type,_InlineType_]]
-<<s-inline-type>>::
-	<<s-enum>> | +
-	<<s-struct>>
-
-[[s-union-type,_UnionType_]]
-<<s-union-type>>::
-	`(` `)` | +
-	`(` <<s-type>> (`|` <<s-type>>){star} `)` +
-	A pair of empty parentheses removes this field definition from the struct.
-
-'''
-
-Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
-
-.Indices
-====
-[source,rust]
-----
-struct Foo {
-	id: string,
-	cow_data: minecraft:entity[cow], // <1>
-	dynamic_entity_data: minecraft:entity[[id]], // <2>
-	command: minecraft:block[command_block][Command], // <3>
-	dynamic_memories: minecraft:entity[[id]][Brain][memories], // <4>
-}
-----
-<1> Static index on a dispatcher.
-<2> Dynamic index on a dispatcher.
-<3> Static index on a dispatcher, followed by a static index on a struct.
-<4> Dynamic index on a dispatcher, followed by two static indices on two structs.
-====
-
-****
 
 == Procedures
 
