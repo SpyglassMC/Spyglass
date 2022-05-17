@@ -16,7 +16,6 @@
 		"strict": true,
 
 		"pretty": true,
-		"noEmitOnError": true,
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true,
