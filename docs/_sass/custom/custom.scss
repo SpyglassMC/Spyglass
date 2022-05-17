@@ -149,3 +149,8 @@ pre > code {
 	overflow-x: auto;
 	white-space: pre;
 }
+
+// Table font size fix
+td, th {
+	font-size: 1rem !important;
+}

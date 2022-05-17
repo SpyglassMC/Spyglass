@@ -5,16 +5,22 @@
 
 Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
 
+This document defines:
+* The syntax and semantics of the mcdoc format.
+* How mcdoc should be used to validate JSON and NBT values. For NBT values, this document further specifies how they should be validated strictly and loosely.
+
+Although mcdocs may technically be able to describe the format of a lot of other languages, how those languages should be validated by mcdoc is not concerned by this document.
+
 == Project Structure
 
-The root folder of a mcdoc project must contain a `pack.mcmeta` file and a `mcdoc` folder, where all mcdoc files are stored.
-The file content of `pack.mcmeta` is not concerned by the mcdoc specification.
+The upmost folder of a mcdoc project must contain a `pack.mcmeta` file and a `mcdoc` folder, under which all mcdoc files are stored.
+The file content of `pack.mcmeta` is not concerned by the mcdoc specification, although it is typically used by Minecraft: Java Edition to store metadata for resource packs and data packs.
 
 .File structure
 ====
 [source]
 ----
-Root/
+Workspace/
 	mcdoc/
 		bar/
 			mod.mcdoc
@@ -24,10 +30,13 @@ Root/
 ----
 ====
 
-== Syntax
+== Syntax Syntax
 
 :plus: pass:n[^pass:[+]^]
 :star: pass:n[^+*+^]
+
+Here is the syntax used by this document to describe the syntax of mcdoc -- syntax syntax, if you want to call it that.
+You can safely ignore this section and all blocks titled "`**SYNTAX**`" if you are not interested in writing a parser for the mcdoc language.
 
 [[tb-syntax-syntax]]
 .Syntax syntax
@@ -46,8 +55,8 @@ Root/
 |A~pass:n[except: B]~ |A except B
 |A~pass:n[lookahead: B]~ |A followed by B, but only consumes A
 |A~pass:n[nochild: B]~ |A but B should not be a child of it
-|<<tb-syntax-syntax,NAME>> |A referenced <<token-rule>>
-|<<tb-syntax-syntax,_Name_>> |A referenced <<parser-rule>>
+|<<token-rule,NAME>> |A referenced <<token-rule>>
+|<<parser-rule,_Name_>> |A referenced <<parser-rule>>
 |===
 
 [[token-rule,token rule]]
@@ -56,25 +65,9 @@ A token rule syntax cannot have any whitespaces (spaces, tabs, CRs, or LFs) or t
 [[parser-rule,parser rule]]
 A parser rule syntax can have whitespaces and <<t-comments>> in between.
 
-=== File Structure
+== Comments
 
 ****
-**SYNTAX**
-
-[[s-file,_File_]]
-<<s-file>>:: (<<s-dispatch>> | <<s-enum>> | <<s-struct>> | <<s-type-alias>> | <<s-use>> | <<s-inject>>){star}
-
-****
-
-=== Common Syntax
-
-****
-**SYNTAX**
-
-[[s-prelim,_Prelim_]]
-<<s-prelim>>:: <<t-doc-comments>> <<s-attributes>>
-
-'''
 **SYNTAX (TOKEN)**
 
 [[t-comments,COMMENTS]]
@@ -88,12 +81,95 @@ A parser rule syntax can have whitespaces and <<t-comments>> in between.
 
 [[t-eof,EOF]]
 <<t-eof>>:: End of file.
+****
+
+Comments can be used in mcdoc to write information that can be seen only by other users viewing/editing your mcdoc files.
+They are ignored by a mcdoc interpreter.
+
+To write a comment, simply put down two forward slashes (`//`) -- everything following them, until the end of the line, is treated as part of the comment.
+They can be put anywhere where a whitespace is allowed.
+Comments, however, cannot start with triple slashes (`///`), as that's reserved for <<doc-comments>>.
+
+.Comments
+====
+[source,rust]
+----
+// This is a comment.
+struct Foo {
+	Bar: boolean, // This is another one.
+}
+----
+====
+
+== Doc comments
+
+****
+**SYNTAX**
+
+[[s-prelim,_Prelim_]]
+<<s-prelim>>:: <<t-doc-comments>> <<s-attributes>>
+
+'''
+
+**SYNTAX (TOKEN)**
 
 [[t-doc-comments,DOC_COMMENTS]]
 <<t-doc-comments>>:: <<t-doc-comment>>{star}
 
 [[t-doc-comment,DOC_COMMENT]]
 <<t-doc-comment>>:: `///` (~not~<<t-eol>>){star} (<<t-eol>> | <<t-eof>>)
+****
+
+Doc comments are similar to comments syntax-wise -- they start with triple slashes (`///`) instead.
+A block of doc comments can provide human-readable documentation for the component right after it to users of your mcdoc files.
+Unlike regular comments, doc comments can only be put in front of enum definitions, enum fields, struct definitions, struct fields, and type aliases, as part of <<prelim>>s.
+
+The text content of a doc comment block should be treated as a MarkDown content, with the leading triple slashes stripped.
+
+.Doc comments
+====
+[source,rust]
+----
+/// This doc comment describes the struct Foo.
+/// External tools, like VS Code, may show this block of text when the user hovers over the name "Foo".
+struct Foo {
+	/// This is another doc comment describing the field "Bar".
+	Bar: boolean, // This is just a regular comment because it only starts with two slashes. It won't be shown by VS Code.
+}
+----
+====
+
+TIP: As the content of a doc comment block is treated as MarkDown, certain characters might have special meaning.
+For example, if you write `<foo>` inside the doc comment, it might disappear when being shown to a user, as it may get interperted as an XML tag by a MarkDown parser.
+Escaping those special characters with a backslash (`\`) (e.g. `\<foo>`) will fix this.
+
+== Integer
+
+****
+**SYNTAX (TOKEN)**
+
+[[t-integer,INTEGER]]
+<<t-integer>>::
+	`0` | +
+	++[++`-` `pass:[+]`++]++^?^ ++[++`1`-`9`++]++ ++[++`0`-`9`++]++{star}
+****
+
+An integer represents a whole number.
+
+.Integers
+====
+[source,rust]
+----
+0
++123
+-456
+----
+====
+
+== Float
+
+****
+**SYNTAX (TOKEN)**
 
 [[t-float,FLOAT]]
 <<t-float>>::
@@ -102,59 +178,280 @@ A parser rule syntax can have whitespaces and <<t-comments>> in between.
 
 [[t-float-exp,FLOAT_EXPONENT]]
 <<t-float-exp>>:: ++[++`e` `E`++]++ ++[++`-` `pass:[+]`++]++^?^ ++[++`0`-`9`++]++{plus}
+****
 
-[[t-ident,IDENTIFIER]]
-<<t-ident>>:: ++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star}
+A float represents a decimal number.
+Scientific notation may be used with the letter `e` (case-insensitive).
 
-[[t-integer,INTEGER]]
-<<t-integer>>::
-	`0` | +
-	++[++`-` `pass:[+]`++]++^?^ ++[++`1`-`9`++]++ ++[++`0`-`9`++]++{star}
+.Floats
+====
+[source,rust,subs="+quotes"]
+----
+1
++1.2
+-1.2e3 // -1.2×10^3^
+----
+====
 
-[[t-path,PATH]]
-<<t-path>>:: (`::`)^?^ <<t-path-seg>> (`::` <<t-path-seg>>){star}
+== Typed Number
 
-[[t-path-seg,PATH_SEGMENT]]
-<<t-path-seg>>:: <<t-ident>> | `super`
+****
+**SYNTAX (TOKEN)**
 
-[[t-res-loc,RESOURCE_LOCATION]]
-<<t-res-loc>>::
-	<<t-res-loc-char>>{star} `:` <<t-res-loc-char>>{star} (`/` <<t-res-loc-char>>{star}){star} +
-	A colon (`:`) must exist to disambiguate this from <<t-ident>>. (e.g. `minecraft:foo`, `:foo`)
+[[t-typed-number,TYPED_NUMBER]]
+<<t-typed-number>>::
+	<<t-integer>> ++[++`b` `B` `l` `L` `s` `S`++]++^?^ | +
+	<<t-float>> ++[++`d` `D` `f` `F`++]++^?^
+****
 
-[[t-res-loc-char,RES_LOC_CHAR]]
-<<t-res-loc-char>>:: ++[++`a`-`z` `0`-`9` `-` `+_+` `.`++]++
+A typed number is similar to a number used in SNBTs syntax-wise.
+It's a normal number followed by a suffix indicating its type:
+
+.Suffix table
+|===
+|Suffix (case-insensitive) |Type
+
+|`b` |Byte
+|`s` |Short
+|`L` |Long
+|`f` |Float
+|`d` |Double
+|(No suffix, integer) |Integer
+|(No suffix, decimal) |Double
+|===
+
+.Typed numbers
+====
+[source,rust]
+----
+1b      // Byte 1
+1       // Integer 1
+1.2     // Double 1.2
+1.2d    // Double 1.2
+1.2e1f  // Float 12
+----
+====
+
+== Number range
+
+****
+**SYNTAX (TOKEN)**
+
+[[t-float-range,FLOAT_RANGE]]
+<<t-float-range>>::
+	`+..+`^?^ <<t-float>> | +
+	<<t-float>> `+..+` <<t-float>>^?^
+
+[[t-int-range,INT_RANGE]]
+<<t-int-range>>::
+	`+..+`^?^ <<t-integer>> | +
+	<<t-integer>> `+..+` <<t-integer>>^?^
+****
+
+A number range represents a range of number.
+It follows the same syntax for ranges used in Minecraft commands.
+There are two types of ranges in mcdoc: float ranges, which consist of <<float>>s, and integer ranges, which consists of <<integer>>s.
+
+.Number ranges
+====
+[source,rust]
+----
+1      // Exactly 1
+1..1   // Exactly 1
+1..2   // Between 1 and 2 (inclusive on ends)
+4.2..  // Greater than or equal to 4.2
+..9.1  // Smaller than or equal to 9.1
+----
+====
+
+== String
+
+****
+**SYNTAX (TOKEN)**
 
 [[t-string,STRING]]
 <<t-string>>:: `"` ++(++~not~++[++`"` `+\+` <<t-unicode-cc>>++]++ | ++(++`+\+` ++[++`b` `f` `n` `r` `t` `+\+` `"`++]++++))++{star} `"`
 
 [[t-unicode-cc,UNICODE_CC]]
 <<t-unicode-cc>>:: Unicode control characters.
+****
 
-[[t-typed-number,TYPED_NUMBER]]
-<<t-typed-number>>:: <<t-float>> ++[++`b` `B` `d` `D` `f` `F` `l` `L` `s` `S`++]++^?^
+A string represents a sequence of characters.
+It must be surrounded by double quotation marks (`"`).
+Certain characters need to be escaped by a backslash (`\`).
+
+.Escape characters
+|===
+|Escape sequence |Meaning
+
+|`\"` |A double quotation mark (`"`, Unicode `U+0022`)
+|`\\` |A backslash (`\`, Unicode `U+005C`)
+|`\b` |A backspace (Unicode `U+0008`)
+|`\f` |A form feed (Unicode `U+000C`)
+|`\n` |A newline (Unicode `U+000A`)
+|`\r` |A carriage return (Unicode `U+000D`)
+|`\t` |A tab (Unicode `U+0009`)
+|===
+
+.Strings
+====
+[source,rust,subs="+quotes"]
+----
+"foo"            // A string representing `foo`
+"bar\"qux\\baz"  // A string representing `bar"qux\baz`
+----
+====
+
+== Resource location
+
+****
+**SYNTAX (TOKEN)**
+
+[[t-res-loc,RES_LOC]]
+<<t-res-loc>>:: <<t-res-loc-char>>{star} `:` <<t-res-loc-char>>{star} (`/` <<t-res-loc-char>>{star}){star}
+
+[[t-res-loc-char,RES_LOC_CHAR]]
+<<t-res-loc-char>>:: ++[++`a`-`z` `0`-`9` `-` `+_+` `.`++]++
+****
+
+A resource location is similar to the resource location from Minecraft syntax-wise, except that a colon (`:`) must exist to disambiguate this from an <<identifier>>.
+
+.Resource locations
+====
+[source,rust,subs="+quotes"]
+----
+minecraft:foo
+:foo  // This also means `minecraft:foo`, and is actually legal in Minecraft.
+spyglassmc:bar
+----
+====
+
+== Identifier
+
+****
+**SYNTAX (TOKEN)**
+
+[[t-ident,IDENTIFIER]]
+<<t-ident>>:: (++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star})~pass:n[except: <<t-keywords>>]~
+
+[[t-keywords,KEYWORDS]]
+<<t-keywords>>:: `key` | `super`
+****
+
+An identifier is a name given to a type definition in mcdoc.
+It can contain any alphanumeric characters and the underscore (`_`), but must not start with a numeric character (`0`-`9`).
+
+It also must not be named after a list of keywords:
+
+* `key`
+* `super`
+
+NOTE: We might extend supported characters for identifiers to any character in the Unicode categories "`Uppercase letter (Lu)`", "`Lowercase letter (Ll)`", "`Titlecase letter (Lt)`", "`Modifier letter (Lm)`", "`Other letter (Lo)`", or "`Letter number (Nl)`" in the future.
+
+.Identifiers
+====
+[source,rust,subs="+quotes"]
+----
+struct *Foo* { // `Foo` is an identifier.
+	*B_1*: boolean, // `B_1` is an identifier.
+}
+----
+====
+
+== Path
+
+****
+**SYNTAX (TOKEN)**
+
+[[t-path,PATH]]
+<<t-path>>:: (`::`)^?^ <<t-path-seg>> (`::` <<t-path-seg>>){star}
+
+[[t-path-seg,PATH_SEGMENT]]
+<<t-path-seg>>:: <<t-ident>> | `super`
+****
+
+A path is used to locate a type definition across the mcdoc project.
+A sequence of two colons (`::`) is used as the *path separater*.
+
+If a path starts with the path separater, it is an *absolute path* and will be resolved from the root of all mcdoc files (the `mcdoc` folder -- see also <<project-structure>>).
+Otherwise it is a *relative path* and will be resolved from the absolute path of the current file.
+
+The absolute path of a file is determined by connecting the names of all its parent folders and its own name (excluding the `.mcdoc` file extension) with the path separater, prepended by the path separater, with a special case for all files named `mod.mcdoc` -- they will not be part of their path.
+
+The absolute path of a type definition is the absolute path of the file where it resides joined with the identifier of the type definition by the path separater.
+
+If multiple files/type definitions ended up having the same path, only the earliest loaded one will take effect; all subsequent ones should be warned and ignored by the mcdoc interpreter.
+
+For relative paths, the keyword `super` may be used to move up one level from the current absolute path.
+
+.Paths
+====
+[source]
+----
+Workspace/
+	mcdoc/
+		foo.mcdoc <1>
+		foo/
+			bar.mcdoc <2>
+			mod.mcdoc <3>
+		qux.mcdoc <4>
+	pack.mcmeta
+----
+<1> The absolute path of this file is `::foo`.
+<2> The absolute path of this file is `::foo::bar`.
+<3> The absolute path of this file is `::foo`, as files named `mod.mcdoc` are special. This has the same path as <1>, and as <1> is shallower in the file structure, it is loaded first, meaning <3> is ignored in favor of <1> and a warning should be given.
+
+If the content of `Workspace/mcdoc/foo/bar.mcdoc` is
+
+[source,rust]
+----
+struct Foo {} <1>
+
+type Bar = super::super::qux::Something <2>
+----
+<1> The absolute path for struct `Foo` is `::foo::bar::Foo`
+<2> The absolute path for type alias `Bar` is `::foo::bar::Bar`. +
+The relative path is interpreted as follows:
++
+. Absolute path of the residing file (`Workspace/mcdoc/foo/bar.mcdoc`) is `::foo::bar`. Given relative path is `super::super::qux::Something`
+. Encounters keyword `super`, moves one level up to `::foo`. Remaining relative path is `super::qux::Something`
+. Encounters keyword `super`, moves one level up to `::`. Remaining relative path is `qux::Something`.
+. Encounters identifier `qux`, moves down to `::qux`. Remaining relative path is `Something`.
+. Encounters identifier `Something`, moves down to `::qux::Something`. Relative path has been resolved.
+. The type alias `Bar` therefore points to the type definition named `Something` in file `Workspace/mcdoc/qux.mcdoc`.
+====
+
+== File Structure
+
+****
+**SYNTAX**
+
+[[s-file,_File_]]
+<<s-file>>:: (<<s-dispatch>> | <<s-enum>> | <<s-struct>> | <<s-type-alias>> | <<s-use>> | <<s-inject>>){star}
 
 ****
 
-=== Dispatcher
+An mcdoc is made of dispatch statements, enum definitions, struct definitions, type aliases, use statements, and injections.
+
+== Dispatcher
 
 ****
 **SYNTAX**
 
 [[s-dispatch,_DispatchStatement_]]
-<<s-dispatch>>:: `dispatch` <<t-res-loc>> <<s-static-index>>^?^ `to` <<s-type>>
+<<s-dispatch>>:: `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
 
 ****
 
 A **dispatcher** can be used to dispatch to a specific type from a given index.
-Each case of a dispatcher can be declared by a <<s-dispatch>> and referenced by a <<s-dispatcher-type>>.
+Each case of a dispatcher can be declared by a <<s-dispatch>>.
 
 Dispatchers are named after <<t-res-loc>>s, so unlike other values in mcdoc that are named after <<t-ident>>s which require <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
 
 When a non-existing index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a fallback case at runtime.
 The union is marked with the "nonexhaustive" metadata.
 
-=== Enum
+== Enum
 
 ****
 **SYNTAX**
@@ -177,11 +474,13 @@ The union is marked with the "nonexhaustive" metadata.
 <<t-enum-type>>:: `byte` | `short` | `int` | `long` | `string` | `float` | `double`
 
 [[t-enum-value,ENUM_VALUE]]
-<<t-enum-value>>:: <<t-integer>> | <<t-float>> | <<t-string>>
+<<t-enum-value>>::
+	<<t-typed-number>> | <<t-string>> +
+	Although <<t-typed-number>> is expected as the value for enums, the user can write the numbers without the proper suffixes as the mcdoc interpreter is able to infer the proper type from the enum definition.
 
 ****
 
-=== Struct
+== Struct
 
 ****
 **SYNTAX**
@@ -202,18 +501,14 @@ The union is marked with the "nonexhaustive" metadata.
 [[s-struct-field,_StructField_]]
 <<s-struct-field>>::
 	<<s-prelim>> <<s-struct-key>> `?`^?^ `:` <<s-type>> | +
-	`+...+` <<s-struct-resolvable>>
+	`+...+` <<s-type>> +
+	For the spreading syntax (`+...+`), if the type after the spread operator cannot be resolved as a struct type, only the attributes on the type will be copied over to the current struct.
 
 [[s-struct-key,_StructKey_]]
 <<s-struct-key>>::
 	<<t-string>> | +
 	<<t-ident>> | +
 	`[` <<s-type>> `]`
-
-[[s-struct-resolvable,_StructResolvable_]]
-<<s-struct-resolvable>>::
-	<<t-ident>> | +
-	<<s-dispatcher-type>>
 
 ****
 
@@ -260,7 +555,7 @@ struct Tag<V extends string> {
 ----
 ====
 
-=== Type Alias
+== Type Alias
 
 ****
 **SYNTAX**
@@ -268,7 +563,7 @@ struct Tag<V extends string> {
 <<s-type-alias>>:: <<s-prelim>> `type` <<t-ident>> <<s-type-parameter-block>>^?^ `=` <<s-type>>
 ****
 
-=== Use Statement
+== Use Statement
 
 ****
 **SYNTAX**
@@ -277,7 +572,7 @@ struct Tag<V extends string> {
 
 ****
 
-=== Injection
+== Injection
 
 ****
 **SYNTAX**
@@ -294,7 +589,7 @@ struct Tag<V extends string> {
 
 ****
 
-=== Attribute
+== Attribute
 
 ****
 **SYNTAX**
@@ -366,14 +661,20 @@ struct Foo {
 ----
 ====
 
-=== Type
+== Type
+
+A type is an essential part of the mcdoc format.
+It defines a schema that the actual data value must fit in to be valid.
+
+NOTE: Mcdoc may be used to describe the format of a wide range of data.
+This section will only define how JSON data and SNBT data should be validated.
 
 ****
 **SYNTAX**
 
 [[s-type,_Type_]]
 <<s-type>>::
-	<<s-attributes>> <<s-unattributed-type>> <<s-index>>{star}
+	<<s-attributes>> <<s-unattributed-type>> <<s-index-body>>{star}
 
 [[s-unattributed-type,_UnattributedType_]]
 <<s-unattributed-type>>::
@@ -384,77 +685,54 @@ struct Foo {
 	<<s-list-type>> | +
 	<<s-tuple-type>> | +
 	<<t-path>> | +
-	<<s-dispatcher-type>> | +
+	<<t-res-loc>> | +
 	<<s-inline-type>> | +
 	<<s-union-type>>
+****
+
+=== `boolean` type
+****
+**SYNTAX**
 
 [[s-keyword-type,_KeywordType_]]
 <<s-keyword-type>>::
 	`any` | +
 	`boolean` | +
 	`string`
+****
 
-[[s-literal-type,_LiteralType_]]
-<<s-literal-type>>::
-	<<t-string>> |
-	<<t-typed-number>>
+The `boolean` type indicates a boolean value (`false` or `true`) is expected.
 
-[[s-numeric-type,_NumericType_]]
-<<s-numeric-type>>::
-	`byte` (`+#+` _IntRange_)^?^ | +
-	`short` (`+#+` _IntRange_)^?^ | +
-	`int` (`+#+` _IntRange_)^?^ | +
-	`long` (`+#+` _IntRange_)^?^ | +
-	`float` (`+#+` _FloatRange_)^?^ | +
-	`double` (`+#+` _FloatRange_)^?^ +
-	The optional range defines the range the value must be in.
+.Valid values for the `boolean` type
+|===
+|Format |Examples |Notes
 
-[[s-primitive-array-type,_PrimitiveArrayType_]]
-<<s-primitive-array-type>>::
-	`byte` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
-	`int` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ | +
-	`long` (`+#+` _IntRange_)^?^ `[]` (`+#+` _UnsignedIntRange_)^?^ +
-	The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the array.
+|JSON |`false`, `true` |-
+|SNBT (strict) |`false`, `true`, `0b`, `1b` |NBT doesn't have real boolean values -- it uses byte numbers for that purpose instead. `false` and `true` are simply aliases for `0b` and `1b`, respectively.
+|SNBT (loose) |`false`, `true`, `0b`, `1b`, `0`, `1`, `2s`, `1.7` ... |Per method `net/minecraft/nbt/NbtCompound#getBoolean` (yarn mappings), any NBT values can be read as a boolean. A non-numeric value is equivalent to `false`, while a numeric value is false if and only if it is a `0` after being converted to a byte number.
+|===
 
-[[s-list-type,_ListType_]]
-<<s-list-type>>::
-	`[` <<s-type>> `]` (`+#+` _UnsignedIntRange_)^?^ +
-	The optional range defines the range of the size of the list.
+=== Indexing on a type
 
-[[s-tuple-type,_TupleType_]]
-<<s-tuple-type>>::
-	`[` <<s-type>> `,` `]` +
-	`[` <<s-type>> (`,` <<s-type>>){plus} `,`^?^ `]`
+****
+**SYNTAX**
 
-[[s-dispatcher-type,_DispatcherType_]]
-<<s-dispatcher-type>>:: <<t-res-loc>> <<s-index>>
-
-[[s-inline-type,_InlineType_]]
-<<s-inline-type>>::
-	<<s-enum>> | +
-	<<s-struct>>
-
-[[s-union-type,_UnionType_]]
-<<s-union-type>>::
-	`(` `)` <<s-index>>{star} | +
-	`(` <<s-type>> (`|` <<s-type>>){star} `)` <<s-index>>{star} +
-	A pair of empty parentheses removes this field definition from the struct.
-
-[[s-index,_Index_]]
-<<s-index>>:: <<s-static-index>> | <<s-dynamic-index>>
-
-[[s-static-index,_StaticIndex_]]
-<<s-static-index>>::
-	`[` <<t-static-index-key>> (`,` <<t-static-index-key>>){star} `]` +
-	Multiple keys can be put inside the brackets to access multiple types from the target.
+[[s-index-body,_IndexBody_]]
+<<s-index-body>>:: `[` <<s-index>> (`,` <<s-index>>){star} `,`^?^ `]` +
+Multiple indices can be put inside the brackets to access multiple types from the target.
 +
 .Access multiple types from a dispatcher
 ====
-`minecraft:entity[ender_dragon, wither]` -> Produces a union of the type for the Ender Dragon and the type for the Wither.
+`minecraft:entity[ender_dragon, wither]` -> Produces a union of the type for the ender dragon and the type for the wither.
+
+`minecraft:entity[[id], allay]` -> Produces a union of the type for the entity at `id` dynamically and the allay.
 ====
 
+[[s-index,_Index_]]
+<<s-index>>:: <<t-static-index-key>> | <<s-dynamic-index>> +
+
 [[s-dynamic-index,_DynamicIndex_]]
-<<s-dynamic-index>>:: `[[` <<t-accessor>> `]]`
+<<s-dynamic-index>>:: `[` <<t-accessor>> `]`
 
 '''
 
@@ -468,6 +746,53 @@ struct Foo {
 
 [[t-accessor-key,ACCESSOR_KEY]]
 <<t-accessor-key>>:: <<t-ident>> | <<t-string>> | `super` | `key`
+****
+
+****
+**SYNTAX**
+
+[[s-literal-type,_LiteralType_]]
+<<s-literal-type>>::
+	<<t-string>> |
+	<<t-typed-number>>
+
+[[s-numeric-type,_NumericType_]]
+<<s-numeric-type>>::
+	`byte` (`+#+` <<t-int-range>>)^?^ | +
+	`short` (`+#+` <<t-int-range>>)^?^ | +
+	`int` (`+#+` <<t-int-range>>)^?^ | +
+	`long` (`+#+` <<t-int-range>>)^?^ | +
+	`float` (`+#+` <<t-float-range>>)^?^ | +
+	`double` (`+#+` <<t-float-range>>)^?^ +
+	The optional range defines the range the value must be in.
+
+[[s-primitive-array-type,_PrimitiveArrayType_]]
+<<s-primitive-array-type>>::
+	`byte` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
+	`int` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
+	`long` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ +
+	The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the array.
+
+[[s-list-type,_ListType_]]
+<<s-list-type>>::
+	`[` <<s-type>> `]` (`+#+` <<t-int-range>>)^?^ +
+	The optional range defines the range of the size of the list.
+
+[[s-tuple-type,_TupleType_]]
+<<s-tuple-type>>::
+	`[` <<s-type>> `,` `]` +
+	`[` <<s-type>> (`,` <<s-type>>){plus} `,`^?^ `]`
+
+[[s-inline-type,_InlineType_]]
+<<s-inline-type>>::
+	<<s-enum>> | +
+	<<s-struct>>
+
+[[s-union-type,_UnionType_]]
+<<s-union-type>>::
+	`(` `)` | +
+	`(` <<s-type>> (`|` <<s-type>>){star} `)` +
+	A pair of empty parentheses removes this field definition from the struct.
 
 '''
 
@@ -497,14 +822,45 @@ struct Foo {
 
 NOTE: Under this section, <<procedures,`PascalCase`>> represents a type in the procedure, <<procedures,`camelCase`>> represents a procedure, and `_italic_` represents a variable.
 
+[[p-Boolean,`Boolean`]]
+=== <<p-Boolean>>
+A boolean value. Either `false` or `true`.
+
+[[p-None,`None`]]
+=== <<p-None>>
+An abstract representation of an empty value (`null` / `undefined` / `None` / `nil` / `Nothing`, etc.).
+
+[[p-Option,`Option`]]
+=== <<p-Option>><``T``>
+An abstract representation of empty value handling for this specification.
+Implementations are free to choose their way of handling empty values.
+
+For the purpose of this specification, an <<p-Option>> is either <<p-None>> or an instance of `T`.
+All operations done on an <<p-Option>> is assumed to be done only when it is an instance of `T`.
+Its value is kept as <<p-None>> if it's already a <<p-None>>.
+
+=== <<t-ident>>
+* [[p-ident-asString,`asString`]] <<t-ident>>.<<p-ident-asString>>(): <<t-string>>. Returns the string representation of the identifier.
+
+=== <<t-res-loc>>
+* [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<t-string>>. Returns the full string representation of the resource location. The namespace part should be complete under all circumstances.
+* [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<t-string>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
+
 [[p-DereferencedType,`DereferencedType`]]
 === <<p-DereferencedType>>
 A dereferenced type is a <<s-type>>~pass:n[nochild: <<t-path>>]~ .
 
-[[p-value,`RuntimeValue`]]
-=== <<p-value>>
+[[p-RuntimeValue,`RuntimeValue`]]
+=== <<p-RuntimeValue>>
 A runtime value is an abstract representation of a data in memory that can be checked against by mcdoc.
 It could be a deserialized JSON data or a deserialized NBT data, for example.
+
+It should support the following basic operations, but it is up to implementations to determine how those operations should work exactly for a specific type of a runtime value:
+
+* [[p-RuntimeValue-asString,`asString`]] <<p-RuntimeValue>>.<<p-RuntimeValue-asString>>(): <<p-Option>><<<t-string>>>. Returns the string value of this runtime value if applicable. Otherwise returns <<p-None>>.
+* [[p-RuntimeValue-getKeyOnParent,`getKeyOnParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getKeyOnParent>>(): <<p-Option>><<<p-RuntimeValue>>>. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns <<p-None>>.
+* [[p-RuntimeValue-getParent,`getParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getParent>>(): <<p-Option>><<<p-RuntimeValue>>>. Returns the value's parent value if applicable. Otherwise returns <<p-None>>.
+* [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<t-string>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
 
 [[p-dereference,`dereference`]]
 === <<p-dereference>> (`_type_`: <<s-type>>): <<p-DereferencedType>>
@@ -517,26 +873,42 @@ This procedure dereferences a <<s-type>>.
 . Returns `_type_`.
 
 [[p-resolveIndex,`resolveIndex`]]
-=== <<p-resolveIndex>> (`_type_`: <<s-type>>, `_value_`: <<p-value>>): <<p-DereferencedType>>
+=== <<p-resolveIndex>> (`_type_`: <<s-type>>, `_value_`: <<p-RuntimeValue>>): <<p-DereferencedType>>
 . Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
-. Destruct `_attributes_`: <<s-attributes>>, `_type_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~, and `_indices_`: <<s-index>>{star} from `_type_`.
+. Destruct `_attributes_`: <<s-attributes>>, `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~, and `_indices_`: <<s-index>>{star} from `_type_`.
+. If `_indices_` is empty, returns `_type_`.
 . For each `_index_`: <<s-index>> of `_indices_`,
 .. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<s-static-index>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
-.. Let `_type_`: <<s-type>> be the value resulted from pattern matching `_type_` to
-... <<s-dispatcher-type>> -> TBD
+.. Pattern match `_unattributedType_`, and stores the result to `_resultType_`: <<s-type>>:
+... <<t-res-loc>> -> TBD
 ... <<s-struct>> -> The type of the field corresponding to key `_index_` on struct `_type_` or an empty union if the field doesn't exist, attributed by `_attributes_`.
 ... <<s-union-type>> ->
 .... For each `_element_`: <<s-type>> of `_type_`,
 ..... Duh.
-... An empty union attributed by `_attributes_`.
-.. Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
+... +*+ -> An empty union.
+.. Let `_resultType_`: <<p-DereferencedType>> be <<p-dereference>>(`_resultType_`).
+.. Let `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~ be `_resultType_` attributed by `_attributes_`. // FIXME: Attributes merging
 .. Let `_value_` be the runtime value corresponding to the key `_index_` under `_value_` or `undefined` if no such value exists.
 . Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
-. Returns `_type_`.
+. Return `_type_`.
+
+[[p-resolveDynamicIndex,`resolveDynamicIndex`]]
+=== <<p-resolveDynamicIndex>> (`_index_`: <<s-dynamic-index>>, `_value_`: <<p-RuntimeValue>>): <<p-Option>><<<t-string>>>
+. Destruct `_accessor_`: <<t-accessor>> from `_index_`.
+. Destruct `_keys_`: <<t-accessor-key>>{plus} from `_accessor_`.
+. Let `_v_`: <<p-Option>><<<p-RuntimeValue>>> be `_value_`.
+. For each `_key_`: <<t-accessor-key>> of `_keys_`,
+.. If `_v_` is <<p-None>>, break.
+.. Pattern match `_key_` for
+... `super` -> set `_v_` to `_v_`.<<p-RuntimeValue-getParent>>().
+... `key` -> set `_v_` to `_v_`.<<p-RuntimeValue-getKeyOnParent>>().
+... <<t-ident>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-ident-asString>>()).
+... <<t-string>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`).
+. Return `_v_`.<<p-RuntimeValue-asString>>().
 
 == Branding
 
-"Mcdoc" is a common noun and should only have its first letter capitalized when it's grammatically required to.
+"Mcdoc" is a common noun and should only have its first letter capitalized when it's grammatically required to (e.g. at the beginning of the sentence).
 
 == Credits
 
