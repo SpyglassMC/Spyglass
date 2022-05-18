@@ -45,7 +45,6 @@ export interface ParserContext extends ContextBase {
 	config: Config,
 	doc: TextDocument,
 	err: ErrorReporter,
-	/** @deprecated */
 	symbols: SymbolUtil,
 }
 interface ParserContextOptions {
@@ -68,7 +67,6 @@ export interface ProcessorContext extends ContextBase {
 	config: Config,
 	doc: TextDocument,
 	src: ReadonlySource,
-	/** @deprecated */
 	symbols: SymbolUtil,
 }
 interface ProcessorContextOptions {

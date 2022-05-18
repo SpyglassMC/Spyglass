@@ -27,11 +27,8 @@ export type ResourceLocationOptions = {
 	allowUnknown?: boolean,
 })
 
-export interface ResourceLocationBaseNode extends AstNode {
+export interface ResourceLocationBaseNode extends AstNode, Partial<ResourceLocation> {
 	readonly options: ResourceLocationOptions,
-	readonly isTag?: boolean,
-	readonly namespace?: string,
-	readonly path?: string[],
 }
 
 export interface ResourceLocationNode extends ResourceLocationBaseNode {

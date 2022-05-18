@@ -1,10 +1,9 @@
 import externalBinarySearch from 'binary-search'
 import crypto from 'crypto'
 import rfdc from 'rfdc'
-import type { URL as Uri } from 'url'
 import { promisify } from 'util'
 import zlib from 'zlib'
-import type { ProcessorContext, RootUriString } from '../service'
+import type { ProcessorContext } from '../service'
 
 export { URL as Uri } from 'url'
 
