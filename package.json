@@ -11,7 +11,7 @@
 		"commit": "gitmoji -c",
 		"con": "cd contributors && all-contributors generate && cd ..",
 		"docs:install": "cd docs; bundle; cd ..",
-		"docs:start": "cd docs; bundle exec jekyll serve; cd ..",
+		"docs:start": "cd docs; bundle exec jekyll serve --incremental; cd ..",
 		"lint": "eslint packages/*/{src,test}/**/*.ts",
 		"lint:fix": "eslint --fix packages/*/{src,test}/**/*.ts",
 		"release": "ts-node scripts/release.ts",

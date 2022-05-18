@@ -55,7 +55,8 @@ Tabs for indents, spaces for alignment. Except do not align things because the a
 
 ### Test docs locally
 
-See [Jekyll's documentation](https://jekyllrb.com/docs/#instructions).
+1. Install Jekyll according to [its documentation](https://jekyllrb.com/docs/#instructions).
+2. Run `npm run docs:start` to start a local preview at `localhost:4000`.
 
 ## Credits
 
