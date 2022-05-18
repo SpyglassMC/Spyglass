@@ -5,40 +5,40 @@ import { checkAssignability, NbtdocType } from '../../lib/type'
 describe('nbtdoc checker/type.ts', () => {
 	const cases: { source: NbtdocType, target: NbtdocType }[] = [
 		{
-			source: { type: 'string' },
-			target: { type: 'string' },
+			source: { kind: 'string' },
+			target: { kind: 'string' },
 		},
 		{
-			source: { type: 'int' },
-			target: { type: 'string' },
+			source: { kind: 'int' },
+			target: { kind: 'string' },
 		},
 		{
-			source: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
-			target: { type: 'string' },
+			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			target: { kind: 'string' },
 		},
 		{
-			source: { type: 'string' },
-			target: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
+			source: { kind: 'string' },
+			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
-			source: { type: 'union', members: [{ type: 'string' }, { type: 'union', members: [{ type: 'string' }, { type: 'int' }] }] },
-			target: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
+			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] }] },
+			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
-			source: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] },
-			target: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
+			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] },
+			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
-			source: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] },
-			target: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] },
+			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] },
 		},
 		{
-			source: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] } } },
-			target: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] } } },
+			source: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] } } },
+			target: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] } } },
 		},
 		{
-			source: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }, { type: 'boolean' }] } } },
-			target: { type: 'list', item: { type: 'list', item: { type: 'union', members: [{ type: 'string' }, { type: 'int' }] } } },
+			source: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] } } },
+			target: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] } } },
 		},
 	]
 	describe('checkAssignability()', () => {

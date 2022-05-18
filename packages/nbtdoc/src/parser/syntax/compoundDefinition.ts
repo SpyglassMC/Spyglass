@@ -91,7 +91,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: literals[0].value,
+						typeKind: literals[0].value,
 					}
 					return ans
 				}
@@ -105,7 +105,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 						const ans: CompoundFieldTypeNode = {
 							type: 'nbtdoc:compound_definition/field/type',
 							range: res.range,
-							typeType: `${literals[0].value}_array` as 'byte_array' | 'int_array' | 'long_array',
+							typeKind: `${literals[0].value}_array` as 'byte_array' | 'int_array' | 'long_array',
 							valueRange,
 							lengthRange,
 						}
@@ -119,7 +119,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: literals[0].value,
+						typeKind: literals[0].value,
 						valueRange,
 					}
 					return ans
@@ -131,7 +131,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: literals[0].value,
+						typeKind: literals[0].value,
 						valueRange,
 					}
 					return ans
@@ -143,7 +143,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: 'list',
+						typeKind: 'list',
 						lengthRange,
 						item,
 					}
@@ -155,7 +155,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: 'id',
+						typeKind: 'id',
 						registry,
 					}
 					return ans
@@ -166,7 +166,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 					const ans: CompoundFieldTypeNode = {
 						type: 'nbtdoc:compound_definition/field/type',
 						range: res.range,
-						typeType: 'union',
+						typeKind: 'union',
 						members,
 					}
 					return ans
@@ -182,7 +182,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 				const ans: CompoundFieldTypeNode = {
 					type: 'nbtdoc:compound_definition/field/type',
 					range: res.range,
-					typeType: 'index',
+					typeKind: 'index',
 					index,
 				}
 				return ans
@@ -191,7 +191,7 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 				const ans: CompoundFieldTypeNode = {
 					type: 'nbtdoc:compound_definition/field/type',
 					range: res.range,
-					typeType: 'path',
+					typeKind: 'path',
 					path,
 				}
 				return ans

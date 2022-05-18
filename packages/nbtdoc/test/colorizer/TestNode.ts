@@ -623,7 +623,7 @@ export const TestNode: MainNode = {
 				children: [],
 				value: '',
 			},
-			enumType: {
+			enumKind: {
 				type: 'nbtdoc:literal',
 				range: {
 					start: 63,
@@ -858,7 +858,7 @@ export const TestNode: MainNode = {
 				children: [],
 				value: '',
 			},
-			enumType: {
+			enumKind: {
 				type: 'nbtdoc:literal',
 				range: {
 					start: 91,
@@ -1121,7 +1121,7 @@ export const TestNode: MainNode = {
 				children: [],
 				value: '',
 			},
-			enumType: {
+			enumKind: {
 				type: 'nbtdoc:literal',
 				range: {
 					start: 123,

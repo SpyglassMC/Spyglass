@@ -132,8 +132,8 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 		const data = query.symbol?.data as nbtdoc.EnumDefinitionNode.SymbolData | undefined
 
 		// Check type.
-		if (data?.enumType && node.type !== data.enumType && node.type !== `nbt:${data.enumType}`) {
-			ctx.err.report(localize('expected', localize(`nbt.node.${data.enumType}`)), node, core.ErrorSeverity.Warning)
+		if (data?.enumKind && node.type !== data.enumKind && node.type !== `nbt:${data.enumKind}`) {
+			ctx.err.report(localize('expected', localize(`nbt.node.${data.enumKind}`)), node, core.ErrorSeverity.Warning)
 		}
 
 		// Get all enum members.
@@ -154,22 +154,34 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 	}
 }
 
-type Select<T, K extends keyof T, V> = T extends { [k in K]: V } ? T : never
 /**
  * @param id If set to `undefined` or an empty array, all nbtdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
  */
 export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
-		type Data = { type: 'resolved_compound', data: ResolvedCompoundData } | Select<nbtdoc.NbtdocType, 'type', 'byte_array' | 'int_array' | 'long_array' | 'list' | 'union'> | undefined
 		const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
-		let data: Data = { type: 'resolved_compound', data: resolveResult.value }
-		let targetType: nbtdoc.NbtdocType | undefined = { type: 'index', index: { registry, path: [] } }
+		let targetType: nbtdoc.NbtdocType | undefined = {
+			kind: 'dispatcher',
+			registry,
+			index: ((): nbtdoc.DispatcherData['index'] => {
+				if (id === undefined) {
+					return { kind: 'static', value: { keyword: '()' } }
+				} else if (typeof id === 'string') {
+					return { kind: 'static', value: id }
+				} else {
+					return id.map(v => ({ kind: 'static', value: v }))
+				}
+			})(),
+		}
 		const options: Options = { allowUnknownKey: resolveResult.allowUnknownKey, isPredicate: true }
 		let currentCompound: NbtCompoundNode | undefined
 		for (const child of node.children) {
 			if (NbtCompoundNode.is(child)) {
 				// Compound filter.
 				currentCompound = child
+				if (data?.type === 'union') {
+
+				}
 				if (data?.type === 'resolved_compound') {
 					compound(data.data, options)(child, ctx)
 				} else {
@@ -177,11 +189,14 @@ export function path(registry: nbtdoc.ExtendableRootRegistry, id: core.FullResou
 				}
 			} else if (core.StringNode.is(child)) {
 				// Key.
+				if (data?.type === 'union') {
+
+				}
 				if (data?.type === 'resolved_compound') {
 					const fieldData: ResolvedCompoundData[string] = data.data[child.value]
 					if (fieldData) {
 						fieldData.query.enter({ usage: { type: 'reference', node: child } })
-						if (fieldData.data.type === 'byte_array' || fieldData.data.type === 'int_array' || fieldData.data.type === 'long_array' || fieldData.data.type === 'list') {
+						if (fieldData.data.type === 'byte_array' || fieldData.data.type === 'int_array' || fieldData.data.type === 'long_array' || fieldData.data.type === 'list' || fieldData.data.type === 'union') {
 							data = fieldData.data
 						} else {
 							const resolveResult = resolveSymbolData(fieldData.data, ctx, currentCompound)
@@ -268,7 +283,7 @@ export function fieldValue(type: nbtdoc.NbtdocType, options: Options): core.Sync
 	const isInRange = (value: number, [min, max]: [number | undefined, number | undefined]) =>
 		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
 
-	const ExpectedTypes: Record<Exclude<nbtdoc.NbtdocType['type'], 'enum' | 'union'>, NbtNode['type']> = {
+	const ExpectedTypes: Record<Exclude<nbtdoc.NbtdocType['type'], 'any' | 'enum' | 'index_static' | 'union'>, NbtNode['type']> = {
 		boolean: 'nbt:byte',
 		byte: 'nbt:byte',
 		byte_array: 'nbt:byte_array',
@@ -288,7 +303,7 @@ export function fieldValue(type: nbtdoc.NbtdocType, options: Options): core.Sync
 
 	return (node, ctx): void => {
 		// Rough type check.
-		if (type.type !== 'enum' && type.type !== 'union' && node.type !== ExpectedTypes[type.type]) {
+		if (type.type !== 'any' && type.type !== 'enum' && type.type !== 'index_static' && type.type !== 'union' && node.type !== ExpectedTypes[type.type]) {
 			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.type])), node, core.ErrorSeverity.Warning)
 			return
 		}
@@ -532,11 +547,11 @@ function resolveSymbolPaths(paths: core.SymbolPath[], ctx: core.CheckerContext, 
 	}
 
 	const getPathsFromSuper = (extendable: nbtdoc.RegistryIndexType | nbtdoc.CompoundType): Result<core.SymbolPath[]> => {
-		if (extendable.type === 'compound') {
+		if (extendable.kind === 'compound') {
 			return { allowUnknownKey: false, value: extendable.symbol ? [extendable.symbol] : [] }
 		} else {
-			const id = resolveFieldPath(compound, extendable.index.path)
-			return getPathsFromRootRegistry(extendable.index.registry, id ? core.ResourceLocation.lengthen(id) : undefined, ctx)
+			const id = resolveFieldPath(compound, extendable.path)
+			return getPathsFromRootRegistry(extendable.registry, id ? core.ResourceLocation.lengthen(id) : undefined, ctx)
 		}
 	}
 
@@ -589,7 +604,7 @@ function resolveSymbolPaths(paths: core.SymbolPath[], ctx: core.CheckerContext, 
 
 /**
  * @param registry If `undefined`, allows unknown key.
- * @param id If `undefined` or an empty array, merges all available definitions and allows unknown key.
+ * @param inputIds If `undefined` or an empty array, merges all available definitions and allows unknown key.
  */
 function resolveRootRegistry(registry: ResolvedRootRegistry | undefined, inputIds: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, ctx: core.CheckerContext, compound: NbtCompoundNode | undefined): Result<ResolvedCompoundData> {
 	const out: Out = { allowUnknownKey: false }
@@ -620,17 +635,17 @@ function getPathsFromSymbolData(data: nbtdoc.NbtdocType, ctx: core.CheckerContex
 	const out: Out = { allowUnknownKey: false }
 	const unwrap = getUnwrapper(out)
 	const iterate = (data: nbtdoc.NbtdocType): boolean => {
-		if (data.type === 'compound') {
+		if (data.kind === 'compound') {
 			collector.add(data.symbol)
 			return true
-		} else if (data.type === 'index') {
-			const id = resolveFieldPath(compound, data.index.path)
-			const paths = unwrap(getPathsFromRootRegistry(data.index.registry, id ? core.ResourceLocation.lengthen(id) : undefined, ctx))
+		} else if (data.kind === 'index_dynamic') {
+			const id = resolveFieldPath(compound, data.path)
+			const paths = unwrap(getPathsFromRootRegistry(data.registry, id ? core.ResourceLocation.lengthen(id) : undefined, ctx))
 			for (const path of paths) {
 				collector.add(path)
 			}
 			return true
-		} else if (data.type === 'union') {
+		} else if (data.kind === 'union') {
 			let ans = false
 			for (const member of data.members) {
 				ans ||= iterate(member)

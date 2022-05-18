@@ -1,8 +1,8 @@
 import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { EnumChild, EnumDefinitionNode, EnumFieldChild, EnumTypeOrEmpty, SyntaxUtil } from '../../node'
-import { DocCommentsNode, EnumFieldNode, EnumTypes, EnumTypesOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
+import type { EnumChild, EnumDefinitionNode, EnumKindOrEmpty, SyntaxUtil } from '../../node'
+import { DocCommentsNode, EnumFieldNode, EnumKinds, EnumKindsOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -14,7 +14,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 	return map<SyntaxUtil<EnumChild>, EnumDefinitionNode>(
 		syntax([
 			docComments,
-			keyword('enum'), punctuation('('), enumType, punctuation(')'), identifier(), punctuation('{'),
+			keyword('enum'), punctuation('('), enumKind, punctuation(')'), identifier(), punctuation('{'),
 			enumFields,
 			punctuation('}'),
 		], true),
@@ -24,7 +24,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 				range: res.range,
 				children: res.children,
 				doc: res.children.find(DocCommentsNode.is)!,
-				enumType: res.children.find(LiteralToken.is(EnumTypesOrEmpty))!,
+				enumKind: res.children.find(LiteralToken.is(EnumKindsOrEmpty))!,
 				identifier: res.children.find(IdentifierToken.is)!,
 				fields: res.children.filter(EnumFieldNode.is),
 			}
@@ -33,11 +33,11 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 	)
 }
 
-export const enumType: InfallibleParser<LiteralToken<EnumTypeOrEmpty>> = recover<LiteralToken<EnumTypeOrEmpty>>(
-	any(EnumTypes.map(t => keyword(t))),
+export const enumKind: InfallibleParser<LiteralToken<EnumKindOrEmpty>> = recover<LiteralToken<EnumKindOrEmpty>>(
+	any(EnumKinds.map(t => keyword(t))),
 	(src, ctx) => {
 		ctx.err.report(localize('expected',
-			EnumTypes,
+			EnumKinds,
 		), src)
 		const ans: LiteralToken<''> = {
 			type: 'nbtdoc:literal',

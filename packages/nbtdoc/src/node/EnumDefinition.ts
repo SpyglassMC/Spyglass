@@ -3,17 +3,17 @@ import type { DocCommentsNode, IdentifierToken, LiteralToken, Primitive, SyntaxN
 export interface EnumDefinitionNode extends SyntaxNode<EnumChild> {
 	type: 'nbtdoc:enum_definition'
 	doc: DocCommentsNode
-	enumType: LiteralToken<EnumTypeOrEmpty>
+	enumKind: LiteralToken<EnumKindOrEmpty>
 	identifier: IdentifierToken
 	fields: EnumFieldNode[]
 }
 export namespace EnumDefinitionNode {
 	export interface SymbolData {
-		enumType?: EnumType
+		enumKind?: EnumKind
 	}
 	export function toSymbolData(node: EnumDefinitionNode): SymbolData {
 		return {
-			enumType: node.enumType.value || undefined,
+			enumKind: node.enumKind.value || undefined,
 		}
 	}
 }
@@ -43,8 +43,8 @@ export namespace EnumFieldNode {
 
 export type EnumFieldChild = DocCommentsNode | LiteralToken | IdentifierToken | Primitive
 
-export const EnumTypes = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
-export type EnumType = typeof EnumTypes[number]
+export const EnumKinds = ['byte', 'short', 'int', 'long', 'string', 'float', 'double'] as const
+export type EnumKind = typeof EnumKinds[number]
 
-export const EnumTypesOrEmpty = [...EnumTypes, ''] as const
-export type EnumTypeOrEmpty = typeof EnumTypesOrEmpty[number]
+export const EnumKindsOrEmpty = [...EnumKinds, ''] as const
+export type EnumKindOrEmpty = typeof EnumKindsOrEmpty[number]

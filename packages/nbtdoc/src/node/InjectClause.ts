@@ -1,5 +1,5 @@
 import type { CompoundFieldNode } from './CompoundDefinition'
-import type { EnumFieldNode, EnumTypeOrEmpty } from './EnumDefinition'
+import type { EnumFieldNode, EnumKindOrEmpty } from './EnumDefinition'
 import type { IdentPathToken, LiteralToken, SyntaxNode } from './misc'
 
 export interface InjectClauseNode extends SyntaxNode<InjectClauseChild> {
@@ -17,7 +17,7 @@ interface CompoundDefinitionInject extends SyntaxNode<DefinitionInjectChild> {
 interface EnumDefinitionInject extends SyntaxNode<DefinitionInjectChild> {
 	type: 'nbtdoc:inject_clause/enum',
 	path: IdentPathToken,
-	enumType: LiteralToken<EnumTypeOrEmpty>,
+	enumKind: LiteralToken<EnumKindOrEmpty>,
 	fields: EnumFieldNode[],
 }
 export type DefinitionInject = CompoundDefinitionInject | EnumDefinitionInject

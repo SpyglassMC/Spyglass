@@ -1,10 +1,9 @@
 import type { AstNode, FloatNode, IntegerNode, Symbol } from '@spyglassmc/core'
 import { ResourceLocationNode, StringNode, SymbolPath } from '@spyglassmc/core'
-import type { CompoundType, NbtdocType, RegistryIndexData, RegistryIndexType, ValueRange } from '../type'
+import type { DispatcherData, DispatcherType, NbtdocType, NumericRange, ReferenceType } from '../type'
 import { simplifyType } from '../type'
-import type { EnumDefinitionNode } from './EnumDefinition'
 import type { DocCommentsNode, SyntaxNode } from './misc'
-import { IdentifierToken, IdentPathToken, IdRegistryMap, LiteralToken, RootRegistryMap } from './misc'
+import { IdentifierToken, IdentPathToken, LiteralToken, RootRegistryMap } from './misc'
 
 type ResolveIdentPathFunc = (identPath: IdentPathToken) => Promise<Symbol | undefined>
 
@@ -17,7 +16,7 @@ export interface CompoundDefinitionNode extends SyntaxNode<CompoundChild> {
 }
 export namespace CompoundDefinitionNode {
 	export interface SymbolData {
-		extends?: RegistryIndexType | CompoundType,
+		extends?: DispatcherType | ReferenceType,
 	}
 
 	export async function toSymbolData(node: CompoundDefinitionNode, resolveIdentPath: ResolveIdentPathFunc): Promise<SymbolData> {
@@ -39,13 +38,16 @@ export namespace RegistryIndexNode {
 		return (obj as RegistryIndexNode).type === 'nbtdoc:registry_index'
 	}
 
-	export function toData(node: RegistryIndexNode): RegistryIndexData {
+	export function toData(node: RegistryIndexNode): DispatcherData {
 		const stringRegistry = ResourceLocationNode.toString(node.registry, 'full')
 		return {
 			registry: stringRegistry in RootRegistryMap
 				? RootRegistryMap[stringRegistry as keyof typeof RootRegistryMap]
 				: undefined,
-			path: node.path.map(v => LiteralToken.is('super')(v) ? { special: 'super' } : v.value),
+			index: {
+				kind: 'dynamic',
+				accessor: node.path.map(v => LiteralToken.is('super')(v) ? { keyword: 'super' } : v.value),
+			},
 		}
 	}
 }
@@ -56,10 +58,10 @@ export namespace CompoundExtendable {
 		return RegistryIndexNode.is(obj) || IdentPathToken.is(obj)
 	}
 
-	export async function toType(node: CompoundExtendable, resolveIdentPath: ResolveIdentPathFunc): Promise<RegistryIndexType | CompoundType> {
+	export async function toType(node: CompoundExtendable, resolveIdentPath: ResolveIdentPathFunc): Promise<DispatcherType | ReferenceType> {
 		return RegistryIndexNode.is(node)
-			? { type: 'index', index: RegistryIndexNode.toData(node) }
-			: { type: 'compound', symbol: SymbolPath.fromSymbol(await resolveIdentPath(node)) }
+			? { kind: 'dispatcher', ...RegistryIndexNode.toData(node) }
+			: { kind: 'reference', symbol: SymbolPath.fromSymbol(await resolveIdentPath(node)) }
 	}
 }
 
@@ -128,56 +130,56 @@ export type CompoundFieldType = typeof CompoundFieldTypes[number]
  */
 export type CompoundFieldTypeNode = AstNode & {
 	type: 'nbtdoc:compound_definition/field/type',
-	typeType: string,
+	typeKind: string,
 } & ({
-	typeType: 'boolean',
+	typeKind: 'boolean',
 } | {
-	typeType: 'string',
+	typeKind: 'string',
 } | {
-	typeType: 'byte_array',
+	typeKind: 'byte_array',
 	valueRange: IntRangeNode | undefined,
 	lengthRange: UnsignedRangeNode | undefined,
 } | {
-	typeType: 'int_array',
+	typeKind: 'int_array',
 	valueRange: IntRangeNode | undefined,
 	lengthRange: UnsignedRangeNode | undefined,
 } | {
-	typeType: 'long_array',
+	typeKind: 'long_array',
 	valueRange: IntRangeNode | undefined,
 	lengthRange: UnsignedRangeNode | undefined,
 } | {
-	typeType: 'byte',
+	typeKind: 'byte',
 	valueRange: IntRangeNode | undefined,
 } | {
-	typeType: 'short',
+	typeKind: 'short',
 	valueRange: IntRangeNode | undefined,
 } | {
-	typeType: 'int',
+	typeKind: 'int',
 	valueRange: IntRangeNode | undefined,
 } | {
-	typeType: 'long',
+	typeKind: 'long',
 	valueRange: IntRangeNode | undefined,
 } | {
-	typeType: 'float',
+	typeKind: 'float',
 	valueRange: FloatRangeNode | undefined,
 } | {
-	typeType: 'double',
+	typeKind: 'double',
 	valueRange: FloatRangeNode | undefined,
 } | {
-	typeType: 'list',
+	typeKind: 'list',
 	item: CompoundFieldTypeNode,
 	lengthRange: UnsignedRangeNode | undefined,
 } | {
-	typeType: 'index',
+	typeKind: 'index',
 	index: RegistryIndexNode,
 } | {
-	typeType: 'id',
+	typeKind: 'id',
 	registry: ResourceLocationNode,
 } | {
-	typeType: 'path',
+	typeKind: 'path',
 	path: IdentPathToken,
 } | {
-	typeType: 'union',
+	typeKind: 'union',
 	members: CompoundFieldTypeNode[],
 })
 export namespace CompoundFieldTypeNode {
@@ -186,18 +188,18 @@ export namespace CompoundFieldTypeNode {
 	}
 
 	/**
-	 * @param symbol If `node.typeType === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
+	 * @param symbol If `node.typeKind === 'path'`, this parameter will be used to fill in the {@link SymbolData}'s `symbol` property.
 	 */
 	export async function toType(node: CompoundFieldTypeNode, resolveIdentPath: ResolveIdentPathFunc): Promise<NbtdocType> {
-		switch (node.typeType) {
+		switch (node.typeKind) {
 			case 'boolean':
 			case 'string':
-				return { type: node.typeType }
+				return { kind: node.typeKind }
 			case 'byte_array':
 			case 'int_array':
 			case 'long_array':
 				return {
-					type: node.typeType,
+					kind: node.typeKind,
 					valueRange: node.valueRange ? IntRangeNode.toValueRange(node.valueRange) : undefined,
 					lengthRange: node.lengthRange ? UnsignedRangeNode.toValueRange(node.lengthRange) : undefined,
 				}
@@ -206,50 +208,57 @@ export namespace CompoundFieldTypeNode {
 			case 'int':
 			case 'long':
 				return {
-					type: node.typeType,
+					kind: node.typeKind,
 					valueRange: node.valueRange ? IntRangeNode.toValueRange(node.valueRange) : undefined,
 				}
 			case 'float':
 			case 'double':
 				return {
-					type: node.typeType,
+					kind: node.typeKind,
 					valueRange: node.valueRange ? FloatRangeNode.toSymbolData(node.valueRange) : undefined,
 				}
 			case 'list':
 				return {
-					type: 'list',
+					kind: 'list',
 					item: await toType(node.item, resolveIdentPath),
 					lengthRange: node.lengthRange ? UnsignedRangeNode.toValueRange(node.lengthRange) : undefined,
 				}
 			case 'index':
 				return {
-					type: 'index',
-					index: RegistryIndexNode.toData(node.index),
+					kind: 'dispatcher',
+					...RegistryIndexNode.toData(node.index),
 				}
 			case 'id':
-				const stringId = ResourceLocationNode.toString(node.registry, 'full')
+				// const stringId = ResourceLocationNode.toString(node.registry, 'full')
+				// return {
+				// 	kind: 'id',
+				// 	registry: stringId in IdRegistryMap
+				// 		? IdRegistryMap[stringId as keyof typeof IdRegistryMap]
+				// 		: undefined,
+				// }
 				return {
-					type: 'id',
-					registry: stringId in IdRegistryMap
-						? IdRegistryMap[stringId as keyof typeof IdRegistryMap]
-						: undefined,
+					kind: 'string',
 				}
 			case 'path':
 				const symbol = await resolveIdentPath(node.path)
-				if (symbol?.subcategory === 'enum') {
-					return {
-						type: 'enum',
-						enumType: (symbol.data as EnumDefinitionNode.SymbolData | undefined)?.enumType,
-						symbol: SymbolPath.fromSymbol(symbol),
-					}
-				}
+				// if (symbol?.subcategory === 'enum') {
+				// 	return {
+				// 		kind: 'enum',
+				// 		enumKind: (symbol.data as EnumDefinitionNode.SymbolData | undefined)?.enumKind,
+				// 		symbol: SymbolPath.fromSymbol(symbol),
+				// 	}
+				// }
+				// return {
+				// 	kind: 'compound',
+				// 	symbol: SymbolPath.fromSymbol(symbol),
+				// }
 				return {
-					type: 'compound',
+					kind: 'reference',
 					symbol: SymbolPath.fromSymbol(symbol),
 				}
 			case 'union':
 				return {
-					type: 'union',
+					kind: 'union',
 					members: await Promise.all(node.members.map(m => toType(m, resolveIdentPath))),
 				}
 		}
@@ -265,7 +274,7 @@ export namespace IntRangeNode {
 		return (obj as IntRangeNode).type === 'nbtdoc:int_range'
 	}
 
-	export function toValueRange(node: IntRangeNode): ValueRange {
+	export function toValueRange(node: IntRangeNode): NumericRange {
 		return node.value
 	}
 }
@@ -283,7 +292,7 @@ export namespace UnsignedRangeNode {
 		value: [number | undefined, number | undefined],
 	}
 
-	export function toValueRange(node: UnsignedRangeNode): ValueRange {
+	export function toValueRange(node: UnsignedRangeNode): NumericRange {
 		return node.value
 	}
 }
@@ -297,7 +306,7 @@ export namespace FloatRangeNode {
 		return (obj as FloatRangeNode).type === 'nbtdoc:float_range'
 	}
 
-	export function toSymbolData(node: FloatRangeNode): ValueRange {
+	export function toSymbolData(node: FloatRangeNode): NumericRange {
 		return node.value
 	}
 }

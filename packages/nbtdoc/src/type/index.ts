@@ -1,77 +1,130 @@
-import type { SymbolPath } from '@spyglassmc/core'
+import type { ProcessorContext, SymbolPath } from '@spyglassmc/core'
+import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { EnumType, ResolvedIdRegistry, ResolvedRootRegistry } from '../node'
+import type { EnumKind, ResolvedRootRegistry } from '../node'
 
-export type ValueRange = [number | undefined, number | undefined]
+export interface Attribute {
+	name: string,
+	value: AttributeValue,
+}
 
-export interface RegistryIndexData {
+export type AttributeValue = string | { [key: string | number]: AttributeValue }
+
+export type NumericRange = [number | undefined, number | undefined]
+
+interface StaticIndex {
+	kind: 'static',
+	value: string | { keyword: 'fallback' | 'none' }
+}
+interface DynamicIndex {
+	kind: 'dynamic',
+	accessor: (string | { keyword: 'key' | 'parent' })[]
+}
+export type Index = StaticIndex | DynamicIndex
+
+export type ParallelIndices = [Index, ...Index[]]
+
+export interface DispatcherData {
 	registry: ResolvedRootRegistry | undefined,
-	path: (string | { special: 'super' })[],
+	index: ParallelIndices,
 }
 
-export interface CompoundType {
-	type: 'compound',
-	symbol: SymbolPath | undefined,
+interface TypeBase {
+	kind: string,
+	attributes?: Attribute[],
+	indices?: ParallelIndices[],
 }
-export interface RegistryIndexType {
-	type: 'index',
-	index: RegistryIndexData,
+
+export interface DispatcherType extends TypeBase, DispatcherData {
+	kind: 'dispatcher',
 }
-export interface ListType {
-	type: 'list',
+
+export interface StructType extends TypeBase {
+	kind: 'struct',
+	fields: ({
+		kind: 'field', key: string, type: NbtdocType, symbol: SymbolPath,
+	} | {
+		kind: 'spread', type: NbtdocType,
+	})[]
+}
+
+export interface EnumType extends TypeBase {
+	kind: 'enum',
+	enumKind?: EnumKind,
+	values: { identifier: string, value: string | number | bigint }[]
+}
+
+export interface ReferenceType extends TypeBase {
+	kind: 'reference',
+	symbol?: SymbolPath,
+	index?: Index,
+}
+
+export interface UnionType<T extends NbtdocType = NbtdocType> extends TypeBase {
+	kind: 'union',
+	members: T[],
+}
+
+export const EmptyUnion = Object.freeze({ kind: 'union', members: [] })
+export function createEmptyUnion(attributes?: Attribute[]) {
+	return {
+		...EmptyUnion,
+		attributes,
+	}
+}
+
+interface KeywordType extends TypeBase {
+	kind: 'any' | 'boolean',
+}
+
+interface StringType extends TypeBase {
+	kind: 'string',
+	lengthRange?: NumericRange,
+}
+
+interface LiteralType extends TypeBase {
+	kind: 'literal',
+	value: string, // FIXME
+}
+
+interface NumericType extends TypeBase {
+	kind: 'byte' | 'short' | 'int' | 'long' | 'float' | 'double',
+	valueRange?: NumericRange,
+}
+
+interface PrimitiveArrayType extends TypeBase {
+	kind: 'byte_array' | 'int_array' | 'long_array',
+	valueRange?: NumericRange,
+	lengthRange?: NumericRange,
+}
+
+export interface ListType extends TypeBase {
+	kind: 'list',
 	item: NbtdocType,
-	lengthRange?: ValueRange,
-}
-export interface UnionType {
-	type: 'union',
-	members: NbtdocType[],
+	lengthRange?: NumericRange,
 }
 
-export type NbtdocType = {
-	type: 'boolean',
-} | {
-	type: 'string',
-} | {
-	type: 'byte_array',
-	valueRange?: ValueRange,
-	lengthRange?: ValueRange,
-} | {
-	type: 'int_array',
-	valueRange?: ValueRange,
-	lengthRange?: ValueRange,
-} | {
-	type: 'long_array',
-	valueRange?: ValueRange,
-	lengthRange?: ValueRange,
-} | {
-	type: 'byte',
-	valueRange?: ValueRange,
-} | {
-	type: 'short',
-	valueRange?: ValueRange,
-} | {
-	type: 'int',
-	valueRange?: ValueRange,
-} | {
-	type: 'long',
-	valueRange?: ValueRange,
-} | {
-	type: 'float',
-	valueRange?: ValueRange,
-} | {
-	type: 'double',
-	valueRange?: ValueRange,
-} | {
-	type: 'id',
-	registry?: ResolvedIdRegistry,
-} | {
-	type: 'enum',
-	enumType: EnumType | undefined,
-	symbol: SymbolPath | undefined,
-} | CompoundType | ListType | RegistryIndexType | UnionType
+export interface TupleType extends TypeBase {
+	kind: 'tuple',
+	items: NbtdocType[],
+}
+
+export type NbtdocType =
+	| DispatcherType
+	| EnumType
+	| KeywordType
+	| ListType
+	| LiteralType
+	| NumericType
+	| PrimitiveArrayType
+	| ReferenceType
+	| StringType
+	| StructType
+	| TupleType
+	| UnionType
 export namespace NbtdocType {
 	export function toString(type: NbtdocType | undefined): string {
-		const rangeToString = (range: ValueRange | undefined): string => {
+		const rangeToString = (range: NumericRange | undefined): string => {
 			if (!range) {
 				return ''
 			}
@@ -79,46 +132,89 @@ export namespace NbtdocType {
 			return min === max ? ` @ ${min}` : ` @ ${min ?? ''}..${max ?? ''}`
 		}
 
-		if (type === undefined) {
-			return 'any'
+		const indicesToString = (indices: Arrayable<Index | undefined>): string => {
+			const strings: string[] = []
+			for (const index of Arrayable.toArray(indices)) {
+				if (index === undefined) {
+					strings.push('()')
+				} else {
+					strings.push(index.kind === 'static'
+						? `[${index.value}]`
+						: `[[${index.accessor.map(v => typeof v === 'string' ? v : v.keyword).join('.')}]]`
+					)
+				}
+			}
+			return `[${strings.join(', ')}]`
 		}
-		switch (type.type) {
+
+		if (type === undefined) {
+			return '<unknown>'
+		}
+		switch (type.kind) {
+			case 'any':
 			case 'boolean':
-				return 'boolean'
+				return type.kind
 			case 'byte':
 				return `byte${rangeToString(type.valueRange)}`
 			case 'byte_array':
 				return `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
-			case 'compound':
-				return type.symbol?.path.join('::') ?? 'compound'
+			case 'dispatcher':
+				return `${type.registry ?? 'spyglass:unknown'}[${indicesToString(type.index)}]`
 			case 'double':
 				return `double${rangeToString(type.valueRange)}`
 			case 'enum':
-				return type.symbol?.path.join('::') ?? 'enum'
+				return '<anonymous_enum>'
 			case 'float':
 				return `float${rangeToString(type.valueRange)}`
-			case 'id':
-				return `id(${type.registry ?? 'spyglassmc:any'})`
-			case 'index':
-				return `${type.index.registry ?? 'spyglassmc:any'}[]`
 			case 'int':
 				return `int${rangeToString(type.valueRange)}`
 			case 'int_array':
 				return `int${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
 			case 'list':
 				return `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
+			case 'literal':
+				return `${type.value}`
 			case 'long':
 				return `long${rangeToString(type.valueRange)}`
 			case 'long_array':
 				return `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'reference':
+				return type.symbol?.path.join('::') ?? '<unknown_reference>'
 			case 'short':
 				return `short${rangeToString(type.valueRange)}`
 			case 'string':
-				return 'string'
+				return `string${rangeToString(type.lengthRange)}`
+			case 'struct':
+				return '<anonymous_compound>'
+			case 'tuple':
+				return `[${type.items.map(v => toString(v)).join(',')}${type.items.length === 1 ? ',' : ''}]`
 			case 'union':
 				return `(${type.members.map(toString).join(' | ')})`
 		}
 	}
+}
+
+/**
+ * A type that doesn't include a dispatcher type.
+ */
+export type DispatchedType = Exclude<NbtdocType, DispatcherType | UnionType> | UnionType<DispatchedType>
+/**
+ * A type that doesn't include a reference type.
+ */
+export type DereferencedType = Exclude<NbtdocType, ReferenceType | UnionType> | UnionType<DereferencedType>
+/**
+ * A type that doesn't include a dispatcher type or a reference type.
+ */
+export type TangibleType = Exclude<NbtdocType, DispatcherType | ReferenceType | UnionType> | UnionType<TangibleType>
+/**
+ * A type that is {@link TangibleType} and doesn't have any indices.
+ */
+export type ResolvedType = (Exclude<NbtdocType, DispatcherType | ReferenceType | UnionType> | UnionType<ResolvedType>) & NoIndices
+type NoIndices = { indices?: undefined }
+
+export interface FlatStructType extends TypeBase {
+	kind: 'flat_struct',
+	fields: Record<string, { type: NbtdocType, symbol: SymbolPath }>,
 }
 
 enum CheckResult {
@@ -127,7 +223,7 @@ enum CheckResult {
 	StrictlyAssignable = 0b11,
 }
 
-const areRangesMatch = (s: ValueRange | undefined, t: ValueRange | undefined): boolean => {
+const areRangesMatch = (s: NumericRange | undefined, t: NumericRange | undefined): boolean => {
 	if (!t) {
 		return true
 	}
@@ -154,14 +250,14 @@ export const flattenUnionType = (union: UnionType): UnionType => {
 		set.add(data)
 	}
 	for (const member of union.members) {
-		if (member.type === 'union') {
+		if (member.kind === 'union') {
 			flattenUnionType(member).members.forEach(add)
 		} else {
 			add(member)
 		}
 	}
 	return {
-		type: 'union',
+		kind: 'union',
 		members: [...set],
 	}
 }
@@ -175,10 +271,10 @@ export const unionTypes = (a: NbtdocType, b: NbtdocType): NbtdocType => {
 	}
 
 	const ans: UnionType = {
-		type: 'union',
+		kind: 'union',
 		members: [
-			...a.type === 'union' ? a.members : [a],
-			...b.type === 'union' ? b.members : [b],
+			...a.kind === 'union' ? a.members : [a],
+			...b.kind === 'union' ? b.members : [b],
 		],
 	}
 	return ans
@@ -193,15 +289,15 @@ export const simplifyUnionType = (union: UnionType): NbtdocType => {
 }
 
 export const simplifyListType = (list: ListType): ListType => ({
-	type: 'list',
+	kind: 'list',
 	item: simplifyType(list.item),
 	...list.lengthRange ? { lengthRange: [...list.lengthRange] } : {},
 })
 
 export const simplifyType = (data: NbtdocType): NbtdocType => {
-	if (data.type === 'union') {
+	if (data.kind === 'union') {
 		data = simplifyUnionType(data)
-	} else if (data.type === 'list') {
+	} else if (data.kind === 'list') {
 		data = simplifyListType(data)
 	}
 	return data
@@ -213,57 +309,52 @@ const check = (s: NbtdocType, t: NbtdocType, errors: string[] = []): CheckResult
 	let ans: CheckResult
 	s = simplifyType(s)
 	t = simplifyType(t)
-	if (s.type === 'union') {
+	if (s.kind === 'any' || s.kind === 'reference' || t.kind === 'reference') {
+		// Reference types are treated as any for now.
+		ans = CheckResult.Assignable
+	} else if (t.kind === 'any') {
+		ans = CheckResult.StrictlyAssignable
+	} else if (s.kind === 'union') {
 		ans = assignableIfTrue(s.members.every(v => check(v, t, errors)))
-	} else if (t.type === 'union') {
+	} else if (t.kind === 'union') {
 		ans = assignableIfTrue(t.members.some(v => check(s, v)))
-	} else if (s.type === 'boolean') {
-		ans = strictlyAssignableIfTrue(t.type === 'boolean' || t.type === 'byte')
-	} else if (s.type === 'byte') {
-		if (t.type === 'boolean') {
-			ans = check(s, { type: 'byte', valueRange: [0, 1] }, errors)
-		} else if (t.type === 'byte') {
+	} else if (s.kind === 'boolean') {
+		ans = strictlyAssignableIfTrue(t.kind === 'boolean' || t.kind === 'byte')
+	} else if (s.kind === 'byte') {
+		if (t.kind === 'boolean') {
+			ans = check(s, { kind: 'byte', valueRange: [0, 1] }, errors)
+		} else if (t.kind === 'byte') {
 			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
-		} else if (t.type === 'enum') {
-			ans = assignableIfTrue(!t.enumType || t.enumType === 'byte')
+		} else if (t.kind === 'enum') {
+			ans = assignableIfTrue(!t.enumKind || t.enumKind === 'byte')
 		} else {
 			ans = CheckResult.Nah
 		}
-	} else if (s.type === 'byte_array' || s.type === 'int_array' || s.type === 'long_array') {
-		if (t.type === s.type) {
-			ans = strictlyAssignableIfTrue(areRangesMatch(s.lengthRange, t.lengthRange) && areRangesMatch(s.valueRange, t.valueRange))
-		} else {
-			ans = CheckResult.Nah
-		}
-	} else if (s.type === 'compound' || s.type === 'index') {
-		ans = assignableIfTrue(t.type === 'compound' || t.type === 'index')
-	} else if (s.type === 'enum') {
-		ans = assignableIfTrue((t.type === 'byte' || t.type === 'float' || t.type === 'double' || t.type === 'int' || t.type === 'long' || t.type === 'short' || t.type === 'string') && (!s.enumType || s.enumType === t.type))
-	} else if (s.type === 'float' || s.type === 'double' || s.type === 'int' || s.type === 'long' || s.type === 'short') {
-		if (t.type === s.type) {
+	} else if (s.kind === 'byte_array' || s.kind === 'int_array' || s.kind === 'long_array') {
+		ans = strictlyAssignableIfTrue(t.kind === s.kind && areRangesMatch(s.lengthRange, t.lengthRange) && areRangesMatch(s.valueRange, t.valueRange))
+	} else if (s.kind === 'struct' || s.kind === 'dispatcher') {
+		ans = assignableIfTrue(t.kind === 'struct' || t.kind === 'dispatcher')
+	} else if (s.kind === 'enum') {
+		ans = assignableIfTrue((t.kind === 'byte' || t.kind === 'float' || t.kind === 'double' || t.kind === 'int' || t.kind === 'long' || t.kind === 'short' || t.kind === 'string') && (!s.enumKind || s.enumKind === t.kind))
+	} else if (s.kind === 'float' || s.kind === 'double' || s.kind === 'int' || s.kind === 'long' || s.kind === 'short') {
+		if (t.kind === s.kind) {
 			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
-		} else if (t.type === 'enum') {
-			ans = assignableIfTrue(!t.enumType || t.enumType === s.type)
+		} else if (t.kind === 'enum') {
+			ans = assignableIfTrue(!t.enumKind || t.enumKind === s.kind)
 		} else {
 			ans = CheckResult.Nah
 		}
-	} else if (s.type === 'id') {
-		if (t.type === 'id' && s.registry === t.registry) {
-			ans = CheckResult.StrictlyAssignable
-		} else {
-			ans = assignableIfTrue(t.type === 'id' || t.type === 'string')
-		}
-	} else if (s.type === 'list') {
-		if (t.type === 'list' && areRangesMatch(s.lengthRange, t.lengthRange)) {
+	} else if (s.kind === 'list') {
+		if (t.kind === 'list' && areRangesMatch(s.lengthRange, t.lengthRange)) {
 			ans = check(s.item, t.item, errors)
 		} else {
 			ans = CheckResult.Nah
 		}
-	} else if (s.type === 'string') {
-		if (t.type === 'string') {
+	} else if (s.kind === 'string') {
+		if (t.kind === 'string') {
 			ans = CheckResult.StrictlyAssignable
 		} else {
-			ans = assignableIfTrue(t.type === 'enum' && (!t.enumType || t.enumType === 'string'))
+			ans = assignableIfTrue(t.kind === 'enum' && (!t.enumKind || t.enumKind === 'string'))
 		}
 	} else {
 		ans = CheckResult.Nah
@@ -293,5 +384,156 @@ export const checkAssignability = ({ source, target }: { source: NbtdocType | un
 	return {
 		isAssignable: errors.length === 0,
 		...errors.length ? { errorMessage: errors.reverse().map((m, i) => `${'  '.repeat(i)}${m}`).join('\n') } : {},
+	}
+}
+
+/**
+ * https://spyglassmc.com/user/mcdoc/#p-RuntimeValue
+ */
+export interface RuntimeValue {
+	asString(): string | undefined
+	getKeyOnParent(): RuntimeValue | undefined
+	getParent(): RuntimeValue | undefined
+	getValue(key: string): RuntimeValue | undefined
+}
+
+export function resolveType(inputType: NbtdocType, ctx: ProcessorContext, value: RuntimeValue | undefined): ResolvedType {
+	const type = getTangibleType(inputType, ctx, value)
+
+	let ans: ResolvedType = ((): ResolvedType => {
+		if (type.kind === 'union') {
+			return {
+				kind: 'union',
+				members: type.members.map(t => resolveType(t, ctx, value)),
+				attributes: type.attributes,
+			}
+		} else {
+			return {
+				...type,
+				indices: undefined,
+			}
+		}
+	})()
+
+	for (const parallelIndices of type.indices ?? []) {
+		ans = navigateParallelIndices(ans, parallelIndices, ctx, value)
+	}
+
+	return ans
+}
+
+function dispatchType(type: DispatcherType, ctx: ProcessorContext): DispatchedType {
+	throw '// TODO'
+}
+
+function dereferenceType(type: ReferenceType, ctx: ProcessorContext): DereferencedType {
+	throw '// TODO'
+}
+
+function getTangibleType(type: NbtdocType, ctx: ProcessorContext, value: RuntimeValue | undefined): TangibleType {
+	let ans: TangibleType
+	if (type.kind === 'dispatcher') {
+		const dispatchedType = dispatchType(type, ctx)
+		return getTangibleType(dispatchedType, ctx, value)
+	} else if (type.kind === 'reference') {
+		const dereferencedType = dereferenceType(type, ctx)
+		return getTangibleType(dereferencedType, ctx, value)
+	} else if (type.kind === 'union') {
+		ans = mapUnion(type, t => getTangibleType(t, ctx, value))
+	} else {
+		ans = type
+	}
+	return ans
+}
+
+function navigateParallelIndices(type: ResolvedType, indices: ParallelIndices, ctx: ProcessorContext, value: RuntimeValue | undefined): ResolvedType {
+	if (indices.length === 1) {
+		return navigateIndex(type, indices[0], ctx, value)
+	} else {
+		return {
+			kind: 'union',
+			members: indices.map(i => navigateIndex(type, i, ctx, value)),
+			attributes: type.attributes,
+		}
+	}
+}
+
+function navigateIndex(type: ResolvedType, index: Index, ctx: ProcessorContext, value: RuntimeValue | undefined): ResolvedType {
+	if (type.kind === 'struct') {
+		const key = index.kind === 'static'
+			? typeof index.value === 'string' ? index.value : undefined // Special static indices have no meaning on structs.
+			: resolveDynamicIndex(index, value)
+		if (key === undefined) {
+			return createEmptyUnion(type.attributes)
+		}
+		const flatStruct = flattenStruct(type, ctx, value)
+		return resolveType(flatStruct.fields[key].type, ctx, value)
+	} else if (type.kind === 'union') {
+		return mapUnion(type, t => navigateIndex(t, index, ctx, value))
+	} else {
+		return createEmptyUnion(type.attributes)
+	}
+}
+
+function resolveDynamicIndex(index: DynamicIndex, value: RuntimeValue | undefined): string | undefined {
+	for (const key of index.accessor) {
+		if (value === undefined) {
+			break
+		}
+		if (typeof key === 'string') {
+			value = value.getValue(key)
+		} else if (key.keyword === 'key') {
+			value = value.getKeyOnParent()
+		} else if (key.keyword === 'parent') {
+			value = value.getParent()
+		}
+	}
+	return value?.asString()
+}
+
+function mapUnion<T extends NbtdocType, U extends NbtdocType>(type: UnionType<T> & NoIndices, mapper: (this: void, t: T) => U): UnionType<U> & NoIndices
+function mapUnion<T extends NbtdocType, U extends NbtdocType>(type: UnionType<T>, mapper: (this: void, t: T) => U): UnionType<U>
+function mapUnion<T extends NbtdocType, U extends NbtdocType>(type: UnionType<T>, mapper: (this: void, t: T) => U): UnionType<U> {
+	const ans: UnionType<U> = {
+		kind: 'union',
+		members: type.members.map(mapper),
+		attributes: type.attributes,
+		indices: type.indices,
+	}
+	return ans
+}
+
+function flattenStruct(type: StructType & NoIndices, ctx: ProcessorContext, value: RuntimeValue | undefined): FlatStructType & NoIndices
+function flattenStruct(type: StructType, ctx: ProcessorContext, value: RuntimeValue | undefined): FlatStructType
+function flattenStruct(type: StructType, ctx: ProcessorContext, value: RuntimeValue | undefined): FlatStructType {
+	const ans: FlatStructType = {
+		kind: 'flat_struct',
+		fields: Object.create(null),
+		attributes: type.attributes,
+		indices: type.indices,
+	}
+	for (const field of type.fields) {
+		if (field.kind === 'spread') {
+			const target = resolveType(field.type, ctx, value)
+			addAttributes(ans, ...target.attributes ?? [])
+			if (target.kind === 'struct') {
+				const flatTarget = flattenStruct(target, ctx, value)
+				for (const [key, value] of Object.entries(flatTarget)) {
+					ans.fields[key] = value
+				}
+			}
+		} else {
+			ans.fields[field.key] = { type: field.type, symbol: field.symbol }
+		}
+	}
+	return ans
+}
+
+function addAttributes(type: TypeBase, ...attributes: Attribute[]): void {
+	for (const attr of attributes) {
+		type.attributes ??= []
+		if (!type.attributes.some(a => a.name === attr.name)) {
+			type.attributes.push(attr)
+		}
 	}
 }

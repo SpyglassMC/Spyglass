@@ -131,16 +131,12 @@ pre {
 a > code {
 	color: var(--secondarycolor);
 }
-a:focus {
-	color: var(--linkcolor);
-}
-a:hover {
-	color: var(--linkcolor);
-}
-p a > code:hover {
-	color: var(--linkcolor);
-}
-a > code:hover {
+a:focus,
+a:hover,
+p a > code:hover,
+p a:hover > code,
+a > code:hover,
+a:hover > code {
 	color: var(--linkcolor);
 }
 

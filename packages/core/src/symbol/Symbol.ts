@@ -7,6 +7,7 @@ import { Location, PositionRange, Range } from '../source'
 
 //#region NBTDoc Categories
 export const NbtdocCategories = Object.freeze([
+	'mcdoc/dispatcher',
 	'nbtdoc',
 	'nbtdoc/description',
 ] as const)

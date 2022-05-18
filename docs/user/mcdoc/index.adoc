@@ -3,6 +3,8 @@
 :page-parent: Home
 :page-nav_order: 1
 
+:toc:
+
 Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
 
 This document defines:
@@ -324,7 +326,7 @@ spyglassmc:bar
 <<t-ident>>:: (++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star})~pass:n[except: <<t-reserved-words>>]~
 
 [[t-reserved-words,RESERVED_WORDS]]
-<<t-reserved-words>>:: `any` | `boolean` | `byte` | `double` | `enum` | `false` | `float` | `int` | `key` | `long` | `short` | `string` | `struct` | `super` | `true`
+<<t-reserved-words>>:: `any` | `boolean` | `byte` | `double` | `enum` | `false` | `float` | `int` | `long` | `short` | `string` | `struct` | `super` | `true`
 ****
 
 An identifier is a name given to a type definition in mcdoc.
@@ -417,6 +419,7 @@ The relative path is interpreted as follows:
 [[s-unattributed-type,_UnattributedType_]]
 <<s-unattributed-type>>::
 	<<s-keyword-type>> | +
+	<<s-string-type>> | +
 	<<s-literal-type>> | +
 	<<s-numeric-type>> | +
 	<<s-primitive-array-type>> | +
@@ -450,8 +453,7 @@ The te-co mode, however, allows such bizarre values.
 [[s-keyword-type,_KeywordType_]]
 <<s-keyword-type>>::
 	`any` | +
-	`boolean` | +
-	`string`
+	`boolean`
 ****
 
 The `any` type serves as the top type of mcdoc's type system.
@@ -482,15 +484,23 @@ The `boolean` type indicates a boolean value (`false` or `true`) is expected.
 
 === `string` type
 
+****
+**SYNTAX**
+
+[[s-string-type,_StringType_]]
+<<s-string-type>>:: `string` (`@` <<t-int-range>>)^?^
+****
+
 The `string` type indicates a string value is expected.
+The optional range defines the range of the length of the string.
 
 .Valid values for the `boolean` type
 |===
 |Format |Valid values |Notes
 
-|JSON |String values |-
-|SNBT (strict and loose) |String values |-
-|SNBT (te-co) |Any values |[[x-NbtElement-asString]] Per method `net/minecraft/nbt/NbtElement-asString` (yarn mappings), any NBT values can be read as a string. String tags have their string values as the result, while other tags have their string representation as the result.
+|JSON |String values matching the length range |-
+|SNBT (strict and loose) |String values matching the length range |-
+|SNBT (te-co) |Any values that match the length range after being converted to a string |[[x-NbtElement-asString]] Per method `net/minecraft/nbt/NbtElement-asString` (yarn mappings), any NBT values can be read as a string. String tags have their string values as the result, while other tags have their string representation as the result.
 |===
 
 === Literal boolean type
@@ -576,12 +586,12 @@ A literal number type includes a numeric value and a type the data must match li
 
 [[s-numeric-type,_NumericType_]]
 <<s-numeric-type>>::
-	`byte` (`+#+` <<t-int-range>>)^?^ | +
-	`short` (`+#+` <<t-int-range>>)^?^ | +
-	`int` (`+#+` <<t-int-range>>)^?^ | +
-	`long` (`+#+` <<t-int-range>>)^?^ | +
-	`float` (`+#+` <<t-float-range>>)^?^ | +
-	`double` (`+#+` <<t-float-range>>)^?^
+	`byte` (`@` <<t-int-range>>)^?^ | +
+	`short` (`@` <<t-int-range>>)^?^ | +
+	`int` (`@` <<t-int-range>>)^?^ | +
+	`long` (`@` <<t-int-range>>)^?^ | +
+	`float` (`@` <<t-float-range>>)^?^ | +
+	`double` (`@` <<t-float-range>>)^?^
 ****
 
 A numeric type indicates the data must be of that type to be valid.
@@ -604,9 +614,9 @@ float # 4.2..9.1
 
 [[s-primitive-array-type,_PrimitiveArrayType_]]
 <<s-primitive-array-type>>::
-	`byte` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
-	`int` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^ | +
-	`long` (`+#+` <<t-int-range>>)^?^ `[]` (`+#+` <<t-int-range>>)^?^
+	`byte` (`@` <<t-int-range>>)^?^ `[]` (`@` <<t-int-range>>)^?^ | +
+	`int` (`@` <<t-int-range>>)^?^ `[]` (`@` <<t-int-range>>)^?^ | +
+	`long` (`@` <<t-int-range>>)^?^ `[]` (`@` <<t-int-range>>)^?^
 ****
 
 A primitive array type indicates the data must be a collection of certain numeric values.
@@ -629,7 +639,7 @@ long#0..[] # 3..    // A collection of 3 or more non-negative longs.
 **SYNTAX**
 
 [[s-list-type,_ListType_]]
-<<s-list-type>>:: `[` <<s-type>> `]` (`+#+` <<t-int-range>>)^?^
+<<s-list-type>>:: `[` <<s-type>> `]` (`@` <<t-int-range>>)^?^
 ****
 
 A list type indicates the data must be a collection of a certain other type.
@@ -792,12 +802,12 @@ type ItemTag = Tag<#[id=item] string>
 **SYNTAX**
 
 [[s-dispatcher-type,_DispatcherType_]]
-<<s-dispatcher-type>>:: <<t-res-loc>> <<s-index-body>>^?^
+<<s-dispatcher-type>>:: <<t-res-loc>> <<s-index-body>>
 ****
 
 TODO
 
-The <<dispatcher-fallback-case,fallback case>> is used when the index is omitted.
+The <<dispatcher-fallback-case>> is used when the index is omitted.
 
 === Union type
 
@@ -840,18 +850,18 @@ Multiple indices can be put inside the brackets to access multiple types from th
 **SYNTAX (TOKEN)**
 
 [[t-static-index-key,STATIC_INDEX_KEY]]
-<<t-static-index-key>>:: `()` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
+<<t-static-index-key>>:: `%fallback` | `%none` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
 
 [[t-accessor,ACCESSOR]]
 <<t-accessor>>:: <<t-accessor-key>> (`.` <<t-accessor-key>>){star}
 
 [[t-accessor-key,ACCESSOR_KEY]]
-<<t-accessor-key>>:: <<t-ident>> | <<t-string>> | `super` | `key`
+<<t-accessor-key>>:: `%key` | `%parent` | <<t-ident>> | <<t-string>>
 ****
 
 Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
 
-.Indices
+.Static and dynamic indices
 ====
 [source,rust]
 ----
@@ -867,6 +877,88 @@ struct Foo {
 <2> Dynamic index on a dispatcher.
 <3> Static index on a dispatcher, followed by a static index on a struct.
 <4> Dynamic index on a dispatcher, followed by two static indices on two structs.
+====
+
+.Special static key: `%fallback`
+====
+The `%fallback` key can be used to access the <<dispatcher-fallback-case>> of a dispatcher.
+It cannot be used in <<dispatch-statement,dispatch statements>>, as the fallback case is generated automatically and cannot be manually declared.
+
+[source,rust]
+----
+type AnyEntity = minecraft:entity[%fallback]
+----
+====
+
+.Special static key: `%none`
+====
+The case corresponding to `%none` is used when the accessor of a dynamic index gets no value at runtime.
+
+[source,rust]
+----
+struct RandomIntGenerator {
+	type?: ("uniform" | "binomial" | "constant"), // <1>
+	...minecraft:random_int_generator[[type]], // <2>
+}
+
+dispatch minecraft:random_int_generator[uniform, %none] to struct { min?: int, max?: int } // <3>
+----
+<1> Note that `type` is defined as optional here.
+<2> The value of `type` at runtime is used as a dynamic index here.
+<3> The case corresponding to `%none` is dispatched to the struct here,
+so the random int generator can still get validated as a uniform generator properly when no value for `type` is provided at runtime.
+====
+
+.Special accessor key: `%key`
+====
+The `%key` accessor key can be used to access the key where the current runtime value is.
+
+[source,rust]
+----
+struct DebugStick {
+	DebugProperty: struct {
+		[#[id=block] string]: mcdoc:block_state_name[[%key]],
+	},
+}
+----
+
+This struct can be used to validate the following data:
+
+[source,json]
+----
+{
+	"DebugProperty": {
+		"minecraft:anvil": "facing",
+		"minecraft:oak_fence": "east"
+	}
+}
+----
+====
+
+.Special accessor key: `%parent`
+====
+The `%parent` accessor key can be used to access the parent value of the current runtime value.
+
+[source,rust]
+----
+struct DebugStick {
+	DebugProperty: struct {
+		[#[id=block] string]: mcdoc:block_state_name[[%key]],
+	},
+}
+----
+
+This struct can be used to validate the following data:
+
+[source,json]
+----
+{
+	"DebugProperty": {
+		"minecraft:anvil": "facing",
+		"minecraft:oak_fence": "east"
+	}
+}
+----
 ====
 
 TODO
@@ -900,12 +992,12 @@ An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliase
 
 TODO
 
-== Use Statement
+== Use statement
 
 ****
 **SYNTAX**
 [[s-use,_UseStatement_]]
-<<s-use>>:: `export`^?^ `use` <<t-path>> (`as` <<t-ident>>)^?^
+<<s-use>>:: `use` <<t-path>> (`as` <<t-ident>>)^?^
 ****
 
 TODO
@@ -928,7 +1020,7 @@ TODO
 
 TODO
 
-== Dispatcher
+== Dispatch statement
 
 ****
 **SYNTAX**
@@ -942,7 +1034,7 @@ Each case of a dispatcher can be declared by a <<s-dispatch>> and accessed by a 
 
 Dispatchers are named after <<resource-location>>s, so unlike other values in mcdoc that are named after <<identifier>>s which require <<use-statement,being imported>> before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project.
 
-[[dispatcher-fallback-case]]
+[[dispatcher-fallback-case,fallback case]]
 .Fallback case
 When an unknown index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a **fallback case** at runtime.
 The union is marked with the "nonexhaustive" metadata.
@@ -960,7 +1052,7 @@ TODO
 [[s-attribute,_Attribute_]]
 <<s-attribute>>::
 	`+#[+` <<t-ident>> `]` | +
-	`+#[+` <<t-ident>> `=` <<s-type>> `]` | +
+	`+#[+` <<t-ident>> `=` <<s-attribute-value>> `]` | +
 	`+#[+` <<t-ident>> <<s-attribute-tree-value>> `]`
 
 [[s-attribute-value,_Value_]]
@@ -985,7 +1077,9 @@ TODO
 <<s-attribute-named-values>>:: <<s-attribute-named-value>> (`,` <<s-attribute-named-value>>){star}
 
 [[s-attribute-named-value,_NamedValue_]]
-<<s-attribute-named-value>>:: (<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>>
+<<s-attribute-named-value>>::
+	(<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>> | +
+	(<<t-ident>> | <<t-string>>) <<s-attribute-value>>
 ****
 
 .Attribute examples (non-final)
@@ -1056,6 +1150,10 @@ Its value is kept as <<p-None>> if it's already a <<p-None>>.
 * [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<p-String>>. Returns the full string representation of the resource location. The namespace part should always be kept.
 * [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<p-String>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
 
+[[p-ResolvedType,`ResolvedType`]]
+=== <<p-ResolvedType>>
+A resolved type is a <<s-type>>~pass:n[nochild: <<t-path>> | <<t-dispatcher-type>>]~ .
+
 [[p-DereferencedType,`DereferencedType`]]
 === <<p-DereferencedType>>
 A dereferenced type is a <<s-type>>~pass:n[nochild: <<t-path>>]~ .
@@ -1071,6 +1169,19 @@ It should support the following basic operations, but it is up to implementation
 * [[p-RuntimeValue-getKeyOnParent,`getKeyOnParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getKeyOnParent>>(): <<p-Option>><<<p-RuntimeValue>>>. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns <<p-None>>.
 * [[p-RuntimeValue-getParent,`getParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getParent>>(): <<p-Option>><<<p-RuntimeValue>>>. Returns the value's parent value if applicable. Otherwise returns <<p-None>>.
 * [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<p-String>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
+
+[[p-resolve,`resolve`]]
+=== <<p-resolve>> (`_type_`: <<s-type>>): <<p-ResolvedType>>
+
+. Pattern match `_type_`:
+.. <<t-path>> -> TODO
+.. <<s-dispatcher-type>> -> TODO
+.. <<s-union-type>> ->
+... Let `_ans_`: <<s-union-type>> be `()`.
+... For each `_element_`: <<s-type>> of `_type_`,
+.... Add <<p-resolve>>(`_element_`) to `_ans_`.
+... Return `_ans_`.
+.. +*+ -> return `_type_`.
 
 [[p-dereference,`dereference`]]
 === <<p-dereference>> (`_type_`: <<s-type>>): <<p-DereferencedType>>
@@ -1090,11 +1201,11 @@ This procedure dereferences a <<s-type>>.
 . For each `_index_`: <<s-index>> of `_indices_`,
 .. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<t-static-index-key>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
 .. Pattern match `_unattributedType_`, and stores the result to `_resultType_`: <<s-type>>:
-... <<t-res-loc>> -> TBD
+... <<t-res-loc>> -> TODO
 ... <<s-struct>> -> The type of the field corresponding to key `_index_` on struct `_type_` or an empty union if the field doesn't exist, attributed by `_attributes_`.
 ... <<s-union-type>> ->
 .... For each `_element_`: <<s-type>> of `_type_`,
-..... Duh.
+..... TODO.
 ... +*+ -> An empty union.
 .. Let `_resultType_`: <<p-DereferencedType>> be <<p-dereference>>(`_resultType_`).
 .. Let `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~ be `_resultType_` attributed by `_attributes_`. // FIXME: Attributes merging

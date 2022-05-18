@@ -1619,7 +1619,7 @@ exports['entry() Parse "↓// https://github.com/Yurihaia/mc-nbtdoc/blob/2e5a3da
           ],
           "value": " Joint type.\n"
         },
-        "enumType": {
+        "enumKind": {
           "type": "nbtdoc:literal",
           "range": {
             "start": 657,

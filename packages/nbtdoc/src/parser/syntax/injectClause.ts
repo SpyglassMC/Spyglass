@@ -1,12 +1,12 @@
 import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { DefinitionInjectChild, InjectClauseChild, InjectClauseNode, SyntaxUtil } from '../../node'
-import { CompoundFieldNode, DefinitionInject, EnumFieldNode, EnumTypesOrEmpty, IdentPathToken, LiteralToken } from '../../node'
+import type { DefinitionInjectChild, InjectClauseNode, SyntaxUtil } from '../../node'
+import { CompoundFieldNode, DefinitionInject, EnumFieldNode, EnumKindsOrEmpty, IdentPathToken, LiteralToken } from '../../node'
 import { identPath, keyword, marker, punctuation } from '../terminator'
 import { syntax } from '../util'
 import { compoundFields } from './compoundDefinition'
-import { enumFields, enumType } from './enumDefinition'
+import { enumFields, enumKind } from './enumDefinition'
 
 /**
  * `Failure` when there's no `inject` keyword.
@@ -33,7 +33,7 @@ const definitionInject: InfallibleParser<DefinitionInject | undefined> = map(
 	recover(
 		any([
 			syntax([
-				keyword('enum'), punctuation('('), enumType, punctuation(')'), identPath(), punctuation('{'),
+				keyword('enum'), punctuation('('), enumKind, punctuation(')'), identPath(), punctuation('{'),
 				enumFields,
 				punctuation('}'),
 			], true),
@@ -71,7 +71,7 @@ const definitionInject: InfallibleParser<DefinitionInject | undefined> = map(
 				type: 'nbtdoc:inject_clause/enum',
 				range: res.range,
 				children: res.children,
-				enumType: res.children.find(LiteralToken.is(EnumTypesOrEmpty))!,
+				enumKind: res.children.find(LiteralToken.is(EnumKindsOrEmpty))!,
 				path: res.children.find(IdentPathToken.is)!,
 				fields: res.children.filter(EnumFieldNode.is),
 			}

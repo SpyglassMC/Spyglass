@@ -282,7 +282,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(float) TestEnu
       ],
       "value": " Doc comments for enum\n"
     },
-    "enumType": {
+    "enumKind": {
       "type": "nbtdoc:literal",
       "range": {
         "start": 31,
@@ -700,7 +700,7 @@ exports['enumDefinition() Parse "/// Doc comments for enum↓enum(string) TestEn
       ],
       "value": " Doc comments for enum\n"
     },
-    "enumType": {
+    "enumKind": {
       "type": "nbtdoc:literal",
       "range": {
         "start": 31,
@@ -997,7 +997,7 @@ exports['enumDefinition() Parse "enum" 1'] = {
       "children": [],
       "value": ""
     },
-    "enumType": {
+    "enumKind": {
       "type": "nbtdoc:literal",
       "range": {
         "start": 4,
@@ -1384,7 +1384,7 @@ exports['enumDefinition() Parse "enum(byte) TestEnum {One = 1,}" 1'] = {
       "children": [],
       "value": ""
     },
-    "enumType": {
+    "enumKind": {
       "type": "nbtdoc:literal",
       "range": {
         "start": 5,

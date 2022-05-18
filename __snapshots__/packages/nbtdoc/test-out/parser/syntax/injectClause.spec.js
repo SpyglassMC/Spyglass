@@ -2411,7 +2411,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
             "value": "}"
           }
         ],
-        "enumType": {
+        "enumKind": {
           "type": "nbtdoc:literal",
           "value": "",
           "range": {
@@ -2665,7 +2665,7 @@ exports['injectClause() Parse "inject enum () super::Eww {}" 1'] = {
           "value": "}"
         }
       ],
-      "enumType": {
+      "enumKind": {
         "type": "nbtdoc:literal",
         "value": "",
         "range": {
@@ -3130,7 +3130,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "value": "}"
           }
         ],
-        "enumType": {
+        "enumKind": {
           "type": "nbtdoc:literal",
           "range": {
             "start": 13,
@@ -3694,7 +3694,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           "value": "}"
         }
       ],
-      "enumType": {
+      "enumKind": {
         "type": "nbtdoc:literal",
         "range": {
           "start": 13,
@@ -4160,7 +4160,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
             "value": "}"
           }
         ],
-        "enumType": {
+        "enumKind": {
           "type": "nbtdoc:literal",
           "range": {
             "start": 13,
@@ -4498,7 +4498,7 @@ exports['injectClause() Parse "inject enum (string) super::Eww {↓⮀/// Doc co
           "value": "}"
         }
       ],
-      "enumType": {
+      "enumKind": {
         "type": "nbtdoc:literal",
         "range": {
           "start": 13,
@@ -4805,7 +4805,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
             "value": ""
           }
         ],
-        "enumType": {
+        "enumKind": {
           "type": "nbtdoc:literal",
           "range": {
             "start": 11,
@@ -5043,7 +5043,7 @@ exports['injectClause() Parse "inject enum" 1'] = {
           "value": ""
         }
       ],
-      "enumType": {
+      "enumKind": {
         "type": "nbtdoc:literal",
         "range": {
           "start": 11,
