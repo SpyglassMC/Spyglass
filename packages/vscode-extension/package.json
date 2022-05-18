@@ -6,15 +6,17 @@
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -b && webpack",
-    "build:dev": "webpack --mode=\"development\"",
-    "build:profile": "webpack --profile --json > dist/stats.json",
+    "build": "tsc -b && npm run bundle",
+    "build:dev": "tsc -b && npm run bundle:dev",
+    "bundle": "./esbuild.mjs prod",
+    "bundle:dev": "./esbuild.mjs dev",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
-    "watch": "webpack --watch --mode=\"development\""
+    "watch": "./esbuild.mjs watch"
   },
   "devDependencies": {
     "@types/vscode": "1.65.0",
+    "esbuild": "^0.14.39",
     "vscode-languageclient": "^7.0.0",
     "vscode-test": "^1.5.2"
   },
