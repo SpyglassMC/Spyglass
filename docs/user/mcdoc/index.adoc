@@ -917,7 +917,7 @@ The `%key` accessor key can be used to access the key where the current runtime 
 ----
 struct DebugStick {
 	DebugProperty: struct {
-		[#[id=block] string]: mcdoc:block_state_name[[%key]],
+		[#[id=block] string]: mcdoc:block_state_name[[%key]], // Get the type of the block state names of the block stored in the key.
 	},
 }
 ----
@@ -941,22 +941,11 @@ The `%parent` accessor key can be used to access the parent value of the current
 
 [source,rust]
 ----
-struct DebugStick {
-	DebugProperty: struct {
-		[#[id=block] string]: mcdoc:block_state_name[[%key]],
+struct Item {
+	id: #[id=item] string,
+	tag: struct ItemTag {
+		BlockStateTag: mcdoc:block_item_states[[%parent.id]]
 	},
-}
-----
-
-This struct can be used to validate the following data:
-
-[source,json]
-----
-{
-	"DebugProperty": {
-		"minecraft:anvil": "facing",
-		"minecraft:oak_fence": "east"
-	}
 }
 ----
 ====
@@ -1079,7 +1068,7 @@ TODO
 [[s-attribute-named-value,_NamedValue_]]
 <<s-attribute-named-value>>::
 	(<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>> | +
-	(<<t-ident>> | <<t-string>>) <<s-attribute-value>>
+	(<<t-ident>> | <<t-string>>) <<s-attribute-tree-value>>
 ****
 
 .Attribute examples (non-final)
