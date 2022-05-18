@@ -603,14 +603,7 @@ interface SymbolAdditionUsageBase extends SymbolLocationMetadata {
 	 */
 	type?: SymbolUsageType,
 	/**
-	 * The range of the full declaration/implementation of this {@link Symbol}. For example, for the following piece of
-	 * nbtdoc code,
-	 * ```nbtdoc
-	 * 0123456789012345
-	 * compound Foo {}
-	 * ```
-	 * 
-	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
+	 * @see {@link SymbolLocation.fullRange}
 	 */
 	fullRange?: RangeLike,
 }

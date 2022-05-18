@@ -29,7 +29,7 @@ export interface Config {
 
 export interface EnvConfig {
 	/**
-	 * Where to download data like `mcmeta` or `mc-nbtdoc` from (case-insensitive).
+	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
 	 * 
 	 * * `GitHub`
 	 * * `jsDelivr`: Not recommended as files from there can be outdated. Only use this if you have trouble connecting to `raw.githubusercontent.com`.
@@ -37,7 +37,7 @@ export interface EnvConfig {
 	dataSource: string,
 	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
-	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@mc-nbtdoc`.
+	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
 	 */
 	dependencies: string[],
 	feature: {
@@ -290,7 +290,7 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: [
-			'@mc-nbtdoc',
+			'@vanilla-mcdoc',
 		],
 		feature: {
 			codeActions: true,

@@ -10,11 +10,11 @@ describe('fileUtil', () => {
 			'file:///root2/',
 		]
 		const suites: { uri: string, expected: string | undefined }[] = [
-			{ uri: 'file:///root1/subdir/foo.nbtdoc', expected: 'foo.nbtdoc' },
-			{ uri: 'file:///root1/foo.nbtdoc', expected: 'foo.nbtdoc' },
-			{ uri: 'file:///root1/foo/bar.nbtdoc', expected: 'foo/bar.nbtdoc' },
-			{ uri: 'file:///root2/baz.nbtdoc', expected: 'baz.nbtdoc' },
-			{ uri: 'file:///qux.nbtdoc', expected: undefined },
+			{ uri: 'file:///root1/subdir/foo.mcdoc', expected: 'foo.mcdoc' },
+			{ uri: 'file:///root1/foo.mcdoc', expected: 'foo.mcdoc' },
+			{ uri: 'file:///root1/foo/bar.mcdoc', expected: 'foo/bar.mcdoc' },
+			{ uri: 'file:///root2/baz.mcdoc', expected: 'baz.mcdoc' },
+			{ uri: 'file:///qux.mcdoc', expected: undefined },
 		]
 		for (const { uri, expected } of suites) {
 			it(`Should return '${expected}' for '${uri}'`, () => {
@@ -35,10 +35,10 @@ describe('fileUtil', () => {
 	})
 	describe('join()', () => {
 		const suites: { fromUri: string, toUri: string, expected: string }[] = [
-			{ fromUri: 'file:///root1/foo', toUri: 'bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
-			{ fromUri: 'file:///root1/foo/', toUri: 'bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
-			{ fromUri: 'file:///root1/foo', toUri: '/bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
-			{ fromUri: 'file:///root1/foo/', toUri: '/bar.nbtdoc', expected: 'file:///root1/foo/bar.nbtdoc' },
+			{ fromUri: 'file:///root1/foo', toUri: 'bar.mcdoc', expected: 'file:///root1/foo/bar.mcdoc' },
+			{ fromUri: 'file:///root1/foo/', toUri: 'bar.mcdoc', expected: 'file:///root1/foo/bar.mcdoc' },
+			{ fromUri: 'file:///root1/foo', toUri: '/bar.mcdoc', expected: 'file:///root1/foo/bar.mcdoc' },
+			{ fromUri: 'file:///root1/foo/', toUri: '/bar.mcdoc', expected: 'file:///root1/foo/bar.mcdoc' },
 		]
 		for (const { fromUri, toUri, expected } of suites) {
 			it(`Should join '${fromUri}' and '${toUri}' to '${expected}'`, () => {
@@ -48,8 +48,8 @@ describe('fileUtil', () => {
 	})
 	describe('isFileUri()', () => {
 		const suites: { uri: string, expected: boolean }[] = [
-			{ uri: 'file:///root1/foo.nbtdoc', expected: true },
-			{ uri: 'spyglassmc:///root1/foo.nbtdoc', expected: false },
+			{ uri: 'file:///root1/foo.mcdoc', expected: true },
+			{ uri: 'spyglassmc:///root1/foo.mcdoc', expected: false },
 		]
 		for (const { uri, expected } of suites) {
 			it(`Should return '${expected}' for '${uri}'`, () => {

@@ -12,7 +12,7 @@
 			"path": "../locales"
 		},
 		{
-			"path": "../nbtdoc"
+			"path": "../mcdoc"
 		},
 		{
 			"path": "src"

@@ -3,7 +3,7 @@ import type { AstNode, StringBaseNode } from '../../node'
 import { isAllowedCharacter } from '../../parser'
 import type { Logger, MetaRegistry, QuoteConfig } from '../../service'
 import { SymbolLinterConfig } from '../../service'
-import { NbtdocCategories } from '../../symbol'
+import { McdocCategories } from '../../symbol'
 import { undeclaredSymbol } from './builtin/undeclaredSymbol'
 import type { Linter } from './Linter'
 
@@ -115,6 +115,6 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('undeclaredSymbol', {
 		configValidator: configValidator.symbolLinterConfig,
 		linter: undeclaredSymbol,
-		nodePredicate: n => n.symbol && !NbtdocCategories.includes(n.symbol.category as any),
+		nodePredicate: n => n.symbol && !McdocCategories.includes(n.symbol.category as any),
 	})
 }

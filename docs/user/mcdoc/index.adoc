@@ -18,7 +18,7 @@ Although mcdocs may technically be able to describe the format of a lot of other
 
 Normally, the **workspace** (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the **root** of a mcdoc project.
 
-If, however, there exists both a file named `pack.mcmeta` and a folder named `mcdoc` under the workspace, the `mcdoc` folder will be considered as the root instead.
+If, however, there exists a folder named `mcdoc` under the workspace and all `mcdoc` files are stored inside of the direcotry, it will be considered as the root instead.
 
 == Syntax syntax
 

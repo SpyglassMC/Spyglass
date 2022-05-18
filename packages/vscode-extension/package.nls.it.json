@@ -1,7 +1,7 @@
 {
     "datapack.commands.regenerateCache.title": "Rigenera il cache",
     "datapack.config.env.cmdVersion": "La versione dell'albero dei comandi. Solo le version maggiori sono disponibili",
-    "datapack.config.env.dataVersion": "La versione del completamento dei dati, inclusi i registry, definizioni dei blocchi e nbtdoc. Dovrebbe essere un'identità nel [manifesto di versione](https://launchermeta.mojang.com/mc/game/version_manifest.json), che è stato rilasciato dopo '19w40a'. A parte un' identità della versione, puoi anche inserire `Latest release` o `Latest snapshot` qui (non importa se maiuscolo o minuscolo)",
+    "datapack.config.env.dataVersion": "La versione del completamento dei dati, inclusi i registry, definizioni dei blocchi e mcdoc. Dovrebbe essere un'identità nel [manifesto di versione](https://launchermeta.mojang.com/mc/game/version_manifest.json), che è stato rilasciato dopo '19w40a'. A parte un' identità della versione, puoi anche inserire `Latest release` o `Latest snapshot` qui (non importa se maiuscolo o minuscolo)",
     "datapack.config.env.permissionLevel": "`function-permission-level` definito in `server.properties`",
     "datapack.config.lint.blockStateSortKeys": "Se sistemare nei stati dei blocchi o no",
     "datapack.config.lint.nameOfNbtCompoundTagKeys": "il convegno di nominazione per i tag composti nei NBT",

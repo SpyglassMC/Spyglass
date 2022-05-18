@@ -5,7 +5,7 @@
     "datapack.commands.regenerateCache.title": "Cache regenerieren",
     "datapack.config.env.cmdVersion": "Die Version des Befehlsbaums. Nur Major Versions sind möglich.",
     "datapack.config.env.dataSource": "Die Quelle für das Herunterladen von Vervollständigungsdaten. Wir empfehlen GitHub zu verwenden, es sei denn raw.github.com wird in deinem Land oder deiner Region blockiert.",
-    "datapack.config.env.dataVersion": "Die Version der Vervollständigungsdaten, einschließlich Registern, Blockdefinitionen und nbtdoc. Sollte eine Version wie im [Versionsmanifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) sein, die nach `19w40a` erschienen ist. Neben einer Version sind auch `Latest release` oder `Latest snapshot` möglich (Groß- und Kleinschreibung werden ignoriert).",
+    "datapack.config.env.dataVersion": "Die Version der Vervollständigungsdaten, einschließlich Registern, Blockdefinitionen und mcdoc. Sollte eine Version wie im [Versionsmanifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) sein, die nach `19w40a` erschienen ist. Neben einer Version sind auch `Latest release` oder `Latest snapshot` möglich (Groß- und Kleinschreibung werden ignoriert).",
     "datapack.config.env.defaultVisibility": "Der Standard Zugriffsmodifikator für Ressourcen.",
     "datapack.config.env.dependsOnVanilla": "Ob dieses Datenpaket vom Vanilla-Datenpaket abhängt. Wenn diese Option aktiviert ist, werden benötigte Dateien aus dem Vanilla-Datenpaket bereitgestellt.",
     "datapack.config.env.detectionDepth": "Die Dateisystemtiefe für das Suchen von Datenpaketwurzeln.",

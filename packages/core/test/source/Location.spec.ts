@@ -24,7 +24,7 @@ describe('Location', () => {
 	})
 	describe('create()', () => {
 		it('Should create correctly', () => {
-			const doc = TextDocument.create('file:///home/spgoding/test', 'nbtdoc', 0, '01234567890')
+			const doc = TextDocument.create('file:///home/spgoding/test', 'mcdoc', 0, '01234567890')
 			snapshot(Location.create(doc, Range.create(5, 6)))
 			snapshot(Location.create(doc, { range: Range.create(7, 8) }))
 			snapshot(Location.create(doc, 9))

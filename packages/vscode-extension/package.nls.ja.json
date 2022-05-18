@@ -5,7 +5,7 @@
     "datapack.commands.regenerateCache.title": "キャッシュを再生成する",
     "datapack.config.env.cmdVersion": "コマンドツリーのバージョン (一般的なバージョンのみが利用可能です)",
     "datapack.config.env.dataSource": "補完データのダウンロード元 国/地域によってraw.githubusercontent.comがブロックされていない限り、GitHubを選択することをお勧めします。",
-    "datapack.config.env.dataVersion": "レジストリ, ブロックの定義, nbtdocを含むデータのバージョン\n`19w40a`の後にリリースされた[version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json)のIDである必要があります。\nバージョンIDとは別に`Latest release`または`Latest snapshot`を入力することも可能です。 (大文字と小文字は区別されません)",
+    "datapack.config.env.dataVersion": "レジストリ, ブロックの定義, mcdocを含むデータのバージョン\n`19w40a`の後にリリースされた[version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json)のIDである必要があります。\nバージョンIDとは別に`Latest release`または`Latest snapshot`を入力することも可能です。 (大文字と小文字は区別されません)",
     "datapack.config.env.defaultVisibility": "リソースのデフォルトのアクセス修飾子",
     "datapack.config.env.dependsOnVanilla": "このデータパックをVanillaデータパックに依存させる。\n有効にするとVanillaデータパックのデータ補完が提供されます。",
     "datapack.config.env.detectionDepth": "データパックのrootファイルの深度",

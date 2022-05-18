@@ -1,9 +1,9 @@
 import * as core from '@spyglassmc/core'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { uriBinder } from './binder'
 import type { McmetaSummary } from './dependency'
-import { getMcmetaSummary, getMcNbtdoc, getVersions, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
+import { getMcmetaSummary, getVanillaMcdoc, getVersions, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency'
 import * as jeJson from './json'
 import * as jeMcf from './mcfunction'
 
@@ -41,7 +41,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	const packMcmeta = await getPackMcmeta()
 	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
-	meta.registerDependencyProvider('@mc-nbtdoc', () => getMcNbtdoc(downloader, version, isLatest))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader, version, isLatest))
 
 	const summary = await getMcmetaSummary(downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
 	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
@@ -58,12 +58,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		configValidator: core.linter.configValidator.nameConvention,
 		linter: core.linter.nameConvention('value'),
 		nodePredicate: n => (
-			// nbt compound keys without nbtdoc definition.
+			// nbt compound keys without mcdoc definition.
 			(!n.symbol && n.parent?.parent?.type === 'nbt:compound' && core.PairNode.is(n.parent) && n.type === 'string' && n.parent.key === n) ||
-			// nbt path keys without nbtdoc definition.
+			// nbt path keys without mcdoc definition.
 			(!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') ||
-			// nbtdoc compound key definition outside of `::minecraft` modules.
-			(nbtdoc.CompoundFieldNode.is(n.parent) && nbtdoc.CompoundFieldKey.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
+			// mcdoc compound key definition outside of `::minecraft` modules.
+			(mcdoc.CompoundFieldNode.is(n.parent) && mcdoc.CompoundFieldKey.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
 		),
 	})
 

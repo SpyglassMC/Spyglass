@@ -5,13 +5,12 @@ import { isIterable } from '../common'
 import type { RangeLike } from '../source'
 import { Location, PositionRange, Range } from '../source'
 
-//#region NBTDoc Categories
-export const NbtdocCategories = Object.freeze([
+//#region Mcdoc Categories
+export const McdocCategories = Object.freeze([
+	'mcdoc',
 	'mcdoc/dispatcher',
-	'nbtdoc',
-	'nbtdoc/description',
 ] as const)
-export type NbtdocCategory = typeof NbtdocCategories[number]
+export type McdocCategory = typeof McdocCategories[number]
 //#endregion
 
 //#region Registry Categories
@@ -141,7 +140,7 @@ export type DatapackCategory = typeof DatapackCategories[number]
 
 export const AllCategories = Object.freeze([
 	...DatapackCategories,
-	...NbtdocCategories,
+	...McdocCategories,
 	...RegistryCategories,
 ] as const)
 export type AllCategory = typeof AllCategories[number]
@@ -234,9 +233,9 @@ export interface SymbolMetadata {
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
 	 * subcategories may be used interchangeablely in certain context. e.g. both 
-	 * nbtdoc compounds and nbtdoc enums can be used to describe the type of a field,
+	 * mcdoc struct and mcdoc enums can be used to describe the type of a field,
 	 * but cannot be used in a `/function` command, so they should be put in a category
-	 * other than `function` (like `nbtdoc`), and with different subcategories.
+	 * other than `mcdoc` (like `function`), and with different subcategories.
 	 */
 	subcategory?: string,
 	/**
@@ -331,13 +330,13 @@ export interface SymbolLocation extends SymbolLocationMetadata {
 	posRange?: PositionRange,
 	/**
 	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
-	 * nbtdoc code,
-	 * ```nbtdoc
+	 * mcdoc code,
+	 * ```mcdoc
 	 * 0123456789012345
-	 * compound Foo {}
+	 * struct Foo {}
 	 * ```
 	 * 
-	 * The `range` for the Symbol `Foo` is `[9, 12)`, while the `fullRange` for it is `[0, 15)`.
+	 * The `range` for the Symbol `Foo` is `[7, 10)`, while the `fullRange` for it is `[0, 13)`.
 	 * 
 	 * Does not exist for non-file URIs.
 	 */

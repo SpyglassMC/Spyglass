@@ -20,13 +20,13 @@
 			"path": "locales"
 		},
 		{
+			"path": "mcdoc"
+		},
+		{
 			"path": "mcfunction"
 		},
 		{
 			"path": "nbt"
-		},
-		{
-			"path": "nbtdoc"
 		},
 		{
 			"path": "vscode-extension"

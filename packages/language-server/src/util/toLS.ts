@@ -288,7 +288,7 @@ export function symbolKind(category: string, subcategory = '', supportedKinds: l
 	if (core.ResourceLocationCategory.is(category)) {
 		return ls.SymbolKind.Function
 	}
-	if (category === 'nbtdoc') {
+	if (category === 'mcdoc') {
 		const map = new Map([
 			['enum', ls.SymbolKind.Enum],
 			['enum_key', getKind(ls.SymbolKind.EnumMember, ls.SymbolKind.Field)],
@@ -300,7 +300,7 @@ export function symbolKind(category: string, subcategory = '', supportedKinds: l
 	}
 	const map = new Map([
 		['attribute_modifier_uuid', ls.SymbolKind.Number],
-		['nbtdoc/description', ls.SymbolKind.Constructor],
+		['mcdoc/description', ls.SymbolKind.Constructor],
 		['objective', ls.SymbolKind.Variable],
 		['score_holder', ls.SymbolKind.Class],
 		['tag', ls.SymbolKind.String],

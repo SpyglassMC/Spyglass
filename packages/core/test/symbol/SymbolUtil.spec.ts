@@ -23,7 +23,7 @@ describe('SymbolUtil', () => {
 			const global: SymbolTable = {}
 			const symbols = new SymbolUtil(global)
 			symbols
-				.query(fileUri, 'nbtdoc', 'ShouldBeKept1')
+				.query(fileUri, 'mcdoc', 'ShouldBeKept1')
 				.enter({ usage: { type: 'definition' } })
 				.member('ShouldBeRemoved1', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
@@ -32,10 +32,10 @@ describe('SymbolUtil', () => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			symbols
-				.query(anotherFileUri, 'nbtdoc', 'ShouldBeKept1', 'ShouldBeKept2')
+				.query(anotherFileUri, 'mcdoc', 'ShouldBeKept1', 'ShouldBeKept2')
 				.enter({ usage: { type: 'definition' } })
 			symbols
-				.query(anotherFileUri, 'nbtdoc', 'ShouldBeKept3')
+				.query(anotherFileUri, 'mcdoc', 'ShouldBeKept3')
 				.enter({ usage: { type: 'definition' } })
 				.member('ShouldBeKept4', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
@@ -44,7 +44,7 @@ describe('SymbolUtil', () => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			symbols
-				.query(fileUri, 'nbtdoc', 'ShouldBeKept3')
+				.query(fileUri, 'mcdoc', 'ShouldBeKept3')
 				.member('ShouldBeRemoved3', memberQuery => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})

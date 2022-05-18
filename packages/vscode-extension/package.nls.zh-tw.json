@@ -5,7 +5,7 @@
     "datapack.commands.regenerateCache.title": "重新生成快取",
     "datapack.config.env.cmdVersion": "指令樹的版本。只能選擇正式版本號。",
     "datapack.config.env.dataSource": "補完資料的下載來源。建議選擇GitHub，除非域名 raw.githubusercontent.com 無法在您所在的國家/地區訪問。",
-    "datapack.config.env.dataVersion": "補完資料（包括註冊表、方塊定義、NBTDOC）的版本。應當是 [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) 中定義的一個晚於 `19w40a` 的版本。除了填寫版本識別碼以外，你還可以填寫 `Latest release`（最新正式版）或 `Latest snapshot` （最新快照），大小寫不敏感。",
+    "datapack.config.env.dataVersion": "補完資料（包括註冊表、方塊定義、mcdoc）的版本。應當是 [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) 中定義的一個晚於 `19w40a` 的版本。除了填寫版本識別碼以外，你還可以填寫 `Latest release`（最新正式版）或 `Latest snapshot` （最新快照），大小寫不敏感。",
     "datapack.config.env.defaultVisibility": "資源的預設可見度。",
     "datapack.config.env.dependsOnVanilla": "當前資料包是否依賴於原版資料包。當啟用該選項時，DHP 將會提供原版資料包中相應資料的補完提示。",
     "datapack.config.env.detectionDepth": "在檔案系統中檢測資料包根目錄的深度。",

@@ -162,16 +162,16 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getMcNbtdoc(downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
+export async function getVanillaMcdoc(downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
 	return {
 		info: { startDepth: 1 },
 		uri: await downloadGitHubRepo({
-			defaultBranch: 'master',
+			defaultBranch: 'main',
 			downloader,
 			getTag: v => v,
 			isLatest,
-			owner: 'Yurihaia',
-			repo: 'mc-nbtdoc',
+			owner: 'SpyglassMC',
+			repo: 'vanila-mcdoc',
 			version,
 		}),
 	}

@@ -13,7 +13,7 @@
 			"core",
 			"java-edition",
 			"locales",
-			"nbtdoc"
+			"mcdoc"
 		],
 		"released": {
 			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",
@@ -26,8 +26,8 @@
 			"json",
 			"locales",
 			"mcfunction",
-			"nbt",
-			"nbtdoc"
+			"mcdoc",
+			"nbt"
 		],
 		"released": {
 			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",
@@ -49,7 +49,7 @@
 			"core",
 			"java-edition",
 			"locales",
-			"nbtdoc"
+			"mcdoc"
 		],
 		"released": {
 			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",
@@ -61,6 +61,12 @@
 			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",
 			"version": "0.1.1"
 		}
+	},
+	"mcdoc": {
+		"dependencies": [
+			"core",
+			"locales"
+		]
 	},
 	"mcfunction": {
 		"dependencies": [
@@ -76,17 +82,7 @@
 		"dependencies": [
 			"core",
 			"locales",
-			"nbtdoc"
-		],
-		"released": {
-			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",
-			"version": "0.1.1"
-		}
-	},
-	"nbtdoc": {
-		"dependencies": [
-			"core",
-			"locales"
+			"mcdoc"
 		],
 		"released": {
 			"commit": "3a775f97975a322a4146ca3d0bfd56b7e54b765d",

@@ -1,9 +1,9 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales/lib'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
-import * as nbtdoc from '@spyglassmc/nbtdoc'
 import { getTagValues } from '../../common'
 import { text_component } from '../../json/checker/data/text_component'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node'
@@ -46,61 +46,61 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 		} else if (getName(nodes, index + 1) === 'modify') {
 			nbtPath(nodes, index + 2, ctx)
 			const targetPath = getNode(nodes, index + 4)
-			if (nbt.NbtPathNode.is(targetPath)) {
-				const operationNode = getNode(nodes, index + 5)
-				const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
-				const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
-				let targetNbtdocType: nbtdoc.NbtdocType | undefined = targetPath.targetType ? nbtdoc.simplifyType(targetPath.targetType) : undefined
-				const isType = (type: nbtdoc.NbtdocType['type']) => !targetNbtdocType || targetNbtdocType.type === type || (targetNbtdocType.type === 'union' && targetNbtdocType.members.some(m => m.type === type))
-				if (operation === 'merge') {
-					if (!(isType('compound') || isType('index'))) {
-						ctx.err.report(
-							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.compound'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
-							core.Range.span(targetPath, operationNode!),
-							core.ErrorSeverity.Warning
-						)
-						targetNbtdocType = undefined
-					}
-				} else if (operation === 'append' || operation === 'insert' || operation === 'prepend') {
-					if (isType('list') || isType('byte_array') || isType('int_array') || isType('long_array')) {
-						if (targetNbtdocType?.type === 'list') {
-							targetNbtdocType = targetNbtdocType.item
-						} else if (targetNbtdocType?.type === 'byte_array') {
-							targetNbtdocType = { type: 'byte', valueRange: targetNbtdocType.valueRange }
-						} else if (targetNbtdocType?.type === 'int_array') {
-							targetNbtdocType = { type: 'int', valueRange: targetNbtdocType.valueRange }
-						} else if (targetNbtdocType?.type === 'long_array') {
-							targetNbtdocType = { type: 'long', valueRange: targetNbtdocType.valueRange }
-						}
-					} else {
-						ctx.err.report(
-							localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.list'), localeQuote(nbtdoc.NbtdocType.toString(targetNbtdocType))),
-							core.Range.span(targetPath, operationNode!),
-							core.ErrorSeverity.Warning
-						)
-						targetNbtdocType = undefined
-					}
-				}
-				if (targetNbtdocType) {
-					if (getName(nodes, sourceTypeIndex) === 'from') {
-						// `from <$nbtPath$>`
-						nbtPath(nodes, sourceTypeIndex + 1, ctx)
-						const sourcePath = getNode(nodes, sourceTypeIndex + 3)
-						if (nbt.NbtPathNode.is(sourcePath)) {
-							const { errorMessage } = nbtdoc.checkAssignability({ source: sourcePath.targetType, target: targetNbtdocType })
-							if (errorMessage) {
-								ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
-							}
-						}
-					} else if (getName(nodes, sourceTypeIndex) === 'value') {
-						// `value <value: nbt_tag>`
-						const valueNode = getNode(nodes, sourceTypeIndex + 1)
-						if (nbt.NbtNode.is(valueNode)) {
-							nbt.checker.fieldValue(targetNbtdocType, { allowUnknownKey: true })(valueNode, ctx)
-						}
-					}
-				}
-			}
+			// if (nbt.NbtPathNode.is(targetPath)) {
+			// 	const operationNode = getNode(nodes, index + 5)
+			// 	const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
+			// 	const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
+			// 	let targetMcdocType: mcdoc.McdocType | undefined = targetPath.targetType ? mcdoc.simplifyType(targetPath.targetType) : undefined
+			// 	const isType = (type: mcdoc.McdocType['kind']) => !targetMcdocType || targetMcdocType.kind === type || (targetMcdocType.type === 'union' && targetMcdocType.members.some(m => m.type === type))
+			// 	if (operation === 'merge') {
+			// 		if (!(isType('compound') || isType('index'))) {
+			// 			ctx.err.report(
+			// 				localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.compound'), localeQuote(mcdoc.McdocType.toString(targetMcdocType))),
+			// 				core.Range.span(targetPath, operationNode!),
+			// 				core.ErrorSeverity.Warning
+			// 			)
+			// 			targetMcdocType = undefined
+			// 		}
+			// 	} else if (operation === 'append' || operation === 'insert' || operation === 'prepend') {
+			// 		if (isType('list') || isType('byte_array') || isType('int_array') || isType('long_array')) {
+			// 			if (targetMcdocType?.type === 'list') {
+			// 				targetMcdocType = targetMcdocType.item
+			// 			} else if (targetMcdocType?.type === 'byte_array') {
+			// 				targetMcdocType = { type: 'byte', valueRange: targetMcdocType.valueRange }
+			// 			} else if (targetMcdocType?.type === 'int_array') {
+			// 				targetMcdocType = { type: 'int', valueRange: targetMcdocType.valueRange }
+			// 			} else if (targetMcdocType?.type === 'long_array') {
+			// 				targetMcdocType = { type: 'long', valueRange: targetMcdocType.valueRange }
+			// 			}
+			// 		} else {
+			// 			ctx.err.report(
+			// 				localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.list'), localeQuote(mcdoc.McdocType.toString(targetMcdocType))),
+			// 				core.Range.span(targetPath, operationNode!),
+			// 				core.ErrorSeverity.Warning
+			// 			)
+			// 			targetMcdocType = undefined
+			// 		}
+			// 	}
+			// 	if (targetMcdocType) {
+			// 		if (getName(nodes, sourceTypeIndex) === 'from') {
+			// 			// `from <$nbtPath$>`
+			// 			nbtPath(nodes, sourceTypeIndex + 1, ctx)
+			// 			const sourcePath = getNode(nodes, sourceTypeIndex + 3)
+			// 			if (nbt.NbtPathNode.is(sourcePath)) {
+			// 				const { errorMessage } = mcdoc.checkAssignability({ source: sourcePath.targetType, target: targetMcdocType })
+			// 				if (errorMessage) {
+			// 					ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
+			// 				}
+			// 			}
+			// 		} else if (getName(nodes, sourceTypeIndex) === 'value') {
+			// 			// `value <value: nbt_tag>`
+			// 			const valueNode = getNode(nodes, sourceTypeIndex + 1)
+			// 			if (nbt.NbtNode.is(valueNode)) {
+			// 				nbt.checker.fieldValue(targetMcdocType, { allowUnknownKey: true })(valueNode, ctx)
+			// 			}
+			// 		}
+			// 	}
+			// }
 		} else if (getName(nodes, index + 1) === 'remove') {
 			nbtPath(nodes, index + 2, ctx)
 		}

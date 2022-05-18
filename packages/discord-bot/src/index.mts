@@ -3,7 +3,7 @@ import { REST } from '@discordjs/rest'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import { ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service } from '@spyglassmc/core'
 import * as je from '@spyglassmc/java-edition'
-import * as nbtdoc from '@spyglassmc/nbtdoc'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import { Routes } from 'discord-api-types/rest/v9'
 import type { Snowflake } from 'discord.js'
 import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
@@ -34,7 +34,7 @@ const client = new Client({
 const service = new Service({
 	cacheRoot,
 	initializers: [
-		nbtdoc.initialize,
+		mcdoc.initialize,
 		je.initialize,
 	],
 	logger: console,

@@ -19,7 +19,7 @@ There's no support for multiple config files or inheriting/overriding config fil
 	"env": {
 		"dataSource": "GitHub",
 		"dependencies": [
-			"@mc-nbtdoc"
+			"@vanilla-mcdoc"
 		],
 		"feature": {
 			"codeActions": true,

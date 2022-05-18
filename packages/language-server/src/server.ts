@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
-import * as nbtdoc from '@spyglassmc/nbtdoc'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import envPaths from 'env-paths'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
@@ -63,7 +63,7 @@ connection.onInitialize(async params => {
 		service = new core.Service({
 			cacheRoot,
 			initializers: [
-				nbtdoc.initialize,
+				mcdoc.initialize,
 				je.initialize,
 			],
 			isDebugging: false,

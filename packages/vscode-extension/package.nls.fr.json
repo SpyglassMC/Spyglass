@@ -5,7 +5,7 @@
     "datapack.commands.regenerateCache.title": "Régénérer le cache",
     "datapack.config.env.cmdVersion": "La version de l'arbre de commandes. Seules les versions majeures sont disponibles.",
     "datapack.config.env.dataSource": "La source de téléchargement des données d'auto-complétion. Nous recommandons de choisir GitHub, à moins que raw.githubusercontent.com soit bloqué dans votre pays/région.",
-    "datapack.config.env.dataVersion": "La version des données d'auto-complétion, incluant les registres, les définitions de blocs et le nbtdoc. Devrait être une identité dans le [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) qui a été publiée après la `19w40a`. À part l'identité de version, vous pouvez aussi entrer `Latest release` ou `Latest snapshot` ici (insensible à la casse).",
+    "datapack.config.env.dataVersion": "La version des données d'auto-complétion, incluant les registres, les définitions de blocs et le mcdoc. Devrait être une identité dans le [version manifest](https://launchermeta.mojang.com/mc/game/version_manifest.json) qui a été publiée après la `19w40a`. À part l'identité de version, vous pouvez aussi entrer `Latest release` ou `Latest snapshot` ici (insensible à la casse).",
     "datapack.config.env.defaultVisibility": "Le modificateur d'accès par défaut aux ressources.",
     "datapack.config.env.dependsOnVanilla": "Si ce pack de données dépend du pack de données vanilla ou non. Si cette option est activée, des complétions des données correspondantes du pack de données vanilla seront fournies.",
     "datapack.config.env.detectionDepth": "La profondeur du système de fichiers pour la détection de la racine des packs de données.",

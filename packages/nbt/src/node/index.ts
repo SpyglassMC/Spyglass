@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type * as nbtdoc from '@spyglassmc/nbtdoc'
+import type * as mcdoc from '@spyglassmc/mcdoc'
 
 export type NbtNode =
 	| NbtPrimitiveNode
@@ -201,7 +201,7 @@ export namespace NbtLongArrayNode {
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path',
 	children: (core.StringNode | NbtCompoundNode | NbtPathIndexNode)[],
-	targetType?: nbtdoc.NbtdocType | undefined,
+	targetType?: mcdoc.McdocType | undefined,
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */
