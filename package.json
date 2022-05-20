@@ -39,9 +39,9 @@
 		"snap-shot-it": "^7.9.6",
 		"source-map-loader": "^3.0.0",
 		"source-map-support": "^0.5.19",
-		"ts-loader": "^9.2.3",
-		"ts-node": "^10.0.0",
-		"typescript": "^4.5.4",
+		"ts-loader": "^9.3.0",
+		"ts-node": "^10.7.0",
+		"typescript": "^4.7.1-rc",
 		"webpack": "^5.44.0",
 		"webpack-cli": "^4.7.2"
 	},
