@@ -127,7 +127,7 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 
 	return (node, ctx) => {
 		const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
-		const data = query.symbol?.data as mcdoc.EnumDefinitionNode.SymbolData | undefined
+		const data = query.symbol?.data as mcdoc.EnumNode.SymbolData | undefined
 
 		// Check type.
 		if (data?.enumKind && node.type !== data.enumKind && node.type !== `nbt:${data.enumKind}`) {

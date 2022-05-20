@@ -1,7 +1,7 @@
 import type { ProcessorContext, SymbolPath } from '@spyglassmc/core'
 import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { EnumKind, ResolvedRootRegistry } from '../node'
+import type { EnumKind, ResolvedRootRegistry } from '../node/nodes'
 
 export interface Attribute {
 	name: string,

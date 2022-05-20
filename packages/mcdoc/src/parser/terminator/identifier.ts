@@ -1,7 +1,7 @@
 import type { InfallibleParser, ParserContext, Source } from '@spyglassmc/core'
 import { Range } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { IdentifierToken } from '../../node'
+import type { IdentifierToken } from '../../node/nodes'
 
 interface Options {
 	regex?: RegExp,
@@ -10,7 +10,7 @@ interface Options {
 
 const Regex = /^[A-Za-z_][A-Za-z0-9_]*$/
 const HardSeparations = new Set([
-	'\r', '\n', ' ', ';', ':', '@', '/', ',', '{', '}', '[', ']', '(', ')', '.', '=', '?',
+	'\r', '\n', '\t', ' ', ';', ':', '@', '/', ',', '{', '}', '[', ']', '(', ')', '<', '>', '.', '=', '?',
 ])
 
 export function identifier({ regex = Regex, allowEmpty = false }: Options = {}): InfallibleParser<IdentifierToken> {

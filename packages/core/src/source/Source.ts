@@ -68,10 +68,21 @@ export class ReadonlySource {
 	/**
 	 * If the `expectedValue` is right after the cursor, returns `true`. Otherwise returns `false`.
 	 * 
+	 * @param offset Defaults to 0.
+	 * 
 	 * @see {@link Source.trySkip}
 	 */
-	tryPeek(expectedValue: string): boolean {
-		return this.peek(expectedValue.length) === expectedValue
+	tryPeek(expectedValue: string, offset = 0): boolean {
+		return this.peek(expectedValue.length, offset) === expectedValue
+	}
+
+	tryPeekAfterWhitespace(expectedValue: string): boolean {
+		const maxOffset = this.string.length - this.innerCursor
+		let offset = 0
+		while (offset < maxOffset && Source.isWhitespace(this.peek(1, offset))) {
+			offset++
+		}
+		return this.tryPeek(expectedValue, offset)
 	}
 
 	peekUntil(...terminators: string[]): string {
@@ -234,6 +245,24 @@ export class Source extends ReadonlySource {
 		while (this.canRead() && Source.isWhitespace(this.peek())) {
 			this.skip()
 		}
+		return this
+	}
+
+	readIf(predicate: (this: void, char: string) => boolean): string {
+		let ans = ''
+		while (this.canRead()) {
+			const c = this.peek()
+			if (predicate(c)) {
+				this.skip()
+				ans += c
+			} else {
+				break
+			}
+		}
+		return ans
+	}
+	skipIf(predicate: (this: void, char: string) => boolean): this {
+		this.readIf(predicate)
 		return this
 	}
 

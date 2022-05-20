@@ -1,8 +1,8 @@
 import type { Range } from '../source'
 import type { AstNode } from './AstNode'
 
-export interface ListNode<V extends AstNode> extends AstNode {
-	readonly children: ItemNode<V>[],
+export interface ListNode<V extends AstNode, CN extends AstNode = never> extends AstNode {
+	readonly children: (ItemNode<V> | CN)[],
 }
 
 export interface ItemNode<V extends AstNode> extends AstNode {

@@ -1,8 +1,8 @@
 import type { InfallibleParser, Parser } from '@spyglassmc/core'
 import { any, map, Range, recover } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { EnumChild, EnumDefinitionNode, EnumKindOrEmpty, SyntaxUtil } from '../../node'
-import { DocCommentsNode, EnumFieldNode, EnumKinds, EnumKindsOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node'
+import type { EnumChild, EnumKindOrEmpty, EnumNode, SyntaxUtil } from '../../node/nodes'
+import { DocCommentsNode, EnumFieldNode, EnumKinds, EnumKindsOrEmpty, IdentifierToken, LiteralToken, Primitive } from '../../node/nodes'
 import { float, identifier, integer, keyword, marker, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -10,8 +10,8 @@ import { docComments } from './docComments'
 /**
  * `Failure` when there's no `enum` keyword.
  */
-export function enumDefinition(): Parser<EnumDefinitionNode> {
-	return map<SyntaxUtil<EnumChild>, EnumDefinitionNode>(
+export function enumDefinition(): Parser<EnumNode> {
+	return map<SyntaxUtil<EnumChild>, EnumNode>(
 		syntax([
 			docComments,
 			keyword('enum'), punctuation('('), enumKind, punctuation(')'), identifier(), punctuation('{'),
@@ -19,7 +19,7 @@ export function enumDefinition(): Parser<EnumDefinitionNode> {
 			punctuation('}'),
 		], true),
 		res => {
-			const ans: EnumDefinitionNode = {
+			const ans: EnumNode = {
 				type: 'mcdoc:enum',
 				range: res.range,
 				children: res.children,

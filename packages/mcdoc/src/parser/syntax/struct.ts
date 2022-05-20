@@ -1,7 +1,7 @@
 import type { InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
-import { any, FloatNode, IntegerNode, map, optional, repeat, ResourceLocation, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
-import type { CompoundChild, CompoundDefinitionNode, CompoundFieldChild, RegistryIndexChild, SyntaxUtil } from '../../node'
-import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IdRegistries, IntRangeNode, LiteralToken, RegistryIndexNode, RootRegistries, UnsignedRangeNode } from '../../node'
+import { any, failOnEmpty, FloatNode, IntegerNode, map, optional, repeat, ResourceLocation, ResourceLocationCategories, ResourceLocationNode, sequence } from '@spyglassmc/core'
+import type { CompoundChild, CompoundFieldChild, RegistryIndexChild, StructNode, SyntaxUtil } from '../../node/nodes'
+import { CompoundExtendable, CompoundFieldKey, CompoundFieldNode, CompoundFieldTypeNode, DocCommentsNode, FieldPathKey, FloatRangeNode, IdentifierToken, IdentPathToken, IdRegistries, IntRangeNode, LiteralToken, RegistryIndexNode, RootRegistries, UnsignedRangeNode } from '../../node/nodes'
 import { fallibleFloat, fallibleInteger, float, identifier, identPath, integer, keyword, marker, minecraftIdentifier, punctuation, string } from '../terminator'
 import { syntax, syntaxRepeat } from '../util'
 import { docComments } from './docComments'
@@ -9,24 +9,24 @@ import { docComments } from './docComments'
 /**
  * `Failure` when there is no `compound` keyword.
  */
-export function compoundDefinition(): Parser<CompoundDefinitionNode> {
-	return map<SyntaxUtil<CompoundChild>, CompoundDefinitionNode>(
+export function struct(): Parser<StructNode> {
+	return map<SyntaxUtil, StructNode>(
 		syntax([
 			docComments,
-			keyword('compound'), identifier(), optional(extendsClause), punctuation('{'),
+			keyword('struct'), optional(failOnEmpty(identifier())), punctuation('{'),
 			any([
 				marker('}'),
-				syntax([compoundFields, punctuation('}')], true),
+				syntax([structFields, punctuation('}')], true),
 			]),
 		], true),
 		res => {
-			const ans: CompoundDefinitionNode = {
+			const ans: StructNode = {
 				type: 'mcdoc:struct',
 				range: res.range,
-				children: res.children,
-				doc: res.children.find(DocCommentsNode.is)!,
-				identifier: res.children.find(IdentifierToken.is)!,
-				extends: res.children.find(CompoundExtendable.is),
+				children: res.children as StructNode['children'],
+				doc: res.children.findIndex(DocCommentsNode.is),
+				identifier: res.children.findIndex(IdentifierToken.is),
+				extends: res.children.findIndex(CompoundExtendable.is),
 				fields: res.children.filter(CompoundFieldNode.is),
 			}
 			return ans
@@ -49,12 +49,12 @@ const unsignedRange = _range<IntegerNode, UnsignedRangeNode>('mcdoc:unsigned_ran
  */
 const floatRange = _range<FloatNode, FloatRangeNode>('mcdoc:float_range', float, fallibleFloat)
 
-const compoundFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
+const structFieldKey: InfallibleParser<CompoundFieldKey> = any([identifier(), string])
 
-const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source, ctx: ParserContext): CompoundFieldTypeNode => map<SyntaxUtil<CompoundFieldChild>, CompoundFieldTypeNode>(
+const structFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source, ctx: ParserContext): CompoundFieldTypeNode => map<SyntaxUtil<CompoundFieldChild>, CompoundFieldTypeNode>(
 	any([
 		syntax([keyword('boolean')]),
-		syntax([keyword('string')]),
+		syntax([keyword('string'), optional(unsignedRange)]),
 		syntax([keyword('byte'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
 		syntax([keyword('int'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
 		syntax([keyword('long'), optional(intRange), marker('['), punctuation(']'), optional(unsignedRange)]),
@@ -200,10 +200,10 @@ const compoundFieldType: InfallibleParser<CompoundFieldTypeNode> = (src: Source,
 	}
 )(src, ctx)
 
-const compoundField: InfallibleParser<CompoundFieldNode> = map(
+const structField: InfallibleParser<CompoundFieldNode> = map(
 	syntax([
 		docComments,
-		compoundFieldKey, optional(keyword('?')), punctuation(':'), compoundFieldType,
+		structFieldKey, optional(keyword('?')), punctuation(':'), structFieldType,
 	], true),
 	res => {
 		const ans: CompoundFieldNode = {
@@ -218,11 +218,11 @@ const compoundField: InfallibleParser<CompoundFieldNode> = map(
 	}
 )
 
-export const compoundFields: InfallibleParser<SyntaxUtil<LiteralToken | CompoundFieldNode>> = syntax([
-	compoundField,
+export const structFields: InfallibleParser<SyntaxUtil<LiteralToken | CompoundFieldNode>> = syntax([
+	structField,
 	syntaxRepeat(syntax([
 		marker(','),
-		compoundField,
+		structField,
 	], true)),
 ], true)
 

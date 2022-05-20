@@ -1,9 +1,9 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { describesClause } from '../../../lib'
+import { dispatchStatement } from '../../../lib'
 
-describe('describesClause()', () => {
+describe('dispatchStatement()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
 		{ content: 'Foo describes [];' },
@@ -17,7 +17,7 @@ describe('describesClause()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = describesClause()
+			const parser = dispatchStatement()
 			snapshot(testParser(parser, content))
 		})
 	}

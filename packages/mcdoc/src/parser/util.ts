@@ -1,6 +1,6 @@
 import type { AstNode, CommentNode, InfallibleParser, Parser, ParserContext, Source } from '@spyglassmc/core'
 import { repeat, sequence } from '@spyglassmc/core'
-import type { SyntaxUtil } from '../node'
+import type { SyntaxUtil } from '../node/nodes'
 import { comment } from './terminator'
 
 /**

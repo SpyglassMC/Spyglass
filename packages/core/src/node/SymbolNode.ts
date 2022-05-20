@@ -20,8 +20,8 @@ export interface SymbolNode extends SymbolBaseNode {
 }
 export namespace SymbolNode {
 	/* istanbul ignore next */
-	export function is(obj: object): obj is SymbolNode {
-		return (obj as SymbolNode).type === 'symbol'
+	export function is(obj: AstNode | undefined): obj is SymbolNode {
+		return (obj as SymbolNode | undefined)?.type === 'symbol'
 	}
 
 	export function mock(range: RangeLike, options: SymbolOptions): SymbolNode {

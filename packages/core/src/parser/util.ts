@@ -1,5 +1,5 @@
 import type { AstNode } from '../node'
-import { SequenceUtil } from '../node'
+import { SequenceUtil, SequenceUtilDiscriminator } from '../node'
 import type { ParserContext } from '../service'
 import { ErrorReporter } from '../service'
 import type { ErrorSeverity, ReadonlySource, Source } from '../source'
@@ -72,7 +72,7 @@ export function sequence<GN extends AstNode = never, PA extends SP<AstNode>[] = 
 export function sequence(parsers: SP<AstNode>[], parseGap?: InfallibleParser<AstNode[]>): Parser<SequenceUtil<AstNode>> {
 	return (src: Source, ctx: ParserContext): Result<SequenceUtil<AstNode>> => {
 		const ans: SequenceUtil<AstNode> = {
-			isSequenceUtil: true,
+			[SequenceUtilDiscriminator]: true,
 			children: [],
 			range: Range.create(src),
 		}
@@ -113,12 +113,12 @@ export function sequence(parsers: SP<AstNode>[], parseGap?: InfallibleParser<Ast
  * 
  * @returns A parser that takes a sequence with the passed-in parser being repeated zero or more times.
  */
-export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): void
+export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): { _inputParserIsInfallible: never } & never
 export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>>
 export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>> {
 	return (src: Source, ctx: ParserContext): SequenceUtil<CN> => {
 		const ans: SequenceUtil<CN> = {
-			isSequenceUtil: true,
+			[SequenceUtilDiscriminator]: true,
 			children: [],
 			range: Range.create(src),
 		}
@@ -206,11 +206,7 @@ export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> 
 export function optional<N extends Returnable>(parser: InfallibleParser<N>): void
 export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined>
 export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined> {
-	// return any<N | undefined>([
-	// 	parser,
-	// 	empty,
-	// ])
-	return (src: Source, ctx: ParserContext): N | undefined => {
+	return ((src: Source, ctx: ParserContext): N | undefined => {
 		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
 		if (result === Failure) {
 			return undefined
@@ -218,7 +214,7 @@ export function optional<N extends Returnable>(parser: Parser<N>): InfalliblePar
 			updateSrcAndCtx()
 			return result
 		}
-	}
+	}) as never
 }
 
 /**
@@ -274,9 +270,9 @@ export function map<NA extends Returnable, NB extends Returnable = NA>(parser: P
 	}
 }
 
-export function setType<N extends AstNode, T extends string>(type: T, parser: InfallibleParser<N>): InfallibleParser<Omit<N, 'type'> & { type: T }>
-export function setType<N extends AstNode, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }>
-export function setType<N extends AstNode, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }> {
+export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type: T, parser: InfallibleParser<N>): InfallibleParser<Omit<N, 'type'> & { type: T }>
+export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }>
+export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }> {
 	return map(
 		parser,
 		res => ({

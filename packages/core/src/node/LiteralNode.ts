@@ -18,8 +18,8 @@ export interface LiteralNode extends LiteralBaseNode {
 }
 export namespace LiteralNode {
 	/* istanbul ignore next */
-	export function is(obj: object): obj is LiteralNode {
-		return (obj as LiteralNode).type === 'literal'
+	export function is(obj: object | undefined): obj is LiteralNode {
+		return (obj as LiteralNode | undefined)?.type === 'literal'
 	}
 
 	export function mock(range: RangeLike, options: LiteralOptions): LiteralNode {

@@ -1,17 +1,16 @@
 import type { InfallibleParser } from '@spyglassmc/core'
 import { any, map } from '@spyglassmc/core'
-import type { MainNode } from '../node'
-import { compoundDefinition, describesClause, enumDefinition, injectClause, moduleDeclaration, useClause } from './syntax'
+import type { MainNode } from '../node/nodes'
+import { dispatchStatement, enumDefinition, injectClause, struct, useStatement } from './syntax'
 import { syntaxRepeat } from './util'
 
 export const entry: InfallibleParser<MainNode> = map(
 	syntaxRepeat(any([
-		compoundDefinition(),
-		describesClause(),
+		struct(),
+		dispatchStatement(),
 		enumDefinition(),
 		injectClause(),
-		moduleDeclaration(),
-		useClause(),
+		useStatement(),
 	]), true),
 	res => {
 		const ans: MainNode = {

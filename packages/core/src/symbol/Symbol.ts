@@ -148,6 +148,7 @@ export type AllCategory = typeof AllCategories[number]
 export const ResourceLocationCategories = Object.freeze([
 	'bossbar',
 	'storage',
+	'mcdoc/dispatcher',
 	...FileCategories,
 	...RegistryCategories,
 ] as const)

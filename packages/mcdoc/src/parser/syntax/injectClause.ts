@@ -1,12 +1,12 @@
 import type { InfallibleParser, Parser } from '@spyglassmc/core'
-import { any, map, Range, recover } from '@spyglassmc/core'
+import { any, map, Range, recover, SequenceUtilDiscriminator } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { DefinitionInjectChild, InjectClauseNode, SyntaxUtil } from '../../node'
-import { CompoundFieldNode, DefinitionInject, EnumFieldNode, EnumKindsOrEmpty, IdentPathToken, LiteralToken } from '../../node'
+import type { DefinitionInjectChild, InjectClauseNode, SyntaxUtil } from '../../node/nodes'
+import { CompoundFieldNode, DefinitionInject, EnumFieldNode, EnumKindsOrEmpty, IdentPathToken, LiteralToken } from '../../node/nodes'
+import { structFields } from '../syntax'
 import { identPath, keyword, marker, punctuation } from '../terminator'
 import { syntax } from '../util'
-import { compoundFields } from './compoundDefinition'
-import { enumFields, enumKind } from './enumDefinition'
+import { enumFields, enumKind } from './enum'
 
 /**
  * `Failure` when there's no `inject` keyword.
@@ -38,17 +38,17 @@ const definitionInject: InfallibleParser<DefinitionInject | undefined> = map(
 				punctuation('}'),
 			], true),
 			syntax([
-				keyword('compound'), identPath(), punctuation('{'),
+				keyword('struct'), identPath(), punctuation('{'),
 				any([
 					marker('}'),
-					syntax([compoundFields, punctuation('}')], true),
+					syntax([structFields, punctuation('}')], true),
 				]),
 			], true),
 		]),
 		(src, ctx) => {
 			ctx.err.report(localize('mcdoc.parser.inject-clause.definition-expected'), src)
 			const ans: SyntaxUtil<DefinitionInjectChild> = {
-				isSequenceUtil: true,
+				[SequenceUtilDiscriminator]: true,
 				range: Range.create(src),
 				children: [],
 			}
