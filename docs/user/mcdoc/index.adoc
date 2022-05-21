@@ -855,7 +855,7 @@ Multiple indices can be put inside the brackets to access multiple types from th
 **SYNTAX (TOKEN)**
 
 [[t-static-index-key,STATIC_INDEX_KEY]]
-<<t-static-index-key>>:: `%fallback` | `%none` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
+<<t-static-index-key>>:: `%fallback` | `%none` | `%unknown` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
 
 [[t-accessor,ACCESSOR]]
 <<t-accessor>>:: <<t-accessor-key>> (`.` <<t-accessor-key>>){star}
@@ -884,10 +884,12 @@ struct Foo {
 <4> Dynamic index on a dispatcher, followed by two static indices on two structs.
 ====
 
+The default value used for all cases (including the two mutable special keys, `%none` and `%unknown`) is the <<dispatcher-fallback-case>>.
+
 .Special static key: `%fallback`
 ====
 The `%fallback` key can be used to access the <<dispatcher-fallback-case>> of a dispatcher.
-It cannot be used in <<dispatch-statement,dispatch statements>>, as the fallback case is generated automatically and cannot be manually declared.
+It cannot be used on the left hand side of <<dispatch-statement,dispatch statements>>, as the fallback case is generated automatically and cannot be manually declared.
 
 [source,rust]
 ----
@@ -912,6 +914,16 @@ dispatch minecraft:random_int_generator[uniform, %none] to struct { min?: int, m
 <2> The value of `type` at runtime is used as a dynamic index here.
 <3> The case corresponding to `%none` is dispatched to the struct here,
 so the random int generator can still get validated as a uniform generator properly when no value for `type` is provided at runtime.
+====
+
+.Special static key: `%unknown`
+====
+The case corresponding to `%unknown` is used when an unknown key is used to access the dispatcher.
+
+[source,rust]
+----
+dispatch minecraft:block[%unknown] to ()
+----
 ====
 
 .Special accessor key: `%key`
@@ -1020,7 +1032,7 @@ TODO
 **SYNTAX**
 
 [[s-dispatch,_DispatchStatement_]]
-<<s-dispatch>>:: `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
+<<s-dispatch>>:: <<s-attributes>> `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
 ****
 
 A **dispatcher** can be used to dispatch to a specific type from a given index.

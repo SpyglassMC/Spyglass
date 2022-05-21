@@ -1,12 +1,13 @@
 import type * as core from '@spyglassmc/core'
 import * as binder from './binder'
 import * as checker from './checker'
+import * as colorizer from './colorizer'
 import type { ModuleNode } from './node'
 import * as parser from './parser'
 
 export * as checker from './checker'
-// export * as colorizer from './colorizer'
-export * from './node/nodes'
+export * as colorizer from './colorizer'
+export * from './node'
 export * from './parser'
 export * from './type'
 
@@ -14,14 +15,10 @@ export * from './type'
 export const initialize: core.ProjectInitializer = ({ meta }) => {
 	meta.registerLanguage('mcdoc', {
 		extensions: ['.mcdoc'],
-		parser: parser.module,
+		parser: parser.module_,
 	})
 
-	meta.registerChecker<ModuleNode>('mcdoc:module', checker.module)
-
-	// meta.registerColorizer<CompoundFieldTypeNode>('mcdoc:struct/field/type', colorizer.compoundFieldType)
-	// meta.registerColorizer<IdentifierToken>('mcdoc:identifier', colorizer.identifier)
-	// meta.registerColorizer<LiteralToken>('mcdoc:literal', colorizer.literal)
-
+	meta.registerChecker<ModuleNode>('mcdoc:module', checker.module_)
 	meta.registerUriBinder(binder.uriBinder)
+	colorizer.registerMcdocColorizer(meta)
 }

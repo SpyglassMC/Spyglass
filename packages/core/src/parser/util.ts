@@ -297,10 +297,14 @@ export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type:
 export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type: T, parser: Parser<N>): Parser<Omit<N, 'type'> & { type: T }> {
 	return map(
 		parser,
-		res => ({
-			...res,
-			type,
-		})
+		res => {
+			const ans = {
+				...res,
+				type,
+			}
+			delete (ans as Partial<SequenceUtil>)[SequenceUtilDiscriminator]
+			return ans
+		}
 	)
 }
 

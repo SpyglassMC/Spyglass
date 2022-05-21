@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import type { Checker } from '@spyglassmc/core'
-import type { ModuleNode } from '../node/nodes'
+import type { ModuleNode } from '../node'
 
 // import type * as core from '@spyglassmc/core'
 // import type { Checker, RangeLike, Symbol, SymbolQuery } from '@spyglassmc/core'
@@ -12,7 +12,7 @@ import type { ModuleNode } from '../node/nodes'
 // import { CompoundFieldNode, EnumFieldNode, EnumNode, ExtendableRootRegistryMap, StructNode } from '../node'
 // import type { CheckerContext } from './CheckerContext'
 
-export const module: Checker<ModuleNode> = async (node: ModuleNode, ctx: core.CheckerContext): Promise<void> => {
+export const module_: Checker<ModuleNode> = async (node: ModuleNode, ctx: core.CheckerContext): Promise<void> => {
 	// const modSeg = uriToSeg(ctx.doc.uri, ctx)
 	// if (modSeg === undefined) {
 	// 	ctx.err.report(localize('mcdoc.checker.entry.undefined-mod-seg'), 0, ErrorSeverity.Warning)

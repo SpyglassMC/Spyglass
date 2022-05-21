@@ -14,7 +14,7 @@ export type NumericRange = [number | undefined, number | undefined]
 
 interface StaticIndex {
 	kind: 'static',
-	value: string | { keyword: 'fallback' | 'none' }
+	value: string | { keyword: 'fallback' | 'none' | 'unknown' }
 }
 interface DynamicIndex {
 	kind: 'dynamic',

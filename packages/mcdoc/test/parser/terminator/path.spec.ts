@@ -1,18 +1,21 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { integer } from '../../../lib'
+import { path } from '../../../lib'
 
-describe('mcdoc integer', () => {
+describe('mcdoc path()', () => {
 	const suites: { content: string }[] = [
 		{ content: '' },
-		{ content: '-1' },
-		{ content: '0' },
-		{ content: '1' },
+		{ content: 'foo' },
+		{ content: 'foo::bar' },
+		{ content: '::foo::bar' },
+		{ content: 'super::foo' },
+		{ content: 'super::foo::bar' },
+		{ content: 'super::foo something else;' },
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = integer
+			const parser = path
 			snapshot(testParser(parser, content))
 		})
 	}

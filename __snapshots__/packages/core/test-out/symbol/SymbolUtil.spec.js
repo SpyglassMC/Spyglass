@@ -1,57 +1,57 @@
 exports['SymbolUtil clear() Should clear all 1'] = `
-CATEGORY nbtdoc
-+ SYMBOL ShouldBeKept1 {nbtdoc} [Public]
+CATEGORY mcdoc
++ SYMBOL ShouldBeKept1 {mcdoc} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://test_file"}
 + + members:
-+ + + SYMBOL ShouldBeKept1.ShouldBeRemoved1 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept1.ShouldBeRemoved1 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 + + + ------------
-+ + + SYMBOL ShouldBeKept1.ShouldBeKept2 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept1.ShouldBeKept2 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 + + + + + ------------
 + + + + + {"uri":"spyglassmc://another_test_file"}
 + ------------
-+ SYMBOL ShouldBeKept3 {nbtdoc} [Public]
++ SYMBOL ShouldBeKept3 {mcdoc} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://another_test_file"}
 + + members:
-+ + + SYMBOL ShouldBeKept3.ShouldBeKept4 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept3.ShouldBeKept4 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
 + + + ------------
-+ + + SYMBOL ShouldBeKept3.ShouldBeKept5 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept3.ShouldBeKept5 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
 + + + + + ------------
 + + + + + {"uri":"spyglassmc://test_file"}
 + + + ------------
-+ + + SYMBOL ShouldBeKept3.ShouldBeRemoved3 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept3.ShouldBeRemoved3 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://test_file"}
 `
 
 exports['SymbolUtil clear() Should clear all 2'] = `
-CATEGORY nbtdoc
-+ SYMBOL ShouldBeKept1 {nbtdoc} [Public]
+CATEGORY mcdoc
++ SYMBOL ShouldBeKept1 {mcdoc} [Public]
 + + definition:
 
 + + members:
-+ + + SYMBOL ShouldBeKept1.ShouldBeKept2 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept1.ShouldBeKept2 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
 + ------------
-+ SYMBOL ShouldBeKept3 {nbtdoc} [Public]
++ SYMBOL ShouldBeKept3 {mcdoc} [Public]
 + + definition:
 + + + {"uri":"spyglassmc://another_test_file"}
 + + members:
-+ + + SYMBOL ShouldBeKept3.ShouldBeKept4 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept3.ShouldBeKept4 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
 + + + ------------
-+ + + SYMBOL ShouldBeKept3.ShouldBeKept5 {nbtdoc} [Public]
++ + + SYMBOL ShouldBeKept3.ShouldBeKept5 {mcdoc} [Public]
 + + + + definition:
 + + + + + {"uri":"spyglassmc://another_test_file"}
 `
