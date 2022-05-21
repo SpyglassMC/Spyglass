@@ -63,7 +63,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			// nbt path keys without mcdoc definition.
 			(!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') ||
 			// mcdoc compound key definition outside of `::minecraft` modules.
-			(mcdoc.CompoundFieldNode.is(n.parent) && mcdoc.CompoundFieldKey.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
+			(mcdoc.StructFieldNode.is(n.parent) && mcdoc.StructKeyNode.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
 		),
 	})
 

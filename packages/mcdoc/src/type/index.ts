@@ -1,7 +1,7 @@
-import type { ProcessorContext, SymbolPath } from '@spyglassmc/core'
+import type { FullResourceLocation, ProcessorContext, SymbolPath } from '@spyglassmc/core'
 import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { EnumKind, ResolvedRootRegistry } from '../node/nodes'
+import type { EnumKind } from '../node'
 
 export interface Attribute {
 	name: string,
@@ -25,7 +25,7 @@ export type Index = StaticIndex | DynamicIndex
 export type ParallelIndices = [Index, ...Index[]]
 
 export interface DispatcherData {
-	registry: ResolvedRootRegistry | undefined,
+	registry: FullResourceLocation | undefined,
 	index: ParallelIndices,
 }
 
@@ -50,7 +50,7 @@ export interface StructType extends TypeBase {
 
 export interface EnumType extends TypeBase {
 	kind: 'enum',
-	enumKind?: EnumKind,
+	enumKind: EnumKind,
 	values: { identifier: string, value: string | number | bigint }[]
 }
 

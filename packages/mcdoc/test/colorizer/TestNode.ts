@@ -1,5 +1,5 @@
 import type { SymbolTable } from '@spyglassmc/core'
-import type { MainNode } from '../../lib'
+import type { ModuleNode } from '../../lib'
 
 export const TestContent = `
 /// Doc comment.
@@ -27,6 +27,6 @@ inject compound Foo {
 }
 `
 
-export const TestNode: MainNode = {} as any
+export const TestNode: ModuleNode = {} as any
 
 export declare const TestSymbolTable: SymbolTable

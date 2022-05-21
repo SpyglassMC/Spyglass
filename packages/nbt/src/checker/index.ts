@@ -26,9 +26,9 @@ declare global {
 * @param id If the registry is under the `custom` namespace, `id` can only be a string. Otherwise it can be a string, string array, or `undefined`.
 * If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
 */
-export function index(registry: mcdoc.ExtendableRootRegistry, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options?: Options): core.SyncChecker<NbtCompoundNode>
-export function index(registry: mcdoc.ResolvedRootRegistry, id: core.FullResourceLocation, options?: Options): core.SyncChecker<NbtCompoundNode>
-export function index(registry: mcdoc.ResolvedRootRegistry, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+export function index(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options?: Options): core.SyncChecker<NbtCompoundNode>
+export function index(registry: string, id: core.FullResourceLocation, options?: Options): core.SyncChecker<NbtCompoundNode>
+export function index(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
 	switch (registry) {
 		case 'custom:blockitemstates':
 			const blockIds = getBlocksFromItem(id as core.FullResourceLocation)
@@ -126,36 +126,36 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 	}
 
 	return (node, ctx) => {
-		const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
-		const data = query.symbol?.data as mcdoc.EnumNode.SymbolData | undefined
+		// const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
+		// const data = query.symbol?.data as mcdoc.EnumNode.SymbolData | undefined
 
-		// Check type.
-		if (data?.enumKind && node.type !== data.enumKind && node.type !== `nbt:${data.enumKind}`) {
-			ctx.err.report(localize('expected', localize(`nbt.node.${data.enumKind}`)), node, core.ErrorSeverity.Warning)
-		}
+		// // Check type.
+		// if (data?.enumKind && node.type !== data.enumKind && node.type !== `nbt:${data.enumKind}`) {
+		// 	ctx.err.report(localize('expected', localize(`nbt.node.${data.enumKind}`)), node, core.ErrorSeverity.Warning)
+		// }
 
-		// Get all enum members.
-		const enumMembers: Record<string, string> = {}
-		query.forEachMember((name, memberQuery) => {
-			const value = (memberQuery.symbol?.data as mcdoc.EnumFieldNode.SymbolData | undefined)?.value
-			if (value !== undefined) {
-				enumMembers[name] = value.toString()
-			}
-		})
+		// // Get all enum members.
+		// const enumMembers: Record<string, string> = {}
+		// query.forEachMember((name, memberQuery) => {
+		// 	const value = (memberQuery.symbol?.data as mcdoc.EnumFieldNode.SymbolData | undefined)?.value
+		// 	if (value !== undefined) {
+		// 		enumMembers[name] = value.toString()
+		// 	}
+		// })
 
-		// Check value.
-		if (!Object.values(enumMembers).includes(node.value.toString())) {
-			ctx.err.report(localize('expected',
-				Object.entries(enumMembers).map(([k, v]) => `${k} = ${v}`)
-			), node, core.ErrorSeverity.Warning)
-		}
+		// // Check value.
+		// if (!Object.values(enumMembers).includes(node.value.toString())) {
+		// 	ctx.err.report(localize('expected',
+		// 		Object.entries(enumMembers).map(([k, v]) => `${k} = ${v}`)
+		// 	), node, core.ErrorSeverity.Warning)
+		// }
 	}
 }
 
 /**
  * @param id If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
  */
-export function path(registry: mcdoc.ExtendableRootRegistry, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined): core.SyncChecker<NbtPathNode> {
+export function path(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
 		// const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
 		// let targetType: mcdoc.McdocType | undefined = {

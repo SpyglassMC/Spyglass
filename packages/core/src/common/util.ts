@@ -35,14 +35,14 @@ export function CachePromise(getCacheKey: (args: any[]) => any = args => args[0]
 }
 
 /**
- * This is a decorator for async methods. Decorated methods will return the same `Promise` no matter what.
+ * This is a decorator for methods. Decorated methods will return the same non-`undefined` value no matter what.
  */
-export const SingletonPromise: MethodDecorator = (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
-	let promise: Promise<unknown> | undefined
-	const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
+export const Singleton: MethodDecorator = (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+	let value: unknown
+	const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 	// The `function` syntax is used to preserve `this` context from the decorated method.
 	descripter.value = function (...args: unknown[]) {
-		return promise ??= decoratedMethod.apply(this, args)
+		return value ??= decoratedMethod.apply(this, args)
 	}
 	return descripter
 }

@@ -113,9 +113,9 @@ export function sequence(parsers: SP<AstNode>[], parseGap?: InfallibleParser<Ast
  * 
  * @returns A parser that takes a sequence with the passed-in parser being repeated zero or more times.
  */
-export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): { _inputParserIsInfallible: never } & never
+export function repeat<CN extends AstNode>(parser: InfallibleParser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): { _inputParserIsInfallible: never } & void
 export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>>
-export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>> {
+export function repeat<CN extends AstNode>(parser: Parser<CN | SequenceUtil<CN>>, parseGap?: InfallibleParser<CN[]>): InfallibleParser<SequenceUtil<CN>> | void {
 	return (src: Source, ctx: ParserContext): SequenceUtil<CN> => {
 		const ans: SequenceUtil<CN> = {
 			[SequenceUtilDiscriminator]: true,
@@ -201,11 +201,26 @@ export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> 
 }
 
 /**
+ * @returns A parser that fails when the passed-in parser produced any errors.
+ */
+export function failOnError<T extends Returnable>(parser: Parser<T>): Parser<T> {
+	return (src, ctx) => {
+		const start = src.cursor
+		const { errorAmount, updateSrcAndCtx, result } = attempt(parser, src, ctx)
+		if (!errorAmount) {
+			updateSrcAndCtx()
+			return result
+		}
+		return Failure
+	}
+}
+
+/**
  * @returns A parser that takes an optional syntax component.
  */
-export function optional<N extends Returnable>(parser: InfallibleParser<N>): void
+export function optional<N extends Returnable>(parser: InfallibleParser<N>): { _inputParserIsInfallible: never } & void
 export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined>
-export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined> {
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined> | void {
 	return ((src: Source, ctx: ParserContext): N | undefined => {
 		const { result, updateSrcAndCtx } = attempt(parser, src, ctx)
 		if (result === Failure) {
@@ -222,9 +237,9 @@ export function optional<N extends Returnable>(parser: Parser<N>): InfalliblePar
  * 
  * @returns A parser that returns the return value of the `parser`, or the return value of `defaultValue` it it's a `Failure`.
  */
-export function recover<N extends Returnable>(parser: InfallibleParser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): void
+export function recover<N extends Returnable>(parser: InfallibleParser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): { _inputParserIsInfallible: never } & void
 export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N>
-export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N> {
+export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (src: Source, ctx: ParserContext) => N): InfallibleParser<N> | void {
 	return (src: Source, ctx: ParserContext): N => {
 		const result = parser(src, ctx)
 		if (result === Failure) {
@@ -235,17 +250,24 @@ export function recover<N extends Returnable>(parser: Parser<N>, defaultValue: (
 	}
 }
 
-type Case = { predicate?: (this: void, src: ReadonlySource) => boolean, parser: Parser<Returnable> }
+type GettableParser = Parser<Returnable> | { get: () => Parser<Returnable> }
+type ExtractFromGettableParser<T extends GettableParser> = T extends { get: () => infer V }
+	? V
+	: T extends Parser<Returnable> ? T : never
+type Case = { predicate?: (this: void, src: ReadonlySource) => boolean, prefix?: string, parser: GettableParser }
 
 /**
  * @template CA Case array.
  */
-export function select<CA extends readonly Case[]>(cases: CA): Parser<ExtractNodeType<CA[number]['parser']>>
+export function select<CA extends readonly Case[]>(cases: CA): ExtractFromGettableParser<CA[number]['parser']> extends InfallibleParser<Returnable>
+	? InfallibleParser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
+	: Parser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
 export function select(cases: readonly Case[]): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
-		for (const { predicate, parser } of cases) {
-			if (predicate?.(src) ?? true) {
-				return parser(src, ctx)
+		for (const { predicate, prefix, parser } of cases) {
+			if (predicate?.(src) ?? (prefix !== undefined ? src.tryPeek(prefix) : undefined) ?? true) {
+				const callableParser = typeof parser === 'object' ? parser.get() : parser
+				return callableParser(src, ctx)
 			}
 		}
 		return Failure
@@ -344,4 +366,23 @@ export function acceptOnly<N extends Returnable>(parser: Parser<N>, ...character
 		src.cursor = tmpSrc.cursor
 		return ans
 	}
+}
+
+export function acceptIf<P extends Parser<AstNode>>(parser: P, predicate: (this: void, char: string) => boolean): P extends InfallibleParser<infer N>
+	? InfallibleParser<N>
+	: P extends Parser<infer N> ? Parser<N> : never {
+	return ((src: Source, ctx: ParserContext) => {
+		const tmpSrc = src.clone()
+		// Cut tmpSrc.string before the nearest unacceptable character.
+		for (let i = tmpSrc.innerCursor; i < tmpSrc.string.length; i++) {
+			if (!predicate(tmpSrc.string.charAt(i))) {
+				tmpSrc.string = tmpSrc.string.slice(0, i)
+				break
+			}
+		}
+
+		const ans = parser(tmpSrc, ctx)
+		src.innerCursor = tmpSrc.innerCursor
+		return ans
+	}) as ReturnType<typeof acceptIf<P>>
 }

@@ -33,6 +33,7 @@ Here is the syntax used by this document to describe the syntax of mcdoc -- synt
 |Symbol |Meaning
 
 |`str` |Literal `str`
+|U+`xxxx` |Unicode character with the code point `xxxx`
 |A{star} |A repeated zero or more times
 |A{plus} |A repeated one or more times
 |A^?^ |A repeated zero or one times
@@ -115,7 +116,7 @@ Doc comments are similar to comments syntax-wise -- they start with triple slash
 A block of doc comments can provide human-readable documentation for the component right after it to users of your mcdoc files.
 Unlike regular comments, doc comments can only be put in front of enum definitions, enum fields, struct definitions, struct fields, and type aliases, as part of <<prelim>>s.
 
-The text content of a doc comment block should be treated as a MarkDown content, with the leading triple slashes stripped.
+The text content of a doc comment block should be treated as a MarkDown content, with the leading triple slashes (and up to one leading space after the slashes if all lines within the block share that one leading space) stripped.
 
 .Doc comments
 ====
@@ -190,9 +191,7 @@ Scientific notation may be used with the letter `e` (case-insensitive).
 **SYNTAX (TOKEN)**
 
 [[t-typed-number,TYPED_NUMBER]]
-<<t-typed-number>>::
-	<<t-integer>> ++[++`b` `B` `l` `L` `s` `S`++]++^?^ | +
-	<<t-float>> ++[++`d` `D` `f` `F`++]++^?^
+<<t-typed-number>>:: <<t-float>> ++[++`b` `B` `d` `D` `f` `F` `l` `L` `s` `S`++]++^?^
 ****
 
 A typed number is similar to a number used in SNBTs syntax-wise.
@@ -323,18 +322,24 @@ spyglassmc:bar
 **SYNTAX (TOKEN)**
 
 [[t-ident,IDENTIFIER]]
-<<t-ident>>:: (++[++`A`-`Z` `a`-`z` `+_+`++]++ ++[++`A`-`Z` `a`-`z` `0`-`9` `+_+`++]++{star})~pass:n[except: <<t-reserved-words>>]~
+<<t-ident>>:: ((<<t-ident-start>>) (<<t-ident-continue>>){star})~pass:n[except: <<t-reserved-words>>]~
+
+[[t-ident-start,IDENT_START]]
+<<t-ident-start>>:: any character in the https://unicode.org/reports/tr18/#General_Category_Property[Unicode general categories] "`Letter (`L`)`" or "`Letter Number (`Nl`)`"
+// <<t-ident-start>>:: [`A`-`Z` `a`-`z` `_`]
+
+[[t-ident-continue,IDENT_CONTINUE]]
+<<t-ident-continue>>:: <<t-ident-start>> | U+`200C` | U+`200D` | (any character in the Unicode categories "`Non-Spacing Mark (`Mn`)`", "`Spacing Combining Mark (`Mc`)`", "`Decimal Digit Number (`Nd`)`", or "`Connector Punctuation (`Pc`)`")
+// <<t-ident-continue>>:: <<t-ident-start>> | [`0`-`9`]
 
 [[t-reserved-words,RESERVED_WORDS]]
 <<t-reserved-words>>:: `any` | `boolean` | `byte` | `double` | `enum` | `false` | `float` | `int` | `long` | `short` | `string` | `struct` | `super` | `true`
 ****
 
-An identifier is a name given to a type definition in mcdoc.
-It can contain any alphanumeric characters and the underscore (`_`), but must not start with a numeric character (`0`-`9`).
+An identifier is a case-sensitive name given to a type definition in mcdoc.
+It can contain any Unicode letters and the underscore (`_`), but must not start with a digit.
 
 It also must not be named after a list of <<t-reserved-words,reserved words>>.
-
-NOTE: We might extend supported characters for identifiers to any character in the Unicode categories "`Uppercase letter (Lu)`", "`Lowercase letter (Ll)`", "`Titlecase letter (Lt)`", "`Modifier letter (Lm)`", "`Other letter (Lo)`", or "`Letter number (Nl)`" in the future.
 
 .Identifiers
 ====

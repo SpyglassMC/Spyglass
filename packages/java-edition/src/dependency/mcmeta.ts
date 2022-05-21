@@ -54,8 +54,7 @@ export function getMcmetaSummaryUris(version: string, isLatest: boolean, source:
 	const tag = isLatest ? 'summary' : `${version}-summary`
 
 	function getUri(path: string): core.RemoteUriString {
-		source = source.toLowerCase()
-		const template = DataSources[source] ?? source
+		const template = DataSources[source.toLowerCase()] ?? source
 		const ans = template
 			.replace(/\${user}/g, 'misode')
 			.replace(/\${repo}/g, 'mcmeta')

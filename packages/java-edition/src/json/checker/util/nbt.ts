@@ -2,7 +2,6 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { ResourceLocation } from '@spyglassmc/core'
 import { simpleString, string } from '@spyglassmc/json/lib/checker'
 import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker'
-import type { ExtendableRootRegistry } from '@spyglassmc/mcdoc'
 import type { NbtCompoundNode, NbtPathNode } from '@spyglassmc/nbt'
 import { checker as nbtChecker } from '@spyglassmc/nbt'
 import { getTagValues } from '../../../common'
@@ -11,7 +10,7 @@ interface DefinitionOptions {
 	definition: `::${string}::${string}`,
 }
 interface RegistryOptions {
-	registry: ExtendableRootRegistry,
+	registry: string,
 	id?: string | undefined,
 	idOrTag?: string | undefined,
 	ids?: readonly string[] | undefined,
