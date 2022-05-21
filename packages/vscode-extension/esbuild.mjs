@@ -9,6 +9,7 @@ try {
 
 	const isDev = mode !== 'prod'
 	const isWatch = mode === 'watch'
+	console.info('Start building...')
 	const result = await esbuild.build({
 		entryPoints: ['./out/extension.js', '../language-server/lib/server.js'],
 		entryNames: '[name]',
