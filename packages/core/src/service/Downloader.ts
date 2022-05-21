@@ -10,6 +10,10 @@ import type { Logger } from './Logger'
 type RemoteProtocol = 'http:' | 'https:'
 export type RemoteUriString = `${RemoteProtocol}${string}`
 export namespace RemoteUriString {
+	export function is(value: string): value is RemoteUriString {
+		return value.startsWith('http:') || value.startsWith('https:')
+	}
+
 	export function getProtocol(uri: RemoteUriString): RemoteProtocol {
 		return uri.slice(0, uri.indexOf(':') + 1) as RemoteProtocol
 	}

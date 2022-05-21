@@ -44,13 +44,27 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 	return toVersionInfo(versions.findIndex(v => inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()))
 }
 
+const DataSources: Partial<Record<string, string>> = {
+	fastly: 'https://fastly.jsdelivr.net/gh/${user}/${repo}/${tag}/${path}',
+	github: 'https://raw.githubusercontent.com/${user}/${repo}/${tag}/${path}',
+	jsdelivr: 'https://cdn.jsdelivr.net/gh/${user}/${repo}/${tag}/${path}',
+}
+
 export function getMcmetaSummaryUris(version: string, isLatest: boolean, source: string): { blocks: core.RemoteUriString, commands: core.RemoteUriString, registries: core.RemoteUriString } {
 	const tag = isLatest ? 'summary' : `${version}-summary`
 
 	function getUri(path: string): core.RemoteUriString {
-		return source.toLowerCase() === 'jsdelivr'
-			? `https://cdn.jsdelivr.net/gh/misode/mcmeta@${tag}/${path}`
-			: `https://raw.githubusercontent.com/misode/mcmeta/${tag}/${path}`
+		source = source.toLowerCase()
+		const template = DataSources[source] ?? source
+		const ans = template
+			.replace(/\${user}/g, 'misode')
+			.replace(/\${repo}/g, 'mcmeta')
+			.replace(/\${tag}/g, tag)
+			.replace(/\${path}/g, path)
+		if (!core.RemoteUriString.is(ans)) {
+			throw new Error(`Expected a remote URI from data source template but got ${ans}`)
+		}
+		return ans
 	}
 
 	return {

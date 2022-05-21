@@ -31,8 +31,10 @@ export interface EnvConfig {
 	/**
 	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
 	 * 
-	 * * `GitHub`
-	 * * `jsDelivr`: Not recommended as files from there can be outdated. Only use this if you have trouble connecting to `raw.githubusercontent.com`.
+	 * * `GitHub`: Recommended, unless you have trouble connecting to `raw.githubusercontent.com`.
+	 * * `fastly`
+	 * * `jsDelivr`
+	 * * A custom URL, with placeholder variables: `${user}`, `${repo}`, `${tag}`, and `${path}`.
 	 */
 	dataSource: string,
 	/**
