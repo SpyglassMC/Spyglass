@@ -45,9 +45,9 @@ export function resolveConfiguredVersion(inputVersion: string, { packMcmeta, ver
 }
 
 const DataSources: Partial<Record<string, string>> = {
-	fastly: 'https://fastly.jsdelivr.net/gh/${user}/${repo}/${tag}/${path}',
+	fastly: 'https://fastly.jsdelivr.net/gh/${user}/${repo}@${tag}/${path}',
 	github: 'https://raw.githubusercontent.com/${user}/${repo}/${tag}/${path}',
-	jsdelivr: 'https://cdn.jsdelivr.net/gh/${user}/${repo}/${tag}/${path}',
+	jsdelivr: 'https://cdn.jsdelivr.net/gh/${user}/${repo}@${tag}/${path}',
 }
 
 export function getMcmetaSummaryUris(version: string, isLatest: boolean, source: string): { blocks: core.RemoteUriString, commands: core.RemoteUriString, registries: core.RemoteUriString } {
