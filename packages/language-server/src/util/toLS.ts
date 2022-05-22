@@ -138,8 +138,8 @@ export function completionItem(completion: core.CompletionItem, doc: TextDocumen
 	const textEdit: ls.TextEdit | ls.InsertReplaceEdit = canInsertReplace
 		? ls.InsertReplaceEdit.create(
 			insertText,
-				/* insert  */ range(core.Range.create(completion.range.start, requestedOffset), doc),
-				/* replace */ range(completion.range, doc)
+			/* insert  */ range(core.Range.create(completion.range.start, requestedOffset), doc),
+			/* replace */ range(completion.range, doc)
 		)
 		: ls.TextEdit.replace(range(completion.range, doc), insertText)
 	const ans: ls.CompletionItem = {
@@ -206,16 +206,27 @@ export function semanticTokenModifiers(modifiers: readonly core.ColorTokenModifi
 	return ans
 }
 
-export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocument): ls.SemanticTokens {
+const MaxCharacterNumber = 2147483647
+export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocument, multilineSupport: boolean | undefined): ls.SemanticTokens {
 	const builder = new ls.SemanticTokensBuilder()
 	for (const token of tokens) {
 		const pos = position(token.range.start, doc)
-		const length = token.range.end - token.range.start
-		builder.push(
-			pos.line, pos.character, length,
-			semanticTokenType(token.type),
-			semanticTokenModifiers(token.modifiers)
-		)
+		const endPos = position(token.range.end, doc)
+		const type = semanticTokenType(token.type)
+		const modifiers = semanticTokenModifiers(token.modifiers)
+		if (multilineSupport || pos.line === endPos.line) {
+			const length = token.range.end - token.range.start
+			builder.push(pos.line, pos.character, length, type, modifiers)
+		} else {
+			const firstLineRemainingLength = doc.getText(ls.Range.create(pos.line, pos.character, pos.line, MaxCharacterNumber)).length
+			const lastLineLeadingLength = doc.getText(ls.Range.create(endPos.line, 0, endPos.line, MaxCharacterNumber)).length
+			builder.push(pos.line, pos.character, firstLineRemainingLength, type, modifiers)
+			for (let i = pos.line + 1; i < endPos.line - 1; i++) {
+				const lineLength = doc.getText(ls.Range.create(i, 0, i, MaxCharacterNumber)).length
+				builder.push(i, 0, lineLength, type, modifiers)
+			}
+			builder.push(endPos.line, 0, lastLineLeadingLength, type, modifiers)
+		}
 	}
 	return builder.build()
 }

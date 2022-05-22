@@ -317,7 +317,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	}
 	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc)
-	return toLS.semanticTokens(tokens, doc)
+	return toLS.semanticTokens(tokens, doc, capabilities.textDocument?.semanticTokens?.multilineTokenSupport)
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
 	const docAndNode = await service.project.ensureParsedAndCheckedOnlyWhenReady(uri)
@@ -326,7 +326,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 	}
 	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc, toCore.range(range, doc))
-	return toLS.semanticTokens(tokens, doc)
+	return toLS.semanticTokens(tokens, doc, capabilities.textDocument?.semanticTokens?.multilineTokenSupport)
 })
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
