@@ -263,7 +263,7 @@ const attributeTreePosValues: InfallibleParser<AttributeTreePosValuesNode> = set
 	], true)
 )
 
-const attributeNamedValue: InfallibleParser<SyntaxUtil<StringNode | IdentifierNode | AttributeValueNode>> = syntax([
+const attributeNamedValue: Parser<SyntaxUtil<StringNode | IdentifierNode | AttributeValueNode>> = syntax([
 	select([
 		{ prefix: '"', parser: string },
 		{ parser: identifier },
@@ -274,7 +274,7 @@ const attributeNamedValue: InfallibleParser<SyntaxUtil<StringNode | IdentifierNo
 	]),
 ], true)
 
-const attributeTreeNamedValues: InfallibleParser<AttributeTreeNamedValuesNode> = setType(
+const attributeTreeNamedValues: Parser<AttributeTreeNamedValuesNode> = setType(
 	'mcdoc:attribute/tree/named',
 	syntax([
 		attributeNamedValue,
@@ -283,9 +283,9 @@ const attributeTreeNamedValues: InfallibleParser<AttributeTreeNamedValuesNode> =
 )
 
 const treeBody: InfallibleParser<SyntaxUtil<AttributeTreePosValuesNode | AttributeTreeNamedValuesNode>> = any([
-	syntax([attributeTreePosValues, optional(marker(','))]),
 	syntax([attributeTreeNamedValues, optional(marker(','))]),
 	syntax([attributeTreePosValues, punctuation(','), attributeTreeNamedValues, optional(marker(','))]),
+	syntax([attributeTreePosValues, optional(marker(','))]),
 ])
 
 const AttributeTreeClosure = Object.freeze({
@@ -293,8 +293,11 @@ const AttributeTreeClosure = Object.freeze({
 	'[': ']',
 	'{': '}',
 })
-const attributeTree: InfallibleParser<AttributeTreeNode> = (src, ctx) => {
-	const delim = src.trySkip('(') ? '(' : (src.trySkip('[') ? '[' : '{')
+const attributeTree: Parser<AttributeTreeNode> = (src, ctx) => {
+	const delim = src.trySkip('(') ? '(' : (src.trySkip('[') ? '[' : (src.trySkip('{') ? '{' : undefined))
+	if (!delim) {
+		return Failure
+	}
 	const res = treeBody(src, ctx)
 	const ans: AttributeTreeNode = {
 		type: 'mcdoc:attribute/tree',
@@ -307,7 +310,7 @@ const attributeTree: InfallibleParser<AttributeTreeNode> = (src, ctx) => {
 }
 
 const attributeValue: InfallibleParser<AttributeValueNode> = select([
-	{ predicate: src => ['(', '[', '{'].includes(src.peek()), parser: attributeTree },
+	{ predicate: src => ['(', '[', '{'].includes(src.peek()), parser: attributeTree as InfallibleParser<AttributeTreeNode> },
 	{ parser: { get: () => type } },
 ])
 
@@ -318,7 +321,7 @@ export const attribute: Parser<AttributeNode> = setType(
 		identifier,
 		select([
 			{ prefix: '=', parser: syntax([punctuation('='), attributeValue, punctuation(']')], true) },
-			{ predicate: src => ['(', '[', '{'].includes(src.peek()), parser: syntax([attributeTree, punctuation(']')], true) },
+			{ predicate: src => ['(', '[', '{'].includes(src.peek()), parser: syntax([attributeTree as InfallibleParser<AttributeTreeNode>, punctuation(']')], true) },
 			{ parser: punctuation(']') },
 		]),
 	], true)

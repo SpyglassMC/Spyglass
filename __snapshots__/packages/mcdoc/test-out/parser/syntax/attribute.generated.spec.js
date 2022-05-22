@@ -179,6 +179,81 @@ exports['mcdoc attribute Parse "#[advancement_criterion=(type=definition,id=test
   "errors": []
 }
 
+exports['mcdoc attribute Parse "#[bitfield(enum (int) {})]" 1'] = {
+  "node": {
+    "type": "mcdoc:attribute",
+    "children": [
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 2,
+          "end": 10
+        },
+        "value": "bitfield"
+      },
+      {
+        "type": "mcdoc:attribute/tree",
+        "range": {
+          "start": 11,
+          "end": 24
+        },
+        "children": [
+          {
+            "type": "mcdoc:attribute/tree/pos",
+            "children": [
+              {
+                "type": "mcdoc:enum",
+                "children": [
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 11,
+                      "end": 15
+                    },
+                    "value": "enum",
+                    "colorTokenType": "keyword"
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 17,
+                      "end": 20
+                    },
+                    "value": "int",
+                    "colorTokenType": "type"
+                  },
+                  {
+                    "type": "mcdoc:enum/block",
+                    "children": [],
+                    "range": {
+                      "start": 22,
+                      "end": 24
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 11,
+                  "end": 24
+                }
+              }
+            ],
+            "range": {
+              "start": 11,
+              "end": 24
+            }
+          }
+        ],
+        "delim": "("
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 26
+    }
+  },
+  "errors": []
+}
+
 exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1,↓⮀⮀⮀⮀⮀Bar = 2,↓⮀⮀⮀⮀⮀Qux = 3,↓⮀⮀⮀⮀}]" 1'] = {
   "node": {
     "type": "mcdoc:attribute",
@@ -448,6 +523,106 @@ exports['mcdoc attribute Parse "#[uuid]" 1'] = {
     "range": {
       "start": 0,
       "end": 7
+    }
+  },
+  "errors": []
+}
+
+exports['mcdoc attribute Parse "#[vector(dimension=3,integer=true)]" 1'] = {
+  "node": {
+    "type": "mcdoc:attribute",
+    "children": [
+      {
+        "type": "mcdoc:identifier",
+        "range": {
+          "start": 2,
+          "end": 8
+        },
+        "value": "vector"
+      },
+      {
+        "type": "mcdoc:attribute/tree",
+        "range": {
+          "start": 9,
+          "end": 33
+        },
+        "children": [
+          {
+            "type": "mcdoc:attribute/tree/named",
+            "children": [
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 9,
+                  "end": 18
+                },
+                "value": "dimension"
+              },
+              {
+                "type": "mcdoc:type/literal",
+                "children": [
+                  {
+                    "type": "mcdoc:typed_number",
+                    "children": [
+                      {
+                        "type": "float",
+                        "range": {
+                          "start": 19,
+                          "end": 20
+                        },
+                        "value": 3
+                      }
+                    ],
+                    "range": {
+                      "start": 19,
+                      "end": 20
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 19,
+                  "end": 20
+                }
+              },
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 21,
+                  "end": 28
+                },
+                "value": "integer"
+              },
+              {
+                "type": "mcdoc:type/literal",
+                "children": [
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 29,
+                      "end": 33
+                    },
+                    "value": "true",
+                    "colorTokenType": "type"
+                  }
+                ],
+                "range": {
+                  "start": 29,
+                  "end": 33
+                }
+              }
+            ],
+            "range": {
+              "start": 9,
+              "end": 33
+            }
+          }
+        ],
+        "delim": "("
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 35
     }
   },
   "errors": []

@@ -102,7 +102,9 @@ export const McdocParserTestSuites: Record<'terminator' | 'syntax' | 'syntax/typ
 				'#[uuid]',
 				'#[since=1.17]',
 				'#[color=composite_int]',
+				'#[vector(dimension=3,integer=true)]',
 				'#[advancement_criterion=(type=definition,id=test)]',
+				'#[bitfield(enum (int) {})]',
 				`#[bitfield=enum (int) {
 					Foo = 1,
 					Bar = 2,
