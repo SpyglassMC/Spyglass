@@ -591,7 +591,7 @@ export const useStatement: Parser<UseStatementNode> = setType(
 			{ prefix: 'as', parser: syntax([literal('as'), identifier]) },
 			{ parser: noop },
 		]),
-	])
+	], true)
 )
 
 const topLevel: Parser<TopLevelNode> = any([

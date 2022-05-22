@@ -120,6 +120,45 @@ exports['mcdoc useStatement Parse "use foo" 1'] = {
   "errors": []
 }
 
+exports['mcdoc useStatement Parse "use foo/// Trailing doc comment." 1'] = {
+  "node": {
+    "type": "mcdoc:use_statement",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "use",
+        "colorTokenType": "keyword"
+      },
+      {
+        "type": "mcdoc:path",
+        "children": [
+          {
+            "type": "mcdoc:identifier",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "value": "foo"
+          }
+        ],
+        "range": {
+          "start": 4,
+          "end": 7
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 7
+    }
+  },
+  "errors": []
+}
+
 exports['mcdoc useStatement Parse "use foo::bar as qux// Trailing comment." 1'] = {
   "node": {
     "type": "mcdoc:use_statement",

@@ -138,6 +138,7 @@ export const McdocParserTestSuites: Record<'terminator' | 'syntax' | 'syntax/typ
 				'other',
 				'use',
 				'use foo',
+				'use foo/// Trailing doc comment.',
 				'use foo as bar',
 				'use foo::bar as qux// Trailing comment.',
 			],
