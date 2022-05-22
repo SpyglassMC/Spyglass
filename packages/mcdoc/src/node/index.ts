@@ -444,7 +444,7 @@ export const StructMapKeyNode = Object.freeze({
 
 export interface StructSpreadFieldNode extends AstNode {
 	type: 'mcdoc:struct/field/spread',
-	children: (CommentNode | TypeNode)[],
+	children: (CommentNode | AttributeNode | TypeNode)[],
 }
 export const StructSpreadFieldNode = Object.freeze({
 	is(node: AstNode | undefined): node is StructSpreadFieldNode {

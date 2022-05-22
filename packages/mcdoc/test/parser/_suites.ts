@@ -177,8 +177,12 @@ export const McdocParserTestSuites: Record<'terminator' | 'syntax' | 'syntax/typ
 				'enum (int) {}',
 				'enum (int) Foo {}',
 				`enum (double) Foo {
+					/// Bar doc
 					Bar = 1.2,
+					/// Boo doc
+					/// Another line
 					Boo = 4.2d,
+					/// Qux doc
 					Qux = 12e3,
 				}`,
 			],
@@ -263,6 +267,7 @@ export const McdocParserTestSuites: Record<'terminator' | 'syntax' | 'syntax/typ
 					UUID: #[uuid] int[] @ 4,
 					#[meh]
 					Qux: enum (int) {},
+					#[since=1.17]
 					...Lol,
 				}`,
 			],

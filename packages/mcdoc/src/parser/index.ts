@@ -361,7 +361,7 @@ const enumType: InfallibleParser<LiteralNode> = literal([
 	'string',
 	'float',
 	'double',
-])
+], { colorTokenType: 'type' })
 
 export const float: InfallibleParser<FloatNode> = core.float({
 	pattern: /^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
@@ -399,7 +399,7 @@ const enumBlock: InfallibleParser<EnumBlockNode> = setType(
 			{
 				parser: syntax([
 					enumField,
-					syntaxRepeat(syntax([marker(','), failOnEmpty(enumField)])),
+					syntaxRepeat(syntax([marker(','), failOnEmpty(enumField)], true), true),
 					optional(marker(',')),
 					punctuation('}'),
 				], true),
@@ -491,17 +491,18 @@ const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
 	return ans
 }
 
-const structSpreadField: InfallibleParser<StructSpreadFieldNode> = setType(
+const structSpreadField: Parser<StructSpreadFieldNode> = setType(
 	'mcdoc:struct/field/spread',
 	syntax([
-		punctuation('...'),
+		attributes,
+		marker('...'),
 		{ get: () => type },
 	], true)
 )
 
-const structField: InfallibleParser<StructPairFieldNode | StructSpreadFieldNode> = select([
-	{ prefix: '...', parser: structSpreadField },
-	{ parser: structPairField },
+const structField: InfallibleParser<StructPairFieldNode | StructSpreadFieldNode> = any([
+	structSpreadField,
+	structPairField,
 ])
 
 const structBlock: InfallibleParser<StructBlockNode> = setType(

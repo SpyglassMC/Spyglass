@@ -209,7 +209,8 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
               "start": 17,
               "end": 20
             },
-            "value": "int"
+            "value": "int",
+            "colorTokenType": "type"
           },
           {
             "type": "mcdoc:enum/block",

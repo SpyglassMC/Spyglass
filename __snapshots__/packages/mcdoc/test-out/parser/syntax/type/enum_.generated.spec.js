@@ -31,7 +31,8 @@ exports['mcdoc enum_ Parse "enum () Foo" 1'] = {
           "start": 6,
           "end": 6
         },
-        "value": ""
+        "value": "",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:identifier",
@@ -142,7 +143,7 @@ exports['mcdoc enum_ Parse "enum () Foo" 1'] = {
   ]
 }
 
-exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}" 1'] = {
+exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀/// Bar doc↓⮀⮀⮀⮀⮀Bar = 1.2,↓⮀⮀⮀⮀⮀/// Boo doc↓⮀⮀⮀⮀⮀/// Another line↓⮀⮀⮀⮀⮀Boo = 4.2d,↓⮀⮀⮀⮀⮀/// Qux doc↓⮀⮀⮀⮀⮀Qux = 12e3,↓⮀⮀⮀⮀}" 1'] = {
   "node": {
     "type": "mcdoc:enum",
     "children": [
@@ -161,7 +162,8 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓�
           "start": 6,
           "end": 12
         },
-        "value": "double"
+        "value": "double",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:identifier",
@@ -178,10 +180,27 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓�
             "type": "mcdoc:enum/field",
             "children": [
               {
-                "type": "mcdoc:identifier",
+                "type": "mcdoc:doc_comments",
+                "children": [
+                  {
+                    "type": "comment",
+                    "range": {
+                      "start": 25,
+                      "end": 37
+                    },
+                    "comment": " Bar doc\n"
+                  }
+                ],
                 "range": {
                   "start": 25,
-                  "end": 28
+                  "end": 42
+                }
+              },
+              {
+                "type": "mcdoc:identifier",
+                "range": {
+                  "start": 42,
+                  "end": 45
                 },
                 "value": "Bar"
               },
@@ -191,31 +210,56 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓�
                   {
                     "type": "float",
                     "range": {
-                      "start": 31,
-                      "end": 34
+                      "start": 48,
+                      "end": 51
                     },
                     "value": 1.2
                   }
                 ],
                 "range": {
-                  "start": 31,
-                  "end": 34
+                  "start": 48,
+                  "end": 51
                 }
               }
             ],
             "range": {
               "start": 25,
-              "end": 34
+              "end": 51
             }
           },
           {
             "type": "mcdoc:enum/field",
             "children": [
               {
+                "type": "mcdoc:doc_comments",
+                "children": [
+                  {
+                    "type": "comment",
+                    "range": {
+                      "start": 58,
+                      "end": 70
+                    },
+                    "comment": " Boo doc\n"
+                  },
+                  {
+                    "type": "comment",
+                    "range": {
+                      "start": 75,
+                      "end": 92
+                    },
+                    "comment": " Another line\n"
+                  }
+                ],
+                "range": {
+                  "start": 58,
+                  "end": 97
+                }
+              },
+              {
                 "type": "mcdoc:identifier",
                 "range": {
-                  "start": 41,
-                  "end": 44
+                  "start": 97,
+                  "end": 100
                 },
                 "value": "Boo"
               },
@@ -225,40 +269,57 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓�
                   {
                     "type": "float",
                     "range": {
-                      "start": 47,
-                      "end": 50
+                      "start": 103,
+                      "end": 106
                     },
                     "value": 4.2
                   },
                   {
                     "type": "mcdoc:literal",
                     "range": {
-                      "start": 50,
-                      "end": 51
+                      "start": 106,
+                      "end": 107
                     },
                     "value": "d",
                     "colorTokenType": "keyword"
                   }
                 ],
                 "range": {
-                  "start": 47,
-                  "end": 51
+                  "start": 103,
+                  "end": 107
                 }
               }
             ],
             "range": {
-              "start": 41,
-              "end": 51
+              "start": 58,
+              "end": 107
             }
           },
           {
             "type": "mcdoc:enum/field",
             "children": [
               {
+                "type": "mcdoc:doc_comments",
+                "children": [
+                  {
+                    "type": "comment",
+                    "range": {
+                      "start": 114,
+                      "end": 126
+                    },
+                    "comment": " Qux doc\n"
+                  }
+                ],
+                "range": {
+                  "start": 114,
+                  "end": 131
+                }
+              },
+              {
                 "type": "mcdoc:identifier",
                 "range": {
-                  "start": 58,
-                  "end": 61
+                  "start": 131,
+                  "end": 134
                 },
                 "value": "Qux"
               },
@@ -268,33 +329,33 @@ exports['mcdoc enum_ Parse "enum (double) Foo {↓⮀⮀⮀⮀⮀Bar = 1.2,↓�
                   {
                     "type": "float",
                     "range": {
-                      "start": 64,
-                      "end": 68
+                      "start": 137,
+                      "end": 141
                     },
                     "value": 12000
                   }
                 ],
                 "range": {
-                  "start": 64,
-                  "end": 68
+                  "start": 137,
+                  "end": 141
                 }
               }
             ],
             "range": {
-              "start": 58,
-              "end": 68
+              "start": 114,
+              "end": 141
             }
           }
         ],
         "range": {
           "start": 18,
-          "end": 75
+          "end": 148
         }
       }
     ],
     "range": {
       "start": 0,
-      "end": 75
+      "end": 148
     }
   },
   "errors": []
@@ -319,7 +380,8 @@ exports['mcdoc enum_ Parse "enum (int) Foo {}" 1'] = {
           "start": 6,
           "end": 9
         },
-        "value": "int"
+        "value": "int",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:identifier",
@@ -365,7 +427,8 @@ exports['mcdoc enum_ Parse "enum (int) Foo" 1'] = {
           "start": 6,
           "end": 9
         },
-        "value": "int"
+        "value": "int",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:identifier",
@@ -487,7 +550,8 @@ exports['mcdoc enum_ Parse "enum (int) {" 1'] = {
           "start": 6,
           "end": 9
         },
-        "value": "int"
+        "value": "int",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:enum/block",
@@ -593,7 +657,8 @@ exports['mcdoc enum_ Parse "enum (int) {}" 1'] = {
           "start": 6,
           "end": 9
         },
-        "value": "int"
+        "value": "int",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:enum/block",
@@ -631,7 +696,8 @@ exports['mcdoc enum_ Parse "enum Foo" 1'] = {
           "start": 5,
           "end": 8
         },
-        "value": "Foo"
+        "value": "Foo",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:enum/block",
@@ -769,7 +835,8 @@ exports['mcdoc enum_ Parse "enum" 1'] = {
           "start": 4,
           "end": 4
         },
-        "value": ""
+        "value": "",
+        "colorTokenType": "type"
       },
       {
         "type": "mcdoc:enum/block",

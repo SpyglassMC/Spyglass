@@ -744,7 +744,7 @@ TODO
 [[s-struct-field,_StructField_]]
 <<s-struct-field>>::
 	<<s-prelim>> <<s-struct-key>> `?`^?^ `:` <<s-type>> | +
-	`+...+` <<s-type>> +
+	<<s-attributes>> `+...+` <<s-type>> +
 	For the spreading syntax (`+...+`), if the type after the spread operator cannot be resolved as a struct type, only the attributes on the type will be copied over to the current struct.
 
 [[s-struct-key,_StructKey_]]
