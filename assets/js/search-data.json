@@ -1,0 +1,386 @@
+{"0": {
+    "doc": "Custom Server Capabilities",
+    "title": "experimental.spyglassmc.dataHackPubify",
+    "content": "Request sent from client: spyglassmc/dataHackPubify . Parameters . | initialism: (string) . | . Response string . ",
+    "url": "https://spyglassmc.com/developer/language-server/capabilities.html#experimental-spyglassmc-datahackpubify",
+    "relUrl": "/developer/language-server/capabilities.html#experimental-spyglassmc-datahackpubify"
+  },"1": {
+    "doc": "Custom Server Capabilities",
+    "title": "experimental.spyglassmc.inlayHints",
+    "content": "Request sent from client: spyglassmc/inlayHints . Parameters . | textDocument . | uri . | . | range . | . Response InlayHint[] . ",
+    "url": "https://spyglassmc.com/developer/language-server/capabilities.html#experimental-spyglassmc-inlayhints",
+    "relUrl": "/developer/language-server/capabilities.html#experimental-spyglassmc-inlayhints"
+  },"2": {
+    "doc": "Custom Server Capabilities",
+    "title": "experimental.spyglassmc.resetProjectCache",
+    "content": "Request sent from client: spyglassmc/resetProjectCache . Parameters None. Response void . ",
+    "url": "https://spyglassmc.com/developer/language-server/capabilities.html#experimental-spyglassmc-resetprojectcache",
+    "relUrl": "/developer/language-server/capabilities.html#experimental-spyglassmc-resetprojectcache"
+  },"3": {
+    "doc": "Custom Server Capabilities",
+    "title": "experimental.spyglassmc.showCacheRoot",
+    "content": "Request sent from client: spyglassmc/showCacheRoot . Parameters None. Response void . ",
+    "url": "https://spyglassmc.com/developer/language-server/capabilities.html#experimental-spyglassmc-showcacheroot",
+    "relUrl": "/developer/language-server/capabilities.html#experimental-spyglassmc-showcacheroot"
+  },"4": {
+    "doc": "Custom Server Capabilities",
+    "title": "Custom Server Capabilities",
+    "content": " ",
+    "url": "https://spyglassmc.com/developer/language-server/capabilities.html",
+    "relUrl": "/developer/language-server/capabilities.html"
+  },"5": {
+    "doc": "Config",
+    "title": "Example File",
+    "content": "{ \"env\": { \"dataSource\": \"GitHub\", \"dependencies\": [ \"@vanilla-mcdoc\" ], \"feature\": { \"codeActions\": true, \"colors\": true, \"completions\": true, \"documentHighlighting\": true, \"documentLinks\": true, \"foldingRanges\": true, \"formatting\": true, \"hover\": true, \"inlayHint\": { \"enabledNodes\": [ \"mcfunction:command_child/unknown\" ] }, \"semanticColoring\": true, \"selectionRanges\": true, \"signatures\": true }, \"gameVersion\": \"Auto\", \"language\": \"Default\", \"permissionLevel\": 2, \"plugins\": [], \"mcmetaSummaryOverrides\": {} }, \"format\": { \"blockStateBracketSpacing\": { \"inside\": 0 }, \"blockStateCommaSpacing\": { \"before\": 0, \"after\": 1 }, \"blockStateEqualSpacing\": { \"before\": 0, \"after\": 0 }, \"blockStateTrailingComma\": false, \"eol\": \"auto\", \"nbtArrayBracketSpacing\": { \"inside\": 0 }, \"nbtArrayCommaSpacing\": { \"before\": 0, \"after\": 1 }, \"nbtArraySemicolonSpacing\": { \"after\": 1 }, \"nbtArrayTrailingComma\": false, \"nbtByteSuffix\": \"b\", \"nbtCompoundBracketSpacing\": { \"inside\": 0 }, \"nbtCompoundColonSpacing\": { \"before\": 0, \"after\": 1 }, \"nbtCompoundCommaSpacing\": { \"before\": 0, \"after\": 1 }, \"nbtCompoundTrailingComma\": false, \"nbtDoubleOmitSuffix\": false, \"nbtDoubleSuffix\": \"d\", \"nbtFloatSuffix\": \"f\", \"nbtListBracketSpacing\": { \"inside\": 0 }, \"nbtListCommaSpacing\": { \"before\": 0, \"after\": 1 }, \"nbtListTrailingComma\": false, \"nbtLongSuffix\": \"L\", \"nbtShortSuffix\": \"s\", \"selectorBracketSpacing\": { \"inside\": 0 }, \"selectorCommaSpacing\": { \"before\": 0, \"after\": 1 }, \"selectorEqualSpacing\": { \"before\": 0, \"after\": 0 }, \"selectorTrailingComma\": false, \"timeOmitTickUnit\": false }, \"lint\": { \"blockStateSortKeys\": null, \"nbtCompoundSortKeys\": null, \"selectorSortKeys\": null, \"commandStringQuote\": null, \"nbtKeyQuote\": null, \"nbtPathQuote\": null, \"nbtStringQuote\": null, \"selectorKeyQuote\": null, \"idOmitDefaultNamespace\": null, \"nameOfNbtKey\": null, \"nameOfObjective\": null, \"nameOfScoreHolder\": null, \"nameOfTag\": null, \"nameOfTeam\": null, \"nbtArrayLengthCheck\": true, \"nbtBoolean\": null, \"nbtListLengthCheck\": null, \"nbtTypeCheck\": \"loosely\", \"undeclaredSymbol\": [ { \"then\": { \"declare\": \"block\" } } ] }, \"snippet\": { \"executeIfScoreSet\": \"execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0\", \"summonAec\": \"summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: [\\\"${1:tag}\\\"]}\" } } . ",
+    "url": "https://spyglassmc.com/user/config.html#example-file",
+    "relUrl": "/user/config.html#example-file"
+  },"6": {
+    "doc": "Config",
+    "title": "Environment Settings",
+    "content": "TODO: Find a way to generate the docs and the Config interfaces from one single source of truth. ",
+    "url": "https://spyglassmc.com/user/config.html#environment-settings",
+    "relUrl": "/user/config.html#environment-settings"
+  },"7": {
+    "doc": "Config",
+    "title": "Linting Rules",
+    "content": ". | nameOfNbtKey . | nameOfObjective . | nameOfScoreHolder . | nameOfTag . | nameOfTeam . | undeclaredSymbol . | . ",
+    "url": "https://spyglassmc.com/user/config.html#linting-rules",
+    "relUrl": "/user/config.html#linting-rules"
+  },"8": {
+    "doc": "Config",
+    "title": "Config",
+    "content": "The config file can be put under the root of your workspace with either of the following names. | spyglass.json . | .spyglassrc.json . | . There&#8217;s no support for multiple config files or inheriting/overriding config files yet. ",
+    "url": "https://spyglassmc.com/user/config.html",
+    "relUrl": "/user/config.html"
+  },"9": {
+    "doc": "Maintainer Guides",
+    "title": "Maintainer Guides",
+    "content": " ",
+    "url": "https://spyglassmc.com/maintainer/",
+    "relUrl": "/maintainer/"
+  },"10": {
+    "doc": "Mcdoc",
+    "title": "Project root",
+    "content": "Normally, the workspace (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the root of a mcdoc project. If, however, there exists a folder named mcdoc under the workspace and all mcdoc files are stored inside of the direcotry, it will be considered as the root instead. ",
+    "url": "https://spyglassmc.com/user/mcdoc/#project-root",
+    "relUrl": "/user/mcdoc/#project-root"
+  },"11": {
+    "doc": "Mcdoc",
+    "title": "Syntax syntax",
+    "content": "Here is the syntax used by this document to describe the syntax of mcdoc&#8201;&#8212;&#8201;syntax syntax, if you want to call it that. Table 1. Syntax syntax | Symbol | Meaning | . | str . | Literal str . | . | U+xxxx . | Unicode character with the code point xxxx . | . | A* . | A repeated zero or more times . | . | A+ . | A repeated one or more times . | . | A? . | A repeated zero or one times . | . | A | B . | Either A or B . | . | [A B C] . | One of the literals A, B, or C . | . | [A-Z] . | Any literal from A to Z . | . | (A) . | General grouping . | . | notA . | Anything not A . | . | Aexcept: B . | A except B . | . | Alookahead: B . | A followed by B, but only consumes A . | . | Anochild: B . | A but B should not be a child of it . | . | NAME . | A referenced token rule . | . | Name . | A referenced parser rule . | . A token rule syntax cannot have any whitespaces (spaces, tabs, CRs, or LFs) or tokens in between the individual parts. A parser rule syntax can have whitespaces and COMMENTS in between. All syntax rules should be greedy (i.e. consume as many characters as possible). ",
+    "url": "https://spyglassmc.com/user/mcdoc/#syntax-syntax",
+    "relUrl": "/user/mcdoc/#syntax-syntax"
+  },"12": {
+    "doc": "Mcdoc",
+    "title": "Comments",
+    "content": "SYNTAX (TOKEN) . COMMENTS COMMENT* . COMMENT // lookahead: not/ (notEOL)* (EOL | EOF) . EOL End of line: CR (Unicode U+000D) or LF (Unicode U+000A). EOF End of file. Comments can be used in mcdoc to write information that can be seen only by other users viewing/editing your mcdoc files. They are ignored by a mcdoc interpreter. To write a comment, simply put down two forward slashes (//)&#8201;&#8212;&#8201;everything following them, until the end of the line, is treated as part of the comment. They can be put anywhere where a whitespace is allowed. Comments, however, cannot start with triple slashes (///), as that&#8217;s reserved for Doc comments. Example 1. Comments // This is a comment. struct Foo { Bar: boolean, // This is another one. } . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#comments",
+    "relUrl": "/user/mcdoc/#comments"
+  },"13": {
+    "doc": "Mcdoc",
+    "title": "Doc comments",
+    "content": "SYNTAX . Prelim DocComments Attributes . [t-doc-comments] DOC_COMMENT* // No regular comments are allowed between the individual DOC_COMMENT. SYNTAX (TOKEN) . DOC_COMMENT /// (notEOL)* (EOL | EOF) . Doc comments are similar to comments syntax-wise&#8201;&#8212;&#8201;they start with triple slashes (///) instead. A block of doc comments can provide human-readable documentation for the component right after it to users of your mcdoc files. Unlike regular comments, doc comments can only be put in front of enum definitions, enum fields, struct definitions, struct fields, and type aliases, as part of [prelim]s. The text content of a doc comment block should be treated as a MarkDown content, with the leading triple slashes (and up to one leading space after the slashes if all lines within the block share that one leading space) stripped. Example 2. Doc comments /// This doc comment describes the struct Foo. /// External tools, like VS Code, may show this block of text when the user hovers over the name \"Foo\". struct Foo { /// This is another doc comment describing the field \"Bar\". Bar: boolean, // This is just a regular comment because it only starts with two slashes. } . | | As the content of a doc comment block is treated as MarkDown, certain characters might have special meaning. For example, if you write &lt;foo&gt; inside the doc comment, it might disappear when being shown to a user, as it may get interperted as an XML tag by a MarkDown parser. Escaping those special characters with a backslash (\\) (e.g. \\&lt;foo&gt;) will fix this. | . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#doc-comments",
+    "relUrl": "/user/mcdoc/#doc-comments"
+  },"14": {
+    "doc": "Mcdoc",
+    "title": "Integer",
+    "content": "SYNTAX (TOKEN) . INTEGER 0 | [- +]? [1-9] [0-9]* . An integer represents a whole number. Example 3. Integers 0 +123 -456 . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#integer",
+    "relUrl": "/user/mcdoc/#integer"
+  },"15": {
+    "doc": "Mcdoc",
+    "title": "Float",
+    "content": "SYNTAX (TOKEN) . FLOAT [- +]? [0-9]+ FLOAT_EXPONENT? | [- +]? [0-9]* . [0-9]+ FLOAT_EXPONENT? . FLOAT_EXPONENT [e E] [- +]? [0-9]+ . A float represents a decimal number. Scientific notation may be used with the letter e (case-insensitive). Example 4. Floats 1 +1.2 -1.2e3 // -1.2×103 . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#float",
+    "relUrl": "/user/mcdoc/#float"
+  },"16": {
+    "doc": "Mcdoc",
+    "title": "Typed Number",
+    "content": "SYNTAX (TOKEN) . TYPED_NUMBER FLOAT [b B d D f F l L s S]? . A typed number is similar to a number used in SNBTs syntax-wise. It&#8217;s a normal number followed by a suffix indicating its type: . Table 2. Suffix table | Suffix (case-insensitive) | Type | . | b . | Byte . | . | s . | Short . | . | L . | Long . | . | f . | Float . | . | d . | Double . | . | (No suffix, integer) . | Integer . | . | (No suffix, decimal) . | Double . | . Example 5. Typed numbers 1b // Byte 1 1 // Integer 1 1.2 // Double 1.2 1.2d // Double 1.2 1.2e1f // Float 12 . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#typed-number",
+    "relUrl": "/user/mcdoc/#typed-number"
+  },"17": {
+    "doc": "Mcdoc",
+    "title": "Number range",
+    "content": "SYNTAX (TOKEN) . FLOAT_RANGE ..? FLOAT | FLOAT .. FLOAT? . INT_RANGE ..? INTEGER | INTEGER .. INTEGER? . A number range represents a range of number. It follows the same syntax for ranges used in Minecraft commands. There are two types of ranges in mcdoc: float ranges, which consist of Floats, and integer ranges, which consists of Integers. Example 6. Number ranges 1 // Exactly 1 1..1 // Exactly 1 1..2 // Between 1 and 2 (inclusive on ends) 4.2.. // Greater than or equal to 4.2 ..9.1 // Smaller than or equal to 9.1 . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#number-range",
+    "relUrl": "/user/mcdoc/#number-range"
+  },"18": {
+    "doc": "Mcdoc",
+    "title": "String",
+    "content": "SYNTAX (TOKEN) . STRING \" (not[\" \\ UNICODE_CC] | (\\ [b f n r t \\ \"]))* \" . UNICODE_CC Unicode control characters. A string represents a sequence of characters. It must be surrounded by double quotation marks (\"). Certain characters need to be escaped by a backslash (\\). Table 3. Escape characters | Escape sequence | Meaning | . | \\\" . | A double quotation mark (\", Unicode U+0022) . | . | \\\\ . | A backslash (\\, Unicode U+005C) . | . | \\b . | A backspace (Unicode U+0008) . | . | \\f . | A form feed (Unicode U+000C) . | . | \\n . | A newline (Unicode U+000A) . | . | \\r . | A carriage return (Unicode U+000D) . | . | \\t . | A tab (Unicode U+0009) . | . Example 7. Strings \"foo\" // A string representing foo \"bar\\\"qux\\\\baz\" // A string representing bar\"qux\\baz . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#string",
+    "relUrl": "/user/mcdoc/#string"
+  },"19": {
+    "doc": "Mcdoc",
+    "title": "Resource location",
+    "content": "SYNTAX (TOKEN) . RES_LOC RES_LOC_CHAR* : RES_LOC_CHAR* (/ RES_LOC_CHAR*)* . RES_LOC_CHAR [a-z 0-9 - _ .] . A resource location is similar to the resource location from Minecraft syntax-wise, except that a colon (:) must exist to disambiguate this from an Identifier. Example 8. Resource locations minecraft:foo :foo // This also means minecraft:foo, and is actually legal in Minecraft. spyglassmc:bar . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#resource-location",
+    "relUrl": "/user/mcdoc/#resource-location"
+  },"20": {
+    "doc": "Mcdoc",
+    "title": "Identifier",
+    "content": "SYNTAX (TOKEN) . IDENTIFIER ((IDENT_START) (IDENT_CONTINUE)*)except: RESERVED_WORDS . IDENT_START any character in the Unicode general categories &#8220;Letter (L)&#8221; or &#8220;Letter Number (Nl)&#8221; . IDENT_CONTINUE IDENT_START | U+200C | U+200D | (any character in the Unicode categories &#8220;Non-Spacing Mark (Mn)&#8221;, &#8220;Spacing Combining Mark (Mc)&#8221;, &#8220;Decimal Digit Number (Nd)&#8221;, or &#8220;Connector Punctuation (Pc)&#8221;) . RESERVED_WORDS any | boolean | byte | double | enum | false | float | int | long | short | string | struct | super | true . An identifier is a case-sensitive name given to a type definition in mcdoc. It can contain any Unicode letters and the underscore (_), but must not start with a digit. It also must not be named after a list of reserved words. Example 9. Identifiers struct Foo { // Foo is an identifier. B_1: boolean, // B_1 is an identifier. } . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#identifier",
+    "relUrl": "/user/mcdoc/#identifier"
+  },"21": {
+    "doc": "Mcdoc",
+    "title": "Path",
+    "content": "SYNTAX (TOKEN) . PATH (::)? PATH_SEGMENT (:: PATH_SEGMENT)* . PATH_SEGMENT IDENTIFIER | super . A path is used to locate a type definition across the mcdoc project. A sequence of two colons (::) is used as the path separater. If a path starts with the path separater, it is an absolute path and will be resolved from the Project root. Otherwise it is a relative path and will be resolved from the absolute path of the current file. The absolute path of a file is determined by connecting the names of all its parent folders up until the root and the file&#8217;s own name (excluding the .mcdoc file extension) with the path separater, prepended by the path separater, with a special case for files named mod.mcdoc&#8201;&#8212;&#8201;they will not be part of their paths. The absolute path of a type definition is the absolute path of the file where it resides joined with the identifier of the type definition by the path separater. If multiple files/type definitions ended up having the same path, only the earliest loaded one will take effect; all subsequent ones should be warned and ignored by the mcdoc interpreter. For relative paths, the keyword super may be used to move up one level from the current absolute path. Example 10. Paths / foo.mcdoc (1) foo/ bar.mcdoc (2) mod.mcdoc (3) qux.mcdoc (4) . | 1 | The absolute path of this file is ::foo. | . | 2 | The absolute path of this file is ::foo::bar. | . | 3 | The absolute path of this file is ::foo instead of ::foo::mod, as files named mod.mcdoc are special. This has the same path as &lt;1&gt;, and as &lt;1&gt; is shallower in the file structure, it is loaded first, meaning &lt;3&gt; is ignored in favor of &lt;1&gt; and a warning should be given. | . If the content of /foo/bar.mcdoc is . struct Foo {} (1) type Bar = super::super::qux::Something (2) . | 1 | The absolute path for struct Foo is ::foo::bar::Foo | . | 2 | The absolute path for type alias Bar is ::foo::bar::Bar. The relative path is interpreted as follows: . | Absolute path of the residing file (/foo/bar.mcdoc) is ::foo::bar. The given relative path is super::super::qux::Something. | Encounters keyword super, moves one level up to ::foo. Remaining relative path is super::qux::Something. | Encounters keyword super, moves one level up to ::. Remaining relative path is qux::Something. | Encounters identifier qux, moves down to ::qux. Remaining relative path is Something. | Encounters identifier Something, moves down to ::qux::Something. Relative path has been resolved. | The type alias Bar therefore points to the type definition named Something in file /qux.mcdoc. | . | . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#path",
+    "relUrl": "/user/mcdoc/#path"
+  },"22": {
+    "doc": "Mcdoc",
+    "title": "Type",
+    "content": "SYNTAX . Type Attributes UnattributedType IndexBody* . UnattributedType KeywordType | StringType | LiteralType | NumericType | PrimitiveArrayType | ListType | TupleType | Enum | Struct | PathType | DispatcherType | UnionType . A type is an essential component of the mcdoc format. It defines a schema that the actual data value must fit in to be valid. | | Mcdoc may be used to describe the format of a wide range of data. This section will only define how JSON data and SNBT data should be validated. | . | | For SNBT validation, a strict mode, a loose mode, and a technically-compliant mode (&#8220;te-co&#8221; for short 🌮) are documented. The strict mode is used when an SNBT value is used as a predicate (e.g. in entity selectors, loot function conditions, etc.). The loose mode is used when an SNBT value is provided for deserialization (e.g. in /setblock or /summon commands). Although some values are technically allowed for a given type (e.g. a compound tag means false when it&#8217;s read as a boolean), such cases are beyond a sane person&#8217;s reasonable expectations and will not be allowed under the loose mode. The te-co mode, however, allows such bizarre values. | . any type . SYNTAX . KeywordType any | boolean . The any type serves as the top type of mcdoc&#8217;s type system. Any another types, including any itself, are assignable to any. any can only be assigned to any. Table 4. Valid values for the any type | Format | Valid values | . | JSON . | Any values . | . | SNBT (all modes) . | Any values . | . boolean type . The boolean type indicates a boolean value (false or true) is expected. Table 5. Valid values for the boolean type | Format | Valid values | Notes | . | JSON . | false, true . | - . | . | SNBT (strict) . | false, true, 0b, 1b . | NBT doesn&#8217;t have real boolean values&#8201;&#8212;&#8201;it uses byte numbers for that purpose instead. false and true are simply aliases for 0b and 1b, respectively. | . | SNBT (loose) . | Any numeric values of 0 or 1 . | - . | . | SNBT (te-co) . | Any values . | Per method net/minecraft/nbt/NbtCompound#getBoolean (yarn mappings), any NBT values can be read as a boolean. A non-numeric value is equivalent to false, while a numeric value is false if and only if it is a 0 after being converted to a byte number. | . string type . SYNTAX . StringType string (@ INT_RANGE)? . The string type indicates a string value is expected. The optional range defines the range of the length of the string. Table 6. Valid values for the boolean type | Format | Valid values | Notes | . | JSON . | String values matching the length range . | - . | . | SNBT (strict and loose) . | String values matching the length range . | - . | . | SNBT (te-co) . | Any values that match the length range after being converted to a string . | Per method net/minecraft/nbt/NbtElement-asString (yarn mappings), any NBT values can be read as a string. String tags have their string values as the result, while other tags have their string representation as the result. | . Literal boolean type . SYNTAX . LiteralType false | true | STRING | TYPED_NUMBER . A literal boolean type is one of the two boolean values (false and true) that the data must match to be valid. Example 11. Literal string types false true . Table 7. Valid values for a literal boolean type | Format | Valid values | . | JSON . | false if the type is false; true is the type is true . | . | SNBT (strict) . | false or 0b if the type is false; true or 1b if the type is true . | . | SNBT (loose) . | Any numeric values of 0 if the type is false; any numeric values of 1 if the type is true . | . | SNBT (te-co) . | Any values that match the type after being converted to a boolean . | . Literal string type . A literal string type is a string value the data must match literally to be valid. Example 12. Literal string types \"\" \"foobar\" . Table 8. Valid values for a literal string type | Format | Valid values | . | JSON . | String values that have the same value as the string literal . | . | SNBT (strict and loose) . | String values that have the same value as the string literal . | . | SNBT (te-co) . | Any values that when converted to string is the same as the string literal . | . Literal number type . A literal number type includes a numeric value and a type the data must match literally to be valid. Example 13. Literal number types -1 1.2f 42L . Table 9. Valid values for a literal number type | Format | Valid values | Notes | . | JSON . | Number values that have the same numeric value as the number literal . | JSON only has one number type, so the type part of a literal number type is not checked. | . | SNBT (strict) . | Number values that have the same numeric value and the same type as the number literal . | - . | . | SNBT (loose) . | Number values that have the same numeric value as the number literal . | - . | . | SNBT (te-co) . | Actually I gave up on documenting this mode. Good luck . | - . | . Numeric type . SYNTAX . NumericType byte (@ INT_RANGE)? | short (@ INT_RANGE)? | int (@ INT_RANGE)? | long (@ INT_RANGE)? | float (@ FLOAT_RANGE)? | double (@ FLOAT_RANGE)? . A numeric type indicates the data must be of that type to be valid. If the optional range is provided, then the data must also fit into that range. Example 14. Numeric types byte short#1.. float # 4.2..9.1 . Primitive array type . SYNTAX . PrimitiveArrayType byte (@ INT_RANGE)? [] (@ INT_RANGE)? | int (@ INT_RANGE)? [] (@ INT_RANGE)? | long (@ INT_RANGE)? [] (@ INT_RANGE)? . A primitive array type indicates the data must be a collection of certain numeric values. The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the collection. Example 15. Primitive array types byte[] // A collection of bytes. byte#0..1[] // A collection of bytes 0 or 1. int[] # 4 // A collection of 4 integers. long#0..[] # 3.. // A collection of 3 or more non-negative longs. List type . SYNTAX . ListType [ Type ] (@ INT_RANGE)? . A list type indicates the data must be a collection of a certain other type. The optional range defines the range of the size of the collection. Example 16. List types [byte] // A collection of bytes. [[string]] // A collection of collections of strings. [struct Foo {}] // A collection of structs. | | Unlike NBT, JSON doesn&#8217;t distinguish between primitive arrays and lists&#8201;&#8212;&#8201;it only has an array type. Therefore, byte[] and [byte] means essentially the same thing for JSON validation. | . Tuple type . SYNTAX . TupleType [ Type , ] [ Type (, Type)+ ,? ] . A tuple type indicates the data must be a collection of certain other types arranged in a specified order. To distinguish a tuple type containing only one element from a list type, a trailing comma (,) needs to be added after the type. Alternatively, you can also use a list type with size 1 to represent a tuple with one element (e.g. [byte] # 1). Example 17. Tuple types [byte,] // A tuple of a byte. [string, boolean] // A tuple of a string followed by a boolean. | | Tuple types are generally not useful for NBT structures, as NBT doesn&#8217;t have collections of mixed types. | . Enum . SYNTAX . Enum Prelim enum ( ENUM_TYPE ) IDENTIFIER? EnumBlock . EnumBlock { } | { EnumField (, EnumField)* ,? } . EnumField Prelim IDENTIFIER = ENUM_VALUE . SYNTAX (TOKEN) . ENUM_TYPE byte | short | int | long | string | float | double . ENUM_VALUE TYPED_NUMBER | STRING Although TYPED_NUMBER is expected as the value for enums, the user can write the numbers without the proper suffixes as the mcdoc interpreter is able to infer the proper type from the enum definition. TODO . Struct . SYNTAX . Struct Prelim struct IDENTIFIER? TypeParamBlock? StructBlock . TypeParamBlock &lt; &gt; | &lt; TypeParam (, TypeParam)* ,? &gt; . TypeParam IDENTIFIER (extends PATH)? . StructBlock { } | { StructField (, StructField)* ,? } . StructField Prelim StructKey ?? : Type | Attributes ... Type For the spreading syntax (...), if the type after the spread operator cannot be resolved as a struct type, only the attributes on the type will be copied over to the current struct. StructKey STRING | IDENTIFIER | [ Type ] . A struct defines the schema of a dictionary-like structure consisting of key-value pairs, like a JSON object or an NBT compound tag. If a key is duplicated, the type of the later one will override that of the former one. A question mark (?) can be added between the key and the colon (:) to indicate an optional field. Example 18. Data pack tag struct struct Tag { replace?: boolean, values: [string], } . The spread operator (three dots, ...) followed by a struct type can be used to reuse fields from another struct. Example 19. Spread syntax struct Player { ...Mob, // Reuse fields from the Mob struct here. abilities: Abilities, CustomName: (), // Overrides CustomName from the Mob struct to an empty union. } . A pair of angle brackets (&lt; and &gt;) can be put after the struct identifier to declare type parameters, which should be passed in when the struct is referenced. Example 20. Type parameter struct Tag&lt;V extends string&gt; { replace?: boolean, values: [V], } type BlockTag = Tag&lt;#[id=block] string&gt; type EntityTypeTag = Tag&lt;#[id=entity_type] string&gt; type FunctionTag = Tag&lt;#[id=function] string&gt; type ItemTag = Tag&lt;#[id=item] string&gt; . Path type . SYNTAX . PathType PATH TypeParamAssignment? . TypeParamAssignment &lt; &gt; | &lt; Type (, Type)* ,? &gt; . Dispatcher type . SYNTAX . DispatcherType RES_LOC IndexBody . TODO . The fallback case is used when the index is omitted. Union type . SYNTAX . UnionType ( ) | ( Type (| Type)* |? ) A pair of empty parentheses removes this field definition from the struct.kk . TODO . Indexing on a type . SYNTAX . IndexBody [ Index (, Index)* ,? ] Multiple indices can be put inside the brackets to access multiple types from the target. Example 21. Access multiple types from a dispatcher minecraft:entity[ender_dragon, wither] &#8594; Produces a union of the type for the ender dragon and the type for the wither. minecraft:entity[[id], allay] &#8594; Produces a union of the type for the entity at id dynamically and the allay. Index STATIC_INDEX_KEY | DynamicIndex . DynamicIndex [ ACCESSOR ] . SYNTAX (TOKEN) . STATIC_INDEX_KEY %fallback | %none | %unknown | IDENTIFIER | STRING | RES_LOC . ACCESSOR ACCESSOR_KEY (. ACCESSOR_KEY)* . ACCESSOR_KEY %key | %parent | IDENTIFIER | STRING . Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime). Example 22. Static and dynamic indices struct Foo { id: string, cow_data: minecraft:entity[cow], (1) dynamic_entity_data: minecraft:entity[[id]], (2) command: minecraft:block[command_block][Command], (3) dynamic_memories: minecraft:entity[[id]][Brain][memories], (4) } . | 1 | Static index on a dispatcher. | . | 2 | Dynamic index on a dispatcher. | . | 3 | Static index on a dispatcher, followed by a static index on a struct. | . | 4 | Dynamic index on a dispatcher, followed by two static indices on two structs. | . The default value used for all cases (including the two mutable special keys, %none and %unknown) is the fallback case. Example 23. Special static key: %fallback The %fallback key can be used to access the fallback case of a dispatcher. It cannot be used on the left hand side of dispatch statements, as the fallback case is generated automatically and cannot be manually declared. type AnyEntity = minecraft:entity[%fallback] . Example 24. Special static key: %none The case corresponding to %none is used when the accessor of a dynamic index gets no value at runtime. struct RandomIntGenerator { type?: (\"uniform\" | \"binomial\" | \"constant\"), (1) ...minecraft:random_int_generator[[type]], (2) } dispatch minecraft:random_int_generator[uniform, %none] to struct { min?: int, max?: int } (3) . | 1 | Note that type is defined as optional here. | . | 2 | The value of type at runtime is used as a dynamic index here. | . | 3 | The case corresponding to %none is dispatched to the struct here, so the random int generator can still get validated as a uniform generator properly when no value for type is provided at runtime. | . Example 25. Special static key: %unknown The case corresponding to %unknown is used when an unknown key is used to access the dispatcher. dispatch minecraft:block[%unknown] to () . Example 26. Special accessor key: %key The %key accessor key can be used to access the key where the current runtime value is. struct DebugStick { DebugProperty: struct { [#[id=block] string]: mcdoc:block_state_name[[%key]], // Get the type of the block state names of the block stored in the key. }, } . This struct can be used to validate the following data: . { \"DebugProperty\": { \"minecraft:anvil\": \"facing\", \"minecraft:oak_fence\": \"east\" } } . Example 27. Special accessor key: %parent The %parent accessor key can be used to access the parent value of the current runtime value. struct Item { id: #[id=item] string, tag: struct ItemTag { BlockStateTag: mcdoc:block_item_states[[%parent.id]] }, } . TODO . Assignability . The assignability of types are detailed by [p-isAssignable]. In short, types in mcdoc can be think of as sets. any is the largest set that contains all other types, and an empty union (()) is the empty set. ",
+    "url": "https://spyglassmc.com/user/mcdoc/#type",
+    "relUrl": "/user/mcdoc/#type"
+  },"23": {
+    "doc": "Mcdoc",
+    "title": "File Structure",
+    "content": "SYNTAX . File (Struct | Enum | TypeAlias | UseStatement | Injection | DispatchStatement)* . An mcdoc is made of structs, enums, type aliases, use statements, injections, and dispatch statements. ",
+    "url": "https://spyglassmc.com/user/mcdoc/#file-structure",
+    "relUrl": "/user/mcdoc/#file-structure"
+  },"24": {
+    "doc": "Mcdoc",
+    "title": "Type Alias",
+    "content": "SYNTAX . TypeAlias Prelim type IDENTIFIER TypeParamBlock? = Type . TODO . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#type-alias",
+    "relUrl": "/user/mcdoc/#type-alias"
+  },"25": {
+    "doc": "Mcdoc",
+    "title": "Use statement",
+    "content": "SYNTAX . UseStatement use PATH (as IDENTIFIER)? . TODO . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#use-statement",
+    "relUrl": "/user/mcdoc/#use-statement"
+  },"26": {
+    "doc": "Mcdoc",
+    "title": "Injection",
+    "content": "SYNTAX . Injection inject (EnumInjection | StructInjection) . EnumInjection enum ( ENUM_TYPE ) PATH EnumBlock . StructInjection struct PATH TypeParamBlock? StructBlock The type parameter block must be the same as the one on the original definition of the injected struct. TODO . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#injection",
+    "relUrl": "/user/mcdoc/#injection"
+  },"27": {
+    "doc": "Mcdoc",
+    "title": "Dispatch statement",
+    "content": "SYNTAX . DispatchStatement Attributes dispatch RES_LOC IndexBodynochild: DynamicIndex to Type . A dispatcher can be used to dispatch to a specific type from a given index. Each case of a dispatcher can be declared by a DispatchStatement and accessed by a DispatcherType. Dispatchers are named after Resource locations, so unlike other values in mcdoc that are named after Identifiers which require being imported before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project. Fallback case When an unknown index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a fallback case at runtime. The union is marked with the \"nonexhaustive\" metadata. TODO . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#dispatch-statement",
+    "relUrl": "/user/mcdoc/#dispatch-statement"
+  },"28": {
+    "doc": "Mcdoc",
+    "title": "Attribute",
+    "content": "SYNTAX . Attributes Attribute* . Attribute #[ IDENTIFIER ] | #[ IDENTIFIER = Value ] | #[ IDENTIFIER TreeValue ] . Value Type | TreeValue . TreeValue ( TreeBody? ) | [ TreeBody? ] | { TreeBody? } . TreeBody PositionalValues ,? | NamedValues ,? | PositionalValues , NamedValues ,? . PositionalValues Value (, Value)* . NamedValues NamedValue (, NamedValue)* . NamedValue (IDENTIFIER | STRING) = Value | (IDENTIFIER | STRING) TreeValue . Example 28. Attribute examples (non-final) All following examples are syntactically legal under the current attribute proposal. Which ones should be semantically legal, however, is still under debate. struct Foo { #[id=item] id1: string, id2: #[id=item] string, // id1 and id2 will likely both be supported and have equivalent effects. blockStateValue1: ( #[serializable] string | byte | short | int | long | float | double ), #[serialize_to=string] blockStateValue2: (string | byte | short | int | long | float | double), evilUUID1: ( #[until(\"1.16\", uuid_string_to_compound)] #[parser=uuid] string | #[until(\"1.17\", uuid_compound_to_array)] MostLeastCompound | int[] # 4 ), #[history{ (#[parser=uuid] string, until=\"1.16\", updater=uuid_string_to_compound), (MostLeastCompound, until=\"1.17\", updater=uuid_compound_to_array), }] evilUUID2: int[] # 4 } . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#attribute",
+    "relUrl": "/user/mcdoc/#attribute"
+  },"29": {
+    "doc": "Mcdoc",
+    "title": "Procedures",
+    "content": "| | Under this section, PascalCase represents a type in the procedure, camelCase represents a procedure, and italic represents a variable. | . Boolean . A boolean value. Either false or true. String . A string value. None . An abstract representation of an empty value (null / undefined / None / nil / Nothing, etc.). Option&lt;T&gt; . An abstract representation of empty value handling. Implementations are free to choose their way of handling empty values. For the purpose of this specification, an Option&lt;T&gt; is either None or an instance of T. All operations done on an Option&lt;T&gt; is assumed to be done only when it is an instance of T. Its value is kept as None if it&#8217;s already a None. IDENTIFIER . | IDENTIFIER.asString(): String. Returns the string value of the identifier token. | . STRING . | STRING.asString(): String. Returns the string value of the string token. | . RES_LOC . | RES_LOC.asFullString(): String. Returns the full string representation of the resource location. The namespace part should always be kept. | RES_LOC.asShortString(): String. Returns the short string representation of the resource location. The namespace part should be omitted if it&#8217;s the default namespace (minecraft:). | . ResolvedType . A resolved type is a Typenochild: PATH | [t-dispatcher-type] . DereferencedType . A dereferenced type is a Typenochild: PATH . RuntimeValue . A runtime value is an abstract representation of a data in memory that can be checked against by mcdoc. It could be a deserialized JSON data or a deserialized NBT data, for example. It should support the following basic operations, but it is up to implementations to determine how those operations should work exactly for a specific type of a runtime value: . | RuntimeValue.asString(): Option&lt;String&gt;. Returns the string value (not the string representation) of this runtime value if applicable. Otherwise returns None. | RuntimeValue.getKeyOnParent(): Option&lt;RuntimeValue&gt;. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns None. | RuntimeValue.getParent(): Option&lt;RuntimeValue&gt;. Returns the value&#8217;s parent value if applicable. Otherwise returns None. | RuntimeValue.getValue(key: String): Option&lt;RuntimeValue&gt;. Returns the value corresponding to key under this value if applicable. Otherwise returns None. | . resolve (type: Type): ResolvedType . | Pattern match type: . | PATH &#8594; TODO . | DispatcherType &#8594; TODO . | UnionType &#8594; . | Let ans: UnionType be (). | For each element: Type of type, . | Add resolve(element) to ans. | . | Return ans. | . | * &#8594; return type. | . | . dereference (type: Type): DereferencedType . This procedure dereferences a Type. | If type consists of a PATH, then . | Destruct attributes: Attributes, path: PATH, and indices: Index* from type. | Let type: Type be the type pointed to by path or an empty union if path points to undefined, attributed by attributes and indexed by indices. | Returns dereference(type) recursively. | . | Returns type. | . resolveIndex (type: Type, value: RuntimeValue): DereferencedType . | Let type: DereferencedType be dereference(type). | Destruct attributes: Attributes, unattributedType: UnattributedTypeexcept: PATH, and indices: Index* from type. | If indices is empty, returns type. | For each index: Index of indices, . | If index is DynamicIndex, let index: STATIC_INDEX_KEY be resolveDynamicIndex(index, value). | Pattern match unattributedType, and stores the result to resultType: Type: . | RES_LOC &#8594; TODO . | Struct &#8594; The type of the field corresponding to key index on struct type or an empty union if the field doesn&#8217;t exist, attributed by attributes. | UnionType &#8594; . | For each element: Type of type, . | TODO. | . | . | * &#8594; An empty union. | . | Let resultType: DereferencedType be dereference(resultType). | Let unattributedType: UnattributedTypeexcept: PATH be resultType attributed by attributes. // FIXME: Attributes merging . | Let value be the runtime value corresponding to the key index under value or undefined if no such value exists. | . | Let type: DereferencedType be dereference(type). | Return type. | . resolveDynamicIndex (index: DynamicIndex, value: RuntimeValue): Option&lt;String&gt; . | Destruct accessor: ACCESSOR from index. | Destruct keys: ACCESSOR_KEY+ from accessor. | Let v: Option&lt;RuntimeValue&gt; be value. | For each key: ACCESSOR_KEY of keys, . | If v is None, break. | Pattern match key for . | super &#8594; set v to v.getParent(). | key &#8594; set v to v.getKeyOnParent(). | IDENTIFIER &#8594; set v to v.getValue(key.asString()). | STRING &#8594; set v to v.getValue(key.asString()). | . | . | Return v.asString(). | . ",
+    "url": "https://spyglassmc.com/user/mcdoc/#procedures",
+    "relUrl": "/user/mcdoc/#procedures"
+  },"30": {
+    "doc": "Mcdoc",
+    "title": "Branding",
+    "content": "\"Mcdoc\" is a common noun and should only have its first letter capitalized when it&#8217;s grammatically required to (e.g. at the beginning of the sentence). ",
+    "url": "https://spyglassmc.com/user/mcdoc/#branding",
+    "relUrl": "/user/mcdoc/#branding"
+  },"31": {
+    "doc": "Mcdoc",
+    "title": "Credits",
+    "content": "The mcdoc format takes heavy inspiration from the nbtdoc format created by Yurihaia, licensed under the MIT License. Misode, MulverineX, and NeunEinser also have provided valuable feedback for the mcdoc format. This documentation is written with AsciiDoc. ",
+    "url": "https://spyglassmc.com/user/mcdoc/#credits",
+    "relUrl": "/user/mcdoc/#credits"
+  },"32": {
+    "doc": "Mcdoc",
+    "title": "Mcdoc",
+    "content": "Table of Contents . | Project root | Syntax syntax | Comments | Doc comments | Integer | Float | Typed Number | Number range | String | Resource location | Identifier | Path | Type . | any type | boolean type | string type | Literal boolean type | Literal string type | Literal number type | Numeric type | Primitive array type | List type | Tuple type | Enum | Struct | Path type | Dispatcher type | Union type | Indexing on a type | Assignability | . | File Structure | Type Alias | Use statement | Injection | Dispatch statement | Attribute | Procedures . | Boolean | String | None | Option&lt;T&gt; | IDENTIFIER | STRING | RES_LOC | ResolvedType | DereferencedType | RuntimeValue | resolve (type: Type): ResolvedType | dereference (type: Type): DereferencedType | resolveIndex (type: Type, value: RuntimeValue): DereferencedType | resolveDynamicIndex (index: DynamicIndex, value: RuntimeValue): Option&lt;String&gt; | . | Branding | Credits | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. This document defines: . | The syntax and semantics of the mcdoc format. | How mcdoc should be used to validate JSON and NBT values. For NBT values, this document further specifies how they should be validated strictly and loosely. | . Although mcdocs may technically be able to describe the format of a lot of other languages, how those languages should be validated by mcdoc is not concerned by this document. ",
+    "url": "https://spyglassmc.com/user/mcdoc/",
+    "relUrl": "/user/mcdoc/"
+  },"33": {
+    "doc": "Developer Guides",
+    "title": "Developer Guides",
+    "content": " ",
+    "url": "https://spyglassmc.com/developer/",
+    "relUrl": "/developer/"
+  },"34": {
+    "doc": "Home",
+    "title": "User Testimonials",
+    "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
+    "url": "https://spyglassmc.com/#user-testimonials",
+    "relUrl": "/#user-testimonials"
+  },"35": {
+    "doc": "Home",
+    "title": "Getting Started",
+    "content": "You can enjoy features provided by Spyglass on various text editors. Sublime Text . Follow the instructions here. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. ",
+    "url": "https://spyglassmc.com/#getting-started",
+    "relUrl": "/#getting-started"
+  },"36": {
+    "doc": "Home",
+    "title": "Customization",
+    "content": "Main article: Config . ",
+    "url": "https://spyglassmc.com/#customization",
+    "relUrl": "/#customization"
+  },"37": {
+    "doc": "Home",
+    "title": "Plugins",
+    "content": "The cake is a lie. ALL LIES. ",
+    "url": "https://spyglassmc.com/#plugins",
+    "relUrl": "/#plugins"
+  },"38": {
+    "doc": "Home",
+    "title": "Mcdoc Specification",
+    "content": "Main article: Mcdoc . ",
+    "url": "https://spyglassmc.com/#mcdoc-specification",
+    "relUrl": "/#mcdoc-specification"
+  },"39": {
+    "doc": "Home",
+    "title": "Contributing",
+    "content": "Ew so many things to write. | Create an issue . | GitHub Repository . | Localization . | . ",
+    "url": "https://spyglassmc.com/#contributing",
+    "relUrl": "/#contributing"
+  },"40": {
+    "doc": "Home",
+    "title": "Home",
+    "content": "Welcome to the work-in-progress documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real time diagnostics, semantic coloring and such. The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out the VS Code Marketplace. ",
+    "url": "https://spyglassmc.com/",
+    "relUrl": "/"
+  },"41": {
+    "doc": "Initialization Options",
+    "title": "Initialization Options",
+    "content": "The extension may provide optional initialization options to the language server on the initialize request. | (object) The initializationOptions . | inDevelopmentMode: (boolean) If the language server is launched under development mode. If set to true, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process. | . | . ",
+    "url": "https://spyglassmc.com/developer/language-server/initialization-options.html",
+    "relUrl": "/developer/language-server/initialization-options.html"
+  },"42": {
+    "doc": "Meta Registry",
+    "title": "Symbol Registrar",
+    "content": "A function that will be called after the symbol table is loaded from cache. ",
+    "url": "https://spyglassmc.com/developer/meta-registry.html#symbol-registrar",
+    "relUrl": "/developer/meta-registry.html#symbol-registrar"
+  },"43": {
+    "doc": "Meta Registry",
+    "title": "Meta Registry",
+    "content": " ",
+    "url": "https://spyglassmc.com/developer/meta-registry.html",
+    "relUrl": "/developer/meta-registry.html"
+  },"44": {
+    "doc": "nameOfNbtKey",
+    "title": "Description",
+    "content": "This rule enforces a consistent naming convention for keys in NBT compound tags and NBT paths. This linter only checks the naming in the following cases: . | This is a key definition in an nbtdoc compound definition block that is outside of the ::minecraft module; . | This is a key used in an NBT compound tag that doesn&#8217;t have an associated nbtdoc definition; OR . | This is a key used in an NBT path that doesn&#8217;t have an associated nbtdoc definition. | . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html#description",
+    "relUrl": "/user/lint/nameOfNbtKey.html#description"
+  },"45": {
+    "doc": "nameOfNbtKey",
+    "title": "JSON Format",
+    "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfNbtKey\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good give @s stone{foo: true} give @s stone{foo_bar: true} . 👎 Bad give @s stone{FooBar: true} . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfNbtKey\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfNbtKey\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html#json-format",
+    "relUrl": "/user/lint/nameOfNbtKey.html#json-format"
+  },"46": {
+    "doc": "nameOfNbtKey",
+    "title": "nameOfNbtKey",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html",
+    "relUrl": "/user/lint/nameOfNbtKey.html"
+  },"47": {
+    "doc": "nameOfObjective",
+    "title": "Description",
+    "content": "This rule enforces a consistent naming convention for scoreboard objectives. ",
+    "url": "https://spyglassmc.com/user/lint/nameOfObjective.html#description",
+    "relUrl": "/user/lint/nameOfObjective.html#description"
+  },"48": {
+    "doc": "nameOfObjective",
+    "title": "JSON Format",
+    "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfObjective\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good scoreboard objectives add foo scoreboard objectives add foo_bar . 👎 Bad scoreboard objectives add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfObjective\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfObjective\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfObjective.html#json-format",
+    "relUrl": "/user/lint/nameOfObjective.html#json-format"
+  },"49": {
+    "doc": "nameOfObjective",
+    "title": "nameOfObjective",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/nameOfObjective.html",
+    "relUrl": "/user/lint/nameOfObjective.html"
+  },"50": {
+    "doc": "nameOfScoreHolder",
+    "title": "Description",
+    "content": "This rule enforces a consistent naming convention for score holder names (fake names). ",
+    "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html#description",
+    "relUrl": "/user/lint/nameOfScoreHolder.html#description"
+  },"51": {
+    "doc": "nameOfScoreHolder",
+    "title": "JSON Format",
+    "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfScoreHolder\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good execute if score foo objective matches 1 run say hello world! execute if score foo_bar objective matches 1 run say hello world! . 👎 Bad execute if score FooBar objective matches 1 run say hello world! . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfScoreHolder\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfScoreHolder\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html#json-format",
+    "relUrl": "/user/lint/nameOfScoreHolder.html#json-format"
+  },"52": {
+    "doc": "nameOfScoreHolder",
+    "title": "nameOfScoreHolder",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html",
+    "relUrl": "/user/lint/nameOfScoreHolder.html"
+  },"53": {
+    "doc": "nameOfTag",
+    "title": "Description",
+    "content": "This rule enforces a consistent naming convention for tags managed by the `/tag` command. ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTag.html#description",
+    "relUrl": "/user/lint/nameOfTag.html#description"
+  },"54": {
+    "doc": "nameOfTag",
+    "title": "JSON Format",
+    "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfTag\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good tag add foo tag add foo_bar . 👎 Bad tag add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfTag\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfTag\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTag.html#json-format",
+    "relUrl": "/user/lint/nameOfTag.html#json-format"
+  },"55": {
+    "doc": "nameOfTag",
+    "title": "nameOfTag",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTag.html",
+    "relUrl": "/user/lint/nameOfTag.html"
+  },"56": {
+    "doc": "nameOfTeam",
+    "title": "Description",
+    "content": "This rule enforces a consistent naming convention for teams. ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTeam.html#description",
+    "relUrl": "/user/lint/nameOfTeam.html#description"
+  },"57": {
+    "doc": "nameOfTeam",
+    "title": "JSON Format",
+    "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfTeam\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good team add foo team add foo_bar . 👎 Bad team add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfTeam\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfTeam\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTeam.html#json-format",
+    "relUrl": "/user/lint/nameOfTeam.html#json-format"
+  },"58": {
+    "doc": "nameOfTeam",
+    "title": "nameOfTeam",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/nameOfTeam.html",
+    "relUrl": "/user/lint/nameOfTeam.html"
+  },"59": {
+    "doc": "Profilers",
+    "title": "Profilers",
+    "content": "Profiler IDs . | cache#save . | cache#load . | project#ready . | . ",
+    "url": "https://spyglassmc.com/maintainer/profilers.html",
+    "relUrl": "/maintainer/profilers.html"
+  },"60": {
+    "doc": "undeclaredSymbol",
+    "title": "Description",
+    "content": "This rule specifies what actions should be done when there are undeclared symbols. ",
+    "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html#description",
+    "relUrl": "/user/lint/undeclaredSymbol.html#description"
+  },"61": {
+    "doc": "undeclaredSymbol",
+    "title": "JSON Format",
+    "content": "Either a simple Action object: . | (object) An action to take when encounterred undeclared symbols . | Either declare: declares the symbol at the specified scope. Allowed values: \"block\", \"file\", or \"public\". | Or report: reports a diagnostic with the specified severity. Allowed values: \"inherit\", \"hint\", \"information\", \"warning\", or \"error\". | . | . Or a more Complex structure with conditions: . | (object) . | if: (object) . | category: (string | string[]) . | pattern: (string | string[]) . | excludePattern: (string | string[]) . | namespace: (string | string[]) . | excludeNamespace: (string | string[]) . | . | then: (Action) . | override: (Complex | Complex[]) . | . | . Example 1. Example Config { \"lint\": { \"undeclaredSymbol\": [ { \"if\": [ { \"category\": [\"block\", \"entity_type\", \"item\"], \"namespace\": \"minecraft\" }, { \"category\": [\"advancement\", \"bossbar\", \"objective\", \"team\"] }, ], \"then\": { \"report\": \"warning\" }, }, { \"then\": { \"declare\": \"block\" }, }, ] } } . 👍 Good tag @s add foo . 👎 Bad setblock ~ ~ ~ minecraft:foo . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"undeclaredSymbol\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"undeclaredSymbol\": null } } . ",
+    "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html#json-format",
+    "relUrl": "/user/lint/undeclaredSymbol.html#json-format"
+  },"62": {
+    "doc": "undeclaredSymbol",
+    "title": "undeclaredSymbol",
+    "content": " ",
+    "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html",
+    "relUrl": "/user/lint/undeclaredSymbol.html"
+  },"63": {
+    "doc": "Update Guide",
+    "title": "Update Guide",
+    "content": "This document is intended for maintainers of the Spyglass project. Searchable comments // DOCS: Update here when format_version is changed. // DOCS: Update here when a new major version of Minecraft is released. ",
+    "url": "https://spyglassmc.com/maintainer/update_guide.html",
+    "relUrl": "/maintainer/update_guide.html"
+  }
+}
