@@ -219,7 +219,7 @@ export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocu
 			builder.push(pos.line, pos.character, length, type, modifiers)
 		} else {
 			const firstLineRemainingLength = doc.getText(ls.Range.create(pos.line, pos.character, pos.line, MaxCharacterNumber)).length
-			const lastLineLeadingLength = doc.getText(ls.Range.create(endPos.line, 0, endPos.line, MaxCharacterNumber)).length
+			const lastLineLeadingLength = doc.getText(ls.Range.create(endPos.line, 0, endPos.line, endPos.character)).length
 			builder.push(pos.line, pos.character, firstLineRemainingLength, type, modifiers)
 			for (let i = pos.line + 1; i < endPos.line - 1; i++) {
 				const lineLength = doc.getText(ls.Range.create(i, 0, i, MaxCharacterNumber)).length
