@@ -2,7 +2,7 @@ import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser,
 import * as core from '@spyglassmc/core'
 import { any, Arrayable, failOnEmpty, failOnError, Failure, map, optional, Range, repeat, ResourceLocation, select, sequence, setType, stopBefore, SymbolAccessType, validate } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
-import type { AccessorKeyNode, AnyTypeNode, AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, AttributeValueNode, BooleanTypeNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, EnumValueNode, FloatRangeNode, IdentifierNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, ModuleNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, StringTypeNode, StructBlockNode, StructInjectionNode, StructKeyNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypedNumberNode, TypeNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node'
+import type { AccessorKeyNode, AnyTypeNode, AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, AttributeValueNode, BooleanTypeNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, EnumValueNode, FloatRangeNode, IdentifierNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, ModuleNode, NumericTypeNode, PathNode, PathTypeNode, PrimitiveArrayTypeNode, StringTypeNode, StructBlockNode, StructInjectionNode, StructKeyNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypedNumberNode, TypeNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node'
 
 /**
  * @returns A comment parser that accepts normal comments (`//`) and reports an error if it's a doc comment (`///`).
@@ -22,14 +22,14 @@ export const comment: Parser<CommentNode> = validate(
  */
 function syntaxGap(
 	/* istanbul ignore next */
-	forbidsDocCommentsInGap = false
+	delegatesDocComments = false
 ): InfallibleParser<CommentNode[]> {
 	return (src: Source, ctx: ParserContext): CommentNode[] => {
 		const ans: CommentNode[] = []
 
 		src.skipWhitespace()
 
-		while (src.canRead() && src.peek(2) === '//' && (!forbidsDocCommentsInGap || src.peek(3) !== '///')) {
+		while (src.canRead() && src.peek(2) === '//' && (!delegatesDocComments || src.peek(3) !== '///')) {
 			const result = comment(src, ctx) as CommentNode
 			ans.push(result)
 			src.skipWhitespace()
@@ -68,14 +68,14 @@ function syntax(parsers: SP<AstNode>[], delegatesDocComments = false): Parser<Sy
  * 
  * @returns A parser that follows a **SYNTAX** rule built with the passed-in parser being repeated zero or more times.
  */
-function syntaxRepeat<P extends Parser<AstNode | SyntaxUtil<AstNode>>>(parser: P, forbidsDocCommentsInGap?: boolean): P extends InfallibleParser
+function syntaxRepeat<P extends Parser<AstNode | SyntaxUtil<AstNode>>>(parser: P, delegatesDocComments?: boolean): P extends InfallibleParser
 	? { _inputParserIsInfallible: never } & void
 	: P extends Parser<infer V | SyntaxUtil<infer V>> ? InfallibleParser<SyntaxUtil<V>> : never
-function syntaxRepeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>, forbidsDocCommentsInGap = false): InfallibleParser<SyntaxUtil<CN>> | void {
-	return repeat<CN | CommentNode>(parser, syntaxGap(forbidsDocCommentsInGap))
+function syntaxRepeat<CN extends AstNode>(parser: Parser<CN | SyntaxUtil<CN>>, delegatesDocComments = false): InfallibleParser<SyntaxUtil<CN>> | void {
+	return repeat<CN | CommentNode>(parser, syntaxGap(delegatesDocComments))
 }
 
-export function literal(literal: Arrayable<string>, options?: { specialChars?: Set<string>, colorTokenType?: ColorTokenType }): InfallibleParser<LiteralNode> {
+export function literal(literal: Arrayable<string>, options?: { allowedChars?: Set<string>, specialChars?: Set<string>, colorTokenType?: ColorTokenType }): InfallibleParser<LiteralNode> {
 	return (src, ctx) => {
 		const ans: LiteralNode = {
 			type: 'mcdoc:literal',
@@ -83,7 +83,7 @@ export function literal(literal: Arrayable<string>, options?: { specialChars?: S
 			value: '',
 			colorTokenType: options?.colorTokenType,
 		}
-		ans.value = src.readIf(c => options?.specialChars?.has(c) || /[a-z]/i.test(c))
+		ans.value = src.readIf(c => options?.allowedChars?.has(c) ?? (options?.specialChars?.has(c) || /[a-z]/i.test(c)))
 		ans.range.end = src.cursor
 		if (Arrayable.toArray(literal).every(l => l !== ans.value)) {
 			ctx.err.report(localize('expected-got', arrayToMessage(literal), localeQuote(ans.value)), ans)
@@ -92,7 +92,7 @@ export function literal(literal: Arrayable<string>, options?: { specialChars?: S
 	}
 }
 
-function keyword(keyword: Arrayable<string>, options: { specialChars?: Set<string>, colorTokenType?: ColorTokenType } = { colorTokenType: 'keyword' }): Parser<LiteralNode> {
+function keyword(keyword: Arrayable<string>, options: { allowedChars?: Set<string>, specialChars?: Set<string>, colorTokenType?: ColorTokenType } = { colorTokenType: 'keyword' }): Parser<LiteralNode> {
 	return (src, ctx) => {
 		const result = literal(keyword, options)(src, ctx)
 		if (!Arrayable.toArray(keyword).includes(result.value)) {
@@ -223,6 +223,7 @@ function indexBody(options?: { accessType?: SymbolAccessType, noDynamic?: boolea
 			index,
 			syntaxRepeat(syntax([marker(','), failOnEmpty(index)])),
 			optional(marker(',')),
+			punctuation(']'),
 		])
 	)
 }
@@ -287,6 +288,11 @@ const treeBody: InfallibleParser<SyntaxUtil<AttributeTreePosValuesNode | Attribu
 	syntax([attributeTreePosValues, punctuation(','), attributeTreeNamedValues, optional(marker(','))]),
 ])
 
+const AttributeTreeClosure = Object.freeze({
+	'(': ')',
+	'[': ']',
+	'{': '}',
+})
 const attributeTree: InfallibleParser<AttributeTreeNode> = (src, ctx) => {
 	const delim = src.trySkip('(') ? '(' : (src.trySkip('[') ? '[' : '{')
 	const res = treeBody(src, ctx)
@@ -296,6 +302,7 @@ const attributeTree: InfallibleParser<AttributeTreeNode> = (src, ctx) => {
 		children: res.children,
 		delim,
 	}
+	src.trySkip(AttributeTreeClosure[delim])
 	return ans
 }
 
@@ -310,9 +317,9 @@ export const attribute: Parser<AttributeNode> = setType(
 		marker('#['),
 		identifier,
 		select([
-			{ prefix: ']', parser: punctuation(']') },
-			{ prefix: '=', parser: syntax([attributeValue, punctuation(']')], true) },
-			{ parser: syntax([attributeTree, punctuation(']')], true) },
+			{ prefix: '=', parser: syntax([punctuation('='), attributeValue, punctuation(']')], true) },
+			{ predicate: src => ['(', '[', '{'].includes(src.peek()), parser: syntax([attributeTree, punctuation(']')], true) },
+			{ parser: punctuation(']') },
 		]),
 	], true)
 )
@@ -336,7 +343,10 @@ export const docComment: Parser<CommentNode> = core.comment({
 	includesEol: true,
 })
 
-const docComments: InfallibleParser<DocCommentsNode> = setType('mcdoc:doc_comments', repeat(docComment))
+export const docComments: InfallibleParser<DocCommentsNode> = setType('mcdoc:doc_comments', repeat(docComment, src => {
+	src.skipWhitespace()
+	return []
+}))
 
 const prelim: InfallibleParser<SyntaxUtil<DocCommentsNode | AttributeNode>> = syntax([
 	optional(failOnEmpty(docComments)),
@@ -361,7 +371,7 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
 	sequence([
 		float,
-		literal(['b', 'B', 'd', 'D', 'f', 'F', 'l', 'L', 's', 'S'], { colorTokenType: 'keyword' }),
+		optional(keyword(['b', 'B', 'd', 'D', 'f', 'F', 'l', 'L', 's', 'S'], { colorTokenType: 'keyword' })),
 	])
 )
 
@@ -471,7 +481,7 @@ const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
 	const result1 = syntax([
 		punctuation(':'),
 		{ get: () => type },
-	])(src, ctx)
+	], true)(src, ctx)
 	const ans: StructPairFieldNode = {
 		type: 'mcdoc:struct/field/pair',
 		children: [...result0.children, ...result1.children],
@@ -509,7 +519,7 @@ const structBlock: InfallibleParser<StructBlockNode> = setType(
 				], true),
 			},
 		]),
-	])
+	], true)
 )
 
 export const struct: Parser<StructNode> = setType(
@@ -629,21 +639,22 @@ function range(type: string, number: InfallibleParser): InfallibleParser {
 			{
 				prefix: '..',
 				parser: sequence([
-					punctuation('..'),
+					literal('..', { allowedChars: new Set('.') }),
 					number,
 				]),
 			},
 			{
 				parser: sequence([
-					number,
+					stopBefore(number, '..'),
 					select([
 						{
 							prefix: '..',
 							parser: sequence([
-								punctuation('..'),
+								literal('..', { allowedChars: new Set('.') }),
 								optional(failOnEmpty(number)),
 							]),
 						},
+						{ parser: noop },
 					]),
 				]),
 			},
@@ -701,7 +712,7 @@ export const numericType: Parser<NumericTypeNode> = typeBase('mcdoc:type/numeric
 export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase('mcdoc:type/primitive_array', syntax([
 	literal(['byte', 'int', 'long']),
 	atIntRange,
-	marker('[]'),
+	keyword('[]', { allowedChars: new Set(['[', ']']), colorTokenType: 'type' }),
 	atIntRange,
 ]))
 
@@ -723,6 +734,7 @@ export const tupleType: Parser<TupleTypeNode> = typeBase('mcdoc:type/tuple', syn
 				{ get: () => type },
 				syntaxRepeat(syntax([marker(','), { get: () => failOnEmpty(type) }], true), true),
 				optional(marker(',')),
+				punctuation(']'),
 			], true),
 		},
 	]),
@@ -742,35 +754,42 @@ export const unionType: Parser<UnionTypeNode> = typeBase('mcdoc:type/union', syn
 				{ get: () => type },
 				syntaxRepeat(syntax([marker('|'), { get: () => failOnEmpty(type) }], true), true),
 				optional(marker('|')),
+				punctuation(')'),
 			], true),
 		},
 	]),
 ]))
 
+export const pathType: InfallibleParser<PathTypeNode> = typeBase('mcdoc:type/path', syntax([
+	path,
+	optional(syntax([
+		marker('<'),
+		select([
+			{ prefix: '>', parser: punctuation('>') },
+			{
+				parser: syntax([
+					{ get: () => type },
+					syntaxRepeat(syntax([marker(','), { get: () => failOnEmpty(type) }], true), true),
+					optional(marker(',')),
+					punctuation('>'),
+				], true),
+			},
+		]),
+	])),
+]))
+
 export const type: InfallibleParser<TypeNode> = any([
 	anyType,
 	booleanType,
-	stringType,
+	dispatcherType,
+	enum_,
+	listType,
 	literalType,
 	numericType,
 	primitiveArrayType,
-	listType,
-	tupleType,
-	enum_,
+	stringType,
 	struct,
-	dispatcherType,
+	tupleType,
 	unionType,
-	path,
+	pathType,
 ])
-// select([
-// 	{ prefix: 'any', parser: anyType },
-// 	{ prefix: 'boolean', parser: booleanType },
-// 	{ prefix: 'string', parser: stringType },
-// 	{ predicate: src => src.tryPeek('byte') || src.tryPeek('int') || src.tryPeek('long'), parser: any([primitiveArrayType, numericType]) },
-// 	{ predicate: src => src.tryPeek('short') || src.tryPeek('float') || src.tryPeek('double'), parser: numericType },
-// 	{ prefix: '[', parser: any([listType, tupleType]) },
-// 	{ prefix: 'enum', parser: enum_ as InfallibleParser<EnumNode> },
-// 	{ prefix: 'struct', parser: struct as InfallibleParser<StructNode> },
-// 	{ prefix: '(', parser: unionType },
-// 	{ parser: any([literalType, path, dispatcherType]) },
-// ])

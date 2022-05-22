@@ -99,14 +99,14 @@ struct Foo {
 **SYNTAX**
 
 [[s-prelim,_Prelim_]]
-<<s-prelim>>:: <<t-doc-comments>> <<s-attributes>>
+<<s-prelim>>:: <<s-doc-comments>> <<s-attributes>>
+
+[[s-doc-comments,_DocComments_]]
+<<t-doc-comments>>:: <<t-doc-comment>>{star} // No regular comments are allowed between the individual <<t-doc-comment>>.
 
 '''
 
 **SYNTAX (TOKEN)**
-
-[[t-doc-comments,DOC_COMMENTS]]
-<<t-doc-comments>>:: <<t-doc-comment>>{star}
 
 [[t-doc-comment,DOC_COMMENT]]
 <<t-doc-comment>>:: `///` (~not~<<t-eol>>){star} (<<t-eol>> | <<t-eof>>)
@@ -432,7 +432,7 @@ The relative path is interpreted as follows:
 	<<s-tuple-type>> | +
 	<<s-enum>> | +
 	<<s-struct>> | +
-	<<t-path>> | +
+	<<s-path-type>> | +
 	<<s-dispatcher-type>> | +
 	<<s-union-type>>
 ****
@@ -800,6 +800,20 @@ type FunctionTag = Tag<#[id=function] string>
 type ItemTag = Tag<#[id=item] string>
 ----
 ====
+
+=== Path type
+
+****
+**SYNTAX**
+
+[[s-path-type,_PathType_]]
+<<s-path-type>>:: <<t-path>> <<s-type-param-assignment>>^?^
+
+[[s-type-param-assignment,_TypeParamAssignment_]]
+<<s-type-param-assignment>>::
+	`<` `>` | +
+	`<` <<s-type>> (`,` <<s-type>>){star} `,`^?^ `>`
+****
 
 === Dispatcher type
 

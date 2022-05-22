@@ -270,7 +270,7 @@ export function select(cases: readonly Case[]): Parser<Returnable> {
 				return callableParser(src, ctx)
 			}
 		}
-		return Failure
+		throw new Error('The select parser util was called with non-exhaustive cases')
 	}
 }
 
@@ -298,9 +298,10 @@ export function setType<N extends Omit<AstNode, 'type'>, T extends string>(type:
 	return map(
 		parser,
 		res => {
+			const { type: _type, ...restResult } = res as N & { type: never }
 			const ans = {
-				...res,
 				type,
+				...restResult,
 			}
 			delete (ans as Partial<SequenceUtil>)[SequenceUtilDiscriminator]
 			return ans

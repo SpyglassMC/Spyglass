@@ -116,7 +116,7 @@ export type TypeNode =
 	| TupleTypeNode
 	| EnumNode
 	| StructNode
-	| PathNode
+	| PathTypeNode
 	| DispatcherTypeNode
 	| UnionTypeNode
 export const TypeNode = Object.freeze({
@@ -361,6 +361,10 @@ export const StructNode = Object.freeze({
 		return (node as StructNode | undefined)?.type === 'mcdoc:struct'
 	},
 })
+
+export interface PathTypeNode extends TypeBaseNode<PathNode | TypeNode> {
+	type: 'mcdoc:type/path',
+}
 
 export interface TypeParamBlockNode extends AstNode {
 	type: 'mcdoc:type_param_block',
