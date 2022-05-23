@@ -1,6 +1,5 @@
 import type { Uri } from '../util.mjs'
 import type { ExternalDownloader } from './downloader.mjs'
-import { NodeJsExternals } from './nodejs.mjs'
 
 export * from './downloader.mjs'
 
@@ -18,7 +17,7 @@ export interface Externals {
 	},
 	downloader: ExternalDownloader,
 	event: {
-		EventEmitter: new () => EventEmitter,
+		EventEmitter: new () => ExternalEventEmitter,
 	},
 	fs: {
 		/**
@@ -69,7 +68,7 @@ export interface DecompressedFile {
 	type: string,
 }
 
-export interface EventEmitter {
+export interface ExternalEventEmitter {
 	emit(eventName: string, ...args: unknown[]): boolean
 	on(eventName: string, listener: (...args: unknown[]) => unknown): this
 	once(eventName: string, listener: (...args: unknown[]) => unknown): this
@@ -97,18 +96,4 @@ export interface FsWatcher {
 	once(eventName: 'error', listener: (error: Error) => unknown): this
 
 	close(): Promise<void>
-}
-
-export let Externals: Externals = NodeJsExternals // Temporary hack
-
-export function setExternals(externals: Externals) {
-	Externals = externals
-}
-
-export async function setExternalsAutomatically() {
-	if (process?.versions?.node) {
-		setExternals((await import('./nodejs.mjs')).NodeJsExternals)
-	} else {
-		setExternals((await import('./browser.mjs')).BrowserExternals)
-	}
 }

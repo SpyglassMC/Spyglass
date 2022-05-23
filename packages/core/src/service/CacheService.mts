@@ -1,4 +1,4 @@
-import { Externals, isEnoent, isErrorCode } from '../common/index.mjs'
+import { isEnoent, isErrorCode } from '../common/index.mjs'
 import type { UnlinkedSymbolTable } from '../symbol/index.mjs'
 import { SymbolTable } from '../symbol/index.mjs'
 import type { RootUriString } from './fileUtil.mjs'
@@ -72,7 +72,7 @@ export class CacheService {
 			}
 			try {
 				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] = await Externals.crypto.getSha1(doc.getText())
+				this.checksums.files[doc.uri] = await this.project.externals.crypto.getSha1(doc.getText())
 			} catch (e) {
 				if (!isErrorCode(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -107,7 +107,7 @@ export class CacheService {
 	 * @returns `${cacheRoot}/symbols/${sha1(projectRoot)}.json`
 	 */
 	private async getCacheFilePath(): Promise<string> {
-		return this.#cacheFilePath ??= Externals.path.join(this.cacheRoot, 'symbols', `${await Externals.crypto.getSha1(this.project.projectRoot)}.json.gz`)
+		return this.#cacheFilePath ??= this.project.externals.path.join(this.cacheRoot, 'symbols', `${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`)
 	}
 
 	async load(): Promise<LoadResult> {
@@ -117,7 +117,7 @@ export class CacheService {
 		try {
 			filePath = await this.getCacheFilePath()
 			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
-			const cache = await fileUtil.readGzippedJson<CacheFile>(filePath)
+			const cache = await fileUtil.readGzippedJson(this.project.externals, filePath) as CacheFile
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.checksums = cache.checksums
@@ -209,7 +209,7 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeGzippedJson(filePath, cache)
+			await fileUtil.writeGzippedJson(this.project.externals,filePath, cache)
 			__profiler.task('Write File').finalize()
 
 			return true

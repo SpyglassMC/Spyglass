@@ -1,8 +1,8 @@
-import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
+import { mockProjectData } from '@spyglassmc/core/test-out/utils.mjs'
 
-const project = core.ProjectData.mock()
+const project = mockProjectData()
 
 json.initialize(project)
 nbt.initialize(project)

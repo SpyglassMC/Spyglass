@@ -1,7 +1,7 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
 import type { ProcessorContext } from '../service/index.mjs'
-import { Externals } from './externals/index.mjs'
+import type { Externals } from './externals/index.mjs'
 
 export const Uri = URL
 export type Uri = URL
@@ -164,8 +164,8 @@ export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner:
 	})()
 }
 
-export async function parseGzippedJson<T>(buffer: Uint8Array): Promise<T> {
-	return JSON.parse(bufferToString(await Externals.archive.gunzip(buffer)))
+export async function parseGzippedJson(externals: Externals, buffer: Uint8Array): Promise<unknown> {
+	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
 }
 
 export function isObject(value: unknown): value is Exclude<object, Array<any>> {

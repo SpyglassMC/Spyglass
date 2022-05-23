@@ -1,6 +1,7 @@
-import type { Completer, CompletionItem, LanguageError } from '@spyglassmc/core'
-import { AstNode, CheckerContext, CompleterContext, Failure, ParserContext, ProjectData, Source, SymbolUtil } from '@spyglassmc/core'
-import { markOffsetInString, showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils.mjs'
+import type { Completer, CompletionItem, LanguageError, ProjectData } from '@spyglassmc/core'
+import { AstNode, CheckerContext, CompleterContext, Failure, ParserContext, Source, SymbolUtil } from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.mjs'
+import { markOffsetInString, mockProjectData, showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils.mjs'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { JsonChecker } from '../lib/checker/JsonChecker.mjs'
@@ -14,9 +15,9 @@ export function testChecker(checker: JsonChecker, test: string, { project }: { p
 } {
 	const src = new Source(test)
 	const doc = TextDocument.create('file:///', 'json', 0, test)
-	const symbols = new SymbolUtil({})
-	const parserCtx = ParserContext.create(ProjectData.mock({ symbols, ...project }), { doc })
-	const checkerCtx = CheckerContext.create(ProjectData.mock({ symbols, ...project }), { doc, src })
+	const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
+	const parserCtx = ParserContext.create(mockProjectData({ symbols, ...project }), { doc })
+	const checkerCtx = CheckerContext.create(mockProjectData({ symbols, ...project }), { doc, src })
 	const result = parser(src, parserCtx)
 	if (result !== Failure) {
 		checker(result, { ...checkerCtx, context: '' })
@@ -41,17 +42,17 @@ export function testGrid(suites: { content: string }[], checkers: { name: string
 	}
 }
 
-export function testCompleter(completer: Completer<any>, text: string, expectation: JsonExpectation[] | undefined, offset: number, { project, symbols = new SymbolUtil({}) }: { project?: Partial<ProjectData>, symbols?: SymbolUtil } = {}): {
+export function testCompleter(completer: Completer<any>, text: string, expectation: JsonExpectation[] | undefined, offset: number, { project, symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter) }: { project?: Partial<ProjectData>, symbols?: SymbolUtil } = {}): {
 	completions: readonly CompletionItem[],
 } {
 	const src = new Source(text)
 	const doc = TextDocument.create('file:///', 'json', 0, text)
-	const parserCtx = ParserContext.create(ProjectData.mock({ symbols, ...project }), { doc })
+	const parserCtx = ParserContext.create(mockProjectData({ symbols, ...project }), { doc })
 	const node = parser(src, parserCtx) as JsonNode
 	AstNode.setParents(node)
 	node.expectation = expectation
 
-	const completerCtx = CompleterContext.create(ProjectData.mock({ symbols, ...project }), { doc, offset })
+	const completerCtx = CompleterContext.create(mockProjectData({ symbols, ...project }), { doc, offset })
 	const result = completer(node, completerCtx)
 
 	return { completions: result }

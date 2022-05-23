@@ -1,8 +1,9 @@
-import type { EventEmitter, Externals, FsWatcher } from './index.mjs'
 import type { ExternalDownloader, ExternalDownloaderOptions, RemoteUriString } from './downloader.mjs'
+import type { ExternalEventEmitter, Externals, FsWatcher } from './index.mjs'
 
-class BrowserEventEmitter implements EventEmitter {
+class BrowserEventEmitter implements ExternalEventEmitter {
 	emit(eventName: string, ...args: unknown[]): boolean {
+		console.log(`Event ${eventName} with ${JSON.stringify(args)} emitted.`)
 		return false
 	}
 	on(eventName: string, listener: (...args: unknown[]) => unknown): this {

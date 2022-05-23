@@ -1,7 +1,8 @@
 import { SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandStringOption } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
-import { ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service, setExternalsAutomatically } from '@spyglassmc/core'
+import { ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service } from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.mjs'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { Routes } from 'discord-api-types/rest/v9'
@@ -9,8 +10,6 @@ import type { Snowflake } from 'discord.js'
 import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
-
-await setExternalsAutomatically()
 
 export declare const __dirname: undefined // Not defined in ES module scope
 const MaxContentLength = 2000
@@ -22,7 +21,7 @@ const __profiler = profilers.get(ProfilerId)
 const parentPath = dirname(fileURLToPath(import.meta.url))
 const cacheRoot = join(parentPath, 'cache')
 const projectPath = join(parentPath, 'project-root')
-await fileUtil.ensureDir(projectPath)
+await fileUtil.ensureDir(NodeJsExternals, projectPath)
 console.log(`cacheRoot = ${cacheRoot}`)
 console.log(`projectPath = ${projectPath}`)
 
@@ -35,6 +34,7 @@ const client = new Client({
 })
 const service = new Service({
 	cacheRoot,
+	externals: NodeJsExternals,
 	initializers: [
 		mcdoc.initialize,
 		je.initialize,
@@ -111,7 +111,7 @@ interface Config {
  */
 async function loadConfig(): Promise<Config> {
 	const path = join(parentPath, 'config.json')
-	const config = await fileUtil.readJson<Config>(path)
+	const config = await fileUtil.readJson(NodeJsExternals, path) as Config
 	if (!(typeof config.clientId === 'string' &&
 		typeof config.guildId === 'string' &&
 		typeof config.token === 'string')) {

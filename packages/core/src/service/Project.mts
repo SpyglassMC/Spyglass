@@ -1,7 +1,7 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { FsWatcher, IntervalId } from '../common/index.mjs'
-import { bufferToString, CachePromise, ExternalDownloader, Externals } from '../common/index.mjs'
+import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.mjs'
+import { bufferToString, CachePromise } from '../common/index.mjs'
 import type { AstNode } from '../node/index.mjs'
 import { FileNode } from '../node/index.mjs'
 import { file } from '../parser/index.mjs'
@@ -11,7 +11,7 @@ import { Source } from '../source/index.mjs'
 import { SymbolUtil } from '../symbol/index.mjs'
 import { CacheService } from './CacheService.mjs'
 import type { Config } from './Config.mjs'
-import { ConfigService, LinterConfigValue, VanillaConfig } from './Config.mjs'
+import { ConfigService, LinterConfigValue } from './Config.mjs'
 import { CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context.mjs'
 import type { Dependency } from './Dependency.mjs'
 import { DependencyKey } from './Dependency.mjs'
@@ -26,12 +26,13 @@ import { ProfilerFactory } from './Profiler.mjs'
 
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
-export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'logger' | 'meta' | 'projectRoot'>
+export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'externals' | 'logger' | 'meta' | 'projectRoot'>
 export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
 
 interface Options {
 	cacheRoot: string,
 	downloader?: Downloader,
+	externals: Externals,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	logger?: Logger,
@@ -64,63 +65,13 @@ interface SymbolRegistrarEvent {
 	checksum: string | undefined,
 }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureParsedAndChecked' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
-export namespace ProjectData {
-	export function mock(data: Partial<ProjectData> = {}): ProjectData {
-		const cacheRoot = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist'
-		const logger = data.logger ?? Logger.create()
-		const downloader = data.downloader ?? new Downloader(cacheRoot, logger, ExternalDownloader.mock({ fixtures: {} }))
-		return {
-			cacheRoot,
-			config: data.config ?? VanillaConfig,
-			ctx: data.ctx ?? {},
-			downloader,
-			ensureParsedAndChecked: data.ensureParsedAndChecked!,
-			fs: data.fs ?? FileService.create('file:///cache/'),
-			get: data.get ?? (() => undefined),
-			logger,
-			meta: data.meta ?? new MetaRegistry(),
-			profilers: data.profilers ?? ProfilerFactory.noop(),
-			projectRoot: data.projectRoot ?? 'file:///',
-			roots: data.roots ?? [],
-			symbols: data.symbols ?? new SymbolUtil({}),
-		}
-	}
-}
-
-export interface Project {
-	on(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
-	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
-	// the document anymore.
-	on(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	on(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
-	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-
-	once(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
-	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
-	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
-	once(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
-	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
-	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
-
-	emit(event: 'documentErrorred', data: DocumentErrorEvent): boolean
-	emit(event: 'documentUpdated', data: DocumentEvent): boolean
-	emit(event: 'documentRemoved', data: FileEvent): boolean
-	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
-	emit(event: 'ready', data: EmptyEvent): boolean
-	emit(event: 'rootsUpdated', data: RootsEvent): boolean
-	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
-}
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureParsedAndChecked' | 'externals' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 
 /* istanbul ignore next */
 /**
  * Manage all tracked documents and errors.
  */
-export class Project extends Externals['event']['EventEmitter'] {
+export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
 	readonly #cacheSaverIntervalId: IntervalId
@@ -131,6 +82,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 	readonly #clientManagedUris = new Set<string>()
 	readonly #configService: ConfigService
 	readonly #docAndNodes = new Map<string, DocAndNode>()
+	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
 	#initPromise!: Promise<void>
 	#readyPromise!: Promise<void>
@@ -145,6 +97,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 
 	config!: Config
 	readonly downloader: Downloader
+	readonly externals: Externals
 	readonly fs: FileService
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
@@ -199,6 +152,43 @@ export class Project extends Externals['event']['EventEmitter'] {
 		this.emit('rootsUpdated', { roots: this.#roots })
 	}
 
+	on(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
+	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
+	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
+	// the document anymore.
+	on(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
+	on(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
+	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
+	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
+	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
+	on(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.on(event, callbackFn)
+		return this
+	}
+
+	once(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
+	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
+	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
+	once(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
+	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
+	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
+	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
+	once(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.once(event, callbackFn)
+		return this
+	}
+
+	emit(event: 'documentErrorred', data: DocumentErrorEvent): boolean
+	emit(event: 'documentUpdated', data: DocumentEvent): boolean
+	emit(event: 'documentRemoved', data: FileEvent): boolean
+	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
+	emit(event: 'ready', data: EmptyEvent): boolean
+	emit(event: 'rootsUpdated', data: RootsEvent): boolean
+	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
+	emit(event: string, ...args: unknown[]): boolean {
+		return this.#eventEmitter.emit(event, ...args)
+	}
+
 	/**
 	 * Get all files that are tracked and supported.
 	 * 
@@ -214,25 +204,26 @@ export class Project extends Externals['event']['EventEmitter'] {
 	constructor({
 		cacheRoot,
 		downloader,
-		fs = FileService.create(cacheRoot),
+		externals,
+		fs = FileService.create(externals, cacheRoot),
 		initializers = [],
 		logger = Logger.create(),
 		profilers = ProfilerFactory.noop(),
 		projectPath,
 	}: Options) {
-		super()
-
 		this.#cacheRoot = cacheRoot
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this)
-		this.downloader = downloader ?? new Downloader(cacheRoot, logger)
+		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
+		this.externals = externals
+		this.#eventEmitter = new externals.event.EventEmitter()
 		this.fs = fs
 		this.#initializers = initializers
 		this.logger = logger
 		this.profilers = profilers
 		this.projectPath = projectPath
-		this.projectRoot = fileUtil.ensureEndingSlash(Externals.uri.fromPath(projectPath))
-		this.symbols = new SymbolUtil({})
+		this.projectRoot = fileUtil.ensureEndingSlash(externals.uri.fromPath(projectPath))
+		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 		this.#ctx = {}
 
 		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
@@ -302,6 +293,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 				cacheRoot: this.cacheRoot,
 				config: this.config,
 				downloader: this.downloader,
+				externals: this.externals,
 				logger: this.logger,
 				meta: this.meta,
 				projectRoot: this.projectRoot,
@@ -321,7 +313,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 			const __profiler = this.profilers.get('project#init')
 
 			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(symbols)
+			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
@@ -358,14 +350,14 @@ export class Project extends Externals['event']['EventEmitter'] {
 		}
 		const listDependencyFiles = async () => {
 			const dependencies = await getDependencies()
-			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.logger)
-			const archiveUriSupporter = await ArchiveUriSupporter.create(dependencies, this.logger, this.cacheService.checksums.roots)
+			const fileUriSupporter = await FileUriSupporter.create(dependencies, this.externals, this.logger)
+			const archiveUriSupporter = await ArchiveUriSupporter.create(dependencies, this.externals, this.logger, this.cacheService.checksums.roots)
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
 		const listProjectFiles = () => new Promise<void>(resolve => {
 			this.#watcherReady = false
-			this.#watcher = Externals.fs
+			this.#watcher = this.externals.fs
 				.watch(this.projectPath)
 				.once('ready', () => {
 					this.#watcherReady = true
@@ -483,7 +475,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 	}
 
 	normalizeUri(uri: string): string {
-		return this.fs.mapFromDisk(fileUtil.normalize(uri))
+		return this.fs.mapFromDisk(fileUtil.normalize(this.externals, uri))
 	}
 
 	/**
@@ -710,7 +702,7 @@ export class Project extends Externals['event']['EventEmitter'] {
 		}
 
 		try {
-			await Externals.fs.showFile(this.#cacheRoot)
+			await this.externals.fs.showFile(this.#cacheRoot)
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)
 		}

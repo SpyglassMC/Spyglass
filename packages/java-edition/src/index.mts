@@ -12,11 +12,13 @@ export * as json from './json/index.mjs'
 export * as mcf from './mcfunction/index.mjs'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
+	const { config, downloader, externals, logger, meta, projectRoot } = ctx
+
 	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
 		let ans: PackMcmeta | undefined
 		const uri = `${projectRoot}pack.mcmeta`
 		try {
-			const data = await core.fileUtil.readJson(uri)
+			const data = await core.fileUtil.readJson(externals, uri)
 			PackMcmeta.assert(data)
 			ans = data
 		} catch (e) {
@@ -28,11 +30,9 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return ans
 	}
 
-	const { config, downloader, logger, meta, projectRoot } = ctx
-
 	meta.registerUriBinder(uriBinder)
 
-	const versions = await getVersions(ctx.downloader)
+	const versions = await getVersions(ctx.externals, ctx.downloader)
 	if (!versions) {
 		ctx.logger.error('[je-initialize] Failed loading game version list. Expect everything to be broken.')
 		return
@@ -41,9 +41,9 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	const packMcmeta = await getPackMcmeta()
 	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader, version, isLatest))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(externals, downloader, version, isLatest))
 
-	const summary = await getMcmetaSummary(downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
+	const summary = await getMcmetaSummary(ctx.externals, downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
 	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
 		ctx.logger.error('[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.')
 		return

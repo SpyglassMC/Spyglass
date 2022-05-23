@@ -1,5 +1,5 @@
-import type { ExternalDownloaderOptions, RemoteUriString } from '../common/index.mjs'
-import { bufferToString, Externals, isEnoent } from '../common/index.mjs'
+import type { ExternalDownloaderOptions, Externals, RemoteUriString } from '../common/index.mjs'
+import { bufferToString, isEnoent } from '../common/index.mjs'
 import { fileUtil } from './fileUtil.mjs'
 import type { Logger } from './Logger.mjs'
 
@@ -13,8 +13,8 @@ export class Downloader {
 
 	constructor(
 		private readonly cacheRoot: string,
+		private readonly externals: Externals,
 		private readonly logger: Logger,
-		private readonly lld = Externals.downloader,
 	) { }
 
 	async download<R>(job: Job<R>, out: DownloaderDownloadOut = {}): Promise<R | undefined> {
@@ -33,16 +33,16 @@ export class Downloader {
 		let cacheChecksumPath: string | undefined
 		if (cache) {
 			const { checksumJob, checksumExtension } = cache
-			out.cachePath = cachePath = Externals.path.join(this.cacheRoot, 'downloader', id)
-			cacheChecksumPath = Externals.path.join(this.cacheRoot, 'downloader', id + checksumExtension)
+			out.cachePath = cachePath = this.externals.path.join(this.cacheRoot, 'downloader', id)
+			cacheChecksumPath = this.externals.path.join(this.cacheRoot, 'downloader', id + checksumExtension)
 			try {
 				out.checksum = checksum = await this.download({ ...checksumJob, id: id + checksumExtension })
 				try {
-					const cacheChecksum = bufferToString(await fileUtil.readFile(cacheChecksumPath))
+					const cacheChecksum = bufferToString(await fileUtil.readFile(this.externals, cacheChecksumPath))
 						.slice(0, -1) // Remove ending newline
 					if (checksum === cacheChecksum) {
 						try {
-							const cachedBuffer = await fileUtil.readFile(cachePath)
+							const cachedBuffer = await fileUtil.readFile(this.externals, cachePath)
 							if (ttl) {
 								this.#memoryCache.set(uri, { buffer: cachedBuffer, time: performance.now() })
 							}
@@ -56,7 +56,7 @@ export class Downloader {
 								// Cache checksum exists, but cached file doesn't.
 								// Remove the invalid cache checksum.
 								try {
-									await Externals.fs.unlink(cacheChecksumPath)
+									await this.externals.fs.unlink(cacheChecksumPath)
 								} catch (e) {
 									this.logger.error(`[Downloader] [${id}] Removing invalid cache checksum “${cacheChecksumPath}”`, e)
 								}
@@ -74,21 +74,21 @@ export class Downloader {
 		}
 
 		try {
-			const buffer = await this.lld.get(uri, options)
+			const buffer = await this.externals.downloader.get(uri, options)
 			if (ttl) {
 				this.#memoryCache.set(uri, { buffer, time: performance.now() })
 			}
 			if (cache && cachePath && cacheChecksumPath) {
 				if (checksum) {
 					try {
-						await fileUtil.writeFile(cacheChecksumPath, `${checksum}\n`)
+						await fileUtil.writeFile(this.externals, cacheChecksumPath, `${checksum}\n`)
 					} catch (e) {
 						this.logger.error(`[Downloader] [${id}] Saving cache checksum “${cacheChecksumPath}”`, e)
 					}
 				}
 				try {
 					const serializer = cache.serializer ?? (b => b)
-					await fileUtil.writeFile(cachePath, serializer(buffer))
+					await fileUtil.writeFile(this.externals, cachePath, serializer(buffer))
 				} catch (e) {
 					this.logger.error(`[Downloader] [${id}] Caching file “${cachePath}”`, e)
 				}
@@ -99,7 +99,7 @@ export class Downloader {
 			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
 			if (cache && cachePath) {
 				try {
-					const cachedBuffer = await fileUtil.readFile(cachePath)
+					const cachedBuffer = await fileUtil.readFile(this.externals, cachePath)
 					const deserializer = cache.deserializer ?? (b => b)
 					const ans = await transformer(deserializer(cachedBuffer))
 					this.logger.warn(`[Downloader] [${id}] Fell back to cached file “${cachePath}”`)

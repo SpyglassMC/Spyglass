@@ -13,11 +13,11 @@ const DownloaderTtl = 15_000
  * 
  * [versions.json]: https://github.com/misode/mcmeta/blob/summary/versions/data.json
  */
-export async function getVersions(downloader: core.Downloader): Promise<McmetaVersions | undefined> {
+export async function getVersions(externals: core.Externals, downloader: core.Downloader): Promise<McmetaVersions | undefined> {
 	return downloader.download<McmetaVersions>({
 		id: 'mc-je/versions.json.gz',
 		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
-		transformer: buffer => core.parseGzippedJson<McmetaVersions>(buffer),
+		transformer: buffer => core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
 		cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
 		ttl: DownloaderTtl,
 	})
@@ -33,7 +33,7 @@ interface GetMcmetaSummaryResult extends Partial<McmetaSummary> {
  * 
  * @throws Network/file system errors.
  */
-export async function getMcmetaSummary(downloader: core.Downloader, logger: core.Logger, version: string, isLatest: boolean, source: string, overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {}): Promise<GetMcmetaSummaryResult> {
+export async function getMcmetaSummary(externals: core.Externals, downloader: core.Downloader, logger: core.Logger, version: string, isLatest: boolean, source: string, overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {}): Promise<GetMcmetaSummaryResult> {
 	type OverrideConfig = core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
 	const ref = getGitRef({
 		defaultBranch: 'summary',
@@ -47,7 +47,7 @@ export async function getMcmetaSummary(downloader: core.Downloader, logger: core
 	async function handleOverride<T>(currentValue: T, overrideConfig: OverrideConfig) {
 		if (overrideConfig) {
 			try {
-				const override = await core.fileUtil.readJson(core.Externals.uri.fromPath(overrideConfig.path))
+				const override = await core.fileUtil.readJson(externals, overrideConfig.path) as any
 				if (overrideConfig.replace) {
 					return override
 				} else {
@@ -65,7 +65,7 @@ export async function getMcmetaSummary(downloader: core.Downloader, logger: core
 		const data = await downloader.download<T>({
 			id: `mc-je/${version}/${type}.json.gz`,
 			uri: uris[type],
-			transformer: buffer => core.parseGzippedJson<T>(buffer),
+			transformer: buffer => core.parseGzippedJson(externals, buffer) as Promise<T>,
 			cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
 			ttl: DownloaderTtl,
 		}, out)
@@ -128,9 +128,10 @@ function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref:
 /**
  * @returns The URI to the `.tar.gz` file.
  */
-async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isLatest, owner, version }: {
+async function downloadGitHubRepo({ defaultBranch, downloader, externals, getTag, repo, isLatest, owner, version }: {
 	defaultBranch: string,
 	downloader: core.Downloader,
+	externals: core.Externals,
 	getTag: (version: string) => string,
 	owner: string,
 	repo: string,
@@ -149,7 +150,7 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
 		ttl: DownloaderTtl,
 	}, out)
 
-	return core.Externals.uri.fromPath(out.cachePath!)
+	return externals.uri.fromPath(out.cachePath!)
 }
 
 /* istanbul ignore next */
@@ -162,12 +163,13 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getVanillaMcdoc(downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
+export async function getVanillaMcdoc(externals: core.Externals, downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
 	return {
 		info: { startDepth: 1 },
 		uri: await downloadGitHubRepo({
 			defaultBranch: 'main',
 			downloader,
+			externals,
 			getTag: v => v,
 			isLatest,
 			owner: 'SpyglassMC',

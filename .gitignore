@@ -4,6 +4,7 @@
 **/*.cpuprofile
 **/*.tsbuildinfo
 
+/.history
 /.vscode/settings.json
 /.mocharc.local.jsonc
 

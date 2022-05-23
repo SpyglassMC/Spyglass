@@ -1,14 +1,15 @@
+import type { SymbolTable } from '@spyglassmc/core'
+import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.mjs'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import type { SymbolTable } from '../../lib/index.mjs'
-import { SymbolFormatter, SymbolUtil } from '../../lib/index.mjs'
 
 describe('SymbolUtil', () => {
 	const fileUri = 'spyglassmc://test_file'
 	const anotherFileUri = 'spyglassmc://another_test_file'
 	describe('contributeAs', () => {
 		it('Should execute correctly', () => {
-			const symbols = new SymbolUtil({})
+			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			symbols.contributeAs('uri_binder', () => {
 				symbols
 					.query(fileUri, 'test', 'Bound')
@@ -21,7 +22,7 @@ describe('SymbolUtil', () => {
 		it('Should clear all', () => {
 			// Set up the symbol table.
 			const global: SymbolTable = {}
-			const symbols = new SymbolUtil(global)
+			const symbols = new SymbolUtil(global, NodeJsExternals.event.EventEmitter)
 			symbols
 				.query(fileUri, 'mcdoc', 'ShouldBeKept1')
 				.enter({ usage: { type: 'definition' } })
@@ -59,7 +60,7 @@ describe('SymbolUtil', () => {
 	})
 	describe('lookup()', () => {
 		// Set up the symbol table.
-		const symbols = new SymbolUtil({})
+		const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		symbols
 			.query(fileUri, 'advancement', 'Foo')
 			.enter({ usage: { type: 'definition' } })
@@ -69,7 +70,7 @@ describe('SymbolUtil', () => {
 					.enter({ usage: { type: 'definition' } })
 				)
 			)
-		// const stackSymbols = new SymbolUtil({})
+		// const stackSymbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		// stackSymbols
 		// 	.query(fileUri, 'advancement', 'Foo')
 		// 	.enter({
@@ -123,7 +124,7 @@ describe('SymbolUtil', () => {
 		]
 		for (const path of paths) {
 			it(`Should return correctly for “${path.join('.')}”`, () => {
-				const symbols = new SymbolUtil({})
+				const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 				symbols
 					.query(fileUri, 'advancement', 'Foo')
 					.enter({ usage: { type: 'definition' } })

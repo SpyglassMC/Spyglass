@@ -1,5 +1,5 @@
-import type { FsLocation } from '../common/index.mjs'
-import { bufferToString, Externals, isEnoent, isErrorCode, Uri } from '../common/index.mjs'
+import type { Externals, FsLocation } from '../common/index.mjs'
+import { bufferToString, isEnoent, isErrorCode, Uri } from '../common/index.mjs'
 
 export type RootUriString = `${string}/`
 
@@ -75,18 +75,18 @@ export namespace fileUtil {
 	}
 
 	/* istanbul ignore next */
-	export function getParentOfFile(path: FsLocation): FsLocation {
+	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
 		if (path instanceof Uri || isFileUri(path)) {
 			return new Uri('.', path)
 		} else {
-			return Externals.path.resolve(path, '..')
+			return externals.path.resolve(path, '..')
 		}
 	}
 
 	/* istanbul ignore next */
-	export function normalize(uri: string): string {
+	export function normalize(externals: Externals, uri: string): string {
 		try {
-			return isFileUri(uri) ? Externals.uri.fromPath(Externals.uri.toPath(uri)) : new Uri(uri).toString()
+			return isFileUri(uri) ? externals.uri.fromPath(externals.uri.toPath(uri)) : new Uri(uri).toString()
 		} catch {
 			return uri
 		}
@@ -98,9 +98,9 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureDir(path: FsLocation, mode: number = 0o777): Promise<void> {
+	export async function ensureDir(externals: Externals, path: FsLocation, mode: number = 0o777): Promise<void> {
 		try {
-			await Externals.fs.mkdir(path, { mode, recursive: true })
+			await externals.fs.mkdir(path, { mode, recursive: true })
 		} catch (e) {
 			if (!isErrorCode(e, 'EEXIST')) {
 				throw e
@@ -116,17 +116,17 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureParentOfFile(path: FsLocation, mode: number = 0o777): Promise<void> {
-		return ensureDir(getParentOfFile(path), mode)
+	export async function ensureParentOfFile(externals: Externals, path: FsLocation, mode: number = 0o777): Promise<void> {
+		return ensureDir(externals, getParentOfFile(externals, path), mode)
 	}
 
-	export async function chmod(path: FsLocation, mode: number): Promise<void> {
-		return Externals.fs.chmod(path, mode)
+	export async function chmod(externals: Externals, path: FsLocation, mode: number): Promise<void> {
+		return externals.fs.chmod(path, mode)
 	}
 
-	export async function ensureWritable(path: FsLocation): Promise<void> {
+	export async function ensureWritable(externals: Externals, path: FsLocation): Promise<void> {
 		try {
-			await chmod(path, 0o666)
+			await chmod(externals, path, 0o666)
 		} catch (e) {
 			if (!isEnoent(e)) {
 				throw e
@@ -134,12 +134,12 @@ export namespace fileUtil {
 		}
 	}
 
-	export async function markReadOnly(path: FsLocation): Promise<void> {
-		return chmod(path, 0o444)
+	export async function markReadOnly(externals: Externals, path: FsLocation): Promise<void> {
+		return chmod(externals, path, 0o444)
 	}
 
-	export async function readFile(path: FsLocation): Promise<Uint8Array> {
-		return Externals.fs.readFile(path)
+	export async function readFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
+		return externals.fs.readFile(path)
 	}
 
 	/* istanbul ignore next */
@@ -155,18 +155,18 @@ export namespace fileUtil {
 	 * * Mode: `0o666` (`rw-rw-rw-`)
 	 * * Flag: `w`
 	 */
-	export async function writeFile(path: FsLocation, data: Uint8Array | string, mode: number = 0o666): Promise<void> {
-		await ensureParentOfFile(path)
-		await ensureWritable(path)
-		return Externals.fs.writeFile(path, data, { mode })
+	export async function writeFile(externals: Externals, path: FsLocation, data: Uint8Array | string, mode: number = 0o666): Promise<void> {
+		await ensureParentOfFile(externals, path)
+		await ensureWritable(externals, path)
+		return externals.fs.writeFile(path, data, { mode })
 	}
 
 	/* istanbul ignore next */
 	/**
 	 * @throws
 	 */
-	export async function readJson<T = any>(path: FsLocation): Promise<T> {
-		return JSON.parse(bufferToString(await readFile(path)))
+	export async function readJson(externals: Externals, path: FsLocation): Promise<unknown> {
+		return JSON.parse(bufferToString(await readFile(externals, path)))
 	}
 
 	/* istanbul ignore next */
@@ -175,38 +175,38 @@ export namespace fileUtil {
 	 * 
 	 * @see {@link writeFile}
 	 */
-	export async function writeJson(path: FsLocation, data: any): Promise<void> {
-		return writeFile(path, JSON.stringify(data))
+	export async function writeJson(externals: Externals, path: FsLocation, data: any): Promise<void> {
+		return writeFile(externals, path, JSON.stringify(data))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function readGzippedFile(path: FsLocation): Promise<Uint8Array> {
-		return Externals.archive.gunzip(await readFile(path))
+	export async function readGzippedFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
+		return externals.archive.gunzip(await readFile(externals, path))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedFile(path: FsLocation, buffer: Uint8Array | string): Promise<void> {
+	export async function writeGzippedFile(externals: Externals, path: FsLocation, buffer: Uint8Array | string): Promise<void> {
 		if (typeof buffer === 'string') {
 			buffer = new TextEncoder().encode(buffer)
 		}
-		return writeFile(path, await Externals.archive.gzip(buffer))
+		return writeFile(externals, path, await externals.archive.gzip(buffer))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function readGzippedJson<T = any>(path: FsLocation): Promise<T> {
-		return JSON.parse(bufferToString(await readGzippedFile(path)))
+	export async function readGzippedJson(externals: Externals, path: FsLocation): Promise<unknown> {
+		return JSON.parse(bufferToString(await readGzippedFile(externals, path)))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedJson(path: FsLocation, data: any): Promise<void> {
-		return writeGzippedFile(path, JSON.stringify(data))
+	export async function writeGzippedJson(externals: Externals, path: FsLocation, data: any): Promise<void> {
+		return writeGzippedFile(externals, path, JSON.stringify(data))
 	}
 }

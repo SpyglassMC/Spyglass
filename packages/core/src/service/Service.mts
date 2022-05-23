@@ -1,5 +1,5 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import { Externals } from '../common/index.mjs'
+import type { Externals } from '../common/index.mjs'
 import type { FileNode } from '../node/index.mjs'
 import { AstNode } from '../node/index.mjs'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor/index.mjs'
@@ -21,6 +21,7 @@ import { SymbolLocations } from './SymbolLocations.mjs'
 interface Options {
 	cacheRoot: string,
 	downloader?: Downloader,
+	externals: Externals,
 	fs?: FileService,
 	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
@@ -30,7 +31,7 @@ interface Options {
 }
 
 /* istanbul ignore next */
-export class Service extends Externals['event']['EventEmitter'] {
+export class Service {
 	readonly downloader: Downloader
 	readonly fs: FileService
 	readonly isDebugging: boolean
@@ -41,21 +42,20 @@ export class Service extends Externals['event']['EventEmitter'] {
 	constructor({
 		cacheRoot,
 		downloader,
-		fs = FileService.create(cacheRoot),
+		externals,
+		fs = FileService.create(externals, cacheRoot),
 		initializers = [],
 		isDebugging = false,
 		logger = Logger.create(),
 		profilers = ProfilerFactory.noop(),
 		projectPath,
 	}: Options) {
-		super()
-
-		this.downloader = (downloader ??= new Downloader(cacheRoot, logger))
+		this.downloader = (downloader ??= new Downloader(cacheRoot, externals, logger))
 		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
-		this.project = new Project({ cacheRoot, downloader, fs, initializers, logger, profilers, projectPath })
+		this.project = new Project({ cacheRoot, downloader, externals, fs, initializers, logger, profilers, projectPath })
 	}
 
 	private debug(message: string): void {

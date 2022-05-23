@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { Externals } from '../common/index.mjs'
+import type { ExternalEventEmitter, Externals } from '../common/index.mjs'
 import type { AstNode } from '../node/index.mjs'
 import type { RangeLike } from '../source/index.mjs'
 import { Range } from '../source/index.mjs'
@@ -31,34 +31,17 @@ interface SymbolLocationEvent extends SymbolEvent {
 	location: SymbolLocation,
 }
 
-export interface SymbolUtil {
-	on(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	on(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
-	on(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
-
-	once(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	once(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
-	once(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
-
-	emit(event: 'symbolCreated', data: SymbolEvent): boolean
-	emit(event: 'symbolAmended', data: SymbolEvent): boolean
-	emit(event: 'symbolRemoved', data: SymbolEvent): boolean
-	emit(event: 'symbolLocationCreated', data: SymbolLocationEvent): boolean
-	emit(event: 'symbolLocationRemoved', data: SymbolLocationEvent): boolean
-}
-
 type UriSymbolCache = Record<string, Set<string>>
 interface DocAndNode {
 	doc: TextDocument,
 	node: AstNode,
 }
 
-export class SymbolUtil extends Externals['event']['EventEmitter'] {
+export class SymbolUtil implements ExternalEventEmitter {
 	#global: SymbolTable
+
+	#eventEmitter: ExternalEventEmitter
+	#eventEmitterConstructor: Externals['event']['EventEmitter']
 
 	#trimmableSymbols = new Set<string>()
 	#cache: {
@@ -82,13 +65,14 @@ export class SymbolUtil extends Externals['event']['EventEmitter'] {
 
 	constructor(
 		global: SymbolTable,
+		eventEmitterConstructor: Externals['event']['EventEmitter'],
 		/** @internal */
 		_currentContributor?: string,
 		/** @internal */
 		_inDelayMode = false,
 	) {
-		super()
-
+		this.#eventEmitter = new eventEmitterConstructor()
+		this.#eventEmitterConstructor = eventEmitterConstructor
 		this.#global = global
 		this.#currentContributor = _currentContributor
 		this._inDelayMode = _inDelayMode
@@ -113,6 +97,35 @@ export class SymbolUtil extends Externals['event']['EventEmitter'] {
 			})
 	}
 
+	on(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
+	on(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	on(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
+	on(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.on(event, callbackFn)
+		return this
+	}
+
+	once(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
+	once(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	once(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
+	once(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.once(event, callbackFn)
+		return this
+	}
+
+	emit(event: 'symbolCreated', data: SymbolEvent): boolean
+	emit(event: 'symbolAmended', data: SymbolEvent): boolean
+	emit(event: 'symbolRemoved', data: SymbolEvent): boolean
+	emit(event: 'symbolLocationCreated', data: SymbolLocationEvent): boolean
+	emit(event: 'symbolLocationRemoved', data: SymbolLocationEvent): boolean
+	emit(event: string, ...args: unknown[]): boolean {
+		return this.#eventEmitter.emit(event, ...args)
+	}
+
 	/**
 	 * Build the internal cache of the SymbolUtil according to the current global symbol table.
 	 */
@@ -133,7 +146,7 @@ export class SymbolUtil extends Externals['event']['EventEmitter'] {
 	 * `applyDelayedEdits` is called, the original SymbolUtil will also be modified.
 	 */
 	clone(): SymbolUtil {
-		return new SymbolUtil(this.#global, this.#currentContributor, true)
+		return new SymbolUtil(this.#global, this.#eventEmitterConstructor, this.#currentContributor, true)
 	}
 
 	/**

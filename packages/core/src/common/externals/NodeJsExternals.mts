@@ -100,7 +100,7 @@ export const NodeJsExternals: Externals = {
 			return fsp.unlink(toFsPathLike(location))
 		},
 		watch(location) {
-			return new ChokidarWrapper(chokidar.watch(toPath(location)))
+			return new ChokidarWatcherWrapper(chokidar.watch(toPath(location)))
 		},
 		writeFile(location, data, options) {
 			return fsp.writeFile(toFsPathLike(location), data, options)
@@ -143,7 +143,7 @@ function toPath(path: FsLocation): string {
 	return NodeJsExternals.uri.toPath(path)
 }
 
-class ChokidarWrapper extends EventEmitter implements FsWatcher {
+class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
 	#watcher: chokidar.FSWatcher
 
 	constructor(watcher: chokidar.FSWatcher) {

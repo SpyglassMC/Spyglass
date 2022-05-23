@@ -1,4 +1,5 @@
-import { ProjectData, SymbolFormatter, UriBinderContext } from '@spyglassmc/core'
+import { SymbolFormatter, UriBinderContext } from '@spyglassmc/core'
+import { mockProjectData } from '@spyglassmc/core/test-out/utils.mjs'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { uriBinder } from '../../lib/binder/uriBinder.mjs'
@@ -43,7 +44,7 @@ describe('uriBinder()', () => {
 	]
 	for (const { uris } of suites) {
 		it(`Bind ${JSON.stringify(uris.map(u => u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u))}`, () => {
-			const ctx = UriBinderContext.create(ProjectData.mock({ roots: ['file:///root/'] }))
+			const ctx = UriBinderContext.create(mockProjectData({ roots: ['file:///root/'] }))
 			uriBinder(uris, ctx)
 			snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
 		})

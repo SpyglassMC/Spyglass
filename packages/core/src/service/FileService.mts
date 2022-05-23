@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
-import type { DecompressedFile } from '../common/index.mjs'
-import { Externals, Uri } from '../common/index.mjs'
+import type { DecompressedFile, Externals } from '../common/index.mjs'
+import { Uri } from '../common/index.mjs'
 import { TwoWayMap } from '../common/TwoWayMap.mjs'
 import type { Dependency } from './Dependency.mjs'
 import type { RootUriString } from './fileUtil.mjs'
@@ -61,9 +61,9 @@ export interface FileService extends UriProtocolSupporter {
 }
 
 export namespace FileService {
-	export function create(cacheRoot: string): FileService {
-		const virtualUrisRoot = fileUtil.ensureEndingSlash(Externals.uri.fromPath(Externals.path.join(cacheRoot, 'virtual-uris')))
-		return new FileServiceImpl(virtualUrisRoot)
+	export function create(externals: Externals, cacheRoot: string): FileService {
+		const virtualUrisRoot = fileUtil.ensureEndingSlash(externals.uri.fromPath(externals.path.join(cacheRoot, 'virtual-uris')))
+		return new FileServiceImpl(externals, virtualUrisRoot)
 	}
 }
 
@@ -74,7 +74,10 @@ export class FileServiceImpl implements FileService {
 	 */
 	private readonly map = new TwoWayMap<string, string>()
 
-	constructor(private readonly virtualUrisRoot?: RootUriString) { }
+	constructor(
+		private readonly externals: Externals,
+		private readonly virtualUrisRoot?: RootUriString,
+	) { }
 
 	register(protocol: Protocol, supporter: UriProtocolSupporter, force = false): void {
 		if (!force && this.supporters.has(protocol)) {
@@ -138,9 +141,9 @@ export class FileServiceImpl implements FileService {
 		try {
 			let mappedUri = this.map.getKey(virtualUri)
 			if (mappedUri === undefined) {
-				mappedUri = `${this.virtualUrisRoot}${await Externals.crypto.getSha1(virtualUri)}/${fileUtil.basename(virtualUri)}`
+				mappedUri = `${this.virtualUrisRoot}${await this.externals.crypto.getSha1(virtualUri)}/${fileUtil.basename(virtualUri)}`
 				const buffer = await this.readFile(virtualUri)
-				await fileUtil.writeFile(mappedUri, buffer, 0o444)
+				await fileUtil.writeFile(this.externals, mappedUri, buffer, 0o444)
 				this.map.set(mappedUri, virtualUri)
 			}
 			return mappedUri
@@ -162,16 +165,17 @@ export class FileUriSupporter implements UriProtocolSupporter {
 	readonly protocol = 'file:'
 
 	private constructor(
+		private readonly externals: Externals,
 		private readonly roots: RootUriString[],
 		private readonly files: Map<string, string[]>
 	) { }
 
 	async hash(uri: string): Promise<string> {
-		return hashFile(uri)
+		return hashFile(this.externals, uri)
 	}
 
 	readFile(uri: string) {
-		return Externals.fs.readFile(uri)
+		return this.externals.fs.readFile(uri)
 	}
 
 	*listFiles() {
@@ -188,23 +192,23 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		return uri
 	}
 
-	static async create(dependencies: readonly Dependency[], logger: Logger): Promise<FileUriSupporter> {
+	static async create(dependencies: readonly Dependency[], externals: Externals, logger: Logger): Promise<FileUriSupporter> {
 		const roots: RootUriString[] = []
 		const files = new Map<string, string[]>()
 
 		for (let { uri } of dependencies) {
 			try {
-				if (fileUtil.isFileUri(uri) && (await Externals.fs.stat(uri)).isDirectory()) {
+				if (fileUtil.isFileUri(uri) && (await externals.fs.stat(uri)).isDirectory()) {
 					uri = fileUtil.ensureEndingSlash(uri)
 					roots.push(uri as RootUriString)
-					files.set(uri, await Externals.fs.getAllFiles(uri))
+					files.set(uri, await externals.fs.getAllFiles(uri))
 				}
 			} catch (e) {
 				logger.error(`[FileUriSupporter#create] Bad dependency “${uri}”`, e)
 			}
 		}
 
-		return new FileUriSupporter(roots, files)
+		return new FileUriSupporter(externals, roots, files)
 	}
 }
 
@@ -227,6 +231,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	 * @param entries A map from archive URIs to unzipped entries.
 	 */
 	private constructor(
+		private readonly externals: Externals,
 		private readonly entries: Map<string, Map<string, DecompressedFile>>,
 	) { }
 
@@ -234,10 +239,10 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		const { archiveUri, pathInArchive } = ArchiveUriSupporter.decodeUri(new Uri(uri))
 		if (!pathInArchive) {
 			// Hash the archive itself.
-			return hashFile(archiveUri)
+			return hashFile(this.externals, archiveUri)
 		} else {
 			// Hash the corresponding file.
-			return Externals.crypto.getSha1(this.getDataInArchive(archiveUri, pathInArchive))
+			return this.externals.crypto.getSha1(this.getDataInArchive(archiveUri, pathInArchive))
 		}
 	}
 
@@ -297,16 +302,16 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 	}
 
-	static async create(dependencies: readonly Dependency[], logger: Logger, checksums: Record<RootUriString, string>): Promise<ArchiveUriSupporter> {
+	static async create(dependencies: readonly Dependency[], externals: Externals, logger: Logger, checksums: Record<RootUriString, string>): Promise<ArchiveUriSupporter> {
 		const entries = new Map<string, Map<string, DecompressedFile>>()
 
 		for (const { uri, info } of dependencies) {
 			try {
-				if (uri.startsWith('file:') && ArchiveUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await Externals.fs.stat(uri)).isFile()) {
+				if (uri.startsWith('file:') && ArchiveUriSupporter.SupportedArchiveExtnames.some(ext => uri.endsWith(ext)) && (await externals.fs.stat(uri)).isFile()) {
 					const rootUri = ArchiveUriSupporter.getUri(uri)
 					const cachedChecksum: string | undefined = checksums[rootUri]
 					if (cachedChecksum !== undefined) {
-						const checksum = await hashFile(uri)
+						const checksum = await hashFile(externals, uri)
 						if (cachedChecksum === checksum) {
 							// The dependency has not changed since last cache.
 							logger.info(`[SpyglassUriSupporter#create] Skipped decompressing “${uri}” thanks to cache ${checksum}`)
@@ -314,7 +319,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 						}
 					}
 
-					const files = await Externals.archive.decompressBall(await Externals.fs.readFile(uri), { stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 })
+					const files = await externals.archive.decompressBall(await externals.fs.readFile(uri), { stripLevel: typeof info?.startDepth === 'number' ? info.startDepth : 0 })
 					entries.set(uri, new Map(files.map(f => [f.path.replace(/\\/g, '/'), f])))
 				}
 			} catch (e) {
@@ -322,10 +327,10 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 			}
 		}
 
-		return new ArchiveUriSupporter(entries)
+		return new ArchiveUriSupporter(externals, entries)
 	}
 }
 
-async function hashFile(uri: string): Promise<string> {
-	return Externals.crypto.getSha1(await Externals.fs.readFile(uri))
+async function hashFile(externals: Externals, uri: string): Promise<string> {
+	return externals.crypto.getSha1(await externals.fs.readFile(uri))
 }

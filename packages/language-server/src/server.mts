@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.mjs'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
@@ -25,6 +26,7 @@ let workspaceFolders!: ls.WorkspaceFolder[]
 let hasShutdown = false
 let progressReporter: ls.WorkDoneProgressReporter | undefined
 
+const externals = NodeJsExternals
 const logger: core.Logger = {
 	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
 	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
@@ -52,11 +54,6 @@ connection.onInitialize(async params => {
 		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
 		progressReporter.begin(locales.localize('server.progress.preparing.title'))
 	}
-	try {
-		await core.setExternalsAutomatically()
-	} catch (e) {
-		logger.error('[setExternalsAutomatically]', e)
-	}
 
 	try {
 		await locales.loadLocale(params.locale)
@@ -67,6 +64,7 @@ connection.onInitialize(async params => {
 	try {
 		service = new core.Service({
 			cacheRoot,
+			externals,
 			initializers: [
 				mcdoc.initialize,
 				je.initialize,
@@ -79,7 +77,7 @@ connection.onInitialize(async params => {
 				'project#init',
 				'project#ready',
 			]),
-			projectPath: core.Externals.uri.toPath(workspaceFolders[0].uri),
+			projectPath: externals.uri.toPath(workspaceFolders[0].uri),
 		})
 		service.project
 			.on('documentErrorred', ({ doc, errors }) => {

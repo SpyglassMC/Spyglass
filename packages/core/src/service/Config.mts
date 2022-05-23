@@ -1,5 +1,6 @@
 import rfdc from 'rfdc'
-import { Arrayable, bufferToString, Externals, isEnoent, TypePredicates } from '../common/index.mjs'
+import type { ExternalEventEmitter } from '../common/index.mjs'
+import { Arrayable, bufferToString, isEnoent, TypePredicates } from '../common/index.mjs'
 import { ErrorSeverity } from '../source/index.mjs'
 import { FileCategories, RegistryCategories } from '../symbol/index.mjs'
 import type { Project } from './Project.mjs'
@@ -391,26 +392,16 @@ export const VanillaConfig: Config = {
 type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown, uri: string }
 
-export interface ConfigService {
-	on(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
-	on(event: 'error', callbackFn: (data: ErrorEvent) => void): this
-
-	once(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
-	once(event: 'error', callbackFn: (data: ErrorEvent) => void): this
-
-	emit(event: 'changed', data: ConfigEvent): boolean
-	emit(event: 'error', data: ErrorEvent): boolean
-}
-
-export class ConfigService extends Externals['event']['EventEmitter'] {
+export class ConfigService implements ExternalEventEmitter {
 	static readonly ConfigFileNames = Object.freeze([
 		'spyglass.json',
 		'.spyglassrc.json',
 	] as const)
 
-	constructor(private readonly project: Project) {
-		super()
+	readonly #eventEmitter: ExternalEventEmitter
 
+	constructor(private readonly project: Project) {
+		this.#eventEmitter = new project.externals.event.EventEmitter()
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
 				this.emit('changed', { config: await this.load() })
@@ -421,12 +412,32 @@ export class ConfigService extends Externals['event']['EventEmitter'] {
 		project.on('fileDeleted', handler)
 	}
 
+	on(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
+	on(event: 'error', callbackFn: (data: ErrorEvent) => void): this
+	on(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.on(event, callbackFn)
+		return this
+	}
+
+	once(event: 'changed', callbackFn: (data: ConfigEvent) => void): this
+	once(event: 'error', callbackFn: (data: ErrorEvent) => void): this
+	once(event: string, callbackFn: (...args: any[]) => unknown): this {
+		this.#eventEmitter.once(event, callbackFn)
+		return this
+	}
+
+	emit(event: 'changed', data: ConfigEvent): boolean
+	emit(event: 'error', data: ErrorEvent): boolean
+	emit(event: string, ...args: unknown[]): boolean {
+		return this.#eventEmitter.emit(event, ...args)
+	}
+
 	async load(): Promise<Config> {
 		let ans = VanillaConfig
 		for (const name of ConfigService.ConfigFileNames) {
 			const uri = this.project.projectRoot + name
 			try {
-				ans = JSON.parse(bufferToString(await Externals.fs.readFile(uri)))
+				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
 			} catch (e) {
 				if (isEnoent(e)) {
 					// File doesn't exist.

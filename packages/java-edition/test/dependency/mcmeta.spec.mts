@@ -1,9 +1,10 @@
 import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
+import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.mjs'
 import * as fs from 'fs'
 import { describe, it } from 'mocha'
 import * as path from 'path'
-import url from 'url'
 import snapshot from 'snap-shot-it'
+import url from 'url'
 import type { PackMcmeta } from '../../lib/dependency/common.mjs'
 import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.mjs'
 import { Fluids, getMcmetaSummaryUris, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta.mjs'
@@ -60,7 +61,7 @@ describe('mcmeta', () => {
 				fluids: Fluids,
 				registries: Fixtures.Registries,
 			})
-			const symbols = new SymbolUtil({})
+			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			registrar(symbols, {})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
