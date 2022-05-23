@@ -13,6 +13,8 @@ module.exports = {
 	],
 	"ignorePatterns": [
 		"**/*.js",
+		"**/*.cjs",
+		"**/*.mjs",
 
 		"**/node_modules",
 
