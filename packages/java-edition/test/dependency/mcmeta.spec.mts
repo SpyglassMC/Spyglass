@@ -2,6 +2,7 @@ import { SymbolFormatter, SymbolUtil } from '@spyglassmc/core'
 import * as fs from 'fs'
 import { describe, it } from 'mocha'
 import * as path from 'path'
+import url from 'url'
 import snapshot from 'snap-shot-it'
 import type { PackMcmeta } from '../../lib/dependency/common.mjs'
 import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.mjs'
@@ -12,9 +13,9 @@ function readJsonSync(path: string): unknown {
 }
 
 const Fixtures = {
-	Blocks: readJsonSync(path.join(__dirname, 'fixture/blocks.json')) as McmetaStates,
-	Registries: readJsonSync(path.join(__dirname, 'fixture/registries.json')) as McmetaRegistries,
-	Versions: readJsonSync(path.join(__dirname, 'fixture/versions.json')) as McmetaVersions,
+	Blocks: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/blocks.json')) as McmetaStates,
+	Registries: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/registries.json')) as McmetaRegistries,
+	Versions: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/versions.json')) as McmetaVersions,
 }
 
 describe('mcmeta', () => {
