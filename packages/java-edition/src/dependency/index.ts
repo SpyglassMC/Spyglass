@@ -47,7 +47,7 @@ export async function getMcmetaSummary(downloader: core.Downloader, logger: core
 	const handleOverride = async <T>(currentValue: T, overrideConfig: OverrideConfig) => {
 		if (overrideConfig) {
 			try {
-				const override = await core.fileUtil.readJson(core.fileUtil.pathToFileUri(overrideConfig.path))
+				const override = await core.fileUtil.readJson(core.Externals.uri.fromPath(overrideConfig.path))
 				if (overrideConfig.replace) {
 					return override
 				} else {
@@ -109,7 +109,7 @@ function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref:
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
 			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
-			transformer: (buffer: Buffer) => {
+			transformer: (buffer: Uint8Array) => {
 				const response = JSON.parse(core.bufferToString(buffer)) as GitHubRefResponse
 				if (Array.isArray(response)) {
 					return response[0].object.sha
@@ -140,7 +140,7 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
 	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
 
 	const out: core.DownloaderDownloadOut = {}
-	await downloader.download<Buffer>({
+	await downloader.download<Uint8Array>({
 		id: `mc-je/${version}/${repo}.tar.gz`,
 		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
 		transformer: b => b,
@@ -149,7 +149,7 @@ async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isL
 		ttl: DownloaderTtl,
 	}, out)
 
-	return core.fileUtil.pathToFileUri(out.cachePath!)
+	return core.Externals.uri.fromPath(out.cachePath!)
 }
 
 /* istanbul ignore next */

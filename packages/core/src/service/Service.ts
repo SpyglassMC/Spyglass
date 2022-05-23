@@ -1,5 +1,5 @@
-import EventEmitter from 'events'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import { Externals } from '../common'
 import type { FileNode } from '../node'
 import { AstNode } from '../node'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor'
@@ -30,7 +30,7 @@ interface Options {
 }
 
 /* istanbul ignore next */
-export class Service extends EventEmitter {
+export class Service extends Externals['event']['EventEmitter'] {
 	readonly downloader: Downloader
 	readonly fs: FileService
 	readonly isDebugging: boolean

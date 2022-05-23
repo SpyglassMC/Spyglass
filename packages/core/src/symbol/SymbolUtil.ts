@@ -1,6 +1,5 @@
-import { strict as assert } from 'assert'
-import EventEmitter from 'events'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import { Externals } from '../common'
 import type { AstNode } from '../node'
 import type { RangeLike } from '../source'
 import { Range } from '../source'
@@ -58,7 +57,7 @@ interface DocAndNode {
 	node: AstNode,
 }
 
-export class SymbolUtil extends EventEmitter {
+export class SymbolUtil extends Externals['event']['EventEmitter'] {
 	#global: SymbolTable
 
 	#trimmableSymbols = new Set<string>()
@@ -1012,6 +1011,12 @@ export class SymbolQuery {
 export namespace SymbolFormatter {
 	const IndentChar = '+ '
 
+	function assertEqual<T>(a: T, b: T): void {
+		if (a !== b) {
+			throw new Error(`Assertion error: ${a} !== ${b}`)
+		}
+	}
+
 	export function stringifySymbolStack(stack: SymbolStack): string {
 		return stack.map(table => stringifySymbolTable(table)).join('\n------------\n')
 	}
@@ -1032,7 +1037,7 @@ export namespace SymbolFormatter {
 		const ans: string[] = []
 		for (const identifier of Object.keys(map)) {
 			const symbol: Symbol = map[identifier]!
-			assert.equal(identifier, symbol.identifier)
+			assertEqual(identifier, symbol.identifier)
 			ans.push(stringifySymbol(symbol, indent))
 		}
 		return ans.join(`\n${indent}------------\n`)
@@ -1043,7 +1048,7 @@ export namespace SymbolFormatter {
 			return 'undefined'
 		}
 		const ans: string[] = []
-		assert.equal(symbol.path[symbol.path.length - 1], symbol.identifier)
+		assertEqual(symbol.path[symbol.path.length - 1], symbol.identifier)
 		ans.push(
 			`SYMBOL ${symbol.path.join('.')}` +
 			` {${symbol.category}${symbol.subcategory ? ` (${symbol.subcategory})` : ''}}` +

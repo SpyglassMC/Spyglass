@@ -52,6 +52,11 @@ connection.onInitialize(async params => {
 		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
 		progressReporter.begin(locales.localize('server.progress.preparing.title'))
 	}
+	try {
+		await core.setExternalsAutomatically()
+	} catch (e) {
+		logger.error('[setExternalsAutomatically]', e)
+	}
 
 	try {
 		await locales.loadLocale(params.locale)
@@ -74,7 +79,7 @@ connection.onInitialize(async params => {
 				'project#init',
 				'project#ready',
 			]),
-			projectPath: core.fileUtil.fileUriToPath(workspaceFolders[0].uri),
+			projectPath: core.Externals.uri.toPath(workspaceFolders[0].uri),
 		})
 		service.project
 			.on('documentErrorred', ({ doc, errors }) => {

@@ -365,6 +365,11 @@ export const StructNode = Object.freeze({
 export interface PathTypeNode extends TypeBaseNode<PathNode | TypeNode> {
 	type: 'mcdoc:type/path',
 }
+export const PathTypeNode = Object.freeze({
+	is(node: AstNode | undefined): node is PathTypeNode {
+		return (node as PathTypeNode | undefined)?.type === 'mcdoc:type/path'
+	},
+})
 
 export interface TypeParamBlockNode extends AstNode {
 	type: 'mcdoc:type_param_block',

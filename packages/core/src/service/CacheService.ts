@@ -1,5 +1,4 @@
-import path from 'path'
-import { getSha1, isEnoent, isErrorCode } from '../common'
+import { Externals, isEnoent, isErrorCode } from '../common'
 import type { UnlinkedSymbolTable } from '../symbol'
 import { SymbolTable } from '../symbol'
 import type { RootUriString } from './fileUtil'
@@ -67,13 +66,13 @@ export class CacheService {
 		private readonly cacheRoot: string,
 		private readonly project: Project,
 	) {
-		this.project.on('documentUpdated', ({ doc }) => {
+		this.project.on('documentUpdated', async ({ doc }) => {
 			if (!this.#hasValidatedFiles) {
 				return
 			}
 			try {
 				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] = getSha1(doc.getText())
+				this.checksums.files[doc.uri] = await Externals.crypto.getSha1(doc.getText())
 			} catch (e) {
 				if (!isErrorCode(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -107,8 +106,8 @@ export class CacheService {
 	 * 
 	 * @returns `${cacheRoot}/symbols/${sha1(projectRoot)}.json`
 	 */
-	private getCacheFilePath(): string {
-		return this.#cacheFilePath ??= path.join(this.cacheRoot, 'symbols', `${getSha1(this.project.projectRoot)}.json.gz`)
+	private async getCacheFilePath(): Promise<string> {
+		return this.#cacheFilePath ??= Externals.path.join(this.cacheRoot, 'symbols', `${await Externals.crypto.getSha1(this.project.projectRoot)}.json.gz`)
 	}
 
 	async load(): Promise<LoadResult> {
@@ -116,7 +115,7 @@ export class CacheService {
 		const ans: LoadResult = { symbols: {} }
 		let filePath: string | undefined
 		try {
-			filePath = this.getCacheFilePath()
+			filePath = await this.getCacheFilePath()
 			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
 			const cache = await fileUtil.readGzippedJson<CacheFile>(filePath)
 			__profiler.task('Read File')
@@ -201,7 +200,7 @@ export class CacheService {
 		const __profiler = this.project.profilers.get('cache#save')
 		let filePath: string | undefined
 		try {
-			filePath = this.getCacheFilePath()
+			filePath = await this.getCacheFilePath()
 			const cache: CacheFile = {
 				checksums: this.checksums,
 				projectRoot: this.project.projectRoot,

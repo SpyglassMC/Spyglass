@@ -1,23 +1,7 @@
-import { http, https } from 'follow-redirects'
-import { promises as fsp } from 'fs'
-import type { IncomingMessage } from 'http'
-import path from 'path'
-import { performance } from 'perf_hooks'
-import { bufferToString, isEnoent, promisifyAsyncIterable } from '../common'
+import type { ExternalDownloaderOptions, RemoteUriString } from '../common'
+import { bufferToString, Externals, isEnoent } from '../common'
 import { fileUtil } from './fileUtil'
 import type { Logger } from './Logger'
-
-type RemoteProtocol = 'http:' | 'https:'
-export type RemoteUriString = `${RemoteProtocol}${string}`
-export namespace RemoteUriString {
-	export function is(value: string): value is RemoteUriString {
-		return value.startsWith('http:') || value.startsWith('https:')
-	}
-
-	export function getProtocol(uri: RemoteUriString): RemoteProtocol {
-		return uri.slice(0, uri.indexOf(':') + 1) as RemoteProtocol
-	}
-}
 
 export interface DownloaderDownloadOut {
 	cachePath?: string,
@@ -25,12 +9,12 @@ export interface DownloaderDownloadOut {
 }
 
 export class Downloader {
-	#memoryCache = new Map<string, { buffer: Buffer, time: number }>()
+	#memoryCache = new Map<string, { buffer: Uint8Array, time: number }>()
 
 	constructor(
 		private readonly cacheRoot: string,
 		private readonly logger: Logger,
-		private readonly lld = LowLevelDownloader.create(),
+		private readonly lld = Externals.downloader,
 	) { }
 
 	async download<R>(job: Job<R>, out: DownloaderDownloadOut = {}): Promise<R | undefined> {
@@ -49,16 +33,16 @@ export class Downloader {
 		let cacheChecksumPath: string | undefined
 		if (cache) {
 			const { checksumJob, checksumExtension } = cache
-			out.cachePath = cachePath = path.join(this.cacheRoot, 'downloader', id)
-			cacheChecksumPath = path.join(this.cacheRoot, 'downloader', id + checksumExtension)
+			out.cachePath = cachePath = Externals.path.join(this.cacheRoot, 'downloader', id)
+			cacheChecksumPath = Externals.path.join(this.cacheRoot, 'downloader', id + checksumExtension)
 			try {
 				out.checksum = checksum = await this.download({ ...checksumJob, id: id + checksumExtension })
 				try {
-					const cacheChecksum = bufferToString(await fileUtil.readFile(fileUtil.pathToFileUri(cacheChecksumPath)))
+					const cacheChecksum = bufferToString(await fileUtil.readFile(cacheChecksumPath))
 						.slice(0, -1) // Remove ending newline
 					if (checksum === cacheChecksum) {
 						try {
-							const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
+							const cachedBuffer = await fileUtil.readFile(cachePath)
 							if (ttl) {
 								this.#memoryCache.set(uri, { buffer: cachedBuffer, time: performance.now() })
 							}
@@ -72,7 +56,7 @@ export class Downloader {
 								// Cache checksum exists, but cached file doesn't.
 								// Remove the invalid cache checksum.
 								try {
-									await fsp.unlink(cacheChecksumPath)
+									await Externals.fs.unlink(cacheChecksumPath)
 								} catch (e) {
 									this.logger.error(`[Downloader] [${id}] Removing invalid cache checksum “${cacheChecksumPath}”`, e)
 								}
@@ -97,14 +81,14 @@ export class Downloader {
 			if (cache && cachePath && cacheChecksumPath) {
 				if (checksum) {
 					try {
-						await fileUtil.writeFile(fileUtil.pathToFileUri(cacheChecksumPath), `${checksum}\n`)
+						await fileUtil.writeFile(cacheChecksumPath, `${checksum}\n`)
 					} catch (e) {
 						this.logger.error(`[Downloader] [${id}] Saving cache checksum “${cacheChecksumPath}”`, e)
 					}
 				}
 				try {
 					const serializer = cache.serializer ?? (b => b)
-					await fileUtil.writeFile(fileUtil.pathToFileUri(cachePath), serializer(buffer))
+					await fileUtil.writeFile(cachePath, serializer(buffer))
 				} catch (e) {
 					this.logger.error(`[Downloader] [${id}] Caching file “${cachePath}”`, e)
 				}
@@ -115,7 +99,7 @@ export class Downloader {
 			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
 			if (cache && cachePath) {
 				try {
-					const cachedBuffer = await fileUtil.readFile(fileUtil.pathToFileUri(cachePath))
+					const cachedBuffer = await fileUtil.readFile(cachePath)
 					const deserializer = cache.deserializer ?? (b => b)
 					const ans = await transformer(deserializer(cachedBuffer))
 					this.logger.warn(`[Downloader] [${id}] Fell back to cached file “${cachePath}”`)
@@ -144,77 +128,10 @@ interface Job<R> {
 		 */
 		checksumJob: Omit<Job<string>, 'cache' | 'id'>,
 		checksumExtension: `.${string}`,
-		serializer?: (data: Buffer) => Buffer,
-		deserializer?: (cache: Buffer) => Buffer,
+		serializer?: (data: Uint8Array) => Uint8Array,
+		deserializer?: (cache: Uint8Array) => Uint8Array,
 	},
-	transformer: (data: Buffer) => PromiseLike<R> | R,
-	options?: LowLevelDownloadOptions,
+	transformer: (data: Uint8Array) => PromiseLike<R> | R,
+	options?: ExternalDownloaderOptions,
 	ttl?: number,
-}
-
-interface LowLevelDownloadOptions {
-	/**
-	 * Use an string array to set multiple values to the header.
-	 */
-	headers?: Record<string, string | string[]>
-	timeout?: number,
-}
-
-export interface LowLevelDownloader {
-	/**
-	 * @throws
-	 */
-	get(uri: RemoteUriString, options?: LowLevelDownloadOptions): Promise<Buffer>
-}
-
-export namespace LowLevelDownloader {
-	export function create(): LowLevelDownloader {
-		return new LowLevelDownloaderImpl()
-	}
-	export function mock(options: LowLevelDownloaderMockOptions): LowLevelDownloader {
-		return new LowLevelDownloaderMock(options)
-	}
-}
-
-class LowLevelDownloaderImpl implements LowLevelDownloader {
-	get(uri: RemoteUriString, options: LowLevelDownloadOptions = {}): Promise<Buffer> {
-		const protocol = RemoteUriString.getProtocol(uri)
-		return new Promise((resolve, reject) => {
-			const backend = protocol === 'http:' ? http : https
-			backend.get(uri, options, (res: IncomingMessage) => {
-				if (res.statusCode !== 200) {
-					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
-				} else {
-					resolve(promisifyAsyncIterable(res, chunks => Buffer.concat(chunks)))
-				}
-			})
-		})
-	}
-}
-
-interface LowLevelDownloaderMockOptions {
-	/**
-	 * A record from URIs to fixture data. The {@link LowLevelDownloader.get} only returns a {@link Buffer},
-	 * therefore `string` fixtures will be turned into a `Buffer` and `object` fixtures will be transformed
-	 * into JSON and then turned into a `Buffer`.
-	 */
-	fixtures: Record<RemoteUriString, string | Buffer | object>,
-}
-
-class LowLevelDownloaderMock implements LowLevelDownloader {
-	constructor(private readonly options: LowLevelDownloaderMockOptions) { }
-
-	async get(uri: RemoteUriString): Promise<Buffer> {
-		if (!this.options.fixtures[uri]) {
-			throw new Error(`404 not found: ${uri}`)
-		}
-		const fixture = this.options.fixtures[uri]
-		if (Buffer.isBuffer(fixture)) {
-			return fixture
-		} else if (typeof fixture === 'string') {
-			return Buffer.from(fixture, 'utf-8')
-		} else {
-			return Buffer.from(JSON.stringify(fixture), 'utf-8')
-		}
-	}
 }

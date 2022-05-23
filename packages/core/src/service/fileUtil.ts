@@ -1,21 +1,9 @@
-import cp from 'child_process'
-import type fs from 'fs'
-import { promises as fsp } from 'fs'
-import { resolve } from 'path'
-import process from 'process'
-import url, { URL as Uri } from 'url'
-import { promisify } from 'util'
-import zlib from 'zlib'
-import { bufferToString, isEnoent, isErrorCode } from '../common'
+import type { FsLocation } from '../common'
+import { bufferToString, Externals, isEnoent, isErrorCode, Uri } from '../common'
 
 export type RootUriString = `${string}/`
 
 export type FileExtension = `.${string}`
-
-/**
- * A string file path, string file URI, or a file URI object.
- */
-export type PathLike = string | Uri
 
 export namespace fileUtil {
 	/**
@@ -87,51 +75,20 @@ export namespace fileUtil {
 	}
 
 	/* istanbul ignore next */
-	/**
-	 * @param fileUri A file URI.
-	 * @returns The corresponding file path of the `fileUri` in platform-specific format.
-	 * @throws If the URI is not a file schema URI.
-	 */
-	export function fileUriToPath(fileUri: string): string {
-		return url.fileURLToPath(new Uri(fileUri))
-	}
-
-	/* istanbul ignore next */
-	/**
-	 * @param path A file path.
-	 * @returns The corresponding file URI of the `path`.
-	 */
-	export function pathToFileUri(path: string): string {
-		return url.pathToFileURL(path).toString()
+	export function getParentOfFile(path: FsLocation): FsLocation {
+		if (path instanceof Uri || isFileUri(path)) {
+			return new Uri('.', path)
+		} else {
+			return Externals.path.resolve(path, '..')
+		}
 	}
 
 	/* istanbul ignore next */
 	export function normalize(uri: string): string {
 		try {
-			return isFileUri(uri) ? pathToFileUri(fileUriToPath(uri)) : new Uri(uri).toString()
+			return isFileUri(uri) ? Externals.uri.fromPath(Externals.uri.toPath(uri)) : new Uri(uri).toString()
 		} catch {
 			return uri
-		}
-	}
-
-	/**
-	 * @param path A string file path, string file URI, or a file URI object.
-	 * 
-	 * @returns A {@link fs.PathLike}.
-	 */
-	function toFsPathLike(path: PathLike): fs.PathLike {
-		if (typeof path === 'string' && isFileUri(path)) {
-			return new Uri(path)
-		}
-		return path
-	}
-
-	/* istanbul ignore next */
-	export function getParentOfFile(path: PathLike): PathLike {
-		if (path instanceof Uri || isFileUri(path)) {
-			return new Uri('.', path)
-		} else {
-			return resolve(path, '..')
 		}
 	}
 
@@ -141,9 +98,9 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureDir(path: PathLike, mode: number = 0o777): Promise<void> {
+	export async function ensureDir(path: FsLocation, mode: number = 0o777): Promise<void> {
 		try {
-			await fsp.mkdir(toFsPathLike(path), { mode, recursive: true })
+			await Externals.fs.mkdir(path, { mode, recursive: true })
 		} catch (e) {
 			if (!isErrorCode(e, 'EEXIST')) {
 				throw e
@@ -159,15 +116,15 @@ export namespace fileUtil {
 	 * 
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureParentOfFile(path: PathLike, mode: number = 0o777): Promise<void> {
+	export async function ensureParentOfFile(path: FsLocation, mode: number = 0o777): Promise<void> {
 		return ensureDir(getParentOfFile(path), mode)
 	}
 
-	export async function chmod(path: PathLike, mode: number): Promise<void> {
-		return fsp.chmod(toFsPathLike(path), mode)
+	export async function chmod(path: FsLocation, mode: number): Promise<void> {
+		return Externals.fs.chmod(path, mode)
 	}
 
-	export async function ensureWritable(path: PathLike): Promise<void> {
+	export async function ensureWritable(path: FsLocation): Promise<void> {
 		try {
 			await chmod(path, 0o666)
 		} catch (e) {
@@ -177,12 +134,12 @@ export namespace fileUtil {
 		}
 	}
 
-	export async function markReadOnly(path: PathLike): Promise<void> {
+	export async function markReadOnly(path: FsLocation): Promise<void> {
 		return chmod(path, 0o444)
 	}
 
-	export async function readFile(path: PathLike): Promise<Buffer> {
-		return fsp.readFile(toFsPathLike(path))
+	export async function readFile(path: FsLocation): Promise<Uint8Array> {
+		return Externals.fs.readFile(path)
 	}
 
 	/* istanbul ignore next */
@@ -198,17 +155,17 @@ export namespace fileUtil {
 	 * * Mode: `0o666` (`rw-rw-rw-`)
 	 * * Flag: `w`
 	 */
-	export async function writeFile(path: PathLike, data: Buffer | string, mode: number = 0o666): Promise<void> {
+	export async function writeFile(path: FsLocation, data: Uint8Array | string, mode: number = 0o666): Promise<void> {
 		await ensureParentOfFile(path)
 		await ensureWritable(path)
-		return fsp.writeFile(toFsPathLike(path), data, { mode })
+		return Externals.fs.writeFile(path, data, { mode })
 	}
 
 	/* istanbul ignore next */
 	/**
 	 * @throws
 	 */
-	export async function readJson<T = any>(path: PathLike): Promise<T> {
+	export async function readJson<T = any>(path: FsLocation): Promise<T> {
 		return JSON.parse(bufferToString(await readFile(path)))
 	}
 
@@ -218,62 +175,38 @@ export namespace fileUtil {
 	 * 
 	 * @see {@link writeFile}
 	 */
-	export async function writeJson(path: PathLike, data: any): Promise<void> {
+	export async function writeJson(path: FsLocation, data: any): Promise<void> {
 		return writeFile(path, JSON.stringify(data))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function readGzippedFile(path: PathLike): Promise<Buffer> {
-		const unzip = promisify(zlib.gunzip)
-		return unzip(await readFile(path))
+	export async function readGzippedFile(path: FsLocation): Promise<Uint8Array> {
+		return Externals.archive.gunzip(await readFile(path))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedFile(path: PathLike, buffer: Buffer | string): Promise<void> {
-		const zip = promisify(zlib.gzip)
-		return writeFile(path, await zip(buffer))
+	export async function writeGzippedFile(path: FsLocation, buffer: Uint8Array | string): Promise<void> {
+		if (typeof buffer === 'string') {
+			buffer = new TextEncoder().encode(buffer)
+		}
+		return writeFile(path, await Externals.archive.gzip(buffer))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function readGzippedJson<T = any>(path: PathLike): Promise<T> {
+	export async function readGzippedJson<T = any>(path: FsLocation): Promise<T> {
 		return JSON.parse(bufferToString(await readGzippedFile(path)))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedJson(path: PathLike, data: any): Promise<void> {
+	export async function writeGzippedJson(path: FsLocation, data: any): Promise<void> {
 		return writeGzippedFile(path, JSON.stringify(data))
-	}
-
-	/**
-	 * Show the file/directory in the platform-specific explorer program.
-	 * 
-	 * Should not be called with unsanitized user-input path due to the possibility of
-	 * arbitrary code execution.
-	 * 
-	 * @returns The `stdout` from the spawned child process.
-	 */
-	export async function showFile(path: string): Promise<{ stdout: string, stderr: string }> {
-		const execFile = promisify(cp.execFile)
-		let command: string
-		switch (process.platform) {
-			case 'darwin':
-				command = 'open'
-				break
-			case 'win32':
-				command = 'explorer'
-				break
-			default:
-				command = 'xdg-open'
-				break
-		}
-		return execFile(command, [path])
 	}
 }

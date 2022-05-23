@@ -5,14 +5,15 @@ import { AstNode, Failure, ParserContext, ProjectData, setExternalsAutomatically
 
 export const mochaHooks: RootHookObject = {
 	beforeAll(done) {
-import { AstNode, Failure, ParserContext, ProjectData, Source } from '../lib'
+		// Set up Externals
+		setExternalsAutomatically()
 
-// Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
-Object.defineProperty(BigInt.prototype, 'toJSON', {
-	get() {
-		return () => String(this)
-	},
-})
+		// Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
+		Object.defineProperty(BigInt.prototype, 'toJSON', {
+			get() {
+				return () => String(this)
+			},
+		})
 
 		done()
 	},

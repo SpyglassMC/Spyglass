@@ -1,11 +1,15 @@
 import externalBinarySearch from 'binary-search'
-import crypto from 'crypto'
 import rfdc from 'rfdc'
-import { promisify } from 'util'
-import zlib from 'zlib'
 import type { ProcessorContext } from '../service'
+import { Externals } from './externals'
 
-export { URL as Uri } from 'url'
+export const Uri = URL
+export type Uri = URL
+
+/** 
+ * `NodeJS.Timeout` on Node.js and `number` on browser.
+ */
+export type IntervalId = any
 
 /**
  * @param getCacheKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
@@ -56,7 +60,7 @@ export const Singleton: MethodDecorator = (_target: Object, _key: string | symbo
  */
 export function Delay(ms: number, getKey: (args: any[]) => any = args => args[0]): MethodDecorator {
 	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
-		const timeouts = new Map<unknown, NodeJS.Timeout>()
+		const timeouts = new Map<unknown, IntervalId>()
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
 		descripter.value = function (...args: unknown[]) {
@@ -115,28 +119,12 @@ export namespace ResourceLocation {
  * @returns The string value decoded from the buffer according to UTF-8.
  * Byte order mark is correctly removed.
  */
-export function bufferToString(buffer: Buffer): string {
-	const ans = buffer.toString('utf-8')
-	if (ans.charCodeAt(0) === 0xFEFF) {
-		return ans.slice(1)
-	}
+export function bufferToString(buffer: Uint8Array): string {
+	const ans = new TextDecoder().decode(buffer)
+	// if (ans.charCodeAt(0) === 0xFEFF) {
+	// 	return ans.slice(1)
+	// }
 	return ans
-}
-
-export function stringToBase64(str: string): string {
-	return Buffer.from(str).toString('base64')
-}
-export function base64ToString(base64: string): string {
-	return Buffer.from(base64, 'base64').toString('utf-8')
-}
-
-/**
- * @throws
- */
-export function getSha1(data: string | Buffer): string {
-	const hash = crypto.createHash('sha1')
-	hash.update(data)
-	return hash.digest('hex')
 }
 
 export function isErrorCode(e: unknown, code: string): boolean {
@@ -176,11 +164,8 @@ export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner:
 	})()
 }
 
-export const unzip: (buffer: Buffer) => Promise<Buffer> = promisify(zlib.gunzip)
-export const zip: (buffer: Buffer) => Promise<Buffer> = promisify(zlib.gzip)
-
-export async function parseGzippedJson<T>(buffer: Buffer): Promise<T> {
-	return JSON.parse(bufferToString(await unzip(buffer)))
+export async function parseGzippedJson<T>(buffer: Uint8Array): Promise<T> {
+	return JSON.parse(bufferToString(await Externals.archive.gunzip(buffer)))
 }
 
 export function isObject(value: unknown): value is Exclude<object, Array<any>> {

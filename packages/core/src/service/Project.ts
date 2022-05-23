@@ -1,10 +1,7 @@
-import chokidar from 'chokidar'
-import EventEmitter from 'events'
-import pLimit from 'p-limit'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import { LowLevelDownloader } from '.'
-import { bufferToString, CachePromise } from '../common'
+import type { FsWatcher, IntervalId } from '../common'
+import { bufferToString, CachePromise, ExternalDownloader, Externals } from '../common'
 import type { AstNode } from '../node'
 import { FileNode } from '../node'
 import { file } from '../parser'
@@ -72,7 +69,7 @@ export namespace ProjectData {
 	export function mock(data: Partial<ProjectData> = {}): ProjectData {
 		const cacheRoot = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist'
 		const logger = data.logger ?? Logger.create()
-		const downloader = data.downloader ?? new Downloader(cacheRoot, logger, LowLevelDownloader.mock({ fixtures: {} }))
+		const downloader = data.downloader ?? new Downloader(cacheRoot, logger, ExternalDownloader.mock({ fixtures: {} }))
 		return {
 			cacheRoot,
 			config: data.config ?? VanillaConfig,
@@ -91,7 +88,7 @@ export namespace ProjectData {
 	}
 }
 
-export interface Project extends EventEmitter {
+export interface Project {
 	on(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
 	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
 	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
@@ -123,10 +120,10 @@ export interface Project extends EventEmitter {
 /**
  * Manage all tracked documents and errors.
  */
-export class Project extends EventEmitter {
+export class Project extends Externals['event']['EventEmitter'] {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
-	readonly #cacheSaverIntervalId: NodeJS.Timeout
+	readonly #cacheSaverIntervalId: IntervalId
 	readonly cacheService: CacheService
 	/**
 	 * URI of files that are currently managed by the language client.
@@ -138,7 +135,7 @@ export class Project extends EventEmitter {
 	#initPromise!: Promise<void>
 	#readyPromise!: Promise<void>
 	readonly #watchedFiles = new Set<string>()
-	#watcher!: chokidar.FSWatcher
+	#watcher!: FsWatcher
 	#watcherReady = false
 
 	#isReady = false
@@ -234,7 +231,7 @@ export class Project extends EventEmitter {
 		this.logger = logger
 		this.profilers = profilers
 		this.projectPath = projectPath
-		this.projectRoot = fileUtil.ensureEndingSlash(fileUtil.pathToFileUri(projectPath))
+		this.projectRoot = fileUtil.ensureEndingSlash(Externals.uri.fromPath(projectPath))
 		this.symbols = new SymbolUtil({})
 		this.#ctx = {}
 
@@ -368,27 +365,24 @@ export class Project extends EventEmitter {
 		}
 		const listProjectFiles = () => new Promise<void>(resolve => {
 			this.#watcherReady = false
-			this.#watcher = chokidar
-				.watch(this.projectPath, { ignoreInitial: false })
+			this.#watcher = Externals.fs
+				.watch(this.projectPath)
 				.once('ready', () => {
 					this.#watcherReady = true
 					resolve()
 				})
-				.on('add', path => {
-					const uri = fileUtil.pathToFileUri(path)
+				.on('add', uri => {
 					this.#watchedFiles.add(uri)
 					if (this.#watcherReady) {
 						this.emit('fileCreated', { uri })
 					}
 				})
-				.on('change', path => {
-					const uri = fileUtil.pathToFileUri(path)
+				.on('change', uri => {
 					if (this.#watcherReady) {
 						this.emit('fileModified', { uri })
 					}
 				})
-				.on('unlink', path => {
-					const uri = fileUtil.pathToFileUri(path)
+				.on('unlink', uri => {
 					this.#watchedFiles.delete(uri)
 					if (this.#watcherReady) {
 						this.emit('fileDeleted', { uri })
@@ -402,7 +396,6 @@ export class Project extends EventEmitter {
 			await this.init()
 
 			const __profiler = this.profilers.get('project#ready')
-			const limit = pLimit(8)
 			const ensureParsed = this.ensureParsed.bind(this)
 			const ensureChecked = this.ensureChecked.bind(this)
 
@@ -717,7 +710,7 @@ export class Project extends EventEmitter {
 		}
 
 		try {
-			await fileUtil.showFile(this.#cacheRoot)
+			await Externals.fs.showFile(this.#cacheRoot)
 		} catch (e) {
 			this.logger.error('[Service#showCacheRoot]', e)
 		}

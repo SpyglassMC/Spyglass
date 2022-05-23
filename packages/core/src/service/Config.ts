@@ -1,7 +1,5 @@
-import EventEmitter from 'events'
-import { promises as fsp } from 'fs'
 import rfdc from 'rfdc'
-import { Arrayable, bufferToString, isEnoent, TypePredicates, Uri } from '../common'
+import { Arrayable, bufferToString, Externals, isEnoent, TypePredicates } from '../common'
 import { ErrorSeverity } from '../source'
 import { FileCategories, RegistryCategories } from '../symbol'
 import type { Project } from './Project'
@@ -404,7 +402,7 @@ export interface ConfigService {
 	emit(event: 'error', data: ErrorEvent): boolean
 }
 
-export class ConfigService extends EventEmitter {
+export class ConfigService extends Externals['event']['EventEmitter'] {
 	static readonly ConfigFileNames = Object.freeze([
 		'spyglass.json',
 		'.spyglassrc.json',
@@ -426,16 +424,15 @@ export class ConfigService extends EventEmitter {
 	async load(): Promise<Config> {
 		let ans = VanillaConfig
 		for (const name of ConfigService.ConfigFileNames) {
-			const uriString = this.project.projectRoot + name
-			const uri = new Uri(uriString)
+			const uri = this.project.projectRoot + name
 			try {
-				ans = JSON.parse(bufferToString(await fsp.readFile(uri)))
+				ans = JSON.parse(bufferToString(await Externals.fs.readFile(uri)))
 			} catch (e) {
 				if (isEnoent(e)) {
 					// File doesn't exist.
 					continue
 				}
-				this.emit('error', { error: e, uri: uriString })
+				this.emit('error', { error: e, uri })
 			}
 			break
 		}
