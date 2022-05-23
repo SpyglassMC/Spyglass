@@ -15,9 +15,9 @@
     "watch": "./esbuild.mjs watch"
   },
   "devDependencies": {
-    "@types/vscode": "1.65.0",
+    "@types/vscode": "1.67.0",
     "esbuild": "^0.14.39",
-    "vscode-languageclient": "^7.0.0",
+    "vscode-languageclient": "^8.0.1",
     "vscode-test": "^1.5.2"
   },
   "repository": {
@@ -29,7 +29,7 @@
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "engines": {
-    "vscode": "^1.52.0"
+    "vscode": "^1.67.0"
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
