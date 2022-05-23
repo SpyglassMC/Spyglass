@@ -21,17 +21,17 @@ function bumpTypeToString(type: BumpType): string {
 	return ['patch', 'minor', 'major'][type]
 }
 
-function getCommitType(emoji: string): BumpType {
-	function getEmoji(str: string) {
-		return new Map<string, string>([
-			[':boom:', '💥'],
-			[':sparkles:', '✨'],
+function getCommitType(emoji: string | number | undefined): BumpType {
+	function getEmoji(str: string | number | undefined) {
+		return new Map<string | number | undefined, number>([
+			[':boom:', '💥'.codePointAt(0)!],
+			[':sparkles:', '✨'.codePointAt(0)!],
 		]).get(str) ?? str
 	}
 
-	return new Map<string, BumpType>([
-		['💥', BumpType.Major],
-		['✨', BumpType.Minor],
+	return new Map<string | number | undefined, BumpType>([
+		['💥'.codePointAt(0)!, BumpType.Major],
+		['✨'.codePointAt(0)!, BumpType.Minor],
 	]).get(getEmoji(emoji)) ?? BumpType.Patch
 }
 
@@ -52,7 +52,7 @@ async function getPackageCommits(name: string): Promise<Commit[]> {
 	return result.stdout.split(/\r?\n/).map(line => {
 		const [hash, ...messageParts] = line.split(' ')
 		const message = messageParts.join(' ').trimStart()
-		const emoji = message.startsWith(':') ? message.slice(0, message.indexOf(':', 1) + 1) : message.charAt(0)
+		const emoji = message.startsWith(':') ? message.slice(0, message.indexOf(':', 1) + 1) : message.codePointAt(0)
 		const ans: Commit = {
 			hash,
 			message,
@@ -154,13 +154,13 @@ async function main(): Promise<void> {
 			addPackageToBump(key, BumpType.Patch)
 		} else {
 			let type: BumpType | undefined
-			console.log(`\treleased ${info.released.commit}`)
+			console.log(`\t${info.released.commit} was released`)
 			for (const commit of commits) {
 				if (commit.hash === info.released.commit) {
 					break
 				}
-				console.log(`\tanalyzing ${commit.hash}...`)
 				type = type === undefined ? commit.type : Math.max(type, commit.type)
+				console.log(`\t${commit.hash} is ${bumpTypeToString(commit.type)}; proper bump is ${bumpTypeToString(type)}`)
 			}
 			if (type !== undefined) {
 				info.released.commit = commits[0].hash
