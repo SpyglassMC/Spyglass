@@ -22,7 +22,7 @@ CommandTreeRegistry.instance.register('1.17-tdn', vanillaCommandTreeFor1_17, tri
 
 ## Supported Minecraft Parsers
 
-See `ParsersToNodes` at `src/mcfunction/parser/argument.ts`.
+See `ParsersToNodes` at `src/mcfunction/parser/argument.mts`.
 
 ## Exported Parsers
 

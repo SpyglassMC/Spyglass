@@ -1,8 +1,8 @@
 {
   "name": "@spyglassmc/core",
   "version": "0.1.0-PLACEHOLDER",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/index.mjs",
+  "types": "lib/index.d.mts",
   "author": "SPGoding",
   "license": "MIT",
   "directories": {

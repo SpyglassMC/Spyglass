@@ -11,19 +11,19 @@ module.exports = {
 	mode: 'production',
 
 	entry: {
-		main: './src/server.ts'
+		main: './src/server.mts'
 	},
 	devtool: 'source-map',
 	externals: {
 		vscode: 'commonjs vscode'
 	},
 	resolve: {
-		extensions: ['.ts', '.js', 'json']
+		extensions: ['.mts', '.mjs', 'json']
 	},
 	module: {
 		rules: [
 			{
-				test: /\.ts$/,
+				test: /(\.cts|\.mts|\.ts)$/,
 				exclude: /node_modules/,
 				use: [
 					{

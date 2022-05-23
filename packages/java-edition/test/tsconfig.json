@@ -5,7 +5,7 @@
 	},
 	"include": [
 		"./**/*.json",
-		"./**/*.ts",
+		"./**/*.mts", "mcfunction/parser/argument/_suites.mjs", "mcfunction/parser/argument/_generate.mjs",
 	],
 	"exclude": [
 		"./**/tsconfig.json"

@@ -11,8 +11,9 @@ try {
 	const isWatch = mode === 'watch'
 	console.info('Start building...')
 	const result = await esbuild.build({
-		entryPoints: ['./out/extension.js', '../language-server/lib/server.js'],
+		entryPoints: ['./out/extension.mjs', '../language-server/lib/server.mjs'],
 		entryNames: '[name]',
+		format: 'cjs', // https://github.com/microsoft/vscode/issues/130367
 		platform: 'node',
 		target: 'node16.13',
 		bundle: true,
@@ -40,10 +41,7 @@ try {
  * @param {esbuild.BuildResult} result 
  */
 function logResult(result) {
-	if (result.errors.length === 0 && result.warnings.length === 0) {
+	if (result.errors.length === 0) {
 		console.info('Built successfully.')
-	} else {
-		result.errors.forEach(e => console.error(e))
-		result.warnings.forEach(w => console.warn(w))
 	}
 }

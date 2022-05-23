@@ -4,10 +4,6 @@
 		"outDir": "../lib"
 	},
 	"include": [
-		"./**/*.json",
-		"./**/*.ts"
-	],
-	"exclude": [
-		"./**/tsconfig.json"
+		"./**/*.mts"
 	]
 }

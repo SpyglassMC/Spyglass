@@ -1,8 +1,8 @@
 {
   "name": "@spyglassmc/language-server",
   "version": "0.1.0-PLACEHOLDER",
-  "main": "lib/server.js",
-  "types": "lib/server.d.ts",
+  "main": "lib/server.mjs",
+  "types": "lib/server.d.mts",
   "author": "SPGoding",
   "license": "MIT",
   "directories": {
