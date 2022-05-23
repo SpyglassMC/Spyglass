@@ -1,8 +1,8 @@
 *
 */**
 
-!lib/**/*.mjs
+!lib/**/*.js
 !lib/**/*.json
-!lib/**/*.d.mts
+!lib/**/*.d.ts
 !package.json
 !README.md

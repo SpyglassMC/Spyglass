@@ -1,6 +1,0 @@
-export * from './boolean.mjs'
-export * from './list.mjs'
-export * from './number.mjs'
-export * from './object.mjs'
-export * from './string.mjs'
-export * from './util.mjs'

@@ -7,7 +7,7 @@
 		"sourceMap": false
 	},
 	"files": [
-		"src/extension.mts"
+		"src/extension.ts"
 	],
 	"references": [
 		{

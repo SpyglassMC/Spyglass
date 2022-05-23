@@ -11,14 +11,14 @@ module.exports = {
 	mode: 'production',
 
 	entry: {
-		main: './src/server.mts'
+		main: './src/server.ts'
 	},
 	devtool: 'source-map',
 	externals: {
 		vscode: 'commonjs vscode'
 	},
 	resolve: {
-		extensions: ['.mts', '.mjs', 'json']
+		extensions: ['.ts', '.js', 'json']
 	},
 	module: {
 		rules: [

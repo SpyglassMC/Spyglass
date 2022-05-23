@@ -29,6 +29,9 @@
 			"path": "nbt"
 		},
 		{
+			"path": "playground"
+		},
+		{
 			"path": "vscode-extension"
 		}
 	]

@@ -1,12 +1,13 @@
 {
   "name": "@spyglassmc/locales",
   "version": "0.1.0-PLACEHOLDER",
+	"type": "module",
   "description": "Locales for the Spyglass Project",
-  "main": "./lib/index.mjs",
-  "types": "./lib/index.d.mts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "node ./build.mjs",
+    "build": "node ./build.js",
     "release": "npm publish",
     "release:dry": "npm publish --dry-run"
   },

@@ -2,6 +2,7 @@
 	"name": "@spyglassmc/root",
 	"private": true,
 	"version": "1.0.0",
+	"type": "module",
 	"license": "MIT",
 	"scripts": {
 		"build": "npm run build:tsc && npm run build:locales && npm run build:vscode-extension",
@@ -21,7 +22,8 @@
 		"lint:fix": "eslint --fix packages/*/{src,test}/**/*.{cts,mts,ts}",
 		"release": "ts-node scripts/release.ts",
 		"release:dry": "ts-node scripts/release.ts --dry-run",
-		"start-discord-bot": "node packages/discord-bot/lib/index.mjs",
+		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
+		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"test": "nyc mocha",
 		"test:local": "nyc mocha --config .mocharc.local.jsonc"
 	},

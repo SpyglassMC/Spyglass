@@ -1,8 +1,9 @@
 {
   "name": "@spyglassmc/discord-bot",
   "version": "0.1.0-PLACEHOLDER",
-  "main": "lib/index.mjs",
-  "types": "lib/index.d.mts",
+	"type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "author": "SPGoding",
   "license": "MIT",
   "directories": {
@@ -17,7 +18,7 @@
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
-    "start": "node lib/index.mjs"
+    "start": "node lib/index.js"
   },
   "engines": {
     "node": ">=16.9.0"
