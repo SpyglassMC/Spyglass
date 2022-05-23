@@ -86,19 +86,23 @@ interface PackageJson {
 	dependencies?: Record<string, string>,
 }
 
-function setPackageJsons(infos: PackagesInfo) {
+function setPackageJsons(infos: PackagesInfo, isDryRun: boolean) {
 	for (const [key, info] of Object.entries(infos)) {
-		const filePath = path.join(__dirname, `../packages/${key}/package.json`)
-		const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as PackageJson
-		packageJson.version = info.released!.version
-		if (info.dependencies?.length) {
-			packageJson.dependencies ??= {}
-			for (const dependency of info.dependencies) {
-				packageJson.dependencies[`@spyglassmc/${dependency}`] = infos[dependency].released!.version
+		if (isDryRun) {
+			console.log(`[Dry run mode] Would have saved packages/${key}/package.json`)
+		} else {
+			const filePath = path.join(__dirname, `../packages/${key}/package.json`)
+			const packageJson = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as PackageJson
+			packageJson.version = info.released!.version
+			if (info.dependencies?.length) {
+				packageJson.dependencies ??= {}
+				for (const dependency of info.dependencies) {
+					packageJson.dependencies[`@spyglassmc/${dependency}`] = infos[dependency].released!.version
+				}
 			}
+			fs.writeFileSync(filePath, JSON.stringify(packageJson, undefined, 2) + '\n', 'utf-8')
+			console.log(`Saved packages/${key}/package.json`)
 		}
-		fs.writeFileSync(filePath, JSON.stringify(packageJson, undefined, 2) + '\n', 'utf-8')
-		console.log(`Saved packages/${key}/package.json`)
 	}
 }
 
@@ -112,14 +116,31 @@ async function shell(file: string, args: readonly string[], cwd: string, env?: R
 	return result
 }
 
+async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<unknown> {
+	if (isDryRun) {
+		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
+	} else {
+		return shell(file, args, cwd, env)
+	}
+	return
+}
+
 async function main(): Promise<void> {
 	if (process.argv[2] && process.argv[2] !== '--dry-run') {
 		throw new Error('Usage: ts-node scripts/release.td [--dry-run]')
 	}
 
 	const isDryRun = !!process.argv[2]
-	if (!isDryRun && !(process.env.GITHUB_ACTOR && process.env.GITHUB_TOKEN)) {
-		throw new Error('GITHUB_ACTOR and GITHUB_TOKEN environment variables required.')
+
+	if (isDryRun) {
+		console.log('[Dry run mode] --dry-run option enabled')
+	} else {
+		console.log('Start releasing in 5 seconds!')
+		await new Promise<void>(resolve => setTimeout(resolve, 5000))
+		console.log('Start releasing...')
+		if (!(process.env.GITHUB_ACTOR && process.env.GITHUB_TOKEN)) {
+			throw new Error('GITHUB_ACTOR and GITHUB_TOKEN environment variables required.')
+		}
 	}
 
 	const RepoRoot = path.join(__dirname, '..')
@@ -188,9 +209,9 @@ async function main(): Promise<void> {
 
 	if (packagesToBump.size) {
 		console.log('Saving status...')
-		savePackagesInfo(packagesInfo)
+		savePackagesInfo(packagesInfo, isDryRun)
 		console.log('Saved .packages.json')
-		setPackageJsons(packagesInfo)
+		setPackageJsons(packagesInfo, isDryRun)
 
 		console.log('Releasing changed packages...')
 		const releaseScript = isDryRun ? 'release:dry' : 'release'
@@ -199,27 +220,20 @@ async function main(): Promise<void> {
 			console.log(`Released ${key}`)
 		}
 
-		await shell('git', ['restore', 'packages/'], RepoRoot)
-
 		console.log('Committing changes...')
 		const commitMessage = `🔖 v${rootVersion} [ci skip]`
-		if (isDryRun) {
-			console.log(`[Dry run mode] Would have committed with message ${commitMessage}\n\n${versionSummary}.`)
-			console.log(`[Dry run mode] Would have tagged HEAD with v${rootVersion}.`)
-			console.log('[Dry run mode] Would have pushed changes to remote repository.')
-		} else {
-			await shell('git', ['add', '.'], RepoRoot)
-			await shell('git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, {
-				GIT_AUTHOR_NAME: 'actions-user',
-				GIT_AUTHOR_EMAIL: 'action@github.com',
-				GIT_COMMITTER_NAME: 'actions-user',
-				GIT_COMMITTER_EMAIL: 'action@github.com',
-			})
-			await shell('git', ['tag', `v${rootVersion}`], RepoRoot)
-			await shell('git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
-			await shell('git', ['push'], RepoRoot)
-			await shell('git', ['push', '--tags'], RepoRoot)
-		}
+		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, {
+			GIT_AUTHOR_NAME: 'actions-user',
+			GIT_AUTHOR_EMAIL: 'action@github.com',
+			GIT_COMMITTER_NAME: 'actions-user',
+			GIT_COMMITTER_EMAIL: 'action@github.com',
+		})
+		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)
 	} else {
 		console.log('Nothing was changed.')
 	}
