@@ -1,6 +1,7 @@
 {
 	"require": [
-		 "source-map-support/register"
+		"source-map-support/register",
+		"./packages/core/test-out/utils.js"
 	],
 	"inlineDiffs": true,
 	"color": true,

@@ -1,5 +1,10 @@
+import type { RootHookObject } from 'mocha'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { LanguageError, Parser, Returnable } from '../lib'
+import { AstNode, Failure, ParserContext, ProjectData, setExternalsAutomatically, Source } from '../lib'
+
+export const mochaHooks: RootHookObject = {
+	beforeAll(done) {
 import { AstNode, Failure, ParserContext, ProjectData, Source } from '../lib'
 
 // Some AST Nodes may contain `BigInt` in them, which can't be serialized in snapshots without defining this.
@@ -8,6 +13,10 @@ Object.defineProperty(BigInt.prototype, 'toJSON', {
 		return () => String(this)
 	},
 })
+
+		done()
+	},
+}
 
 /**
  * @returns The string with `\t`, `\r`, `\n`, and `\\` replaced with non-special characters.
