@@ -1,6 +1,7 @@
 {
-    "extends": "../packages/tsconfig-base.json",
-    "compilerOptions": {
-        "noEmit": true
-    }
+	"extends": "../packages/tsconfig-base.json",
+	"compilerOptions": {
+		"module": "CommonJS",
+		"noEmit": true
+	}
 }
