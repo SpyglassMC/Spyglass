@@ -8,6 +8,7 @@
 		"build:all": "tsc -b packages && cd packages/vscode-extension && npm run build; cd ../..",
 		"watch": "tsc -b -w packages",
 		"clean": "tsc -b packages --clean",
+		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out",
 		"commit": "gitmoji -c",
 		"con": "cd contributors && all-contributors generate && cd ..",
 		"docs:install": "cd docs; bundle; cd ..",
