@@ -19,8 +19,8 @@
 		"docs:start": "cd docs; bundle exec jekyll serve --incremental; cd ..",
 		"lint": "eslint packages/*/{src,test}/**/*.{cts,mts,ts}",
 		"lint:fix": "eslint --fix packages/*/{src,test}/**/*.{cts,mts,ts}",
-		"release": "ts-node scripts/release.{cts,mts,ts}",
-		"release:dry": "ts-node scripts/release.{cts,mts,ts} --dry-run",
+		"release": "ts-node scripts/release.ts",
+		"release:dry": "ts-node scripts/release.ts --dry-run",
 		"start-discord-bot": "node packages/discord-bot/lib/index.mjs",
 		"test": "nyc mocha",
 		"test:local": "nyc mocha --config .mocharc.local.jsonc"
