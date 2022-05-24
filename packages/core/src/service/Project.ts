@@ -29,8 +29,9 @@ const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'externals' | 'logger' | 'meta' | 'projectRoot'>
 export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
 
-interface Options {
-	cacheRoot: string,
+export interface ProjectOptions {
+	cacheRoot: RootUriString,
+	defaultConfig?: Config,
 	downloader?: Downloader,
 	externals: Externals,
 	fs?: FileService,
@@ -38,9 +39,9 @@ interface Options {
 	logger?: Logger,
 	profilers?: ProfilerFactory,
 	/**
-	 * A file path to the root of this project.
+	 * A file URI to the root of this project.
 	 */
-	projectPath: string,
+	projectRoot: RootUriString,
 	symbols?: SymbolUtil,
 }
 

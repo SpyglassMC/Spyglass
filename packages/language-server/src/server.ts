@@ -1,9 +1,11 @@
 import * as core from '@spyglassmc/core'
+import { fileUtil } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as locales from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import envPaths from 'env-paths'
+import url from 'url'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node'
 import type { CustomInitializationOptions, CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util/index.js'
@@ -63,13 +65,7 @@ connection.onInitialize(async params => {
 
 	try {
 		service = new core.Service({
-			cacheRoot,
-			externals,
-			initializers: [
-				mcdoc.initialize,
-				je.initialize,
-			],
-			isDebugging: false,
+			isDebugging: initializationOptions?.inDevelopmentMode && false,
 			logger,
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
@@ -77,7 +73,15 @@ connection.onInitialize(async params => {
 				'project#init',
 				'project#ready',
 			]),
-			projectPath: externals.uri.toPath(workspaceFolders[0].uri),
+			project: {
+				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
+				externals,
+				initializers: [
+					mcdoc.initialize,
+					je.initialize,
+				],
+				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
+			},
 		})
 		service.project
 			.on('documentErrorred', ({ doc, errors }) => {

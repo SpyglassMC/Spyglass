@@ -1,7 +1,7 @@
 import { SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandStringOption } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
 import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
-import { ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service } from '@spyglassmc/core'
+import { ConfigService, ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
@@ -9,7 +9,7 @@ import { Routes } from 'discord-api-types/rest/v9'
 import type { Snowflake } from 'discord.js'
 import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
 import { dirname, join } from 'path'
-import { fileURLToPath } from 'url'
+import { fileURLToPath, pathToFileURL } from 'url'
 
 export declare const __dirname: undefined // Not defined in ES module scope
 const MaxContentLength = 2000
@@ -33,15 +33,18 @@ const client = new Client({
 	],
 })
 const service = new Service({
-	cacheRoot,
-	externals: NodeJsExternals,
-	initializers: [
-		mcdoc.initialize,
-		je.initialize,
-	],
 	logger: console,
-	projectPath,
 	profilers,
+	project: {
+		cacheRoot: fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
+		defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
+		externals: NodeJsExternals,
+		initializers: [
+			mcdoc.initialize,
+			je.initialize,
+		],
+		projectRoot: fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString()),
+	},
 })
 const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
 

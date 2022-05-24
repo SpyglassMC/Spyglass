@@ -16,15 +16,10 @@ import { Project } from './Project.js'
 import { SymbolLocations } from './SymbolLocations.js'
 
 interface Options {
-	cacheRoot: string,
-	downloader?: Downloader,
-	externals: Externals,
-	fs?: FileService,
-	initializers?: readonly ProjectInitializer[],
 	isDebugging?: boolean,
-	logger?: Logger,
+	logger: Logger,
 	profilers?: ProfilerFactory,
-	projectPath: string,
+	project: ProjectOptions,
 }
 
 /* istanbul ignore next */
@@ -35,22 +30,19 @@ export class Service {
 	readonly project: Project
 
 	constructor({
-		cacheRoot,
-		downloader,
-		externals,
-		fs = FileService.create(externals, cacheRoot),
-		initializers = [],
 		isDebugging = false,
-		logger = Logger.create(),
+		logger,
 		profilers = ProfilerFactory.noop(),
-		projectPath,
+		project,
 	}: Options) {
-		this.downloader = (downloader ??= new Downloader(cacheRoot, externals, logger))
-		this.fs = fs
 		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
-		this.project = new Project({ cacheRoot, downloader, externals, fs, initializers, logger, profilers, projectPath })
+		this.project = new Project({
+			logger,
+			profilers,
+			...project,
+		})
 	}
 
 	private debug(message: string): void {
