@@ -39,6 +39,6 @@ jobs:
       - run: npm run release:dry
 
       - name: Deploy playground
-        if: ${{ github.event.name == 'push' }}
+        if: ${{ github.event_name == 'push' }}
         working-directory: packages/playground
         run: npm run deploy
