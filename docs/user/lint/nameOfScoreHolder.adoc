@@ -1,9 +1,9 @@
 :rule-name: nameOfScoreHolder
 :linter: nameConvention
 :description: This rule enforces a consistent naming convention for score holder names (fake names).
-include::user/lint/_header.adoc[]
+include::_header.adoc[]
 
-include::user/lint/_pre-json-format.adoc[]
+include::_pre-json-format.adoc[]
 
 .Snake case
 ====
@@ -31,4 +31,4 @@ execute if score FooBar objective matches 1 run say hello world!
 ----
 ====
 
-include::user/lint/_post-json-format.adoc[]
+include::_post-json-format.adoc[]

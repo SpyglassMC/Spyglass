@@ -1,7 +1,7 @@
 :rule-name: nameOfNbtKey
 :linter: nameConvention
 :description: This rule enforces a consistent naming convention for keys in NBT compound tags and NBT paths.
-include::user/lint/_header.adoc[]
+include::_header.adoc[]
 
 This linter only checks the naming in the following cases:
 
@@ -9,7 +9,7 @@ This linter only checks the naming in the following cases:
 * This is a key used in an NBT compound tag that doesn't have an associated nbtdoc definition; OR
 * This is a key used in an NBT path that doesn't have an associated nbtdoc definition.
 
-include::user/lint/_pre-json-format.adoc[]
+include::_pre-json-format.adoc[]
 
 .Snake case
 ====
@@ -37,4 +37,4 @@ give @s stone{FooBar: true}
 ----
 ====
 
-include::user/lint/_post-json-format.adoc[]
+include::_post-json-format.adoc[]

@@ -1,9 +1,9 @@
 :rule-name: undeclaredSymbol
 :linter: undeclaredSymbol
 :description: This rule specifies what actions should be done when there are undeclared symbols.
-include::user/lint/_header.adoc[]
+include::_header.adoc[]
 
-include::user/lint/_pre-json-format.adoc[]
+include::_pre-json-format.adoc[]
 
 .Example
 ====
@@ -41,4 +41,4 @@ setblock ~ ~ ~ minecraft:foo
 ----
 ====
 
-include::user/lint/_post-json-format.adoc[]
+include::_post-json-format.adoc[]
