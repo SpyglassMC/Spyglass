@@ -8,6 +8,7 @@ github_username:  SpyglassMC
 # Build settings
 plugins:
   - jekyll-asciidoc
+  - jekyll-redirect-from
 
 keep_files:
   - .git

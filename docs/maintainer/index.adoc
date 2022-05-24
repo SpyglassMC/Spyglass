@@ -1,4 +1,4 @@
 :page-layout: default
 :page-title: Maintainer Guides
 :page-has_children: true
-:page-nav_order: zzz
+:page-nav_order: 3

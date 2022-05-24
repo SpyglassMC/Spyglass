@@ -1,0 +1,5 @@
+:page-layout: default
+:page-title: Playground
+:page-nav_order: 4
+:page-permalink: /playground-redirect/
+:page-redirect_to: https://spyglassmc.com/playground/
