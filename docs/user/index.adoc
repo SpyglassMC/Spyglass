@@ -39,17 +39,21 @@ Install https://open-vsx.org/extension/SPGoding/datapack-language-server[from th
 
 Main article: link:./user/config[Config]
 
-== Plugins
-
-The cake is a lie. ALL LIES.
-
 == Mcdoc Specification
 
 Main article: link:./user/mcdoc[Mcdoc]
 
+== Playground
+
+Click link:./playground[here].
+
+== Plugins
+
+The cake is a lie. ALL LIES.
+
 == Contributing
 
-Ew so many things to write.
+Uh so many things to write.
 
 * {link-github-repo}/issues/new/choose[Create an issue]
 * {link-github-repo}[GitHub Repository]

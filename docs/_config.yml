@@ -9,6 +9,10 @@ github_username:  SpyglassMC
 plugins:
   - jekyll-asciidoc
 
+keep_files:
+  - .git/
+  - playground/
+
 exclude:
   - .sass-cache/
   - .jekyll-cache/

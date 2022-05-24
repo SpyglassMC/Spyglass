@@ -1,4 +1,4 @@
-name: Test
+name: Test & Deploy
 on:
   push:
     branches:
@@ -11,33 +11,22 @@ on:
     paths-ignore:
       - "docs/**"
 env:
-  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
   GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
-  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
-  test:
-    name: Test
+  test-and-deploy:
+    name: Test & Deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
-
-      - run: npm i -g npm
-
-      - name: Cache node modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: "npm"
 
       - run: npm ci --legacy-peer-deps
 
@@ -48,3 +37,8 @@ jobs:
       - run: npm run lint
 
       - run: npm run release:dry
+
+      - name: Deploy playground
+        if: ${{ github.event == "push" }}
+        working-directory: packages/playground
+        run: npm run deploy

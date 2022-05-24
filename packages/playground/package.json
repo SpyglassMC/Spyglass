@@ -10,8 +10,9 @@
   "scripts": {
     "build": "./esbuild.js prod",
     "build:dev": "./esbuild.js dev",
-    "release": "echo \"DO NOT PUBLISH\"",
-    "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
+    "deploy": "./deploy.js",
+    "release": "",
+    "release:dry": "",
     "watch": "./esbuild.js watch"
   },
   "devDependencies": {
