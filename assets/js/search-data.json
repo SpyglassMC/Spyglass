@@ -222,161 +222,167 @@
     "relUrl": "/#customization"
   },"37": {
     "doc": "Home",
-    "title": "Plugins",
-    "content": "The cake is a lie. ALL LIES. ",
-    "url": "https://spyglassmc.com/#plugins",
-    "relUrl": "/#plugins"
-  },"38": {
-    "doc": "Home",
     "title": "Mcdoc Specification",
     "content": "Main article: Mcdoc . ",
     "url": "https://spyglassmc.com/#mcdoc-specification",
     "relUrl": "/#mcdoc-specification"
+  },"38": {
+    "doc": "Home",
+    "title": "Playground",
+    "content": "Click here. ",
+    "url": "https://spyglassmc.com/#playground",
+    "relUrl": "/#playground"
   },"39": {
     "doc": "Home",
+    "title": "Plugins",
+    "content": "The cake is a lie. ALL LIES. ",
+    "url": "https://spyglassmc.com/#plugins",
+    "relUrl": "/#plugins"
+  },"40": {
+    "doc": "Home",
     "title": "Contributing",
-    "content": "Ew so many things to write. | Create an issue . | GitHub Repository . | Localization . | . ",
+    "content": "Uh so many things to write. | Create an issue . | GitHub Repository . | Localization . | . ",
     "url": "https://spyglassmc.com/#contributing",
     "relUrl": "/#contributing"
-  },"40": {
+  },"41": {
     "doc": "Home",
     "title": "Home",
     "content": "Welcome to the work-in-progress documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real time diagnostics, semantic coloring and such. The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out the VS Code Marketplace. ",
     "url": "https://spyglassmc.com/",
     "relUrl": "/"
-  },"41": {
+  },"42": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
     "content": "The extension may provide optional initialization options to the language server on the initialize request. | (object) The initializationOptions . | inDevelopmentMode: (boolean) If the language server is launched under development mode. If set to true, a few seconds of delay will be introduced on the serverside when initializing to give NodeJS debugger time to attach to the server process. | . | . ",
     "url": "https://spyglassmc.com/developer/language-server/initialization-options.html",
     "relUrl": "/developer/language-server/initialization-options.html"
-  },"42": {
+  },"43": {
     "doc": "Meta Registry",
     "title": "Symbol Registrar",
     "content": "A function that will be called after the symbol table is loaded from cache. ",
     "url": "https://spyglassmc.com/developer/meta-registry.html#symbol-registrar",
     "relUrl": "/developer/meta-registry.html#symbol-registrar"
-  },"43": {
+  },"44": {
     "doc": "Meta Registry",
     "title": "Meta Registry",
     "content": " ",
     "url": "https://spyglassmc.com/developer/meta-registry.html",
     "relUrl": "/developer/meta-registry.html"
-  },"44": {
+  },"45": {
     "doc": "nameOfNbtKey",
     "title": "Description",
     "content": "This rule enforces a consistent naming convention for keys in NBT compound tags and NBT paths. This linter only checks the naming in the following cases: . | This is a key definition in an nbtdoc compound definition block that is outside of the ::minecraft module; . | This is a key used in an NBT compound tag that doesn&#8217;t have an associated nbtdoc definition; OR . | This is a key used in an NBT path that doesn&#8217;t have an associated nbtdoc definition. | . ",
     "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html#description",
     "relUrl": "/user/lint/nameOfNbtKey.html#description"
-  },"45": {
+  },"46": {
     "doc": "nameOfNbtKey",
     "title": "JSON Format",
     "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfNbtKey\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good give @s stone{foo: true} give @s stone{foo_bar: true} . 👎 Bad give @s stone{FooBar: true} . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfNbtKey\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfNbtKey\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html#json-format",
     "relUrl": "/user/lint/nameOfNbtKey.html#json-format"
-  },"46": {
+  },"47": {
     "doc": "nameOfNbtKey",
     "title": "nameOfNbtKey",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/nameOfNbtKey.html",
     "relUrl": "/user/lint/nameOfNbtKey.html"
-  },"47": {
+  },"48": {
     "doc": "nameOfObjective",
     "title": "Description",
     "content": "This rule enforces a consistent naming convention for scoreboard objectives. ",
     "url": "https://spyglassmc.com/user/lint/nameOfObjective.html#description",
     "relUrl": "/user/lint/nameOfObjective.html#description"
-  },"48": {
+  },"49": {
     "doc": "nameOfObjective",
     "title": "JSON Format",
     "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfObjective\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good scoreboard objectives add foo scoreboard objectives add foo_bar . 👎 Bad scoreboard objectives add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfObjective\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfObjective\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/nameOfObjective.html#json-format",
     "relUrl": "/user/lint/nameOfObjective.html#json-format"
-  },"49": {
+  },"50": {
     "doc": "nameOfObjective",
     "title": "nameOfObjective",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/nameOfObjective.html",
     "relUrl": "/user/lint/nameOfObjective.html"
-  },"50": {
+  },"51": {
     "doc": "nameOfScoreHolder",
     "title": "Description",
     "content": "This rule enforces a consistent naming convention for score holder names (fake names). ",
     "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html#description",
     "relUrl": "/user/lint/nameOfScoreHolder.html#description"
-  },"51": {
+  },"52": {
     "doc": "nameOfScoreHolder",
     "title": "JSON Format",
     "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfScoreHolder\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good execute if score foo objective matches 1 run say hello world! execute if score foo_bar objective matches 1 run say hello world! . 👎 Bad execute if score FooBar objective matches 1 run say hello world! . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfScoreHolder\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfScoreHolder\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html#json-format",
     "relUrl": "/user/lint/nameOfScoreHolder.html#json-format"
-  },"52": {
+  },"53": {
     "doc": "nameOfScoreHolder",
     "title": "nameOfScoreHolder",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/nameOfScoreHolder.html",
     "relUrl": "/user/lint/nameOfScoreHolder.html"
-  },"53": {
+  },"54": {
     "doc": "nameOfTag",
     "title": "Description",
     "content": "This rule enforces a consistent naming convention for tags managed by the `/tag` command. ",
     "url": "https://spyglassmc.com/user/lint/nameOfTag.html#description",
     "relUrl": "/user/lint/nameOfTag.html#description"
-  },"54": {
+  },"55": {
     "doc": "nameOfTag",
     "title": "JSON Format",
     "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfTag\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good tag add foo tag add foo_bar . 👎 Bad tag add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfTag\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfTag\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/nameOfTag.html#json-format",
     "relUrl": "/user/lint/nameOfTag.html#json-format"
-  },"55": {
+  },"56": {
     "doc": "nameOfTag",
     "title": "nameOfTag",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/nameOfTag.html",
     "relUrl": "/user/lint/nameOfTag.html"
-  },"56": {
+  },"57": {
     "doc": "nameOfTeam",
     "title": "Description",
     "content": "This rule enforces a consistent naming convention for teams. ",
     "url": "https://spyglassmc.com/user/lint/nameOfTeam.html#description",
     "relUrl": "/user/lint/nameOfTeam.html#description"
-  },"57": {
+  },"58": {
     "doc": "nameOfTeam",
     "title": "JSON Format",
     "content": ". | (string) A regex specifying the pattern of the name. The name will be considered valid if any part of it matches the regex, so use ^ and $ if you want the full name to be tested. | . Example 1. Snake case Config { \"lint\": { \"nameOfTeam\": \"^[a-z]+(_[a-z]+)*$\" } } . 👍 Good team add foo team add foo_bar . 👎 Bad team add FooBar . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"nameOfTeam\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"nameOfTeam\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/nameOfTeam.html#json-format",
     "relUrl": "/user/lint/nameOfTeam.html#json-format"
-  },"58": {
+  },"59": {
     "doc": "nameOfTeam",
     "title": "nameOfTeam",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/nameOfTeam.html",
     "relUrl": "/user/lint/nameOfTeam.html"
-  },"59": {
+  },"60": {
     "doc": "Profilers",
     "title": "Profilers",
     "content": "Profiler IDs . | cache#save . | cache#load . | project#ready . | . ",
     "url": "https://spyglassmc.com/maintainer/profilers.html",
     "relUrl": "/maintainer/profilers.html"
-  },"60": {
+  },"61": {
     "doc": "undeclaredSymbol",
     "title": "Description",
     "content": "This rule specifies what actions should be done when there are undeclared symbols. ",
     "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html#description",
     "relUrl": "/user/lint/undeclaredSymbol.html#description"
-  },"61": {
+  },"62": {
     "doc": "undeclaredSymbol",
     "title": "JSON Format",
     "content": "Either a simple Action object: . | (object) An action to take when encounterred undeclared symbols . | Either declare: declares the symbol at the specified scope. Allowed values: \"block\", \"file\", or \"public\". | Or report: reports a diagnostic with the specified severity. Allowed values: \"inherit\", \"hint\", \"information\", \"warning\", or \"error\". | . | . Or a more Complex structure with conditions: . | (object) . | if: (object) . | category: (string | string[]) . | pattern: (string | string[]) . | excludePattern: (string | string[]) . | namespace: (string | string[]) . | excludeNamespace: (string | string[]) . | . | then: (Action) . | override: (Complex | Complex[]) . | . | . Example 1. Example Config { \"lint\": { \"undeclaredSymbol\": [ { \"if\": [ { \"category\": [\"block\", \"entity_type\", \"item\"], \"namespace\": \"minecraft\" }, { \"category\": [\"advancement\", \"bossbar\", \"objective\", \"team\"] }, ], \"then\": { \"report\": \"warning\" }, }, { \"then\": { \"declare\": \"block\" }, }, ] } } . 👍 Good tag @s add foo . 👎 Bad setblock ~ ~ ~ minecraft:foo . Severity . All diagnostics provided by this linter will be of warning severity by default. You can wrap the config value in a tuple like this to change the severity to one of error, warning, information, or hint: . Config { \"lint\": { \"undeclaredSymbol\": [\"error\", &lt;value&gt;] } } . To Disable . If you do not wish to utilize this rule, simply set it to null: . Config { \"lint\": { \"undeclaredSymbol\": null } } . ",
     "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html#json-format",
     "relUrl": "/user/lint/undeclaredSymbol.html#json-format"
-  },"62": {
+  },"63": {
     "doc": "undeclaredSymbol",
     "title": "undeclaredSymbol",
     "content": " ",
     "url": "https://spyglassmc.com/user/lint/undeclaredSymbol.html",
     "relUrl": "/user/lint/undeclaredSymbol.html"
-  },"63": {
+  },"64": {
     "doc": "Update Guide",
     "title": "Update Guide",
     "content": "This document is intended for maintainers of the Spyglass project. Searchable comments // DOCS: Update here when format_version is changed. // DOCS: Update here when a new major version of Minecraft is released. ",
