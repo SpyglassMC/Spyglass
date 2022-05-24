@@ -61,6 +61,11 @@ export const NodeJsExternals: Externals = {
 		},
 	},
 	downloader: new NodeJsExternalDownloader(),
+	error: {
+		isKind(e, kind) {
+			return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
+		},
+	},
 	event: {
 		EventEmitter,
 	},
@@ -69,7 +74,7 @@ export const NodeJsExternals: Externals = {
 			return fsp.chmod(toFsPathLike(location), mode)
 		},
 		async getAllFiles(location) {
-			return (await globby(toPath(location) + '**/*', { absolute: true, dot: true })).map(NodeJsExternals.uri.fromPath)
+			return (await globby(toPath(location) + '**/*', { absolute: true, dot: true })).map(uriFromPath)
 		},
 		async mkdir(location, options) {
 			return void await fsp.mkdir(toFsPathLike(location), options)
@@ -106,20 +111,13 @@ export const NodeJsExternals: Externals = {
 			return fsp.writeFile(toFsPathLike(location), data, options)
 		},
 	},
-	path: {
-		join(...paths) {
-			return path.join(...paths)
-		},
-		resolve(...paths) {
-			return path.resolve(...paths)
-		},
-	},
 	uri: {
-		fromPath(filePath) {
-			return url.pathToFileURL(filePath).toString()
-		},
-		toPath(fileUri) {
-			return url.fileURLToPath(fileUri)
+		normalize(uri) {
+			if (uri.startsWith('file:')) {
+				return url.pathToFileURL(url.fileURLToPath(uri)).toString()
+			} else {
+				return new Uri(uri).toString()
+			}
 		},
 	},
 }
@@ -140,8 +138,11 @@ function toPath(path: FsLocation): string {
 	if (typeof path === 'string' && !path.startsWith('file:')) {
 		return path
 	}
-	return NodeJsExternals.uri.toPath(path)
+	return uriToPath(path)
 }
+
+const uriToPath = (uri: string | Uri) => url.fileURLToPath(uri)
+const uriFromPath = (path: string) => url.pathToFileURL(path).toString()
 
 class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
 	#watcher: chokidar.FSWatcher
@@ -150,9 +151,9 @@ class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
 		super()
 		this.#watcher = watcher
 			.on('ready', () => this.emit('ready'))
-			.on('add', path => this.emit('add', NodeJsExternals.uri.fromPath(path)))
-			.on('change', path => this.emit('change', NodeJsExternals.uri.fromPath(path)))
-			.on('unlink', path => this.emit('unlink', NodeJsExternals.uri.fromPath(path)))
+			.on('add', path => this.emit('add', uriFromPath(path)))
+			.on('change', path => this.emit('change', uriFromPath(path)))
+			.on('unlink', path => this.emit('unlink', uriFromPath(path)))
 			.on('error', e => this.emit('error', e))
 	}
 

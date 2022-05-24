@@ -1,4 +1,4 @@
-import type { LanguageError, Parser, ProjectData, Returnable } from '@spyglassmc/core'
+import type { LanguageError, Parser, ProjectData, Returnable, RootUriString } from '@spyglassmc/core'
 import { AstNode, Downloader, Failure, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, SymbolUtil, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import type { RootHookObject } from 'mocha'
@@ -18,7 +18,7 @@ export const mochaHooks: RootHookObject = {
 }
 
 export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
-	const cacheRoot = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist'
+	const cacheRoot: RootUriString = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
 	const downloader = data.downloader ?? new Downloader(cacheRoot, externals, logger)

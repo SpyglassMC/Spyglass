@@ -1,4 +1,4 @@
-import { isEnoent, isErrorCode } from '../common/index.js'
+import { Uri } from '../common/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
 import type { RootUriString } from './fileUtil.js'
@@ -63,7 +63,7 @@ export class CacheService {
 	 * @param project 
 	 */
 	constructor(
-		private readonly cacheRoot: string,
+		private readonly cacheRoot: RootUriString,
 		private readonly project: Project,
 	) {
 		this.project.on('documentUpdated', async ({ doc }) => {
@@ -74,7 +74,7 @@ export class CacheService {
 				// TODO: Don't update this for every single change.
 				this.checksums.files[doc.uri] = await this.project.externals.crypto.getSha1(doc.getText())
 			} catch (e) {
-				if (!isErrorCode(e, 'EISDIR')) {
+				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
 				}
 			}
@@ -87,7 +87,7 @@ export class CacheService {
 				try {
 					this.checksums.roots[root] = await this.project.fs.hash(root)
 				} catch (e) {
-					if (!isErrorCode(e, 'EISDIR')) {
+					if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 						this.project.logger.error(`[CacheService#hash-root] ${root}`)
 					}
 				}
@@ -104,10 +104,10 @@ export class CacheService {
 	/**
 	 * @throws
 	 * 
-	 * @returns `${cacheRoot}/symbols/${sha1(projectRoot)}.json`
+	 * @returns `${cacheRoot}symbols/${sha1(projectRoot)}.json`
 	 */
-	private async getCacheFilePath(): Promise<string> {
-		return this.#cacheFilePath ??= this.project.externals.path.join(this.cacheRoot, 'symbols', `${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`)
+	private async getCacheFileUri(): Promise<string> {
+		return this.#cacheFilePath ??= new Uri(`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`, this.cacheRoot).toString()
 	}
 
 	async load(): Promise<LoadResult> {
@@ -115,7 +115,7 @@ export class CacheService {
 		const ans: LoadResult = { symbols: {} }
 		let filePath: string | undefined
 		try {
-			filePath = await this.getCacheFilePath()
+			filePath = await this.getCacheFileUri()
 			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
 			const cache = await fileUtil.readGzippedJson(this.project.externals, filePath) as CacheFile
 			__profiler.task('Read File')
@@ -127,7 +127,7 @@ export class CacheService {
 				this.project.logger.info(`[CacheService#load] Unsupported cache format ${cache.version}; expected ${LatestCacheVersion}`)
 			}
 		} catch (e) {
-			if (!isEnoent(e)) {
+			if (!this.project.externals.error.isKind(e, 'ENOENT')) {
 				this.project.logger.error('[CacheService#load] ', e)
 			}
 		}
@@ -151,7 +151,7 @@ export class CacheService {
 					unchangedRoots.push(uri)
 				}
 			} catch (e) {
-				if (!isErrorCode(e, 'EISDIR')) {
+				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${uri}`)
 				}
 				// Failed calculating hash. Assume the root has changed.
@@ -172,7 +172,7 @@ export class CacheService {
 					ans.changedFiles.push(uri)
 				}
 			} catch (e) {
-				if (isEnoent(e) || isErrorCode(e, 'EISDIR')) {
+				if (this.project.externals.error.isKind(e, 'ENOENT') || this.project.externals.error.isKind(e, 'EISDIR')) {
 					ans.removedFiles.push(uri)
 				} else {
 					this.project.logger.error(`[CacheService#validate] ${uri}`, e)
@@ -200,7 +200,7 @@ export class CacheService {
 		const __profiler = this.project.profilers.get('cache#save')
 		let filePath: string | undefined
 		try {
-			filePath = await this.getCacheFilePath()
+			filePath = await this.getCacheFileUri()
 			const cache: CacheFile = {
 				checksums: this.checksums,
 				projectRoot: this.project.projectRoot,
@@ -209,7 +209,7 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeGzippedJson(this.project.externals,filePath, cache)
+			await fileUtil.writeGzippedJson(this.project.externals, filePath, cache)
 			__profiler.task('Write File').finalize()
 
 			return true

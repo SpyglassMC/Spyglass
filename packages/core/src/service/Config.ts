@@ -1,6 +1,6 @@
 import rfdc from 'rfdc'
 import type { ExternalEventEmitter } from '../common/index.js'
-import { Arrayable, bufferToString, isEnoent, TypePredicates } from '../common/index.js'
+import { Arrayable, bufferToString, TypePredicates } from '../common/index.js'
 import { ErrorSeverity } from '../source/index.js'
 import { FileCategories, RegistryCategories } from '../symbol/index.js'
 import type { Project } from './Project.js'
@@ -400,7 +400,10 @@ export class ConfigService implements ExternalEventEmitter {
 
 	readonly #eventEmitter: ExternalEventEmitter
 
-	constructor(private readonly project: Project) {
+	constructor(
+		private readonly project: Project,
+		private readonly defaultConfig = VanillaConfig,
+	) {
 		this.#eventEmitter = new project.externals.event.EventEmitter()
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
@@ -433,13 +436,13 @@ export class ConfigService implements ExternalEventEmitter {
 	}
 
 	async load(): Promise<Config> {
-		let ans = VanillaConfig
+		let ans = this.defaultConfig
 		for (const name of ConfigService.ConfigFileNames) {
 			const uri = this.project.projectRoot + name
 			try {
 				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
 			} catch (e) {
-				if (isEnoent(e)) {
+				if (this.project.externals.error.isKind(e, 'ENOENT')) {
 					// File doesn't exist.
 					continue
 				}
@@ -447,14 +450,14 @@ export class ConfigService implements ExternalEventEmitter {
 			}
 			break
 		}
-		return this.merge(VanillaConfig, ans)
+		return ConfigService.merge(this.defaultConfig, ans)
 	}
 
 	private static isConfigFile(this: void, uri: string): boolean {
 		return ConfigService.ConfigFileNames.some(n => uri.endsWith(`/${n}`))
 	}
 
-	private merge(base: Config, ...overrides: Partial<Config>[]): Config {
+	public static merge(base: Config, ...overrides: any[]): Config {
 		// FIXME
 		const ans = rfdc()(base)
 		for (const override of overrides) {

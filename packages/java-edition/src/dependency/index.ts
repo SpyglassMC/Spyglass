@@ -150,7 +150,7 @@ async function downloadGitHubRepo({ defaultBranch, downloader, externals, getTag
 		ttl: DownloaderTtl,
 	}, out)
 
-	return externals.uri.fromPath(out.cachePath!)
+	return out.cacheUri!
 }
 
 /* istanbul ignore next */

@@ -22,7 +22,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			PackMcmeta.assert(data)
 			ans = data
 		} catch (e) {
-			if (!core.isEnoent(e)) {
+			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
 				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
 			}

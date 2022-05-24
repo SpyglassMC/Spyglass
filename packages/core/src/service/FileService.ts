@@ -61,8 +61,8 @@ export interface FileService extends UriProtocolSupporter {
 }
 
 export namespace FileService {
-	export function create(externals: Externals, cacheRoot: string): FileService {
-		const virtualUrisRoot = fileUtil.ensureEndingSlash(externals.uri.fromPath(externals.path.join(cacheRoot, 'virtual-uris')))
+	export function create(externals: Externals, cacheRoot: RootUriString): FileService {
+		const virtualUrisRoot = fileUtil.ensureEndingSlash(new Uri('virtual-uris/', cacheRoot).toString())
 		return new FileServiceImpl(externals, virtualUrisRoot)
 	}
 }

@@ -16,47 +16,15 @@ export interface Externals {
 		getSha1: (data: string | Uint8Array) => Promise<string>,
 	},
 	downloader: ExternalDownloader,
+	error: {
+		isKind: (e: unknown, kind: ExternalErrorKind) => boolean,
+	},
 	event: {
 		EventEmitter: new () => ExternalEventEmitter,
 	},
-	fs: {
-		/**
-		 * @param mode File mode bit mask (e.g. `0o775`).
-		 */
-		chmod: (location: FsLocation, mode: number) => Promise<void>,
-		/**
-		 * @returns an array of file URIs under the given `location`.
-		 */
-		getAllFiles: (location: FsLocation) => Promise<string[]>,
-		/**
-		 * @param options `mode` - File mode bit mask (e.g. `0o775`).
-		 */
-		mkdir: (location: FsLocation, options?: { mode?: number, recursive?: boolean }) => Promise<void>,
-		readFile: (location: FsLocation) => Promise<Uint8Array>,
-		/**
-		 * Show the file/directory in the platform-specific explorer program.
-		 * 
-		 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
-		 */
-		showFile: (path: FsLocation) => Promise<void>,
-		stat: (location: FsLocation) => Promise<{
-			isDirectory(): boolean,
-			isFile(): boolean,
-		}>,
-		unlink: (location: FsLocation) => Promise<void>,
-		watch: (location: FsLocation) => FsWatcher,
-		/**
-		 * @param options `mode` - File mode bit mask (e.g. `0o775`).
-		 */
-		writeFile: (location: FsLocation, data: string | Uint8Array, options?: { mode: number }) => Promise<void>,
-	},
-	path: {
-		join: (...paths: string[]) => string,
-		resolve: (...paths: string[]) => string,
-	},
+	fs: ExternalFileSystem,
 	uri: {
-		fromPath: (filePath: string) => string,
-		toPath: (fileUri: string | Uri) => string,
+		normalize: (uri: string) => string,
 	},
 }
 
@@ -68,14 +36,51 @@ export interface DecompressedFile {
 	type: string,
 }
 
+export type ExternalErrorKind =
+	| 'EEXIST'
+	| 'EISDIR'
+	| 'ENOENT'
+
 export interface ExternalEventEmitter {
 	emit(eventName: string, ...args: unknown[]): boolean
 	on(eventName: string, listener: (...args: unknown[]) => unknown): this
 	once(eventName: string, listener: (...args: unknown[]) => unknown): this
 }
 
+export interface ExternalFileSystem {
+	/**
+	 * @param mode File mode bit mask (e.g. `0o775`).
+	 */
+	chmod(location: FsLocation, mode: number): Promise<void>,
+	/**
+	 * @returns an array of file URIs under the given `location`.
+	 */
+	getAllFiles(location: FsLocation): Promise<string[]>,
+	/**
+	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
+	 */
+	mkdir(location: FsLocation, options?: { mode?: number, recursive?: boolean }): Promise<void>,
+	readFile(location: FsLocation): Promise<Uint8Array>,
+	/**
+	 * Show the file/directory in the platform-specific explorer program.
+	 * 
+	 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
+	 */
+	showFile(path: FsLocation): Promise<void>,
+	stat(location: FsLocation): Promise<{
+		isDirectory(): boolean,
+		isFile(): boolean,
+	}>,
+	unlink(location: FsLocation): Promise<void>,
+	watch(location: FsLocation): FsWatcher,
+	/**
+	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
+	 */
+	writeFile(location: FsLocation, data: string | Uint8Array, options?: { mode: number }): Promise<void>,
+}
+
 /**
- * A file path string, file URI string, or a URI object.
+ * A file file URI string or a URI object.
  */
 export type FsLocation = string | Uri
 

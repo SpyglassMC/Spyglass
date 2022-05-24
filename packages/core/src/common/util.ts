@@ -127,14 +127,6 @@ export function bufferToString(buffer: Uint8Array): string {
 	return ans
 }
 
-export function isErrorCode(e: unknown, code: string): boolean {
-	return e instanceof Error && (e as NodeJS.ErrnoException).code === code
-}
-
-export function isEnoent(e: unknown): boolean {
-	return isErrorCode(e, 'ENOENT')
-}
-
 export type Arrayable<T> = T | readonly T[]
 export namespace Arrayable {
 	export function is<T>(value: unknown, isT: (value: unknown) => value is T): value is Arrayable<T> {

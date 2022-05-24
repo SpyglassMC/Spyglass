@@ -102,7 +102,6 @@ export class Project implements ExternalEventEmitter {
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
-	readonly projectPath: string
 	readonly projectRoot: RootUriString
 	symbols: SymbolUtil
 
@@ -131,11 +130,11 @@ export class Project implements ExternalEventEmitter {
 		return this.#ctx
 	}
 
-	#cacheRoot: string
+	#cacheRoot: RootUriString
 	/**
-	 * File path to a directory where all cache files of Spyglass should be stored.
+	 * File URI to a directory where all cache files of Spyglass should be stored.
 	 */
-	get cacheRoot(): string {
+	get cacheRoot(): RootUriString {
 		return this.#cacheRoot
 	}
 
@@ -203,28 +202,29 @@ export class Project implements ExternalEventEmitter {
 
 	constructor({
 		cacheRoot,
+		defaultConfig,
 		downloader,
 		externals,
 		fs = FileService.create(externals, cacheRoot),
 		initializers = [],
 		logger = Logger.create(),
 		profilers = ProfilerFactory.noop(),
-		projectPath,
-	}: Options) {
+		projectRoot,
+	}: ProjectOptions) {
+		this.#cacheRoot = cacheRoot
 		this.#eventEmitter = new externals.event.EventEmitter()
 		this.externals = externals
-
-		this.#cacheRoot = cacheRoot
-		this.cacheService = new CacheService(cacheRoot, this)
-		this.#configService = new ConfigService(this)
-		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.fs = fs
 		this.#initializers = initializers
 		this.logger = logger
 		this.profilers = profilers
-		this.projectPath = projectPath
-		this.projectRoot = fileUtil.ensureEndingSlash(externals.uri.fromPath(projectPath))
+		this.projectRoot = projectRoot
+
+		this.cacheService = new CacheService(cacheRoot, this)
+		this.#configService = new ConfigService(this, defaultConfig)
+		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
+
 		this.#ctx = {}
 
 		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
@@ -359,7 +359,7 @@ export class Project implements ExternalEventEmitter {
 		const listProjectFiles = () => new Promise<void>(resolve => {
 			this.#watcherReady = false
 			this.#watcher = this.externals.fs
-				.watch(this.projectPath)
+				.watch(this.projectRoot)
 				.once('ready', () => {
 					this.#watcherReady = true
 					resolve()
@@ -476,7 +476,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	normalizeUri(uri: string): string {
-		return this.fs.mapFromDisk(fileUtil.normalize(this.externals, uri))
+		return this.fs.mapFromDisk(this.externals.uri.normalize(uri))
 	}
 
 	/**

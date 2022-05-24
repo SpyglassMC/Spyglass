@@ -1,5 +1,4 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import type { Externals } from '../common/index.js'
 import type { FileNode } from '../node/index.js'
 import { AstNode } from '../node/index.js'
 import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor/index.js'
@@ -8,13 +7,11 @@ import { Range } from '../source/index.js'
 import type { SymbolLocation, SymbolUsageType } from '../symbol/index.js'
 import { SymbolUsageTypes } from '../symbol/index.js'
 import { ColorizerContext, CompleterContext, FormatterContext, ProcessorContext, SignatureHelpProviderContext } from './Context.js'
-import { Downloader } from './Downloader.js'
-import { FileService } from './FileService.js'
 import { fileUtil } from './fileUtil.js'
 import { Hover } from './Hover.js'
-import { Logger } from './Logger.js'
+import type { Logger } from './Logger.js'
 import { ProfilerFactory } from './Profiler.js'
-import type { ProjectInitializer } from './Project.js'
+import type { ProjectOptions } from './Project.js'
 import { Project } from './Project.js'
 import { SymbolLocations } from './SymbolLocations.js'
 
@@ -32,8 +29,6 @@ interface Options {
 
 /* istanbul ignore next */
 export class Service {
-	readonly downloader: Downloader
-	readonly fs: FileService
 	readonly isDebugging: boolean
 	readonly logger: Logger
 	readonly profilers: ProfilerFactory

@@ -1,15 +1,45 @@
+import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
+import pako from 'pako'
+import { fileUtil } from '../../service/fileUtil.js'
+import { Uri } from '../index.js'
 import type { ExternalDownloader, ExternalDownloaderOptions, RemoteUriString } from './downloader.js'
-import type { ExternalEventEmitter, Externals, FsWatcher } from './index.js'
+import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation, FsWatcher } from './index.js'
 
+type Listener = (...args: unknown[]) => unknown
 class BrowserEventEmitter implements ExternalEventEmitter {
+	#listeners = new Map<string, { all: Set<Listener>, once: Set<Listener> }>()
+
 	emit(eventName: string, ...args: unknown[]): boolean {
-		console.log(`Event ${eventName} with ${JSON.stringify(args)} emitted.`)
+		const listeners = this.#listeners.get(eventName)
+		if (!listeners?.all?.size) {
+			return false
+		}
+		for (const listener of listeners.all) {
+			listener(...args)
+			if (listeners.once.has(listener)) {
+				listeners.all.delete(listener)
+				listeners.once.delete(listener)
+			}
+		}
 		return false
 	}
-	on(eventName: string, listener: (...args: unknown[]) => unknown): this {
+
+	on(eventName: string, listener: Listener): this {
+		if (!this.#listeners.has(eventName)) {
+			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
+		}
+		const listeners = this.#listeners.get(eventName)!
+		listeners.all.add(listener)
 		return this
 	}
-	once(eventName: string, listener: (...args: unknown[]) => unknown): this {
+
+	once(eventName: string, listener: Listener): this {
+		if (!this.#listeners.has(eventName)) {
+			this.#listeners.set(eventName, { all: new Set(), once: new Set() })
+		}
+		const listeners = this.#listeners.get(eventName)!
+		listeners.all.add(listener)
+		listeners.once.add(listener)
 		return this
 	}
 }
@@ -36,11 +66,17 @@ class BrowserExternalDownloader implements ExternalDownloader {
 }
 
 class BrowserFsWatcher implements FsWatcher {
-	on(eventName: unknown, listener: unknown): this {
+	on(event: string, listener: (...args: any[]) => unknown): this {
+		if (event === 'ready') {
+			listener()
+		}
 		return this
 	}
 
-	once(eventName: unknown, listener: unknown): this {
+	once(event: unknown, listener: (...args: any[]) => unknown): this {
+		if (event === 'ready') {
+			listener()
+		}
 		return this
 	}
 
@@ -49,16 +85,89 @@ class BrowserFsWatcher implements FsWatcher {
 	}
 }
 
+class BrowserFileSystem implements ExternalFileSystem {
+	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
+	private states: Record<string, { type: 'file', content: string } | { type: 'directory' }>
+
+	constructor() {
+		this.states = JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
+	}
+
+	private saveStates() {
+		localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
+	}
+
+	async chmod(_location: FsLocation, _mode: number): Promise<void> {
+		return
+	}
+	async getAllFiles(_location: FsLocation): Promise<string[]> {
+		return []
+	}
+	async mkdir(location: FsLocation, _options?: { mode?: number | undefined, recursive?: boolean | undefined } | undefined): Promise<void> {
+		location = fileUtil.ensureEndingSlash(location.toString())
+		if (this.states[location]) {
+			throw new Error(`EEXIST: ${location}`)
+		}
+		this.states[location] = { type: 'directory' }
+		this.saveStates()
+	}
+	async readFile(location: FsLocation): Promise<Uint8Array> {
+		location = location.toString()
+		const entry = this.states[location]
+		if (!entry) {
+			throw new Error(`ENOENT: ${location}`)
+		} else if (entry.type === 'directory') {
+			throw new Error(`EISDIR: ${location}`)
+		}
+		return new Uint8Array(arrayBufferFromBase64(entry.content))
+	}
+	async showFile(_path: FsLocation): Promise<void> {
+		throw new Error('showFile not supported on browser')
+	}
+	async stat(location: FsLocation): Promise<{ isDirectory(): boolean, isFile(): boolean }> {
+		location = location.toString()
+		const entry = this.states[location]
+		if (!entry) {
+			throw new Error(`ENOENT: ${location}`)
+		}
+		return {
+			isDirectory: () => entry.type === 'directory',
+			isFile: () => entry.type === 'file',
+		}
+	}
+	async unlink(location: FsLocation): Promise<void> {
+		location = location.toString()
+		const entry = this.states[location]
+		if (!entry) {
+			throw new Error(`ENOENT: ${location}`)
+		}
+		delete this.states[location]
+		this.saveStates()
+	}
+	watch(_location: FsLocation): FsWatcher {
+		return new BrowserFsWatcher()
+	}
+	async writeFile(location: FsLocation, data: string | Uint8Array, _options?: { mode: number } | undefined): Promise<void> {
+		location = location.toString()
+		if (typeof data === 'string') {
+			data = new TextEncoder().encode(data)
+		}
+		data = arrayBufferToBase64(data)
+		this.states[location] = { type: 'file', content: data }
+		this.saveStates()
+	}
+}
+
 export const BrowserExternals: Externals = {
 	archive: {
-		decompressBall(buffer, options) {
+		decompressBall(_buffer, _options) {
 			throw new Error('decompressBall not supported on browser.')
 		},
-		gunzip(buffer) {
-			throw new Error('gunzip not supported on browser.')
+		async gunzip(buffer) {
+			return pako.inflate(buffer)
 		},
-		gzip(buffer) {
-			throw new Error('gzip not supported on browser.')
+		async gzip(buffer) {
+			return pako.gzip(buffer)
 		},
 	},
 	crypto: {
@@ -67,62 +176,32 @@ export const BrowserExternals: Externals = {
 				data = new TextEncoder().encode(data)
 			}
 			const hash = await crypto.subtle.digest('SHA-1', data)
-			let ans = ''
-			for (const v of new Uint8Array(hash)) {
-				ans += v.toString(16).padStart(2, '0')
-			}
-			return ans
+			return uint8ArrayToHex(new Uint8Array(hash))
 		},
 	},
 	downloader: new BrowserExternalDownloader(),
+	error: {
+		isKind(e, kind) {
+			return e instanceof Error && e.message.startsWith(kind)
+		},
+	},
 	event: {
 		EventEmitter: BrowserEventEmitter,
 	},
-	fs: {
-		chmod(location, mode) {
-			throw new Error('fs not supported on browser.')
-		},
-		async getAllFiles(location) {
-			throw new Error('fs not supported on browser.')
-		},
-		async mkdir(location, options) {
-			throw new Error('fs not supported on browser.')
-		},
-		readFile(location) {
-			throw new Error('fs not supported on browser.')
-		},
-		async showFile(location): Promise<void> {
-			throw new Error('fs not supported on browser.')
-		},
-		stat(location) {
-			throw new Error('fs not supported on browser.')
-		},
-		unlink(location) {
-			throw new Error('fs not supported on browser.')
-		},
-		watch(location) {
-			return new BrowserFsWatcher()
-		},
-		writeFile(location, data, options) {
-			throw new Error('fs not supported on browser.')
-		},
-	},
-	path: {
-		join(...paths) {
-			throw new Error('path not supported on browser.')
-		},
-		resolve(...paths) {
-			throw new Error('path not supported on browser.')
-		},
-	},
+	fs: new BrowserFileSystem(),
 	uri: {
-		fromPath(filePath) {
-			throw new Error('uri not supported on browser.')
-		},
-		toPath(fileUri) {
-			throw new Error('uri not supported on browser.')
+		normalize(uri) {
+			return new Uri(uri).toString()
 		},
 	},
+}
+
+function uint8ArrayToHex(array: Uint8Array) {
+	let ans = ''
+	for (const v of array) {
+		ans += v.toString(16).padStart(2, '0')
+	}
+	return ans
 }
 
 Object.freeze(BrowserExternals)

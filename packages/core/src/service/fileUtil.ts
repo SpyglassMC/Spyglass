@@ -1,5 +1,5 @@
 import type { Externals, FsLocation } from '../common/index.js'
-import { bufferToString, isEnoent, isErrorCode, Uri } from '../common/index.js'
+import { bufferToString, Uri } from '../common/index.js'
 
 export type RootUriString = `${string}/`
 
@@ -76,20 +76,7 @@ export namespace fileUtil {
 
 	/* istanbul ignore next */
 	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
-		if (path instanceof Uri || isFileUri(path)) {
-			return new Uri('.', path)
-		} else {
-			return externals.path.resolve(path, '..')
-		}
-	}
-
-	/* istanbul ignore next */
-	export function normalize(externals: Externals, uri: string): string {
-		try {
-			return isFileUri(uri) ? externals.uri.fromPath(externals.uri.toPath(uri)) : new Uri(uri).toString()
-		} catch {
-			return uri
-		}
+		return new Uri('.', path)
 	}
 
 	/* istanbul ignore next */
@@ -102,7 +89,7 @@ export namespace fileUtil {
 		try {
 			await externals.fs.mkdir(path, { mode, recursive: true })
 		} catch (e) {
-			if (!isErrorCode(e, 'EEXIST')) {
+			if (!externals.error.isKind(e, 'EEXIST')) {
 				throw e
 			}
 		}
@@ -128,7 +115,7 @@ export namespace fileUtil {
 		try {
 			await chmod(externals, path, 0o666)
 		} catch (e) {
-			if (!isEnoent(e)) {
+			if (!externals.error.isKind(e, 'ENOENT')) {
 				throw e
 			}
 		}
