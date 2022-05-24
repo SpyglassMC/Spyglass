@@ -19,7 +19,7 @@ try {
 	await fsp.writeFile('playground/index.html', indexHtml)
 	await fsp.writeFile('playground/dist/index.js', indexJs)
 	await execFile('git', ['add', 'playground'])
-	await execFile('git', ['commit', '-m "🚀 Deploy playground"'], {
+	await execFile('git', ['commit', '-m 🚀 Deploy playground'], {
 		env: {
 			GIT_COMMITTER_EMAIL: process.env.GIT_AUTHOR_EMAIL,
 			GIT_COMMITTER_NAME: process.env.GIT_AUTHOR_NAME,
