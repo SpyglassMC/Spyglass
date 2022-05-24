@@ -7,10 +7,8 @@
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -b && npm run bundle",
-    "build:dev": "tsc -b && npm run bundle:dev",
-    "bundle": "./esbuild.js prod",
-    "bundle:dev": "./esbuild.js dev",
+    "build": "./esbuild.js prod",
+    "build:dev": "./esbuild.js dev",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
     "watch": "./esbuild.js watch"

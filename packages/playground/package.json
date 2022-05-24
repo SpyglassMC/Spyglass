@@ -1,0 +1,28 @@
+{
+  "name": "@spyglassmc/playground",
+  "version": "0.1.0-PLACEHOLDER",
+  "type": "module",
+  "private": true,
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "SPGoding",
+  "license": "MIT",
+  "scripts": {
+    "build": "./esbuild.js prod",
+    "build:dev": "./esbuild.js dev",
+    "release": "echo \"DO NOT PUBLISH\"",
+    "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
+    "watch": "./esbuild.js watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.14.39"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}
