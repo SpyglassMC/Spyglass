@@ -21,10 +21,10 @@ try {
 	await execFile('git', ['add', 'playground'])
 	await execFile('git', ['commit', '-m "🚀 Deploy playground"'], {
 		env: {
-			GIT_COMMITTER_EMAIL: env.process.GIT_AUTHOR_EMAIL,
-			GIT_COMMITTER_NAME: env.process.GIT_AUTHOR_NAME,
-			GIT_AUTHOR_EMAIL: env.process.GIT_AUTHOR_EMAIL,
-			GIT_AUTHOR_NAME: env.process.GIT_AUTHOR_NAME,
+			GIT_COMMITTER_EMAIL: process.env.process.GIT_AUTHOR_EMAIL,
+			GIT_COMMITTER_NAME: process.env.process.GIT_AUTHOR_NAME,
+			GIT_AUTHOR_EMAIL: process.env.process.GIT_AUTHOR_EMAIL,
+			GIT_AUTHOR_NAME: process.env.process.GIT_AUTHOR_NAME,
 		},
 	})
 	await execFile('git', ['push'])
