@@ -2,6 +2,7 @@
 <html>
 <head>
 	<meta charset='utf-8'>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 	<title>Spyglass Playground</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
 	<script type="module" src='dist/index.js'></script>
@@ -15,13 +16,10 @@
 		<option value="json">json</option>
 		<option value="mcfunction" selected>mcfunction</option>
 		<option value="mcdoc">mcdoc</option>
-		<option value="snbt">snbt</option>
+		<option data-language="nbt" value="snbt">snbt</option>
 	</select><br>
 
-	<label for="text">Text content:</label><br>
-	<textarea id="text" rows="40" cols="80"></textarea><br>
-	
-	<label for="errors">Errors:</label><br>
-	<p id="errors"></p>
+	<label for="text">Text content (press Escape followed by Tab to change focus instead of indent):</label><br>
+	<div id="editor-container" style="width:45%;height:40em;overflow:auto;"></div><br>
 </body>
 </html>

@@ -5,7 +5,7 @@
 	"license": "MIT",
 	"scripts": {
 		"build": "npm run build:tsc && npm run build:locales && npm run build:playground && npm run build:vscode-extension",
-		"build:dev": "npm run build:tsc && npm run build:locales && npm run build:playground && npm run build:vscode-extension:dev",
+		"build:dev": "npm run build:tsc && npm run build:locales && npm run build:playground:dev && npm run build:vscode-extension:dev",
 		"build:tsc": "tsc -b packages",
 		"build:locales": "cd packages/locales && npm run build; cd ../..",
 		"build:playground": "cd packages/playground && npm run build; cd ../..",
