@@ -14,14 +14,23 @@ jobs:
 
       - uses: ruby/setup-ruby@v1
         with:
-          working-directory: "docs"
-          ruby-version: "2.7"
-          bundler-cache: true
+          ruby-version: "3.0"
+          working-directory: docs
 
-      - uses: helaili/jekyll-action@v2
+      - uses: limjh16/jekyll-action-ts@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           jekyll_src: docs
-          target_branch: gh-pages
-          keep_history: true
-          pre_build_commands: gem install bundler:2.3.11
+          gem_src: docs
+          enable_cache: true
+
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: docs/_site
+          git-config-name: ${{ secrets.GIT_AUTHOR_NAME }}
+          git-config-email: ${{ secrets.GIT_AUTHOR_EMAIL }}
+          commit-message: 🚀 Deploy docs
+          clean: true
+          clean-exclude: |
+            playground
+          force: false
