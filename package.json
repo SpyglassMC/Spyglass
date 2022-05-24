@@ -2,7 +2,6 @@
 	"name": "@spyglassmc/root",
 	"private": true,
 	"version": "1.0.0",
-	"type": "module",
 	"license": "MIT",
 	"scripts": {
 		"build": "npm run build:tsc && npm run build:locales && npm run build:playground && npm run build:vscode-extension",
