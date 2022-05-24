@@ -10,8 +10,8 @@ plugins:
   - jekyll-asciidoc
 
 keep_files:
-  - .git/
-  - playground/
+  - .git
+  - playground
 
 exclude:
   - .sass-cache/
