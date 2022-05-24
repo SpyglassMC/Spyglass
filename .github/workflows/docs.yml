@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "docs/**"
+  workflow_dispatch:
 
 jobs:
   jekyll:
@@ -26,7 +27,7 @@ jobs:
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: docs/_site
+          folder: _site
           git-config-name: ${{ secrets.GIT_AUTHOR_NAME }}
           git-config-email: ${{ secrets.GIT_AUTHOR_EMAIL }}
           commit-message: 🚀 Deploy docs
