@@ -6,11 +6,11 @@ import type { Checker, Colorizer, Completer, InlayHintProvider } from '../proces
 import { checker, colorizer, completer, formatter, linter } from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
-import type { UriBinder } from '../symbol/index.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { Logger } from './Logger.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
+import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
 
 export interface LanguageOptions {
 	/**
@@ -53,6 +53,7 @@ export class MetaRegistry {
 	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
 	readonly #symbolRegistrars = new Map<string, SymbolRegistrarRegistration>()
 	readonly #uriBinders = new Set<UriBinder>()
+	#uriSorter: UriSorter = () => 0
 
 	constructor() {
 		checker.registerCheckers(this)
@@ -240,5 +241,13 @@ export class MetaRegistry {
 	}
 	public get uriBinders(): Set<UriBinder> {
 		return this.#uriBinders
+	}
+
+	public setUriSorter(uriSorter: UriSorterRegistration): void {
+		const nextSorter = this.#uriSorter
+		this.#uriSorter = (a, b) => uriSorter(a, b, nextSorter)
+	}
+	public get uriSorter(): UriSorter {
+		return this.#uriSorter
 	}
 }

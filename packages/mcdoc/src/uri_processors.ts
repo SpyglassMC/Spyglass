@@ -1,6 +1,6 @@
-import type { UriBinder, UriBinderContext } from '@spyglassmc/core'
+import type { UriBinder, UriBinderContext, UriSorterRegistration } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
-import { segToIdentifier } from './util.js'
+import { segToIdentifier } from './common.js'
 
 const Extension = '.mcdoc'
 const McdocRootPrefix = 'mcdoc/'
@@ -46,5 +46,15 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 					type: 'implementation',
 				},
 			})
+	}
+}
+
+export const uriSorter: UriSorterRegistration = (a, b, next) => {
+	if (a.endsWith(Extension) && !b.endsWith(Extension)) {
+		return -1
+	} else if (!a.endsWith(Extension) && b.endsWith(Extension)) {
+		return 1
+	} else {
+		return next(a, b)
 	}
 }

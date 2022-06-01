@@ -1,10 +1,10 @@
 import { SymbolFormatter, UriBinderContext } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
+import { uriBinder } from '@spyglassmc/mcdoc/lib/uri_processors.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { uriBinder } from '../../lib/binder/uriBinder.js'
 
-describe('uriBinder()', () => {
+describe('mcdoc uriBinder()', () => {
 	const suites: { uris: string[] }[] = [
 		{
 			uris: [

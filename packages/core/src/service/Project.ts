@@ -429,8 +429,7 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Bind URIs')
 
-			const files = [...addedFiles, ...changedFiles]// FIXME: mcdoc files might need to be parsed and checked before others.
-			// const docAndNodes = (await Promise.all(files.map(uri => limit(ensureParsed, uri)))).filter((r): r is DocAndNode => !!r)
+			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			const docAndNodes = (await Promise.all(files.map(uri => ensureParsed(uri)))).filter((r): r is DocAndNode => !!r)
 			__profiler.task('Parse Files')
 

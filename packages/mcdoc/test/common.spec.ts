@@ -1,8 +1,8 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
-import { identifierToSeg, segToIdentifier } from '../../lib/binder/util.js'
+import { identifierToSeg, segToIdentifier } from '@spyglassmc/mcdoc/lib/common.js'
 
-describe('binder/util.ts', () => {
+describe('mcdoc common.ts', () => {
 	const suites: { identifier: string, segments: string[] }[] = [
 		{
 			identifier: '::',

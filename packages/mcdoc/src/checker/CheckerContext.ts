@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import type { Symbol } from '@spyglassmc/core'
-import type { Segments } from '../binder/index.js'
+import type { Segments } from '../common.js'
 
 export interface CheckerContext extends core.CheckerContext {
 	/**
