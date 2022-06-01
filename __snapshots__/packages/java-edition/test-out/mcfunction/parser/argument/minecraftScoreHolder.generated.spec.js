@@ -11,19 +11,7 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"mu
         "start": 0,
         "end": 1
       },
-      "value": "*",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "*",
-        "path": [
-          "*"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "*"
     }
   },
   "errors": []
@@ -42,19 +30,7 @@ exports['mcfunction argument minecraft:score_holder Parse "*" with {"amount":"si
         "start": 0,
         "end": 1
       },
-      "value": "*",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "*",
-        "path": [
-          "*"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "*"
     }
   },
   "errors": []
@@ -73,19 +49,7 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
         "start": 0,
         "end": 4
       },
-      "value": "0123",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "0123",
-        "path": [
-          "0123"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "0123"
     }
   },
   "errors": []
@@ -104,19 +68,7 @@ exports['mcfunction argument minecraft:score_holder Parse "0123" with {"amount":
         "start": 0,
         "end": 4
       },
-      "value": "0123",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "0123",
-        "path": [
-          "0123"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "0123"
     }
   },
   "errors": []
@@ -431,19 +383,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                             "start": 15,
                             "end": 18
                           },
-                          "value": "foo",
-                          "symbol": {
-                            "category": "objective",
-                            "identifier": "foo",
-                            "path": [
-                              "foo"
-                            ],
-                            "reference": [
-                              {
-                                "uri": ""
-                              }
-                            ]
-                          }
+                          "value": "foo"
                         },
                         {
                           "type": "mcfunction:int_range",
@@ -481,19 +421,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "start": 15,
                           "end": 18
                         },
-                        "value": "foo",
-                        "symbol": {
-                          "category": "objective",
-                          "identifier": "foo",
-                          "path": [
-                            "foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        "value": "foo"
                       },
                       "sep": {
                         "start": 19,
@@ -590,19 +518,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "start": 15,
                           "end": 18
                         },
-                        "value": "foo",
-                        "symbol": {
-                          "category": "objective",
-                          "identifier": "foo",
-                          "path": [
-                            "foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        "value": "foo"
                       },
                       {
                         "type": "mcfunction:int_range",
@@ -640,19 +556,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "start": 15,
                         "end": 18
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "objective",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     },
                     "sep": {
                       "start": 19,
@@ -767,19 +671,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                           "start": 15,
                           "end": 18
                         },
-                        "value": "foo",
-                        "symbol": {
-                          "category": "objective",
-                          "identifier": "foo",
-                          "path": [
-                            "foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        "value": "foo"
                       },
                       {
                         "type": "mcfunction:int_range",
@@ -817,19 +709,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "start": 15,
                         "end": 18
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "objective",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     },
                     "sep": {
                       "start": 19,
@@ -926,19 +806,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                         "start": 15,
                         "end": 18
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "objective",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     },
                     {
                       "type": "mcfunction:int_range",
@@ -976,19 +844,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
                       "start": 15,
                       "end": 18
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "objective",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   },
                   "sep": {
                     "start": 19,
@@ -1885,19 +1741,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                         "start": 10,
                         "end": 13
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "tag",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     }
                   ],
                   "inverted": false,
@@ -1907,19 +1751,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 10,
                       "end": 13
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 }
               ],
@@ -1970,19 +1802,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 10,
                       "end": 13
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": false,
@@ -1992,19 +1812,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 10,
                     "end": 13
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               },
               "end": {
@@ -2070,19 +1878,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                         "start": 24,
                         "end": 27
                       },
-                      "value": "bar",
-                      "symbol": {
-                        "category": "tag",
-                        "identifier": "bar",
-                        "path": [
-                          "bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "bar"
                     }
                   ],
                   "inverted": true,
@@ -2092,19 +1888,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 }
               ],
@@ -2163,19 +1947,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": true,
@@ -2185,19 +1957,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               },
               "end": {
@@ -2266,19 +2026,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 10,
                       "end": 13
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": false,
@@ -2288,19 +2036,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 10,
                     "end": 13
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               }
             ],
@@ -2351,19 +2087,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 10,
                     "end": 13
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               ],
               "inverted": false,
@@ -2373,19 +2097,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "start": 10,
                   "end": 13
                 },
-                "value": "foo",
-                "symbol": {
-                  "category": "tag",
-                  "identifier": "foo",
-                  "path": [
-                    "foo"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "foo"
               }
             },
             "end": {
@@ -2451,19 +2163,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "tag",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": true,
@@ -2473,19 +2173,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               }
             ],
@@ -2544,19 +2232,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "tag",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               ],
               "inverted": true,
@@ -2566,19 +2242,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
                   "start": 24,
                   "end": 27
                 },
-                "value": "bar",
-                "symbol": {
-                  "category": "tag",
-                  "identifier": "bar",
-                  "path": [
-                    "bar"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "bar"
               }
             },
             "end": {
@@ -2685,19 +2349,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                         "start": 13,
                         "end": 16
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "team",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     }
                   ],
                   "inverted": true,
@@ -2707,19 +2359,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 13,
                       "end": 16
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 }
               ],
@@ -2778,19 +2418,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 13,
                       "end": 16
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": true,
@@ -2800,19 +2428,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 13,
                     "end": 16
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               },
               "end": {
@@ -2878,19 +2494,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                         "start": 28,
                         "end": 31
                       },
-                      "value": "bar",
-                      "symbol": {
-                        "category": "team",
-                        "identifier": "bar",
-                        "path": [
-                          "bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "bar"
                     }
                   ],
                   "inverted": true,
@@ -2900,19 +2504,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 28,
                       "end": 31
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 }
               ],
@@ -2971,19 +2563,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 28,
                       "end": 31
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": true,
@@ -2993,19 +2573,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 28,
                     "end": 31
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               },
               "end": {
@@ -3082,19 +2650,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 13,
                       "end": 16
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": true,
@@ -3104,19 +2660,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 13,
                     "end": 16
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               }
             ],
@@ -3175,19 +2719,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 13,
                     "end": 16
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               ],
               "inverted": true,
@@ -3197,19 +2729,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "start": 13,
                   "end": 16
                 },
-                "value": "foo",
-                "symbol": {
-                  "category": "team",
-                  "identifier": "foo",
-                  "path": [
-                    "foo"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "foo"
               }
             },
             "end": {
@@ -3275,19 +2795,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                       "start": 28,
                       "end": 31
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": true,
@@ -3297,19 +2805,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 28,
                     "end": 31
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               }
             ],
@@ -3368,19 +2864,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                     "start": 28,
                     "end": 31
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               ],
               "inverted": true,
@@ -3390,19 +2874,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
                   "start": 28,
                   "end": 31
                 },
-                "value": "bar",
-                "symbol": {
-                  "category": "team",
-                  "identifier": "bar",
-                  "path": [
-                    "bar"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "bar"
               }
             },
             "end": {
@@ -3501,19 +2973,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                         "start": 11,
                         "end": 14
                       },
-                      "value": "foo",
-                      "symbol": {
-                        "category": "team",
-                        "identifier": "foo",
-                        "path": [
-                          "foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "foo"
                     }
                   ],
                   "inverted": false,
@@ -3523,19 +2983,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 11,
                       "end": 14
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 }
               ],
@@ -3586,19 +3034,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 11,
                       "end": 14
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": false,
@@ -3608,19 +3044,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 11,
                     "end": 14
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               },
               "end": {
@@ -3678,19 +3102,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                         "start": 24,
                         "end": 27
                       },
-                      "value": "bar",
-                      "symbol": {
-                        "category": "team",
-                        "identifier": "bar",
-                        "path": [
-                          "bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      "value": "bar"
                     }
                   ],
                   "inverted": false,
@@ -3700,19 +3112,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 }
               ],
@@ -3763,19 +3163,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": false,
@@ -3785,19 +3173,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               },
               "end": {
@@ -3866,19 +3242,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 11,
                       "end": 14
                     },
-                    "value": "foo",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "foo",
-                      "path": [
-                        "foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "foo"
                   }
                 ],
                 "inverted": false,
@@ -3888,19 +3252,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 11,
                     "end": 14
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               }
             ],
@@ -3951,19 +3303,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 11,
                     "end": 14
                   },
-                  "value": "foo",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "foo",
-                    "path": [
-                      "foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "foo"
                 }
               ],
               "inverted": false,
@@ -3973,19 +3313,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "start": 11,
                   "end": 14
                 },
-                "value": "foo",
-                "symbol": {
-                  "category": "team",
-                  "identifier": "foo",
-                  "path": [
-                    "foo"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "foo"
               }
             },
             "end": {
@@ -4043,19 +3371,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                       "start": 24,
                       "end": 27
                     },
-                    "value": "bar",
-                    "symbol": {
-                      "category": "team",
-                      "identifier": "bar",
-                      "path": [
-                        "bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    "value": "bar"
                   }
                 ],
                 "inverted": false,
@@ -4065,19 +3381,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               }
             ],
@@ -4128,19 +3432,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                     "start": 24,
                     "end": 27
                   },
-                  "value": "bar",
-                  "symbol": {
-                    "category": "team",
-                    "identifier": "bar",
-                    "path": [
-                      "bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  "value": "bar"
                 }
               ],
               "inverted": false,
@@ -4150,19 +3442,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
                   "start": 24,
                   "end": 27
                 },
-                "value": "bar",
-                "symbol": {
-                  "category": "team",
-                  "identifier": "bar",
-                  "path": [
-                    "bar"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                "value": "bar"
               }
             },
             "end": {
@@ -4272,19 +3552,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                       },
                       "path": [
                         "zombie"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:zombie",
-                        "path": [
-                          "minecraft:zombie"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -4296,19 +3564,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -4361,19 +3617,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -4385,19 +3629,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             }
@@ -4464,19 +3696,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -4488,19 +3708,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -4553,19 +3761,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -4577,19 +3773,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
                 },
                 "path": [
                   "zombie"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:zombie",
-                  "path": [
-                    "minecraft:zombie"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             }
           }
@@ -8315,19 +7499,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                       },
                       "path": [
                         "skeleton"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:skeleton",
-                        "path": [
-                          "minecraft:skeleton"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": true,
@@ -8339,19 +7511,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -8412,19 +7572,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -8436,19 +7584,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -8516,19 +7652,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                       },
                       "path": [
                         "zombie"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:zombie",
-                        "path": [
-                          "minecraft:zombie"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": true,
@@ -8540,19 +7664,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -8613,19 +7725,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -8637,19 +7737,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -8728,19 +7816,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -8752,19 +7828,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -8825,19 +7889,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": true,
@@ -8849,19 +7901,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 },
                 "path": [
                   "skeleton"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:skeleton",
-                  "path": [
-                    "minecraft:skeleton"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -8929,19 +7969,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -8953,19 +7981,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -9026,19 +8042,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": true,
@@ -9050,19 +8054,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = ! skeleton
                 },
                 "path": [
                   "zombie"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:zombie",
-                  "path": [
-                    "minecraft:zombie"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -9167,19 +8159,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                       "isTag": true,
                       "path": [
                         "tag1"
-                      ],
-                      "symbol": {
-                        "category": "tag/entity_type",
-                        "identifier": "minecraft:tag1",
-                        "path": [
-                          "minecraft:tag1"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -9192,19 +8172,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag1",
-                      "path": [
-                        "minecraft:tag1"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -9258,19 +8226,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag1",
-                      "path": [
-                        "minecraft:tag1"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -9283,19 +8239,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag1",
-                    "path": [
-                      "minecraft:tag1"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -9356,19 +8300,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                       "isTag": true,
                       "path": [
                         "tag2"
-                      ],
-                      "symbol": {
-                        "category": "tag/entity_type",
-                        "identifier": "minecraft:tag2",
-                        "path": [
-                          "minecraft:tag2"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -9381,19 +8313,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag2",
-                      "path": [
-                        "minecraft:tag2"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -9447,19 +8367,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag2",
-                      "path": [
-                        "minecraft:tag2"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -9472,19 +8380,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag2",
-                    "path": [
-                      "minecraft:tag2"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -9556,19 +8452,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag1"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag1",
-                      "path": [
-                        "minecraft:tag1"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -9581,19 +8465,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag1",
-                    "path": [
-                      "minecraft:tag1"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -9647,19 +8519,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag1"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag1",
-                    "path": [
-                      "minecraft:tag1"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -9672,19 +8532,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "isTag": true,
                 "path": [
                   "tag1"
-                ],
-                "symbol": {
-                  "category": "tag/entity_type",
-                  "identifier": "minecraft:tag1",
-                  "path": [
-                    "minecraft:tag1"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -9745,19 +8593,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                     "isTag": true,
                     "path": [
                       "tag2"
-                    ],
-                    "symbol": {
-                      "category": "tag/entity_type",
-                      "identifier": "minecraft:tag2",
-                      "path": [
-                        "minecraft:tag2"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -9770,19 +8606,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag2",
-                    "path": [
-                      "minecraft:tag2"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -9836,19 +8660,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                   "isTag": true,
                   "path": [
                     "tag2"
-                  ],
-                  "symbol": {
-                    "category": "tag/entity_type",
-                    "identifier": "minecraft:tag2",
-                    "path": [
-                      "minecraft:tag2"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -9861,19 +8673,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = #tag1 , ty
                 "isTag": true,
                 "path": [
                   "tag2"
-                ],
-                "symbol": {
-                  "category": "tag/entity_type",
-                  "identifier": "minecraft:tag2",
-                  "path": [
-                    "minecraft:tag2"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -9977,19 +8777,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                       },
                       "path": [
                         "player"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:player",
-                        "path": [
-                          "minecraft:player"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -10001,19 +8789,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:player",
-                      "path": [
-                        "minecraft:player"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -10066,19 +8842,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:player",
-                      "path": [
-                        "minecraft:player"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10090,19 +8854,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:player",
-                    "path": [
-                      "minecraft:player"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             }
@@ -10169,19 +8921,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                     },
                     "path": [
                       "player"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:player",
-                      "path": [
-                        "minecraft:player"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10193,19 +8933,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:player",
-                    "path": [
-                      "minecraft:player"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -10258,19 +8986,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                   },
                   "path": [
                     "player"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:player",
-                    "path": [
-                      "minecraft:player"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -10282,19 +8998,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
                 },
                 "path": [
                   "player"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:player",
-                  "path": [
-                    "minecraft:player"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             }
           }
@@ -10394,19 +9098,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                       },
                       "path": [
                         "skeleton"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:skeleton",
-                        "path": [
-                          "minecraft:skeleton"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -10418,19 +9110,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -10483,19 +9163,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10507,19 +9175,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -10579,19 +9235,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                       },
                       "path": [
                         "zombie"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:zombie",
-                        "path": [
-                          "minecraft:zombie"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -10603,19 +9247,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -10668,19 +9300,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10692,19 +9312,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -10775,19 +9383,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "skeleton"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:skeleton",
-                      "path": [
-                        "minecraft:skeleton"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10799,19 +9395,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -10864,19 +9448,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "skeleton"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:skeleton",
-                    "path": [
-                      "minecraft:skeleton"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -10888,19 +9460,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 },
                 "path": [
                   "skeleton"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:skeleton",
-                  "path": [
-                    "minecraft:skeleton"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -10960,19 +9520,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                     },
                     "path": [
                       "zombie"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:zombie",
-                      "path": [
-                        "minecraft:zombie"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10984,19 +9532,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -11049,19 +9585,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                   },
                   "path": [
                     "zombie"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:zombie",
-                    "path": [
-                      "minecraft:zombie"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -11073,19 +9597,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
                 },
                 "path": [
                   "zombie"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:zombie",
-                  "path": [
-                    "minecraft:zombie"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -11763,19 +10275,7 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
         "start": 0,
         "end": 6
       },
-      "value": "Player",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "Player",
-        "path": [
-          "Player"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "Player"
     }
   },
   "errors": []
@@ -11794,19 +10294,7 @@ exports['mcfunction argument minecraft:score_holder Parse "Player" with {"amount
         "start": 0,
         "end": 6
       },
-      "value": "Player",
-      "symbol": {
-        "category": "score_holder",
-        "identifier": "Player",
-        "path": [
-          "Player"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      "value": "Player"
     }
   },
   "errors": []

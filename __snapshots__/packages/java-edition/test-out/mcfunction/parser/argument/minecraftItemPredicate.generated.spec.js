@@ -14,19 +14,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick" 1'] = {
       "isTag": true,
       "path": [
         "stick"
-      ],
-      "symbol": {
-        "category": "tag/item",
-        "identifier": "minecraft:stick",
-        "path": [
-          "minecraft:stick"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -48,19 +36,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
       "isTag": true,
       "path": [
         "stick"
-      ],
-      "symbol": {
-        "category": "tag/item",
-        "identifier": "minecraft:stick",
-        "path": [
-          "minecraft:stick"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     },
     "nbt": {
       "type": "nbt:compound",
@@ -184,19 +160,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "minecraft:stick" 1'
       "namespace": "minecraft",
       "path": [
         "stick"
-      ],
-      "symbol": {
-        "category": "item",
-        "identifier": "minecraft:stick",
-        "path": [
-          "minecraft:stick"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -217,19 +181,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "stick" 1'] = {
       },
       "path": [
         "stick"
-      ],
-      "symbol": {
-        "category": "item",
-        "identifier": "minecraft:stick",
-        "path": [
-          "minecraft:stick"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []

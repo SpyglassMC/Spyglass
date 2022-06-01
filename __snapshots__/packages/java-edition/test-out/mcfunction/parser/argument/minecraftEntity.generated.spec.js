@@ -199,19 +199,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           "namespace": "minecraft",
                           "path": [
                             "foo"
-                          ],
-                          "symbol": {
-                            "category": "advancement",
-                            "identifier": "minecraft:foo",
-                            "path": [
-                              "minecraft:foo"
-                            ],
-                            "reference": [
-                              {
-                                "uri": ""
-                              }
-                            ]
-                          }
+                          ]
                         },
                         {
                           "type": "boolean",
@@ -231,19 +219,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "foo"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:foo",
-                          "path": [
-                            "minecraft:foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       "sep": {
                         "start": 35,
@@ -278,19 +254,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                           "namespace": "minecraft",
                           "path": [
                             "bar"
-                          ],
-                          "symbol": {
-                            "category": "advancement",
-                            "identifier": "minecraft:bar",
-                            "path": [
-                              "minecraft:bar"
-                            ],
-                            "reference": [
-                              {
-                                "uri": ""
-                              }
-                            ]
-                          }
+                          ]
                         },
                         {
                           "type": "mcfunction:entity_selector/arguments/advancements/criteria",
@@ -384,19 +348,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "bar"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:bar",
-                          "path": [
-                            "minecraft:bar"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       "sep": {
                         "start": 58,
@@ -549,19 +501,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "foo"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:foo",
-                          "path": [
-                            "minecraft:foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       {
                         "type": "boolean",
@@ -581,19 +521,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "foo"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:foo",
-                        "path": [
-                          "minecraft:foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     "sep": {
                       "start": 35,
@@ -628,19 +556,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "bar"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:bar",
-                          "path": [
-                            "minecraft:bar"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       {
                         "type": "mcfunction:entity_selector/arguments/advancements/criteria",
@@ -734,19 +650,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "bar"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:bar",
-                        "path": [
-                          "minecraft:bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     "sep": {
                       "start": 58,
@@ -917,19 +821,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "foo"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:foo",
-                          "path": [
-                            "minecraft:foo"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       {
                         "type": "boolean",
@@ -949,19 +841,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "foo"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:foo",
-                        "path": [
-                          "minecraft:foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     "sep": {
                       "start": 35,
@@ -996,19 +876,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                         "namespace": "minecraft",
                         "path": [
                           "bar"
-                        ],
-                        "symbol": {
-                          "category": "advancement",
-                          "identifier": "minecraft:bar",
-                          "path": [
-                            "minecraft:bar"
-                          ],
-                          "reference": [
-                            {
-                              "uri": ""
-                            }
-                          ]
-                        }
+                        ]
                       },
                       {
                         "type": "mcfunction:entity_selector/arguments/advancements/criteria",
@@ -1102,19 +970,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "bar"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:bar",
-                        "path": [
-                          "minecraft:bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     "sep": {
                       "start": 58,
@@ -1267,19 +1123,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "foo"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:foo",
-                        "path": [
-                          "minecraft:foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     {
                       "type": "boolean",
@@ -1299,19 +1143,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                     "namespace": "minecraft",
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "advancement",
-                      "identifier": "minecraft:foo",
-                      "path": [
-                        "minecraft:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   },
                   "sep": {
                     "start": 35,
@@ -1346,19 +1178,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                       "namespace": "minecraft",
                       "path": [
                         "bar"
-                      ],
-                      "symbol": {
-                        "category": "advancement",
-                        "identifier": "minecraft:bar",
-                        "path": [
-                          "minecraft:bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     },
                     {
                       "type": "mcfunction:entity_selector/arguments/advancements/criteria",
@@ -1452,19 +1272,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
                     "namespace": "minecraft",
                     "path": [
                       "bar"
-                    ],
-                    "symbol": {
-                      "category": "advancement",
-                      "identifier": "minecraft:bar",
-                      "path": [
-                        "minecraft:bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   },
                   "sep": {
                     "start": 58,
@@ -8743,19 +8551,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                       "namespace": "spgoding",
                       "path": [
                         "foo"
-                      ],
-                      "symbol": {
-                        "category": "predicate",
-                        "identifier": "spgoding:foo",
-                        "path": [
-                          "spgoding:foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -8768,19 +8564,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:foo",
-                      "path": [
-                        "spgoding:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -8834,19 +8618,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:foo",
-                      "path": [
-                        "spgoding:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -8859,19 +8631,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:foo",
-                    "path": [
-                      "spgoding:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -8940,19 +8700,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                       "namespace": "spgoding",
                       "path": [
                         "bar"
-                      ],
-                      "symbol": {
-                        "category": "predicate",
-                        "identifier": "spgoding:bar",
-                        "path": [
-                          "spgoding:bar"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": true,
@@ -8965,19 +8713,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "bar"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:bar",
-                      "path": [
-                        "spgoding:bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -9039,19 +8775,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "bar"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:bar",
-                      "path": [
-                        "spgoding:bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -9064,19 +8788,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "bar"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:bar",
-                    "path": [
-                      "spgoding:bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               },
               "end": {
@@ -9148,19 +8860,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:foo",
-                      "path": [
-                        "spgoding:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -9173,19 +8873,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:foo",
-                    "path": [
-                      "spgoding:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -9239,19 +8927,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:foo",
-                    "path": [
-                      "spgoding:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -9264,19 +8940,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                 "namespace": "spgoding",
                 "path": [
                   "foo"
-                ],
-                "symbol": {
-                  "category": "predicate",
-                  "identifier": "spgoding:foo",
-                  "path": [
-                    "spgoding:foo"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -9345,19 +9009,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                     "namespace": "spgoding",
                     "path": [
                       "bar"
-                    ],
-                    "symbol": {
-                      "category": "predicate",
-                      "identifier": "spgoding:bar",
-                      "path": [
-                        "spgoding:bar"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": true,
@@ -9370,19 +9022,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "bar"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:bar",
-                    "path": [
-                      "spgoding:bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -9444,19 +9084,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                   "namespace": "spgoding",
                   "path": [
                     "bar"
-                  ],
-                  "symbol": {
-                    "category": "predicate",
-                    "identifier": "spgoding:bar",
-                    "path": [
-                      "spgoding:bar"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": true,
@@ -9469,19 +9097,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
                 "namespace": "spgoding",
                 "path": [
                   "bar"
-                ],
-                "symbol": {
-                  "category": "predicate",
-                  "identifier": "spgoding:bar",
-                  "path": [
-                    "spgoding:bar"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             },
             "end": {
@@ -10145,19 +9761,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                       },
                       "path": [
                         "foo"
-                      ],
-                      "symbol": {
-                        "category": "entity_type",
-                        "identifier": "minecraft:foo",
-                        "path": [
-                          "minecraft:foo"
-                        ],
-                        "reference": [
-                          {
-                            "uri": ""
-                          }
-                        ]
-                      }
+                      ]
                     }
                   ],
                   "inverted": false,
@@ -10169,19 +9773,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                     },
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:foo",
-                      "path": [
-                        "minecraft:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 }
               ],
@@ -10234,19 +9826,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                     },
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:foo",
-                      "path": [
-                        "minecraft:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10258,19 +9838,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                   },
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:foo",
-                    "path": [
-                      "minecraft:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             }
@@ -10337,19 +9905,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                     },
                     "path": [
                       "foo"
-                    ],
-                    "symbol": {
-                      "category": "entity_type",
-                      "identifier": "minecraft:foo",
-                      "path": [
-                        "minecraft:foo"
-                      ],
-                      "reference": [
-                        {
-                          "uri": ""
-                        }
-                      ]
-                    }
+                    ]
                   }
                 ],
                 "inverted": false,
@@ -10361,19 +9917,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                   },
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:foo",
-                    "path": [
-                      "minecraft:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               }
             ],
@@ -10426,19 +9970,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                   },
                   "path": [
                     "foo"
-                  ],
-                  "symbol": {
-                    "category": "entity_type",
-                    "identifier": "minecraft:foo",
-                    "path": [
-                      "minecraft:foo"
-                    ],
-                    "reference": [
-                      {
-                        "uri": ""
-                      }
-                    ]
-                  }
+                  ]
                 }
               ],
               "inverted": false,
@@ -10450,19 +9982,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
                 },
                 "path": [
                   "foo"
-                ],
-                "symbol": {
-                  "category": "entity_type",
-                  "identifier": "minecraft:foo",
-                  "path": [
-                    "minecraft:foo"
-                  ],
-                  "reference": [
-                    {
-                      "uri": ""
-                    }
-                  ]
-                }
+                ]
               }
             }
           }

@@ -27,19 +27,7 @@ exports['mcfunction argument minecraft:objective_criteria Parse "minecraft.used:
         "namespace": "minecraft",
         "path": [
           "used"
-        ],
-        "symbol": {
-          "category": "stat_type",
-          "identifier": "minecraft:used",
-          "path": [
-            "minecraft:used"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "resource_location",
@@ -50,19 +38,7 @@ exports['mcfunction argument minecraft:objective_criteria Parse "minecraft.used:
         "namespace": "minecraft",
         "path": [
           "spyglass"
-        ],
-        "symbol": {
-          "category": "item",
-          "identifier": "minecraft:spyglass",
-          "path": [
-            "minecraft:spyglass"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       }
     ]
   },
@@ -85,19 +61,7 @@ exports['mcfunction argument minecraft:objective_criteria Parse "used:spyglass" 
         },
         "path": [
           "used"
-        ],
-        "symbol": {
-          "category": "stat_type",
-          "identifier": "minecraft:used",
-          "path": [
-            "minecraft:used"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "resource_location",
@@ -107,19 +71,7 @@ exports['mcfunction argument minecraft:objective_criteria Parse "used:spyglass" 
         },
         "path": [
           "spyglass"
-        ],
-        "symbol": {
-          "category": "item",
-          "identifier": "minecraft:spyglass",
-          "path": [
-            "minecraft:spyglass"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       }
     ]
   },

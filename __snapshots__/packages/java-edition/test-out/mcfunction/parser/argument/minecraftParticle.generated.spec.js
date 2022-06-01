@@ -14,19 +14,7 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
         },
         "path": [
           "block"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:block",
-          "path": [
-            "minecraft:block"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcfunction:block",
@@ -43,19 +31,7 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
             },
             "path": [
               "stone"
-            ],
-            "symbol": {
-              "category": "block",
-              "identifier": "minecraft:stone",
-              "path": [
-                "minecraft:stone"
-              ],
-              "reference": [
-                {
-                  "uri": ""
-                }
-              ]
-            }
+            ]
           }
         ],
         "id": {
@@ -66,19 +42,7 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
           },
           "path": [
             "stone"
-          ],
-          "symbol": {
-            "category": "block",
-            "identifier": "minecraft:stone",
-            "path": [
-              "minecraft:stone"
-            ],
-            "reference": [
-              {
-                "uri": ""
-              }
-            ]
-          }
+          ]
         }
       }
     ],
@@ -90,19 +54,7 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
       },
       "path": [
         "block"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:block",
-        "path": [
-          "minecraft:block"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -124,19 +76,7 @@ exports['mcfunction argument minecraft:particle Parse "cloud" 1'] = {
         },
         "path": [
           "cloud"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:cloud",
-          "path": [
-            "minecraft:cloud"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       }
     ],
     "id": {
@@ -147,19 +87,7 @@ exports['mcfunction argument minecraft:particle Parse "cloud" 1'] = {
       },
       "path": [
         "cloud"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:cloud",
-        "path": [
-          "minecraft:cloud"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -181,19 +109,7 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1']
         },
         "path": [
           "dust"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:dust",
-          "path": [
-            "minecraft:dust"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcfunction:vector",
@@ -260,19 +176,7 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1']
       },
       "path": [
         "dust"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:dust",
-        "path": [
-          "minecraft:dust"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -294,19 +198,7 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
         },
         "path": [
           "dust_color_transition"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:dust_color_transition",
-          "path": [
-            "minecraft:dust_color_transition"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcfunction:vector",
@@ -421,19 +313,7 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
       },
       "path": [
         "dust_color_transition"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:dust_color_transition",
-        "path": [
-          "minecraft:dust_color_transition"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -455,19 +335,7 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
         },
         "path": [
           "item"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:item",
-          "path": [
-            "minecraft:item"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcfunction:item",
@@ -484,19 +352,7 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
             },
             "path": [
               "carrot_on_a_stick"
-            ],
-            "symbol": {
-              "category": "item",
-              "identifier": "minecraft:carrot_on_a_stick",
-              "path": [
-                "minecraft:carrot_on_a_stick"
-              ],
-              "reference": [
-                {
-                  "uri": ""
-                }
-              ]
-            }
+            ]
           }
         ],
         "id": {
@@ -507,19 +363,7 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
           },
           "path": [
             "carrot_on_a_stick"
-          ],
-          "symbol": {
-            "category": "item",
-            "identifier": "minecraft:carrot_on_a_stick",
-            "path": [
-              "minecraft:carrot_on_a_stick"
-            ],
-            "reference": [
-              {
-                "uri": ""
-              }
-            ]
-          }
+          ]
         }
       }
     ],
@@ -531,19 +375,7 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
       },
       "path": [
         "item"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:item",
-        "path": [
-          "minecraft:item"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -565,19 +397,7 @@ exports['mcfunction argument minecraft:particle Parse "sculk_charge 4.2" 1'] = {
         },
         "path": [
           "sculk_charge"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:sculk_charge",
-          "path": [
-            "minecraft:sculk_charge"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "float",
@@ -596,19 +416,7 @@ exports['mcfunction argument minecraft:particle Parse "sculk_charge 4.2" 1'] = {
       },
       "path": [
         "sculk_charge"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:sculk_charge",
-        "path": [
-          "minecraft:sculk_charge"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -630,19 +438,7 @@ exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 0.4
         },
         "path": [
           "vibration"
-        ],
-        "symbol": {
-          "category": "particle_type",
-          "identifier": "minecraft:vibration",
-          "path": [
-            "minecraft:vibration"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcfunction:vector",
@@ -735,19 +531,7 @@ exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 0.4
       },
       "path": [
         "vibration"
-      ],
-      "symbol": {
-        "category": "particle_type",
-        "identifier": "minecraft:vibration",
-        "path": [
-          "minecraft:vibration"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []

@@ -9,19 +9,7 @@ exports['mcfunction argument minecraft:resource_or_tag Parse "#minecraft:skeleto
     "namespace": "minecraft",
     "path": [
       "skeletons"
-    ],
-    "symbol": {
-      "category": "tag/bossbar",
-      "identifier": "minecraft:skeletons",
-      "path": [
-        "minecraft:skeletons"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -36,19 +24,7 @@ exports['mcfunction argument minecraft:resource_or_tag Parse "#skeletons" with {
     "isTag": true,
     "path": [
       "skeletons"
-    ],
-    "symbol": {
-      "category": "tag/bossbar",
-      "identifier": "minecraft:skeletons",
-      "path": [
-        "minecraft:skeletons"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -62,19 +38,7 @@ exports['mcfunction argument minecraft:resource_or_tag Parse "012" with {"regist
     },
     "path": [
       "012"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:012",
-      "path": [
-        "minecraft:012"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -88,19 +52,7 @@ exports['mcfunction argument minecraft:resource_or_tag Parse "foo" with {"regist
     },
     "path": [
       "foo"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:foo",
-      "path": [
-        "minecraft:foo"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -115,19 +67,7 @@ exports['mcfunction argument minecraft:resource_or_tag Parse "foo:bar" with {"re
     "namespace": "foo",
     "path": [
       "bar"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "foo:bar",
-      "path": [
-        "foo:bar"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }

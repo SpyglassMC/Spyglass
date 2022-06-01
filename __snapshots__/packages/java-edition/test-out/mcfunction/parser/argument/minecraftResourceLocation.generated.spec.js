@@ -21,19 +21,7 @@ exports['mcfunction argument minecraft:resource_location Parse "012" with {"cate
     },
     "path": [
       "012"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:012",
-      "path": [
-        "minecraft:012"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -61,19 +49,7 @@ exports['mcfunction argument minecraft:resource_location Parse "foo" with {"cate
     },
     "path": [
       "foo"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:foo",
-      "path": [
-        "minecraft:foo"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -103,19 +79,7 @@ exports['mcfunction argument minecraft:resource_location Parse "foo:bar" with {"
     "namespace": "foo",
     "path": [
       "bar"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "foo:bar",
-      "path": [
-        "foo:bar"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }

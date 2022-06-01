@@ -77,20 +77,7 @@ exports['mcdoc dispatchStatement Parse "#[since=1.17]↓⮀⮀⮀⮀dispatch min
         "namespace": "minecraft",
         "path": [
           "entity"
-        ],
-        "symbol": {
-          "category": "mcdoc/dispatcher",
-          "identifier": "minecraft:entity",
-          "path": [
-            "minecraft:entity"
-          ],
-          "reference": [
-            {
-              "uri": "",
-              "accessType": 1
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcdoc:index_body",
@@ -174,20 +161,7 @@ exports['mcdoc dispatchStatement Parse "dispatch :entity[cow] to boolean" 1'] = 
         "namespace": "",
         "path": [
           "entity"
-        ],
-        "symbol": {
-          "category": "mcdoc/dispatcher",
-          "identifier": "minecraft:entity",
-          "path": [
-            "minecraft:entity"
-          ],
-          "reference": [
-            {
-              "uri": "",
-              "accessType": 1
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcdoc:index_body",
@@ -263,20 +237,7 @@ exports['mcdoc dispatchStatement Parse "dispatch minecraft:entity[] to any" 1'] 
         "namespace": "minecraft",
         "path": [
           "entity"
-        ],
-        "symbol": {
-          "category": "mcdoc/dispatcher",
-          "identifier": "minecraft:entity",
-          "path": [
-            "minecraft:entity"
-          ],
-          "reference": [
-            {
-              "uri": "",
-              "accessType": 1
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcdoc:index_body",

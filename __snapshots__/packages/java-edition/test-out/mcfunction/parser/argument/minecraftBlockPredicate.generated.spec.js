@@ -14,19 +14,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone" 1'] = {
       "isTag": true,
       "path": [
         "stone"
-      ],
-      "symbol": {
-        "category": "tag/block",
-        "identifier": "minecraft:stone",
-        "path": [
-          "minecraft:stone"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -48,19 +36,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
       "isTag": true,
       "path": [
         "stone"
-      ],
-      "symbol": {
-        "category": "tag/block",
-        "identifier": "minecraft:stone",
-        "path": [
-          "minecraft:stone"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     },
     "states": {
       "type": "mcfunction:block/states",
@@ -286,19 +262,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "minecraft:stone" 1
       "namespace": "minecraft",
       "path": [
         "stone"
-      ],
-      "symbol": {
-        "category": "block",
-        "identifier": "minecraft:stone",
-        "path": [
-          "minecraft:stone"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -319,19 +283,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone" 1'] = {
       },
       "path": [
         "stone"
-      ],
-      "symbol": {
-        "category": "block",
-        "identifier": "minecraft:stone",
-        "path": [
-          "minecraft:stone"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     }
   },
   "errors": []
@@ -352,19 +304,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
       },
       "path": [
         "stone"
-      ],
-      "symbol": {
-        "category": "block",
-        "identifier": "minecraft:stone",
-        "path": [
-          "minecraft:stone"
-        ],
-        "reference": [
-          {
-            "uri": ""
-          }
-        ]
-      }
+      ]
     },
     "states": {
       "type": "mcfunction:block/states",

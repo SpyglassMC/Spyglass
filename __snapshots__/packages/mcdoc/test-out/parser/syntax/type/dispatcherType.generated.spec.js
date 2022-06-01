@@ -16,19 +16,7 @@ exports['mcdoc dispatcherType Parse ":entity[]" 1'] = {
         "namespace": "",
         "path": [
           "entity"
-        ],
-        "symbol": {
-          "category": "mcdoc/dispatcher",
-          "identifier": "minecraft:entity",
-          "path": [
-            "minecraft:entity"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcdoc:index_body",
@@ -83,19 +71,7 @@ exports['mcdoc dispatcherType Parse "minecraft:entity[cow,[%parent.id],sheep]" 1
         "namespace": "minecraft",
         "path": [
           "entity"
-        ],
-        "symbol": {
-          "category": "mcdoc/dispatcher",
-          "identifier": "minecraft:entity",
-          "path": [
-            "minecraft:entity"
-          ],
-          "reference": [
-            {
-              "uri": ""
-            }
-          ]
-        }
+        ]
       },
       {
         "type": "mcdoc:index_body",

@@ -7,19 +7,7 @@ exports['mcfunction argument minecraft:resource Parse "012" with {"registry":"bo
     },
     "path": [
       "012"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:012",
-      "path": [
-        "minecraft:012"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -33,19 +21,7 @@ exports['mcfunction argument minecraft:resource Parse "foo" with {"registry":"bo
     },
     "path": [
       "foo"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "minecraft:foo",
-      "path": [
-        "minecraft:foo"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
@@ -60,19 +36,7 @@ exports['mcfunction argument minecraft:resource Parse "foo:bar" with {"registry"
     "namespace": "foo",
     "path": [
       "bar"
-    ],
-    "symbol": {
-      "category": "bossbar",
-      "identifier": "foo:bar",
-      "path": [
-        "foo:bar"
-      ],
-      "reference": [
-        {
-          "uri": ""
-        }
-      ]
-    }
+    ]
   },
   "errors": []
 }
