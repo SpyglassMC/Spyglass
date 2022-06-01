@@ -2,8 +2,8 @@ import { Lazy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { Parser } from '../parser/index.js'
 import type { Formatter } from '../processor/formatter/index.js'
-import type { Checker, Colorizer, Completer, InlayHintProvider } from '../processor/index.js'
-import { checker, colorizer, completer, formatter, linter } from '../processor/index.js'
+import type { Binder, Checker, Colorizer, Completer, InlayHintProvider } from '../processor/index.js'
+import { binder, checker, colorizer, completer, formatter, linter } from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
@@ -42,6 +42,7 @@ export class MetaRegistry {
 	 * A map from language IDs to language options.
 	 */
 	readonly #languages = new Map<string, LanguageOptions>()
+	readonly #binders = new Map<string, Binder<any>>()
 	readonly #checkers = new Map<string, Checker<any>>()
 	readonly #colorizers = new Map<string, Colorizer<any>>()
 	readonly #completers = new Map<string, Completer<any>>()
@@ -56,6 +57,7 @@ export class MetaRegistry {
 	#uriSorter: UriSorter = () => 0
 
 	constructor() {
+		binder.registerBinders(this)
 		checker.registerCheckers(this)
 		colorizer.registerColorizers(this)
 		completer.registerCompleters(this)
@@ -108,6 +110,16 @@ export class MetaRegistry {
 			}
 		}
 		return undefined
+	}
+
+	public hasBinder<N extends AstNode>(type: N['type']): boolean {
+		return this.#binders.has(type)
+	}
+	public getBinder<N extends AstNode>(type: N['type']): Binder<N> {
+		return this.#binders.get(type) ?? binder.fallback
+	}
+	public registerBinder<N extends AstNode>(type: N['type'], binder: Binder<N>): void {
+		this.#binders.set(type, binder)
 	}
 
 	public hasChecker<N extends AstNode>(type: N['type']): boolean {

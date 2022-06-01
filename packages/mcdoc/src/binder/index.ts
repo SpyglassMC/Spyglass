@@ -1,2 +1,5 @@
-export * from './uriBinder.js'
-export * from './util.js'
+import type { MetaRegistry } from '@spyglassmc/core'
+
+export function registerMcdocBinders(meta: MetaRegistry) {
+	meta
+}

@@ -1,3 +1,4 @@
+export * from './binder/index.js'
 export * from './checker/index.js'
 export * from './ColorInfoProvider.js'
 export * from './colorizer/index.js'

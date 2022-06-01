@@ -45,7 +45,6 @@ export interface ParserContext extends ContextBase {
 	config: Config,
 	doc: TextDocument,
 	err: ErrorReporter,
-	symbols: SymbolUtil,
 }
 interface ParserContextOptions {
 	doc: TextDocument,
@@ -58,7 +57,6 @@ export namespace ParserContext {
 			config: project.config,
 			doc: opts.doc,
 			err: opts.err ?? new ErrorReporter(),
-			symbols: project.symbols,
 		}
 	}
 }
@@ -111,6 +109,26 @@ namespace ProcessorWithOffsetContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			offset: opts.offset,
+		}
+	}
+}
+
+export interface BinderContext extends ProcessorContext {
+	err: ErrorReporter,
+	ops: Operations,
+	ensureBound: (this: void, uri: string) => Promise<unknown>,
+}
+interface BinderContextOptions extends ProcessorContextOptions {
+	err?: ErrorReporter,
+	ops?: Operations,
+}
+export namespace BinderContext {
+	export function create(project: ProjectData, opts: BinderContextOptions): BinderContext {
+		return {
+			...ProcessorContext.create(project, opts),
+			err: opts.err ?? new ErrorReporter(),
+			ops: opts.ops ?? new Operations(),
+			ensureBound: project.ensureBound?.bind(project),
 		}
 	}
 }

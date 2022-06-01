@@ -25,13 +25,6 @@ export function symbol(param: string | SymbolOptions): InfallibleParser<SymbolNo
 			value: src.readRemaining(),
 		}
 
-		if (ans.value) {
-			const path = options.parentPath ? [...options.parentPath, ans.value] : [ans.value]
-			ctx.symbols
-				.query(ctx.doc, options.category, ...path)
-				.enter({ usage: { type: options.usageType, node: ans, accessType: options.accessType } })
-		}
-
 		ans.range.end = src.cursor
 
 		return ans

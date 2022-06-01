@@ -6,6 +6,7 @@ import type { ModuleNode } from './node/index.js'
 import * as parser from './parser/index.js'
 import * as uri_professors from './uri_processors.js'
 
+export * as binder from './binder/index.js'
 export * as checker from './checker/index.js'
 export * as colorizer from './colorizer/index.js'
 export * from './node/index.js'
@@ -24,5 +25,6 @@ export const initialize: core.ProjectInitializer = ({ meta }) => {
 	meta.registerUriBinder(uri_professors.uriBinder)
 	meta.setUriSorter(uri_professors.uriSorter)
 
+	binder.registerMcdocBinders(meta)
 	colorizer.registerMcdocColorizer(meta)
 }

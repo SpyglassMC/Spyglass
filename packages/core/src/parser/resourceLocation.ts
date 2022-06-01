@@ -59,16 +59,6 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			if (!ans.namespace && options.isPredicate) {
 				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
 			}
-
-			if (options.category) {
-				const fullRaw = ResourceLocation.lengthen(options.namespacePathSep === '.'
-					? raw.replace('.', ResourceLocation.NamespacePathSep)
-					: raw
-				)
-				ctx.symbols
-					.query(ctx.doc, ans.isTag ? `tag/${options.category}` : options.category, fullRaw)
-					.enter({ usage: { type: options.usageType, node: ans, accessType: options.accessType } })
-			}
 		}
 
 		return ans

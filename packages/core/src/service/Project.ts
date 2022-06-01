@@ -12,7 +12,7 @@ import { SymbolUtil } from '../symbol/index.js'
 import { CacheService } from './CacheService.js'
 import type { Config } from './Config.js'
 import { ConfigService, LinterConfigValue } from './Config.js'
-import { CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context.js'
+import { BinderContext, CheckerContext, LinterContext, ParserContext, UriBinderContext } from './Context.js'
 import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
 import { Downloader } from './Downloader.js'
@@ -256,7 +256,7 @@ export class Project implements ExternalEventEmitter {
 				if (uri.endsWith(Project.RootSuffix)) {
 					this.updateRoots()
 				}
-				this.bind(uri)
+				this.bindUri(uri)
 				return this.ensureParsedAndChecked(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
@@ -425,7 +425,7 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Validate Cache')
 
 			if (addedFiles.length > 0) {
-				this.bind(addedFiles)
+				this.bindUri(addedFiles)
 			}
 			__profiler.task('Bind URIs')
 
@@ -433,8 +433,9 @@ export class Project implements ExternalEventEmitter {
 			const docAndNodes = (await Promise.all(files.map(uri => ensureParsed(uri)))).filter((r): r is DocAndNode => !!r)
 			__profiler.task('Parse Files')
 
-			// await Promise.all(docAndNodes.map(({ doc, node }) => limit(ensureChecked, doc, node)))
-			await Promise.all(docAndNodes.map(({ doc, node }) => ensureChecked(doc, node)))
+			await Promise.all(docAndNodes.map(({ doc, node }) => bind(doc, node)))
+			__profiler.task('Bind Files')
+
 			__profiler.task('Check Files').finalize()
 
 			this.emit('ready', {})
@@ -530,9 +531,7 @@ export class Project implements ExternalEventEmitter {
 	private parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = ParserContext.create(this, { doc })
 		const src = new Source(doc.getText())
-		let ans!: FileNode<AstNode>
-		ctx.symbols.clear({ contributor: 'parser', uri: doc.uri })
-		ctx.symbols.contributeAs('parser', () => ans = file()(src, ctx))
+		const ans = file()(src, ctx)
 		return ans
 	}
 
@@ -543,6 +542,24 @@ export class Project implements ExternalEventEmitter {
 		return data
 	}
 
+	@CachePromise()
+	private async bind(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
+		if (node.binderErrors) {
+			return
+		}
+		try {
+			const binder = this.meta.getBinder(node.type)
+			const ctx = BinderContext.create(this, { doc })
+			ctx.symbols.clear({ contributor: 'binder', uri: doc.uri })
+			await ctx.symbols.contributeAsAsync('binder', async () => {
+				await binder(node, ctx)
+				node.binderErrors = ctx.err.dump()
+				this.cache(doc, node)
+			})
+		} catch (e) {
+			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
+		}
+	}
 	@CachePromise()
 	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		const checker = this.meta.getChecker(node.type)
@@ -619,10 +636,14 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	@CachePromise()
-	async ensureParsedAndChecked(uri: string): Promise<DocAndNode | undefined> {
+	async ensureBound(uri: string): Promise<DocAndNode | undefined> {
 		const result = await this.ensureParsed(uri)
 		if (result) {
-			await this.ensureChecked(result.doc, result.node)
+			await this.bind(result.doc, result.node)
+		}
+		return result
+	}
+
 		}
 		return result
 	}
@@ -636,7 +657,7 @@ export class Project implements ExternalEventEmitter {
 		return result
 	}
 
-	private bind(param: string | string[]): void {
+	private bindUri(param: string | string[]): void {
 		const ctx = UriBinderContext.create(this)
 		if (typeof param === 'string') {
 			ctx.symbols.clear({ contributor: 'uri_binder', uri: param })

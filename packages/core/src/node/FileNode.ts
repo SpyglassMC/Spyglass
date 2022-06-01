@@ -8,6 +8,10 @@ export interface FileNode<CN extends AstNode> extends AstNode {
 	locals: SymbolTable,
 	readonly parserErrors: readonly LanguageError[],
 	/**
+	 * Only exists when the file has been bound.
+	 */
+	binderErrors?: readonly LanguageError[],
+	/**
 	 * Only exists when the file has been checked.
 	 */
 	checkerErrors?: readonly LanguageError[],
@@ -18,6 +22,6 @@ export interface FileNode<CN extends AstNode> extends AstNode {
 }
 export namespace FileNode {
 	export function getErrors(node: FileNode<any>): LanguageError[] {
-		return [...node.parserErrors, ...node.checkerErrors ?? [], ...node.linterErrors ?? []]
+		return [...node.parserErrors, ...node.binderErrors ?? [], ...node.checkerErrors ?? [], ...node.linterErrors ?? []]
 	}
 }
