@@ -1,4 +1,4 @@
-import type * as ls from 'vscode-languageserver/node'
+import type * as ls from 'vscode-languageserver/node.js'
 
 export interface CustomInitializationOptions {
 	inDevelopmentMode?: boolean,

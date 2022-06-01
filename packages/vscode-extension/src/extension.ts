@@ -6,7 +6,7 @@
 import type * as server from '@spyglassmc/language-server'
 import path from 'path'
 import * as vsc from 'vscode'
-import * as lc from 'vscode-languageclient/node'
+import * as lc from 'vscode-languageclient/node.js'
 
 let client: lc.LanguageClient
 

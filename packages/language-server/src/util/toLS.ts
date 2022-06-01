@@ -6,8 +6,8 @@
 
 import * as core from '@spyglassmc/core'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import * as ls from 'vscode-languageserver/node'
-import { InsertTextFormat } from 'vscode-languageserver/node'
+import * as ls from 'vscode-languageserver/node.js'
+import { InsertTextFormat } from 'vscode-languageserver/node.js'
 import type { MyLspInlayHint } from './types.js'
 
 const ZeroPosition: ls.Position = { line: 0, character: 0 }

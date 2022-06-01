@@ -7,7 +7,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import envPaths from 'env-paths'
 import url from 'url'
 import * as util from 'util'
-import * as ls from 'vscode-languageserver/node'
+import * as ls from 'vscode-languageserver/node.js'
 import type { CustomInitializationOptions, CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
 

@@ -1,3 +1,5 @@
+// https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60592
+/// <reference path="./decompress.d.ts"/>
 import chokidar from 'chokidar'
 import decompress from 'decompress'
 import followRedirects from 'follow-redirects'
@@ -9,7 +11,6 @@ import { EventEmitter } from 'node:events'
 import type fs from 'node:fs'
 import { promises as fsp } from 'node:fs'
 import type { IncomingMessage } from 'node:http'
-import path from 'node:path'
 import process from 'node:process'
 import url from 'node:url'
 import { promisify } from 'node:util'

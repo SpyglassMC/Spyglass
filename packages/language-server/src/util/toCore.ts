@@ -6,7 +6,7 @@
 
 import * as core from '@spyglassmc/core'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import type * as ls from 'vscode-languageserver/node'
+import type * as ls from 'vscode-languageserver/node.js'
 
 export function offset(position: ls.Position, doc: TextDocument): number {
 	return doc.offsetAt(position)
