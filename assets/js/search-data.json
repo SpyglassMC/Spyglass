@@ -79,7 +79,7 @@
   },"13": {
     "doc": "Mcdoc",
     "title": "Project root",
-    "content": "Normally, the workspace (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the root of a mcdoc project. If, however, there exists a folder named mcdoc under the workspace and all mcdoc files are stored inside of the direcotry, it will be considered as the root instead. ",
+    "content": "Normally, the workspace (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the root of a mcdoc project. If, however, there exists a folder named mcdoc directly under the workspace and all mcdoc files inside the workspace are stored under of that direcotry, it will be considered as the root instead. ",
     "url": "https://spyglassmc.com/user/mcdoc/#project-root",
     "relUrl": "/user/mcdoc/#project-root"
   },"14": {
