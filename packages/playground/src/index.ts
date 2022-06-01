@@ -55,7 +55,7 @@ const onChange = EditorView.updateListener.of((update) => {
 })
 
 async function spyglassCompletions(ctx: CompletionContext): Promise<CompletionResult | null> {
-	const docAndNodes = await service.project.ensureParsedAndCheckedOnlyWhenReady($uri.value)
+	const docAndNodes = await service.project.ensureCheckedOnlyWhenReady($uri.value)
 	if (!docAndNodes) {
 		return null
 	}

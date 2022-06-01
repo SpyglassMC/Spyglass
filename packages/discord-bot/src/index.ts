@@ -155,7 +155,7 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 	}
 
 	service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureParsedAndChecked(DocumentUri)
+	const docAndNode = await service.project.ensureChecked(DocumentUri)
 	service.project.onDidClose(DocumentUri)
 	if (!docAndNode) {
 		throw new Error('docAndNode is undefined')

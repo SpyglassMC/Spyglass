@@ -1,15 +1,15 @@
 /* istanbul ignore file */
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import type { LinterErrorReporter } from './index.js'
 import { formatterContextIndentation } from '../processor/index.js'
 import type { Range } from '../source/index.js'
 import { ReadonlySource } from '../source/index.js'
-import type { SymbolTable, SymbolUtil } from '../symbol/index.js'
+import type { SymbolUtil } from '../symbol/index.js'
 import type { Config } from './Config.js'
 import { ErrorReporter } from './ErrorReporter.js'
 import type { FileService } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
+import type { LinterErrorReporter } from './index.js'
 import type { Logger } from './Logger.js'
 import type { MetaRegistry } from './MetaRegistry.js'
 import { Operations } from './Operations.js'
@@ -19,7 +19,6 @@ import type { DocAndNode, ProjectData } from './Project.js'
 export interface ContextBase {
 	fs: FileService,
 	getDocAndNode: (uri: string) => DocAndNode | undefined,
-	global: SymbolTable,
 	logger: Logger,
 	meta: MetaRegistry,
 	profilers: ProfilerFactory,
@@ -31,7 +30,6 @@ export namespace ContextBase {
 		return {
 			fs: project.fs,
 			getDocAndNode: project.get.bind(project),
-			global: project.symbols.global,
 			logger: project.logger,
 			meta: project.meta,
 			profilers: project.profilers,
@@ -148,7 +146,7 @@ export namespace CheckerContext {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
 			ops: opts.ops ?? new Operations(),
-			ensureChecked: project.ensureParsedAndChecked?.bind(project),
+			ensureChecked: project.ensureChecked?.bind(project),
 		}
 	}
 }
@@ -232,7 +230,6 @@ export namespace SignatureHelpProviderContext {
 }
 
 export interface UriBinderContext extends ContextBase {
-	/** @deprecated */
 	symbols: SymbolUtil,
 }
 export namespace UriBinderContext {

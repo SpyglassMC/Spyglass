@@ -66,7 +66,7 @@ interface SymbolRegistrarEvent {
 	checksum: string | undefined,
 }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureParsedAndChecked' | 'externals' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureBound' | 'ensureChecked' | 'externals' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 
 /* istanbul ignore next */
 /**
@@ -257,12 +257,12 @@ export class Project implements ExternalEventEmitter {
 					this.updateRoots()
 				}
 				this.bindUri(uri)
-				return this.ensureParsedAndChecked(uri)
+				return this.ensureChecked(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
 				if (this.isOnlyWatched(uri)) {
 					this.#docAndNodes.delete(uri)
-					await this.ensureParsedAndChecked(uri)
+					await this.ensureChecked(uri)
 				}
 			})
 			.on('fileDeleted', ({ uri }) => {
@@ -391,7 +391,8 @@ export class Project implements ExternalEventEmitter {
 
 			const __profiler = this.profilers.get('project#ready')
 			const ensureParsed = this.ensureParsed.bind(this)
-			const ensureChecked = this.ensureChecked.bind(this)
+			const bind = this.bind.bind(this)
+			const check = this.check.bind(this)
 
 			await Promise.all([
 				listDependencyFiles(),
@@ -436,6 +437,7 @@ export class Project implements ExternalEventEmitter {
 			await Promise.all(docAndNodes.map(({ doc, node }) => bind(doc, node)))
 			__profiler.task('Bind Files')
 
+			await Promise.all(docAndNodes.map(({ doc, node }) => check(doc, node)))
 			__profiler.task('Check Files').finalize()
 
 			this.emit('ready', {})
@@ -560,27 +562,24 @@ export class Project implements ExternalEventEmitter {
 			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
-	@CachePromise()
-	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
-		const checker = this.meta.getChecker(node.type)
-		const ctx = CheckerContext.create(this, { doc })
-		ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
-		await ctx.symbols.contributeAsAsync('checker', async () => {
-			await checker(node, ctx)
-			node.checkerErrors = ctx.err.dump()
-			this.cache(doc, node)
-			this.ensureLinted(doc, node)
-		})
-	}
 
 	@CachePromise()
-	async ensureChecked(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
-		if (!node.checkerErrors) {
-			try {
-				return this.check(doc, node)
-			} catch (e) {
-				this.logger.error(`[Project] [ensuredChecked] Failed for “${doc.uri}” #${doc.version}`, e)
-			}
+	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
+		if (node.checkerErrors) {
+			return
+		}
+		try {
+			const checker = this.meta.getChecker(node.type)
+			const ctx = CheckerContext.create(this, { doc })
+			ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
+			await ctx.symbols.contributeAsAsync('checker', async () => {
+				await checker(node, ctx)
+				node.checkerErrors = ctx.err.dump()
+				this.cache(doc, node)
+				this.ensureLinted(doc, node)
+			})
+		} catch (e) {
+			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
@@ -644,15 +643,20 @@ export class Project implements ExternalEventEmitter {
 		return result
 	}
 
+	@CachePromise()
+	async ensureChecked(uri: string): Promise<DocAndNode | undefined> {
+		const result = await this.ensureBound(uri)
+		if (result) {
+			await this.check(result.doc, result.node)
 		}
 		return result
 	}
 
 	@CachePromise()
-	async ensureParsedAndCheckedOnlyWhenReady(uri: string): Promise<DocAndNode | undefined> {
-		const result = await this.ensureParsed(uri)
+	async ensureCheckedOnlyWhenReady(uri: string): Promise<DocAndNode | undefined> {
+		const result = await this.ensureBound(uri)
 		if (this.#isReady && result) {
-			await this.ensureChecked(result.doc, result.node)
+			await this.check(result.doc, result.node)
 		}
 		return result
 	}
