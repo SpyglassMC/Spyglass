@@ -18,7 +18,7 @@ export const mochaHooks: RootHookObject = {
 }
 
 export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
-	const cacheRoot: RootUriString = data.cacheRoot ?? '/some/random/garbage/path/that/definitely/does/not/exist/'
+	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
 	const downloader = data.downloader ?? new Downloader(cacheRoot, externals, logger)
@@ -29,7 +29,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		downloader,
 		ensureParsedAndChecked: data.ensureParsedAndChecked!,
 		externals,
-		fs: data.fs ?? FileService.create(externals, 'file:///cache/'),
+		fs: data.fs ?? FileService.create(externals, cacheRoot),
 		get: data.get ?? (() => undefined),
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
@@ -112,4 +112,19 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 			result === undefined ? 'undefined' : result,
 		errors: ctx.err.dump(),
 	}
+}
+
+/**
+ * A helper function for testing types.
+ * This function has a signature similar to mocha's `describe` and `it` methods.
+ * The method passed into this function is never actually executed.
+ */
+export function typing(_title: string, _fn: () => void): void { }
+
+/**
+ * This function should never be actually executed at runtime.
+ * Enclose it inside the body of a {@link typing} function.
+ */
+export function assertType<T>(_value: T): void {
+	throw new Error('The assertType function should never be called at runtime. Have you enclosed this call inside a typing function?')
 }
