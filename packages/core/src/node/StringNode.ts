@@ -69,7 +69,7 @@ export type QuoteTypeConfig =
 
 export interface StringBaseNode extends AstNode {
 	readonly options: StringOptions,
-	readonly value: string,
+	value: string,
 	readonly valueMap: IndexMap,
 }
 

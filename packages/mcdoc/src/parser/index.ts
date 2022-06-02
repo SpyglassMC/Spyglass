@@ -1,4 +1,4 @@
-import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser, IntegerNode, Mutable, Parser, ParserContext, ResourceLocationNode, ResourceLocationOptions, SequenceUtil, Source, StringNode } from '@spyglassmc/core'
+import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser, IntegerNode, Parser, ParserContext, ResourceLocationNode, ResourceLocationOptions, SequenceUtil, Source, StringNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { any, Arrayable, failOnEmpty, failOnError, Failure, map, optional, Range, repeat, ResourceLocation, select, sequence, setType, stopBefore, SymbolAccessType, validate } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
@@ -146,7 +146,7 @@ export const identifier: InfallibleParser<IdentifierNode> = (src, ctx) => {
 	const IdentifierStart = /^[\p{L}\p{Nl}]$/u
 	const IdentifierContinue = /^[\p{L}\p{Nl}\u200C\u200D\p{Mn}\p{Mc}\p{Nd}\p{Pc}]$/u
 	const ReservedWords = new Set(['any', 'boolean', 'byte', 'double', 'enum', 'false', 'float', 'int', 'long', 'short', 'string', 'struct', 'super', 'true'])
-	const ans: Mutable<IdentifierNode> = {
+	const ans: IdentifierNode = {
 		type: 'mcdoc:identifier',
 		range: Range.create(src),
 		options: { category: 'mcdoc' },

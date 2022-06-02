@@ -10,7 +10,7 @@ export interface LiteralOptions {
 
 export interface LiteralBaseNode extends AstNode {
 	readonly options: LiteralOptions,
-	readonly value: string,
+	value: string,
 }
 
 export interface LiteralNode extends LiteralBaseNode {

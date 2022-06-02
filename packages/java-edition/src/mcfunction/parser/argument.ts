@@ -279,7 +279,7 @@ function long(min?: number, max?: number): core.InfallibleParser<core.LongNode> 
 
 function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> {
 	return (src, ctx): CoordinateNode => {
-		const ans: core.Mutable<CoordinateNode> = {
+		const ans: CoordinateNode = {
 			type: 'mcfunction:coordinate',
 			notation: '',
 			range: core.Range.create(src),

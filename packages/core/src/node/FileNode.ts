@@ -6,7 +6,7 @@ export interface FileNode<CN extends AstNode> extends AstNode {
 	readonly type: 'file',
 	readonly children: CN[],
 	locals: SymbolTable,
-	readonly parserErrors: readonly LanguageError[],
+	parserErrors: readonly LanguageError[],
 	/**
 	 * Only exists when the file has been bound.
 	 */

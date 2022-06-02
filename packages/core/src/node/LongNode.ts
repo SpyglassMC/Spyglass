@@ -3,7 +3,7 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface LongBaseNode extends AstNode {
-	readonly value: bigint,
+	value: bigint,
 }
 
 export interface LongNode extends LongBaseNode {

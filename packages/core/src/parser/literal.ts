@@ -1,5 +1,4 @@
 import { localize } from '@spyglassmc/locales'
-import type { Mutable } from '../node/index.js'
 import type { LiteralNode, LiteralOptions } from '../node/LiteralNode.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
@@ -11,7 +10,7 @@ export function literal(options: LiteralOptions): InfallibleParser<LiteralNode>
 export function literal(...param: [LiteralOptions] | string[]): InfallibleParser<LiteralNode> {
 	const options = getOptions(param)
 	return (src: Source, ctx: ParserContext): LiteralNode => {
-		const ans: Mutable<LiteralNode> = {
+		const ans: LiteralNode = {
 			type: 'literal',
 			range: Range.create(src),
 			options,

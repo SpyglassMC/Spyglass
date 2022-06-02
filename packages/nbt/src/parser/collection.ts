@@ -7,7 +7,7 @@ import { primitive } from './primitive.js'
 
 export const list: core.Parser<NbtListNode> = (src, ctx) => {
 	const parser = core.list({ start: '[', value: entry, sep: ',', trailingSep: false, end: ']' })
-	const ans = parser(src, ctx) as core.Mutable<NbtListNode>
+	const ans = parser(src, ctx) as NbtListNode
 	ans.type = 'nbt:list'
 	ans.valueType = ans.children[0]?.value?.type
 
@@ -29,7 +29,7 @@ export const list: core.Parser<NbtListNode> = (src, ctx) => {
 
 export const byteArray: core.Parser<NbtByteArrayNode> = (src, ctx) => {
 	const parser = core.list({ start: '[B;', value: primitive, sep: ',', trailingSep: false, end: ']' })
-	const ans = parser(src, ctx) as core.Mutable<NbtByteArrayNode>
+	const ans = parser(src, ctx) as NbtByteArrayNode
 	ans.type = 'nbt:byte_array'
 
 	// Check if every element is of the required type.
@@ -47,7 +47,7 @@ export const byteArray: core.Parser<NbtByteArrayNode> = (src, ctx) => {
 
 export const intArray: core.Parser<NbtIntArrayNode> = (src, ctx) => {
 	const parser = core.list({ start: '[I;', value: primitive, sep: ',', trailingSep: false, end: ']' })
-	const ans = parser(src, ctx) as core.Mutable<NbtIntArrayNode>
+	const ans = parser(src, ctx) as NbtIntArrayNode
 	ans.type = 'nbt:int_array'
 
 	// Check if every element is of the required type.
@@ -65,7 +65,7 @@ export const intArray: core.Parser<NbtIntArrayNode> = (src, ctx) => {
 
 export const longArray: core.Parser<NbtLongArrayNode> = (src, ctx) => {
 	const parser = core.list({ start: '[L;', value: primitive, sep: ',', trailingSep: false, end: ']' })
-	const ans = parser(src, ctx) as core.Mutable<NbtLongArrayNode>
+	const ans = parser(src, ctx) as NbtLongArrayNode
 	ans.type = 'nbt:long_array'
 
 	// Check if every element is of the required type.

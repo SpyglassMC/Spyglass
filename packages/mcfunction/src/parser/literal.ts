@@ -15,7 +15,7 @@ export function literal(names: string[], isRoot = false): core.Parser<LiteralCom
 			return core.Failure
 		}
 
-		const ans: core.Mutable<LiteralCommandChildNode> = {
+		const ans: LiteralCommandChildNode = {
 			type: 'mcfunction:command_child/literal',
 			range: core.Range.create(start, src),
 			options,

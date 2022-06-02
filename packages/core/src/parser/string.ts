@@ -1,6 +1,6 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { Mutable, Quote, StringNode, StringOptions } from '../node/index.js'
+import type { Quote, StringNode, StringOptions } from '../node/index.js'
 import { EscapeChar, EscapeTable } from '../node/index.js'
 import type { InfallibleParser } from '../parser/index.js'
 import type { ParserContext } from '../service/index.js'
@@ -11,7 +11,7 @@ import { Failure } from './Parser.js'
 
 export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
-		const ans: Mutable<StringNode> = {
+		const ans: StringNode = {
 			type: 'string',
 			range: Range.create(src),
 			options,

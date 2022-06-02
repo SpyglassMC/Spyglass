@@ -1,5 +1,5 @@
 import { localize } from '@spyglassmc/locales'
-import type { LongNode, Mutable } from '../node/index.js'
+import type { LongNode } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorSeverity, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result } from './Parser.js'
@@ -46,7 +46,7 @@ export function long(options: InfallibleOptions): InfallibleParser<LongNode>
 export function long(options: FallibleOptions): Parser<LongNode>
 export function long(options: Options): Parser<LongNode> {
 	return (src: Source, ctx: ParserContext): Result<LongNode> => {
-		const ans: Mutable<LongNode> = {
+		const ans: LongNode = {
 			type: 'long',
 			range: Range.create(src),
 			value: 0n,

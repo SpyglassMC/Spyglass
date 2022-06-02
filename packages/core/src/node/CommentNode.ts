@@ -6,7 +6,7 @@ export interface CommentNode extends AstNode {
 	/**
 	 * The actual comment with prefixes and suffixes removed.
 	 */
-	readonly comment: string,
+	comment: string,
 }
 
 export const CommentNode = Object.freeze({

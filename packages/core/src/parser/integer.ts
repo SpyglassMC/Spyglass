@@ -1,5 +1,5 @@
 import { localize } from '@spyglassmc/locales'
-import type { IntegerNode, Mutable } from '../node/index.js'
+import type { IntegerNode } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorSeverity, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result } from './Parser.js'
@@ -46,7 +46,7 @@ export function integer(options: InfallibleOptions): InfallibleParser<IntegerNod
 export function integer(options: FallibleOptions): Parser<IntegerNode>
 export function integer(options: Options): Parser<IntegerNode> {
 	return (src: Source, ctx: ParserContext): Result<IntegerNode> => {
-		const ans: Mutable<IntegerNode> = {
+		const ans: IntegerNode = {
 			type: 'integer',
 			range: Range.create(src),
 			value: 0,

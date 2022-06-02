@@ -1,4 +1,4 @@
-import type { ErrorNode, FileNode, Mutable } from '../node/index.js'
+import type { ErrorNode, FileNode } from '../node/index.js'
 import { AstNode } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
@@ -14,7 +14,7 @@ import { Failure } from './Parser.js'
 export function file(): InfallibleParser<FileNode<AstNode>> {
 	return (src: Source, ctx: ParserContext): FileNode<AstNode> => {
 		const fullRange = Range.create(src, src.string.length)
-		const ans: Mutable<FileNode<AstNode>> = {
+		const ans: FileNode<AstNode> = {
 			type: 'file',
 			range: fullRange,
 			children: [],

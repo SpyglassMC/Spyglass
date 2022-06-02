@@ -1,4 +1,3 @@
-import type { Mutable } from '../node/index.js'
 import type { SymbolNode, SymbolOptions } from '../node/SymbolNode.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
@@ -17,8 +16,8 @@ export function symbol(options: SymbolOptions): InfallibleParser<SymbolNode>
 export function symbol(param: string | SymbolOptions): InfallibleParser<SymbolNode> {
 	const options = getOptions(param)
 
-	return (src: Source, ctx: ParserContext): SymbolNode => {
-		const ans: Mutable<SymbolNode> = {
+	return (src: Source, _ctx: ParserContext): SymbolNode => {
+		const ans: SymbolNode = {
 			type: 'symbol',
 			range: Range.create(src),
 			options,

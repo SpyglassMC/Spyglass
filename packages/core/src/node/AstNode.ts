@@ -5,13 +5,13 @@ import { Range } from '../source/index.js'
 import type { Symbol, SymbolTable } from '../symbol/index.js'
 
 export interface AstNode {
-	readonly type: string,
-	readonly range: Range,
+	type: string,
+	range: Range,
 	/**
 	 * All child nodes of this AST node.
 	 */
-	readonly children?: AstNode[],
-	readonly parent?: AstNode,
+	children?: AstNode[],
+	parent?: AstNode,
 	locals?: SymbolTable,
 	symbol?: Symbol,
 	hover?: string,
@@ -29,7 +29,7 @@ export namespace AstNode {
 
 	export function setParents(node: AstNode): void {
 		for (const child of node.children ?? []) {
-			(child as Mutable<AstNode>).parent = node
+			child.parent = node
 			setParents(child)
 		}
 	}

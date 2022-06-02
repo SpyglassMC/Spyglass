@@ -1,4 +1,4 @@
-import type { CommentNode, Mutable } from '../node/index.js'
+import type { CommentNode } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -16,7 +16,7 @@ interface Options {
 export function comment({ singleLinePrefixes, includesEol }: Options): Parser<CommentNode> {
 	return (src: Source, _ctx: ParserContext): Result<CommentNode> => {
 		const start = src.cursor
-		const ans: Mutable<CommentNode> = {
+		const ans: CommentNode = {
 			type: 'comment',
 			range: Range.create(start),
 			comment: '',

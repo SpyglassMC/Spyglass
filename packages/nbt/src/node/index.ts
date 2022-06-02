@@ -144,8 +144,8 @@ export namespace NbtCollectionNode {
 }
 
 export interface NbtListNode extends core.ListNode<NbtNode> {
-	readonly type: 'nbt:list',
-	readonly valueType?: NbtNode['type'],
+	type: 'nbt:list',
+	valueType?: NbtNode['type'],
 }
 export namespace NbtListNode {
 	/* istanbul ignore next */
@@ -167,7 +167,7 @@ export namespace NbtPrimitiveArrayNode {
 }
 
 export interface NbtByteArrayNode extends core.ListNode<NbtByteNode> {
-	readonly type: 'nbt:byte_array',
+	type: 'nbt:byte_array',
 }
 export namespace NbtByteArrayNode {
 	/* istanbul ignore next */
@@ -177,7 +177,7 @@ export namespace NbtByteArrayNode {
 }
 
 export interface NbtIntArrayNode extends core.ListNode<NbtIntNode> {
-	readonly type: 'nbt:int_array',
+	type: 'nbt:int_array',
 }
 export namespace NbtIntArrayNode {
 	/* istanbul ignore next */
@@ -187,7 +187,7 @@ export namespace NbtIntArrayNode {
 }
 
 export interface NbtLongArrayNode extends core.ListNode<NbtLongNode> {
-	readonly type: 'nbt:long_array',
+	type: 'nbt:long_array',
 }
 export namespace NbtLongArrayNode {
 	/* istanbul ignore next */

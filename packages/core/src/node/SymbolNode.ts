@@ -12,7 +12,7 @@ export interface SymbolOptions {
 
 export interface SymbolBaseNode extends AstNode {
 	readonly options: SymbolOptions,
-	readonly value: string,
+	value: string,
 }
 
 export interface SymbolNode extends SymbolBaseNode {
