@@ -2,7 +2,6 @@
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Logger } from '../common/index.js'
-import { Operations } from '../common/index.js'
 import { formatterContextIndentation } from '../processor/index.js'
 import type { Range } from '../source/index.js'
 import { ReadonlySource } from '../source/index.js'
@@ -113,19 +112,16 @@ namespace ProcessorWithOffsetContext {
 
 export interface BinderContext extends ProcessorContext {
 	err: ErrorReporter,
-	ops: Operations,
 	ensureBound: (this: void, uri: string) => Promise<unknown>,
 }
 interface BinderContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
-	ops?: Operations,
 }
 export namespace BinderContext {
 	export function create(project: ProjectData, opts: BinderContextOptions): BinderContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
-			ops: opts.ops ?? new Operations(),
 			ensureBound: project.ensureBound?.bind(project),
 		}
 	}
@@ -133,19 +129,16 @@ export namespace BinderContext {
 
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
-	ops: Operations,
 	ensureChecked: (this: void, uri: string) => Promise<unknown>,
 }
 interface CheckerContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
-	ops?: Operations,
 }
 export namespace CheckerContext {
 	export function create(project: ProjectData, opts: CheckerContextOptions): CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
-			ops: opts.ops ?? new Operations(),
 			ensureChecked: project.ensureChecked?.bind(project),
 		}
 	}

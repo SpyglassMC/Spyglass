@@ -1,6 +1,5 @@
 import { localize } from '@spyglassmc/locales'
-import type { StateProxy } from '../../common/index.js'
-import { Operations, ResourceLocation } from '../../common/index.js'
+import { ResourceLocation, StateProxy } from '../../common/index.js'
 import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import { ResourceLocationNode } from '../../node/index.js'
 import type { BinderContext, MetaRegistry } from '../../service/index.js'
@@ -21,12 +20,11 @@ export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N
 	const tempCtx: BinderContext = {
 		...ctx,
 		err: new ErrorReporter(),
-		ops: new Operations(),
 		symbols: ctx.symbols.clone(),
 	}
 
 	const processAfterBinder = () => {
-		tempCtx.ops.undo()
+		StateProxy.undoChanges(node)
 
 		const totalErrorSpan = tempCtx.err.errors
 			.map(e => e.range.end - e.range.start)
@@ -37,7 +35,7 @@ export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N
 			totalErrorSpan,
 			updateNodeAndCtx: () => {
 				ctx.err.absorb(tempCtx.err)
-				tempCtx.ops.redo()
+				StateProxy.redoChanges(node)
 				tempCtx.symbols.applyDelayedEdits()
 			},
 		}

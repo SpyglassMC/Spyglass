@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
-import * as mcdoc from '@spyglassmc/mcdoc'
 import { localeQuote, localize } from '@spyglassmc/locales'
+import * as mcdoc from '@spyglassmc/mcdoc'
 import type { NbtByteNode, NbtCompoundNode, NbtNode, NbtNumberNode, NbtPathNode, NbtPrimitiveArrayNode, NbtPrimitiveNode } from '../node/index.js'
 import { NbtListNode } from '../node/index.js'
 import { localizeTag } from '../util.js'
@@ -396,8 +396,8 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 							const parser = ctx.meta.getParser(parserName)
 							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
 							if (result !== core.Failure) {
-								ctx.ops.set(node, 'children', [result]);
-								(result as core.Mutable<core.AstNode>).parent = node
+								node.children = [result]
+								result.parent = node
 							}
 						} catch (e) {
 							ctx.logger.error('[nbt.checker.fieldValue#string]', e)

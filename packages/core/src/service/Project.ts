@@ -573,7 +573,7 @@ export class Project implements ExternalEventEmitter {
 			const ctx = CheckerContext.create(this, { doc })
 			ctx.symbols.clear({ contributor: 'checker', uri: doc.uri })
 			await ctx.symbols.contributeAsAsync('checker', async () => {
-				await checker(node, ctx)
+				await checker(StateProxy.create(node), ctx)
 				node.checkerErrors = ctx.err.dump()
 				this.cache(doc, node)
 				this.ensureLinted(doc, node)

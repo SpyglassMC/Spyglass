@@ -1,5 +1,5 @@
 import type { ErrorSeverity } from '@spyglassmc/core'
-import { ErrorReporter, Operations, Range } from '@spyglassmc/core'
+import { ErrorReporter, Range, StateProxy } from '@spyglassmc/core'
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type { JsonExpectation, JsonNode } from '../../node/index.js'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker.js'
@@ -28,14 +28,13 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
-		ops: new Operations(),
 		symbols: ctx.symbols.clone(),
 	}
 
 	checker(node, tempCtx)
 
 	const tempExpectation = node.expectation
-	tempCtx.ops.undo()
+	StateProxy.undoChanges(node as StateProxy<JsonNode>)
 
 	const totalErrorSpan = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
@@ -47,7 +46,7 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 		expectation: tempExpectation,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
-			tempCtx.ops.redo()
+			StateProxy.redoChanges(node as StateProxy<JsonNode>)
 			tempCtx.symbols.applyDelayedEdits()
 		},
 	}
@@ -72,7 +71,7 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 		} else {
 			sameTypeAttempts[0].updateNodeAndCtx()
 		}
-		ctx.ops.set(node, 'expectation', allExpectations)
+		node.expectation = allExpectations
 	}
 }
 

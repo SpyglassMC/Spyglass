@@ -34,23 +34,22 @@ export function object(keys: string[], values: (key: string, ctx: JsonCheckerCon
 export function object(keys: JsonChecker, values: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined, options?: ObjectCheckerOptions): JsonChecker
 export function object(keys?: string[] | JsonChecker, values?: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined, options: ObjectCheckerOptions = {}): JsonChecker {
 	return (node, ctx) => {
-		ctx.ops.set(node, 'expectation', [{ type: 'json:object', typedoc: 'Object' }])
+		node.expectation = [{ type: 'json:object', typedoc: 'Object' }]
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
 				const fields = keys.map<[string, CheckerProperty]>(key =>
-					[key, values(key, ctx)!]).filter(([_, v]) => v !== undefined)
-				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'fields', fields.map(([key, prop]) => {
+					[key, values(key, ctx)!]).filter(([_, v]) => v !== undefined);
+				(node.expectation![0] as JsonObjectExpectation).fields = fields.map(([key, prop]) => {
 					return {
 						key,
 						value: expectation(isComplex(prop) ? prop.checker : prop, ctx),
 						...isComplex(prop) && (prop.opt || prop.deprecated) ? { opt: true } : {},
 						...isComplex(prop) && prop.deprecated ? { deprecated: true } : {},
 					}
-				}))
+				})
 			} else if (typeof keys === 'function' && values) {
-				ctx.ops.set((node.expectation![0] as JsonObjectExpectation), 'keys', expectation(keys, ctx)
+				(node.expectation![0] as JsonObjectExpectation).keys = expectation(keys, ctx)
 					?.filter(JsonStringExpectation.is)
-				)
 			}
 		}
 
@@ -119,8 +118,8 @@ export function record(properties: CheckerRecord, options?: ObjectCheckerOptions
 export function opt(checker?: JsonChecker | ComplexProperty, defaultValue?: JsonValue): ComplexProperty | undefined {
 	if (checker === undefined) return undefined
 	return isComplex(checker)
-	 ? { ...checker, opt: true, def: defaultValue }
-	 : { checker, opt: true, def: defaultValue }
+		? { ...checker, opt: true, def: defaultValue }
+		: { checker, opt: true, def: defaultValue }
 }
 
 export function deprecate(checker?: JsonChecker | ComplexProperty): ComplexProperty | undefined {
@@ -205,7 +204,7 @@ export function having(node: JsonNode, ctx: JsonCheckerContext, cases: Record<st
 	if (key === undefined) {
 		ctx.err.report(localize('json.checker.property.missing', Object.keys(cases)), Range.create(node.range.start, node.range.start + 1))
 		return Object.fromEntries(Object.entries(cases)
-			.map(([k, v]) => [k, opt(typeof v === 'function' ? any() : v[k]?? any())])
+			.map(([k, v]) => [k, opt(typeof v === 'function' ? any() : v[k] ?? any())])
 		)
 	}
 	const c = cases[key]

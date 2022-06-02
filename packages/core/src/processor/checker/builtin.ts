@@ -1,5 +1,5 @@
 import { localize } from '@spyglassmc/locales'
-import { Operations } from '../../common/index.js'
+import { StateProxy } from '../../common/index.js'
 import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import { ResourceLocationNode } from '../../node/index.js'
 import type { CheckerContext, MetaRegistry } from '../../service/index.js'
@@ -18,14 +18,13 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 	const tempCtx: CheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
-		ops: new Operations(),
 		symbols: ctx.symbols.clone(),
 	}
 
 	// FIXME: await
 	checker(node, tempCtx)
 
-	tempCtx.ops.undo()
+	StateProxy.undoChanges(node as StateProxy<N>)
 
 	const totalErrorSpan = tempCtx.err.errors
 		.map(e => e.range.end - e.range.start)
@@ -36,7 +35,7 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 		totalErrorSpan,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
-			tempCtx.ops.redo()
+			StateProxy.redoChanges(node as StateProxy<N>)
 			tempCtx.symbols.applyDelayedEdits()
 		},
 	}

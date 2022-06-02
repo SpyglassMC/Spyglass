@@ -1,4 +1,4 @@
-import type { AllCategory, AstNode, Checker, Mutable, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
+import type { AllCategory, AstNode, Checker, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { Failure, Lazy, ResourceLocation } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
@@ -25,14 +25,14 @@ export function string<T extends AstNode>(name: string | readonly string[] | und
 export function string(name?: string | readonly string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
 export function string(name?: string | readonly string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
 	return (node, ctx) => {
-		ctx.ops.set(node, 'expectation', [{ type: 'json:string', typedoc: typedoc(name), ...expectation }])
+		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (parser) {
 			const result = core.parseStringValue(Lazy.resolve(parser), node.value, node.valueMap, ctx)
 			if (result !== Failure) {
-				(node as Mutable<AstNode>).children = [result];
-				(result as Mutable<AstNode>).parent = node
+				node.children = [result]
+				result.parent = node
 				if (checker) {
 					Lazy.resolve(checker)(result, ctx)
 				}

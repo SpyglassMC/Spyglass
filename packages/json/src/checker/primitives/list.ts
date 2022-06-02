@@ -1,5 +1,5 @@
-import { localize } from '@spyglassmc/locales'
 import { ErrorSeverity } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import type { JsonArrayExpectation, JsonNode } from '../../node/index.js'
 import { JsonArrayNode, JsonStringNode } from '../../node/index.js'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker.js'
@@ -7,9 +7,9 @@ import { expectation } from './util.js'
 
 export function listOf(checker: JsonChecker): JsonChecker {
 	return (node, ctx) => {
-		ctx.ops.set(node, 'expectation', [{ type: 'json:array', typedoc: 'Array' }])
+		node.expectation = [{ type: 'json:array', typedoc: 'Array' }]
 		if (!ctx.depth || ctx.depth <= 0) {
-			ctx.ops.set((node.expectation![0] as JsonArrayExpectation), 'items', expectation(checker, ctx))
+			(node.expectation![0] as JsonArrayExpectation).items = expectation(checker, ctx)
 		}
 
 		if (!JsonArrayNode.is(node)) {

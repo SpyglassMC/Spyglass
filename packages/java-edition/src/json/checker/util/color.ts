@@ -29,17 +29,17 @@ export function stringColor(): JsonChecker {
 	}
 
 	return (node, ctx) => {
-		ctx.ops.set(node, 'expectation', [{ type: 'json:string', typedoc: 'String("Color")', pool: Color.ColorNames }])
+		node.expectation = [{ type: 'json:string', typedoc: 'String("Color")', pool: Color.ColorNames }]
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else {
 			const result = parseStringValue(parser, node.value, node.valueMap, ctx)
 			if (result !== Failure) {
-				ctx.ops.set(node, 'color', {
+				node.color = {
 					value: result,
 					format: [ColorFormat.HexRGB],
 					range: { start: node.range.start + 1, end: node.range.end - 1 },
-				})
+				}
 			}
 		}
 	}
@@ -50,10 +50,10 @@ export function intColor(): JsonChecker {
 		if (!JsonNumberNode.is(node) || !Number.isInteger(node.value)) {
 			ctx.err.report(localize('expected', localize('integer')), node)
 		} else {
-			ctx.ops.set(node, 'color', {
+			node.color = {
 				value: Color.fromCompositeInt(node.value),
 				format: [ColorFormat.CompositeInt],
-			})
+			}
 		}
 	}
 }
