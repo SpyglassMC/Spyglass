@@ -25,22 +25,15 @@ export type StateProxy<T extends object> = {
 	[Undo]: () => void,
 }
 
-export const StateProxy: {
-	branchOff<T extends object>(proxy: StateProxy<T>): StateProxy<T>,
-	create<T extends object>(obj: T): T extends StateProxy<any> ? (void & { _cannotCreateProxyFromProxy: never }) : StateProxy<T>,
-	dereference<T extends object>(value: StateProxy<T> | T): T,
-	is(obj: any): obj is StateProxy<object>,
-	redoChanges(proxy: StateProxy<object>): void,
-	undoChanges(proxy: StateProxy<object>): void,
-} = Object.freeze({
+export const StateProxy = Object.freeze({
 	branchOff<T extends object>(proxy: StateProxy<T>): StateProxy<T> {
 		return proxy[BranchOff]()
 	},
-	create<T extends object>(obj: T): any {
+	create<T extends object>(obj: T): T extends StateProxy<any> ? (void & { _cannotCreateProxyFromProxy: never }) : StateProxy<T> {
 		if (StateProxy.is(obj)) {
 			throw new Error('Cannot create a proxy over a proxy. You might want to use branchOff instead.')
 		}
-		return _createStateProxy(obj, new Operations())
+		return _createStateProxy(obj, new Operations()) as any
 	},
 	dereference<T extends object>(value: StateProxy<T> | T): T {
 		return StateProxy.is(value) ? value[Origin] : value
@@ -80,10 +73,7 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 		}
 		const value = Reflect.get(target, p, receiver)
 		if (value && typeof value === 'object') {
-			const ans = emplaceMap(this.map, p, {
-				insert: () => _createStateProxy(value, this.rootOps),
-			})
-			return ans
+			return emplaceMap(this.map, p, { insert: () => _createStateProxy(value, this.rootOps) })
 		}
 		return value
 	}
