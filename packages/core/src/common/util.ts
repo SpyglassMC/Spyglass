@@ -243,3 +243,20 @@ export const binarySearch = externalBinarySearch
 export function isIterable(value: unknown): value is Iterable<unknown> {
 	return !!(value as Iterable<unknown>)[Symbol.iterator]
 }
+
+export function emplaceMap<K, V>(map: Map<K, V>, key: K, handler: { insert?: (key: K, map: Map<K, V>) => V, update?: (existing: V, key: K, map: Map<K, V>) => V }): V {
+	if (map.has(key)) {
+		let value: V = map.get(key)!
+		if (handler.update) {
+			value = handler.update(value, key, map)
+			map.set(key, value)
+		}
+		return value
+	} else if (handler.insert) {
+		const value = handler.insert(key, map)
+		map.set(key, value)
+		return value
+	} else {
+		throw new Error(`No key ${key} in map and no insert handler provided`)
+	}
+}

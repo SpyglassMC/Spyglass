@@ -1,12 +1,26 @@
 export class Operations {
-	private readonly undoOps: (() => unknown)[] = []
-	private readonly redoOps: (() => unknown)[] = []
+	constructor(
+		private readonly parent?: Operations,
+	) { }
 
-	set<O extends object, K extends keyof O>(obj: O, key: K, value: O[K]): void {
-		const oldValue = obj[key]
-		const op = () => { obj[key] = value }
+	private readonly undoOps: (() => void)[] = []
+	private readonly redoOps: (() => void)[] = []
+
+	private addUndoOp(op: () => void): void {
+		this.undoOps.push(op)
+		this.parent?.addUndoOp(op)
+	}
+	private addRedoOp(op: () => void): void {
 		this.redoOps.push(op)
-		this.undoOps.push(() => { obj[key] = oldValue })
+		this.parent?.addRedoOp(op)
+	}
+
+	set<O extends object, K extends keyof O>(obj: O, key: K, value: O[K], receiver: any = obj): void {
+		const oldValue = Reflect.get(obj, key, receiver)
+		const op = () => { Reflect.set(obj, key, value, receiver) }
+		const undoOp = () => { Reflect.set(obj, key, oldValue, receiver) }
+		this.addRedoOp(op)
+		this.addUndoOp(undoOp)
 		op()
 	}
 
@@ -16,6 +30,6 @@ export class Operations {
 		}
 	}
 	redo(): void {
-		this.redoOps.forEach(f => f())
+		this.redoOps.forEach(op => op())
 	}
 }
