@@ -1,7 +1,7 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
-import { bufferToString, CachePromise } from '../common/index.js'
+import { bufferToString, CachePromise, Logger, StateProxy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
@@ -20,7 +20,6 @@ import { LinterErrorReporter } from './ErrorReporter.js'
 import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
-import { Logger } from './Logger.js'
 import { MetaRegistry } from './MetaRegistry.js'
 import { ProfilerFactory } from './Profiler.js'
 
@@ -554,7 +553,8 @@ export class Project implements ExternalEventEmitter {
 			const ctx = BinderContext.create(this, { doc })
 			ctx.symbols.clear({ contributor: 'binder', uri: doc.uri })
 			await ctx.symbols.contributeAsAsync('binder', async () => {
-				await binder(node, ctx)
+				const proxy = StateProxy.create(node)
+				await binder(proxy, ctx)
 				node.binderErrors = ctx.err.dump()
 				this.cache(doc, node)
 			})

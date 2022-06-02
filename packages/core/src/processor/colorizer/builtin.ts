@@ -1,4 +1,4 @@
-import type { BooleanNode, CommentNode, ErrorNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
+import type { AstNode, BooleanNode, CommentNode, ErrorNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import type { MetaRegistry } from '../../service/index.js'
 import { Range } from '../../source/index.js'
 import { traversePreOrder } from '../util.js'
@@ -10,7 +10,7 @@ import { ColorToken } from './Colorizer.js'
  */
 export const fallback: Colorizer = (node, ctx) => {
 	const ans: ColorToken[] = []
-	traversePreOrder(node,
+	traversePreOrder(node as AstNode,
 		node => !ctx.meta.hasColorizer(node.type) && (!ctx.range || Range.intersects(node.range, ctx.range)),
 		node => ctx.meta.hasColorizer(node.type),
 		node => {

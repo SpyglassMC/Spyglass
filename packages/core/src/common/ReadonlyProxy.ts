@@ -1,12 +1,14 @@
+import { AstNode } from '../index.js'
 import { emplaceMap } from './util.js'
 
+type Wrap<T> = T extends object ? ReadonlyProxy<T> : T
 export type ReadonlyProxy<T extends object> = {
-	readonly [K in keyof T]: T[K] extends object ? ReadonlyProxy<T[K]> : T[K]
+	readonly [K in keyof T]: Wrap<T[K]>
 }
 
 export const ReadonlyProxy = Object.freeze({
 	create<T extends object>(obj: T): ReadonlyProxy<T> {
-		return new Proxy(obj, new ReadonlyProxyHandler())
+		return new Proxy(obj, new ReadonlyProxyHandler()) as any
 	},
 })
 

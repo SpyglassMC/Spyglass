@@ -1,9 +1,10 @@
 import { localize } from '@spyglassmc/locales'
-import { ResourceLocation } from '../../common/index.js'
+import type { StateProxy } from '../../common/index.js'
+import { Operations, ResourceLocation } from '../../common/index.js'
 import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import { ResourceLocationNode } from '../../node/index.js'
 import type { BinderContext, MetaRegistry } from '../../service/index.js'
-import { ErrorReporter, Operations } from '../../service/index.js'
+import { ErrorReporter } from '../../service/index.js'
 import { ErrorSeverity } from '../../source/index.js'
 import { traversePreOrder } from '../util.js'
 import type { Binder } from './Binder.js'
@@ -15,8 +16,8 @@ export type AttemptResult = {
 	updateNodeAndCtx: () => void,
 }
 
-export function attempt<B extends Binder<never>>(binder: B, node: B extends Binder<infer N extends AstNode> ? N : never, ctx: BinderContext): B extends SyncBinder<any> ? AttemptResult : Promise<AttemptResult>
-export function attempt<N extends AstNode>(binder: Binder<N>, node: N, ctx: BinderContext): AttemptResult | Promise<AttemptResult> {
+export function attempt<B extends Binder<never>>(binder: B, node: B extends Binder<infer N extends AstNode> ? StateProxy<N> : never, ctx: BinderContext): B extends SyncBinder<any> ? AttemptResult : Promise<AttemptResult>
+export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N>, ctx: BinderContext): AttemptResult | Promise<AttemptResult> {
 	const tempCtx: BinderContext = {
 		...ctx,
 		err: new ErrorReporter(),
@@ -93,7 +94,7 @@ export const fallback = AsyncBinder.create(async (node, ctx) => {
 		node => ctx.meta.hasBinder(node.type),
 		node => {
 			const binder = ctx.meta.getBinder(node.type)
-			const result = binder(node, ctx)
+			const result = binder(node as StateProxy<AstNode>, ctx)
 			if (result instanceof Promise) {
 				promises.push(result)
 			}

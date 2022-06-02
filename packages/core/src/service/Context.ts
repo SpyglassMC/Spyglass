@@ -1,6 +1,8 @@
 /* istanbul ignore file */
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type { Logger } from '../common/index.js'
+import { Operations } from '../common/index.js'
 import { formatterContextIndentation } from '../processor/index.js'
 import type { Range } from '../source/index.js'
 import { ReadonlySource } from '../source/index.js'
@@ -10,9 +12,7 @@ import { ErrorReporter } from './ErrorReporter.js'
 import type { FileService } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import type { LinterErrorReporter } from './index.js'
-import type { Logger } from './Logger.js'
 import type { MetaRegistry } from './MetaRegistry.js'
-import { Operations } from './Operations.js'
 import type { ProfilerFactory } from './Profiler.js'
 import type { DocAndNode, ProjectData } from './Project.js'
 

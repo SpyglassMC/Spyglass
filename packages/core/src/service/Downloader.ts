@@ -1,8 +1,7 @@
-import type { ExternalDownloaderOptions, Externals, RemoteUriString } from '../common/index.js'
+import type { ExternalDownloaderOptions, Externals, Logger, RemoteUriString } from '../common/index.js'
 import { bufferToString, Uri } from '../common/index.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
-import type { Logger } from './Logger.js'
 
 export interface DownloaderDownloadOut {
 	cacheUri?: string,

@@ -1,3 +1,4 @@
+import type { ReadonlyProxy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { SignatureHelpProviderContext } from '../service/index.js'
 
@@ -18,4 +19,4 @@ export interface ParameterInfo {
 	documentation?: string,
 }
 
-export type SignatureHelpProvider<N = AstNode> = (node: N, ctx: SignatureHelpProviderContext) => SignatureHelp | undefined
+export type SignatureHelpProvider<N extends AstNode = AstNode> = (node: ReadonlyProxy<N>, ctx: SignatureHelpProviderContext) => SignatureHelp | undefined

@@ -1,12 +1,11 @@
 /* istanbul ignore file */
 
-import type { DecompressedFile, Externals } from '../common/index.js'
+import type { DecompressedFile, Externals, Logger } from '../common/index.js'
 import { Uri } from '../common/index.js'
 import { TwoWayMap } from '../common/TwoWayMap.js'
 import type { Dependency } from './Dependency.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
-import type { Logger } from './Logger.js'
 
 export interface UriProtocolSupporter {
 	/**

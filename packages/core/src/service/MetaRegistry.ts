@@ -1,3 +1,4 @@
+import type { Logger } from '../common/index.js'
 import { Lazy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { Parser } from '../parser/index.js'
@@ -8,7 +9,6 @@ import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
-import type { Logger } from './Logger.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
 import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
 

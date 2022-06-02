@@ -1,4 +1,4 @@
-import type { FullResourceLocation } from '../common/index.js'
+import type { FullResourceLocation, ReadonlyProxy } from '../common/index.js'
 import { ResourceLocation } from '../common/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -62,9 +62,9 @@ export namespace ResourceLocationNode {
 		}
 	}
 
-	export function toString(node: ResourceLocationBaseNode, type?: 'full'): FullResourceLocation
-	export function toString(node: ResourceLocationBaseNode, type?: 'origin' | 'full' | 'short'): string
-	export function toString(node: ResourceLocationBaseNode, type: 'origin' | 'full' | 'short' = 'origin'): string {
+	export function toString(node: ReadonlyProxy<ResourceLocationBaseNode>, type?: 'full'): FullResourceLocation
+	export function toString(node: ReadonlyProxy<ResourceLocationBaseNode>, type?: 'origin' | 'full' | 'short'): string
+	export function toString(node: ReadonlyProxy<ResourceLocationBaseNode>, type: 'origin' | 'full' | 'short' = 'origin'): string {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string
 		/* 

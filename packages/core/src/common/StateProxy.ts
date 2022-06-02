@@ -7,6 +7,7 @@ const Origin = Symbol('OriginState')
 const Redo = Symbol('RedoStateChanges')
 const Undo = Symbol('UndoStateChanges')
 
+type Wrap<T> = T extends object ? StateProxy<T> : T
 /**
  * A proxy wrapped around an arbitrary object value.
  * You can access and mutate the value as normal, but you also have the ability to revert all changes ever since the
@@ -16,7 +17,7 @@ const Undo = Symbol('UndoStateChanges')
  * over what changes to be reverted.
  */
 export type StateProxy<T extends object> = {
-	[K in keyof T]: T[K] extends object ? StateProxy<T[K]> : T[K]
+	[K in keyof T]: Wrap<T[K]>
 } & {
 	[BranchOff]: () => StateProxy<T>,
 	[Is]: true,
