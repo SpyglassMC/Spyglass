@@ -32,7 +32,7 @@ export const StateProxy = Object.freeze({
 	},
 	create<T extends object>(obj: T): T extends StateProxy<any> ? (void & { _cannotCreateProxyFromProxy: never }) : StateProxy<T> {
 		if (StateProxy.is(obj)) {
-			throw new Error('Cannot create a proxy over a proxy. You might want to use branchOff instead.')
+			throw new TypeError('Cannot create a proxy over a proxy. You might want to use branchOff instead.')
 		}
 		return _createStateProxy(obj, new Operations()) as any
 	},
@@ -81,7 +81,7 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 
 	set(target: T, p: string | symbol, value: any, receiver: any): boolean {
 		if (p === BranchOff || p === Is || p === Origin || p === Redo || p === Undo) {
-			throw new Error(`Cannot set ${String(p)}`)
+			throw new TypeError(`Cannot set ${String(p)}`)
 		}
 		this.rootOps.set(target, p as keyof T, StateProxy.dereference(value), receiver)
 		return true

@@ -23,10 +23,10 @@ class ReadonlyProxyHandler<T extends object> implements ProxyHandler<T> {
 	}
 
 	set(_target: T, p: string | symbol, _value: any, _receiver: any): boolean {
-		throw new Error(`Cannot set property '${String(p)}' on a readonly proxy`)
+		throw new TypeError(`Cannot set property '${String(p)}' on a readonly proxy`)
 	}
 
 	deleteProperty(_target: T, p: string | symbol): boolean {
-		throw new Error(`Cannot delete property '${String(p)}' on a readonly proxy`)
+		throw new TypeError(`Cannot delete property '${String(p)}' on a readonly proxy`)
 	}
 }
