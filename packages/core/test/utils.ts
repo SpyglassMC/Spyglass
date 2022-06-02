@@ -1,6 +1,7 @@
 import type { LanguageError, Parser, ProjectData, Returnable, RootUriString } from '@spyglassmc/core'
 import { AstNode, Downloader, Failure, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, SymbolUtil, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
+import { fail } from 'assert'
 import type { RootHookObject } from 'mocha'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
@@ -128,4 +129,13 @@ export function typing(_title: string, _fn: () => void): void { }
  */
 export function assertType<T>(_value: T): void {
 	throw new Error('The assertType function should never be called at runtime. Have you enclosed this call inside a typing function?')
+}
+
+export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => {}) {
+	try {
+		fn()
+		fail('Expected an error to be thrown.')
+	} catch (e) {
+		errorCallback(e)
+	}
 }
