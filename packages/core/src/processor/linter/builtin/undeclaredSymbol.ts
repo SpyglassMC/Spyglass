@@ -1,4 +1,5 @@
 import { localeQuote, localize } from '@spyglassmc/locales'
+import type { DeepReadonly } from '../../../common/index.js'
 import { Arrayable, ResourceLocation } from '../../../common/index.js'
 import type { AstNode } from '../../../node/index.js'
 import type { LinterContext } from '../../../service/index.js'
@@ -33,7 +34,7 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 	}
 }
 
-function getAction(config: Config, symbol: Symbol, ctx: LinterContext): Config.Action | undefined {
+function getAction(config: Config, symbol: DeepReadonly<Symbol>, ctx: LinterContext): Config.Action | undefined {
 	if (Config.Action.is(config)) {
 		return config
 	}

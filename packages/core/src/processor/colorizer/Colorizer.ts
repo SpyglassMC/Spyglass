@@ -1,10 +1,10 @@
-import type { ReadonlyProxy } from '../../common/index.js'
+import type { DeepReadonly } from '../../common/index.js'
 import type { AstNode } from '../../node/index.js'
 import type { ColorizerContext } from '../../service/index.js'
 import type { RangeLike } from '../../source/index.js'
 import { Range } from '../../source/index.js'
 
-export type Colorizer<N extends AstNode = AstNode> = (node: ReadonlyProxy<N>, ctx: ColorizerContext) => readonly ColorToken[]
+export type Colorizer<N extends AstNode = AstNode> = (node: DeepReadonly<N>, ctx: ColorizerContext) => readonly ColorToken[]
 
 export interface ColorToken {
 	range: Range,

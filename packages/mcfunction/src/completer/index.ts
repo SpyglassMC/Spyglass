@@ -1,3 +1,4 @@
+import type { DeepReadonly } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import type { McfunctionNode } from '../node/index.js'
 import { CommandNode } from '../node/index.js'
@@ -25,7 +26,7 @@ export function entry(commandTreeName: string, getMockNodes: MockNodesGetter): c
 export function command(tree: RootTreeNode, getMockNodes: MockNodesGetter): core.Completer<CommandNode> {
 	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
-		const selectedChildNode: core.AstNode | undefined = node.children[index]?.children[0]
+		const selectedChildNode: DeepReadonly<core.AstNode> | undefined = node.children[index]?.children[0]
 		if (selectedChildNode) {
 			return core.completer.dispatch(selectedChildNode, ctx)
 		}

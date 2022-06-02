@@ -1,4 +1,5 @@
 import binarySearch from 'binary-search'
+import type { DeepReadonly } from '../common/index.js'
 import type { Color, FormattableColor } from '../processor/index.js'
 import { Range } from '../source/index.js'
 import type { Symbol, SymbolTable } from '../symbol/index.js'
@@ -36,7 +37,7 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
+	export function findChildIndex(node: DeepReadonly<AstNode>, needle: number | Range, endInclusive = false): number {
 		if (!node.children) {
 			return -1
 		}
@@ -47,7 +48,7 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): Exclude<N['children'], undefined>[number] | undefined {
+	export function findChild<N extends DeepReadonly<AstNode>>(node: N, needle: number | Range, endInclusive = false): Exclude<N['children'], undefined>[number] | undefined {
 		return node.children?.[findChildIndex(node, needle, endInclusive)] as any
 	}
 
@@ -56,7 +57,7 @@ export namespace AstNode {
 	 * 
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findLastChildIndex(node: AstNode, needle: number | Range, endInclusive = false): number {
+	export function findLastChildIndex(node: DeepReadonly<AstNode>, needle: number | Range, endInclusive = false): number {
 		if (!node.children) {
 			return -1
 		}
@@ -75,7 +76,7 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findLastChild<N extends AstNode>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends unknown[] ? N['children'][number] : undefined) | undefined {
+	export function findLastChild<N extends DeepReadonly<AstNode>>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends readonly unknown[] ? N['children'][number] : undefined) | undefined {
 		return node.children?.[findLastChildIndex(node, needle, endInclusive)] as any
 	}
 

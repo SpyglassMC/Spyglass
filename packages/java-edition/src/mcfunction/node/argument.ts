@@ -18,7 +18,7 @@ export interface BlockNode extends core.AstNode {
 	nbt?: nbt.NbtCompoundNode,
 }
 export namespace BlockNode {
-	export function is(node: core.AstNode | undefined): node is BlockNode {
+	export function is(node: core.DeepReadonly<core.AstNode> | undefined): node is BlockNode {
 		return (node as BlockNode | undefined)?.type === 'mcfunction:block'
 	}
 
@@ -121,7 +121,7 @@ export interface EntitySelectorNode extends core.AstNode {
 }
 export namespace EntitySelectorNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is EntitySelectorNode {
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(node: T): node is core.NodeIsHelper<EntitySelectorNode, T> {
 		return (node as EntitySelectorNode | undefined)?.type === 'mcfunction:entity_selector'
 	}
 
@@ -147,7 +147,7 @@ export namespace EntitySelectorNode {
 		Duplicated,
 		NotApplicable,
 	}
-	export function canKeyExist(selector: EntitySelectorNode, argument: EntitySelectorArgumentsNode, key: string): Result {
+	export function canKeyExist(selector: core.DeepReadonly<EntitySelectorNode>, argument: core.DeepReadonly<EntitySelectorArgumentsNode>, key: string): Result {
 		const hasKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key)
 		const hasNonInvertedKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key && !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted)
 		switch (key) {

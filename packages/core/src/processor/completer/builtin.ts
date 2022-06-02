@@ -1,5 +1,5 @@
 import binarySearch from 'binary-search'
-import type { ReadonlyProxy } from '../../common/index.js'
+import type { DeepReadonly } from '../../common/index.js'
 import { ResourceLocation } from '../../common/index.js'
 import type { BooleanBaseNode, BooleanNode } from '../../node/BooleanNode.js'
 import type { CommentNode, FileNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, PairNode, RecordBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
@@ -63,8 +63,8 @@ export const literal: Completer<LiteralBaseNode> = node => {
 export const noop: Completer<any> = () => []
 
 interface RecordOptions<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>> {
-	key: (record: ReadonlyProxy<N>, pair: ReadonlyProxy<PairNode<K, V>> | undefined, ctx: CompleterContext, range: RangeLike, insertValue: boolean, insertPairEnd: boolean, existingKeys: ReadonlyProxy<K>[]) => CompletionItem[],
-	value: (record: ReadonlyProxy<N>, pair: ReadonlyProxy<PairNode<K, V>>, ctx: CompleterContext) => CompletionItem[],
+	key: (record: DeepReadonly<N>, pair: DeepReadonly<PairNode<K, V>> | undefined, ctx: CompleterContext, range: RangeLike, insertValue: boolean, insertPairEnd: boolean, existingKeys: DeepReadonly<K>[]) => CompletionItem[],
+	value: (record: DeepReadonly<N>, pair: DeepReadonly<PairNode<K, V>>, ctx: CompleterContext) => CompletionItem[],
 }
 export function record<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>>(o: RecordOptions<K, V, N>): Completer<N> {
 	return (node, ctx) => {
@@ -72,11 +72,11 @@ export function record<K extends AstNode, V extends AstNode, N extends RecordBas
 			return []
 		}
 
-		const completeKeys = (pair: ReadonlyProxy<PairNode<K, V>> | undefined) => o.key(node, pair, ctx, pair?.key ?? ctx.offset, false, false, existingKeys)
-		const completePairs = (pair: ReadonlyProxy<PairNode<K, V>> | undefined) => o.key(node, pair, ctx, pair ?? ctx.offset, true, hasNextPair || !!pair?.end, existingKeys)
+		const completeKeys = (pair: DeepReadonly<PairNode<K, V>> | undefined) => o.key(node, pair, ctx, pair?.key ?? ctx.offset, false, false, existingKeys)
+		const completePairs = (pair: DeepReadonly<PairNode<K, V>> | undefined) => o.key(node, pair, ctx, pair ?? ctx.offset, true, hasNextPair || !!pair?.end, existingKeys)
 		const existingKeys = node.children
-			.filter((n): n is ReadonlyProxy<Omit<PairNode<K, V>, 'key'> & { key: K }> => !!n.key)
-			.map(n => n.key as ReadonlyProxy<K>)
+			.filter((n): n is DeepReadonly<Omit<PairNode<K, V>, 'key'> & { key: K }> => !!n.key)
+			.map(n => n.key as DeepReadonly<K>)
 		const index = binarySearch(node.children, ctx.offset, (n, o) => n.end
 			? Range.compareOffset(Range.translate(n, 0, -1), o, true)
 			: Range.compareOffset(n.range, o, true)

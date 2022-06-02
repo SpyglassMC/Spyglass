@@ -1,7 +1,9 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
+import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 import type { Externals } from './externals/index.js'
+import type { DeepReadonly } from './ReadonlyProxy.js'
 
 export const Uri = URL
 export type Uri = URL
@@ -160,14 +162,17 @@ export async function parseGzippedJson(externals: Externals, buffer: Uint8Array)
 	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
 }
 
-export function isObject(value: unknown): value is Exclude<object, Array<any>> {
+/**
+ * @returns Is Plain Old JavaScript Object (POJO).
+ */
+export function isPojo(value: unknown): value is Record<string, unknown> {
 	return !!value && typeof value === 'object' && !Array.isArray(value)
 }
 
 export function merge<T extends Record<string, any>>(a: T, b: Record<string, any>): T {
 	const ans = rfdc()(a)
 	for (const [key, value] of Object.entries(b) as [keyof typeof ans, any][]) {
-		if (isObject(ans[key]) && isObject(value)) {
+		if (isPojo(ans[key]) && isPojo(value)) {
 			ans[key] = merge(ans[key], value)
 		} else if (value === undefined) {
 			delete ans[key]
@@ -260,3 +265,28 @@ export function emplaceMap<K, V>(map: Map<K, V>, key: K, handler: { insert?: (ke
 		throw new Error(`No key ${key} in map and no insert handler provided`)
 	}
 }
+
+/**
+ * @returns If `val` is an non-null object or a callable object (i.e. function).
+ */
+export function isObject(val: unknown): val is object {
+	return typeof val === 'function' || (!!val && typeof val === 'object')
+}
+
+/**
+ * @example
+ * ```ts
+ * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is IsHelper<AstNode, CommentNode, T>
+ * ```
+ */
+export type IsHelper<ROOT extends object, TARGET extends ROOT, INPUT extends DeepReadonly<ROOT> | undefined> = INPUT extends DeepReadonly<ROOT>
+	? INPUT & DeepReadonly<TARGET>
+	: INPUT & TARGET
+
+/**
+ * @example
+ * ```ts
+ * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is NodeIsHelper<CommentNode, T>
+ * ```
+ */
+export type NodeIsHelper<TARGET extends AstNode, INPUT extends DeepReadonly<AstNode> | undefined> = IsHelper<AstNode, TARGET, INPUT>

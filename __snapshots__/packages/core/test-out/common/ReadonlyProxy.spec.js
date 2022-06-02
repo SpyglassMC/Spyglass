@@ -10,7 +10,11 @@ exports['ReadonlyProxy Should create a deeply readonly proxy 3'] = `
 Cannot set property 'qux' on a readonly proxy
 `
 
-exports['ReadonlyProxy Should create a deeply readonly proxy 4'] = {
+exports['ReadonlyProxy Should create a deeply readonly proxy 4'] = `
+Cannot delete property 'qux' on a readonly proxy
+`
+
+exports['ReadonlyProxy Should create a deeply readonly proxy 5'] = {
   "foo": {
     "baz": {
       "qux": true

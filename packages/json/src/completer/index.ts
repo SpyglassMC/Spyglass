@@ -1,4 +1,4 @@
-import type { Completer, CompleterContext, MetaRegistry, RangeLike } from '@spyglassmc/core'
+import type { Completer, CompleterContext, DeepReadonly, MetaRegistry, RangeLike } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { CompletionItem, CompletionKind, Range } from '@spyglassmc/core'
 import type { JsonArrayNode, JsonBooleanNode, JsonNode, JsonObjectExpectation, JsonObjectNode, JsonStringExpectation, JsonStringNode } from '../node/index.js'
@@ -73,7 +73,7 @@ const string: Completer<JsonStringNode> = (node, ctx) => {
 	return []
 }
 
-function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: JsonObjectExpectation, ctx: CompleterContext, insertValue: boolean, insertComma: boolean, selectedKey: string | undefined): CompletionItem[] {
+function objectCompletion(range: RangeLike, node: DeepReadonly<JsonObjectNode>, expectation: DeepReadonly<JsonObjectExpectation>, ctx: CompleterContext, insertValue: boolean, insertComma: boolean, selectedKey: string | undefined): CompletionItem[] {
 	if (expectation.fields) {
 		return expectation.fields!
 			.filter(f => f.key === selectedKey || !node.children.find(p => f.key === p.key?.value))
@@ -88,7 +88,7 @@ function objectCompletion(range: RangeLike, node: JsonObjectNode, expectation: J
 	return []
 }
 
-function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation['fields'], undefined>[number], insertValue: boolean, insertComma: boolean): CompletionItem {
+function fieldCompletion(range: RangeLike, field: DeepReadonly<Exclude<JsonObjectExpectation['fields'], undefined>[number]>, insertValue: boolean, insertComma: boolean): CompletionItem {
 	const value = field.value?.[0] ? SIMPLE_SNIPPETS[field.value[0].type] : ''
 	return CompletionItem.create(field.key, range, {
 		kind: CompletionKind.Property,
@@ -100,7 +100,7 @@ function fieldCompletion(range: RangeLike, field: Exclude<JsonObjectExpectation[
 	})
 }
 
-function valueCompletion(range: RangeLike, expectation: JsonExpectation[], ctx: CompleterContext): CompletionItem[] {
+function valueCompletion(range: RangeLike, expectation: readonly DeepReadonly<JsonExpectation>[], ctx: CompleterContext): CompletionItem[] {
 	return unique(expectation.flatMap(e => {
 		switch (e.type) {
 			case 'json:object':
@@ -116,7 +116,7 @@ function valueCompletion(range: RangeLike, expectation: JsonExpectation[], ctx: 
 	}))
 }
 
-function stringCompletion(range: RangeLike, expectation: JsonStringExpectation, ctx: CompleterContext): CompletionItem[] {
+function stringCompletion(range: RangeLike, expectation: DeepReadonly<JsonStringExpectation>, ctx: CompleterContext): CompletionItem[] {
 	if (Array.isArray(expectation.pool)) {
 		return expectation.pool.map(v => CompletionItem.create(v, range, {
 			kind: CompletionKind.Value,

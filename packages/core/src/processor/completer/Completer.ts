@@ -1,10 +1,10 @@
-import type { ReadonlyProxy } from '../../common/index.js'
+import type { DeepReadonly } from '../../index.js'
 import type { AstNode } from '../../node/index.js'
 import type { CompleterContext } from '../../service/index.js'
 import type { RangeLike } from '../../source/index.js'
 import { Range } from '../../source/index.js'
 
-export type Completer<N extends AstNode = AstNode> = (node: ReadonlyProxy<N>, ctx: CompleterContext) => CompletionItem[]
+export type Completer<N extends AstNode = AstNode> = (node: DeepReadonly<N>, ctx: CompleterContext) => CompletionItem[]
 
 // Built-in LSP completion item kinds: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_completion
 

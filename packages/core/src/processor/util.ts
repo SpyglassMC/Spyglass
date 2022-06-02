@@ -1,10 +1,11 @@
+import type { DeepReadonly } from '../index.js'
 import type { AstNode } from '../node/index.js'
 import { Range } from '../source/index.js'
 
 type Callback<R> = (this: void, node: AstNode, parents: AstNode[]) => R
 
-export function traversePreOrder(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>): void {
-	traversePreOrderImpl(node, shouldContinue, shouldCallFn, fn, [])
+export function traversePreOrder(node: DeepReadonly<AstNode>, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>): void {
+	traversePreOrderImpl(node as AstNode, shouldContinue, shouldCallFn, fn, [])
 }
 
 function traversePreOrderImpl(node: AstNode, shouldContinue: Callback<unknown>, shouldCallFn: Callback<unknown>, fn: Callback<unknown>, parents: AstNode[]): void {

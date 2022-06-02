@@ -1,5 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type { ExternalEventEmitter, Externals } from '../common/index.js'
+import type { DeepReadonly, ExternalEventEmitter, Externals } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -535,38 +535,38 @@ export class SymbolUtil implements ExternalEventEmitter {
 	/**
 	 * @returns If the symbol has declarations or definitions.
 	 */
-	static isDeclared(symbol: Symbol | undefined): boolean {
+	static isDeclared(symbol: DeepReadonly<Symbol> | undefined): boolean {
 		return !!(symbol?.declaration?.length || symbol?.definition?.length)
 	}
 	/**
 	 * @returns If the symbol has definitions, or declarations and implementations.
 	 */
-	static isDefined(symbol: Symbol | undefined): symbol is Symbol {
+	static isDefined(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!(symbol?.definition?.length || (symbol?.definition?.length && symbol?.implementation?.length))
 	}
 	/**
 	 * @returns If the symbol has implementations or definitions.
 	 */
-	static isImplemented(symbol: Symbol | undefined): symbol is Symbol {
+	static isImplemented(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!(symbol?.implementation?.length || symbol?.definition?.length)
 	}
 	/**
 	 * @returns If the symbol has references.
 	 */
-	static isReferenced(symbol: Symbol | undefined): symbol is Symbol {
+	static isReferenced(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!symbol?.reference?.length
 	}
 	/**
 	 * @returns If the symbol has type definitions.
 	 */
-	static isTypeDefined(symbol: Symbol | undefined): symbol is Symbol {
+	static isTypeDefined(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!symbol?.typeDefinition?.length
 	}
 
 	/**
 	 * @throws If the symbol does not have any declarations or definitions.
 	 */
-	static getDeclaredLocation(symbol: Symbol): SymbolLocation {
+	static getDeclaredLocation(symbol: DeepReadonly<Symbol>): SymbolLocation {
 		return symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => { throw new Error(`Cannot get declared location of ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`) })()
 	}
 

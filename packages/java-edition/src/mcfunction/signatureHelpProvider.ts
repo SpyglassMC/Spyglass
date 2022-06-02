@@ -60,7 +60,7 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 	}
 }
 
-function getSelectedCommandNode(fileNode: core.FileNode<mcf.McfunctionNode>, offset: number): mcf.CommandNode | undefined {
+function getSelectedCommandNode(fileNode: core.DeepReadonly<core.FileNode<mcf.McfunctionNode>>, offset: number): mcf.CommandNode | undefined {
 	return core.AstNode.findChild(fileNode.children[0], offset, true) as mcf.CommandNode | undefined
 }
 

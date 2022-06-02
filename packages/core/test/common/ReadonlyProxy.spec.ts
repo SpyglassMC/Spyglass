@@ -29,6 +29,10 @@ describe('ReadonlyProxy', () => {
 			// @ts-expect-error
 			proxy.foo.baz.qux = false
 		}, e => snapshot((e as Error).message))
+		assertError(() => {
+			// @ts-expect-error
+			delete proxy.foo.baz.qux
+		}, e => snapshot((e as Error).message))
 		snapshot(testObj)
 		assert.deepStrictEqual(testObj, proxy)
 	})

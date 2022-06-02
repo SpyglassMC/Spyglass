@@ -1,4 +1,4 @@
-import type { ItemNode, PairNode } from '@spyglassmc/core'
+import type { DeepReadonly, ItemNode, PairNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { JsonStringOptions } from '../parser/index.js'
 
@@ -31,13 +31,13 @@ interface JsonBaseAstNode {
 
 export type JsonExpectation = JsonObjectExpectation | JsonArrayExpectation | JsonStringExpectation | JsonNumberExpectation | JsonBooleanExpectation
 export namespace JsonExpectation {
-	export function isArray(e: JsonExpectation): e is JsonArrayExpectation {
+	export function isArray(e: DeepReadonly<JsonExpectation>): e is DeepReadonly<JsonArrayExpectation> {
 		return (e as JsonArrayExpectation).type === 'json:array'
 	}
-	export function isObject(e: JsonExpectation): e is JsonObjectExpectation {
+	export function isObject(e: DeepReadonly<JsonExpectation>): e is DeepReadonly<JsonObjectExpectation> {
 		return (e as JsonObjectExpectation).type === 'json:object'
 	}
-	export function isString(e: JsonExpectation): e is JsonStringExpectation {
+	export function isString(e: DeepReadonly<JsonExpectation>): e is DeepReadonly<JsonStringExpectation> {
 		return (e as JsonStringExpectation).type === 'json:string'
 	}
 }

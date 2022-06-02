@@ -613,7 +613,8 @@ export class Project implements ExternalEventEmitter {
 				() => true,
 				node => {
 					if (nodePredicate(node)) {
-						linter(node, ctx)
+						const proxy = StateProxy.create(node)
+						linter(proxy, ctx)
 					}
 				}
 			);

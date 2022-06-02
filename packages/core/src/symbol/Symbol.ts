@@ -1,6 +1,7 @@
 import rfdc from 'rfdc'
 // import { TypedEmitter } from 'tiny-typed-emitter'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
+import type { DeepReadonly } from '../common/index.js'
 import { isIterable } from '../common/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
@@ -176,9 +177,9 @@ export interface SymbolPath {
 	path: readonly string[],
 }
 export namespace SymbolPath {
-	export function fromSymbol(symbol: Symbol): SymbolPath
-	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined
-	export function fromSymbol(symbol: Symbol | undefined): SymbolPath | undefined {
+	export function fromSymbol(symbol: DeepReadonly<Symbol>): SymbolPath
+	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined
+	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined {
 		return symbol
 			? { category: symbol.category, path: symbol.path }
 			: undefined
@@ -285,7 +286,7 @@ export namespace Symbol {
 		}
 		const map = table[category]
 		for (const p of path) {
-			
+
 		}
 		return undefined
 	}

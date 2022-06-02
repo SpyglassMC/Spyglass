@@ -2,6 +2,7 @@ import { StateProxy } from '@spyglassmc/core'
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
+import { assertType, typing } from '../utils.js'
 
 const getTestObj = () => ({
 	symbols: {

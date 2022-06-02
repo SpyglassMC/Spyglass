@@ -1,4 +1,4 @@
-import type { AsyncBinder, BinderContext, BooleanNode, StringNode, SyncBinder } from '@spyglassmc/core'
+import type { AsyncBinder, BinderContext, BooleanNode, StateProxy, StringNode, SyncBinder } from '@spyglassmc/core'
 import { binder } from '@spyglassmc/core'
 import { assertType, typing } from '../../utils.js'
 
@@ -6,7 +6,7 @@ declare const stringAsyncBinder: AsyncBinder<StringNode>
 declare const stringSyncBinder: SyncBinder<StringNode>
 declare const booleanAsyncBinder: AsyncBinder<BooleanNode>
 declare const booleanSyncBinder: SyncBinder<BooleanNode>
-declare const booleanNode: BooleanNode
+declare const booleanNode: StateProxy<BooleanNode>
 declare const ctx: BinderContext
 
 type AttemptResult = binder.AttemptResult

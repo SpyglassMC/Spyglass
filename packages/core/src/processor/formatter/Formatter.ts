@@ -1,8 +1,8 @@
-import type { ReadonlyProxy } from '../../common/index.js'
+import type { DeepReadonly } from '../../common/index.js'
 import type { AstNode } from '../../node/index.js'
 import type { FormatterContext } from '../../service/index.js'
 
-export type Formatter<N extends AstNode = AstNode> = (node: ReadonlyProxy<N>, ctx: FormatterContext) => string
+export type Formatter<N extends AstNode = AstNode> = (node: DeepReadonly<N>, ctx: FormatterContext) => string
 
 export function formatterContextIndentation(ctx: FormatterContext, additionalLevels = 0): string {
 	const total = ctx.indentLevel + additionalLevels
