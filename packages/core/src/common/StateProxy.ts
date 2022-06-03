@@ -73,7 +73,7 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 			case Undo: return () => this.rootOps.undo()
 		}
 		const value = Reflect.get(target, p, receiver)
-		if (isObject(value)) {
+		if (p !== 'prototype' && isObject(value)) {
 			return emplaceMap(this.map, p, { insert: () => _createStateProxy(value, this.rootOps) })
 		}
 		return value

@@ -16,7 +16,7 @@ class ReadonlyProxyHandler<T extends object> implements ProxyHandler<T> {
 
 	get(target: T, p: string | symbol, receiver: any): any {
 		const value = Reflect.get(target, p, receiver)
-		if (isObject(value)) {
+		if (p !== 'prototype' && isObject(value)) {
 			return emplaceMap(this.map, p, { insert: () => ReadonlyProxy.create(value) })
 		}
 		return value
