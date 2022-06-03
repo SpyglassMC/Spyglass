@@ -39,12 +39,8 @@ export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderCont
 			.query(uri, 'mcdoc', segToIdentifier(rel.split('/')))
 			.ifKnown(() => { })
 			.elseEnter({
-				data: {
-					subcategory: 'module',
-				},
-				usage: {
-					type: 'implementation',
-				},
+				data: { subcategory: 'module' },
+				usage: { type: 'definition' },
 			})
 	}
 }
