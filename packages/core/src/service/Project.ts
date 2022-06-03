@@ -1,7 +1,7 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
-import { bufferToString, CachePromise, Logger, StateProxy } from '../common/index.js'
+import { bufferToString, CachePromise, emplaceMap, Logger, StateProxy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
@@ -278,6 +278,7 @@ export class Project implements ExternalEventEmitter {
 				for (const uri of this.#clientManagedUris) {
 					const result = this.#docAndNodes.get(uri)
 					if (result) {
+						promises.push(this.bind(result.doc, result.node))
 						promises.push(this.check(result.doc, result.node))
 					}
 				}
@@ -537,8 +538,14 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private cache(doc: TextDocument, node: FileNode<AstNode>): DocAndNode {
-		const data: DocAndNode = { doc, node }
-		this.#docAndNodes.set(doc.uri, data)
+		const data: DocAndNode = emplaceMap(this.#docAndNodes, doc.uri, {
+			insert: () => ({ doc, node }),
+			update: v => {
+				v.doc = doc
+				v.node = node
+				return v
+			},
+		})
 		this.emit('documentUpdated', data)
 		return data
 	}
@@ -575,8 +582,8 @@ export class Project implements ExternalEventEmitter {
 			await ctx.symbols.contributeAsAsync('checker', async () => {
 				await checker(StateProxy.create(node), ctx)
 				node.checkerErrors = ctx.err.dump()
-				this.cache(doc, node)
 				this.ensureLinted(doc, node)
+				this.cache(doc, node)
 			})
 		} catch (e) {
 			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
@@ -678,7 +685,7 @@ export class Project implements ExternalEventEmitter {
 	/**
 	 * Notify that a new document was opened in the editor.
 	 */
-	onDidOpen(uri: string, languageID: string, version: number, content: string): void {
+	async onDidOpen(uri: string, languageID: string, version: number, content: string): Promise<void> {
 		uri = this.normalizeUri(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
@@ -687,7 +694,8 @@ export class Project implements ExternalEventEmitter {
 		const doc = TextDocument.create(uri, languageID, version, content)
 		const { node } = this.parseAndCache(doc)
 		if (this.#isReady) {
-			this.check(doc, node)
+			await this.bind(doc, node)
+			await this.check(doc, node)
 		}
 	}
 
@@ -695,7 +703,7 @@ export class Project implements ExternalEventEmitter {
 	 * Notify that an existing document was changed in the editor.
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
-	onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): void {
+	async onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): Promise<void> {
 		uri = this.normalizeUri(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
@@ -707,7 +715,8 @@ export class Project implements ExternalEventEmitter {
 		TextDocument.update(result.doc, changes, version)
 		const { node } = this.parseAndCache(result.doc)
 		if (this.#isReady) {
-			this.check(result.doc, node)
+			await this.bind(result.doc, result.node)
+			await this.check(result.doc, node)
 		}
 	}
 
