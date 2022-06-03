@@ -249,6 +249,11 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 	return !!(value as Iterable<unknown>)[Symbol.iterator]
 }
 
+//#region ESNext functions polyfill
+export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
+	return index >= 0 ? array?.[index] : array?.[array.length + index]
+}
+
 export function emplaceMap<K, V>(map: Map<K, V>, key: K, handler: { insert?: (key: K, map: Map<K, V>) => V, update?: (existing: V, key: K, map: Map<K, V>) => V }): V {
 	if (map.has(key)) {
 		let value: V = map.get(key)!
@@ -265,6 +270,7 @@ export function emplaceMap<K, V>(map: Map<K, V>, key: K, handler: { insert?: (ke
 		throw new Error(`No key ${key} in map and no insert handler provided`)
 	}
 }
+//#endregion
 
 /**
  * @returns If `val` is an non-null object or a callable object (i.e. function).
