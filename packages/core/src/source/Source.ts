@@ -135,17 +135,17 @@ export class ReadonlySource {
 
 export class Source extends ReadonlySource {
 	constructor(
-		public string: string,
-		public indexMap: IndexMap = [],
+		public override string: string,
+		public override indexMap: IndexMap = [],
 	) {
 		super(string, indexMap)
 	}
 
-	get cursor() {
+	override get cursor() {
 		return super.cursor
 	}
 
-	set cursor(cursor: number) {
+	override set cursor(cursor: number) {
 		this.innerCursor = IndexMap.toInnerOffset(this.indexMap, cursor)
 	}
 
