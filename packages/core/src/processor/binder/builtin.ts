@@ -15,8 +15,8 @@ export type AttemptResult = {
 	updateNodeAndCtx: () => void,
 }
 
-export function attempt<B extends Binder<never>>(binder: B, node: B extends Binder<infer N extends AstNode> ? StateProxy<N> : never, ctx: BinderContext): B extends SyncBinder<any> ? AttemptResult : Promise<AttemptResult>
-export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N>, ctx: BinderContext): AttemptResult | Promise<AttemptResult> {
+export function attempt<B extends Binder<never>>(binder: B, node: B extends Binder<infer N extends AstNode> ? N : never, ctx: BinderContext): B extends SyncBinder<any> ? AttemptResult : Promise<AttemptResult>
+export function attempt<N extends AstNode>(binder: Binder<N>, node: N, ctx: BinderContext): AttemptResult | Promise<AttemptResult> {
 	const tempCtx: BinderContext = {
 		...ctx,
 		err: new ErrorReporter(),
@@ -24,7 +24,7 @@ export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N
 	}
 
 	const processAfterBinder = () => {
-		StateProxy.undoChanges(node)
+		StateProxy.undoChanges(node as StateProxy<N>)
 
 		const totalErrorSpan = tempCtx.err.errors
 			.map(e => e.range.end - e.range.start)
@@ -35,7 +35,7 @@ export function attempt<N extends AstNode>(binder: Binder<N>, node: StateProxy<N
 			totalErrorSpan,
 			updateNodeAndCtx: () => {
 				ctx.err.absorb(tempCtx.err)
-				StateProxy.redoChanges(node)
+				StateProxy.redoChanges(node as StateProxy<N>)
 				tempCtx.symbols.applyDelayedEdits()
 			},
 		}

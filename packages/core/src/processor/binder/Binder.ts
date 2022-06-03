@@ -1,4 +1,3 @@
-import type { StateProxy } from '../../common/index.js'
 import type { AstNode } from '../../node/index.js'
 import type { BinderContext } from '../../service/index.js'
 
@@ -7,7 +6,7 @@ const IsAsync = Symbol('IsAsyncBinder')
 export type Binder<N extends AstNode> = SyncBinder<N> | AsyncBinder<N>
 
 export interface SyncBinderInitializer<N extends AstNode> {
-	(node: StateProxy<N>, ctx: BinderContext): void
+	(node: N, ctx: BinderContext): void
 }
 export interface SyncBinder<N extends AstNode> extends SyncBinderInitializer<N> {
 	[IsAsync]?: never
@@ -22,7 +21,7 @@ export const SyncBinder = Object.freeze({
 })
 
 interface AsyncBinderInitializer<N extends AstNode> {
-	(node: StateProxy<N>, ctx: BinderContext): Promise<void>
+	(node: N, ctx: BinderContext): Promise<void>
 }
 export interface AsyncBinder<N extends AstNode> extends AsyncBinderInitializer<N> {
 	[IsAsync]: true

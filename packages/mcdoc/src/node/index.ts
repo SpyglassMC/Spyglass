@@ -1,5 +1,5 @@
 import type { AstNode, ColorTokenType, FloatNode, IntegerNode, SymbolBaseNode } from '@spyglassmc/core'
-import { CommentNode, ResourceLocationNode, StringNode } from '@spyglassmc/core'
+import { atArray, CommentNode, ResourceLocationNode, StringNode } from '@spyglassmc/core'
 import type { McdocType } from '../type/index.js'
 
 export interface ModuleNode extends AstNode {
@@ -302,10 +302,23 @@ export interface EnumNode extends TypeBaseNode<DocCommentsNode | LiteralNode | I
 	type: 'mcdoc:enum',
 }
 export const EnumNode = Object.freeze({
+	kinds: new Set(['byte', 'short', 'int', 'long', 'float', 'double', 'string'] as const),
+	destruct(node: EnumNode): {
+		attributes: AttributeNode[],
+		block?: EnumBlockNode,
+		docComments?: DocCommentsNode,
+		identifier?: IdentifierNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			block: node.children.find(EnumBlockNode.is),
+			docComments: node.children.find(DocCommentsNode.is),
+			identifier: node.children.find(IdentifierNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is EnumNode {
 		return (node as EnumNode | undefined)?.type === 'mcdoc:enum'
 	},
-	kinds: new Set(['byte', 'short', 'int', 'long', 'float', 'double', 'string'] as const),
 })
 export type EnumKind = typeof EnumNode['kinds'] extends Set<infer V> ? V : never
 
@@ -314,6 +327,27 @@ export interface DocCommentsNode extends AstNode {
 	children: CommentNode[],
 }
 export const DocCommentsNode = Object.freeze({
+	/**
+	 * @returns The text content of this doc comment block.
+	 */
+	asText(node: DocCommentsNode | undefined): string | undefined {
+		if (!node) {
+			return undefined
+		}
+
+		let comments = node.children.map(doc => doc.comment)
+
+		// If every comment contains a leading space or is empty, stripe the leading spaces off.
+		// e.g. /// This is an example doc comment.
+		//      ///
+		//      /// Another line.
+		// should be converted to "This is an example doc comment.\n\nAnother line."
+		if (comments.every(s => s.length === 0 || s.startsWith(' '))) {
+			comments = comments.map(s => s.slice(1))
+		}
+
+		return comments.join('\n')
+	},
 	is(node: AstNode | undefined): node is DocCommentsNode {
 		return (node as DocCommentsNode | undefined)?.type === 'mcdoc:doc_comments'
 	},
@@ -357,6 +391,21 @@ export interface StructNode extends TypeBaseNode<DocCommentsNode | LiteralNode |
 	type: 'mcdoc:struct',
 }
 export const StructNode = Object.freeze({
+	destruct(node: StructNode): {
+		attributes: AttributeNode[],
+		block?: StructBlockNode,
+		docComments?: DocCommentsNode,
+		identifier?: IdentifierNode,
+		typeParams?: TypeParamBlockNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			block: node.children.find(StructBlockNode.is),
+			docComments: node.children.find(DocCommentsNode.is),
+			identifier: node.children.find(IdentifierNode.is),
+			typeParams: node.children.find(TypeParamBlockNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is StructNode {
 		return (node as StructNode | undefined)?.type === 'mcdoc:struct'
 	},
@@ -397,6 +446,16 @@ export interface PathNode extends AstNode {
 	isAbsolute?: boolean,
 }
 export const PathNode = Object.freeze({
+	destruct(node: PathNode | undefined): {
+		isAbsolute?: boolean,
+		lastIdentifier?: IdentifierNode,
+	} {
+		const lastChild = atArray(node?.children, -1)
+		return {
+			isAbsolute: node?.isAbsolute,
+			lastIdentifier: IdentifierNode.is(lastChild) ? lastChild : undefined,
+		}
+	},
 	is(node: AstNode | undefined): node is PathNode {
 		return (node as PathNode | undefined)?.type === 'mcdoc:path'
 	},
@@ -510,6 +569,21 @@ export interface TypeAliasNode extends AstNode {
 	children: (CommentNode | PrelimNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[],
 }
 export const TypeAliasNode = Object.freeze({
+	destruct(node: TypeAliasNode): {
+		attributes: AttributeNode[],
+		docComments?: DocCommentsNode,
+		identifier?: IdentifierNode,
+		typeParams?: TypeParamBlockNode,
+		rhs?: TypeNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			docComments: node.children.find(DocCommentsNode.is),
+			identifier: node.children.find(IdentifierNode.is),
+			typeParams: node.children.find(TypeParamBlockNode.is),
+			rhs: node.children.find(TypeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is TypeAliasNode {
 		return (node as TypeAliasNode | undefined)?.type === 'mcdoc:type_alias'
 	},
@@ -520,6 +594,15 @@ export interface UseStatementNode extends AstNode {
 	children: (CommentNode | LiteralNode | PathNode | IdentifierNode)[]
 }
 export const UseStatementNode = Object.freeze({
+	destruct(node: UseStatementNode): {
+		binding?: IdentifierNode,
+		path?: PathNode,
+	} {
+		return {
+			binding: node.children.find(IdentifierNode.is),
+			path: node.children.find(PathNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is UseStatementNode {
 		return (node as UseStatementNode | undefined)?.type === 'mcdoc:use_statement'
 	},

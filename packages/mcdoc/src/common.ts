@@ -1,3 +1,5 @@
+import type * as core from '@spyglassmc/core'
+
 export type Segments = readonly string[]
 
 export function identifierToSeg(identifier: string): Segments {
@@ -10,4 +12,8 @@ export function identifierToSeg(identifier: string): Segments {
 
 export function segToIdentifier(seg: Segments): string {
 	return `::${seg.join('::')}`
+}
+
+export interface AdditionalContext {
+	moduleIdentifier: string,
 }
