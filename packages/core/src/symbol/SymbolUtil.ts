@@ -247,6 +247,15 @@ export class SymbolUtil implements ExternalEventEmitter {
 	lookup(category: AllCategory, path: readonly string[], node?: AstNode): LookupResult
 	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult
 	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult {
+		while (node) {
+			if (node.locals) {
+				const result = SymbolUtil.lookupTable(node.locals, category, path)
+				if (result.symbol) {
+					return result
+				}
+			}
+			node = node.parent
+		}
 		return SymbolUtil.lookupTable(this.global, category, path)
 	}
 
