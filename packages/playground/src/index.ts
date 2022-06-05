@@ -55,7 +55,7 @@ const onChange = EditorView.updateListener.of((update) => {
 })
 
 async function spyglassCompletions(ctx: CompletionContext): Promise<CompletionResult | null> {
-	const docAndNodes = await service.project.ensureCheckedOnlyWhenReady($uri.value)
+	const docAndNodes = await service.project.ensureClientManagedChecked($uri.value)
 	if (!docAndNodes) {
 		return null
 	}
@@ -75,7 +75,7 @@ const diagnosticField = StateField.define<DecorationSet>({
 		return Decoration.none
 	},
 	update(underlines, tr) {
-		const docAndNode = service.project.get($uri.value)
+		const docAndNode = service.project.getClientManaged($uri.value)
 		if (!docAndNode) {
 			return underlines
 		}
@@ -138,7 +138,7 @@ const colorTokenField = StateField.define<DecorationSet>({
 		return Decoration.none
 	},
 	update(underlines, tr) {
-		const docAndNode = service.project.get($uri.value)
+		const docAndNode = service.project.getClientManaged($uri.value)
 		if (!docAndNode) {
 			return underlines
 		}

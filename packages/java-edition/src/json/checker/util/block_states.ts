@@ -19,8 +19,8 @@ export function blockStateMap({ category, id, ids, tag, mixedTypes, requireAll }
 		} else if (id) {
 			ids = [id]
 		}
-		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!ids?.length || !ctx.ensureChecked) {
+		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
+		if (!ids?.length || !ctx.ensureBound) {
 			const values = mixedTypes ? any([boolean, simpleString, intBounds()]) : simpleString
 			object(
 				simpleString,
@@ -55,8 +55,8 @@ export function blockStateList({ category, id, ids, tag }: Options): JsonChecker
 		} else if (id) {
 			ids = [id]
 		}
-		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!ids?.length || !ctx.ensureChecked) {
+		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
+		if (!ids?.length || !ctx.ensureBound) {
 			listOf(simpleString)(node, ctx)
 			return
 		}

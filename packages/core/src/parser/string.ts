@@ -9,6 +9,11 @@ import { Range, Source } from '../source/index.js'
 import type { Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
+const OPTIONS: StringOptions = {
+}
+
+const VALUEMAP: never[] = []
+
 export function string(options: StringOptions): InfallibleParser<StringNode> {
 	return (src: Source, ctx: ParserContext): StringNode => {
 		const ans: StringNode = {
@@ -101,7 +106,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			}
 		}
 
-		ans.range.end = src.cursor
+		ans.range.end = src.cursor;
+
+		(ans as any).valueMap = VALUEMAP;
+		(ans as any).options = OPTIONS
 
 		return ans
 	}

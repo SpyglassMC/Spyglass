@@ -76,7 +76,7 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 }
 
 export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation[] | undefined {
-	const node: JsonNode = { type: 'json:null', range: Range.create(0) }
+	const node: JsonNode = StateProxy.create({ type: 'json:null', range: Range.create(0) })
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),

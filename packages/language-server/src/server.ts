@@ -185,7 +185,7 @@ connection.workspace.onDidRenameFiles(({ }) => {
 })
 
 connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -194,7 +194,7 @@ connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) =
 	return toLS.colorPresentationArray(presentation, doc)
 })
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -204,7 +204,7 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 })
 
 connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -219,7 +219,7 @@ connection.onRequest('spyglassmc/dataHackPubify', ({ initialism }: MyLspDataHack
 })
 
 connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -228,7 +228,7 @@ connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
 })
 connection.onDefinition(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -237,7 +237,7 @@ connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
 connection.onImplementation(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -246,7 +246,7 @@ connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
 })
 connection.onReferences(async ({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -255,7 +255,7 @@ connection.onReferences(async ({ textDocument: { uri }, position, context: { inc
 	return toLS.locationLink(ans, doc, false)
 })
 connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -265,7 +265,7 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 })
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -275,7 +275,7 @@ connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 })
 
 connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -289,7 +289,7 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 })
 
 connection.onHover(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -299,7 +299,7 @@ connection.onHover(async ({ textDocument: { uri }, position }) => {
 })
 
 connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, range }: MyLspInlayHintRequestParams): Promise<MyLspInlayHint[]> => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return []
 	}
@@ -318,7 +318,7 @@ connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 })
 
 connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return { data: [] }
 	}
@@ -327,7 +327,7 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	return toLS.semanticTokens(tokens, doc, capabilities.textDocument?.semanticTokens?.multilineTokenSupport)
 })
 connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return { data: [] }
 	}
@@ -337,7 +337,7 @@ connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, rang
 })
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
@@ -354,7 +354,7 @@ connection.onWorkspaceSymbol(({ query }) => {
 })
 
 connection.onDocumentFormatting(async ({ textDocument: { uri }, options }) => {
-	const docAndNode = await service.project.ensureCheckedOnlyWhenReady(uri)
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}

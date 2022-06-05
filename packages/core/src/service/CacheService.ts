@@ -1,3 +1,4 @@
+import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { Uri } from '../common/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
@@ -217,6 +218,10 @@ export class CacheService {
 			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
 		}
 		return false
+	}
+
+	async hasFileChangedSinceCache(doc: TextDocument): Promise<boolean> {
+		return this.checksums.files[doc.uri] !== await this.project.externals.crypto.getSha1(doc.getText())
 	}
 
 	reset(): void {

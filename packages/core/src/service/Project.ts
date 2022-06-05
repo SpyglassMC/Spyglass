@@ -1,7 +1,7 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
-import { bufferToString, CachePromise, emplaceMap, Logger, StateProxy } from '../common/index.js'
+import { bufferToString, Logger, SingletonPromise, StateProxy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
@@ -65,11 +65,45 @@ interface SymbolRegistrarEvent {
 	checksum: string | undefined,
 }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureBound' | 'ensureChecked' | 'externals' | 'fs' | 'get' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureBound' | 'externals' | 'fs' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 
 /* istanbul ignore next */
 /**
  * Manage all tracked documents and errors.
+ *
+ * The four stages of processing a document:
+ * 1. `read` - read the file from the external file system as a `TextDocument`.
+ * 2. `parse` - Parse the `TextDocument` into an `AstNode`. 
+ * 3. `bind` - Bind the `AstNode` and populate both the global symbol table and the local symbol tables on the nodes.
+ * 4. `check` (includes `lint`) - Check the `AstNode` with information from the symbol tables.
+ * 
+ * **Caching**
+ * 
+ * The global symbol table along with a list of file URIs and checksums is cached in memory and is periodically saved to disk.
+ * 
+ * The `TextDocument`s and file `AstNode`s (including their local symbol tables) managed by the client are stored in memory until the client sends a `didClose` notification.
+ * 
+ * Some `TextDocument`s may be cached to avoid excessive reading from the file system.
+ * 
+ * **INIT and READY**
+ * 
+ * When a new instance of the {@link Project} class is constructed, its INIT and READY processes are immediately started in serial.
+ * 
+ * During the INIT process of the project, the config and language feature initialization are processed.
+ * The Promise returned by the {@link init} function resolves when the INIT process is complete.
+ * 
+ * During the READY process of the project, the whole project is analyzed mainly to populate the global symbol table.
+ * The Promise returned by the {@link ready} function resolves when the READY process is complete.
+ * 
+ * The following generally happens during the READY process:
+ * 1. A list of file URIs under the project is obtained.
+ * 2. The global symbol cache, if available, is loaded and validated against the know list of files.
+ *    A list of files that need to be (re)processed is returned in this step.
+ * 3. For each files in the new list, the file is read, parsed, bound, and checked.
+ * 
+ * **EDITING**
+ * 
+ * After the READY process is complete, editing text documents as signaled by the client or the file watcher results in the file being re-processed.
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
@@ -80,8 +114,8 @@ export class Project implements ExternalEventEmitter {
 	 * URI of files that are currently managed by the language client.
 	 */
 	readonly #clientManagedUris = new Set<string>()
+	readonly #clientManagedDocAndNodes = new Map<string, DocAndNode>()
 	readonly #configService: ConfigService
-	readonly #docAndNodes = new Map<string, DocAndNode>()
 	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
 	#initPromise!: Promise<void>
@@ -256,12 +290,11 @@ export class Project implements ExternalEventEmitter {
 					this.updateRoots()
 				}
 				this.bindUri(uri)
-				return this.ensureChecked(uri)
+				return this.ensureBound(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
 				if (this.isOnlyWatched(uri)) {
-					this.#docAndNodes.delete(uri)
-					await this.ensureChecked(uri)
+					await this.ensureBound(uri)
 				}
 			})
 			.on('fileDeleted', ({ uri }) => {
@@ -273,16 +306,12 @@ export class Project implements ExternalEventEmitter {
 			})
 			.on('ready', () => {
 				this.#isReady = true
-				// Recheck client managed files.
-				const promises: Promise<unknown>[] = []
-				for (const uri of this.#clientManagedUris) {
-					const result = this.#docAndNodes.get(uri)
-					if (result) {
-						promises.push(this.bind(result.doc, result.node))
-						promises.push(this.check(result.doc, result.node))
-					}
-				}
-				Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after ready', e))
+				// // Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
+				// const promises: Promise<unknown>[] = []
+				// for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
+				// 	promises.push(this.check(doc, node))
+				// }
+				// Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after READY', e))
 			})
 	}
 
@@ -390,9 +419,6 @@ export class Project implements ExternalEventEmitter {
 			await this.init()
 
 			const __profiler = this.profilers.get('project#ready')
-			const ensureParsed = this.ensureParsed.bind(this)
-			const bind = this.bind.bind(this)
-			const check = this.check.bind(this)
 
 			await Promise.all([
 				listDependencyFiles(),
@@ -403,7 +429,7 @@ export class Project implements ExternalEventEmitter {
 			this.#dependencyRoots = new Set(this.fs.listRoots())
 
 			this.updateRoots()
-			__profiler.task('List Files')
+			__profiler.task('List URIs')
 
 			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
 				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
@@ -431,25 +457,30 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Bind URIs')
 
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
-			const docAndNodes = (await Promise.all(files.map(uri => ensureParsed(uri)))).filter((r): r is DocAndNode => !!r)
-			__profiler.task('Parse Files')
+			__profiler.task('Sort URIs')
 
-			await Promise.all(docAndNodes.map(({ doc, node }) => bind(doc, node)))
-			__profiler.task('Bind Files')
+			for (const uri of files) {
+				await this.ensureChecked(uri)
+			}
+			__profiler.task('Check Files')
 
-			await Promise.all(docAndNodes.map(({ doc, node }) => check(doc, node)))
-			__profiler.task('Check Files').finalize()
-
+			__profiler.finalize()
 			this.emit('ready', {})
 		}
 		this.#readyPromise = ready()
 	}
 
+	/**
+	 * Load the config file and initialize parsers and processors.
+	 */
 	async init(): Promise<this> {
 		await this.#initPromise
 		return this
 	}
 
+	/**
+	 * Finish the initial run of parsing, binding, and checking the entire project.
+	 */
 	async ready(): Promise<this> {
 		await this.#readyPromise
 		return this
@@ -482,75 +513,94 @@ export class Project implements ExternalEventEmitter {
 		return this.fs.mapFromDisk(this.externals.uri.normalize(uri))
 	}
 
-	/**
-	 * @returns The language ID of the file, or the file extension without the leading dot.
-	 */
-	private getLanguageID(uri: string): string {
-		uri = this.normalizeUri(uri)
-		const ext = fileUtil.extname(uri) ?? '.plaintext'
-		return this.meta.getLanguageID(ext) ?? ext.slice(1)
+	private static readonly TextDocumentCacheMaxLength = 268435456
+	#textDocumentCache = new Map<string, Promise<TextDocument | undefined> | TextDocument>()
+	#textDocumentCacheLength = 0
+	private removeCachedTextDocument(uri: string): void {
+		const doc = this.#textDocumentCache.get(uri)
+		if (doc && !(doc instanceof Promise)) {
+			this.#textDocumentCacheLength -= doc.getText().length
+		}
+		this.#textDocumentCache.delete(uri)
 	}
+	private async read(uri: string): Promise<TextDocument | undefined> {
+		const getLanguageID = (uri: string): string => {
+			const ext = fileUtil.extname(uri) ?? '.plaintext'
+			return this.meta.getLanguageID(ext) ?? ext.slice(1)
+		}
+		const createTextDocument = async (uri: string): Promise<TextDocument | undefined> => {
+			const languageId = getLanguageID(uri)
+			if (!this.meta.isSupportedLanguage(languageId)) {
+				return undefined
+			}
 
-	/**
-	 * @returns The cached `TextDocument` and `AstNode` for the URI, or `undefined` when such data isn't available in cache.
-	 */
-	get(uri: string): DocAndNode | undefined {
-		uri = this.normalizeUri(uri)
-		return this.#docAndNodes.get(uri)
-	}
+			try {
+				const content = bufferToString(await this.fs.readFile(uri))
+				return TextDocument.create(uri, languageId, -1, content)
+			} catch (e) {
+				this.logger.warn(`[Project] [read] Failed creating TextDocument for “${uri}”`, e)
+				return undefined
+			}
+		}
+		const trimCache = (): void => {
+			const iterator = this.#textDocumentCache.keys()
+			while (this.#textDocumentCacheLength > Project.TextDocumentCacheMaxLength) {
+				const result = iterator.next()
+				if (result.done) {
+					throw new Error(`[Project] [read] Cache is too large with length ${this.#textDocumentCacheLength} even though it's empty; make sure to call 'removeCachedTextDocument()' instead of 'this.#textDocumentCache.delete()'`)
+				}
+				this.removeCachedTextDocument(result.value)
+			}
+		}
+		const getCacheHandlingPromise = async (uri: string): Promise<TextDocument | undefined> => {
+			if (this.#textDocumentCache.has(uri)) {
+				const ans = this.#textDocumentCache.get(uri)!
+				// Move the entry to the end of the cache.
+				// The goal is that more-frequently-used entries are preferably not trimmed.
+				this.#textDocumentCache.delete(uri)
+				this.#textDocumentCache.set(uri, ans)
+				return ans
+			} else {
+				const promise = createTextDocument(uri)
+				this.#textDocumentCache.set(uri, promise)
 
-	/**
-	 * @throws FS-related errors
-	 */
-	@CachePromise()
-	async ensureParsed(uri: string): Promise<DocAndNode | undefined> {
-		uri = this.normalizeUri(uri)
-
-		if (this.#docAndNodes.has(uri)) {
-			return this.#docAndNodes.get(uri)!
+				// We replace the Promise in the cache with the TextDocument after it resolves,
+				// or removes it from the cache if it resolves to undefined.
+				const doc = await promise
+				if (this.#textDocumentCache.get(uri) === promise) {
+					// The Promise in the cache is the same as the one we created earlier.
+					// This check is to make sure we don't set a wrong TextDocument to the cache in case the cache was modified elsewhere.
+					if (doc) {
+						this.#textDocumentCache.set(uri, doc)
+						this.#textDocumentCacheLength += doc.getText().length
+						trimCache()
+					} else {
+						this.#textDocumentCache.delete(uri)
+					}
+				}
+				return doc
+			}
 		}
 
-		const languageID = this.getLanguageID(uri)
-		if (!this.meta.isSupportedLanguage(languageID)) {
-			return undefined
+		uri = this.normalizeUri(uri)
+		if (this.#clientManagedUris.has(uri)) {
+			const result = this.#clientManagedDocAndNodes.get(uri)
+			if (result) {
+				return result.doc
+			}
+			throw new Error(`[Project] [read] Client-managed URI “${uri}” does not have a TextDocument in the cache`)
 		}
-
-		try {
-			const content = bufferToString(await this.fs.readFile(uri))
-			const doc = TextDocument.create(uri, languageID, -1, content)
-			return this.parseAndCache(doc)
-		} catch (e) {
-			this.logger.warn(`[Project] [ensureParsed] Failed for “${uri}”`, e)
-			return undefined
-		}
-	}
-
-	private parseAndCache(doc: TextDocument): DocAndNode {
-		const node = this.parse(doc)
-		return this.cache(doc, node)
+		return getCacheHandlingPromise(uri)
 	}
 
 	private parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = ParserContext.create(this, { doc })
 		const src = new Source(doc.getText())
-		const ans = file()(src, ctx)
-		return ans
+		const node = file()(src, ctx)
+		return node
 	}
 
-	private cache(doc: TextDocument, node: FileNode<AstNode>): DocAndNode {
-		const data: DocAndNode = emplaceMap(this.#docAndNodes, doc.uri, {
-			insert: () => ({ doc, node }),
-			update: v => {
-				v.doc = doc
-				v.node = node
-				return v
-			},
-		})
-		this.emit('documentUpdated', data)
-		return data
-	}
-
-	@CachePromise()
+	@SingletonPromise()
 	private async bind(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		if (node.binderErrors) {
 			return
@@ -563,14 +613,13 @@ export class Project implements ExternalEventEmitter {
 				const proxy = StateProxy.create(node)
 				await binder(proxy, ctx)
 				node.binderErrors = ctx.err.dump()
-				this.cache(doc, node)
 			})
 		} catch (e) {
 			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
-	@CachePromise()
+	@SingletonPromise()
 	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		if (node.checkerErrors) {
 			return
@@ -582,8 +631,7 @@ export class Project implements ExternalEventEmitter {
 			await ctx.symbols.contributeAsAsync('checker', async () => {
 				await checker(StateProxy.create(node), ctx)
 				node.checkerErrors = ctx.err.dump()
-				this.ensureLinted(doc, node)
-				this.cache(doc, node)
+				this.lint(doc, node)
 			})
 		} catch (e) {
 			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
@@ -591,82 +639,73 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private lint(doc: TextDocument, node: FileNode<AstNode>): void {
+		if (node.linterErrors) {
+			return
+		}
+
 		node.linterErrors = []
-
-		for (const [ruleName, rawValue] of Object.entries(this.config.lint)) {
-			const result = LinterConfigValue.destruct(rawValue)
-			if (!result) {
-				// Rule is disabled (i.e. set to `null`) in the config.
-				continue
-			}
-
-			const { ruleSeverity, ruleValue } = result
-			const { configValidator, linter, nodePredicate } = this.meta.getLinter(ruleName)
-			if (!configValidator(ruleName, ruleValue, this.logger)) {
-				// Config value is invalid.
-				continue
-			}
-
-			const ctx = LinterContext.create(this, {
-				doc,
-				err: new LinterErrorReporter(ruleName, ruleSeverity),
-				ruleName,
-				ruleValue,
-			})
-
-			traversePreOrder(
-				node,
-				() => true,
-				() => true,
-				node => {
-					if (nodePredicate(node)) {
-						const proxy = StateProxy.create(node)
-						linter(proxy, ctx)
-					}
+		try {
+			for (const [ruleName, rawValue] of Object.entries(this.config.lint)) {
+				const result = LinterConfigValue.destruct(rawValue)
+				if (!result) {
+					// Rule is disabled (i.e. set to `null`) in the config.
+					continue
 				}
-			);
 
-			(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
-		}
+				const { ruleSeverity, ruleValue } = result
+				const { configValidator, linter, nodePredicate } = this.meta.getLinter(ruleName)
+				if (!configValidator(ruleName, ruleValue, this.logger)) {
+					// Config value is invalid.
+					continue
+				}
 
-		this.cache(doc, node)
-	}
+				const ctx = LinterContext.create(this, {
+					doc,
+					err: new LinterErrorReporter(ruleName, ruleSeverity),
+					ruleName,
+					ruleValue,
+				})
 
-	ensureLinted(doc: TextDocument, node: FileNode<AstNode>): void {
-		if (!node.linterErrors) {
-			try {
-				this.lint(doc, node)
-			} catch (e) {
-				this.logger.error(`[Project] [ensureLinted] Failed for “${doc.uri}” #${doc.version}`, e)
+				traversePreOrder(
+					node,
+					() => true,
+					() => true,
+					node => {
+						if (nodePredicate(node)) {
+							const proxy = StateProxy.create(node)
+							linter(proxy, ctx)
+						}
+					}
+				);
+
+				(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
+		} catch (e) {
+			this.logger.error(`[Project] [lint] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
-	@CachePromise()
-	async ensureBound(uri: string): Promise<DocAndNode | undefined> {
-		const result = await this.ensureParsed(uri)
-		if (result) {
-			await this.bind(result.doc, result.node)
+	@SingletonPromise()
+	async ensureBound(uri: string): Promise<void> {
+		const doc = await this.read(uri)
+		if (!doc || !(await this.cacheService.hasFileChangedSinceCache(doc))) {
+			return
 		}
-		return result
+
+		const node = this.parse(doc)
+		await this.bind(doc, node)
+		this.emit('documentUpdated', { doc, node })
 	}
 
-	@CachePromise()
-	async ensureChecked(uri: string): Promise<DocAndNode | undefined> {
-		const result = await this.ensureBound(uri)
-		if (result) {
-			await this.check(result.doc, result.node)
+	@SingletonPromise()
+	async ensureChecked(uri: string): Promise<void> {
+		const doc = await this.read(uri)
+		const node = doc ? this.parse(doc) : undefined
+		if (doc && node && this.#isReady) {
+			await this.bind(doc, node)
+			await this.check(doc, node)
+			this.emit('documentUpdated', { doc, node })
 		}
-		return result
-	}
-
-	@CachePromise()
-	async ensureCheckedOnlyWhenReady(uri: string): Promise<DocAndNode | undefined> {
-		const result = await this.ensureBound(uri)
-		if (this.#isReady && result) {
-			await this.check(result.doc, result.node)
-		}
-		return result
 	}
 
 	private bindUri(param: string | string[]): void {
@@ -690,9 +729,10 @@ export class Project implements ExternalEventEmitter {
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
-		this.#clientManagedUris.add(uri)
 		const doc = TextDocument.create(uri, languageID, version, content)
-		const { node } = this.parseAndCache(doc)
+		const node = this.parse(doc)
+		this.#clientManagedUris.add(uri)
+		this.#clientManagedDocAndNodes.set(uri, { doc, node })
 		if (this.#isReady) {
 			await this.bind(doc, node)
 			await this.check(doc, node)
@@ -708,15 +748,16 @@ export class Project implements ExternalEventEmitter {
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
-		const result = this.get(uri)
-		if (!result) {
-			throw new Error(`Document for “${uri}” is not cached. This should not happen. Did the language client send a didChange notification without sending a didOpen one?`)
+		const doc = this.#clientManagedDocAndNodes.get(uri)?.doc
+		if (!doc) {
+			throw new Error(`TextDocument for “${uri}” is ${!doc ? 'not cached' : 'a Promise'}. This should not happen. Did the language client send a didChange notification without sending a didOpen one, or is there a logic error on our side resulting the 'read' function overriding the 'TextDocument' created in the 'didOpen' notification handler?`)
 		}
-		TextDocument.update(result.doc, changes, version)
-		const { node } = this.parseAndCache(result.doc)
+		TextDocument.update(doc, changes, version)
+		const node = this.parse(doc)
+		this.#clientManagedDocAndNodes.set(uri, { doc, node })
 		if (this.#isReady) {
-			await this.bind(result.doc, result.node)
-			await this.check(result.doc, node)
+			await this.bind(doc, node)
+			await this.check(doc, node)
 		}
 	}
 
@@ -729,7 +770,25 @@ export class Project implements ExternalEventEmitter {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
 		this.#clientManagedUris.delete(uri)
+		this.#clientManagedDocAndNodes.delete(uri)
 		this.tryClearingCache(uri)
+	}
+
+	@SingletonPromise()
+	async ensureClientManagedChecked(uri: string): Promise<DocAndNode | undefined> {
+		const result = this.#clientManagedDocAndNodes.get(uri)
+		if (result && this.#isReady) {
+			const { doc, node } = result
+			await this.bind(doc, node)
+			await this.check(doc, node)
+			this.emit('documentUpdated', { doc, node })
+			return { doc, node }
+		}
+		return undefined
+	}
+
+	getClientManaged(uri: string): DocAndNode | undefined {
+		return this.#clientManagedDocAndNodes.get(uri)
 	}
 
 	async showCacheRoot(): Promise<void> {
@@ -746,7 +805,7 @@ export class Project implements ExternalEventEmitter {
 
 	private tryClearingCache(uri: string): void {
 		if (this.shouldRemove(uri)) {
-			this.#docAndNodes.delete(uri)
+			this.removeCachedTextDocument(uri)
 			this.emit('documentRemoved', { uri })
 		}
 	}

@@ -14,26 +14,26 @@ export type Uri = URL
 export type IntervalId = any
 
 /**
- * @param getCacheKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
- * The result of this function will be used as the key to cache the `Promise`. By default the first element in the argument
+ * @param getKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
+ * The result of this function will be used as the key to identify the `Promise`. By default the first element in the argument
  * list will be used.
  * 
  * This is a decorator for async methods. Decorated methods will return the same `Promise` for
- * the same arguments, provided that the cached `Promise` is still pending.
+ * the same key, provided that the previously returned `Promise` is still pending.
  */
-export function CachePromise(getCacheKey: (args: any[]) => any = args => args[0]): MethodDecorator {
+export function SingletonPromise(getKey: (args: any[]) => any = args => args[0]): MethodDecorator {
 	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
 		const promises = new Map<unknown, Promise<unknown>>()
 		const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
 		descripter.value = function (...args: unknown[]) {
-			const cacheKey = getCacheKey(args)
-			if (promises.has(cacheKey)) {
-				return promises.get(cacheKey)!
+			const key = getKey(args)
+			if (promises.has(key)) {
+				return promises.get(key)!
 			}
 			const ans = decoratedMethod.apply(this, args)
-				.then(ans => (promises.delete(cacheKey), ans), e => (promises.delete(cacheKey), Promise.reject(e)))
-			promises.set(cacheKey, ans)
+				.then(ans => (promises.delete(key), ans), e => (promises.delete(key), Promise.reject(e)))
+			promises.set(key, ans)
 			return ans
 		}
 		return descripter

@@ -93,8 +93,8 @@ const block_state_provider = as('block_state_provider', dispatch('type', (type, 
 			states: listOf(block_state),
 		},
 		randomized_int_state_provider: {
-			// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-			property: (ctx.ensureChecked) ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
+			// FIXME: Temporary solution to make tests pass when ensureBound is not given.
+			property: (ctx.ensureBound) ? literal(blockProviderProperties(props.find(p => p.key?.value === 'source')?.value, ctx)) : simpleString,
 			values: intProvider(),
 			source: block_state_provider,
 		},

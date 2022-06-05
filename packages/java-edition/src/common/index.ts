@@ -17,7 +17,8 @@ export function getTagValues(category: core.TagFileCategory, id: string, ctx: co
 		: (node.children.find(n => n.key?.value === 'id')!.value as json.JsonStringNode).value
 
 	const set = getUris(category, id, ctx).reduce<Set<core.FullResourceLocation>>((ans, uri) => {
-		const result = ctx.getDocAndNode(uri)
+		// const result = ctx.getDocAndNode(uri)
+		const result: any = undefined // FIXME: Use global symbol table to get the result
 		if (!result || result.node.parserErrors.length || result.node.checkerErrors?.length) {
 			return ans
 		}

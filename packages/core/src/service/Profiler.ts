@@ -46,10 +46,11 @@ class ProfilerImpl implements Profiler {
 			throw new Error('The profiler is finalized.')
 		}
 		const time = performance.now()
-		this.#tasks.push([name, time - this.#lastTime])
+		const duration = time - this.#lastTime
 		this.#lastTime = time
+		this.#tasks.push([name, duration])
 		this.#longestTaskNameLength = Math.max(this.#longestTaskNameLength, name.length)
-		this.logger.info(`[Profiler: ${this.id}] Done: ${name}`)
+		this.logger.info(`[Profiler: ${this.id}] Done: ${name} in ${duration} ms`)
 		return this
 	}
 

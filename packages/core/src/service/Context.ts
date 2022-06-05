@@ -17,7 +17,6 @@ import type { DocAndNode, ProjectData } from './Project.js'
 
 export interface ContextBase {
 	fs: FileService,
-	getDocAndNode: (uri: string) => DocAndNode | undefined,
 	logger: Logger,
 	meta: MetaRegistry,
 	profilers: ProfilerFactory,
@@ -28,7 +27,6 @@ export namespace ContextBase {
 	export function create(project: ProjectData): ContextBase {
 		return {
 			fs: project.fs,
-			getDocAndNode: project.get.bind(project),
 			logger: project.logger,
 			meta: project.meta,
 			profilers: project.profilers,
@@ -129,7 +127,7 @@ export namespace BinderContext {
 
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
-	ensureChecked: (this: void, uri: string) => Promise<unknown>,
+	ensureBound: (this: void, uri: string) => Promise<unknown>,
 }
 interface CheckerContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
@@ -139,7 +137,7 @@ export namespace CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
-			ensureChecked: project.ensureChecked?.bind(project),
+			ensureBound: project.ensureBound?.bind(project),
 		}
 	}
 }

@@ -4,8 +4,8 @@ import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker.js'
 
 export function criterionReference(advancement: string): JsonChecker {
 	return (node, ctx) => {
-		// FIXME: Temporary solution to make tests pass when ensureChecked is not given.
-		if (!ctx.ensureChecked) {
+		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
+		if (!ctx.ensureBound) {
 			simpleString(node, ctx)
 			return
 		}
