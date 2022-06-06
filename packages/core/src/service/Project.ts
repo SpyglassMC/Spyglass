@@ -459,7 +459,7 @@ export class Project implements ExternalEventEmitter {
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
 
-			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n').setN(50)
+			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
 				await this.ensureBound(uri)
 				__bindProfiler.task(uri)

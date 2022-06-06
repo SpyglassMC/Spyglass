@@ -25,11 +25,7 @@ export interface Profiler {
 	finalize(): void
 }
 
-export interface TopNProfiler extends Profiler {
-	setN(n: number): this
-}
-
-class TopNImpl implements TopNProfiler {
+class TopNImpl implements Profiler {
 	#finalized = false
 	#startTime: number
 	#lastTime: number
@@ -37,18 +33,13 @@ class TopNImpl implements TopNProfiler {
 	#topTasks: [string, number][] = []
 	#minTime = Infinity
 	#maxTime = 0
-	#n = 10
 
 	constructor(
 		private readonly id: string,
-		private readonly logger: Logger
+		private readonly logger: Logger,
+		private readonly n: number,
 	) {
 		this.#startTime = this.#lastTime = performance.now()
-	}
-
-	setN(n: number): this {
-		this.#n = n
-		return this
 	}
 
 	task(name: string): this {
@@ -63,7 +54,7 @@ class TopNImpl implements TopNProfiler {
 		this.#maxTime = Math.max(this.#maxTime, duration)
 		this.#topTasks.push([name, duration])
 		this.#topTasks.sort((a, b) => b[1] - a[1])
-		if (this.#topTasks.length > this.#n) {
+		if (this.#topTasks.length > this.n) {
 			this.#topTasks = this.#topTasks.slice(0, -1)
 		}
 		return this
@@ -76,7 +67,7 @@ class TopNImpl implements TopNProfiler {
 		this.logger.info(`[Profiler: ${this.id}] == Summary ==`)
 		this.logger.info(`[Profiler: ${this.id}] Total tasks: ${this.#taskCount} done in ${totalDuration} ms`)
 		this.logger.info(`[Profiler: ${this.id}] Min/Avg/Max: ${this.#minTime} / ${totalDuration / this.#taskCount} / ${this.#maxTime} ms`)
-		this.logger.info(`[Profiler: ${this.id}] Top ${Math.min(this.#n, this.#topTasks.length)} task(s):`)
+		this.logger.info(`[Profiler: ${this.id}] Top ${Math.min(this.n, this.#topTasks.length)} task(s):`)
 		for (const [name, time] of this.#topTasks) {
 			this.logger.info(`[Profiler: ${this.id}] ${name}${' '.repeat(longestTaskNameLength - name.length)} - ${time} ms (${time / totalDuration * 100}%)`)
 		}
@@ -123,8 +114,7 @@ class TotalImpl implements Profiler {
 	}
 }
 
-class NoopImpl implements TopNProfiler {
-	setN(): this { return this }
+class NoopImpl implements Profiler {
 	task(): this { return this }
 	finalize(): void { }
 }
@@ -141,12 +131,12 @@ export class ProfilerFactory {
 		this.#enabledProfilers = new Set(enabledProfilers)
 	}
 
-	get(id: string, style: 'top-n'): TopNProfiler
-	get(id: string, style?: SummaryStyle): Profiler
-	get(id: string, style: SummaryStyle = 'total'): Profiler {
+	get(id: string, style: 'top-n', n: number): Profiler
+	get(id: string, style?: 'total'): Profiler
+	get(id: string, style: SummaryStyle = 'total', n?: number): Profiler {
 		if (this.#enabledProfilers.has(id)) {
 			switch (style) {
-				case 'top-n': return new TopNImpl(id, this.logger)
+				case 'top-n': return new TopNImpl(id, this.logger, n!)
 				case 'total': return new TotalImpl(id, this.logger)
 				default: return Dev.assertNever(style)
 			}

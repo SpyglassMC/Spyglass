@@ -2,7 +2,7 @@ import type { AstNode, BinderContext, Location, MetaRegistry, RangeLike, Symbol 
 import { AsyncBinder, ErrorSeverity, Range, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AdditionalContext } from '../common.js'
-import type { IdentifierNode, ModuleNode } from '../node/index.js'
+import type { DispatchStatementNode, IdentifierNode, InjectionNode, ModuleNode } from '../node/index.js'
 import { DocCommentsNode, EnumNode, PathNode, StructNode, TypeAliasNode, UseStatementNode } from '../node/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext { }
@@ -30,12 +30,23 @@ export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 
 export async function module_(node: ModuleNode, ctx: McdocBinderContext): Promise<void> {
 	hoist(node, ctx)
+
+	for (const child of node.children) {
+		switch (child.type) {
+			case 'mcdoc:dispatch_statement': await bindDispatchStatement(child, ctx); break
+			case 'mcdoc:enum': bindEnum(child, ctx); break
+			case 'mcdoc:injection': await bindInjection(child, ctx); break
+			case 'mcdoc:struct': await bindStruct(child, ctx); break
+			case 'mcdoc:type_alias': await bindTypeAlias(child, ctx); break
+			case 'mcdoc:use_statement': await bindUseStatement(child, ctx); break
+		}
+	}
 }
 
 /**
  * Hoist enums, structs, type aliases, and use statements under the module scope.
  */
-export function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
+function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 	for (const child of node.children) {
 		switch (child.type) {
 			case 'mcdoc:enum': hoistEnum(child); break
@@ -92,6 +103,25 @@ export function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				usage: { type: 'definition', node: identifier, fullRange: node },
 			})
 	}
+}
+
+async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBinderContext): Promise<void> {
+
+}
+
+function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
+}
+
+async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Promise<void> {
+}
+
+async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
+}
+
+async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Promise<void> {
+}
+
+async function bindUseStatement(node: UseStatementNode, ctx: McdocBinderContext): Promise<void> {
 }
 
 export function registerMcdocBinders(meta: MetaRegistry) {
