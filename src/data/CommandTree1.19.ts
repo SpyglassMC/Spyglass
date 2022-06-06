@@ -37,7 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 
 /**
- * Command tree of Minecraft Java Edition 21w11a commands.
+ * Command tree of Minecraft Java Edition 1.19 commands.
  */
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1200,9 +1200,32 @@ export const CommandTree: ICommandTree = {
         locate: {
             parser: new LiteralArgumentParser('locate'),
             children: {
-                type: {
-                    parser: new IdentityArgumentParser('minecraft:worldgen/configured_structure_feature', true),
-                    executable: true
+                biome: {
+                    parser: new LiteralArgumentParser('biome'),
+                    children: {
+                        type: {
+                            parser: new IdentityArgumentParser('$worldgen/biome', true),
+                            executable: true
+                        }
+                    }
+                },
+                poi: {
+                    parser: new LiteralArgumentParser('poi'),
+                    children: {
+                        type: {
+                            parser: new IdentityArgumentParser('minecraft:point_of_interest_type', true),
+                            executable: true
+                        }
+                    }
+                },
+                structure: {
+                    parser: new LiteralArgumentParser('structure'),
+                    children: {
+                        type: {
+                            parser: new IdentityArgumentParser('$worldgen/structure', true),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
@@ -1398,6 +1421,45 @@ export const CommandTree: ICommandTree = {
                                 pos: {
                                     parser: new VectorArgumentParser(3, 'integer'),
                                     executable: true
+                                }
+                            }
+                        }
+                    }
+                },
+                template: {
+                    parser: new LiteralArgumentParser('template'),
+                    children: {
+                        template: {
+                            parser: new IdentityArgumentParser('structure'),
+                            executable: true,
+                            children: {
+                                pos: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    executable: true,
+                                    children: {
+                                        rotation: {
+                                            parser: new LiteralArgumentParser('none', 'clockwise_90', '180', 'counterclockwise_90'),
+                                            executable: true,
+                                            children: {
+                                                mirror: {
+                                                    parser: new LiteralArgumentParser('none', 'left_right', 'front_back'),
+                                                    executable: true,
+                                                    children: {
+                                                        integrity: {
+                                                            parser: new NumberArgumentParser('float', 0, 1),
+                                                            executable: true,
+                                                            children: {
+                                                                seed: {
+                                                                    parser: new NumberArgumentParser('integer'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
