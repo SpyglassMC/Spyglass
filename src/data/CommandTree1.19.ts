@@ -1188,15 +1188,6 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-        locatebiome: {
-            parser: new LiteralArgumentParser('locatebiome'),
-            children: {
-                type: {
-                    parser: new IdentityArgumentParser('$worldgen/biome', true),
-                    executable: true
-                }
-            }
-        },
         locate: {
             parser: new LiteralArgumentParser('locate'),
             children: {
