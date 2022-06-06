@@ -123,7 +123,8 @@ class TotalImpl implements Profiler {
 	}
 }
 
-class NoopImpl implements Profiler {
+class NoopImpl implements TopNProfiler {
+	setN(): this { return this }
 	task(): this { return this }
 	finalize(): void { }
 }
