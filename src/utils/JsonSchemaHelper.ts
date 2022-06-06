@@ -451,7 +451,7 @@ export class JsonSchemaHelper {
                 break
             case 'resource':
                 ans = new ctx.parsers.Identity(
-                    option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown, option.params.isDefinition
+                    option.params.pool, option.params.allowTag, undefined, option.params.allowUnknown, option.params.isDefinition, option.params.requireTag
                 ).parse(reader, ctx)
                 break
             case 'team':

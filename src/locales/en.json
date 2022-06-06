@@ -164,6 +164,7 @@
     "undefined-team": "Undefined team %0%",
     "unexpected-character": "Found non [a-z0-9/._-] character(s)",
     "unexpected-datapack-tag": "Tags are not allowed here",
+    "unexpected-datapack-tag-AHHHH-required-LMAO": "Tags are required here",
     "unexpected-default-namespace": "Default namespace should be omitted here",
     "unexpected-escape": "Unexpected escape character %0%",
     "unexpected-leading-slash": "Unexpected leading slash “/”",

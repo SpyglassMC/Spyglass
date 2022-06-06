@@ -23,7 +23,6 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     /**
      * @param type A type in the registry, or a type in cache if beginning with the dollar sign (`$`). 
      * Alternatively, an array with all possible values.
-     * @param registries The registries.
      */
     /* istanbul ignore next */
     constructor(
@@ -31,7 +30,8 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         private readonly allowTag = false,
         private readonly isPredicate = false,
         private readonly allowUnknown = false,
-        private readonly isDefinition = false
+        private readonly isDefinition = false,
+        private readonly requireTag = false
     ) {
         super()
         if (typeof this.type === 'string' && !this.type.startsWith('$')) {
@@ -88,12 +88,17 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         if (reader.peek() === IdentityNode.TagSymbol) {
             reader.skip()
             isTag = true
-            if (!this.allowTag) {
+            if (!this.allowTag && !this.requireTag) {
                 ans.errors.push(new ParsingError(
                     { start, end: reader.cursor },
                     locale('unexpected-datapack-tag')
                 ))
             }
+        } else if (this.requireTag) {
+            ans.errors.push(new ParsingError(
+                { start, end: reader.cursor },
+                locale('unexpected-datapack-tag-AHHHH-required-LMAO')
+            ))
         }
         let pool = isTag ? tagPool : idPool
 
@@ -183,7 +188,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     private checkIfIdExist(isTag: boolean, ans: ArgumentParserResult<IdentityNode>, reader: StringReader, namespace: string | undefined, stringID: string, start: number, config: Config, cache: ClientCache, registries: Registry, namespaceSummary: NamespaceSummary) {
-        if (isTag && this.allowTag) {
+        if (isTag && (this.allowTag || this.requireTag)) {
             // For tags.
             const tagType = IdentityNode.getTagType(this.type as string)!
             this.checkIDInCache(ans, reader, tagType, namespace, stringID, start, config, cache, namespaceSummary)
@@ -325,7 +330,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
     }
 
     private completeBeginningFromTagPoolIfApplicable(isTag: boolean, tagPool: string[], shouldOmit: boolean | null, complNamespaces: Set<string>, complFolders: Set<string>, complFiles: Set<string>) {
-        if (!isTag && this.allowTag) {
+        if (!isTag && (this.allowTag || this.requireTag)) {
             for (const id of tagPool) {
                 const complNamespace = id.split(IdentityNode.NamespaceDelimiter)[0]
                 const complPaths = id.split(IdentityNode.NamespaceDelimiter)[1].split(IdentityNode.PathSep)
@@ -351,7 +356,7 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
         const tagPool: string[] = []
         const idPool: string[] = []
         // Set `tagPool`.
-        if (this.allowTag) {
+        if (this.allowTag || this.requireTag) {
             const type = IdentityNode.getTagType(this.type as string)!
             const category = getSafeCategory(cache, type)
             tagPool.push(...Object.keys(category))
@@ -360,20 +365,22 @@ export class IdentityArgumentParser extends ArgumentParser<IdentityNode> {
             }
         }
         // Set `idPool`.
-        if (this.type instanceof Array) {
-            idPool.push(...this.type)
-        } else if (this.type.startsWith('$')) {
-            const type = this.type.slice(1) as CacheType
-            idPool.push(...Object.keys(getSafeCategory(cache, type)))
-            if (config.env.dependsOnVanilla) {
-                idPool.push(...this.getVanillaPool(type, namespaceSummary))
-            }
-        } else {
-            const registry = registries[this.type]
-            if (registry) {
-                idPool.push(...Object.keys(registry.entries))
+        if (!this.requireTag) {
+            if (this.type instanceof Array) {
+                idPool.push(...this.type)
+            } else if (this.type.startsWith('$')) {
+                const type = this.type.slice(1) as CacheType
+                idPool.push(...Object.keys(getSafeCategory(cache, type)))
+                if (config.env.dependsOnVanilla) {
+                    idPool.push(...this.getVanillaPool(type, namespaceSummary))
+                }
             } else {
-                console.error(`Identity registry “${this.type}” doesn't exist!`)
+                const registry = registries[this.type]
+                if (registry) {
+                    idPool.push(...Object.keys(registry.entries))
+                } else {
+                    console.error(`Identity registry “${this.type}” doesn't exist!`)
+                }
             }
         }
         const complNamespaces = new Set<string>()
