@@ -72,6 +72,7 @@ connection.onInitialize(async params => {
 				'cache#save',
 				'project#init',
 				'project#ready',
+				'project#ready#bind',
 			]),
 			project: {
 				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),

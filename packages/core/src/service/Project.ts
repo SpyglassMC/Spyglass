@@ -459,10 +459,13 @@ export class Project implements ExternalEventEmitter {
 			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
 
+			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n').setN(50)
 			for (const uri of files) {
-				await this.ensureChecked(uri)
+				await this.ensureBound(uri)
+				__bindProfiler.task(uri)
 			}
-			__profiler.task('Check Files')
+			__bindProfiler.finalize()
+			__profiler.task('Bind Files')
 
 			__profiler.finalize()
 			this.emit('ready', {})
@@ -695,17 +698,6 @@ export class Project implements ExternalEventEmitter {
 		const node = this.parse(doc)
 		await this.bind(doc, node)
 		this.emit('documentUpdated', { doc, node })
-	}
-
-	@SingletonPromise()
-	async ensureChecked(uri: string): Promise<void> {
-		const doc = await this.read(uri)
-		const node = doc ? this.parse(doc) : undefined
-		if (doc && node && this.#isReady) {
-			await this.bind(doc, node)
-			await this.check(doc, node)
-			this.emit('documentUpdated', { doc, node })
-		}
 	}
 
 	private bindUri(param: string | string[]): void {
