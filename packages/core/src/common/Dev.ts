@@ -1,5 +1,6 @@
 export const Dev = Object.freeze({
 	assertNever(value: never): never {
+		// The `String` constructor is used in case `value` is a `Symbol`, as JavaScript does not convert `Symbol`s to strings implicitly.
 		throw new Error(`'${String(value)}' is not of type 'never'`)
 	},
 	assertTrue(value: boolean, message: string): void {

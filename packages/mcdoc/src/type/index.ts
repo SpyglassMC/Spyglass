@@ -1,4 +1,4 @@
-import type { FullResourceLocation, ProcessorContext, SymbolPath } from '@spyglassmc/core'
+import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
 import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { EnumKind } from '../node/index.js'
@@ -8,28 +8,34 @@ export interface Attribute {
 	value: AttributeValue,
 }
 
-export type AttributeValue = string | { [key: string | number]: AttributeValue }
+export type AttributeValue = McdocType | AttributeTree
+export type AttributeTree = { [key: string | number]: AttributeValue }
 
 export type NumericRange = [number | undefined, number | undefined]
 
-interface StaticIndex {
+export const StaticIndexKeywords = Object.freeze(['fallback', 'none', 'unknown'] as const)
+export type StaticIndexKeyword = typeof StaticIndexKeywords[number]
+export interface StaticIndex {
 	kind: 'static',
-	value: string | { keyword: 'fallback' | 'none' | 'unknown' }
+	value: string | { keyword: StaticIndexKeyword }
 }
-interface DynamicIndex {
+export interface DynamicIndex {
 	kind: 'dynamic',
 	accessor: (string | { keyword: 'key' | 'parent' })[]
 }
 export type Index = StaticIndex | DynamicIndex
 
-export type ParallelIndices = [Index, ...Index[]]
+/**
+ * Corresponds to the IndexBodyNode
+ */
+export type ParallelIndices = Index[]
 
 export interface DispatcherData {
-	registry: FullResourceLocation | undefined,
+	registry: FullResourceLocation,
 	index: ParallelIndices,
 }
 
-interface TypeBase {
+export interface TypeBase {
 	kind: string,
 	attributes?: Attribute[],
 	indices?: ParallelIndices[],
@@ -41,23 +47,35 @@ export interface DispatcherType extends TypeBase, DispatcherData {
 
 export interface StructType extends TypeBase {
 	kind: 'struct',
-	fields: ({
-		kind: 'field', key: string, type: McdocType, symbol: SymbolPath,
-	} | {
-		kind: 'spread', type: McdocType,
-	})[]
+	fields: StructTypeField[]
+}
+export type StructTypeField = StructTypePairField | StructTypeSpreadField
+export interface StructTypePairField {
+	kind: 'pair',
+	key: string | McdocType,
+	type: McdocType,
+}
+export interface StructTypeSpreadField {
+	kind: 'spread',
+	attributes?: Attribute[],
+	type: McdocType,
 }
 
 export interface EnumType extends TypeBase {
 	kind: 'enum',
-	enumKind: EnumKind,
-	values: { identifier: string, value: string | number | bigint }[]
+	enumKind?: EnumKind,
+	values: EnumTypeField[],
+}
+export interface EnumTypeField {
+	attributes?: Attribute[],
+	identifier: string,
+	value: string | number | bigint,
 }
 
 export interface ReferenceType extends TypeBase {
 	kind: 'reference',
-	symbol?: SymbolPath,
-	index?: Index,
+	path?: string,
+	typeParameters?: McdocType[],
 }
 
 export interface UnionType<T extends McdocType = McdocType> extends TypeBase {
@@ -73,16 +91,16 @@ export function createEmptyUnion(attributes?: Attribute[]): UnionType<never> & N
 	}
 }
 
-interface KeywordType extends TypeBase {
+export interface KeywordType extends TypeBase {
 	kind: 'any' | 'boolean',
 }
 
-interface StringType extends TypeBase {
+export interface StringType extends TypeBase {
 	kind: 'string',
 	lengthRange?: NumericRange,
 }
 
-type LiteralValue = {
+export type LiteralValue = {
 	kind: 'boolean',
 	value: boolean,
 } | {
@@ -91,23 +109,37 @@ type LiteralValue = {
 } | {
 	kind: 'number',
 	value: number,
-	suffix: 'b' | 's' | 'L' | 'f' | 'd' | undefined,
+	suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined,
 }
-interface LiteralType extends TypeBase {
+export interface LiteralType extends TypeBase {
 	kind: 'literal',
 	value: LiteralValue,
 }
+export const LiteralNumberSuffixes = Object.freeze(['b', 's', 'l', 'f', 'd'] as const)
+export type LiteralNumberSuffix = typeof LiteralNumberSuffixes[number]
+export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze([...LiteralNumberSuffixes, 'B', 'S', 'L', 'F', 'D'] as const)
+export type LiteralNumberCaseInsensitiveSuffix = typeof LiteralNumberCaseInsensitiveSuffixes[number]
 
-interface NumericType extends TypeBase {
-	kind: 'byte' | 'short' | 'int' | 'long' | 'float' | 'double',
+export interface NumericType extends TypeBase {
+	kind: NumericTypeKind,
 	valueRange?: NumericRange,
 }
+export const NumericTypeIntKinds = Object.freeze(['byte', 'short', 'int', 'long'] as const)
+export type NumericTypeIntKind = typeof NumericTypeIntKinds[number]
+export const NumericTypeFloatKinds = Object.freeze(['float', 'double'] as const)
+export type NumericTypeFloatKind = typeof NumericTypeFloatKinds[number]
+export const NumericTypeKinds = Object.freeze([...NumericTypeIntKinds, ...NumericTypeFloatKinds] as const)
+export type NumericTypeKind = typeof NumericTypeKinds[number]
 
-interface PrimitiveArrayType extends TypeBase {
+export interface PrimitiveArrayType extends TypeBase {
 	kind: 'byte_array' | 'int_array' | 'long_array',
 	valueRange?: NumericRange,
 	lengthRange?: NumericRange,
 }
+export const PrimitiveArrayValueKinds = Object.freeze(['byte', 'int', 'long'] as const)
+export type PrimitiveArrayValueKind = typeof PrimitiveArrayValueKinds[number]
+export const PrimitiveArrayKinds = Object.freeze(PrimitiveArrayValueKinds.map(kind => `${kind}_array` as const))
+export type PrimitiveArrayKind = typeof PrimitiveArrayKinds[number]
 
 export interface ListType extends TypeBase {
 	kind: 'list',
@@ -190,7 +222,7 @@ export namespace McdocType {
 			case 'long_array':
 				return `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
 			case 'reference':
-				return type.symbol?.path.join('::') ?? '<unknown_reference>'
+				return type.path ?? '<unknown_reference>'
 			case 'short':
 				return `short${rangeToString(type.valueRange)}`
 			case 'string':
@@ -225,7 +257,7 @@ type NoIndices = { indices?: undefined }
 
 export interface FlatStructType extends TypeBase {
 	kind: 'flat_struct',
-	fields: Record<string, { type: McdocType, symbol: SymbolPath }>,
+	fields: Record<string, McdocType>,
 }
 
 enum CheckResult {
@@ -478,7 +510,7 @@ function navigateIndex(type: ResolvedType, index: Index, ctx: ProcessorContext, 
 			return createEmptyUnion(type.attributes)
 		}
 		const flatStruct = flattenStruct(type, ctx, value)
-		return resolveType(flatStruct.fields[key].type, ctx, value)
+		return resolveType(flatStruct.fields[key], ctx, value)
 	} else if (type.kind === 'union') {
 		return mapUnion(type, t => navigateIndex(t, index, ctx, value))
 	} else {
@@ -534,7 +566,11 @@ function flattenStruct(type: StructType, ctx: ProcessorContext, value: RuntimeVa
 				}
 			}
 		} else {
-			ans.fields[field.key] = { type: field.type, symbol: field.symbol }
+			if (typeof field.key === 'string') {
+				ans.fields[field.key] = field.type
+			} else {
+				// TODO: Handle map keys
+			}
 		}
 	}
 	return ans

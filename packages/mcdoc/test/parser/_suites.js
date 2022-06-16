@@ -230,13 +230,6 @@ export const McdocParserTestSuites = {
 				'double[]',
 			],
 		},
-		pathType: {
-			content: [
-				'',
-				'#[uuid] UuidMostLeast',
-				'MinMaxBounds<float @ 1..2>',
-			],
-		},
 		primitiveArrayType: {
 			content: [
 				'',
@@ -246,6 +239,13 @@ export const McdocParserTestSuites = {
 				'byte@0..1[]',
 				'int[] @ 4',
 				'byte @ 0..1 [] @ 0..',
+			],
+		},
+		referenceType: {
+			content: [
+				'',
+				'#[uuid] UuidMostLeast',
+				'MinMaxBounds<float @ 1..2>',
 			],
 		},
 		stringType: {

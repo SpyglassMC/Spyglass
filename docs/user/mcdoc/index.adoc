@@ -6,25 +6,20 @@
 
 Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs.
 
-This document defines:
-
-* The syntax and semantics of the mcdoc format.
-* How mcdoc should be used to validate JSON and NBT values. For NBT values, this document further specifies how they should be validated strictly and loosely.
-
-Although mcdocs may technically be able to describe the format of a lot of other languages, how those languages should be validated by mcdoc is not concerned by this document.
+This document defines the syntax and semantics of the mcdoc format.
 
 == Project root
 
 Normally, the **workspace** (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the **root** of a mcdoc project.
 
-If, however, there exists a folder named `mcdoc` directly under the workspace and all `mcdoc` files inside the workspace are stored under of that direcotry, it will be considered as the root instead.
+If, however, there exists a folder named `mcdoc` directly under the workspace and all `mcdoc` files inside the workspace are stored under that direcotry, it will be considered as the root instead.
 
 == Syntax syntax
 
 :plus: pass:n[^pass:[+]^]
 :star: pass:n[^+*+^]
 
-Here is the syntax used by this document to describe the syntax of mcdoc -- syntax syntax, if you want to call it that.
+Here is the syntax used by this document to describe the syntax of mcdoc -- syntax syntax, if you wish.
 
 [[tb-syntax-syntax]]
 .Syntax syntax
@@ -101,7 +96,9 @@ struct Foo {
 <<s-prelim>>:: <<s-doc-comments>> <<s-attributes>>
 
 [[s-doc-comments,_DocComments_]]
-<<t-doc-comments>>:: <<t-doc-comment>>{star} // No regular comments are allowed between the individual <<t-doc-comment>>.
+<<s-doc-comments>>:: <<t-doc-comment>>{star} +
+	Although this is a syntax rule, no regular comments are allowed between the individual <<t-doc-comment>>.
+	Only whitespaces (including newlines) should be allowed.
 
 '''
 
@@ -310,7 +307,7 @@ A resource location is similar to the resource location from Minecraft syntax-wi
 [source,rust,subs="+quotes"]
 ----
 minecraft:foo
-:foo  // This also means `minecraft:foo`, and is actually legal in Minecraft.
+:foo  // This also means `minecraft:foo`, and is legal in Minecraft itself.
 spyglassmc:bar
 ----
 ====
@@ -324,19 +321,17 @@ spyglassmc:bar
 <<t-ident>>:: ((<<t-ident-start>>) (<<t-ident-continue>>){star})~pass:n[except: <<t-reserved-words>>]~
 
 [[t-ident-start,IDENT_START]]
-<<t-ident-start>>:: any character in the https://unicode.org/reports/tr18/#General_Category_Property[Unicode general categories] "`Letter (`L`)`" or "`Letter Number (`Nl`)`"
-// <<t-ident-start>>:: [`A`-`Z` `a`-`z` `_`]
+<<t-ident-start>>:: Any character in the https://unicode.org/reports/tr18/#General_Category_Property[Unicode general categories] "`Letter (`L`)`" or "`Letter Number (`Nl`)`"
 
 [[t-ident-continue,IDENT_CONTINUE]]
-<<t-ident-continue>>:: <<t-ident-start>> | U+`200C` | U+`200D` | (any character in the Unicode categories "`Non-Spacing Mark (`Mn`)`", "`Spacing Combining Mark (`Mc`)`", "`Decimal Digit Number (`Nd`)`", or "`Connector Punctuation (`Pc`)`")
-// <<t-ident-continue>>:: <<t-ident-start>> | [`0`-`9`]
+<<t-ident-continue>>:: <<t-ident-start>> | U+`200C` | U+`200D` | (any character in the Unicode general categories "`Non-Spacing Mark (`Mn`)`", "`Spacing Combining Mark (`Mc`)`", "`Decimal Digit Number (`Nd`)`", or "`Connector Punctuation (`Pc`)`")
 
 [[t-reserved-words,RESERVED_WORDS]]
 <<t-reserved-words>>:: `any` | `boolean` | `byte` | `double` | `enum` | `false` | `float` | `int` | `long` | `short` | `string` | `struct` | `super` | `true`
 ****
 
 An identifier is a case-sensitive name given to a type definition in mcdoc.
-It can contain any Unicode letters and the underscore (`_`), but must not start with a digit.
+It can contain any Unicode letters, numbers, and the underscore (`_`), but must not start with a digit.
 
 It also must not be named after a list of <<t-reserved-words,reserved words>>.
 
@@ -365,7 +360,7 @@ struct *Foo* { // `Foo` is an identifier.
 A path is used to locate a type definition across the mcdoc project.
 A sequence of two colons (`::`) is used as the *path separater*.
 
-If a path starts with the path separater, it is an *absolute path* and will be resolved from the <<project-root>>.
+If a path starts with the path separater, it is an *absolute path* and will be resolved from the <<project-root,project root>>.
 Otherwise it is a *relative path* and will be resolved from the absolute path of the current file.
 
 The absolute path of a file is determined by connecting the names of all its parent folders up until the root and the file's own name (excluding the `.mcdoc` file extension) with the path separater, prepended by the path separater, with a special case for files named `mod.mcdoc` -- they will not be part of their paths.
@@ -390,6 +385,7 @@ For relative paths, the keyword `super` may be used to move up one level from th
 <1> The absolute path of this file is `::foo`.
 <2> The absolute path of this file is `::foo::bar`.
 <3> The absolute path of this file is `::foo` instead of `::foo::mod`, as files named `mod.mcdoc` are special. This has the same path as <1>, and as <1> is shallower in the file structure, it is loaded first, meaning <3> is ignored in favor of <1> and a warning should be given.
+<4> The absolute path of this file is `::qux`.
 
 If the content of `/foo/bar.mcdoc` is
 
@@ -437,17 +433,10 @@ The relative path is interpreted as follows:
 ****
 
 A type is an essential component of the mcdoc format.
-It defines a schema that the actual data value must fit in to be valid.
+It defines a schema that actual data values must fit in to be valid.
 
 NOTE: Mcdoc may be used to describe the format of a wide range of data.
-This section will only define how JSON data and SNBT data should be validated.
-
-NOTE: For SNBT validation, a strict mode, a loose mode, and a technically-compliant mode ("`te-co`" for short 🌮) are documented. +
-The strict mode is used when an SNBT value is used as a predicate (e.g. in entity selectors, loot function conditions, etc.). +
-The loose mode is used when an SNBT value is provided for deserialization (e.g. in `/setblock` or `/summon` commands).
-Although some values are technically allowed for a given type (e.g. a compound tag means `false` when it's read as a boolean),
-such cases are beyond a sane person's reasonable expectations and will not be allowed under the loose mode. +
-The te-co mode, however, allows such bizarre values.
+This section will only provide some JSON data as examples for each type.
 
 === `any` type
 
@@ -462,29 +451,31 @@ The te-co mode, however, allows such bizarre values.
 
 The `any` type serves as the top type of mcdoc's type system.
 Any another types, including `any` itself, are assignable to `any`.
-`any` can only be assigned to `any`.
+`any` cannot be assigned to any other types other than `any`.
 
 .Valid values for the `any` type
-|===
-|Format |Valid values
-
-|JSON |Any values
-|SNBT (all modes) |Any values
-|===
+====
+[source,json]
+----
+null
+true
+[0, 1, 2, 3]
+{ "foo": "bar" }
+----
+====
 
 === `boolean` type
 
 The `boolean` type indicates a boolean value (`false` or `true`) is expected.
 
 .Valid values for the `boolean` type
-|===
-|Format |Valid values |Notes
-
-|JSON |`false`, `true` |-
-|SNBT (strict) |`false`, `true`, `0b`, `1b` |NBT doesn't have real boolean values -- it uses byte numbers for that purpose instead. `false` and `true` are simply aliases for `0b` and `1b`, respectively.
-|SNBT (loose) |Any numeric values of `0` or `1` |-
-|SNBT (te-co) |Any values |[[x-NbtCompound-getBoolean]] Per method `net/minecraft/nbt/NbtCompound#getBoolean` (yarn mappings), any NBT values can be read as a boolean. A non-numeric value is equivalent to `false`, while a numeric value is false if and only if it is a `0` after being converted to a byte number.
-|===
+====
+[source,json]
+----
+false
+true
+----
+====
 
 === `string` type
 
@@ -498,14 +489,14 @@ The `boolean` type indicates a boolean value (`false` or `true`) is expected.
 The `string` type indicates a string value is expected.
 The optional range defines the range of the length of the string.
 
-.Valid values for the `boolean` type
-|===
-|Format |Valid values |Notes
-
-|JSON |String values matching the length range |-
-|SNBT (strict and loose) |String values matching the length range |-
-|SNBT (te-co) |Any values that match the length range after being converted to a string |[[x-NbtElement-asString]] Per method `net/minecraft/nbt/NbtElement-asString` (yarn mappings), any NBT values can be read as a string. String tags have their string values as the result, while other tags have their string representation as the result.
-|===
+.Valid values for the `string` type
+====
+[source,json]
+----
+"foo"
+"bar"
+----
+====
 
 === Literal boolean type
 
@@ -518,24 +509,14 @@ The optional range defines the range of the length of the string.
 
 A literal boolean type is one of the two boolean values (`false` and `true`) that the data must match to be valid.
 
-.Literal string types
+.Literal boolean types
 ====
-[source,rust]
+[source,json]
 ----
 false
 true
 ----
 ====
-
-.Valid values for a literal boolean type
-|===
-|Format |Valid values
-
-|JSON |`false` if the type is `false`; `true` is the type is `true`
-|SNBT (strict) |`false` or `0b` if the type is `false`; `true` or `1b` if the type is `true`
-|SNBT (loose) |Any numeric values of `0` if the type is `false`; any numeric values of `1` if the type is `true`
-|SNBT (te-co) |Any values that match the type after being <<x-NbtCompound-getBoolean,converted to a boolean>>
-|===
 
 === Literal string type
 
@@ -546,18 +527,9 @@ A literal string type is a string value the data must match literally to be vali
 [source,rust]
 ----
 ""
-"foobar"
+"foo"
 ----
 ====
-
-.Valid values for a literal string type
-|===
-|Format |Valid values
-
-|JSON |String values that have the same value as the string literal
-|SNBT (strict and loose) |String values that have the same value as the string literal
-|SNBT (te-co) |Any values that when <<x-NbtElement-asString,converted to string>> is the same as the string literal
-|===
 
 === Literal number type
 
@@ -572,16 +544,6 @@ A literal number type includes a numeric value and a type the data must match li
 42L
 ----
 ====
-
-.Valid values for a literal number type
-|===
-|Format |Valid values |Notes
-
-|JSON |Number values that have the same numeric value as the number literal |JSON only has one number type, so the type part of a literal number type is not checked.
-|SNBT (strict) |Number values that have the same numeric value and the same type as the number literal |-
-|SNBT (loose) |Number values that have the same numeric value as the number literal |-
-|SNBT (te-co) |Actually I gave up on documenting this mode. Good luck |-
-|===
 
 === Numeric type
 
@@ -606,8 +568,8 @@ If the optional <<number-range,range>> is provided, then the data must also fit 
 [source,rust]
 ----
 byte
-short#1..
-float # 4.2..9.1
+short@1..
+float @ 4.2..9.1
 ----
 ====
 
@@ -725,15 +687,7 @@ TODO
 **SYNTAX**
 
 [[s-struct,_Struct_]]
-<<s-struct>>:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-type-param-block>>^?^ <<s-struct-block>>
-
-[[s-type-param-block,_TypeParamBlock_]]
-<<s-type-param-block>>::
-	`<` `>` | +
-	`<` <<s-type-param>> (`,` <<s-type-param>>){star} `,`^?^ `>`
-
-[[s-type-param,_TypeParam_]]
-<<s-type-param>>:: <<t-ident>> (`extends` <<t-path>>)^?^
+<<s-struct>>:: <<s-prelim>> `struct` <<t-ident>>^?^ <<s-struct-block>>
 
 [[s-struct-block,_StructBlock_]]
 <<s-struct-block>>::
@@ -782,13 +736,13 @@ struct Player {
 ----
 ====
 
-A pair of angle brackets (`<` and `>`) can be put after the struct identifier to declare **type parameters**, which should be passed in when the struct is referenced.
+Although type parameters are not directly allowed in struct definitions, you can inline a struct on the right hand side of a type alias definition.
 
 .Type parameter
 ====
 [source,rust]
 ----
-struct Tag<V extends string> {
+type Tag<V extends string> = struct {
 	replace?: boolean,
 	values: [V],
 }
@@ -1007,6 +961,15 @@ An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliase
 
 [[s-type-alias,_TypeAlias_]]
 <<s-type-alias>>:: <<s-prelim>> `type` <<t-ident>> <<s-type-param-block>>^?^ `=` <<s-type>>
+
+[[s-type-param-block,_TypeParamBlock_]]
+<<s-type-param-block>>::
+	`<` `>` | +
+	`<` <<s-type-param>> (`,` <<s-type-param>>){star} `,`^?^ `>`
+
+[[s-type-param,_TypeParam_]]
+<<s-type-param>>:: <<t-ident>> (`extends` <<t-path>>)^?^
+
 ****
 
 TODO
@@ -1033,8 +996,7 @@ TODO
 
 [[s-struct-inject,_StructInjection_]]
 <<s-struct-inject>>::
-	`struct` <<t-path>> <<s-type-param-block>>^?^ <<s-struct-block>> +
-	The type parameter block must be the same as the one on the original definition of the injected struct.
+	`struct` <<t-path>> <<s-struct-block>>
 ****
 
 TODO
@@ -1137,6 +1099,8 @@ struct Foo {
 == Procedures
 
 NOTE: Under this section, <<procedures,`PascalCase`>> represents a type in the procedure, <<procedures,`camelCase`>> represents a procedure, and `_italic_` represents a variable.
+
+NOTE: THIS SECTION IS A WORK IN PROGRESS.
 
 [[p-Boolean,`Boolean`]]
 === <<p-Boolean>>

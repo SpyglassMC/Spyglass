@@ -1,6 +1,5 @@
-import type { AstNode, ColorTokenType, FloatNode, IntegerNode, SymbolBaseNode } from '@spyglassmc/core'
-import { atArray, CommentNode, ResourceLocationNode, StringNode } from '@spyglassmc/core'
-import type { McdocType } from '../type/index.js'
+import type { AstNode, ColorTokenType, IntegerNode, SymbolBaseNode } from '@spyglassmc/core'
+import { atArray, CommentNode, FloatNode, ResourceLocationNode, StringNode } from '@spyglassmc/core'
 
 export interface ModuleNode extends AstNode {
 	type: 'mcdoc:module',
@@ -39,6 +38,19 @@ export interface DispatchStatementNode extends AstNode {
 	children: (CommentNode | AttributeNode | LiteralNode | ResourceLocationNode | IndexBodyNode | TypeNode)[]
 }
 export const DispatchStatementNode = Object.freeze({
+	destruct(node: DispatchStatementNode): {
+		attributes: AttributeNode[],
+		dispatcher?: ResourceLocationNode,
+		index?: IndexBodyNode,
+		target?: TypeNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			dispatcher: node.children.find(ResourceLocationNode.is),
+			index: node.children.find(IndexBodyNode.is),
+			target: node.children.find(TypeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is DispatchStatementNode {
 		return (node as DispatchStatementNode | undefined)?.type === 'mcdoc:dispatch_statement'
 	},
@@ -60,6 +72,13 @@ export interface IndexBodyNode extends AstNode {
 	children: (CommentNode | IndexNode)[],
 }
 export const IndexBodyNode = Object.freeze({
+	destruct(node: IndexBodyNode): {
+		parallelIndices: IndexNode[],
+	} {
+		return {
+			parallelIndices: node.children.filter(IndexNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is IndexBodyNode {
 		return (node as IndexBodyNode | undefined)?.type === 'mcdoc:index_body'
 	},
@@ -93,6 +112,13 @@ export interface DynamicIndexNode extends AstNode {
 	children: (CommentNode | AccessorKeyNode)[],
 }
 export const DynamicIndexNode = Object.freeze({
+	destruct(node: DynamicIndexNode): {
+		keys: AccessorKeyNode[],
+	} {
+		return {
+			keys: node.children.filter(AccessorKeyNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is DynamicIndexNode {
 		return (node as DynamicIndexNode | undefined)?.type === 'mcdoc:dynamic_index'
 	},
@@ -116,7 +142,7 @@ export type TypeNode =
 	| TupleTypeNode
 	| EnumNode
 	| StructNode
-	| PathTypeNode
+	| ReferenceTypeNode
 	| DispatcherTypeNode
 	| UnionTypeNode
 export const TypeNode = Object.freeze({
@@ -137,22 +163,38 @@ export const TypeNode = Object.freeze({
 			UnionTypeNode.is(node)
 		)
 	},
-	asType(node: TypeNode): McdocType {
-		throw '// TODO'
-	},
 })
 
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`,
 	children: (CommentNode | AttributeNode | IndexBodyNode | CN)[]
 }
+export const TypeBaseNode = Object.freeze({
+	destruct(node: TypeBaseNode<any>): {
+		attributes: AttributeNode[],
+		indices: IndexBodyNode[],
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			indices: node.children.filter(IndexBodyNode.is),
+		}
+	},
+})
 
 export interface AttributeNode extends AstNode {
 	type: 'mcdoc:attribute',
 	children: (CommentNode | IdentifierNode | AttributeValueNode)[],
-	sep?: boolean,
 }
 export const AttributeNode = Object.freeze({
+	destruct(node: AttributeNode): {
+		name: IdentifierNode,
+		value: AttributeValueNode,
+	} {
+		return {
+			name: node.children.find(IdentifierNode.is)!,
+			value: node.children.find(AttributeValueNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is AttributeNode {
 		return (node as AttributeNode | undefined)?.type === 'mcdoc:attribute'
 	},
@@ -171,6 +213,15 @@ export interface AttributeTreeNode extends AstNode {
 	delim: '(' | '[' | '{',
 }
 export const AttributeTreeNode = Object.freeze({
+	destruct(node: AttributeTreeNode): {
+		positional?: AttributeTreePosValuesNode,
+		named?: AttributeTreeNamedValuesNode,
+	} {
+		return {
+			positional: node.children.find(AttributeTreePosValuesNode.is),
+			named: node.children.find(AttributeTreeNamedValuesNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is AttributeTreeNode {
 		return (node as AttributeTreeNode | undefined)?.type === 'mcdoc:attribute/tree'
 	},
@@ -181,6 +232,13 @@ export interface AttributeTreePosValuesNode extends AstNode {
 	children: (CommentNode | AttributeValueNode)[],
 }
 export const AttributeTreePosValuesNode = Object.freeze({
+	destruct(node: AttributeTreePosValuesNode): {
+		values: AttributeValueNode[],
+	} {
+		return {
+			values: node.children.filter(AttributeValueNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is AttributeTreePosValuesNode {
 		return (node as AttributeTreePosValuesNode | undefined)?.type === 'mcdoc:attribute/tree/pos'
 	},
@@ -191,10 +249,35 @@ export interface AttributeTreeNamedValuesNode extends AstNode {
 	children: (CommentNode | IdentifierNode | StringNode | AttributeValueNode)[],
 }
 export const AttributeTreeNamedValuesNode = Object.freeze({
+	destruct(node: AttributeTreeNamedValuesNode): {
+		values: AttributeTreeNamedKeyValuePair[],
+	} {
+		const ans: { values: AttributeTreeNamedKeyValuePair[] } = {
+			values: [],
+		}
+		let key: IdentifierNode | StringNode | undefined
+		for (const child of node.children) {
+			if (CommentNode.is(child)) {
+				continue
+			}
+
+			if (IdentifierNode.is(child) || StringNode.is(child)) {
+				key = child
+			} else if (key) {
+				ans.values.push({ key, value: child })
+				key = undefined
+			}
+		}
+		return ans
+	},
 	is(node: AstNode | undefined): node is AttributeTreeNamedValuesNode {
 		return (node as AttributeTreeNamedValuesNode | undefined)?.type === 'mcdoc:attribute/tree/named'
 	},
 })
+export interface AttributeTreeNamedKeyValuePair {
+	key: IdentifierNode | StringNode,
+	value: AttributeValueNode,
+}
 
 export interface AnyTypeNode extends TypeBaseNode<LiteralNode> {
 	type: 'mcdoc:type/any',
@@ -214,31 +297,42 @@ export const BooleanTypeNode = Object.freeze({
 	},
 })
 
-export interface StringTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
-	type: 'mcdoc:type/string',
-}
-export const StringTypeNode = Object.freeze({
-	is(node: AstNode | undefined): node is StringTypeNode {
-		return (node as StringTypeNode | undefined)?.type === 'mcdoc:type/string'
-	},
-})
-
 export interface IntRangeNode extends AstNode {
 	type: 'mcdoc:int_range',
-	children: IntegerNode[],
+	children: (IntegerNode | LiteralNode)[],
 }
 export const IntRangeNode = Object.freeze({
+	destruct(node: IntRangeNode): {
+		min?: IntegerNode,
+		max?: IntegerNode,
+	} {
+		return destructRangeNode(node)
+	},
 	is(node: AstNode | undefined): node is IntRangeNode {
 		return (node as IntRangeNode | undefined)?.type === 'mcdoc:int_range'
 	},
 })
 
-export interface LiteralTypeNode extends TypeBaseNode<LiteralNode | TypedNumberNode | StringNode> {
+export interface LiteralTypeNode extends TypeBaseNode<LiteralTypeValueNode> {
 	type: 'mcdoc:type/literal',
 }
 export const LiteralTypeNode = Object.freeze({
+	destruct(node: LiteralTypeNode): {
+		value: LiteralTypeValueNode,
+	} {
+		return {
+			value: node.children.find(LiteralTypeValueNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is LiteralTypeNode {
 		return (node as LiteralTypeNode | undefined)?.type === 'mcdoc:type/literal'
+	},
+})
+
+export type LiteralTypeValueNode = LiteralNode | TypedNumberNode | StringNode
+export const LiteralTypeValueNode = Object.freeze({
+	is(node: AstNode | undefined): node is LiteralTypeValueNode {
+		return LiteralNode.is(node) || TypedNumberNode.is(node) || StringNode.is(node)
 	},
 })
 
@@ -247,6 +341,15 @@ export interface TypedNumberNode extends AstNode {
 	children: (FloatNode | LiteralNode)[],
 }
 export const TypedNumberNode = Object.freeze({
+	destruct(node: TypedNumberNode): {
+		value: FloatNode,
+		suffix?: LiteralNode,
+	} {
+		return {
+			value: node.children.find(FloatNode.is)!,
+			suffix: node.children.find(LiteralNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is TypedNumberNode {
 		return (node as TypedNumberNode | undefined)?.type === 'mcdoc:typed_number'
 	},
@@ -256,25 +359,91 @@ export interface NumericTypeNode extends TypeBaseNode<LiteralNode | FloatRangeNo
 	type: 'mcdoc:type/numeric_type'
 }
 export const NumericTypeNode = Object.freeze({
+	destruct(node: NumericTypeNode): {
+		numericKind: LiteralNode,
+		valueRange?: FloatRangeNode | IntRangeNode,
+	} {
+		return {
+			numericKind: node.children.find(LiteralNode.is)!,
+			valueRange: node.children.find(FloatRangeNode.is) || node.children.find(IntRangeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is NumericTypeNode {
 		return (node as NumericTypeNode | undefined)?.type === 'mcdoc:type/numeric_type'
 	},
 })
 
+function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(node: N): {
+	min?: N extends FloatRangeNode ? FloatNode : IntegerNode,
+	max?: N extends FloatRangeNode ? FloatNode : IntegerNode,
+} {
+	let min: (FloatNode & IntegerNode) | undefined
+	let max: (FloatNode & IntegerNode) | undefined
+	if (node.children.length === 1) {
+		// a
+		min = max = node.children[0] as FloatNode & IntegerNode
+	} else if (node.children.length === 3) {
+		// a..b
+		min = node.children[0] as FloatNode & IntegerNode
+		max = node.children[2] as FloatNode & IntegerNode
+	} else if (LiteralNode.is(node.children[0])) {
+		// ..b
+		max = node.children[1] as FloatNode & IntegerNode
+	} else {
+		// a..
+		min = node.children[1] as FloatNode & IntegerNode
+	}
+	return {
+		min,
+		max,
+	}
+}
+
 export interface FloatRangeNode extends AstNode {
 	type: 'mcdoc:float_range',
-	children: FloatNode[],
+	children: (FloatNode | LiteralNode)[],
 }
 export const FloatRangeNode = Object.freeze({
+	destruct(node: FloatRangeNode): {
+		min?: FloatNode,
+		max?: FloatNode,
+	} {
+		return destructRangeNode(node)
+	},
 	is(node: AstNode | undefined): node is FloatRangeNode {
 		return (node as FloatRangeNode | undefined)?.type === 'mcdoc:float_range'
 	},
 })
 
-export interface PrimitiveArrayTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode | FloatRangeNode> {
+export interface PrimitiveArrayTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/primitive_array',
 }
 export const PrimitiveArrayTypeNode = Object.freeze({
+	destruct(node: PrimitiveArrayTypeNode): {
+		arrayKind: LiteralNode,
+		lengthRange?: IntRangeNode,
+		valueRange?: IntRangeNode,
+	} {
+		let lengthRange: IntRangeNode | undefined
+		let valueRange: IntRangeNode | undefined
+		let afterBrackets = false
+		for (const child of node.children) {
+			if (LiteralNode.is(child) && child.value === '[]') {
+				afterBrackets = true
+			} else if (IntRangeNode.is(child)) {
+				if (afterBrackets) {
+					lengthRange = child
+				} else {
+					valueRange = child
+				}
+			}
+		}
+		return {
+			arrayKind: node.children.find(LiteralNode.is)!,
+			lengthRange,
+			valueRange,
+		}
+	},
 	is(node: AstNode | undefined): node is PrimitiveArrayTypeNode {
 		return (node as PrimitiveArrayTypeNode | undefined)?.type === 'mcdoc:type/primitive_array'
 	},
@@ -284,8 +453,33 @@ export interface ListTypeNode extends TypeBaseNode<TypeNode | IntRangeNode> {
 	type: 'mcdoc:type/list',
 }
 export const ListTypeNode = Object.freeze({
+	destruct(node: ListTypeNode): {
+		item: TypeNode,
+		lengthRange?: IntRangeNode,
+	} {
+		return {
+			item: node.children.find(TypeNode.is)!,
+			lengthRange: node.children.find(IntRangeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is ListTypeNode {
 		return (node as ListTypeNode | undefined)?.type === 'mcdoc:type/list'
+	},
+})
+
+export interface StringTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
+	type: 'mcdoc:type/string',
+}
+export const StringTypeNode = Object.freeze({
+	destruct(node: StringTypeNode): {
+		lengthRange?: IntRangeNode,
+	} {
+		return {
+			lengthRange: node.children.find(IntRangeNode.is),
+		}
+	},
+	is(node: AstNode | undefined): node is StringTypeNode {
+		return (node as StringTypeNode | undefined)?.type === 'mcdoc:type/string'
 	},
 })
 
@@ -293,6 +487,13 @@ export interface TupleTypeNode extends TypeBaseNode<TypeNode> {
 	type: 'mcdoc:type/tuple',
 }
 export const TupleTypeNode = Object.freeze({
+	destruct(node: TupleTypeNode): {
+		items: TypeNode[],
+	} {
+		return {
+			items: node.children.filter(TypeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is TupleTypeNode {
 		return (node as TupleTypeNode | undefined)?.type === 'mcdoc:type/tuple'
 	},
@@ -301,26 +502,36 @@ export const TupleTypeNode = Object.freeze({
 export interface EnumNode extends TypeBaseNode<DocCommentsNode | LiteralNode | IdentifierNode | EnumBlockNode> {
 	type: 'mcdoc:enum',
 }
+const EnumKinds = new Set(['byte', 'short', 'int', 'long', 'float', 'double', 'string'] as const)
+export type EnumKind = typeof EnumKinds extends Set<infer V> ? V : never
 export const EnumNode = Object.freeze({
-	kinds: new Set(['byte', 'short', 'int', 'long', 'float', 'double', 'string'] as const),
+	kinds: EnumKinds,
 	destruct(node: EnumNode): {
-		attributes: AttributeNode[],
-		block?: EnumBlockNode,
+		block: EnumBlockNode,
 		docComments?: DocCommentsNode,
+		enumKind?: EnumKind,
 		identifier?: IdentifierNode,
 	} {
 		return {
-			attributes: node.children.filter(AttributeNode.is),
-			block: node.children.find(EnumBlockNode.is),
+			block: node.children.find(EnumBlockNode.is)!,
 			docComments: node.children.find(DocCommentsNode.is),
+			enumKind: getEnumKind(node),
 			identifier: node.children.find(IdentifierNode.is),
+		}
+
+		function getEnumKind(node: EnumNode): EnumKind | undefined {
+			for (const literal of node.children.filter(LiteralNode.is)) {
+				if (EnumKinds.has(literal.value as EnumKind)) {
+					return literal.value as EnumKind
+				}
+			}
+			return undefined
 		}
 	},
 	is(node: AstNode | undefined): node is EnumNode {
 		return (node as EnumNode | undefined)?.type === 'mcdoc:enum'
 	},
 })
-export type EnumKind = typeof EnumNode['kinds'] extends Set<infer V> ? V : never
 
 export interface DocCommentsNode extends AstNode {
 	type: 'mcdoc:doc_comments',
@@ -355,9 +566,16 @@ export const DocCommentsNode = Object.freeze({
 
 export interface EnumBlockNode extends AstNode {
 	type: 'mcdoc:enum/block',
-	children: (CommentNode | EnumFieldNode | PrelimNode)[],
+	children: (CommentNode | EnumFieldNode)[],
 }
 export const EnumBlockNode = Object.freeze({
+	destruct(node: EnumBlockNode): {
+		fields: EnumFieldNode[],
+	} {
+		return {
+			fields: node.children.filter(EnumFieldNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is EnumBlockNode {
 		return (node as EnumBlockNode | undefined)?.type === 'mcdoc:enum/block'
 	},
@@ -368,6 +586,17 @@ export interface EnumFieldNode extends AstNode {
 	children: (CommentNode | PrelimNode | IdentifierNode | EnumValueNode)[],
 }
 export const EnumFieldNode = Object.freeze({
+	destruct(node: EnumFieldNode): {
+		attributes: AttributeNode[],
+		identifier: IdentifierNode,
+		value: EnumValueNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			identifier: node.children.find(IdentifierNode.is)!,
+			value: node.children.find(EnumValueNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is EnumFieldNode {
 		return (node as EnumFieldNode | undefined)?.type === 'mcdoc:enum/field'
 	},
@@ -387,23 +616,19 @@ export const PrelimNode = Object.freeze({
 	},
 })
 
-export interface StructNode extends TypeBaseNode<DocCommentsNode | LiteralNode | IdentifierNode | TypeParamBlockNode | StructBlockNode> {
+export interface StructNode extends TypeBaseNode<DocCommentsNode | LiteralNode | IdentifierNode | StructBlockNode> {
 	type: 'mcdoc:struct',
 }
 export const StructNode = Object.freeze({
 	destruct(node: StructNode): {
-		attributes: AttributeNode[],
-		block?: StructBlockNode,
+		block: StructBlockNode,
 		docComments?: DocCommentsNode,
 		identifier?: IdentifierNode,
-		typeParams?: TypeParamBlockNode,
 	} {
 		return {
-			attributes: node.children.filter(AttributeNode.is),
-			block: node.children.find(StructBlockNode.is),
+			block: node.children.find(StructBlockNode.is)!,
 			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is),
-			typeParams: node.children.find(TypeParamBlockNode.is),
 		}
 	},
 	is(node: AstNode | undefined): node is StructNode {
@@ -411,12 +636,21 @@ export const StructNode = Object.freeze({
 	},
 })
 
-export interface PathTypeNode extends TypeBaseNode<PathNode | TypeNode> {
-	type: 'mcdoc:type/path',
+export interface ReferenceTypeNode extends TypeBaseNode<PathNode | TypeNode> {
+	type: 'mcdoc:type/reference',
 }
-export const PathTypeNode = Object.freeze({
-	is(node: AstNode | undefined): node is PathTypeNode {
-		return (node as PathTypeNode | undefined)?.type === 'mcdoc:type/path'
+export const ReferenceTypeNode = Object.freeze({
+	destruct(node: ReferenceTypeNode): {
+		path: PathNode,
+		typeParameters: TypeNode[],
+	} {
+		return {
+			path: node.children.find(PathNode.is)!,
+			typeParameters: node.children.filter(TypeNode.is),
+		}
+	},
+	is(node: AstNode | undefined): node is ReferenceTypeNode {
+		return (node as ReferenceTypeNode | undefined)?.type === 'mcdoc:type/reference'
 	},
 })
 
@@ -447,11 +681,13 @@ export interface PathNode extends AstNode {
 }
 export const PathNode = Object.freeze({
 	destruct(node: PathNode | undefined): {
+		children: (LiteralNode | IdentifierNode)[],
 		isAbsolute?: boolean,
 		lastIdentifier?: IdentifierNode,
 	} {
 		const lastChild = atArray(node?.children, -1)
 		return {
+			children: node?.children ?? [],
 			isAbsolute: node?.isAbsolute,
 			lastIdentifier: IdentifierNode.is(lastChild) ? lastChild : undefined,
 		}
@@ -463,9 +699,16 @@ export const PathNode = Object.freeze({
 
 export interface StructBlockNode extends AstNode {
 	type: 'mcdoc:struct/block',
-	children: (CommentNode | StructFieldNode | PrelimNode)[],
+	children: (CommentNode | StructFieldNode)[],
 }
 export const StructBlockNode = Object.freeze({
+	destruct(node: StructBlockNode): {
+		fields: StructFieldNode[],
+	} {
+		return {
+			fields: node.children.filter(StructFieldNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is StructBlockNode {
 		return (node as StructBlockNode | undefined)?.type === 'mcdoc:struct/block'
 	},
@@ -484,6 +727,17 @@ export interface StructPairFieldNode extends AstNode {
 	isOptional?: boolean,
 }
 export const StructPairFieldNode = Object.freeze({
+	destruct(node: StructPairFieldNode): {
+		attributes: AttributeNode[],
+		key: StructKeyNode,
+		type: TypeNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			key: node.children.find(StructKeyNode.is)!,
+			type: node.children.find(TypeNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is StructPairFieldNode {
 		return (node as StructPairFieldNode | undefined)?.type === 'mcdoc:struct/field/pair'
 	},
@@ -501,6 +755,13 @@ export interface StructMapKeyNode extends AstNode {
 	children: (CommentNode | TypeNode)[],
 }
 export const StructMapKeyNode = Object.freeze({
+	destruct(node: StructMapKeyNode): {
+		type: TypeNode,
+	} {
+		return {
+			type: node.children.find(TypeNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is StructMapKeyNode {
 		return (node as StructMapKeyNode | undefined)?.type === 'mcdoc:struct/map_key'
 	},
@@ -511,6 +772,15 @@ export interface StructSpreadFieldNode extends AstNode {
 	children: (CommentNode | AttributeNode | TypeNode)[],
 }
 export const StructSpreadFieldNode = Object.freeze({
+	destruct(node: StructSpreadFieldNode): {
+		attributes: AttributeNode[],
+		type: TypeNode,
+	} {
+		return {
+			attributes: node.children.filter(AttributeNode.is),
+			type: node.children.find(TypeNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is StructSpreadFieldNode {
 		return (node as StructSpreadFieldNode | undefined)?.type === 'mcdoc:struct/field/spread'
 	},
@@ -520,6 +790,15 @@ export interface DispatcherTypeNode extends TypeBaseNode<ResourceLocationNode | 
 	type: 'mcdoc:type/dispatcher',
 }
 export const DispatcherTypeNode = Object.freeze({
+	destruct(node: DispatcherTypeNode): {
+		location: ResourceLocationNode,
+		index: IndexBodyNode,
+	} {
+		return {
+			location: node.children.find(ResourceLocationNode.is)!,
+			index: node.children.find(IndexBodyNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is DispatcherTypeNode {
 		return (node as DispatcherTypeNode | undefined)?.type === 'mcdoc:type/dispatcher'
 	},
@@ -529,6 +808,13 @@ export interface UnionTypeNode extends TypeBaseNode<TypeNode> {
 	type: 'mcdoc:type/union',
 }
 export const UnionTypeNode = Object.freeze({
+	destruct(node: UnionTypeNode): {
+		members: TypeNode[],
+	} {
+		return {
+			members: node.children.filter(TypeNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is UnionTypeNode {
 		return (node as UnionTypeNode | undefined)?.type === 'mcdoc:type/union'
 	},
@@ -536,11 +822,25 @@ export const UnionTypeNode = Object.freeze({
 
 export interface InjectionNode extends AstNode {
 	type: 'mcdoc:injection',
-	children: (CommentNode | LiteralNode | EnumInjectionNode | StructInjectionNode)[]
+	children: (CommentNode | LiteralNode | InjectionContentNode)[]
 }
 export const InjectionNode = Object.freeze({
+	destruct(node: InjectionNode): {
+		injection: InjectionContentNode,
+	} {
+		return {
+			injection: node.children.find(InjectionContentNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is InjectionNode {
 		return (node as InjectionNode | undefined)?.type === 'mcdoc:injection'
+	},
+})
+
+export type InjectionContentNode = EnumInjectionNode | StructInjectionNode
+export const InjectionContentNode = Object.freeze({
+	is(node: AstNode | undefined): node is InjectionContentNode {
+		return EnumInjectionNode.is(node) || StructInjectionNode.is(node)
 	},
 })
 
@@ -556,7 +856,7 @@ export const EnumInjectionNode = Object.freeze({
 
 export interface StructInjectionNode extends AstNode {
 	type: 'mcdoc:injection/struct',
-	children: (CommentNode | LiteralNode | PathNode | TypeParamBlockNode | StructBlockNode)[],
+	children: (CommentNode | LiteralNode | PathNode | StructBlockNode)[],
 }
 export const StructInjectionNode = Object.freeze({
 	is(node: AstNode | undefined): node is StructInjectionNode {

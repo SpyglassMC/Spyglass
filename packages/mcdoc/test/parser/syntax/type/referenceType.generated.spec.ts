@@ -2,14 +2,14 @@
 import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { pathType } from '@spyglassmc/mcdoc/lib/parser/index.js'
+import { referenceType } from '@spyglassmc/mcdoc/lib/parser/index.js'
 // @ts-ignore
 import { McdocParserTestSuites } from '@spyglassmc/mcdoc/test/parser/_suites.js'
 
-describe('mcdoc pathType', () => {
-	for (const content of McdocParserTestSuites['syntax/type'].pathType.content) {
+describe('mcdoc referenceType', () => {
+	for (const content of McdocParserTestSuites['syntax/type'].referenceType.content) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			snapshot(testParser(pathType, content))
+			snapshot(testParser(referenceType, content))
 		})
 	}
 })

@@ -2,7 +2,8 @@ import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser,
 import * as core from '@spyglassmc/core'
 import { any, Arrayable, failOnEmpty, failOnError, Failure, map, optional, Range, repeat, ResourceLocation, select, sequence, setType, stopBefore, SymbolAccessType, validate } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
-import type { AccessorKeyNode, AnyTypeNode, AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, AttributeValueNode, BooleanTypeNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, EnumValueNode, FloatRangeNode, IdentifierNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, ModuleNode, NumericTypeNode, PathNode, PathTypeNode, PrimitiveArrayTypeNode, StringTypeNode, StructBlockNode, StructInjectionNode, StructKeyNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypedNumberNode, TypeNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import type { AccessorKeyNode, AnyTypeNode, AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, AttributeValueNode, BooleanTypeNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, EnumValueNode, FloatRangeNode, IdentifierNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, ModuleNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StringTypeNode, StructBlockNode, StructInjectionNode, StructKeyNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypedNumberNode, TypeNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import { LiteralNumberCaseInsensitiveSuffixes, NumericTypeFloatKinds, NumericTypeIntKinds, PrimitiveArrayValueKinds, StaticIndexKeywords } from '../type/index.js'
 
 /**
  * @returns A comment parser that accepts normal comments (`//`) and reports an error if it's a doc comment (`///`).
@@ -201,7 +202,7 @@ function indexBody(options?: { accessType?: SymbolAccessType, noDynamic?: boolea
 	const index: InfallibleParser<LiteralNode | IdentifierNode | StringNode | ResourceLocationNode | DynamicIndexNode> = select([
 		{
 			prefix: '%',
-			parser: literal(['%fallback', '%none', '%unknown'], { specialChars: new Set(['%']) }),
+			parser: literal(StaticIndexKeywords.map(v => `%${v}`), { specialChars: new Set(['%']) }),
 		},
 		{
 			prefix: '"',
@@ -209,7 +210,9 @@ function indexBody(options?: { accessType?: SymbolAccessType, noDynamic?: boolea
 		},
 		{
 			prefix: '[',
-			parser: dynamicIndex,
+			parser: options?.noDynamic
+				? validate(dynamicIndex, () => false, localize('mcdoc.parser.index-body.dynamic-index-not-allowed'))
+				: dynamicIndex,
 		},
 		{
 			parser: any([resLoc({ category: 'mcdoc/dispatcher', accessType: options?.accessType }), identifier]),
@@ -374,7 +377,7 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
 	sequence([
 		float,
-		optional(keyword(['b', 'B', 'd', 'D', 'f', 'F', 'l', 'L', 's', 'S'], { colorTokenType: 'keyword' })),
+		optional(keyword(LiteralNumberCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
 	])
 )
 
@@ -423,39 +426,6 @@ export const enum_: Parser<EnumNode> = setType(
 		enumBlock,
 	], true)
 )
-
-const typeParam: InfallibleParser<TypeParamNode> = setType(
-	'mcdoc:type_param',
-	syntax([
-		identifier,
-		optional(syntax([failOnError(literal('extends')), path])),
-	])
-)
-
-const typeParamBlock: InfallibleParser<TypeParamBlockNode> = setType(
-	'mcdoc:type_param_block',
-	syntax([
-		punctuation('<'),
-		select([
-			{ prefix: '>', parser: punctuation('>') },
-			{
-				parser: syntax([
-					typeParam,
-					syntaxRepeat(syntax([marker(','), failOnEmpty(typeParam)])),
-					optional(marker(',')),
-					punctuation('>'),
-				]),
-			},
-		]),
-	])
-)
-
-const noop: InfallibleParser<undefined> = () => undefined
-
-const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> = select([
-	{ prefix: '<', parser: typeParamBlock },
-	{ parser: noop },
-])
 
 const structMapKey: InfallibleParser<StructMapKeyNode> = setType(
 	'mcdoc:struct/map_key',
@@ -532,7 +502,6 @@ export const struct: Parser<StructNode> = setType(
 		prelim,
 		keyword('struct'),
 		optional(failOnEmpty(identifier)),
-		optionalTypeParamBlock,
 		structBlock,
 	], true)
 )
@@ -554,7 +523,6 @@ const structInjection: InfallibleParser<StructInjectionNode> = setType(
 	syntax([
 		literal('struct'),
 		path,
-		optionalTypeParamBlock,
 		structBlock,
 	])
 )
@@ -569,6 +537,39 @@ export const injection: Parser<InjectionNode> = setType(
 		]),
 	])
 )
+
+const typeParam: InfallibleParser<TypeParamNode> = setType(
+	'mcdoc:type_param',
+	syntax([
+		identifier,
+		optional(syntax([failOnError(literal('extends')), path])),
+	])
+)
+
+const typeParamBlock: InfallibleParser<TypeParamBlockNode> = setType(
+	'mcdoc:type_param_block',
+	syntax([
+		punctuation('<'),
+		select([
+			{ prefix: '>', parser: punctuation('>') },
+			{
+				parser: syntax([
+					typeParam,
+					syntaxRepeat(syntax([marker(','), failOnEmpty(typeParam)])),
+					optional(marker(',')),
+					punctuation('>'),
+				]),
+			},
+		]),
+	])
+)
+
+const noop: InfallibleParser<undefined> = () => undefined
+
+const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> = select([
+	{ prefix: '<', parser: typeParamBlock },
+	{ parser: noop },
+])
 
 export const typeAlias: Parser<TypeAliasNode> = setType(
 	'mcdoc:type_alias',
@@ -699,22 +700,22 @@ const atFloatRange: InfallibleParser<FloatRangeNode | undefined> = optional((src
 
 export const numericType: Parser<NumericTypeNode> = typeBase('mcdoc:type/numeric_type', select([
 	{
-		predicate: src => src.tryPeek('float') || src.tryPeek('double'),
+		predicate: src => NumericTypeFloatKinds.some(k => src.tryPeek(k)),
 		parser: syntax([
-			keyword(['float', 'double'], { colorTokenType: 'type' }),
+			keyword(NumericTypeFloatKinds, { colorTokenType: 'type' }),
 			atFloatRange,
 		]),
 	},
 	{
 		parser: syntax([
-			keyword(['byte', 'short', 'int', 'long'], { colorTokenType: 'type' }),
+			keyword(NumericTypeIntKinds, { colorTokenType: 'type' }),
 			atIntRange,
 		]),
 	},
 ]))
 
 export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase('mcdoc:type/primitive_array', syntax([
-	literal(['byte', 'int', 'long']),
+	literal(PrimitiveArrayValueKinds),
 	atIntRange,
 	keyword('[]', { allowedChars: new Set(['[', ']']), colorTokenType: 'type' }),
 	atIntRange,
@@ -764,7 +765,7 @@ export const unionType: Parser<UnionTypeNode> = typeBase('mcdoc:type/union', syn
 	]),
 ]))
 
-export const pathType: InfallibleParser<PathTypeNode> = typeBase('mcdoc:type/path', syntax([
+export const referenceType: InfallibleParser<ReferenceTypeNode> = typeBase('mcdoc:type/reference', syntax([
 	path,
 	optional(syntax([
 		marker('<'),
@@ -795,5 +796,5 @@ export const type: InfallibleParser<TypeNode> = any([
 	struct,
 	tupleType,
 	unionType,
-	pathType,
+	referenceType,
 ])
