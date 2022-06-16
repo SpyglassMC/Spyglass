@@ -346,7 +346,7 @@ exports['mcdoc dispatchStatement Parse "dispatch" 1'] = {
         "value": ""
       },
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",

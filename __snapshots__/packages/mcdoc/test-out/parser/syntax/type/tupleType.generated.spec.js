@@ -59,7 +59,7 @@ exports['mcdoc tupleType Parse "[boolean," 1'] = {
         }
       },
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",

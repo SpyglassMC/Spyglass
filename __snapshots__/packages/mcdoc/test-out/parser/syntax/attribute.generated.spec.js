@@ -102,7 +102,7 @@ exports['mcdoc attribute Parse "#[advancement_criterion=(type=definition,id=test
                 "value": "type"
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",
@@ -136,7 +136,7 @@ exports['mcdoc attribute Parse "#[advancement_criterion=(type=definition,id=test
                 "value": "id"
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",
@@ -426,7 +426,7 @@ exports['mcdoc attribute Parse "#[color=composite_int]" 1'] = {
         "value": "color"
       },
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",

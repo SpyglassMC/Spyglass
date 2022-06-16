@@ -427,7 +427,7 @@ The relative path is interpreted as follows:
 	<<s-tuple-type>> | +
 	<<s-enum>> | +
 	<<s-struct>> | +
-	<<s-path-type>> | +
+	<<s-reference-type>> | +
 	<<s-dispatcher-type>> | +
 	<<s-union-type>>
 ****
@@ -754,13 +754,13 @@ type ItemTag = Tag<#[id=item] string>
 ----
 ====
 
-=== Path type
+=== Reference type
 
 ****
 **SYNTAX**
 
-[[s-path-type,_PathType_]]
-<<s-path-type>>:: <<t-path>> <<s-type-param-assignment>>^?^
+[[s-reference-type,_ReferenceType_]]
+<<s-reference-type>>:: <<t-path>> <<s-type-param-assignment>>^?^
 
 [[s-type-param-assignment,_TypeParamAssignment_]]
 <<s-type-param-assignment>>::

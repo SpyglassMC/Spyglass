@@ -8,7 +8,7 @@ exports['mcdoc unionType Parse "(" 1'] = {
     "type": "mcdoc:type/union",
     "children": [
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",

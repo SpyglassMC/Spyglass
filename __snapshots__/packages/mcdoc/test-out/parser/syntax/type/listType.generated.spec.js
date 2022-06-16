@@ -8,7 +8,7 @@ exports['mcdoc listType Parse "[" 1'] = {
     "type": "mcdoc:type/list",
     "children": [
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",
@@ -104,7 +104,7 @@ exports['mcdoc listType Parse "[]" 1'] = {
     "type": "mcdoc:type/list",
     "children": [
       {
-        "type": "mcdoc:type/path",
+        "type": "mcdoc:type/reference",
         "children": [
           {
             "type": "mcdoc:path",

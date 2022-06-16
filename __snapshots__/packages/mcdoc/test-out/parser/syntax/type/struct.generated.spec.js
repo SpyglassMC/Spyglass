@@ -62,7 +62,7 @@ exports['mcdoc struct Parse "struct Foo {" 1'] = {
                 "value": ""
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",
@@ -535,7 +535,7 @@ exports['mcdoc struct Parse "struct Foo {↓⮀⮀⮀⮀⮀/// Hello world.↓�
                 }
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",
@@ -617,7 +617,7 @@ exports['mcdoc struct Parse "struct Foo" 1'] = {
                 "value": ""
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",
@@ -762,7 +762,7 @@ exports['mcdoc struct Parse "struct" 1'] = {
                 "value": ""
               },
               {
-                "type": "mcdoc:type/path",
+                "type": "mcdoc:type/reference",
                 "children": [
                   {
                     "type": "mcdoc:path",

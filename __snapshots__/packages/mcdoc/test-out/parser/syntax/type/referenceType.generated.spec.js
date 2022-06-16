@@ -1,6 +1,6 @@
-exports['mcdoc pathType Parse "" 1'] = {
+exports['mcdoc referenceType Parse "" 1'] = {
   "node": {
-    "type": "mcdoc:type/path",
+    "type": "mcdoc:type/reference",
     "children": [
       {
         "type": "mcdoc:path",
@@ -37,9 +37,9 @@ exports['mcdoc pathType Parse "" 1'] = {
   ]
 }
 
-exports['mcdoc pathType Parse "#[uuid] UuidMostLeast" 1'] = {
+exports['mcdoc referenceType Parse "#[uuid] UuidMostLeast" 1'] = {
   "node": {
-    "type": "mcdoc:type/path",
+    "type": "mcdoc:type/reference",
     "children": [
       {
         "type": "mcdoc:attribute",
@@ -84,9 +84,9 @@ exports['mcdoc pathType Parse "#[uuid] UuidMostLeast" 1'] = {
   "errors": []
 }
 
-exports['mcdoc pathType Parse "MinMaxBounds<float @ 1..2>" 1'] = {
+exports['mcdoc referenceType Parse "MinMaxBounds<float @ 1..2>" 1'] = {
   "node": {
-    "type": "mcdoc:type/path",
+    "type": "mcdoc:type/reference",
     "children": [
       {
         "type": "mcdoc:path",
