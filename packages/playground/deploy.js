@@ -39,6 +39,7 @@ try {
 		// Assume nothing to commit.
 		process.exit()
 	}
+	await execFile('git', ['pull', '--rebase'])
 	await execFile('git', ['push'])
 	console.log('Git pushed.')
 } catch (e) {
