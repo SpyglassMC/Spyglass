@@ -714,15 +714,6 @@ export class NbtdocHelper {
     /* istanbul ignore next */
     private static getIdentityTypeFromRegistry(registry: string) {
         switch (registry) {
-            case 'minecraft:attribute':
-            case 'minecraft:block':
-            case 'minecraft:enchantment':
-            case 'minecraft:item':
-            case 'minecraft:motive':
-            case 'minecraft:potion':
-            case 'minecraft:villager_profession':
-            case 'minecraft:villager_type':
-                return registry
             case 'minecraft:block_entity':
                 return 'minecraft:block_entity_type'
             case 'minecraft:dimension':
@@ -736,7 +727,7 @@ export class NbtdocHelper {
             case 'minecraft:structure':
                 return '$structure'
             default:
-                throw new Error(`Unknown nbtdoc ID registry: ${registry}`)
+                return registry
         }
     }
     private validateIdField(ans: LegacyValidateResult, ctx: ParsingContext, tag: NbtNode, doc: IdDoc, isPredicate: boolean): void {
