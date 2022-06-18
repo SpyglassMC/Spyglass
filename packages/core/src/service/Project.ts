@@ -26,7 +26,9 @@ import { ProfilerFactory } from './Profiler.js'
 const CacheAutoSaveInterval = 600_000 // 10 Minutes.
 
 export type ProjectInitializerContext = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'externals' | 'logger' | 'meta' | 'projectRoot'>
-export type ProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void> | Record<string, string> | void
+export type SyncProjectInitializer = (this: void, ctx: ProjectInitializerContext) => Record<string, string> | void
+export type AsyncProjectInitializer = (this: void, ctx: ProjectInitializerContext) => PromiseLike<Record<string, string> | void>
+export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitializer
 
 export interface ProjectOptions {
 	cacheRoot: RootUriString,

@@ -44,14 +44,14 @@ const service = new core.Service({
 
 await service.project.ready()
 
-service.project.onDidOpen($uri.value, getLanguage(), 0, initialContent)
+await service.project.onDidOpen($uri.value, getLanguage(), 0, initialContent)
 
 const onChange = EditorView.updateListener.of((update) => {
 	if (!update.docChanged) {
 		return
 	}
 	const content = getContent(update.state)
-	service.project.onDidChange($uri.value, [{ text: content }], ++version)
+	service.project.onDidChange($uri.value, [{ text: content }], ++version).catch(e => console.error('[onChange]', e))
 })
 
 async function spyglassCompletions(ctx: CompletionContext): Promise<CompletionResult | null> {
@@ -215,9 +215,9 @@ const view = new EditorView({
 // 	service.project.onDidChange($uri.value, [{ text: $text.value }], ++version)
 // }
 
-$language.onchange = () => {
+$language.onchange = async () => {
 	service.project.onDidClose($uri.value)
 	$uri.value = `file:///root/foo.${$language.value}`
 	version = 0
-	service.project.onDidOpen($uri.value, getLanguage(), version, getContent(view.state))
+	await service.project.onDidOpen($uri.value, getLanguage(), version, getContent(view.state))
 }

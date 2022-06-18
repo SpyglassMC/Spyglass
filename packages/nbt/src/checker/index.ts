@@ -423,7 +423,7 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 						core.ErrorSeverity.Warning
 					)
 				} else {
-					core.checker.any(type.members.map(t => fieldValue(t, options)))(node, ctx)
+					(core.checker.any(type.members.map(t => fieldValue(t, options))) as core.SyncChecker<NbtNode>)(node, ctx)
 				}
 				break
 		}

@@ -104,7 +104,7 @@ export const fallback = AsyncBinder.create(async (node, ctx) => {
 export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {
 	for (const child of node.children ?? []) {
 		if (ctx.meta.hasBinder(child.type)) {
-			const binder = ctx.meta.getBinder(child.type)
+			const binder = ctx.meta.getBinder(child.type) as SyncBinder<AstNode>
 			binder(child, ctx)
 		}
 	}

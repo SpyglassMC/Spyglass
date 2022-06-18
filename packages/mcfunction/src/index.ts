@@ -9,7 +9,7 @@ export * from './parser/index.js'
 export * from './tree/index.js'
 
 /* istanbul ignore next */
-export const initialize: core.ProjectInitializer = ({ meta }) => {
+export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	colorizer.register(meta)
 	meta.registerCompleter<LiteralCommandChildNode>('mcfunction:command_child/literal', core.completer.literal)
 }

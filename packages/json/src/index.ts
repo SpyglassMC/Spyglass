@@ -13,7 +13,7 @@ export * as formatter from './formatter/index.js'
 export * from './node/index.js'
 export * as parser from './parser/index.js'
 
-export const initialize: core.ProjectInitializer = ({ meta }) => {
+export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	meta.registerLanguage('json', {
 		extensions: ['.json', '.mcmeta'],
 		triggerCharacters: completer.JsonTriggerCharacters,

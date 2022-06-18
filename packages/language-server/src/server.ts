@@ -173,10 +173,10 @@ connection.onInitialized(async () => {
 })
 
 connection.onDidOpenTextDocument(({ textDocument: { text, uri, version, languageId: languageID } }) => {
-	service.project.onDidOpen(uri, languageID, version, text)
+	return service.project.onDidOpen(uri, languageID, version, text)
 })
 connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, version } }) => {
-	service.project.onDidChange(uri, contentChanges, version)
+	return service.project.onDidChange(uri, contentChanges, version)
 })
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)

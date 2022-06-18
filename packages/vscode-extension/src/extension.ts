@@ -128,6 +128,8 @@ export function activate(context: vsc.ExtensionContext) {
 				}
 			))
 		}
+	}, e => {
+		console.error('[client#start]', e)
 	})
 }
 

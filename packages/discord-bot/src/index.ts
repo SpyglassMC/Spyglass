@@ -154,7 +154,7 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 		return activeInteractions.get(content)!
 	}
 
-	service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
+	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
 	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
 	service.project.onDidClose(DocumentUri)
 	if (!docAndNode) {

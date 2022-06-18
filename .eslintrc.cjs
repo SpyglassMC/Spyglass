@@ -69,6 +69,7 @@ module.exports = {
 				}
 			}
 		],
+		"@typescript-eslint/no-floating-promises": "error",
 		"comma-dangle": "off",
 		"@typescript-eslint/comma-dangle": ["warn", "always-multiline"],
 		"indent": "off",

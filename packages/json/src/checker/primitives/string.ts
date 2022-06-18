@@ -1,4 +1,4 @@
-import type { AllCategory, AstNode, Checker, Parser, ResourceLocationCategory, TaggableResourceLocationCategory } from '@spyglassmc/core'
+import type { AllCategory, AstNode, Checker, Parser, ResourceLocationCategory, SyncChecker, TaggableResourceLocationCategory } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { Failure, Lazy, ResourceLocation } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
@@ -21,9 +21,9 @@ export function literal(value: AllCategory | readonly string[]): JsonChecker {
 		: string(value, core.literal(...value))
 }
 
-export function string<T extends AstNode>(name: string | readonly string[] | undefined, parser: Lazy<Parser<T>>, checker?: Lazy<Checker<T>>, expectation?: Partial<JsonExpectation>): JsonChecker
-export function string(name?: string | readonly string[], parser?: undefined, checker?: Lazy<Checker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
-export function string(name?: string | readonly string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<Checker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
+export function string<T extends AstNode>(name: string | readonly string[] | undefined, parser: Lazy<Parser<T>>, checker?: Lazy<SyncChecker<T>>, expectation?: Partial<JsonExpectation>): JsonChecker
+export function string(name?: string | readonly string[], parser?: undefined, checker?: Lazy<SyncChecker<JsonStringNode>>, expectation?: Partial<JsonExpectation>): JsonChecker
+export function string(name?: string | readonly string[], parser?: Lazy<Parser<AstNode>>, checker?: Lazy<SyncChecker<any>>, expectation?: Partial<JsonExpectation>): JsonChecker {
 	return (node, ctx) => {
 		node.expectation = [{ type: 'json:string', typedoc: typedoc(name), ...expectation }]
 		if (!JsonStringNode.is(node)) {

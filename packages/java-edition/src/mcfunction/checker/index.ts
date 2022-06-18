@@ -120,7 +120,7 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 }
 
 //#region Checkers for argument nodes
-const block: core.Checker<BlockNode> = (node, ctx) => {
+const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 	if (!node.nbt) {
 		return
 	}
@@ -128,7 +128,7 @@ const block: core.Checker<BlockNode> = (node, ctx) => {
 	nbt.checker.index('block', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
 }
 
-const entity: core.Checker<EntityNode> = (node, ctx) => {
+const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	const nbtPair = node.selector?.arguments?.children.find(pair => pair.key?.value === 'nbt')
 	if (!nbtPair) {
 		return
@@ -139,7 +139,7 @@ const entity: core.Checker<EntityNode> = (node, ctx) => {
 	nbt.checker.index('entity_type', types)(nbtValue, ctx)
 }
 
-const item: core.Checker<ItemNode> = (node, ctx) => {
+const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 	if (!node.nbt) {
 		return
 	}
@@ -147,7 +147,7 @@ const item: core.Checker<ItemNode> = (node, ctx) => {
 	nbt.checker.index('item', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
 }
 
-const particle: core.Checker<ParticleNode> = (node, ctx) => {
+const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 	core.checker.dispatchSync(node, ctx)
 }
 //#endregion

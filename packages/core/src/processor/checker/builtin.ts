@@ -22,7 +22,7 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 	}
 
 	// FIXME: await
-	checker(node, tempCtx)
+	checker(node, tempCtx) as void
 
 	StateProxy.undoChanges(node as StateProxy<N>)
 
@@ -80,7 +80,7 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
 	for (const child of node.children ?? []) {
 		if (ctx.meta.hasChecker(child.type)) {
-			const checker = ctx.meta.getChecker(child.type)
+			const checker = ctx.meta.getChecker(child.type) as SyncChecker<AstNode>
 			checker(child, ctx)
 		}
 	}

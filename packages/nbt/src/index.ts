@@ -9,7 +9,7 @@ export * from './node/index.js'
 export * as parser from './parser/index.js'
 
 /* istanbul ignore next */
-export const initialize: core.ProjectInitializer = ({ meta }) => {
+export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	meta.registerLanguage('nbt', {
 		extensions: ['.snbt'],
 		parser: parser.entry,
