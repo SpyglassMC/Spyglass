@@ -5,6 +5,15 @@ import { promisify } from 'util'
 
 const execFile = promisify(cp.execFile)
 
+const GitExecOptions = {
+	env: {
+		GIT_COMMITTER_EMAIL: process.env.GIT_AUTHOR_EMAIL,
+		GIT_COMMITTER_NAME: process.env.GIT_AUTHOR_NAME,
+		GIT_AUTHOR_EMAIL: process.env.GIT_AUTHOR_EMAIL,
+		GIT_AUTHOR_NAME: process.env.GIT_AUTHOR_NAME,
+	},
+}
+
 try {
 	const indexHtml = await fsp.readFile('./index.html')
 	const indexJs = await fsp.readFile('./dist/index.js')
@@ -26,20 +35,13 @@ try {
 	await execFile('git', ['add', 'playground'])
 	console.log('Git added.')
 	try {
-		await execFile('git', ['commit', '-m 🚀 Deploy playground'], {
-			env: {
-				GIT_COMMITTER_EMAIL: process.env.GIT_AUTHOR_EMAIL,
-				GIT_COMMITTER_NAME: process.env.GIT_AUTHOR_NAME,
-				GIT_AUTHOR_EMAIL: process.env.GIT_AUTHOR_EMAIL,
-				GIT_AUTHOR_NAME: process.env.GIT_AUTHOR_NAME,
-			},
-		})
+		await execFile('git', ['commit', '-m 🚀 Deploy playground'], GitExecOptions)
 		console.log('Git committed.')
 	} catch (e) {
 		// Assume nothing to commit.
 		process.exit()
 	}
-	await execFile('git', ['pull', '--rebase'])
+	await execFile('git', ['pull', '--rebase'], GitExecOptions)
 	await execFile('git', ['push'])
 	console.log('Git pushed.')
 } catch (e) {
