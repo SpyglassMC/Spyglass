@@ -157,7 +157,7 @@
   },"26": {
     "doc": "Mcdoc",
     "title": "Type Alias",
-    "content": "SYNTAX . TypeAlias Prelim type IDENTIFIER TypeParamBlock? = Type . TypeParamBlock &lt; &gt; | &lt; TypeParam (, TypeParam)* ,? &gt; . TypeParam IDENTIFIER (extends PATH)? . TODO . ",
+    "content": "SYNTAX . TypeAlias DocComments type IDENTIFIER TypeParamBlock? = Type . TypeParamBlock &lt; &gt; | &lt; TypeParam (, TypeParam)* ,? &gt; . TypeParam IDENTIFIER (extends PATH)? . TODO . ",
     "url": "https://spyglassmc.com/user/mcdoc/#type-alias",
     "relUrl": "/user/mcdoc/#type-alias"
   },"27": {
