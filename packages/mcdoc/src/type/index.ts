@@ -17,7 +17,7 @@ export const StaticIndexKeywords = Object.freeze(['fallback', 'none', 'unknown']
 export type StaticIndexKeyword = typeof StaticIndexKeywords[number]
 export interface StaticIndex {
 	kind: 'static',
-	value: string | { keyword: StaticIndexKeyword }
+	value: string,
 }
 export interface DynamicIndex {
 	kind: 'dynamic',

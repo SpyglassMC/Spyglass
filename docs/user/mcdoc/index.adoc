@@ -960,7 +960,7 @@ An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliase
 **SYNTAX**
 
 [[s-type-alias,_TypeAlias_]]
-<<s-type-alias>>:: <<s-prelim>> `type` <<t-ident>> <<s-type-param-block>>^?^ `=` <<s-type>>
+<<s-type-alias>>:: <<s-doc-comments>> `type` <<t-ident>> <<s-type-param-block>>^?^ `=` <<s-type>>
 
 [[s-type-param-block,_TypeParamBlock_]]
 <<s-type-param-block>>::

@@ -40,13 +40,13 @@ export interface DispatchStatementNode extends AstNode {
 export const DispatchStatementNode = Object.freeze({
 	destruct(node: DispatchStatementNode): {
 		attributes: AttributeNode[],
-		dispatcher?: ResourceLocationNode,
+		location?: ResourceLocationNode,
 		index?: IndexBodyNode,
 		target?: TypeNode,
 	} {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
-			dispatcher: node.children.find(ResourceLocationNode.is),
+			location: node.children.find(ResourceLocationNode.is),
 			index: node.children.find(IndexBodyNode.is),
 			target: node.children.find(TypeNode.is),
 		}
@@ -659,6 +659,13 @@ export interface TypeParamBlockNode extends AstNode {
 	children: (CommentNode | TypeParamNode)[],
 }
 export const TypeParamBlockNode = Object.freeze({
+	destruct(node: TypeParamBlockNode): {
+		params: TypeParamNode[],
+	} {
+		return {
+			params: node.children.filter(TypeParamNode.is),
+		}
+	},
 	is(node: AstNode | undefined): node is TypeParamBlockNode {
 		return (node as TypeParamBlockNode | undefined)?.type === 'mcdoc:type_param_block'
 	},
@@ -669,6 +676,15 @@ export interface TypeParamNode extends AstNode {
 	children: (CommentNode | IdentifierNode | LiteralNode | PathNode)[],
 }
 export const TypeParamNode = Object.freeze({
+	destruct(node: TypeParamNode): {
+		constraint?: PathNode,
+		identifier: IdentifierNode,
+	} {
+		return {
+			constraint: node.children.find(PathNode.is),
+			identifier: node.children.find(IdentifierNode.is)!,
+		}
+	},
 	is(node: AstNode | undefined): node is TypeParamNode {
 		return (node as TypeParamNode | undefined)?.type === 'mcdoc:type_param'
 	},
@@ -866,18 +882,16 @@ export const StructInjectionNode = Object.freeze({
 
 export interface TypeAliasNode extends AstNode {
 	type: 'mcdoc:type_alias',
-	children: (CommentNode | PrelimNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[],
+	children: (CommentNode | DocCommentsNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[],
 }
 export const TypeAliasNode = Object.freeze({
 	destruct(node: TypeAliasNode): {
-		attributes: AttributeNode[],
 		docComments?: DocCommentsNode,
 		identifier?: IdentifierNode,
 		typeParams?: TypeParamBlockNode,
 		rhs?: TypeNode,
 	} {
 		return {
-			attributes: node.children.filter(AttributeNode.is),
 			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is),
 			typeParams: node.children.find(TypeParamBlockNode.is),

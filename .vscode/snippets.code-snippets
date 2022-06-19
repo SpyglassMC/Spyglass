@@ -25,5 +25,12 @@
 			"\t},",
 			"})",
 		]
-	}
+	},
+	"destruct": {
+		"scope": "javascript,typescript",
+		"prefix": "des",
+		"body": [
+			"const { $0 } = $1.destruct(${2:node})"
+		]
+	},
 }

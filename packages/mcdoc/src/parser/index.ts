@@ -574,7 +574,7 @@ const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> =
 export const typeAlias: Parser<TypeAliasNode> = setType(
 	'mcdoc:type_alias',
 	syntax([
-		prelim,
+		docComments,
 		keyword('type'),
 		identifier,
 		optionalTypeParamBlock,

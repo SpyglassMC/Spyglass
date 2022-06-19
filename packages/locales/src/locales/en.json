@@ -107,6 +107,8 @@
   "nbt.node.short": "a short tag",
   "nbt.node.string": "a string tag",
   "nbt.parser.number.out-of-range": "This looks like %0%, but it is actually %1% due to the numeral value being out of [%2%, %3%]",
+  "mcdoc.binder.dispatcher-statement.duplicated-key": "Duplicated dispatcher case %0%",
+  "mcdoc.binder.dispatcher-statement.duplicated-key.related": "%0% has already been dispatched here",
   "mcdoc.binder.duplicated-path": "Duplicated declaration for %0%",
   "mcdoc.binder.duplicated-path.related": "%0% is already declared here",
   "mcdoc.binder.out-of-root": "File %0% is not under the root directory of any mcdoc project; semantic checking will be skipped",
