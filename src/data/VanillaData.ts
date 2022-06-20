@@ -3,6 +3,7 @@
 import clone from 'clone'
 import { promises as fsp } from 'fs'
 import path from 'path'
+import { isFileType } from '../types'
 import { BlockDefinition } from '../types/BlockDefinition'
 import { NamespaceSummary } from '../types/NamespaceSummary'
 import { nbtdoc } from '../types/nbtdoc'
@@ -10,8 +11,8 @@ import { Registry } from '../types/Registry'
 import { VersionInformation } from '../types/VersionInformation'
 import { pathAccessible, readFile, requestText } from '../utils'
 
-let faildTimes = 0
-const MaxFaildTimes = 3
+let failedTimes = 0
+const MaxFailedTimes = 3
 
 export type VanillaData = {
     BlockDefinition: BlockDefinition,
@@ -53,11 +54,7 @@ export type DataType = 'BlockDefinition' | 'NamespaceSummary' | 'Nbtdoc' | 'Regi
 export type DataSource = 'GitHub' | '码云'
 
 function getUri(_source: DataSource, maintainer: string, name: string, path: string) {
-    // if (source === 'GitHub') {
     return `https://raw.githubusercontent.com/${maintainer}/${name}/${path}`
-    // } else {
-    //     return `https://gitee.com/SPGoding/${name}/raw/${path}`
-    // }
 }
 
 function getReportUri(type: DataType, source: DataSource, version: string, processedVersions: string[], isLatestSnapshot: boolean) {
@@ -69,11 +66,7 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
                 return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/blocks.json`)
             }
         case 'NamespaceSummary':
-            if (processedVersions.includes(version)) {
-                return getUri(source, 'SPGoding', 'vanilla-datapack', `${isLatestSnapshot ? 'summary' : `${version}-summary`}/summary/flattened.min.json`)
-            } else {
-                return getUri(source, 'SPGoding', 'vanilla-datapack', 'summary/summary/flattened.min.json')
-            }
+            return getUri(source, 'misode', 'mcmeta', `${isLatestSnapshot ? 'summary' : `${version}-summary`}/registries/data.min.json`)
         case 'Nbtdoc':
             return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${isLatestSnapshot ? 'generated' : `${version}-gen`}/build/generated.json`)
         case 'Registry':
@@ -89,7 +82,7 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
 async function getSingleVanillaData(type: DataType, source: DataSource, version: string, globalStoragePath: string | undefined, processedVersions: string[], latestSnapshot: string) {
     const cache = VanillaDataCache[type]
     cache[version] = cache[version] ?? new Promise(async (resolve) => {
-        if (faildTimes < MaxFaildTimes) {
+        if (failedTimes < MaxFailedTimes) {
             let ans: any
             const versionPath = globalStoragePath ? path.join(globalStoragePath, version) : undefined
             const filePath = versionPath ? path.join(versionPath, `${type}.json`) : undefined
@@ -118,9 +111,22 @@ async function getSingleVanillaData(type: DataType, source: DataSource, version:
                     }
                     ans = json
                 }
+                if (type === 'NamespaceSummary') {
+                    // Transform misode/mcmeta summaries to SPGoding/vanilla-datapack summaries:
+                    // 1. Remove all non-ClientCache-type keys.
+                    // 2. Add the `minecraft:` namespace.
+                    for (const key of Object.keys(ans)) {
+                        if (!isFileType(key)) {
+                            delete ans[key]
+                        }
+                    }
+                    for (const [key, values] of Object.entries(ans as Record<string, string[]>)) {
+                        ans[key] = values.map(s => s.includes(':') ? s : `minecraft:${s}`)
+                    }
+                }
                 resolve(ans)
             } catch (e) {
-                console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++faildTimes}/${MaxFaildTimes})`)
+                console.warn(`[VanillaData: ${type} for ${version}] ${e} (${++failedTimes}/${MaxFailedTimes})`)
                 console.info(`[VanillaData: ${type} for ${version}] Used the fallback.`)
                 resolve(FallbackVanillaData[type])
             }
