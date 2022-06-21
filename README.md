@@ -19,7 +19,7 @@ _Sample image is from the legacy version of the project_
 
 ## Documentation
 
-WIP under the [`docs` directory](https://github.com/SpyglassMC/Spyglass/tree/main/docs).
+WIP at https://spyglassmc.com.
 
 ## Contributing
 
