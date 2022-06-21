@@ -1,4 +1,10 @@
 export const Dev = Object.freeze({
+	assertDefined<T>(value: T): asserts value is Exclude<T, undefined> {
+		if (value === undefined) {
+			// The `String` constructor is used in case `value` is a `Symbol`, as JavaScript does not convert `Symbol`s to strings implicitly.
+			throw new Error(`'${String(value)}' is 'undefined'`)
+		}
+	},
 	assertNever(value: never): never {
 		// The `String` constructor is used in case `value` is a `Symbol`, as JavaScript does not convert `Symbol`s to strings implicitly.
 		throw new Error(`'${String(value)}' is not of type 'never'`)

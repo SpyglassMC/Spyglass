@@ -1,9 +1,9 @@
-import type { AstNode, BinderContext, CheckerContext, Location, MetaRegistry, RangeLike, StringNode, Symbol } from '@spyglassmc/core'
-import { AsyncBinder, Dev, ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
+import type { AstNode, BinderContext, CheckerContext, Location, MetaRegistry, RangeLike, StringNode, Symbol, SymbolQuery } from '@spyglassmc/core'
+import { AsyncBinder, atArray, Dev, ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AdditionalContext } from '../common.js'
-import type { AnyTypeNode, AttributeValueNode, BooleanTypeNode, EnumValueNode, IdentifierNode, IndexNode, InjectionNode, LiteralTypeValueNode, ModuleNode, StructFieldNode, StructKeyNode, TypeNode } from '../node/index.js'
-import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumNode, FloatRangeNode, IndexBodyNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TupleTypeNode, TypeAliasNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import type { AnyTypeNode, AttributeValueNode, BooleanTypeNode, EnumValueNode, IdentifierNode, IndexNode, LiteralTypeValueNode, ModuleNode, StructFieldNode, StructKeyNode, TypeNode } from '../node/index.js'
+import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, FloatRangeNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TupleTypeNode, TypeAliasNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
 import type { Attribute, AttributeTree, AttributeValue, DispatcherType, DynamicIndex, EnumType, EnumTypeField, Index, KeywordType, ListType, LiteralNumberCaseInsensitiveSuffix, LiteralNumberSuffix, LiteralType, LiteralValue, McdocType, NumericRange, NumericType, NumericTypeKind, ParallelIndices, PrimitiveArrayType, PrimitiveArrayValueKind, ReferenceType, StaticIndex, StringType, StructType, StructTypeField, StructTypePairField, StructTypeSpreadField, TupleType, TypeBase, UnionType } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext { }
@@ -54,15 +54,22 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 	}
 
 	function hoistEnum(node: EnumNode) {
-		hoistFor('enum', node, EnumNode.destruct)
+		hoistFor('enum', node, EnumNode.destruct, n => ({ typeDef: convertEnum(n, ctx) }))
 	}
 
 	function hoistStruct(node: StructNode) {
-		hoistFor('struct', node, StructNode.destruct)
+		hoistFor('struct', node, StructNode.destruct, n => ({ typeDef: convertStruct(n, ctx) }))
 	}
 
 	function hoistTypeAlias(node: TypeAliasNode) {
-		hoistFor('type_alias', node, TypeAliasNode.destruct)
+		hoistFor('type_alias', node, TypeAliasNode.destruct, n => {
+			const { rhs } = TypeAliasNode.destruct(n)
+			if (!rhs) {
+				return undefined
+			}
+
+			return { typeDef: convertType(rhs, ctx) }
+		})
 	}
 
 	function hoistUseStatement(node: UseStatementNode) {
@@ -86,7 +93,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			})
 	}
 
-	function hoistFor<N extends AstNode>(subcategory: 'enum' | 'struct' | 'type_alias', node: N, destructor: (node: N) => { docComments?: DocCommentsNode, identifier?: IdentifierNode }) {
+	function hoistFor<N extends AstNode>(subcategory: 'enum' | 'struct' | 'type_alias', node: N, destructor: (node: N) => { docComments?: DocCommentsNode, identifier?: IdentifierNode }, getData: (node: N) => unknown) {
 		const { docComments, identifier } = destructor(node)
 		if (!identifier?.value) {
 			return
@@ -96,7 +103,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
 			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, identifier))
 			.elseEnter({
-				data: { desc: DocCommentsNode.asText(docComments), subcategory },
+				data: { data: getData(node), desc: DocCommentsNode.asText(docComments), subcategory },
 				usage: { type: 'definition', node: identifier, fullRange: node },
 			})
 	}
@@ -185,40 +192,83 @@ function bindDispatcherType(node: DispatcherTypeNode, ctx: McdocBinderContext): 
 }
 
 async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> {
-	// TODO
+	await ensureFileBound(node, ctx)
+
+	resolvePath(node, ctx, {
+		callback: (identifiers, identNode) => {
+			ctx.symbols
+				.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
+				.amend({ usage: { type: 'reference', node: identNode, fullRange: node, skipRenaming: LiteralNode.is(identNode) } })
+		},
+		reportErrors: true,
+	})
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
-	const { block, identifier } = EnumNode.destruct(node)
-	if (!identifier?.value) {
+	const { block } = EnumNode.destruct(node)
+	if (node.symbol?.subcategory !== 'enum') {
 		return
 	}
 
-	// TODO: Check duplicated keys.
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...node.symbol.path)
+	Dev.assertDefined(query.symbol)
+	bindEnumBlock(block, ctx, query)
+}
+
+function bindEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext, query: SymbolQuery, options: { extendsTypeDefData?: boolean } = {}): void {
+	const { fields } = EnumBlockNode.destruct(node)
+	for (const field of fields) {
+		const { identifier } = EnumFieldNode.destruct(field)
+		query.member(identifier.value, fieldQuery => fieldQuery
+			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, identifier))
+			.elseEnter({ usage: { type: 'definition', node: identifier, fullRange: field } })
+		)
+	}
 }
 
 async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Promise<void> {
-	// TODO
+	const { injection } = InjectionNode.destruct(node)
+	if (EnumInjectionNode.is(injection)) {
+		// TODO
+		// const {  } = EnumInjectionNode.destruct(injection)
+		// bindEnumBlock(block, ctx, query, { extendsTypeDefData: true })
+	}
 }
 
 async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
-	const { block, identifier } = StructNode.destruct(node)
-	if (!identifier?.value) {
+	const { block } = StructNode.destruct(node)
+	if (node.symbol?.subcategory !== 'struct') {
 		return
 	}
 
-	// TODO: Check duplicated keys.
-	// TODO: Bind spread types.
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...node.symbol.path)
+	Dev.assertDefined(query.symbol)
+	await bindStructBlock(block, ctx, query)
+}
+
+async function bindStructBlock(node: StructBlockNode, ctx: McdocBinderContext, query: SymbolQuery, options: { extendsTypeDefData?: boolean } = {}): Promise<void> {
+	const { fields } = StructBlockNode.destruct(node)
+	for (const field of fields) {
+		if (StructPairFieldNode.is(field)) {
+			const { key, type } = StructPairFieldNode.destruct(field)
+			if (!StructMapKeyNode.is(key)) {
+				query.member(key.value, fieldQuery => fieldQuery
+					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, key))
+					.elseEnter({ usage: { type: 'definition', node: key, fullRange: field } })
+				)
+			}
+			await bindType(type, ctx)
+		} else {
+			const { type } = StructSpreadFieldNode.destruct(field)
+			await bindType(type, ctx)
+		}
+	}
 }
 
 async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Promise<void> {
 	const { identifier, rhs, typeParams } = TypeAliasNode.destruct(node)
 	if (!identifier?.value) {
 		return
-	}
-
-	if (rhs) {
-		await bindType(rhs, ctx)
 	}
 
 	if (typeParams) {
@@ -243,6 +293,10 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 			}
 		}
 	}
+
+	if (rhs) {
+		await bindType(rhs, ctx)
+	}
 }
 
 async function bindUseStatement(node: UseStatementNode, ctx: McdocBinderContext): Promise<void> {
@@ -258,7 +312,7 @@ export function registerMcdocBinders(meta: MetaRegistry) {
 	meta.registerBinder<ModuleNode>('mcdoc:module', fileModule)
 }
 
-function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, range: RangeLike, options: { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key.related' | 'mcdoc.binder.duplicated-path' } = { localeString: 'mcdoc.binder.duplicated-path' }) {
+function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, range: RangeLike, options: { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key.related' | 'mcdoc.binder.duplicated-declaration' } = { localeString: 'mcdoc.binder.duplicated-declaration' }) {
 	ctx.err.report(
 		localize(options.localeString, localeQuote(symbol.identifier)),
 		range, ErrorSeverity.Warning,
@@ -271,7 +325,7 @@ function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, ra
 	)
 }
 
-function resolvePath(ctx: McdocBinderContext, path: PathNode, options: { reportErrors?: boolean } = {}): string[] | undefined {
+function resolvePath(path: PathNode, ctx: McdocBinderContext, options: { callback?: (identifiers: readonly string[], node: IdentifierNode | LiteralNode) => void, reportErrors?: boolean } = {}): string[] | undefined {
 	const { children, isAbsolute } = PathNode.destruct(path)
 	const identifiers: string[] = isAbsolute
 		? []
@@ -294,31 +348,33 @@ function resolvePath(ctx: McdocBinderContext, path: PathNode, options: { reportE
 			default:
 				Dev.assertNever(child)
 		}
+		options.callback?.(identifiers, child)
 	}
 	return identifiers
 }
 
-async function ensureFileBound(ctx: McdocBinderContext, path: PathNode): Promise<string | undefined> {
-	const identifiers = resolvePath(ctx, path, { reportErrors: true })
-	if (!identifiers) {
+async function ensureFileBound(path: PathNode, ctx: McdocBinderContext): Promise<string[] | undefined> {
+	const identifiers = resolvePath(path, ctx)
+	if (!identifiers?.length) {
 		return undefined
 	}
 
 	const referencedModuleFile = `::${identifiers.slice(0, -1).join('::')}`
 	const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
-	const referencedPath = `::${identifiers.join('::')}`
+	const referencedPath = pathArrayToString(identifiers)
 	if (!referencedModuleUri) {
-		ctx.err.report(localize('mcdoc.binder.path.unknown-module'), path)
+		ctx.err.report(localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)), path)
 		return undefined
 	}
 
 	await ctx.ensureBound(referencedModuleUri)
 
 	if (!ctx.symbols.global.mcdoc?.[referencedPath]?.definition?.length) {
+		ctx.err.report(localize('mcdoc.binder.path.unknown-identifier', localeQuote(atArray(identifiers, -1)!)), path)
 		return undefined
 	}
 
-	return referencedPath
+	return identifiers
 }
 
 function identifierToUri(module: string, ctx: McdocBinderContext): string | undefined {
@@ -334,9 +390,9 @@ function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
 		?.identifier
 }
 
-function pathArrayToString(path: string[]): string
-function pathArrayToString(path: string[] | undefined): string | undefined
-function pathArrayToString(path: string[] | undefined): string | undefined {
+function pathArrayToString(path: readonly string[]): string
+function pathArrayToString(path: readonly string[] | undefined): string | undefined
+function pathArrayToString(path: readonly string[] | undefined): string | undefined {
 	return path ? `::${path.join('::')}` : undefined
 }
 
@@ -636,7 +692,7 @@ function convertReference(node: ReferenceTypeNode, ctx: McdocBinderContext): Ref
 	return {
 		...convertBase(node, ctx),
 		kind: 'reference',
-		path: pathArrayToString(resolvePath(ctx, path)),
+		path: pathArrayToString(resolvePath(path, ctx)),
 		typeParameters: undefineEmptyArray(typeParameters.map(n => convertType(n, ctx))),
 	}
 }
