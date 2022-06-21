@@ -82,7 +82,6 @@
   "nbt.node.string": "uma string tag",
   "nbt.parser.number.out-of-range": "Parece que %0%, mas na verdade é %1% devido ao valor numeral estar fora de [%2%, %3%]",
   "mcdoc.checker.entry.empty-mod-seg": "Você não pode colocar “mod.mcdoc” em uma raiz diretamente",
-  "mcdoc.checker.ident-path.unknown-identifier": "O identificador %0% não existe no módulo %1%",
   "mcdoc.parser.compound-definition.field-type": "um tipo de campo",
   "mcdoc.parser.float.illegal": "Número float ilegal encontrado",
   "mcdoc.parser.identifier.illegal": "%0% não segue o formato de %1%",

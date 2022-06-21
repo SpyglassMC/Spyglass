@@ -99,7 +99,6 @@
   "nbt.node.string": "一個字串標籤",
   "nbt.parser.number.out-of-range": "這看起來像 %0%，但實際上是 %1%，因為數值超出了 [%2%, %3%]",
   "mcdoc.checker.entry.empty-mod-seg": "您不能將「mod.mcdoc」直接放在根目錄下",
-  "mcdoc.checker.ident-path.unknown-identifier": "標識符 %0% 在模組 %1% 中不存在",
   "mcdoc.checker.inject-clause.unmatched-injection": "不能用 %1% 注碼於 %0%",
   "mcdoc.checker.type-not-assignable": "類型 %0% 不能分配給類型 %1%",
   "mcdoc.node.compound-definition": "一個複合定義",
