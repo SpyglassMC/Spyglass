@@ -1,5 +1,4 @@
 // https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/60592
-/// <reference path="./decompress.d.ts"/>
 import chokidar from 'chokidar'
 import decompress from 'decompress'
 import followRedirects from 'follow-redirects'
