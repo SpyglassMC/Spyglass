@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-// @ts-ignore
+// @ts-expect-error
 import Fallback from './locales/en.js'
 
 type Locale = Record<string, string>

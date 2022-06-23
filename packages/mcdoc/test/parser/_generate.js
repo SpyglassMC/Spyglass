@@ -1,3 +1,5 @@
+// This module script .
+
 import fs from 'fs'
 import path from 'path'
 import url from 'url'
@@ -5,8 +7,6 @@ import { McdocParserTestSuites } from './_suites.js'
 
 // Generates test files for each mcdoc rule parser with test suites from `./_suites.js`.
 // It is super laggy to have a giant snapshot file, hence why we separated the tests to multiple files.
-
-const ShouldGenerate = false // Prevent from mis-triggering.
 
 /**
  * @param {string} parser
@@ -19,7 +19,7 @@ import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { ${parser} } from '@spyglassmc/mcdoc/lib/parser/index.js'
-// @ts-ignore
+// @ts-expect-error
 import { McdocParserTestSuites } from '@spyglassmc/mcdoc/test/parser/_suites.js'
 
 describe('mcdoc ${parser}${functionParams ? '()' : ''}', () => {
@@ -32,14 +32,12 @@ describe('mcdoc ${parser}${functionParams ? '()' : ''}', () => {
 `
 }
 
-if (ShouldGenerate) {
-	for (const [directory, parserSuites] of Object.entries(McdocParserTestSuites)) {
-		for (const [parser, { functionParams }] of Object.entries(parserSuites)) {
-			fs.writeFileSync(
-				path.join(url.fileURLToPath(new URL('.', import.meta.url)), directory, `${parser}.generated.spec.ts`),
-				template(parser, directory, functionParams),
-				{ encoding: 'utf-8' }
-			)
-		}
+for (const [directory, parserSuites] of Object.entries(McdocParserTestSuites)) {
+	for (const [parser, { functionParams }] of Object.entries(parserSuites)) {
+		fs.writeFileSync(
+			path.join(url.fileURLToPath(new URL('.', import.meta.url)), directory, `${parser}.generated.spec.ts`),
+			template(parser, directory, functionParams),
+			{ encoding: 'utf-8' }
+		)
 	}
 }

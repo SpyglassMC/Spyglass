@@ -27,9 +27,9 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
-// @ts-ignore
+// @ts-expect-error
 import { CommandArgumentTestSuites } from '@spyglassmc/java-edition/test/mcfunction/parser/argument/_suites.js'
-// @ts-ignore
+// @ts-expect-error
 import { meta } from '@spyglassmc/java-edition/test/mcfunction/parser/argument/_meta.js'
 
 describe('mcfunction argument ${parser}', () => {
