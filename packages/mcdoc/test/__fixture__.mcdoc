@@ -1,0 +1,29 @@
+// __fixture__.mcdoc syntax:
+//
+// //== <test case name>
+// //=== <absolute file path>
+// <content of the file>
+
+//== duplicated path
+//=== /foo.mcdoc
+struct Foo {}
+type Foo = boolean
+
+//== duplicated path with implicit use statement binding
+//=== /bar.mcdoc
+struct Bar {}
+
+//=== /foo.mcdoc
+use super::bar::Bar
+
+struct Bar {}
+
+//== duplicated path with explicit use statement binding
+//=== /bar.mcdoc
+struct Bar {}
+
+//=== /foo.mcdoc
+use super::bar::Bar as ImportedBar
+
+struct Bar {}
+struct ImportedBar {}
