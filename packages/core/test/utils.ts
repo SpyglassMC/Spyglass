@@ -1,5 +1,5 @@
-import type { LanguageError, Parser, ProjectData, Returnable, RootUriString } from '@spyglassmc/core'
-import { AstNode, Downloader, Failure, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, SymbolUtil, VanillaConfig } from '@spyglassmc/core'
+import type { ColorToken, FileNode, LanguageError, Parser, ProjectData, Returnable, RootUriString, UnlinkedSymbolTable } from '@spyglassmc/core'
+import { AstNode, BinderContext, Downloader, Failure, file, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, StateProxy, SymbolTable, SymbolUtil, UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import { fail } from 'assert'
 import type { RootHookObject } from 'mocha'
@@ -136,4 +136,97 @@ export function assertError(fn: () => void, errorCallback: (e: unknown) => void 
 	} catch (e) {
 		errorCallback(e)
 	}
+}
+
+export interface SimpleProjectState {
+	colorTokens: ColorToken[],
+	global: UnlinkedSymbolTable,
+	nodes: Record<string, FileNode<AstNode>>,
+}
+
+export class SimpleProject {
+	#colorTokens: ColorToken[] = []
+	#global: SymbolTable = Object.create(null)
+	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
+
+	#symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+
+	get projectData(): ProjectData {
+		return mockProjectData({
+			cacheRoot: 'file:///.cache/',
+			meta: this.meta,
+			roots: ['file:///'],
+			symbols: this.#symbols,
+		})
+	}
+
+	constructor(
+		private readonly meta: MetaRegistry,
+		private readonly files: readonly { uri: string, content: string }[],
+	) {
+		// Bind URIs
+		const ctx = UriBinderContext.create(this.projectData)
+		ctx.symbols.contributeAs('uri_binder', () => {
+			const uris = files.map(f => f.uri)
+			for (const binder of this.meta.uriBinders) {
+				binder(uris, ctx)
+			}
+		})
+	}
+
+	public parse(): void {
+		for (const { uri, content } of this.files) {
+			const src = new Source(content)
+			const ctx = ParserContext.create(this.projectData, {
+				doc: TextDocument.create(uri, uri.slice(uri.lastIndexOf('.') + 1), 0, content),
+			})
+			const node = file()(src, ctx)
+			this.#nodes[uri] = node
+		}
+	}
+
+	public async bind(): Promise<void> {
+		for (const { uri, content } of this.files) {
+			const node = this.#nodes[uri]
+			try {
+				const binder = this.meta.getBinder(node.type)
+				const ctx = BinderContext.create(this.projectData, {
+					doc: TextDocument.create(uri, '', 0, content),
+				})
+				await ctx.symbols.contributeAsAsync('binder', async () => {
+					const proxy = StateProxy.create(node)
+					await binder(proxy, ctx)
+					node.binderErrors = ctx.err.dump()
+				})
+			} catch (e) {
+				throw new Error(`[bind] Failed for “${uri}”: ${e}`)
+			}
+		}
+	}
+
+	public async check(): Promise<void> {
+		throw new Error('TODO')
+	}
+
+	public colorize(): void {
+		throw new Error('TODO')
+	}
+
+	public dumpState<T extends keyof SimpleProjectState>(keys: readonly T[], options?: DumpStateOptions): Pick<SimpleProjectState, T>
+	public dumpState(keys: readonly (keyof SimpleProjectState)[], options: DumpStateOptions = {}): Partial<SimpleProjectState> {
+		for (const node of Object.values(this.#nodes)) {
+			removeExtraProperties(node, !!options?.keepOptions, !!options?.removeTopLevelChildren)
+		}
+
+		return {
+			...keys.includes('colorTokens') && { colorTokens: this.#colorTokens },
+			...keys.includes('global') && { global: SymbolTable.unlink(this.#global) },
+			...keys.includes('nodes') && { nodes: this.#nodes },
+		}
+	}
+}
+
+interface DumpStateOptions {
+	keepOptions?: boolean,
+	removeTopLevelChildren?: boolean,
 }

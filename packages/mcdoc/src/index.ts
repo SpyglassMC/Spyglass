@@ -15,7 +15,7 @@ export * from './type/index.js'
 export * from './uri_processors.js'
 
 /* istanbul ignore next */
-export const initialize: core.ProjectInitializer = ({ meta }) => {
+export const initialize = ({ meta }: { meta: core.MetaRegistry }): void => {
 	meta.registerLanguage('mcdoc', {
 		extensions: ['.mcdoc'],
 		parser: parser.module_,

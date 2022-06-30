@@ -6,6 +6,8 @@ const Extension = '.mcdoc'
 const McdocRootPrefix = 'mcdoc/'
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
+	console.log(uris)
+	console.log(ctx)
 	let urisAndRels: [string, string][] = []
 	for (const uri of uris) {
 		if (!uri.endsWith(Extension)) {

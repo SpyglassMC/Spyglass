@@ -1,26 +1,36 @@
-import fs from 'fs'
+import { MetaRegistry } from '@spyglassmc/core'
+import { SimpleProject } from '@spyglassmc/core/test-out/utils.js'
+import { initialize } from '@spyglassmc/mcdoc'
+import fs from 'fs/promises'
 import snapshot from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
-const fixture = fs.readFileSync(new URL('./__fixture__.mcdoc', import.meta.url), 'utf8')
+describe.only('mcdoc __fixture__', () => {
+	it('__fixture__', async () => {
+		const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
 
-for (const [caseName, caseContent] of getSections(fixture, 2)) {
-	const files = [...getSections(caseContent, 3)]
-		.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent }))
-	// @ts-expect-error // FIXME
-	const project = new SimpleProject(files)
-	project.parseAll()
-	await project.bindAll()
-	snapshot.core({
-		what: project.dumpState(),
-		file: fileURLToPath(new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url)),
-		specName: `mcdoc __fixture__ ${caseName}`,
-		opts: {
-			sortSnapshots: true,
-			useRelativePath: true,
-		},
+		const meta = new MetaRegistry()
+		initialize({ meta })
+
+		for (const [caseName, caseContent] of getSections(fixture, 2)) {
+			const files = [...getSections(caseContent, 3)]
+				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent }))
+			const project = new SimpleProject(meta, files)
+			project.parse()
+			await project.bind()
+			snapshot.core({
+				what: project.dumpState(['global', 'nodes']),
+				file: fileURLToPath(new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url)),
+				specName: `mcdoc __fixture__ ${caseName}`,
+				ext: '.spec.js',
+				opts: {
+					sortSnapshots: true,
+					useRelativePath: true,
+				},
+			})
+		}
 	})
-}
+})
 
 /**
  * Breaks a text into sections.
@@ -39,7 +49,7 @@ for (const [caseName, caseContent] of getSections(fixture, 2)) {
  * ```
  */
 function* getSections(text: string, equalSignAmount: number): Generator<[title: string, content: string]> {
-	const regex = new RegExp(`^//${'='.repeat(equalSignAmount)} `, 'u')
+	const regex = new RegExp(`^//${'='.repeat(equalSignAmount)} `, 'mu')
 	const sections = text.split(regex).slice(1)
 	// Example sections:
 	// [
