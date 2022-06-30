@@ -1,5 +1,5 @@
 import type { ColorToken, FileNode, LanguageError, Parser, ProjectData, Returnable, RootUriString, UnlinkedSymbolTable } from '@spyglassmc/core'
-import { AstNode, BinderContext, Downloader, Failure, file, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, StateProxy, SymbolTable, SymbolUtil, UriBinderContext, VanillaConfig } from '@spyglassmc/core'
+import { AstNode, BinderContext, Downloader, Failure, file, FileService, Logger, MetaRegistry, ParserContext, ProfilerFactory, Source, StateProxy, SymbolPath, SymbolTable, SymbolUtil, UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import { fail } from 'assert'
 import type { RootHookObject } from 'mocha'
@@ -56,7 +56,7 @@ export function markOffsetInString(string: string, offset: number) {
 	return `'${string.slice(0, offset)}|${string.slice(offset)}'`
 }
 
-function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean): void {
+function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean, simplifySymbol: boolean): void {
 	if (!node || typeof node !== 'object') {
 		return
 	}
@@ -70,9 +70,12 @@ function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: 
 		delete node.parent
 		delete node.symbol?.parentMap
 		delete node.symbol?.parentSymbol
+		if (simplifySymbol && node.symbol) {
+			node.symbol = SymbolPath.fromSymbol(node.symbol)
+		}
 	}
 	for (const value of Object.values(node)) {
-		removeExtraProperties(value, keepOptions, false)
+		removeExtraProperties(value, keepOptions, false, simplifySymbol)
 	}
 }
 
@@ -84,6 +87,7 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	noNodeReturn = false,
 	project = {},
 	removeTopLevelChildren = false,
+	simplifySymbol = false,
 }: {
 	uri?: string,
 	languageID?: string,
@@ -91,6 +95,7 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	noNodeReturn?: boolean,
 	project?: Partial<ProjectData>,
 	removeTopLevelChildren?: boolean,
+	simplifySymbol?: boolean,
 } = {}): {
 	node: Returnable | 'FAILURE',
 	errors: readonly LanguageError[],
@@ -105,7 +110,7 @@ export function testParser(parser: Parser<Returnable>, text: string, {
 	)
 	const result: any = parser(src, ctx)
 	if (!noNodeReturn) {
-		removeExtraProperties(result, keepOptions, removeTopLevelChildren)
+		removeExtraProperties(result, keepOptions, removeTopLevelChildren, simplifySymbol)
 	}
 	return {
 		node: result === Failure ? 'FAILURE' :
@@ -212,10 +217,10 @@ export class SimpleProject {
 		throw new Error('TODO')
 	}
 
-	public dumpState<T extends keyof SimpleProjectState>(keys: readonly T[], options?: DumpStateOptions): Pick<SimpleProjectState, T>
-	public dumpState(keys: readonly (keyof SimpleProjectState)[], options: DumpStateOptions = {}): Partial<SimpleProjectState> {
+	public dumpState<T extends keyof SimpleProjectState>(keys: readonly T[]): Pick<SimpleProjectState, T>
+	public dumpState(keys: readonly (keyof SimpleProjectState)[]): Partial<SimpleProjectState> {
 		for (const node of Object.values(this.#nodes)) {
-			removeExtraProperties(node, !!options?.keepOptions, !!options?.removeTopLevelChildren)
+			removeExtraProperties(node, false, false, true)
 		}
 
 		return {
@@ -224,9 +229,4 @@ export class SimpleProject {
 			...keys.includes('nodes') && { nodes: this.#nodes },
 		}
 	}
-}
-
-interface DumpStateOptions {
-	keepOptions?: boolean,
-	removeTopLevelChildren?: boolean,
 }

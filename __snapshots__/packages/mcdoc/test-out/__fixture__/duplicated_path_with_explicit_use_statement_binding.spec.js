@@ -167,50 +167,8 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
                   "value": "Bar",
                   "symbol": {
                     "category": "mcdoc",
-                    "identifier": "::bar::Bar",
                     "path": [
                       "::bar::Bar"
-                    ],
-                    "data": {
-                      "typeDef": {
-                        "kind": "struct",
-                        "fields": []
-                      }
-                    },
-                    "subcategory": "struct",
-                    "definition": [
-                      {
-                        "uri": "file:///bar.mcdoc",
-                        "range": {
-                          "start": 7,
-                          "end": 10
-                        },
-                        "posRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 7
-                          },
-                          "end": {
-                            "line": 0,
-                            "character": 10
-                          }
-                        },
-                        "fullRange": {
-                          "start": 0,
-                          "end": 15
-                        },
-                        "fullPosRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 0
-                          },
-                          "end": {
-                            "line": 2,
-                            "character": 0
-                          }
-                        },
-                        "contributor": "binder"
-                      }
                     ]
                   }
                 },
@@ -311,45 +269,8 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
                   "value": "ImportedBar",
                   "symbol": {
                     "category": "mcdoc",
-                    "identifier": "::foo::ImportedBar",
                     "path": [
                       "::foo::ImportedBar"
-                    ],
-                    "subcategory": "use_statement_binding",
-                    "visibility": 1,
-                    "definition": [
-                      {
-                        "uri": "file:///foo.mcdoc",
-                        "range": {
-                          "start": 23,
-                          "end": 34
-                        },
-                        "posRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 23
-                          },
-                          "end": {
-                            "line": 0,
-                            "character": 34
-                          }
-                        },
-                        "fullRange": {
-                          "start": 0,
-                          "end": 36
-                        },
-                        "fullPosRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 0
-                          },
-                          "end": {
-                            "line": 2,
-                            "character": 0
-                          }
-                        },
-                        "contributor": "binder"
-                      }
                     ]
                   }
                 }
@@ -380,50 +301,8 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
                   "value": "Bar",
                   "symbol": {
                     "category": "mcdoc",
-                    "identifier": "::foo::Bar",
                     "path": [
                       "::foo::Bar"
-                    ],
-                    "data": {
-                      "typeDef": {
-                        "kind": "struct",
-                        "fields": []
-                      }
-                    },
-                    "subcategory": "struct",
-                    "definition": [
-                      {
-                        "uri": "file:///foo.mcdoc",
-                        "range": {
-                          "start": 43,
-                          "end": 46
-                        },
-                        "posRange": {
-                          "start": {
-                            "line": 2,
-                            "character": 7
-                          },
-                          "end": {
-                            "line": 2,
-                            "character": 10
-                          }
-                        },
-                        "fullRange": {
-                          "start": 36,
-                          "end": 50
-                        },
-                        "fullPosRange": {
-                          "start": {
-                            "line": 2,
-                            "character": 0
-                          },
-                          "end": {
-                            "line": 3,
-                            "character": 0
-                          }
-                        },
-                        "contributor": "binder"
-                      }
                     ]
                   }
                 },
@@ -536,7 +415,7 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
             "start": 57,
             "end": 68
           },
-          "message": "",
+          "message": "Duplicated declaration for “::foo::ImportedBar”",
           "severity": 2,
           "info": {
             "related": [
@@ -573,7 +452,7 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
                   },
                   "contributor": "binder"
                 },
-                "message": ""
+                "message": "“::foo::ImportedBar” is already declared here"
               }
             ]
           }

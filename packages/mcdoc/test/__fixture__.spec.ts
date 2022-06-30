@@ -5,7 +5,7 @@ import fs from 'fs/promises'
 import snapshot from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
-describe.only('mcdoc __fixture__', () => {
+describe('mcdoc __fixture__', () => {
 	it('__fixture__', async () => {
 		const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
 

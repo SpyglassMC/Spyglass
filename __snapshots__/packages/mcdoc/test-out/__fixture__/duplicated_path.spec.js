@@ -101,50 +101,8 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
                   "value": "Foo",
                   "symbol": {
                     "category": "mcdoc",
-                    "identifier": "::foo::Foo",
                     "path": [
                       "::foo::Foo"
-                    ],
-                    "data": {
-                      "typeDef": {
-                        "kind": "struct",
-                        "fields": []
-                      }
-                    },
-                    "subcategory": "struct",
-                    "definition": [
-                      {
-                        "uri": "file:///foo.mcdoc",
-                        "range": {
-                          "start": 7,
-                          "end": 10
-                        },
-                        "posRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 7
-                          },
-                          "end": {
-                            "line": 0,
-                            "character": 10
-                          }
-                        },
-                        "fullRange": {
-                          "start": 0,
-                          "end": 14
-                        },
-                        "fullPosRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 0
-                          },
-                          "end": {
-                            "line": 1,
-                            "character": 0
-                          }
-                        },
-                        "contributor": "binder"
-                      }
                     ]
                   }
                 },
@@ -229,7 +187,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
             "start": 19,
             "end": 22
           },
-          "message": "",
+          "message": "Duplicated declaration for “::foo::Foo”",
           "severity": 2,
           "info": {
             "related": [
@@ -266,7 +224,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
                   },
                   "contributor": "binder"
                 },
-                "message": ""
+                "message": "“::foo::Foo” is already declared here"
               }
             ]
           }

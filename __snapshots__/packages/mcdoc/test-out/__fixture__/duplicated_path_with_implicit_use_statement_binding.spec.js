@@ -124,50 +124,8 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                   "value": "Bar",
                   "symbol": {
                     "category": "mcdoc",
-                    "identifier": "::bar::Bar",
                     "path": [
                       "::bar::Bar"
-                    ],
-                    "data": {
-                      "typeDef": {
-                        "kind": "struct",
-                        "fields": []
-                      }
-                    },
-                    "subcategory": "struct",
-                    "definition": [
-                      {
-                        "uri": "file:///bar.mcdoc",
-                        "range": {
-                          "start": 7,
-                          "end": 10
-                        },
-                        "posRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 7
-                          },
-                          "end": {
-                            "line": 0,
-                            "character": 10
-                          }
-                        },
-                        "fullRange": {
-                          "start": 0,
-                          "end": 15
-                        },
-                        "fullPosRange": {
-                          "start": {
-                            "line": 0,
-                            "character": 0
-                          },
-                          "end": {
-                            "line": 2,
-                            "character": 0
-                          }
-                        },
-                        "contributor": "binder"
-                      }
                     ]
                   }
                 },
@@ -246,45 +204,8 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                       "value": "Bar",
                       "symbol": {
                         "category": "mcdoc",
-                        "identifier": "::foo::Bar",
                         "path": [
                           "::foo::Bar"
-                        ],
-                        "subcategory": "use_statement_binding",
-                        "visibility": 1,
-                        "definition": [
-                          {
-                            "uri": "file:///foo.mcdoc",
-                            "range": {
-                              "start": 16,
-                              "end": 19
-                            },
-                            "posRange": {
-                              "start": {
-                                "line": 0,
-                                "character": 16
-                              },
-                              "end": {
-                                "line": 0,
-                                "character": 19
-                              }
-                            },
-                            "fullRange": {
-                              "start": 0,
-                              "end": 21
-                            },
-                            "fullPosRange": {
-                              "start": {
-                                "line": 0,
-                                "character": 0
-                              },
-                              "end": {
-                                "line": 2,
-                                "character": 0
-                              }
-                            },
-                            "contributor": "binder"
-                          }
                         ]
                       }
                     }
@@ -395,7 +316,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
             "start": 28,
             "end": 31
           },
-          "message": "",
+          "message": "Duplicated declaration for “::foo::Bar”",
           "severity": 2,
           "info": {
             "related": [
@@ -432,7 +353,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                   },
                   "contributor": "binder"
                 },
-                "message": ""
+                "message": "“::foo::Bar” is already declared here"
               }
             ]
           }
