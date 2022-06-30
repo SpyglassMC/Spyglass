@@ -27,3 +27,28 @@ use super::bar::Bar as ImportedBar
 
 struct Bar {}
 struct ImportedBar {}
+
+//== simple types
+//=== /foo.mcdoc
+type AnyTest = any
+type BooleanTest = boolean
+type StringTest0 = string
+type StringTest1 = string @ 1..
+type StringTest2 = string @ ..128
+type StringTest3 = string @ 1
+type StringTest4 = string @ 4..128
+type LiteralTest0 = "foo"
+type LiteralTest1 = 42L
+type LiteralTest2 = true
+type NumericTest = byte @ 42..91
+type PrimitiveArrayTest0 = int[] @ 4
+type PrimitiveArrayTest1 = long@1..[]
+type PrimitiveArrayTest2 = byte@0..1[] @ 8
+type ListTest0 = [byte]
+type ListTest1 = [[string]]
+type ListTest2 = [struct {}] @ 1
+type TupleTest0 = [byte,]
+type TupleTest1 = [string, boolean]
+
+//== enum
+//=== /foo.mcdoc

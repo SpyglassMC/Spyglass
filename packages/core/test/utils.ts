@@ -156,6 +156,8 @@ export class SimpleProject {
 
 	#symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
 
+	#hasDumped = false
+
 	get projectData(): ProjectData {
 		return mockProjectData({
 			cacheRoot: 'file:///.cache/',
@@ -180,6 +182,10 @@ export class SimpleProject {
 	}
 
 	public parse(): void {
+		if (this.#hasDumped) {
+			throw new Error('dumpState() has been called.')
+		}
+
 		for (const { uri, content } of this.files) {
 			const src = new Source(content)
 			const ctx = ParserContext.create(this.projectData, {
@@ -191,6 +197,10 @@ export class SimpleProject {
 	}
 
 	public async bind(): Promise<void> {
+		if (this.#hasDumped) {
+			throw new Error('dumpState() has been called.')
+		}
+
 		for (const { uri, content } of this.files) {
 			const node = this.#nodes[uri]
 			try {
@@ -210,10 +220,18 @@ export class SimpleProject {
 	}
 
 	public async check(): Promise<void> {
+		if (this.#hasDumped) {
+			throw new Error('dumpState() has been called.')
+		}
+
 		throw new Error('TODO')
 	}
 
 	public colorize(): void {
+		if (this.#hasDumped) {
+			throw new Error('dumpState() has been called.')
+		}
+
 		throw new Error('TODO')
 	}
 

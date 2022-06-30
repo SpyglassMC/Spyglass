@@ -201,7 +201,7 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
       "type": "file",
       "range": {
         "start": 0,
-        "end": 72
+        "end": 73
       },
       "children": [
         {
@@ -351,13 +351,13 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
               ],
               "range": {
                 "start": 50,
-                "end": 72
+                "end": 73
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 72
+            "end": 73
           }
         }
       ],

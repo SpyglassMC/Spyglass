@@ -391,7 +391,7 @@ function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(node: N): {
 		max = node.children[1] as FloatNode & IntegerNode
 	} else {
 		// a..
-		min = node.children[1] as FloatNode & IntegerNode
+		min = node.children[0] as FloatNode & IntegerNode
 	}
 	return {
 		min,
