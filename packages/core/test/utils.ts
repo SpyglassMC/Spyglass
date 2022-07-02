@@ -3,6 +3,7 @@ import { AstNode, BinderContext, Downloader, Failure, file, FileService, Logger,
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import { fail } from 'assert'
 import type { RootHookObject } from 'mocha'
+import { format } from 'util'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 export const mochaHooks: RootHookObject = {
@@ -221,7 +222,7 @@ export class SimpleProject {
 				node.binderErrors = ctx.err.dump()
 			})
 		} catch (e) {
-			throw new Error(`[bind] Failed for “${uri}”: ${e}`)
+			throw new Error(format(`[bind] Failed for “${uri}”:`, e))
 		}
 	}
 

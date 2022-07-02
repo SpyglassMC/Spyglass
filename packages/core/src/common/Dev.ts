@@ -1,17 +1,15 @@
 export const Dev = Object.freeze({
 	assertDefined<T>(value: T): asserts value is Exclude<T, undefined> {
 		if (value === undefined) {
-			// The `String` constructor is used in case `value` is a `Symbol`, as JavaScript does not convert `Symbol`s to strings implicitly.
-			throw new Error(`'${String(value)}' is 'undefined'`)
+			throw new Error(`'${Dev.stringify(value)}' is 'undefined'`)
 		}
 	},
 	assertNever(value: never): never {
-		// The `String` constructor is used in case `value` is a `Symbol`, as JavaScript does not convert `Symbol`s to strings implicitly.
-		throw new Error(`'${String(value)}' is not of type 'never'`)
+		throw new Error(`'${Dev.stringify(value)}' is not of type 'never'`)
 	},
 	assertTrue(value: boolean, message: string): void {
 		if (!value) {
-			throw new Error(`Assertion failed: ${message}. '${value}' should be true.`)
+			throw new Error(`Assertion failed: ${message}. '${Dev.stringify(value)}' should be true.`)
 		}
 	},
 	/**
@@ -63,5 +61,28 @@ export const Dev = Object.freeze({
 		}
 
 		return ans
+	},
+	stringify(value: unknown): string {
+		if (value && typeof value === 'object') {
+			try {
+				const seen = new Set<object>()
+				return JSON.stringify(value, (_k, v) => {
+					if (v && typeof v === 'object') {
+						return seen.has(v) ? '[Circular]' : (seen.add(v), v)
+					} else {
+						return v
+					}
+				})
+			} catch (ignored) {
+				// Most likely "Maximum callstack size exceeded".
+				// Fall back to a shallow string representation.
+				return `{ ${Object.entries(value).map(([k, v]) => `'${k}': '${String(v)}'`).join(', ')} }`
+			}
+		} else if (typeof value === 'symbol') {
+			// JavaScript does not convert `Symbol`s to strings implicitly.
+			return String(value)
+		} else {
+			return `${value}`
+		}
 	},
 })
