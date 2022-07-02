@@ -50,5 +50,17 @@ type ListTest2 = [struct {}] @ 1
 type TupleTest0 = [byte,]
 type TupleTest1 = [string, boolean]
 
-//== enum
+//== attributed types
 //=== /foo.mcdoc
+type AttributeTest0 = #[deprecated] boolean
+type AttributeTest1 = #[since=1.19] boolean
+type AttributeTest2 = #[id(registry="worldgen/biome",tags=allowed)] string
+
+//== enum
+//=== /advancement.mcdoc
+enum(string) Trigger {
+	#[since=1.19] AllayDropItemOnBlock = "allay_drop_item_on_block",
+	BeeNestDestroyed = "bee_nest_destroyed",
+}
+
+//== struct

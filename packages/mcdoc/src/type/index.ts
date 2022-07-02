@@ -5,7 +5,7 @@ import type { EnumKind } from '../node/index.js'
 
 export interface Attribute {
 	name: string,
-	value: AttributeValue,
+	value?: AttributeValue,
 }
 
 export type AttributeValue = McdocType | AttributeTree

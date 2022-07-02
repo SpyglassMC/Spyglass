@@ -440,7 +440,7 @@ function convertAttribute(node: AttributeNode, ctx: McdocBinderContext): Attribu
 	const { name, value } = AttributeNode.destruct(node)
 	return {
 		name: name.value,
-		value: convertAttributeValue(value, ctx),
+		value: value && convertAttributeValue(value, ctx),
 	}
 }
 

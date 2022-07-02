@@ -188,11 +188,11 @@ export interface AttributeNode extends AstNode {
 export const AttributeNode = Object.freeze({
 	destruct(node: AttributeNode): {
 		name: IdentifierNode,
-		value: AttributeValueNode,
+		value: AttributeValueNode | undefined,
 	} {
 		return {
 			name: node.children.find(IdentifierNode.is)!,
-			value: node.children.find(AttributeValueNode.is)!,
+			value: node.children.find(AttributeValueNode.is),
 		}
 	},
 	is(node: AstNode | undefined): node is AttributeNode {
