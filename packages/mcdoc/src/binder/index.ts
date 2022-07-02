@@ -438,15 +438,19 @@ function undefineEmptyArray<T>(array: T[]): T[] | undefined {
 
 function convertAttribute(node: AttributeNode, ctx: McdocBinderContext): Attribute {
 	const { name, value } = AttributeNode.destruct(node)
-	return {
+	const ans = {
 		name: name.value,
 		value: value && convertAttributeValue(value, ctx),
 	}
+	return ans
 }
 
 function convertAttributeValue(node: AttributeValueNode, ctx: McdocBinderContext): AttributeValue {
 	if (node.type === 'mcdoc:attribute/tree') {
-		return convertAttributeTree(node, ctx)
+		return {
+			kind: 'tree',
+			values: convertAttributeTree(node, ctx),
+		}
 	} else {
 		return convertType(node, ctx)
 	}

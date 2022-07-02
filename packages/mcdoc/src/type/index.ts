@@ -8,7 +8,7 @@ export interface Attribute {
 	value?: AttributeValue,
 }
 
-export type AttributeValue = McdocType | AttributeTree
+export type AttributeValue = McdocType | { kind: 'tree', values: AttributeTree }
 export type AttributeTree = { [key: string | number]: AttributeValue }
 
 export type NumericRange = [number | undefined, number | undefined]
