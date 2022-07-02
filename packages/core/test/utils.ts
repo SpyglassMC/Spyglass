@@ -56,25 +56,25 @@ export function markOffsetInString(string: string, offset: number) {
 	return `'${string.slice(0, offset)}|${string.slice(offset)}'`
 }
 
-function removeExtraProperties(node: any, keepOptions: boolean, removeChildren: boolean, simplifySymbol: boolean): void {
-	if (!node || typeof node !== 'object') {
+function removeExtraProperties(obj: any, keepOptions: boolean, removeChildren: boolean, simplifySymbol: boolean): void {
+	if (!obj || typeof obj !== 'object') {
 		return
 	}
-	if (AstNode.is(node as unknown)) {
+	if (AstNode.is(obj as unknown)) {
 		if (removeChildren) {
-			delete node.children
+			delete obj.children
 		}
 		if (!keepOptions) {
-			delete node.options
+			delete obj.options
 		}
-		delete node.parent
-		delete node.symbol?.parentMap
-		delete node.symbol?.parentSymbol
-		if (simplifySymbol && node.symbol) {
-			node.symbol = SymbolPath.fromSymbol(node.symbol)
+		delete obj.parent
+		if (simplifySymbol && obj.symbol) {
+			obj.symbol = SymbolPath.fromSymbol(obj.symbol)
 		}
 	}
-	for (const value of Object.values(node)) {
+	delete obj.parentMap
+	delete obj.parentSymbol
+	for (const value of Object.values(obj)) {
 		removeExtraProperties(value, keepOptions, false, simplifySymbol)
 	}
 }
