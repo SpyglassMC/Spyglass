@@ -6,12 +6,12 @@ import { core as snapshotCore } from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
 describe.only('mcdoc __fixture__', async () => {
-		const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
+	const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
 
-		const meta = new MetaRegistry()
-		initialize({ meta })
+	const meta = new MetaRegistry()
+	initialize({ meta })
 
-		for (const [caseName, caseContent] of getSections(fixture, 2)) {
+	for (const [caseName, caseContent] of getSections(fixture, 2)) {
 		it.only(caseName, async () => {
 			const files = [...getSections(caseContent, 3)]
 				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent }))
@@ -28,7 +28,7 @@ describe.only('mcdoc __fixture__', async () => {
 					useRelativePath: true,
 				},
 			})
-	})
+		})
 	}
 })
 
