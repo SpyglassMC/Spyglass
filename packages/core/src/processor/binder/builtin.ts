@@ -98,7 +98,7 @@ export const fallback = AsyncBinder.create(async (node, ctx) => {
 			}
 		}
 	)
-	await Promise.allSettled(promises)
+	await Promise.all(promises)
 })
 
 export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {

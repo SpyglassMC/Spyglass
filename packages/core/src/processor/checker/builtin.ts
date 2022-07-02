@@ -74,7 +74,7 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 			}
 		}
 	)
-	await Promise.allSettled(promises)
+	await Promise.all(promises)
 }
 
 export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
