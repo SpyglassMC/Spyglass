@@ -161,6 +161,7 @@ export class SimpleProject {
 	get projectData(): ProjectData {
 		return mockProjectData({
 			cacheRoot: 'file:///.cache/',
+			ensureBound: async uri => this.bindSingleFile(uri),
 			meta: this.meta,
 			roots: ['file:///'],
 			symbols: this.#symbols,
@@ -202,20 +203,25 @@ export class SimpleProject {
 		}
 
 		for (const { uri, content } of this.files) {
-			const node = this.#nodes[uri]
-			try {
-				const binder = this.meta.getBinder(node.type)
-				const ctx = BinderContext.create(this.projectData, {
-					doc: TextDocument.create(uri, '', 0, content),
-				})
-				await ctx.symbols.contributeAsAsync('binder', async () => {
-					const proxy = StateProxy.create(node)
-					await binder(proxy, ctx)
-					node.binderErrors = ctx.err.dump()
-				})
-			} catch (e) {
-				throw new Error(`[bind] Failed for “${uri}”: ${e}`)
-			}
+			await this.bindSingleFile(uri, content)
+		}
+	}
+
+	private async bindSingleFile(uri: string, content: string = this.files.find(f => f.uri === uri)?.content!): Promise<void> {
+		const node = this.#nodes[uri]
+		try {
+			const binder = this.meta.getBinder(node.type)
+			const ctx = BinderContext.create(this.projectData, {
+				doc: TextDocument.create(uri, '', 0, content),
+			})
+			ctx.symbols.clear({ contributor: 'binder', uri })
+			await ctx.symbols.contributeAsAsync('binder', async () => {
+				const proxy = StateProxy.create(node)
+				await binder(proxy, ctx)
+				node.binderErrors = ctx.err.dump()
+			})
+		} catch (e) {
+			throw new Error(`[bind] Failed for “${uri}”: ${e}`)
 		}
 	}
 
@@ -237,6 +243,8 @@ export class SimpleProject {
 
 	public dumpState<T extends keyof SimpleProjectState>(keys: readonly T[]): Pick<SimpleProjectState, T>
 	public dumpState(keys: readonly (keyof SimpleProjectState)[]): Partial<SimpleProjectState> {
+		this.#hasDumped = true
+
 		for (const node of Object.values(this.#nodes)) {
 			removeExtraProperties(node, false, false, true)
 		}
