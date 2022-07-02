@@ -2,23 +2,23 @@ import { MetaRegistry } from '@spyglassmc/core'
 import { SimpleProject } from '@spyglassmc/core/test-out/utils.js'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
-import snapshot from 'snap-shot-core'
+import { core as snapshotCore } from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
-describe('mcdoc __fixture__', () => {
-	it('__fixture__', async () => {
+describe.only('mcdoc __fixture__', async () => {
 		const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
 
 		const meta = new MetaRegistry()
 		initialize({ meta })
 
 		for (const [caseName, caseContent] of getSections(fixture, 2)) {
+		it.only(caseName, async () => {
 			const files = [...getSections(caseContent, 3)]
 				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent }))
 			const project = new SimpleProject(meta, files)
 			project.parse()
 			await project.bind()
-			snapshot.core({
+			snapshotCore({
 				what: project.dumpState(['global', 'nodes']),
 				file: fileURLToPath(new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url)),
 				specName: `mcdoc __fixture__ ${caseName}`,
@@ -28,8 +28,8 @@ describe('mcdoc __fixture__', () => {
 					useRelativePath: true,
 				},
 			})
-		}
 	})
+	}
 })
 
 /**

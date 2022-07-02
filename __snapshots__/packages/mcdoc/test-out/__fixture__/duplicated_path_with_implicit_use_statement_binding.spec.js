@@ -1,11 +1,69 @@
 exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1'] = {
   "global": {
     "mcdoc": {
-      "::bar": {
+      "::used": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///bar.mcdoc",
+            "uri": "file:///used.mcdoc",
+            "range": {
+              "start": 0,
+              "end": 0
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 0
+              },
+              "end": {
+                "line": 0,
+                "character": 0
+              }
+            },
+            "contributor": "uri_binder"
+          }
+        ],
+        "reference": [
+          {
+            "uri": "file:///client.mcdoc",
+            "range": {
+              "start": 11,
+              "end": 15
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 11
+              },
+              "end": {
+                "line": 0,
+                "character": 15
+              }
+            },
+            "fullRange": {
+              "start": 4,
+              "end": 21
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 0,
+                "character": 4
+              },
+              "end": {
+                "line": 0,
+                "character": 21
+              }
+            },
+            "contributor": "binder",
+            "skipRenaming": false
+          }
+        ]
+      },
+      "::client": {
+        "subcategory": "module",
+        "definition": [
+          {
+            "uri": "file:///client.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,30 +82,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
           }
         ]
       },
-      "::foo": {
-        "subcategory": "module",
-        "definition": [
-          {
-            "uri": "file:///foo.mcdoc",
-            "range": {
-              "start": 0,
-              "end": 0
-            },
-            "posRange": {
-              "start": {
-                "line": 0,
-                "character": 0
-              },
-              "end": {
-                "line": 0,
-                "character": 0
-              }
-            },
-            "contributor": "uri_binder"
-          }
-        ]
-      },
-      "::bar::Bar": {
+      "::used::Used": {
         "data": {
           "typeDef": {
             "kind": "struct",
@@ -57,10 +92,10 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
         "subcategory": "struct",
         "definition": [
           {
-            "uri": "file:///bar.mcdoc",
+            "uri": "file:///used.mcdoc",
             "range": {
               "start": 7,
-              "end": 10
+              "end": 11
             },
             "posRange": {
               "start": {
@@ -69,12 +104,12 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
               },
               "end": {
                 "line": 0,
-                "character": 10
+                "character": 11
               }
             },
             "fullRange": {
               "start": 0,
-              "end": 15
+              "end": 16
             },
             "fullPosRange": {
               "start": {
@@ -88,16 +123,51 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
             },
             "contributor": "binder"
           }
+        ],
+        "reference": [
+          {
+            "uri": "file:///client.mcdoc",
+            "range": {
+              "start": 17,
+              "end": 21
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 17
+              },
+              "end": {
+                "line": 0,
+                "character": 21
+              }
+            },
+            "fullRange": {
+              "start": 4,
+              "end": 21
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 0,
+                "character": 4
+              },
+              "end": {
+                "line": 0,
+                "character": 21
+              }
+            },
+            "contributor": "binder",
+            "skipRenaming": false
+          }
         ]
       }
     }
   },
   "nodes": {
-    "file:///bar.mcdoc": {
+    "file:///used.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 15
+        "end": 16
       },
       "children": [
         {
@@ -119,13 +189,13 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                   "type": "mcdoc:identifier",
                   "range": {
                     "start": 7,
-                    "end": 10
+                    "end": 11
                   },
-                  "value": "Bar",
+                  "value": "Used",
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::bar::Bar"
+                      "::used::Used"
                     ]
                   }
                 },
@@ -133,20 +203,20 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                   "type": "mcdoc:struct/block",
                   "children": [],
                   "range": {
-                    "start": 11,
-                    "end": 13
+                    "start": 12,
+                    "end": 14
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 15
+                "end": 16
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 15
+            "end": 16
           }
         }
       ],
@@ -154,11 +224,11 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
       "parserErrors": [],
       "binderErrors": []
     },
-    "file:///foo.mcdoc": {
+    "file:///client.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 36
+        "end": 39
       },
       "children": [
         {
@@ -191,34 +261,40 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                       "type": "mcdoc:identifier",
                       "range": {
                         "start": 11,
-                        "end": 14
+                        "end": 15
                       },
-                      "value": "bar"
+                      "value": "used",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::used"
+                        ]
+                      }
                     },
                     {
                       "type": "mcdoc:identifier",
                       "range": {
-                        "start": 16,
-                        "end": 19
+                        "start": 17,
+                        "end": 21
                       },
-                      "value": "Bar",
+                      "value": "Used",
                       "symbol": {
                         "category": "mcdoc",
                         "path": [
-                          "::foo::Bar"
+                          "::used::Used"
                         ]
                       }
                     }
                   ],
                   "range": {
                     "start": 4,
-                    "end": 19
+                    "end": 21
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 21
+                "end": 23
               }
             },
             {
@@ -227,8 +303,8 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                 {
                   "type": "mcdoc:literal",
                   "range": {
-                    "start": 21,
-                    "end": 27
+                    "start": 23,
+                    "end": 29
                   },
                   "value": "struct",
                   "colorTokenType": "keyword"
@@ -236,62 +312,62 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                 {
                   "type": "mcdoc:identifier",
                   "range": {
-                    "start": 28,
-                    "end": 31
+                    "start": 30,
+                    "end": 34
                   },
-                  "value": "Bar"
+                  "value": "Used"
                 },
                 {
                   "type": "mcdoc:struct/block",
                   "children": [],
                   "range": {
-                    "start": 32,
-                    "end": 34
+                    "start": 35,
+                    "end": 37
                   }
                 }
               ],
               "range": {
-                "start": 21,
-                "end": 36
+                "start": 23,
+                "end": 39
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 36
+            "end": 39
           }
         }
       ],
       "locals": {
         "mcdoc": {
-          "::foo::Bar": {
+          "::client::Used": {
             "category": "mcdoc",
-            "identifier": "::foo::Bar",
+            "identifier": "::client::Used",
             "path": [
-              "::foo::Bar"
+              "::client::Used"
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
             "definition": [
               {
-                "uri": "file:///foo.mcdoc",
+                "uri": "file:///client.mcdoc",
                 "range": {
-                  "start": 16,
-                  "end": 19
+                  "start": 17,
+                  "end": 21
                 },
                 "posRange": {
                   "start": {
                     "line": 0,
-                    "character": 16
+                    "character": 17
                   },
                   "end": {
                     "line": 0,
-                    "character": 19
+                    "character": 21
                   }
                 },
                 "fullRange": {
                   "start": 0,
-                  "end": 21
+                  "end": 23
                 },
                 "fullPosRange": {
                   "start": {
@@ -313,33 +389,33 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
       "binderErrors": [
         {
           "range": {
-            "start": 28,
-            "end": 31
+            "start": 30,
+            "end": 34
           },
-          "message": "Duplicated declaration for “::foo::Bar”",
+          "message": "Duplicated declaration for “::client::Used”",
           "severity": 2,
           "info": {
             "related": [
               {
                 "location": {
-                  "uri": "file:///foo.mcdoc",
+                  "uri": "file:///client.mcdoc",
                   "range": {
-                    "start": 16,
-                    "end": 19
+                    "start": 17,
+                    "end": 21
                   },
                   "posRange": {
                     "start": {
                       "line": 0,
-                      "character": 16
+                      "character": 17
                     },
                     "end": {
                       "line": 0,
-                      "character": 19
+                      "character": 21
                     }
                   },
                   "fullRange": {
                     "start": 0,
-                    "end": 21
+                    "end": 23
                   },
                   "fullPosRange": {
                     "start": {
@@ -353,7 +429,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                   },
                   "contributor": "binder"
                 },
-                "message": "“::foo::Bar” is already declared here"
+                "message": "“::client::Used” is already declared here"
               }
             ]
           }

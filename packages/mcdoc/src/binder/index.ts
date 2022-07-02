@@ -84,6 +84,11 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			return
 		}
 
+		// hoistUseStatement associates the AST node with the binding definition in the file symbol table,
+		// which may get overridden by bindUseStatement in the later stage to the imported symbol in the global symbol table.
+		// This way when the user tries to go to definition on the path in the use statement,
+		// they will go to the definition in the imported file.
+
 		ctx.symbols
 			.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
 			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, identifier))

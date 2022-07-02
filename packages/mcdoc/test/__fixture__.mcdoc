@@ -10,23 +10,23 @@ struct Foo {}
 type Foo = boolean
 
 //== duplicated path with implicit use statement binding
-//=== /bar.mcdoc
-struct Bar {}
+//=== /used.mcdoc
+struct Used {}
 
-//=== /foo.mcdoc
-use super::bar::Bar
+//=== /client.mcdoc
+use super::used::Used
 
-struct Bar {}
+struct Used {}
 
 //== duplicated path with explicit use statement binding
-//=== /bar.mcdoc
-struct Bar {}
+//=== /used.mcdoc
+struct Used {}
 
 //=== /foo.mcdoc
-use super::bar::Bar as ImportedBar
+use super::used::Used as ReboundUsed
 
-struct Bar {}
-struct ImportedBar {}
+struct Used {}
+struct ReboundUsed {}
 
 //== simple types
 //=== /foo.mcdoc
