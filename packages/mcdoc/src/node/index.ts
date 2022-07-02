@@ -158,7 +158,7 @@ export const TypeNode = Object.freeze({
 			TupleTypeNode.is(node) ||
 			EnumNode.is(node) ||
 			StructNode.is(node) ||
-			PathNode.is(node) ||
+			ReferenceTypeNode.is(node) ||
 			DispatcherTypeNode.is(node) ||
 			UnionTypeNode.is(node)
 		)
