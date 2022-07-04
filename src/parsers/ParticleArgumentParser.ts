@@ -135,6 +135,24 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                     combineArgumentParserResult(ans, itemResult)
                     ans.data.param = item
                     break
+                case 'minecraft:sculk_charge':
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const angleResult = new ctx.parsers.Number('float').parse(reader, ctx)
+                    const angle = angleResult.data
+                    combineArgumentParserResult(ans, angleResult)
+                    ans.data.param = angle
+                    break
+                case 'minecraft:shriek':
+                    reader
+                        .expect(' ')
+                        .skip()
+                    const delayResult = new ctx.parsers.Number('integer').parse(reader, ctx)
+                    const delay = delayResult.data
+                    combineArgumentParserResult(ans, delayResult)
+                    ans.data.param = delay
+                    break
                 case 'minecraft:vibration': {
                     reader
                         .expect(' ')
