@@ -158,7 +158,7 @@ export class ParticleArgumentParser extends ArgumentParser<ParticleNode<any>> {
                         .expect(' ')
                         .skip()
                     ans.data.param = []
-                    for (let i = 0; i < 6; i++) {
+                    for (let i = 0; i < 3; i++) {
                         const result: ArgumentParserResult<NumberNode> = new ctx.parsers.Number('float').parse(reader, ctx)
                         combineArgumentParserResult(ans, result)
                         ans.data.param.push(result.data)
