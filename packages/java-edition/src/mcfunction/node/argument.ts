@@ -292,6 +292,7 @@ export namespace ParticleNode {
 		'falling_dust',
 		'item',
 		'sculk_charge',
+		'shriek',
 		'vibration',
 	] as const)
 	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined

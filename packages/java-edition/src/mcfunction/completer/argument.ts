@@ -198,6 +198,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 		falling_dust: [BlockNode.mock(ctx.offset, false)],
 		item: [ItemNode.mock(ctx.offset, false)],
 		sculk_charge: [FloatNode.mock(ctx.offset)],
+		shriek: [IntegerNode.mock(ctx.offset)],
 		vibration: [VectorNode.mock(ctx.offset, { dimension: 3 }), VectorNode.mock(ctx.offset, { dimension: 3 }), IntegerNode.mock(ctx.offset)],
 	}
 	if (ParticleNode.isSpecialType(id)) {

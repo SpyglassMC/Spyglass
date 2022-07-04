@@ -422,12 +422,53 @@ exports['mcfunction argument minecraft:particle Parse "sculk_charge 4.2" 1'] = {
   "errors": []
 }
 
-exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 0.4 0.5 0.6 40" 1'] = {
+exports['mcfunction argument minecraft:particle Parse "shriek 20" 1'] = {
   "node": {
     "type": "mcfunction:particle",
     "range": {
       "start": 0,
-      "end": 36
+      "end": 9
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "path": [
+          "shriek"
+        ]
+      },
+      {
+        "type": "integer",
+        "range": {
+          "start": 7,
+          "end": 9
+        },
+        "value": 20
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 6
+      },
+      "path": [
+        "shriek"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 40" 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 24
     },
     "children": [
       {
@@ -478,47 +519,10 @@ exports['mcfunction argument minecraft:particle Parse "vibration 0.1 0.2 0.3 0.4
         "system": 0
       },
       {
-        "type": "mcfunction:vector",
-        "range": {
-          "start": 22,
-          "end": 33
-        },
-        "children": [
-          {
-            "type": "mcfunction:coordinate",
-            "notation": "",
-            "range": {
-              "start": 22,
-              "end": 25
-            },
-            "value": 0.4
-          },
-          {
-            "type": "mcfunction:coordinate",
-            "notation": "",
-            "range": {
-              "start": 26,
-              "end": 29
-            },
-            "value": 0.5
-          },
-          {
-            "type": "mcfunction:coordinate",
-            "notation": "",
-            "range": {
-              "start": 30,
-              "end": 33
-            },
-            "value": 0.6
-          }
-        ],
-        "system": 0
-      },
-      {
         "type": "integer",
         "range": {
-          "start": 34,
-          "end": 36
+          "start": 22,
+          "end": 24
         },
         "value": 40
       }

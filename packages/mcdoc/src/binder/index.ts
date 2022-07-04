@@ -438,11 +438,10 @@ function undefineEmptyArray<T>(array: T[]): T[] | undefined {
 
 function convertAttribute(node: AttributeNode, ctx: McdocBinderContext): Attribute {
 	const { name, value } = AttributeNode.destruct(node)
-	const ans = {
+	return {
 		name: name.value,
 		value: value && convertAttributeValue(value, ctx),
 	}
-	return ans
 }
 
 function convertAttributeValue(node: AttributeValueNode, ctx: McdocBinderContext): AttributeValue {

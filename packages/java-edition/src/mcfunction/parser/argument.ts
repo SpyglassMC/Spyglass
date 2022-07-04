@@ -414,7 +414,8 @@ export const particle: core.InfallibleParser<ParticleNode> = (() => {
 		falling_dust: blockState,
 		item: itemStack,
 		sculk_charge: float(),
-		vibration: sequence([vec, vec, integer()], sep),
+		shriek: integer(),
+		vibration: sequence([vec, integer()], sep),
 	}
 	return core.map(
 		sequence([
