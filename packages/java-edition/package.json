@@ -1,7 +1,7 @@
 {
   "name": "@spyglassmc/java-edition",
   "version": "0.1.0-PLACEHOLDER",
-	"type": "module",
+  "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "author": "SPGoding",

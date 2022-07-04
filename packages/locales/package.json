@@ -1,7 +1,7 @@
 {
   "name": "@spyglassmc/locales",
   "version": "0.1.0-PLACEHOLDER",
-	"type": "module",
+  "type": "module",
   "description": "Locales for the Spyglass Project",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",

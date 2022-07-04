@@ -1,7 +1,7 @@
 {
   "name": "@spyglassmc/language-server",
   "version": "0.1.0-PLACEHOLDER",
-	"type": "module",
+  "type": "module",
   "main": "lib/server.js",
   "types": "lib/server.d.ts",
   "author": "SPGoding",

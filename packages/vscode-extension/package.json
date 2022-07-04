@@ -1,7 +1,7 @@
 {
   "name": "datapack-language-server",
   "version": "4.0.0",
-	"type": "module",
+  "type": "module",
   "main": "dist/extension.cjs",
   "author": "SPGoding",
   "publisher": "SPGoding",
