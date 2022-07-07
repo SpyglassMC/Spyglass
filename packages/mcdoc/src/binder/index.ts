@@ -85,7 +85,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		}
 
 		// hoistUseStatement associates the AST node with the binding definition in the file symbol table,
-		// which may get overridden by bindUseStatement in the later stage to the imported symbol in the global symbol table.
+		// which may get overridden by bindUseStatement in the later stage as an reference to the imported symbol in the global symbol table.
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
 
@@ -628,8 +628,8 @@ function convertRange(node: FloatRangeNode | IntRangeNode | undefined, ctx: Mcdo
 		return undefined
 	}
 
-	const { min, max } = FloatRangeNode.is(node) ? FloatRangeNode.destruct(node) : IntRangeNode.destruct(node)
-	return [min?.value, max?.value]
+	const { kind, min, max } = FloatRangeNode.is(node) ? FloatRangeNode.destruct(node) : IntRangeNode.destruct(node)
+	return { kind, min: min?.value, max: max?.value }
 }
 
 function convertLiteral(node: LiteralTypeNode, ctx: McdocBinderContext): LiteralType {

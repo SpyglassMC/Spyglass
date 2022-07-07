@@ -225,17 +225,26 @@ It's a normal number followed by a suffix indicating its type:
 
 [[t-float-range,FLOAT_RANGE]]
 <<t-float-range>>::
-	`+..+`^?^ <<t-float>> | +
-	<<t-float>> `+..+` <<t-float>>^?^
+	<<t-range-delimiter>>^?^ <<t-float>> | +
+	<<t-float>> <<t-range-delimiter>> <<t-float>>^?^
+
+[[t-range-delimiter,RANGE_DELIMITER]]
+<<t-range-delimiter>>::
+	`..` | +
+	`../` | +
+	`/..` | +
+	`/../`
++
+NOTE: Bikeshedding on the exclusive character is welcome.
 
 [[t-int-range,INT_RANGE]]
 <<t-int-range>>::
-	`+..+`^?^ <<t-integer>> | +
-	<<t-integer>> `+..+` <<t-integer>>^?^
+	<<t-range-delimiter>>^?^ <<t-integer>> | +
+	<<t-integer>> <<t-range-delimiter>> <<t-integer>>^?^
 ****
 
 A number range represents a range of number.
-It follows the same syntax for ranges used in Minecraft commands.
+Its syntax is derived from ranges used in Minecraft commands, with additional support for signaling an exclusive end using the `/` character.
 There are two types of ranges in mcdoc: float ranges, which consist of <<float>>s, and integer ranges, which consists of <<integer>>s.
 
 .Number ranges
@@ -245,8 +254,11 @@ There are two types of ranges in mcdoc: float ranges, which consist of <<float>>
 1      // Exactly 1
 1..1   // Exactly 1
 1..2   // Between 1 and 2 (inclusive on ends)
+1/../2 // Between 1 and 2 (exclusive on ends)
 4.2..  // Greater than or equal to 4.2
+4.2/.. // Greater than 4.2
 ..9.1  // Smaller than or equal to 9.1
+../9.1 // Smaller than 9.1
 ----
 ====
 

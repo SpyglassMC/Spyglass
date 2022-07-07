@@ -303,6 +303,7 @@ export interface IntRangeNode extends AstNode {
 }
 export const IntRangeNode = Object.freeze({
 	destruct(node: IntRangeNode): {
+		kind: RangeKind,
 		min?: IntegerNode,
 		max?: IntegerNode,
 	} {
@@ -373,29 +374,67 @@ export const NumericTypeNode = Object.freeze({
 	},
 })
 
+export const RangeExclusiveChar = '/'
+
+/**
+ * A 2-bit binary number is used to represent the kind of range.
+ * The bit is turned on if that end is exclusive.
+ */
+export const RangeKind = Object.freeze({
+	/** Inclusive..Inclusive */ II: 0b00,
+	/** Inclusive..Exclusive */ IE: 0b01,
+	/** Exclusive..Inclusive */ EI: 0b10,
+	/** Exclusive..Exclusive */ EE: 0b11,
+})
+export type RangeKind = (typeof RangeKind)[keyof typeof RangeKind]
+
+export function getRangeDelimiter(kind: RangeKind): string {
+	const prefix = kind & RangeKind.EI ? RangeExclusiveChar : ''
+	const suffix = kind & RangeKind.IE ? RangeExclusiveChar : ''
+	return `${prefix}..${suffix}`
+}
+
 function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(node: N): {
+	kind: RangeKind,
 	min?: N extends FloatRangeNode ? FloatNode : IntegerNode,
 	max?: N extends FloatRangeNode ? FloatNode : IntegerNode,
 } {
+	let kind: RangeKind
 	let min: (FloatNode & IntegerNode) | undefined
 	let max: (FloatNode & IntegerNode) | undefined
 	if (node.children.length === 1) {
 		// a
+		kind = RangeKind.II
 		min = max = node.children[0] as FloatNode & IntegerNode
 	} else if (node.children.length === 3) {
 		// a..b
+		kind = getKind(node.children[1] as LiteralNode)
 		min = node.children[0] as FloatNode & IntegerNode
 		max = node.children[2] as FloatNode & IntegerNode
 	} else if (LiteralNode.is(node.children[0])) {
 		// ..b
+		kind = getKind(node.children[0])
 		max = node.children[1] as FloatNode & IntegerNode
 	} else {
 		// a..
+		kind = getKind(node.children[1] as LiteralNode)
 		min = node.children[0] as FloatNode & IntegerNode
 	}
 	return {
+		kind,
 		min,
 		max,
+	}
+
+	function getKind(delimiter: LiteralNode): RangeKind {
+		let ans: number = RangeKind.II
+		if (delimiter.value.startsWith(RangeExclusiveChar)) {
+			ans |= RangeKind.EI
+		}
+		if (delimiter.value.endsWith(RangeExclusiveChar)) {
+			ans |= RangeKind.IE
+		}
+		return ans as RangeKind
 	}
 }
 
@@ -405,6 +444,7 @@ export interface FloatRangeNode extends AstNode {
 }
 export const FloatRangeNode = Object.freeze({
 	destruct(node: FloatRangeNode): {
+		kind: RangeKind,
 		min?: FloatNode,
 		max?: FloatNode,
 	} {

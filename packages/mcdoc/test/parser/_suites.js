@@ -30,6 +30,18 @@ export const McdocParserTestSuites = {
 				'.7e+3',
 			],
 		},
+		floatRange: {
+			content: [
+				'',
+				'4.2',
+				'4.2..',
+				'4.2/..',
+				'..9.1',
+				'../9.1',
+				'4.2..9.1',
+				'4.2/../9.1',
+			]
+		},
 		identifier: {
 			content: [
 				'',
@@ -50,6 +62,19 @@ export const McdocParserTestSuites = {
 				'0',
 				'1',
 			],
+		},
+		intRange: {
+			content: [
+				'',
+				'1',
+				'1..1',
+				'1..',
+				'1/..',
+				'..2',
+				'../2',
+				'1..2',
+				'1/../2',
+			]
 		},
 		literal: {
 			functionParams: "('foo')",

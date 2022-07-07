@@ -2,6 +2,7 @@ import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
 import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { EnumKind } from '../node/index.js'
+import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
 export interface Attribute {
 	name: string,
@@ -11,7 +12,11 @@ export interface Attribute {
 export type AttributeValue = McdocType | { kind: 'tree', values: AttributeTree }
 export type AttributeTree = { [key: string | number]: AttributeValue }
 
-export type NumericRange = [number | undefined, number | undefined]
+export type NumericRange = {
+	kind: RangeKind,
+	min?: number,
+	max?: number,
+}
 
 export const StaticIndexKeywords = Object.freeze(['fallback', 'none', 'unknown'] as const)
 export type StaticIndexKeyword = typeof StaticIndexKeywords[number]
@@ -171,8 +176,8 @@ export namespace McdocType {
 			if (!range) {
 				return ''
 			}
-			const [min, max] = range
-			return min === max ? ` @ ${min}` : ` @ ${min ?? ''}..${max ?? ''}`
+			const { kind, min, max } = range
+			return min === max ? ` @ ${min}` : ` @ ${min ?? ''}${getRangeDelimiter(kind)}${max ?? ''}`
 		}
 
 		const indicesToString = (indices: Arrayable<Index | undefined>): string => {
@@ -273,8 +278,8 @@ const areRangesMatch = (s: NumericRange | undefined, t: NumericRange | undefined
 	if (!s) {
 		return false
 	}
-	const [sMin, sMax] = s
-	const [tMin, tMax] = t
+	const { min: sMin, max: sMax } = s
+	const { min: tMin, max: tMax } = t
 	return (tMin === undefined || (sMin !== undefined && sMin >= tMin)) &&
 		(tMax === undefined || (sMax !== undefined && sMax <= tMax))
 }
@@ -334,7 +339,7 @@ export const simplifyUnionType = (union: UnionType): McdocType => {
 export const simplifyListType = (list: ListType): ListType => ({
 	kind: 'list',
 	item: simplifyType(list.item),
-	...list.lengthRange ? { lengthRange: [...list.lengthRange] } : {},
+	...list.lengthRange ? { lengthRange: { ...list.lengthRange } } : {},
 })
 
 export const simplifyType = (data: McdocType): McdocType => {
@@ -365,7 +370,7 @@ const check = (s: McdocType, t: McdocType, errors: string[] = []): CheckResult =
 		ans = strictlyAssignableIfTrue(t.kind === 'boolean' || t.kind === 'byte')
 	} else if (s.kind === 'byte') {
 		if (t.kind === 'boolean') {
-			ans = check(s, { kind: 'byte', valueRange: [0, 1] }, errors)
+			ans = check(s, { kind: 'byte', valueRange: { kind: RangeKind.II, min: 0, max: 1 } }, errors)
 		} else if (t.kind === 'byte') {
 			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
 		} else if (t.kind === 'enum') {

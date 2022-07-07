@@ -1,8 +1,9 @@
-import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser, IntegerNode, Parser, ParserContext, ResourceLocationNode, ResourceLocationOptions, SequenceUtil, Source, StringNode } from '@spyglassmc/core'
+import type { AstNode, ColorTokenType, CommentNode, FloatNode, InfallibleParser, IntegerNode, Parser, ParserContext, ReadonlySource, ResourceLocationNode, ResourceLocationOptions, SequenceUtil, Source, StringNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { any, Arrayable, failOnEmpty, failOnError, Failure, map, optional, Range, repeat, ResourceLocation, select, sequence, setType, stopBefore, SymbolAccessType, validate } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import type { AccessorKeyNode, AnyTypeNode, AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, AttributeValueNode, BooleanTypeNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, EnumValueNode, FloatRangeNode, IdentifierNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, ModuleNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StringTypeNode, StructBlockNode, StructInjectionNode, StructKeyNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypedNumberNode, TypeNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import { RangeExclusiveChar } from '../node/index.js'
 import { LiteralNumberCaseInsensitiveSuffixes, NumericTypeFloatKinds, NumericTypeIntKinds, PrimitiveArrayValueKinds, StaticIndexKeywords } from '../type/index.js'
 
 /**
@@ -638,13 +639,22 @@ function range<P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatN
 	number: P
 ): InfallibleParser<P extends InfallibleParser<infer V> ? (V extends IntegerNode ? IntRangeNode : FloatRangeNode) : never>
 function range(type: string, number: InfallibleParser): InfallibleParser {
+	const delimiterPredicate = (src: ReadonlySource) => src.tryPeek('..') || src.tryPeek(`${RangeExclusiveChar}..`)
+	const delimiterParser = literal([
+		'..',
+		`..${RangeExclusiveChar}`,
+		`${RangeExclusiveChar}..`,
+		`${RangeExclusiveChar}..${RangeExclusiveChar}`,
+	], {
+		allowedChars: new Set(['.', RangeExclusiveChar]),
+	})
 	return setType(
 		type,
 		select([
 			{
-				prefix: '..',
+				predicate: delimiterPredicate,
 				parser: sequence([
-					literal('..', { allowedChars: new Set('.') }),
+					delimiterParser,
 					number,
 				]),
 			},
@@ -653,9 +663,9 @@ function range(type: string, number: InfallibleParser): InfallibleParser {
 					stopBefore(number, '..'),
 					select([
 						{
-							prefix: '..',
+							predicate: delimiterPredicate,
 							parser: sequence([
-								literal('..', { allowedChars: new Set('.') }),
+								delimiterParser,
 								optional(failOnEmpty(number)),
 							]),
 						},
@@ -667,7 +677,7 @@ function range(type: string, number: InfallibleParser): InfallibleParser {
 	)
 }
 
-const intRange: InfallibleParser<IntRangeNode> = range('mcdoc:int_range', integer)
+export const intRange: InfallibleParser<IntRangeNode> = range('mcdoc:int_range', integer)
 
 const atIntRange: InfallibleParser<IntRangeNode | undefined> = optional((src, ctx) => {
 	if (!src.trySkip('@')) {
@@ -688,7 +698,7 @@ export const literalType: Parser<LiteralTypeNode> = typeBase('mcdoc:type/literal
 	{ parser: failOnError(typedNumber) },
 ]))
 
-const floatRange: InfallibleParser<FloatRangeNode> = range('mcdoc:float_range', float)
+export const floatRange: InfallibleParser<FloatRangeNode> = range('mcdoc:float_range', float)
 
 const atFloatRange: InfallibleParser<FloatRangeNode | undefined> = optional((src, ctx) => {
 	if (!src.trySkip('@')) {
