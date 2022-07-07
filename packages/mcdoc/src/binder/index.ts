@@ -559,11 +559,13 @@ function convertStructField(node: StructFieldNode, ctx: McdocBinderContext): Str
 }
 
 function convertStructPairField(node: StructPairFieldNode, ctx: McdocBinderContext): StructTypePairField {
-	const { key, type } = StructPairFieldNode.destruct(node)
+	const { attributes, key, type, isOptional } = StructPairFieldNode.destruct(node)
 	return {
 		kind: 'pair',
+		attributes: convertAttributes(attributes, ctx),
 		key: convertStructKey(key, ctx),
 		type: convertType(type, ctx),
+		optional: isOptional,
 	}
 }
 

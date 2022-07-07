@@ -782,11 +782,13 @@ export const StructPairFieldNode = Object.freeze({
 		attributes: AttributeNode[],
 		key: StructKeyNode,
 		type: TypeNode,
+		isOptional?: boolean,
 	} {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
 			key: node.children.find(StructKeyNode.is)!,
 			type: node.children.find(TypeNode.is)!,
+			isOptional: node.isOptional,
 		}
 	},
 	is(node: AstNode | undefined): node is StructPairFieldNode {

@@ -57,8 +57,10 @@ export interface StructType extends TypeBase {
 export type StructTypeField = StructTypePairField | StructTypeSpreadField
 export interface StructTypePairField {
 	kind: 'pair',
+	attributes?: Attribute[],
 	key: string | McdocType,
 	type: McdocType,
+	optional?: boolean,
 }
 export interface StructTypeSpreadField {
 	kind: 'spread',
