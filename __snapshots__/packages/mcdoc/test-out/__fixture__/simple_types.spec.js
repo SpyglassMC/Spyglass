@@ -157,10 +157,10 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "string",
-            "lengthRange": [
-              1,
-              null
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 1
+            }
           }
         },
         "desc": "",
@@ -204,10 +204,10 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "string",
-            "lengthRange": [
-              null,
-              128
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "max": 128
+            }
           }
         },
         "desc": "",
@@ -251,10 +251,11 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "string",
-            "lengthRange": [
-              1,
-              1
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 1,
+              "max": 1
+            }
           }
         },
         "desc": "",
@@ -298,10 +299,11 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "string",
-            "lengthRange": [
-              4,
-              128
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 4,
+              "max": 128
+            }
           }
         },
         "desc": "",
@@ -487,10 +489,11 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "byte",
-            "valueRange": [
-              42,
-              91
-            ]
+            "valueRange": {
+              "kind": 0,
+              "min": 42,
+              "max": 91
+            }
           }
         },
         "desc": "",
@@ -534,10 +537,11 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "int_array",
-            "lengthRange": [
-              4,
-              4
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 4,
+              "max": 4
+            }
           }
         },
         "desc": "",
@@ -581,10 +585,10 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "long_array",
-            "valueRange": [
-              1,
-              null
-            ]
+            "valueRange": {
+              "kind": 0,
+              "min": 1
+            }
           }
         },
         "desc": "",
@@ -628,14 +632,16 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "data": {
           "typeDef": {
             "kind": "byte_array",
-            "lengthRange": [
-              8,
-              8
-            ],
-            "valueRange": [
-              0,
-              1
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 8,
+              "max": 8
+            },
+            "valueRange": {
+              "kind": 0,
+              "min": 0,
+              "max": 1
+            }
           }
         },
         "desc": "",
@@ -778,10 +784,11 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "kind": "struct",
               "fields": []
             },
-            "lengthRange": [
-              1,
-              1
-            ]
+            "lengthRange": {
+              "kind": 0,
+              "min": 1,
+              "max": 1
+            }
           }
         },
         "desc": "",
