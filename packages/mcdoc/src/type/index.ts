@@ -1,8 +1,8 @@
 import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
 import { Arrayable } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { EnumKind } from '../node/index.js'
-import { getRangeDelimiter, RangeKind } from '../node/index.js'
+import type { EnumKind, RangeKind } from '../node/index.js'
+import { getRangeDelimiter } from '../node/index.js'
 
 export interface Attribute {
 	name: string,
@@ -370,7 +370,7 @@ const check = (s: McdocType, t: McdocType, errors: string[] = []): CheckResult =
 		ans = strictlyAssignableIfTrue(t.kind === 'boolean' || t.kind === 'byte')
 	} else if (s.kind === 'byte') {
 		if (t.kind === 'boolean') {
-			ans = check(s, { kind: 'byte', valueRange: { kind: RangeKind.II, min: 0, max: 1 } }, errors)
+			ans = check(s, { kind: 'byte', valueRange: { kind: 0b00, min: 0, max: 1 } }, errors)
 		} else if (t.kind === 'byte') {
 			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
 		} else if (t.kind === 'enum') {

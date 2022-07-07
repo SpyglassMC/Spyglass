@@ -378,19 +378,14 @@ export const RangeExclusiveChar = '/'
 
 /**
  * A 2-bit binary number is used to represent the kind of range.
- * The bit is turned on if that end is exclusive.
+ * The first bit from the left represents the start, the second bit from the left represents the end.
+ * The bit is turned on if the range is exclusive on that end.
  */
-export const RangeKind = Object.freeze({
-	/** Inclusive..Inclusive */ II: 0b00,
-	/** Inclusive..Exclusive */ IE: 0b01,
-	/** Exclusive..Inclusive */ EI: 0b10,
-	/** Exclusive..Exclusive */ EE: 0b11,
-})
-export type RangeKind = (typeof RangeKind)[keyof typeof RangeKind]
+export type RangeKind = 0b00 | 0b01 | 0b10 | 0b11
 
 export function getRangeDelimiter(kind: RangeKind): string {
-	const prefix = kind & RangeKind.EI ? RangeExclusiveChar : ''
-	const suffix = kind & RangeKind.IE ? RangeExclusiveChar : ''
+	const prefix = kind & 0b10 ? RangeExclusiveChar : ''
+	const suffix = kind & 0b01 ? RangeExclusiveChar : ''
 	return `${prefix}..${suffix}`
 }
 
@@ -404,7 +399,7 @@ function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(node: N): {
 	let max: (FloatNode & IntegerNode) | undefined
 	if (node.children.length === 1) {
 		// a
-		kind = RangeKind.II
+		kind = 0b00
 		min = max = node.children[0] as FloatNode & IntegerNode
 	} else if (node.children.length === 3) {
 		// a..b
@@ -427,12 +422,12 @@ function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(node: N): {
 	}
 
 	function getKind(delimiter: LiteralNode): RangeKind {
-		let ans: number = RangeKind.II
+		let ans: number = 0b00
 		if (delimiter.value.startsWith(RangeExclusiveChar)) {
-			ans |= RangeKind.EI
+			ans |= 0b10
 		}
 		if (delimiter.value.endsWith(RangeExclusiveChar)) {
-			ans |= RangeKind.IE
+			ans |= 0b01
 		}
 		return ans as RangeKind
 	}

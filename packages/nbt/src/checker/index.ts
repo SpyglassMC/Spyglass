@@ -278,8 +278,10 @@ export function path(registry: string, id: core.FullResourceLocation | readonly 
 }
 
 export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncChecker<NbtNode> {
-	const isInRange = (value: number, [min, max]: [number | undefined, number | undefined]) =>
-		(min ?? -Infinity) <= value && value <= (max ?? Infinity)
+	const isInRange = (value: number, { kind, min = -Infinity, max = Infinity }: mcdoc.NumericRange) => {
+		const comparator = (a: number, b: number, exclusive: unknown) => exclusive ? a < b : a <= b
+		return comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
+	}
 
 	const ExpectedTypes: Record<Exclude<mcdoc.McdocType['kind'], 'any' | 'dispatcher' | 'enum' | 'literal' | 'reference' | 'union'>, NbtNode['type']> = {
 		boolean: 'nbt:byte',
@@ -322,16 +324,16 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
 					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
-						type.lengthRange[0] ?? '-∞',
-						type.lengthRange[1] ?? '+∞'
+						type.lengthRange.min ?? '-∞',
+						type.lengthRange.max ?? '+∞'
 					)), node, core.ErrorSeverity.Warning)
 				}
 				if (type.valueRange) {
 					for (const { value: childNode } of node.children) {
 						if (childNode && !isInRange(Number(childNode.value), type.valueRange)) {
 							ctx.err.report(localize('number.between',
-								type.valueRange[0] ?? '-∞',
-								type.valueRange[1] ?? '+∞'
+								type.valueRange.min ?? '-∞',
+								type.valueRange.max ?? '+∞'
 							), node, core.ErrorSeverity.Warning)
 						}
 					}
@@ -346,8 +348,8 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 				node = node as NbtNumberNode
 				if (type.valueRange && !isInRange(Number(node.value), type.valueRange)) {
 					ctx.err.report(localize('number.between',
-						type.valueRange[0] ?? '-∞',
-						type.valueRange[1] ?? '+∞'
+						type.valueRange.min ?? '-∞',
+						type.valueRange.max ?? '+∞'
 					), node, core.ErrorSeverity.Warning)
 				}
 				break
@@ -368,8 +370,8 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
 					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
 						localizeTag(node.type),
-						type.lengthRange[0] ?? '-∞',
-						type.lengthRange[1] ?? '+∞'
+						type.lengthRange.min ?? '-∞',
+						type.lengthRange.max ?? '+∞'
 					)), node, core.ErrorSeverity.Warning)
 				}
 				for (const { value: childNode } of node.children) {
