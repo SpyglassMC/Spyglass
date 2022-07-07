@@ -374,7 +374,7 @@ export const NumericTypeNode = Object.freeze({
 	},
 })
 
-export const RangeExclusiveChar = '/'
+export const RangeExclusiveChar = '<'
 
 /**
  * A 2-bit binary number is used to represent the kind of range.

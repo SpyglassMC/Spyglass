@@ -231,11 +231,10 @@ It's a normal number followed by a suffix indicating its type:
 [[t-range-delimiter,RANGE_DELIMITER]]
 <<t-range-delimiter>>::
 	`..` | +
-	`../` | +
-	`/..` | +
-	`/../`
+	`..<` | +
+	`<..` | +
+	`<..<`
 +
-NOTE: Bikeshedding on the exclusive character is welcome.
 
 [[t-int-range,INT_RANGE]]
 <<t-int-range>>::
@@ -244,7 +243,7 @@ NOTE: Bikeshedding on the exclusive character is welcome.
 ****
 
 A number range represents a range of number.
-Its syntax is derived from ranges used in Minecraft commands, with additional support for signaling an exclusive end using the `/` character.
+Its syntax derives from number ranges used in Minecraft commands, with additional support for signaling an exclusive end using the strictly less than symbol (`<`).
 There are two types of ranges in mcdoc: float ranges, which consist of <<float>>s, and integer ranges, which consists of <<integer>>s.
 
 .Number ranges
@@ -254,11 +253,11 @@ There are two types of ranges in mcdoc: float ranges, which consist of <<float>>
 1      // Exactly 1
 1..1   // Exactly 1
 1..2   // Between 1 and 2 (inclusive on ends)
-1/../2 // Between 1 and 2 (exclusive on ends)
+1<..<2 // Between 1 and 2 (exclusive on ends)
 4.2..  // Greater than or equal to 4.2
-4.2/.. // Greater than 4.2
+4.2<.. // Greater than 4.2
 ..9.1  // Smaller than or equal to 9.1
-../9.1 // Smaller than 9.1
+..<9.1 // Smaller than 9.1
 ----
 ====
 
@@ -1229,6 +1228,6 @@ This procedure dereferences a <<s-type>>.
 == Credits
 
 The mcdoc format takes heavy inspiration from the https://github.com/Yurihaia/nbtdoc-rs[nbtdoc format] created by https://github.com/Yurihaia[Yurihaia], licensed under the https://github.com/Yurihaia/nbtdoc-rs/blob/master/LICENSE-MIT[MIT License].
-https://github.com/misode[Misode], https://github.com/MulverineX[MulverineX], and https://github.com/NeunEinser[NeunEinser] also have provided valuable feedback for the mcdoc format.
+https://github.com/misode[Misode], https://github.com/MulverineX[MulverineX], https://github.com/NeunEinser[NeunEinser], and https://github.com/vdvman1[vdvman1] also have provided valuable feedback for the mcdoc format.
 
 This documentation is written with https://docs.asciidoctor.org/asciidoc/latest/[AsciiDoc].

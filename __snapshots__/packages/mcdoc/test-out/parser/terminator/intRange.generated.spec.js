@@ -28,35 +28,6 @@ exports['mcdoc intRange Parse "" 1'] = {
   ]
 }
 
-exports['mcdoc intRange Parse "../2" 1'] = {
-  "node": {
-    "type": "mcdoc:int_range",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "value": "../"
-      },
-      {
-        "type": "integer",
-        "range": {
-          "start": 3,
-          "end": 4
-        },
-        "value": 2
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 4
-    }
-  },
-  "errors": []
-}
-
 exports['mcdoc intRange Parse "..2" 1'] = {
   "node": {
     "type": "mcdoc:int_range",
@@ -81,6 +52,35 @@ exports['mcdoc intRange Parse "..2" 1'] = {
     "range": {
       "start": 0,
       "end": 3
+    }
+  },
+  "errors": []
+}
+
+exports['mcdoc intRange Parse "..<2" 1'] = {
+  "node": {
+    "type": "mcdoc:int_range",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "..<"
+      },
+      {
+        "type": "integer",
+        "range": {
+          "start": 3,
+          "end": 4
+        },
+        "value": 2
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 4
     }
   },
   "errors": []
@@ -210,7 +210,7 @@ exports['mcdoc intRange Parse "1..2" 1'] = {
   "errors": []
 }
 
-exports['mcdoc intRange Parse "1/.." 1'] = {
+exports['mcdoc intRange Parse "1<.." 1'] = {
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -228,7 +228,7 @@ exports['mcdoc intRange Parse "1/.." 1'] = {
           "start": 1,
           "end": 4
         },
-        "value": "/.."
+        "value": "<.."
       }
     ],
     "range": {
@@ -239,7 +239,7 @@ exports['mcdoc intRange Parse "1/.." 1'] = {
   "errors": []
 }
 
-exports['mcdoc intRange Parse "1/../2" 1'] = {
+exports['mcdoc intRange Parse "1<..<2" 1'] = {
   "node": {
     "type": "mcdoc:int_range",
     "children": [
@@ -257,7 +257,7 @@ exports['mcdoc intRange Parse "1/../2" 1'] = {
           "start": 1,
           "end": 5
         },
-        "value": "/../"
+        "value": "<..<"
       },
       {
         "type": "integer",

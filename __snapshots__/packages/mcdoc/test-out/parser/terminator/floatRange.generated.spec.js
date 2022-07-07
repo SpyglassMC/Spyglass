@@ -28,35 +28,6 @@ exports['mcdoc floatRange Parse "" 1'] = {
   ]
 }
 
-exports['mcdoc floatRange Parse "../9.1" 1'] = {
-  "node": {
-    "type": "mcdoc:float_range",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 3
-        },
-        "value": "../"
-      },
-      {
-        "type": "float",
-        "range": {
-          "start": 3,
-          "end": 6
-        },
-        "value": 9.1
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 6
-    }
-  },
-  "errors": []
-}
-
 exports['mcdoc floatRange Parse "..9.1" 1'] = {
   "node": {
     "type": "mcdoc:float_range",
@@ -81,6 +52,35 @@ exports['mcdoc floatRange Parse "..9.1" 1'] = {
     "range": {
       "start": 0,
       "end": 5
+    }
+  },
+  "errors": []
+}
+
+exports['mcdoc floatRange Parse "..<9.1" 1'] = {
+  "node": {
+    "type": "mcdoc:float_range",
+    "children": [
+      {
+        "type": "mcdoc:literal",
+        "range": {
+          "start": 0,
+          "end": 3
+        },
+        "value": "..<"
+      },
+      {
+        "type": "float",
+        "range": {
+          "start": 3,
+          "end": 6
+        },
+        "value": 9.1
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 6
     }
   },
   "errors": []
@@ -173,7 +173,7 @@ exports['mcdoc floatRange Parse "4.2..9.1" 1'] = {
   "errors": []
 }
 
-exports['mcdoc floatRange Parse "4.2/.." 1'] = {
+exports['mcdoc floatRange Parse "4.2<.." 1'] = {
   "node": {
     "type": "mcdoc:float_range",
     "children": [
@@ -191,7 +191,7 @@ exports['mcdoc floatRange Parse "4.2/.." 1'] = {
           "start": 3,
           "end": 6
         },
-        "value": "/.."
+        "value": "<.."
       }
     ],
     "range": {
@@ -202,7 +202,7 @@ exports['mcdoc floatRange Parse "4.2/.." 1'] = {
   "errors": []
 }
 
-exports['mcdoc floatRange Parse "4.2/../9.1" 1'] = {
+exports['mcdoc floatRange Parse "4.2<..<9.1" 1'] = {
   "node": {
     "type": "mcdoc:float_range",
     "children": [
@@ -220,7 +220,7 @@ exports['mcdoc floatRange Parse "4.2/../9.1" 1'] = {
           "start": 3,
           "end": 7
         },
-        "value": "/../"
+        "value": "<..<"
       },
       {
         "type": "float",
