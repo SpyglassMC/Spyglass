@@ -52,9 +52,13 @@ type TupleTest1 = [string, boolean]
 
 //== attributed types
 //=== /foo.mcdoc
-type AttributeTest0 = #[deprecated] boolean
-type AttributeTest1 = #[since=1.19] boolean
-type AttributeTest2 = #[id(registry="worldgen/biome",tags=allowed)] string
+type NoValue = #[deprecated] boolean
+type SimpleValue = #[since=1.19] boolean
+type TreeValue = #[id(registry="worldgen/biome",tags=allowed)] string
+type EnumValue = #[bitfield(enum(int) {
+	HandAll = 1,
+	BootsAll = 2,
+})] int
 
 //== enum
 //=== /advancement.mcdoc
