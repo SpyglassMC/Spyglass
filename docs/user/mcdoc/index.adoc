@@ -234,7 +234,6 @@ It's a normal number followed by a suffix indicating its type:
 	`..<` | +
 	`<..` | +
 	`<..<`
-+
 
 [[t-int-range,INT_RANGE]]
 <<t-int-range>>::
