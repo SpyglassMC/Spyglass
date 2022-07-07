@@ -65,11 +65,11 @@
     "url": "https://spyglassmc.com/user/config.html",
     "relUrl": "/user/config.html"
   },"11": {
-    "doc": "Developer Guides",
-    "title": "Developer Guides",
+    "doc": "Maintainer Guides",
+    "title": "Maintainer Guides",
     "content": " ",
-    "url": "https://spyglassmc.com/developer/",
-    "relUrl": "/developer/"
+    "url": "https://spyglassmc.com/maintainer/",
+    "relUrl": "/maintainer/"
   },"12": {
     "doc": "Mcdoc",
     "title": "Project root",
@@ -115,7 +115,7 @@
   },"19": {
     "doc": "Mcdoc",
     "title": "Number range",
-    "content": "SYNTAX (TOKEN) . FLOAT_RANGE ..? FLOAT | FLOAT .. FLOAT? . INT_RANGE ..? INTEGER | INTEGER .. INTEGER? . A number range represents a range of number. It follows the same syntax for ranges used in Minecraft commands. There are two types of ranges in mcdoc: float ranges, which consist of Floats, and integer ranges, which consists of Integers. Example 6. Number ranges 1 // Exactly 1 1..1 // Exactly 1 1..2 // Between 1 and 2 (inclusive on ends) 4.2.. // Greater than or equal to 4.2 ..9.1 // Smaller than or equal to 9.1 . ",
+    "content": "SYNTAX (TOKEN) . FLOAT_RANGE RANGE_DELIMITER? FLOAT | FLOAT RANGE_DELIMITER FLOAT? . RANGE_DELIMITER .. | ../ | /.. | /../ . | | Bikeshedding on the exclusive character is welcome. | . INT_RANGE RANGE_DELIMITER? INTEGER | INTEGER RANGE_DELIMITER INTEGER? . A number range represents a range of number. Its syntax is derived from ranges used in Minecraft commands, with additional support for signaling an exclusive end using the / character. There are two types of ranges in mcdoc: float ranges, which consist of Floats, and integer ranges, which consists of Integers. Example 6. Number ranges 1 // Exactly 1 1..1 // Exactly 1 1..2 // Between 1 and 2 (inclusive on ends) 1/../2 // Between 1 and 2 (exclusive on ends) 4.2.. // Greater than or equal to 4.2 4.2/.. // Greater than 4.2 ..9.1 // Smaller than or equal to 9.1 ../9.1 // Smaller than 9.1 . ",
     "url": "https://spyglassmc.com/user/mcdoc/#number-range",
     "relUrl": "/user/mcdoc/#number-range"
   },"20": {
@@ -257,11 +257,11 @@
     "url": "https://spyglassmc.com/",
     "relUrl": "/"
   },"43": {
-    "doc": "Maintainer Guides",
-    "title": "Maintainer Guides",
+    "doc": "Developer Guides",
+    "title": "Developer Guides",
     "content": " ",
-    "url": "https://spyglassmc.com/maintainer/",
-    "relUrl": "/maintainer/"
+    "url": "https://spyglassmc.com/developer/",
+    "relUrl": "/developer/"
   },"44": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
