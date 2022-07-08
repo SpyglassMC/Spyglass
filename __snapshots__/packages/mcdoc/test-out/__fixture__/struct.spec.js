@@ -204,6 +204,49 @@ exports['mcdoc __fixture__ struct 1'] = {
           }
         ]
       },
+      "::foo::NamedGrandchild": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": []
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///foo.mcdoc",
+            "range": {
+              "start": 149,
+              "end": 164
+            },
+            "posRange": {
+              "start": {
+                "line": 12,
+                "character": 21
+              },
+              "end": {
+                "line": 12,
+                "character": 36
+              }
+            },
+            "fullRange": {
+              "start": 142,
+              "end": 169
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 12,
+                "character": 14
+              },
+              "end": {
+                "line": 13,
+                "character": 1
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      },
       "::foo::NestedSpread": {
         "data": {
           "typeDef": {
@@ -624,7 +667,13 @@ exports['mcdoc __fixture__ struct 1'] = {
                                             "start": 149,
                                             "end": 164
                                           },
-                                          "value": "NamedGrandchild"
+                                          "value": "NamedGrandchild",
+                                          "symbol": {
+                                            "category": "mcdoc",
+                                            "path": [
+                                              "::foo::NamedGrandchild"
+                                            ]
+                                          }
                                         },
                                         {
                                           "type": "mcdoc:struct/block",

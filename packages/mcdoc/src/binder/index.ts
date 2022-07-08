@@ -1,9 +1,9 @@
 import type { AstNode, BinderContext, CheckerContext, Location, MetaRegistry, RangeLike, StringNode, Symbol, SymbolQuery } from '@spyglassmc/core'
-import { AsyncBinder, atArray, Dev, ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility } from '@spyglassmc/core'
+import { AsyncBinder, atArray, Dev, ErrorSeverity, Range, ResourceLocationNode, SymbolUtil, SymbolVisibility, traversePreOrder } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AdditionalContext } from '../common.js'
 import type { AnyTypeNode, AttributeValueNode, BooleanTypeNode, EnumValueNode, IdentifierNode, IndexNode, LiteralTypeValueNode, ModuleNode, StructFieldNode, StructKeyNode, TypeNode } from '../node/index.js'
-import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, FloatRangeNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TupleTypeNode, TypeAliasNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, FloatRangeNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
 import type { Attribute, AttributeTree, AttributeValue, DispatcherType, DynamicIndex, EnumType, EnumTypeField, Index, KeywordType, ListType, LiteralNumberCaseInsensitiveSuffix, LiteralNumberSuffix, LiteralType, LiteralValue, McdocType, NumericRange, NumericType, NumericTypeKind, ParallelIndices, PrimitiveArrayType, PrimitiveArrayValueKind, ReferenceType, StaticIndex, StringType, StructType, StructTypeField, StructTypePairField, StructTypeSpreadField, TupleType, TypeBase, UnionType } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext { }
@@ -44,14 +44,14 @@ export async function module_(node: ModuleNode, ctx: McdocBinderContext): Promis
  * Hoist enums, structs, type aliases, and use statements under the module scope.
  */
 function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
-	for (const child of node.children) {
+	traversePreOrder(node, () => true, TopLevelNode.is, child => {
 		switch (child.type) {
 			case 'mcdoc:enum': hoistEnum(child); break
 			case 'mcdoc:struct': hoistStruct(child); break
 			case 'mcdoc:type_alias': hoistTypeAlias(child); break
 			case 'mcdoc:use_statement': hoistUseStatement(child); break
 		}
-	}
+	})
 
 	function hoistEnum(node: EnumNode) {
 		hoistFor('enum', node, EnumNode.destruct, n => ({ typeDef: convertEnum(n, ctx) }))
