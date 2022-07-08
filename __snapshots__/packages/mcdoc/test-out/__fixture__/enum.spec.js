@@ -73,7 +73,7 @@ exports['mcdoc __fixture__ enum 1'] = {
             },
             "fullRange": {
               "start": 0,
-              "end": 134
+              "end": 132
             },
             "fullPosRange": {
               "start": {
@@ -81,8 +81,8 @@ exports['mcdoc __fixture__ enum 1'] = {
                 "character": 0
               },
               "end": {
-                "line": 5,
-                "character": 0
+                "line": 3,
+                "character": 1
               }
             },
             "contributor": "binder"
@@ -96,7 +96,7 @@ exports['mcdoc __fixture__ enum 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 134
+        "end": 132
       },
       "children": [
         {
@@ -260,19 +260,19 @@ exports['mcdoc __fixture__ enum 1'] = {
                   ],
                   "range": {
                     "start": 21,
-                    "end": 134
+                    "end": 132
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 134
+                "end": 132
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 134
+            "end": 132
           }
         }
       ],

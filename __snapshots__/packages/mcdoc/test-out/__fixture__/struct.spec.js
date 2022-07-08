@@ -316,7 +316,7 @@ exports['mcdoc __fixture__ struct 1'] = {
             },
             "fullRange": {
               "start": 174,
-              "end": 291
+              "end": 289
             },
             "fullPosRange": {
               "start": {
@@ -324,8 +324,8 @@ exports['mcdoc __fixture__ struct 1'] = {
                 "character": 0
               },
               "end": {
-                "line": 23,
-                "character": 0
+                "line": 21,
+                "character": 1
               }
             },
             "contributor": "binder"
@@ -339,7 +339,7 @@ exports['mcdoc __fixture__ struct 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 836
+        "end": 289
       },
       "children": [
         {
@@ -916,187 +916,19 @@ exports['mcdoc __fixture__ struct 1'] = {
                   ],
                   "range": {
                     "start": 194,
-                    "end": 291
+                    "end": 289
                   }
                 }
               ],
               "range": {
                 "start": 174,
-                "end": 291
+                "end": 289
               }
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 291,
-                "end": 313
-              },
-              "comment": " //== type parameter"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 314,
-                "end": 333
-              },
-              "comment": " //=== /foo.mcdoc"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 334,
-                "end": 363
-              },
-              "comment": " type InclusiveRange<T> = ("
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 364,
-                "end": 371
-              },
-              "comment": " \tT |"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 372,
-                "end": 385
-              },
-              "comment": " \t[T] @ 2 |"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 386,
-                "end": 398
-              },
-              "comment": " \tstruct {"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 399,
-                "end": 421
-              },
-              "comment": " \t\tmin_inclusive: T,"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 422,
-                "end": 444
-              },
-              "comment": " \t\tmax_inclusive: T,"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 445,
-                "end": 452
-              },
-              "comment": " \t} |"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 453,
-                "end": 457
-              },
-              "comment": " )"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 459,
-                "end": 508
-              },
-              "comment": " type VarietyType = InclusiveRange<int @ 1..64>"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 510,
-                "end": 528
-              },
-              "comment": " //== dispatcher"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 529,
-                "end": 548
-              },
-              "comment": " //=== /foo.mcdoc"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 549,
-                "end": 565
-              },
-              "comment": " #[since=1.18]"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 566,
-                "end": 659
-              },
-              "comment": " dispatch minecraft:block_state_provider[dual_noise_provider] to struct DualNoiseProvider {"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 660,
-                "end": 681
-              },
-              "comment": " \t...NoiseProvider,"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 682,
-                "end": 723
-              },
-              "comment": " \tvariety: InclusiveRange<int @ 1..64>,"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 724,
-                "end": 756
-              },
-              "comment": " \tslow_noise: NoiseParameters,"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 757,
-                "end": 804
-              },
-              "comment": " \tslow_scale: float @ 0.., // TODO: exclude 0"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 805,
-                "end": 830
-              },
-              "comment": " \tstates: [BlockState],"
-            },
-            {
-              "type": "comment",
-              "range": {
-                "start": 831,
-                "end": 835
-              },
-              "comment": " }"
             }
           ],
           "range": {
             "start": 0,
-            "end": 836
+            "end": 289
           }
         }
       ],

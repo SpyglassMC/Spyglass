@@ -911,7 +911,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
             },
             "fullRange": {
               "start": 540,
-              "end": 577
+              "end": 575
             },
             "fullPosRange": {
               "start": {
@@ -919,8 +919,8 @@ exports['mcdoc __fixture__ simple types 1'] = {
                 "character": 0
               },
               "end": {
-                "line": 20,
-                "character": 0
+                "line": 18,
+                "character": 35
               }
             },
             "contributor": "binder"
@@ -934,7 +934,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 577
+        "end": 575
       },
       "children": [
         {
@@ -2407,19 +2407,19 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   ],
                   "range": {
                     "start": 558,
-                    "end": 577
+                    "end": 575
                   }
                 }
               ],
               "range": {
                 "start": 540,
-                "end": 577
+                "end": 575
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 577
+            "end": 575
           }
         }
       ],

@@ -11,10 +11,11 @@ describe('mcdoc __fixture__', async () => {
 	const meta = new MetaRegistry()
 	initialize({ meta })
 
-	for (const [caseName, caseContent] of getSections(fixture, 2)) {
+	for (const [caseName, untrimmedCaseContent] of getSections(fixture, 2)) {
+		const caseContent = untrimmedCaseContent.trim()
 		it(caseName, async () => {
 			const files = [...getSections(caseContent, 3)]
-				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent }))
+				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent.trim() }))
 			const project = new SimpleProject(meta, files)
 			project.parse()
 			await project.bind()

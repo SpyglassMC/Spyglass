@@ -74,7 +74,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 34
+        "end": 32
       },
       "children": [
         {
@@ -163,19 +163,19 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
                   ],
                   "range": {
                     "start": 25,
-                    "end": 34
+                    "end": 32
                   }
                 }
               ],
               "range": {
                 "start": 14,
-                "end": 34
+                "end": 32
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 34
+            "end": 32
           }
         }
       ],

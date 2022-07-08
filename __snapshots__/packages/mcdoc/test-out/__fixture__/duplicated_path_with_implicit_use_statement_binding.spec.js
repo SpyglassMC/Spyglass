@@ -109,7 +109,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
             },
             "fullRange": {
               "start": 0,
-              "end": 16
+              "end": 14
             },
             "fullPosRange": {
               "start": {
@@ -117,8 +117,8 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
                 "character": 0
               },
               "end": {
-                "line": 2,
-                "character": 0
+                "line": 0,
+                "character": 14
               }
             },
             "contributor": "binder"
@@ -167,7 +167,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
       "type": "file",
       "range": {
         "start": 0,
-        "end": 16
+        "end": 14
       },
       "children": [
         {
@@ -210,13 +210,13 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
               ],
               "range": {
                 "start": 0,
-                "end": 16
+                "end": 14
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 16
+            "end": 14
           }
         }
       ],
@@ -228,7 +228,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
       "type": "file",
       "range": {
         "start": 0,
-        "end": 39
+        "end": 37
       },
       "children": [
         {
@@ -328,13 +328,13 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
               ],
               "range": {
                 "start": 23,
-                "end": 39
+                "end": 37
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 39
+            "end": 37
           }
         }
       ],
