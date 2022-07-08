@@ -98,7 +98,81 @@ exports['mcdoc __fixture__ struct/simple 1'] = {
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "Foo": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 17,
+                  "end": 20
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 4
+                  }
+                },
+                "fullRange": {
+                  "start": 17,
+                  "end": 26
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 10
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "Bar": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 44,
+                  "end": 47
+                },
+                "posRange": {
+                  "start": {
+                    "line": 3,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 3,
+                    "character": 4
+                  }
+                },
+                "fullRange": {
+                  "start": 29,
+                  "end": 62
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 3,
+                    "character": 19
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -151,7 +225,14 @@ exports['mcdoc __fixture__ struct/simple 1'] = {
                             "start": 17,
                             "end": 20
                           },
-                          "value": "Foo"
+                          "value": "Foo",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Simple",
+                              "Foo"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:type/numeric_type",
@@ -229,7 +310,14 @@ exports['mcdoc __fixture__ struct/simple 1'] = {
                             "start": 44,
                             "end": 47
                           },
-                          "value": "Bar"
+                          "value": "Bar",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Simple",
+                              "Bar"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:type/string",

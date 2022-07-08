@@ -80,7 +80,45 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "naughty": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 24,
+                  "end": 31
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 8
+                  }
+                },
+                "fullRange": {
+                  "start": 24,
+                  "end": 40
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 17
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -133,7 +171,14 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                             "start": 24,
                             "end": 31
                           },
-                          "value": "naughty"
+                          "value": "naughty",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::DuplicatedKey",
+                              "naughty"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:type/boolean",
@@ -215,7 +260,55 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
       ],
       "locals": {},
       "parserErrors": [],
-      "binderErrors": []
+      "binderErrors": [
+        {
+          "range": {
+            "start": 43,
+            "end": 50
+          },
+          "message": "Duplicated declaration for “naughty”",
+          "severity": 2,
+          "info": {
+            "related": [
+              {
+                "location": {
+                  "uri": "file:///test.mcdoc",
+                  "range": {
+                    "start": 24,
+                    "end": 31
+                  },
+                  "posRange": {
+                    "start": {
+                      "line": 1,
+                      "character": 1
+                    },
+                    "end": {
+                      "line": 1,
+                      "character": 8
+                    }
+                  },
+                  "fullRange": {
+                    "start": 24,
+                    "end": 40
+                  },
+                  "fullPosRange": {
+                    "start": {
+                      "line": 1,
+                      "character": 1
+                    },
+                    "end": {
+                      "line": 1,
+                      "character": 17
+                    }
+                  },
+                  "contributor": "binder"
+                },
+                "message": "“naughty” is already declared here"
+              }
+            ]
+          }
+        }
+      ]
     }
   }
 }

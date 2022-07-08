@@ -74,7 +74,45 @@ exports['mcdoc __fixture__ hoisting 1'] = {
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "bar": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 14,
+                  "end": 17
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 4
+                  }
+                },
+                "fullRange": {
+                  "start": 14,
+                  "end": 22
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 9
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       },
       "::test::Bar": {
         "data": {
@@ -116,6 +154,41 @@ exports['mcdoc __fixture__ hoisting 1'] = {
               }
             },
             "contributor": "binder"
+          }
+        ],
+        "reference": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 19,
+              "end": 22
+            },
+            "posRange": {
+              "start": {
+                "line": 1,
+                "character": 6
+              },
+              "end": {
+                "line": 1,
+                "character": 9
+              }
+            },
+            "fullRange": {
+              "start": 19,
+              "end": 22
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 1,
+                "character": 6
+              },
+              "end": {
+                "line": 1,
+                "character": 9
+              }
+            },
+            "contributor": "binder",
+            "skipRenaming": false
           }
         ]
       }
@@ -170,7 +243,14 @@ exports['mcdoc __fixture__ hoisting 1'] = {
                             "start": 14,
                             "end": 17
                           },
-                          "value": "bar"
+                          "value": "bar",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Foo",
+                              "bar"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:type/reference",
@@ -184,7 +264,13 @@ exports['mcdoc __fixture__ hoisting 1'] = {
                                     "start": 19,
                                     "end": 22
                                   },
-                                  "value": "Bar"
+                                  "value": "Bar",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::Bar"
+                                    ]
+                                  }
                                 }
                               ],
                               "range": {

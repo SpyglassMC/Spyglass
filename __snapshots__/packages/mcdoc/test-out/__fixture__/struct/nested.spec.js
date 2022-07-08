@@ -83,7 +83,45 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "Child": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 17,
+                  "end": 22
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 6
+                  }
+                },
+                "fullRange": {
+                  "start": 17,
+                  "end": 76
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 0
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       },
       "::test::NamedGrandchild": {
         "data": {
@@ -179,7 +217,14 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                             "start": 17,
                             "end": 22
                           },
-                          "value": "Child"
+                          "value": "Child",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Nested",
+                              "Child"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:struct",

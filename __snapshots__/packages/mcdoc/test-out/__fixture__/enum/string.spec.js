@@ -87,7 +87,81 @@ exports['mcdoc __fixture__ enum/string 1'] = {
             },
             "contributor": "binder"
           }
-        ]
+        ],
+        "members": {
+          "AllayDropItemOnBlock": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 38,
+                  "end": 58
+                },
+                "posRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 15
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 35
+                  }
+                },
+                "fullRange": {
+                  "start": 24,
+                  "end": 87
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 1,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 1,
+                    "character": 64
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "BeeNestDestroyed": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 90,
+                  "end": 106
+                },
+                "posRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 17
+                  }
+                },
+                "fullRange": {
+                  "start": 90,
+                  "end": 129
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 2,
+                    "character": 1
+                  },
+                  "end": {
+                    "line": 2,
+                    "character": 40
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -192,7 +266,14 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                             "start": 38,
                             "end": 58
                           },
-                          "value": "AllayDropItemOnBlock"
+                          "value": "AllayDropItemOnBlock",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Trigger",
+                              "AllayDropItemOnBlock"
+                            ]
+                          }
                         },
                         {
                           "type": "string",
@@ -229,7 +310,14 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                             "start": 90,
                             "end": 106
                           },
-                          "value": "BeeNestDestroyed"
+                          "value": "BeeNestDestroyed",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::Trigger",
+                              "BeeNestDestroyed"
+                            ]
+                          }
                         },
                         {
                           "type": "string",

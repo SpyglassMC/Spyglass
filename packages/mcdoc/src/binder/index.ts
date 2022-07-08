@@ -210,12 +210,12 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
-	const { block } = EnumNode.destruct(node)
-	if (node.symbol?.subcategory !== 'enum') {
+	const { block, identifier } = EnumNode.destruct(node)
+	if (identifier?.symbol?.subcategory !== 'enum') {
 		return
 	}
 
-	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...node.symbol.path)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...identifier.symbol.path)
 	Dev.assertDefined(query.symbol)
 	bindEnumBlock(block, ctx, query)
 }
@@ -241,12 +241,12 @@ async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Prom
 }
 
 async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
-	const { block } = StructNode.destruct(node)
-	if (node.symbol?.subcategory !== 'struct') {
+	const { block, identifier } = StructNode.destruct(node)
+	if (identifier?.symbol?.subcategory !== 'struct') {
 		return
 	}
 
-	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...node.symbol.path)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...identifier.symbol.path)
 	Dev.assertDefined(query.symbol)
 	await bindStructBlock(block, ctx, query)
 }
