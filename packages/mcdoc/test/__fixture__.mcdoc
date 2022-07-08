@@ -28,6 +28,13 @@ use super::used::Used as ReboundUsed
 struct Used {}
 struct ReboundUsed {}
 
+//== hoisting
+//=== /foo.mcdoc
+struct Foo {
+	bar: Bar,
+}
+struct Bar {}
+
 //== simple types
 //=== /foo.mcdoc
 type AnyTest = any
