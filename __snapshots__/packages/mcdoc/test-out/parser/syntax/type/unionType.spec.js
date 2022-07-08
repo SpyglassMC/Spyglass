@@ -393,3 +393,176 @@ exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀#[until=1.16]↓⮀⮀⮀⮀�
   },
   "errors": []
 }
+
+exports['mcdoc unionType Parse "(↓⮀⮀⮀⮀⮀int |↓⮀⮀⮀⮀⮀[int, int] |↓⮀⮀⮀⮀⮀struct {↓⮀⮀⮀⮀⮀⮀min: int,↓⮀⮀⮀⮀⮀⮀max: int,↓⮀⮀⮀⮀⮀} |↓⮀⮀⮀⮀)" 1'] = {
+  "node": {
+    "type": "mcdoc:type/union",
+    "children": [
+      {
+        "type": "mcdoc:type/numeric_type",
+        "children": [
+          {
+            "type": "mcdoc:literal",
+            "range": {
+              "start": 7,
+              "end": 10
+            },
+            "value": "int",
+            "colorTokenType": "type"
+          }
+        ],
+        "range": {
+          "start": 7,
+          "end": 11
+        }
+      },
+      {
+        "type": "mcdoc:type/tuple",
+        "children": [
+          {
+            "type": "mcdoc:type/numeric_type",
+            "children": [
+              {
+                "type": "mcdoc:literal",
+                "range": {
+                  "start": 19,
+                  "end": 22
+                },
+                "value": "int",
+                "colorTokenType": "type"
+              }
+            ],
+            "range": {
+              "start": 19,
+              "end": 22
+            }
+          },
+          {
+            "type": "mcdoc:type/numeric_type",
+            "children": [
+              {
+                "type": "mcdoc:literal",
+                "range": {
+                  "start": 24,
+                  "end": 27
+                },
+                "value": "int",
+                "colorTokenType": "type"
+              }
+            ],
+            "range": {
+              "start": 24,
+              "end": 27
+            }
+          }
+        ],
+        "range": {
+          "start": 18,
+          "end": 29
+        }
+      },
+      {
+        "type": "mcdoc:struct",
+        "children": [
+          {
+            "type": "mcdoc:literal",
+            "range": {
+              "start": 36,
+              "end": 42
+            },
+            "value": "struct",
+            "colorTokenType": "keyword"
+          },
+          {
+            "type": "mcdoc:struct/block",
+            "children": [
+              {
+                "type": "mcdoc:struct/field/pair",
+                "children": [
+                  {
+                    "type": "mcdoc:identifier",
+                    "range": {
+                      "start": 51,
+                      "end": 54
+                    },
+                    "value": "min"
+                  },
+                  {
+                    "type": "mcdoc:type/numeric_type",
+                    "children": [
+                      {
+                        "type": "mcdoc:literal",
+                        "range": {
+                          "start": 56,
+                          "end": 59
+                        },
+                        "value": "int",
+                        "colorTokenType": "type"
+                      }
+                    ],
+                    "range": {
+                      "start": 56,
+                      "end": 59
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 51,
+                  "end": 59
+                }
+              },
+              {
+                "type": "mcdoc:struct/field/pair",
+                "children": [
+                  {
+                    "type": "mcdoc:identifier",
+                    "range": {
+                      "start": 67,
+                      "end": 70
+                    },
+                    "value": "max"
+                  },
+                  {
+                    "type": "mcdoc:type/numeric_type",
+                    "children": [
+                      {
+                        "type": "mcdoc:literal",
+                        "range": {
+                          "start": 72,
+                          "end": 75
+                        },
+                        "value": "int",
+                        "colorTokenType": "type"
+                      }
+                    ],
+                    "range": {
+                      "start": 72,
+                      "end": 75
+                    }
+                  }
+                ],
+                "range": {
+                  "start": 67,
+                  "end": 75
+                }
+              }
+            ],
+            "range": {
+              "start": 43,
+              "end": 84
+            }
+          }
+        ],
+        "range": {
+          "start": 36,
+          "end": 84
+        }
+      }
+    ],
+    "range": {
+      "start": 0,
+      "end": 91
+    }
+  },
+  "errors": []
+}

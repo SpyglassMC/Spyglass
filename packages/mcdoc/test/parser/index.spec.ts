@@ -333,14 +333,14 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 					#[since=1.16]
 					#[uuid] int[] @ 4 |
 				)`,
-				// `(
-				// 	int |
-				// 	[int, int] |
-				// 	struct {
-				// 		min: int,
-				// 		max: int,
-				// 	} |
-				// )`,
+				`(
+					int |
+					[int, int] |
+					struct {
+						min: int,
+						max: int,
+					} |
+				)`,
 			],
 		},
 	},
