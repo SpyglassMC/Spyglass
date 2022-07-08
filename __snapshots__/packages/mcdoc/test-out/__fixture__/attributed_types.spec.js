@@ -1,11 +1,11 @@
 exports['mcdoc __fixture__ attributed types 1'] = {
   "global": {
     "mcdoc": {
-      "::foo": {
+      "::test": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,7 +24,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::foo::NoValue": {
+      "::test::NoValue": {
         "data": {
           "typeDef": {
             "attributes": [
@@ -39,7 +39,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 5,
               "end": 12
@@ -72,7 +72,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::foo::SimpleValue": {
+      "::test::SimpleValue": {
         "data": {
           "typeDef": {
             "attributes": [
@@ -94,7 +94,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 42,
               "end": 53
@@ -127,7 +127,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::foo::TreeValue": {
+      "::test::TreeValue": {
         "data": {
           "typeDef": {
             "attributes": [
@@ -145,7 +145,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                     },
                     "tags": {
                       "kind": "reference",
-                      "path": "::foo::allowed"
+                      "path": "::test::allowed"
                     }
                   }
                 }
@@ -158,7 +158,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 83,
               "end": 92
@@ -191,7 +191,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::foo::EnumValue": {
+      "::test::EnumValue": {
         "data": {
           "typeDef": {
             "attributes": [
@@ -225,7 +225,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 153,
               "end": 162
@@ -261,7 +261,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
     }
   },
   "nodes": {
-    "file:///foo.mcdoc": {
+    "file:///test.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
@@ -301,7 +301,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::NoValue"
+                      "::test::NoValue"
                     ]
                   }
                 },
@@ -376,7 +376,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::SimpleValue"
+                      "::test::SimpleValue"
                     ]
                   }
                 },
@@ -477,7 +477,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::TreeValue"
+                      "::test::TreeValue"
                     ]
                   }
                 },
@@ -642,7 +642,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::EnumValue"
+                      "::test::EnumValue"
                     ]
                   }
                 },

@@ -1,11 +1,11 @@
 exports['mcdoc __fixture__ simple types 1'] = {
   "global": {
     "mcdoc": {
-      "::foo": {
+      "::test": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,7 +24,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::AnyTest": {
+      "::test::AnyTest": {
         "data": {
           "typeDef": {
             "kind": "any"
@@ -34,7 +34,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 5,
               "end": 12
@@ -67,7 +67,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::BooleanTest": {
+      "::test::BooleanTest": {
         "data": {
           "typeDef": {
             "kind": "boolean"
@@ -77,7 +77,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 24,
               "end": 35
@@ -110,7 +110,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::StringTest0": {
+      "::test::StringTest0": {
         "data": {
           "typeDef": {
             "kind": "string"
@@ -120,7 +120,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 51,
               "end": 62
@@ -153,7 +153,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::StringTest1": {
+      "::test::StringTest1": {
         "data": {
           "typeDef": {
             "kind": "string",
@@ -167,7 +167,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 77,
               "end": 88
@@ -200,7 +200,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::StringTest2": {
+      "::test::StringTest2": {
         "data": {
           "typeDef": {
             "kind": "string",
@@ -214,7 +214,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 109,
               "end": 120
@@ -247,7 +247,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::StringTest3": {
+      "::test::StringTest3": {
         "data": {
           "typeDef": {
             "kind": "string",
@@ -262,7 +262,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 143,
               "end": 154
@@ -295,7 +295,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::StringTest4": {
+      "::test::StringTest4": {
         "data": {
           "typeDef": {
             "kind": "string",
@@ -310,7 +310,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 173,
               "end": 184
@@ -343,7 +343,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::LiteralTest0": {
+      "::test::LiteralTest0": {
         "data": {
           "typeDef": {
             "kind": "literal",
@@ -357,7 +357,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 208,
               "end": 220
@@ -390,7 +390,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::LiteralTest1": {
+      "::test::LiteralTest1": {
         "data": {
           "typeDef": {
             "kind": "literal",
@@ -405,7 +405,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 234,
               "end": 246
@@ -438,7 +438,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::LiteralTest2": {
+      "::test::LiteralTest2": {
         "data": {
           "typeDef": {
             "kind": "literal",
@@ -452,7 +452,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 258,
               "end": 270
@@ -485,7 +485,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::NumericTest": {
+      "::test::NumericTest": {
         "data": {
           "typeDef": {
             "kind": "byte",
@@ -500,7 +500,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 283,
               "end": 294
@@ -533,7 +533,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::PrimitiveArrayTest0": {
+      "::test::PrimitiveArrayTest0": {
         "data": {
           "typeDef": {
             "kind": "int_array",
@@ -548,7 +548,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 316,
               "end": 335
@@ -581,7 +581,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::PrimitiveArrayTest1": {
+      "::test::PrimitiveArrayTest1": {
         "data": {
           "typeDef": {
             "kind": "long_array",
@@ -595,7 +595,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 353,
               "end": 372
@@ -628,7 +628,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::PrimitiveArrayTest2": {
+      "::test::PrimitiveArrayTest2": {
         "data": {
           "typeDef": {
             "kind": "byte_array",
@@ -648,7 +648,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 391,
               "end": 410
@@ -681,7 +681,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::ListTest0": {
+      "::test::ListTest0": {
         "data": {
           "typeDef": {
             "kind": "list",
@@ -694,7 +694,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 434,
               "end": 443
@@ -727,7 +727,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::ListTest1": {
+      "::test::ListTest1": {
         "data": {
           "typeDef": {
             "kind": "list",
@@ -743,7 +743,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 458,
               "end": 467
@@ -776,7 +776,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::ListTest2": {
+      "::test::ListTest2": {
         "data": {
           "typeDef": {
             "kind": "list",
@@ -795,7 +795,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 486,
               "end": 495
@@ -828,7 +828,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::TupleTest0": {
+      "::test::TupleTest0": {
         "data": {
           "typeDef": {
             "kind": "tuple",
@@ -843,7 +843,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 519,
               "end": 529
@@ -876,7 +876,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
           }
         ]
       },
-      "::foo::TupleTest1": {
+      "::test::TupleTest1": {
         "data": {
           "typeDef": {
             "kind": "tuple",
@@ -894,7 +894,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
         "subcategory": "type_alias",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 545,
               "end": 555
@@ -930,7 +930,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
     }
   },
   "nodes": {
-    "file:///foo.mcdoc": {
+    "file:///test.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
@@ -970,7 +970,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::AnyTest"
+                      "::test::AnyTest"
                     ]
                   }
                 },
@@ -1028,7 +1028,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::BooleanTest"
+                      "::test::BooleanTest"
                     ]
                   }
                 },
@@ -1086,7 +1086,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::StringTest0"
+                      "::test::StringTest0"
                     ]
                   }
                 },
@@ -1144,7 +1144,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::StringTest1"
+                      "::test::StringTest1"
                     ]
                   }
                 },
@@ -1227,7 +1227,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::StringTest2"
+                      "::test::StringTest2"
                     ]
                   }
                 },
@@ -1310,7 +1310,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::StringTest3"
+                      "::test::StringTest3"
                     ]
                   }
                 },
@@ -1385,7 +1385,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::StringTest4"
+                      "::test::StringTest4"
                     ]
                   }
                 },
@@ -1476,7 +1476,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::LiteralTest0"
+                      "::test::LiteralTest0"
                     ]
                   }
                 },
@@ -1545,7 +1545,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::LiteralTest1"
+                      "::test::LiteralTest1"
                     ]
                   }
                 },
@@ -1620,7 +1620,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::LiteralTest2"
+                      "::test::LiteralTest2"
                     ]
                   }
                 },
@@ -1678,7 +1678,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::NumericTest"
+                      "::test::NumericTest"
                     ]
                   }
                 },
@@ -1769,7 +1769,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::PrimitiveArrayTest0"
+                      "::test::PrimitiveArrayTest0"
                     ]
                   }
                 },
@@ -1852,7 +1852,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::PrimitiveArrayTest1"
+                      "::test::PrimitiveArrayTest1"
                     ]
                   }
                 },
@@ -1943,7 +1943,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::PrimitiveArrayTest2"
+                      "::test::PrimitiveArrayTest2"
                     ]
                   }
                 },
@@ -2059,7 +2059,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::ListTest0"
+                      "::test::ListTest0"
                     ]
                   }
                 },
@@ -2126,7 +2126,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::ListTest1"
+                      "::test::ListTest1"
                     ]
                   }
                 },
@@ -2202,7 +2202,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::ListTest2"
+                      "::test::ListTest2"
                     ]
                   }
                 },
@@ -2294,7 +2294,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::TupleTest0"
+                      "::test::TupleTest0"
                     ]
                   }
                 },
@@ -2361,7 +2361,7 @@ exports['mcdoc __fixture__ simple types 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::TupleTest1"
+                      "::test::TupleTest1"
                     ]
                   }
                 },

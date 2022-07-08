@@ -5,6 +5,8 @@ import fs from 'fs/promises'
 import { core as snapshotCore } from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
+const DefaultTestFilePath = '/test.mcdoc'
+
 describe('mcdoc __fixture__', async () => {
 	const fixture = removeComments(await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8'))
 
@@ -14,7 +16,7 @@ describe('mcdoc __fixture__', async () => {
 	for (const [caseName, untrimmedCaseContent] of getSections(fixture, 2)) {
 		const caseContent = untrimmedCaseContent.trim()
 		it(caseName, async () => {
-			const files = [...getSections(caseContent, 3)]
+			const files = [...getSections(caseContent, 3, DefaultTestFilePath)]
 				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent.trim() }))
 			const project = new SimpleProject(meta, files)
 			project.parse()
@@ -56,9 +58,18 @@ describe('mcdoc __fixture__', async () => {
  * content 1
  * ```
  */
-function* getSections(text: string, equalSignAmount: number): Generator<[title: string, content: string]> {
+function* getSections(text: string, equalSignAmount: number, defaultSectionTitle: string | undefined = undefined): Generator<[title: string, content: string]> {
 	const regex = new RegExp(`^//${'='.repeat(equalSignAmount)} `, 'mu')
-	const sections = text.split(regex).slice(1)
+	const sections = (() => {
+		const arr = text.split(regex)
+		// arr[0] is the text before the first titled section.
+		// It should be removed from the returned array, unless a default section title is given.
+		if (defaultSectionTitle && arr[0].trim()) {
+			arr[0] = `${defaultSectionTitle}\n${arr[0]}`
+			return arr
+		}
+		return arr.slice(1)
+	})()
 	// Example sections:
 	// [
 	// 	'title 0\ncontent 0\n',
@@ -74,5 +85,5 @@ function* getSections(text: string, equalSignAmount: number): Generator<[title: 
 }
 
 function caseNameToFileName(name: string): string {
-	return name.replace(/[^a-zA-Z0-9-]/g, '_')
+	return name.replace(/[^a-zA-Z0-9-/]/g, '_')
 }

@@ -1,11 +1,11 @@
 exports['mcdoc __fixture__ duplicated path 1'] = {
   "global": {
     "mcdoc": {
-      "::foo": {
+      "::test": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,7 +24,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
           }
         ]
       },
-      "::foo::Foo": {
+      "::test::Foo": {
         "data": {
           "typeDef": {
             "kind": "struct",
@@ -34,7 +34,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
         "subcategory": "struct",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 7,
               "end": 10
@@ -70,7 +70,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
     }
   },
   "nodes": {
-    "file:///foo.mcdoc": {
+    "file:///test.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
@@ -102,7 +102,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::Foo"
+                      "::test::Foo"
                     ]
                   }
                 },
@@ -187,13 +187,13 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
             "start": 19,
             "end": 22
           },
-          "message": "Duplicated declaration for “::foo::Foo”",
+          "message": "Duplicated declaration for “::test::Foo”",
           "severity": 2,
           "info": {
             "related": [
               {
                 "location": {
-                  "uri": "file:///foo.mcdoc",
+                  "uri": "file:///test.mcdoc",
                   "range": {
                     "start": 7,
                     "end": 10
@@ -224,7 +224,7 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
                   },
                   "contributor": "binder"
                 },
-                "message": "“::foo::Foo” is already declared here"
+                "message": "“::test::Foo” is already declared here"
               }
             ]
           }

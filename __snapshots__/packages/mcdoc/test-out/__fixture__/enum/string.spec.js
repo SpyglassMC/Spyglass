@@ -1,11 +1,11 @@
-exports['mcdoc __fixture__ enum 1'] = {
+exports['mcdoc __fixture__ enum/string 1'] = {
   "global": {
     "mcdoc": {
-      "::advancement": {
+      "::test": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///advancement.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,7 +24,7 @@ exports['mcdoc __fixture__ enum 1'] = {
           }
         ]
       },
-      "::advancement::Trigger": {
+      "::test::Trigger": {
         "data": {
           "typeDef": {
             "kind": "enum",
@@ -56,7 +56,7 @@ exports['mcdoc __fixture__ enum 1'] = {
         "subcategory": "enum",
         "definition": [
           {
-            "uri": "file:///advancement.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 13,
               "end": 20
@@ -92,7 +92,7 @@ exports['mcdoc __fixture__ enum 1'] = {
     }
   },
   "nodes": {
-    "file:///advancement.mcdoc": {
+    "file:///test.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
@@ -133,7 +133,7 @@ exports['mcdoc __fixture__ enum 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::advancement::Trigger"
+                      "::test::Trigger"
                     ]
                   }
                 },

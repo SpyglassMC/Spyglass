@@ -1,11 +1,11 @@
 exports['mcdoc __fixture__ hoisting 1'] = {
   "global": {
     "mcdoc": {
-      "::foo": {
+      "::test": {
         "subcategory": "module",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
               "end": 0
@@ -24,7 +24,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
           }
         ]
       },
-      "::foo::Foo": {
+      "::test::Foo": {
         "data": {
           "typeDef": {
             "kind": "struct",
@@ -34,7 +34,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
                 "key": "bar",
                 "type": {
                   "kind": "reference",
-                  "path": "::foo::Bar"
+                  "path": "::test::Bar"
                 }
               }
             ]
@@ -43,7 +43,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
         "subcategory": "struct",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 7,
               "end": 10
@@ -76,7 +76,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
           }
         ]
       },
-      "::foo::Bar": {
+      "::test::Bar": {
         "data": {
           "typeDef": {
             "kind": "struct",
@@ -86,7 +86,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
         "subcategory": "struct",
         "definition": [
           {
-            "uri": "file:///foo.mcdoc",
+            "uri": "file:///test.mcdoc",
             "range": {
               "start": 33,
               "end": 36
@@ -122,7 +122,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
     }
   },
   "nodes": {
-    "file:///foo.mcdoc": {
+    "file:///test.mcdoc": {
       "type": "file",
       "range": {
         "start": 0,
@@ -154,7 +154,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::Foo"
+                      "::test::Foo"
                     ]
                   }
                 },
@@ -238,7 +238,7 @@ exports['mcdoc __fixture__ hoisting 1'] = {
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::foo::Bar"
+                      "::test::Bar"
                     ]
                   }
                 },

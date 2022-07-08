@@ -5,14 +5,15 @@
 //// //== <test case name>
 //// //=== <absolute file path>
 //// <content of the file>
+////
+//// If no <absolute file path> is specified, a default one is used.
 
 //== duplicated path
-//=== /foo.mcdoc
 struct Foo {}
 type Foo = boolean
 
 //== duplicated path with implicit use statement binding
-//=== /used.mcdoc
+//=== /module.mcdoc
 struct Used {}
 
 //=== /client.mcdoc
@@ -21,24 +22,22 @@ use super::used::Used
 struct Used {}
 
 //== duplicated path with explicit use statement binding
-//=== /used.mcdoc
+//=== /module.mcdoc
 struct Used {}
 
-//=== /foo.mcdoc
+//=== /client.mcdoc
 use super::used::Used as ReboundUsed
 
 struct Used {}
 struct ReboundUsed {}
 
 //== hoisting
-//=== /foo.mcdoc
 struct Foo {
 	bar: Bar,
 }
 struct Bar {}
 
 //== simple types
-//=== /foo.mcdoc
 type AnyTest = any
 type BooleanTest = boolean
 type StringTest0 = string
@@ -60,7 +59,6 @@ type TupleTest0 = [byte,]
 type TupleTest1 = [string, boolean]
 
 //== attributed types
-//=== /foo.mcdoc
 type NoValue = #[deprecated] boolean
 type SimpleValue = #[since=1.19] boolean
 type TreeValue = #[id(registry="worldgen/biome",tags=allowed)] string
@@ -69,40 +67,65 @@ type EnumValue = #[bitfield(enum(int) {
 	BootsAll = 2,
 })] int
 
-//== enum
-//=== /advancement.mcdoc
+//== enum/string
 enum(string) Trigger {
 	#[since=1.19] AllayDropItemOnBlock = "allay_drop_item_on_block",
 	BeeNestDestroyed = "bee_nest_destroyed",
 }
+//== enum/duplicated key
+enum (byte) DuplicatedKey {
+	Naughty = 42b,
+	Naughty = 91b,
+}
 
-//== struct
-//=== /foo.mcdoc
+//== struct/anonymous
 struct {}
-
+//== struct/empty
 struct Empty {}
-
+//== struct/simple
 struct Simple {
 	Foo: byte,
 	#[since=1.19]
 	Bar?: #[id] string,
 }
-
+//== struct/nested
 struct Nested {
 	Child: struct {
 		Grandchild: struct NamedGrandchild {}
 	}
 }
-
+//== struct/nested spread
 struct NestedSpread {
 	#[since=1.17]
 	...#[expandable] struct {
 		...minecraft:carver_config[[%parent.type]],
 	},
 }
+//== struct/duplicated key
+struct DuplicatedKey {
+	naughty: boolean,
+	naughty: string,
+}
 
-//// //== union types
-//// //=== /foo.mcdoc
+//== union/empty
+type Union = ()
+//== union/simple
+type Union = (int | string)
+//== union/nested
+type Union = (
+	string |
+	(boolean | ((byte | int) | short)) |
+)
+//== union/number range
+type Union = (
+	int |
+	[int, int] |
+	struct {
+		min_inclusive: int,
+		max_inclusive: int,
+	} |
+)
+
 //// 
 //// 
 //// // //== type parameter
