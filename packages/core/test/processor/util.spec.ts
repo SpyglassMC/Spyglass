@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { AstNode } from '../../lib/index.js'
-import { findNode, Range, traversePreOrder } from '../../lib/index.js'
+import { Range, traversePreOrder } from '../../lib/index.js'
 
 const TestNode: AstNode = {
 	type: 'not_leaf_1',
@@ -75,47 +75,6 @@ describe('processor/util.ts', () => {
 					parents: parents.map(p => p.type),
 				})
 			)
-		})
-	})
-
-	describe('findNode()', () => {
-		describe('continuous', () => {
-			const suites: Range[] = [
-				Range.create(0, 10),
-				Range.create(5, 6),
-				Range.create(9, 10),
-			]
-			for (const suite of suites) {
-				it(`Should return the node at ${Range.toString(suite)}`, () => {
-					const { node, parents } = findNode(
-						TestNode,
-						suite,
-					)
-					snapshot(node ? {
-						node: node.type,
-						parents: parents.map(p => p.type),
-					} : 'undefined')
-				})
-			}
-		})
-		describe('discontinuous', () => {
-			const suites: Range[] = [
-				Range.create(0, 10),
-				Range.create(0, 2),
-				Range.create(9, 10),
-			]
-			for (const suite of suites) {
-				it(`Should return the node at ${Range.toString(suite)}`, () => {
-					const { node, parents } = findNode(
-						DiscontinuousTestNode,
-						suite,
-					)
-					snapshot(node ? {
-						node: node.type,
-						parents: parents.map(p => p.type),
-					} : 'undefined')
-				})
-			}
 		})
 	})
 })
