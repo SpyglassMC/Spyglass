@@ -1,8 +1,10 @@
-// __fixture__.mcdoc syntax:
-//
-// //== <test case name>
-// //=== <absolute file path>
-// <content of the file>
+//// __fixture__.mcdoc syntax:
+////
+//// //// <comment>
+////
+//// //== <test case name>
+//// //=== <absolute file path>
+//// <content of the file>
 
 //== duplicated path
 //=== /foo.mcdoc
@@ -99,26 +101,30 @@ struct NestedSpread {
 	},
 }
 
-// //== type parameter
-// //=== /foo.mcdoc
-// type InclusiveRange<T> = (
-// 	T |
-// 	[T] @ 2 |
-// 	struct {
-// 		min_inclusive: T,
-// 		max_inclusive: T,
-// 	} |
-// )
-
-// type VarietyType = InclusiveRange<int @ 1..64>
-
-// //== dispatcher
-// //=== /foo.mcdoc
-// #[since=1.18]
-// dispatch minecraft:block_state_provider[dual_noise_provider] to struct DualNoiseProvider {
-// 	...NoiseProvider,
-// 	variety: InclusiveRange<int @ 1..64>,
-// 	slow_noise: NoiseParameters,
-// 	slow_scale: float @ 0.., // TODO: exclude 0
-// 	states: [BlockState],
-// }
+//// //== union types
+//// //=== /foo.mcdoc
+//// 
+//// 
+//// // //== type parameter
+//// // //=== /foo.mcdoc
+//// // type InclusiveRange<T> = (
+//// // 	T |
+//// // 	[T] @ 2 |
+//// // 	struct {
+//// // 		min_inclusive: T,
+//// // 		max_inclusive: T,
+//// // 	} |
+//// // )
+//// 
+//// // type VarietyType = InclusiveRange<int @ 1..64>
+//// 
+//// // //== dispatcher
+//// // //=== /foo.mcdoc
+//// // #[since=1.18]
+//// // dispatch minecraft:block_state_provider[dual_noise_provider] to struct DualNoiseProvider {
+//// // 	...NoiseProvider,
+//// // 	variety: InclusiveRange<int @ 1..64>,
+//// // 	slow_noise: NoiseParameters,
+//// // 	slow_scale: float @ 0.., // TODO: exclude 0
+//// // 	states: [BlockState],
+//// // }

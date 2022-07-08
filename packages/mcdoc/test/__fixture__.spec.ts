@@ -6,7 +6,7 @@ import { core as snapshotCore } from 'snap-shot-core'
 import { fileURLToPath, URL } from 'url'
 
 describe('mcdoc __fixture__', async () => {
-	const fixture = await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8')
+	const fixture = removeComments(await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8'))
 
 	const meta = new MetaRegistry()
 	initialize({ meta })
@@ -30,6 +30,13 @@ describe('mcdoc __fixture__', async () => {
 				},
 			})
 		})
+	}
+
+	/**
+	 * Remove lines starting with `////`.
+	 */
+	function removeComments(text: string): string {
+		return text.replace(/^\/\/\/\/[^\n]*\n?/gmu, '')
 	}
 })
 
