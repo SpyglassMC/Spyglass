@@ -208,7 +208,13 @@ export class SimpleProject {
 		}
 	}
 
+	#bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(uri: string, content: string = this.files.find(f => f.uri === uri)?.content!): Promise<void> {
+		if (this.#bindingInProgressUris.has(uri)) {
+			return
+		}
+
+		this.#bindingInProgressUris.add(uri)
 		const node = this.#nodes[uri]
 		try {
 			const binder = this.meta.getBinder(node.type)
@@ -223,6 +229,8 @@ export class SimpleProject {
 			})
 		} catch (e) {
 			throw new Error(format(`[bind] Failed for “${uri}”:`, e))
+		} finally {
+			this.#bindingInProgressUris.delete(uri)
 		}
 	}
 

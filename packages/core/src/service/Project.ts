@@ -110,14 +110,15 @@ export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
 
+	/** Prevent circular binding. */
+	readonly #bindingInProgressUris = new Set<string>()
 	readonly #cacheSaverIntervalId: IntervalId
 	readonly cacheService: CacheService
-	/**
-	 * URI of files that are currently managed by the language client.
-	 */
+	/** URI of files that are currently managed by the language client. */
 	readonly #clientManagedUris = new Set<string>()
 	readonly #clientManagedDocAndNodes = new Map<string, DocAndNode>()
 	readonly #configService: ConfigService
+	readonly #symbolUpToDateUris = new Set<string>()
 	readonly #eventEmitter: ExternalEventEmitter
 	readonly #initializers: readonly ProjectInitializer[]
 	#initPromise!: Promise<void>
@@ -295,6 +296,7 @@ export class Project implements ExternalEventEmitter {
 				return this.ensureBound(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
+				this.#symbolUpToDateUris.delete(uri)
 				if (this.isOnlyWatched(uri)) {
 					await this.ensureBound(uri)
 				}
@@ -303,6 +305,7 @@ export class Project implements ExternalEventEmitter {
 				if (uri.endsWith(Project.RootSuffix)) {
 					this.updateRoots()
 				}
+				this.#symbolUpToDateUris.delete(uri)
 				this.symbols.clear({ uri })
 				this.tryClearingCache(uri)
 			})
@@ -611,6 +614,7 @@ export class Project implements ExternalEventEmitter {
 			return
 		}
 		try {
+			this.#bindingInProgressUris.add(doc.uri)
 			const binder = this.meta.getBinder(node.type)
 			const ctx = BinderContext.create(this, { doc })
 			ctx.symbols.clear({ contributor: 'binder', uri: doc.uri })
@@ -619,6 +623,7 @@ export class Project implements ExternalEventEmitter {
 				await binder(proxy, ctx)
 				node.binderErrors = ctx.err.dump()
 			})
+			this.#bindingInProgressUris.delete(doc.uri)
 		} catch (e) {
 			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
@@ -638,6 +643,7 @@ export class Project implements ExternalEventEmitter {
 				node.checkerErrors = ctx.err.dump()
 				this.lint(doc, node)
 			})
+			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
 			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
@@ -692,6 +698,10 @@ export class Project implements ExternalEventEmitter {
 
 	@SingletonPromise()
 	async ensureBound(uri: string): Promise<void> {
+		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
+			return
+		}
+
 		const doc = await this.read(uri)
 		if (!doc || !(await this.cacheService.hasFileChangedSinceCache(doc))) {
 			return
@@ -738,6 +748,7 @@ export class Project implements ExternalEventEmitter {
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
 	async onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): Promise<void> {
+		this.#symbolUpToDateUris.delete(uri)
 		uri = this.normalizeUri(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
