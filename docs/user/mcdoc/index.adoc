@@ -752,7 +752,7 @@ Although type parameters are not directly allowed in struct definitions, you can
 ====
 [source,rust]
 ----
-type Tag<V extends string> = struct {
+type Tag<V> = struct {
 	replace?: boolean,
 	values: [V],
 }
