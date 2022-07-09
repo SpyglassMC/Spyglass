@@ -26,6 +26,10 @@ const TypeDefSymbolData = Object.freeze({
 	},
 })
 
+interface TypeAliasSymbolData extends TypeDefSymbolData {
+	typeParams: { identifier: string }[],
+}
+
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)
 	if (!moduleIdentifier) {
@@ -338,25 +342,38 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 	}
 
 	if (typeParams) {
-		// Type parameters are added as 1) members of the type alias symbol and 2) local symbols on the type alias AST node.
+		// Type parameters are added as local symbols on the type alias AST node.
 		node.locals = Object.create(null)
 		const { params } = TypeParamBlockNode.destruct(typeParams)
 		const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
-		for (const param of params) {
-			const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
-			if (query.symbol?.subcategory === 'type_alias' && paramIdentifier.value) {
-				query.member(paramIdentifier.value, q => q
-					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
-					.elseEnter({ usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
-				)
-				ctx.symbols
-					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`)
-					.ifDeclared(() => {}) // Already reported above.
-					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
+		if (query.symbol?.subcategory === 'type_alias') {
+			// Type parameters are also added to the symbol data.
+			const oldData = query.symbol.data
+			if (!TypeDefSymbolData.is(oldData)) {
+				throw new Error('Failed to locate the typeDef data associated with a supposedly hoisted type alias symbol')
 			}
-			// if (constraint) {
-			// 	await bindPath(constraint, ctx)
-			// }
+			const data: TypeAliasSymbolData = {
+				...oldData,
+				typeParams: [],
+			}
+			query.symbol.data = data
+
+			for (const param of params) {
+				const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
+				if (paramIdentifier.value) {
+					// Add the type parameter as a local symbol.
+					ctx.symbols
+						.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`)
+						.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
+						.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
+
+					// Also add it to the symbol data.
+					data.typeParams.push({ identifier: paramIdentifier.value })
+				}
+				// if (constraint) {
+				// 	await bindPath(constraint, ctx)
+				// }
+			}
 		}
 	}
 

@@ -32,7 +32,15 @@ exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
           "typeDef": {
             "kind": "reference",
             "path": "::test::T"
-          }
+          },
+          "typeParams": [
+            {
+              "identifier": "T"
+            },
+            {
+              "identifier": "T"
+            }
+          ]
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -69,45 +77,7 @@ exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
             },
             "contributor": "binder"
           }
-        ],
-        "members": {
-          "T": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 10,
-                  "end": 11
-                },
-                "posRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 10
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 11
-                  }
-                },
-                "fullRange": {
-                  "start": 10,
-                  "end": 11
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 10
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 11
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          }
-        }
+        ]
       }
     }
   },
@@ -339,7 +309,7 @@ exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
             "start": 13,
             "end": 14
           },
-          "message": "Duplicated declaration for “T”",
+          "message": "Duplicated declaration for “::test::T”",
           "severity": 2,
           "info": {
             "related": [
@@ -376,7 +346,7 @@ exports['mcdoc __fixture__ type parameter/duplicated parameters 1'] = {
                   },
                   "contributor": "binder"
                 },
-                "message": "“T” is already declared here"
+                "message": "“::test::T” is already declared here"
               }
             ]
           }

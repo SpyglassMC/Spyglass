@@ -70,7 +70,12 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
                 ]
               }
             ]
-          }
+          },
+          "typeParams": [
+            {
+              "identifier": "T"
+            }
+          ]
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -108,44 +113,6 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
             "contributor": "binder"
           }
         ],
-        "members": {
-          "T": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 20,
-                  "end": 21
-                },
-                "posRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 20
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 21
-                  }
-                },
-                "fullRange": {
-                  "start": 20,
-                  "end": 21
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 20
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 21
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          }
-        },
         "reference": [
           {
             "uri": "file:///test.mcdoc",

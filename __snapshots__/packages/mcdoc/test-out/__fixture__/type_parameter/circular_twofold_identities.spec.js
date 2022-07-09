@@ -42,7 +42,15 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                 "path": "::test::U"
               }
             ]
-          }
+          },
+          "typeParams": [
+            {
+              "identifier": "T"
+            },
+            {
+              "identifier": "U"
+            }
+          ]
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -80,80 +88,6 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             "contributor": "binder"
           }
         ],
-        "members": {
-          "T": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 11,
-                  "end": 12
-                },
-                "posRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 11
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 12
-                  }
-                },
-                "fullRange": {
-                  "start": 11,
-                  "end": 12
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 11
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 12
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          },
-          "U": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 14,
-                  "end": 15
-                },
-                "posRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 14
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 15
-                  }
-                },
-                "fullRange": {
-                  "start": 14,
-                  "end": 15
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 14
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 15
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          }
-        },
         "reference": [
           {
             "uri": "file:///test.mcdoc",
@@ -205,7 +139,15 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                 "path": "::test::U"
               }
             ]
-          }
+          },
+          "typeParams": [
+            {
+              "identifier": "T"
+            },
+            {
+              "identifier": "U"
+            }
+          ]
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -277,81 +219,7 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             "contributor": "binder",
             "skipRenaming": false
           }
-        ],
-        "members": {
-          "T": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 42,
-                  "end": 43
-                },
-                "posRange": {
-                  "start": {
-                    "line": 1,
-                    "character": 11
-                  },
-                  "end": {
-                    "line": 1,
-                    "character": 12
-                  }
-                },
-                "fullRange": {
-                  "start": 42,
-                  "end": 43
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 1,
-                    "character": 11
-                  },
-                  "end": {
-                    "line": 1,
-                    "character": 12
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          },
-          "U": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 45,
-                  "end": 46
-                },
-                "posRange": {
-                  "start": {
-                    "line": 1,
-                    "character": 14
-                  },
-                  "end": {
-                    "line": 1,
-                    "character": 15
-                  }
-                },
-                "fullRange": {
-                  "start": 45,
-                  "end": 46
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 1,
-                    "character": 14
-                  },
-                  "end": {
-                    "line": 1,
-                    "character": 15
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          }
-        }
+        ]
       }
     }
   },

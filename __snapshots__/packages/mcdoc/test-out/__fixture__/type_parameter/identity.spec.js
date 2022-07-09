@@ -32,7 +32,12 @@ exports['mcdoc __fixture__ type parameter/identity 1'] = {
           "typeDef": {
             "kind": "reference",
             "path": "::test::T"
-          }
+          },
+          "typeParams": [
+            {
+              "identifier": "T"
+            }
+          ]
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -69,45 +74,7 @@ exports['mcdoc __fixture__ type parameter/identity 1'] = {
             },
             "contributor": "binder"
           }
-        ],
-        "members": {
-          "T": {
-            "declaration": [
-              {
-                "uri": "file:///test.mcdoc",
-                "range": {
-                  "start": 10,
-                  "end": 11
-                },
-                "posRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 10
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 11
-                  }
-                },
-                "fullRange": {
-                  "start": 10,
-                  "end": 11
-                },
-                "fullPosRange": {
-                  "start": {
-                    "line": 0,
-                    "character": 10
-                  },
-                  "end": {
-                    "line": 0,
-                    "character": 11
-                  }
-                },
-                "contributor": "binder"
-              }
-            ]
-          }
-        }
+        ]
       }
     }
   },
