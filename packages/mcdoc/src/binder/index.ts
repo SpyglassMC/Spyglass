@@ -351,7 +351,7 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 				)
 				ctx.symbols
 					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`)
-					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
+					.ifDeclared(() => {}) // Already reported above.
 					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
 			}
 			// if (constraint) {

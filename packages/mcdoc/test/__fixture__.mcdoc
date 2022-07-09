@@ -133,21 +133,27 @@ type Union = (
 	} |
 )
 
-//// 
-//// 
-//// // //== type parameter
-//// // //=== /foo.mcdoc
-//// // type InclusiveRange<T> = (
-//// // 	T |
-//// // 	[T] @ 2 |
-//// // 	struct {
-//// // 		min_inclusive: T,
-//// // 		max_inclusive: T,
-//// // 	} |
-//// // )
-//// 
-//// // type VarietyType = InclusiveRange<int @ 1..64>
-//// 
+//== type parameter/identity
+type Test<T> = T
+
+//== type parameter/circular twofold identities
+type Test1<T, U> = Test2<T, U>
+type Test2<T, U> = Test1<T, U>
+
+//== type parameter/number range
+type InclusiveRange<T> = (
+	T |
+	[T] @ 2 |
+	struct {
+		min_inclusive: T,
+		max_inclusive: T,
+	} |
+)
+
+type VarietyType = InclusiveRange<int @ 1..64>
+
+//== type parameter/duplicated parameters
+type Test<T, T> = T
 
 //== dispatcher/random number generator
 dispatch minecraft:rng[uniform,%none] to struct {
