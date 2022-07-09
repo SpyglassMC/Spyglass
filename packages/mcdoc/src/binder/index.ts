@@ -234,16 +234,38 @@ function bindDispatcherType(node: DispatcherTypeNode, ctx: McdocBinderContext): 
 }
 
 async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> {
-	await ensureFileBound(node, ctx)
+	for (const { identifiers, node: identNode, indexRight } of resolvePathByStep(node, ctx, { reportErrors: true })) {
+		if (!identifiers?.length) {
+			continue
+		}
 
-	resolvePath(node, ctx, {
-		callback: (identifiers, identNode) => {
-			ctx.symbols
-				.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
-				.amend({ usage: { type: 'reference', node: identNode, fullRange: node, skipRenaming: LiteralNode.is(identNode) } })
-		},
-		reportErrors: true,
-	})
+		if (indexRight === 1) {
+			// The second last identifier in a path points to a file module.
+			const referencedModuleFile = pathArrayToString(identifiers)
+			const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
+			if (!referencedModuleUri) {
+				ctx.err.report(localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)), node)
+				return
+			}
+
+			await ctx.ensureBindingStarted(referencedModuleUri)
+		}
+
+		ctx.symbols
+			.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
+			.ifDeclared((_, query) => query.enter({
+				usage: { type: 'reference', node: identNode, fullRange: node, skipRenaming: LiteralNode.is(identNode) },
+			}))
+			.else(() => {
+				if (indexRight === 0) {
+					ctx.err.report(localize(
+						'mcdoc.binder.path.unknown-identifier',
+						localeQuote(atArray(identifiers, -1)!),
+						localeQuote(ctx.moduleIdentifier)
+					), node)
+				}
+			})
+	}
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
@@ -328,11 +350,12 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 					.elseEnter({ usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
 				)
 				ctx.symbols
-					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}::${paramIdentifier.value}`)
+					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`)
 					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
 					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
 			}
 			if (constraint) {
+				// FIXME: Add constraint to typeDef.
 				await bindPath(constraint, ctx)
 			}
 		}
@@ -369,12 +392,12 @@ function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, ra
 	)
 }
 
-function resolvePath(path: PathNode, ctx: McdocBinderContext, options: { callback?: (identifiers: readonly string[], node: IdentifierNode | LiteralNode) => void, reportErrors?: boolean } = {}): string[] | undefined {
+function* resolvePathByStep(path: PathNode, ctx: McdocBinderContext, options: { reportErrors?: boolean } = {}): Generator<{ identifiers: readonly string[], node: IdentifierNode | LiteralNode, index: number, indexRight: number }> {
 	const { children, isAbsolute } = PathNode.destruct(path)
 	const identifiers: string[] = isAbsolute
 		? []
 		: ctx.moduleIdentifier.slice(2).split('::')
-	for (const child of children) {
+	for (const [i, child] of children.entries()) {
 		switch (child.type) {
 			case 'mcdoc:identifier':
 				identifiers.push(child.value)
@@ -385,40 +408,19 @@ function resolvePath(path: PathNode, ctx: McdocBinderContext, options: { callbac
 					if (options.reportErrors) {
 						ctx.err.report(localize('mcdoc.binder.path.super-from-root'), child)
 					}
-					return undefined
+					return
 				}
 				identifiers.pop()
 				break
 			default:
 				Dev.assertNever(child)
 		}
-		options.callback?.(identifiers, child)
+		yield { identifiers, node: child, index: i, indexRight: children.length - 1 - i }
 	}
-	return identifiers
 }
 
-async function ensureFileBound(path: PathNode, ctx: McdocBinderContext): Promise<string[] | undefined> {
-	const identifiers = resolvePath(path, ctx)
-	if (!identifiers?.length) {
-		return undefined
-	}
-
-	const referencedModuleFile = `::${identifiers.slice(0, -1).join('::')}`
-	const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
-	const referencedPath = pathArrayToString(identifiers)
-	if (!referencedModuleUri) {
-		ctx.err.report(localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)), path)
-		return undefined
-	}
-
-	await ctx.ensureBindingStarted(referencedModuleUri)
-
-	if (!ctx.symbols.global.mcdoc?.[referencedPath]?.definition?.length) {
-		ctx.err.report(localize('mcdoc.binder.path.unknown-identifier', localeQuote(atArray(identifiers, -1)!)), path)
-		return undefined
-	}
-
-	return identifiers
+function resolvePath(path: PathNode, ctx: McdocBinderContext, options: { reportErrors?: boolean } = {}): readonly string[] | undefined {
+	return atArray([...resolvePathByStep(path, ctx, options)], -1)?.identifiers
 }
 
 function identifierToUri(module: string, ctx: McdocBinderContext): string | undefined {
