@@ -1,9 +1,8 @@
 import { MetaRegistry } from '@spyglassmc/core'
-import { SimpleProject } from '@spyglassmc/core/test-out/utils.js'
+import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test-out/utils.js'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
-import { core as snapshotCore } from 'snap-shot-core'
-import { fileURLToPath, URL } from 'url'
+import { URL } from 'url'
 
 const DefaultTestFilePath = '/test.mcdoc'
 
@@ -21,15 +20,10 @@ describe('mcdoc __fixture__', async () => {
 			const project = new SimpleProject(meta, files)
 			project.parse()
 			await project.bind()
-			snapshotCore({
-				what: project.dumpState(['global', 'nodes']),
-				file: fileURLToPath(new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url)),
+			snapshotWithUri({
 				specName: `mcdoc __fixture__ ${caseName}`,
-				ext: '.spec.js',
-				opts: {
-					sortSnapshots: true,
-					useRelativePath: true,
-				},
+				uri: new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url),
+				value: project.dumpState(['global', 'nodes']),
 			})
 		})
 	}

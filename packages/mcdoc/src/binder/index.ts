@@ -8,6 +8,15 @@ import type { Attribute, AttributeTree, AttributeValue, DispatcherType, DynamicI
 
 interface McdocBinderContext extends BinderContext, AdditionalContext { }
 
+interface ModuleSymbolData {
+	nextAnonymousIndex: number,
+}
+export const ModuleSymbolData = Object.freeze({
+	is(data: unknown): data is ModuleSymbolData {
+		return !!data && typeof data === 'object' && typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
+	},
+})
+
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)
 	if (!moduleIdentifier) {
@@ -26,6 +35,11 @@ export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 })
 
 export async function module_(node: ModuleNode, ctx: McdocBinderContext): Promise<void> {
+	const data: ModuleSymbolData = { nextAnonymousIndex: 0 }
+	ctx.symbols
+		.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier)
+		.amend({ data: { data } })
+
 	hoist(node, ctx)
 
 	for (const child of node.children) {
@@ -100,17 +114,31 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 
 	function hoistFor<N extends AstNode>(subcategory: 'enum' | 'struct' | 'type_alias', node: N, destructor: (node: N) => { docComments?: DocCommentsNode, identifier?: IdentifierNode }, getData: (node: N) => unknown) {
 		const { docComments, identifier } = destructor(node)
-		if (!identifier?.value) {
-			return
-		}
-
+		const name = identifier?.value ?? nextAnonymousIdentifier(node, ctx)
 		ctx.symbols
-			.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
-			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, identifier))
+			.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${name}`)
+			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, identifier ?? node))
 			.elseEnter({
 				data: { data: getData(node), desc: DocCommentsNode.asText(docComments), subcategory },
-				usage: { type: 'definition', node: identifier, fullRange: node },
+				// If the current syntax structure is named, then the identifier node is entered as a definition;
+				// otherwise, an anonymous identifier is generated for the symbol and the whole syntax structure node is entered as a definition.
+				usage: { type: 'definition', node: identifier ?? node, fullRange: identifier && node },
 			})
+	}
+
+	function nextAnonymousIndex(node: AstNode, ctx: McdocBinderContext): number {
+		const data = ctx.symbols
+			.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier)
+			.getData(ModuleSymbolData.is)
+		if (!data) {
+			throw new Error(`No symbol data for module '${ctx.moduleIdentifier}'`)
+		}
+
+		return data.nextAnonymousIndex++
+	}
+
+	function nextAnonymousIdentifier(node: AstNode, ctx: McdocBinderContext): string {
+		return `<anonymous ${nextAnonymousIndex(node, ctx)}>`
 	}
 }
 
@@ -211,11 +239,12 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
 	const { block, identifier } = EnumNode.destruct(node)
-	if (identifier?.symbol?.subcategory !== 'enum') {
+	const symbol = identifier?.symbol ?? node.symbol
+	if (symbol?.subcategory !== 'enum') {
 		return
 	}
 
-	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...identifier.symbol.path)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...symbol.path)
 	Dev.assertDefined(query.symbol)
 	bindEnumBlock(block, ctx, query)
 }
@@ -242,11 +271,12 @@ async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Prom
 
 async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
 	const { block, identifier } = StructNode.destruct(node)
-	if (identifier?.symbol?.subcategory !== 'struct') {
+	const symbol = identifier?.symbol ?? node.symbol
+	if (symbol?.subcategory !== 'struct') {
 		return
 	}
 
-	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...identifier.symbol.path)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...symbol.path)
 	Dev.assertDefined(query.symbol)
 	await bindStructBlock(block, ctx, query)
 }

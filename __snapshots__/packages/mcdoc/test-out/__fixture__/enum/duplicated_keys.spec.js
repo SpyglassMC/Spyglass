@@ -1,4 +1,4 @@
-exports['mcdoc __fixture__ struct/duplicated key 1'] = {
+exports['mcdoc __fixture__ enum/duplicated keys 1'] = {
   "global": {
     "mcdoc": {
       "::test": {
@@ -22,51 +22,49 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 0
+        }
       },
-      "::test::DuplicatedKey": {
+      "::test::Test": {
         "data": {
           "typeDef": {
-            "kind": "struct",
-            "fields": [
+            "kind": "enum",
+            "enumKind": "byte",
+            "values": [
               {
-                "kind": "pair",
-                "key": "naughty",
-                "type": {
-                  "kind": "boolean"
-                }
+                "identifier": "Naughty",
+                "value": 42
               },
               {
-                "kind": "pair",
-                "key": "naughty",
-                "type": {
-                  "kind": "string"
-                }
+                "identifier": "Naughty",
+                "value": 91
               }
             ]
           }
         },
-        "subcategory": "struct",
+        "subcategory": "enum",
         "definition": [
           {
             "uri": "file:///test.mcdoc",
             "range": {
-              "start": 7,
-              "end": 20
+              "start": 12,
+              "end": 16
             },
             "posRange": {
               "start": {
                 "line": 0,
-                "character": 7
+                "character": 12
               },
               "end": {
                 "line": 0,
-                "character": 20
+                "character": 16
               }
             },
             "fullRange": {
               "start": 0,
-              "end": 61
+              "end": 52
             },
             "fullPosRange": {
               "start": {
@@ -82,13 +80,13 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
           }
         ],
         "members": {
-          "naughty": {
+          "Naughty": {
             "definition": [
               {
                 "uri": "file:///test.mcdoc",
                 "range": {
-                  "start": 24,
-                  "end": 31
+                  "start": 20,
+                  "end": 27
                 },
                 "posRange": {
                   "start": {
@@ -101,8 +99,8 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                   }
                 },
                 "fullRange": {
-                  "start": 24,
-                  "end": 40
+                  "start": 20,
+                  "end": 33
                 },
                 "fullPosRange": {
                   "start": {
@@ -111,7 +109,7 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                   },
                   "end": {
                     "line": 1,
-                    "character": 17
+                    "character": 14
                   }
                 },
                 "contributor": "binder"
@@ -127,134 +125,159 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 61
+        "end": 52
       },
       "children": [
         {
           "type": "mcdoc:module",
           "children": [
             {
-              "type": "mcdoc:struct",
+              "type": "mcdoc:enum",
               "children": [
                 {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 0,
-                    "end": 6
+                    "end": 4
                   },
-                  "value": "struct",
+                  "value": "enum",
                   "colorTokenType": "keyword"
+                },
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 6,
+                    "end": 10
+                  },
+                  "value": "byte",
+                  "colorTokenType": "type"
                 },
                 {
                   "type": "mcdoc:identifier",
                   "range": {
-                    "start": 7,
-                    "end": 20
+                    "start": 12,
+                    "end": 16
                   },
-                  "value": "DuplicatedKey",
+                  "value": "Test",
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::test::DuplicatedKey"
+                      "::test::Test"
                     ]
                   }
                 },
                 {
-                  "type": "mcdoc:struct/block",
+                  "type": "mcdoc:enum/block",
                   "children": [
                     {
-                      "type": "mcdoc:struct/field/pair",
+                      "type": "mcdoc:enum/field",
                       "children": [
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 24,
-                            "end": 31
+                            "start": 20,
+                            "end": 27
                           },
-                          "value": "naughty",
+                          "value": "Naughty",
                           "symbol": {
                             "category": "mcdoc",
                             "path": [
-                              "::test::DuplicatedKey",
-                              "naughty"
+                              "::test::Test",
+                              "Naughty"
                             ]
                           }
                         },
                         {
-                          "type": "mcdoc:type/boolean",
+                          "type": "mcdoc:typed_number",
                           "children": [
+                            {
+                              "type": "float",
+                              "range": {
+                                "start": 30,
+                                "end": 32
+                              },
+                              "value": 42
+                            },
                             {
                               "type": "mcdoc:literal",
                               "range": {
-                                "start": 33,
-                                "end": 40
+                                "start": 32,
+                                "end": 33
                               },
-                              "value": "boolean",
-                              "colorTokenType": "type"
+                              "value": "b",
+                              "colorTokenType": "keyword"
                             }
                           ],
                           "range": {
-                            "start": 33,
-                            "end": 40
+                            "start": 30,
+                            "end": 33
                           }
                         }
                       ],
                       "range": {
-                        "start": 24,
-                        "end": 40
+                        "start": 20,
+                        "end": 33
                       }
                     },
                     {
-                      "type": "mcdoc:struct/field/pair",
+                      "type": "mcdoc:enum/field",
                       "children": [
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 43,
-                            "end": 50
+                            "start": 36,
+                            "end": 43
                           },
-                          "value": "naughty"
+                          "value": "Naughty"
                         },
                         {
-                          "type": "mcdoc:type/string",
+                          "type": "mcdoc:typed_number",
                           "children": [
+                            {
+                              "type": "float",
+                              "range": {
+                                "start": 46,
+                                "end": 48
+                              },
+                              "value": 91
+                            },
                             {
                               "type": "mcdoc:literal",
                               "range": {
-                                "start": 52,
-                                "end": 58
+                                "start": 48,
+                                "end": 49
                               },
-                              "value": "string",
-                              "colorTokenType": "type"
+                              "value": "b",
+                              "colorTokenType": "keyword"
                             }
                           ],
                           "range": {
-                            "start": 52,
-                            "end": 58
+                            "start": 46,
+                            "end": 49
                           }
                         }
                       ],
                       "range": {
-                        "start": 43,
-                        "end": 58
+                        "start": 36,
+                        "end": 49
                       }
                     }
                   ],
                   "range": {
-                    "start": 21,
-                    "end": 61
+                    "start": 17,
+                    "end": 52
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 61
+                "end": 52
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 61
+            "end": 52
           }
         }
       ],
@@ -263,10 +286,10 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
       "binderErrors": [
         {
           "range": {
-            "start": 43,
-            "end": 50
+            "start": 36,
+            "end": 43
           },
-          "message": "Duplicated declaration for “naughty”",
+          "message": "Duplicated declaration for “Naughty”",
           "severity": 2,
           "info": {
             "related": [
@@ -274,8 +297,8 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                 "location": {
                   "uri": "file:///test.mcdoc",
                   "range": {
-                    "start": 24,
-                    "end": 31
+                    "start": 20,
+                    "end": 27
                   },
                   "posRange": {
                     "start": {
@@ -288,8 +311,8 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                     }
                   },
                   "fullRange": {
-                    "start": 24,
-                    "end": 40
+                    "start": 20,
+                    "end": 33
                   },
                   "fullPosRange": {
                     "start": {
@@ -298,12 +321,12 @@ exports['mcdoc __fixture__ struct/duplicated key 1'] = {
                     },
                     "end": {
                       "line": 1,
-                      "character": 17
+                      "character": 14
                     }
                   },
                   "contributor": "binder"
                 },
-                "message": "“naughty” is already declared here"
+                "message": "“Naughty” is already declared here"
               }
             ]
           }

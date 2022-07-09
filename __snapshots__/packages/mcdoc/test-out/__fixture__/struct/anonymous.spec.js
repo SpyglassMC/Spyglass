@@ -22,6 +22,38 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
             },
             "contributor": "uri_binder"
           }
+        ],
+        "data": {
+          "nextAnonymousIndex": 1
+        }
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": []
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 0,
+              "end": 9
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 0
+              },
+              "end": {
+                "line": 0,
+                "character": 9
+              }
+            },
+            "contributor": "binder"
+          }
         ]
       }
     }
@@ -61,6 +93,12 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
               "range": {
                 "start": 0,
                 "end": 9
+              },
+              "symbol": {
+                "category": "mcdoc",
+                "path": [
+                  "::test::<anonymous 0>"
+                ]
               }
             }
           ],

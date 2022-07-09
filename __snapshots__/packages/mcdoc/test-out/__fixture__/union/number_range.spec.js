@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ union/number range 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 1
+        }
       },
       "::test::Union": {
         "data": {
@@ -101,6 +104,124 @@ exports['mcdoc __fixture__ union/number range 1'] = {
             "contributor": "binder"
           }
         ]
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": [
+              {
+                "kind": "pair",
+                "key": "min_inclusive",
+                "type": {
+                  "kind": "int"
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "max_inclusive",
+                "type": {
+                  "kind": "int"
+                }
+              }
+            ]
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 37,
+              "end": 93
+            },
+            "posRange": {
+              "start": {
+                "line": 3,
+                "character": 1
+              },
+              "end": {
+                "line": 6,
+                "character": 3
+              }
+            },
+            "contributor": "binder"
+          }
+        ],
+        "members": {
+          "min_inclusive": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 48,
+                  "end": 61
+                },
+                "posRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 15
+                  }
+                },
+                "fullRange": {
+                  "start": 48,
+                  "end": 66
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 4,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 4,
+                    "character": 20
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          },
+          "max_inclusive": {
+            "definition": [
+              {
+                "uri": "file:///test.mcdoc",
+                "range": {
+                  "start": 70,
+                  "end": 83
+                },
+                "posRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 15
+                  }
+                },
+                "fullRange": {
+                  "start": 70,
+                  "end": 88
+                },
+                "fullPosRange": {
+                  "start": {
+                    "line": 5,
+                    "character": 2
+                  },
+                  "end": {
+                    "line": 5,
+                    "character": 20
+                  }
+                },
+                "contributor": "binder"
+              }
+            ]
+          }
+        }
       }
     }
   },
@@ -239,7 +360,14 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                                     "start": 48,
                                     "end": 61
                                   },
-                                  "value": "min_inclusive"
+                                  "value": "min_inclusive",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::<anonymous 0>",
+                                      "min_inclusive"
+                                    ]
+                                  }
                                 },
                                 {
                                   "type": "mcdoc:type/numeric_type",
@@ -274,7 +402,14 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                                     "start": 70,
                                     "end": 83
                                   },
-                                  "value": "max_inclusive"
+                                  "value": "max_inclusive",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::<anonymous 0>",
+                                      "max_inclusive"
+                                    ]
+                                  }
                                 },
                                 {
                                   "type": "mcdoc:type/numeric_type",
@@ -310,6 +445,12 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                       "range": {
                         "start": 37,
                         "end": 93
+                      },
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 0>"
+                        ]
                       }
                     }
                   ],

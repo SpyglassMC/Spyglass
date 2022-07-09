@@ -756,6 +756,11 @@ export class SymbolQuery {
 		return this.#symbol
 	}
 
+	getData<T>(predicate: (this: void, value: unknown) => value is T): T | undefined {
+		const data = this.#symbol?.data
+		return predicate(data) ? data : undefined
+	}
+
 	with(fn: QueryMemberCallback): this {
 		fn(this)
 		return this

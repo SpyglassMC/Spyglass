@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 1
+        }
       },
       "::test::NestedSpread": {
         "data": {
@@ -103,6 +106,57 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
               "end": {
                 "line": 5,
                 "character": 1
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "attributes": [
+              {
+                "name": "expandable"
+              }
+            ],
+            "kind": "struct",
+            "fields": [
+              {
+                "kind": "spread",
+                "type": {
+                  "kind": "dispatcher",
+                  "index": [
+                    {
+                      "kind": "dynamic",
+                      "accessor": [
+                        "%parent",
+                        "type"
+                      ]
+                    }
+                  ],
+                  "registry": "minecraft:carver_config"
+                }
+              }
+            ]
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 41,
+              "end": 112
+            },
+            "posRange": {
+              "start": {
+                "line": 2,
+                "character": 4
+              },
+              "end": {
+                "line": 4,
+                "character": 2
               }
             },
             "contributor": "binder"
@@ -302,6 +356,12 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                           "range": {
                             "start": 41,
                             "end": 112
+                          },
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::<anonymous 0>"
+                            ]
                           }
                         }
                       ],

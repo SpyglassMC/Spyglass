@@ -1,4 +1,4 @@
-exports['mcdoc __fixture__ struct/nested 1'] = {
+exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1'] = {
   "global": {
     "mcdoc": {
       "::test": {
@@ -27,23 +27,29 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
           "nextAnonymousIndex": 1
         }
       },
-      "::test::Nested": {
+      "::test::Test": {
         "data": {
           "typeDef": {
             "kind": "struct",
             "fields": [
               {
                 "kind": "pair",
-                "key": "Child",
+                "key": "child",
                 "type": {
                   "kind": "struct",
                   "fields": [
                     {
                       "kind": "pair",
-                      "key": "Grandchild",
+                      "key": "naughty",
                       "type": {
-                        "kind": "struct",
-                        "fields": []
+                        "kind": "boolean"
+                      }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "naughty",
+                      "type": {
+                        "kind": "string"
                       }
                     }
                   ]
@@ -58,7 +64,7 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 7,
-              "end": 13
+              "end": 11
             },
             "posRange": {
               "start": {
@@ -67,12 +73,12 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
               },
               "end": {
                 "line": 0,
-                "character": 13
+                "character": 11
               }
             },
             "fullRange": {
               "start": 0,
-              "end": 77
+              "end": 75
             },
             "fullPosRange": {
               "start": {
@@ -80,7 +86,7 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                 "character": 0
               },
               "end": {
-                "line": 4,
+                "line": 5,
                 "character": 1
               }
             },
@@ -88,13 +94,13 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
           }
         ],
         "members": {
-          "Child": {
+          "child": {
             "definition": [
               {
                 "uri": "file:///test.mcdoc",
                 "range": {
-                  "start": 17,
-                  "end": 22
+                  "start": 15,
+                  "end": 20
                 },
                 "posRange": {
                   "start": {
@@ -107,8 +113,8 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                   }
                 },
                 "fullRange": {
-                  "start": 17,
-                  "end": 76
+                  "start": 15,
+                  "end": 72
                 },
                 "fullPosRange": {
                   "start": {
@@ -117,7 +123,7 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                   },
                   "end": {
                     "line": 4,
-                    "character": 0
+                    "character": 2
                   }
                 },
                 "contributor": "binder"
@@ -133,10 +139,16 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
             "fields": [
               {
                 "kind": "pair",
-                "key": "Grandchild",
+                "key": "naughty",
                 "type": {
-                  "kind": "struct",
-                  "fields": []
+                  "kind": "boolean"
+                }
+              },
+              {
+                "kind": "pair",
+                "key": "naughty",
+                "type": {
+                  "kind": "string"
                 }
               }
             ]
@@ -147,8 +159,8 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
           {
             "uri": "file:///test.mcdoc",
             "range": {
-              "start": 24,
-              "end": 76
+              "start": 22,
+              "end": 72
             },
             "posRange": {
               "start": {
@@ -157,20 +169,20 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
               },
               "end": {
                 "line": 4,
-                "character": 0
+                "character": 2
               }
             },
             "contributor": "binder"
           }
         ],
         "members": {
-          "Grandchild": {
+          "naughty": {
             "definition": [
               {
                 "uri": "file:///test.mcdoc",
                 "range": {
-                  "start": 35,
-                  "end": 45
+                  "start": 33,
+                  "end": 40
                 },
                 "posRange": {
                   "start": {
@@ -179,12 +191,12 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                   },
                   "end": {
                     "line": 2,
-                    "character": 12
+                    "character": 9
                   }
                 },
                 "fullRange": {
-                  "start": 35,
-                  "end": 74
+                  "start": 33,
+                  "end": 49
                 },
                 "fullPosRange": {
                   "start": {
@@ -192,8 +204,8 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                     "character": 2
                   },
                   "end": {
-                    "line": 3,
-                    "character": 1
+                    "line": 2,
+                    "character": 18
                   }
                 },
                 "contributor": "binder"
@@ -201,49 +213,6 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
             ]
           }
         }
-      },
-      "::test::NamedGrandchild": {
-        "data": {
-          "typeDef": {
-            "kind": "struct",
-            "fields": []
-          }
-        },
-        "subcategory": "struct",
-        "definition": [
-          {
-            "uri": "file:///test.mcdoc",
-            "range": {
-              "start": 54,
-              "end": 69
-            },
-            "posRange": {
-              "start": {
-                "line": 2,
-                "character": 21
-              },
-              "end": {
-                "line": 2,
-                "character": 36
-              }
-            },
-            "fullRange": {
-              "start": 47,
-              "end": 74
-            },
-            "fullPosRange": {
-              "start": {
-                "line": 2,
-                "character": 14
-              },
-              "end": {
-                "line": 3,
-                "character": 1
-              }
-            },
-            "contributor": "binder"
-          }
-        ]
       }
     }
   },
@@ -252,7 +221,7 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 77
+        "end": 75
       },
       "children": [
         {
@@ -274,13 +243,13 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                   "type": "mcdoc:identifier",
                   "range": {
                     "start": 7,
-                    "end": 13
+                    "end": 11
                   },
-                  "value": "Nested",
+                  "value": "Test",
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::test::Nested"
+                      "::test::Test"
                     ]
                   }
                 },
@@ -293,15 +262,15 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 17,
-                            "end": 22
+                            "start": 15,
+                            "end": 20
                           },
-                          "value": "Child",
+                          "value": "child",
                           "symbol": {
                             "category": "mcdoc",
                             "path": [
-                              "::test::Nested",
-                              "Child"
+                              "::test::Test",
+                              "child"
                             ]
                           }
                         },
@@ -311,8 +280,8 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                             {
                               "type": "mcdoc:literal",
                               "range": {
-                                "start": 24,
-                                "end": 30
+                                "start": 22,
+                                "end": 28
                               },
                               "value": "struct",
                               "colorTokenType": "keyword"
@@ -326,74 +295,87 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                                     {
                                       "type": "mcdoc:identifier",
                                       "range": {
-                                        "start": 35,
-                                        "end": 45
+                                        "start": 33,
+                                        "end": 40
                                       },
-                                      "value": "Grandchild",
+                                      "value": "naughty",
                                       "symbol": {
                                         "category": "mcdoc",
                                         "path": [
                                           "::test::<anonymous 0>",
-                                          "Grandchild"
+                                          "naughty"
                                         ]
                                       }
                                     },
                                     {
-                                      "type": "mcdoc:struct",
+                                      "type": "mcdoc:type/boolean",
                                       "children": [
                                         {
                                           "type": "mcdoc:literal",
                                           "range": {
-                                            "start": 47,
-                                            "end": 53
+                                            "start": 42,
+                                            "end": 49
                                           },
-                                          "value": "struct",
-                                          "colorTokenType": "keyword"
-                                        },
-                                        {
-                                          "type": "mcdoc:identifier",
-                                          "range": {
-                                            "start": 54,
-                                            "end": 69
-                                          },
-                                          "value": "NamedGrandchild",
-                                          "symbol": {
-                                            "category": "mcdoc",
-                                            "path": [
-                                              "::test::NamedGrandchild"
-                                            ]
-                                          }
-                                        },
-                                        {
-                                          "type": "mcdoc:struct/block",
-                                          "children": [],
-                                          "range": {
-                                            "start": 70,
-                                            "end": 72
-                                          }
+                                          "value": "boolean",
+                                          "colorTokenType": "type"
                                         }
                                       ],
                                       "range": {
-                                        "start": 47,
-                                        "end": 74
+                                        "start": 42,
+                                        "end": 49
                                       }
                                     }
                                   ],
                                   "range": {
-                                    "start": 35,
-                                    "end": 74
+                                    "start": 33,
+                                    "end": 49
+                                  }
+                                },
+                                {
+                                  "type": "mcdoc:struct/field/pair",
+                                  "children": [
+                                    {
+                                      "type": "mcdoc:identifier",
+                                      "range": {
+                                        "start": 53,
+                                        "end": 60
+                                      },
+                                      "value": "naughty"
+                                    },
+                                    {
+                                      "type": "mcdoc:type/string",
+                                      "children": [
+                                        {
+                                          "type": "mcdoc:literal",
+                                          "range": {
+                                            "start": 62,
+                                            "end": 68
+                                          },
+                                          "value": "string",
+                                          "colorTokenType": "type"
+                                        }
+                                      ],
+                                      "range": {
+                                        "start": 62,
+                                        "end": 68
+                                      }
+                                    }
+                                  ],
+                                  "range": {
+                                    "start": 53,
+                                    "end": 68
                                   }
                                 }
                               ],
                               "range": {
-                                "start": 31,
-                                "end": 76
+                                "start": 29,
+                                "end": 72
                               }
                             }
                           ],
                           "range": {
-                            "start": 24,
-                            "end": 76
+                            "start": 22,
+                            "end": 72
                           },
                           "symbol": {
                             "category": "mcdoc",
@@ -404,32 +386,80 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                         }
                       ],
                       "range": {
-                        "start": 17,
-                        "end": 76
+                        "start": 15,
+                        "end": 72
                       }
                     }
                   ],
                   "range": {
-                    "start": 14,
-                    "end": 77
+                    "start": 12,
+                    "end": 75
                   }
                 }
               ],
               "range": {
                 "start": 0,
-                "end": 77
+                "end": 75
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 77
+            "end": 75
           }
         }
       ],
       "locals": {},
       "parserErrors": [],
-      "binderErrors": []
+      "binderErrors": [
+        {
+          "range": {
+            "start": 53,
+            "end": 60
+          },
+          "message": "Duplicated declaration for “naughty”",
+          "severity": 2,
+          "info": {
+            "related": [
+              {
+                "location": {
+                  "uri": "file:///test.mcdoc",
+                  "range": {
+                    "start": 33,
+                    "end": 40
+                  },
+                  "posRange": {
+                    "start": {
+                      "line": 2,
+                      "character": 2
+                    },
+                    "end": {
+                      "line": 2,
+                      "character": 9
+                    }
+                  },
+                  "fullRange": {
+                    "start": 33,
+                    "end": 49
+                  },
+                  "fullPosRange": {
+                    "start": {
+                      "line": 2,
+                      "character": 2
+                    },
+                    "end": {
+                      "line": 2,
+                      "character": 18
+                    }
+                  },
+                  "contributor": "binder"
+                },
+                "message": "“naughty” is already declared here"
+              }
+            ]
+          }
+        }
+      ]
     }
   }
 }

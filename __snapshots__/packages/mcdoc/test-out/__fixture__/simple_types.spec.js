@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ simple types 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 1
+        }
       },
       "::test::AnyTest": {
         "data": {
@@ -822,6 +825,35 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "end": {
                 "line": 17,
                 "character": 0
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "kind": "struct",
+            "fields": []
+          }
+        },
+        "subcategory": "struct",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 499,
+              "end": 508
+            },
+            "posRange": {
+              "start": {
+                "line": 16,
+                "character": 18
+              },
+              "end": {
+                "line": 16,
+                "character": 27
               }
             },
             "contributor": "binder"
@@ -2233,6 +2265,12 @@ exports['mcdoc __fixture__ simple types 1'] = {
                       "range": {
                         "start": 499,
                         "end": 508
+                      },
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 0>"
+                        ]
                       }
                     },
                     {

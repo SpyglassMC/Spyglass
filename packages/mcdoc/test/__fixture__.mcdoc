@@ -72,8 +72,8 @@ enum(string) Trigger {
 	#[since=1.19] AllayDropItemOnBlock = "allay_drop_item_on_block",
 	BeeNestDestroyed = "bee_nest_destroyed",
 }
-//== enum/duplicated key
-enum (byte) DuplicatedKey {
+//== enum/duplicated keys
+enum (byte) Test {
 	Naughty = 42b,
 	Naughty = 91b,
 }
@@ -101,10 +101,17 @@ struct NestedSpread {
 		...minecraft:carver_config[[%parent.type]],
 	},
 }
-//== struct/duplicated key
-struct DuplicatedKey {
+//== struct/duplicated keys
+struct Test {
 	naughty: boolean,
 	naughty: string,
+}
+//== struct/duplicated keys in nested anonymous struct
+struct Test {
+	child: struct {
+		naughty: boolean,
+		naughty: string,
+	},
 }
 
 //== union/empty
@@ -148,6 +155,6 @@ type Union = (
 //// // 	...NoiseProvider,
 //// // 	variety: InclusiveRange<int @ 1..64>,
 //// // 	slow_noise: NoiseParameters,
-//// // 	slow_scale: float @ 0.., // TODO: exclude 0
+//// // 	slow_scale: float @ 0<..,
 //// // 	states: [BlockState],
 //// // }

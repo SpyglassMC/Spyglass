@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 0
+        }
       },
       "::client": {
         "subcategory": "module",
@@ -45,7 +48,10 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 0
+        }
       },
       "::module::Used": {
         "data": {

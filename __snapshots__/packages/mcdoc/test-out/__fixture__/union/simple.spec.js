@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ union/simple 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 0
+        }
       },
       "::test::Union": {
         "data": {

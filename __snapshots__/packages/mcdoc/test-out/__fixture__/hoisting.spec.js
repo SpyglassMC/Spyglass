@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ hoisting 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 0
+        }
       },
       "::test::Foo": {
         "data": {

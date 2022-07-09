@@ -22,7 +22,10 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             },
             "contributor": "uri_binder"
           }
-        ]
+        ],
+        "data": {
+          "nextAnonymousIndex": 1
+        }
       },
       "::test::NoValue": {
         "data": {
@@ -252,6 +255,45 @@ exports['mcdoc __fixture__ attributed types 1'] = {
               "end": {
                 "line": 6,
                 "character": 7
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      },
+      "::test::<anonymous 0>": {
+        "data": {
+          "typeDef": {
+            "kind": "enum",
+            "enumKind": "int",
+            "values": [
+              {
+                "identifier": "HandAll",
+                "value": 1
+              },
+              {
+                "identifier": "BootsAll",
+                "value": 2
+              }
+            ]
+          }
+        },
+        "subcategory": "enum",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 176,
+              "end": 218
+            },
+            "posRange": {
+              "start": {
+                "line": 3,
+                "character": 28
+              },
+              "end": {
+                "line": 6,
+                "character": 1
               }
             },
             "contributor": "binder"
@@ -772,6 +814,12 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                   "range": {
                                     "start": 176,
                                     "end": 218
+                                  },
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::<anonymous 0>"
+                                    ]
                                   }
                                 }
                               ],
