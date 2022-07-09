@@ -11,6 +11,10 @@
 		[
 			"(",
 			")"
+		],
+		[
+			"<",
+			">"
 		]
 	],
 	"comments": {
@@ -35,6 +39,20 @@
 		}
 	],
 	"autoCloseBefore": ":,}]) \n\t",
+	"colorizedBracketPairs": [
+		[
+			"(",
+			")"
+		],
+		[
+			"[",
+			"]"
+		],
+		[
+			"{",
+			"}"
+		]
+	],
 	"surroundingPairs": [
 		[
 			"\"",
