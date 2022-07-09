@@ -854,24 +854,34 @@ export class SymbolQuery {
 
 	@DelayModeSupport((self: SymbolQuery) => self.util)
 	private _enter(addition: SymbolAddition): void {
+		/**
+		 * Get a proper visibility from the addition:
+		 * * If the visibility is specified, use it.
+		 * * If the visibility is `undefined`, use the visibility of the symbol, or `Public` if unapplicable.
+		 */
+		const getAdditionVisibility = (addition: SymbolAddition): SymbolVisibility => {
+			return addition.data?.visibility ?? this.symbol?.visibility ?? SymbolVisibility.Public
+		}
+
 		const getMap = (addition: SymbolAddition): SymbolMap => {
-			if (this.#map && SymbolUtil.areVisibilitiesCompatible(addition.data?.visibility, this.#symbol?.visibility)) {
+			const additionVisibility = getAdditionVisibility(addition)
+			if (this.#map && SymbolUtil.areVisibilitiesCompatible(additionVisibility, this.#symbol?.visibility)) {
 				return this.#map
 			}
 			if (this.path.length > 1) {
 				if (this.#parentSymbol) {
-					if (!SymbolUtil.areVisibilitiesCompatible(addition.data?.visibility, this.#parentSymbol.visibility)) {
-						throw new Error(`Cannot enter member “${this.getPath()}” of ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility to parent of ${SymbolFormatter.stringifyVisibility(this.#parentSymbol.visibility)} visibility`)
+					if (!SymbolUtil.areVisibilitiesCompatible(additionVisibility, this.#parentSymbol.visibility)) {
+						throw new Error(`Cannot enter member “${this.getPath()}” of ${SymbolFormatter.stringifyVisibility(additionVisibility)} visibility to parent of ${SymbolFormatter.stringifyVisibility(this.#parentSymbol.visibility)} visibility`)
 					}
 					return this.#parentSymbol.members ??= {}
 				}
 			} else {
 				let table: SymbolTable | undefined
-				if (SymbolUtil.isVisibilityInGlobal(addition.data?.visibility)) {
+				if (SymbolUtil.isVisibilityInGlobal(additionVisibility)) {
 					table = this.util.global
-				} else if (addition.data?.visibility === SymbolVisibility.File) {
+				} else if (additionVisibility === SymbolVisibility.File) {
 					if (!this.#node) {
-						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node is supplied`)
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(additionVisibility)} visibility as no node is supplied`)
 					}
 					let node: AstNode | undefined = this.#node
 					while (node) {
@@ -882,11 +892,11 @@ export class SymbolQuery {
 						node = node.parent
 					}
 					if (!table) {
-						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no file node is supplied`)
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(additionVisibility)} visibility as no file node is supplied`)
 					}
 				} else {
 					if (!this.#node) {
-						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node is supplied`)
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(additionVisibility)} visibility as no node is supplied`)
 					}
 					let node: AstNode | undefined = this.#node
 					while (node) {
@@ -897,7 +907,7 @@ export class SymbolQuery {
 						node = node.parent
 					}
 					if (!table) {
-						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(addition.data?.visibility)} visibility as no node with locals is supplied`)
+						throw new Error(`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(additionVisibility)} visibility as no node with locals is supplied`)
 					}
 				}
 				// TODO: Move part of symbol from global to table.
