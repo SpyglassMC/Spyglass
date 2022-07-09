@@ -978,7 +978,8 @@ An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliase
 	`<` <<s-type-param>> (`,` <<s-type-param>>){star} `,`^?^ `>`
 
 [[s-type-param,_TypeParam_]]
-<<s-type-param>>:: <<t-ident>> (`extends` <<t-path>>)^?^
+// <<s-type-param>>:: <<t-ident>> (`extends` <<s-type>>)^?^
+<<s-type-param>>:: <<t-ident>>
 
 ****
 
