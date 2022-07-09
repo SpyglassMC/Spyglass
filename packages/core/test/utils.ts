@@ -3,6 +3,9 @@ import { AstNode, BinderContext, Downloader, Failure, file, FileService, Logger,
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import { fail } from 'assert'
 import type { RootHookObject } from 'mocha'
+import { core as snapshotCore } from 'snap-shot-core'
+import type { URL } from 'url'
+import { fileURLToPath } from 'url'
 import { format } from 'util'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
@@ -142,6 +145,19 @@ export function assertError(fn: () => void, errorCallback: (e: unknown) => void 
 	} catch (e) {
 		errorCallback(e)
 	}
+}
+
+export function snapshotWithUri({ specName, uri, value }: { specName: string, uri: URL, value: {} }): void {
+	snapshotCore({
+		what: value,
+		file: fileURLToPath(uri),
+		specName,
+		ext: '.spec.js',
+		opts: {
+			sortSnapshots: true,
+			useRelativePath: true,
+		},
+	})
 }
 
 export interface SimpleProjectState {

@@ -1,8 +1,6 @@
 import type { Parser } from '@spyglassmc/core'
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
-import { core as snapshotCore } from 'snap-shot-core'
-import { fileURLToPath } from 'url'
 
 const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { content: string[], functionParams?: readonly unknown[] }>> = {
 	terminator: {
@@ -352,20 +350,15 @@ describe('mcdoc parser', async () => {
 			const importedParser = (await import('@spyglassmc/mcdoc/lib/parser/index.js') as unknown as Record<string, any>)[parserName]
 			const parser = (functionParams ? importedParser(...functionParams) : importedParser) as Parser
 			const describeTitle = `${parserName}${functionParams ? '()' : ''}`
-			const path = fileURLToPath(new URL(`./${directory}/${parserName}.spec.js`, import.meta.url))
+			const uri = new URL(`./${directory}/${parserName}.spec.js`, import.meta.url)
 			describe(describeTitle, () => {
 				for (const content of Suites[directory as keyof typeof Suites][parserName].content) {
 					const itTitle = `Parse "${showWhitespaceGlyph(content)}"`
 					it(itTitle, () => {
-						snapshotCore({
-							what: testParser(parser, content),
-							file: path,
+						snapshotWithUri({
 							specName: `mcdoc ${describeTitle} ${itTitle}`,
-							ext: '.spec.js',
-							opts: {
-								sortSnapshots: true,
-								useRelativePath: true,
-							},
+							uri,
+							value: testParser(parser, content),
 						})
 					})
 				}

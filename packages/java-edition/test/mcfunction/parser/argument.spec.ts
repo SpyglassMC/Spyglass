@@ -1,11 +1,9 @@
-import { mockProjectData, showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { mockProjectData, showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test-out/utils.js'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'mocha'
-import { core as snapshotCore } from 'snap-shot-core'
-import { fileURLToPath } from 'url'
 
 const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, content: string[] }[]>> = {
 	'brigadier:bool': [
@@ -268,16 +266,10 @@ describe('mcfunction argument parser', () => {
 				for (const string of content) {
 					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${properties ? ` with ${JSON.stringify(properties)}` : ''}`
 					it(itTitle, () => {
-						const path = fileURLToPath(new URL(`./argument/${parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())}.spec.js`, import.meta.url))
-						snapshotCore({
-							what: testParser(argument(treeNode)!, string, { project: { meta }, removeTopLevelChildren: RemoveExtraChildren.has(parserName) }),
-							file: path,
+						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
-							ext: '.spec.js',
-							opts: {
-								sortSnapshots: true,
-								useRelativePath: true,
-							},
+							uri: new URL(`./argument/${parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())}.spec.js`, import.meta.url),
+							value: testParser(argument(treeNode)!, string, { project: { meta }, removeTopLevelChildren: RemoveExtraChildren.has(parserName) }),
 						})
 					})
 				}
