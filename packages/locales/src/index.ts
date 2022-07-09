@@ -38,11 +38,11 @@ export async function loadLocale(locale = 'en'): Promise<void> {
 	}
 }
 
-function _resolveLocalePlaceholders(val: string | undefined, params: (Parameter | undefined)[]): string | undefined {
+function _resolveLocalePlaceholders(val: string | undefined, params: Parameter[]): string | undefined {
 	return val?.replace(/%\d+%/g, match => {
 		const index = parseInt(match.slice(1, -1))
-		let param = params[index]
-		if (typeof param !== 'string' && (param as Iterable<string>)[Symbol.iterator]) {
+		let param: Parameter | undefined = params[index]
+		if (typeof param !== 'string' && (param as Iterable<string>)?.[Symbol.iterator]) {
 			param = arrayToMessage(param as Iterable<string>)
 		}
 		return `${param ?? match}`
