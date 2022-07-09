@@ -708,15 +708,15 @@ export const TypeParamBlockNode = Object.freeze({
 
 export interface TypeParamNode extends AstNode {
 	type: 'mcdoc:type_param',
-	children: (CommentNode | IdentifierNode | LiteralNode | PathNode)[],
+	children: (CommentNode | IdentifierNode | LiteralNode)[],
 }
 export const TypeParamNode = Object.freeze({
 	destruct(node: TypeParamNode): {
-		constraint?: PathNode,
+		// constraint?: TypeNode,
 		identifier: IdentifierNode,
 	} {
 		return {
-			constraint: node.children.find(PathNode.is),
+			// constraint: node.children.find(TypeNode.is),
 			identifier: node.children.find(IdentifierNode.is)!,
 		}
 	},

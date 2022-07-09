@@ -543,7 +543,7 @@ const typeParam: InfallibleParser<TypeParamNode> = setType(
 	'mcdoc:type_param',
 	syntax([
 		identifier,
-		optional(syntax([failOnError(literal('extends')), path])),
+		// optional(syntax([failOnError(literal('extends')), { get: () => type }])),
 	])
 )
 

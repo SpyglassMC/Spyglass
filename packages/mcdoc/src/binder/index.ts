@@ -343,7 +343,7 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 		const { params } = TypeParamBlockNode.destruct(typeParams)
 		const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
 		for (const param of params) {
-			const { constraint, identifier: paramIdentifier } = TypeParamNode.destruct(param)
+			const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
 			if (query.symbol?.subcategory === 'type_alias' && paramIdentifier.value) {
 				query.member(paramIdentifier.value, q => q
 					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
@@ -354,10 +354,9 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
 					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
 			}
-			if (constraint) {
-				// FIXME: Add constraint to typeDef.
-				await bindPath(constraint, ctx)
-			}
+			// if (constraint) {
+			// 	await bindPath(constraint, ctx)
+			// }
 		}
 	}
 
