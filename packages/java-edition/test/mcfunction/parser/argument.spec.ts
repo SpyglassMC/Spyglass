@@ -1,7 +1,13 @@
-/**
- * @type {Partial<Record<import('@spyglassmc/mcfunction/lib/tree/index.js').ArgumentTreeNode['parser'], { properties?: any, content: string[] }[]>>}
- */
-export const CommandArgumentTestSuites = {
+import { mockProjectData, showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
+import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
+import * as json from '@spyglassmc/json'
+import * as nbt from '@spyglassmc/nbt'
+import { describe, it } from 'mocha'
+import { core as snapshotCore } from 'snap-shot-core'
+import { fileURLToPath } from 'url'
+
+const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, content: string[] }[]>> = {
 	'brigadier:bool': [
 		{ content: ['false', 'true'] },
 	],
@@ -233,3 +239,49 @@ export const CommandArgumentTestSuites = {
 		{ content: ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5'] },
 	],
 }
+
+const RemoveExtraChildren = new Set([
+	'minecraft:block_predicate',
+	'minecraft:block_state',
+	'minecraft:entity',
+	'minecraft:item_predicate',
+	'minecraft:item_stack',
+	'minecraft:score_holder',
+])
+
+const project = mockProjectData()
+
+json.initialize(project)
+nbt.initialize(project)
+
+const { meta } = project
+
+describe('mcfunction argument parser', () => {
+	for (const [parserName, cases] of Object.entries(Suites)) {
+		describe(parserName, () => {
+			for (const { content, properties } of cases) {
+				const treeNode: ArgumentTreeNode = {
+					type: 'argument',
+					parser: parserName as any,
+					properties,
+				}
+				for (const string of content) {
+					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${properties ? ` with ${JSON.stringify(properties)}` : ''}`
+					it(itTitle, () => {
+						const path = fileURLToPath(new URL(`./argument/${parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())}.spec.js`, import.meta.url))
+						snapshotCore({
+							what: testParser(argument(treeNode)!, string, { project: { meta }, removeTopLevelChildren: RemoveExtraChildren.has(parserName) }),
+							file: path,
+							specName: `mcfunction argument ${parserName} ${itTitle}`,
+							ext: '.spec.js',
+							opts: {
+								sortSnapshots: true,
+								useRelativePath: true,
+							},
+						})
+					})
+				}
+			}
+		})
+	}
+})
