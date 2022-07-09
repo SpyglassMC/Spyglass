@@ -11,9 +11,18 @@ interface McdocBinderContext extends BinderContext, AdditionalContext { }
 interface ModuleSymbolData {
 	nextAnonymousIndex: number,
 }
-export const ModuleSymbolData = Object.freeze({
+const ModuleSymbolData = Object.freeze({
 	is(data: unknown): data is ModuleSymbolData {
 		return !!data && typeof data === 'object' && typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
+	},
+})
+
+interface TypeDefSymbolData {
+	typeDef: McdocType,
+}
+const TypeDefSymbolData = Object.freeze({
+	is(data: unknown): data is TypeDefSymbolData {
+		return !!data && typeof data === 'object' && typeof (data as TypeDefSymbolData).typeDef === 'object'
 	},
 })
 
@@ -537,7 +546,14 @@ function convertDynamicIndex(node: DynamicIndexNode, ctx: McdocBinderContext): D
 }
 
 function convertEnum(node: EnumNode, ctx: McdocBinderContext): EnumType {
-	const { block, enumKind } = EnumNode.destruct(node)
+	const { block, enumKind, identifier } = EnumNode.destruct(node)
+
+	// Shortcut if the typeDef has been added to the enum symbol.
+	const symbol = identifier?.symbol ?? node.symbol
+	if (symbol && TypeDefSymbolData.is(symbol.data) && symbol.data.typeDef.kind === 'enum') {
+		return symbol.data.typeDef
+	}
+
 	return {
 		...convertBase(node, ctx),
 		kind: 'enum',
@@ -569,7 +585,14 @@ function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string 
 }
 
 function convertStruct(node: StructNode, ctx: McdocBinderContext): StructType {
-	const { block } = StructNode.destruct(node)
+	const { block, identifier } = StructNode.destruct(node)
+
+	// Shortcut if the typeDef has been added to the struct symbol.
+	const symbol = identifier?.symbol ?? node.symbol
+	if (symbol && TypeDefSymbolData.is(symbol.data) && symbol.data.typeDef.kind === 'struct') {
+		return symbol.data.typeDef
+	}
+
 	return {
 		...convertBase(node, ctx),
 		kind: 'struct',
