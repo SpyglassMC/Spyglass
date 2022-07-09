@@ -372,7 +372,7 @@ async function ensureFileBound(path: PathNode, ctx: McdocBinderContext): Promise
 		return undefined
 	}
 
-	await ctx.ensureBound(referencedModuleUri)
+	await ctx.ensureBindingStarted(referencedModuleUri)
 
 	if (!ctx.symbols.global.mcdoc?.[referencedPath]?.definition?.length) {
 		ctx.err.report(localize('mcdoc.binder.path.unknown-identifier', localeQuote(atArray(identifiers, -1)!)), path)

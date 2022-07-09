@@ -33,8 +33,8 @@ function isDefinitionOptions(options: Options): options is DefinitionOptions {
 
 function definitionNbt({ definition }: DefinitionOptions): JsonChecker {
 	return (node, ctx) => {
-		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
-		if (!ctx.ensureBound) {
+		// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
+		if (!ctx.ensureBindingStarted) {
 			simpleString(node, ctx)
 			return
 		}
@@ -47,8 +47,8 @@ function definitionNbt({ definition }: DefinitionOptions): JsonChecker {
 function registryNbt(options: RegistryOptions): JsonChecker {
 	return (node, ctx) => {
 		const ids = getIds(options, ctx)
-		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
-		if (!ctx.ensureBound) {
+		// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
+		if (!ctx.ensureBindingStarted) {
 			simpleString(node, ctx)
 			return
 		}
@@ -61,8 +61,8 @@ function registryNbt(options: RegistryOptions): JsonChecker {
 export function nbtPath(options: RegistryOptions): JsonChecker {
 	return (node, ctx) => {
 		const ids = getIds(options, ctx)
-		// FIXME: Temporary solution to make tests pass when ensureBound is not given.
-		if (!ctx.ensureBound) {
+		// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
+		if (!ctx.ensureBindingStarted) {
 			simpleString(node, ctx)
 			return
 		}

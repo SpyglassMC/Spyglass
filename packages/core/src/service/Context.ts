@@ -13,7 +13,7 @@ import type { RootUriString } from './fileUtil.js'
 import type { LinterErrorReporter } from './index.js'
 import type { MetaRegistry } from './MetaRegistry.js'
 import type { ProfilerFactory } from './Profiler.js'
-import type { DocAndNode, ProjectData } from './Project.js'
+import type { ProjectData } from './Project.js'
 
 export interface ContextBase {
 	fs: FileService,
@@ -110,7 +110,7 @@ namespace ProcessorWithOffsetContext {
 
 export interface BinderContext extends ProcessorContext {
 	err: ErrorReporter,
-	ensureBound: (this: void, uri: string) => Promise<unknown>,
+	ensureBindingStarted: (this: void, uri: string) => Promise<unknown>,
 }
 interface BinderContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
@@ -120,14 +120,14 @@ export namespace BinderContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
-			ensureBound: project.ensureBound?.bind(project),
+			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}
 }
 
 export interface CheckerContext extends ProcessorContext {
 	err: ErrorReporter,
-	ensureBound: (this: void, uri: string) => Promise<unknown>,
+	ensureBindingStarted: (this: void, uri: string) => Promise<unknown>,
 }
 interface CheckerContextOptions extends ProcessorContextOptions {
 	err?: ErrorReporter,
@@ -137,7 +137,7 @@ export namespace CheckerContext {
 		return {
 			...ProcessorContext.create(project, opts),
 			err: opts.err ?? new ErrorReporter(),
-			ensureBound: project.ensureBound?.bind(project),
+			ensureBindingStarted: project.ensureBindingStarted?.bind(project),
 		}
 	}
 }

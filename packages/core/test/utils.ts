@@ -32,7 +32,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		config: data.config ?? VanillaConfig,
 		ctx: data.ctx ?? {},
 		downloader,
-		ensureBound: data.ensureBound!,
+		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),
 		logger,
@@ -178,7 +178,7 @@ export class SimpleProject {
 	get projectData(): ProjectData {
 		return mockProjectData({
 			cacheRoot: 'file:///.cache/',
-			ensureBound: async uri => this.bindSingleFile(uri),
+			ensureBindingStarted: async uri => this.bindSingleFile(uri),
 			meta: this.meta,
 			roots: ['file:///'],
 			symbols: this.#symbols,

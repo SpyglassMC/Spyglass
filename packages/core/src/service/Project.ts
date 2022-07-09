@@ -67,7 +67,7 @@ interface SymbolRegistrarEvent {
 	checksum: string | undefined,
 }
 
-export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureBound' | 'externals' | 'fs' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
+export type ProjectData = Pick<Project, 'cacheRoot' | 'config' | 'downloader' | 'ensureBindingStarted' | 'externals' | 'fs' | 'logger' | 'meta' | 'profilers' | 'projectRoot' | 'roots' | 'symbols' | 'ctx'>
 
 /* istanbul ignore next */
 /**
@@ -293,12 +293,12 @@ export class Project implements ExternalEventEmitter {
 					this.updateRoots()
 				}
 				this.bindUri(uri)
-				return this.ensureBound(uri)
+				return this.ensureBindingStarted(uri)
 			})
 			.on('fileModified', async ({ uri }) => {
 				this.#symbolUpToDateUris.delete(uri)
 				if (this.isOnlyWatched(uri)) {
-					await this.ensureBound(uri)
+					await this.ensureBindingStarted(uri)
 				}
 			})
 			.on('fileDeleted', ({ uri }) => {
@@ -466,7 +466,7 @@ export class Project implements ExternalEventEmitter {
 
 			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
-				await this.ensureBound(uri)
+				await this.ensureBindingStarted(uri)
 				__bindProfiler.task(uri)
 			}
 			__bindProfiler.finalize()
@@ -697,7 +697,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	@SingletonPromise()
-	async ensureBound(uri: string): Promise<void> {
+	async ensureBindingStarted(uri: string): Promise<void> {
 		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
 			return
 		}

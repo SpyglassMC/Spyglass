@@ -455,8 +455,8 @@ export const advancement = as('advancement', record({
 	parent: opt(resource('advancement')),
 	criteria: object(
 		string(undefined, undefined, (node, ctx) => {
-			// FIXME: Temporary solution to make tests pass when ensureBound is not given.
-			if (!ctx.ensureBound) {
+			// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
+			if (!ctx.ensureBindingStarted) {
 				return
 			}
 			const parts = dissectUri(ctx.doc.uri, ctx)
@@ -472,8 +472,8 @@ export const advancement = as('advancement', record({
 	),
 	requirements: opt(listOf(listOf(
 		(node, ctx) => {
-			// FIXME: Temporary solution to make tests pass when ensureBound is not given.
-			if (!ctx.ensureBound) {
+			// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
+			if (!ctx.ensureBindingStarted) {
 				return
 			}
 			const parts = dissectUri(ctx.doc.uri, ctx)
