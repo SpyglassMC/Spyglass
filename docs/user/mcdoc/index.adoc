@@ -962,9 +962,9 @@ In short, types in mcdoc can be think of as sets. `any` is the largest set that 
 
 ****
 
-An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliases>>, <<use-statement,use statements>>, <<injection,injections>>, and <<dispatch-statement,dispatch statements>>.
+An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias-statement,type alias statements>>, <<use-statement,use statements>>, <<injection,injections>>, and <<dispatch-statement,dispatch statements>>.
 
-== Type Alias
+== Type alias statement
 
 ****
 **SYNTAX**
@@ -983,7 +983,72 @@ An mcdoc is made of <<struct,structs>>, <<enum,enums>>, <<type-alias,type aliase
 
 ****
 
-TODO
+A type alias can be created to refer to another complicated type for better code readability and reusability.
+
+.Type aliases
+====
+[source,rust]
+----
+type Integer = (byte | short | int | long)
+type Float = (float | double)
+type Number = (Integer | Float)
+----
+====
+
+Sometimes we may want to create different type definitions that have roughly the same structure and only differ in some small aspects.
+Instead of duplicating codes, we can create a "template" type alias with **type parameters**.
+The right-hand side of the type alias statement can then <<reference-type,reference>> those type parameters,
+which will get replaced by actual types when the type alias is instantiated elsewhere.
+
+.Type aliases with type parameters
+====
+[source,rust]
+----
+type NumericRange<T> = ( <1>
+	T | <2>
+	[T, T] | <2>
+	struct { min: T, max: T }, <2>
+)
+
+type FloatRange = NumericRange<float> <3>
+type IntegerRange = NumericRange<integer> <3>
+type NaturalRange = NumericRange<integer @ 0..> <3>
+----
+<1> The type parameter `T` is declared in the angle brackets.
+<2> The type parameter `T` can now be referenced on the right-hand side.
+<3> When the `NumericRange` type alias is referenced elsewhere, an actual type must be suplied for the type parameter.
+====
+
+=== Binding type parameters
+
+All path references are resolved by the rules described in <<path>>, and type parameter references are no exceptions.
+When a type parameter is declared in a type alias statement, it is temporarily bound to the current module until the end of the statement.
+Therefore, just like other type definitions, type parameters should be unique at the module scope.
+
+.Duplicated type parameter identifiers
+====
+[source,rust]
+----
+// File '/example.mcdoc'
+
+struct T {}
+
+type List<T> = [T] <1>
+//        ^
+//        WARNING: Duplicated declaration for "::example::T"
+----
+<1> The declaration for `T` is warned and ignored, and the reference of `T` on the right-hand side actually refers to the struct `T` defined above.
+
+[source,rust]
+----
+type List<T> = [T]
+
+type Struct<T> = struct { value: T } <1>
+----
+<1> This is fine, as although `T` is also declared in the `List` type alias statement,
+the effect of that declaration only lives until the end of that statement.
+====
+
 
 == Use statement
 
