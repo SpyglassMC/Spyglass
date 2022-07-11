@@ -155,6 +155,11 @@ type VarietyType = InclusiveRange<int @ 1..64>
 //== type parameter/duplicated parameters
 type Test<T, T> = T
 
+//== type parameter/duplicates name in module scope
+struct T {}
+
+type Test<T> = T
+
 //== dispatcher/random number generator
 dispatch minecraft:rng[uniform,%none] to struct {
 	min?: int,
