@@ -11,7 +11,7 @@ try {
 	const isWatch = mode === 'watch'
 	console.info('Start building...')
 	const result = await esbuild.build({
-		entryPoints: ['./out/extension.js', '../language-server/lib/server.js'],
+		entryPoints: ['./out/extension.mjs', '../language-server/lib/server.js'],
 		entryNames: '[name]',
 		format: 'cjs', // https://github.com/microsoft/vscode/issues/130367
 		platform: 'node',

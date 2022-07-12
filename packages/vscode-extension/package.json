@@ -1,17 +1,17 @@
 {
   "name": "datapack-language-server",
   "version": "4.0.0",
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/extension.js",
   "author": "SPGoding",
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "./esbuild.js prod",
-    "build:dev": "./esbuild.js dev",
+    "build": "./esbuild.mjs prod",
+    "build:dev": "./esbuild.mjs dev",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
-    "watch": "./esbuild.js watch"
+    "watch": "./esbuild.mjs watch"
   },
   "devDependencies": {
     "@types/vscode": "1.67.0",
