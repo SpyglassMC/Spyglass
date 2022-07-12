@@ -624,6 +624,7 @@ export class Project implements ExternalEventEmitter {
 				node.binderErrors = ctx.err.dump()
 			})
 			this.#bindingInProgressUris.delete(doc.uri)
+			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
 			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
@@ -643,7 +644,6 @@ export class Project implements ExternalEventEmitter {
 				node.checkerErrors = ctx.err.dump()
 				this.lint(doc, node)
 			})
-			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
 			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
@@ -696,11 +696,13 @@ export class Project implements ExternalEventEmitter {
 		}
 	}
 
-	@SingletonPromise()
+	// @SingletonPromise()
 	async ensureBindingStarted(uri: string): Promise<void> {
 		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
 			return
 		}
+
+		this.#bindingInProgressUris.add(uri)
 
 		const doc = await this.read(uri)
 		if (!doc || !(await this.cacheService.hasFileChangedSinceCache(doc))) {
