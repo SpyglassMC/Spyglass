@@ -31,6 +31,16 @@ use super::used::Used as ReboundUsed
 struct Used {}
 struct ReboundUsed {}
 
+//== use statement/unknown module
+//=== /client.mcdoc
+use ::module::Foo
+
+//== use statement/unknown identifier
+//=== /module.mcdoc
+
+//=== /client.mcdoc
+use super::module::Foo
+
 //== hoisting
 struct Foo {
 	bar: Bar,

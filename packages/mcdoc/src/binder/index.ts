@@ -265,7 +265,7 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 					ctx.err.report(localize(
 						'mcdoc.binder.path.unknown-identifier',
 						localeQuote(atArray(identifiers, -1)!),
-						localeQuote(ctx.moduleIdentifier)
+						localeQuote(pathArrayToString(identifiers.slice(0, -1)))
 					), node)
 				}
 			})

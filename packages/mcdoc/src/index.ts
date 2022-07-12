@@ -1,7 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import * as binder from './binder/index.js'
 import * as colorizer from './colorizer/index.js'
-import type { ModuleNode } from './node/index.js'
 import * as parser from './parser/index.js'
 import * as uri_professors from './uri_processors.js'
 
