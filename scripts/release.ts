@@ -222,16 +222,18 @@ async function main(): Promise<void> {
 
 		console.log('Committing changes...')
 		const commitMessage = `🔖 v${rootVersion} [ci skip]`
-		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, {
+		const commitEnvVariables = {
 			GIT_AUTHOR_NAME: 'actions-user',
 			GIT_AUTHOR_EMAIL: 'action@github.com',
 			GIT_COMMITTER_NAME: 'actions-user',
 			GIT_COMMITTER_EMAIL: 'action@github.com',
-		})
+		} as const
+		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)
 	} else {
