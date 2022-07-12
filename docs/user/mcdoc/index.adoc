@@ -648,7 +648,7 @@ Therefore, `byte[]` and `[byte]` means essentially the same thing for JSON valid
 A tuple type indicates the data must be a collection of certain other types arranged in a specified order.
 
 To distinguish a tuple type containing only one element from a list type, a trailing comma (`,`) needs to be added after the type.
-Alternatively, you can also use a list type with size `1` to represent a tuple with one element (e.g. `[byte] # 1`).
+Alternatively, you can also use a list type with size `1` to represent a tuple with one element (e.g. `[byte] @ 1`).
 
 .Tuple types
 ====
@@ -946,12 +946,6 @@ struct Item {
 
 TODO
 
-=== Assignability
-
-The assignability of types are detailed by <<p-isAssignable>>.
-
-In short, types in mcdoc can be think of as sets. `any` is the largest set that contains all other types, and an empty union (`()`) is the empty set.
-
 == File Structure
 
 ****
@@ -1048,7 +1042,6 @@ type Struct<T> = struct { value: T } <1>
 <1> This is fine, as although `T` is also declared in the `List` type alias statement,
 the effect of that declaration only lives until the end of that statement.
 ====
-
 
 == Use statement
 
@@ -1172,119 +1165,202 @@ struct Foo {
 ----
 ====
 
-== Procedures
+== Type instantiation
 
-NOTE: Under this section, <<procedures,`PascalCase`>> represents a type in the procedure, <<procedures,`camelCase`>> represents a procedure, and `_italic_` represents a variable.
+<<type>> instantiation is the process of converting a user-defined type into a type that is easy for data validators to consume.
+A user-defined type can be categorized as follows for instantiation purposes:
 
-NOTE: THIS SECTION IS A WORK IN PROGRESS.
+Indexed type:: An <<indexing-on-a-type,indexed type>>.
 
-[[p-Boolean,`Boolean`]]
-=== <<p-Boolean>>
-A boolean value. Either `false` or `true`.
+Self-contained type:: A type where all information needed for data validators to function are contained inside the type itself.
+Includes <<any-type>>, <<boolean-type>>, <<string-type>>, <<literal-boolean-type>>, <<literal-string-type>>, <<literal-number-type>>, <<numeric-type>>, <<primitive-array-type>>, and <<enum>>.
 
-[[p-String,`String`]]
-=== <<p-String>>
-A string value.
+Container type:: A type that provides some information on its own, but needs information from its children for the validation to be complete.
+Includes <<list-type>>, <<tuple-type>>, and <<struct>>.
 
-[[p-None,`None`]]
-=== <<p-None>>
-An abstract representation of an empty value (`null` / `undefined` / `None` / `nil` / `Nothing`, etc.).
+Reference type:: A <<reference-type>>.
 
-[[p-Option,`Option`]]
-=== <<p-Option>><``T``>
-An abstract representation of empty value handling.
-Implementations are free to choose their way of handling empty values.
+Dispatcher type:: A <<dispatcher-type>>.
 
-For the purpose of this specification, an <<p-Option>><``T``> is either <<p-None>> or an instance of `T`.
-All operations done on an <<p-Option>><``T``> is assumed to be done only when it is an instance of `T`.
-Its value is kept as <<p-None>> if it's already a <<p-None>>.
+Union type:: A <<union-type>>.
 
-=== <<t-ident>>
-* [[p-ident-asString,`asString`]] <<t-ident>>.<<p-ident-asString>>(): <<p-String>>. Returns the string value of the identifier token.
+Different procedures are used to instantiate each category of user-defined types.
 
-=== <<t-string>>
-* [[p-string-asString,`asString`]] <<t-string>>.<<p-string-asString>>(): <<p-String>>. Returns the string value of the string token.
+=== Instantiate indexed type
 
-=== <<t-res-loc>>
-* [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<p-String>>. Returns the full string representation of the resource location. The namespace part should always be kept.
-* [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<p-String>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
+First instantiate the part without the indices, then resolve the index on the instantiated type.
+Repeat until all indices are resolved.
 
-[[p-ResolvedType,`ResolvedType`]]
-=== <<p-ResolvedType>>
-A resolved type is a <<s-type>>~pass:n[nochild: <<t-path>> | <<t-dispatcher-type>>]~ .
+=== Instantiate self-contained type
 
-[[p-DereferencedType,`DereferencedType`]]
-=== <<p-DereferencedType>>
-A dereferenced type is a <<s-type>>~pass:n[nochild: <<t-path>>]~ .
+Self-contained types do not need to be instantiated.
 
-[[p-RuntimeValue,`RuntimeValue`]]
-=== <<p-RuntimeValue>>
-A runtime value is an abstract representation of a data in memory that can be checked against by mcdoc.
-It could be a deserialized JSON data or a deserialized NBT data, for example.
+=== Instantiate container type
 
-It should support the following basic operations, but it is up to implementations to determine how those operations should work exactly for a specific type of a runtime value:
+Container types do not need to be instantiated.
+Their children are instantiated when needed lazily.
 
-* [[p-RuntimeValue-asString,`asString`]] <<p-RuntimeValue>>.<<p-RuntimeValue-asString>>(): <<p-Option>><<<p-String>>>. Returns the string value (not the string representation) of this runtime value if applicable. Otherwise returns <<p-None>>.
-* [[p-RuntimeValue-getKeyOnParent,`getKeyOnParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getKeyOnParent>>(): <<p-Option>><<<p-RuntimeValue>>>. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns <<p-None>>.
-* [[p-RuntimeValue-getParent,`getParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getParent>>(): <<p-Option>><<<p-RuntimeValue>>>. Returns the value's parent value if applicable. Otherwise returns <<p-None>>.
-* [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<p-String>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
+=== Instantiate reference type
 
-[[p-resolve,`resolve`]]
-=== <<p-resolve>> (`_type_`: <<s-type>>): <<p-ResolvedType>>
+Dereference the path.
 
-. Pattern match `_type_`:
-.. <<t-path>> -> TODO
-.. <<s-dispatcher-type>> -> TODO
-.. <<s-union-type>> ->
-... Let `_ans_`: <<s-union-type>> be `()`.
-... For each `_element_`: <<s-type>> of `_type_`,
-.... Add <<p-resolve>>(`_element_`) to `_ans_`.
-... Return `_ans_`.
-.. +*+ -> return `_type_`.
+If there are type parameters, replace all occurrences of them in the template type with the provided actual types.
+The resulted type is then instantiated again following the instantiation rules.
 
-[[p-dereference,`dereference`]]
-=== <<p-dereference>> (`_type_`: <<s-type>>): <<p-DereferencedType>>
-This procedure dereferences a <<s-type>>.
+=== Instantiate dispatcher type
 
-. If `_type_` consists of a <<t-path>>, then
-.. Destruct `_attributes_`: <<s-attributes>>, `_path_`: <<t-path>>, and `_indices_`: <<s-index>>{star} from `_type_`.
-.. Let `_type_`: <<s-type>> be the type pointed to by `_path_` or an empty union if `_path_` points to undefined, attributed by `_attributes_` and indexed by `_indices_`.
-.. Returns <<p-dereference>>(`_type_`) recursively.
-. Returns `_type_`.
+Dispatch the type. The resulted type is then instantiated again following the instantiation rules.
 
-[[p-resolveIndex,`resolveIndex`]]
-=== <<p-resolveIndex>> (`_type_`: <<s-type>>, `_value_`: <<p-RuntimeValue>>): <<p-DereferencedType>>
-. Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
-. Destruct `_attributes_`: <<s-attributes>>, `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~, and `_indices_`: <<s-index>>{star} from `_type_`.
-. If `_indices_` is empty, returns `_type_`.
-. For each `_index_`: <<s-index>> of `_indices_`,
-.. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<t-static-index-key>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
-.. Pattern match `_unattributedType_`, and stores the result to `_resultType_`: <<s-type>>:
-... <<t-res-loc>> -> TODO
-... <<s-struct>> -> The type of the field corresponding to key `_index_` on struct `_type_` or an empty union if the field doesn't exist, attributed by `_attributes_`.
-... <<s-union-type>> ->
-.... For each `_element_`: <<s-type>> of `_type_`,
-..... TODO.
-... +*+ -> An empty union.
-.. Let `_resultType_`: <<p-DereferencedType>> be <<p-dereference>>(`_resultType_`).
-.. Let `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~ be `_resultType_` attributed by `_attributes_`. // FIXME: Attributes merging
-.. Let `_value_` be the runtime value corresponding to the key `_index_` under `_value_` or `undefined` if no such value exists.
-. Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
-. Return `_type_`.
+=== Union type
 
-[[p-resolveDynamicIndex,`resolveDynamicIndex`]]
-=== <<p-resolveDynamicIndex>> (`_index_`: <<s-dynamic-index>>, `_value_`: <<p-RuntimeValue>>): <<p-Option>><<<p-String>>>
-. Destruct `_accessor_`: <<t-accessor>> from `_index_`.
-. Destruct `_keys_`: <<t-accessor-key>>{plus} from `_accessor_`.
-. Let `_v_`: <<p-Option>><<<p-RuntimeValue>>> be `_value_`.
-. For each `_key_`: <<t-accessor-key>> of `_keys_`,
-.. If `_v_` is <<p-None>>, break.
-.. Pattern match `_key_` for
-... `super` -> set `_v_` to `_v_`.<<p-RuntimeValue-getParent>>().
-... `key` -> set `_v_` to `_v_`.<<p-RuntimeValue-getKeyOnParent>>().
-... <<t-ident>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-ident-asString>>()).
-... <<t-string>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-string-asString>>()).
-. Return `_v_`.<<p-RuntimeValue-asString>>().
+Each member type of the union is individually instantiated.
+
+=== Aftermath of instantiation
+
+After a type is instantiated following the above rules, it should be <<type-simplification,simplified>> before being returned.
+
+== Type simplification
+
+TODO
+
+To simplify a union type, any members that can be assigned to another member will be removed from the union.
+
+=== Shadowed types
+
+TODO
+
+Although simplifying `(string | "foo" | "bar")` into `string` is sound,
+we lose some more specific information about the original type that could be used by processors like auto completers.
+Therefore, for certain special cases, types that are trimmed during simplification may be accessible under the `shadowedTypes` property of the simplified type.
+
+== Type assignability
+
+Types in mcdoc can be think of as sets. Type A is assignable to type B if and only if A is a subset of B.
+`any` is the universal set that contains all other types, and an empty union (`()`) is the empty set.
+`unsafe` (well, `any` is TypeScript's `unknown` and `unsafe` is TypeScript's `any`. A config rule will also be added to make `any` equivalent to `unsafe` that's enabled by default so most users don't have to deal with a tediously sound validation mechanism, as vanilla-mcdoc will probably use `any` instead of `unsafe` for marker's `data`, which would make it illegal to assign it anywhere else that's not an `any` or `unsafe` under a sound type system. I will update the docs and code later to add the `unsafe` type) is a monster that's both `any` and `()`.
+
+TODO
+
+TODO: Data validator hooks can contribute additional type assignability rules. e.g.
+
+* For JSON: `byte = short = int = long = float = double`
+* For NBT: `boolean = (byte @ 0..1) ⊂ byte`
+
+ajsdhflkajgslkthisissoharddkhdgklsjhiuyra
+
+// == Procedures
+
+// NOTE: Under this section, <<procedures,`PascalCase`>> represents a type in the procedure, <<procedures,`camelCase`>> represents a procedure, and `_italic_` represents a variable.
+
+// NOTE: THIS SECTION IS A WORK IN PROGRESS.
+
+// [[p-Boolean,`Boolean`]]
+// === <<p-Boolean>>
+// A boolean value. Either `false` or `true`.
+
+// [[p-String,`String`]]
+// === <<p-String>>
+// A string value.
+
+// [[p-None,`None`]]
+// === <<p-None>>
+// An abstract representation of an empty value (`null` / `undefined` / `None` / `nil` / `Nothing`, etc.).
+
+// [[p-Option,`Option`]]
+// === <<p-Option>><``T``>
+// An abstract representation of empty value handling.
+// Implementations are free to choose their way of handling empty values.
+
+// For the purpose of this specification, an <<p-Option>><``T``> is either <<p-None>> or an instance of `T`.
+// All operations done on an <<p-Option>><``T``> is assumed to be done only when it is an instance of `T`.
+// Its value is kept as <<p-None>> if it's already a <<p-None>>.
+
+// === <<t-ident>>
+// * [[p-ident-asString,`asString`]] <<t-ident>>.<<p-ident-asString>>(): <<p-String>>. Returns the string value of the identifier token.
+
+// === <<t-string>>
+// * [[p-string-asString,`asString`]] <<t-string>>.<<p-string-asString>>(): <<p-String>>. Returns the string value of the string token.
+
+// === <<t-res-loc>>
+// * [[p-res-loc-asFullString,`asFullString`]] <<t-res-loc>>.<<p-res-loc-asFullString>>(): <<p-String>>. Returns the full string representation of the resource location. The namespace part should always be kept.
+// * [[p-res-loc-asShortString,`asShortString`]] <<t-res-loc>>.<<p-res-loc-asShortString>>(): <<p-String>>. Returns the short string representation of the resource location. The namespace part should be omitted if it's the default namespace (`minecraft:`).
+
+// [[p-ResolvedType,`ResolvedType`]]
+// === <<p-ResolvedType>>
+// A resolved type is a <<s-type>>~pass:n[nochild: <<t-path>> | <<s-dispatcher-type>>]~ .
+
+// [[p-DereferencedType,`DereferencedType`]]
+// === <<p-DereferencedType>>
+// A dereferenced type is a <<s-type>>~pass:n[nochild: <<t-path>>]~ .
+
+// [[p-RuntimeValue,`RuntimeValue`]]
+// === <<p-RuntimeValue>>
+// A runtime value is an abstract representation of a data in memory that can be checked against by mcdoc.
+// It could be a deserialized JSON data or a deserialized NBT data, for example.
+
+// It should support the following basic operations, but it is up to implementations to determine how those operations should work exactly for a specific type of a runtime value:
+
+// * [[p-RuntimeValue-asString,`asString`]] <<p-RuntimeValue>>.<<p-RuntimeValue-asString>>(): <<p-Option>><<<p-String>>>. Returns the string value (not the string representation) of this runtime value if applicable. Otherwise returns <<p-None>>.
+// * [[p-RuntimeValue-getKeyOnParent,`getKeyOnParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getKeyOnParent>>(): <<p-Option>><<<p-RuntimeValue>>>. If this value is a child of a parent value, returns its key on the parent if applicable. Otherwise returns <<p-None>>.
+// * [[p-RuntimeValue-getParent,`getParent`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getParent>>(): <<p-Option>><<<p-RuntimeValue>>>. Returns the value's parent value if applicable. Otherwise returns <<p-None>>.
+// * [[p-RuntimeValue-getValue,`getValue`]] <<p-RuntimeValue>>.<<p-RuntimeValue-getValue>>(`_key_`: <<p-String>>): <<p-Option>><<<p-RuntimeValue>>>. Returns the value corresponding to `_key_` under this value if applicable. Otherwise returns <<p-None>>.
+
+// [[p-resolve,`resolve`]]
+// === <<p-resolve>> (`_type_`: <<s-type>>): <<p-ResolvedType>>
+
+// . Pattern match `_type_`:
+// .. <<t-path>> -> TODO
+// .. <<s-dispatcher-type>> -> TODO
+// .. <<s-union-type>> ->
+// ... Let `_ans_`: <<s-union-type>> be `()`.
+// ... For each `_element_`: <<s-type>> of `_type_`,
+// .... Add <<p-resolve>>(`_element_`) to `_ans_`.
+// ... Return `_ans_`.
+// .. +*+ -> return `_type_`.
+
+// [[p-dereference,`dereference`]]
+// === <<p-dereference>> (`_type_`: <<s-type>>): <<p-DereferencedType>>
+// This procedure dereferences a <<s-type>>.
+
+// . If `_type_` consists of a <<t-path>>, then
+// .. Destruct `_attributes_`: <<s-attributes>>, `_path_`: <<t-path>>, and `_indices_`: <<s-index>>{star} from `_type_`.
+// .. Let `_type_`: <<s-type>> be the type pointed to by `_path_` or an empty union if `_path_` points to undefined, attributed by `_attributes_` and indexed by `_indices_`.
+// .. Returns <<p-dereference>>(`_type_`) recursively.
+// . Returns `_type_`.
+
+// [[p-resolveIndex,`resolveIndex`]]
+// === <<p-resolveIndex>> (`_type_`: <<s-type>>, `_value_`: <<p-RuntimeValue>>): <<p-DereferencedType>>
+// . Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
+// . Destruct `_attributes_`: <<s-attributes>>, `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~, and `_indices_`: <<s-index>>{star} from `_type_`.
+// . If `_indices_` is empty, returns `_type_`.
+// . For each `_index_`: <<s-index>> of `_indices_`,
+// .. If `_index_` is <<s-dynamic-index>>, let `_index_`: <<t-static-index-key>> be <<p-resolveDynamicIndex>>(`_index_`, `_value_`).
+// .. Pattern match `_unattributedType_`, and stores the result to `_resultType_`: <<s-type>>:
+// ... <<t-res-loc>> -> TODO
+// ... <<s-struct>> -> The type of the field corresponding to key `_index_` on struct `_type_` or an empty union if the field doesn't exist, attributed by `_attributes_`.
+// ... <<s-union-type>> ->
+// .... For each `_element_`: <<s-type>> of `_type_`,
+// ..... TODO.
+// ... +*+ -> An empty union.
+// .. Let `_resultType_`: <<p-DereferencedType>> be <<p-dereference>>(`_resultType_`).
+// .. Let `_unattributedType_`: <<s-unattributed-type>>~pass:n[except: <<t-path>>]~ be `_resultType_` attributed by `_attributes_`. // FIXME: Attributes merging
+// .. Let `_value_` be the runtime value corresponding to the key `_index_` under `_value_` or `undefined` if no such value exists.
+// . Let `_type_`: <<p-DereferencedType>> be <<p-dereference>>(`_type_`).
+// . Return `_type_`.
+
+// [[p-resolveDynamicIndex,`resolveDynamicIndex`]]
+// === <<p-resolveDynamicIndex>> (`_index_`: <<s-dynamic-index>>, `_value_`: <<p-RuntimeValue>>): <<p-Option>><<<p-String>>>
+// . Destruct `_accessor_`: <<t-accessor>> from `_index_`.
+// . Destruct `_keys_`: <<t-accessor-key>>{plus} from `_accessor_`.
+// . Let `_v_`: <<p-Option>><<<p-RuntimeValue>>> be `_value_`.
+// . For each `_key_`: <<t-accessor-key>> of `_keys_`,
+// .. If `_v_` is <<p-None>>, break.
+// .. Pattern match `_key_` for
+// ... `super` -> set `_v_` to `_v_`.<<p-RuntimeValue-getParent>>().
+// ... `key` -> set `_v_` to `_v_`.<<p-RuntimeValue-getKeyOnParent>>().
+// ... <<t-ident>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-ident-asString>>()).
+// ... <<t-string>> -> set `_v_` to `_v_`.<<p-RuntimeValue-getValue>>(`_key_`.<<p-string-asString>>()).
+// . Return `_v_`.<<p-RuntimeValue-asString>>().
 
 == Branding
 
