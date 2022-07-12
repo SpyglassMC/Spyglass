@@ -2,7 +2,7 @@
   "name": "datapack-language-server",
   "version": "4.0.0",
   "type": "module",
-  "main": "dist/extension.cjs",
+  "main": "dist/extension.js",
   "author": "SPGoding",
   "publisher": "SPGoding",
   "license": "MIT",

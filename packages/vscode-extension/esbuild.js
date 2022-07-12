@@ -14,9 +14,6 @@ try {
 		entryPoints: ['./out/extension.js', '../language-server/lib/server.js'],
 		entryNames: '[name]',
 		format: 'cjs', // https://github.com/microsoft/vscode/issues/130367
-		outExtension: {
-			'.js': '.cjs',
-		},
 		platform: 'node',
 		target: 'node16.13',
 		bundle: true,
