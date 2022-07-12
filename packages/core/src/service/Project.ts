@@ -279,9 +279,9 @@ export class Project implements ExternalEventEmitter {
 
 		this
 			.on('documentUpdated', ({ doc, node }) => {
-				if (!this.#isReady) {
-					return
-				}
+				// if (!this.#isReady) {
+				// 	return
+				// }
 				this.emit('documentErrorred', {
 					doc,
 					errors: FileNode.getErrors(node),
