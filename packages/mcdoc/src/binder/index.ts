@@ -176,7 +176,7 @@ async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBind
 		}
 		ctx.symbols
 			.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
-			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, key, { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key.related' }))
+			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, key, { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key' }))
 			.elseEnter({
 				data: {
 					data: {
@@ -395,7 +395,7 @@ export function registerMcdocBinders(meta: MetaRegistry) {
 	meta.registerBinder<ModuleNode>('mcdoc:module', fileModule)
 }
 
-function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, range: RangeLike, options: { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key.related' | 'mcdoc.binder.duplicated-declaration' } = { localeString: 'mcdoc.binder.duplicated-declaration' }) {
+function reportDuplicatedDeclaration(ctx: McdocBinderContext, symbol: Symbol, range: RangeLike, options: { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key' | 'mcdoc.binder.duplicated-declaration' } = { localeString: 'mcdoc.binder.duplicated-declaration' }) {
 	ctx.err.report(
 		localize(options.localeString, localeQuote(symbol.identifier)),
 		range, ErrorSeverity.Warning,
