@@ -152,7 +152,7 @@ exports['mcdoc __fixture__ use statement/unknown module 1'] = {
             "end": 17
           },
           "message": "Module “::module” does not exist",
-          "severity": 3
+          "severity": 2
         }
       ]
     }

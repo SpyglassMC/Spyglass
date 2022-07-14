@@ -248,7 +248,10 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 			const referencedModuleFile = pathArrayToString(identifiers)
 			const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
 			if (!referencedModuleUri) {
-				ctx.err.report(localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)), node)
+				ctx.err.report(
+					localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)),
+					node, ErrorSeverity.Warning
+				)
 				return
 			}
 
@@ -266,7 +269,7 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 						'mcdoc.binder.path.unknown-identifier',
 						localeQuote(atArray(identifiers, -1)!),
 						localeQuote(pathArrayToString(identifiers.slice(0, -1)))
-					), node)
+					), node, ErrorSeverity.Warning)
 				}
 			})
 	}

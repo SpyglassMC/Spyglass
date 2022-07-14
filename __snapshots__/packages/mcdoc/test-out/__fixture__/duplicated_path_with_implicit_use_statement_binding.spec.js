@@ -370,7 +370,7 @@ exports['mcdoc __fixture__ duplicated path with implicit use statement binding 1
             "end": 21
           },
           "message": "Module “::used” does not exist",
-          "severity": 3
+          "severity": 2
         }
       ]
     }

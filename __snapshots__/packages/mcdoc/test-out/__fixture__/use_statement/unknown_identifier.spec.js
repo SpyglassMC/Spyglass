@@ -246,7 +246,7 @@ exports['mcdoc __fixture__ use statement/unknown identifier 1'] = {
             "end": 22
           },
           "message": "Identifier “Foo” does not exist in module “::module”",
-          "severity": 3
+          "severity": 2
         }
       ]
     }
