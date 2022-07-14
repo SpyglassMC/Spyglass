@@ -102,6 +102,14 @@ export class ReadonlySource {
 		return this.peekUntil(CR, LF)
 	}
 
+	peekRemaining(): string {
+		return this.string.slice(this.innerCursor)
+	}
+
+	matchPattern(regex: RegExp): boolean {
+		return regex.test(this.peekRemaining())
+	}
+
 	hasNonSpaceAheadInLine(): boolean {
 		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
 			const c = this.string.charAt(cursor)
