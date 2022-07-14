@@ -48,7 +48,7 @@ interface CacheFile {
 	version: number,
 }
 
-export interface CacheLoadResult {
+interface LoadResult {
 	symbols: SymbolTable,
 }
 
@@ -119,9 +119,9 @@ export class CacheService {
 		return this.#cacheFilePath ??= new Uri(`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`, this.cacheRoot).toString()
 	}
 
-	async load(): Promise<CacheLoadResult> {
+	async load(): Promise<LoadResult> {
 		const __profiler = this.project.profilers.get('cache#load')
-		const ans: CacheLoadResult = { symbols: {} }
+		const ans: LoadResult = { symbols: {} }
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
@@ -234,7 +234,7 @@ export class CacheService {
 		return this.checksums.files[doc.uri] !== await this.project.externals.crypto.getSha1(doc.getText())
 	}
 
-	reset(): CacheLoadResult {
+	reset(): LoadResult {
 		this.#hasValidatedFiles = false
 		this.checksums = Checksums.create()
 		this.errors = {}

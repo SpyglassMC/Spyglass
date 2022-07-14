@@ -463,8 +463,6 @@ export class Project implements ExternalEventEmitter {
 
 			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
 			for (const uri of removedFiles) {
-				// this.symbols.clear({ uri })
-				// this.emit('documentErrored', { errors: [], uri })
 				this.emit('fileDeleted', { uri })
 			}
 			__profiler.task('Validate Cache')
