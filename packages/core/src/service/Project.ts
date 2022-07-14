@@ -392,6 +392,7 @@ export class Project implements ExternalEventEmitter {
 			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
 		const listProjectFiles = () => new Promise<void>(resolve => {
+			this.#watchedFiles.clear()
 			this.#watcherReady = false
 			this.#watcher = this.externals.fs
 				.watch(this.projectRoot)
@@ -475,6 +476,7 @@ export class Project implements ExternalEventEmitter {
 			__profiler.finalize()
 			this.emit('ready', {})
 		}
+		this.#isReady = false
 		this.#readyPromise = ready()
 	}
 
@@ -506,6 +508,8 @@ export class Project implements ExternalEventEmitter {
 	async restart(): Promise<void> {
 		try {
 			await this.#watcher.close()
+			this.#bindingInProgressUris.clear()
+			this.#symbolUpToDateUris.clear()
 			this.setReadyPromise()
 			await this.ready()
 		} catch (e) {
@@ -514,7 +518,10 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	resetCache(): void {
-		return this.cacheService.reset()
+		this.logger.info('[Project#resetCache] Initiated...')
+		const { symbols } = this.cacheService.reset()
+		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+		this.symbols.buildCache()
 	}
 
 	normalizeUri(uri: string): string {

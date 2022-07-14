@@ -30,6 +30,11 @@ interface LinterRegistration {
 
 interface SymbolRegistrarRegistration {
 	registrar: SymbolRegistrar,
+	/**
+	 * A checksum associated with this symbol registrar.
+	 * If the cached checksum is equal to this provided checksum,
+	 * the symbol registrar is not executed.
+	 */
 	checksum: string | undefined,
 }
 

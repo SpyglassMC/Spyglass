@@ -224,7 +224,9 @@ export class CacheService {
 		return this.checksums.files[doc.uri] !== await this.project.externals.crypto.getSha1(doc.getText())
 	}
 
-	reset(): void {
+	reset(): LoadResult {
+		this.#hasValidatedFiles = false
 		this.checksums = Checksums.create()
+		return { symbols: {} }
 	}
 }
