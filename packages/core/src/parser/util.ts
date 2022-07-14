@@ -252,7 +252,7 @@ type GettableParser = Parser<Returnable> | { get: () => Parser<Returnable> }
 type ExtractFromGettableParser<T extends GettableParser> = T extends { get: () => infer V }
 	? V
 	: T extends Parser<Returnable> ? T : never
-type Case = { predicate?: (this: void, src: ReadonlySource) => boolean, prefix?: string, parser: GettableParser }
+type Case = { predicate?: (this: void, src: ReadonlySource) => boolean, prefix?: string, regex?: RegExp, parser: GettableParser }
 
 /**
  * @template CA Case array.
@@ -262,8 +262,8 @@ export function select<CA extends readonly Case[]>(cases: CA): ExtractFromGettab
 	: Parser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
 export function select(cases: readonly Case[]): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
-		for (const { predicate, prefix, parser } of cases) {
-			if (predicate?.(src) ?? (prefix !== undefined ? src.tryPeek(prefix) : undefined) ?? true) {
+		for (const { predicate, prefix, parser, regex } of cases) {
+			if (predicate?.(src) ?? (prefix !== undefined ? src.tryPeek(prefix) : undefined) ?? (regex && src.matchPattern(regex)) ?? true) {
 				const callableParser = typeof parser === 'object' ? parser.get() : parser
 				return callableParser(src, ctx)
 			}
