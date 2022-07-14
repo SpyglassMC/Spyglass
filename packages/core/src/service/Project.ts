@@ -6,8 +6,8 @@ import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
 import { traversePreOrder } from '../processor/index.js'
-import type { LanguageError } from '../source/index.js'
-import { Source } from '../source/index.js'
+import type { PosRangeLanguageError } from '../source/index.js'
+import { LanguageError, Source } from '../source/index.js'
 import { SymbolUtil } from '../symbol/index.js'
 import { CacheService } from './CacheService.js'
 import type { Config } from './Config.js'
@@ -52,8 +52,10 @@ export interface DocAndNode {
 }
 
 interface DocumentEvent extends DocAndNode { }
-interface DocumentErrorEvent extends DocumentEvent {
-	errors: LanguageError[],
+interface DocumentErrorEvent {
+	errors: readonly PosRangeLanguageError[],
+	uri: string,
+	version?: number,
 }
 interface FileEvent {
 	uri: string,
@@ -283,10 +285,13 @@ export class Project implements ExternalEventEmitter {
 				// 	return
 				// }
 				this.emit('documentErrorred', {
-					doc,
-					errors: FileNode.getErrors(node),
-					node,
+					errors: FileNode.getErrors(node).map(e => LanguageError.withPosRange(e, doc)),
+					uri: doc.uri,
+					version: doc.version,
 				})
+			})
+			.on('documentRemoved', ({ uri }) => {
+				this.emit('documentErrorred', { errors: [], uri })
 			})
 			.on('fileCreated', async ({ uri }) => {
 				if (uri.endsWith(Project.RootSuffix)) {
@@ -451,9 +456,16 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Register Symbols')
 
+			for (const [uri, values] of Object.entries(this.cacheService.errors)) {
+				this.emit('documentErrorred', { errors: values, uri })
+			}
+			__profiler.task('Pop Errors')
+
 			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
 			for (const uri of removedFiles) {
-				this.symbols.clear({ uri })
+				// this.symbols.clear({ uri })
+				// this.emit('documentErrorred', { errors: [], uri })
+				this.emit('fileDeleted', { uri })
 			}
 			__profiler.task('Validate Cache')
 
@@ -517,11 +529,20 @@ export class Project implements ExternalEventEmitter {
 		}
 	}
 
-	resetCache(): void {
+	resetCache(): Promise<void> {
 		this.logger.info('[Project#resetCache] Initiated...')
+
+		// Clear existing errors.
+		for (const uri of Object.keys(this.cacheService.errors)) {
+			this.emit('documentErrorred', { errors: [], uri })
+		}
+
+		// Reset cache.
 		const { symbols } = this.cacheService.reset()
 		this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
 		this.symbols.buildCache()
+
+		return this.restart()
 	}
 
 	normalizeUri(uri: string): string {

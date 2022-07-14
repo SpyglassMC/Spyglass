@@ -34,8 +34,8 @@ export function colorPresentationArray(presentation: core.ColorPresentation[], d
 	return presentation.map(p => colorPresentation(p, doc))
 }
 
-export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Diagnostic {
-	const ans = ls.Diagnostic.create(range(error.range, doc), error.message, diagnosticSeverity(error.severity), undefined, 'spyglassmc')
+export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
+	const ans = ls.Diagnostic.create(error.posRange, error.message, diagnosticSeverity(error.severity), undefined, 'spyglassmc')
 	if (error.info?.deprecated) {
 		(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
 	}
@@ -56,8 +56,8 @@ export function diagnostic(error: core.LanguageError, doc: TextDocument): ls.Dia
 	return ans
 }
 
-export function diagnostics(errors: readonly core.LanguageError[], doc: TextDocument): ls.Diagnostic[] {
-	return errors.map(e => diagnostic(e, doc))
+export function diagnostics(errors: readonly core.PosRangeLanguageError[]): ls.Diagnostic[] {
+	return errors.map(e => diagnostic(e))
 }
 
 export function diagnosticSeverity(severity: core.ErrorSeverity): ls.DiagnosticSeverity {

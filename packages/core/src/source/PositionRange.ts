@@ -35,11 +35,11 @@ export namespace PositionRange {
 	/**
 	 * @returns A `PositionRange` converted from a `RangeLike`.
 	 */
-	export function from(range: RangeLike, doc: TextDocument) {
-		const _range = Range.get(range)
+	export function from(rangeLike: RangeLike, doc: TextDocument) {
+		const range = Range.get(rangeLike)
 		const ans: PositionRange = {
-			start: doc.positionAt(_range.start),
-			end: doc.positionAt(_range.end),
+			start: doc.positionAt(range.start),
+			end: doc.positionAt(range.end),
 		}
 		return ans
 	}

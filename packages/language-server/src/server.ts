@@ -85,15 +85,12 @@ connection.onInitialize(async params => {
 			},
 		})
 		service.project
-			.on('documentErrorred', ({ doc, errors }) => {
+			.on('documentErrorred', ({ errors, uri, version }) => {
 				connection.sendDiagnostics({
-					diagnostics: toLS.diagnostics(errors, doc),
-					uri: doc.uri,
-					version: doc.version,
+					diagnostics: toLS.diagnostics(errors),
+					uri: uri,
+					version: version,
 				})
-			})
-			.on('documentRemoved', ({ uri }) => {
-				connection.sendDiagnostics({ uri, diagnostics: [] })
 			})
 			.on('ready', () => {
 				progressReporter?.done()
@@ -310,8 +307,7 @@ connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, ra
 })
 
 connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
-	service.project.resetCache()
-	return service.project.restart()
+	return service.project.resetCache()
 })
 
 connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {

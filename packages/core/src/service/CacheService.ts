@@ -1,5 +1,6 @@
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import { Uri } from '../common/index.js'
+import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
 import type { RootUriString } from './fileUtil.js'
@@ -10,7 +11,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 1
+export const LatestCacheVersion = 2
 
 /**
  * Checksums of cached files or roots.
@@ -30,21 +31,24 @@ namespace Checksums {
 	}
 }
 
+type ErrorCache = Record<string, readonly PosRangeLanguageError[]>
+
 /**
  * Format of cache JSON files.
  */
 interface CacheFile {
 	checksums: Checksums,
+	errors: ErrorCache,
 	projectRoot: string,
 	symbols: UnlinkedSymbolTable,
 	/**
 	 * Format version of the cache. The cache should be invalidated if this number
 	 * doesn't match {@link LatestCacheVersion}.
 	 */
-	version: number
+	version: number,
 }
 
-interface LoadResult {
+export interface CacheLoadResult {
 	symbols: SymbolTable,
 }
 
@@ -57,6 +61,7 @@ interface ValidateResult {
 
 export class CacheService {
 	checksums = Checksums.create()
+	errors: ErrorCache = {}
 	#hasValidatedFiles = false
 
 	/**
@@ -99,6 +104,9 @@ export class CacheService {
 				this.checksums.symbolRegistrars[id] = checksum
 			}
 		})
+		this.project.on('documentErrorred', ({ uri, errors }) => {
+			this.errors[uri] = errors
+		})
 	}
 
 	#cacheFilePath: string | undefined
@@ -111,9 +119,9 @@ export class CacheService {
 		return this.#cacheFilePath ??= new Uri(`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`, this.cacheRoot).toString()
 	}
 
-	async load(): Promise<LoadResult> {
+	async load(): Promise<CacheLoadResult> {
 		const __profiler = this.project.profilers.get('cache#load')
-		const ans: LoadResult = { symbols: {} }
+		const ans: CacheLoadResult = { symbols: {} }
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
@@ -122,6 +130,7 @@ export class CacheService {
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.checksums = cache.checksums
+				this.errors = cache.errors
 				ans.symbols = SymbolTable.link(cache.symbols)
 				__profiler.task('Link Symbols')
 			} else {
@@ -203,10 +212,11 @@ export class CacheService {
 		try {
 			filePath = await this.getCacheFileUri()
 			const cache: CacheFile = {
-				checksums: this.checksums,
-				projectRoot: this.project.projectRoot,
-				symbols: SymbolTable.unlink(this.project.symbols.global),
 				version: LatestCacheVersion,
+				projectRoot: this.project.projectRoot,
+				checksums: this.checksums,
+				symbols: SymbolTable.unlink(this.project.symbols.global),
+				errors: this.errors,
 			}
 			__profiler.task('Unlink Symbols')
 
@@ -224,9 +234,10 @@ export class CacheService {
 		return this.checksums.files[doc.uri] !== await this.project.externals.crypto.getSha1(doc.getText())
 	}
 
-	reset(): LoadResult {
+	reset(): CacheLoadResult {
 		this.#hasValidatedFiles = false
 		this.checksums = Checksums.create()
+		this.errors = {}
 		return { symbols: {} }
 	}
 }
