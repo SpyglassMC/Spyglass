@@ -190,7 +190,7 @@ export class Project implements ExternalEventEmitter {
 		this.emit('rootsUpdated', { roots: this.#roots })
 	}
 
-	on(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
+	on(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
 	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
 	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
 	// the document anymore.
@@ -204,7 +204,7 @@ export class Project implements ExternalEventEmitter {
 		return this
 	}
 
-	once(event: 'documentErrorred', callbackFn: (data: DocumentErrorEvent) => void): this
+	once(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
 	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
 	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
 	once(event: `file${'Created' | 'Modified' | 'Deleted'}`, callbackFn: (data: FileEvent) => void): this
@@ -216,7 +216,7 @@ export class Project implements ExternalEventEmitter {
 		return this
 	}
 
-	emit(event: 'documentErrorred', data: DocumentErrorEvent): boolean
+	emit(event: 'documentErrored', data: DocumentErrorEvent): boolean
 	emit(event: 'documentUpdated', data: DocumentEvent): boolean
 	emit(event: 'documentRemoved', data: FileEvent): boolean
 	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
@@ -284,14 +284,14 @@ export class Project implements ExternalEventEmitter {
 				// if (!this.#isReady) {
 				// 	return
 				// }
-				this.emit('documentErrorred', {
+				this.emit('documentErrored', {
 					errors: FileNode.getErrors(node).map(e => LanguageError.withPosRange(e, doc)),
 					uri: doc.uri,
 					version: doc.version,
 				})
 			})
 			.on('documentRemoved', ({ uri }) => {
-				this.emit('documentErrorred', { errors: [], uri })
+				this.emit('documentErrored', { errors: [], uri })
 			})
 			.on('fileCreated', async ({ uri }) => {
 				if (uri.endsWith(Project.RootSuffix)) {
@@ -457,14 +457,14 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Register Symbols')
 
 			for (const [uri, values] of Object.entries(this.cacheService.errors)) {
-				this.emit('documentErrorred', { errors: values, uri })
+				this.emit('documentErrored', { errors: values, uri })
 			}
 			__profiler.task('Pop Errors')
 
 			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
 			for (const uri of removedFiles) {
 				// this.symbols.clear({ uri })
-				// this.emit('documentErrorred', { errors: [], uri })
+				// this.emit('documentErrored', { errors: [], uri })
 				this.emit('fileDeleted', { uri })
 			}
 			__profiler.task('Validate Cache')
@@ -534,7 +534,7 @@ export class Project implements ExternalEventEmitter {
 
 		// Clear existing errors.
 		for (const uri of Object.keys(this.cacheService.errors)) {
-			this.emit('documentErrorred', { errors: [], uri })
+			this.emit('documentErrored', { errors: [], uri })
 		}
 
 		// Reset cache.

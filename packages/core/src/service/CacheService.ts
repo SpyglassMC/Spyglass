@@ -104,7 +104,7 @@ export class CacheService {
 				this.checksums.symbolRegistrars[id] = checksum
 			}
 		})
-		this.project.on('documentErrorred', ({ uri, errors }) => {
+		this.project.on('documentErrored', ({ uri, errors }) => {
 			this.errors[uri] = errors
 		})
 	}

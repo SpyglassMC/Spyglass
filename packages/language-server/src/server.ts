@@ -85,7 +85,7 @@ connection.onInitialize(async params => {
 			},
 		})
 		service.project
-			.on('documentErrorred', ({ errors, uri, version }) => {
+			.on('documentErrored', ({ errors, uri, version }) => {
 				connection.sendDiagnostics({
 					diagnostics: toLS.diagnostics(errors),
 					uri: uri,
