@@ -31,7 +31,8 @@ export const comment: Colorizer = node => {
 }
 
 export const error: Colorizer = node => {
-	return [ColorToken.create(node, 'error')]
+	// return [ColorToken.create(node, 'error')]
+	return []
 }
 
 export const literal: Colorizer<LiteralBaseNode> = node => {
