@@ -1,10 +1,7 @@
-import { localize } from '@spyglassmc/locales'
 import { StateProxy } from '../../common/index.js'
-import type { AstNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
-import { ResourceLocationNode } from '../../node/index.js'
+import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import type { CheckerContext, MetaRegistry } from '../../service/index.js'
 import { ErrorReporter } from '../../service/index.js'
-import { ErrorSeverity } from '../../source/index.js'
 import { traversePreOrder } from '../util.js'
 import type { Checker, SyncChecker } from './Checker.js'
 
