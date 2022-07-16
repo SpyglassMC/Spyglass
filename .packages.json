@@ -4,8 +4,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "6ff237d35af1abeba8a7c75d86b685a507963bfc",
-			"version": "0.3.0"
+			"commit": "c30073e291a0641d473d7b38d04b20066c353068",
+			"version": "0.4.0"
 		}
 	},
 	"discord-bot": {
@@ -17,7 +17,7 @@
 		],
 		"released": {
 			"commit": "5817e9d303dbc643da53828a5dc5a2498ca407d5",
-			"version": "0.3.0"
+			"version": "0.3.1"
 		}
 	},
 	"java-edition": {
@@ -30,8 +30,8 @@
 			"nbt"
 		],
 		"released": {
-			"commit": "40503cccf07cfa91989b0fe78e1932dcc6eb685d",
-			"version": "0.3.0"
+			"commit": "f2ea2886abc49b61b1a040246bc7d20cca90e9f0",
+			"version": "0.3.1"
 		}
 	},
 	"json": {
@@ -41,7 +41,7 @@
 		],
 		"released": {
 			"commit": "5817e9d303dbc643da53828a5dc5a2498ca407d5",
-			"version": "0.3.0"
+			"version": "0.3.1"
 		}
 	},
 	"language-server": {
@@ -52,8 +52,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "5817e9d303dbc643da53828a5dc5a2498ca407d5",
-			"version": "0.3.0"
+			"commit": "f3c9e381975bc092fe1206ffe25c077e995f61e5",
+			"version": "0.4.0"
 		}
 	},
 	"locales": {
@@ -68,8 +68,8 @@
 			"locales"
 		],
 		"released": {
-			"commit": "65e075b2313d8450b8949ed658c74bbe1d1bf27f",
-			"version": "0.3.0"
+			"commit": "14866a7db1c786fd18ffbeb82b401631c792d721",
+			"version": "0.3.1"
 		}
 	},
 	"mcfunction": {
@@ -79,7 +79,7 @@
 		],
 		"released": {
 			"commit": "5817e9d303dbc643da53828a5dc5a2498ca407d5",
-			"version": "0.2.1"
+			"version": "0.2.2"
 		}
 	},
 	"nbt": {
@@ -90,7 +90,7 @@
 		],
 		"released": {
 			"commit": "c8e42b5410d28f8624956a586ab2db8b193d92d7",
-			"version": "0.3.0"
+			"version": "0.3.1"
 		}
 	},
 	"playground": {
@@ -102,7 +102,7 @@
 		],
 		"released": {
 			"commit": "f9d94a2328a1a55e39888a495b4dbd773bdbaef5",
-			"version": "0.2.0"
+			"version": "0.2.1"
 		}
 	},
 	"vscode-extension": {
@@ -110,8 +110,8 @@
 			"language-server"
 		],
 		"released": {
-			"commit": "8df8b9205cb5ee801468c39875932c5ac0e6467d",
-			"version": "0.3.0"
+			"commit": "21dd0421a065cb48396b541fe5ae50805300104e",
+			"version": "0.3.1"
 		}
 	}
 }
