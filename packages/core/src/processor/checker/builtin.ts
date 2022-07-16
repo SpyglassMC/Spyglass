@@ -87,13 +87,13 @@ export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
 }
 
 export const resourceLocation: Checker<ResourceLocationNode> = (node, ctx) => {
-	const full = ResourceLocationNode.toString(node, 'full')
-	if (node.options.pool) {
-		if (!node.options.pool.includes(full)) {
-			ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
-		}
-		return
-	}
+	// const full = ResourceLocationNode.toString(node, 'full')
+	// if (node.options.pool) {
+	// 	if (!node.options.pool.includes(full)) {
+	// 		ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
+	// 	}
+	// 	return
+	// }
 }
 
 export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {

@@ -62,9 +62,9 @@ export namespace ResourceLocationNode {
 		}
 	}
 
-	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type?: 'full'): FullResourceLocation
-	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type?: 'origin' | 'full' | 'short'): string
-	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type: 'origin' | 'full' | 'short' = 'origin'): string {
+	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type?: 'full', includesTagPrefix?: false): FullResourceLocation
+	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type?: 'origin' | 'full' | 'short', includesTagPrefix?: boolean): string
+	export function toString(node: DeepReadonly<ResourceLocationBaseNode>, type: 'origin' | 'full' | 'short' = 'origin', includesTagPrefix = false): string {
 		const path = node.path ? node.path.join(PathSep) : ''
 		let id: string
 		/* 
@@ -91,6 +91,6 @@ export namespace ResourceLocationNode {
 				id = node.namespace && node.namespace !== DefaultNamespace ? `${node.namespace}${NamespacePathSep}${path}` : path
 				break
 		}
-		return node.isTag ? `${TagPrefix}${id}` : id
+		return includesTagPrefix && node.isTag ? `${TagPrefix}${id}` : id
 	}
 }

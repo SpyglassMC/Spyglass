@@ -252,12 +252,12 @@ export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext)
 			if (!valueNode || valueNode.inverted) {
 				continue
 			}
-			const value = core.ResourceLocationNode.toString(valueNode.value, 'full')
+			const value = core.ResourceLocationNode.toString(valueNode.value, 'full', true)
 			if (value.startsWith(core.ResourceLocation.TagPrefix)) {
 				const tagValues = getTagValues('tag/entity_type', value.slice(1), ctx)
 				types = types.filter(t => tagValues.includes(t))
 			} else {
-				types = [value]
+				types = [value as core.FullResourceLocation]
 			}
 		}
 		return types

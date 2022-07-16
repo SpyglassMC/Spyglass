@@ -38,7 +38,7 @@ export const long: Formatter<LongNode> = node => {
 }
 
 export const resourceLocation: Formatter<ResourceLocationBaseNode> = node => {
-	return ResourceLocationNode.toString(node, 'origin')
+	return ResourceLocationNode.toString(node, 'origin', true)
 }
 
 export const string: Formatter<StringBaseNode> = node => {

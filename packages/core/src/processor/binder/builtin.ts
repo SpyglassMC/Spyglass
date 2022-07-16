@@ -111,19 +111,18 @@ export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {
 })
 
 export const resourceLocation = SyncBinder.create<ResourceLocationNode>((node, ctx) => {
+	const raw = ResourceLocationNode.toString(node, 'full')
+	const sanitizedRaw = ResourceLocation.lengthen(node.options.namespacePathSep === '.'
+		? raw.replace(/\./g, ResourceLocation.NamespacePathSep)
+		: raw
+	)
 	if (node.options.category) {
-		const raw = ResourceLocationNode.toString(node, 'full')
-		const sanitizedRaw = ResourceLocation.lengthen(node.options.namespacePathSep === '.'
-			? raw.replace('.', ResourceLocation.NamespacePathSep)
-			: raw
-		)
 		ctx.symbols
 			.query(ctx.doc, node.isTag ? `tag/${node.options.category}` : node.options.category, sanitizedRaw)
 			.enter({ usage: { type: node.options.usageType, node, accessType: node.options.accessType } })
 	}
-	const full = ResourceLocationNode.toString(node, 'full')
-	if (node.options.pool) {
-		if (!node.options.pool.includes(full) && !node.options.allowUnknown) {
+	if (node.options.pool && !node.options.allowUnknown) {
+		if (!node.options.pool.includes(sanitizedRaw)) {
 			ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
 		}
 		return
