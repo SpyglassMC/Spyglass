@@ -123,7 +123,7 @@ export const resourceLocation = SyncBinder.create<ResourceLocationNode>((node, c
 	}
 	const full = ResourceLocationNode.toString(node, 'full')
 	if (node.options.pool) {
-		if (!node.options.pool.includes(full)) {
+		if (!node.options.pool.includes(full) && !node.options.allowUnknown) {
 			ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
 		}
 		return
