@@ -23,9 +23,6 @@ export interface Externals {
 		EventEmitter: new () => ExternalEventEmitter,
 	},
 	fs: ExternalFileSystem,
-	uri: {
-		normalize: (uri: string) => string,
-	},
 }
 
 export interface DecompressedFile {

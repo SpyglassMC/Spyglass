@@ -1,7 +1,7 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
-import { bufferToString, Logger, SingletonPromise, StateProxy } from '../common/index.js'
+import { bufferToString, Logger, normalizeUri, SingletonPromise, StateProxy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
@@ -544,7 +544,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	normalizeUri(uri: string): string {
-		return this.fs.mapFromDisk(this.externals.uri.normalize(uri))
+		return this.fs.mapFromDisk(normalizeUri(uri))
 	}
 
 	private static readonly TextDocumentCacheMaxLength = 268435456
@@ -724,6 +724,7 @@ export class Project implements ExternalEventEmitter {
 
 	// @SingletonPromise()
 	async ensureBindingStarted(uri: string): Promise<void> {
+		uri = this.normalizeUri(uri)
 		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
 			return
 		}
@@ -776,8 +777,8 @@ export class Project implements ExternalEventEmitter {
 	 * @throws If there is no `TextDocument` corresponding to the URI.
 	 */
 	async onDidChange(uri: string, changes: TextDocumentContentChangeEvent[], version: number): Promise<void> {
-		this.#symbolUpToDateUris.delete(uri)
 		uri = this.normalizeUri(uri)
+		this.#symbolUpToDateUris.delete(uri)
 		if (!fileUtil.isFileUri(uri)) {
 			return // We only accept `file:` scheme for client-managed URIs.
 		}
@@ -809,6 +810,7 @@ export class Project implements ExternalEventEmitter {
 
 	@SingletonPromise()
 	async ensureClientManagedChecked(uri: string): Promise<DocAndNode | undefined> {
+		uri = this.normalizeUri(uri)
 		const result = this.#clientManagedDocAndNodes.get(uri)
 		if (result && this.#isReady) {
 			const { doc, node } = result
@@ -821,6 +823,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	getClientManaged(uri: string): DocAndNode | undefined {
+		uri = this.normalizeUri(uri)
 		return this.#clientManagedDocAndNodes.get(uri)
 	}
 

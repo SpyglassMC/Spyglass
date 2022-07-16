@@ -279,6 +279,12 @@ export function isObject(val: unknown): val is object {
 	return typeof val === 'function' || (!!val && typeof val === 'object')
 }
 
+export function normalizeUri(uri: string): string {
+	const obj = new Uri(uri)
+	obj.pathname = obj.pathname.replace(/%3A/gi, ':')
+	return obj.toString()
+}
+
 /**
  * @example
  * ```ts

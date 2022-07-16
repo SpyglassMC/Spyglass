@@ -111,15 +111,6 @@ export const NodeJsExternals: Externals = {
 			return fsp.writeFile(toFsPathLike(location), data, options)
 		},
 	},
-	uri: {
-		normalize(uri) {
-			if (uri.startsWith('file:')) {
-				return url.pathToFileURL(url.fileURLToPath(uri)).toString()
-			} else {
-				return new Uri(uri).toString()
-			}
-		},
-	},
 }
 
 Object.freeze(NodeJsExternals)

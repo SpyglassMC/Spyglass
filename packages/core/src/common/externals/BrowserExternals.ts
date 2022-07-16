@@ -189,11 +189,6 @@ export const BrowserExternals: Externals = {
 		EventEmitter: BrowserEventEmitter,
 	},
 	fs: new BrowserFileSystem(),
-	uri: {
-		normalize(uri) {
-			return new Uri(uri).toString()
-		},
-	},
 }
 
 function uint8ArrayToHex(array: Uint8Array) {
