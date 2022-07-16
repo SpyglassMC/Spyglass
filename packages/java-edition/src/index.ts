@@ -41,7 +41,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	const packMcmeta = await getPackMcmeta()
 	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(externals, downloader, version, isLatest))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
 
 	const summary = await getMcmetaSummary(ctx.externals, downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
 	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {

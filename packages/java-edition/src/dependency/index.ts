@@ -126,12 +126,16 @@ function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref:
 }
 
 /**
+ * Download data from a GitHub repository with tags corresponding to Minecraft versions.
+ * The downloaded data will be cached based on the commit SHA of the respective tag.
+ * 
+ * If `isLatest` if `true`, instead of finding the tag corresponding to the given version, the default branch will be used.
+ * 
  * @returns The URI to the `.tar.gz` file.
  */
-async function downloadGitHubRepo({ defaultBranch, downloader, externals, getTag, repo, isLatest, owner, version }: {
+async function downloadGitHubRepo({ defaultBranch, downloader, getTag, repo, isLatest, owner, version }: {
 	defaultBranch: string,
 	downloader: core.Downloader,
-	externals: core.Externals,
 	getTag: (version: string) => string,
 	owner: string,
 	repo: string,
@@ -155,26 +159,28 @@ async function downloadGitHubRepo({ defaultBranch, downloader, externals, getTag
 
 /* istanbul ignore next */
 /**
- * @param version An already resolved version identifier.
- * 
  * @throws Network/file system errors.
  * 
  * @returns
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getVanillaMcdoc(externals: core.Externals, downloader: core.Downloader, version: string, isLatest: boolean): Promise<core.Dependency> {
+export async function getVanillaMcdoc(downloader: core.Downloader): Promise<core.Dependency> {
+	const owner = 'SpyglassMC'
+	const repo = 'vanilla-mcdoc'
+	const ref = 'refs/heads/main'
+	const out: core.DownloaderDownloadOut = {}
+	await downloader.download<Uint8Array>({
+		id: 'mc-je/vanilla-mcdoc.tar.gz',
+		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
+		transformer: b => b,
+		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: GitHubApiDownloadOptions,
+		ttl: DownloaderTtl,
+	}, out)
+
 	return {
 		info: { startDepth: 1 },
-		uri: await downloadGitHubRepo({
-			defaultBranch: 'main',
-			downloader,
-			externals,
-			getTag: v => v,
-			isLatest,
-			owner: 'SpyglassMC',
-			repo: 'vanila-mcdoc',
-			version,
-		}),
+		uri: out.cacheUri!,
 	}
 }
