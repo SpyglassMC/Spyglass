@@ -812,12 +812,14 @@ export class Project implements ExternalEventEmitter {
 	async ensureClientManagedChecked(uri: string): Promise<DocAndNode | undefined> {
 		uri = this.normalizeUri(uri)
 		const result = this.#clientManagedDocAndNodes.get(uri)
-		if (result && this.#isReady) {
+		if (result) {
 			const { doc, node } = result
-			await this.bind(doc, node)
-			await this.check(doc, node)
-			this.emit('documentUpdated', { doc, node })
-			return { doc, node }
+			if (this.#isReady) {
+				await this.bind(doc, node)
+				await this.check(doc, node)
+				this.emit('documentUpdated', result)
+			}
+			return result
 		}
 		return undefined
 	}
