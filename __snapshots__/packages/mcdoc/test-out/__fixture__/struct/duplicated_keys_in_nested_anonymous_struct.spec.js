@@ -160,7 +160,7 @@ exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1']
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 22,
-              "end": 72
+              "end": 28
             },
             "posRange": {
               "start": {
@@ -168,8 +168,8 @@ exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1']
                 "character": 8
               },
               "end": {
-                "line": 4,
-                "character": 2
+                "line": 1,
+                "character": 14
               }
             },
             "contributor": "binder"
@@ -284,7 +284,13 @@ exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1']
                                 "end": 28
                               },
                               "value": "struct",
-                              "colorTokenType": "keyword"
+                              "colorTokenType": "keyword",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 0>"
+                                ]
+                              }
                             },
                             {
                               "type": "mcdoc:struct/block",
@@ -376,12 +382,6 @@ exports['mcdoc __fixture__ struct/duplicated keys in nested anonymous struct 1']
                           "range": {
                             "start": 22,
                             "end": 72
-                          },
-                          "symbol": {
-                            "category": "mcdoc",
-                            "path": [
-                              "::test::<anonymous 0>"
-                            ]
                           }
                         }
                       ],

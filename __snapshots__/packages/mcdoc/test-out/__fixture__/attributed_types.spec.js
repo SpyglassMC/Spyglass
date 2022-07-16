@@ -284,7 +284,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 176,
-              "end": 218
+              "end": 180
             },
             "posRange": {
               "start": {
@@ -292,8 +292,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                 "character": 28
               },
               "end": {
-                "line": 6,
-                "character": 1
+                "line": 3,
+                "character": 32
               }
             },
             "contributor": "binder"
@@ -722,7 +722,13 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                         "end": 180
                                       },
                                       "value": "enum",
-                                      "colorTokenType": "keyword"
+                                      "colorTokenType": "keyword",
+                                      "symbol": {
+                                        "category": "mcdoc",
+                                        "path": [
+                                          "::test::<anonymous 0>"
+                                        ]
+                                      }
                                     },
                                     {
                                       "type": "mcdoc:literal",
@@ -814,12 +820,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                   "range": {
                                     "start": 176,
                                     "end": 218
-                                  },
-                                  "symbol": {
-                                    "category": "mcdoc",
-                                    "path": [
-                                      "::test::<anonymous 0>"
-                                    ]
                                   }
                                 }
                               ],

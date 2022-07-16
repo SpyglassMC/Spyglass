@@ -40,7 +40,7 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 0,
-              "end": 9
+              "end": 6
             },
             "posRange": {
               "start": {
@@ -49,7 +49,7 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
               },
               "end": {
                 "line": 0,
-                "character": 9
+                "character": 6
               }
             },
             "contributor": "binder"
@@ -79,7 +79,13 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
                     "end": 6
                   },
                   "value": "struct",
-                  "colorTokenType": "keyword"
+                  "colorTokenType": "keyword",
+                  "symbol": {
+                    "category": "mcdoc",
+                    "path": [
+                      "::test::<anonymous 0>"
+                    ]
+                  }
                 },
                 {
                   "type": "mcdoc:struct/block",
@@ -93,12 +99,6 @@ exports['mcdoc __fixture__ struct/anonymous 1'] = {
               "range": {
                 "start": 0,
                 "end": 9
-              },
-              "symbol": {
-                "category": "mcdoc",
-                "path": [
-                  "::test::<anonymous 0>"
-                ]
               }
             }
           ],

@@ -57,7 +57,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 41,
-              "end": 77
+              "end": 47
             },
             "posRange": {
               "start": {
@@ -65,8 +65,8 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                 "character": 41
               },
               "end": {
-                "line": 5,
-                "character": 0
+                "line": 0,
+                "character": 47
               }
             },
             "contributor": "binder"
@@ -184,7 +184,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 127,
-              "end": 172
+              "end": 133
             },
             "posRange": {
               "start": {
@@ -192,8 +192,8 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                 "character": 36
               },
               "end": {
-                "line": 11,
-                "character": 0
+                "line": 6,
+                "character": 42
               }
             },
             "contributor": "binder"
@@ -882,7 +882,13 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                         "end": 47
                       },
                       "value": "struct",
-                      "colorTokenType": "keyword"
+                      "colorTokenType": "keyword",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 0>"
+                        ]
+                      }
                     },
                     {
                       "type": "mcdoc:struct/block",
@@ -983,12 +989,6 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                   "range": {
                     "start": 41,
                     "end": 77
-                  },
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::test::<anonymous 0>"
-                    ]
                   }
                 }
               ],
@@ -1111,7 +1111,13 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                         "end": 133
                       },
                       "value": "struct",
-                      "colorTokenType": "keyword"
+                      "colorTokenType": "keyword",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::test::<anonymous 1>"
+                        ]
+                      }
                     },
                     {
                       "type": "mcdoc:struct/block",
@@ -1268,12 +1274,6 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                   "range": {
                     "start": 127,
                     "end": 172
-                  },
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::test::<anonymous 1>"
-                    ]
                   }
                 }
               ],

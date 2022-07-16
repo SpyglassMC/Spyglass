@@ -133,7 +133,7 @@ exports['mcdoc __fixture__ union/number range 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 37,
-              "end": 93
+              "end": 43
             },
             "posRange": {
               "start": {
@@ -141,8 +141,8 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                 "character": 1
               },
               "end": {
-                "line": 6,
-                "character": 3
+                "line": 3,
+                "character": 7
               }
             },
             "contributor": "binder"
@@ -346,7 +346,13 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                             "end": 43
                           },
                           "value": "struct",
-                          "colorTokenType": "keyword"
+                          "colorTokenType": "keyword",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::test::<anonymous 0>"
+                            ]
+                          }
                         },
                         {
                           "type": "mcdoc:struct/block",
@@ -445,12 +451,6 @@ exports['mcdoc __fixture__ union/number range 1'] = {
                       "range": {
                         "start": 37,
                         "end": 93
-                      },
-                      "symbol": {
-                        "category": "mcdoc",
-                        "path": [
-                          "::test::<anonymous 0>"
-                        ]
                       }
                     }
                   ],

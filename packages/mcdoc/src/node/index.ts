@@ -546,12 +546,14 @@ export const EnumNode = Object.freeze({
 		docComments?: DocCommentsNode,
 		enumKind?: EnumKind,
 		identifier?: IdentifierNode,
+		keyword: LiteralNode,
 	} {
 		return {
 			block: node.children.find(EnumBlockNode.is)!,
 			docComments: node.children.find(DocCommentsNode.is),
 			enumKind: getEnumKind(node),
 			identifier: node.children.find(IdentifierNode.is),
+			keyword: node.children.find(LiteralNode.is)!,
 		}
 
 		function getEnumKind(node: EnumNode): EnumKind | undefined {
@@ -659,11 +661,13 @@ export const StructNode = Object.freeze({
 		block: StructBlockNode,
 		docComments?: DocCommentsNode,
 		identifier?: IdentifierNode,
+		keyword: LiteralNode,
 	} {
 		return {
 			block: node.children.find(StructBlockNode.is)!,
 			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is),
+			keyword: node.children.find(LiteralNode.is)!,
 		}
 	},
 	is(node: AstNode | undefined): node is StructNode {
@@ -925,12 +929,14 @@ export const TypeAliasNode = Object.freeze({
 	destruct(node: TypeAliasNode): {
 		docComments?: DocCommentsNode,
 		identifier?: IdentifierNode,
+		keyword: LiteralNode,
 		typeParams?: TypeParamBlockNode,
 		rhs?: TypeNode,
 	} {
 		return {
 			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is),
+			keyword: node.children.find(LiteralNode.is)!,
 			typeParams: node.children.find(TypeParamBlockNode.is),
 			rhs: node.children.find(TypeNode.is),
 		}

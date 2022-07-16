@@ -125,8 +125,8 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			})
 	}
 
-	function hoistFor<N extends AstNode>(subcategory: 'enum' | 'struct' | 'type_alias', node: N, destructor: (node: N) => { docComments?: DocCommentsNode, identifier?: IdentifierNode }, getData: (node: N) => unknown) {
-		const { docComments, identifier } = destructor(node)
+	function hoistFor<N extends AstNode>(subcategory: 'enum' | 'struct' | 'type_alias', node: N, destructor: (node: N) => { docComments?: DocCommentsNode, keyword: LiteralNode, identifier?: IdentifierNode }, getData: (node: N) => unknown) {
+		const { docComments, identifier, keyword } = destructor(node)
 		const name = identifier?.value ?? nextAnonymousIdentifier(node, ctx)
 		ctx.symbols
 			.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${name}`)
@@ -134,8 +134,8 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			.elseEnter({
 				data: { data: getData(node), desc: DocCommentsNode.asText(docComments), subcategory },
 				// If the current syntax structure is named, then the identifier node is entered as a definition;
-				// otherwise, an anonymous identifier is generated for the symbol and the whole syntax structure node is entered as a definition.
-				usage: { type: 'definition', node: identifier ?? node, fullRange: identifier && node },
+				// otherwise, an anonymous identifier is generated for the symbol and the keyword node is entered as a definition.
+				usage: { type: 'definition', node: identifier ?? keyword, fullRange: identifier && node },
 			})
 	}
 
@@ -276,8 +276,8 @@ async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> 
 }
 
 function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
-	const { block, identifier } = EnumNode.destruct(node)
-	const symbol = identifier?.symbol ?? node.symbol
+	const { block, identifier, keyword } = EnumNode.destruct(node)
+	const symbol = identifier?.symbol ?? keyword.symbol
 	if (symbol?.subcategory !== 'enum') {
 		return
 	}
@@ -308,8 +308,8 @@ async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Prom
 }
 
 async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
-	const { block, identifier } = StructNode.destruct(node)
-	const symbol = identifier?.symbol ?? node.symbol
+	const { block, identifier, keyword } = StructNode.destruct(node)
+	const symbol = identifier?.symbol ?? keyword.symbol
 	if (symbol?.subcategory !== 'struct') {
 		return
 	}

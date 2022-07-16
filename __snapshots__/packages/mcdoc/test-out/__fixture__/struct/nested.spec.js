@@ -148,7 +148,7 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 24,
-              "end": 76
+              "end": 30
             },
             "posRange": {
               "start": {
@@ -156,8 +156,8 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                 "character": 8
               },
               "end": {
-                "line": 4,
-                "character": 0
+                "line": 1,
+                "character": 14
               }
             },
             "contributor": "binder"
@@ -315,7 +315,13 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                                 "end": 30
                               },
                               "value": "struct",
-                              "colorTokenType": "keyword"
+                              "colorTokenType": "keyword",
+                              "symbol": {
+                                "category": "mcdoc",
+                                "path": [
+                                  "::test::<anonymous 0>"
+                                ]
+                              }
                             },
                             {
                               "type": "mcdoc:struct/block",
@@ -394,12 +400,6 @@ exports['mcdoc __fixture__ struct/nested 1'] = {
                           "range": {
                             "start": 24,
                             "end": 76
-                          },
-                          "symbol": {
-                            "category": "mcdoc",
-                            "path": [
-                              "::test::<anonymous 0>"
-                            ]
                           }
                         }
                       ],
