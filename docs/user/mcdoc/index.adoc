@@ -328,7 +328,10 @@ spyglassmc:bar
 **SYNTAX (TOKEN)**
 
 [[t-ident,IDENTIFIER]]
-<<t-ident>>:: ((<<t-ident-start>>) (<<t-ident-continue>>){star})~pass:n[except: <<t-reserved-words>>]~
+<<t-ident>>:: (<<t-ident-name>>)~pass:n[except: <<t-reserved-words>>]~
+
+[[t-ident-name,IDENT_NAME]]
+<<t-ident-name>>:: (<<t-ident-start>>) (<<t-ident-continue>>){star}
 
 [[t-ident-start,IDENT_START]]
 <<t-ident-start>>:: Any character in the https://unicode.org/reports/tr18/#General_Category_Property[Unicode general categories] "`Letter (`L`)`" or "`Letter Number (`Nl`)`"
@@ -675,7 +678,7 @@ NOTE: Tuple types are generally not useful for NBT structures, as NBT doesn't ha
 	`{` <<s-enum-field>> (`,` <<s-enum-field>>){star} `,`^?^ `}`
 
 [[s-enum-field,_EnumField_]]
-<<s-enum-field>>:: <<s-prelim>> <<t-ident>> `=` <<t-enum-value>>
+<<s-enum-field>>:: <<s-prelim>> <<t-ident-name>> `=` <<t-enum-value>>
 
 '''
 **SYNTAX (TOKEN)**
@@ -713,7 +716,7 @@ TODO
 [[s-struct-key,_StructKey_]]
 <<s-struct-key>>::
 	<<t-string>> | +
-	<<t-ident>> | +
+	<<t-ident-name>> | +
 	`[` <<s-type>> `]`
 ****
 
@@ -832,13 +835,13 @@ Multiple indices can be put inside the brackets to access multiple types from th
 **SYNTAX (TOKEN)**
 
 [[t-static-index-key,STATIC_INDEX_KEY]]
-<<t-static-index-key>>:: `%fallback` | `%none` | `%unknown` | <<t-ident>> | <<t-string>> | <<t-res-loc>>
+<<t-static-index-key>>:: `%fallback` | `%none` | `%unknown` | <<t-ident-name>> | <<t-string>> | <<t-res-loc>>
 
 [[t-accessor,ACCESSOR]]
 <<t-accessor>>:: <<t-accessor-key>> (`.` <<t-accessor-key>>){star}
 
 [[t-accessor-key,ACCESSOR_KEY]]
-<<t-accessor-key>>:: `%key` | `%parent` | <<t-ident>> | <<t-string>>
+<<t-accessor-key>>:: `%key` | `%parent` | <<t-ident-name>> | <<t-string>>
 ****
 
 Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime).
@@ -1101,9 +1104,9 @@ TODO
 
 [[s-attribute,_Attribute_]]
 <<s-attribute>>::
-	`+#[+` <<t-ident>> `]` | +
-	`+#[+` <<t-ident>> `=` <<s-attribute-value>> `]` | +
-	`+#[+` <<t-ident>> <<s-attribute-tree-value>> `]`
+	`+#[+` <<t-ident-name>> `]` | +
+	`+#[+` <<t-ident-name>> `=` <<s-attribute-value>> `]` | +
+	`+#[+` <<t-ident-name>> <<s-attribute-tree-value>> `]`
 
 [[s-attribute-value,_Value_]]
 <<s-attribute-value>>:: <<s-type>> | <<s-attribute-tree-value>>
@@ -1128,8 +1131,8 @@ TODO
 
 [[s-attribute-named-value,_NamedValue_]]
 <<s-attribute-named-value>>::
-	(<<t-ident>> | <<t-string>>) `=` <<s-attribute-value>> | +
-	(<<t-ident>> | <<t-string>>) <<s-attribute-tree-value>>
+	(<<t-ident-name>> | <<t-string>>) `=` <<s-attribute-value>> | +
+	(<<t-ident-name>> | <<t-string>>) <<s-attribute-tree-value>>
 ****
 
 .Attribute examples (non-final)
