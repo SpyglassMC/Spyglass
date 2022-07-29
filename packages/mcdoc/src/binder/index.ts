@@ -3,8 +3,8 @@ import { AsyncBinder, atArray, Dev, ErrorSeverity, Range, ResourceLocationNode, 
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { AdditionalContext } from '../common.js'
 import type { AnyTypeNode, AttributeValueNode, BooleanTypeNode, EnumValueNode, IdentifierNode, IndexNode, LiteralTypeValueNode, ModuleNode, StructFieldNode, StructKeyNode, TypeNode } from '../node/index.js'
-import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, FloatRangeNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
-import type { Attribute, AttributeTree, AttributeValue, DispatcherType, DynamicIndex, EnumType, EnumTypeField, Index, KeywordType, ListType, LiteralNumberCaseInsensitiveSuffix, LiteralNumberSuffix, LiteralType, LiteralValue, McdocType, NumericRange, NumericType, NumericTypeKind, ParallelIndices, PrimitiveArrayType, PrimitiveArrayValueKind, ReferenceType, StaticIndex, StringType, StructType, StructTypeField, StructTypePairField, StructTypeSpreadField, TupleType, TypeBase, UnionType } from '../type/index.js'
+import { AttributeNode, AttributeTreeNamedValuesNode, AttributeTreeNode, AttributeTreePosValuesNode, DispatcherTypeNode, DispatchStatementNode, DocCommentsNode, DynamicIndexNode, EnumBlockNode, EnumFieldNode, EnumInjectionNode, EnumNode, FloatRangeNode, IndexBodyNode, InjectionNode, IntRangeNode, ListTypeNode, LiteralNode, LiteralTypeNode, NumericTypeNode, PathNode, PrimitiveArrayTypeNode, ReferenceTypeNode, StaticIndexNode, StringTypeNode, StructBlockNode, StructMapKeyNode, StructNode, StructPairFieldNode, StructSpreadFieldNode, TopLevelNode, TupleTypeNode, TypeAliasNode, TypeArgBlockNode, TypeBaseNode, TypedNumberNode, TypeParamBlockNode, TypeParamNode, UnionTypeNode, UseStatementNode } from '../node/index.js'
+import type { Attribute, AttributeTree, AttributeValue, DynamicIndex, EnumTypeField, Index, LiteralNumberCaseInsensitiveSuffix, LiteralNumberSuffix, LiteralValue, McdocType, NumericRange, NumericTypeKind, ParallelIndices, PrimitiveArrayValueKind, StaticIndex, StructTypeField, StructTypePairField, StructTypeSpreadField } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext { }
 
@@ -156,7 +156,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 }
 
 async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBinderContext): Promise<void> {
-	const { attributes, location, index, target } = DispatchStatementNode.destruct(node)
+	const { attributes, location, index, target, typeParams } = DispatchStatementNode.destruct(node)
 	if (!(location && index && target)) {
 		return
 	}
@@ -191,20 +191,51 @@ async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBind
 	await bindType(target, ctx)
 }
 
+async function bindTypeParamBlock(node: TypeParamBlockNode, ctx: McdocBinderContext, parent: AstNode, identifier: IdentifierNode): Promise<void> {
+	// Type parameters are added as local symbols on the parent AST node.
+	parent.locals = Object.create(null)
+	const { params } = TypeParamBlockNode.destruct(node)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
+	if (query.symbol?.subcategory === 'type_alias') { // FIXME
+		// Type parameters are also added to the symbol data.
+		const oldData = query.symbol.data
+		if (!TypeDefSymbolData.is(oldData)) {
+			// FIXME
+			throw new Error('Failed to locate the typeDef data associated with a supposedly hoisted type alias symbol')
+		}
+		const data: TypeAliasSymbolData = {
+			...oldData,
+			typeParams: [],
+		}
+		query.symbol.data = data
+
+		for (const param of params) {
+			const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
+			if (paramIdentifier.value) {
+				// Add the type parameter as a local symbol.
+				ctx.symbols
+					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`) // FIXME: category
+					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
+					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
+
+				// Also add it to the symbol data.
+				data.typeParams.push({ identifier: paramIdentifier.value })
+			}
+		}
+	}
+}
+
 async function bindType(node: TypeNode, ctx: McdocBinderContext): Promise<void> {
 	if (DispatcherTypeNode.is(node)) {
-		bindDispatcherType(node, ctx)
+		await bindDispatcherType(node, ctx)
 	} else if (EnumNode.is(node)) {
 		bindEnum(node, ctx)
 	} else if (ListTypeNode.is(node)) {
 		const { item } = ListTypeNode.destruct(node)
 		await bindType(item, ctx)
 	} else if (ReferenceTypeNode.is(node)) {
-		const { path, typeParameters } = ReferenceTypeNode.destruct(node)
+		const { path } = ReferenceTypeNode.destruct(node)
 		await bindPath(path, ctx)
-		for (const param of typeParameters) {
-			await bindType(param, ctx)
-		}
 	} else if (StructNode.is(node)) {
 		await bindStruct(node, ctx)
 	} else if (TupleTypeNode.is(node)) {
@@ -220,7 +251,7 @@ async function bindType(node: TypeNode, ctx: McdocBinderContext): Promise<void> 
 	}
 }
 
-function bindDispatcherType(node: DispatcherTypeNode, ctx: McdocBinderContext): void {
+async function bindDispatcherType(node: DispatcherTypeNode, ctx: McdocBinderContext): Promise<void> {
 	const { index, location } = DispatcherTypeNode.destruct(node)
 	const locationStr = ResourceLocationNode.toString(location, 'full')
 	const { parallelIndices } = IndexBodyNode.destruct(index)
@@ -480,12 +511,37 @@ function convertType(node: TypeNode, ctx: McdocBinderContext): McdocType {
 	}
 }
 
-function convertBase(node: TypeBaseNode<any>, ctx: McdocBinderContext, options: { skipFirstIndexBody?: boolean } = {}): Omit<TypeBase, 'kind'> {
-	const { attributes, indices } = TypeBaseNode.destruct(node)
-	return {
-		attributes: convertAttributes(attributes, ctx),
-		indices: convertIndexBodies(options.skipFirstIndexBody ? indices.slice(1) : indices, ctx),
+function wrapType(node: TypeBaseNode<any>, type: McdocType, ctx: McdocBinderContext, options: { skipFirstIndexBody?: boolean } = {}): McdocType {
+	const { attributes, appendixes } = TypeBaseNode.destruct(node)
+	let ans = type
+	for (const appendix of appendixes) {
+		if (IndexBodyNode.is(appendix)) {
+			if (options.skipFirstIndexBody) {
+				options.skipFirstIndexBody = false
+				continue
+			}
+
+			ans = {
+				kind: 'indexed',
+				child: ans,
+				parallelIndices: convertIndexBody(appendix, ctx),
+			}
+		} else {
+			ans = {
+				kind: 'concrete',
+				child: ans,
+				typeArgs: convertTypeArgBlock(appendix, ctx),
+			}
+		}
 	}
+	for (const attribute of attributes) {
+		ans = {
+			kind: 'attributed',
+			attribute: convertAttribute(attribute, ctx),
+			child: ans,
+		}
+	}
+	return ans
 }
 
 function convertAttributes(nodes: AttributeNode[], ctx: McdocBinderContext): Attribute[] | undefined {
@@ -566,7 +622,12 @@ function convertDynamicIndex(node: DynamicIndexNode, ctx: McdocBinderContext): D
 	}
 }
 
-function convertEnum(node: EnumNode, ctx: McdocBinderContext): EnumType {
+function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): McdocType[] {
+	const { args } = TypeArgBlockNode.destruct(node)
+	return args.map(a => convertType(a, ctx))
+}
+
+function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	const { block, enumKind, identifier } = EnumNode.destruct(node)
 
 	// Shortcut if the typeDef has been added to the enum symbol.
@@ -575,12 +636,11 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): EnumType {
 		return symbol.data.typeDef
 	}
 
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'enum',
 		enumKind,
 		values: convertEnumBlock(block, ctx),
-	}
+	}, ctx)
 }
 
 function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTypeField[] {
@@ -605,7 +665,7 @@ function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string 
 	return node.value
 }
 
-function convertStruct(node: StructNode, ctx: McdocBinderContext): StructType {
+function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 	const { block, identifier } = StructNode.destruct(node)
 
 	// Shortcut if the typeDef has been added to the struct symbol.
@@ -614,11 +674,10 @@ function convertStruct(node: StructNode, ctx: McdocBinderContext): StructType {
 		return symbol.data.typeDef
 	}
 
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'struct',
 		fields: convertStructBlock(block, ctx),
-	}
+	}, ctx)
 }
 
 function convertStructBlock(node: StructBlockNode, ctx: McdocBinderContext): StructTypeField[] {
@@ -661,40 +720,34 @@ function convertStructSpreadField(node: StructSpreadFieldNode, ctx: McdocBinderC
 	}
 }
 
-function convertAny(node: AnyTypeNode, ctx: McdocBinderContext): KeywordType {
-	return {
-		...convertBase(node, ctx),
+function convertAny(node: AnyTypeNode, ctx: McdocBinderContext): McdocType {
+	return wrapType(node, {
 		kind: 'any',
-	}
+	}, ctx)
 }
 
-function convertBoolean(node: BooleanTypeNode, ctx: McdocBinderContext): KeywordType {
-	return {
-		...convertBase(node, ctx),
+function convertBoolean(node: BooleanTypeNode, ctx: McdocBinderContext): McdocType {
+	return wrapType(node, {
 		kind: 'boolean',
-	}
+	}, ctx)
 }
 
-function convertDispatcher(node: DispatcherTypeNode, ctx: McdocBinderContext): DispatcherType {
+function convertDispatcher(node: DispatcherTypeNode, ctx: McdocBinderContext): McdocType {
 	const { index, location } = DispatcherTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx, {
-			skipFirstIndexBody: true,
-		}),
+	return wrapType(node, {
 		kind: 'dispatcher',
 		index: convertIndexBody(index, ctx),
 		registry: ResourceLocationNode.toString(location, 'full'),
-	}
+	}, ctx, { skipFirstIndexBody: true })
 }
 
-function convertList(node: ListTypeNode, ctx: McdocBinderContext): ListType {
+function convertList(node: ListTypeNode, ctx: McdocBinderContext): McdocType {
 	const { item, lengthRange } = ListTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'list',
 		item: convertType(item, ctx),
 		lengthRange: convertRange(lengthRange, ctx),
-	}
+	}, ctx)
 }
 
 function convertRange(node: FloatRangeNode | IntRangeNode, ctx: McdocBinderContext): NumericRange
@@ -708,13 +761,12 @@ function convertRange(node: FloatRangeNode | IntRangeNode | undefined, ctx: Mcdo
 	return { kind, min: min?.value, max: max?.value }
 }
 
-function convertLiteral(node: LiteralTypeNode, ctx: McdocBinderContext): LiteralType {
+function convertLiteral(node: LiteralTypeNode, ctx: McdocBinderContext): McdocType {
 	const { value } = LiteralTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'literal',
 		value: convertLiteralValue(value, ctx),
-	}
+	}, ctx)
 }
 
 function convertLiteralValue(node: LiteralTypeValueNode, ctx: McdocBinderContext): LiteralValue {
@@ -743,60 +795,53 @@ function convertLiteralNumberSuffix(node: LiteralNode | undefined, ctx: McdocBin
 	return suffix?.toLowerCase() as Lowercase<Exclude<typeof suffix, undefined>> | undefined
 }
 
-function convertNumericType(node: NumericTypeNode, ctx: McdocBinderContext): NumericType {
+function convertNumericType(node: NumericTypeNode, ctx: McdocBinderContext): McdocType {
 	const { numericKind, valueRange } = NumericTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: numericKind.value as NumericTypeKind,
 		valueRange: convertRange(valueRange, ctx),
-	}
+	}, ctx)
 }
 
-function convertPrimitiveArray(node: PrimitiveArrayTypeNode, ctx: McdocBinderContext): PrimitiveArrayType {
+function convertPrimitiveArray(node: PrimitiveArrayTypeNode, ctx: McdocBinderContext): McdocType {
 	const { arrayKind, lengthRange, valueRange } = PrimitiveArrayTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: `${arrayKind.value as PrimitiveArrayValueKind}_array`,
 		lengthRange: convertRange(lengthRange, ctx),
 		valueRange: convertRange(valueRange, ctx),
-	}
+	}, ctx)
 }
 
-function convertString(node: StringTypeNode, ctx: McdocBinderContext): StringType {
+function convertString(node: StringTypeNode, ctx: McdocBinderContext): McdocType {
 	const { lengthRange } = StringTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'string',
 		lengthRange: convertRange(lengthRange, ctx),
-	}
+	}, ctx)
 }
 
-function convertReference(node: ReferenceTypeNode, ctx: McdocBinderContext): ReferenceType {
-	const { path, typeParameters } = ReferenceTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+function convertReference(node: ReferenceTypeNode, ctx: McdocBinderContext): McdocType {
+	const { path } = ReferenceTypeNode.destruct(node)
+	return wrapType(node, {
 		kind: 'reference',
 		path: pathArrayToString(resolvePath(path, ctx)),
-		typeParameters: undefineEmptyArray(typeParameters.map(n => convertType(n, ctx))),
-	}
+	}, ctx)
 }
 
-function convertTuple(node: TupleTypeNode, ctx: McdocBinderContext): TupleType {
+function convertTuple(node: TupleTypeNode, ctx: McdocBinderContext): McdocType {
 	const { items } = TupleTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'tuple',
 		items: items.map(n => convertType(n, ctx)),
-	}
+	}, ctx)
 }
 
-function convertUnion(node: UnionTypeNode, ctx: McdocBinderContext): UnionType {
+function convertUnion(node: UnionTypeNode, ctx: McdocBinderContext): McdocType {
 	const { members } = UnionTypeNode.destruct(node)
-	return {
-		...convertBase(node, ctx),
+	return wrapType(node, {
 		kind: 'union',
 		members: members.map(n => convertType(n, ctx)),
-	}
+	}, ctx)
 }
 
 function asString(node: IdentifierNode | LiteralNode | StringNode | ResourceLocationNode): string {

@@ -1,5 +1,5 @@
 import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
-import { Arrayable } from '@spyglassmc/core'
+import { Arrayable, Dev } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type { EnumKind, RangeKind } from '../node/index.js'
 import { getRangeDelimiter } from '../node/index.js'
@@ -40,17 +40,11 @@ export interface DispatcherData {
 	index: ParallelIndices,
 }
 
-export interface TypeBase {
-	kind: string,
-	attributes?: Attribute[],
-	indices?: ParallelIndices[],
-}
-
-export interface DispatcherType extends TypeBase, DispatcherData {
+export interface DispatcherType extends DispatcherData {
 	kind: 'dispatcher',
 }
 
-export interface StructType extends TypeBase {
+export interface StructType {
 	kind: 'struct',
 	fields: StructTypeField[]
 }
@@ -68,7 +62,7 @@ export interface StructTypeSpreadField {
 	type: McdocType,
 }
 
-export interface EnumType extends TypeBase {
+export interface EnumType {
 	kind: 'enum',
 	enumKind?: EnumKind,
 	values: EnumTypeField[],
@@ -79,30 +73,53 @@ export interface EnumTypeField {
 	value: string | number | bigint,
 }
 
-export interface ReferenceType extends TypeBase {
+export interface ReferenceType {
 	kind: 'reference',
 	path?: string,
-	typeParameters?: McdocType[],
 }
 
-export interface UnionType<T extends McdocType = McdocType> extends TypeBase {
+export interface UnionType<T extends McdocType = McdocType> {
 	kind: 'union',
 	members: T[],
+}
+
+export interface AttributedType {
+	kind: 'attributed',
+	attribute: Attribute,
+	child: McdocType,
+}
+
+export interface IndexedType {
+	kind: 'indexed',
+	parallelIndices: Index[],
+	child: McdocType,
+}
+
+export interface TemplateType {
+	kind: 'template',
+	child: McdocType,
+	typeParams: { path: string }[],
+}
+
+export interface ConcreteType {
+	kind: 'concrete',
+	child: McdocType,
+	typeArgs: McdocType[],
 }
 
 export const EmptyUnion: UnionType<never> & NoIndices = Object.freeze({ kind: 'union', members: [] })
 export function createEmptyUnion(attributes?: Attribute[]): UnionType<never> & NoIndices {
 	return {
 		...EmptyUnion,
-		attributes,
+		// attributes,
 	}
 }
 
-export interface KeywordType extends TypeBase {
-	kind: 'any' | 'boolean',
+export interface KeywordType {
+	kind: 'any' | 'boolean' | 'unsafe',
 }
 
-export interface StringType extends TypeBase {
+export interface StringType {
 	kind: 'string',
 	lengthRange?: NumericRange,
 }
@@ -118,7 +135,7 @@ export type LiteralValue = {
 	value: number,
 	suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined,
 }
-export interface LiteralType extends TypeBase {
+export interface LiteralType {
 	kind: 'literal',
 	value: LiteralValue,
 }
@@ -127,7 +144,7 @@ export type LiteralNumberSuffix = typeof LiteralNumberSuffixes[number]
 export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze([...LiteralNumberSuffixes, 'B', 'S', 'L', 'F', 'D'] as const)
 export type LiteralNumberCaseInsensitiveSuffix = typeof LiteralNumberCaseInsensitiveSuffixes[number]
 
-export interface NumericType extends TypeBase {
+export interface NumericType {
 	kind: NumericTypeKind,
 	valueRange?: NumericRange,
 }
@@ -138,7 +155,7 @@ export type NumericTypeFloatKind = typeof NumericTypeFloatKinds[number]
 export const NumericTypeKinds = Object.freeze([...NumericTypeIntKinds, ...NumericTypeFloatKinds] as const)
 export type NumericTypeKind = typeof NumericTypeKinds[number]
 
-export interface PrimitiveArrayType extends TypeBase {
+export interface PrimitiveArrayType {
 	kind: 'byte_array' | 'int_array' | 'long_array',
 	valueRange?: NumericRange,
 	lengthRange?: NumericRange,
@@ -148,13 +165,13 @@ export type PrimitiveArrayValueKind = typeof PrimitiveArrayValueKinds[number]
 export const PrimitiveArrayKinds = Object.freeze(PrimitiveArrayValueKinds.map(kind => `${kind}_array` as const))
 export type PrimitiveArrayKind = typeof PrimitiveArrayKinds[number]
 
-export interface ListType extends TypeBase {
+export interface ListType {
 	kind: 'list',
 	item: McdocType,
 	lengthRange?: NumericRange,
 }
 
-export interface TupleType extends TypeBase {
+export interface TupleType {
 	kind: 'tuple',
 	items: McdocType[],
 }
@@ -172,6 +189,10 @@ export type McdocType =
 	| StructType
 	| TupleType
 	| UnionType
+	| AttributedType
+	| IndexedType
+	| TemplateType
+	| ConcreteType
 export namespace McdocType {
 	export function toString(type: McdocType | undefined): string {
 		const rangeToString = (range: NumericRange | undefined): string => {
@@ -204,18 +225,24 @@ export namespace McdocType {
 			case 'any':
 			case 'boolean':
 				return type.kind
+			case 'attributed':
+				return `#[${type.attribute.name}${type.attribute.value ? '=<value ...>' : ''}] ${toString(type.child)}`
 			case 'byte':
 				return `byte${rangeToString(type.valueRange)}`
 			case 'byte_array':
 				return `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
+			case 'concrete':
+				return `${toString(type.child)}${type.typeArgs.length ? `<${type.typeArgs.map(toString).join(', ')}>` : ''}`
 			case 'dispatcher':
 				return `${type.registry ?? 'spyglass:unknown'}[${indicesToString(type.index)}]`
 			case 'double':
 				return `double${rangeToString(type.valueRange)}`
 			case 'enum':
-				return '<anonymous_enum>'
+				return '<enum ...>'
 			case 'float':
 				return `float${rangeToString(type.valueRange)}`
+			case 'indexed':
+				return `${toString(type.child)}${indicesToString(type.parallelIndices)}`
 			case 'int':
 				return `int${rangeToString(type.valueRange)}`
 			case 'int_array':
@@ -235,11 +262,17 @@ export namespace McdocType {
 			case 'string':
 				return `string${rangeToString(type.lengthRange)}`
 			case 'struct':
-				return '<anonymous_compound>'
+				return '<struct ...>'
+			case 'template':
+				return `${toString(type.child)}${type.typeParams.length ? `<${type.typeParams.map(v => `?${v.path}`).join(', ')}>` : ''}`
 			case 'tuple':
 				return `[${type.items.map(v => toString(v)).join(',')}${type.items.length === 1 ? ',' : ''}]`
 			case 'union':
 				return `(${type.members.map(toString).join(' | ')})`
+			case 'unsafe':
+				return 'unsafe'
+			default:
+				return Dev.assertNever(type)
 		}
 	}
 }
@@ -262,7 +295,7 @@ export type TangibleType = Exclude<McdocType, DispatcherType | ReferenceType | U
 export type ResolvedType = (Exclude<McdocType, DispatcherType | ReferenceType | UnionType> | UnionType<ResolvedType>) & NoIndices
 type NoIndices = { indices?: undefined }
 
-export interface FlatStructType extends TypeBase {
+export interface FlatStructType {
 	kind: 'flat_struct',
 	fields: Record<string, McdocType>,
 }
@@ -450,12 +483,12 @@ export interface RuntimeValue {
 export function resolveType(inputType: McdocType, ctx: ProcessorContext, value: RuntimeValue | undefined): ResolvedType {
 	const type = getTangibleType(inputType, ctx, value)
 
-	let ans: ResolvedType = ((): ResolvedType => {
+	const ans: ResolvedType = ((): ResolvedType => {
 		if (type.kind === 'union') {
 			return {
 				kind: 'union',
 				members: type.members.map(t => resolveType(t, ctx, value)),
-				attributes: type.attributes,
+				// attributes: type.attributes,
 			}
 		} else {
 			return {
@@ -465,9 +498,9 @@ export function resolveType(inputType: McdocType, ctx: ProcessorContext, value: 
 		}
 	})()
 
-	for (const parallelIndices of type.indices ?? []) {
-		ans = navigateParallelIndices(ans, parallelIndices, ctx, value)
-	}
+	// for (const parallelIndices of type.indices ?? []) {
+	// 	ans = navigateParallelIndices(ans, parallelIndices, ctx, value)
+	// }
 
 	return ans
 }
@@ -503,7 +536,7 @@ function navigateParallelIndices(type: ResolvedType, indices: ParallelIndices, c
 		return {
 			kind: 'union',
 			members: indices.map(i => navigateIndex(type, i, ctx, value)),
-			attributes: type.attributes,
+			// attributes: type.attributes,
 		}
 	}
 }
@@ -514,14 +547,16 @@ function navigateIndex(type: ResolvedType, index: Index, ctx: ProcessorContext, 
 			? typeof index.value === 'string' ? index.value : undefined // Special static indices have no meaning on structs.
 			: resolveDynamicIndex(index, value)
 		if (key === undefined) {
-			return createEmptyUnion(type.attributes)
+			// return createEmptyUnion(type.attributes)
+			return createEmptyUnion()
 		}
 		const flatStruct = flattenStruct(type, ctx, value)
 		return resolveType(flatStruct.fields[key], ctx, value)
 	} else if (type.kind === 'union') {
 		return mapUnion(type, t => navigateIndex(t, index, ctx, value))
 	} else {
-		return createEmptyUnion(type.attributes)
+		// return createEmptyUnion(type.attributes)
+		return createEmptyUnion()
 	}
 }
 
@@ -547,8 +582,8 @@ function mapUnion<T extends McdocType, U extends McdocType>(type: UnionType<T>, 
 	const ans: UnionType<U> = {
 		kind: 'union',
 		members: type.members.map(mapper),
-		attributes: type.attributes,
-		indices: type.indices,
+		// attributes: type.attributes,
+		// indices: type.indices,
 	}
 	return ans
 }
@@ -559,13 +594,13 @@ function flattenStruct(type: StructType, ctx: ProcessorContext, value: RuntimeVa
 	const ans: FlatStructType = {
 		kind: 'flat_struct',
 		fields: Object.create(null),
-		attributes: type.attributes,
-		indices: type.indices,
+		// attributes: type.attributes,
+		// indices: type.indices,
 	}
 	for (const field of type.fields) {
 		if (field.kind === 'spread') {
 			const target = resolveType(field.type, ctx, value)
-			addAttributes(ans, ...target.attributes ?? [])
+			// addAttributes(ans, ...target.attributes ?? [])
 			if (target.kind === 'struct') {
 				const flatTarget = flattenStruct(target, ctx, value)
 				for (const [key, value] of Object.entries(flatTarget)) {
@@ -583,11 +618,11 @@ function flattenStruct(type: StructType, ctx: ProcessorContext, value: RuntimeVa
 	return ans
 }
 
-function addAttributes(type: TypeBase, ...attributes: Attribute[]): void {
+function addAttributes(type: McdocType, ...attributes: Attribute[]): void {
 	for (const attr of attributes) {
-		type.attributes ??= []
-		if (!type.attributes.some(a => a.name === attr.name)) {
-			type.attributes.push(attr)
-		}
+		// type.attributes ??= []
+		// if (!type.attributes.some(a => a.name === attr.name)) {
+		// 	type.attributes.push(attr)
+		// }
 	}
 }

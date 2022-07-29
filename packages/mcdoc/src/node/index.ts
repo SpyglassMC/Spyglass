@@ -35,7 +35,7 @@ export const TopLevelNode = Object.freeze({
 
 export interface DispatchStatementNode extends AstNode {
 	type: 'mcdoc:dispatch_statement',
-	children: (CommentNode | AttributeNode | LiteralNode | ResourceLocationNode | IndexBodyNode | TypeNode)[]
+	children: (CommentNode | AttributeNode | LiteralNode | ResourceLocationNode | IndexBodyNode | TypeParamBlockNode | TypeNode)[]
 }
 export const DispatchStatementNode = Object.freeze({
 	destruct(node: DispatchStatementNode): {
@@ -43,12 +43,14 @@ export const DispatchStatementNode = Object.freeze({
 		location?: ResourceLocationNode,
 		index?: IndexBodyNode,
 		target?: TypeNode,
+		typeParams?: TypeParamBlockNode,
 	} {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
 			location: node.children.find(ResourceLocationNode.is),
 			index: node.children.find(IndexBodyNode.is),
 			target: node.children.find(TypeNode.is),
+			typeParams: node.children.find(TypeParamBlockNode.is),
 		}
 	},
 	is(node: AstNode | undefined): node is DispatchStatementNode {
@@ -167,16 +169,16 @@ export const TypeNode = Object.freeze({
 
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`,
-	children: (CommentNode | AttributeNode | IndexBodyNode | CN)[]
+	children: (CommentNode | AttributeNode | IndexBodyNode | TypeArgBlockNode | CN)[]
 }
 export const TypeBaseNode = Object.freeze({
 	destruct(node: TypeBaseNode<any>): {
+		appendixes: (IndexBodyNode | TypeArgBlockNode)[],
 		attributes: AttributeNode[],
-		indices: IndexBodyNode[],
 	} {
 		return {
+			appendixes: node.children.filter((n): n is IndexBodyNode | TypeArgBlockNode => IndexBodyNode.is(n) || TypeArgBlockNode.is(n)),
 			attributes: node.children.filter(AttributeNode.is),
-			indices: node.children.filter(IndexBodyNode.is),
 		}
 	},
 })
@@ -278,6 +280,23 @@ export interface AttributeTreeNamedKeyValuePair {
 	key: IdentifierNode | StringNode,
 	value: AttributeValueNode,
 }
+
+export interface TypeArgBlockNode extends AstNode {
+	type: 'mcdoc:type_arg_block',
+	children: (CommentNode | TypeNode)[],
+}
+export const TypeArgBlockNode = Object.freeze({
+	destruct(node: TypeArgBlockNode): {
+		args: TypeNode[],
+	} {
+		return {
+			args: node.children.filter(TypeNode.is),
+		}
+	},
+	is(node: AstNode | undefined): node is TypeArgBlockNode {
+		return (node as TypeArgBlockNode | undefined)?.type === 'mcdoc:type_arg_block'
+	},
+})
 
 export interface AnyTypeNode extends TypeBaseNode<LiteralNode> {
 	type: 'mcdoc:type/any',
@@ -675,17 +694,15 @@ export const StructNode = Object.freeze({
 	},
 })
 
-export interface ReferenceTypeNode extends TypeBaseNode<PathNode | TypeNode> {
+export interface ReferenceTypeNode extends TypeBaseNode<PathNode> {
 	type: 'mcdoc:type/reference',
 }
 export const ReferenceTypeNode = Object.freeze({
 	destruct(node: ReferenceTypeNode): {
 		path: PathNode,
-		typeParameters: TypeNode[],
 	} {
 		return {
 			path: node.children.find(PathNode.is)!,
-			typeParameters: node.children.filter(TypeNode.is),
 		}
 	},
 	is(node: AstNode | undefined): node is ReferenceTypeNode {

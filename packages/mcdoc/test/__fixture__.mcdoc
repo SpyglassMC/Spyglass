@@ -170,6 +170,13 @@ struct T {}
 
 type Test<T> = T
 
+//== type parameter/dispatcher
+dispatch spyglassmc:test[%none]<T> to struct {
+	field: T,
+}
+
+type Result = spyglassmc:test[%fallback]<struct {}>
+
 //== dispatcher/random number generator
 dispatch minecraft:rng[uniform,%none] to struct {
 	min?: int,

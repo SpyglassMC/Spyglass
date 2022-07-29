@@ -424,7 +424,7 @@ The relative path is interpreted as follows:
 
 [[s-type,_Type_]]
 <<s-type>>::
-	<<s-attributes>> <<s-unattributed-type>> <<s-index-body>>{star}
+	<<s-attributes>> <<s-unattributed-type>> (<<s-index-body>> | <<s-type-arg-block>>){star}
 
 [[s-unattributed-type,_UnattributedType_]]
 <<s-unattributed-type>>::
@@ -440,6 +440,11 @@ The relative path is interpreted as follows:
 	<<s-reference-type>> | +
 	<<s-dispatcher-type>> | +
 	<<s-union-type>>
+
+[[s-type-arg-block,_TypeArgBlock_]]
+<<s-type-arg-block>>::
+	`<` `>` | +
+	`<` <<s-type>> (`,` <<s-type>>){star} `,`^?^ `>`
 ****
 
 A type is an essential component of the mcdoc format.
@@ -770,12 +775,7 @@ type ItemTag = Tag<#[id=item] string>
 **SYNTAX**
 
 [[s-reference-type,_ReferenceType_]]
-<<s-reference-type>>:: <<t-path>> <<s-type-param-assignment>>^?^
-
-[[s-type-param-assignment,_TypeParamAssignment_]]
-<<s-type-param-assignment>>::
-	`<` `>` | +
-	`<` <<s-type>> (`,` <<s-type>>){star} `,`^?^ `>`
+<<s-reference-type>>:: <<t-path>>
 ****
 
 === Dispatcher type
@@ -1076,7 +1076,10 @@ TODO
 **SYNTAX**
 
 [[s-dispatch,_DispatchStatement_]]
-<<s-dispatch>>:: <<s-attributes>> `dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ `to` <<s-type>>
+<<s-dispatch>>::
+	<<s-attributes>>
+	`dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ <<s-type-param-block>>^?^
+	`to` <<s-type>>
 ****
 
 A **dispatcher** can be used to dispatch to a specific type from a given index.
