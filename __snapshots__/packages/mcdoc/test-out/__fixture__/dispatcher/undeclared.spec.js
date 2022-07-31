@@ -40,7 +40,6 @@ exports['mcdoc __fixture__ dispatcher/undeclared 1'] = {
             "registry": "spyglassmc:unknown"
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -169,14 +168,6 @@ exports['mcdoc __fixture__ dispatcher/undeclared 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

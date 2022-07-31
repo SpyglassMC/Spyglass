@@ -80,7 +80,6 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -292,7 +291,6 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -345,14 +343,6 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -841,14 +831,6 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 101,
-                    "end": 101
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

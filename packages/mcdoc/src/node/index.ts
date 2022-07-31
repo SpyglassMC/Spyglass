@@ -940,10 +940,11 @@ export const StructInjectionNode = Object.freeze({
 
 export interface TypeAliasNode extends AstNode {
 	type: 'mcdoc:type_alias',
-	children: (CommentNode | DocCommentsNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[],
+	children: (CommentNode | PrelimNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[],
 }
 export const TypeAliasNode = Object.freeze({
 	destruct(node: TypeAliasNode): {
+		attributes: AttributeNode[],
 		docComments?: DocCommentsNode,
 		identifier: IdentifierNode,
 		keyword: LiteralNode,
@@ -951,6 +952,7 @@ export const TypeAliasNode = Object.freeze({
 		rhs?: TypeNode,
 	} {
 		return {
+			attributes: node.children.filter(AttributeNode.is),
 			docComments: node.children.find(DocCommentsNode.is),
 			identifier: node.children.find(IdentifierNode.is)!,
 			keyword: node.children.find(LiteralNode.is)!,

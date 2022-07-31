@@ -86,7 +86,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 
 	function hoistTypeAlias(node: TypeAliasNode) {
 		hoistFor('type_alias', node, TypeAliasNode.destruct, n => {
-			const { rhs, typeParams } = TypeAliasNode.destruct(n)
+			const { attributes, rhs, typeParams } = TypeAliasNode.destruct(n)
 			if (!rhs) {
 				return undefined
 			}
@@ -96,6 +96,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			if (typeParams) {
 				bindTypeParamBlock(node, typeParams, ans, ctx)
 			}
+			ans.typeDef = attributeType(ans.typeDef, attributes, ctx)
 
 			return ans
 		})

@@ -127,14 +127,6 @@ exports['mcdoc __fixture__ duplicated path 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 14,
-                    "end": 14
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 14,

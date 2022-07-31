@@ -124,7 +124,6 @@ exports['mcdoc __fixture__ dispatcher/indexed 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -477,14 +476,6 @@ exports['mcdoc __fixture__ dispatcher/indexed 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 60,
-                    "end": 60
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

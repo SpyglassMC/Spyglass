@@ -576,7 +576,7 @@ export const injection: Parser<InjectionNode> = setType(
 export const typeAliasStatement: Parser<TypeAliasNode> = setType(
 	'mcdoc:type_alias',
 	syntax([
-		docComments,
+		prelim,
 		keyword('type'),
 		identifier,
 		optionalTypeParamBlock,
@@ -626,8 +626,6 @@ const typeArgBlock: Parser<TypeArgBlockNode> = setType(
 		]),
 	])
 )
-
-const optionalTypeArgBlock: InfallibleParser<TypeArgBlockNode | undefined> = optional(typeArgBlock)
 
 /* eslint-disable @typescript-eslint/indent */
 type GetTypeNode<T extends string, P extends Parser<AstNode | SyntaxUtil<AstNode>>> = { type: T } & SyntaxUtil<

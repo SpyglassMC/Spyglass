@@ -41,7 +41,6 @@ exports['mcdoc __fixture__ union/simple 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -94,14 +93,6 @@ exports['mcdoc __fixture__ union/simple 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

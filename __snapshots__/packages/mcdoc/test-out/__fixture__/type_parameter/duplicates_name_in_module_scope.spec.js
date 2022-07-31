@@ -120,7 +120,6 @@ exports['mcdoc __fixture__ type parameter/duplicates name in module scope 1'] = 
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -213,14 +212,6 @@ exports['mcdoc __fixture__ type parameter/duplicates name in module scope 1'] = 
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 13,
-                    "end": 13
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

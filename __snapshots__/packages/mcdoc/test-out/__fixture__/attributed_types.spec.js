@@ -39,7 +39,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -95,7 +94,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -160,7 +158,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -228,7 +225,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -321,14 +317,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 0,
@@ -395,14 +383,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 37,
-                    "end": 37
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -496,14 +476,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 78,
-                    "end": 78
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -661,14 +633,6 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 148,
-                    "end": 148
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

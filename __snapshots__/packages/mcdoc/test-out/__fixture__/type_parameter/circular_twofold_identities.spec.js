@@ -58,7 +58,6 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -161,7 +160,6 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -249,14 +247,6 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -607,14 +597,6 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 31,
-                    "end": 31
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

@@ -51,7 +51,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -206,7 +205,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
             "path": "::test::Test1"
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -297,7 +295,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -350,14 +347,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -593,14 +582,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 36,
-                    "end": 36
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 36,
@@ -664,14 +645,6 @@ exports['mcdoc __fixture__ type parameter/implicit type parameter passing 1'] = 
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 56,
-                    "end": 56
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

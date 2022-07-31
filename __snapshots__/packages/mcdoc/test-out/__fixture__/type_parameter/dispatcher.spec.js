@@ -125,7 +125,6 @@ exports['mcdoc __fixture__ type parameter/dispatcher 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -643,14 +642,6 @@ exports['mcdoc __fixture__ type parameter/dispatcher 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 61,
-                    "end": 61
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

@@ -33,7 +33,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "any"
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -76,7 +75,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "boolean"
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -119,7 +117,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             "kind": "string"
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -166,7 +163,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -213,7 +209,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -261,7 +256,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -309,7 +303,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -356,7 +349,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -404,7 +396,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -451,7 +442,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -499,7 +489,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -547,7 +536,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -594,7 +582,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -647,7 +634,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -693,7 +679,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -742,7 +727,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -794,7 +778,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             }
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -871,7 +854,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -922,7 +904,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             ]
           }
         },
-        "desc": "",
         "subcategory": "type_alias",
         "definition": [
           {
@@ -976,14 +957,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 0,
-                    "end": 0
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 0,
@@ -1033,14 +1006,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 19,
-                    "end": 19
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1092,14 +1057,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 46,
-                    "end": 46
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 46,
@@ -1149,14 +1106,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 72,
-                    "end": 72
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1233,14 +1182,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 104,
-                    "end": 104
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 104,
@@ -1316,14 +1257,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 138,
-                    "end": 138
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 138,
@@ -1390,14 +1323,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 168,
-                    "end": 168
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1482,14 +1407,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 203,
-                    "end": 203
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 203,
@@ -1550,14 +1467,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 229,
-                    "end": 229
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1626,14 +1535,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 253,
-                    "end": 253
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 253,
@@ -1683,14 +1584,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 278,
-                    "end": 278
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1775,14 +1668,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 311,
-                    "end": 311
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 311,
@@ -1857,14 +1742,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 348,
-                    "end": 348
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -1948,14 +1825,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 386,
-                    "end": 386
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -2065,14 +1934,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 429,
-                    "end": 429
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 429,
@@ -2131,14 +1992,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 453,
-                    "end": 453
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -2207,14 +2060,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 481,
-                    "end": 481
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {
@@ -2306,14 +2151,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
               "type": "mcdoc:type_alias",
               "children": [
                 {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 514,
-                    "end": 514
-                  }
-                },
-                {
                   "type": "mcdoc:literal",
                   "range": {
                     "start": 514,
@@ -2372,14 +2209,6 @@ exports['mcdoc __fixture__ simple types 1'] = {
             {
               "type": "mcdoc:type_alias",
               "children": [
-                {
-                  "type": "mcdoc:doc_comments",
-                  "children": [],
-                  "range": {
-                    "start": 540,
-                    "end": 540
-                  }
-                },
                 {
                   "type": "mcdoc:literal",
                   "range": {

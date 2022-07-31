@@ -124,6 +124,10 @@ struct Test {
 	},
 }
 
+//== type alias/attributed
+#[since=1.18]
+type Foo = true
+
 //== union/empty
 type Union = ()
 //== union/simple
