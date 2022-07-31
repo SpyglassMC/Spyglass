@@ -30,27 +30,33 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
       "::test::Test1": {
         "data": {
           "typeDef": {
-            "kind": "reference",
-            "path": "::test::Test2",
-            "typeParameters": [
-              {
+            "kind": "template",
+            "child": {
+              "kind": "concrete",
+              "child": {
                 "kind": "reference",
+                "path": "::test::Test2"
+              },
+              "typeArgs": [
+                {
+                  "kind": "reference",
+                  "path": "::test::T"
+                },
+                {
+                  "kind": "reference",
+                  "path": "::test::U"
+                }
+              ]
+            },
+            "typeParams": [
+              {
                 "path": "::test::T"
               },
               {
-                "kind": "reference",
                 "path": "::test::U"
               }
             ]
-          },
-          "typeParams": [
-            {
-              "identifier": "T"
-            },
-            {
-              "identifier": "U"
-            }
-          ]
+          }
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -127,27 +133,33 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
       "::test::Test2": {
         "data": {
           "typeDef": {
-            "kind": "reference",
-            "path": "::test::Test1",
-            "typeParameters": [
-              {
+            "kind": "template",
+            "child": {
+              "kind": "concrete",
+              "child": {
                 "kind": "reference",
+                "path": "::test::Test1"
+              },
+              "typeArgs": [
+                {
+                  "kind": "reference",
+                  "path": "::test::T"
+                },
+                {
+                  "kind": "reference",
+                  "path": "::test::U"
+                }
+              ]
+            },
+            "typeParams": [
+              {
                 "path": "::test::T"
               },
               {
-                "kind": "reference",
                 "path": "::test::U"
               }
             ]
-          },
-          "typeParams": [
-            {
-              "identifier": "T"
-            },
-            {
-              "identifier": "U"
-            }
-          ]
+          }
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -350,23 +362,32 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                       }
                     },
                     {
-                      "type": "mcdoc:type/reference",
+                      "type": "mcdoc:type_arg_block",
                       "children": [
                         {
-                          "type": "mcdoc:path",
+                          "type": "mcdoc:type/reference",
                           "children": [
                             {
-                              "type": "mcdoc:identifier",
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 25,
+                                    "end": 26
+                                  },
+                                  "value": "T",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::T"
+                                    ]
+                                  }
+                                }
+                              ],
                               "range": {
                                 "start": 25,
                                 "end": 26
-                              },
-                              "value": "T",
-                              "symbol": {
-                                "category": "mcdoc",
-                                "path": [
-                                  "::test::T"
-                                ]
                               }
                             }
                           ],
@@ -374,31 +395,31 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                             "start": 25,
                             "end": 26
                           }
-                        }
-                      ],
-                      "range": {
-                        "start": 25,
-                        "end": 26
-                      }
-                    },
-                    {
-                      "type": "mcdoc:type/reference",
-                      "children": [
+                        },
                         {
-                          "type": "mcdoc:path",
+                          "type": "mcdoc:type/reference",
                           "children": [
                             {
-                              "type": "mcdoc:identifier",
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 28,
+                                    "end": 29
+                                  },
+                                  "value": "U",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::U"
+                                    ]
+                                  }
+                                }
+                              ],
                               "range": {
                                 "start": 28,
                                 "end": 29
-                              },
-                              "value": "U",
-                              "symbol": {
-                                "category": "mcdoc",
-                                "path": [
-                                  "::test::U"
-                                ]
                               }
                             }
                           ],
@@ -409,8 +430,8 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                         }
                       ],
                       "range": {
-                        "start": 28,
-                        "end": 29
+                        "start": 24,
+                        "end": 31
                       }
                     }
                   ],
@@ -699,23 +720,32 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                       }
                     },
                     {
-                      "type": "mcdoc:type/reference",
+                      "type": "mcdoc:type_arg_block",
                       "children": [
                         {
-                          "type": "mcdoc:path",
+                          "type": "mcdoc:type/reference",
                           "children": [
                             {
-                              "type": "mcdoc:identifier",
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 56,
+                                    "end": 57
+                                  },
+                                  "value": "T",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::T"
+                                    ]
+                                  }
+                                }
+                              ],
                               "range": {
                                 "start": 56,
                                 "end": 57
-                              },
-                              "value": "T",
-                              "symbol": {
-                                "category": "mcdoc",
-                                "path": [
-                                  "::test::T"
-                                ]
                               }
                             }
                           ],
@@ -723,31 +753,31 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                             "start": 56,
                             "end": 57
                           }
-                        }
-                      ],
-                      "range": {
-                        "start": 56,
-                        "end": 57
-                      }
-                    },
-                    {
-                      "type": "mcdoc:type/reference",
-                      "children": [
+                        },
                         {
-                          "type": "mcdoc:path",
+                          "type": "mcdoc:type/reference",
                           "children": [
                             {
-                              "type": "mcdoc:identifier",
+                              "type": "mcdoc:path",
+                              "children": [
+                                {
+                                  "type": "mcdoc:identifier",
+                                  "range": {
+                                    "start": 59,
+                                    "end": 60
+                                  },
+                                  "value": "U",
+                                  "symbol": {
+                                    "category": "mcdoc",
+                                    "path": [
+                                      "::test::U"
+                                    ]
+                                  }
+                                }
+                              ],
                               "range": {
                                 "start": 59,
                                 "end": 60
-                              },
-                              "value": "U",
-                              "symbol": {
-                                "category": "mcdoc",
-                                "path": [
-                                  "::test::U"
-                                ]
                               }
                             }
                           ],
@@ -758,8 +788,8 @@ exports['mcdoc __fixture__ type parameter/circular twofold identities 1'] = {
                         }
                       ],
                       "range": {
-                        "start": 59,
-                        "end": 60
+                        "start": 55,
+                        "end": 61
                       }
                     }
                   ],

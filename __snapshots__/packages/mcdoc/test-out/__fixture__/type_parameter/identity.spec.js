@@ -30,14 +30,17 @@ exports['mcdoc __fixture__ type parameter/identity 1'] = {
       "::test::Test": {
         "data": {
           "typeDef": {
-            "kind": "reference",
-            "path": "::test::T"
-          },
-          "typeParams": [
-            {
-              "identifier": "T"
-            }
-          ]
+            "kind": "template",
+            "child": {
+              "kind": "reference",
+              "path": "::test::T"
+            },
+            "typeParams": [
+              {
+                "path": "::test::T"
+              }
+            ]
+          }
         },
         "desc": "",
         "subcategory": "type_alias",

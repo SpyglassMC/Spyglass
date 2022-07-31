@@ -177,6 +177,13 @@ dispatch spyglassmc:test[%none]<T> to struct {
 
 type Result = spyglassmc:test[%fallback]<struct {}>
 
+//== type parameter/implicit type parameter passing
+type Test1<T> = struct { value: T }
+//// Notice how we write `Test2 = Test1` instead of `Test2<T> = Test1<T>` here.
+type Test2 = Test1
+
+type Result = Test2<true>
+
 //== dispatcher/random number generator
 dispatch minecraft:rng[uniform,%none] to struct {
 	min?: int,
@@ -193,3 +200,13 @@ dispatch spyglassmc:meta[rng] to struct RNG {
 	type?: ("uniform" | "binomial"),
 	...minecraft:rng[[type]],
 }
+
+//== dispatcher/undeclared
+type Test = spyglassmc:unknown[%fallback]
+
+//== dispatcher/indexed
+dispatch spyglassmc:test[%none] to struct {
+	id: string,
+}
+
+type Test = spyglassmc:test[%fallback][id]

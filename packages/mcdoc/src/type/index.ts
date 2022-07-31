@@ -37,7 +37,7 @@ export type ParallelIndices = Index[]
 
 export interface DispatcherData {
 	registry: FullResourceLocation,
-	index: ParallelIndices,
+	parallelIndices: ParallelIndices,
 }
 
 export interface DispatcherType extends DispatcherData {
@@ -234,7 +234,7 @@ export namespace McdocType {
 			case 'concrete':
 				return `${toString(type.child)}${type.typeArgs.length ? `<${type.typeArgs.map(toString).join(', ')}>` : ''}`
 			case 'dispatcher':
-				return `${type.registry ?? 'spyglass:unknown'}[${indicesToString(type.index)}]`
+				return `${type.registry ?? 'spyglass:unknown'}[${indicesToString(type.parallelIndices)}]`
 			case 'double':
 				return `double${rangeToString(type.valueRange)}`
 			case 'enum':

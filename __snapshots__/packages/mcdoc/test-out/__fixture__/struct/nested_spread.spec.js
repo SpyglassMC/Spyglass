@@ -47,30 +47,31 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                   }
                 ],
                 "type": {
-                  "attributes": [
-                    {
-                      "name": "expandable"
-                    }
-                  ],
-                  "kind": "struct",
-                  "fields": [
-                    {
-                      "kind": "spread",
-                      "type": {
-                        "kind": "dispatcher",
-                        "index": [
-                          {
-                            "kind": "dynamic",
-                            "accessor": [
-                              "%parent",
-                              "type"
-                            ]
-                          }
-                        ],
-                        "registry": "minecraft:carver_config"
+                  "kind": "attributed",
+                  "attribute": {
+                    "name": "expandable"
+                  },
+                  "child": {
+                    "kind": "struct",
+                    "fields": [
+                      {
+                        "kind": "spread",
+                        "type": {
+                          "kind": "dispatcher",
+                          "parallelIndices": [
+                            {
+                              "kind": "dynamic",
+                              "accessor": [
+                                "%parent",
+                                "type"
+                              ]
+                            }
+                          ],
+                          "registry": "minecraft:carver_config"
+                        }
                       }
-                    }
-                  ]
+                    ]
+                  }
                 }
               }
             ]
@@ -115,30 +116,31 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
       "::test::<anonymous 0>": {
         "data": {
           "typeDef": {
-            "attributes": [
-              {
-                "name": "expandable"
-              }
-            ],
-            "kind": "struct",
-            "fields": [
-              {
-                "kind": "spread",
-                "type": {
-                  "kind": "dispatcher",
-                  "index": [
-                    {
-                      "kind": "dynamic",
-                      "accessor": [
-                        "%parent",
-                        "type"
-                      ]
-                    }
-                  ],
-                  "registry": "minecraft:carver_config"
+            "kind": "attributed",
+            "attribute": {
+              "name": "expandable"
+            },
+            "child": {
+              "kind": "struct",
+              "fields": [
+                {
+                  "kind": "spread",
+                  "type": {
+                    "kind": "dispatcher",
+                    "parallelIndices": [
+                      {
+                        "kind": "dynamic",
+                        "accessor": [
+                          "%parent",
+                          "type"
+                        ]
+                      }
+                    ],
+                    "registry": "minecraft:carver_config"
+                  }
                 }
-              }
-            ]
+              ]
+            }
           }
         },
         "subcategory": "struct",
@@ -157,6 +159,44 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
               "end": {
                 "line": 2,
                 "character": 24
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      }
+    },
+    "mcdoc/dispatcher": {
+      "minecraft:carver_config": {
+        "reference": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 69,
+              "end": 92
+            },
+            "posRange": {
+              "start": {
+                "line": 3,
+                "character": 5
+              },
+              "end": {
+                "line": 3,
+                "character": 28
+              }
+            },
+            "fullRange": {
+              "start": 69,
+              "end": 108
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 3,
+                "character": 5
+              },
+              "end": {
+                "line": 3,
+                "character": 44
               }
             },
             "contributor": "binder"
@@ -304,7 +344,13 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                                           "namespace": "minecraft",
                                           "path": [
                                             "carver_config"
-                                          ]
+                                          ],
+                                          "symbol": {
+                                            "category": "mcdoc/dispatcher",
+                                            "path": [
+                                              "minecraft:carver_config"
+                                            ]
+                                          }
                                         },
                                         {
                                           "type": "mcdoc:index_body",

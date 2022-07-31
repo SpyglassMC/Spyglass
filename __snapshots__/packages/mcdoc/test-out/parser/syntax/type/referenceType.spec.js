@@ -106,54 +106,63 @@ exports['mcdoc referenceType Parse "MinMaxBounds<float @ 1..2>" 1'] = {
         }
       },
       {
-        "type": "mcdoc:type/numeric_type",
+        "type": "mcdoc:type_arg_block",
         "children": [
           {
-            "type": "mcdoc:literal",
-            "range": {
-              "start": 13,
-              "end": 18
-            },
-            "value": "float",
-            "colorTokenType": "type"
-          },
-          {
-            "type": "mcdoc:float_range",
+            "type": "mcdoc:type/numeric_type",
             "children": [
-              {
-                "type": "float",
-                "range": {
-                  "start": 21,
-                  "end": 22
-                },
-                "value": 1
-              },
               {
                 "type": "mcdoc:literal",
                 "range": {
-                  "start": 22,
-                  "end": 24
+                  "start": 13,
+                  "end": 18
                 },
-                "value": ".."
+                "value": "float",
+                "colorTokenType": "type"
               },
               {
-                "type": "float",
+                "type": "mcdoc:float_range",
+                "children": [
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 21,
+                      "end": 22
+                    },
+                    "value": 1
+                  },
+                  {
+                    "type": "mcdoc:literal",
+                    "range": {
+                      "start": 22,
+                      "end": 24
+                    },
+                    "value": ".."
+                  },
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 24,
+                      "end": 25
+                    },
+                    "value": 2
+                  }
+                ],
                 "range": {
-                  "start": 24,
+                  "start": 21,
                   "end": 25
-                },
-                "value": 2
+                }
               }
             ],
             "range": {
-              "start": 21,
+              "start": 13,
               "end": 25
             }
           }
         ],
         "range": {
-          "start": 13,
-          "end": 25
+          "start": 12,
+          "end": 26
         }
       }
     ],

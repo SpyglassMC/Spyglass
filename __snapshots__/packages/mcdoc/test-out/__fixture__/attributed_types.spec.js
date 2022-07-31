@@ -30,12 +30,13 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::NoValue": {
         "data": {
           "typeDef": {
-            "attributes": [
-              {
-                "name": "deprecated"
-              }
-            ],
-            "kind": "boolean"
+            "kind": "attributed",
+            "attribute": {
+              "name": "deprecated"
+            },
+            "child": {
+              "kind": "boolean"
+            }
           }
         },
         "desc": "",
@@ -78,19 +79,20 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::SimpleValue": {
         "data": {
           "typeDef": {
-            "attributes": [
-              {
-                "name": "since",
+            "kind": "attributed",
+            "attribute": {
+              "name": "since",
+              "value": {
+                "kind": "literal",
                 "value": {
-                  "kind": "literal",
-                  "value": {
-                    "kind": "number",
-                    "value": 1.19
-                  }
+                  "kind": "number",
+                  "value": 1.19
                 }
               }
-            ],
-            "kind": "boolean"
+            },
+            "child": {
+              "kind": "boolean"
+            }
           }
         },
         "desc": "",
@@ -133,28 +135,29 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::TreeValue": {
         "data": {
           "typeDef": {
-            "attributes": [
-              {
-                "name": "id",
-                "value": {
-                  "kind": "tree",
-                  "values": {
-                    "registry": {
-                      "kind": "literal",
-                      "value": {
-                        "kind": "string",
-                        "value": "worldgen/biome"
-                      }
-                    },
-                    "tags": {
-                      "kind": "reference",
-                      "path": "::test::allowed"
+            "kind": "attributed",
+            "attribute": {
+              "name": "id",
+              "value": {
+                "kind": "tree",
+                "values": {
+                  "registry": {
+                    "kind": "literal",
+                    "value": {
+                      "kind": "string",
+                      "value": "worldgen/biome"
                     }
+                  },
+                  "tags": {
+                    "kind": "reference",
+                    "path": "::test::allowed"
                   }
                 }
               }
-            ],
-            "kind": "string"
+            },
+            "child": {
+              "kind": "string"
+            }
           }
         },
         "desc": "",
@@ -197,31 +200,32 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::EnumValue": {
         "data": {
           "typeDef": {
-            "attributes": [
-              {
-                "name": "bitfield",
-                "value": {
-                  "kind": "tree",
-                  "values": {
-                    "0": {
-                      "kind": "enum",
-                      "enumKind": "int",
-                      "values": [
-                        {
-                          "identifier": "HandAll",
-                          "value": 1
-                        },
-                        {
-                          "identifier": "BootsAll",
-                          "value": 2
-                        }
-                      ]
-                    }
+            "kind": "attributed",
+            "attribute": {
+              "name": "bitfield",
+              "value": {
+                "kind": "tree",
+                "values": {
+                  "0": {
+                    "kind": "enum",
+                    "enumKind": "int",
+                    "values": [
+                      {
+                        "identifier": "HandAll",
+                        "value": 1
+                      },
+                      {
+                        "identifier": "BootsAll",
+                        "value": 2
+                      }
+                    ]
                   }
                 }
               }
-            ],
-            "kind": "int"
+            },
+            "child": {
+              "kind": "int"
+            }
           }
         },
         "desc": "",

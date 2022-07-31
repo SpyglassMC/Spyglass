@@ -55,12 +55,13 @@ exports['mcdoc __fixture__ struct/simple 1'] = {
                 ],
                 "key": "Bar",
                 "type": {
-                  "attributes": [
-                    {
-                      "name": "id"
-                    }
-                  ],
-                  "kind": "string"
+                  "kind": "attributed",
+                  "attribute": {
+                    "name": "id"
+                  },
+                  "child": {
+                    "kind": "string"
+                  }
                 },
                 "optional": true
               }

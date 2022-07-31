@@ -945,14 +945,14 @@ export interface TypeAliasNode extends AstNode {
 export const TypeAliasNode = Object.freeze({
 	destruct(node: TypeAliasNode): {
 		docComments?: DocCommentsNode,
-		identifier?: IdentifierNode,
+		identifier: IdentifierNode,
 		keyword: LiteralNode,
 		typeParams?: TypeParamBlockNode,
 		rhs?: TypeNode,
 	} {
 		return {
 			docComments: node.children.find(DocCommentsNode.is),
-			identifier: node.children.find(IdentifierNode.is),
+			identifier: node.children.find(IdentifierNode.is)!,
 			keyword: node.children.find(LiteralNode.is)!,
 			typeParams: node.children.find(TypeParamBlockNode.is),
 			rhs: node.children.find(TypeNode.is),

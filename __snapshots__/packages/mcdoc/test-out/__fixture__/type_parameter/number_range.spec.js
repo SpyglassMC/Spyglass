@@ -30,52 +30,55 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
       "::test::InclusiveRange": {
         "data": {
           "typeDef": {
-            "kind": "union",
-            "members": [
-              {
-                "kind": "reference",
-                "path": "::test::T"
-              },
-              {
-                "kind": "list",
-                "item": {
+            "kind": "template",
+            "child": {
+              "kind": "union",
+              "members": [
+                {
                   "kind": "reference",
                   "path": "::test::T"
                 },
-                "lengthRange": {
-                  "kind": 0,
-                  "min": 2,
-                  "max": 2
-                }
-              },
-              {
-                "kind": "struct",
-                "fields": [
-                  {
-                    "kind": "pair",
-                    "key": "min_inclusive",
-                    "type": {
-                      "kind": "reference",
-                      "path": "::test::T"
-                    }
+                {
+                  "kind": "list",
+                  "item": {
+                    "kind": "reference",
+                    "path": "::test::T"
                   },
-                  {
-                    "kind": "pair",
-                    "key": "max_inclusive",
-                    "type": {
-                      "kind": "reference",
-                      "path": "::test::T"
-                    }
+                  "lengthRange": {
+                    "kind": 0,
+                    "min": 2,
+                    "max": 2
                   }
-                ]
+                },
+                {
+                  "kind": "struct",
+                  "fields": [
+                    {
+                      "kind": "pair",
+                      "key": "min_inclusive",
+                      "type": {
+                        "kind": "reference",
+                        "path": "::test::T"
+                      }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "max_inclusive",
+                      "type": {
+                        "kind": "reference",
+                        "path": "::test::T"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "typeParams": [
+              {
+                "path": "::test::T"
               }
             ]
-          },
-          "typeParams": [
-            {
-              "identifier": "T"
-            }
-          ]
+          }
         },
         "desc": "",
         "subcategory": "type_alias",
@@ -272,9 +275,12 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
       "::test::VarietyType": {
         "data": {
           "typeDef": {
-            "kind": "reference",
-            "path": "::test::InclusiveRange",
-            "typeParameters": [
+            "kind": "concrete",
+            "child": {
+              "kind": "reference",
+              "path": "::test::InclusiveRange"
+            },
+            "typeArgs": [
               {
                 "kind": "int",
                 "valueRange": {
@@ -893,54 +899,63 @@ exports['mcdoc __fixture__ type parameter/number range 1'] = {
                       }
                     },
                     {
-                      "type": "mcdoc:type/numeric_type",
+                      "type": "mcdoc:type_arg_block",
                       "children": [
                         {
-                          "type": "mcdoc:literal",
-                          "range": {
-                            "start": 135,
-                            "end": 138
-                          },
-                          "value": "int",
-                          "colorTokenType": "type"
-                        },
-                        {
-                          "type": "mcdoc:int_range",
+                          "type": "mcdoc:type/numeric_type",
                           "children": [
-                            {
-                              "type": "integer",
-                              "range": {
-                                "start": 141,
-                                "end": 142
-                              },
-                              "value": 1
-                            },
                             {
                               "type": "mcdoc:literal",
                               "range": {
-                                "start": 142,
-                                "end": 144
+                                "start": 135,
+                                "end": 138
                               },
-                              "value": ".."
+                              "value": "int",
+                              "colorTokenType": "type"
                             },
                             {
-                              "type": "integer",
+                              "type": "mcdoc:int_range",
+                              "children": [
+                                {
+                                  "type": "integer",
+                                  "range": {
+                                    "start": 141,
+                                    "end": 142
+                                  },
+                                  "value": 1
+                                },
+                                {
+                                  "type": "mcdoc:literal",
+                                  "range": {
+                                    "start": 142,
+                                    "end": 144
+                                  },
+                                  "value": ".."
+                                },
+                                {
+                                  "type": "integer",
+                                  "range": {
+                                    "start": 144,
+                                    "end": 146
+                                  },
+                                  "value": 64
+                                }
+                              ],
                               "range": {
-                                "start": 144,
+                                "start": 141,
                                 "end": 146
-                              },
-                              "value": 64
+                              }
                             }
                           ],
                           "range": {
-                            "start": 141,
+                            "start": 135,
                             "end": 146
                           }
                         }
                       ],
                       "range": {
-                        "start": 135,
-                        "end": 146
+                        "start": 134,
+                        "end": 147
                       }
                     }
                   ],

@@ -307,7 +307,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                 "kind": "spread",
                 "type": {
                   "kind": "dispatcher",
-                  "index": [
+                  "parallelIndices": [
                     {
                       "kind": "dynamic",
                       "accessor": [
@@ -462,6 +462,38 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
               }
             },
             "contributor": "binder"
+          },
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 256,
+              "end": 269
+            },
+            "posRange": {
+              "start": {
+                "line": 13,
+                "character": 4
+              },
+              "end": {
+                "line": 13,
+                "character": 17
+              }
+            },
+            "fullRange": {
+              "start": 256,
+              "end": 277
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 13,
+                "character": 4
+              },
+              "end": {
+                "line": 13,
+                "character": 25
+              }
+            },
+            "contributor": "binder"
           }
         ],
         "members": {
@@ -585,8 +617,9 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
           },
           "binomial": {
             "data": {
-              "attributes": [
-                {
+              "typeDef": {
+                "kind": "attributed",
+                "attribute": {
                   "name": "since",
                   "value": {
                     "kind": "literal",
@@ -595,35 +628,35 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                       "value": 1.18
                     }
                   }
+                },
+                "child": {
+                  "kind": "struct",
+                  "fields": [
+                    {
+                      "kind": "pair",
+                      "key": "n",
+                      "type": {
+                        "kind": "int",
+                        "valueRange": {
+                          "kind": 0,
+                          "min": 0
+                        }
+                      }
+                    },
+                    {
+                      "kind": "pair",
+                      "key": "p",
+                      "type": {
+                        "kind": "float",
+                        "valueRange": {
+                          "kind": 0,
+                          "min": 0,
+                          "max": 1
+                        }
+                      }
+                    }
+                  ]
                 }
-              ],
-              "typeDef": {
-                "kind": "struct",
-                "fields": [
-                  {
-                    "kind": "pair",
-                    "key": "n",
-                    "type": {
-                      "kind": "int",
-                      "valueRange": {
-                        "kind": 0,
-                        "min": 0
-                      }
-                    }
-                  },
-                  {
-                    "kind": "pair",
-                    "key": "p",
-                    "type": {
-                      "kind": "float",
-                      "valueRange": {
-                        "kind": 0,
-                        "min": 0,
-                        "max": 1
-                      }
-                    }
-                  }
-                ]
               }
             },
             "definition": [
@@ -732,7 +765,7 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                     "kind": "spread",
                     "type": {
                       "kind": "dispatcher",
-                      "index": [
+                      "parallelIndices": [
                         {
                           "kind": "dynamic",
                           "accessor": [
@@ -1479,7 +1512,13 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                                   "namespace": "minecraft",
                                   "path": [
                                     "rng"
-                                  ]
+                                  ],
+                                  "symbol": {
+                                    "category": "mcdoc/dispatcher",
+                                    "path": [
+                                      "minecraft:rng"
+                                    ]
+                                  }
                                 },
                                 {
                                   "type": "mcdoc:index_body",

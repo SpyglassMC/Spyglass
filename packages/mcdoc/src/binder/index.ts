@@ -26,10 +26,6 @@ const TypeDefSymbolData = Object.freeze({
 	},
 })
 
-interface TypeAliasSymbolData extends TypeDefSymbolData {
-	typeParams: { identifier: string }[],
-}
-
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)
 	if (!moduleIdentifier) {
@@ -90,12 +86,18 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 
 	function hoistTypeAlias(node: TypeAliasNode) {
 		hoistFor('type_alias', node, TypeAliasNode.destruct, n => {
-			const { rhs } = TypeAliasNode.destruct(n)
+			const { rhs, typeParams } = TypeAliasNode.destruct(n)
 			if (!rhs) {
 				return undefined
 			}
 
-			return { typeDef: convertType(rhs, ctx) }
+			const ans: TypeDefSymbolData = { typeDef: convertType(rhs, ctx) }
+
+			if (typeParams) {
+				bindTypeParamBlock(node, typeParams, ans, ctx)
+			}
+
+			return ans
 		})
 	}
 
@@ -155,6 +157,41 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 	}
 }
 
+/**
+ * Bind the type param block of a parent node, and modifies the `data` argument in-place to change its `typeDef` to be of template kind.
+ */
+function bindTypeParamBlock(node: DispatchStatementNode | TypeAliasNode, typeParams: TypeParamBlockNode, data: TypeDefSymbolData, ctx: McdocBinderContext): void {
+	// Type parameters are added as local symbols on the type alias AST node.
+	// Thus we create a new local scope on the type alias statement node first.
+	node.locals = Object.create(null)
+
+	// They are also added to the type definition.
+	data.typeDef = {
+		kind: 'template',
+		child: data.typeDef,
+		typeParams: [],
+	}
+
+	const { params } = TypeParamBlockNode.destruct(typeParams)
+	for (const param of params) {
+		const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
+		if (paramIdentifier.value) {
+			// Add the type parameter as a local symbol.
+			const paramPath = `${ctx.moduleIdentifier}::${paramIdentifier.value}`
+			ctx.symbols
+				.query({ doc: ctx.doc, node }, 'mcdoc', paramPath)
+				.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
+				.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
+
+			// Also add it to the type definition.
+			data.typeDef.typeParams.push({ path: paramPath })
+		}
+		// if (constraint) {
+		// 	await bindPath(constraint, ctx)
+		// }
+	}
+}
+
 async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBinderContext): Promise<void> {
 	const { attributes, location, index, target, typeParams } = DispatchStatementNode.destruct(node)
 	if (!(location && index && target)) {
@@ -169,60 +206,32 @@ async function bindDispatchStatement(node: DispatchStatementNode, ctx: McdocBind
 		})
 
 	const { parallelIndices } = IndexBodyNode.destruct(index)
-	for (const key of parallelIndices) {
-		if (DynamicIndexNode.is(key)) {
-			// Ignore dynamic indices in dispatch statements.
-			continue
+	if (parallelIndices.length) {
+		const data: TypeDefSymbolData = {
+			typeDef: convertType(target, ctx),
 		}
-		ctx.symbols
-			.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
-			.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, key, { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key' }))
-			.elseEnter({
-				data: {
-					data: {
-						attributes: convertAttributes(attributes, ctx),
-						typeDef: convertType(target, ctx),
-					},
-				},
-				usage: { type: 'definition', node: key, fullRange: node },
-			})
+		if (typeParams) {
+			bindTypeParamBlock(node, typeParams, data, ctx)
+		}
+		data.typeDef = attributeType(data.typeDef, attributes, ctx)
+
+		for (const key of parallelIndices) {
+			if (DynamicIndexNode.is(key)) {
+				// Ignore dynamic indices in dispatch statements.
+				continue
+			}
+
+			ctx.symbols
+				.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
+				.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, key, { localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key' }))
+				.elseEnter({
+					data: { data },
+					usage: { type: 'definition', node: key, fullRange: node },
+				})
+		}
 	}
 
 	await bindType(target, ctx)
-}
-
-async function bindTypeParamBlock(node: TypeParamBlockNode, ctx: McdocBinderContext, parent: AstNode, identifier: IdentifierNode): Promise<void> {
-	// Type parameters are added as local symbols on the parent AST node.
-	parent.locals = Object.create(null)
-	const { params } = TypeParamBlockNode.destruct(node)
-	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
-	if (query.symbol?.subcategory === 'type_alias') { // FIXME
-		// Type parameters are also added to the symbol data.
-		const oldData = query.symbol.data
-		if (!TypeDefSymbolData.is(oldData)) {
-			// FIXME
-			throw new Error('Failed to locate the typeDef data associated with a supposedly hoisted type alias symbol')
-		}
-		const data: TypeAliasSymbolData = {
-			...oldData,
-			typeParams: [],
-		}
-		query.symbol.data = data
-
-		for (const param of params) {
-			const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
-			if (paramIdentifier.value) {
-				// Add the type parameter as a local symbol.
-				ctx.symbols
-					.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`) // FIXME: category
-					.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
-					.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
-
-				// Also add it to the symbol data.
-				data.typeParams.push({ identifier: paramIdentifier.value })
-			}
-		}
-	}
 }
 
 async function bindType(node: TypeNode, ctx: McdocBinderContext): Promise<void> {
@@ -249,11 +258,25 @@ async function bindType(node: TypeNode, ctx: McdocBinderContext): Promise<void> 
 			await bindType(member, ctx)
 		}
 	}
+
+	const { appendixes } = TypeBaseNode.destruct(node)
+	for (const appendix of appendixes) {
+		if (TypeArgBlockNode.is(appendix)) {
+			const { args } = TypeArgBlockNode.destruct(appendix)
+			for (const arg of args) {
+				await bindType(arg, ctx)
+			}
+		}
+	}
 }
 
 async function bindDispatcherType(node: DispatcherTypeNode, ctx: McdocBinderContext): Promise<void> {
 	const { index, location } = DispatcherTypeNode.destruct(node)
 	const locationStr = ResourceLocationNode.toString(location, 'full')
+	ctx.symbols
+		.query(ctx.doc, 'mcdoc/dispatcher', locationStr)
+		.enter({ usage: { type: 'reference', node: location, fullRange: node } })
+
 	const { parallelIndices } = IndexBodyNode.destruct(index)
 	for (const key of parallelIndices) {
 		if (DynamicIndexNode.is(key)) {
@@ -373,42 +396,6 @@ async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Prom
 	const { identifier, rhs, typeParams } = TypeAliasNode.destruct(node)
 	if (!identifier?.value) {
 		return
-	}
-
-	if (typeParams) {
-		// Type parameters are added as local symbols on the type alias AST node.
-		node.locals = Object.create(null)
-		const { params } = TypeParamBlockNode.destruct(typeParams)
-		const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${identifier.value}`)
-		if (query.symbol?.subcategory === 'type_alias') {
-			// Type parameters are also added to the symbol data.
-			const oldData = query.symbol.data
-			if (!TypeDefSymbolData.is(oldData)) {
-				throw new Error('Failed to locate the typeDef data associated with a supposedly hoisted type alias symbol')
-			}
-			const data: TypeAliasSymbolData = {
-				...oldData,
-				typeParams: [],
-			}
-			query.symbol.data = data
-
-			for (const param of params) {
-				const { identifier: paramIdentifier } = TypeParamNode.destruct(param)
-				if (paramIdentifier.value) {
-					// Add the type parameter as a local symbol.
-					ctx.symbols
-						.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${paramIdentifier.value}`)
-						.ifDeclared(symbol => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
-						.elseEnter({ data: { visibility: SymbolVisibility.Block }, usage: { type: 'declaration', node: paramIdentifier, fullRange: param } })
-
-					// Also add it to the symbol data.
-					data.typeParams.push({ identifier: paramIdentifier.value })
-				}
-				// if (constraint) {
-				// 	await bindPath(constraint, ctx)
-				// }
-			}
-		}
 	}
 
 	if (rhs) {
@@ -534,14 +521,19 @@ function wrapType(node: TypeBaseNode<any>, type: McdocType, ctx: McdocBinderCont
 			}
 		}
 	}
+	ans = attributeType(ans, attributes, ctx)
+	return ans
+}
+
+function attributeType(type: McdocType, attributes: AttributeNode[], ctx: McdocBinderContext): McdocType {
 	for (const attribute of attributes) {
-		ans = {
+		type = {
 			kind: 'attributed',
 			attribute: convertAttribute(attribute, ctx),
-			child: ans,
+			child: type,
 		}
 	}
-	return ans
+	return type
 }
 
 function convertAttributes(nodes: AttributeNode[], ctx: McdocBinderContext): Attribute[] | undefined {
@@ -736,7 +728,7 @@ function convertDispatcher(node: DispatcherTypeNode, ctx: McdocBinderContext): M
 	const { index, location } = DispatcherTypeNode.destruct(node)
 	return wrapType(node, {
 		kind: 'dispatcher',
-		index: convertIndexBody(index, ctx),
+		parallelIndices: convertIndexBody(index, ctx),
 		registry: ResourceLocationNode.toString(location, 'full'),
 	}, ctx, { skipFirstIndexBody: true })
 }
