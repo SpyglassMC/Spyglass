@@ -283,7 +283,7 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 		return comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
 	}
 
-	const ExpectedTypes: Record<Exclude<mcdoc.McdocType['kind'], 'any' | 'dispatcher' | 'enum' | 'literal' | 'reference' | 'union'>, NbtNode['type']> = {
+	const ExpectedTypes: Record<Exclude<mcdoc.McdocType['kind'], 'any' | 'dispatcher' | 'enum' | 'literal' | 'reference' | 'union' | 'unsafe' | 'attributed' | 'concrete' | 'indexed' | 'template'>, NbtNode['type']> = {
 		boolean: 'nbt:byte',
 		byte: 'nbt:byte',
 		byte_array: 'nbt:byte_array',
@@ -302,7 +302,7 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 
 	return (node, ctx): void => {
 		// Rough type check.
-		if (type.kind !== 'any' && type.kind !== 'dispatcher' && type.kind !== 'enum' && type.kind !== 'literal' && type.kind !== 'reference' && type.kind !== 'union' && node.type !== ExpectedTypes[type.kind]) {
+		if (type.kind !== 'any' && type.kind !== 'dispatcher' && type.kind !== 'enum' && type.kind !== 'literal' && type.kind !== 'reference' && type.kind !== 'union' && type.kind !== 'attributed' && type.kind !== 'unsafe' && type.kind !== 'concrete' && type.kind !== 'indexed' && type.kind !== 'template' && node.type !== ExpectedTypes[type.kind]) {
 			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.kind])), node, core.ErrorSeverity.Warning)
 			return
 		}
