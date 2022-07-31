@@ -1,4 +1,5 @@
 {
+	"json.format.keepLines": true,
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
 			"source.organizeImports": true,
