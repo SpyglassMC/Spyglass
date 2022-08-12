@@ -45,3 +45,8 @@ gh_edit_repository: https://github.com/SpyglassMC/Spyglass
 gh_edit_branch: main
 gh_edit_source: docs
 gh_edit_view_mode: tree
+## Nav
+nav_external_links:
+  - title: Playground
+    url: https://spyglassmc.com/playground/
+    hide_icon: true
