@@ -53,7 +53,7 @@ function initNav() {
 
 function initSearch() {
   var request = new XMLHttpRequest();
-  request.open('GET', 'https://spyglassmc.com/assets/js/search-data.json', true);
+  request.open('GET', '/assets/js/search-data.json', true);
 
   request.onload = function(){
     if (request.status >= 200 && request.status < 400) {
@@ -430,7 +430,19 @@ jtd.getTheme = function() {
 
 jtd.setTheme = function(theme) {
   var cssFile = document.querySelector('[rel="stylesheet"]');
-  cssFile.setAttribute('href', 'https://spyglassmc.com/assets/css/just-the-docs-' + theme + '.css');
+  cssFile.setAttribute('href', '/assets/css/just-the-docs-' + theme + '.css');
+}
+
+// Scroll site-nav to ensure the link to the current page is visible
+
+function scrollNav() {
+  const href = document.location.pathname;
+  const siteNav = document.getElementById('site-nav');
+  const targetLink = siteNav.querySelector('a[href="' + href + '"], a[href="' + href + '/"]');
+  if(targetLink){
+    const rect = targetLink.getBoundingClientRect();
+    siteNav.scrollBy(0, rect.top - 3*rect.height);
+  }
 }
 
 // Document ready
@@ -438,6 +450,7 @@ jtd.setTheme = function(theme) {
 jtd.onReady(function(){
   initNav();
   initSearch();
+  scrollNav();
 });
 
 })(window.jtd = window.jtd || {});
