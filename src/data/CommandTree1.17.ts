@@ -2441,7 +2441,7 @@ export const CommandTree: ICommandTree = {
             }
         },
         color: {
-            parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white')
+            parser: new LiteralArgumentParser('black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white', 'reset')
         },
         execute_if_unless: {
             parser: new LiteralArgumentParser('if', 'unless'),
