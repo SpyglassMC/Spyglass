@@ -1,9 +1,9 @@
 name: Test
-on:
-  push:
-    branches-ignore:
-      - released
-  pull_request:
+on: {}
+  # push:
+  #   branches-ignore:
+  #     - released
+  # pull_request:
 env:
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
