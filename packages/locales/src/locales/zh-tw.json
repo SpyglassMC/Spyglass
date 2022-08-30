@@ -8,7 +8,7 @@
   "code-action.fix-workspace": "修復當前工作區中所有可自動修復的問題",
   "code-action.id-attribute-datafix": "將該屬性名更新至 1.16",
   "code-action.id-complete-default-namespace": "補完預設命名空間",
-  "code-action.id-create-file": "在同一個資料包中創建%0%",
+  "code-action.id-create-file": "在同一個資料包中建立%0%",
   "code-action.id-omit-default-namespace": "省略預設命名空間",
   "code-action.id-zombified-piglin-datafix": "將該 ID 升級為殭屍化豬布林",
   "code-action.nbt-compound-sort-keys": "將 NBT 複合標籤按鍵排序",
@@ -176,5 +176,14 @@
   "unquoted-string": "一個未被引號包裹的字串",
   "unsorted-keys": "鍵未排序",
   "uuid": "一個 UUID",
-  "vector": "一個向量"
+  "vector": "一個向量",
+  "mcdoc.binder.duplicated-declaration.related": "%0% 已在這裡宣告過了",
+  "mcdoc.binder.duplicated-declaration": "重複的宣告 %0%",
+  "mcfunction.signature-help.argument-parser-documentation": "[Minecraft 維基： `%0%` 參數類型](https://minecraft.fandom.com/zh/wiki/参数类型#%0%)",
+  "mcfunction.signature-help.command-documentation": "[Minecraft 維基： `%0%` 指令](https://minecraft.fandom.com/zh/wiki/命令/%0%)",
+  "mcfunction.completer.block.states.default-value": "預設： %0%",
+  "linter-config-validator.wrapper": "%0%。 閱讀[文件]（%1）以獲取更多資訊",
+  "linter-config-validator.name-convention.type": "期望一個描述名字的正規表示式字串",
+  "linter.undeclared-symbol.message": "找不到 %0% %1%",
+  "json.checker.item.duplicate": "重複的清單內容"
 }
