@@ -136,8 +136,15 @@ export function getRelAndRootIndex(uri: Uri, roots: Uri[]): { rel: string, index
 }
 
 export function getRel(uri: Uri, roots: Uri[]): string | undefined {
-    return getRelAndRootIndex(uri, roots)?.rel
-
+    return getRelAndRootIndex(uri, roots)?.rel ?? (() => {
+        const segments = uri.path.split('/')
+        for (let i = segments.length - 4; i >= 0; i--) {
+            if (segments[i] === 'assets' || segments[i] === 'data') {
+                return segments.slice(i).join('/')
+            }
+        }
+        return undefined
+    })()
 }
 
 export function getId(uri: Uri, roots: Uri[]) {
