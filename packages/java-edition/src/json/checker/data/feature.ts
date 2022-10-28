@@ -155,7 +155,7 @@ const block_state_provider = as(
 				},
 				randomized_int_state_provider: {
 					// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
-					property: ctx.ensureBindingStarted
+					property: (ctx.ensureBindingStarted as Function | undefined)
 						? literal(
 								blockProviderProperties(
 									props.find((p) => p.key?.value === 'source')?.value,
