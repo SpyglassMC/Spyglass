@@ -1,12 +1,15 @@
 export interface Position {
-	line: number,
+	line: number
 	character: number
 }
 
 export namespace Position {
 	export function create(line: number, character: number): Position
 	export function create(partial: Partial<Position>): Position
-	export function create(param1: number | Partial<Position>, param2?: number): Position {
+	export function create(
+		param1: number | Partial<Position>,
+		param2?: number,
+	): Position {
 		if (typeof param1 === 'object') {
 			return _createFromPartial(param1)
 		} else {
@@ -34,7 +37,10 @@ export namespace Position {
 	 * { line: Infinity, character: Infinity }
 	 * ```
 	 */
-	export const Infinity = Position.create(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+	export const Infinity = Position.create(
+		Number.POSITIVE_INFINITY,
+		Number.POSITIVE_INFINITY,
+	)
 
 	export function toString(pos: Position): string {
 		return `<${pos.line}, ${pos.character}>`

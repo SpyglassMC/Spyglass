@@ -1,6 +1,6 @@
 /*
  * A series of functions that can transform `@spyglassmc/core` types to `vscode-languageserver` types.
- * 
+ *
  * Functions are named after types in `vscode-languageserver`.
  */
 
@@ -17,30 +17,51 @@ export function color(color: core.Color): ls.Color {
 	return ls.Color.create(...color)
 }
 
-export function colorInformation(info: core.ColorInfo, doc: TextDocument): ls.ColorInformation {
+export function colorInformation(
+	info: core.ColorInfo,
+	doc: TextDocument,
+): ls.ColorInformation {
 	return ls.ColorInformation.create(range(info.range, doc), color(info.color!))
 }
 
-export function colorInformationArray(info: core.ColorInfo[], doc: TextDocument): ls.ColorInformation[] {
-	return info.map(i => colorInformation(i, doc))
+export function colorInformationArray(
+	info: core.ColorInfo[],
+	doc: TextDocument,
+): ls.ColorInformation[] {
+	return info.map((i) => colorInformation(i, doc))
 }
 
-export function colorPresentation(presentation: core.ColorPresentation, doc: TextDocument): ls.ColorPresentation {
-	const edit = ls.TextEdit.replace(range(presentation.range, doc), presentation.text)
+export function colorPresentation(
+	presentation: core.ColorPresentation,
+	doc: TextDocument,
+): ls.ColorPresentation {
+	const edit = ls.TextEdit.replace(
+		range(presentation.range, doc),
+		presentation.text,
+	)
 	return ls.ColorPresentation.create(presentation.label, edit)
 }
 
-export function colorPresentationArray(presentation: core.ColorPresentation[], doc: TextDocument): ls.ColorPresentation[] {
-	return presentation.map(p => colorPresentation(p, doc))
+export function colorPresentationArray(
+	presentation: core.ColorPresentation[],
+	doc: TextDocument,
+): ls.ColorPresentation[] {
+	return presentation.map((p) => colorPresentation(p, doc))
 }
 
 export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
-	const ans = ls.Diagnostic.create(error.posRange, error.message, diagnosticSeverity(error.severity), undefined, 'spyglassmc')
+	const ans = ls.Diagnostic.create(
+		error.posRange,
+		error.message,
+		diagnosticSeverity(error.severity),
+		undefined,
+		'spyglassmc',
+	)
 	if (error.info?.deprecated) {
-		(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
+		;(ans.tags ??= [])?.push(ls.DiagnosticTag.Deprecated)
 	}
 	if (error.info?.unnecessary) {
-		(ans.tags ??= [])?.push(ls.DiagnosticTag.Unnecessary)
+		;(ans.tags ??= [])?.push(ls.DiagnosticTag.Unnecessary)
 	}
 	if (error.info?.codeAction) {
 		ans.data = {
@@ -48,7 +69,7 @@ export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
 		}
 	}
 	if (error.info?.related) {
-		ans.relatedInformation = error.info?.related.map(v => ({
+		ans.relatedInformation = error.info?.related.map((v) => ({
 			location: location(v.location),
 			message: v.message,
 		}))
@@ -56,11 +77,15 @@ export function diagnostic(error: core.PosRangeLanguageError): ls.Diagnostic {
 	return ans
 }
 
-export function diagnostics(errors: readonly core.PosRangeLanguageError[]): ls.Diagnostic[] {
-	return errors.map(e => diagnostic(e))
+export function diagnostics(
+	errors: readonly core.PosRangeLanguageError[],
+): ls.Diagnostic[] {
+	return errors.map((e) => diagnostic(e))
 }
 
-export function diagnosticSeverity(severity: core.ErrorSeverity): ls.DiagnosticSeverity {
+export function diagnosticSeverity(
+	severity: core.ErrorSeverity,
+): ls.DiagnosticSeverity {
 	switch (severity) {
 		case core.ErrorSeverity.Hint:
 			return ls.DiagnosticSeverity.Hint
@@ -73,43 +98,90 @@ export function diagnosticSeverity(severity: core.ErrorSeverity): ls.DiagnosticS
 	}
 }
 
-export function documentHighlight(locations: core.SymbolLocations | undefined): ls.DocumentHighlight[] | undefined {
+export function documentHighlight(
+	locations: core.SymbolLocations | undefined,
+): ls.DocumentHighlight[] | undefined {
 	return locations?.locations
-		?.filter(loc => loc.posRange)
-		?.map(loc => ({ range: loc.posRange! }))
+		?.filter((loc) => loc.posRange)
+		?.map((loc) => ({ range: loc.posRange! }))
 }
 
 export function documentSelector(meta: core.MetaRegistry): ls.DocumentSelector {
-	const ans: ls.DocumentSelector = meta.getLanguages().map(id => ({ language: id }))
+	const ans: ls.DocumentSelector = meta
+		.getLanguages()
+		.map((id) => ({ language: id }))
 	return ans
 }
 
-export function documentSymbol(symbol: core.Symbol, symLoc: core.SymbolLocation, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol {
+export function documentSymbol(
+	symbol: core.Symbol,
+	symLoc: core.SymbolLocation,
+	doc: TextDocument,
+	hierarchicalSupport: boolean | undefined,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.DocumentSymbol {
 	return {
 		name: symbol.identifier,
 		kind: symbolKind(symbol.category, symbol.subcategory, supportedKinds),
 		range: symLoc.fullPosRange ?? symLoc.posRange ?? ZeroRange,
 		selectionRange: symLoc.posRange ?? ZeroRange,
-		children: hierarchicalSupport ? documentSymbols(symbol.members, doc, hierarchicalSupport, supportedKinds) : undefined,
+		children: hierarchicalSupport
+			? documentSymbols(
+					symbol.members,
+					doc,
+					hierarchicalSupport,
+					supportedKinds,
+			  )
+			: undefined,
 	}
 }
 
-export function documentSymbols(map: core.SymbolMap = {}, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+export function documentSymbols(
+	map: core.SymbolMap = {},
+	doc: TextDocument,
+	hierarchicalSupport: boolean | undefined,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.DocumentSymbol[] {
 	return Object.values(map)
-		.map(s => [s, [...s.declaration ?? [], ...s.definition ?? [], ...s.implementation ?? [], ...s.typeDefinition ?? []].find(l => l.uri === doc.uri)] as const)
+		.map(
+			(s) =>
+				[
+					s,
+					[
+						...(s.declaration ?? []),
+						...(s.definition ?? []),
+						...(s.implementation ?? []),
+						...(s.typeDefinition ?? []),
+					].find((l) => l.uri === doc.uri),
+				] as const,
+		)
 		.filter(([_s, l]) => !!l)
-		.map(([s, l]) => documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds))
+		.map(([s, l]) =>
+			documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds),
+		)
 }
 
-export function documentSymbolsFromTable(table: core.SymbolTable, doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+export function documentSymbolsFromTable(
+	table: core.SymbolTable,
+	doc: TextDocument,
+	hierarchicalSupport: boolean | undefined,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.DocumentSymbol[] {
 	return Object.values(table)
-		.map(m => documentSymbols(m, doc, hierarchicalSupport, supportedKinds))
+		.map((m) => documentSymbols(m, doc, hierarchicalSupport, supportedKinds))
 		.flat()
 }
 
-export function documentSymbolsFromTables(tables: core.SymbolTable[], doc: TextDocument, hierarchicalSupport: boolean | undefined, supportedKinds: ls.SymbolKind[] = []): ls.DocumentSymbol[] {
+export function documentSymbolsFromTables(
+	tables: core.SymbolTable[],
+	doc: TextDocument,
+	hierarchicalSupport: boolean | undefined,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.DocumentSymbol[] {
 	return tables
-		.map(t => documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds))
+		.map((t) =>
+			documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds),
+		)
 		.flat()
 }
 
@@ -121,26 +193,41 @@ export function hover(hover: core.Hover, doc: TextDocument): ls.Hover {
 	return ans
 }
 
-export function inlayHint(hint: core.InlayHint, doc: TextDocument): MyLspInlayHint {
+export function inlayHint(
+	hint: core.InlayHint,
+	doc: TextDocument,
+): MyLspInlayHint {
 	return {
 		position: doc.positionAt(hint.offset),
 		text: hint.text,
 	}
 }
 
-export function inlayHints(hints: core.InlayHint[], doc: TextDocument): MyLspInlayHint[] {
-	return hints.map(h => inlayHint(h, doc))
+export function inlayHints(
+	hints: core.InlayHint[],
+	doc: TextDocument,
+): MyLspInlayHint[] {
+	return hints.map((h) => inlayHint(h, doc))
 }
 
-export function completionItem(completion: core.CompletionItem, doc: TextDocument, requestedOffset: number, insertReplaceSupport: boolean | undefined): ls.CompletionItem {
+export function completionItem(
+	completion: core.CompletionItem,
+	doc: TextDocument,
+	requestedOffset: number,
+	insertReplaceSupport: boolean | undefined,
+): ls.CompletionItem {
 	const insertText = completion.insertText ?? completion.label
-	const canInsertReplace = insertReplaceSupport && ![core.CR, core.LF, core.CRLF].includes(insertText)
+	const canInsertReplace =
+		insertReplaceSupport && ![core.CR, core.LF, core.CRLF].includes(insertText)
 	const textEdit: ls.TextEdit | ls.InsertReplaceEdit = canInsertReplace
 		? ls.InsertReplaceEdit.create(
-			insertText,
-			/* insert  */ range(core.Range.create(completion.range.start, requestedOffset), doc),
-			/* replace */ range(completion.range, doc)
-		)
+				insertText,
+				/* insert  */ range(
+					core.Range.create(completion.range.start, requestedOffset),
+					doc,
+				),
+				/* replace */ range(completion.range, doc),
+		  )
 		: ls.TextEdit.replace(range(completion.range, doc), insertText)
 	const ans: ls.CompletionItem = {
 		label: completion.label,
@@ -152,30 +239,49 @@ export function completionItem(completion: core.CompletionItem, doc: TextDocumen
 		textEdit,
 		insertTextFormat: InsertTextFormat.Snippet,
 		insertTextMode: ls.InsertTextMode.adjustIndentation,
-		...completion.deprecated ? { tags: [ls.CompletionItemTag.Deprecated] } : {},
+		...(completion.deprecated
+			? { tags: [ls.CompletionItemTag.Deprecated] }
+			: {}),
 	}
 	return ans
 }
 
-export function location(location: { uri: string, posRange: core.PositionRange }): ls.Location {
+export function location(location: {
+	uri: string
+	posRange: core.PositionRange
+}): ls.Location {
 	return {
 		uri: location.uri,
 		range: location.posRange,
 	}
 }
 
-export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: false): ls.Location[] | undefined
-export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | undefined
-export function locationLink(locations: core.SymbolLocations | undefined, doc: TextDocument, linkSupport: boolean | undefined): ls.LocationLink[] | ls.Location[] | undefined {
+export function locationLink(
+	locations: core.SymbolLocations | undefined,
+	doc: TextDocument,
+	linkSupport: false,
+): ls.Location[] | undefined
+export function locationLink(
+	locations: core.SymbolLocations | undefined,
+	doc: TextDocument,
+	linkSupport: boolean | undefined,
+): ls.LocationLink[] | ls.Location[] | undefined
+export function locationLink(
+	locations: core.SymbolLocations | undefined,
+	doc: TextDocument,
+	linkSupport: boolean | undefined,
+): ls.LocationLink[] | ls.Location[] | undefined {
 	return locations?.locations
 		? linkSupport
-			? locations.locations.map(loc => ({
-				originSelectionRange: range(locations.range, doc),
-				targetUri: loc.uri,
-				targetRange: loc.fullPosRange ?? loc.posRange ?? ZeroRange,
-				targetSelectionRange: loc.posRange ?? ZeroRange,
-			}))
-			: (locations.locations).map(loc => location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange }))
+			? locations.locations.map((loc) => ({
+					originSelectionRange: range(locations.range, doc),
+					targetUri: loc.uri,
+					targetRange: loc.fullPosRange ?? loc.posRange ?? ZeroRange,
+					targetSelectionRange: loc.posRange ?? ZeroRange,
+			  }))
+			: locations.locations.map((loc) =>
+					location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange }),
+			  )
 		: undefined
 }
 
@@ -194,11 +300,15 @@ export function range(range: core.Range, doc: TextDocument): ls.Range {
 	return ls.Range.create(position(range.start, doc), position(range.end, doc))
 }
 
-export function semanticTokenModifier(modifier: core.ColorTokenModifier): number {
+export function semanticTokenModifier(
+	modifier: core.ColorTokenModifier,
+): number {
 	return core.ColorTokenModifiers.indexOf(modifier)
 }
 
-export function semanticTokenModifiers(modifiers: readonly core.ColorTokenModifier[] = []): number {
+export function semanticTokenModifiers(
+	modifiers: readonly core.ColorTokenModifier[] = [],
+): number {
 	let ans = 0
 	for (const modifier of modifiers) {
 		ans += 1 << semanticTokenModifier(modifier)
@@ -207,7 +317,11 @@ export function semanticTokenModifiers(modifiers: readonly core.ColorTokenModifi
 }
 
 const MaxCharacterNumber = 2147483647
-export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocument, multilineSupport: boolean | undefined): ls.SemanticTokens {
+export function semanticTokens(
+	tokens: readonly core.ColorToken[],
+	doc: TextDocument,
+	multilineSupport: boolean | undefined,
+): ls.SemanticTokens {
 	const builder = new ls.SemanticTokensBuilder()
 	for (const token of tokens) {
 		const pos = position(token.range.start, doc)
@@ -218,11 +332,23 @@ export function semanticTokens(tokens: readonly core.ColorToken[], doc: TextDocu
 			const length = token.range.end - token.range.start
 			builder.push(pos.line, pos.character, length, type, modifiers)
 		} else {
-			const firstLineRemainingLength = doc.getText(ls.Range.create(pos.line, pos.character, pos.line, MaxCharacterNumber)).length
-			const lastLineLeadingLength = doc.getText(ls.Range.create(endPos.line, 0, endPos.line, endPos.character)).length
-			builder.push(pos.line, pos.character, firstLineRemainingLength, type, modifiers)
+			const firstLineRemainingLength = doc.getText(
+				ls.Range.create(pos.line, pos.character, pos.line, MaxCharacterNumber),
+			).length
+			const lastLineLeadingLength = doc.getText(
+				ls.Range.create(endPos.line, 0, endPos.line, endPos.character),
+			).length
+			builder.push(
+				pos.line,
+				pos.character,
+				firstLineRemainingLength,
+				type,
+				modifiers,
+			)
 			for (let i = pos.line + 1; i < endPos.line - 1; i++) {
-				const lineLength = doc.getText(ls.Range.create(i, 0, i, MaxCharacterNumber)).length
+				const lineLength = doc.getText(
+					ls.Range.create(i, 0, i, MaxCharacterNumber),
+				).length
 				builder.push(i, 0, lineLength, type, modifiers)
 			}
 			builder.push(endPos.line, 0, lastLineLeadingLength, type, modifiers)
@@ -243,7 +369,9 @@ export function semanticTokenType(type: core.ColorTokenType): number {
 	return core.ColorTokenTypes.indexOf(type)
 }
 
-export function signatureHelp(help: core.SignatureHelp | undefined): ls.SignatureHelp | undefined {
+export function signatureHelp(
+	help: core.SignatureHelp | undefined,
+): ls.SignatureHelp | undefined {
 	if (!help || help.signatures.length === 0) {
 		return undefined
 	}
@@ -254,47 +382,86 @@ export function signatureHelp(help: core.SignatureHelp | undefined): ls.Signatur
 	}
 }
 
-export function signatureInformation(info: core.SignatureInfo): ls.SignatureInformation {
+export function signatureInformation(
+	info: core.SignatureInfo,
+): ls.SignatureInformation {
 	return {
 		label: info.label,
 		activeParameter: info.activeParameter,
-		documentation: info.documentation ? markupContent(info.documentation) : undefined,
+		documentation: info.documentation
+			? markupContent(info.documentation)
+			: undefined,
 		parameters: info.parameters.map(parameterInformation),
 	}
 }
 
-export function parameterInformation(info: core.ParameterInfo): ls.ParameterInformation {
+export function parameterInformation(
+	info: core.ParameterInfo,
+): ls.ParameterInformation {
 	return {
 		label: info.label,
-		documentation: info.documentation ? markupContent(info.documentation) : undefined,
+		documentation: info.documentation
+			? markupContent(info.documentation)
+			: undefined,
 	}
 }
 
-export function symbolInformation(symbol: core.Symbol, symLoc: core.SymbolLocation, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation {
+export function symbolInformation(
+	symbol: core.Symbol,
+	symLoc: core.SymbolLocation,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.SymbolInformation {
 	return {
 		name: symbol.identifier,
 		kind: symbolKind(symbol.category, symbol.subcategory, supportedKinds),
-		location: location({ uri: symLoc.uri, posRange: symLoc.fullPosRange ?? symLoc.posRange ?? ZeroRange }),
+		location: location({
+			uri: symLoc.uri,
+			posRange: symLoc.fullPosRange ?? symLoc.posRange ?? ZeroRange,
+		}),
 	}
 }
 
-export function symbolInformationArray(map: core.SymbolMap = {}, query: string, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation[] {
+export function symbolInformationArray(
+	map: core.SymbolMap = {},
+	query: string,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.SymbolInformation[] {
 	return Object.values(map)
-		.filter(s => s.identifier.includes(query))
-		.map(s => [s, [...s.declaration ?? [], ...s.definition ?? [], ...s.implementation ?? [], ...s.typeDefinition ?? []][0]] as const)
+		.filter((s) => s.identifier.includes(query))
+		.map(
+			(s) =>
+				[
+					s,
+					[
+						...(s.declaration ?? []),
+						...(s.definition ?? []),
+						...(s.implementation ?? []),
+						...(s.typeDefinition ?? []),
+					][0],
+				] as const,
+		)
 		.filter(([_s, l]) => !!l)
 		.map(([s, l]) => symbolInformation(s, l, supportedKinds))
 }
 
-export function symbolInformationArrayFromTable(table: core.SymbolTable, query: string, supportedKinds: ls.SymbolKind[] = []): ls.SymbolInformation[] {
+export function symbolInformationArrayFromTable(
+	table: core.SymbolTable,
+	query: string,
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.SymbolInformation[] {
 	return Object.values(table)
-		.map(m => symbolInformationArray(m, query, supportedKinds))
+		.map((m) => symbolInformationArray(m, query, supportedKinds))
 		.flat()
 }
 
-export function symbolKind(category: string, subcategory = '', supportedKinds: ls.SymbolKind[] = []): ls.SymbolKind {
+export function symbolKind(
+	category: string,
+	subcategory = '',
+	supportedKinds: ls.SymbolKind[] = [],
+): ls.SymbolKind {
 	const UltimateFallback = ls.SymbolKind.Variable
-	const getKind = (kind: ls.SymbolKind, fallback: ls.SymbolKind) => supportedKinds?.includes(kind) ? kind : fallback
+	const getKind = (kind: ls.SymbolKind, fallback: ls.SymbolKind) =>
+		supportedKinds?.includes(kind) ? kind : fallback
 
 	if (core.ResourceLocationCategory.is(category)) {
 		return ls.SymbolKind.Function
@@ -320,6 +487,10 @@ export function symbolKind(category: string, subcategory = '', supportedKinds: l
 	return map.get(category) ?? UltimateFallback
 }
 
-export function textEdit(editRange: core.Range, text: string, doc: TextDocument) {
+export function textEdit(
+	editRange: core.Range,
+	text: string,
+	doc: TextDocument,
+) {
 	return ls.TextEdit.replace(range(editRange, doc), text)
 }

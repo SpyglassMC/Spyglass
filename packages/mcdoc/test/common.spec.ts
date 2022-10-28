@@ -1,9 +1,12 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
-import { identifierToSeg, segToIdentifier } from '@spyglassmc/mcdoc/lib/common.js'
+import {
+	identifierToSeg,
+	segToIdentifier,
+} from '@spyglassmc/mcdoc/lib/common.js'
 
 describe('mcdoc common.ts', () => {
-	const suites: { identifier: string, segments: string[] }[] = [
+	const suites: { identifier: string; segments: string[] }[] = [
 		{
 			identifier: '::',
 			segments: [],

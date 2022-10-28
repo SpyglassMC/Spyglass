@@ -3,11 +3,11 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface FloatBaseNode extends AstNode {
-	value: number,
+	value: number
 }
 
 export interface FloatNode extends FloatBaseNode {
-	readonly type: 'float',
+	readonly type: 'float'
 }
 export namespace FloatNode {
 	/* istanbul ignore next */

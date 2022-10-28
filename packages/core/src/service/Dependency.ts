@@ -1,4 +1,4 @@
-export type Dependency = { uri: string, info?: Record<string, any> }
+export type Dependency = { uri: string; info?: Record<string, any> }
 
 export type DependencyKey = `@${string}`
 export namespace DependencyKey {

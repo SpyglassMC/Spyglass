@@ -4,15 +4,25 @@ import type { RangeLike } from './Range.js'
 import { Range } from './Range.js'
 
 export interface PositionRange {
-	start: Position,
+	start: Position
 	end: Position
 }
 
 export namespace PositionRange {
-	export function create(startLine: number, startCharacter: number, endLine: number, endCharacter: number): PositionRange
+	export function create(
+		startLine: number,
+		startCharacter: number,
+		endLine: number,
+		endCharacter: number,
+	): PositionRange
 	export function create(start: Position, end: Position): PositionRange
 	export function create(partial: Partial<PositionRange>): PositionRange
-	export function create(param1: number | Position | Partial<PositionRange>, param2?: number | Position, param3?: number, param4?: number): PositionRange {
+	export function create(
+		param1: number | Position | Partial<PositionRange>,
+		param2?: number | Position,
+		param3?: number,
+		param4?: number,
+	): PositionRange {
 		if (typeof param1 === 'number') {
 			return {
 				start: Position.create(param1, param2 as number),
@@ -62,10 +72,14 @@ export namespace PositionRange {
 	 * }
 	 * ```
 	 */
-	export const Full = Object.freeze(PositionRange.create(Position.Beginning, Position.Infinity))
+	export const Full = Object.freeze(
+		PositionRange.create(Position.Beginning, Position.Infinity),
+	)
 
 	export function toString(range: PositionRange): string {
-		return `[${Position.toString(range.start)}, ${Position.toString(range.end)})`
+		return `[${Position.toString(range.start)}, ${Position.toString(
+			range.end,
+		)})`
 	}
 
 	export function contains(range: PositionRange, pos: Position): boolean {
@@ -87,7 +101,7 @@ export namespace PositionRange {
 	export function endsBefore(range: PositionRange, pos: Position): boolean {
 		return Position.isBefore(
 			Position.create(range.end.line, range.end.character - 1),
-			pos
+			pos,
 		)
 	}
 }

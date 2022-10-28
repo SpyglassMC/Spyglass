@@ -15,5 +15,5 @@ export function segToIdentifier(seg: Segments): string {
 }
 
 export interface AdditionalContext {
-	moduleIdentifier: string,
+	moduleIdentifier: string
 }

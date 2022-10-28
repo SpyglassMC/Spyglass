@@ -8,7 +8,7 @@ import type { DeepReadonly } from './ReadonlyProxy.js'
 export const Uri = URL
 export type Uri = URL
 
-/** 
+/**
  * `NodeJS.Timeout` on Node.js and `number` on browser.
  */
 export type IntervalId = any
@@ -17,22 +17,31 @@ export type IntervalId = any
  * @param getKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
  * The result of this function will be used as the key to identify the `Promise`. By default the first element in the argument
  * list will be used.
- * 
+ *
  * This is a decorator for async methods. Decorated methods will return the same `Promise` for
  * the same key, provided that the previously returned `Promise` is still pending.
  */
-export function SingletonPromise(getKey: (args: any[]) => any = args => args[0]): MethodDecorator {
-	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+export function SingletonPromise(
+	getKey: (args: any[]) => any = (args) => args[0],
+): MethodDecorator {
+	return (
+		_target: Object,
+		_key: string | symbol,
+		descripter: PropertyDescriptor,
+	) => {
 		const promises = new Map<unknown, Promise<unknown>>()
-		const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
+		const decoratedMethod: (...args: unknown[]) => Promise<unknown> =
+			descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
 		descripter.value = function (...args: unknown[]) {
 			const key = getKey(args)
 			if (promises.has(key)) {
 				return promises.get(key)!
 			}
-			const ans = decoratedMethod.apply(this, args)
-				.then(ans => (promises.delete(key), ans), e => (promises.delete(key), Promise.reject(e)))
+			const ans = decoratedMethod.apply(this, args).then(
+				(ans) => (promises.delete(key), ans),
+				(e) => (promises.delete(key), Promise.reject(e)),
+			)
 			promises.set(key, ans)
 			return ans
 		}
@@ -43,12 +52,16 @@ export function SingletonPromise(getKey: (args: any[]) => any = args => args[0])
 /**
  * This is a decorator for methods. Decorated methods will return the same non-`undefined` value no matter what.
  */
-export const Singleton: MethodDecorator = (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+export const Singleton: MethodDecorator = (
+	_target: Object,
+	_key: string | symbol,
+	descripter: PropertyDescriptor,
+) => {
 	let value: unknown
 	const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 	// The `function` syntax is used to preserve `this` context from the decorated method.
 	descripter.value = function (...args: unknown[]) {
-		return value ??= decoratedMethod.apply(this, args)
+		return (value ??= decoratedMethod.apply(this, args))
 	}
 	return descripter
 }
@@ -57,11 +70,18 @@ export const Singleton: MethodDecorator = (_target: Object, _key: string | symbo
  * @param getKey A function that takes the actual arguments being passed into the decorated method, and returns anything.
  * The result of this function will be used as the key to cache the `Timeout`. By default the first element in the argument
  * list will be used.
- * 
+ *
  * Decorated methods will be scheduled to run after `ms` milliseconds. The timer will reset when the method is called again.
  */
-export function Delay(ms: number, getKey: (args: any[]) => any = args => args[0]): MethodDecorator {
-	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
+export function Delay(
+	ms: number,
+	getKey: (args: any[]) => any = (args) => args[0],
+): MethodDecorator {
+	return (
+		_target: Object,
+		_key: string | symbol,
+		descripter: PropertyDescriptor,
+	) => {
 		const timeouts = new Map<unknown, IntervalId>()
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
@@ -70,10 +90,13 @@ export function Delay(ms: number, getKey: (args: any[]) => any = args => args[0]
 			if (timeouts.has(key)) {
 				clearTimeout(timeouts.get(key)!)
 			}
-			timeouts.set(key, setTimeout(() => {
-				timeouts.delete(key)
-				decoratedMethod.apply(this, args)
-			}, ms))
+			timeouts.set(
+				key,
+				setTimeout(() => {
+					timeouts.delete(key)
+					decoratedMethod.apply(this, args)
+				}, ms),
+			)
 		}
 		return descripter
 	}
@@ -82,9 +105,9 @@ export function Delay(ms: number, getKey: (args: any[]) => any = args => args[0]
 export type FullResourceLocation = `${string}:${string}`
 
 export interface ResourceLocation {
-	isTag: boolean,
-	namespace: string | undefined,
-	path: readonly string[],
+	isTag: boolean
+	namespace: string | undefined
+	path: readonly string[]
 }
 export namespace ResourceLocation {
 	/**
@@ -131,10 +154,11 @@ export function bufferToString(buffer: Uint8Array): string {
 
 export type Arrayable<T> = T | readonly T[]
 export namespace Arrayable {
-	export function is<T>(value: unknown, isT: (value: unknown) => value is T): value is Arrayable<T> {
-		return Array.isArray(value)
-			? value.every(e => isT(e))
-			: isT(value)
+	export function is<T>(
+		value: unknown,
+		isT: (value: unknown) => value is T,
+	): value is Arrayable<T> {
+		return Array.isArray(value) ? value.every((e) => isT(e)) : isT(value)
 	}
 
 	export function toArray<T>(value: Arrayable<T>): T[] {
@@ -148,7 +172,10 @@ export namespace TypePredicates {
 	}
 }
 
-export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner: (chunks: T[]) => U): Promise<U> {
+export function promisifyAsyncIterable<T, U>(
+	iterable: AsyncIterable<T>,
+	joiner: (chunks: T[]) => U,
+): Promise<U> {
 	return (async () => {
 		const chunks: T[] = []
 		for await (const chunk of iterable) {
@@ -158,7 +185,10 @@ export function promisifyAsyncIterable<T, U>(iterable: AsyncIterable<T>, joiner:
 	})()
 }
 
-export async function parseGzippedJson(externals: Externals, buffer: Uint8Array): Promise<unknown> {
+export async function parseGzippedJson(
+	externals: Externals,
+	buffer: Uint8Array,
+): Promise<unknown> {
 	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
 }
 
@@ -169,7 +199,10 @@ export function isPojo(value: unknown): value is Record<string, unknown> {
 	return !!value && typeof value === 'object' && !Array.isArray(value)
 }
 
-export function merge<T extends Record<string, any>>(a: T, b: Record<string, any>): T {
+export function merge<T extends Record<string, any>>(
+	a: T,
+	b: Record<string, any>,
+): T {
 	const ans = rfdc()(a)
 	for (const [key, value] of Object.entries(b) as [keyof typeof ans, any][]) {
 		if (isPojo(ans[key]) && isPojo(value)) {
@@ -187,13 +220,13 @@ export type Lazy<T> = T | Lazy.ComplexLazy<T>
 export namespace Lazy {
 	const LazyDiscriminator = Symbol('LazyDiscriminator')
 	export type UnresolvedLazy<T> = {
-		discriminator: typeof LazyDiscriminator,
-		getter: (this: void) => T,
+		discriminator: typeof LazyDiscriminator
+		getter: (this: void) => T
 	}
 	export type ResolvedLazy<T> = {
-		discriminator: typeof LazyDiscriminator,
-		getter: (this: void) => T,
-		value: T,
+		discriminator: typeof LazyDiscriminator
+		getter: (this: void) => T
+		value: T
 	}
 	export type ComplexLazy<T> = ResolvedLazy<T> | UnresolvedLazy<T>
 
@@ -213,7 +246,9 @@ export namespace Lazy {
 	}
 
 	export function resolve<T>(lazy: Lazy<T>): T {
-		return isUnresolved(lazy) ? (lazy as ResolvedLazy<T>).value = lazy.getter() : lazy
+		return isUnresolved(lazy)
+			? ((lazy as ResolvedLazy<T>).value = lazy.getter())
+			: lazy
 	}
 }
 
@@ -222,7 +257,11 @@ export namespace Lazy {
  * @returns A map from state names to the corresponding sets of values. The first element in the value array is the default
  * value for that state.
  */
-export function getStates(category: 'block' | 'fluid', ids: readonly string[], ctx: ProcessorContext): Record<string, string[]> {
+export function getStates(
+	category: 'block' | 'fluid',
+	ids: readonly string[],
+	ctx: ProcessorContext,
+): Record<string, string[]> {
 	const ans: Record<string, Set<string>> = {}
 	ids = ids.map(ResourceLocation.lengthen)
 	for (const id of ids) {
@@ -230,7 +269,7 @@ export function getStates(category: 'block' | 'fluid', ids: readonly string[], c
 			.query(ctx.doc, category, id)
 			.forEachMember((state, stateQuery) => {
 				const values = Object.keys(stateQuery.visibleMembers)
-				const set = ans[state] ??= new Set()
+				const set = (ans[state] ??= new Set())
 				const defaultValue = stateQuery.symbol?.relations?.default
 				if (defaultValue) {
 					set.add(defaultValue.path[defaultValue.path.length - 1])
@@ -250,11 +289,21 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 //#region ESNext functions polyfill
-export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
+export function atArray<T>(
+	array: readonly T[] | undefined,
+	index: number,
+): T | undefined {
 	return index >= 0 ? array?.[index] : array?.[array.length + index]
 }
 
-export function emplaceMap<K, V>(map: Map<K, V>, key: K, handler: { insert?: (key: K, map: Map<K, V>) => V, update?: (existing: V, key: K, map: Map<K, V>) => V }): V {
+export function emplaceMap<K, V>(
+	map: Map<K, V>,
+	key: K,
+	handler: {
+		insert?: (key: K, map: Map<K, V>) => V
+		update?: (existing: V, key: K, map: Map<K, V>) => V
+	},
+): V {
 	if (map.has(key)) {
 		let value: V = map.get(key)!
 		if (handler.update) {
@@ -291,7 +340,11 @@ export function normalizeUri(uri: string): string {
  * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is IsHelper<AstNode, CommentNode, T>
  * ```
  */
-export type IsHelper<ROOT extends object, TARGET extends ROOT, INPUT extends DeepReadonly<ROOT> | undefined> = INPUT extends DeepReadonly<ROOT>
+export type IsHelper<
+	ROOT extends object,
+	TARGET extends ROOT,
+	INPUT extends DeepReadonly<ROOT> | undefined,
+> = INPUT extends DeepReadonly<ROOT>
 	? INPUT & DeepReadonly<TARGET>
 	: INPUT & TARGET
 
@@ -301,4 +354,7 @@ export type IsHelper<ROOT extends object, TARGET extends ROOT, INPUT extends Dee
  * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is NodeIsHelper<CommentNode, T>
  * ```
  */
-export type NodeIsHelper<TARGET extends AstNode, INPUT extends DeepReadonly<AstNode> | undefined> = IsHelper<AstNode, TARGET, INPUT>
+export type NodeIsHelper<
+	TARGET extends AstNode,
+	INPUT extends DeepReadonly<AstNode> | undefined,
+> = IsHelper<AstNode, TARGET, INPUT>

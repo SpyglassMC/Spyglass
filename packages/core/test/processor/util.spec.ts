@@ -68,12 +68,13 @@ describe('processor/util.ts', () => {
 		it('Should traverse nodes that match the predicates', () => {
 			traversePreOrder(
 				TestNode,
-				_ => true,
-				node => node.type === 'leaf_1' || node.type === 'not_leaf_3',
-				(node, parents) => snapshot({
-					node: node.type,
-					parents: parents.map(p => p.type),
-				})
+				(_) => true,
+				(node) => node.type === 'leaf_1' || node.type === 'not_leaf_3',
+				(node, parents) =>
+					snapshot({
+						node: node.type,
+						parents: parents.map((p) => p.type),
+					}),
 			)
 		})
 	})

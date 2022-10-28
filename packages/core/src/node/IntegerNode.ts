@@ -3,11 +3,11 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface IntegerBaseNode extends AstNode {
-	value: number,
+	value: number
 }
 
 export interface IntegerNode extends IntegerBaseNode {
-	readonly type: 'integer',
+	readonly type: 'integer'
 }
 export namespace IntegerNode {
 	export function is(obj: object): obj is IntegerNode {

@@ -7,13 +7,15 @@ import type { InfallibleParser } from './Parser.js'
 
 /**
  * This parser reads _everything_ until the end of the {@link Source}.
- * 
+ *
  * You might want to use {@link acceptOnly}, {@link stopBefore}, or {@link string} to restrict what this parser can read.
  */
 export function symbol(category: AllCategory): InfallibleParser<SymbolNode>
 export function symbol(category: string): InfallibleParser<SymbolNode>
 export function symbol(options: SymbolOptions): InfallibleParser<SymbolNode>
-export function symbol(param: string | SymbolOptions): InfallibleParser<SymbolNode> {
+export function symbol(
+	param: string | SymbolOptions,
+): InfallibleParser<SymbolNode> {
 	const options = getOptions(param)
 
 	return (src: Source, _ctx: ParserContext): SymbolNode => {

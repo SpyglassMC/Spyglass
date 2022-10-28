@@ -1,18 +1,30 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtByteNode, NbtCompoundNode, NbtNode, NbtNumberNode, NbtPathNode, NbtPrimitiveArrayNode, NbtPrimitiveNode } from '../node/index.js'
+import type {
+	NbtByteNode,
+	NbtCompoundNode,
+	NbtNode,
+	NbtNumberNode,
+	NbtPathNode,
+	NbtPrimitiveArrayNode,
+	NbtPrimitiveNode,
+} from '../node/index.js'
 import { NbtListNode } from '../node/index.js'
 import { localizeTag } from '../util.js'
-import { getBlocksFromItem, getEntityFromItem, getSpecialStringParser } from './mcdocUtil.js'
+import {
+	getBlocksFromItem,
+	getEntityFromItem,
+	getSpecialStringParser,
+} from './mcdocUtil.js'
 
 interface Options {
-	allowUnknownKey?: boolean,
-	isPredicate?: boolean,
+	allowUnknownKey?: boolean
+	isPredicate?: boolean
 }
 
 interface PathOptions {
-	allowUnknownKey?: boolean,
+	allowUnknownKey?: boolean
 }
 
 declare global {
@@ -23,18 +35,34 @@ declare global {
 }
 
 /**
-* @param id If the registry is under the `custom` namespace, `id` can only be a string. Otherwise it can be a string, string array, or `undefined`.
-* If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
-*/
-export function index(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options?: Options): core.SyncChecker<NbtCompoundNode>
-export function index(registry: string, id: core.FullResourceLocation, options?: Options): core.SyncChecker<NbtCompoundNode>
-export function index(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+ * @param id If the registry is under the `custom` namespace, `id` can only be a string. Otherwise it can be a string, string array, or `undefined`.
+ * If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
+ */
+export function index(
+	registry: string,
+	id:
+		| core.FullResourceLocation
+		| readonly core.FullResourceLocation[]
+		| undefined,
+	options?: Options,
+): core.SyncChecker<NbtCompoundNode>
+export function index(
+	registry: string,
+	id: core.FullResourceLocation,
+	options?: Options,
+): core.SyncChecker<NbtCompoundNode>
+export function index(
+	registry: string,
+	id:
+		| core.FullResourceLocation
+		| readonly core.FullResourceLocation[]
+		| undefined,
+	options: Options = {},
+): core.SyncChecker<NbtCompoundNode> {
 	switch (registry) {
 		case 'custom:blockitemstates':
 			const blockIds = getBlocksFromItem(id as core.FullResourceLocation)
-			return blockIds
-				? blockStates(blockIds, options)
-				: core.checker.noop
+			return blockIds ? blockStates(blockIds, options) : core.checker.noop
 		case 'custom:blockstates':
 			return blockStates([id as string], options)
 		case 'custom:spawnitemtag':
@@ -54,11 +82,17 @@ export function index(registry: string, id: core.FullResourceLocation | readonly
 /**
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
  */
-export function definition(identifier: `::${string}::${string}`, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+export function definition(
+	identifier: `::${string}::${string}`,
+	options: Options = {},
+): core.SyncChecker<NbtCompoundNode> {
 	const index = identifier.lastIndexOf('::')
 	const module = identifier.slice(0, index)
 	const compoundDef = identifier.slice(index + 2)
-	const path: core.SymbolPath = { category: 'mcdoc', path: [module, compoundDef] }
+	const path: core.SymbolPath = {
+		category: 'mcdoc',
+		path: [module, compoundDef],
+	}
 	return (node, ctx) => {
 		// const { allowUnknownKey, value } = resolveSymbolPaths([path], ctx, node)
 		// options.allowUnknownKey ||= allowUnknownKey
@@ -66,7 +100,10 @@ export function definition(identifier: `::${string}::${string}`, options: Option
 	}
 }
 
-export function blockStates(blocks: string[], _options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+export function blockStates(
+	blocks: string[],
+	_options: Options = {},
+): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
 		const states = core.getStates('block', blocks, ctx)
 		for (const { key: keyNode, value: valueNode } of node.children) {
@@ -74,11 +111,23 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 				continue
 			}
 			// Type check.
-			if (valueNode.type === 'nbt:byte' && (ctx.src.slice(valueNode.range).toLowerCase() === 'false' || ctx.src.slice(valueNode.range).toLowerCase() === 'true')) {
-				ctx.err.report(localize('nbt.checker.block-states.fake-boolean'), valueNode, core.ErrorSeverity.Warning)
+			if (
+				valueNode.type === 'nbt:byte' &&
+				(ctx.src.slice(valueNode.range).toLowerCase() === 'false' ||
+					ctx.src.slice(valueNode.range).toLowerCase() === 'true')
+			) {
+				ctx.err.report(
+					localize('nbt.checker.block-states.fake-boolean'),
+					valueNode,
+					core.ErrorSeverity.Warning,
+				)
 				continue
 			} else if (valueNode.type !== 'string' && valueNode.type !== 'nbt:int') {
-				ctx.err.report(localize('nbt.checker.block-states.unexpected-value-type'), valueNode, core.ErrorSeverity.Warning)
+				ctx.err.report(
+					localize('nbt.checker.block-states.unexpected-value-type'),
+					valueNode,
+					core.ErrorSeverity.Warning,
+				)
 				continue
 			}
 
@@ -86,13 +135,26 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 				// The current state exists. Check the value.
 				const stateValues = states[keyNode.value]!
 				if (!stateValues.includes(valueNode.value.toString())) {
-					ctx.err.report(localize('expected-got', stateValues, localeQuote(valueNode.value.toString())), valueNode, core.ErrorSeverity.Warning)
+					ctx.err.report(
+						localize(
+							'expected-got',
+							stateValues,
+							localeQuote(valueNode.value.toString()),
+						),
+						valueNode,
+						core.ErrorSeverity.Warning,
+					)
 				}
 			} else {
 				// The current state doesn't exist.
 				ctx.err.report(
-					localize('nbt.checker.block-states.unknown-state', localeQuote(keyNode.value), blocks),
-					keyNode, core.ErrorSeverity.Warning
+					localize(
+						'nbt.checker.block-states.unknown-state',
+						localeQuote(keyNode.value),
+						blocks,
+					),
+					keyNode,
+					core.ErrorSeverity.Warning,
 				)
 			}
 		}
@@ -102,7 +164,10 @@ export function blockStates(blocks: string[], _options: Options = {}): core.Sync
 /**
  * @param path The {@link core.SymbolPath} to the compound definition.
  */
-export function compound(data: any, options: Options = {}): core.SyncChecker<NbtCompoundNode> {
+export function compound(
+	data: any,
+	options: Options = {},
+): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
 		for (const { key: keyNode, value: valueNode } of node.children) {
 			if (!keyNode || !valueNode) {
@@ -114,13 +179,20 @@ export function compound(data: any, options: Options = {}): core.SyncChecker<Nbt
 				fieldData.query.enter({ usage: { type: 'reference', node: keyNode } })
 				fieldValue(fieldData.data, options)(valueNode, ctx)
 			} else if (!options.allowUnknownKey) {
-				ctx.err.report(localize('unknown-key', localeQuote(key)), keyNode, core.ErrorSeverity.Warning)
+				ctx.err.report(
+					localize('unknown-key', localeQuote(key)),
+					keyNode,
+					core.ErrorSeverity.Warning,
+				)
 			}
 		}
 	}
 }
 
-export function enum_(path: core.SymbolPath | undefined, _options: Options = {}): core.SyncChecker<NbtPrimitiveNode> {
+export function enum_(
+	path: core.SymbolPath | undefined,
+	_options: Options = {},
+): core.SyncChecker<NbtPrimitiveNode> {
 	if (!path) {
 		return core.checker.noop
 	}
@@ -128,12 +200,10 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 	return (node, ctx) => {
 		// const query = ctx.symbols.query(ctx.doc, path.category, ...path.path)
 		// const data = query.symbol?.data as mcdoc.EnumNode.SymbolData | undefined
-
 		// // Check type.
 		// if (data?.enumKind && node.type !== data.enumKind && node.type !== `nbt:${data.enumKind}`) {
 		// 	ctx.err.report(localize('expected', localize(`nbt.node.${data.enumKind}`)), node, core.ErrorSeverity.Warning)
 		// }
-
 		// // Get all enum members.
 		// const enumMembers: Record<string, string> = {}
 		// query.forEachMember((name, memberQuery) => {
@@ -142,7 +212,6 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 		// 		enumMembers[name] = value.toString()
 		// 	}
 		// })
-
 		// // Check value.
 		// if (!Object.values(enumMembers).includes(node.value.toString())) {
 		// 	ctx.err.report(localize('expected',
@@ -155,7 +224,13 @@ export function enum_(path: core.SymbolPath | undefined, _options: Options = {})
 /**
  * @param id If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
  */
-export function path(registry: string, id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined): core.SyncChecker<NbtPathNode> {
+export function path(
+	registry: string,
+	id:
+		| core.FullResourceLocation
+		| readonly core.FullResourceLocation[]
+		| undefined,
+): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
 		// const resolveResult = resolveRootRegistry(registry, id, ctx, undefined)
 		// let targetType: mcdoc.McdocType | undefined = {
@@ -178,7 +253,6 @@ export function path(registry: string, id: core.FullResourceLocation | readonly 
 		// 		// Compound filter.
 		// 		currentCompound = child
 		// 		if (data?.type === 'union') {
-
 		// 		}
 		// 		if (data?.type === 'resolved_compound') {
 		// 			compound(data.data, options)(child, ctx)
@@ -188,7 +262,6 @@ export function path(registry: string, id: core.FullResourceLocation | readonly 
 		// 	} else if (core.StringNode.is(child)) {
 		// 		// Key.
 		// 		if (data?.type === 'union') {
-
 		// 		}
 		// 		if (data?.type === 'resolved_compound') {
 		// 			const fieldData: ResolvedCompoundData[string] = data.data[child.value]
@@ -277,13 +350,38 @@ export function path(registry: string, id: core.FullResourceLocation | readonly 
 	}
 }
 
-export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncChecker<NbtNode> {
-	const isInRange = (value: number, { kind, min = -Infinity, max = Infinity }: mcdoc.NumericRange) => {
-		const comparator = (a: number, b: number, exclusive: unknown) => exclusive ? a < b : a <= b
-		return comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
+export function fieldValue(
+	type: mcdoc.McdocType,
+	options: Options,
+): core.SyncChecker<NbtNode> {
+	const isInRange = (
+		value: number,
+		{ kind, min = -Infinity, max = Infinity }: mcdoc.NumericRange,
+	) => {
+		const comparator = (a: number, b: number, exclusive: unknown) =>
+			exclusive ? a < b : a <= b
+		return (
+			comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
+		)
 	}
 
-	const ExpectedTypes: Record<Exclude<mcdoc.McdocType['kind'], 'any' | 'dispatcher' | 'enum' | 'literal' | 'reference' | 'union' | 'unsafe' | 'attributed' | 'concrete' | 'indexed' | 'template'>, NbtNode['type']> = {
+	const ExpectedTypes: Record<
+		Exclude<
+			mcdoc.McdocType['kind'],
+			| 'any'
+			| 'dispatcher'
+			| 'enum'
+			| 'literal'
+			| 'reference'
+			| 'union'
+			| 'unsafe'
+			| 'attributed'
+			| 'concrete'
+			| 'indexed'
+			| 'template'
+		>,
+		NbtNode['type']
+	> = {
 		boolean: 'nbt:byte',
 		byte: 'nbt:byte',
 		byte_array: 'nbt:byte_array',
@@ -302,8 +400,25 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 
 	return (node, ctx): void => {
 		// Rough type check.
-		if (type.kind !== 'any' && type.kind !== 'dispatcher' && type.kind !== 'enum' && type.kind !== 'literal' && type.kind !== 'reference' && type.kind !== 'union' && type.kind !== 'attributed' && type.kind !== 'unsafe' && type.kind !== 'concrete' && type.kind !== 'indexed' && type.kind !== 'template' && node.type !== ExpectedTypes[type.kind]) {
-			ctx.err.report(localize('expected', localizeTag(ExpectedTypes[type.kind])), node, core.ErrorSeverity.Warning)
+		if (
+			type.kind !== 'any' &&
+			type.kind !== 'dispatcher' &&
+			type.kind !== 'enum' &&
+			type.kind !== 'literal' &&
+			type.kind !== 'reference' &&
+			type.kind !== 'union' &&
+			type.kind !== 'attributed' &&
+			type.kind !== 'unsafe' &&
+			type.kind !== 'concrete' &&
+			type.kind !== 'indexed' &&
+			type.kind !== 'template' &&
+			node.type !== ExpectedTypes[type.kind]
+		) {
+			ctx.err.report(
+				localize('expected', localizeTag(ExpectedTypes[type.kind])),
+				node,
+				core.ErrorSeverity.Warning,
+			)
 			return
 		}
 
@@ -312,8 +427,13 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 				node = node as NbtByteNode
 				if (node.value !== 0 && node.value !== 1) {
 					ctx.err.report(
-						localize('nbt.checker.boolean.out-of-range', localeQuote('0b'), localeQuote('1b')),
-						node, core.ErrorSeverity.Warning
+						localize(
+							'nbt.checker.boolean.out-of-range',
+							localeQuote('0b'),
+							localeQuote('1b'),
+						),
+						node,
+						core.ErrorSeverity.Warning,
 					)
 				}
 				break
@@ -321,20 +441,39 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 			case 'int_array':
 			case 'long_array':
 				node = node as NbtPrimitiveArrayNode
-				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
-					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
-						localizeTag(node.type),
-						type.lengthRange.min ?? '-∞',
-						type.lengthRange.max ?? '+∞'
-					)), node, core.ErrorSeverity.Warning)
+				if (
+					type.lengthRange &&
+					!isInRange(node.children.length, type.lengthRange)
+				) {
+					ctx.err.report(
+						localize(
+							'expected',
+							localize(
+								'nbt.checker.collection.length-between',
+								localizeTag(node.type),
+								type.lengthRange.min ?? '-∞',
+								type.lengthRange.max ?? '+∞',
+							),
+						),
+						node,
+						core.ErrorSeverity.Warning,
+					)
 				}
 				if (type.valueRange) {
 					for (const { value: childNode } of node.children) {
-						if (childNode && !isInRange(Number(childNode.value), type.valueRange)) {
-							ctx.err.report(localize('number.between',
-								type.valueRange.min ?? '-∞',
-								type.valueRange.max ?? '+∞'
-							), node, core.ErrorSeverity.Warning)
+						if (
+							childNode &&
+							!isInRange(Number(childNode.value), type.valueRange)
+						) {
+							ctx.err.report(
+								localize(
+									'number.between',
+									type.valueRange.min ?? '-∞',
+									type.valueRange.max ?? '+∞',
+								),
+								node,
+								core.ErrorSeverity.Warning,
+							)
 						}
 					}
 				}
@@ -346,11 +485,19 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 			case 'float':
 			case 'double':
 				node = node as NbtNumberNode
-				if (type.valueRange && !isInRange(Number(node.value), type.valueRange)) {
-					ctx.err.report(localize('number.between',
-						type.valueRange.min ?? '-∞',
-						type.valueRange.max ?? '+∞'
-					), node, core.ErrorSeverity.Warning)
+				if (
+					type.valueRange &&
+					!isInRange(Number(node.value), type.valueRange)
+				) {
+					ctx.err.report(
+						localize(
+							'number.between',
+							type.valueRange.min ?? '-∞',
+							type.valueRange.max ?? '+∞',
+						),
+						node,
+						core.ErrorSeverity.Warning,
+					)
 				}
 				break
 			case 'dispatcher':
@@ -367,12 +514,23 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 			case 'list':
 				node = node as NbtListNode
 				type = mcdoc.simplifyListType(type)
-				if (type.lengthRange && !isInRange(node.children.length, type.lengthRange)) {
-					ctx.err.report(localize('expected', localize('nbt.checker.collection.length-between',
-						localizeTag(node.type),
-						type.lengthRange.min ?? '-∞',
-						type.lengthRange.max ?? '+∞'
-					)), node, core.ErrorSeverity.Warning)
+				if (
+					type.lengthRange &&
+					!isInRange(node.children.length, type.lengthRange)
+				) {
+					ctx.err.report(
+						localize(
+							'expected',
+							localize(
+								'nbt.checker.collection.length-between',
+								localizeTag(node.type),
+								type.lengthRange.min ?? '-∞',
+								type.lengthRange.max ?? '+∞',
+							),
+						),
+						node,
+						core.ErrorSeverity.Warning,
+					)
 				}
 				for (const { value: childNode } of node.children) {
 					if (childNode) {
@@ -384,19 +542,28 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 				node = node as core.StringNode
 				let suffix = ''
 				let valueNode: NbtNode = node
-				if (core.ItemNode.is(node.parent) && NbtListNode.is(node.parent.parent)) {
+				if (
+					core.ItemNode.is(node.parent) &&
+					NbtListNode.is(node.parent.parent)
+				) {
 					suffix = '[]'
 					valueNode = node.parent.parent
 				}
 				if (core.PairNode.is<core.StringNode, NbtNode>(valueNode.parent)) {
-					const structMcdocPath = valueNode.parent.key?.symbol?.parentSymbol?.path.join('::')
+					const structMcdocPath =
+						valueNode.parent.key?.symbol?.parentSymbol?.path.join('::')
 					const key = valueNode.parent.key?.value
 					const path = `${structMcdocPath}.${key}${suffix}`
 					const parserName = getSpecialStringParser(path)
 					if (parserName) {
 						try {
 							const parser = ctx.meta.getParser(parserName)
-							const result = core.parseStringValue(parser, node.value, node.valueMap, ctx)
+							const result = core.parseStringValue(
+								parser,
+								node.value,
+								node.valueMap,
+								ctx,
+							)
 							if (result !== core.Failure) {
 								node.children = [result]
 								result.parent = node
@@ -420,12 +587,16 @@ export function fieldValue(type: mcdoc.McdocType, options: Options): core.SyncCh
 					ctx.err.report(
 						localize('nbt.checker.compound.field.union-empty-members'),
 						core.PairNode.is(node.parent)
-							? (node.parent.key ?? node.parent)
+							? node.parent.key ?? node.parent
 							: node,
-						core.ErrorSeverity.Warning
+						core.ErrorSeverity.Warning,
 					)
 				} else {
-					(core.checker.any(type.members.map(t => fieldValue(t, options))) as core.SyncChecker<NbtNode>)(node, ctx)
+					;(
+						core.checker.any(
+							type.members.map((t) => fieldValue(t, options)),
+						) as core.SyncChecker<NbtNode>
+					)(node, ctx)
 				}
 				break
 		}

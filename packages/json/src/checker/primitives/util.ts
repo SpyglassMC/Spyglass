@@ -17,13 +17,17 @@ export function as(context: string, checker: JsonChecker): JsonChecker {
 }
 
 export type AttemptResult = {
-	totalErrorSpan: number,
-	maxSeverity: ErrorSeverity,
-	expectation?: JsonExpectation[],
-	updateNodeAndCtx: () => void,
+	totalErrorSpan: number
+	maxSeverity: ErrorSeverity
+	expectation?: JsonExpectation[]
+	updateNodeAndCtx: () => void
 }
 
-export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerContext): AttemptResult {
+export function attempt(
+	checker: JsonChecker,
+	node: JsonNode,
+	ctx: JsonCheckerContext,
+): AttemptResult {
 	// TODO: The code below is mostly copied from core with some changes to support `expectation`. Could be refactored... I guess.
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
@@ -37,12 +41,12 @@ export function attempt(checker: JsonChecker, node: JsonNode, ctx: JsonCheckerCo
 	StateProxy.undoChanges(node as StateProxy<JsonNode>)
 
 	const totalErrorSpan = tempCtx.err.errors
-		.map(e => e.range.end - e.range.start)
+		.map((e) => e.range.end - e.range.start)
 		.reduce((a, b) => a + b, 0)
 
 	return {
 		totalErrorSpan,
-		maxSeverity: Math.max(...tempCtx.err.errors.map(e => e.severity)),
+		maxSeverity: Math.max(...tempCtx.err.errors.map((e) => e.severity)),
 		expectation: tempExpectation,
 		updateNodeAndCtx: () => {
 			ctx.err.absorb(tempCtx.err)
@@ -59,15 +63,24 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 		}
 
 		const attempts = checkers
-			.map(checker => attempt(checker, node, ctx))
-			.sort((a, b) => a.maxSeverity - b.maxSeverity || a.totalErrorSpan - b.totalErrorSpan)
-		const sameTypeAttempts = attempts
-			.filter(a => a.expectation?.map<string>(e => e.type).includes(node.type))
-		const allExpectations = attempts.filter(a => a.expectation).flatMap(a => a.expectation!)
+			.map((checker) => attempt(checker, node, ctx))
+			.sort(
+				(a, b) =>
+					a.maxSeverity - b.maxSeverity || a.totalErrorSpan - b.totalErrorSpan,
+			)
+		const sameTypeAttempts = attempts.filter((a) =>
+			a.expectation?.map<string>((e) => e.type).includes(node.type),
+		)
+		const allExpectations = attempts
+			.filter((a) => a.expectation)
+			.flatMap((a) => a.expectation!)
 
 		if (sameTypeAttempts.length === 0) {
-			const allowedTypes = allExpectations.map(e => localize(e.type.slice(5)))
-			ctx.err.report(localize('expected', arrayToMessage(allowedTypes, false)), node)
+			const allowedTypes = allExpectations.map((e) => localize(e.type.slice(5)))
+			ctx.err.report(
+				localize('expected', arrayToMessage(allowedTypes, false)),
+				node,
+			)
 		} else {
 			sameTypeAttempts[0].updateNodeAndCtx()
 		}
@@ -75,8 +88,14 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 	}
 }
 
-export function expectation(checker: JsonChecker, ctx: JsonCheckerContext): JsonExpectation[] | undefined {
-	const node: JsonNode = StateProxy.create({ type: 'json:null', range: Range.create(0) })
+export function expectation(
+	checker: JsonChecker,
+	ctx: JsonCheckerContext,
+): JsonExpectation[] | undefined {
+	const node: JsonNode = StateProxy.create({
+		type: 'json:null',
+		range: Range.create(0),
+	})
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),

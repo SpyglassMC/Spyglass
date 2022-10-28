@@ -5,7 +5,9 @@ import * as mcf from '@spyglassmc/mcfunction'
  * Only command options that can be satisfied by the current command node will be listed in `signatures`.
  * Only parameters at and immediately after the `offset` will be listed in `parameters`.
  */
-export function signatureHelpProvider(commandTreeName: string): core.SignatureHelpProvider<core.FileNode<mcf.McfunctionNode>> {
+export function signatureHelpProvider(
+	commandTreeName: string,
+): core.SignatureHelpProvider<core.FileNode<mcf.McfunctionNode>> {
 	const rootTreeNode = mcf.CommandTreeRegistry.instance.get(commandTreeName)
 
 	return (fileNode, ctx) => {
@@ -41,9 +43,10 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 			signatures: [],
 		}
 
-		ans.signatures = options.map(v => {
+		ans.signatures = options.map((v) => {
 			const part1 = v[selectedIndex]
-			const part2 = selectedIndex + 1 < v.length ? ` ${v[selectedIndex + 1]}` : ''
+			const part2 =
+				selectedIndex + 1 < v.length ? ` ${v[selectedIndex + 1]}` : ''
 			const label = `${part1}${part2}`
 			return {
 				label,
@@ -60,11 +63,19 @@ export function signatureHelpProvider(commandTreeName: string): core.SignatureHe
 	}
 }
 
-function getSelectedCommandNode(fileNode: core.DeepReadonly<core.FileNode<mcf.McfunctionNode>>, offset: number): mcf.CommandNode | undefined {
-	return core.AstNode.findChild(fileNode.children[0], offset, true) as mcf.CommandNode | undefined
+function getSelectedCommandNode(
+	fileNode: core.DeepReadonly<core.FileNode<mcf.McfunctionNode>>,
+	offset: number,
+): mcf.CommandNode | undefined {
+	return core.AstNode.findChild(fileNode.children[0], offset, true) as
+		| mcf.CommandNode
+		| undefined
 }
 
-function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNode['children']): string[][] {
+function getOptions(
+	rootTreeNode: mcf.RootTreeNode,
+	argumentNodes: mcf.CommandNode['children'],
+): string[][] {
 	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode
 
@@ -73,7 +84,8 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNo
 		if (!name) {
 			break
 		}
-		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode?.children?.[name]
+		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
+			?.children?.[name]
 		if (!treeNode) {
 			break
 		}
@@ -83,7 +95,9 @@ function getOptions(rootTreeNode: mcf.RootTreeNode, argumentNodes: mcf.CommandNo
 	if (treeNode) {
 		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
 		if (treeNode?.children) {
-			return mcf.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map(v => [...current, v])
+			return mcf
+				.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable)
+				.map((v) => [...current, v])
 		}
 	}
 

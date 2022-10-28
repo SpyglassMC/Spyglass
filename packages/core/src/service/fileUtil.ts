@@ -11,7 +11,7 @@ export namespace fileUtil {
 	 * @param uri The target file URI.
 	 * @returns The relative path from one of the `roots` to the `uri`, or `undefined` if the `uri` is not under any roots.
 	 * The separation used in the relative path is always slash (`/`).
-	 * @example 
+	 * @example
 	 * getRels(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json')
 	 * // -> 'bar/qux.json'
 	 * // -> 'foo/bar/qux.json'
@@ -20,7 +20,10 @@ export namespace fileUtil {
 	 * getRels(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json')
 	 * // -> undefined
 	 */
-	export function* getRels(uri: string, rootUris: readonly RootUriString[]): Generator<string, undefined, unknown> {
+	export function* getRels(
+		uri: string,
+		rootUris: readonly RootUriString[],
+	): Generator<string, undefined, unknown> {
 		for (const root of rootUris) {
 			if (uri.startsWith(root)) {
 				yield decodeURIComponent(uri.slice(root.length))
@@ -31,11 +34,14 @@ export namespace fileUtil {
 
 	/**
 	 * @see {@link getRels}
-	 * @example 
+	 * @example
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json') // -> 'bar/qux.json'
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> undefined
 	 */
-	export function getRel(uri: string, rootUris: readonly RootUriString[]): string | undefined {
+	export function getRel(
+		uri: string,
+		rootUris: readonly RootUriString[],
+	): string | undefined {
 		return getRels(uri, rootUris).next().value
 	}
 
@@ -48,7 +54,10 @@ export namespace fileUtil {
 	}
 
 	export function join(fromUri: string, toUri: string): string {
-		return ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri)
+		return (
+			ensureEndingSlash(fromUri) +
+			(toUri.startsWith('/') ? toUri.slice(1) : toUri)
+		)
 	}
 
 	/**
@@ -63,7 +72,7 @@ export namespace fileUtil {
 	 */
 	export function extname(value: string): FileExtension | undefined {
 		const i = value.lastIndexOf('.')
-		return i >= 0 ? value.slice(i) as FileExtension : undefined
+		return i >= 0 ? (value.slice(i) as FileExtension) : undefined
 	}
 
 	/**
@@ -75,17 +84,24 @@ export namespace fileUtil {
 	}
 
 	/* istanbul ignore next */
-	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
+	export function getParentOfFile(
+		externals: Externals,
+		path: FsLocation,
+	): FsLocation {
 		return new Uri('.', path)
 	}
 
 	/* istanbul ignore next */
 	/**
 	 * @throws
-	 * 
+	 *
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureDir(externals: Externals, path: FsLocation, mode: number = 0o777): Promise<void> {
+	export async function ensureDir(
+		externals: Externals,
+		path: FsLocation,
+		mode: number = 0o777,
+	): Promise<void> {
 		try {
 			await externals.fs.mkdir(path, { mode, recursive: true })
 		} catch (e) {
@@ -98,20 +114,31 @@ export namespace fileUtil {
 	/* istanbul ignore next */
 	/**
 	 * @throws
-	 * 
+	 *
 	 * Ensures the parent directory of the path exists.
-	 * 
+	 *
 	 * @param mode Default to `0o777` (`rwxrwxrwx`)
 	 */
-	export async function ensureParentOfFile(externals: Externals, path: FsLocation, mode: number = 0o777): Promise<void> {
+	export async function ensureParentOfFile(
+		externals: Externals,
+		path: FsLocation,
+		mode: number = 0o777,
+	): Promise<void> {
 		return ensureDir(externals, getParentOfFile(externals, path), mode)
 	}
 
-	export async function chmod(externals: Externals, path: FsLocation, mode: number): Promise<void> {
+	export async function chmod(
+		externals: Externals,
+		path: FsLocation,
+		mode: number,
+	): Promise<void> {
 		return externals.fs.chmod(path, mode)
 	}
 
-	export async function ensureWritable(externals: Externals, path: FsLocation): Promise<void> {
+	export async function ensureWritable(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<void> {
 		try {
 			await chmod(externals, path, 0o666)
 		} catch (e) {
@@ -121,28 +148,39 @@ export namespace fileUtil {
 		}
 	}
 
-	export async function markReadOnly(externals: Externals, path: FsLocation): Promise<void> {
+	export async function markReadOnly(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<void> {
 		return chmod(externals, path, 0o444)
 	}
 
-	export async function readFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
+	export async function readFile(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<Uint8Array> {
 		return externals.fs.readFile(path)
 	}
 
 	/* istanbul ignore next */
 	/**
 	 * @throws
-	 * 
+	 *
 	 * The directory of the file will be created recursively if it doesn't exist.
-	 * 
+	 *
 	 * The target file will be given permission `0o666` (`rw-rw-rw-`) before being written into, and changed back to the
 	 * specified `mode`.
-	 * 
+	 *
 	 * * Encoding: `utf-8`
 	 * * Mode: `0o666` (`rw-rw-rw-`)
 	 * * Flag: `w`
 	 */
-	export async function writeFile(externals: Externals, path: FsLocation, data: Uint8Array | string, mode: number = 0o666): Promise<void> {
+	export async function writeFile(
+		externals: Externals,
+		path: FsLocation,
+		data: Uint8Array | string,
+		mode: number = 0o666,
+	): Promise<void> {
 		await ensureParentOfFile(externals, path)
 		await ensureWritable(externals, path)
 		return externals.fs.writeFile(path, data, { mode })
@@ -152,31 +190,45 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 */
-	export async function readJson(externals: Externals, path: FsLocation): Promise<unknown> {
+	export async function readJson(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<unknown> {
 		return JSON.parse(bufferToString(await readFile(externals, path)))
 	}
 
 	/* istanbul ignore next */
 	/**
 	 * @throws
-	 * 
+	 *
 	 * @see {@link writeFile}
 	 */
-	export async function writeJson(externals: Externals, path: FsLocation, data: any): Promise<void> {
+	export async function writeJson(
+		externals: Externals,
+		path: FsLocation,
+		data: any,
+	): Promise<void> {
 		return writeFile(externals, path, JSON.stringify(data))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function readGzippedFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
+	export async function readGzippedFile(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<Uint8Array> {
 		return externals.archive.gunzip(await readFile(externals, path))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedFile(externals: Externals, path: FsLocation, buffer: Uint8Array | string): Promise<void> {
+	export async function writeGzippedFile(
+		externals: Externals,
+		path: FsLocation,
+		buffer: Uint8Array | string,
+	): Promise<void> {
 		if (typeof buffer === 'string') {
 			buffer = new TextEncoder().encode(buffer)
 		}
@@ -186,14 +238,21 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 */
-	export async function readGzippedJson(externals: Externals, path: FsLocation): Promise<unknown> {
+	export async function readGzippedJson(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<unknown> {
 		return JSON.parse(bufferToString(await readGzippedFile(externals, path)))
 	}
 
 	/**
 	 * @throws
 	 */
-	export async function writeGzippedJson(externals: Externals, path: FsLocation, data: any): Promise<void> {
+	export async function writeGzippedJson(
+		externals: Externals,
+		path: FsLocation,
+		data: any,
+	): Promise<void> {
 		return writeGzippedFile(externals, path, JSON.stringify(data))
 	}
 }

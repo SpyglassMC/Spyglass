@@ -1,5 +1,8 @@
 /* eslint-disable no-restricted-syntax */
-import type { CompletionContext, CompletionResult } from '@codemirror/autocomplete'
+import type {
+	CompletionContext,
+	CompletionResult,
+} from '@codemirror/autocomplete'
 import { autocompletion } from '@codemirror/autocomplete'
 import { basicSetup, EditorState, EditorView } from '@codemirror/basic-setup'
 import { indentWithTab } from '@codemirror/commands'
@@ -14,11 +17,14 @@ import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 
 const $language = document.getElementById('language') as HTMLSelectElement
-const $editorContainer = document.getElementById('editor-container') as HTMLDivElement
+const $editorContainer = document.getElementById(
+	'editor-container',
+) as HTMLDivElement
 const $uri = document.getElementById('uri') as HTMLInputElement
 
 const initialContent = 'execute as @a run say hello world'
-const getLanguage = () => $language.selectedOptions[0]?.dataset?.language ?? $language.value
+const getLanguage = () =>
+	$language.selectedOptions[0]?.dataset?.language ?? $language.value
 const getContent = (state: EditorState) => view.state.sliceDoc(0)
 let version = 0
 
@@ -32,12 +38,11 @@ const service = new core.Service({
 	]),
 	project: {
 		cacheRoot: 'file:///.cache/',
-		defaultConfig: core.ConfigService.merge(core.VanillaConfig, { env: { dependencies: [] } }),
+		defaultConfig: core.ConfigService.merge(core.VanillaConfig, {
+			env: { dependencies: [] },
+		}),
 		externals: BrowserExternals,
-		initializers: [
-			mcdoc.initialize,
-			je.initialize,
-		],
+		initializers: [mcdoc.initialize, je.initialize],
 		projectRoot: 'file:///root/',
 	},
 })
@@ -51,11 +56,17 @@ const onChange = EditorView.updateListener.of((update) => {
 		return
 	}
 	const content = getContent(update.state)
-	service.project.onDidChange($uri.value, [{ text: content }], ++version).catch(e => console.error('[onChange]', e))
+	service.project
+		.onDidChange($uri.value, [{ text: content }], ++version)
+		.catch((e) => console.error('[onChange]', e))
 })
 
-async function spyglassCompletions(ctx: CompletionContext): Promise<CompletionResult | null> {
-	const docAndNodes = await service.project.ensureClientManagedChecked($uri.value)
+async function spyglassCompletions(
+	ctx: CompletionContext,
+): Promise<CompletionResult | null> {
+	const docAndNodes = await service.project.ensureClientManagedChecked(
+		$uri.value,
+	)
 	if (!docAndNodes) {
 		return null
 	}
@@ -66,7 +77,11 @@ async function spyglassCompletions(ctx: CompletionContext): Promise<CompletionRe
 	return {
 		from: items[0].range.start,
 		to: items[0].range.end,
-		options: items.map(v => ({ label: v.label, detail: v.detail, info: v.documentation })),
+		options: items.map((v) => ({
+			label: v.label,
+			detail: v.detail,
+			info: v.documentation,
+		})),
 	}
 }
 
@@ -83,12 +98,17 @@ const diagnosticField = StateField.define<DecorationSet>({
 		underlines = Decoration.none
 		for (const e of FileNode.getErrors(node)) {
 			underlines = underlines.update({
-				add: [getDiagnosticMark(e).range(e.range.start, e.range.end === e.range.start ? e.range.start + 1 : e.range.end)],
+				add: [
+					getDiagnosticMark(e).range(
+						e.range.start,
+						e.range.end === e.range.start ? e.range.start + 1 : e.range.end,
+					),
+				],
 			})
 		}
 		return underlines
 	},
-	provide: f => EditorView.decorations.from(f),
+	provide: (f) => EditorView.decorations.from(f),
 })
 
 const getDiagnosticMark = (e: LanguageError): Decoration => {
@@ -155,12 +175,15 @@ const colorTokenField = StateField.define<DecorationSet>({
 		}
 		return underlines
 	},
-	provide: f => EditorView.decorations.from(f),
+	provide: (f) => EditorView.decorations.from(f),
 })
 
 const getColorTokenMark = (t: ColorToken): Decoration => {
 	return Decoration.mark({
-		class: `spyglassmc-color-token-${t.type} ${t.modifiers?.map(m => `spyglassmc-color-token-modifier-${m}`).join() ?? ''}`,
+		class: `spyglassmc-color-token-${t.type} ${
+			t.modifiers?.map((m) => `spyglassmc-color-token-modifier-${m}`).join() ??
+			''
+		}`,
 	})
 }
 
@@ -208,7 +231,6 @@ const view = new EditorView({
 	}),
 })
 
-
 // service.project.onDidOpen($uri.value, getLanguage(), version, $text.value)
 
 // $text.oninput = () => {
@@ -219,5 +241,10 @@ $language.onchange = async () => {
 	service.project.onDidClose($uri.value)
 	$uri.value = `file:///root/foo.${$language.value}`
 	version = 0
-	await service.project.onDidOpen($uri.value, getLanguage(), version, getContent(view.state))
+	await service.project.onDidOpen(
+		$uri.value,
+		getLanguage(),
+		version,
+		getContent(view.state),
+	)
 }

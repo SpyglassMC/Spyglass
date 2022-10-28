@@ -5,7 +5,11 @@ import { showWhitespaceGlyph } from '../../utils.js'
 
 describe('ColorToken', () => {
 	describe('fillGap()', () => {
-		const suites: { title: string, sourceTokens: ColorToken[], targetRange: Range }[] = [
+		const suites: {
+			title: string
+			sourceTokens: ColorToken[]
+			targetRange: Range
+		}[] = [
 			{
 				// 000000000011111111112
 				// 012345678901234567890
@@ -29,9 +33,7 @@ describe('ColorToken', () => {
 				// 000000000011111111112
 				// 012345678901234567890
 				title: 'bar',
-				sourceTokens: [
-					ColorToken.create(Range.create(5, 8), 'keyword'),
-				],
+				sourceTokens: [ColorToken.create(Range.create(5, 8), 'keyword')],
 				targetRange: Range.create(6, 7),
 			},
 			{

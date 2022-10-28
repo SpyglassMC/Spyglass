@@ -3,39 +3,60 @@ import { Lazy } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { Parser } from '../parser/index.js'
 import type { Formatter } from '../processor/formatter/index.js'
-import type { Binder, Checker, Colorizer, Completer, InlayHintProvider } from '../processor/index.js'
-import { binder, checker, colorizer, completer, formatter, linter } from '../processor/index.js'
+import type {
+	Binder,
+	Checker,
+	Colorizer,
+	Completer,
+	InlayHintProvider,
+} from '../processor/index.js'
+import {
+	binder,
+	checker,
+	colorizer,
+	completer,
+	formatter,
+	linter,
+} from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
-import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
+import type {
+	UriBinder,
+	UriSorter,
+	UriSorterRegistration,
+} from './UriProcessor.js'
 
 export interface LanguageOptions {
 	/**
 	 * An array of extensions of files corresponding to the language. Each extension should include the leading dot (`.`).
 	 */
-	extensions: FileExtension[],
-	triggerCharacters?: string[],
-	parser: Parser<AstNode>,
-	completer?: Completer<any>,
+	extensions: FileExtension[]
+	triggerCharacters?: string[]
+	parser: Parser<AstNode>
+	completer?: Completer<any>
 }
 
 interface LinterRegistration {
-	configValidator: (ruleName: string, ruleValue: unknown, logger: Logger) => unknown,
-	linter: Linter<AstNode>,
-	nodePredicate: (node: AstNode) => unknown,
+	configValidator: (
+		ruleName: string,
+		ruleValue: unknown,
+		logger: Logger,
+	) => unknown
+	linter: Linter<AstNode>
+	nodePredicate: (node: AstNode) => unknown
 }
 
 interface SymbolRegistrarRegistration {
-	registrar: SymbolRegistrar,
+	registrar: SymbolRegistrar
 	/**
 	 * A checksum associated with this symbol registrar.
 	 * If the cached checksum is equal to this provided checksum,
 	 * the symbol registrar is not executed.
 	 */
-	checksum: string | undefined,
+	checksum: string | undefined
 }
 
 /* istanbul ignore next */
@@ -94,14 +115,16 @@ export class MetaRegistry {
 	 * An array of file extensions (including the leading dot (`.`)) that are supported.
 	 */
 	public getSupportedFileExtensions(): FileExtension[] {
-		return [...this.#languages.values()].flatMap(v => v.extensions)
+		return [...this.#languages.values()].flatMap((v) => v.extensions)
 	}
 
 	/**
 	 * An array of characters that trigger a completion request.
 	 */
 	public getTriggerCharacters(): string[] {
-		return Array.from(this.#languages.values()).flatMap(v => v.triggerCharacters ?? [])
+		return Array.from(this.#languages.values()).flatMap(
+			(v) => v.triggerCharacters ?? [],
+		)
 	}
 
 	/**
@@ -123,7 +146,10 @@ export class MetaRegistry {
 	public getBinder<N extends AstNode>(type: N['type']): Binder<N> {
 		return this.#binders.get(type) ?? binder.fallback
 	}
-	public registerBinder<N extends AstNode>(type: N['type'], binder: Binder<N>): void {
+	public registerBinder<N extends AstNode>(
+		type: N['type'],
+		binder: Binder<N>,
+	): void {
 		this.#binders.set(type, binder)
 	}
 
@@ -133,7 +159,10 @@ export class MetaRegistry {
 	public getChecker<N extends AstNode>(type: N['type']): Checker<N> {
 		return this.#checkers.get(type) ?? checker.fallback
 	}
-	public registerChecker<N extends AstNode>(type: N['type'], checker: Checker<N>): void {
+	public registerChecker<N extends AstNode>(
+		type: N['type'],
+		checker: Checker<N>,
+	): void {
 		this.#checkers.set(type, checker)
 	}
 
@@ -143,7 +172,10 @@ export class MetaRegistry {
 	public getColorizer<N extends AstNode>(type: N['type']): Colorizer<N> {
 		return this.#colorizers.get(type) ?? colorizer.fallback
 	}
-	public registerColorizer<N extends AstNode>(type: N['type'], colorizer: Colorizer<N>): void {
+	public registerColorizer<N extends AstNode>(
+		type: N['type'],
+		colorizer: Colorizer<N>,
+	): void {
 		this.#colorizers.set(type, colorizer)
 	}
 
@@ -153,23 +185,37 @@ export class MetaRegistry {
 	public getCompleter<N extends AstNode>(type: N['type']): Completer<N> {
 		return this.#completers.get(type) ?? completer.fallback
 	}
-	public registerCompleter<N extends AstNode>(type: N['type'], completer: Completer<N>): void
+	public registerCompleter<N extends AstNode>(
+		type: N['type'],
+		completer: Completer<N>,
+	): void
 	public registerCompleter(type: string, completer: Completer<any>): void
 	public registerCompleter(type: string, completer: Completer<any>): void {
 		this.#completers.set(type, completer)
 	}
-	public shouldComplete(languageID: string, triggerCharacter?: string): boolean {
+	public shouldComplete(
+		languageID: string,
+		triggerCharacter?: string,
+	): boolean {
 		const language = this.#languages.get(languageID)
-		return !triggerCharacter || !!language?.triggerCharacters?.includes(triggerCharacter)
+		return (
+			!triggerCharacter ||
+			!!language?.triggerCharacters?.includes(triggerCharacter)
+		)
 	}
 	public getCompleterForLanguageID(languageID: string): Completer<any> {
 		return this.#languages.get(languageID)?.completer ?? completer.fallback
 	}
 
-	public getDependencyProvider(key: DependencyKey): DependencyProvider | undefined {
+	public getDependencyProvider(
+		key: DependencyKey,
+	): DependencyProvider | undefined {
 		return this.#dependencyProviders.get(key)
 	}
-	public registerDependencyProvider(key: DependencyKey, provider: DependencyProvider): void {
+	public registerDependencyProvider(
+		key: DependencyKey,
+		provider: DependencyProvider,
+	): void {
 		this.#dependencyProviders.set(key, provider)
 	}
 
@@ -179,7 +225,10 @@ export class MetaRegistry {
 	public getFormatter<N extends AstNode>(type: N['type']): Formatter<N> {
 		return this.#formatters.get(type) ?? formatter.fallback
 	}
-	public registerFormatter<N extends AstNode>(type: N['type'], formatter: Formatter<N>): void {
+	public registerFormatter<N extends AstNode>(
+		type: N['type'],
+		formatter: Formatter<N>,
+	): void {
 		this.#formatters.set(type, formatter)
 	}
 
@@ -191,11 +240,13 @@ export class MetaRegistry {
 	}
 
 	public getLinter(ruleName: string): LinterRegistration {
-		return this.#linters.get(ruleName) ?? {
-			configValidator: () => false,
-			linter: linter.noop,
-			nodePredicate: () => false,
-		}
+		return (
+			this.#linters.get(ruleName) ?? {
+				configValidator: () => false,
+				linter: linter.noop,
+				nodePredicate: () => false,
+			}
+		)
 	}
 	public registerLinter(ruleName: string, options: LinterRegistration): void {
 		this.#linters.set(ruleName, options)
@@ -218,12 +269,21 @@ export class MetaRegistry {
 		}
 		return ans
 	}
-	public getParserLazily<N extends AstNode>(id: N['type']): Lazy.UnresolvedLazy<Parser<N>>
-	public getParserLazily<N extends AstNode>(id: string): Lazy.UnresolvedLazy<Parser<N>>
-	public getParserLazily<N extends AstNode>(id: string): Lazy.UnresolvedLazy<Parser<N>> {
+	public getParserLazily<N extends AstNode>(
+		id: N['type'],
+	): Lazy.UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(
+		id: string,
+	): Lazy.UnresolvedLazy<Parser<N>>
+	public getParserLazily<N extends AstNode>(
+		id: string,
+	): Lazy.UnresolvedLazy<Parser<N>> {
 		return Lazy.create(() => this.getParser(id))
 	}
-	public registerParser<N extends AstNode>(id: N['type'], parser: Parser<N>): void
+	public registerParser<N extends AstNode>(
+		id: N['type'],
+		parser: Parser<N>,
+	): void
 	public registerParser(id: string, parser: Parser): void
 	public registerParser(id: string, parser: Parser): void {
 		this.#parsers.set(id, parser)
@@ -232,21 +292,30 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParserForLanguageId<N extends AstNode>(languageID: string): Parser<N> {
+	public getParserForLanguageId<N extends AstNode>(
+		languageID: string,
+	): Parser<N> {
 		if (this.#languages.has(languageID)) {
 			return this.#languages.get(languageID)!.parser as Parser<N>
 		}
-		throw new Error(`There is no parser registered for language ID '${languageID}'`)
+		throw new Error(
+			`There is no parser registered for language ID '${languageID}'`,
+		)
 	}
 
-	public registerSignatureHelpProvider(provider: SignatureHelpProvider<any>): void {
+	public registerSignatureHelpProvider(
+		provider: SignatureHelpProvider<any>,
+	): void {
 		this.#signatureHelpProviders.add(provider)
 	}
 	public get signatureHelpProviders(): Set<SignatureHelpProvider<any>> {
 		return this.#signatureHelpProviders
 	}
 
-	public registerSymbolRegistrar(id: string, registrar: SymbolRegistrarRegistration): void {
+	public registerSymbolRegistrar(
+		id: string,
+		registrar: SymbolRegistrarRegistration,
+	): void {
 		this.#symbolRegistrars.set(id, registrar)
 	}
 	public get symbolRegistrars(): Map<string, SymbolRegistrarRegistration> {

@@ -1,5 +1,11 @@
 import type { Parser } from '@spyglassmc/core'
-import { Color, ColorFormat, Failure, parseStringValue, Range } from '@spyglassmc/core'
+import {
+	Color,
+	ColorFormat,
+	Failure,
+	parseStringValue,
+	Range,
+} from '@spyglassmc/core'
 import { JsonNumberNode, JsonStringNode } from '@spyglassmc/json'
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker.js'
 import { localize } from '@spyglassmc/locales'
@@ -15,21 +21,33 @@ export function stringColor(): JsonChecker {
 			if (remaining.match(HexPattern)) {
 				value = parseInt(remaining, 16)
 			} else {
-				ctx.err.report(localize('expected', localize('json.checker.string.hex-color')), Range.create(start, src))
+				ctx.err.report(
+					localize('expected', localize('json.checker.string.hex-color')),
+					Range.create(start, src),
+				)
 			}
 		} else {
 			const remaining = src.readRemaining()
 			if (Color.NamedColors.has(remaining)) {
 				value = Color.NamedColors.get(remaining)!
 			} else {
-				ctx.err.report(localize('expected', Color.ColorNames), Range.create(start, src))
+				ctx.err.report(
+					localize('expected', Color.ColorNames),
+					Range.create(start, src),
+				)
 			}
 		}
 		return Color.fromCompositeInt(value)
 	}
 
 	return (node, ctx) => {
-		node.expectation = [{ type: 'json:string', typedoc: 'String("Color")', pool: Color.ColorNames }]
+		node.expectation = [
+			{
+				type: 'json:string',
+				typedoc: 'String("Color")',
+				pool: Color.ColorNames,
+			},
+		]
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else {

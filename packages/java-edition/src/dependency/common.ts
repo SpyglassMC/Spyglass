@@ -12,10 +12,10 @@ export namespace ReleaseVersion {
 }
 
 export interface VersionInfo {
-	release: ReleaseVersion,
-	id: string,
-	name: string,
-	isLatest: boolean,
+	release: ReleaseVersion
+	id: string
+	name: string
+	isLatest: boolean
 }
 
 // DOCS: Update here when format_version is changed.
@@ -33,7 +33,7 @@ export const PackVersionMap: Record<number, RegExp | undefined> = {
 
 export interface PackMcmeta {
 	pack: {
-		pack_format: number,
+		pack_format: number
 	}
 }
 export namespace PackMcmeta {

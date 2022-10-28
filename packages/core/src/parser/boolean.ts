@@ -5,9 +5,9 @@ import { map } from './util.js'
 
 export const boolean: InfallibleParser<BooleanNode> = map(
 	literal('false', 'true'),
-	res => ({
+	(res) => ({
 		type: 'boolean',
 		range: res.range,
 		value: res.value === '' ? undefined : res.value === 'true',
-	})
+	}),
 )

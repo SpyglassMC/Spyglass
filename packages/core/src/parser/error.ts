@@ -9,7 +9,10 @@ import type { InfallibleParser } from './Parser.js'
  * Returns an error node containing all the remaining text (including whitespace),
  * or returns `undefined` if the `Source` has already reached its end.
  */
-export const error: InfallibleParser<ErrorNode | undefined> = (src: Source, ctx: ParserContext): ErrorNode | undefined => {
+export const error: InfallibleParser<ErrorNode | undefined> = (
+	src: Source,
+	ctx: ParserContext,
+): ErrorNode | undefined => {
 	if (!src.canRead()) {
 		return undefined
 	}

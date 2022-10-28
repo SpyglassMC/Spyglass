@@ -2,27 +2,10 @@ import { IndexMap } from './IndexMap.js'
 import type { RangeContainer } from './Range.js'
 import { Range } from './Range.js'
 
-type Digit =
-	| '0'
-	| '1'
-	| '2'
-	| '3'
-	| '4'
-	| '5'
-	| '6'
-	| '7'
-	| '8'
-	| '9'
-type Space =
-	| ' '
-	| '\t'
-type Newline =
-	| '\r\n'
-	| '\r'
-	| '\n'
-type Whitespace =
-	| Space
-	| Newline
+type Digit = '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+type Space = ' ' | '\t'
+type Newline = '\r\n' | '\r' | '\n'
+type Whitespace = Space | Newline
 
 export const CRLF = '\r\n'
 export const CR = '\r'
@@ -36,7 +19,7 @@ export class ReadonlySource {
 	constructor(
 		public readonly string: string,
 		public readonly indexMap: IndexMap = [],
-	) { }
+	) {}
 
 	get cursor() {
 		return IndexMap.toOuterOffset(this.indexMap, this.innerCursor)
@@ -44,16 +27,19 @@ export class ReadonlySource {
 
 	/**
 	 * @param offset The index to offset from cursor. Defaults to 0.
-	 * 
+	 *
 	 * @returns The range of the specified character.
-	 * 
+	 *
 	 * @example
 	 * getCharRange(-1) // Returns the range of the character before cursor.
 	 * getCharRange()   // Returns the range of the character at cursor.
 	 * getCharRange(1)  // Returns the range of the character after cursor.
 	 */
 	getCharRange(offset = 0): Range {
-		return IndexMap.toOuterRange(this.indexMap, Range.create(this.innerCursor + offset, this.innerCursor + offset + 1))
+		return IndexMap.toOuterRange(
+			this.indexMap,
+			Range.create(this.innerCursor + offset, this.innerCursor + offset + 1),
+		)
 	}
 
 	/**
@@ -62,14 +48,17 @@ export class ReadonlySource {
 	 * @param offset The index to offset from cursor. Defaults to 0
 	 */
 	peek(length = 1, offset = 0) {
-		return this.string.slice(this.innerCursor + offset, this.innerCursor + offset + length)
+		return this.string.slice(
+			this.innerCursor + offset,
+			this.innerCursor + offset + length,
+		)
 	}
 
 	/**
 	 * If the `expectedValue` is right after the cursor, returns `true`. Otherwise returns `false`.
-	 * 
+	 *
 	 * @param offset Defaults to 0.
-	 * 
+	 *
 	 * @see {@link Source.trySkip}
 	 */
 	tryPeek(expectedValue: string, offset = 0): boolean {
@@ -128,7 +117,10 @@ export class ReadonlySource {
 	slice(param0: Range | RangeContainer | number, end?: number): string {
 		if (typeof param0 === 'number') {
 			const innerStart = IndexMap.toInnerOffset(this.indexMap, param0)
-			const innerEnd = end !== undefined ? IndexMap.toInnerOffset(this.indexMap, end) : undefined
+			const innerEnd =
+				end !== undefined
+					? IndexMap.toInnerOffset(this.indexMap, end)
+					: undefined
 			return this.string.slice(innerStart, innerEnd)
 		}
 		const range = IndexMap.toInnerRange(this.indexMap, Range.get(param0))
@@ -186,7 +178,7 @@ export class Source extends ReadonlySource {
 
 	/**
 	 * If the `expectedValue` is right after the cursor, skips it and returns `true`. Otherwise returns `false`.
-	 * 
+	 *
 	 * This is a shortcut for the following piece of code:
 	 * ```typescript
 	 * declare const src: Source
@@ -195,7 +187,7 @@ export class Source extends ReadonlySource {
 	 * 	// Do something here.
 	 * }
 	 * ```
-	 * 
+	 *
 	 * @see {@link Source.tryPeek}
 	 */
 	trySkip(expectedValue: string): boolean {

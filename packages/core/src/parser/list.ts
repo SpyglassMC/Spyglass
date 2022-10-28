@@ -9,14 +9,20 @@ import { attempt } from './util.js'
 
 /** @internal For test only */
 export interface Options<V extends AstNode> {
-	start: string,
-	value: Parser<V>,
-	sep: string,
-	trailingSep: boolean,
-	end: string,
+	start: string
+	value: Parser<V>
+	sep: string
+	trailingSep: boolean
+	end: string
 }
 
-export function list<V extends AstNode>({ start, value, sep, trailingSep, end }: Options<V>): InfallibleParser<ListNode<V>> {
+export function list<V extends AstNode>({
+	start,
+	value,
+	sep,
+	trailingSep,
+	end,
+}: Options<V>): InfallibleParser<ListNode<V>> {
 	return (src: Source, ctx: ParserContext): ListNode<V> => {
 		const ans: ListNode<V> = {
 			type: 'list',
@@ -44,7 +50,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				if (result === Failure || endCursor === src.cursor) {
 					ctx.err.report(
 						localize('expected', localize('parser.list.value')),
-						Range.create(src, () => src.skipUntilOrEnd(sep, end, '\r', '\n'))
+						Range.create(src, () => src.skipUntilOrEnd(sep, end, '\r', '\n')),
 					)
 				} else {
 					updateSrcAndCtx()
@@ -55,7 +61,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				let sepRange: Range | undefined = undefined
 				src.skipWhitespace()
 				requiresValueSep = true
-				if (hasValueSep = src.peek(sep.length) === sep) {
+				if ((hasValueSep = src.peek(sep.length) === sep)) {
 					sepRange = Range.create(src, () => src.skip(sep.length))
 				}
 
@@ -63,7 +69,7 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 				ans.children.push({
 					type: 'item',
 					range: Range.create(itemStart, src),
-					...valueNode ? { children: [valueNode] } : {},
+					...(valueNode ? { children: [valueNode] } : {}),
 					value: valueNode,
 					sep: sepRange,
 				})
@@ -73,7 +79,10 @@ export function list<V extends AstNode>({ start, value, sep, trailingSep, end }:
 
 			// Trailing item sep.
 			if (hasValueSep && !trailingSep) {
-				ctx.err.report(localize('parser.list.trailing-sep'), ans.children[ans.children.length - 1].sep!)
+				ctx.err.report(
+					localize('parser.list.trailing-sep'),
+					ans.children[ans.children.length - 1].sep!,
+				)
 			}
 
 			// End.

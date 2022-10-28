@@ -3,7 +3,14 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
 import type { McmetaSummary } from './dependency/index.js'
-import { getMcmetaSummary, getVanillaMcdoc, getVersions, PackMcmeta, resolveConfiguredVersion, symbolRegistrar } from './dependency/index.js'
+import {
+	getMcmetaSummary,
+	getVanillaMcdoc,
+	getVersions,
+	PackMcmeta,
+	resolveConfiguredVersion,
+	symbolRegistrar,
+} from './dependency/index.js'
 import * as jeJson from './json/index.js'
 import * as jeMcf from './mcfunction/index.js'
 
@@ -34,18 +41,41 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 
 	const versions = await getVersions(ctx.externals, ctx.downloader)
 	if (!versions) {
-		ctx.logger.error('[je-initialize] Failed loading game version list. Expect everything to be broken.')
+		ctx.logger.error(
+			'[je-initialize] Failed loading game version list. Expect everything to be broken.',
+		)
 		return
 	}
 
 	const packMcmeta = await getPackMcmeta()
-	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
+	const {
+		release,
+		id: version,
+		isLatest,
+	} = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
+	meta.registerDependencyProvider('@vanilla-mcdoc', () =>
+		getVanillaMcdoc(downloader),
+	)
 
-	const summary = await getMcmetaSummary(ctx.externals, downloader, logger, version, isLatest, config.env.dataSource, config.env.mcmetaSummaryOverrides)
-	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
-		ctx.logger.error('[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.')
+	const summary = await getMcmetaSummary(
+		ctx.externals,
+		downloader,
+		logger,
+		version,
+		isLatest,
+		config.env.dataSource,
+		config.env.mcmetaSummaryOverrides,
+	)
+	if (
+		!summary.blocks ||
+		!summary.commands ||
+		!summary.fluids ||
+		!summary.registries
+	) {
+		ctx.logger.error(
+			'[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.',
+		)
 		return
 	}
 
@@ -57,14 +87,19 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	meta.registerLinter('nameOfNbtKey', {
 		configValidator: core.linter.configValidator.nameConvention,
 		linter: core.linter.nameConvention('value'),
-		nodePredicate: n => (
+		nodePredicate: (n) =>
 			// nbt compound keys without mcdoc definition.
-			(!n.symbol && n.parent?.parent?.type === 'nbt:compound' && core.PairNode.is(n.parent) && n.type === 'string' && n.parent.key === n) ||
+			(!n.symbol &&
+				n.parent?.parent?.type === 'nbt:compound' &&
+				core.PairNode.is(n.parent) &&
+				n.type === 'string' &&
+				n.parent.key === n) ||
 			// nbt path keys without mcdoc definition.
 			(!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') ||
 			// mcdoc compound key definition outside of `::minecraft` modules.
-			(mcdoc.StructFieldNode.is(n.parent) && mcdoc.StructKeyNode.is(n) && !n.symbol?.path[0]?.startsWith('::minecraft'))
-		),
+			(mcdoc.StructFieldNode.is(n.parent) &&
+				mcdoc.StructKeyNode.is(n) &&
+				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
 	jeJson.initialize(ctx)

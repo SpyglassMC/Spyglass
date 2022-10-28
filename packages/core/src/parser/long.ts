@@ -6,39 +6,52 @@ import type { InfallibleParser, Parser, Result } from './Parser.js'
 import { Failure } from './Parser.js'
 
 interface OptionsBase {
-	pattern: RegExp,
+	pattern: RegExp
 	/**
 	 * Inclusive.
 	 */
-	min?: bigint,
+	min?: bigint
 	/**
 	 * Inclusive.
 	 */
-	max?: bigint,
+	max?: bigint
 	/**
 	 * A callback function that will be called when the numeral value is out of range.
-	 * 
+	 *
 	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	onOutOfRange?: (ans: LongNode, src: Source, ctx: ParserContext, options: Options) => void,
+	onOutOfRange?: (
+		ans: LongNode,
+		src: Source,
+		ctx: ParserContext,
+		options: Options,
+	) => void
 }
 
 interface FallibleOptions extends OptionsBase {
-	failsOnEmpty: true,
+	failsOnEmpty: true
 }
 
 interface InfallibleOptions extends OptionsBase {
-	failsOnEmpty?: false,
+	failsOnEmpty?: false
 }
 
 /** @internal For test only */
 export type Options = FallibleOptions | InfallibleOptions
 
-const fallbackOnOutOfRange = (ans: LongNode, _src: Source, ctx: ParserContext, options: Options) => {
+const fallbackOnOutOfRange = (
+	ans: LongNode,
+	_src: Source,
+	ctx: ParserContext,
+	options: Options,
+) => {
 	ctx.err.report(
-		localize('expected', localize('long.between', options.min ?? '-∞', options.max ?? '+∞')),
+		localize(
+			'expected',
+			localize('long.between', options.min ?? '-∞', options.max ?? '+∞'),
+		),
 		ans,
-		ErrorSeverity.Error
+		ErrorSeverity.Error,
 	)
 }
 
@@ -78,7 +91,10 @@ export function long(options: Options): Parser<LongNode> {
 			ctx.err.report(localize('expected', localize('long')), ans)
 		} else if (!options.pattern.test(raw) || isOnlySign) {
 			ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
-		} else if ((options.min && ans.value < options.min) || (options.max && ans.value > options.max)) {
+		} else if (
+			(options.min && ans.value < options.min) ||
+			(options.max && ans.value > options.max)
+		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)
 		}

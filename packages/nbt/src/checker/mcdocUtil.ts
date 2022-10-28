@@ -68,59 +68,35 @@ const BlockItems: { [item: string]: core.FullResourceLocation[] } = {
 	],
 
 	// Torches.
-	'minecraft:torch': [
-		'minecraft:torch',
-		'minecraft:wall_torch',
-	],
-	'minecraft:soul_torch': [
-		'minecraft:soul_torch',
-		'minecraft:soul_wall_torch',
-	],
+	'minecraft:torch': ['minecraft:torch', 'minecraft:wall_torch'],
+	'minecraft:soul_torch': ['minecraft:soul_torch', 'minecraft:soul_wall_torch'],
 	'minecraft:redstone_torch': [
 		'minecraft:redstone_torch',
 		'minecraft:redstone_wall_torch',
 	],
 
-	'minecraft:beetroot_seeds': [
-		'minecraft:beetroots',
-	],
-	'minecraft:carrot': [
-		'minecraft:carrots',
-	],
-	'minecraft:cocoa_beans': [
-		'minecraft:cocoa',
-	],
-	'minecraft:glow_berries': [
-		'minecraft:cave_vines',
-	],
-	'minecraft:melon_seeds': [
-		'minecraft:melon_stem',
-	],
-	'minecraft:potato': [
-		'minecraft:potatoes',
-	],
-	'minecraft:pumpkin_seeds': [
-		'minecraft:pumpkin_stem',
-	],
-	'minecraft:redstone': [
-		'minecraft:redstone_wire',
-	],
-	'minecraft:string': [
-		'minecraft:tripwire',
-	],
-	'minecraft:sweat_berries': [
-		'minecraft:sweat_berry_bush',
-	],
-	'minecraft:wheat_seeds': [
-		'minecraft:wheat',
-	],
+	'minecraft:beetroot_seeds': ['minecraft:beetroots'],
+	'minecraft:carrot': ['minecraft:carrots'],
+	'minecraft:cocoa_beans': ['minecraft:cocoa'],
+	'minecraft:glow_berries': ['minecraft:cave_vines'],
+	'minecraft:melon_seeds': ['minecraft:melon_stem'],
+	'minecraft:potato': ['minecraft:potatoes'],
+	'minecraft:pumpkin_seeds': ['minecraft:pumpkin_stem'],
+	'minecraft:redstone': ['minecraft:redstone_wire'],
+	'minecraft:string': ['minecraft:tripwire'],
+	'minecraft:sweat_berries': ['minecraft:sweat_berry_bush'],
+	'minecraft:wheat_seeds': ['minecraft:wheat'],
 }
 
-export function getBlocksFromItem(item: core.FullResourceLocation): core.FullResourceLocation[] | undefined {
+export function getBlocksFromItem(
+	item: core.FullResourceLocation,
+): core.FullResourceLocation[] | undefined {
 	return BlockItems[item]
 }
 
-export function getEntityFromItem(item: core.FullResourceLocation): core.FullResourceLocation | undefined {
+export function getEntityFromItem(
+	item: core.FullResourceLocation,
+): core.FullResourceLocation | undefined {
 	if (item === 'minecraft:armor_stand') {
 		return item
 	}
@@ -133,22 +109,30 @@ export function getEntityFromItem(item: core.FullResourceLocation): core.FullRes
 
 const SpecialStrings: { [path: string]: string } = {
 	'::minecraft::block::banner::Banner.CustomName': 'mcfunction:component',
-	'::minecraft::block::brewingstand::BrewingStand.CustomName': 'mcfunction:component',
-	'::minecraft::block::commandblock::CommandBlock.Command': 'mcfunction:command',
-	'::minecraft::block::commandblock::CommandBlock.CustomName': 'mcfunction:component',
-	'::minecraft::block::container::ContainerBase.CustomName': 'mcfunction:component',
-	'::minecraft::block::enchantingtable::EnchantingTable.CustomName': 'mcfunction:component',
+	'::minecraft::block::brewingstand::BrewingStand.CustomName':
+		'mcfunction:component',
+	'::minecraft::block::commandblock::CommandBlock.Command':
+		'mcfunction:command',
+	'::minecraft::block::commandblock::CommandBlock.CustomName':
+		'mcfunction:component',
+	'::minecraft::block::container::ContainerBase.CustomName':
+		'mcfunction:component',
+	'::minecraft::block::enchantingtable::EnchantingTable.CustomName':
+		'mcfunction:component',
 	'::minecraft::block::furnace::Furnace.CustomName': 'mcfunction:component',
 	'::minecraft::block::hopper::Hopper.CustomName': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text1': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text2': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text3': 'mcfunction:component',
 	'::minecraft::block::sign::Sign.Text4': 'mcfunction:component',
-	'::minecraft::entity::effectcloud::EffectCloud.Particle': 'mcfunction:particle',
-	'::minecraft::entity::minecart::CommandMinecart.Command': 'mcfunction:command',
+	'::minecraft::entity::effectcloud::EffectCloud.Particle':
+		'mcfunction:particle',
+	'::minecraft::entity::minecart::CommandMinecart.Command':
+		'mcfunction:command',
 	'::minecraft::entity::mob::LivingEntity.Team': 'mcfunction:team',
 	'::minecraft::entity::EntityBase.Tags[]': 'mcfunction:tag',
-	'::minecraft::item::blockitem::BlockItem.CanPlaceOn[]': 'mcfunction:block_predicate',
+	'::minecraft::item::blockitem::BlockItem.CanPlaceOn[]':
+		'mcfunction:block_predicate',
 	'::minecraft::item::book::WrittenBook.pages[]': 'mcfunction:component',
 	'::minecraft::item::ItemBase.CanDestroy[]': 'mcfunction:block_predicate',
 }

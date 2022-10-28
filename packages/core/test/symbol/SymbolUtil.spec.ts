@@ -26,10 +26,10 @@ describe('SymbolUtil', () => {
 			symbols
 				.query(fileUri, 'mcdoc', 'ShouldBeKept1')
 				.enter({ usage: { type: 'definition' } })
-				.member('ShouldBeRemoved1', memberQuery => {
+				.member('ShouldBeRemoved1', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeKept2', memberQuery => {
+				.member('ShouldBeKept2', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			symbols
@@ -38,18 +38,18 @@ describe('SymbolUtil', () => {
 			symbols
 				.query(anotherFileUri, 'mcdoc', 'ShouldBeKept3')
 				.enter({ usage: { type: 'definition' } })
-				.member('ShouldBeKept4', memberQuery => {
+				.member('ShouldBeKept4', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeKept5', memberQuery => {
+				.member('ShouldBeKept5', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			symbols
 				.query(fileUri, 'mcdoc', 'ShouldBeKept3')
-				.member('ShouldBeRemoved3', memberQuery => {
+				.member('ShouldBeRemoved3', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-				.member('ShouldBeKept5', memberQuery => {
+				.member('ShouldBeKept5', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
@@ -64,11 +64,12 @@ describe('SymbolUtil', () => {
 		symbols
 			.query(fileUri, 'advancement', 'Foo')
 			.enter({ usage: { type: 'definition' } })
-			.member('Bar', member => member
-				.enter({ usage: { type: 'definition' } })
-				.member('Qux', member => member
+			.member('Bar', (member) =>
+				member
 					.enter({ usage: { type: 'definition' } })
-				)
+					.member('Qux', (member) =>
+						member.enter({ usage: { type: 'definition' } }),
+					),
 			)
 		// const stackSymbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		// stackSymbols
@@ -128,11 +129,12 @@ describe('SymbolUtil', () => {
 				symbols
 					.query(fileUri, 'advancement', 'Foo')
 					.enter({ usage: { type: 'definition' } })
-					.member('Bar', member => member
-						.enter({ usage: { type: 'definition' } })
-						.member('Qux', member => member
+					.member('Bar', (member) =>
+						member
 							.enter({ usage: { type: 'definition' } })
-						)
+							.member('Qux', (member) =>
+								member.enter({ usage: { type: 'definition' } }),
+							),
 					)
 
 				const query = symbols.query(fileUri, 'advancement', ...path)

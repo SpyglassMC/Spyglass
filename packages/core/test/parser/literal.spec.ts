@@ -5,7 +5,7 @@ import { literal } from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 describe('literal()', () => {
-	const cases: { options: string[] | [LiteralOptions], content: string }[] = [
+	const cases: { options: string[] | [LiteralOptions]; content: string }[] = [
 		{ options: ['foo', 'foobar', 'bar'], content: '' },
 		{ options: ['foo', 'foobar', 'bar'], content: 'foo qux' },
 		{ options: ['foo', 'foobar', 'bar'], content: 'foobar qux' },
@@ -14,7 +14,7 @@ describe('literal()', () => {
 	]
 	for (const { options, content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = literal(...options as any)
+			const parser = literal(...(options as any))
 			snapshot(testParser(parser, content))
 		})
 	}

@@ -1,34 +1,40 @@
-import { mockProjectData, showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test-out/utils.js'
+import {
+	mockProjectData,
+	showWhitespaceGlyph,
+	snapshotWithUri,
+	testParser,
+} from '@spyglassmc/core/test-out/utils.js'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
 import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'mocha'
 
-const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, content: string[] }[]>> = {
-	'brigadier:bool': [
-		{ content: ['false', 'true'] },
-	],
+const Suites: Partial<
+	Record<ArgumentTreeNode['parser'], { properties?: any; content: string[] }[]>
+> = {
+	'brigadier:bool': [{ content: ['false', 'true'] }],
 	'brigadier:double': [
 		{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] },
 	],
-	'brigadier:float': [
-		{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] },
-	],
-	'brigadier:integer': [
-		{ content: ['0', '123', '-123'] },
-	],
-	'brigadier:long': [
-		{ content: ['0', '123', '-123'] },
-	],
+	'brigadier:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'brigadier:integer': [{ content: ['0', '123', '-123'] }],
+	'brigadier:long': [{ content: ['0', '123', '-123'] }],
 	'brigadier:string': [
-		{ properties: { type: 'word' }, content: ['word', 'word_with_underscores'] },
-		{ properties: { type: 'phrase' }, content: ['"quoted phrase"', 'word', '""'] },
-		{ properties: { type: 'greedy' }, content: ['word', 'words with spaces', '"and symbols"'] },
+		{
+			properties: { type: 'word' },
+			content: ['word', 'word_with_underscores'],
+		},
+		{
+			properties: { type: 'phrase' },
+			content: ['"quoted phrase"', 'word', '""'],
+		},
+		{
+			properties: { type: 'greedy' },
+			content: ['word', 'words with spaces', '"and symbols"'],
+		},
 	],
-	'minecraft:angle': [
-		{ content: ['0', '~', '~-0.5', '^'] },
-	],
+	'minecraft:angle': [{ content: ['0', '~', '~-0.5', '^'] }],
 	'minecraft:block_pos': [
 		{
 			content: [
@@ -54,20 +60,11 @@ const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, con
 	],
 	'minecraft:block_state': [
 		{
-			content: [
-				'stone',
-				'minecraft:stone',
-				'stone[foo=bar]',
-				'foo{bar:baz}',
-			],
+			content: ['stone', 'minecraft:stone', 'stone[foo=bar]', 'foo{bar:baz}'],
 		},
 	],
-	'minecraft:color': [
-		{ content: ['red', 'green'] },
-	],
-	'minecraft:column_pos': [
-		{ content: ['0 0', '~ ~', '~1 ~-2'] },
-	],
+	'minecraft:color': [{ content: ['red', 'green'] }],
+	'minecraft:column_pos': [{ content: ['0 0', '~ ~', '~1 ~-2'] }],
 	'minecraft:component': [
 		{ content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'] },
 	],
@@ -75,8 +72,28 @@ const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, con
 		{ content: ['minecraft:overworld', 'minecraft:the_nether'] },
 	],
 	'minecraft:entity': [
-		{ properties: { amount: 'multiple', type: 'entities' }, content: ['Player', '0123', '@e', '@e[type=foo]', 'dd12be42-52a9-4a91-a8a1-11c01849e498'] },
-		{ properties: { amount: 'single', type: 'players' }, content: ['Player', '0123', '@e', '@e[limit=1]', '@r', '@a[limit=1]', 'dd12be42-52a9-4a91-a8a1-11c01849e498'] },
+		{
+			properties: { amount: 'multiple', type: 'entities' },
+			content: [
+				'Player',
+				'0123',
+				'@e',
+				'@e[type=foo]',
+				'dd12be42-52a9-4a91-a8a1-11c01849e498',
+			],
+		},
+		{
+			properties: { amount: 'single', type: 'players' },
+			content: [
+				'Player',
+				'0123',
+				'@e',
+				'@e[limit=1]',
+				'@r',
+				'@a[limit=1]',
+				'dd12be42-52a9-4a91-a8a1-11c01849e498',
+			],
+		},
 		{
 			properties: { amount: 'multiple', type: 'entities' },
 			content: [
@@ -100,70 +117,47 @@ const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, con
 			],
 		},
 	],
-	'minecraft:entity_anchor': [
-		{ content: ['eyes', 'feet'] },
-	],
-	'minecraft:entity_summon': [
-		{ content: ['minecraft:pig', 'cow'] },
-	],
+	'minecraft:entity_anchor': [{ content: ['eyes', 'feet'] }],
+	'minecraft:entity_summon': [{ content: ['minecraft:pig', 'cow'] }],
 	'minecraft:float_range': [
 		{ content: ['0..5.2', '0', '-5.4', '-100.76..', '..100', '..'] },
 	],
-	'minecraft:function': [
-		{ content: ['foo', 'foo:bar', '#foo'] },
-	],
+	'minecraft:function': [{ content: ['foo', 'foo:bar', '#foo'] }],
 	'minecraft:game_profile': [
-		{ content: ['Player', '0123', 'dd12be42-52a9-4a91-a8a1-11c01849e498', '@e'] },
+		{
+			content: ['Player', '0123', 'dd12be42-52a9-4a91-a8a1-11c01849e498', '@e'],
+		},
 	],
 	'minecraft:int_range': [
 		{ content: ['0..5', '0', '-5', '-100..', '..100', '..'] },
 	],
-	'minecraft:item_enchantment': [
-		{ content: ['unbreaking', 'silk_touch'] },
-	],
+	'minecraft:item_enchantment': [{ content: ['unbreaking', 'silk_touch'] }],
 	'minecraft:item_predicate': [
 		{
-			content: [
-				'stick',
-				'minecraft:stick',
-				'#stick',
-				'#stick{foo:bar}',
-			],
+			content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
 		},
 	],
-	'minecraft:item_slot': [
-		{ content: ['container.5', 'weapon'] },
-	],
+	'minecraft:item_slot': [{ content: ['container.5', 'weapon'] }],
 	'minecraft:item_stack': [
 		{
-			content: [
-				'stick',
-				'minecraft:stick',
-				'stick{foo:bar}',
-			],
+			content: ['stick', 'minecraft:stick', 'stick{foo:bar}'],
 		},
 	],
 	'minecraft:message': [
 		{ content: ['Hello world!', 'foo', '@e', 'Hello @p :)'] },
 	],
-	'minecraft:mob_effect': [
-		{ content: ['spooky', 'effect'] },
-	],
-	'minecraft:nbt_compound_tag': [
-		{ content: ['{}', '{foo:bar}'] },
-	],
+	'minecraft:mob_effect': [{ content: ['spooky', 'effect'] }],
+	'minecraft:nbt_compound_tag': [{ content: ['{}', '{foo:bar}'] }],
 	'minecraft:nbt_tag': [
 		{ content: ['0', '0b', '0l', '0.0', '"foo"', '{foo:bar}'] },
 	],
-	'minecraft:objective': [
-		{ content: ['foo', '012'] },
-	],
+	'minecraft:objective': [{ content: ['foo', '012'] }],
 	'minecraft:objective_criteria': [
-		{ content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'] },
+		{
+			content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'],
+		},
 	],
-	'minecraft:operation': [
-		{ content: ['=', '>', '<'] },
-	],
+	'minecraft:operation': [{ content: ['=', '>', '<'] }],
 	'minecraft:particle': [
 		{
 			content: [
@@ -186,14 +180,21 @@ const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, con
 		{ properties: { category: 'bossbar' }, content: ['foo', 'foo:bar', '012'] },
 	],
 	'minecraft:resource_or_tag': [
-		{ properties: { registry: 'bossbar' }, content: ['foo', 'foo:bar', '012', '#skeletons', '#minecraft:skeletons'] },
+		{
+			properties: { registry: 'bossbar' },
+			content: ['foo', 'foo:bar', '012', '#skeletons', '#minecraft:skeletons'],
+		},
 	],
-	'minecraft:rotation': [
-		{ content: ['0 0', '~ ~', '~-5 ~5'] },
-	],
+	'minecraft:rotation': [{ content: ['0 0', '~ ~', '~-5 ~5'] }],
 	'minecraft:score_holder': [
-		{ properties: { amount: 'multiple' }, content: ['Player', '0123', '*', '@e'] },
-		{ properties: { amount: 'single' }, content: ['Player', '0123', '*', '@e'] },
+		{
+			properties: { amount: 'multiple' },
+			content: ['Player', '0123', '*', '@e'],
+		},
+		{
+			properties: { amount: 'single' },
+			content: ['Player', '0123', '*', '@e'],
+		},
 		{
 			properties: { amount: 'multiple' },
 			content: [
@@ -218,23 +219,32 @@ const Suites: Partial<Record<ArgumentTreeNode['parser'], { properties?: any, con
 			],
 		},
 	],
-	'minecraft:swizzle': [
-		{ content: ['xyz', 'x'] },
-	],
-	'minecraft:team': [
-		{ content: ['foo', '123'] },
-	],
-	'minecraft:time': [
-		{ content: ['0d', '0s', '0t', '0', '0foo'] },
-	],
+	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
+	'minecraft:team': [{ content: ['foo', '123'] }],
+	'minecraft:time': [{ content: ['0d', '0s', '0t', '0', '0foo'] }],
 	'minecraft:uuid': [
-		{ content: ['dd12be42-52a9-4a91-a8a1-11c01849e498', '1-1-1-1-1', '42', 'ffffffffffffffff-1-1-1-1', 'fffffffffffffff-1-1-1-1'] },
+		{
+			content: [
+				'dd12be42-52a9-4a91-a8a1-11c01849e498',
+				'1-1-1-1-1',
+				'42',
+				'ffffffffffffffff-1-1-1-1',
+				'fffffffffffffff-1-1-1-1',
+			],
+		},
 	],
-	'minecraft:vec2': [
-		{ content: ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2'] },
-	],
+	'minecraft:vec2': [{ content: ['0 0', '~ ~', '0.1 -0.5', '~1 ~-2'] }],
 	'minecraft:vec3': [
-		{ content: ['0 0 0', '~ ~ ~', '^ ^ ^', '^1 ^ ^-5', '0.1 -0.5 .9', '~0.5 ~1 ~-5'] },
+		{
+			content: [
+				'0 0 0',
+				'~ ~ ~',
+				'^ ^ ^',
+				'^1 ^ ^-5',
+				'0.1 -0.5 .9',
+				'~0.5 ~1 ~-5',
+			],
+		},
 	],
 }
 
@@ -264,12 +274,22 @@ describe('mcfunction argument parser', () => {
 					properties,
 				}
 				for (const string of content) {
-					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${properties ? ` with ${JSON.stringify(properties)}` : ''}`
+					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${
+						properties ? ` with ${JSON.stringify(properties)}` : ''
+					}`
 					it(itTitle, () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
-							uri: new URL(`./argument/${parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())}.spec.js`, import.meta.url),
-							value: testParser(argument(treeNode)!, string, { project: { meta }, removeTopLevelChildren: RemoveExtraChildren.has(parserName) }),
+							uri: new URL(
+								`./argument/${parserName.replace(/[:_](\w)/g, (_, c) =>
+									c.toUpperCase(),
+								)}.spec.js`,
+								import.meta.url,
+							),
+							value: testParser(argument(treeNode)!, string, {
+								project: { meta },
+								removeTopLevelChildren: RemoveExtraChildren.has(parserName),
+							}),
 						})
 					})
 				}

@@ -1,6 +1,13 @@
 import type { MetaRegistry } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
-import type { NbtByteNode, NbtDoubleNode, NbtFloatNode, NbtIntNode, NbtLongNode, NbtShortNode } from '../node/index.js'
+import type {
+	NbtByteNode,
+	NbtDoubleNode,
+	NbtFloatNode,
+	NbtIntNode,
+	NbtLongNode,
+	NbtShortNode,
+} from '../node/index.js'
 
 export function register(meta: MetaRegistry) {
 	meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)

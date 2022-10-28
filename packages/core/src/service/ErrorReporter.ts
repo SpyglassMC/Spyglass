@@ -5,13 +5,20 @@ import { ErrorSeverity, LanguageError, Range } from '../source/index.js'
 export class ErrorReporter {
 	public errors: LanguageError[] = []
 
-	constructor() { }
+	constructor() {}
 
 	/**
 	 * Reports a new error.
 	 */
-	report(message: string, range: RangeLike, severity = ErrorSeverity.Error, info?: LanguageErrorInfo): void {
-		this.errors.push(LanguageError.create(message, Range.get(range), severity, info))
+	report(
+		message: string,
+		range: RangeLike,
+		severity = ErrorSeverity.Error,
+		info?: LanguageErrorInfo,
+	): void {
+		this.errors.push(
+			LanguageError.create(message, Range.get(range), severity, info),
+		)
 	}
 
 	/**
@@ -33,23 +40,29 @@ export class ErrorReporter {
 }
 
 export class LinterErrorReporter extends ErrorReporter {
-	constructor(
-		public ruleName: string,
-		public ruleSeverity: ErrorSeverity
-	) {
+	constructor(public ruleName: string, public ruleSeverity: ErrorSeverity) {
 		super()
 	}
 
-	lint(message: string, range: RangeLike, info?: LanguageErrorInfo, severityOverride?: ErrorSeverity): void {
+	lint(
+		message: string,
+		range: RangeLike,
+		info?: LanguageErrorInfo,
+		severityOverride?: ErrorSeverity,
+	): void {
 		return this.report(
 			localize('linter.diagnostic-message-wrapper', message, this.ruleName),
 			range,
 			severityOverride ?? this.ruleSeverity,
-			info
+			info,
 		)
 	}
 
-	static fromErrorReporter(reporter: ErrorReporter, ruleName: string, ruleSeverity: ErrorSeverity): LinterErrorReporter {
+	static fromErrorReporter(
+		reporter: ErrorReporter,
+		ruleName: string,
+		ruleSeverity: ErrorSeverity,
+	): LinterErrorReporter {
 		const ans = new LinterErrorReporter(ruleName, ruleSeverity)
 		ans.errors = reporter.errors
 		return ans

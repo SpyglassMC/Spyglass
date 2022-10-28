@@ -1,4 +1,20 @@
-import type { AstNode, BooleanNode, CommentNode, ErrorNode, FloatNode, IntegerNode, LiteralBaseNode, LiteralNode, LongNode, ResourceLocationBaseNode, ResourceLocationNode, StringBaseNode, StringNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
+import type {
+	AstNode,
+	BooleanNode,
+	CommentNode,
+	ErrorNode,
+	FloatNode,
+	IntegerNode,
+	LiteralBaseNode,
+	LiteralNode,
+	LongNode,
+	ResourceLocationBaseNode,
+	ResourceLocationNode,
+	StringBaseNode,
+	StringNode,
+	SymbolBaseNode,
+	SymbolNode,
+} from '../../node/index.js'
 import type { MetaRegistry } from '../../service/index.js'
 import { Range } from '../../source/index.js'
 import { traversePreOrder } from '../util.js'
@@ -10,40 +26,46 @@ import { ColorToken } from './Colorizer.js'
  */
 export const fallback: Colorizer = (node, ctx) => {
 	const ans: ColorToken[] = []
-	traversePreOrder(node as AstNode,
-		node => !ctx.meta.hasColorizer(node.type) && (!ctx.range || Range.intersects(node.range, ctx.range)),
-		node => ctx.meta.hasColorizer(node.type),
-		node => {
+	traversePreOrder(
+		node as AstNode,
+		(node) =>
+			!ctx.meta.hasColorizer(node.type) &&
+			(!ctx.range || Range.intersects(node.range, ctx.range)),
+		(node) => ctx.meta.hasColorizer(node.type),
+		(node) => {
 			const colorizer = ctx.meta.getColorizer(node.type)
 			const result = colorizer(node, ctx)
 			ans.push(...result)
-		}
+		},
 	)
 	return Object.freeze(ans)
 }
 
-export const boolean: Colorizer = node => {
+export const boolean: Colorizer = (node) => {
 	return [ColorToken.create(node, 'literal')]
 }
 
-export const comment: Colorizer = node => {
+export const comment: Colorizer = (node) => {
 	return [ColorToken.create(node, 'comment')]
 }
 
-export const error: Colorizer = node => {
+export const error: Colorizer = (node) => {
 	// return [ColorToken.create(node, 'error')]
 	return []
 }
 
-export const literal: Colorizer<LiteralBaseNode> = node => {
+export const literal: Colorizer<LiteralBaseNode> = (node) => {
 	return [ColorToken.create(node, node.options.colorTokenType ?? 'literal')]
 }
 
-export const number: Colorizer = node => {
+export const number: Colorizer = (node) => {
 	return [ColorToken.create(node, 'number')]
 }
 
-export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (node, _ctx) => {
+export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (
+	node,
+	_ctx,
+) => {
 	let type: ColorTokenType
 	switch (node.options.category) {
 		case 'function':
@@ -64,13 +86,15 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		// TODO: Fill the gap between the last token and the ending quote with errors.
 		return ColorToken.fillGap(
 			result,
-			node.range, node.options.colorTokenType ?? 'string')
+			node.range,
+			node.options.colorTokenType ?? 'string',
+		)
 	} else {
 		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 	}
 }
 
-export const symbol: Colorizer<SymbolBaseNode> = node => {
+export const symbol: Colorizer<SymbolBaseNode> = (node) => {
 	// TODO: Set the modifiers according to `node.symbol`.
 	return [ColorToken.create(node, 'variable')]
 }
@@ -83,7 +107,10 @@ export function registerColorizers(meta: MetaRegistry) {
 	meta.registerColorizer<IntegerNode>('integer', number)
 	meta.registerColorizer<LongNode>('long', number)
 	meta.registerColorizer<LiteralNode>('literal', literal)
-	meta.registerColorizer<ResourceLocationNode>('resource_location', resourceLocation)
+	meta.registerColorizer<ResourceLocationNode>(
+		'resource_location',
+		resourceLocation,
+	)
 	meta.registerColorizer<StringNode>('string', string)
 	meta.registerColorizer<SymbolNode>('symbol', symbol)
 }

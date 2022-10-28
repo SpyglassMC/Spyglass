@@ -28,7 +28,13 @@ describe('float()', () => {
 		const options: Options[] = [
 			{ pattern, min: 1 },
 			{ pattern, max: 6 },
-			{ pattern, min: 1, max: 6, onOutOfRange: (ans, _src, ctx) => ctx.err.report('Testing MESSAGE', ans) },
+			{
+				pattern,
+				min: 1,
+				max: 6,
+				onOutOfRange: (ans, _src, ctx) =>
+					ctx.err.report('Testing MESSAGE', ans),
+			},
 		]
 		const cases: { content: string }[] = [
 			{ content: '0.0' },
@@ -36,7 +42,9 @@ describe('float()', () => {
 			{ content: '9.0' },
 		]
 		for (const option of options) {
-			describe(`float(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
+			describe(`float(${option.min}, ${
+				option.max
+			}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = float(option as any)
@@ -49,10 +57,7 @@ describe('float()', () => {
 
 	describe('float(failsOnEmpty = true)', () => {
 		const option: Options = { pattern, failsOnEmpty: true }
-		const cases: { content: string }[] = [
-			{ content: '' },
-			{ content: '7e+3' },
-		]
+		const cases: { content: string }[] = [{ content: '' }, { content: '7e+3' }]
 		for (const { content } of cases) {
 			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 				const parser = float(option as any)

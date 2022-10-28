@@ -1,4 +1,3 @@
-
 // import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 // describe('mcdoc colorizer', () => {
 // 	const project = mockProjectData()

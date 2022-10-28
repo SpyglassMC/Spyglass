@@ -6,15 +6,18 @@ export interface SymbolLocations {
 	/**
 	 * The range of the currently selected symbol.
 	 */
-	range: Range,
+	range: Range
 	/**
 	 * All locations of the symbol for the specific usage, or `undefined` if this symbol doesn't have the said usage.
 	 */
-	locations: SymbolLocation[] | undefined,
+	locations: SymbolLocation[] | undefined
 }
 export namespace SymbolLocations {
 	/* istanbul ignore next */
-	export function create(range: RangeLike, locations: SymbolLocation[] | undefined): SymbolLocations {
+	export function create(
+		range: RangeLike,
+		locations: SymbolLocation[] | undefined,
+	): SymbolLocations {
 		return {
 			range: Range.get(range),
 			locations,

@@ -4,19 +4,19 @@ import type { SymbolAccessType, SymbolUsageType } from '../symbol/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface SymbolOptions {
-	category: string,
-	parentPath?: string[],
-	accessType?: SymbolAccessType,
-	usageType?: SymbolUsageType,
+	category: string
+	parentPath?: string[]
+	accessType?: SymbolAccessType
+	usageType?: SymbolUsageType
 }
 
 export interface SymbolBaseNode extends AstNode {
-	readonly options: SymbolOptions,
-	value: string,
+	readonly options: SymbolOptions
+	value: string
 }
 
 export interface SymbolNode extends SymbolBaseNode {
-	readonly type: 'symbol',
+	readonly type: 'symbol'
 }
 export namespace SymbolNode {
 	/* istanbul ignore next */

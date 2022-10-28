@@ -28,7 +28,7 @@ describe('Operations', () => {
 		const childOps = new Operations(parentOps)
 		const testObj = getTestObj()
 		snapshot(testObj)
-		
+
 		parentOps.set(testObj, 'foo', 100)
 		parentOps.set(testObj, 'foo', 42)
 		snapshot(testObj)

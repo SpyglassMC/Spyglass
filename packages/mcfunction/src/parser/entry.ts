@@ -7,7 +7,10 @@ import { command } from './command.js'
 /**
  * @throws When there's no command tree associated with `commandTreeName`.
  */
-export function entry(commandTreeName: string, argument: ArgumentParserGetter): core.Parser<McfunctionNode> {
+export function entry(
+	commandTreeName: string,
+	argument: ArgumentParserGetter,
+): core.Parser<McfunctionNode> {
 	return (src, ctx) => {
 		const ans: McfunctionNode = {
 			type: 'mcfunction:entry',
@@ -20,7 +23,10 @@ export function entry(commandTreeName: string, argument: ArgumentParserGetter): 
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
 			} else {
-				result = command(CommandTreeRegistry.instance.get(commandTreeName), argument)(src, ctx)
+				result = command(
+					CommandTreeRegistry.instance.get(commandTreeName),
+					argument,
+				)(src, ctx)
 			}
 			ans.children.push(result)
 			src.nextLine()

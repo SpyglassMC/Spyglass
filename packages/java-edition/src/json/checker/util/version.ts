@@ -1,4 +1,8 @@
-import type { JsonChecker, JsonCheckerContext, record } from '@spyglassmc/json/lib/checker/index.js'
+import type {
+	JsonChecker,
+	JsonCheckerContext,
+	record,
+} from '@spyglassmc/json/lib/checker/index.js'
 import { deprecate } from '@spyglassmc/json/lib/checker/index.js'
 import { ReleaseVersion } from '../../../dependency/index.js'
 
@@ -12,18 +16,62 @@ function cmpVersion(ctx: JsonCheckerContext, target: ReleaseVersion): number {
 	return ReleaseVersion.cmp(getVersion(ctx), target)
 }
 
-export function versioned(ctx: JsonCheckerContext, version: ReleaseVersion, checker: string[]): string[]
-export function versioned(ctx: JsonCheckerContext, version: ReleaseVersion, checker: JsonChecker | undefined): JsonChecker | undefined
-export function versioned(ctx: JsonCheckerContext, version: ReleaseVersion, checker: CheckerRecord | undefined): CheckerRecord | undefined
+export function versioned(
+	ctx: JsonCheckerContext,
+	version: ReleaseVersion,
+	checker: string[],
+): string[]
+export function versioned(
+	ctx: JsonCheckerContext,
+	version: ReleaseVersion,
+	checker: JsonChecker | undefined,
+): JsonChecker | undefined
+export function versioned(
+	ctx: JsonCheckerContext,
+	version: ReleaseVersion,
+	checker: CheckerRecord | undefined,
+): CheckerRecord | undefined
 
-export function versioned(ctx: JsonCheckerContext, checker: string[], version: ReleaseVersion): string[]
-export function versioned(ctx: JsonCheckerContext, checker: JsonChecker | undefined, version: ReleaseVersion): JsonChecker | undefined
-export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord | undefined, version: ReleaseVersion): CheckerRecord | undefined
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: string[],
+	version: ReleaseVersion,
+): string[]
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: JsonChecker | undefined,
+	version: ReleaseVersion,
+): JsonChecker | undefined
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: CheckerRecord | undefined,
+	version: ReleaseVersion,
+): CheckerRecord | undefined
 
-export function versioned(ctx: JsonCheckerContext, checker: string[], version: ReleaseVersion, checker2: string[]): string[]
-export function versioned(ctx: JsonCheckerContext, checker: JsonChecker, version: ReleaseVersion, checker2: JsonChecker): JsonChecker
-export function versioned(ctx: JsonCheckerContext, checker: CheckerRecord, version: ReleaseVersion, checker2: CheckerRecord): CheckerRecord
-export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?: any): any {
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: string[],
+	version: ReleaseVersion,
+	checker2: string[],
+): string[]
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: JsonChecker,
+	version: ReleaseVersion,
+	checker2: JsonChecker,
+): JsonChecker
+export function versioned(
+	ctx: JsonCheckerContext,
+	checker: CheckerRecord,
+	version: ReleaseVersion,
+	checker2: CheckerRecord,
+): CheckerRecord
+export function versioned(
+	ctx: JsonCheckerContext,
+	arg1: any,
+	arg2?: any,
+	arg3?: any,
+): any {
 	if (typeof arg1 === 'string') {
 		const check = cmpVersion(ctx, arg1 as ReleaseVersion) >= 0
 		if (arg2 === undefined) {
@@ -38,22 +86,37 @@ export function versioned(ctx: JsonCheckerContext, arg1: any, arg2?: any, arg3?:
 		if (arg1 === undefined) {
 			return arg1
 		} else if (Array.isArray(arg1)) {
-			return check ? arg1 : (arg3 ?? [])
+			return check ? arg1 : arg3 ?? []
 		} else {
-			return check ? arg1 : (arg3 ?? undefined)
+			return check ? arg1 : arg3 ?? undefined
 		}
 	}
 }
 
-export function renamed(ctx: JsonCheckerContext, from: string, version: ReleaseVersion, to: string, checker: JsonChecker): CheckerRecord | undefined {
-	return versioned(ctx, {
-		[from]: checker,
-	}, version, {
-		[to]: checker,
-	})
+export function renamed(
+	ctx: JsonCheckerContext,
+	from: string,
+	version: ReleaseVersion,
+	to: string,
+	checker: JsonChecker,
+): CheckerRecord | undefined {
+	return versioned(
+		ctx,
+		{
+			[from]: checker,
+		},
+		version,
+		{
+			[to]: checker,
+		},
+	)
 }
 
-export function deprecated(ctx: JsonCheckerContext, version: ReleaseVersion, checker: JsonChecker | undefined) {
+export function deprecated(
+	ctx: JsonCheckerContext,
+	version: ReleaseVersion,
+	checker: JsonChecker | undefined,
+) {
 	if (cmpVersion(ctx, version) < 0) {
 		return checker
 	}

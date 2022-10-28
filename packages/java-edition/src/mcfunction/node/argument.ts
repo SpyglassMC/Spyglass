@@ -1,7 +1,8 @@
 import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
 
-export interface BlockStatesNode extends core.RecordBaseNode<core.StringNode, core.StringNode> {
+export interface BlockStatesNode
+	extends core.RecordBaseNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
 }
 export namespace BlockStatesNode {
@@ -11,19 +12,28 @@ export namespace BlockStatesNode {
 	}
 }
 export interface BlockNode extends core.AstNode {
-	type: 'mcfunction:block',
-	children: (core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode)[],
-	id: core.ResourceLocationNode,
-	states?: BlockStatesNode,
-	nbt?: nbt.NbtCompoundNode,
+	type: 'mcfunction:block'
+	children: (
+		| core.ResourceLocationNode
+		| BlockStatesNode
+		| nbt.NbtCompoundNode
+	)[]
+	id: core.ResourceLocationNode
+	states?: BlockStatesNode
+	nbt?: nbt.NbtCompoundNode
 }
 export namespace BlockNode {
-	export function is(node: core.DeepReadonly<core.AstNode> | undefined): node is BlockNode {
+	export function is(
+		node: core.DeepReadonly<core.AstNode> | undefined,
+	): node is BlockNode {
 		return (node as BlockNode | undefined)?.type === 'mcfunction:block'
 	}
 
 	export function mock(range: core.RangeLike, isPredicate: boolean): BlockNode {
-		const id = core.ResourceLocationNode.mock(range, { category: 'block', allowTag: isPredicate })
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'block',
+			allowTag: isPredicate,
+		})
 		return {
 			type: 'mcfunction:block',
 			range: core.Range.get(range),
@@ -37,8 +47,8 @@ export const CoordinateNotations = ['', '~', '^'] as const
 export type CoordinateNodeNotation = typeof CoordinateNotations[number]
 
 export interface CoordinateNode extends core.FloatBaseNode {
-	type: 'mcfunction:coordinate',
-	notation: CoordinateNodeNotation,
+	type: 'mcfunction:coordinate'
+	notation: CoordinateNodeNotation
 }
 export namespace CoordinateNode {
 	export function mock(range: core.RangeLike): CoordinateNode {
@@ -56,9 +66,7 @@ export namespace CoordinateNode {
 	export function toDegree(node: CoordinateNode): number {
 		// TODO: For relative coordinates, const value = (node.value + baseCoordinate) % 360
 		const value = node.value % 360
-		return value >= 180
-			? value - 360
-			: value < -180 ? value + 360 : value
+		return value >= 180 ? value - 360 : value < -180 ? value + 360 : value
 	}
 }
 
@@ -67,27 +75,39 @@ export const enum CoordinateSystem {
 	Local = 1,
 }
 
-export interface EntitySelectorAdvancementsArgumentCriteriaNode extends core.RecordBaseNode<core.StringNode, core.BooleanNode> {
+export interface EntitySelectorAdvancementsArgumentCriteriaNode
+	extends core.RecordBaseNode<core.StringNode, core.BooleanNode> {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
-export interface EntitySelectorAdvancementsArgumentNode extends core.RecordBaseNode<core.ResourceLocationNode, core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode> {
+export interface EntitySelectorAdvancementsArgumentNode
+	extends core.RecordBaseNode<
+		core.ResourceLocationNode,
+		core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
+	> {
 	type: 'mcfunction:entity_selector/arguments/advancements'
 }
-export interface EntitySelectorScoresArgumentNode extends core.RecordBaseNode<core.SymbolNode, IntRangeNode> {
+export interface EntitySelectorScoresArgumentNode
+	extends core.RecordBaseNode<core.SymbolNode, IntRangeNode> {
 	type: 'mcfunction:entity_selector/arguments/scores'
 }
-export interface EntitySelectorInvertableArgumentValueNode<T extends core.AstNode> extends core.SequenceNode<core.LiteralNode | T> {
-	type: 'mcfunction:entity_selector/arguments/value/invertable',
-	value: T,
-	inverted: boolean,
+export interface EntitySelectorInvertableArgumentValueNode<
+	T extends core.AstNode,
+> extends core.SequenceNode<core.LiteralNode | T> {
+	type: 'mcfunction:entity_selector/arguments/value/invertable'
+	value: T
+	inverted: boolean
 }
-export interface EntitySelectorArgumentsNode extends core.RecordBaseNode<core.StringNode, any> {
+export interface EntitySelectorArgumentsNode
+	extends core.RecordBaseNode<core.StringNode, any> {
 	type: 'mcfunction:entity_selector/arguments'
 }
 export namespace EntitySelectorArgumentsNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode): node is EntitySelectorArgumentsNode {
-		return (node as EntitySelectorArgumentsNode).type === 'mcfunction:entity_selector/arguments'
+		return (
+			(node as EntitySelectorArgumentsNode).type ===
+			'mcfunction:entity_selector/arguments'
+		)
 	}
 }
 export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's'] as const
@@ -98,7 +118,9 @@ export namespace EntitySelectorVariable {
 		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-export const EntitySelectorAtVariables = EntitySelectorVariables.map(v => `@${v}` as const)
+export const EntitySelectorAtVariables = EntitySelectorVariables.map(
+	(v) => `@${v}` as const,
+)
 export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
 export namespace EntitySelectorAtVariable {
 	/* istanbul ignore next */
@@ -107,26 +129,34 @@ export namespace EntitySelectorAtVariable {
 	}
 }
 export interface EntitySelectorNode extends core.AstNode {
-	type: 'mcfunction:entity_selector',
-	children: [core.LiteralNode, ...[] | [EntitySelectorArgumentsNode]]
-	variable: EntitySelectorVariable,
-	arguments?: EntitySelectorArgumentsNode,
-	currentEntity?: boolean,
-	dimensionLimited?: boolean,
-	playersOnly?: boolean,
-	predicates?: string[],
-	chunkLimited?: boolean,
-	single?: boolean,
-	typeLimited?: boolean,
+	type: 'mcfunction:entity_selector'
+	children: [core.LiteralNode, ...([] | [EntitySelectorArgumentsNode])]
+	variable: EntitySelectorVariable
+	arguments?: EntitySelectorArgumentsNode
+	currentEntity?: boolean
+	dimensionLimited?: boolean
+	playersOnly?: boolean
+	predicates?: string[]
+	chunkLimited?: boolean
+	single?: boolean
+	typeLimited?: boolean
 }
 export namespace EntitySelectorNode {
 	/* istanbul ignore next */
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(node: T): node is core.NodeIsHelper<EntitySelectorNode, T> {
-		return (node as EntitySelectorNode | undefined)?.type === 'mcfunction:entity_selector'
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
+		node: T,
+	): node is core.NodeIsHelper<EntitySelectorNode, T> {
+		return (
+			(node as EntitySelectorNode | undefined)?.type ===
+			'mcfunction:entity_selector'
+		)
 	}
 
 	export function mock(range: core.RangeLike): EntitySelectorNode {
-		const literal = core.LiteralNode.mock(range, { pool: EntitySelectorAtVariables, colorTokenType: 'keyword' })
+		const literal = core.LiteralNode.mock(range, {
+			pool: EntitySelectorAtVariables,
+			colorTokenType: 'keyword',
+		})
 		return {
 			type: 'mcfunction:entity_selector',
 			range: core.Range.get(range),
@@ -136,20 +166,51 @@ export namespace EntitySelectorNode {
 	}
 
 	export const ArgumentKeys = new Set([
-		'advancements', 'distance', 'gamemode', 'level', 'limit', 'name',
-		'nbt', 'predicate', 'scores', 'sort', 'tag', 'team', 'type',
-		'x', 'y', 'z', 'dx', 'dy', 'dz', 'x_rotation', 'y_rotation',
+		'advancements',
+		'distance',
+		'gamemode',
+		'level',
+		'limit',
+		'name',
+		'nbt',
+		'predicate',
+		'scores',
+		'sort',
+		'tag',
+		'team',
+		'type',
+		'x',
+		'y',
+		'z',
+		'dx',
+		'dy',
+		'dz',
+		'x_rotation',
+		'y_rotation',
 	] as const)
-	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T> ? T : undefined
+	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T>
+		? T
+		: undefined
 
 	export const enum Result {
 		Ok,
 		Duplicated,
 		NotApplicable,
 	}
-	export function canKeyExist(selector: core.DeepReadonly<EntitySelectorNode>, argument: core.DeepReadonly<EntitySelectorArgumentsNode>, key: string): Result {
-		const hasKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key)
-		const hasNonInvertedKey = (key: string): boolean => !!argument.children.find(p => p.key?.value === key && !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted)
+	export function canKeyExist(
+		selector: core.DeepReadonly<EntitySelectorNode>,
+		argument: core.DeepReadonly<EntitySelectorArgumentsNode>,
+		key: string,
+	): Result {
+		const hasKey = (key: string): boolean =>
+			!!argument.children.find((p) => p.key?.value === key)
+		const hasNonInvertedKey = (key: string): boolean =>
+			!!argument.children.find(
+				(p) =>
+					p.key?.value === key &&
+					!(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)
+						?.inverted,
+			)
 		switch (key) {
 			case 'advancements':
 			case 'distance':
@@ -173,8 +234,8 @@ export namespace EntitySelectorNode {
 				return selector.currentEntity
 					? Result.NotApplicable
 					: hasKey(key)
-						? Result.Duplicated
-						: Result.Ok
+					? Result.Duplicated
+					: Result.Ok
 			case 'type':
 				return selector.typeLimited
 					? hasKey(key)
@@ -186,11 +247,11 @@ export namespace EntitySelectorNode {
 	}
 }
 export interface EntityNode extends core.AstNode {
-	type: 'mcfunction:entity',
-	children: [core.StringNode | EntitySelectorNode | UuidNode],
-	playerName?: core.StringNode,
-	selector?: EntitySelectorNode,
-	uuid?: UuidNode,
+	type: 'mcfunction:entity'
+	children: [core.StringNode | EntitySelectorNode | UuidNode]
+	playerName?: core.StringNode
+	selector?: EntitySelectorNode
+	uuid?: UuidNode
 }
 export namespace EntityNode {
 	export function is(node: core.AstNode | undefined): node is EntityNode {
@@ -199,16 +260,16 @@ export namespace EntityNode {
 }
 
 export interface FloatRangeNode extends core.AstNode {
-	type: 'mcfunction:float_range',
-	children: (core.FloatNode | core.LiteralNode)[],
-	value: [number | undefined, number | undefined],
+	type: 'mcfunction:float_range'
+	children: (core.FloatNode | core.LiteralNode)[]
+	value: [number | undefined, number | undefined]
 }
 
 export interface ItemNode extends core.AstNode {
-	type: 'mcfunction:item',
-	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[],
-	id: core.ResourceLocationNode,
-	nbt?: nbt.NbtCompoundNode,
+	type: 'mcfunction:item'
+	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[]
+	id: core.ResourceLocationNode
+	nbt?: nbt.NbtCompoundNode
 }
 export namespace ItemNode {
 	export function is(node: core.AstNode | undefined): node is ItemNode {
@@ -216,7 +277,10 @@ export namespace ItemNode {
 	}
 
 	export function mock(range: core.RangeLike, isPredicate: boolean): ItemNode {
-		const id = core.ResourceLocationNode.mock(range, { category: 'item', allowTag: isPredicate })
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'item',
+			allowTag: isPredicate,
+		})
 		return {
 			type: 'mcfunction:item',
 			range: core.Range.get(range),
@@ -227,9 +291,9 @@ export namespace ItemNode {
 }
 
 export interface IntRangeNode extends core.AstNode {
-	type: 'mcfunction:int_range',
-	children: (core.IntegerNode | core.LiteralNode)[],
-	value: [number | undefined, number | undefined],
+	type: 'mcfunction:int_range'
+	children: (core.IntegerNode | core.LiteralNode)[]
+	value: [number | undefined, number | undefined]
 }
 export namespace IntRangeNode {
 	export function mock(range: core.RangeLike): IntRangeNode {
@@ -243,19 +307,28 @@ export namespace IntRangeNode {
 }
 
 export interface MessageNode extends core.AstNode {
-	type: 'mcfunction:message',
-	children: (core.StringNode | EntitySelectorNode)[],
+	type: 'mcfunction:message'
+	children: (core.StringNode | EntitySelectorNode)[]
 }
 
 export interface ObjectiveCriteriaNode extends core.AstNode {
-	type: 'mcfunction:objective_criteria',
-	children?: [core.ResourceLocationNode, core.ResourceLocationNode],
-	simpleValue?: string,
+	type: 'mcfunction:objective_criteria'
+	children?: [core.ResourceLocationNode, core.ResourceLocationNode]
+	simpleValue?: string
 }
 export namespace ObjectiveCriteriaNode {
 	export const SimpleValues = [
-		'air', 'armor', 'deathCount', 'dummy', 'food', 'health', 'level',
-		'playerKillCount', 'totalKillCount', 'trigger', 'xp',
+		'air',
+		'armor',
+		'deathCount',
+		'dummy',
+		'food',
+		'health',
+		'level',
+		'playerKillCount',
+		'totalKillCount',
+		'trigger',
+		'xp',
 	]
 	export const ComplexCategories = new Map<string, core.RegistryCategory>([
 		['broken', 'item'],
@@ -279,9 +352,16 @@ export namespace ObjectiveCriteriaNode {
 }
 
 export interface ParticleNode extends core.AstNode {
-	type: 'mcfunction:particle',
-	children?: (core.FloatNode | core.IntegerNode | core.ResourceLocationNode | BlockNode | ItemNode | VectorNode)[],
-	id: core.ResourceLocationNode,
+	type: 'mcfunction:particle'
+	children?: (
+		| core.FloatNode
+		| core.IntegerNode
+		| core.ResourceLocationNode
+		| BlockNode
+		| ItemNode
+		| VectorNode
+	)[]
+	id: core.ResourceLocationNode
 }
 export namespace ParticleNode {
 	const SpecialTypes = new Set([
@@ -295,7 +375,9 @@ export namespace ParticleNode {
 		'shriek',
 		'vibration',
 	] as const)
-	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined
+	export type SpecialType = typeof SpecialTypes extends Set<infer T>
+		? T
+		: undefined
 	export function isSpecialType(type: string | undefined): type is SpecialType {
 		return SpecialTypes.has(type as SpecialType)
 	}
@@ -305,7 +387,9 @@ export namespace ParticleNode {
 	}
 
 	export function mock(range: core.RangeLike): ParticleNode {
-		const id = core.ResourceLocationNode.mock(range, { category: 'particle_type' })
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'particle_type',
+		})
 		return {
 			type: 'mcfunction:particle',
 			range: core.Range.get(range),
@@ -316,10 +400,10 @@ export namespace ParticleNode {
 }
 
 export interface ScoreHolderNode extends core.AstNode {
-	type: 'mcfunction:score_holder',
-	children: [core.SymbolNode | EntitySelectorNode],
-	fakeName?: core.SymbolNode,
-	selector?: EntitySelectorNode,
+	type: 'mcfunction:score_holder'
+	children: [core.SymbolNode | EntitySelectorNode]
+	fakeName?: core.SymbolNode
+	selector?: EntitySelectorNode
 }
 export namespace ScoreHolderNode {
 	export function mock(range: core.RangeLike): ScoreHolderNode {
@@ -334,10 +418,10 @@ export namespace ScoreHolderNode {
 }
 
 export interface TimeNode extends core.AstNode {
-	type: 'mcfunction:time',
-	children: (core.FloatNode | core.LiteralNode)[],
-	value: number,
-	unit?: string,
+	type: 'mcfunction:time'
+	children: (core.FloatNode | core.LiteralNode)[]
+	value: number
+	unit?: string
 }
 export namespace TimeNode {
 	export const UnitToTicks = new Map<string, number>([
@@ -350,20 +434,20 @@ export namespace TimeNode {
 }
 
 export interface UuidNode extends core.AstNode {
-	type: 'mcfunction:uuid',
-	bits: [bigint, bigint],
+	type: 'mcfunction:uuid'
+	bits: [bigint, bigint]
 }
 
 export interface VectorNode extends core.SequenceNode<CoordinateNode> {
-	type: 'mcfunction:vector',
-	options: VectorNode.Options,
-	system: CoordinateSystem,
+	type: 'mcfunction:vector'
+	options: VectorNode.Options
+	system: CoordinateSystem
 }
 export namespace VectorNode {
 	export interface Options {
-		dimension: 2 | 3,
-		integersOnly?: boolean,
-		noLocal?: boolean,
+		dimension: 2 | 3
+		integersOnly?: boolean
+		noLocal?: boolean
 	}
 
 	export function mock(range: core.RangeLike, options: Options): VectorNode {

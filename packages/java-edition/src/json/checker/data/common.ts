@@ -1,5 +1,22 @@
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker.js'
-import { any, as, dispatch, extract, float, floatRange, int, intRange, listOf, literal, opt, pick, record, ref, resource, simpleString } from '@spyglassmc/json/lib/checker/primitives/index.js'
+import {
+	any,
+	as,
+	dispatch,
+	extract,
+	float,
+	floatRange,
+	int,
+	intRange,
+	listOf,
+	literal,
+	opt,
+	pick,
+	record,
+	ref,
+	resource,
+	simpleString,
+} from '@spyglassmc/json/lib/checker/primitives/index.js'
 import { blockStateMap } from '../util/index.js'
 
 function smallestEncompassingPowerOfTwo(n: number) {
@@ -12,258 +29,335 @@ function smallestEncompassingPowerOfTwo(n: number) {
 	return n + 1
 }
 
-const BITS_FOR_Y = 64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000))) // 12
+const BITS_FOR_Y =
+	64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000))) // 12
 export const Y_SIZE = (1 << BITS_FOR_Y) - 32 // 4064
 export const MAX_Y = (Y_SIZE >> 1) - 1 // 2031
 export const MIN_Y = MAX_Y - Y_SIZE + 1 // -2031
 
-export const number_provider = as('range', any([
-	float,
-	dispatch('type', (type) => record({
-		type: opt(resource('loot_number_provider_type')),
-		...type === undefined ? {
-			min: number_provider,
-			max: number_provider,
-		} : {},
-		...pick(type, {
-			constant: {
-				value: float,
-			},
-			uniform: {
-				min: number_provider,
-				max: number_provider,
-			},
-			binomial: {
-				n: number_provider,
-				p: number_provider,
-			},
-			score: {
-				target: score_provider,
-				score: literal('objective'),
-				scale: opt(float),
-			},
-		}),
-	})),
-]))
+export const number_provider = as(
+	'range',
+	any([
+		float,
+		dispatch('type', (type) =>
+			record({
+				type: opt(resource('loot_number_provider_type')),
+				...(type === undefined
+					? {
+							min: number_provider,
+							max: number_provider,
+					  }
+					: {}),
+				...pick(type, {
+					constant: {
+						value: float,
+					},
+					uniform: {
+						min: number_provider,
+						max: number_provider,
+					},
+					binomial: {
+						n: number_provider,
+						p: number_provider,
+					},
+					score: {
+						target: score_provider,
+						score: literal('objective'),
+						scale: opt(float),
+					},
+				}),
+			}),
+		),
+	]),
+)
 
 export const score_provider = any([
 	literal(['this', 'killer', 'player_killer', 'direct_killer']),
-	dispatch('type', (type) => record({
-		type: resource('loot_score_provider_type'),
-		...pick(type, {
-			context: {
-				target: literal(['this', 'killer', 'player_killer', 'direct_killer']),
-			},
-			fixed: {
-				name: simpleString, // TODO: score holder, no selector
-			},
+	dispatch('type', (type) =>
+		record({
+			type: resource('loot_score_provider_type'),
+			...pick(type, {
+				context: {
+					target: literal(['this', 'killer', 'player_killer', 'direct_killer']),
+				},
+				fixed: {
+					name: simpleString, // TODO: score holder, no selector
+				},
+			}),
 		}),
-	})),
+	),
 ])
 
 export const nbt_provider = any([
 	literal(['this', 'killer', 'killer_player', 'block_entity']),
-	dispatch('type', type => record({
-		type: resource('loot_nbt_provider_type'),
-		...pick(type, {
-			context: {
-				target: literal(['this', 'killer', 'killer_player', 'block_entity']),
-			},
-			storage: {
-				source: resource('storage'),
-			},
+	dispatch('type', (type) =>
+		record({
+			type: resource('loot_nbt_provider_type'),
+			...pick(type, {
+				context: {
+					target: literal(['this', 'killer', 'killer_player', 'block_entity']),
+				},
+				storage: {
+					source: resource('storage'),
+				},
+			}),
 		}),
-	})),
+	),
 ])
 
-export const int_bounds = as('bounds', any([
-	int,
+export const int_bounds = as(
+	'bounds',
+	any([
+		int,
+		any([
+			record({
+				min: int,
+				max: opt(int),
+			}),
+			record({
+				min: opt(int),
+				max: int,
+			}),
+		]),
+	]),
+)
+
+export const float_bounds = as(
+	'bounds',
+	any([
+		float,
+		any([
+			record({
+				min: float,
+				max: opt(float),
+			}),
+			record({
+				min: opt(float),
+				max: float,
+			}),
+		]),
+	]),
+)
+
+export const block_state = as(
+	'block_state',
+	dispatch((props) =>
+		record({
+			Name: resource('block'),
+			Properties: opt(
+				blockStateMap({
+					id: extract('Name', props),
+					requireAll: true,
+				}),
+			),
+		}),
+	),
+)
+
+export const fluid_state = as(
+	'fluid_state',
+	dispatch((props) =>
+		record({
+			Name: resource('fluid'),
+			Properties: opt(
+				blockStateMap({
+					id: extract('Name', props),
+					category: 'fluid',
+					requireAll: true,
+				}),
+			),
+		}),
+	),
+)
+
+export const vertical_anchor = as(
+	'vertical_anchor',
 	any([
 		record({
-			min: int,
-			max: opt(int),
+			absolute: intRange(MIN_Y, MAX_Y),
 		}),
 		record({
-			min: opt(int),
-			max: int,
+			above_bottom: intRange(MIN_Y, MAX_Y),
+		}),
+		record({
+			below_top: intRange(MIN_Y, MAX_Y),
 		}),
 	]),
-]))
+)
 
-export const float_bounds = as('bounds', any([
-	float,
+export const height_provider = as(
+	'height_provider',
 	any([
-		record({
-			min: float,
-			max: opt(float),
-		}),
-		record({
-			min: opt(float),
-			max: float,
-		}),
+		vertical_anchor,
+		dispatch('type', (type) =>
+			record({
+				type: resource('height_provider_type'),
+				...pick(type, {
+					constant: {
+						value: vertical_anchor,
+					},
+					uniform: {
+						min_inclusive: vertical_anchor,
+						max_inclusive: vertical_anchor,
+					},
+					biased_to_bottom: {
+						min_inclusive: vertical_anchor,
+						max_inclusive: vertical_anchor,
+						inner: opt(intRange(1, undefined), 1),
+					},
+					very_biased_to_bottom: {
+						min_inclusive: vertical_anchor,
+						max_inclusive: vertical_anchor,
+						inner: opt(intRange(1, undefined), 1),
+					},
+					trapezoid: {
+						min_inclusive: vertical_anchor,
+						max_inclusive: vertical_anchor,
+						plateau: opt(int, 0),
+					},
+					weighted_list: {
+						distribution: listOf(
+							record({
+								data: ref(() => height_provider),
+								weight: int,
+							}),
+						),
+					},
+				}),
+			}),
+		),
 	]),
-]))
+)
 
-export const block_state = as('block_state', dispatch(props => record({
-	Name: resource('block'),
-	Properties: opt(blockStateMap({
-		id: extract('Name', props),
-		requireAll: true,
-	})),
-})))
+export const floatProvider = (
+	min: number | undefined = undefined,
+	max: number | undefined = undefined,
+) =>
+	as(
+		'float_provider',
+		any([
+			floatRange(min, max),
+			dispatch('type', (type) =>
+				record({
+					type: resource('float_provider_type'),
+					...pick(type, {
+						constant: {
+							value: floatRange(min, max),
+						},
+						uniform: {
+							value: record({
+								min_inclusive: floatRange(min, max),
+								max_exclusive: floatRange(min, max),
+							}),
+						},
+						clamped_normal: {
+							value: record({
+								mean: float,
+								deviation: float,
+								min: floatRange(min, max),
+								max: floatRange(min, max),
+							}),
+						},
+						trapezoid: {
+							value: record({
+								min: floatRange(min, max),
+								max: floatRange(min, max),
+								plateau: float,
+							}),
+						},
+					}),
+				}),
+			),
+		]),
+	)
 
-export const fluid_state = as('fluid_state', dispatch(props => record({
-	Name: resource('fluid'),
-	Properties: opt(blockStateMap({
-		id: extract('Name', props),
-		category: 'fluid',
-		requireAll: true,
-	})),
-})))
-
-export const vertical_anchor = as('vertical_anchor', any([
-	record({
-		absolute: intRange(MIN_Y, MAX_Y),
-	}),
-	record({
-		above_bottom: intRange(MIN_Y, MAX_Y),
-	}),
-	record({
-		below_top: intRange(MIN_Y, MAX_Y),
-	}),
-]))
-
-export const height_provider = as('height_provider', any([
-	vertical_anchor,
-	dispatch('type', type => record({
-		type: resource('height_provider_type'),
-		...pick(type, {
-			constant: {
-				value: vertical_anchor,
-			},
-			uniform: {
-				min_inclusive: vertical_anchor,
-				max_inclusive: vertical_anchor,
-			},
-			biased_to_bottom: {
-				min_inclusive: vertical_anchor,
-				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, undefined), 1),
-			},
-			very_biased_to_bottom: {
-				min_inclusive: vertical_anchor,
-				max_inclusive: vertical_anchor,
-				inner: opt(intRange(1, undefined), 1),
-			},
-			trapezoid: {
-				min_inclusive: vertical_anchor,
-				max_inclusive: vertical_anchor,
-				plateau: opt(int, 0),
-			},
-			weighted_list: {
-				distribution: listOf(record({
-					data: ref(() => height_provider),
-					weight: int,
-				})),
-			},
-		}),
-	})),
-]))
-
-export const floatProvider = (min: number | undefined = undefined, max: number | undefined = undefined) => as('float_provider', any([
-	floatRange(min, max),
-	dispatch('type', type => record({
-		type: resource('float_provider_type'),
-		...pick(type, {
-			constant: {
-				value: floatRange(min, max),
-			},
-			uniform: {
-				value: record({
-					min_inclusive: floatRange(min, max),
-					max_exclusive: floatRange(min, max),
+export const intProvider = (
+	min: number | undefined = undefined,
+	max: number | undefined = undefined,
+): JsonChecker =>
+	as(
+		'int_provider',
+		any([
+			intRange(min, max),
+			dispatch('type', (type) =>
+				record({
+					type: resource('int_provider_type'),
+					...pick(type, {
+						constant: {
+							value: intRange(min, max),
+						},
+						uniform: {
+							value: record({
+								min_inclusive: intRange(min, max),
+								max_inclusive: intRange(min, max),
+							}),
+						},
+						biased_to_bottom: {
+							value: record({
+								min_inclusive: intRange(min, max),
+								max_inclusive: intRange(min, max),
+							}),
+						},
+						clamped: {
+							value: record({
+								min_inclusive: intRange(min, max),
+								max_inclusive: intRange(min, max),
+								source: ref(() => intProvider()),
+							}),
+						},
+						clamped_normal: {
+							value: record({
+								mean: float,
+								deviation: float,
+								min_inclusive: intRange(min, max),
+								max_inclusive: intRange(min, max),
+							}),
+						},
+						weighted_list: {
+							distribution: listOf(
+								record({
+									data: ref(() => intProvider()),
+									weight: int,
+								}),
+							),
+						},
+					}),
 				}),
-			},
-			clamped_normal: {
-				value: record({
-					mean: float,
-					deviation: float,
-					min: floatRange(min, max),
-					max: floatRange(min, max),
-				}),
-			},
-			trapezoid: {
-				value: record({
-					min: floatRange(min, max),
-					max: floatRange(min, max),
-					plateau: float,
-				}),
-			},
-		}),
-	})),
-]))
-
-export const intProvider = (min: number | undefined = undefined, max: number | undefined = undefined): JsonChecker => as('int_provider', any([
-	intRange(min, max),
-	dispatch('type', type => record({
-		type: resource('int_provider_type'),
-		...pick(type, {
-			constant: {
-				value: intRange(min, max),
-			},
-			uniform: {
-				value: record({
-					min_inclusive: intRange(min, max),
-					max_inclusive: intRange(min, max),
-				}),
-			},
-			biased_to_bottom: {
-				value: record({
-					min_inclusive: intRange(min, max),
-					max_inclusive: intRange(min, max),
-				}),
-			},
-			clamped: {
-				value: record({
-					min_inclusive: intRange(min, max),
-					max_inclusive: intRange(min, max),
-					source: ref(() => intProvider()),
-				}),
-			},
-			clamped_normal: {
-				value: record({
-					mean: float,
-					deviation: float,
-					min_inclusive: intRange(min, max),
-					max_inclusive: intRange(min, max),
-				}),
-			},
-			weighted_list: {
-				distribution: listOf(record({
-					data: ref(() => intProvider()),
-					weight: int,
-				})),
-			},
-		}),
-	})),
-]))
+			),
+		]),
+	)
 
 // until 1.16
-export const uniformInt = (min?: number, max?: number, maxSpread?: number): JsonChecker => as('uniform_int', any([
-	intRange(min, max),
-	record({
-		base: intRange(min, max),
-		spread: intRange(0, maxSpread),
-	}),
-]))
+export const uniformInt = (
+	min?: number,
+	max?: number,
+	maxSpread?: number,
+): JsonChecker =>
+	as(
+		'uniform_int',
+		any([
+			intRange(min, max),
+			record({
+				base: intRange(min, max),
+				spread: intRange(0, maxSpread),
+			}),
+		]),
+	)
 
-export const inclusiveRange = (min?: number | undefined, max?: number | undefined) => as('inclusive_range', any([
-	record({
-		min_inclusive: intRange(min, max),
-		max_inclusive: intRange(min, max),
-	}),
-	listOf(intRange(min, max)),
-]))
+export const inclusiveRange = (
+	min?: number | undefined,
+	max?: number | undefined,
+) =>
+	as(
+		'inclusive_range',
+		any([
+			record({
+				min_inclusive: intRange(min, max),
+				max_inclusive: intRange(min, max),
+			}),
+			listOf(intRange(min, max)),
+		]),
+	)
 
 export const noise_parameters = record({
 	firstOctave: int,
@@ -279,20 +373,6 @@ export const HeightmapType = [
 	'WORLD_SURFACE_WG',
 ]
 
-export const Slots = [
-	'mainhand',
-	'offhand',
-	'head',
-	'chest',
-	'legs',
-	'feet',
-]
+export const Slots = ['mainhand', 'offhand', 'head', 'chest', 'legs', 'feet']
 
-export const Direction = [
-	'up',
-	'down',
-	'north',
-	'east',
-	'south',
-	'west',
-]
+export const Direction = ['up', 'down', 'north', 'east', 'south', 'west']

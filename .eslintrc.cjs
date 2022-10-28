@@ -1,4 +1,7 @@
 module.exports = {
+	"extends": [
+		'prettier',
+	],
 	"env": {
 		"es6": true,
 		"node": true
@@ -34,46 +37,8 @@ module.exports = {
 		],
 		"@typescript-eslint/prefer-for-of": "warn",
 		"@typescript-eslint/prefer-readonly": "warn",
-		"@typescript-eslint/quotes": [
-			"warn",
-			"single",
-			{
-				"avoidEscape": true
-			}
-		],
-		"@typescript-eslint/semi": [
-			"warn",
-			"never"
-		],
-		"@typescript-eslint/indent": [
-			"warn",
-			"tab"
-		],
-		"@typescript-eslint/member-delimiter-style": [
-			"warn",
-			{
-				"multiline": {
-					"delimiter": "comma",
-					"requireLast": true
-				},
-				"singleline": {
-					"delimiter": "comma",
-					"requireLast": false
-				},
-				"overrides": {
-					"interface": {
-						"multiline": {
-							"delimiter": undefined
-						}
-					}
-				}
-			}
-		],
 		"@typescript-eslint/no-floating-promises": "error",
-		"comma-dangle": "off",
-		"@typescript-eslint/comma-dangle": ["warn", "always-multiline"],
 		"indent": "off",
-		"eol-last": "warn",
 		"no-fallthrough": "warn",
 		"no-restricted-syntax": [
 			"warn",
@@ -89,15 +54,11 @@ module.exports = {
 				"message": "Use `undefined` instead of `null` when possible."
 			},
 			{
-				"selector": 'ImportDeclaration > Literal[value=/src/]',
+				"selector": 'ImportDeclaration > Literal[value=/\\bsrc\\b/]',
 				"message": "Import from the `lib` dir instead of the `src` dir."
 			},
 		],
 		"prefer-const": "warn",
 		"prefer-object-spread": "warn",
-		"quote-props": [
-			"warn",
-			"as-needed"
-		],
 	}
 }

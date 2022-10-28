@@ -15,15 +15,27 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	rootCommand(node.children, 0, ctx)
 }
 
-const getName = (nodes: mcf.CommandNode['children'], index: number): string | undefined => {
+const getName = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+): string | undefined => {
 	return nodes[index]?.path[nodes[index].path.length - 1]
 }
-const getNode = (nodes: mcf.CommandNode['children'], index: number): core.AstNode | undefined => {
+const getNode = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+): core.AstNode | undefined => {
 	return nodes[index]?.children[0]
 }
 
-const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
-	for (const { children: [node] } of nodes) {
+const rootCommand = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+	ctx: core.CheckerContext,
+) => {
+	for (const {
+		children: [node],
+	} of nodes) {
 		if (BlockNode.is(node)) {
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
@@ -105,7 +117,10 @@ const rootCommand = (nodes: mcf.CommandNode['children'], index: number, ctx: cor
 		}
 	} else if (getName(nodes, index) === 'execute') {
 		for (let i = index + 1; i < nodes.length; i++) {
-			if ((getName(nodes, i) === 'if' || getName(nodes, i) === 'unless') && getName(nodes, i + 1) === 'data') {
+			if (
+				(getName(nodes, i) === 'if' || getName(nodes, i) === 'unless') &&
+				getName(nodes, i + 1) === 'data'
+			) {
 				// `if|unless data <$nbtPath$>`
 				nbtPath(nodes, i + 2, ctx)
 				i += 2
@@ -125,11 +140,16 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 		return
 	}
 
-	nbt.checker.index('block', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
+	nbt.checker.index(
+		'block',
+		core.ResourceLocationNode.toString(node.id, 'full'),
+	)(node.nbt, ctx)
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
-	const nbtPair = node.selector?.arguments?.children.find(pair => pair.key?.value === 'nbt')
+	const nbtPair = node.selector?.arguments?.children.find(
+		(pair) => pair.key?.value === 'nbt',
+	)
 	if (!nbtPair) {
 		return
 	}
@@ -144,7 +164,10 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 		return
 	}
 
-	nbt.checker.index('item', core.ResourceLocationNode.toString(node.id, 'full'))(node.nbt, ctx)
+	nbt.checker.index(
+		'item',
+		core.ResourceLocationNode.toString(node.id, 'full'),
+	)(node.nbt, ctx)
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
@@ -158,7 +181,11 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
  * - `entity <target: entity> <nbt: nbt_compound_tag>`
  * - `storage <target: resource_location> <nbt: nbt_compound_tag>`
  */
-const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+const dataMergeTarget = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+	ctx: core.CheckerContext,
+) => {
 	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
@@ -180,8 +207,14 @@ const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx:
 		case 'storage': {
 			const idNode = getNode(nodes, index + 1)
 			const nbtNode = getNode(nodes, index + 2)
-			if (core.ResourceLocationNode.is(idNode) && nbt.NbtCompoundNode.is(nbtNode)) {
-				nbt.checker.index('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
+			if (
+				core.ResourceLocationNode.is(idNode) &&
+				nbt.NbtCompoundNode.is(nbtNode)
+			) {
+				nbt.checker.index(
+					'storage',
+					core.ResourceLocationNode.toString(idNode, 'full'),
+				)(nbtNode, ctx)
 			}
 			break
 		}
@@ -193,7 +226,11 @@ const dataMergeTarget = (nodes: mcf.CommandNode['children'], index: number, ctx:
  * - `entity <entity> <nbt_path>`
  * - `storage <resource_location> <nbt_path>`
  */
-const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+const nbtPath = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+	ctx: core.CheckerContext,
+) => {
 	const registry = getName(nodes, index)
 	switch (registry) {
 		case 'block': {
@@ -216,7 +253,10 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
 			const idNode = getNode(nodes, index + 1)
 			const nbtNode = getNode(nodes, index + 2)
 			if (core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)) {
-				nbt.checker.path('storage', core.ResourceLocationNode.toString(idNode, 'full'))(nbtNode, ctx)
+				nbt.checker.path(
+					'storage',
+					core.ResourceLocationNode.toString(idNode, 'full'),
+				)(nbtNode, ctx)
 			}
 			break
 		}
@@ -226,16 +266,29 @@ const nbtPath = (nodes: mcf.CommandNode['children'], index: number, ctx: core.Ch
 /**
  * - `<entity: entity_summon> [<pos: vec3>] [<nbt: nbt_compound_tag>]`
  */
-const summonNbt = (nodes: mcf.CommandNode['children'], index: number, ctx: core.CheckerContext) => {
+const summonNbt = (
+	nodes: mcf.CommandNode['children'],
+	index: number,
+	ctx: core.CheckerContext,
+) => {
 	const typeNode = getNode(nodes, index)
 	const nbtNode = getNode(nodes, index + 2)
-	if (core.ResourceLocationNode.is(typeNode) && nbt.NbtCompoundNode.is(nbtNode)) {
-		nbt.checker.index('entity_type', core.ResourceLocationNode.toString(typeNode, 'full'))(nbtNode, ctx)
+	if (
+		core.ResourceLocationNode.is(typeNode) &&
+		nbt.NbtCompoundNode.is(nbtNode)
+	) {
+		nbt.checker.index(
+			'entity_type',
+			core.ResourceLocationNode.toString(typeNode, 'full'),
+		)(nbtNode, ctx)
 	}
 }
 //#endregion
 
-export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext): core.FullResourceLocation[] | undefined => {
+export const getTypesFromEntity = (
+	entity: EntityNode,
+	ctx: core.CheckerContext,
+): core.FullResourceLocation[] | undefined => {
 	if (entity.playerName !== undefined || entity.selector?.playersOnly) {
 		return ['minecraft:player']
 	} else if (entity.selector) {
@@ -248,14 +301,20 @@ export const getTypesFromEntity = (entity: EntityNode, ctx: core.CheckerContext)
 			if (pairNode.key?.value !== 'type') {
 				continue
 			}
-			const valueNode = pairNode.value as EntitySelectorInvertableArgumentValueNode<core.ResourceLocationNode> | undefined
+			const valueNode = pairNode.value as
+				| EntitySelectorInvertableArgumentValueNode<core.ResourceLocationNode>
+				| undefined
 			if (!valueNode || valueNode.inverted) {
 				continue
 			}
-			const value = core.ResourceLocationNode.toString(valueNode.value, 'full', true)
+			const value = core.ResourceLocationNode.toString(
+				valueNode.value,
+				'full',
+				true,
+			)
 			if (value.startsWith(core.ResourceLocation.TagPrefix)) {
 				const tagValues = getTagValues('tag/entity_type', value.slice(1), ctx)
-				types = types.filter(t => tagValues.includes(t))
+				types = types.filter((t) => tagValues.includes(t))
 			} else {
 				types = [value as core.FullResourceLocation]
 			}

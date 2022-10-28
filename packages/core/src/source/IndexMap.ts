@@ -3,10 +3,16 @@ import { Range } from './Range.js'
 /**
  * The pairs should be in ascending order.
  */
-export type IndexMap = { outer: Range, inner: Range }[]
+export type IndexMap = { outer: Range; inner: Range }[]
 
 export namespace IndexMap {
-	function convertOffset(map: IndexMap, offset: number, from: 'inner' | 'outer', to: 'inner' | 'outer', isEndOffset: boolean): number {
+	function convertOffset(
+		map: IndexMap,
+		offset: number,
+		from: 'inner' | 'outer',
+		to: 'inner' | 'outer',
+		isEndOffset: boolean,
+	): number {
 		let ans = offset
 
 		for (const pair of map) {
@@ -29,7 +35,7 @@ export namespace IndexMap {
 	export function toInnerRange(map: IndexMap, outer: Range): Range {
 		return Range.create(
 			toInnerOffset(map, outer.start),
-			convertOffset(map, outer.end, 'outer', 'inner', true)
+			convertOffset(map, outer.end, 'outer', 'inner', true),
 		)
 	}
 
@@ -40,12 +46,12 @@ export namespace IndexMap {
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
 		return Range.create(
 			toOuterOffset(map, inner.start),
-			convertOffset(map, inner.end, 'inner', 'outer', true)
+			convertOffset(map, inner.end, 'inner', 'outer', true),
 		)
 	}
 
 	export function merge(outerMap: IndexMap, innerMap: IndexMap): IndexMap {
-		return innerMap.map(p => ({
+		return innerMap.map((p) => ({
 			inner: p.inner,
 			outer: toOuterRange(outerMap, p.outer),
 		}))

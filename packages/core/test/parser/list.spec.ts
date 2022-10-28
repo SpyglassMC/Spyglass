@@ -7,10 +7,20 @@ import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 describe('list()', () => {
 	const quotedString = string({ quotes: ['"'] })
-	const suites: { title: string, options: Options<StringNode>, contents: string[] }[] = [
+	const suites: {
+		title: string
+		options: Options<StringNode>
+		contents: string[]
+	}[] = [
 		{
 			title: 'list(no trailing comma)',
-			options: { start: '[', value: quotedString, sep: ',', trailingSep: false, end: ']' },
+			options: {
+				start: '[',
+				value: quotedString,
+				sep: ',',
+				trailingSep: false,
+				end: ']',
+			},
 			contents: [
 				'',
 				'[',
@@ -26,7 +36,13 @@ describe('list()', () => {
 		},
 		{
 			title: 'list(trailing comma)',
-			options: { start: '[', value: quotedString, sep: ',', trailingSep: true, end: ']' },
+			options: {
+				start: '[',
+				value: quotedString,
+				sep: ',',
+				trailingSep: true,
+				end: ']',
+			},
 			contents: [
 				'[ "foo" ]',
 				'[ "foo" , ]',

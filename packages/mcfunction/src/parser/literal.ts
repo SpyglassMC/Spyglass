@@ -2,7 +2,10 @@ import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import type { LiteralCommandChildNode } from '../node/index.js'
 
-export function literal(names: string[], isRoot = false): core.Parser<LiteralCommandChildNode> {
+export function literal(
+	names: string[],
+	isRoot = false,
+): core.Parser<LiteralCommandChildNode> {
 	const options: core.LiteralOptions = {
 		pool: names,
 		colorTokenType: isRoot ? 'keyword' : 'literal',

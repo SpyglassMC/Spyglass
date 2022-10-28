@@ -17,9 +17,9 @@ export const LatestCacheVersion = 2
  * Checksums of cached files or roots.
  */
 interface Checksums {
-	files: Record<string, string>,
-	roots: Record<RootUriString, string>,
-	symbolRegistrars: Record<string, string>,
+	files: Record<string, string>
+	roots: Record<RootUriString, string>
+	symbolRegistrars: Record<string, string>
 }
 namespace Checksums {
 	export function create(): Checksums {
@@ -37,26 +37,26 @@ type ErrorCache = Record<string, readonly PosRangeLanguageError[]>
  * Format of cache JSON files.
  */
 interface CacheFile {
-	checksums: Checksums,
-	errors: ErrorCache,
-	projectRoot: string,
-	symbols: UnlinkedSymbolTable,
+	checksums: Checksums
+	errors: ErrorCache
+	projectRoot: string
+	symbols: UnlinkedSymbolTable
 	/**
 	 * Format version of the cache. The cache should be invalidated if this number
 	 * doesn't match {@link LatestCacheVersion}.
 	 */
-	version: number,
+	version: number
 }
 
 interface LoadResult {
-	symbols: SymbolTable,
+	symbols: SymbolTable
 }
 
 interface ValidateResult {
-	addedFiles: string[],
-	changedFiles: string[],
-	removedFiles: string[],
-	unchangedFiles: string[],
+	addedFiles: string[]
+	changedFiles: string[]
+	removedFiles: string[]
+	unchangedFiles: string[]
 }
 
 export class CacheService {
@@ -66,7 +66,7 @@ export class CacheService {
 
 	/**
 	 * @param cacheRoot File path to the directory where cache files by Spyglass should be stored.
-	 * @param project 
+	 * @param project
 	 */
 	constructor(
 		private readonly cacheRoot: RootUriString,
@@ -78,7 +78,8 @@ export class CacheService {
 			}
 			try {
 				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] = await this.project.externals.crypto.getSha1(doc.getText())
+				this.checksums.files[doc.uri] =
+					await this.project.externals.crypto.getSha1(doc.getText())
 			} catch (e) {
 				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -112,11 +113,16 @@ export class CacheService {
 	#cacheFilePath: string | undefined
 	/**
 	 * @throws
-	 * 
+	 *
 	 * @returns `${cacheRoot}symbols/${sha1(projectRoot)}.json`
 	 */
 	private async getCacheFileUri(): Promise<string> {
-		return this.#cacheFilePath ??= new Uri(`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`, this.cacheRoot).toString()
+		return (this.#cacheFilePath ??= new Uri(
+			`symbols/${await this.project.externals.crypto.getSha1(
+				this.project.projectRoot,
+			)}.json.gz`,
+			this.cacheRoot,
+		).toString())
 	}
 
 	async load(): Promise<LoadResult> {
@@ -125,8 +131,13 @@ export class CacheService {
 		let filePath: string | undefined
 		try {
 			filePath = await this.getCacheFileUri()
-			this.project.logger.info(`[CacheService#load] symbolCachePath = “${filePath}”`)
-			const cache = await fileUtil.readGzippedJson(this.project.externals, filePath) as CacheFile
+			this.project.logger.info(
+				`[CacheService#load] symbolCachePath = “${filePath}”`,
+			)
+			const cache = (await fileUtil.readGzippedJson(
+				this.project.externals,
+				filePath,
+			)) as CacheFile
 			__profiler.task('Read File')
 			if (cache.version === LatestCacheVersion) {
 				this.checksums = cache.checksums
@@ -134,7 +145,9 @@ export class CacheService {
 				ans.symbols = SymbolTable.link(cache.symbols)
 				__profiler.task('Link Symbols')
 			} else {
-				this.project.logger.info(`[CacheService#load] Unsupported cache format ${cache.version}; expected ${LatestCacheVersion}`)
+				this.project.logger.info(
+					`[CacheService#load] Unsupported cache format ${cache.version}; expected ${LatestCacheVersion}`,
+				)
 			}
 		} catch (e) {
 			if (!this.project.externals.error.isKind(e, 'ENOENT')) {
@@ -169,7 +182,7 @@ export class CacheService {
 		}
 
 		for (const [uri, checksum] of Object.entries(this.checksums.files)) {
-			if (unchangedRoots.some(root => uri.startsWith(root))) {
+			if (unchangedRoots.some((root) => uri.startsWith(root))) {
 				ans.unchangedFiles.push(uri)
 				continue
 			}
@@ -182,7 +195,10 @@ export class CacheService {
 					ans.changedFiles.push(uri)
 				}
 			} catch (e) {
-				if (this.project.externals.error.isKind(e, 'ENOENT') || this.project.externals.error.isKind(e, 'EISDIR')) {
+				if (
+					this.project.externals.error.isKind(e, 'ENOENT') ||
+					this.project.externals.error.isKind(e, 'EISDIR')
+				) {
 					ans.removedFiles.push(uri)
 				} else {
 					this.project.logger.error(`[CacheService#validate] ${uri}`, e)
@@ -231,7 +247,10 @@ export class CacheService {
 	}
 
 	async hasFileChangedSinceCache(doc: TextDocument): Promise<boolean> {
-		return this.checksums.files[doc.uri] !== await this.project.externals.crypto.getSha1(doc.getText())
+		return (
+			this.checksums.files[doc.uri] !==
+			(await this.project.externals.crypto.getSha1(doc.getText()))
+		)
 	}
 
 	reset(): LoadResult {

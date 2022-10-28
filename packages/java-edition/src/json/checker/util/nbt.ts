@@ -1,20 +1,23 @@
 import type { FullResourceLocation } from '@spyglassmc/core'
 import { ResourceLocation } from '@spyglassmc/core'
 import { simpleString, string } from '@spyglassmc/json/lib/checker/index.js'
-import type { JsonChecker, JsonCheckerContext } from '@spyglassmc/json/lib/checker/JsonChecker.js'
+import type {
+	JsonChecker,
+	JsonCheckerContext,
+} from '@spyglassmc/json/lib/checker/JsonChecker.js'
 import type { NbtCompoundNode, NbtPathNode } from '@spyglassmc/nbt'
 import { checker as nbtChecker } from '@spyglassmc/nbt'
 import { getTagValues } from '../../../common/index.js'
 
 interface DefinitionOptions {
-	definition: `::${string}::${string}`,
+	definition: `::${string}::${string}`
 }
 interface RegistryOptions {
-	registry: string,
-	id?: string | undefined,
-	idOrTag?: string | undefined,
-	ids?: readonly string[] | undefined,
-	tag?: string | undefined,
+	registry: string
+	id?: string | undefined
+	idOrTag?: string | undefined
+	ids?: readonly string[] | undefined
+	tag?: string | undefined
 }
 
 type Options = DefinitionOptions | RegistryOptions
@@ -72,11 +75,17 @@ export function nbtPath(options: RegistryOptions): JsonChecker {
 	}
 }
 
-function getIds({ registry, id, idOrTag, ids, tag }: RegistryOptions, ctx: JsonCheckerContext): FullResourceLocation[] | undefined {
+function getIds(
+	{ registry, id, idOrTag, ids, tag }: RegistryOptions,
+	ctx: JsonCheckerContext,
+): FullResourceLocation[] | undefined {
 	if (idOrTag) {
-		idOrTag.startsWith('#') ? tag = idOrTag.slice(1) : id = idOrTag
+		idOrTag.startsWith('#') ? (tag = idOrTag.slice(1)) : (id = idOrTag)
 	}
-	if (tag && (registry === 'block' || registry === 'item' || registry === 'entity_type')) {
+	if (
+		tag &&
+		(registry === 'block' || registry === 'item' || registry === 'entity_type')
+	) {
 		ids = getTagValues(`tag/${registry}`, tag, ctx)
 	} else if (id) {
 		ids = [id]

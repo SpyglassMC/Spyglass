@@ -65,42 +65,38 @@ const DiscontinuousTestNode: AstNode = {
 describe('AstNode', () => {
 	describe('findDeepestChild', () => {
 		describe('continuous', () => {
-			const suites: number[] = [
-				0,
-				1,
-				5,
-				7,
-				9,
-				12,
-			]
+			const suites: number[] = [0, 1, 5, 7, 9, 12]
 			for (const suite of suites) {
 				it(`Should return the node at ${suite}`, () => {
 					const node = AstNode.findDeepestChild({
 						node: TestNode,
 						needle: suite,
 					})
-					snapshot(node ? {
-						node: node.type,
-					} : 'undefined')
+					snapshot(
+						node
+							? {
+									node: node.type,
+							  }
+							: 'undefined',
+					)
 				})
 			}
 		})
 		describe('discontinuous', () => {
-			const suites: number[] = [
-				0,
-				3,
-				7,
-				12,
-			]
+			const suites: number[] = [0, 3, 7, 12]
 			for (const suite of suites) {
 				it(`Should return the node at ${suite}`, () => {
 					const node = AstNode.findDeepestChild({
 						node: DiscontinuousTestNode,
 						needle: suite,
 					})
-					snapshot(node ? {
-						node: node.type,
-					} : 'undefined')
+					snapshot(
+						node
+							? {
+									node: node.type,
+							  }
+							: 'undefined',
+					)
 				})
 			}
 		})

@@ -17,16 +17,22 @@ class ReadonlyProxyHandler<T extends object> implements ProxyHandler<T> {
 	get(target: T, p: string | symbol, receiver: any): any {
 		const value = Reflect.get(target, p, receiver)
 		if (p !== 'prototype' && isObject(value)) {
-			return emplaceMap(this.map, p, { insert: () => ReadonlyProxy.create(value) })
+			return emplaceMap(this.map, p, {
+				insert: () => ReadonlyProxy.create(value),
+			})
 		}
 		return value
 	}
 
 	set(_target: T, p: string | symbol, _value: any, _receiver: any): boolean {
-		throw new TypeError(`Cannot set property '${String(p)}' on a readonly proxy`)
+		throw new TypeError(
+			`Cannot set property '${String(p)}' on a readonly proxy`,
+		)
 	}
 
 	deleteProperty(_target: T, p: string | symbol): boolean {
-		throw new TypeError(`Cannot delete property '${String(p)}' on a readonly proxy`)
+		throw new TypeError(
+			`Cannot delete property '${String(p)}' on a readonly proxy`,
+		)
 	}
 }

@@ -6,14 +6,17 @@ import type { Parser, Result } from './Parser.js'
 import { Failure } from './Parser.js'
 
 interface Options {
-	singleLinePrefixes: Set<string>,
-	includesEol?: boolean,
+	singleLinePrefixes: Set<string>
+	includesEol?: boolean
 }
 
 /**
  * `Failure` when three isn't a comment.
  */
-export function comment({ singleLinePrefixes, includesEol }: Options): Parser<CommentNode> {
+export function comment({
+	singleLinePrefixes,
+	includesEol,
+}: Options): Parser<CommentNode> {
 	return (src: Source, _ctx: ParserContext): Result<CommentNode> => {
 		const start = src.cursor
 		const ans: CommentNode = {

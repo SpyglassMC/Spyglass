@@ -10,9 +10,7 @@ describe('file()', () => {
 		parser: (src) => {
 			const start = src.cursor
 			if (src.trySkip('{')) {
-				src
-					.skipUntilOrEnd('}')
-					.skip()
+				src.skipUntilOrEnd('}').skip()
 			}
 			return {
 				type: 'test',
@@ -29,7 +27,12 @@ describe('file()', () => {
 	]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			snapshot(testParser(file(), content, { languageID: '@spyglassmc/core#file-test', project: { meta } }))
+			snapshot(
+				testParser(file(), content, {
+					languageID: '@spyglassmc/core#file-test',
+					project: { meta },
+				}),
+			)
 		})
 	}
 })

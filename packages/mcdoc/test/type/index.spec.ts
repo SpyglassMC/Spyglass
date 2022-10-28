@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { checkAssignability, McdocType } from '../../lib/type/index.js'
 describe('mcdoc checker/type.ts', () => {
-	const cases: { source: McdocType, target: McdocType }[] = [
+	const cases: { source: McdocType; target: McdocType }[] = [
 		{
 			source: { kind: 'string' },
 			target: { kind: 'string' },
@@ -20,29 +20,79 @@ describe('mcdoc checker/type.ts', () => {
 			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
-			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] }] },
+			source: {
+				kind: 'union',
+				members: [
+					{ kind: 'string' },
+					{ kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+				],
+			},
 			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
-			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] },
+			source: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+			},
 			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
 		},
 		{
 			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
-			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] },
+			target: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+			},
 		},
 		{
-			source: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] } } },
-			target: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] } } },
+			source: {
+				kind: 'list',
+				item: {
+					kind: 'list',
+					item: {
+						kind: 'union',
+						members: [{ kind: 'string' }, { kind: 'int' }],
+					},
+				},
+			},
+			target: {
+				kind: 'list',
+				item: {
+					kind: 'list',
+					item: {
+						kind: 'union',
+						members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+					},
+				},
+			},
 		},
 		{
-			source: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }] } } },
-			target: { kind: 'list', item: { kind: 'list', item: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] } } },
+			source: {
+				kind: 'list',
+				item: {
+					kind: 'list',
+					item: {
+						kind: 'union',
+						members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+					},
+				},
+			},
+			target: {
+				kind: 'list',
+				item: {
+					kind: 'list',
+					item: {
+						kind: 'union',
+						members: [{ kind: 'string' }, { kind: 'int' }],
+					},
+				},
+			},
 		},
 	]
 	describe('checkAssignability()', () => {
 		for (const { source, target } of cases) {
-			it(`Assign '${McdocType.toString(source)}' to '${McdocType.toString(target)}'`, () => {
+			it(`Assign '${McdocType.toString(source)}' to '${McdocType.toString(
+				target,
+			)}'`, () => {
 				snapshot(checkAssignability({ source, target }))
 			})
 		}

@@ -4,17 +4,17 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface LiteralOptions {
-	pool: string[],
-	colorTokenType?: ColorTokenType,
+	pool: string[]
+	colorTokenType?: ColorTokenType
 }
 
 export interface LiteralBaseNode extends AstNode {
-	readonly options: LiteralOptions,
-	value: string,
+	readonly options: LiteralOptions
+	value: string
 }
 
 export interface LiteralNode extends LiteralBaseNode {
-	readonly type: 'literal',
+	readonly type: 'literal'
 }
 export namespace LiteralNode {
 	/* istanbul ignore next */

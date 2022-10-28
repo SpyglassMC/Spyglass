@@ -7,7 +7,11 @@ describe('ErrorReporter', () => {
 		it('Should report and dump errors correctly', () => {
 			const err = new ErrorReporter()
 			err.report('Error message 1', Range.Beginning)
-			err.report('Error message 2', { type: 'ast', range: Range.Beginning }, ErrorSeverity.Warning)
+			err.report(
+				'Error message 2',
+				{ type: 'ast', range: Range.Beginning },
+				ErrorSeverity.Warning,
+			)
 			snapshot(err.dump())
 			const src = new Source('foobar')
 			src.cursor = 4

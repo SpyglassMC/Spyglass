@@ -1,7 +1,5 @@
 export class Operations {
-	constructor(
-		private readonly parent?: Operations,
-	) { }
+	constructor(private readonly parent?: Operations) {}
 
 	private readonly undoOps: (() => void)[] = []
 	private readonly redoOps: (() => void)[] = []
@@ -15,10 +13,19 @@ export class Operations {
 		this.parent?.addRedoOp(op)
 	}
 
-	set<O extends object, K extends keyof O>(obj: O, key: K, value: O[K], receiver: any = obj): void {
+	set<O extends object, K extends keyof O>(
+		obj: O,
+		key: K,
+		value: O[K],
+		receiver: any = obj,
+	): void {
 		const oldValue = Reflect.get(obj, key, receiver)
-		const op = () => { Reflect.set(obj, key, value, receiver) }
-		const undoOp = () => { Reflect.set(obj, key, oldValue, receiver) }
+		const op = () => {
+			Reflect.set(obj, key, value, receiver)
+		}
+		const undoOp = () => {
+			Reflect.set(obj, key, oldValue, receiver)
+		}
 		this.addRedoOp(op)
 		this.addUndoOp(undoOp)
 		op()
@@ -30,6 +37,6 @@ export class Operations {
 		}
 	}
 	redo(): void {
-		this.redoOps.forEach(op => op())
+		this.redoOps.forEach((op) => op())
 	}
 }

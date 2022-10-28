@@ -40,7 +40,12 @@ describe('integer()', () => {
 		const options: Options[] = [
 			{ pattern, min: 1 },
 			{ pattern, max: 6 },
-			{ pattern, min: 1, max: 6, onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans) },
+			{
+				pattern,
+				min: 1,
+				max: 6,
+				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans),
+			},
 		]
 		const cases: { content: string }[] = [
 			{ content: '0' },
@@ -48,7 +53,9 @@ describe('integer()', () => {
 			{ content: '9' },
 		]
 		for (const option of options) {
-			describe(`integer(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
+			describe(`integer(${option.min}, ${
+				option.max
+			}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = integer(option as any)

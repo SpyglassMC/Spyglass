@@ -1,17 +1,26 @@
 import { StateProxy } from '../../common/index.js'
-import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
+import type {
+	AstNode,
+	ResourceLocationNode,
+	SymbolBaseNode,
+	SymbolNode,
+} from '../../node/index.js'
 import type { CheckerContext, MetaRegistry } from '../../service/index.js'
 import { ErrorReporter } from '../../service/index.js'
 import { traversePreOrder } from '../util.js'
 import type { Checker, SyncChecker } from './Checker.js'
 
 export type AttemptResult = {
-	errorAmount: number,
-	totalErrorSpan: number,
-	updateNodeAndCtx: () => void,
+	errorAmount: number
+	totalErrorSpan: number
+	updateNodeAndCtx: () => void
 }
 
-export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: CheckerContext): AttemptResult {
+export function attempt<N extends AstNode>(
+	checker: Checker<N>,
+	node: N,
+	ctx: CheckerContext,
+): AttemptResult {
 	const tempCtx: CheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
@@ -24,7 +33,7 @@ export function attempt<N extends AstNode>(checker: Checker<N>, node: N, ctx: Ch
 	StateProxy.undoChanges(node as StateProxy<N>)
 
 	const totalErrorSpan = tempCtx.err.errors
-		.map(e => e.range.end - e.range.start)
+		.map((e) => e.range.end - e.range.start)
 		.reduce((a, b) => a + b, 0)
 
 	return {
@@ -44,8 +53,11 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 	}
 	return (node, ctx) => {
 		const attempts = checkers
-			.map(checker => attempt(checker, node, ctx))
-			.sort((a, b) => a.errorAmount - b.errorAmount || a.totalErrorSpan - b.totalErrorSpan)
+			.map((checker) => attempt(checker, node, ctx))
+			.sort(
+				(a, b) =>
+					a.errorAmount - b.errorAmount || a.totalErrorSpan - b.totalErrorSpan,
+			)
 		attempts[0].updateNodeAndCtx()
 	}
 }
@@ -53,23 +65,24 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 /**
  * No operation.
  */
-export const noop: SyncChecker<AstNode> = () => { }
+export const noop: SyncChecker<AstNode> = () => {}
 
 /**
  * Use the shallowest children that have their own checker to validate.
  */
 export const fallback: Checker<AstNode> = async (node, ctx) => {
 	const promises: Promise<unknown>[] = []
-	traversePreOrder(node,
-		node => !ctx.meta.hasChecker(node.type),
-		node => ctx.meta.hasChecker(node.type),
-		node => {
+	traversePreOrder(
+		node,
+		(node) => !ctx.meta.hasChecker(node.type),
+		(node) => ctx.meta.hasChecker(node.type),
+		(node) => {
 			const checker = ctx.meta.getChecker(node.type)
 			const result = checker(node, ctx)
 			if (result instanceof Promise) {
 				promises.push(result)
 			}
-		}
+		},
 	)
 	await Promise.all(promises)
 }
@@ -98,6 +111,9 @@ export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
 }
 
 export function registerCheckers(meta: MetaRegistry) {
-	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
+	meta.registerChecker<ResourceLocationNode>(
+		'resource_location',
+		resourceLocation,
+	)
 	meta.registerChecker<SymbolNode>('symbol', symbol)
 }

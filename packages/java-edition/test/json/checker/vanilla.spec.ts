@@ -10,9 +10,14 @@ import { Checkers } from '../../../lib/json/checker/data/index.js'
 
 describe.skip('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
-	const summary = [...Categories.keys()].map(c => fg.sync(`${root}${c}/**/*.json`))
+	const summary = [...Categories.keys()].map((c) =>
+		fg.sync(`${root}${c}/**/*.json`),
+	)
 
-	const project = mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: '1.18' } })
+	const project = mockProjectData({
+		roots: ['file:///'],
+		ctx: { loadedVersion: '1.18' },
+	})
 	nbt.initialize(project)
 
 	summary.forEach((files, i) => {
@@ -22,21 +27,22 @@ describe.skip('Check vanilla files', async () => {
 
 		it(`Category ${category[1].category}`, () => {
 			let passing = true
-			files.forEach(file => {
+			files.forEach((file) => {
 				if (file.endsWith('/dimension/overworld.json')) {
 					return // skip insanely large file
 				}
 				const text = fs.readFileSync(file, 'utf-8')
 				const result = testChecker(checker, text, { project })
-				const errors = result.parserErrors.concat(result.checkerErrors)
-					.filter(e => !e.message.startsWith('Cannot find'))
+				const errors = result.parserErrors
+					.concat(result.checkerErrors)
+					.filter((e) => !e.message.startsWith('Cannot find'))
 				if (errors.length === 0) return
 
 				passing = false
 				setTimeout(() => {
 					console.log(`\t${file.slice(root.length + category[0].length + 1)}`)
 					const doc = TextDocument.create('', '', 0, text)
-					errors.forEach(e => {
+					errors.forEach((e) => {
 						const pos = doc.positionAt(e.range.start)
 						console.log(`\t  ${pos.line + 1}:${pos.character}  ${e.message}`)
 					})

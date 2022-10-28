@@ -3,11 +3,11 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface BooleanBaseNode extends AstNode {
-	readonly value?: boolean,
+	readonly value?: boolean
 }
 
 export interface BooleanNode extends BooleanBaseNode {
-	readonly type: 'boolean',
+	readonly type: 'boolean'
 }
 
 export namespace BooleanNode {

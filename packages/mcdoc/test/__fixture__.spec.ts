@@ -1,5 +1,8 @@
 import { MetaRegistry } from '@spyglassmc/core'
-import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test-out/utils.js'
+import {
+	SimpleProject,
+	snapshotWithUri,
+} from '@spyglassmc/core/test-out/utils.js'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
 import { URL } from 'url'
@@ -7,7 +10,12 @@ import { URL } from 'url'
 const DefaultTestFilePath = '/test.mcdoc'
 
 describe('mcdoc __fixture__', async () => {
-	const fixture = removeComments(await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8'))
+	const fixture = removeComments(
+		await fs.readFile(
+			new URL('../test/__fixture__.mcdoc', import.meta.url),
+			'utf8',
+		),
+	)
 
 	const meta = new MetaRegistry()
 	initialize({ meta })
@@ -15,14 +23,21 @@ describe('mcdoc __fixture__', async () => {
 	for (const [caseName, untrimmedCaseContent] of getSections(fixture, 2)) {
 		const caseContent = untrimmedCaseContent.trim()
 		it(caseName, async () => {
-			const files = [...getSections(caseContent, 3, DefaultTestFilePath)]
-				.map(([filePath, fileContent]) => ({ uri: `file://${filePath}`, content: fileContent.trim() }))
+			const files = [...getSections(caseContent, 3, DefaultTestFilePath)].map(
+				([filePath, fileContent]) => ({
+					uri: `file://${filePath}`,
+					content: fileContent.trim(),
+				}),
+			)
 			const project = new SimpleProject(meta, files)
 			project.parse()
 			await project.bind()
 			snapshotWithUri({
 				specName: `mcdoc __fixture__ ${caseName}`,
-				uri: new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url),
+				uri: new URL(
+					`./__fixture__/${caseNameToFileName(caseName)}.spec.js`,
+					import.meta.url,
+				),
 				value: project.dumpState(['global', 'nodes']),
 			})
 		})
@@ -38,13 +53,13 @@ describe('mcdoc __fixture__', async () => {
 
 /**
  * Breaks a text into sections.
- * 
+ *
  * A section starts with double slashes (`//`) at the beginning of a line followed by a various amount of equal signs (`=`) and a space.
  * The text between the space and the immediate newline character is the title of the section.
  * Everything after that until the next section is the content of the section.
- * 
+ *
  * Example input text with `equalSignAmount` === 2:
- * 
+ *
  * ```plaintext
  * //== title 0
  * content 0
@@ -52,7 +67,11 @@ describe('mcdoc __fixture__', async () => {
  * content 1
  * ```
  */
-function* getSections(text: string, equalSignAmount: number, defaultSectionTitle: string | undefined = undefined): Generator<[title: string, content: string]> {
+function* getSections(
+	text: string,
+	equalSignAmount: number,
+	defaultSectionTitle: string | undefined = undefined,
+): Generator<[title: string, content: string]> {
 	const regex = new RegExp(`^//${'='.repeat(equalSignAmount)} `, 'mu')
 	const sections = (() => {
 		const arr = text.split(regex)

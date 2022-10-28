@@ -5,38 +5,38 @@ export * from './downloader.js'
 
 export interface Externals {
 	archive: {
-		decompressBall: (buffer: Uint8Array, options?: { stripLevel?: number }) => Promise<DecompressedFile[]>,
-		gzip: (buffer: Uint8Array) => Promise<Uint8Array>,
-		gunzip: (buffer: Uint8Array) => Promise<Uint8Array>,
-	},
+		decompressBall: (
+			buffer: Uint8Array,
+			options?: { stripLevel?: number },
+		) => Promise<DecompressedFile[]>
+		gzip: (buffer: Uint8Array) => Promise<Uint8Array>
+		gunzip: (buffer: Uint8Array) => Promise<Uint8Array>
+	}
 	crypto: {
 		/**
 		 * @returns SHA-1 digest of the given data in hexadecimal format.
 		 */
-		getSha1: (data: string | Uint8Array) => Promise<string>,
-	},
-	downloader: ExternalDownloader,
+		getSha1: (data: string | Uint8Array) => Promise<string>
+	}
+	downloader: ExternalDownloader
 	error: {
-		isKind: (e: unknown, kind: ExternalErrorKind) => boolean,
-	},
+		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
+	}
 	event: {
-		EventEmitter: new () => ExternalEventEmitter,
-	},
-	fs: ExternalFileSystem,
+		EventEmitter: new () => ExternalEventEmitter
+	}
+	fs: ExternalFileSystem
 }
 
 export interface DecompressedFile {
-	data: Uint8Array,
-	mode: number,
-	mtime: string,
-	path: string,
-	type: string,
+	data: Uint8Array
+	mode: number
+	mtime: string
+	path: string
+	type: string
 }
 
-export type ExternalErrorKind =
-	| 'EEXIST'
-	| 'EISDIR'
-	| 'ENOENT'
+export type ExternalErrorKind = 'EEXIST' | 'EISDIR' | 'ENOENT'
 
 export interface ExternalEventEmitter {
 	emit(eventName: string, ...args: unknown[]): boolean
@@ -48,32 +48,39 @@ export interface ExternalFileSystem {
 	/**
 	 * @param mode File mode bit mask (e.g. `0o775`).
 	 */
-	chmod(location: FsLocation, mode: number): Promise<void>,
+	chmod(location: FsLocation, mode: number): Promise<void>
 	/**
 	 * @returns an array of file URIs under the given `location`.
 	 */
-	getAllFiles(location: FsLocation): Promise<string[]>,
+	getAllFiles(location: FsLocation): Promise<string[]>
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
-	mkdir(location: FsLocation, options?: { mode?: number, recursive?: boolean }): Promise<void>,
-	readFile(location: FsLocation): Promise<Uint8Array>,
+	mkdir(
+		location: FsLocation,
+		options?: { mode?: number; recursive?: boolean },
+	): Promise<void>
+	readFile(location: FsLocation): Promise<Uint8Array>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
-	 * 
+	 *
 	 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
 	 */
-	showFile(path: FsLocation): Promise<void>,
+	showFile(path: FsLocation): Promise<void>
 	stat(location: FsLocation): Promise<{
-		isDirectory(): boolean,
-		isFile(): boolean,
-	}>,
-	unlink(location: FsLocation): Promise<void>,
-	watch(location: FsLocation): FsWatcher,
+		isDirectory(): boolean
+		isFile(): boolean
+	}>
+	unlink(location: FsLocation): Promise<void>
+	watch(location: FsLocation): FsWatcher
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
-	writeFile(location: FsLocation, data: string | Uint8Array, options?: { mode: number }): Promise<void>,
+	writeFile(
+		location: FsLocation,
+		data: string | Uint8Array,
+		options?: { mode: number },
+	): Promise<void>
 }
 
 /**

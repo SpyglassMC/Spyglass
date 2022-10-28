@@ -11,84 +11,87 @@ export interface Config {
 	 * Environment settings. Unlike other configs, all involved root folders must have the same `env` settings. It is undocumented
 	 * what would happen if two roots have conflicting `env` settings.
 	 */
-	env: EnvConfig,
+	env: EnvConfig
 	/**
 	 * Formatter rules.
 	 */
-	format: FormatterConfig,
+	format: FormatterConfig
 	/**
 	 *t Linter rules.
 	 */
-	lint: LinterConfig,
+	lint: LinterConfig
 	/**
 	 * Code snippets.
 	 */
-	snippet: SnippetsConfig,
+	snippet: SnippetsConfig
 }
 
 export interface EnvConfig {
 	/**
 	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
-	 * 
+	 *
 	 * * `GitHub`: Recommended, unless you have trouble connecting to `raw.githubusercontent.com`.
 	 * * `fastly`
 	 * * `jsDelivr`
 	 * * A custom URL, with placeholder variables: `${user}`, `${repo}`, `${tag}`, and `${path}`.
 	 */
-	dataSource: string,
+	dataSource: string
 	/**
 	 * A list of data packs the current project depends on. Each value in this array can be either an absolute file path
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
 	 */
-	dependencies: string[],
+	dependencies: string[]
 	feature: {
-		codeActions: boolean,
-		colors: boolean,
-		completions: boolean,
-		documentHighlighting: boolean,
-		documentLinks: boolean,
-		foldingRanges: boolean,
-		formatting: boolean,
-		hover: boolean,
-		inlayHint: boolean | { enabledNodes: string[] },
-		semanticColoring: boolean,
-		selectionRanges: boolean,
-		signatures: boolean,
-	},
+		codeActions: boolean
+		colors: boolean
+		completions: boolean
+		documentHighlighting: boolean
+		documentLinks: boolean
+		foldingRanges: boolean
+		formatting: boolean
+		hover: boolean
+		inlayHint: boolean | { enabledNodes: string[] }
+		semanticColoring: boolean
+		selectionRanges: boolean
+		signatures: boolean
+	}
 	/**
 	 * This field is case-insensitive.
-	 * 
+	 *
 	 * - `Auto`: Auto infer from `pack.mcmeta`.
 	 * - `Latest release`
 	 * - `Latest snapshot`
 	 * - A version identifier or name found in [mcmeta's version data](https://github.com/misode/mcmeta/blob/summary/versions/data.json) that is older than `1.15` (inclusive).
 	 */
-	gameVersion: string,
+	gameVersion: string
 	/**
 	 * Locale language for error messages and other texts provided by Spyglass.
 	 */
-	language: string,
+	language: string
 	/**
 	 * Use custom files as mcmeta summaries.
-	 * 
+	 *
 	 * // TODO: Support file paths relative to the project root.
 	 */
-	mcmetaSummaryOverrides: Partial<Record<'blocks' | 'commands' | 'fluids' | 'registries', { path: string, replace?: boolean }>>,
-	permissionLevel: 1 | 2 | 3 | 4,
-	plugins: string[],
+	mcmetaSummaryOverrides: Partial<
+		Record<
+			'blocks' | 'commands' | 'fluids' | 'registries',
+			{ path: string; replace?: boolean }
+		>
+	>
+	permissionLevel: 1 | 2 | 3 | 4
+	plugins: string[]
 }
 
-export type LinterSeverity =
-	| 'hint'
-	| 'information'
-	| 'warning'
-	| 'error'
+export type LinterSeverity = 'hint' | 'information' | 'warning' | 'error'
 export namespace LinterSeverity {
 	export function is(value: unknown): value is LinterSeverity {
-		return value === 'hint' ||
+		return (
+			value === 'hint' ||
 			value === 'information' ||
 			value === 'warning' ||
 			value === 'error'
+		)
 	}
 	export function toErrorSeverity(value: LinterSeverity): ErrorSeverity {
 		switch (value) {
@@ -107,16 +110,23 @@ export namespace LinterSeverity {
 type BracketSpacingConfig = any
 type SepSpacingConfig = any
 export type QuoteConfig = {
-	always?: boolean,
-	avoidEscape?: boolean | null,
-	type?: 'double' | 'single',
+	always?: boolean
+	avoidEscape?: boolean | null
+	type?: 'double' | 'single'
 }
 
 type LinterConfigValue<T> = T extends boolean
 	? null | T | [LinterSeverity, T] | LinterSeverity
 	: null | T | [LinterSeverity, T]
 export namespace LinterConfigValue {
-	export function destruct(value: LinterConfigValue<boolean | string | number | object>): { ruleSeverity: ErrorSeverity, ruleValue: boolean | string | number | object } | undefined {
+	export function destruct(
+		value: LinterConfigValue<boolean | string | number | object>,
+	):
+		| {
+				ruleSeverity: ErrorSeverity
+				ruleValue: boolean | string | number | object
+		  }
+		| undefined {
 		if (value === null || value === undefined) {
 			return undefined
 		}
@@ -143,68 +153,68 @@ export namespace LinterConfigValue {
 }
 
 export interface FormatterConfig {
-	blockStateBracketSpacing: BracketSpacingConfig,
-	blockStateCommaSpacing: SepSpacingConfig,
-	blockStateEqualSpacing: SepSpacingConfig,
-	blockStateTrailingComma: boolean,
-	eol: 'auto' | 'CRLF' | 'LF',
-	nbtArrayBracketSpacing: BracketSpacingConfig,
-	nbtArrayCommaSpacing: SepSpacingConfig,
-	nbtArraySemicolonSpacing: { after: number },
-	nbtArrayTrailingComma: boolean,
-	nbtByteSuffix: 'b' | 'B',
-	nbtCompoundBracketSpacing: BracketSpacingConfig,
-	nbtCompoundColonSpacing: SepSpacingConfig,
-	nbtCompoundCommaSpacing: SepSpacingConfig,
-	nbtCompoundTrailingComma: boolean,
-	nbtDoubleOmitSuffix: boolean,
-	nbtDoubleSuffix: 'd' | 'D',
-	nbtFloatSuffix: 'f' | 'F',
-	nbtListBracketSpacing: BracketSpacingConfig,
-	nbtListCommaSpacing: SepSpacingConfig,
-	nbtListTrailingComma: boolean,
-	nbtLongSuffix: 'l' | 'L',
-	nbtShortSuffix: 's' | 'S',
-	selectorBracketSpacing: BracketSpacingConfig,
-	selectorCommaSpacing: SepSpacingConfig,
-	selectorEqualSpacing: SepSpacingConfig,
-	selectorTrailingComma: boolean,
-	timeOmitTickUnit: boolean,
+	blockStateBracketSpacing: BracketSpacingConfig
+	blockStateCommaSpacing: SepSpacingConfig
+	blockStateEqualSpacing: SepSpacingConfig
+	blockStateTrailingComma: boolean
+	eol: 'auto' | 'CRLF' | 'LF'
+	nbtArrayBracketSpacing: BracketSpacingConfig
+	nbtArrayCommaSpacing: SepSpacingConfig
+	nbtArraySemicolonSpacing: { after: number }
+	nbtArrayTrailingComma: boolean
+	nbtByteSuffix: 'b' | 'B'
+	nbtCompoundBracketSpacing: BracketSpacingConfig
+	nbtCompoundColonSpacing: SepSpacingConfig
+	nbtCompoundCommaSpacing: SepSpacingConfig
+	nbtCompoundTrailingComma: boolean
+	nbtDoubleOmitSuffix: boolean
+	nbtDoubleSuffix: 'd' | 'D'
+	nbtFloatSuffix: 'f' | 'F'
+	nbtListBracketSpacing: BracketSpacingConfig
+	nbtListCommaSpacing: SepSpacingConfig
+	nbtListTrailingComma: boolean
+	nbtLongSuffix: 'l' | 'L'
+	nbtShortSuffix: 's' | 'S'
+	selectorBracketSpacing: BracketSpacingConfig
+	selectorCommaSpacing: SepSpacingConfig
+	selectorEqualSpacing: SepSpacingConfig
+	selectorTrailingComma: boolean
+	timeOmitTickUnit: boolean
 }
 
 export interface LinterConfig {
 	// Sort key.
-	blockStateSortKeys: LinterConfigValue<'alphabetically'>,
-	nbtCompoundSortKeys: LinterConfigValue<'alphabetically'>,
-	selectorSortKeys: LinterConfigValue<string[]>,
+	blockStateSortKeys: LinterConfigValue<'alphabetically'>
+	nbtCompoundSortKeys: LinterConfigValue<'alphabetically'>
+	selectorSortKeys: LinterConfigValue<string[]>
 
 	// Quote.
-	commandStringQuote: LinterConfigValue<QuoteConfig>,
-	nbtKeyQuote: LinterConfigValue<QuoteConfig>,
-	nbtPathQuote: LinterConfigValue<QuoteConfig>,
-	nbtStringQuote: LinterConfigValue<QuoteConfig>,
-	selectorKeyQuote: LinterConfigValue<QuoteConfig>,
+	commandStringQuote: LinterConfigValue<QuoteConfig>
+	nbtKeyQuote: LinterConfigValue<QuoteConfig>
+	nbtPathQuote: LinterConfigValue<QuoteConfig>
+	nbtStringQuote: LinterConfigValue<QuoteConfig>
+	selectorKeyQuote: LinterConfigValue<QuoteConfig>
 
-	idOmitDefaultNamespace: LinterConfigValue<boolean>,
+	idOmitDefaultNamespace: LinterConfigValue<boolean>
 
 	// Name convention.
-	nameOfNbtKey: LinterConfigValue<string>,
-	nameOfObjective: LinterConfigValue<string>,
-	nameOfScoreHolder: LinterConfigValue<string>,
-	nameOfTag: LinterConfigValue<string>,
-	nameOfTeam: LinterConfigValue<string>,
+	nameOfNbtKey: LinterConfigValue<string>
+	nameOfObjective: LinterConfigValue<string>
+	nameOfScoreHolder: LinterConfigValue<string>
+	nameOfTag: LinterConfigValue<string>
+	nameOfTeam: LinterConfigValue<string>
 
 	// NBT.
-	nbtArrayLengthCheck: LinterConfigValue<boolean>,
-	nbtBoolean: LinterConfigValue<boolean>,
-	nbtListLengthCheck: LinterConfigValue<boolean>,
-	nbtTypeCheck: LinterConfigValue<'strictly' | 'loosely'>,
+	nbtArrayLengthCheck: LinterConfigValue<boolean>
+	nbtBoolean: LinterConfigValue<boolean>
+	nbtListLengthCheck: LinterConfigValue<boolean>
+	nbtTypeCheck: LinterConfigValue<'strictly' | 'loosely'>
 
-	undeclaredSymbol: LinterConfigValue<SymbolLinterConfig>,
+	undeclaredSymbol: LinterConfigValue<SymbolLinterConfig>
 }
 
 export interface SnippetsConfig {
-	[label: string]: string,
+	[label: string]: string
 }
 
 export type SymbolLinterConfig =
@@ -219,9 +229,9 @@ export namespace SymbolLinterConfig {
 		/**
 		 * {@link Condition}s in this array are connected with OR.
 		 */
-		if?: Arrayable<Condition>,
-		then?: Action,
-		override?: Arrayable<Complex>,
+		if?: Arrayable<Condition>
+		then?: Action
+		override?: Arrayable<Complex>
 	}
 	export namespace Complex {
 		export function is(v: unknown): v is Complex {
@@ -232,17 +242,18 @@ export namespace SymbolLinterConfig {
 			return (
 				(value.if === undefined || Arrayable.is(value.if, Condition.is)) &&
 				(value.then === undefined || Action.is(value.then)) &&
-				(value.override === undefined || Arrayable.is(value.override, Complex.is))
+				(value.override === undefined ||
+					Arrayable.is(value.override, Complex.is))
 			)
 		}
 	}
 
 	export interface Condition {
-		category?: Arrayable<string>,
-		pattern?: Arrayable<string>,
-		excludePattern?: Arrayable<string>,
-		namespace?: Arrayable<string>,
-		excludeNamespace?: Arrayable<string>,
+		category?: Arrayable<string>
+		pattern?: Arrayable<string>
+		excludePattern?: Arrayable<string>
+		namespace?: Arrayable<string>
+		excludeNamespace?: Arrayable<string>
 	}
 	export namespace Condition {
 		export function is(v: unknown): v is Condition {
@@ -251,28 +262,43 @@ export namespace SymbolLinterConfig {
 			}
 			const value = v as Condition
 			return (
-				(value.category === undefined || Arrayable.is(value.category, TypePredicates.isString)) &&
-				(value.pattern === undefined || Arrayable.is(value.pattern, TypePredicates.isString)) &&
-				(value.excludePattern === undefined || Arrayable.is(value.excludePattern, TypePredicates.isString)) &&
-				(value.namespace === undefined || Arrayable.is(value.namespace, TypePredicates.isString)) &&
-				(value.excludeNamespace === undefined || Arrayable.is(value.excludeNamespace, TypePredicates.isString))
+				(value.category === undefined ||
+					Arrayable.is(value.category, TypePredicates.isString)) &&
+				(value.pattern === undefined ||
+					Arrayable.is(value.pattern, TypePredicates.isString)) &&
+				(value.excludePattern === undefined ||
+					Arrayable.is(value.excludePattern, TypePredicates.isString)) &&
+				(value.namespace === undefined ||
+					Arrayable.is(value.namespace, TypePredicates.isString)) &&
+				(value.excludeNamespace === undefined ||
+					Arrayable.is(value.excludeNamespace, TypePredicates.isString))
 			)
 		}
 	}
 
 	export interface DeclareAction {
-		declare: 'block' | 'file' | 'public',
+		declare: 'block' | 'file' | 'public'
 	}
 	export interface ReportAction {
-		report: LinterSeverity | 'inherit',
+		report: LinterSeverity | 'inherit'
 	}
 	export type Action = DeclareAction | ReportAction
 	export namespace Action {
-		export function isDeclare(value: Action | undefined): value is DeclareAction {
-			return value !== undefined && ['block', 'file', 'public'].includes((value as DeclareAction).declare)
+		export function isDeclare(
+			value: Action | undefined,
+		): value is DeclareAction {
+			return (
+				value !== undefined &&
+				['block', 'file', 'public'].includes((value as DeclareAction).declare)
+			)
 		}
 		export function isReport(value: Action | undefined): value is ReportAction {
-			return value !== undefined && ['inherit', 'hint', 'information', 'warning', 'error'].includes((value as ReportAction).report)
+			return (
+				value !== undefined &&
+				['inherit', 'hint', 'information', 'warning', 'error'].includes(
+					(value as ReportAction).report,
+				)
+			)
 		}
 		export function is(v: unknown): v is Action {
 			if (!v || typeof v !== 'object') {
@@ -285,14 +311,12 @@ export namespace SymbolLinterConfig {
 }
 
 /**
-* Config which simulates the default vanilla command system.
-*/
+ * Config which simulates the default vanilla command system.
+ */
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: [
-			'@vanilla-mcdoc',
-		],
+		dependencies: ['@vanilla-mcdoc'],
 		feature: {
 			codeActions: true,
 			colors: true,
@@ -303,9 +327,7 @@ export const VanillaConfig: Config = {
 			formatting: true,
 			hover: true,
 			inlayHint: {
-				enabledNodes: [
-					'mcfunction:command_child/unknown',
-				],
+				enabledNodes: ['mcfunction:command_child/unknown'],
 			},
 			semanticColoring: true,
 			selectionRanges: true,
@@ -384,13 +406,15 @@ export const VanillaConfig: Config = {
 		],
 	},
 	snippet: {
-		executeIfScoreSet: 'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
-		summonAec: 'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}',
+		executeIfScoreSet:
+			'execute if score ${1:score_holder} ${2:objective} = ${1:score_holder} ${2:objective} $0',
+		summonAec:
+			'summon minecraft:area_effect_cloud ~ ~ ~ {Age: -2147483648, Duration: -1, WaitTime: -2147483648, Tags: ["${1:tag}"]}',
 	},
 }
 
 type ConfigEvent = { config: Config }
-type ErrorEvent = { error: unknown, uri: string }
+type ErrorEvent = { error: unknown; uri: string }
 
 export class ConfigService implements ExternalEventEmitter {
 	static readonly ConfigFileNames = Object.freeze([
@@ -440,7 +464,9 @@ export class ConfigService implements ExternalEventEmitter {
 		for (const name of ConfigService.ConfigFileNames) {
 			const uri = this.project.projectRoot + name
 			try {
-				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
+				ans = JSON.parse(
+					bufferToString(await this.project.externals.fs.readFile(uri)),
+				)
 			} catch (e) {
 				if (this.project.externals.error.isKind(e, 'ENOENT')) {
 					// File doesn't exist.
@@ -454,7 +480,7 @@ export class ConfigService implements ExternalEventEmitter {
 	}
 
 	private static isConfigFile(this: void, uri: string): boolean {
-		return ConfigService.ConfigFileNames.some(n => uri.endsWith(`/${n}`))
+		return ConfigService.ConfigFileNames.some((n) => uri.endsWith(`/${n}`))
 	}
 
 	public static merge(base: Config, ...overrides: any[]): Config {

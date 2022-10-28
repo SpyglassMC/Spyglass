@@ -5,7 +5,7 @@ import { resourceLocation } from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 describe('resourceLocation()', () => {
-	const suites: { options: ResourceLocationOptions, content: string }[] = [
+	const suites: { options: ResourceLocationOptions; content: string }[] = [
 		{ options: { category: 'function' }, content: '' },
 		{ options: { category: 'function' }, content: 'foo' },
 		{ options: { category: 'function' }, content: 'foo/bar' },
@@ -15,13 +15,18 @@ describe('resourceLocation()', () => {
 		{ options: { category: 'function' }, content: ':foo/bar' },
 		{ options: { category: 'function' }, content: 'minecraft:foo/bar' },
 		{ options: { category: 'function' }, content: 'spgoding:foo/bar' },
-		{ options: { category: 'function' }, content: 'foo # can you stop before here?' },
+		{
+			options: { category: 'function' },
+			content: 'foo # can you stop before here?',
+		},
 		{ options: { category: 'function' }, content: 'spg/:foo:qux/H/42' },
 		{ options: { category: 'function', allowTag: true }, content: '#tick' },
 		{ options: { category: 'function', allowTag: false }, content: '#tick' },
 	]
 	for (const { content, options } of suites) {
-		it(`Parse "${showWhitespaceGlyph(content)}" with ${options.category}, ${options.allowTag}`, () => {
+		it(`Parse "${showWhitespaceGlyph(content)}" with ${options.category}, ${
+			options.allowTag
+		}`, () => {
 			const parser = resourceLocation(options)
 			snapshot(testParser(parser, content))
 		})

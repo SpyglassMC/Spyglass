@@ -34,17 +34,32 @@ describe('StateProxy', () => {
 		assert.strictEqual(proxy.symbols, proxy.symbols)
 		assert(StateProxy.is(proxy.symbols), 'proxy.symbols is a StateProxy')
 		assert.strictEqual(proxy.symbols.advancement, proxy.symbols.advancement)
-		assert(StateProxy.is(proxy.symbols.advancement), 'proxy.symbols.advancement is a StateProxy')
-		assert.strictEqual(proxy.symbols.advancement.foo, proxy.symbols.advancement.foo)
-		assert(StateProxy.is(proxy.symbols.advancement.foo), 'proxy.symbols.advancement.foo is a StateProxy')
+		assert(
+			StateProxy.is(proxy.symbols.advancement),
+			'proxy.symbols.advancement is a StateProxy',
+		)
+		assert.strictEqual(
+			proxy.symbols.advancement.foo,
+			proxy.symbols.advancement.foo,
+		)
+		assert(
+			StateProxy.is(proxy.symbols.advancement.foo),
+			'proxy.symbols.advancement.foo is a StateProxy',
+		)
 		assert.strictEqual(proxy.symbols.advancement.foo.category, 'advancement')
 		assert.strictEqual(proxy.node, proxy.node)
 		assert(StateProxy.is(proxy.node), 'proxy.node is a StateProxy')
 		assert.strictEqual(proxy.node.type, 'file')
 		assert.strictEqual(proxy.node.children, proxy.node.children)
-		assert(StateProxy.is(proxy.node.children), 'proxy.node.children is a StateProxy')
+		assert(
+			StateProxy.is(proxy.node.children),
+			'proxy.node.children is a StateProxy',
+		)
 		assert.strictEqual(proxy.node.children[0], proxy.node.children[0])
-		assert(StateProxy.is(proxy.node.children[0]), 'proxy.node.children[0] is a StateProxy')
+		assert(
+			StateProxy.is(proxy.node.children[0]),
+			'proxy.node.children[0] is a StateProxy',
+		)
 		assert.strictEqual(proxy.node.children[0].type, 'symbol')
 	})
 	it('Should return the correct origin', () => {
@@ -52,11 +67,23 @@ describe('StateProxy', () => {
 		const proxy = StateProxy.create(testObj)
 		assert.strictEqual(StateProxy.dereference(proxy), testObj)
 		assert.strictEqual(StateProxy.dereference(proxy.symbols), testObj.symbols)
-		assert.strictEqual(StateProxy.dereference(proxy.symbols.advancement), testObj.symbols.advancement)
-		assert.strictEqual(StateProxy.dereference(proxy.symbols.advancement.foo), testObj.symbols.advancement.foo)
+		assert.strictEqual(
+			StateProxy.dereference(proxy.symbols.advancement),
+			testObj.symbols.advancement,
+		)
+		assert.strictEqual(
+			StateProxy.dereference(proxy.symbols.advancement.foo),
+			testObj.symbols.advancement.foo,
+		)
 		assert.strictEqual(StateProxy.dereference(proxy.node), testObj.node)
-		assert.strictEqual(StateProxy.dereference(proxy.node.children), testObj.node.children)
-		assert.strictEqual(StateProxy.dereference(proxy.node.children[0]), testObj.node.children[0])
+		assert.strictEqual(
+			StateProxy.dereference(proxy.node.children),
+			testObj.node.children,
+		)
+		assert.strictEqual(
+			StateProxy.dereference(proxy.node.children[0]),
+			testObj.node.children[0],
+		)
 	})
 	it('Should undo and redo changes correctly', () => {
 		const testObj = getTestObj() as any
@@ -110,16 +137,16 @@ describe('StateProxy', () => {
 		const testArr = [0, 1, 2, 3]
 		const proxy = StateProxy.create(testArr)
 
-		const v2 = proxy.find(v => v === 2)
+		const v2 = proxy.find((v) => v === 2)
 		assert.strictEqual(v2, 2)
 
-		const vUndefined = proxy.find(v => v === 42)
+		const vUndefined = proxy.find((v) => v === 42)
 		assert.strictEqual(vUndefined, undefined)
 
-		const positiveNumbers = proxy.filter(v => v > 0)
+		const positiveNumbers = proxy.filter((v) => v > 0)
 		assert.deepStrictEqual(positiveNumbers, [1, 2, 3])
 
-		const squaredNumbers = proxy.map(v => v * v)
+		const squaredNumbers = proxy.map((v) => v * v)
 		assert.deepStrictEqual(squaredNumbers, [0, 1, 4, 9])
 	})
 })

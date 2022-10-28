@@ -1,5 +1,8 @@
 import { SymbolAccessType } from '@spyglassmc/core'
-import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
+import type {
+	PartialRootTreeNode,
+	PartialTreeNode,
+} from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
 
 export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
@@ -11,44 +14,47 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					revoke: AdvancementTargets,
 				},
 			},
-			...ReleaseVersion.cmp(release, '1.16') >= 0 ? {
-				attribute: {
-					children: {
-						target: {
+			...(ReleaseVersion.cmp(release, '1.16') >= 0
+				? {
+						attribute: {
 							children: {
-								attribute: {
-									properties: {
-										category: 'attribute',
-									},
+								target: {
 									children: {
-										modifier: {
+										attribute: {
+											properties: {
+												category: 'attribute',
+											},
 											children: {
-												add: {
+												modifier: {
 													children: {
-														uuid: {
-															properties: {
-																category: 'attribute_modifier_uuid',
-																usageType: 'definition',
-															},
-														},
-													},
-												},
-												remove: {
-													children: {
-														uuid: {
-															properties: {
-																category: 'attribute_modifier_uuid',
-															},
-														},
-													},
-												},
-												value: {
-													children: {
-														get: {
+														add: {
 															children: {
 																uuid: {
 																	properties: {
 																		category: 'attribute_modifier_uuid',
+																		usageType: 'definition',
+																	},
+																},
+															},
+														},
+														remove: {
+															children: {
+																uuid: {
+																	properties: {
+																		category: 'attribute_modifier_uuid',
+																	},
+																},
+															},
+														},
+														value: {
+															children: {
+																get: {
+																	children: {
+																		uuid: {
+																			properties: {
+																				category: 'attribute_modifier_uuid',
+																			},
+																		},
 																	},
 																},
 															},
@@ -61,9 +67,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								},
 							},
 						},
-					},
-				},
-			} : {},
+				  }
+				: {}),
 			ban: {
 				permission: 3,
 			},
@@ -175,28 +180,48 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 					unless: ExecuteCondition,
 				},
 			},
-			...ReleaseVersion.cmp(release, '1.17') >= 0 ? {
-				item: {
-					children: {
-						replace: {
+			...(ReleaseVersion.cmp(release, '1.17') >= 0
+				? {
+						item: {
 							children: {
-								block: {
+								replace: {
 									children: {
-										pos: {
+										block: {
 											children: {
-												slot: {
+												pos: {
 													children: {
-														from: {
+														slot: {
 															children: {
-																block: {
+																from: {
 																	children: {
-																		source: {
+																		block: {
 																			children: {
-																				sourceSlot: {
+																				source: {
 																					children: {
-																						modifier: {
-																							properties: {
-																								category: 'item_modifier',
+																						sourceSlot: {
+																							children: {
+																								modifier: {
+																									properties: {
+																										category: 'item_modifier',
+																									},
+																								},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																		entity: {
+																			children: {
+																				source: {
+																					children: {
+																						sourceSlot: {
+																							children: {
+																								modifier: {
+																									properties: {
+																										category: 'item_modifier',
+																									},
+																								},
 																							},
 																						},
 																					},
@@ -205,15 +230,48 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																		},
 																	},
 																},
-																entity: {
+															},
+														},
+													},
+												},
+											},
+										},
+										entity: {
+											children: {
+												targets: {
+													children: {
+														slot: {
+															children: {
+																from: {
 																	children: {
-																		source: {
+																		block: {
 																			children: {
-																				sourceSlot: {
+																				source: {
 																					children: {
-																						modifier: {
-																							properties: {
-																								category: 'item_modifier',
+																						sourceSlot: {
+																							children: {
+																								modifier: {
+																									properties: {
+																										category: 'item_modifier',
+																									},
+																								},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
+																		entity: {
+																			children: {
+																				source: {
+																					children: {
+																						sourceSlot: {
+																							children: {
+																								modifier: {
+																									properties: {
+																										category: 'item_modifier',
+																									},
+																								},
 																							},
 																						},
 																					},
@@ -230,46 +288,34 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 										},
 									},
 								},
-								entity: {
+								modify: {
 									children: {
-										targets: {
+										block: {
 											children: {
-												slot: {
+												pos: {
 													children: {
-														from: {
+														slot: {
 															children: {
-																block: {
-																	children: {
-																		source: {
-																			children: {
-																				sourceSlot: {
-																					children: {
-																						modifier: {
-																							properties: {
-																								category: 'item_modifier',
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
+																modifier: {
+																	properties: {
+																		category: 'item_modifier',
 																	},
 																},
-																entity: {
-																	children: {
-																		source: {
-																			children: {
-																				sourceSlot: {
-																					children: {
-																						modifier: {
-																							properties: {
-																								category: 'item_modifier',
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
+															},
+														},
+													},
+												},
+											},
+										},
+										entity: {
+											children: {
+												targets: {
+													children: {
+														slot: {
+															children: {
+																modifier: {
+																	properties: {
+																		category: 'item_modifier',
 																	},
 																},
 															},
@@ -282,47 +328,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								},
 							},
 						},
-						modify: {
-							children: {
-								block: {
-									children: {
-										pos: {
-											children: {
-												slot: {
-													children: {
-														modifier: {
-															properties: {
-																category: 'item_modifier',
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-								entity: {
-									children: {
-										targets: {
-											children: {
-												slot: {
-													children: {
-														modifier: {
-															properties: {
-																category: 'item_modifier',
-															},
-														},
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-				},
-			} : {},
+				  }
+				: {}),
 			help: {
 				permission: 0,
 			},
@@ -332,17 +339,19 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			list: {
 				permission: 0,
 			},
-			...ReleaseVersion.cmp(release, '1.16') >= 0 ? {
-				locatebiome: {
-					children: {
-						biome: {
-							properties: {
-								category: 'worldgen/biome',
+			...(ReleaseVersion.cmp(release, '1.16') >= 0
+				? {
+						locatebiome: {
+							children: {
+								biome: {
+									properties: {
+										category: 'worldgen/biome',
+									},
+								},
 							},
 						},
-					},
-				},
-			} : {},
+				  }
+				: {}),
 			loot: {
 				children: {
 					give: {
@@ -524,18 +533,18 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			 * 1. `teleport <destination: entity(single)>`
 			 * 2. `teleport <location: vec3>`
 			 * 3. `teleport <targets: entity(multiple)> <...arguments>`
-			 * 
+			 *
 			 * It is impossible for Spyglass to differentiate between (1) and (3) when it encouters a single entity
 			 * at the position of the first argument, due to its lack of ability to backtrack.
-			 * 
+			 *
 			 * Therefore, we have compromised to patch the trees to something like this:
 			 * - `teleport <location: vec3>`
 			 * - `teleport <targets: entity(multiple)> [<...arguments>]`
-			 * 
+			 *
 			 * Diff:
 			 * - Removed (1) `teleport <destination: entity(single)>`.
 			 * - Marked `<...arguments>` in (3) as optional.
-			 * 
+			 *
 			 * The downside of this patch is that entity selectors tracking multiple entities can now be used as the
 			 * `<destination>` argument. We will see how this work.
 			 */

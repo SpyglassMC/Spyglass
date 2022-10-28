@@ -9,10 +9,12 @@ export function criterionReference(advancement: string): JsonChecker {
 			simpleString(node, ctx)
 			return
 		}
-		const criteria = Object.values(ctx.symbols.query(ctx.doc, 'advancement', advancement).symbol
-			?.members ?? {})
+		const criteria = Object.values(
+			ctx.symbols.query(ctx.doc, 'advancement', advancement).symbol?.members ??
+				{},
+		)
 			.filter((m): m is Symbol => m?.subcategory === 'criterion')
-			.map(s => s.identifier)
+			.map((s) => s.identifier)
 		literal(criteria)(node, ctx)
 	}
 }

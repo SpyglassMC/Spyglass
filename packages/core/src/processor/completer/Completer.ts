@@ -4,7 +4,10 @@ import type { CompleterContext } from '../../service/index.js'
 import type { RangeLike } from '../../source/index.js'
 import { Range } from '../../source/index.js'
 
-export type Completer<N extends AstNode = AstNode> = (node: DeepReadonly<N>, ctx: CompleterContext) => CompletionItem[]
+export type Completer<N extends AstNode = AstNode> = (
+	node: DeepReadonly<N>,
+	ctx: CompleterContext,
+) => CompletionItem[]
 
 // Built-in LSP completion item kinds: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#textDocument_completion
 
@@ -37,37 +40,41 @@ export const enum CompletionKind {
 }
 
 export interface CompletionItem {
-	label: string,
-	range: Range,
-	kind?: CompletionKind,
-	detail?: string,
-	documentation?: string,
-	deprecated?: boolean,
+	label: string
+	range: Range
+	kind?: CompletionKind
+	detail?: string
+	documentation?: string
+	deprecated?: boolean
 	/**
 	 * `$`, `\`, and `}` needs to be escaped if they are not used for TextMate snippet purposes.
 	 */
-	insertText?: string,
-	sortText?: string,
-	filterText?: string,
+	insertText?: string
+	sortText?: string
+	filterText?: string
 }
 export namespace CompletionItem {
 	/* istanbul ignore next */
 	/**
 	 * If no `insertText` is provided in `other`, the value of `label` will be escaped for TextMate purposes
 	 * (@see {@link escape}) and used as the insert text.
-	 * 
+	 *
 	 * @example
 	 * create('foo', range) // insertText = 'foo'
 	 * create('\\ $ }', range) // insertText = '\\\\ \\$ \\}'
 	 * create('foo', range, { insertText: '\\ $ }' }) // insertText = '\\ $ }'
 	 */
-	export function create(label: string, range: RangeLike, other?: Partial<CompletionItem>): CompletionItem {
+	export function create(
+		label: string,
+		range: RangeLike,
+		other?: Partial<CompletionItem>,
+	): CompletionItem {
 		const shouldEscape = other?.insertText === undefined && needsEscape(label)
 		return {
 			...other,
 			label,
 			range: Range.get(range),
-			...shouldEscape ? { insertText: escape(label) } : {},
+			...(shouldEscape ? { insertText: escape(label) } : {}),
 		}
 	}
 
@@ -99,9 +106,13 @@ export class InsertTextBuilder {
 		if (defaultValues.length === 0) {
 			this.#ans += `$\{${this.#nextPlaceholder}}`
 		} else if (defaultValues.length === 1) {
-			this.#ans += `$\{${this.#nextPlaceholder}:${CompletionItem.escape(defaultValues[0])}}`
+			this.#ans += `$\{${this.#nextPlaceholder}:${CompletionItem.escape(
+				defaultValues[0],
+			)}}`
 		} else {
-			this.#ans += `$\{${this.#nextPlaceholder}|${defaultValues.map(v => v.replace(/([\\$},|])/g, '\\$1')).join(',')}|}`
+			this.#ans += `$\{${this.#nextPlaceholder}|${defaultValues
+				.map((v) => v.replace(/([\\$},|])/g, '\\$1'))
+				.join(',')}|}`
 		}
 		this.#nextPlaceholder += 1
 		return this

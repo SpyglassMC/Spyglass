@@ -2,18 +2,20 @@ import type { OffsetLike } from './Offset.js'
 import { Offset } from './Offset.js'
 
 export type RangeLike =
-	| Range | RangeContainer | OffsetLike
+	| Range
+	| RangeContainer
+	| OffsetLike
 	| ((this: void) => Range | RangeContainer | OffsetLike)
 
 export interface Range {
-	start: number,
+	start: number
 	end: number
 }
 
 export namespace Range {
 	/**
 	 * Gets a range from `RangeLike`.
-	 * 
+	 *
 	 * @returns
 	 * - `Range`: a clone of it.
 	 * - `RangeContainer`: a clone of its range.
@@ -23,7 +25,8 @@ export namespace Range {
 		const evaluated = typeof range === 'function' ? range() : range
 		if (Range.is(evaluated)) {
 			return Range.create(evaluated.start, evaluated.end)
-		} if (RangeContainer.is(evaluated)) {
+		}
+		if (RangeContainer.is(evaluated)) {
 			return Range.create(evaluated.range.start, evaluated.range.end)
 		}
 		return Range.create(evaluated)
@@ -52,7 +55,8 @@ export namespace Range {
 
 	export function is(obj: unknown): obj is Range {
 		return (
-			!!obj && typeof obj === 'object' &&
+			!!obj &&
+			typeof obj === 'object' &&
 			typeof (obj as Range).start === 'number' &&
 			typeof (obj as Range).end === 'number'
 		)
@@ -76,12 +80,23 @@ export namespace Range {
 		return `[${range.start}, ${range.end})`
 	}
 
-	export function contains(range: RangeLike, offset: number, endInclusive = false): boolean {
+	export function contains(
+		range: RangeLike,
+		offset: number,
+		endInclusive = false,
+	): boolean {
 		range = get(range)
-		return range.start <= offset && (endInclusive ? offset <= range.end : offset < range.end)
+		return (
+			range.start <= offset &&
+			(endInclusive ? offset <= range.end : offset < range.end)
+		)
 	}
 
-	export function containsRange(a: RangeLike, b: RangeLike, endInclusive = false): boolean {
+	export function containsRange(
+		a: RangeLike,
+		b: RangeLike,
+		endInclusive = false,
+	): boolean {
 		a = get(a)
 		b = get(b)
 		return contains(a, b.start, endInclusive) && contains(a, b.end, true)
@@ -95,7 +110,11 @@ export namespace Range {
 		return a.start === b.start && a.end === b.end
 	}
 
-	export function endsBefore(range: Range, target: RangeLike, endInclusive = false): boolean {
+	export function endsBefore(
+		range: Range,
+		target: RangeLike,
+		endInclusive = false,
+	): boolean {
 		return endInclusive
 			? range.end < Range.get(target).start
 			: range.end <= Range.get(target).start
@@ -126,7 +145,11 @@ export namespace Range {
 	/**
 	 * @returns Negative when `range` is before `offset`, `0` if it {@link contains} `offset`, and positive if it's after.
 	 */
-	export function compareOffset(range: Range, offset: number, endInclusive = false): number {
+	export function compareOffset(
+		range: Range,
+		offset: number,
+		endInclusive = false,
+	): number {
 		if (endInclusive ? range.end < offset : range.end <= offset) {
 			return -1
 		} else if (range.start > offset) {
@@ -141,7 +164,11 @@ export namespace Range {
 	 * @param endOffset The number to offset the end of the `range`. Default: `startOffset`.
 	 * @returns A copy of `range`.
 	 */
-	export function translate(range: RangeLike, startOffset: number, endOffset = startOffset): Range {
+	export function translate(
+		range: RangeLike,
+		startOffset: number,
+		endOffset = startOffset,
+	): Range {
 		range = get(range)
 		return {
 			start: range.start + startOffset,
@@ -151,13 +178,14 @@ export namespace Range {
 }
 
 export interface RangeContainer {
-	range: Range,
-	[key: string]: any,
+	range: Range
+	[key: string]: any
 }
 export namespace RangeContainer {
 	export function is(obj: unknown): obj is RangeContainer {
 		return (
-			!!obj && typeof obj === 'object' &&
+			!!obj &&
+			typeof obj === 'object' &&
 			Range.is((obj as RangeContainer).range)
 		)
 	}

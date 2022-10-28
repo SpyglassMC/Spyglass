@@ -1,13 +1,26 @@
-import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
+import {
+	decode as arrayBufferFromBase64,
+	encode as arrayBufferToBase64,
+} from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
 import { Uri } from '../index.js'
-import type { ExternalDownloader, ExternalDownloaderOptions, RemoteUriString } from './downloader.js'
-import type { ExternalEventEmitter, ExternalFileSystem, Externals, FsLocation, FsWatcher } from './index.js'
+import type {
+	ExternalDownloader,
+	ExternalDownloaderOptions,
+	RemoteUriString,
+} from './downloader.js'
+import type {
+	ExternalEventEmitter,
+	ExternalFileSystem,
+	Externals,
+	FsLocation,
+	FsWatcher,
+} from './index.js'
 
 type Listener = (...args: unknown[]) => unknown
 class BrowserEventEmitter implements ExternalEventEmitter {
-	#listeners = new Map<string, { all: Set<Listener>, once: Set<Listener> }>()
+	#listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
 
 	emit(eventName: string, ...args: unknown[]): boolean {
 		const listeners = this.#listeners.get(eventName)
@@ -45,7 +58,10 @@ class BrowserEventEmitter implements ExternalEventEmitter {
 }
 
 class BrowserExternalDownloader implements ExternalDownloader {
-	async get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
+	async get(
+		uri: RemoteUriString,
+		options: ExternalDownloaderOptions = {},
+	): Promise<Uint8Array> {
 		const headers = new Headers()
 		for (const [name, value] of Object.entries(options?.headers ?? {})) {
 			const values = typeof value === 'string' ? [value] : value
@@ -80,21 +96,27 @@ class BrowserFsWatcher implements FsWatcher {
 		return this
 	}
 
-	async close(): Promise<void> {
-
-	}
+	async close(): Promise<void> {}
 }
 
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
-	private states: Record<string, { type: 'file', content: string } | { type: 'directory' }>
+	private states: Record<
+		string,
+		{ type: 'file'; content: string } | { type: 'directory' }
+	>
 
 	constructor() {
-		this.states = JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
+		this.states = JSON.parse(
+			localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}',
+		)
 	}
 
 	private saveStates() {
-		localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
+		localStorage.setItem(
+			BrowserFileSystem.LocalStorageKey,
+			JSON.stringify(this.states),
+		)
 	}
 
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
@@ -103,7 +125,12 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async getAllFiles(_location: FsLocation): Promise<string[]> {
 		return []
 	}
-	async mkdir(location: FsLocation, _options?: { mode?: number | undefined, recursive?: boolean | undefined } | undefined): Promise<void> {
+	async mkdir(
+		location: FsLocation,
+		_options?:
+			| { mode?: number | undefined; recursive?: boolean | undefined }
+			| undefined,
+	): Promise<void> {
 		location = fileUtil.ensureEndingSlash(location.toString())
 		if (this.states[location]) {
 			throw new Error(`EEXIST: ${location}`)
@@ -124,7 +151,9 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async showFile(_path: FsLocation): Promise<void> {
 		throw new Error('showFile not supported on browser')
 	}
-	async stat(location: FsLocation): Promise<{ isDirectory(): boolean, isFile(): boolean }> {
+	async stat(
+		location: FsLocation,
+	): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
@@ -147,7 +176,11 @@ class BrowserFileSystem implements ExternalFileSystem {
 	watch(_location: FsLocation): FsWatcher {
 		return new BrowserFsWatcher()
 	}
-	async writeFile(location: FsLocation, data: string | Uint8Array, _options?: { mode: number } | undefined): Promise<void> {
+	async writeFile(
+		location: FsLocation,
+		data: string | Uint8Array,
+		_options?: { mode: number } | undefined,
+	): Promise<void> {
 		location = location.toString()
 		if (typeof data === 'string') {
 			data = new TextEncoder().encode(data)

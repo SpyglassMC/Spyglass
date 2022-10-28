@@ -1,13 +1,14 @@
 import { ReadonlySource } from './Source.js'
 
 export type OffsetLike =
-	| number | ReadonlySource
+	| number
+	| ReadonlySource
 	| ((this: void) => number | ReadonlySource)
 
 export namespace Offset {
 	/**
 	 * Get an offset from a `OffsetLike`.
-	 * 
+	 *
 	 * @returns
 	 * - `number`: itself.
 	 * - `Source`: its `cursor`.

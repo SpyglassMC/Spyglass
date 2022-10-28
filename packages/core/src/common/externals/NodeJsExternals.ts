@@ -15,7 +15,11 @@ import url from 'node:url'
 import { promisify } from 'node:util'
 import zlib from 'node:zlib'
 import { promisifyAsyncIterable, Uri } from '../util.js'
-import type { ExternalDownloader, ExternalDownloaderOptions, RemoteUriString } from './downloader.js'
+import type {
+	ExternalDownloader,
+	ExternalDownloaderOptions,
+	RemoteUriString,
+} from './downloader.js'
 import type { Externals, FsLocation, FsWatcher } from './index.js'
 
 const { http, https } = followRedirects
@@ -23,15 +27,22 @@ const gunzip = promisify(zlib.gunzip)
 const gzip = promisify(zlib.gzip)
 
 class NodeJsExternalDownloader implements ExternalDownloader {
-	get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
+	get(
+		uri: RemoteUriString,
+		options: ExternalDownloaderOptions = {},
+	): Promise<Uint8Array> {
 		const protocol = new Uri(uri).protocol
 		return new Promise((resolve, reject) => {
 			const backend = protocol === 'http:' ? http : https
 			backend.get(uri, options, (res: IncomingMessage) => {
 				if (res.statusCode !== 200) {
-					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
+					reject(
+						new Error(`Status code ${res.statusCode}: ${res.statusMessage}`),
+					)
 				} else {
-					resolve(promisifyAsyncIterable(res, chunks => Buffer.concat(chunks)))
+					resolve(
+						promisifyAsyncIterable(res, (chunks) => Buffer.concat(chunks)),
+					)
 				}
 			})
 		})
@@ -44,7 +55,9 @@ export const NodeJsExternals: Externals = {
 			if (buffer instanceof Buffer) {
 				return decompress(buffer, { strip: options?.stripLevel })
 			}
-			throw new TypeError(`The 'buffer' argument for 'decompressBall' on Node.js must be an instance of 'Buffer'. Got '${buffer}' instead.`)
+			throw new TypeError(
+				`The 'buffer' argument for 'decompressBall' on Node.js must be an instance of 'Buffer'. Got '${buffer}' instead.`,
+			)
 		},
 		gunzip(buffer) {
 			return gunzip(buffer)
@@ -74,10 +87,12 @@ export const NodeJsExternals: Externals = {
 			return fsp.chmod(toFsPathLike(location), mode)
 		},
 		async getAllFiles(location) {
-			return (await globby(toPath(location) + '**/*', { absolute: true, dot: true })).map(uriFromPath)
+			return (
+				await globby(toPath(location) + '**/*', { absolute: true, dot: true })
+			).map(uriFromPath)
 		},
 		async mkdir(location, options) {
-			return void await fsp.mkdir(toFsPathLike(location), options)
+			return void (await fsp.mkdir(toFsPathLike(location), options))
 		},
 		readFile(location) {
 			return fsp.readFile(toFsPathLike(location))
@@ -96,7 +111,7 @@ export const NodeJsExternals: Externals = {
 					command = 'xdg-open'
 					break
 			}
-			return void await execFile(command, [toPath(location)])
+			return void (await execFile(command, [toPath(location)]))
 		},
 		stat(location) {
 			return fsp.stat(toFsPathLike(location))
@@ -142,10 +157,10 @@ class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
 		super()
 		this.#watcher = watcher
 			.on('ready', () => this.emit('ready'))
-			.on('add', path => this.emit('add', uriFromPath(path)))
-			.on('change', path => this.emit('change', uriFromPath(path)))
-			.on('unlink', path => this.emit('unlink', uriFromPath(path)))
-			.on('error', e => this.emit('error', e))
+			.on('add', (path) => this.emit('add', uriFromPath(path)))
+			.on('change', (path) => this.emit('change', uriFromPath(path)))
+			.on('unlink', (path) => this.emit('unlink', uriFromPath(path)))
+			.on('error', (e) => this.emit('error', e))
 	}
 
 	close(): Promise<void> {

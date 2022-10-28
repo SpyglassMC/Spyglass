@@ -7,7 +7,9 @@ import type { InfallibleParser } from './Parser.js'
 
 export function literal(...pool: string[]): InfallibleParser<LiteralNode>
 export function literal(options: LiteralOptions): InfallibleParser<LiteralNode>
-export function literal(...param: [LiteralOptions] | string[]): InfallibleParser<LiteralNode> {
+export function literal(
+	...param: [LiteralOptions] | string[]
+): InfallibleParser<LiteralNode> {
 	const options = getOptions(param)
 	return (src: Source, ctx: ParserContext): LiteralNode => {
 		const ans: LiteralNode = {

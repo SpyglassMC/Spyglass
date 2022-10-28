@@ -3,7 +3,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 
 /**
  * A parser that takes a continuous sequence of spaces and tabs, and marks an error if it is not a single space.
- * 
+ *
  * @returns The accepted spaces and tabs.
  */
 export const sep: core.InfallibleParser<string> = (src, ctx): string => {
@@ -12,7 +12,7 @@ export const sep: core.InfallibleParser<string> = (src, ctx): string => {
 	if (ans !== ' ') {
 		ctx.err.report(
 			localize('expected', localize('mcfunction.parser.sep', localeQuote(' '))),
-			core.Range.create(start, src)
+			core.Range.create(start, src),
 		)
 	}
 	return ans

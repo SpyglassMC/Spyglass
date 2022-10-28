@@ -8,7 +8,13 @@ import envPaths from 'env-paths'
 import url from 'url'
 import * as util from 'util'
 import * as ls from 'vscode-languageserver/node.js'
-import type { CustomInitializationOptions, CustomServerCapabilities, MyLspDataHackPubifyRequestParams, MyLspInlayHint, MyLspInlayHintRequestParams } from './util/index.js'
+import type {
+	CustomInitializationOptions,
+	CustomServerCapabilities,
+	MyLspDataHackPubifyRequestParams,
+	MyLspInlayHint,
+	MyLspInlayHintRequestParams,
+} from './util/index.js'
 import { toCore, toLS } from './util/index.js'
 
 export * from './util/types.js'
@@ -30,30 +36,46 @@ let progressReporter: ls.WorkDoneProgressReporter | undefined
 
 const externals = NodeJsExternals
 const logger: core.Logger = {
-	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
-	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
-	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
-	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
+	error: (msg: any, ...args: any[]): void =>
+		connection.console.error(util.format(msg, ...args)),
+	info: (msg: any, ...args: any[]): void =>
+		connection.console.info(util.format(msg, ...args)),
+	log: (msg: any, ...args: any[]): void =>
+		connection.console.log(util.format(msg, ...args)),
+	warn: (msg: any, ...args: any[]): void =>
+		connection.console.warn(util.format(msg, ...args)),
 }
 let service!: core.Service
 
-connection.onInitialize(async params => {
-	const initializationOptions = params.initializationOptions as CustomInitializationOptions | undefined
+connection.onInitialize(async (params) => {
+	const initializationOptions = params.initializationOptions as
+		| CustomInitializationOptions
+		| undefined
 
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
-	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`)
-	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
+	logger.info(
+		`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`,
+	)
+	logger.info(
+		`[onInitialize] initializationOptions = ${JSON.stringify(
+			initializationOptions,
+		)}`,
+	)
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
 
 	if (initializationOptions?.inDevelopmentMode) {
-		await new Promise(resolve => setTimeout(resolve, 3000))
-		logger.warn('Delayed 3 seconds manually. If you see this in production, it means SPGoding messed up.')
+		await new Promise((resolve) => setTimeout(resolve, 3000))
+		logger.warn(
+			'Delayed 3 seconds manually. If you see this in production, it means SPGoding messed up.',
+		)
 	}
 
 	if (params.workDoneToken) {
-		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
+		progressReporter = connection.window.attachWorkDoneProgress(
+			params.workDoneToken,
+		)
 		progressReporter.begin(locales.localize('server.progress.preparing.title'))
 	}
 
@@ -75,12 +97,11 @@ connection.onInitialize(async params => {
 				'project#ready#bind',
 			]),
 			project: {
-				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
+				cacheRoot: fileUtil.ensureEndingSlash(
+					url.pathToFileURL(cacheRoot).toString(),
+				),
 				externals,
-				initializers: [
-					mcdoc.initialize,
-					je.initialize,
-				],
+				initializers: [mcdoc.initialize, je.initialize],
 				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
 			},
 		})
@@ -169,28 +190,38 @@ connection.onInitialized(async () => {
 	}
 })
 
-connection.onDidOpenTextDocument(({ textDocument: { text, uri, version, languageId: languageID } }) => {
-	return service.project.onDidOpen(uri, languageID, version, text)
-})
-connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, version } }) => {
-	return service.project.onDidChange(uri, contentChanges, version)
-})
+connection.onDidOpenTextDocument(
+	({ textDocument: { text, uri, version, languageId: languageID } }) => {
+		return service.project.onDidOpen(uri, languageID, version, text)
+	},
+)
+connection.onDidChangeTextDocument(
+	({ contentChanges, textDocument: { uri, version } }) => {
+		return service.project.onDidChange(uri, contentChanges, version)
+	},
+)
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
 
-connection.workspace.onDidRenameFiles(({ }) => {
-})
+connection.workspace.onDidRenameFiles(({}) => {})
 
-connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
-	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
-		return undefined
-	}
-	const { doc, node } = docAndNode
-	const presentation = service.getColorPresentation(node, doc, toCore.range(range, doc), toCore.color(color))
-	return toLS.colorPresentationArray(presentation, doc)
-})
+connection.onColorPresentation(
+	async ({ textDocument: { uri }, color, range }) => {
+		const docAndNode = await service.project.ensureClientManagedChecked(uri)
+		if (!docAndNode) {
+			return undefined
+		}
+		const { doc, node } = docAndNode
+		const presentation = service.getColorPresentation(
+			node,
+			doc,
+			toCore.range(range, doc),
+			toCore.color(color),
+		)
+		return toLS.colorPresentationArray(presentation, doc)
+	},
+)
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
@@ -201,20 +232,33 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	return toLS.colorInformationArray(info, doc)
 })
 
-connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
-	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
-		return undefined
-	}
-	const { doc, node } = docAndNode
-	const offset = toCore.offset(position, doc)
-	const items = service.complete(node, doc, offset, context?.triggerCharacter)
-	return items.map(item => toLS.completionItem(item, doc, offset, capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport))
-})
+connection.onCompletion(
+	async ({ textDocument: { uri }, position, context }) => {
+		const docAndNode = await service.project.ensureClientManagedChecked(uri)
+		if (!docAndNode) {
+			return undefined
+		}
+		const { doc, node } = docAndNode
+		const offset = toCore.offset(position, doc)
+		const items = service.complete(node, doc, offset, context?.triggerCharacter)
+		return items.map((item) =>
+			toLS.completionItem(
+				item,
+				doc,
+				offset,
+				capabilities.textDocument?.completion?.completionItem
+					?.insertReplaceSupport,
+			),
+		)
+	},
+)
 
-connection.onRequest('spyglassmc/dataHackPubify', ({ initialism }: MyLspDataHackPubifyRequestParams) => {
-	return service.dataHackPubify(initialism)
-})
+connection.onRequest(
+	'spyglassmc/dataHackPubify',
+	({ initialism }: MyLspDataHackPubifyRequestParams) => {
+		return service.dataHackPubify(initialism)
+	},
+)
 
 connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -222,8 +266,17 @@ connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['declaration', 'definition'])
-	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
+	const ans = await service.getSymbolLocations(
+		node,
+		doc,
+		toCore.offset(position, doc),
+		['declaration', 'definition'],
+	)
+	return toLS.locationLink(
+		ans,
+		doc,
+		capabilities.textDocument?.declaration?.linkSupport,
+	)
 })
 connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -231,8 +284,17 @@ connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['definition', 'declaration', 'implementation', 'typeDefinition'])
-	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
+	const ans = await service.getSymbolLocations(
+		node,
+		doc,
+		toCore.offset(position, doc),
+		['definition', 'declaration', 'implementation', 'typeDefinition'],
+	)
+	return toLS.locationLink(
+		ans,
+		doc,
+		capabilities.textDocument?.definition?.linkSupport,
+	)
 })
 connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -240,26 +302,55 @@ connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['implementation', 'definition'])
-	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
+	const ans = await service.getSymbolLocations(
+		node,
+		doc,
+		toCore.offset(position, doc),
+		['implementation', 'definition'],
+	)
+	return toLS.locationLink(
+		ans,
+		doc,
+		capabilities.textDocument?.implementation?.linkSupport,
+	)
 })
-connection.onReferences(async ({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
-	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
-		return undefined
-	}
-	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), includeDeclaration ? undefined : ['reference'])
-	return toLS.locationLink(ans, doc, false)
-})
+connection.onReferences(
+	async ({
+		textDocument: { uri },
+		position,
+		context: { includeDeclaration },
+	}) => {
+		const docAndNode = await service.project.ensureClientManagedChecked(uri)
+		if (!docAndNode) {
+			return undefined
+		}
+		const { doc, node } = docAndNode
+		const ans = await service.getSymbolLocations(
+			node,
+			doc,
+			toCore.offset(position, doc),
+			includeDeclaration ? undefined : ['reference'],
+		)
+		return toLS.locationLink(ans, doc, false)
+	},
+)
 connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), ['typeDefinition'])
-	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
+	const ans = await service.getSymbolLocations(
+		node,
+		doc,
+		toCore.offset(position, doc),
+		['typeDefinition'],
+	)
+	return toLS.locationLink(
+		ans,
+		doc,
+		capabilities.textDocument?.typeDefinition?.linkSupport,
+	)
 })
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
@@ -268,7 +359,13 @@ connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), undefined, true)
+	const ans = await service.getSymbolLocations(
+		node,
+		doc,
+		toCore.offset(position, doc),
+		undefined,
+		true,
+	)
 	return toLS.documentHighlight(ans)
 })
 
@@ -281,8 +378,9 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 	return toLS.documentSymbolsFromTables(
 		[service.project.symbols.global, ...core.AstNode.getLocalsToLeaves(node)],
 		doc,
-		capabilities.textDocument?.documentSymbol?.hierarchicalDocumentSymbolSupport,
-		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
+		capabilities.textDocument?.documentSymbol
+			?.hierarchicalDocumentSymbolSupport,
+		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet,
 	)
 })
 
@@ -296,19 +394,28 @@ connection.onHover(async ({ textDocument: { uri }, position }) => {
 	return ans ? toLS.hover(ans, doc) : undefined
 })
 
-connection.onRequest('spyglassmc/inlayHints', async ({ textDocument: { uri }, range }: MyLspInlayHintRequestParams): Promise<MyLspInlayHint[]> => {
-	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
-		return []
-	}
-	const { doc, node } = docAndNode
-	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
-	return toLS.inlayHints(hints, doc)
-})
+connection.onRequest(
+	'spyglassmc/inlayHints',
+	async ({
+		textDocument: { uri },
+		range,
+	}: MyLspInlayHintRequestParams): Promise<MyLspInlayHint[]> => {
+		const docAndNode = await service.project.ensureClientManagedChecked(uri)
+		if (!docAndNode) {
+			return []
+		}
+		const { doc, node } = docAndNode
+		const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
+		return toLS.inlayHints(hints, doc)
+	},
+)
 
-connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
-	return service.project.resetCache()
-})
+connection.onRequest(
+	'spyglassmc/resetProjectCache',
+	async (): Promise<void> => {
+		return service.project.resetCache()
+	},
+)
 
 connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 	return service.project.showCacheRoot()
@@ -321,17 +428,27 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 	}
 	const { doc, node } = docAndNode
 	const tokens = service.colorize(node, doc)
-	return toLS.semanticTokens(tokens, doc, capabilities.textDocument?.semanticTokens?.multilineTokenSupport)
+	return toLS.semanticTokens(
+		tokens,
+		doc,
+		capabilities.textDocument?.semanticTokens?.multilineTokenSupport,
+	)
 })
-connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
-	const docAndNode = await service.project.ensureClientManagedChecked(uri)
-	if (!docAndNode) {
-		return { data: [] }
-	}
-	const { doc, node } = docAndNode
-	const tokens = service.colorize(node, doc, toCore.range(range, doc))
-	return toLS.semanticTokens(tokens, doc, capabilities.textDocument?.semanticTokens?.multilineTokenSupport)
-})
+connection.languages.semanticTokens.onRange(
+	async ({ textDocument: { uri }, range }) => {
+		const docAndNode = await service.project.ensureClientManagedChecked(uri)
+		if (!docAndNode) {
+			return { data: [] }
+		}
+		const { doc, node } = docAndNode
+		const tokens = service.colorize(node, doc, toCore.range(range, doc))
+		return toLS.semanticTokens(
+			tokens,
+			doc,
+			capabilities.textDocument?.semanticTokens?.multilineTokenSupport,
+		)
+	},
+)
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -345,8 +462,9 @@ connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 
 connection.onWorkspaceSymbol(({ query }) => {
 	return toLS.symbolInformationArrayFromTable(
-		service.project.symbols.global, query,
-		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet
+		service.project.symbols.global,
+		query,
+		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet,
 	)
 })
 
@@ -370,7 +488,9 @@ connection.onShutdown(async (): Promise<void> => {
 connection.onExit((): void => {
 	connection.dispose()
 	if (!hasShutdown) {
-		console.error('The server has not finished the shutdown request before receiving the exit request.')
+		console.error(
+			'The server has not finished the shutdown request before receiving the exit request.',
+		)
 		process.exitCode = 1
 	}
 })

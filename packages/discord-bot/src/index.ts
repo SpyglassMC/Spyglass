@@ -1,13 +1,36 @@
-import { SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandStringOption } from '@discordjs/builders'
+import {
+	SlashCommandBooleanOption,
+	SlashCommandBuilder,
+	SlashCommandStringOption,
+} from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
-import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
-import { ConfigService, ErrorSeverity, FileNode, fileUtil, ProfilerFactory, Range, Service, VanillaConfig } from '@spyglassmc/core'
+import type {
+	ColorToken,
+	ColorTokenType,
+	LanguageError,
+} from '@spyglassmc/core'
+import {
+	ConfigService,
+	ErrorSeverity,
+	FileNode,
+	fileUtil,
+	ProfilerFactory,
+	Range,
+	Service,
+	VanillaConfig,
+} from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { Routes } from 'discord-api-types/rest/v9'
 import type { Snowflake } from 'discord.js'
-import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
+import {
+	Client,
+	Intents,
+	MessageActionRow,
+	MessageButton,
+	MessageEmbed,
+} from 'discord.js'
 import { dirname, join } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 
@@ -28,42 +51,43 @@ console.log(`projectPath = ${projectPath}`)
 const config = await loadConfig()
 const rest = new REST({ version: '9' }).setToken(config.token)
 const client = new Client({
-	intents: [
-		Intents.FLAGS.GUILDS,
-	],
+	intents: [Intents.FLAGS.GUILDS],
 })
 const service = new Service({
 	logger: console,
 	profilers,
 	project: {
 		cacheRoot: fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
-		defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
+		defaultConfig: ConfigService.merge(VanillaConfig, {
+			env: { dependencies: [] },
+		}),
 		externals: NodeJsExternals,
-		initializers: [
-			mcdoc.initialize,
-			je.initialize,
-		],
-		projectRoot: fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString()),
+		initializers: [mcdoc.initialize, je.initialize],
+		projectRoot: fileUtil.ensureEndingSlash(
+			pathToFileURL(projectPath).toString(),
+		),
 	},
 })
 const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
 
 interface InteractionInfo {
-	content: string,
-	errors: LanguageError[],
-	activeErrorIndex: number,
-	tokens: readonly ColorToken[],
-	showRaw: boolean,
+	content: string
+	errors: LanguageError[]
+	activeErrorIndex: number
+	tokens: readonly ColorToken[]
+	showRaw: boolean
 }
 const activeInteractions = new Map<Snowflake, InteractionInfo>()
 
-client.on('interactionCreate', async i => {
+client.on('interactionCreate', async (i) => {
 	try {
 		if (i.isButton()) {
 			const info = activeInteractions.get(i.message.id)
 			if (!info) {
 				await i.update({
-					embeds: [new MessageEmbed().setDescription('The interaction has expired!')],
+					embeds: [
+						new MessageEmbed().setDescription('The interaction has expired!'),
+					],
 					components: [],
 				})
 				return
@@ -78,7 +102,10 @@ client.on('interactionCreate', async i => {
 		} else if (i.isCommand()) {
 			switch (i.commandName) {
 				case 'ping':
-					await i.reply({ content: `Pong! Bot to Discord ping ${client.ws.ping} ms`, ephemeral: true })
+					await i.reply({
+						content: `Pong! Bot to Discord ping ${client.ws.ping} ms`,
+						ephemeral: true,
+					})
 					break
 				case 'spy':
 					const command = i.options.getString('command', true)
@@ -104,9 +131,9 @@ await registerCommands()
 __profiler.task('Register Commands').finalize()
 
 interface Config {
-	clientId: string,
-	guildId: string,
-	token: string,
+	clientId: string
+	guildId: string
+	token: string
 }
 
 /**
@@ -114,10 +141,14 @@ interface Config {
  */
 async function loadConfig(): Promise<Config> {
 	const path = join(parentPath, 'config.json')
-	const config = await fileUtil.readJson(NodeJsExternals, path) as Config
-	if (!(typeof config.clientId === 'string' &&
-		typeof config.guildId === 'string' &&
-		typeof config.token === 'string')) {
+	const config = (await fileUtil.readJson(NodeJsExternals, path)) as Config
+	if (
+		!(
+			typeof config.clientId === 'string' &&
+			typeof config.guildId === 'string' &&
+			typeof config.token === 'string'
+		)
+	) {
 		throw new Error(`Bad config: ${JSON.stringify(config)}`)
 	}
 	return config
@@ -133,29 +164,43 @@ async function registerCommands(): Promise<unknown> {
 		.toJSON()
 	const spyCommand = new SlashCommandBuilder()
 		.setName('spy')
-		.setDescription('Renders a mcfunction command. Error reporting coming soon™')
-		.addStringOption(new SlashCommandStringOption()
-			.setName('command')
-			.setDescription('Put a single mcfunction command here')
-			.setRequired(true)
+		.setDescription(
+			'Renders a mcfunction command. Error reporting coming soon™',
 		)
-		.addBooleanOption(new SlashCommandBooleanOption()
-			.setName('showraw')
-			.setDescription('Whether to show the result ANSI code in raw code blocks')
-			.setRequired(false)
+		.addStringOption(
+			new SlashCommandStringOption()
+				.setName('command')
+				.setDescription('Put a single mcfunction command here')
+				.setRequired(true),
+		)
+		.addBooleanOption(
+			new SlashCommandBooleanOption()
+				.setName('showraw')
+				.setDescription(
+					'Whether to show the result ANSI code in raw code blocks',
+				)
+				.setRequired(false),
 		)
 		.toJSON()
 
-	return rest.put(Routes.applicationGuildCommands(config.clientId, config.guildId), { body: [pingCommand, spyCommand] })
+	return rest.put(
+		Routes.applicationGuildCommands(config.clientId, config.guildId),
+		{ body: [pingCommand, spyCommand] },
+	)
 }
 
-async function getInteractionInfo(content: string, showRaw: boolean): Promise<InteractionInfo> {
+async function getInteractionInfo(
+	content: string,
+	showRaw: boolean,
+): Promise<InteractionInfo> {
 	if (activeInteractions.has(content)) {
 		return activeInteractions.get(content)!
 	}
 
 	await service.project.onDidOpen(DocumentUri, 'mcfunction', 0, content)
-	const docAndNode = await service.project.ensureClientManagedChecked(DocumentUri)
+	const docAndNode = await service.project.ensureClientManagedChecked(
+		DocumentUri,
+	)
 	service.project.onDidClose(DocumentUri)
 	if (!docAndNode) {
 		throw new Error('docAndNode is undefined')
@@ -175,16 +220,34 @@ async function getInteractionInfo(content: string, showRaw: boolean): Promise<In
 	}
 }
 
-function getReplyOptions(info: InteractionInfo): { content: string, components: MessageActionRow[], fetchReply: true } {
+function getReplyOptions(info: InteractionInfo): {
+	content: string
+	components: MessageActionRow[]
+	fetchReply: true
+} {
 	const content = getReplyContent(info)
 	return {
-		content: content.length > MaxContentLength
-			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
-			: content,
-		components: info.errors.length > 1 ? [new MessageActionRow().addComponents(
-			new MessageButton().setCustomId('previous').setLabel('Previous Error').setStyle('PRIMARY').setDisabled(info.activeErrorIndex <= 0),
-			new MessageButton().setCustomId('next').setLabel('Next Error').setStyle('PRIMARY').setDisabled(info.activeErrorIndex >= info.errors.length - 1)
-		)] : [],
+		content:
+			content.length > MaxContentLength
+				? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
+				: content,
+		components:
+			info.errors.length > 1
+				? [
+						new MessageActionRow().addComponents(
+							new MessageButton()
+								.setCustomId('previous')
+								.setLabel('Previous Error')
+								.setStyle('PRIMARY')
+								.setDisabled(info.activeErrorIndex <= 0),
+							new MessageButton()
+								.setCustomId('next')
+								.setLabel('Next Error')
+								.setStyle('PRIMARY')
+								.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+						),
+				  ]
+				: [],
 		fetchReply: true,
 	}
 }
@@ -201,7 +264,7 @@ type RenderFormat =
 	| 'reset'
 	| 'underline'
 interface RenderToken {
-	formats: Set<RenderFormat>,
+	formats: Set<RenderFormat>
 	range: Range
 }
 const AnsiCodeMap: Record<RenderFormat, number> = {
@@ -243,19 +306,33 @@ function getReplyContent(info: InteractionInfo): string {
 
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 
-	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${activeError
-		? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(activeError.range)} ${activeError.message}\``
-		: ''}`
+	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
+		activeError
+			? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(
+					activeError.range,
+			  )} ${activeError.message}\``
+			: ''
+	}`
 }
 
 /**
  * @returns Unsorted tokens.
  */
-function toRenderTokens({ tokens, errors, activeErrorIndex }: InteractionInfo): RenderToken[] {
-	const ans: RenderToken[] = tokens.map(t => ({ formats: ColorTokenTypeLegend[t.type], range: t.range }))
+function toRenderTokens({
+	tokens,
+	errors,
+	activeErrorIndex,
+}: InteractionInfo): RenderToken[] {
+	const ans: RenderToken[] = tokens.map((t) => ({
+		formats: ColorTokenTypeLegend[t.type],
+		range: t.range,
+	}))
 	const activeError: LanguageError | undefined = errors[activeErrorIndex]
 	if (activeError) {
-		ans.push({ formats: new Set(['background_orange', 'foreground_white']), range: activeError.range })
+		ans.push({
+			formats: new Set(['background_orange', 'foreground_white']),
+			range: activeError.range,
+		})
 	}
 	return ans
 }
@@ -263,9 +340,13 @@ function toRenderTokens({ tokens, errors, activeErrorIndex }: InteractionInfo): 
 function getAnsiCode(content: string, tokens: RenderToken[]): string {
 	let ans: string = toAnsiEscapeCode(['reset'])
 	tokens = tokens
-		.map(t => t.range.end - t.range.start === 0
-			? { range: { start: t.range.start, end: t.range.start + 1 }, formats: t.formats }
-			: t
+		.map((t) =>
+			t.range.end - t.range.start === 0
+				? {
+						range: { start: t.range.start, end: t.range.start + 1 },
+						formats: t.formats,
+				  }
+				: t,
 		)
 		.sort((a, b) => a.range.start - b.range.start)
 
@@ -287,11 +368,15 @@ function getAnsiCode(content: string, tokens: RenderToken[]): string {
 			}
 			insertedTokens.push({
 				formats: new Set([...current.formats, ...next.formats]),
-				range: { start: next.range.start, end: Math.min(current.range.end, next.range.end) },
+				range: {
+					start: next.range.start,
+					end: Math.min(current.range.end, next.range.end),
+				},
 			})
 			if (current.range.end !== next.range.end) {
 				insertedTokens.push({
-					formats: current.range.end < next.range.end ? next.formats : current.formats,
+					formats:
+						current.range.end < next.range.end ? next.formats : current.formats,
 					range: {
 						start: Math.min(current.range.end, next.range.end),
 						end: Math.max(current.range.end, next.range.end),
@@ -314,8 +399,10 @@ function getAnsiCode(content: string, tokens: RenderToken[]): string {
 	return ans
 }
 
-function toAnsiEscapeCode(formats: Iterable<RenderFormat>): `\u001b[${string}m` {
-	return `\u001b[${[...formats].map(v => AnsiCodeMap[v]).join(';')}m`
+function toAnsiEscapeCode(
+	formats: Iterable<RenderFormat>,
+): `\u001b[${string}m` {
+	return `\u001b[${[...formats].map((v) => AnsiCodeMap[v]).join(';')}m`
 }
 
 function errorSeverityToChar(severity: ErrorSeverity): string {

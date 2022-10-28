@@ -11,7 +11,14 @@ const Locales: Record<string, Locale> = {
 
 let language = 'en'
 
-type Parameter = string | number | boolean | bigint | RegExp | Date | Iterable<string>
+type Parameter =
+	| string
+	| number
+	| boolean
+	| bigint
+	| RegExp
+	| Date
+	| Iterable<string>
 
 /**
  * @param key The locale key.
@@ -38,11 +45,17 @@ export async function loadLocale(locale = 'en'): Promise<void> {
 	}
 }
 
-function _resolveLocalePlaceholders(val: string | undefined, params: Parameter[]): string | undefined {
-	return val?.replace(/%\d+%/g, match => {
+function _resolveLocalePlaceholders(
+	val: string | undefined,
+	params: Parameter[],
+): string | undefined {
+	return val?.replace(/%\d+%/g, (match) => {
 		const index = parseInt(match.slice(1, -1))
 		let param: Parameter | undefined = params[index]
-		if (typeof param !== 'string' && (param as Iterable<string>)?.[Symbol.iterator]) {
+		if (
+			typeof param !== 'string' &&
+			(param as Iterable<string>)?.[Symbol.iterator]
+		) {
 			param = arrayToMessage(param as Iterable<string>)
 		}
 		return `${param ?? match}`
@@ -74,10 +87,15 @@ async function _setupLanguage(code: string) {
  * arrayToMessage(['A', 'B'], false) // "A{conjunction.or_2}B"
  * arrayToMessage(['A', 'B', 'C'], false) // "A{conjunction.or_3+_1}B{conjunction.or_3+_2}C"
  */
-export function arrayToMessage(param: string | Iterable<string>, quoted = true, conjunction: 'and' | 'or' = 'or') {
-	const getPart = (str: string) => quoted ? localeQuote(str) : str
-	const arr = (typeof param === 'string' ? [param] : Array.from(param))
-		.map(getPart)
+export function arrayToMessage(
+	param: string | Iterable<string>,
+	quoted = true,
+	conjunction: 'and' | 'or' = 'or',
+) {
+	const getPart = (str: string) => (quoted ? localeQuote(str) : str)
+	const arr = (typeof param === 'string' ? [param] : Array.from(param)).map(
+		getPart,
+	)
 	switch (arr.length) {
 		case 0:
 			return localize('nothing')
@@ -86,6 +104,10 @@ export function arrayToMessage(param: string | Iterable<string>, quoted = true, 
 		case 2:
 			return arr[0] + localize(`conjunction.${conjunction}_2`) + arr[1]
 		default:
-			return `${arr.slice(0, -1).join(localize(`conjunction.${conjunction}_3+_1`))}${localize(`conjunction.${conjunction}_3+_2`)}${arr[arr.length - 1]}`
+			return `${arr
+				.slice(0, -1)
+				.join(localize(`conjunction.${conjunction}_3+_1`))}${localize(
+				`conjunction.${conjunction}_3+_2`,
+			)}${arr[arr.length - 1]}`
 	}
 }

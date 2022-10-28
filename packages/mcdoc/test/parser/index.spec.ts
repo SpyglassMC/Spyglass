@@ -1,8 +1,15 @@
 import type { Parser } from '@spyglassmc/core'
-import { showWhitespaceGlyph, snapshotWithUri, testParser } from '@spyglassmc/core/test-out/utils.js'
+import {
+	showWhitespaceGlyph,
+	snapshotWithUri,
+	testParser,
+} from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 
-const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { content: string[], functionParams?: readonly unknown[] }>> = {
+const Suites: Record<
+	'terminator' | 'syntax' | 'syntax/type',
+	Record<string, { content: string[]; functionParams?: readonly unknown[] }>
+> = {
 	terminator: {
 		comment: {
 			content: [
@@ -24,12 +31,7 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 			],
 		},
 		float: {
-			content: [
-				'',
-				'-1.4',
-				'0',
-				'.7e+3',
-			],
+			content: ['', '-1.4', '0', '.7e+3'],
 		},
 		floatRange: {
 			content: [
@@ -57,12 +59,7 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 			],
 		},
 		integer: {
-			content: [
-				'',
-				'-1',
-				'0',
-				'1',
-			],
+			content: ['', '-1', '0', '1'],
 		},
 		intRange: {
 			content: [
@@ -79,12 +76,7 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 		},
 		literal: {
 			functionParams: ['foo'],
-			content: [
-				'',
-				'foo',
-				'foobar',
-				'foo something else;',
-			],
+			content: ['', 'foo', 'foobar', 'foo something else;'],
 		},
 		path: {
 			content: [
@@ -111,15 +103,7 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 			],
 		},
 		string: {
-			content: [
-				'',
-				'foo',
-				'"foo',
-				'"foo"',
-				'"fo\no"',
-				'"fo\\no"',
-				'"fo\\Ao"',
-			],
+			content: ['', 'foo', '"foo', '"foo"', '"fo\no"', '"fo\\no"', '"fo\\Ao"'],
 		},
 	},
 	syntax: {
@@ -175,19 +159,10 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 	},
 	'syntax/type': {
 		anyType: {
-			content: [
-				'',
-				'other',
-				'any',
-				'#[id] any',
-			],
+			content: ['', 'other', 'any', '#[id] any'],
 		},
 		booleanType: {
-			content: [
-				'',
-				'other',
-				'boolean',
-			],
+			content: ['', 'other', 'boolean'],
 		},
 		dispatcherType: {
 			content: [
@@ -268,20 +243,10 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 			],
 		},
 		referenceType: {
-			content: [
-				'',
-				'#[uuid] UuidMostLeast',
-				'MinMaxBounds<float @ 1..2>',
-			],
+			content: ['', '#[uuid] UuidMostLeast', 'MinMaxBounds<float @ 1..2>'],
 		},
 		stringType: {
-			content: [
-				'',
-				'other',
-				'string',
-				'string @',
-				'string@42..',
-			],
+			content: ['', 'other', 'string', 'string @', 'string@42..'],
 		},
 		struct: {
 			content: [
@@ -346,13 +311,26 @@ const Suites: Record<'terminator' | 'syntax' | 'syntax/type', Record<string, { c
 
 describe('mcdoc parser', async () => {
 	for (const [directory, parserSuites] of Object.entries(Suites)) {
-		for (const [parserName, { functionParams }] of Object.entries(parserSuites)) {
-			const importedParser = (await import('@spyglassmc/mcdoc/lib/parser/index.js') as unknown as Record<string, any>)[parserName]
-			const parser = (functionParams ? importedParser(...functionParams) : importedParser) as Parser
+		for (const [parserName, { functionParams }] of Object.entries(
+			parserSuites,
+		)) {
+			const importedParser = (
+				(await import(
+					'@spyglassmc/mcdoc/lib/parser/index.js'
+				)) as unknown as Record<string, any>
+			)[parserName]
+			const parser = (
+				functionParams ? importedParser(...functionParams) : importedParser
+			) as Parser
 			const describeTitle = `${parserName}${functionParams ? '()' : ''}`
-			const uri = new URL(`./${directory}/${parserName}.spec.js`, import.meta.url)
+			const uri = new URL(
+				`./${directory}/${parserName}.spec.js`,
+				import.meta.url,
+			)
 			describe(describeTitle, () => {
-				for (const content of Suites[directory as keyof typeof Suites][parserName].content) {
+				for (const content of Suites[directory as keyof typeof Suites][
+					parserName
+				].content) {
 					const itTitle = `Parse "${showWhitespaceGlyph(content)}"`
 					it(itTitle, () => {
 						snapshotWithUri({

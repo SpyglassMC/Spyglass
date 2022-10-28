@@ -1,4 +1,7 @@
-import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
+import {
+	showWhitespaceGlyph,
+	testParser,
+} from '@spyglassmc/core/test-out/utils.js'
 import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
@@ -58,7 +61,10 @@ describe('mcfunction parser command()', () => {
 		const content = `execute ${'if true '.repeat(10000)}run `
 		const parser = command(tree, () => undefined)
 		try {
-			snapshot({ node: 'OMITTED', errors: testParser(parser, content, { noNodeReturn: true }).errors })
+			snapshot({
+				node: 'OMITTED',
+				errors: testParser(parser, content, { noNodeReturn: true }).errors,
+			})
 		} catch (e) {
 			fail((e as Error).stack?.slice(0, 500))
 		}

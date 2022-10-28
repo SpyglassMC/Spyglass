@@ -1,18 +1,47 @@
-import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from './type.js'
+import type {
+	ArgumentTreeNode,
+	LiteralTreeNode,
+	RootTreeNode,
+	TreeNode,
+} from './type.js'
 
-export function redirect(rootTreeNode: TreeNode, path: readonly string[]): TreeNode | undefined {
-	return path.reduce<TreeNode | undefined>((p, c) => p?.children?.[c], rootTreeNode)
+export function redirect(
+	rootTreeNode: TreeNode,
+	path: readonly string[],
+): TreeNode | undefined {
+	return path.reduce<TreeNode | undefined>(
+		(p, c) => p?.children?.[c],
+		rootTreeNode,
+	)
 }
 
 /**
  * @returns A `TreeNode` whose `children` property, if exists, contains its subsequent `TreeNode`s.
  */
-export function resolveParentTreeNode(parentTreeNode: TreeNode | undefined, rootTreeNode: RootTreeNode): { treeNode: TreeNode | undefined, path: undefined }
-export function resolveParentTreeNode(parentTreeNode: TreeNode | undefined, rootTreeNode: RootTreeNode, parentPath: string[]): { treeNode: TreeNode | undefined, path: string[] }
-export function resolveParentTreeNode(parentTreeNode: TreeNode | undefined, rootTreeNode: RootTreeNode, parentPath?: string[]): { treeNode: TreeNode | undefined, path: string[] | undefined } {
+export function resolveParentTreeNode(
+	parentTreeNode: TreeNode | undefined,
+	rootTreeNode: RootTreeNode,
+): { treeNode: TreeNode | undefined; path: undefined }
+export function resolveParentTreeNode(
+	parentTreeNode: TreeNode | undefined,
+	rootTreeNode: RootTreeNode,
+	parentPath: string[],
+): { treeNode: TreeNode | undefined; path: string[] }
+export function resolveParentTreeNode(
+	parentTreeNode: TreeNode | undefined,
+	rootTreeNode: RootTreeNode,
+	parentPath?: string[],
+): { treeNode: TreeNode | undefined; path: string[] | undefined } {
 	if (parentTreeNode?.redirect) {
-		return { treeNode: redirect(rootTreeNode, parentTreeNode.redirect), path: [...parentTreeNode.redirect] }
-	} else if (parentTreeNode && !parentTreeNode.children && !parentTreeNode.executable) {
+		return {
+			treeNode: redirect(rootTreeNode, parentTreeNode.redirect),
+			path: [...parentTreeNode.redirect],
+		}
+	} else if (
+		parentTreeNode &&
+		!parentTreeNode.children &&
+		!parentTreeNode.executable
+	) {
 		// The `execute.run` literal tree node doesn't have any property.
 		// We should use children from the root tree node in this case.
 		return { treeNode: rootTreeNode, path: [] }
@@ -24,7 +53,12 @@ export function resolveParentTreeNode(parentTreeNode: TreeNode | undefined, root
 /**
  * Categorize command tree children to literal entries and argument entries.
  */
-export function categorizeTreeChildren(children: Exclude<TreeNode['children'], undefined>): { literalTreeNodes: [string, LiteralTreeNode][], argumentTreeNodes: [string, ArgumentTreeNode][] } {
+export function categorizeTreeChildren(
+	children: Exclude<TreeNode['children'], undefined>,
+): {
+	literalTreeNodes: [string, LiteralTreeNode][]
+	argumentTreeNodes: [string, ArgumentTreeNode][]
+} {
 	const ans = {
 		literalTreeNodes: [] as [string, LiteralTreeNode][],
 		argumentTreeNodes: [] as [string, ArgumentTreeNode][],

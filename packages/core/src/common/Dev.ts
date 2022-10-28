@@ -9,7 +9,11 @@ export const Dev = Object.freeze({
 	},
 	assertTrue(value: boolean, message: string): void {
 		if (!value) {
-			throw new Error(`Assertion failed: ${message}. '${Dev.stringify(value)}' should be true.`)
+			throw new Error(
+				`Assertion failed: ${message}. '${Dev.stringify(
+					value,
+				)}' should be true.`,
+			)
 		}
 	},
 	/**
@@ -28,7 +32,8 @@ export const Dev = Object.freeze({
 			switch (typeof current) {
 				case 'bigint': {
 					const bits = Math.ceil(Math.log2(Number(current)))
-					ans += (2 + Math.ceil(bits / (ByteToBits * PointerSize))) * PointerSize // https://stackoverflow.com/a/54298760
+					ans +=
+						(2 + Math.ceil(bits / (ByteToBits * PointerSize))) * PointerSize // https://stackoverflow.com/a/54298760
 					break
 				}
 				case 'boolean':
@@ -76,7 +81,9 @@ export const Dev = Object.freeze({
 			} catch (ignored) {
 				// Most likely "Maximum callstack size exceeded".
 				// Fall back to a shallow string representation.
-				return `{ ${Object.entries(value).map(([k, v]) => `'${k}': '${String(v)}'`).join(', ')} }`
+				return `{ ${Object.entries(value)
+					.map(([k, v]) => `'${k}': '${String(v)}'`)
+					.join(', ')} }`
 			}
 		} else if (typeof value === 'symbol') {
 			// JavaScript does not convert `Symbol`s to strings implicitly.

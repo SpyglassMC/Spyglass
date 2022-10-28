@@ -15,11 +15,19 @@ export * as completer from './completer/index.js'
 export * as parser from './parser/index.js'
 
 /* istanbul ignore next */
-export const initialize = (ctx: core.ProjectInitializerContext, commands: McmetaCommands, releaseVersion: ReleaseVersion) => {
+export const initialize = (
+	ctx: core.ProjectInitializerContext,
+	commands: McmetaCommands,
+	releaseVersion: ReleaseVersion,
+) => {
 	const { meta } = ctx
 
 	mcf.initialize(ctx)
-	mcf.CommandTreeRegistry.instance.register(releaseVersion, commands, getPatch(releaseVersion))
+	mcf.CommandTreeRegistry.instance.register(
+		releaseVersion,
+		commands,
+		getPatch(releaseVersion),
+	)
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
@@ -33,7 +41,13 @@ export const initialize = (ctx: core.ProjectInitializerContext, commands: Mcmeta
 	meta.registerParser('mcfunction:particle', parser.particle)
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())
-	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.command(mcf.CommandTreeRegistry.instance.get(releaseVersion), parser.argument))
+	meta.registerParser<mcf.CommandNode>(
+		'mcfunction:command',
+		mcf.command(
+			mcf.CommandTreeRegistry.instance.get(releaseVersion),
+			parser.argument,
+		),
+	)
 
 	checker.register(meta)
 	colorizer.register(meta)

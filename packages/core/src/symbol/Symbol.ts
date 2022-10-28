@@ -99,10 +99,11 @@ export const TaggableResourceLocationCategories = Object.freeze([
 	...RegistryCategories,
 	...WorldgenFileCategories,
 ] as const)
-export type TaggableResourceLocationCategory = typeof TaggableResourceLocationCategories[number]
+export type TaggableResourceLocationCategory =
+	typeof TaggableResourceLocationCategories[number]
 
 export const TagFileCategories = Object.freeze(
-	TaggableResourceLocationCategories.map(key => `tag/${key}` as const)
+	TaggableResourceLocationCategories.map((key) => `tag/${key}` as const),
 )
 export type TagFileCategory = typeof TagFileCategories[number]
 
@@ -156,7 +157,9 @@ export const ResourceLocationCategories = Object.freeze([
 export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
 export namespace ResourceLocationCategory {
 	export function is(category: string): category is ResourceLocationCategory {
-		return ResourceLocationCategories.includes(category as ResourceLocationCategory)
+		return ResourceLocationCategories.includes(
+			category as ResourceLocationCategory,
+		)
 	}
 }
 
@@ -173,16 +176,18 @@ export const enum SymbolVisibility {
 }
 
 export interface SymbolPath {
-	category: string,
-	path: readonly string[],
+	category: string
+	path: readonly string[]
 }
 export namespace SymbolPath {
 	export function fromSymbol(symbol: DeepReadonly<Symbol>): SymbolPath
-	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined
-	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined {
-		return symbol
-			? { category: symbol.category, path: symbol.path }
-			: undefined
+	export function fromSymbol(
+		symbol: DeepReadonly<Symbol> | undefined,
+	): SymbolPath | undefined
+	export function fromSymbol(
+		symbol: DeepReadonly<Symbol> | undefined,
+	): SymbolPath | undefined {
+		return symbol ? { category: symbol.category, path: symbol.path } : undefined
 	}
 
 	/**
@@ -219,38 +224,44 @@ export interface SymbolMetadata {
 	/**
 	 * Custom information about this symbol that cannot be expressed by other fields.
 	 */
-	data?: unknown,
+	data?: unknown
 	/**
 	 * The documentation for this {@link Symbol}. May be edited by doc comments.
 	 */
-	desc?: string,
+	desc?: string
 	/**
 	 * A map of symbols that are related to the current symbol. **Only** symbols defined in the global symbol table
 	 * (i.e. visibility is {@link SymbolVisibility.Public} or {@link SymbolVisibility.Restricted}) can be specified in this map.
 	 */
 	relations?: {
-		aliasOf?: SymbolPath,
-		[relationship: string]: SymbolPath | undefined,
-	},
+		aliasOf?: SymbolPath
+		[relationship: string]: SymbolPath | undefined
+	}
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
-	 * subcategories may be used interchangeablely in certain context. e.g. both 
+	 * subcategories may be used interchangeablely in certain context. e.g. both
 	 * mcdoc struct and mcdoc enums can be used to describe the type of a field,
 	 * but cannot be used in a `/function` command, so they should be put in a category
 	 * other than `mcdoc` (like `function`), and with different subcategories.
 	 */
-	subcategory?: string,
+	subcategory?: string
 	/**
 	 * The visibility of this `Symbol`. Defaults to {@link SymbolVisibility.Public}.
 	 */
-	visibility?: SymbolVisibility,
+	visibility?: SymbolVisibility
 	/**
 	 * An array of regular expressions in string form. Only exists if `visibility` is set to {@link SymbolVisibility.Restricted}.
 	 */
-	visibilityRestriction?: string[],
+	visibilityRestriction?: string[]
 }
 
-export const SymbolUsageTypes = Object.freeze(['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const)
+export const SymbolUsageTypes = Object.freeze([
+	'definition',
+	'declaration',
+	'implementation',
+	'reference',
+	'typeDefinition',
+] as const)
 export type SymbolUsageType = typeof SymbolUsageTypes[number]
 export namespace SymbolUsageType {
 	export function is(value: unknown): value is SymbolUsageType {
@@ -258,23 +269,29 @@ export namespace SymbolUsageType {
 	}
 }
 
-export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
+export interface Symbol
+	extends SymbolMetadata,
+		Partial<Record<SymbolUsageType, SymbolLocation[]>> {
 	/**
 	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
 	 */
-	category: string,
-	identifier: string,
-	members?: SymbolMap,
-	parentMap: SymbolMap,
+	category: string
+	identifier: string
+	members?: SymbolMap
+	parentMap: SymbolMap
 	/**
 	 * The parent symbol of this symbol. Does not exist if the current symbol is not a member of another symbol.
 	 */
-	parentSymbol?: Symbol,
-	path: readonly string[],
+	parentSymbol?: Symbol
+	path: readonly string[]
 }
 export namespace Symbol {
-	export function get(table: SymbolTable | Iterable<SymbolTable>, category: AllCategory, ...path: [string, ...string[]]): Symbol | undefined {
+	export function get(
+		table: SymbolTable | Iterable<SymbolTable>,
+		category: AllCategory,
+		...path: [string, ...string[]]
+	): Symbol | undefined {
 		if (isIterable(table)) {
 			for (const t of table) {
 				const result = get(t, category, ...path)
@@ -286,7 +303,6 @@ export namespace Symbol {
 		}
 		const map = table[category]
 		for (const p of path) {
-
 		}
 		return undefined
 	}
@@ -296,11 +312,11 @@ export interface SymbolLocationMetadata {
 	/**
 	 * @default SymbolAccessType.Read
 	 */
-	accessType?: SymbolAccessType,
+	accessType?: SymbolAccessType
 	/**
 	 * Whether this symbol location should be skipped during renaming.
 	 */
-	skipRenaming?: boolean,
+	skipRenaming?: boolean
 }
 
 /**
@@ -316,20 +332,20 @@ export type SymbolLocationBuiltInContributor =
 	| `symbol_registrar/${string}`
 
 export interface SymbolLocation extends SymbolLocationMetadata {
-	uri: string,
+	uri: string
 	/**
 	 * The range of this symbol usage. It should contain exactly the symbol identifier itself, with no
 	 * whitespaces whatsoever included.
-	 * 
+	 *
 	 * Does not exist for non-file URIs.
 	 */
-	range?: Range,
+	range?: Range
 	/**
 	 * The same range as `range`, but in `PositionRange` form.
-	 * 
+	 *
 	 * Does not exist for non-file URIs.
 	 */
-	posRange?: PositionRange,
+	posRange?: PositionRange
 	/**
 	 * The range of the full declaration/implementation of this `Symbol`. For example, for the following piece of
 	 * mcdoc code,
@@ -337,71 +353,98 @@ export interface SymbolLocation extends SymbolLocationMetadata {
 	 * 0123456789012345
 	 * struct Foo {}
 	 * ```
-	 * 
+	 *
 	 * The `range` for the Symbol `Foo` is `[7, 10)`, while the `fullRange` for it is `[0, 13)`.
-	 * 
+	 *
 	 * Does not exist for non-file URIs.
 	 */
-	fullRange?: Range,
+	fullRange?: Range
 	/**
 	 * The same range as `fullRange`, but in `PositionRange` form.
-	 * 
+	 *
 	 * Does not exist for non-file URIs.
 	 */
-	fullPosRange?: PositionRange,
+	fullPosRange?: PositionRange
 	/**
 	 * What this usage is contributed by.
-	 * 
+	 *
 	 * For a list of default contributors, see {@link SymbolLocationBuiltInContributor}
 	 */
-	contributor?: string,
+	contributor?: string
 }
 export namespace SymbolLocation {
 	/* istanbul ignore next */
-	export function create(doc: TextDocument, range: RangeLike, fullRange?: RangeLike, contributor?: string, additional?: SymbolLocationMetadata): SymbolLocation {
+	export function create(
+		doc: TextDocument,
+		range: RangeLike,
+		fullRange?: RangeLike,
+		contributor?: string,
+		additional?: SymbolLocationMetadata,
+	): SymbolLocation {
 		return {
 			...Location.create(doc, range),
-			...fullRange ? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) } : {},
-			...contributor ? { contributor } : {},
-			...additional ? additional : {},
+			...(fullRange
+				? {
+						fullRange: Range.get(fullRange),
+						fullPosRange: PositionRange.from(fullRange, doc),
+				  }
+				: {}),
+			...(contributor ? { contributor } : {}),
+			...(additional ? additional : {}),
 		}
 	}
 }
 
 export interface SymbolMap {
-	[identifier: string]: Symbol,
+	[identifier: string]: Symbol
 }
 
 export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
-	[category: string]: SymbolMap | undefined,
+	[category: string]: SymbolMap | undefined
 }
 
-export interface UnlinkedSymbol extends Omit<Symbol, 'category' | 'identifier' | 'members' | 'parentMap' | 'parentSymbol' | 'path'> {
-	category?: undefined,
-	identifier?: undefined,
-	members?: UnlinkedSymbolMap,
-	parentMap?: undefined,
-	parentSymbol?: undefined,
-	path?: undefined,
+export interface UnlinkedSymbol
+	extends Omit<
+		Symbol,
+		| 'category'
+		| 'identifier'
+		| 'members'
+		| 'parentMap'
+		| 'parentSymbol'
+		| 'path'
+	> {
+	category?: undefined
+	identifier?: undefined
+	members?: UnlinkedSymbolMap
+	parentMap?: undefined
+	parentSymbol?: undefined
+	path?: undefined
 }
 
 export interface UnlinkedSymbolMap {
-	[identifier: string]: UnlinkedSymbol,
+	[identifier: string]: UnlinkedSymbol
 }
 
-export interface UnlinkedSymbolTable extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
-	[category: string]: UnlinkedSymbolMap | undefined,
+export interface UnlinkedSymbolTable
+	extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
+	[category: string]: UnlinkedSymbolMap | undefined
 }
 
 export namespace SymbolTable {
 	/**
 	 * The passed-in parameter `table` won't be mutated.
-	 * 
+	 *
 	 * @returns An identical symbol table where each Symbol's `parentMap` and `parentSymbol` properties
 	 * are set properly.
 	 */
 	export function link(table: UnlinkedSymbolTable): SymbolTable {
-		const linkSymbol = (symbol: Symbol, parentMap: SymbolMap, parentSymbol: Symbol | undefined, category: string, path: string[]) => {
+		const linkSymbol = (
+			symbol: Symbol,
+			parentMap: SymbolMap,
+			parentSymbol: Symbol | undefined,
+			category: string,
+			path: string[],
+		) => {
 			symbol.category = category
 			symbol.identifier = path[path.length - 1]
 			symbol.path = path
@@ -414,9 +457,17 @@ export namespace SymbolTable {
 			}
 		}
 
-		const linkSymbolMap = (map: SymbolMap, parentSymbol: Symbol | undefined, category: string, path: string[]) => {
+		const linkSymbolMap = (
+			map: SymbolMap,
+			parentSymbol: Symbol | undefined,
+			category: string,
+			path: string[],
+		) => {
 			for (const [identifier, childSymbol] of Object.entries(map)) {
-				linkSymbol(childSymbol, map, parentSymbol, category, [...path, identifier])
+				linkSymbol(childSymbol, map, parentSymbol, category, [
+					...path,
+					identifier,
+				])
 			}
 		}
 
@@ -431,7 +482,7 @@ export namespace SymbolTable {
 
 	/**
 	 * The passed-in parameter `table` won't be mutated.
-	 * 
+	 *
 	 * @returns An identical symbol table where each Symbol's `parentMap` and `parentSymbol` properties
 	 * are deleted.
 	 */

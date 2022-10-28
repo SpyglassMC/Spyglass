@@ -1,6 +1,12 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { CommandChildNode, CommandNode, LiteralCommandChildNode, TrailingCommandChildNode, UnknownCommandChildNode } from '../node/index.js'
+import type {
+	CommandChildNode,
+	CommandNode,
+	LiteralCommandChildNode,
+	TrailingCommandChildNode,
+	UnknownCommandChildNode,
+} from '../node/index.js'
 import { categorizeTreeChildren, resolveParentTreeNode } from '../tree/index.js'
 import type { ArgumentTreeNode, RootTreeNode, TreeNode } from '../tree/type.js'
 import type { ArgumentParserGetter } from './argument.js'
@@ -11,7 +17,10 @@ import { literal } from './literal.js'
 /**
  * @returns A parser that always takes a whole line (excluding line turn characters) and tries to parse it as a command.
  */
-export function command(tree: RootTreeNode, argument: ArgumentParserGetter): core.InfallibleParser<CommandNode> {
+export function command(
+	tree: RootTreeNode,
+	argument: ArgumentParserGetter,
+): core.InfallibleParser<CommandNode> {
 	return (src, ctx): CommandNode => {
 		const ans: CommandNode = {
 			type: 'mcfunction:command',
@@ -45,14 +54,29 @@ export function command(tree: RootTreeNode, argument: ArgumentParserGetter): cor
 
 /**
  * Dispatch and parse based on the specified command tree node's children.
- * 
+ *
  * @param ans An array where child nodes will be pushed into.
  */
-function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserContext, path: string[], rootTreeNode: RootTreeNode, parentTreeNode: TreeNode, argument: ArgumentParserGetter): void {
+function dispatch(
+	ans: CommandChildNode[],
+	src: core.Source,
+	ctx: core.ParserContext,
+	path: string[],
+	rootTreeNode: RootTreeNode,
+	parentTreeNode: TreeNode,
+	argument: ArgumentParserGetter,
+): void {
 	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for command tree nodes.
 
-	function _dispatch(path: string[], parentTreeNode: TreeNode): false | { childPath: string[], childTreeNode: TreeNode } {
-		const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(parentTreeNode, rootTreeNode, path)
+	function _dispatch(
+		path: string[],
+		parentTreeNode: TreeNode,
+	): false | { childPath: string[]; childTreeNode: TreeNode } {
+		const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(
+			parentTreeNode,
+			rootTreeNode,
+			path,
+		)
 		path = resolvedPath
 
 		const children = parent?.children
@@ -60,19 +84,24 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 			return false
 		}
 
-		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(children)
+		const { literalTreeNodes, argumentTreeNodes } =
+			categorizeTreeChildren(children)
 
-		const argumentParsers: { name: string, parser: core.Parser }[] = argumentTreeNodes.map(([name, treeNode]) => ({
-			name,
-			parser: argument(treeNode) ?? unknown(treeNode),
-		}))
+		const argumentParsers: { name: string; parser: core.Parser }[] =
+			argumentTreeNodes.map(([name, treeNode]) => ({
+				name,
+				parser: argument(treeNode) ?? unknown(treeNode),
+			}))
 		const literalParser = literalTreeNodes.length
-			? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
+			? literal(
+					literalTreeNodes.map(([name, _treeNode]) => name),
+					parent.type === 'root',
+			  )
 			: undefined
 
 		const parsers: core.Parser[] = [
-			...literalParser ? [literalParser] : [],
-			...argumentParsers.map(v => v.parser),
+			...(literalParser ? [literalParser] : []),
+			...argumentParsers.map((v) => v.parser),
 		]
 
 		const out: core.AnyOutObject = { index: 0 }
@@ -80,7 +109,9 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 		const result = parser(src, ctx)
 
 		if (result !== core.Failure) {
-			const takenName = argumentParsers[out.index - (literalParser ? 1 : 0)]?.name ?? (result as LiteralCommandChildNode).value
+			const takenName =
+				argumentParsers[out.index - (literalParser ? 1 : 0)]?.name ??
+				(result as LiteralCommandChildNode).value
 			const childPath = [...path, takenName]
 
 			ans.push({
@@ -98,12 +129,19 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 			const requiredPermissionLevel = childTreeNode.permission ?? 2
 			if (ctx.config.env.permissionLevel < requiredPermissionLevel) {
 				ctx.err.report(
-					localize('mcfunction.parser.no-permission', requiredPermissionLevel, ctx.config.env.permissionLevel),
-					result
+					localize(
+						'mcfunction.parser.no-permission',
+						requiredPermissionLevel,
+						ctx.config.env.permissionLevel,
+					),
+					result,
 				)
 			}
 
-			if ((result as UnknownCommandChildNode).type === 'mcfunction:command_child/unknown') {
+			if (
+				(result as UnknownCommandChildNode).type ===
+				'mcfunction:command_child/unknown'
+			) {
 				// Encountered an unsupported parser. Stop parsing this command.
 				return false
 			}
@@ -122,7 +160,7 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 			// Failed to parse as any arguments.
 			ctx.err.report(
 				localize('expected', treeNodeChildrenToString(children)),
-				core.Range.create(src)
+				core.Range.create(src),
 			)
 		}
 
@@ -135,15 +173,20 @@ function dispatch(ans: CommandChildNode[], src: core.Source, ctx: core.ParserCon
 	}
 }
 
-function unknown(treeNode: ArgumentTreeNode): core.InfallibleParser<UnknownCommandChildNode> {
+function unknown(
+	treeNode: ArgumentTreeNode,
+): core.InfallibleParser<UnknownCommandChildNode> {
 	return (src, ctx): UnknownCommandChildNode => {
 		const start = src.cursor
 		const value = src.readUntilLineEnd()
 		const range = core.Range.create(start, src)
 		ctx.err.report(
-			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.parser)),
+			localize(
+				'mcfunction.parser.unknown-parser',
+				localeQuote(treeNode.parser),
+			),
 			range,
-			core.ErrorSeverity.Hint
+			core.ErrorSeverity.Hint,
 		)
 		return {
 			type: 'mcfunction:command_child/unknown',
@@ -153,11 +196,17 @@ function unknown(treeNode: ArgumentTreeNode): core.InfallibleParser<UnknownComma
 	}
 }
 
-const trailing: core.InfallibleParser<TrailingCommandChildNode> = (src, ctx): TrailingCommandChildNode => {
+const trailing: core.InfallibleParser<TrailingCommandChildNode> = (
+	src,
+	ctx,
+): TrailingCommandChildNode => {
 	const start = src.cursor
 	const value = src.readUntilLineEnd()
 	const range = core.Range.create(start, src)
-	ctx.err.report(localize('mcfunction.parser.trailing', localeQuote(value)), range)
+	ctx.err.report(
+		localize('mcfunction.parser.trailing', localeQuote(value)),
+		range,
+	)
 	return {
 		type: 'mcfunction:command_child/trailing',
 		range,
@@ -169,13 +218,19 @@ function wrapWithBrackets(syntax: string, executable: boolean): string {
 	return executable ? `[${syntax}]` : syntax
 }
 
-export function treeNodeChildrenToStringArray(children: Exclude<TreeNode['children'], undefined>, executable = false): string[] {
-	const entries = Object.entries(children)
-		.map(([name, treeNode]) => wrapWithBrackets(treeNodeToString(name, treeNode), executable))
+export function treeNodeChildrenToStringArray(
+	children: Exclude<TreeNode['children'], undefined>,
+	executable = false,
+): string[] {
+	const entries = Object.entries(children).map(([name, treeNode]) =>
+		wrapWithBrackets(treeNodeToString(name, treeNode), executable),
+	)
 	return entries
 }
 
-export function treeNodeChildrenToString(children: Exclude<TreeNode['children'], undefined>): string {
+export function treeNodeChildrenToString(
+	children: Exclude<TreeNode['children'], undefined>,
+): string {
 	const entries = treeNodeChildrenToStringArray(children)
 	return entries.length > 5
 		? `${entries.slice(0, 3).join('|')}|...|${entries.slice(-2).join('|')}`

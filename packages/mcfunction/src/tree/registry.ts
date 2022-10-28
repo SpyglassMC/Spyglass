@@ -4,19 +4,23 @@ import { merge } from '@spyglassmc/core'
 /* istanbul ignore next */
 /**
  * The registry for mcfunction command trees.
- * This is a singleton; use the `instance` static property to get an instance. 
+ * This is a singleton; use the `instance` static property to get an instance.
  */
 export class CommandTreeRegistry {
 	readonly #trees = new Map<string, RootTreeNode>()
 
 	/**
 	 * Register command tree for an arbitrary version.
-	 * 
+	 *
 	 * @param version The game version. e.g. `1.15-tdn`.
 	 * @param tree The command tree for this version.
 	 * @param treePatch A custom command tree patch that will be merged onto `tree`.
 	 */
-	public register(version: string, tree: RootTreeNode, treePatch?: PartialRootTreeNode): void {
+	public register(
+		version: string,
+		tree: RootTreeNode,
+		treePatch?: PartialRootTreeNode,
+	): void {
 		this.#trees.set(version, treePatch ? merge(tree, treePatch) : tree)
 	}
 

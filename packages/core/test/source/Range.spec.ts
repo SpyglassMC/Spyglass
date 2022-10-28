@@ -78,10 +78,22 @@ describe('Range', () => {
 	})
 	describe('endsBefore()', () => {
 		const offset = 2
-		const suites: { name: string, range: Range, expected: boolean }[] = [
-			{ name: 'ranges ending before the offset', range: Range.create(0, 1), expected: true },
-			{ name: 'ranges ending at the offset', range: Range.create(0, 2), expected: true },
-			{ name: 'ranges ending after the offset', range: Range.create(0, 3), expected: false },
+		const suites: { name: string; range: Range; expected: boolean }[] = [
+			{
+				name: 'ranges ending before the offset',
+				range: Range.create(0, 1),
+				expected: true,
+			},
+			{
+				name: 'ranges ending at the offset',
+				range: Range.create(0, 2),
+				expected: true,
+			},
+			{
+				name: 'ranges ending after the offset',
+				range: Range.create(0, 3),
+				expected: false,
+			},
 		]
 		for (const { name, range, expected } of suites) {
 			it(`Should return ${expected} for ${name}`, () => {
@@ -110,9 +122,7 @@ describe('Range', () => {
 			},
 			{
 				range: Range.Full,
-				cases: [
-					{ offset: 4, expected: true },
-				],
+				cases: [{ offset: 4, expected: true }],
 			},
 		] as const
 		for (const { range, cases } of suites) {
@@ -147,9 +157,7 @@ describe('Range', () => {
 			},
 			{
 				baseRange: Range.Full,
-				cases: [
-					{ range: Range.create(4, 4), expected: true },
-				],
+				cases: [{ range: Range.create(4, 4), expected: true }],
 			},
 		] as const
 		for (const { baseRange, cases } of suites) {
@@ -197,10 +205,16 @@ describe('RangeContainer', () => {
 			assert.strictEqual(RangeContainer.is({ start: 1, end: 1 }), false)
 		})
 		it('Should return false for keys with wrong type', () => {
-			assert.strictEqual(RangeContainer.is({ range: { start: undefined, end: 1 } }), false)
+			assert.strictEqual(
+				RangeContainer.is({ range: { start: undefined, end: 1 } }),
+				false,
+			)
 		})
 		it('Should return true for range container', () => {
-			assert.strictEqual(RangeContainer.is({ range: { start: 1, end: 1 } }), true)
+			assert.strictEqual(
+				RangeContainer.is({ range: { start: 1, end: 1 } }),
+				true,
+			)
 		})
 	})
 })

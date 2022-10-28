@@ -1,13 +1,19 @@
 import type { Colorizer, MetaRegistry } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { ColorToken } from '@spyglassmc/core'
-import type { JsonBooleanNode, JsonNullNode, JsonNumberNode, JsonObjectNode, JsonStringNode } from '../node/index.js'
+import type {
+	JsonBooleanNode,
+	JsonNullNode,
+	JsonNumberNode,
+	JsonObjectNode,
+	JsonStringNode,
+} from '../node/index.js'
 
-export const boolean: Colorizer<JsonBooleanNode> = node => {
+export const boolean: Colorizer<JsonBooleanNode> = (node) => {
 	return [ColorToken.create(node, 'literal')]
 }
 
-export const null_: Colorizer<JsonNullNode> = node => {
+export const null_: Colorizer<JsonNullNode> = (node) => {
 	return [ColorToken.create(node, 'literal')]
 }
 

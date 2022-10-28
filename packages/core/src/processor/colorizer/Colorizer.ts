@@ -4,16 +4,23 @@ import type { ColorizerContext } from '../../service/index.js'
 import type { RangeLike } from '../../source/index.js'
 import { Range } from '../../source/index.js'
 
-export type Colorizer<N extends AstNode = AstNode> = (node: DeepReadonly<N>, ctx: ColorizerContext) => readonly ColorToken[]
+export type Colorizer<N extends AstNode = AstNode> = (
+	node: DeepReadonly<N>,
+	ctx: ColorizerContext,
+) => readonly ColorToken[]
 
 export interface ColorToken {
-	range: Range,
-	type: ColorTokenType,
+	range: Range
+	type: ColorTokenType
 	modifiers?: ColorTokenModifier[]
 }
 export namespace ColorToken {
 	/* istanbul ignore next */
-	export function create(range: RangeLike, type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken {
+	export function create(
+		range: RangeLike,
+		type: ColorTokenType,
+		modifiers?: ColorTokenModifier[],
+	): ColorToken {
 		return {
 			range: Range.get(range),
 			type,
@@ -25,18 +32,38 @@ export namespace ColorToken {
 	 * @returns An array of color tokens that cover the whole range of `targetRange`, with gaps in `tokens` filled
 	 * with tokens created from the specified `type` and `modifiers`.
 	 */
-	export function fillGap(tokens: readonly ColorToken[], targetRange: Range, type: ColorTokenType, modifiers?: ColorTokenModifier[]): ColorToken[] {
+	export function fillGap(
+		tokens: readonly ColorToken[],
+		targetRange: Range,
+		type: ColorTokenType,
+		modifiers?: ColorTokenModifier[],
+	): ColorToken[] {
 		const ans: ColorToken[] = []
-		let nextStart = Math.min(targetRange.start, tokens[0]?.range.start ?? Infinity)
+		let nextStart = Math.min(
+			targetRange.start,
+			tokens[0]?.range.start ?? Infinity,
+		)
 		for (const t of tokens) {
 			if (t.range.start > nextStart) {
-				ans.push(ColorToken.create(Range.create(nextStart, t.range.start), type, modifiers))
+				ans.push(
+					ColorToken.create(
+						Range.create(nextStart, t.range.start),
+						type,
+						modifiers,
+					),
+				)
 			}
 			ans.push(t)
 			nextStart = t.range.end
 		}
 		if (nextStart < targetRange.end) {
-			ans.push(ColorToken.create(Range.create(nextStart, targetRange.end), type, modifiers))
+			ans.push(
+				ColorToken.create(
+					Range.create(nextStart, targetRange.end),
+					type,
+					modifiers,
+				),
+			)
 		}
 		return ans
 	}

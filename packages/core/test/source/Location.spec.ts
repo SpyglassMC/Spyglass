@@ -10,8 +10,18 @@ describe('Location', () => {
 			snapshot(Location.get({}))
 			snapshot(Location.get({ uri: 'file:///home/spgoding/test' }))
 			snapshot(Location.get({ range: Range.create(1, 2) }))
-			snapshot(Location.get({ uri: 'file:///home/spgoding/test', range: Range.create(1, 2) }))
-			snapshot(Location.get({ uri: 'file:///home/spgoding/test', range: () => ({ range: Range.create(3, 4) }) }))
+			snapshot(
+				Location.get({
+					uri: 'file:///home/spgoding/test',
+					range: Range.create(1, 2),
+				}),
+			)
+			snapshot(
+				Location.get({
+					uri: 'file:///home/spgoding/test',
+					range: () => ({ range: Range.create(3, 4) }),
+				}),
+			)
 		})
 		it('Should create a new object from the passed-in Position', () => {
 			const incoming = Location.get({ range: Range.create(1, 2) })
@@ -19,12 +29,20 @@ describe('Location', () => {
 			const result = Location.get(incoming)
 			incoming.range = Range.create(9, 9)
 
-			assert.deepStrictEqual(result, Location.get({ range: Range.create(1, 2) }))
+			assert.deepStrictEqual(
+				result,
+				Location.get({ range: Range.create(1, 2) }),
+			)
 		})
 	})
 	describe('create()', () => {
 		it('Should create correctly', () => {
-			const doc = TextDocument.create('file:///home/spgoding/test', 'mcdoc', 0, '01234567890')
+			const doc = TextDocument.create(
+				'file:///home/spgoding/test',
+				'mcdoc',
+				0,
+				'01234567890',
+			)
 			snapshot(Location.create(doc, Range.create(5, 6)))
 			snapshot(Location.create(doc, { range: Range.create(7, 8) }))
 			snapshot(Location.create(doc, 9))

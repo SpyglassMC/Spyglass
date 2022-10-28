@@ -40,8 +40,8 @@ export namespace Logger {
 }
 
 class NoopLogger implements Logger {
-	error(): void { }
-	info(): void { }
-	log(): void { }
-	warn(): void { }
+	error(): void {}
+	info(): void {}
+	log(): void {}
+	warn(): void {}
 }

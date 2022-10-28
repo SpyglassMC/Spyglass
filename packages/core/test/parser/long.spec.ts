@@ -8,9 +8,7 @@ describe('long()', () => {
 	const pattern = /^[+-]?(?:0|[1-9][0-9]*)$/
 
 	describe('long()', () => {
-		const options: Options[] = [
-			{ pattern },
-		]
+		const options: Options[] = [{ pattern }]
 		const cases: { content: string }[] = [
 			{ content: '' },
 			{ content: 'foo' },
@@ -46,7 +44,12 @@ describe('long()', () => {
 		const options: Options[] = [
 			{ pattern, min: 1n },
 			{ pattern, max: 6n },
-			{ pattern, min: 1n, max: 6n, onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans) },
+			{
+				pattern,
+				min: 1n,
+				max: 6n,
+				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans),
+			},
 		]
 		const cases: { content: string }[] = [
 			{ content: '0' },
@@ -54,7 +57,9 @@ describe('long()', () => {
 			{ content: '9' },
 		]
 		for (const option of options) {
-			describe(`long(${option.min}, ${option.max}, ${!!option.onOutOfRange})`, () => {
+			describe(`long(${option.min}, ${
+				option.max
+			}, ${!!option.onOutOfRange})`, () => {
 				for (const { content } of cases) {
 					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 						const parser = long(option as any)

@@ -1,9 +1,16 @@
-import type { Checker, CheckerContext as CoreCheckerContext, MetaRegistry } from '@spyglassmc/core'
+import type {
+	Checker,
+	CheckerContext as CoreCheckerContext,
+	MetaRegistry,
+} from '@spyglassmc/core'
 import type { JsonNode } from '@spyglassmc/json'
 import { dissectUri } from '../../binder/index.js'
 import { Checkers, pack_mcmeta } from './data/index.js'
 
-export const entry: Checker<JsonNode> = (node: JsonNode, ctx: CoreCheckerContext) => {
+export const entry: Checker<JsonNode> = (
+	node: JsonNode,
+	ctx: CoreCheckerContext,
+) => {
 	const parts = dissectUri(ctx.doc.uri, ctx)
 	if (parts && Checkers.has(parts.category)) {
 		Checkers.get(parts.category)!(node, { ...ctx, context: '' })

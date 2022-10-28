@@ -5,26 +5,30 @@ import { Range } from '../source/index.js'
 import type { Symbol, SymbolTable } from '../symbol/index.js'
 
 export interface AstNode {
-	type: string,
-	range: Range,
+	type: string
+	range: Range
 	/**
 	 * All child nodes of this AST node.
 	 */
-	children?: AstNode[],
-	parent?: AstNode,
-	locals?: SymbolTable,
-	symbol?: Symbol,
-	hover?: string,
+	children?: AstNode[]
+	parent?: AstNode
+	locals?: SymbolTable
+	symbol?: Symbol
+	hover?: string
 	/**
 	 * An actual color that this node represents.
 	 */
-	color?: Color | FormattableColor,
+	color?: Color | FormattableColor
 }
 export namespace AstNode {
 	/* istanbul ignore next */
 	export function is(obj: unknown): obj is AstNode {
-		return !!obj && typeof obj === 'object' && typeof (obj as AstNode).type === 'string' &&
+		return (
+			!!obj &&
+			typeof obj === 'object' &&
+			typeof (obj as AstNode).type === 'string' &&
 			Range.is((obj as AstNode).range)
+		)
 	}
 
 	export function setParents(node: AstNode): void {
@@ -37,27 +41,42 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findChildIndex(node: DeepReadonly<AstNode>, needle: number | Range, endInclusive = false): number {
+	export function findChildIndex(
+		node: DeepReadonly<AstNode>,
+		needle: number | Range,
+		endInclusive = false,
+	): number {
 		if (!node.children) {
 			return -1
 		}
-		const comparator = typeof needle === 'number' ? Range.compareOffset : Range.compare
-		return binarySearch(node.children, needle, (a, b) => comparator(a.range, b as number & Range, endInclusive))
+		const comparator =
+			typeof needle === 'number' ? Range.compareOffset : Range.compare
+		return binarySearch(node.children, needle, (a, b) =>
+			comparator(a.range, b as number & Range, endInclusive),
+		)
 	}
 
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findChild<N extends DeepReadonly<AstNode>>(node: N, needle: number | Range, endInclusive = false): Exclude<N['children'], undefined>[number] | undefined {
+	export function findChild<N extends DeepReadonly<AstNode>>(
+		node: N,
+		needle: number | Range,
+		endInclusive = false,
+	): Exclude<N['children'], undefined>[number] | undefined {
 		return node.children?.[findChildIndex(node, needle, endInclusive)] as any
 	}
 
 	/**
 	 * Returns the index of the last child node that ends before the `needle`.
-	 * 
+	 *
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findLastChildIndex(node: DeepReadonly<AstNode>, needle: number | Range, endInclusive = false): number {
+	export function findLastChildIndex(
+		node: DeepReadonly<AstNode>,
+		needle: number | Range,
+		endInclusive = false,
+	): number {
 		if (!node.children) {
 			return -1
 		}
@@ -76,22 +95,41 @@ export namespace AstNode {
 	/**
 	 * @param endInclusive Defaults to `false`.
 	 */
-	export function findLastChild<N extends DeepReadonly<AstNode>>(node: N, needle: number | Range, endInclusive = false): (N['children'] extends readonly unknown[] ? N['children'][number] : undefined) | undefined {
-		return node.children?.[findLastChildIndex(node, needle, endInclusive)] as any
+	export function findLastChild<N extends DeepReadonly<AstNode>>(
+		node: N,
+		needle: number | Range,
+		endInclusive = false,
+	):
+		| (N['children'] extends readonly unknown[]
+				? N['children'][number]
+				: undefined)
+		| undefined {
+		return node.children?.[
+			findLastChildIndex(node, needle, endInclusive)
+		] as any
 	}
 
 	interface FindRecursivelyOptions<P = (node: AstNode) => boolean> {
-		node: AstNode,
-		needle: number,
-		endInclusive?: boolean,
-		predicate?: P,
+		node: AstNode
+		needle: number
+		endInclusive?: boolean
+		predicate?: P
 	}
 	/**
 	 * @returns The deepest node that both contains `needle` and satisfies the `predicate`.
 	 */
-	export function findDeepestChild<N extends AstNode>(options: FindRecursivelyOptions<(node: AstNode) => node is N>): N | undefined
-	export function findDeepestChild(options: FindRecursivelyOptions): AstNode | undefined
-	export function findDeepestChild({ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions): AstNode | undefined {
+	export function findDeepestChild<N extends AstNode>(
+		options: FindRecursivelyOptions<(node: AstNode) => node is N>,
+	): N | undefined
+	export function findDeepestChild(
+		options: FindRecursivelyOptions,
+	): AstNode | undefined
+	export function findDeepestChild({
+		node,
+		needle,
+		endInclusive = false,
+		predicate = () => true,
+	}: FindRecursivelyOptions): AstNode | undefined {
 		let last: AstNode | undefined
 		let head = Range.contains(node, needle, endInclusive) ? node : undefined
 		while (head && predicate(head)) {
@@ -104,9 +142,18 @@ export namespace AstNode {
 	/**
 	 * @returns The shallowest node that both contains `needle` and satisfies the `predicate`.
 	 */
-	export function findShallowestChild<N extends AstNode>(options: FindRecursivelyOptions<(node: AstNode) => node is N>): N | undefined
-	export function findShallowestChild(options: FindRecursivelyOptions): AstNode | undefined
-	export function findShallowestChild({ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions): AstNode | undefined {
+	export function findShallowestChild<N extends AstNode>(
+		options: FindRecursivelyOptions<(node: AstNode) => node is N>,
+	): N | undefined
+	export function findShallowestChild(
+		options: FindRecursivelyOptions,
+	): AstNode | undefined
+	export function findShallowestChild({
+		node,
+		needle,
+		endInclusive = false,
+		predicate = () => true,
+	}: FindRecursivelyOptions): AstNode | undefined {
 		let head = Range.contains(node, needle, endInclusive) ? node : undefined
 		while (head && !predicate(head)) {
 			head = findChild(head, needle, endInclusive)
@@ -134,6 +181,8 @@ export namespace AstNode {
 	}
 }
 
-export type Mutable<N> = N extends AstNode ? {
-	-readonly [K in keyof N]: Mutable<N[K]>
-} : N
+export type Mutable<N> = N extends AstNode
+	? {
+			-readonly [K in keyof N]: Mutable<N[K]>
+	  }
+	: N

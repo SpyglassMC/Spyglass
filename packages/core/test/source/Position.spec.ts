@@ -26,17 +26,40 @@ describe('Position', () => {
 			assert.strictEqual(Position.toString(Position.Beginning), '<0, 0>')
 		})
 		it('Should work for Infinity', () => {
-			assert.strictEqual(Position.toString(Position.Infinity), '<Infinity, Infinity>')
+			assert.strictEqual(
+				Position.toString(Position.Infinity),
+				'<Infinity, Infinity>',
+			)
 		})
 	})
 	describe('isBefore()', () => {
 		const pos2 = Position.create(4, 2)
-		const suites: { name: string, pos1: Position, expected: boolean }[] = [
-			{ name: 'positions before the line', pos1: Position.create(3, 5), expected: true },
-			{ name: 'positions within the line and before the character', pos1: Position.create(4, 1), expected: true },
-			{ name: 'positions within the line and at the character', pos1: Position.create(4, 2), expected: false },
-			{ name: 'positions within the line and after the character', pos1: Position.create(4, 3), expected: false },
-			{ name: 'positions after the line', pos1: Position.create(5, 1), expected: false },
+		const suites: { name: string; pos1: Position; expected: boolean }[] = [
+			{
+				name: 'positions before the line',
+				pos1: Position.create(3, 5),
+				expected: true,
+			},
+			{
+				name: 'positions within the line and before the character',
+				pos1: Position.create(4, 1),
+				expected: true,
+			},
+			{
+				name: 'positions within the line and at the character',
+				pos1: Position.create(4, 2),
+				expected: false,
+			},
+			{
+				name: 'positions within the line and after the character',
+				pos1: Position.create(4, 3),
+				expected: false,
+			},
+			{
+				name: 'positions after the line',
+				pos1: Position.create(5, 1),
+				expected: false,
+			},
 		]
 		for (const { name, pos1, expected } of suites) {
 			it(`Should return ${expected} for ${name}`, () => {

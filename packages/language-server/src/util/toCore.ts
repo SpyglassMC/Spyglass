@@ -1,6 +1,6 @@
 /*
  * A series of functions that can transform `vscode-languageserver` types to `@spyglassmc/core` types.
- * 
+ *
  * Functions are named after types in `@spyglassmc/core`.
  */
 

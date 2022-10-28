@@ -8,7 +8,8 @@ export type Binder<N extends AstNode> = SyncBinder<N> | AsyncBinder<N>
 export interface SyncBinderInitializer<N extends AstNode> {
 	(node: N, ctx: BinderContext): void
 }
-export interface SyncBinder<N extends AstNode> extends SyncBinderInitializer<N> {
+export interface SyncBinder<N extends AstNode>
+	extends SyncBinderInitializer<N> {
 	[IsAsync]?: never
 }
 export const SyncBinder = Object.freeze({
@@ -23,7 +24,8 @@ export const SyncBinder = Object.freeze({
 interface AsyncBinderInitializer<N extends AstNode> {
 	(node: N, ctx: BinderContext): Promise<void>
 }
-export interface AsyncBinder<N extends AstNode> extends AsyncBinderInitializer<N> {
+export interface AsyncBinder<N extends AstNode>
+	extends AsyncBinderInitializer<N> {
 	[IsAsync]: true
 }
 export const AsyncBinder = Object.freeze({

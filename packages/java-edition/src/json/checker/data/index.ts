@@ -2,21 +2,42 @@ import type { FileCategory } from '@spyglassmc/core'
 import { as, int, record } from '@spyglassmc/json/lib/checker/index.js'
 import type { JsonChecker } from '@spyglassmc/json/lib/checker/JsonChecker.js'
 import { advancement } from './advancement.js'
-import { biome, configured_carver, configured_surface_builder } from './biome.js'
+import {
+	biome,
+	configured_carver,
+	configured_surface_builder,
+} from './biome.js'
 import { dimension, dimension_type, noise_settings } from './dimension.js'
 import { configured_feature } from './feature.js'
 import { item_modifier_list, loot_table, predicate_list } from './loot_table.js'
 import { recipe } from './recipe.js'
-import { configured_structure_feature, processor_list, template_pool } from './structure.js'
-import { block_tag, entity_type_tag, fluid_tag, function_tag, game_event_tag, item_tag } from './tag.js'
+import {
+	configured_structure_feature,
+	processor_list,
+	template_pool,
+} from './structure.js'
+import {
+	block_tag,
+	entity_type_tag,
+	fluid_tag,
+	function_tag,
+	game_event_tag,
+	item_tag,
+} from './tag.js'
 import { text_component } from './text_component.js'
 
-export const pack_mcmeta = as('pack', record({
-	pack: record({
-		pack_format: int,
-		description: text_component,
-	}),
-}, { allowUnknownProperties: true }))
+export const pack_mcmeta = as(
+	'pack',
+	record(
+		{
+			pack: record({
+				pack_format: int,
+				description: text_component,
+			}),
+		},
+		{ allowUnknownProperties: true },
+	),
+)
 
 export const Checkers = new Map<FileCategory, JsonChecker>([
 	['advancement', advancement],

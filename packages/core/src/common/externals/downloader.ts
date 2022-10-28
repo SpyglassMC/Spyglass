@@ -11,14 +11,17 @@ export interface ExternalDownloaderOptions {
 	 * Use an string array to set multiple values to the header.
 	 */
 	headers?: Record<string, string | string[]>
-	timeout?: number,
+	timeout?: number
 }
 
 export interface ExternalDownloader {
 	/**
 	 * @throws
 	 */
-	get(uri: RemoteUriString, options?: ExternalDownloaderOptions): Promise<Uint8Array>
+	get(
+		uri: RemoteUriString,
+		options?: ExternalDownloaderOptions,
+	): Promise<Uint8Array>
 }
 export const ExternalDownloader = Object.freeze({
 	mock(options: ExternalDownloaderMockOptions): ExternalDownloader {
@@ -32,11 +35,11 @@ interface ExternalDownloaderMockOptions {
 	 * therefore `string` fixtures will be turned into a `Uint8Array` and `object` fixtures will be transformed
 	 * into JSON and then turned into a `Uint8Array`.
 	 */
-	fixtures: Record<RemoteUriString, string | Uint8Array | object>,
+	fixtures: Record<RemoteUriString, string | Uint8Array | object>
 }
 
 class ExternalDownloaderMock implements ExternalDownloader {
-	constructor(private readonly options: ExternalDownloaderMockOptions) { }
+	constructor(private readonly options: ExternalDownloaderMockOptions) {}
 
 	async get(uri: RemoteUriString): Promise<Uint8Array> {
 		if (!this.options.fixtures[uri]) {

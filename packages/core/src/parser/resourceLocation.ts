@@ -1,19 +1,75 @@
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { ResourceLocation } from '../common/index.js'
-import type { ResourceLocationNode, ResourceLocationOptions } from '../node/index.js'
+import type {
+	ResourceLocationNode,
+	ResourceLocationOptions,
+} from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
 import { Range } from '../source/index.js'
 import type { InfallibleParser } from './Parser.js'
 
-const Terminators = new Set([' ', '\r', '\n', '=', ',', '"', "'", '{', '}', '[', ']', '(', ')', ';'])
+const Terminators = new Set([
+	' ',
+	'\r',
+	'\n',
+	'=',
+	',',
+	'"',
+	"'",
+	'{',
+	'}',
+	'[',
+	']',
+	'(',
+	')',
+	';',
+])
 const LegalCharacters = new Set([
-	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '-', '.',
+	'a',
+	'b',
+	'c',
+	'd',
+	'e',
+	'f',
+	'g',
+	'h',
+	'i',
+	'j',
+	'k',
+	'l',
+	'm',
+	'n',
+	'o',
+	'p',
+	'q',
+	'r',
+	's',
+	't',
+	'u',
+	'v',
+	'w',
+	'x',
+	'y',
+	'z',
+	'0',
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',
+	'8',
+	'9',
+	'_',
+	'-',
+	'.',
 ])
 
-export function resourceLocation(options: ResourceLocationOptions): InfallibleParser<ResourceLocationNode> {
+export function resourceLocation(
+	options: ResourceLocationOptions,
+): InfallibleParser<ResourceLocationNode> {
 	return (src: Source, ctx: ParserContext): ResourceLocationNode => {
 		const ans: ResourceLocationNode = {
 			type: 'resource_location',
@@ -35,7 +91,9 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 		if (raw.length === 0) {
 			ctx.err.report(localize('expected', localize('resource-location')), ans)
 		} else {
-			const sepIndex = raw.indexOf(options.namespacePathSep ?? ResourceLocation.NamespacePathSep)
+			const sepIndex = raw.indexOf(
+				options.namespacePathSep ?? ResourceLocation.NamespacePathSep,
+			)
 			if (sepIndex >= 0) {
 				ans.namespace = raw.slice(0, sepIndex)
 			}
@@ -44,12 +102,20 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 
 			// Check characters.
 			/* istanbul ignore next */
-			const illegalChars = [...new Set([
-				...[...ans.namespace ?? []].filter(c => !LegalCharacters.has(c)),
-				...[...rawPath].filter(c => c !== '/' && !LegalCharacters.has(c)),
-			])]
+			const illegalChars = [
+				...new Set([
+					...[...(ans.namespace ?? [])].filter((c) => !LegalCharacters.has(c)),
+					...[...rawPath].filter((c) => c !== '/' && !LegalCharacters.has(c)),
+				]),
+			]
 			if (illegalChars.length) {
-				ctx.err.report(localize('parser.resource-location.illegal', arrayToMessage(illegalChars, true, 'and')), ans)
+				ctx.err.report(
+					localize(
+						'parser.resource-location.illegal',
+						arrayToMessage(illegalChars, true, 'and'),
+					),
+					ans,
+				)
 			}
 
 			if (ans.isTag && !options.allowTag) {
@@ -57,7 +123,10 @@ export function resourceLocation(options: ResourceLocationOptions): InfalliblePa
 			}
 
 			if (!ans.namespace && options.isPredicate) {
-				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
+				ctx.err.report(
+					localize('parser.resource-location.namespace-expected'),
+					ans,
+				)
 			}
 		}
 

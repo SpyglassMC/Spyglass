@@ -6,22 +6,46 @@ import * as path from 'path'
 import snapshot from 'snap-shot-it'
 import url from 'url'
 import type { PackMcmeta } from '../../lib/dependency/common.js'
-import type { McmetaRegistries, McmetaStates, McmetaVersions } from '../../lib/dependency/mcmeta.js'
-import { Fluids, getMcmetaSummaryUris, resolveConfiguredVersion, symbolRegistrar } from '../../lib/dependency/mcmeta.js'
+import type {
+	McmetaRegistries,
+	McmetaStates,
+	McmetaVersions,
+} from '../../lib/dependency/mcmeta.js'
+import {
+	Fluids,
+	getMcmetaSummaryUris,
+	resolveConfiguredVersion,
+	symbolRegistrar,
+} from '../../lib/dependency/mcmeta.js'
 
 function readJsonSync(path: string): unknown {
 	return JSON.parse(fs.readFileSync(path, 'utf-8'))
 }
 
 const Fixtures = {
-	Blocks: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/blocks.json')) as McmetaStates,
-	Registries: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/registries.json')) as McmetaRegistries,
-	Versions: readJsonSync(path.join(url.fileURLToPath(new url.URL('.', import.meta.url)), '../../test/dependency/fixture/versions.json')) as McmetaVersions,
+	Blocks: readJsonSync(
+		path.join(
+			url.fileURLToPath(new url.URL('.', import.meta.url)),
+			'../../test/dependency/fixture/blocks.json',
+		),
+	) as McmetaStates,
+	Registries: readJsonSync(
+		path.join(
+			url.fileURLToPath(new url.URL('.', import.meta.url)),
+			'../../test/dependency/fixture/registries.json',
+		),
+	) as McmetaRegistries,
+	Versions: readJsonSync(
+		path.join(
+			url.fileURLToPath(new url.URL('.', import.meta.url)),
+			'../../test/dependency/fixture/versions.json',
+		),
+	) as McmetaVersions,
 }
 
 describe('mcmeta', () => {
 	describe('resolveConfiguredVersion()', () => {
-		const suites: { version: string, packMcmeta?: PackMcmeta | undefined }[] = [
+		const suites: { version: string; packMcmeta?: PackMcmeta | undefined }[] = [
 			{ version: 'Auto', packMcmeta: { pack: { pack_format: 6 } } },
 			{ version: 'Latest Release' },
 			{ version: 'Latest Snapshot' },
@@ -32,14 +56,17 @@ describe('mcmeta', () => {
 		]
 		for (const { version, packMcmeta } of suites) {
 			it(`Should resolve "${version}"`, async () => {
-				const actual = resolveConfiguredVersion(version, { packMcmeta, versions: Fixtures.Versions })
+				const actual = resolveConfiguredVersion(version, {
+					packMcmeta,
+					versions: Fixtures.Versions,
+				})
 				snapshot(actual)
 			})
 		}
 	})
 
 	describe('getMcmetaSummaryUris()', () => {
-		const cases: { version: string, isLatest: boolean, source: string }[] = [
+		const cases: { version: string; isLatest: boolean; source: string }[] = [
 			{ version: '1.17', isLatest: false, source: 'GitHub' },
 			{ version: '22w03a', isLatest: true, source: 'GitHub' },
 			{ version: '1.17', isLatest: false, source: 'jsDelivr' },
