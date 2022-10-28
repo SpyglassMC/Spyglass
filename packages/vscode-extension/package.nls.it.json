@@ -1,13 +1,7 @@
 {
-	"datapack.config.env.permissionLevel": "`function-permission-level` definito in `server.properties`",
 	"datapack.config.lint.nameOfTags": "Il convegno di nominazione nei tag dei tabelloni segnapunti",
-	"datapack.config.lint.nbtFloatSuffix": "Il suffisso usato per TAG_FLoat nei NBT",
 	"datapack.config.lint.strictBlockCheck": "Se dare gli avvertimenti per blocchi sconosciuti",
-	"datapack.config.lint.strictEnchantmentCheck": "Se dare gli avvertimenti per incantamenti scconosciuti",
 	"datapack.config.lint.strictFluidTagCheck": "Se dare avvertimenti per tag di fluidi che non esistono nel tuo spazio di lavoro",
-	"datapack.config.lint.strictItemTagCheck": "Se dare avvertimenti per tag di itemi che non esistono nel tuo spazio di lavoro",
 	"datapack.config.lint.strictObjectiveCheck": "Se dare avvertimenti per oggettivi non definiti",
-	"datapack.config.lint.strictRecipeCheck": "Se dare avvertimenti per ricette che non esistono nel tuo spazio di lavoro",
-	"datapack.config.lint.strictTeamCheck": "Se dare avvertimenti per squadre non definite",
-	"datapack.displayName": "Data-pack Helper Plus"
+	"datapack.config.lint.strictTeamCheck": "Se dare avvertimenti per squadre non definite"
 }
