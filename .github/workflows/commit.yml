@@ -56,14 +56,11 @@ jobs:
 
       - run: npm test
 
+      - run: tar -cvf build-artifact.tar packages/*/lib/packages/*/out/packages/*/dist/packages/vscode-extension/**/*.vsix
       - uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: |
-            packages/*/lib/
-            packages/*/out/
-            packages/*/dist/
-            packages/vscode-extension/**/*.vsix
+          path: build-artifact.tar
 
   deploy:
     name: Deploy
@@ -74,17 +71,22 @@ jobs:
       - test
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 100
+      - run: git pull origin gh-pages:gh-pages
       - uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
           cache: "npm"
       - run: npm ci --legacy-peer-deps
-      
+
       - uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: packages/
-      
+      - run: |
+          tar -xvf build-artifact.tar
+          rm build-artifact.tar
+
       - run: npm run release:dry
 
       - name: Deploy playground
