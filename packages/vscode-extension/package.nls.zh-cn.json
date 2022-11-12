@@ -1,8 +1,1 @@
-{
-	"datapack.config.features.codeActions": "DHP 是否应该提供源代码操作。",
-	"datapack.config.lint.eol": "设置 `mcfunction` 文件的换行字符",
-	"datapack.config.lint.nbtCompoundKeyQuote": "是否用引号包裹 NBT 复合标签中的键。",
-	"datapack.config.lint.nbtStringQuoteType": "NBT 字符串标签的引号类型。",
-	"datapack.config.lint.strictEntityTypeCheck": "是否为未知的实体类型显示警告。",
-	"datapack.config.lint.strictScoreHolderCheck": "是否为当前工作区内未定义的score_holders显示警告。"
-}
+{}

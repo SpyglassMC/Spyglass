@@ -1,8 +1,1 @@
-{
-	"datapack.config.features.codeActions": "DHPのコードアクション機能を使用する。",
-	"datapack.config.lint.eol": "`mcfunction`ファイルの行末（EOL）文字を強制する。",
-	"datapack.config.lint.nbtCompoundCommaSpacing": "NBT compoundのコンマの周りのスペースを強制する。\n設定に関係なく末尾のコンマの後のスペースは常に削除されます。",
-	"datapack.config.lint.nbtStringQuote": "文字列の要素に引用符を必要とする。",
-	"datapack.config.lint.strictEnchantmentCheck": "不明なenchantmentに対して警告する。",
-	"datapack.config.lint.strictRecipeCheck": "ワークスペースに存在しないrecipeに対して警告する。"
-}
+{}

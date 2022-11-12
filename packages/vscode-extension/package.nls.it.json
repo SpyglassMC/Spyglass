@@ -1,4 +1,1 @@
-{
-	"datapack.config.lint.strictBlockCheck": "Se dare gli avvertimenti per blocchi sconosciuti",
-	"datapack.config.lint.strictObjectiveCheck": "Se dare avvertimenti per oggettivi non definiti"
-}
+{}

@@ -1,8 +1,1 @@
-{
-	"datapack.config.features.codeActions": "Ob DHP Code Actions zeigen soll.",
-	"datapack.config.lint.eol": "Das EOL-Zeichen in `mcfunction`-Dateien erzwingen.",
-	"datapack.config.lint.nbtCompoundKeyQuote": "Ob die Namen von NBT-Compound-Eigenschaften in Anführungszeichen gesetzt werden sollen.",
-	"datapack.config.lint.nbtStringQuoteType": "Die Art der Anführungszeichen für Zeichenketten in NBT erzwingen.",
-	"datapack.config.lint.strictEntityTypeCheck": "Warnungen für unbekannte Objekttypen anzeigen.",
-	"datapack.config.lint.strictSoundEventCheck": "Warnungen für unbekannte Geräusche anzeigen."
-}
+{}

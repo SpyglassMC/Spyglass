@@ -1,8 +1,1 @@
-{
-	"datapack.config.features.codeActions": "Si DHP devrait fournir des actions de code ou non.",
-	"datapack.config.lint.eol": "Imposer le caractère de fin de ligne (EOL) dans les fichiers `mcfunction`.",
-	"datapack.config.lint.nbtCompoundKeyQuote": "Si il faut citer les clés dans les listes de tags composés NBT ou non.",
-	"datapack.config.lint.nbtStringQuoteType": "Imposer le type de guillemets pour les chaînes de caractères NBT.",
-	"datapack.config.lint.strictEntityTypeCheck": "Afficher des avertissements pour les types d'entités qui n'existent pas dans le registre.",
-	"datapack.config.lint.strictSoundEventCheck": "Afficher des avertissements pour les sons qui n'existent pas dans le registre."
-}
+{}
