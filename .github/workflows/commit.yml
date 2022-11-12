@@ -72,8 +72,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 100
-      - run: git pull origin gh-pages:gh-pages --ff-only
+          fetch-depth: 0
+      # - run: git pull origin gh-pages:gh-pages --ff-only
       - uses: actions/setup-node@v3
         with:
           node-version: "lts/*"
