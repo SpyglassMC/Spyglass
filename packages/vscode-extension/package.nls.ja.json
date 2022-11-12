@@ -1,15 +1,8 @@
 {
-	"datapack.config.env.defaultVisibility": "リソースのデフォルトのアクセス修飾子",
 	"datapack.config.features.codeActions": "DHPのコードアクション機能を使用する。",
-	"datapack.config.features.selectionRanges": "DHPの選択範囲機能を使用する。",
 	"datapack.config.lint.eol": "`mcfunction`ファイルの行末（EOL）文字を強制する。",
-	"datapack.config.lint.nbtArrayCommaSpacing": "NBT配列のコンマの周りの間隔を強制する。\n設定に関係なく末尾のコンマの後のスペースは常に削除されます。",
 	"datapack.config.lint.nbtCompoundCommaSpacing": "NBT compoundのコンマの周りのスペースを強制する。\n設定に関係なく末尾のコンマの後のスペースは常に削除されます。",
-	"datapack.config.lint.nbtListBracketSpacing": "NBTリストの角括弧内の間隔を強制する。",
 	"datapack.config.lint.nbtStringQuote": "文字列の要素に引用符を必要とする。",
-	"datapack.config.lint.selectorSortKeys": "セレクターの引数の順番を強制する。",
 	"datapack.config.lint.strictEnchantmentCheck": "不明なenchantmentに対して警告する。",
-	"datapack.config.lint.strictItemTagCheck": "ワークスペースに存在しないitem tagsに対して警告する。",
-	"datapack.config.lint.strictRecipeCheck": "ワークスペースに存在しないrecipeに対して警告する。",
-	"datapack.config.lint.timeOmitTickUnit": "時間を入力する引数でtickの単位(`t`)を省略する。"
+	"datapack.config.lint.strictRecipeCheck": "ワークスペースに存在しないrecipeに対して警告する。"
 }

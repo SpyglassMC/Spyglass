@@ -1,15 +1,8 @@
 {
-	"datapack.config.env.defaultVisibility": "Der Standard Zugriffsmodifikator für Ressourcen.",
 	"datapack.config.features.codeActions": "Ob DHP Code Actions zeigen soll.",
-	"datapack.config.features.selectionRanges": "Ob DHP Auswahlbereiche unterstützen soll.",
 	"datapack.config.lint.eol": "Das EOL-Zeichen in `mcfunction`-Dateien erzwingen.",
-	"datapack.config.lint.nbtArrayLengthCheck": "Die Länge von NBT-Arrays überprüfen.",
 	"datapack.config.lint.nbtCompoundKeyQuote": "Ob die Namen von NBT-Compound-Eigenschaften in Anführungszeichen gesetzt werden sollen.",
-	"datapack.config.lint.nbtListCommaSpacing": "Leerzeichen um Kommata in NBT-Listen erzwingen. Unabhängig von dieser Einstellung werden Leerzeichen hinter abschließenden Kommata immer entfernt.",
 	"datapack.config.lint.nbtStringQuoteType": "Die Art der Anführungszeichen für Zeichenketten in NBT erzwingen.",
-	"datapack.config.lint.selectorTrailingComma": "Ob hinter dem letzten Selektorargument ein Komma stehen soll.",
 	"datapack.config.lint.strictEntityTypeCheck": "Warnungen für unbekannte Objekttypen anzeigen.",
-	"datapack.config.lint.strictLootTableCheck": "Warnungen für Beutetabellen, die nicht im Arbeitsverzeichnis existieren, anzeigen.",
-	"datapack.config.lint.strictSoundEventCheck": "Warnungen für unbekannte Geräusche anzeigen.",
-	"datapack.description": "Umfangreiche Sprachfunktionen für Minecraft: Java Edition Datenpaket-Dateien"
+	"datapack.config.lint.strictSoundEventCheck": "Warnungen für unbekannte Geräusche anzeigen."
 }

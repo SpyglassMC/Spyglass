@@ -1,15 +1,8 @@
 {
-	"datapack.config.env.defaultVisibility": "资源的默认可见度。",
 	"datapack.config.features.codeActions": "DHP 是否应该提供源代码操作。",
-	"datapack.config.features.selectionRanges": "DHP 是否应该提供选择区域。",
 	"datapack.config.lint.eol": "设置 `mcfunction` 文件的换行字符",
-	"datapack.config.lint.nbtArrayLengthCheck": "验证 NBT 数组的长度。",
 	"datapack.config.lint.nbtCompoundKeyQuote": "是否用引号包裹 NBT 复合标签中的键。",
-	"datapack.config.lint.nbtListCommaSpacing": "NBT 列表的逗号周围的空格。不论设置为何，尾逗号后面的空格永远会被移除。",
 	"datapack.config.lint.nbtStringQuoteType": "NBT 字符串标签的引号类型。",
-	"datapack.config.lint.selectorTrailingComma": "实体选择器的最后一个键值对之后是否应当有尾逗号。",
 	"datapack.config.lint.strictEntityTypeCheck": "是否为未知的实体类型显示警告。",
-	"datapack.config.lint.strictLootTableCheck": "是否为当前工作区内不存在的战利品表显示警告。",
-	"datapack.config.lint.strictScoreHolderCheck": "是否为当前工作区内未定义的score_holders显示警告。",
-	"datapack.config.snippets": "代码片段。"
+	"datapack.config.lint.strictScoreHolderCheck": "是否为当前工作区内未定义的score_holders显示警告。"
 }

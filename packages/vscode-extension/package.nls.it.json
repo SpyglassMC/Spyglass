@@ -1,7 +1,4 @@
 {
-	"datapack.config.lint.nameOfTags": "Il convegno di nominazione nei tag dei tabelloni segnapunti",
 	"datapack.config.lint.strictBlockCheck": "Se dare gli avvertimenti per blocchi sconosciuti",
-	"datapack.config.lint.strictFluidTagCheck": "Se dare avvertimenti per tag di fluidi che non esistono nel tuo spazio di lavoro",
-	"datapack.config.lint.strictObjectiveCheck": "Se dare avvertimenti per oggettivi non definiti",
-	"datapack.config.lint.strictTeamCheck": "Se dare avvertimenti per squadre non definite"
+	"datapack.config.lint.strictObjectiveCheck": "Se dare avvertimenti per oggettivi non definiti"
 }
