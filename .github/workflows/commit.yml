@@ -56,7 +56,7 @@ jobs:
 
       - run: npm test
 
-      - run: tar -cvf build-artifact.tar packages/*/lib/packages/*/out/packages/*/dist/packages/vscode-extension/**/*.vsix
+      - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/ packages/vscode-extension/**/*.vsix
       - uses: actions/upload-artifact@v3
         with:
           name: build-artifact
