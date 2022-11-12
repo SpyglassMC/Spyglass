@@ -10,11 +10,11 @@ import { JsonObjectNode, JsonStringExpectation } from '../../node/index.js'
 import type { JsonChecker, JsonCheckerContext } from '../JsonChecker.js'
 import { any, expectation } from './util.js'
 
-// eslint-disable-next-line no-restricted-syntax
 type JsonValue =
 	| string
 	| number
 	| boolean
+	// eslint-disable-next-line no-restricted-syntax
 	| null
 	| JsonValue[]
 	| { [key: string]: JsonValue }
