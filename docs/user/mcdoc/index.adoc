@@ -1236,6 +1236,13 @@ Although simplifying `(string | "foo" | "bar")` into `string` is sound,
 we lose some more specific information about the original type that could be used by processors like auto completers.
 Therefore, for certain special cases, types that are trimmed during simplification may be accessible under the `shadowedTypes` property of the simplified type.
 
+== Validate value
+
+* Pure JSON: infer exact type. if it's assignable to the expected type.
+* JSON AST: ditto.
+* NBT AST: ditto.
+* NBT path AST: infer exact type. if the expected type is assignable 
+
 == Type assignability
 
 Types in mcdoc can be think of as sets. Type A is assignable to type B if and only if A is a subset of B.
@@ -1249,7 +1256,6 @@ TODO: Data validator hooks can contribute additional type assignability rules. e
 * For JSON: `byte = short = int = long = float = double`
 * For NBT: `boolean = (byte @ 0..1) ⊂ byte`
 
-ajsdhflkajgslkthisissoharddkhdgklsjhiuyra
 
 // == Procedures
 
