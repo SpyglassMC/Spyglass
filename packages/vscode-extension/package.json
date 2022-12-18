@@ -13,6 +13,9 @@
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
     "watch": "./esbuild.mjs watch"
   },
+  "extensionDependencies": [
+    "arcensoth.language-mcfunction"
+  ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
     "esbuild": "^0.14.39",
