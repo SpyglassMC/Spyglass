@@ -1,0 +1,37 @@
+{
+  "name": "@spyglassmc/mcdoc-cli",
+  "version": "0.1.0-PLACEHOLDER",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Misode",
+  "license": "MIT",
+  "directories": {
+    "test": "test/"
+  },
+  "bin": {
+    "mcdoc": "./lib/index.js"
+  },
+  "scripts": {
+    "release": "npm publish",
+    "release:dry": "npm publish --dry-run"
+  },
+  "dependencies": {
+    "yargs": "17.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "18.11.17",
+    "@types/yargs": "17.0.17"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}

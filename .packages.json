@@ -72,6 +72,12 @@
 			"version": "0.3.1"
 		}
 	},
+	"mcdoc-cli": {
+		"dependencies": [
+			"core",
+			"mcdoc"
+		]
+	},
 	"mcfunction": {
 		"dependencies": [
 			"core",
