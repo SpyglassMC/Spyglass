@@ -882,7 +882,7 @@ export const CommandTree: ICommandTree = {
                                             parser: new LiteralArgumentParser('replace'),
                                             children: {
                                                 filter: {
-                                                    parser: new IdentityArgumentParser('$worldgen/biome'),
+                                                    parser: new IdentityArgumentParser('$worldgen/biome', true),
                                                     executable: true
                                                 }
                                             }
