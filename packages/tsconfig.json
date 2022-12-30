@@ -23,6 +23,9 @@
 			"path": "mcdoc"
 		},
 		{
+			"path": "mcdoc-cli"
+		},
+		{
 			"path": "mcfunction"
 		},
 		{
