@@ -74,22 +74,22 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                 .skip()
                 .skipSpace()
             if (isFunctionDoc) {
-                const idStart = reader.cursor
+                // const idStart = reader.cursor
                 const idResult = new ctx.parsers
                     .Identity('$function', undefined, undefined, undefined, true)
                     .parse(reader, ctx)
                 docComment.functionID = idResult.data
                 combineArgumentParserResult(ans, idResult)
-                const actualID = docComment.functionID.toString()
-                if (currentID && actualID !== currentID) {
-                    ans.errors.push(new ParsingError(
-                        { start: idStart, end: reader.cursor },
-                        locale('expected-got',
-                            locale('punc.quote', currentID),
-                            locale('punc.quote', actualID)
-                        )
-                    ))
-                }
+                // const actualID = docComment.functionID.toString()
+                // if (currentID && actualID !== currentID) {
+                    // ans.errors.push(new ParsingError(
+                    //     { start: idStart, end: reader.cursor },
+                    //     locale('expected-got',
+                    //         locale('punc.quote', currentID),
+                    //         locale('punc.quote', actualID)
+                    //     )
+                    // ))
+                // }
             } else {
                 docComment.plainText += reader.readLine() + '\n'
             }
