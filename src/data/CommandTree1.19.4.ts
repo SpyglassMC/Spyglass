@@ -3099,7 +3099,14 @@ export const CommandTree: ICommandTree = {
         on: {
             parser: new LiteralArgumentParser('on'),
             children: {
-                relation: LiteralArgumentParser('attacker', 'controller', 'leasher', 'owner', 'passengers', 'target', 'vehicle')
+                relation: {
+                    parser: new LiteralArgumentParser('attacker', 'controller', 'leasher', 'origin', 'owner', 'passengers', 'target', 'vehicle'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
             }
         },
         positioned: {
