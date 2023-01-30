@@ -423,18 +423,6 @@ export const CommandTree: ICommandTree = {
                     children: {
                         end: {
                             parser: new VectorArgumentParser(3, 'integer'),
-                            run: ({ data, errors }) => {
-                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                const volume = v1.volumeTo(v2)
-                                if (volume && volume > 32768) {
-                                    errors.push(new ParsingError(
-                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Error
-                                    ))
-                                }
-                            },
                             children: {
                                 destination: {
                                     parser: new VectorArgumentParser(3, 'integer'),
@@ -861,18 +849,6 @@ export const CommandTree: ICommandTree = {
                     children: {
                         to: {
                             parser: new VectorArgumentParser(3, 'integer'),
-                            run: ({ data, errors }) => {
-                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                const volume = v1.volumeTo(v2)
-                                if (volume && volume > 32768) {
-                                    errors.push(new ParsingError(
-                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Error
-                                    ))
-                                }
-                            },
                             children: {
                                 block: {
                                     parser: new IdentityArgumentParser('$worldgen/biome'),
@@ -903,18 +879,6 @@ export const CommandTree: ICommandTree = {
                     children: {
                         to: {
                             parser: new VectorArgumentParser(3, 'integer'),
-                            run: ({ data, errors }) => {
-                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                const volume = v1.volumeTo(v2)
-                                if (volume && volume > 32768) {
-                                    errors.push(new ParsingError(
-                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Error
-                                    ))
-                                }
-                            },
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(false),
@@ -1558,7 +1522,7 @@ export const CommandTree: ICommandTree = {
                             children: {
                                 port: {
                                     parser: new NumberArgumentParser('integer', 0, 65535),
-                                    executable: true,
+                                    executable: true
                                 }
                             }
                         }
@@ -2659,18 +2623,6 @@ export const CommandTree: ICommandTree = {
                             children: {
                                 end: {
                                     parser: new VectorArgumentParser(3, 'integer'),
-                                    run: ({ data, errors }) => {
-                                        const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                        const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                        const volume = v1.volumeTo(v2)
-                                        if (volume && volume > 32768) {
-                                            errors.push(new ParsingError(
-                                                { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                                locale('too-many-block-affected', 32768, volume),
-                                                undefined, DiagnosticSeverity.Error
-                                            ))
-                                        }
-                                    },
                                     children: {
                                         destination: {
                                             parser: new VectorArgumentParser(3, 'integer'),
