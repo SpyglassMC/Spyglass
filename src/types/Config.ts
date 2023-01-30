@@ -37,7 +37,6 @@ export interface EnvConfig {
     detectionDepth: number,
     exclude: string[],
     include: string[],
-    jsonVersion: JsonSchemaVersion,
     language: string
 }
 
@@ -189,7 +188,6 @@ export const VanillaConfig: Config = {
         detectionDepth: 1,
         exclude: [],
         include: [],
-        jsonVersion: '1.19.3',
         language: 'Default'
     },
     lint: {

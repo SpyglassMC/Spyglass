@@ -177,7 +177,10 @@ export class DatapackLanguageService {
      * @param config A config object.
      */
     async getJsonSchemas(config = VanillaConfig, data: VanillaData) {
-        return getJsonSchemas(config.env.jsonVersion, data.Registry)
+        if (config.env.cmdVersion === '1.15') {
+            throw new Error('No JSON schemas for 1.15.')
+        }
+        return getJsonSchemas(config.env.cmdVersion, data.Registry)
     }
 
     /**

@@ -39,7 +39,7 @@ export class JsonSchemaHelper {
                 const field = fields[key]
                 const fieldPath = getChildModelPath(path, key)
 
-                if (ctx.config.env.jsonVersion === '1.17') {
+                if (ctx.config.env.cmdVersion === '1.17') {
                     const context = fieldPath.contextArr.join('.')
                     if (context === 'block.block' && p.valueNode.type === 'string') {
                         ans.errors.push(new ParsingError({ start: p.offset, end: p.offset + p.length }, locale('datafix.error.json-block'), true, DiagnosticSeverity.Error, ErrorCode.JsonBlock))
@@ -182,7 +182,7 @@ export class JsonSchemaHelper {
                 const field = fields[key]
                 const fieldPath = getChildModelPath(path, key)
 
-                if (ctx.config.env.jsonVersion === '1.17') {
+                if (ctx.config.env.cmdVersion === '1.17') {
                     const context = fieldPath.contextArr.join('.')
                     if (context === 'block.block' && p.valueNode.type === 'string') {
                         ans.push(getCodeAction(
@@ -246,7 +246,7 @@ export class JsonSchemaHelper {
 
         if (valueNode.type === 'object' && typeof replacingNode?.value === 'string') {
             // Delete the current selected key from `value`, so that the selected key can show in the suggestions.
-            delete value[replacingNode.value]
+            delete value[replacingNode!.value]
         }
         if (atEmptyValue && valueSchema) {
             // Currently at an empty value position; suggest the default value of this schema node.
