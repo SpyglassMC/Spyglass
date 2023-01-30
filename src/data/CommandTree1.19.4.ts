@@ -454,6 +454,139 @@ export const CommandTree: ICommandTree = {
                                             }
                                         }
                                     }
+                                },
+                                to: {
+                                    parser: new LiteralArgumentParser('to'),
+                                    children: {
+                                        targetDimension: {
+                                            parser: new IdentityArgumentParser('$dimension'),
+                                            children: {
+                                                destination: {
+                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                    executable: true,
+                                                    children: {
+                                                        filtered: {
+                                                            parser: new LiteralArgumentParser('filtered'),
+                                                            children: {
+                                                                block: {
+                                                                    parser: new BlockArgumentParser(true),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        cloneMode: {
+                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                            executable: true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        otherMaskMode: {
+                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                            executable: true,
+                                                            children: {
+                                                                cloneMode: {
+                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                from: {
+                    parser: new LiteralArgumentParser('from'),
+                    children: {
+                        sourceDimension: {
+                            parser: new IdentityArgumentParser('$dimension'),
+                            children: {
+                                begin: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    children: {
+                                        end: {
+                                            parser: new VectorArgumentParser(3, 'integer'),
+                                            children: {
+                                                destination: {
+                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                    executable: true,
+                                                    children: {
+                                                        filtered: {
+                                                            parser: new LiteralArgumentParser('filtered'),
+                                                            children: {
+                                                                block: {
+                                                                    parser: new BlockArgumentParser(true),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        cloneMode: {
+                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                            executable: true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        otherMaskMode: {
+                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                            executable: true,
+                                                            children: {
+                                                                cloneMode: {
+                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                to: {
+                                                    parser: new LiteralArgumentParser('to'),
+                                                    children: {
+                                                        targetDimension: {
+                                                            parser: new IdentityArgumentParser('$dimension'),
+                                                            children: {
+                                                                destination: {
+                                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        filtered: {
+                                                                            parser: new LiteralArgumentParser('filtered'),
+                                                                            children: {
+                                                                                block: {
+                                                                                    parser: new BlockArgumentParser(true),
+                                                                                    executable: true,
+                                                                                    children: {
+                                                                                        cloneMode: {
+                                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                                            executable: true
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        otherMaskMode: {
+                                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                                            executable: true,
+                                                                            children: {
+                                                                                cloneMode: {
+                                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                                    executable: true
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
