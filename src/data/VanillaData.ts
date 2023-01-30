@@ -61,9 +61,9 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
     switch (type) {
         case 'BlockDefinition':
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/blocks/data.min.json`)
+                return getUri(source, 'Ersatz77', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/blocks/data.min.json`)
             } else {
-                return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/blocks.json`)
+                return getUri(source, 'Ersatz77', 'mcdata', `${version}/generated/reports/blocks.json`)
             }
         case 'NamespaceSummary':
             return getUri(source, 'misode', 'mcmeta', `${isLatestSnapshot ? 'summary' : `${version}-summary`}/registries/data.min.json`)
@@ -72,9 +72,9 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
         case 'Registry':
         default:
             if (processedVersions.includes(version)) {
-                return getUri(source, 'Arcensoth', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/registries/data.min.json`)
+                return getUri(source, 'Ersatz77', 'mcdata', `${isLatestSnapshot ? 'master' : version}/processed/reports/registries/data.min.json`)
             } else {
-                return getUri(source, 'Arcensoth', 'mcdata', `${version}/generated/reports/registries.json`)
+                return getUri(source, 'Ersatz77', 'mcdata', `${version}/generated/reports/registries.json`)
             }
     }
 }
