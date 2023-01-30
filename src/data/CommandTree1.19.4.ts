@@ -2760,6 +2760,20 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
+                dimension: {
+                    parser: new LiteralArgumentParser('dimension'),
+                    children: {
+                        dimension: {
+                            parser: new IdentityArgumentParser('$dimension', true),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
                 entity: {
                     parser: new LiteralArgumentParser('entity'),
                     children: {
