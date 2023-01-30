@@ -1060,7 +1060,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 intRuleName: {
-                    parser: new LiteralArgumentParser('maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'snowAccumulationHeight', 'spawnRadius'),
+                    parser: new LiteralArgumentParser('commandModificationBlockLimit', 'maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'snowAccumulationHeight', 'spawnRadius'),
                     executable: true,
                     children: {
                         value: {
