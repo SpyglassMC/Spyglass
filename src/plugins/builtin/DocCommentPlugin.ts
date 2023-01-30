@@ -79,6 +79,7 @@ class DocCommentSyntaxComponentParser implements plugins.SyntaxComponentParser {
                     .Identity('$function', undefined, undefined, undefined, true)
                     .parse(reader, ctx)
                 docComment.functionID = idResult.data
+                idResult.errors = []
                 combineArgumentParserResult(ans, idResult)
                 // const actualID = docComment.functionID.toString()
                 // if (currentID && actualID !== currentID) {
