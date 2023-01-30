@@ -752,6 +752,44 @@ export const CommandTree: ICommandTree = {
                                                         }
                                                     }
                                                 },
+                                                string: {
+                                                    parser: new LiteralArgumentParser('string'),
+                                                    children: {
+                                                        source: {
+                                                            template: 'nbt_holder',
+                                                            executable: true,
+                                                            children: {
+                                                                sourcePath: {
+                                                                    parser: ({ data }) => {
+                                                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                                        if (type === 'entity') {
+                                                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
+                                                                            const id = getNbtdocRegistryId(entity)
+                                                                            return new NbtPathArgumentParser('minecraft:entity', id)
+                                                                        } else if (type === 'block') {
+                                                                            return new NbtPathArgumentParser('minecraft:block', null)
+                                                                        } else {
+                                                                            return new NbtPathArgumentParser('minecraft:block')
+                                                                        }
+                                                                    },
+                                                                    executable: true,
+                                                                    children: {
+                                                                        start: {
+                                                                            parser: new NumberArgumentParser('integer', 0),
+                                                                            executable: true,
+                                                                            children: {
+                                                                                end: {
+                                                                                    parser: new NumberArgumentParser('integer', 0),
+                                                                                    executable: true
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
                                                 value: {
                                                     parser: new LiteralArgumentParser('value'),
                                                     children: {
