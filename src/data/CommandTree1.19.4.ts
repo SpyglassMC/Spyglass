@@ -2788,6 +2788,20 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
+                loaded: {
+                    parser: new LiteralArgumentParser('loaded'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
                 predicate: {
                     parser: new LiteralArgumentParser('predicate'),
                     children: {
