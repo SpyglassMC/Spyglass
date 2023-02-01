@@ -936,6 +936,22 @@ export const CommandTree: ICommandTree = {
                                                     }
                                                 }
                                             }
+                                        },
+                                        infinite: {
+                                            parser: new LiteralArgumentParser('infinite'),
+                                            executable: true,
+                                            children: {
+                                                amplifier: {
+                                                    parser: new NumberArgumentParser('integer', 0, 255),
+                                                    executable: true,
+                                                    children: {
+                                                        hideParticles: {
+                                                            template: 'templates.boolean',
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
