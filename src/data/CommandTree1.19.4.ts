@@ -3412,7 +3412,7 @@ export const CommandTree: ICommandTree = {
             }
         },
         summon: {
-            parser: new LiteralArgumentParser('store'),
+            parser: new LiteralArgumentParser('summon'),
             children: {
                 name: {
                    parser: new IdentityArgumentParser('minecraft:entity_type'),
