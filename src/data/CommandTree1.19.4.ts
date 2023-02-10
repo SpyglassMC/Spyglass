@@ -3411,6 +3411,19 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        summon: {
+            parser: new LiteralArgumentParser('store'),
+            children: {
+                name: {
+                   parser: new IdentityArgumentParser('minecraft:entity_type'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
         unless: {
             redirect: 'templates.execute_if_unless'
         }
