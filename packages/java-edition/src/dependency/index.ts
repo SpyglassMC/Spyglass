@@ -7,7 +7,7 @@ import type {
 	McmetaRegistries,
 	McmetaStates,
 	McmetaSummary,
-	McmetaVersions
+	McmetaVersions,
 } from './mcmeta.js'
 import { Fluids, getMcmetaSummaryUris } from './mcmeta.js'
 
