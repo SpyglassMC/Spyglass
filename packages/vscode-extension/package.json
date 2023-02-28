@@ -7,11 +7,11 @@
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "./esbuild.mjs prod",
-    "build:dev": "./esbuild.mjs dev",
+    "build": "node esbuild.mjs prod",
+    "build:dev": "node esbuild.mjs dev",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
-    "watch": "./esbuild.mjs watch"
+    "watch": "node esbuild.mjs watch"
   },
   "extensionDependencies": [
     "arcensoth.language-mcfunction"

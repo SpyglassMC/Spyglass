@@ -162,7 +162,7 @@ export namespace Arrayable {
 	}
 
 	export function toArray<T>(value: Arrayable<T>): T[] {
-		return Array.isArray(value) ? value : [value]
+		return Array.isArray(value) ? value : [value as T]
 	}
 }
 

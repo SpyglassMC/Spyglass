@@ -8,12 +8,12 @@
   "author": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "./esbuild.js prod",
-    "build:dev": "./esbuild.js dev",
-    "deploy": "./deploy.js",
+    "build": "node esbuild.js prod",
+    "build:dev": "node esbuild.js dev",
+    "deploy": "node deploy.js",
     "release": "",
     "release:dry": "",
-    "watch": "./esbuild.js watch"
+    "watch": "node esbuild.js watch"
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^0.20.2",
