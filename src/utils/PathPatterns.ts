@@ -4,6 +4,7 @@ export const GeneralPathPattern = 'data/**/*.{json,mcfunction,nbt}'
 
 export const PathPatterns: Record<FileType, string> = {
     advancement: 'data/*/advancements/**/*.json',
+    damage_type: 'data/*/damage_type/**/*.json',
     dimension: 'data/*/dimension/**/*.json',
     dimension_type: 'data/*/dimension_type/**/*.json',
     function: 'data/*/functions/**/*.mcfunction',
@@ -13,6 +14,7 @@ export const PathPatterns: Record<FileType, string> = {
     recipe: 'data/*/recipes/**/*.json',
     structure: 'data/*/structures/**/*.nbt',
     'tag/block': 'data/*/tags/blocks/**/*.json',
+    'tag/damage_type': 'data/*/tags/damage_type/**/*.json',
     'tag/entity_type': 'data/*/tags/entity_types/**/*.json',
     'tag/fluid': 'data/*/tags/fluids/**/*.json',
     'tag/function': 'data/*/tags/functions/**/*.json',

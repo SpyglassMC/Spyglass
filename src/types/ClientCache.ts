@@ -40,6 +40,7 @@ export const WorldgenFileTypes = [
 ] as const
 export const TagFileTypes = [
     'tag/block',
+    'tag/damage_type',
     'tag/entity_type',
     'tag/fluid',
     'tag/function',
@@ -65,6 +66,7 @@ export const TagFileTypes = [
 ] as const
 export const FileTypes = [
     'advancement',
+    'damage_type',
     'dimension',
     'dimension_type',
     'function',
