@@ -4,7 +4,7 @@ import esbuild from 'esbuild'
 try {
 	const mode = process.argv[2]
 	if (mode !== 'dev' && mode !== 'prod' && mode !== 'watch') {
-		throw new Error('Usage: ./esbuild.js dev|prod|watch')
+		throw new Error('Usage: ./esbuild.mjs dev|prod|watch')
 	}
 
 	const isDev = mode !== 'prod'
