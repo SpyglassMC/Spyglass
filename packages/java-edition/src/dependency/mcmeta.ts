@@ -23,7 +23,7 @@ export function resolveConfiguredVersion(
 		return {
 			id: version.id,
 			name: version.name,
-			release: version.release_target as ReleaseVersion,
+			release: (version.release_target ?? '1.99') as ReleaseVersion, // FIXME: figure out how to get the release target for newer versions
 			isLatest: index === 0,
 		}
 	}
