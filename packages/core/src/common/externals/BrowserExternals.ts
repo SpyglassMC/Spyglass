@@ -4,7 +4,6 @@ import {
 } from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
-import { Uri } from '../index.js'
 import type {
 	ExternalDownloader,
 	ExternalDownloaderOptions,

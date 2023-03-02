@@ -5,7 +5,7 @@ import type {
 	RootUriString,
 	TagFileCategory,
 	UriBinder,
-	UriBinderContext
+	UriBinderContext,
 } from '@spyglassmc/core'
 import { fileUtil, RegistryCategories } from '@spyglassmc/core'
 import { ReleaseVersion } from '../dependency/index.js'
@@ -155,14 +155,12 @@ export function dissectUri(uri: string, ctx: ContextBase) {
 		if (!def || def.extname !== match[4]) {
 			continue
 		}
-		const loadedVersion = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+		const loadedVersion = ctx.project['loadedVersion'] as
+			| ReleaseVersion
+			| undefined
 		if (
 			!loadedVersion || // FIXME: check why this can be undefined sometimes
-			!matchVersion(
-				loadedVersion,
-				def.since,
-				def.until,
-			)
+			!matchVersion(loadedVersion, def.since, def.until)
 		) {
 			continue
 		}
