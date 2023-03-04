@@ -113,10 +113,10 @@ const ModuleSymbolData = Object.freeze({
 	},
 })
 
-interface TypeDefSymbolData {
+export interface TypeDefSymbolData {
 	typeDef: McdocType
 }
-const TypeDefSymbolData = Object.freeze({
+export const TypeDefSymbolData = Object.freeze({
 	is(data: unknown): data is TypeDefSymbolData {
 		return (
 			!!data &&

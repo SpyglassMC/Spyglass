@@ -71,11 +71,26 @@ export function index(
 				? index('entity_type', entityId, options)
 				: core.checker.noop
 		default:
-			return (node, ctx) => {
-				// const { allowUnknownKey, value } = resolveRootRegistry(registry, id, ctx, node)
-				// options.allowUnknownKey ||= allowUnknownKey
-				// compound(value, options)(node, ctx)
+			const identifier = getRegistryIdentifier(registry)
+			if (!identifier) {
+				return core.checker.noop
 			}
+			return (node, ctx) => {
+				definition(identifier, options)(node, ctx)
+			}
+	}
+}
+
+function getRegistryIdentifier(registry: string) {
+	switch (registry) {
+		case 'block':
+			return '::java::server::world::block::BlockEntity'
+		case 'entity_type':
+			return '::java::server::world::entity::AnyEntity'
+		case 'item':
+			return '::java::server::world::item::AnyItem'
+		default:
+			return undefined
 	}
 }
 
@@ -86,17 +101,21 @@ export function definition(
 	identifier: `::${string}::${string}`,
 	options: Options = {},
 ): core.SyncChecker<NbtCompoundNode> {
-	const index = identifier.lastIndexOf('::')
-	const module = identifier.slice(0, index)
-	const compoundDef = identifier.slice(index + 2)
-	const path: core.SymbolPath = {
-		category: 'mcdoc',
-		path: [module, compoundDef],
-	}
 	return (node, ctx) => {
-		// const { allowUnknownKey, value } = resolveSymbolPaths([path], ctx, node)
-		// options.allowUnknownKey ||= allowUnknownKey
-		// compound(value, options)(node, ctx)
+		const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
+		const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
+		if (!typeDef) {
+			return
+		}
+		switch (typeDef.kind) {
+			case 'struct':
+				compound(typeDef, options)(node, ctx)
+				break
+			default:
+				ctx.logger.error(
+					`[nbt.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
+				)
+		}
 	}
 }
 
@@ -161,11 +180,8 @@ export function blockStates(
 	}
 }
 
-/**
- * @param path The {@link core.SymbolPath} to the compound definition.
- */
 export function compound(
-	data: any,
+	typeDef: mcdoc.StructType,
 	options: Options = {},
 ): core.SyncChecker<NbtCompoundNode> {
 	return (node, ctx) => {
@@ -174,10 +190,13 @@ export function compound(
 				continue
 			}
 			const key = keyNode.value
-			const fieldData = data[key]
-			if (fieldData) {
-				fieldData.query.enter({ usage: { type: 'reference', node: keyNode } })
-				fieldValue(fieldData.data, options)(valueNode, ctx)
+			// TODO: handle spread types
+			const fieldDef = typeDef.fields.find(
+				(p) => p.kind === 'pair' && p.key === key,
+			)
+			if (fieldDef) {
+				// TODO: enter a reference to the mcdoc key
+				fieldValue(fieldDef.type, options)(valueNode, ctx)
 			} else if (!options.allowUnknownKey) {
 				ctx.err.report(
 					localize('unknown-key', localeQuote(key)),
@@ -186,6 +205,8 @@ export function compound(
 				)
 			}
 		}
+		// TODO: check for required fields
+		// requires an update to vanilla-mcdoc to make most fields optional
 	}
 }
 
@@ -598,6 +619,10 @@ export function fieldValue(
 						) as core.SyncChecker<NbtNode>
 					)(node, ctx)
 				}
+				break
+			case 'attributed':
+				// TODO: don't just ignore the attribute
+				fieldValue(type.child, options)(node, ctx)
 				break
 		}
 	}
