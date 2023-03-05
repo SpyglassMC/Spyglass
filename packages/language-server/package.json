@@ -11,7 +11,7 @@
     "test": "test"
   },
   "bin": {
-    "spyglassmc-language-server": "./bin/server"
+    "spyglassmc-language-server": "./bin/server.js"
   },
   "scripts": {
     "release": "npm publish",
