@@ -3299,6 +3299,19 @@ export const CommandTree: ICommandTree = {
                             redirect: 'execute_subcommand'
                         }
                     }
+                },
+                over: {
+                    parser: new LiteralArgumentParser('over'),
+                    children: {
+                        height_map: {
+                            parser: new LiteralArgumentParser('world_surface', 'motion_blocking', 'motion_blocking_no_leaves', 'ocean_floor'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -3415,7 +3428,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('summon'),
             children: {
                 name: {
-                   parser: new IdentityArgumentParser('minecraft:entity_type'),
+                    parser: new IdentityArgumentParser('minecraft:entity_type'),
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'
