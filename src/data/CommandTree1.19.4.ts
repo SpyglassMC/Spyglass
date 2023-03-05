@@ -643,6 +643,47 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        damage: {
+            parser: new LiteralArgumentParser('damage'),
+            children: {
+                target: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    children: {
+                        damageType: {
+                            parser: new IdentityArgumentParser('$damage_type'),
+                            executable: true,
+                            children: {
+                                [Switchable]: true,
+                                at: {
+                                    parser: new LiteralArgumentParser('at'),
+                                    children: {
+                                        location: {
+                                            parser: new VectorArgumentParser(3, 'float', true, true),
+                                            executable: true
+                                        }
+                                    }
+                                },
+                                by: {
+                                    parser: new LiteralArgumentParser('by'),
+                                    children: {
+                                        entity: {
+                                            parser: new EntityArgumentParser('single', 'entities'),
+                                            executable: true,
+                                            children: {
+                                                cause: {
+                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         data: {
             parser: new LiteralArgumentParser('data'),
             children: {

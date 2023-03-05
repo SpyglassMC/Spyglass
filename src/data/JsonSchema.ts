@@ -9,6 +9,7 @@ export const FallbackJsonSchemaRegistry = getFallbackSchemas(setUpJsonCollection
 
 export type JsonSchemaType =
     | 'advancement'
+    | 'damage_type'
     | 'dimension'
     | 'dimension_type'
     | 'item_modifier'
@@ -17,6 +18,7 @@ export type JsonSchemaType =
     | 'recipe'
     /* tag */
     | 'block_tag'
+    | 'damage_type_tag'
     | 'entity_type_tag'
     | 'fluid_tag'
     | 'function_tag'
@@ -59,6 +61,7 @@ export type JsonSchemaType =
 
 const globPatterns: Record<JsonSchemaType, string> = {
     advancement: PathPatterns.advancement,
+    damage_type: PathPatterns.damage_type,
     dimension: PathPatterns.dimension,
     dimension_type: PathPatterns.dimension_type,
     item_modifier: PathPatterns.item_modifier,
@@ -67,6 +70,7 @@ const globPatterns: Record<JsonSchemaType, string> = {
     recipe: PathPatterns.recipe,
     /* tag */
     block_tag: PathPatterns['tag/block'],
+    damage_type_tag: PathPatterns['tag/damage_type'],
     entity_type_tag: PathPatterns['tag/entity_type'],
     fluid_tag: PathPatterns['tag/fluid'],
     function_tag: PathPatterns['tag/function'],
