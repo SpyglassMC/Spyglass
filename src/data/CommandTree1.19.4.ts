@@ -649,30 +649,35 @@ export const CommandTree: ICommandTree = {
                 target: {
                     parser: new EntityArgumentParser('multiple', 'entities'),
                     children: {
-                        damageType: {
-                            parser: new IdentityArgumentParser('$damage_type'),
-                            executable: true,
+                        amount: {
+                            parser: new NumberArgumentParser('float', 0),
                             children: {
-                                [Switchable]: true,
-                                at: {
-                                    parser: new LiteralArgumentParser('at'),
+                                damageType: {
+                                    parser: new IdentityArgumentParser('$damage_type'),
+                                    executable: true,
                                     children: {
-                                        location: {
-                                            parser: new VectorArgumentParser(3, 'float', true, true),
-                                            executable: true
-                                        }
-                                    }
-                                },
-                                by: {
-                                    parser: new LiteralArgumentParser('by'),
-                                    children: {
-                                        entity: {
-                                            parser: new EntityArgumentParser('single', 'entities'),
-                                            executable: true,
+                                        [Switchable]: true,
+                                        at: {
+                                            parser: new LiteralArgumentParser('at'),
                                             children: {
-                                                cause: {
-                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                location: {
+                                                    parser: new VectorArgumentParser(3, 'float', true, true),
                                                     executable: true
+                                                }
+                                            }
+                                        },
+                                        by: {
+                                            parser: new LiteralArgumentParser('by'),
+                                            children: {
+                                                entity: {
+                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                    executable: true,
+                                                    children: {
+                                                        cause: {
+                                                            parser: new EntityArgumentParser('single', 'entities'),
+                                                            executable: true
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
