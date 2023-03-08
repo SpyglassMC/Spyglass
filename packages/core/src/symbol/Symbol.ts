@@ -86,6 +86,7 @@ export const WorldgenFileCategories = Object.freeze([
 	'worldgen/configured_feature',
 	'worldgen/configured_structure_feature',
 	'worldgen/configured_surface_builder',
+	'worldgen/density_function',
 	'worldgen/noise',
 	'worldgen/noise_settings',
 	'worldgen/placed_feature',

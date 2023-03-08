@@ -37,8 +37,8 @@ export function activate(context: vsc.ExtensionContext) {
 		{ language: 'mcfunction' },
 		{ language: 'mcdoc' },
 		{ language: 'nbt' },
-		{ scheme: 'file', pattern: '**/pack.mcmeta' },
-		{ scheme: 'file', pattern: '**/data/*/*/**/*.json' },
+		{ pattern: '**/pack.mcmeta' },
+		{ pattern: '**/data/*/*/**/*.json' },
 	]
 
 	const initializationOptions: server.CustomInitializationOptions = {
