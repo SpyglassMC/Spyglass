@@ -675,9 +675,11 @@ export const CommandTree: ICommandTree = {
                                                     children: {
                                                         from: {
                                                             parser: new LiteralArgumentParser('from'),
-                                                            cause: {
-                                                                parser: new EntityArgumentParser('single', 'entities'),
-                                                                executable: true
+                                                            children: {
+                                                                cause: {
+                                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                                    executable: true
+                                                                }
                                                             }
                                                         }
                                                     }
