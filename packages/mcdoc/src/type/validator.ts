@@ -1,36 +1,37 @@
 import type { ContextBase, ErrorSeverity } from '@spyglassmc/core'
 import type { McdocType } from './index.js'
 
-export function validateValue(
-	type: McdocType,
-	value: RuntimeValue,
-	ctx: ValidatorContext,
-): void {}
+export function checkAssignability({
+	ctx,
+	ruleSet,
+	source,
+	sourceAdapter,
+	target,
+	targetAdapter,
+}: {
+	ctx: ContextBase
+	ruleSet: RuleSet
+	source: unknown
+	sourceAdapter: Adapter
+	target: unknown
+	targetAdapter: Adapter
+}): void {}
 
-export function checkAssignability(
-	target: McdocType,
-	source: McdocType,
-	ctx: ValidatorContext,
-): void {}
-
-export interface ValidatorContext extends ContextBase {
+export interface Adapter {
+	inferExactType(value: unknown): McdocType
+	bind(target: McdocType, path: readonly string[]): void
 	/**
 	 * @param message
 	 * @param target
 	 * @param severity Defaults to `ErrorSeverity.Warning`.
 	 */
-	error(message: string, target: RuntimeValue, severity?: ErrorSeverity): void
-	bind(target: RuntimeValue, path: readonly string[]): void
+	error(message: string, target: McdocType, severity?: ErrorSeverity): void
+	/**
+	 * @returns if the provided type is supported by the current adapter.
+	 *
+	 * this function MUST return `true` for objects returned by the `asType` function on the same adapter.
+	 */
+	supported(type: McdocType): boolean
 }
 
-export interface RuntimeValue {
-	asType(): McdocType
-	asString(): string
-	getKeyOnParent(): RuntimeValue | undefined
-	getParent(): RuntimeValue | undefined
-	getValue(key: string): RuntimeValue | undefined
-}
-
-export interface ValidatorHook {
-	name: McdocType['kind'] | `attributed-${string}`
-}
+export interface RuleSet {}

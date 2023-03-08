@@ -41,16 +41,20 @@ export type Index = StaticIndex | DynamicIndex
  */
 export type ParallelIndices = Index[]
 
+export interface TypeBase {
+	validatorData?: Record</* adapter name */ string, Record<string, unknown>>
+}
+
 export interface DispatcherData {
 	registry: FullResourceLocation
 	parallelIndices: ParallelIndices
 }
 
-export interface DispatcherType extends DispatcherData {
+export interface DispatcherType extends TypeBase, DispatcherData {
 	kind: 'dispatcher'
 }
 
-export interface StructType {
+export interface StructType extends TypeBase {
 	kind: 'struct'
 	fields: StructTypeField[]
 }
@@ -68,7 +72,7 @@ export interface StructTypeSpreadField {
 	type: McdocType
 }
 
-export interface EnumType {
+export interface EnumType extends TypeBase {
 	kind: 'enum'
 	enumKind?: EnumKind
 	values: EnumTypeField[]
@@ -79,58 +83,56 @@ export interface EnumTypeField {
 	value: string | number | bigint
 }
 
-export interface ReferenceType {
+export interface ReferenceType extends TypeBase {
 	kind: 'reference'
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType> {
+export interface UnionType<T extends McdocType = McdocType> extends TypeBase {
 	kind: 'union'
 	members: T[]
 }
 
-export interface AttributedType {
+export interface AttributedType extends TypeBase {
 	kind: 'attributed'
 	attribute: Attribute
 	child: McdocType
 }
 
-export interface IndexedType {
+export interface IndexedType extends TypeBase {
 	kind: 'indexed'
 	parallelIndices: Index[]
 	child: McdocType
 }
 
-export interface TemplateType {
+export interface TemplateType extends TypeBase {
 	kind: 'template'
 	child: McdocType
 	typeParams: { path: string }[]
 }
 
-export interface ConcreteType {
+export interface ConcreteType extends TypeBase {
 	kind: 'concrete'
 	child: McdocType
 	typeArgs: McdocType[]
 }
 
-export const EmptyUnion: UnionType<never> & NoIndices = Object.freeze({
+export const EmptyUnion: UnionType<never> = Object.freeze({
 	kind: 'union',
 	members: [],
 })
-export function createEmptyUnion(
-	attributes?: Attribute[],
-): UnionType<never> & NoIndices {
+export function createEmptyUnion(attributes?: Attribute[]): UnionType<never> {
 	return {
 		...EmptyUnion,
 		// attributes,
 	}
 }
 
-export interface KeywordType {
+export interface KeywordType extends TypeBase {
 	kind: 'any' | 'boolean' | 'unsafe'
 }
 
-export interface StringType {
+export interface StringType extends TypeBase {
 	kind: 'string'
 	lengthRange?: NumericRange
 }
@@ -145,11 +147,11 @@ export type LiteralValue =
 		value: string
 	}
 	| {
-		kind: 'number'
-		value: number
-		suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
-	}
-export interface LiteralType {
+			kind: 'number'
+			value: number
+			suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
+	  }
+export interface LiteralType extends TypeBase {
 	kind: 'literal'
 	value: LiteralValue
 }
@@ -176,7 +178,7 @@ export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
 export type LiteralNumberCaseInsensitiveSuffix =
 	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
-export interface NumericType {
+export interface NumericType extends TypeBase {
 	kind: NumericTypeKind
 	valueRange?: NumericRange
 }
@@ -199,7 +201,7 @@ export const NumericTypeKinds = Object.freeze(
 )
 export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
-export interface PrimitiveArrayType {
+export interface PrimitiveArrayType extends TypeBase {
 	kind: 'byte_array' | 'int_array' | 'long_array'
 	valueRange?: NumericRange
 	lengthRange?: NumericRange
@@ -217,13 +219,13 @@ export const PrimitiveArrayKinds = Object.freeze(
 )
 export type PrimitiveArrayKind = (typeof PrimitiveArrayKinds)[number]
 
-export interface ListType {
+export interface ListType extends TypeBase {
 	kind: 'list'
 	item: McdocType
 	lengthRange?: NumericRange
 }
 
-export interface TupleType {
+export interface TupleType extends TypeBase {
 	kind: 'tuple'
 	items: McdocType[]
 }
@@ -397,7 +399,7 @@ export type ResolvedType =
 	& NoIndices
 type NoIndices = { indices?: undefined }
 
-export interface FlatStructType {
+export interface FlatStructType extends TypeBase {
 	kind: 'flat_struct'
 	fields: Record<string, McdocType>
 }

@@ -16,6 +16,7 @@ import type { ProfilerFactory } from './Profiler.js'
 import type { ProjectData } from './Project.js'
 
 export interface ContextBase {
+	config: Config
 	fs: FileService
 	logger: Logger
 	meta: MetaRegistry
@@ -26,6 +27,7 @@ export interface ContextBase {
 export namespace ContextBase {
 	export function create(project: ProjectData): ContextBase {
 		return {
+			config: project.config,
 			fs: project.fs,
 			logger: project.logger,
 			meta: project.meta,
@@ -37,7 +39,6 @@ export namespace ContextBase {
 }
 
 export interface ParserContext extends ContextBase {
-	config: Config
 	doc: TextDocument
 	err: ErrorReporter
 }
@@ -52,7 +53,6 @@ export namespace ParserContext {
 	): ParserContext {
 		return {
 			...ContextBase.create(project),
-			config: project.config,
 			doc: opts.doc,
 			err: opts.err ?? new ErrorReporter(),
 		}
@@ -60,7 +60,6 @@ export namespace ParserContext {
 }
 
 export interface ProcessorContext extends ContextBase {
-	config: Config
 	doc: TextDocument
 	src: ReadonlySource
 	symbols: SymbolUtil
@@ -76,7 +75,6 @@ export namespace ProcessorContext {
 	): ProcessorContext {
 		return {
 			...ContextBase.create(project),
-			config: project.config,
 			doc: opts.doc,
 			src: opts.src ?? new ReadonlySource(opts.doc.getText()),
 			symbols: project.symbols,
