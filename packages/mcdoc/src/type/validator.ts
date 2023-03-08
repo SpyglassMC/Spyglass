@@ -29,7 +29,7 @@ export interface Adapter {
 	/**
 	 * @returns if the provided type is supported by the current adapter.
 	 *
-	 * this function MUST return `true` for objects returned by the `asType` function on the same adapter.
+	 * this function MUST return `true` for objects returned by the `inferExactType` function on the same adapter.
 	 */
 	supported(type: McdocType): boolean
 }
