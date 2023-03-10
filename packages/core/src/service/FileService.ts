@@ -330,9 +330,9 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	private static getUri(archiveUri: string): RootUriString
 	private static getUri(archiveUri: string, pathInArchive: string): string
 	private static getUri(archiveUri: string, pathInArchive = '') {
-		return `${ArchiveUriSupporter.Protocol}//${encodeURIComponent(
+		return `${ArchiveUriSupporter.Protocol}${encodeURIComponent(
 			archiveUri,
-		)}/${pathInArchive.replace(/\\/g, '/')}`
+		)}?path=${encodeURIComponent(pathInArchive.replace(/\\/g, '/'))}`
 	}
 
 	/**
@@ -347,10 +347,13 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 				`Expected protocol “${ArchiveUriSupporter.Protocol}” in “${uri}”`,
 			)
 		}
+		const path = uri.searchParams.get('path')
+		if (!path) {
+			throw new Error(`Missing path in archive uri “${uri.toString()}”`)
+		}
 		return {
-			archiveUri: decodeURIComponent(uri.hostname),
-			pathInArchive:
-				uri.pathname.charAt(0) === '/' ? uri.pathname.slice(1) : uri.pathname,
+			archiveUri: decodeURIComponent(uri.pathname),
+			pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path,
 		}
 	}
 
