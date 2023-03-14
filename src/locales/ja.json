@@ -29,6 +29,7 @@
     "argument-type.time": "time",
     "argument-type.uuid": "UUID",
     "argument-type.vector": "vector",
+    "argument-type.vector.1D": "1D vector",
     "argument-type.vector.2D": "2D vector",
     "argument-type.vector.3D": "3D vector",
     "argument-type.vector.4D": "4D vector",
