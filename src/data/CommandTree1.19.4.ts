@@ -651,6 +651,7 @@ export const CommandTree: ICommandTree = {
                     children: {
                         amount: {
                             parser: new NumberArgumentParser('float', 0),
+                            executable: true,
                             children: {
                                 damageType: {
                                     parser: new IdentityArgumentParser('$damage_type'),
