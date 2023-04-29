@@ -4,15 +4,9 @@
 	"version": "1.0.0",
 	"license": "MIT",
 	"scripts": {
-		"build": "npm run build:tsc && npm run build:locales && npm run build:playground && npm run build:vscode-extension",
-		"build:dev": "npm run build:tsc && npm run build:locales && npm run build:playground:dev && npm run build:vscode-extension:dev",
-		"build:tsc": "tsc -b packages",
-		"build:locales": "npm run build --workspace=packages/locales",
-		"build:playground": "npm run build --workspace=packages/playground",
-		"build:playground:dev": "npm run build:dev --workspace=packages/playground",
-		"build:vscode-extension": "npm run build --workspace=packages/vscode-extension",
-		"build:vscode-extension:dev": "npm run build:dev --workspace=packages/vscode-extension",
-		"watch": "tsc -b -w packages",
+		"build": "wireit",
+		"build:dev": "wireit",
+		"watch": "npm run build --watch",
 		"clean": "tsc -b packages --clean",
 		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo",
 		"commit": "gitmoji -c",
@@ -28,6 +22,27 @@
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"test": "nyc mocha",
 		"test:local": "nyc mocha --config .mocharc.local.jsonc"
+	},
+	"wireit": {
+		"build": {
+			"dependencies": [
+				"build:tsc",
+				"./packages/locales:build",
+				"./packages/playground:build",
+				"./packages/vscode-extension:build"
+			]
+		},
+		"build:dev": {
+			"dependencies": [
+				"build:tsc",
+				"./packages/locales:build",
+				"./packages/playground:build:dev",
+				"./packages/vscode-extension:build:dev"
+			]
+		},
+		"build:tsc": {
+			"command": "tsc -b packages"
+		}
 	},
 	"devDependencies": {
 		"@types/benchmark": "^2.1.2",

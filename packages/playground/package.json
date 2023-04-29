@@ -8,12 +8,32 @@
   "author": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "node esbuild.js prod",
-    "build:dev": "node esbuild.js dev",
+    "build": "wireit",
+    "build:dev": "wireit",
     "deploy": "node deploy.js",
-    "release": "",
-    "release:dry": "",
-    "watch": "node esbuild.js watch"
+    "release": "echo TODO",
+    "release:dry": "echo TODO",
+    "watch": "npm run build --watch"
+  },
+  "wireit": {
+    "build": {
+      "command": "node esbuild.js prod",
+      "files": [
+        "out/index.js"
+      ],
+      "output": [
+        "dist/index.js"
+      ]
+    },
+    "build:dev": {
+      "command": "node esbuild.js dev",
+      "files": [
+        "out/index.js"
+      ],
+      "output": [
+        "dist/index.js"
+      ]
+    }
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^0.20.2",
@@ -21,7 +41,7 @@
     "@codemirror/state": "^0.20.0",
     "@codemirror/view": "^0.20.6",
     "@codemirror/commands": "^0.20.0",
-    "esbuild": "^0.14.39"
+    "esbuild": "^0.17.18"
   },
   "repository": {
     "type": "git",

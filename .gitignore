@@ -2,6 +2,7 @@
 **/node_modules
 **/.eslintcache
 **/.nyc_output
+**/.wireit
 **/*.cpuprofile
 **/*.tsbuildinfo
 

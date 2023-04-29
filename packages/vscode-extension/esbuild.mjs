@@ -21,15 +21,6 @@ try {
 		external: ['electron', 'vscode'],
 		sourcemap: isDev,
 		minify: !isDev,
-		watch: isWatch ? {
-			onRebuild(error, result) {
-				if (!result) {
-					console.error('No result on rebuild', error)
-				} else {
-					logResult(result)
-				}
-			}
-		} : undefined,
 	})
 	logResult(result)
 } catch (e) {

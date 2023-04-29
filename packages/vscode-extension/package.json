@@ -7,18 +7,42 @@
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
-    "build": "node esbuild.mjs prod",
-    "build:dev": "node esbuild.mjs dev",
+    "build": "wireit",
+    "build:dev": "wireit",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
-    "watch": "node esbuild.mjs watch"
+    "watch": "npm run build --watch"
+  },
+  "wireit": {
+    "build": {
+      "command": "node esbuild.mjs prod",
+      "files": [
+        "out/extension.mjs",
+        "../language-server/lib/server.js"
+      ],
+      "output": [
+        "dist/extension.js",
+        "dist/server.js"
+      ]
+    },
+    "build:dev": {
+      "command": "node esbuild.mjs dev",
+      "files": [
+        "out/extension.mjs",
+        "../language-server/lib/server.js"
+      ],
+      "output": [
+        "dist/extension.js",
+        "dist/server.js"
+      ]
+    }
   },
   "extensionDependencies": [
     "arcensoth.language-mcfunction"
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
-    "esbuild": "^0.14.39",
+    "esbuild": "^0.17.18",
     "vscode-languageclient": "^8.0.1",
     "vscode-test": "^1.5.2"
   },
@@ -196,7 +220,7 @@
         "description": "A vector."
       }
     ],
-    "semanticTokenModifiers": [],
+    "semanticTokenModifiers": [ ],
     "semanticTokenScopes": [
       {
         "scopes": {
