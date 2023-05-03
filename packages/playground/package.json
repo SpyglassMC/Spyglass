@@ -18,6 +18,9 @@
   "wireit": {
     "build": {
       "command": "node esbuild.js prod",
+      "dependencies": [
+        "../..:build:packages"
+      ],
       "files": [
         "out/index.js"
       ],
@@ -27,6 +30,9 @@
     },
     "build:dev": {
       "command": "node esbuild.js dev",
+      "dependencies": [
+        "../..:build:packages"
+      ],
       "files": [
         "out/index.js"
       ],

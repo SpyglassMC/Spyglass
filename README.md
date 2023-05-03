@@ -58,6 +58,16 @@ Tabs for indents, spaces for alignment. Except do not align things because the a
 1. Install Jekyll according to [its documentation](https://jekyllrb.com/docs/#instructions).
 2. Run `npm run docs:start` to start a local preview at `localhost:4000`.
 
+### Build Pipeline
+
+The `build` script at the root level does the following steps in series:
+
+* Run the `build` script in `./packages/locales`.
+* Run the TypeScript compiler across all packages.
+* Then, do the two steps in parallel:
+	1. Run the `build` script in `./packages/playground`.
+	2. Run the `build` script in `./packages/vscode-extension`.
+
 ## Credits
 
 The original Spyglass logo was provided by [BlackNight0315](https://github.com/BlackNight0315).

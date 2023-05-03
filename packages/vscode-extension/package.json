@@ -16,6 +16,9 @@
   "wireit": {
     "build": {
       "command": "node esbuild.mjs prod",
+      "dependencies": [
+        "../..:build:packages"
+      ],
       "files": [
         "out/extension.mjs",
         "../language-server/lib/server.js"
@@ -27,6 +30,9 @@
     },
     "build:dev": {
       "command": "node esbuild.mjs dev",
+      "dependencies": [
+        "../..:build:packages"
+      ],
       "files": [
         "out/extension.mjs",
         "../language-server/lib/server.js"
