@@ -25,23 +25,20 @@
 	},
 	"wireit": {
 		"build": {
+			"command": "tsc -b packages",
 			"dependencies": [
-				"build:tsc",
 				"./packages/locales:build",
 				"./packages/playground:build",
 				"./packages/vscode-extension:build"
 			]
 		},
 		"build:dev": {
+			"command": "tsc -b packages",
 			"dependencies": [
-				"build:tsc",
 				"./packages/locales:build",
 				"./packages/playground:build:dev",
 				"./packages/vscode-extension:build:dev"
 			]
-		},
-		"build:tsc": {
-			"command": "tsc -b packages"
 		}
 	},
 	"devDependencies": {
