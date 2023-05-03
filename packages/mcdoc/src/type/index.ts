@@ -23,7 +23,7 @@ export const StaticIndexKeywords = Object.freeze([
 	'none',
 	'unknown',
 ] as const)
-export type StaticIndexKeyword = typeof StaticIndexKeywords[number]
+export type StaticIndexKeyword = (typeof StaticIndexKeywords)[number]
 export interface StaticIndex {
 	kind: 'static'
 	value: string
@@ -158,7 +158,7 @@ export const LiteralNumberSuffixes = Object.freeze([
 	'f',
 	'd',
 ] as const)
-export type LiteralNumberSuffix = typeof LiteralNumberSuffixes[number]
+export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
 export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze([
 	...LiteralNumberSuffixes,
 	'B',
@@ -168,7 +168,7 @@ export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze([
 	'D',
 ] as const)
 export type LiteralNumberCaseInsensitiveSuffix =
-	typeof LiteralNumberCaseInsensitiveSuffixes[number]
+	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
 export interface NumericType {
 	kind: NumericTypeKind
@@ -180,14 +180,14 @@ export const NumericTypeIntKinds = Object.freeze([
 	'int',
 	'long',
 ] as const)
-export type NumericTypeIntKind = typeof NumericTypeIntKinds[number]
+export type NumericTypeIntKind = (typeof NumericTypeIntKinds)[number]
 export const NumericTypeFloatKinds = Object.freeze(['float', 'double'] as const)
-export type NumericTypeFloatKind = typeof NumericTypeFloatKinds[number]
+export type NumericTypeFloatKind = (typeof NumericTypeFloatKinds)[number]
 export const NumericTypeKinds = Object.freeze([
 	...NumericTypeIntKinds,
 	...NumericTypeFloatKinds,
 ] as const)
-export type NumericTypeKind = typeof NumericTypeKinds[number]
+export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
 export interface PrimitiveArrayType {
 	kind: 'byte_array' | 'int_array' | 'long_array'
@@ -199,11 +199,11 @@ export const PrimitiveArrayValueKinds = Object.freeze([
 	'int',
 	'long',
 ] as const)
-export type PrimitiveArrayValueKind = typeof PrimitiveArrayValueKinds[number]
+export type PrimitiveArrayValueKind = (typeof PrimitiveArrayValueKinds)[number]
 export const PrimitiveArrayKinds = Object.freeze(
 	PrimitiveArrayValueKinds.map((kind) => `${kind}_array` as const),
 )
-export type PrimitiveArrayKind = typeof PrimitiveArrayKinds[number]
+export type PrimitiveArrayKind = (typeof PrimitiveArrayKinds)[number]
 
 export interface ListType {
 	kind: 'list'

@@ -11,7 +11,7 @@ export const McdocCategories = Object.freeze([
 	'mcdoc',
 	'mcdoc/dispatcher',
 ] as const)
-export type McdocCategory = typeof McdocCategories[number]
+export type McdocCategory = (typeof McdocCategories)[number]
 //#endregion
 
 //#region Registry Categories
@@ -76,7 +76,7 @@ export const RegistryCategories = Object.freeze([
 	'worldgen/tree_decorator_type',
 	'worldgen/trunk_placer_type',
 ] as const)
-export type RegistryCategory = typeof RegistryCategories[number]
+export type RegistryCategory = (typeof RegistryCategories)[number]
 //#endregion
 
 //#region Data Pack Categories
@@ -93,7 +93,7 @@ export const WorldgenFileCategories = Object.freeze([
 	'worldgen/processor_list',
 	'worldgen/template_pool',
 ] as const)
-export type WorldgenFileCategory = typeof WorldgenFileCategories[number]
+export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
 
 export const TaggableResourceLocationCategories = Object.freeze([
 	'function',
@@ -101,12 +101,12 @@ export const TaggableResourceLocationCategories = Object.freeze([
 	...WorldgenFileCategories,
 ] as const)
 export type TaggableResourceLocationCategory =
-	typeof TaggableResourceLocationCategories[number]
+	(typeof TaggableResourceLocationCategories)[number]
 
 export const TagFileCategories = Object.freeze(
 	TaggableResourceLocationCategories.map((key) => `tag/${key}` as const),
 )
-export type TagFileCategory = typeof TagFileCategories[number]
+export type TagFileCategory = (typeof TagFileCategories)[number]
 
 export const FileCategories = Object.freeze([
 	'advancement',
@@ -121,7 +121,7 @@ export const FileCategories = Object.freeze([
 	...TagFileCategories,
 	...WorldgenFileCategories,
 ] as const)
-export type FileCategory = typeof FileCategories[number]
+export type FileCategory = (typeof FileCategories)[number]
 
 export const MiscCategories = Object.freeze([
 	'attribute_modifier_uuid',
@@ -132,13 +132,13 @@ export const MiscCategories = Object.freeze([
 	'tag',
 	'team',
 ] as const)
-export type MiscCategory = typeof MiscCategories[number]
+export type MiscCategory = (typeof MiscCategories)[number]
 
 export const DatapackCategories = Object.freeze([
 	...FileCategories,
 	...MiscCategories,
 ] as const)
-export type DatapackCategory = typeof DatapackCategories[number]
+export type DatapackCategory = (typeof DatapackCategories)[number]
 //#endregion
 
 export const AllCategories = Object.freeze([
@@ -146,7 +146,7 @@ export const AllCategories = Object.freeze([
 	...McdocCategories,
 	...RegistryCategories,
 ] as const)
-export type AllCategory = typeof AllCategories[number]
+export type AllCategory = (typeof AllCategories)[number]
 
 export const ResourceLocationCategories = Object.freeze([
 	'bossbar',
@@ -155,7 +155,8 @@ export const ResourceLocationCategories = Object.freeze([
 	...FileCategories,
 	...RegistryCategories,
 ] as const)
-export type ResourceLocationCategory = typeof ResourceLocationCategories[number]
+export type ResourceLocationCategory =
+	(typeof ResourceLocationCategories)[number]
 export namespace ResourceLocationCategory {
 	export function is(category: string): category is ResourceLocationCategory {
 		return ResourceLocationCategories.includes(
@@ -263,7 +264,7 @@ export const SymbolUsageTypes = Object.freeze([
 	'reference',
 	'typeDefinition',
 ] as const)
-export type SymbolUsageType = typeof SymbolUsageTypes[number]
+export type SymbolUsageType = (typeof SymbolUsageTypes)[number]
 export namespace SymbolUsageType {
 	export function is(value: unknown): value is SymbolUsageType {
 		return SymbolUsageTypes.includes(value as SymbolUsageType)

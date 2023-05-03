@@ -5,7 +5,7 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 
 export const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 't'] as const
-export type EscapeChar = typeof EscapeChars[number]
+export type EscapeChar = (typeof EscapeChars)[number]
 export namespace EscapeChar {
 	/* istanbul ignore next */
 	export function is(
