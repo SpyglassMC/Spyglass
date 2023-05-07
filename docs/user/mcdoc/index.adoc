@@ -1001,12 +1001,12 @@ which will get replaced by actual types when the type alias is instantiated else
 type NumericRange<T> = ( <1>
 	T | <2>
 	[T, T] | <2>
-	struct { min: T, max: T }, <2>
+	struct { min: T, max: T } <2>
 )
 
 type FloatRange = NumericRange<float> <3>
-type IntegerRange = NumericRange<integer> <3>
-type NaturalRange = NumericRange<integer @ 0..> <3>
+type IntegerRange = NumericRange<int> <3>
+type NaturalRange = NumericRange<int @ 0..> <3>
 ----
 <1> The type parameter `T` is declared in the angle brackets.
 <2> The type parameter `T` can now be referenced on the right-hand side.
@@ -1157,13 +1157,13 @@ struct Foo {
 	evilUUID1: (
 		#[until("1.16", uuid_string_to_compound)] #[parser=uuid] string |
 		#[until("1.17", uuid_compound_to_array)] MostLeastCompound |
-		int[] # 4
+		int[] @ 4
 	),
 	#[history{
 		(#[parser=uuid] string, until="1.16", updater=uuid_string_to_compound),
 		(MostLeastCompound, until="1.17", updater=uuid_compound_to_array),
 	}]
-	evilUUID2: int[] # 4
+	evilUUID2: int[] @ 4
 }
 ----
 ====
