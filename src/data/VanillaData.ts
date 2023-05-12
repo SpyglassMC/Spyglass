@@ -40,10 +40,10 @@ export function getVanillaDataCache(): {
     Registry: { [version: string]: Promise<Registry> }
 } {
     return clone({
-        BlockDefinition: { '1.18.1': Promise.resolve(FallbackBlockDefinition) },
-        NamespaceSummary: { '1.18.1': Promise.resolve(FallbackNamespaceSummary) },
-        Nbtdoc: { '1.18.1': Promise.resolve(FallbackNbtdoc) },
-        Registry: { '1.18.1': Promise.resolve(FallbackRegistry) }
+        BlockDefinition: { '1.19.4': Promise.resolve(FallbackBlockDefinition) },
+        NamespaceSummary: { '1.19.4': Promise.resolve(FallbackNamespaceSummary) },
+        Nbtdoc: { '1.19.4': Promise.resolve(FallbackNbtdoc) },
+        Registry: { '1.19.4': Promise.resolve(FallbackRegistry) }
     })
 }
 
