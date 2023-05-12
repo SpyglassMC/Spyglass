@@ -420,18 +420,6 @@ export const CommandTree: ICommandTree = {
                     children: {
                         end: {
                             parser: new VectorArgumentParser(3, 'integer'),
-                            run: ({ data, errors }) => {
-                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                const volume = v1.volumeTo(v2)
-                                if (volume && volume > 32768) {
-                                    errors.push(new ParsingError(
-                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Error
-                                    ))
-                                }
-                            },
                             children: {
                                 destination: {
                                     parser: new VectorArgumentParser(3, 'integer'),
@@ -459,6 +447,139 @@ export const CommandTree: ICommandTree = {
                                                 cloneMode: {
                                                     parser: new LiteralArgumentParser('force', 'move', 'normal'),
                                                     executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                to: {
+                                    parser: new LiteralArgumentParser('to'),
+                                    children: {
+                                        targetDimension: {
+                                            parser: new IdentityArgumentParser('$dimension'),
+                                            children: {
+                                                destination: {
+                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                    executable: true,
+                                                    children: {
+                                                        filtered: {
+                                                            parser: new LiteralArgumentParser('filtered'),
+                                                            children: {
+                                                                block: {
+                                                                    parser: new BlockArgumentParser(true),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        cloneMode: {
+                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                            executable: true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        otherMaskMode: {
+                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                            executable: true,
+                                                            children: {
+                                                                cloneMode: {
+                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                from: {
+                    parser: new LiteralArgumentParser('from'),
+                    children: {
+                        sourceDimension: {
+                            parser: new IdentityArgumentParser('$dimension'),
+                            children: {
+                                begin: {
+                                    parser: new VectorArgumentParser(3, 'integer'),
+                                    children: {
+                                        end: {
+                                            parser: new VectorArgumentParser(3, 'integer'),
+                                            children: {
+                                                destination: {
+                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                    executable: true,
+                                                    children: {
+                                                        filtered: {
+                                                            parser: new LiteralArgumentParser('filtered'),
+                                                            children: {
+                                                                block: {
+                                                                    parser: new BlockArgumentParser(true),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        cloneMode: {
+                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                            executable: true
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        },
+                                                        otherMaskMode: {
+                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                            executable: true,
+                                                            children: {
+                                                                cloneMode: {
+                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                to: {
+                                                    parser: new LiteralArgumentParser('to'),
+                                                    children: {
+                                                        targetDimension: {
+                                                            parser: new IdentityArgumentParser('$dimension'),
+                                                            children: {
+                                                                destination: {
+                                                                    parser: new VectorArgumentParser(3, 'integer'),
+                                                                    executable: true,
+                                                                    children: {
+                                                                        filtered: {
+                                                                            parser: new LiteralArgumentParser('filtered'),
+                                                                            children: {
+                                                                                block: {
+                                                                                    parser: new BlockArgumentParser(true),
+                                                                                    executable: true,
+                                                                                    children: {
+                                                                                        cloneMode: {
+                                                                                            parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                                            executable: true
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        otherMaskMode: {
+                                                                            parser: new LiteralArgumentParser('masked', 'replace'),
+                                                                            executable: true,
+                                                                            children: {
+                                                                                cloneMode: {
+                                                                                    parser: new LiteralArgumentParser('force', 'move', 'normal'),
+                                                                                    executable: true
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -514,6 +635,58 @@ export const CommandTree: ICommandTree = {
                         available_enabled: {
                             parser: new LiteralArgumentParser('available', 'enabled'),
                             executable: true
+                        }
+                    }
+                }
+            }
+        },
+        damage: {
+            parser: new LiteralArgumentParser('damage'),
+            children: {
+                target: {
+                    parser: new EntityArgumentParser('multiple', 'entities'),
+                    children: {
+                        amount: {
+                            parser: new NumberArgumentParser('float', 0),
+                            executable: true,
+                            children: {
+                                damageType: {
+                                    parser: new IdentityArgumentParser('$damage_type'),
+                                    executable: true,
+                                    children: {
+                                        [Switchable]: true,
+                                        at: {
+                                            parser: new LiteralArgumentParser('at'),
+                                            children: {
+                                                location: {
+                                                    parser: new VectorArgumentParser(3, 'float', true, true),
+                                                    executable: true
+                                                }
+                                            }
+                                        },
+                                        by: {
+                                            parser: new LiteralArgumentParser('by'),
+                                            children: {
+                                                entity: {
+                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                    executable: true,
+                                                    children: {
+                                                        from: {
+                                                            parser: new LiteralArgumentParser('from'),
+                                                            children: {
+                                                                cause: {
+                                                                    parser: new EntityArgumentParser('single', 'entities'),
+                                                                    executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -623,6 +796,44 @@ export const CommandTree: ICommandTree = {
                                                                         }
                                                                     },
                                                                     executable: true
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                string: {
+                                                    parser: new LiteralArgumentParser('string'),
+                                                    children: {
+                                                        source: {
+                                                            template: 'nbt_holder',
+                                                            executable: true,
+                                                            children: {
+                                                                sourcePath: {
+                                                                    parser: ({ data }) => {
+                                                                        const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                                        if (type === 'entity') {
+                                                                            const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
+                                                                            const id = getNbtdocRegistryId(entity)
+                                                                            return new NbtPathArgumentParser('minecraft:entity', id)
+                                                                        } else if (type === 'block') {
+                                                                            return new NbtPathArgumentParser('minecraft:block', null)
+                                                                        } else {
+                                                                            return new NbtPathArgumentParser('minecraft:block')
+                                                                        }
+                                                                    },
+                                                                    executable: true,
+                                                                    children: {
+                                                                        start: {
+                                                                            parser: new NumberArgumentParser('integer', 0),
+                                                                            executable: true,
+                                                                            children: {
+                                                                                end: {
+                                                                                    parser: new NumberArgumentParser('integer', 0),
+                                                                                    executable: true
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -774,6 +985,22 @@ export const CommandTree: ICommandTree = {
                                                     }
                                                 }
                                             }
+                                        },
+                                        infinite: {
+                                            parser: new LiteralArgumentParser('infinite'),
+                                            executable: true,
+                                            children: {
+                                                amplifier: {
+                                                    parser: new NumberArgumentParser('integer', 0, 255),
+                                                    executable: true,
+                                                    children: {
+                                                        hideParticles: {
+                                                            template: 'templates.boolean',
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -850,6 +1077,36 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        fillbiome: {
+            parser: new LiteralArgumentParser('fillbiome'),
+            children: {
+                from: {
+                    parser: new VectorArgumentParser(3, 'integer'),
+                    children: {
+                        to: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            children: {
+                                block: {
+                                    parser: new IdentityArgumentParser('$worldgen/biome'),
+                                    executable: true,
+                                    children: {
+                                        replace: {
+                                            parser: new LiteralArgumentParser('replace'),
+                                            children: {
+                                                filter: {
+                                                    parser: new IdentityArgumentParser('$worldgen/biome', true),
+                                                    executable: true
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         fill: {
             parser: new LiteralArgumentParser('fill'),
             children: {
@@ -858,18 +1115,6 @@ export const CommandTree: ICommandTree = {
                     children: {
                         to: {
                             parser: new VectorArgumentParser(3, 'integer'),
-                            run: ({ data, errors }) => {
-                                const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                const volume = v1.volumeTo(v2)
-                                if (volume && volume > 32768) {
-                                    errors.push(new ParsingError(
-                                        { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                        locale('too-many-block-affected', 32768, volume),
-                                        undefined, DiagnosticSeverity.Error
-                                    ))
-                                }
-                            },
                             children: {
                                 block: {
                                     parser: new BlockArgumentParser(false),
@@ -1005,7 +1250,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doTileDrops', 'doWardenSpawning', 'doWeatherCycle', 'freezeDamage', 'keepInventory', 'logAdminCommands', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'doInsomnia', 'doImmediateRespawn', 'drowningDamage', 'fallDamage', 'fireDamage', 'doPatrolSpawning', 'doTraderSpawning', 'universalAnger', 'forgiveDeadPlayers'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'blockExplosionDropDecay', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doImmediateRespawn', 'doInsomnia', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doPatrolSpawning', 'doTileDrops', 'doTraderSpawning', 'doVinesSpread', 'doWardenSpawning', 'doWeatherCycle', 'drowningDamage', 'fallDamage', 'fireDamage', 'forgiveDeadPlayers', 'freezeDamage', 'globalSoundEvents', 'keepInventory', 'lavaSourceConversion', 'logAdminCommands', 'mobExplosionDropDecay', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'tntExplosionDropDecay', 'universalAnger', 'waterSourceConversion'),
                     executable: true,
                     children: {
                         value: {
@@ -1015,7 +1260,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 intRuleName: {
-                    parser: new LiteralArgumentParser('maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'spawnRadius'),
+                    parser: new LiteralArgumentParser('commandModificationBlockLimit', 'maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'snowAccumulationHeight', 'spawnRadius'),
                     executable: true,
                     children: {
                         value: {
@@ -1503,9 +1748,21 @@ export const CommandTree: ICommandTree = {
             permission: 4,
             executable: true,
             children: {
-                port: {
-                    parser: new NumberArgumentParser('integer', 0, 65535),
-                    executable: true
+                allowCommands: {
+                    template: 'templates.boolean',
+                    executable: true,
+                    children: {
+                        gamemode: {
+                            parser: new LiteralArgumentParser('adventure', 'creative', 'spectator', 'survival'),
+                            executable: true,
+                            children: {
+                                port: {
+                                    parser: new NumberArgumentParser('integer', 0, 65535),
+                                    executable: true
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -1575,6 +1832,29 @@ export const CommandTree: ICommandTree = {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        ride: {
+            parser: new LiteralArgumentParser('ride'),
+            children: {
+                entity: {
+                    parser: new EntityArgumentParser('single', 'entities'),
+                    children: {
+                        mount: {
+                            parser: new LiteralArgumentParser('mount'),
+                            children: {
+                                mount: {
+                                    parser: new EntityArgumentParser('single', 'entities'),
+                                    executable: true
+                                }
+                            }
+                        },
+                        dismount: {
+                            parser: new LiteralArgumentParser('dismount'),
+                            executable: true
                         }
                     }
                 }
@@ -2320,13 +2600,13 @@ export const CommandTree: ICommandTree = {
                             parser: new LiteralArgumentParser('times'),
                             children: {
                                 fadeIn: {
-                                    parser: new NumberArgumentParser('integer'),
+                                    parser: new TimeArgumentParser(),
                                     children: {
                                         stay: {
-                                            parser: new NumberArgumentParser('integer'),
+                                            parser: new TimeArgumentParser(),
                                             children: {
                                                 fadeOut: {
-                                                    parser: new NumberArgumentParser('integer'),
+                                                    parser: new TimeArgumentParser(),
                                                     executable: true
                                                 }
                                             }
@@ -2374,7 +2654,7 @@ export const CommandTree: ICommandTree = {
                     executable: true,
                     children: {
                         duration: {
-                            parser: new NumberArgumentParser('integer', 0, 1_000_000),
+                            parser: new TimeArgumentParser(),
                             executable: true
                         }
                     }
@@ -2579,18 +2859,6 @@ export const CommandTree: ICommandTree = {
                             children: {
                                 end: {
                                     parser: new VectorArgumentParser(3, 'integer'),
-                                    run: ({ data, errors }) => {
-                                        const v1 = getArgOrDefault<VectorNode>(data, 2, new VectorNode())
-                                        const v2 = getArgOrDefault<VectorNode>(data, 1, new VectorNode())
-                                        const volume = v1.volumeTo(v2)
-                                        if (volume && volume > 32768) {
-                                            errors.push(new ParsingError(
-                                                { start: v1[NodeRange].start, end: v2[NodeRange].end },
-                                                locale('too-many-block-affected', 32768, volume),
-                                                undefined, DiagnosticSeverity.Error
-                                            ))
-                                        }
-                                    },
                                     children: {
                                         destination: {
                                             parser: new VectorArgumentParser(3, 'integer'),
@@ -2605,6 +2873,25 @@ export const CommandTree: ICommandTree = {
                                                     }
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                biome: {
+                    parser: new LiteralArgumentParser('biome'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3, 'integer'),
+                            children: {
+                                biome: {
+                                    parser: new IdentityArgumentParser('$worldgen/biome', true),
+                                    executable: true,
+                                    children: {
+                                        subcommand: {
+                                            redirect: 'execute_subcommand'
                                         }
                                     }
                                 }
@@ -2661,11 +2948,39 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
+                dimension: {
+                    parser: new LiteralArgumentParser('dimension'),
+                    children: {
+                        dimension: {
+                            parser: new IdentityArgumentParser('$dimension', true),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
                 entity: {
                     parser: new LiteralArgumentParser('entity'),
                     children: {
                         entities: {
                             parser: new EntityArgumentParser('multiple', 'entities'),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                loaded: {
+                    parser: new LiteralArgumentParser('loaded'),
+                    children: {
+                        pos: {
+                            parser: new VectorArgumentParser(3, 'integer'),
                             executable: true,
                             children: {
                                 subcommand: {
@@ -2997,6 +3312,19 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
+        on: {
+            parser: new LiteralArgumentParser('on'),
+            children: {
+                relation: {
+                    parser: new LiteralArgumentParser('attacker', 'controller', 'leasher', 'origin', 'owner', 'passengers', 'target', 'vehicle'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
+                        }
+                    }
+                }
+            }
+        },
         positioned: {
             parser: new LiteralArgumentParser('positioned'),
             children: {
@@ -3018,6 +3346,19 @@ export const CommandTree: ICommandTree = {
                     children: {
                         subcommand: {
                             redirect: 'execute_subcommand'
+                        }
+                    }
+                },
+                over: {
+                    parser: new LiteralArgumentParser('over'),
+                    children: {
+                        height_map: {
+                            parser: new LiteralArgumentParser('world_surface', 'motion_blocking', 'motion_blocking_no_leaves', 'ocean_floor'),
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
                         }
                     }
                 }
@@ -3127,6 +3468,19 @@ export const CommandTree: ICommandTree = {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        },
+        summon: {
+            parser: new LiteralArgumentParser('summon'),
+            children: {
+                name: {
+                    parser: new IdentityArgumentParser('minecraft:entity_type'),
+                    children: {
+                        subcommand: {
+                            redirect: 'execute_subcommand'
                         }
                     }
                 }
