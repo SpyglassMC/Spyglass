@@ -136,7 +136,7 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
                 key = reader.readQuotedString(out)
             } else {
                 out.mapping.start = reader.cursor
-                while (reader.canRead() && StringReader.canInUnquotedString(reader.peek()) && reader.peek() !== '.') {
+                while (reader.canRead() && this.canInUnquotedKeyWtfMojang(reader.peek()) && reader.peek() !== '.') {
                     key += reader.read()
                 }
             }
@@ -263,7 +263,11 @@ export class NbtPathArgumentParser extends ArgumentParser<NbtPathNode> {
 
     private canParseKey(reader: StringReader) {
         // FIXME: after MC-175504 is fixed.
-        return reader.peek() === '"' || StringReader.canInUnquotedString(reader.peek())
+        return reader.peek() === '"' || this.canInUnquotedKeyWtfMojang(reader.peek())
+    }
+
+    private canInUnquotedKeyWtfMojang(char: string) {
+        return /^[^ \[\]\.\{\}]+$/.test(char)
     }
 
     private canParseCompoundFilter(reader: StringReader) {
