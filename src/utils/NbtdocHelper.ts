@@ -456,8 +456,8 @@ export class NbtdocHelper {
         return isLooselyMatched
     }
 
-    private validateCollectionLength(ans: LegacyValidateResult, { config }: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number, number], _isPredicate: boolean, configKey: 'nbtArrayLengthCheck' | 'nbtListLengthCheck') {
-        if (config.lint[configKey] && config.lint[configKey]![1] && !(min <= tag.length && tag.length <= max)) {
+    private validateCollectionLength(ans: LegacyValidateResult, { config }: ParsingContext, tag: NbtCollectionNode<any>, [min, max]: [number | null, number | null], _isPredicate: boolean, configKey: 'nbtArrayLengthCheck' | 'nbtListLengthCheck') {
+        if (config.lint[configKey] && config.lint[configKey]![1] && !((min ?? -Infinity) <= tag.length && tag.length <= (max ?? Infinity))) {
             ans.errors.push(new ParsingError(
                 tag[NodeRange],
                 locale('diagnostic-rule',
@@ -480,7 +480,7 @@ export class NbtdocHelper {
         }
     }
 
-    private validateNumberField(ans: LegacyValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, range: [number, number] | null, _isPredicate: boolean, description: string) {
+    private validateNumberField(ans: LegacyValidateResult, _ctx: ParsingContext, tag: NbtNumberNode<number | bigint>, range: [number | null, number | null] | null, _isPredicate: boolean, description: string) {
         // Cache.
         /// Color information.
         if (description.match(/RED << 16 \| GREEN << 8 \| BLUE/i)) {
@@ -499,7 +499,7 @@ export class NbtdocHelper {
         // Errors.
         if (range) {
             const [min, max] = range
-            if (!(min <= tag.valueOf() && tag.valueOf() <= max)) {
+            if (!(((min ?? -Infinity) <= tag.valueOf()) && (tag.valueOf() <= (max ?? Infinity)))) {
                 ans.errors.push(new ParsingError(
                     tag[NodeRange],
                     locale('expected-got', locale('number.between', min, max), tag.valueOf()),

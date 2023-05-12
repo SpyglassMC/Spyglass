@@ -95,7 +95,7 @@ export namespace nbtdoc {
     /**
      * A range of numbers. Both sides inclusive
      */
-    type Range = [number, number]
+    type Range = [number | null, number | null]
 
     /**
      * The different types of enums
