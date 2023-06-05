@@ -824,11 +824,11 @@ export const CommandTree: ICommandTree = {
                                                                     executable: true,
                                                                     children: {
                                                                         start: {
-                                                                            parser: new NumberArgumentParser('integer', 0),
+                                                                            parser: new NumberArgumentParser('integer'),
                                                                             executable: true,
                                                                             children: {
                                                                                 end: {
-                                                                                    parser: new NumberArgumentParser('integer', 0),
+                                                                                    parser: new NumberArgumentParser('integer'),
                                                                                     executable: true
                                                                                 }
                                                                             }
@@ -1834,6 +1834,15 @@ export const CommandTree: ICommandTree = {
                             }
                         }
                     }
+                }
+            }
+        },
+        return: {
+            parser: new LiteralArgumentParser('return'),
+            children: {
+                value: {
+                    parser: new NumberArgumentParser('integer'),
+                    executable: true
                 }
             }
         },
