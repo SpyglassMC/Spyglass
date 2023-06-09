@@ -46,11 +46,18 @@ export function list<V extends AstNode>({
 
 				// Value.
 				src.skipWhitespace()
-				const { result, endCursor, updateSrcAndCtx } = attempt(value, src, ctx)
+				const { result, endCursor, updateSrcAndCtx } = attempt(
+					value,
+					src,
+					ctx,
+				)
 				if (result === Failure || endCursor === src.cursor) {
 					ctx.err.report(
 						localize('expected', localize('parser.list.value')),
-						Range.create(src, () => src.skipUntilOrEnd(sep, end, '\r', '\n')),
+						Range.create(
+							src,
+							() => src.skipUntilOrEnd(sep, end, '\r', '\n'),
+						),
 					)
 				} else {
 					updateSrcAndCtx()

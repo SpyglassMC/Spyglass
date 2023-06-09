@@ -41,7 +41,9 @@ describe('string()', () => {
 		},
 		{
 			title: 'unquoted_string()',
-			options: { unquotable: { allowList: BrigadierUnquotableCharacterSet } },
+			options: {
+				unquotable: { allowList: BrigadierUnquotableCharacterSet },
+			},
 			contents: ['', 'foo', '$$$', '"foo"'],
 		},
 		{

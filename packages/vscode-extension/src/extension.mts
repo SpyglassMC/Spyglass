@@ -42,7 +42,8 @@ export function activate(context: vsc.ExtensionContext) {
 	]
 
 	const initializationOptions: server.CustomInitializationOptions = {
-		inDevelopmentMode: context.extensionMode === vsc.ExtensionMode.Development,
+		inDevelopmentMode:
+			context.extensionMode === vsc.ExtensionMode.Development,
 	}
 
 	// Options to control the language client
@@ -79,15 +80,21 @@ export function activate(context: vsc.ExtensionContext) {
 										line: range.start.line,
 										character: range.start.character,
 									},
-									end: { line: range.end.line, character: range.end.character },
+									end: {
+										line: range.end.line,
+										character: range.end.character,
+									},
 								},
 							}
-							const response: server.MyLspInlayHint[] =
-								await client.sendRequest('spyglassmc/inlayHints', params)
+							const response: server.MyLspInlayHint[] = await client
+								.sendRequest('spyglassmc/inlayHints', params)
 							return response.map(
 								(v) =>
 									new vsc.InlayHint(
-										new vsc.Position(v.position.line, v.position.character),
+										new vsc.Position(
+											v.position.line,
+											v.position.character,
+										),
 										v.text,
 										vsc.InlayHintKind.Parameter,
 									),
@@ -113,9 +120,10 @@ export function activate(context: vsc.ExtensionContext) {
 									return
 								}
 
-								const params: server.MyLspDataHackPubifyRequestParams = {
-									initialism,
-								}
+								const params: server.MyLspDataHackPubifyRequestParams =
+									{
+										initialism,
+									}
 								const response: string = await client.sendRequest(
 									'spyglassmc/dataHackPubify',
 									params,

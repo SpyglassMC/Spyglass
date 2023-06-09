@@ -106,13 +106,17 @@ export class InsertTextBuilder {
 		if (defaultValues.length === 0) {
 			this.#ans += `$\{${this.#nextPlaceholder}}`
 		} else if (defaultValues.length === 1) {
-			this.#ans += `$\{${this.#nextPlaceholder}:${CompletionItem.escape(
-				defaultValues[0],
-			)}}`
+			this.#ans += `$\{${this.#nextPlaceholder}:${
+				CompletionItem.escape(
+					defaultValues[0],
+				)
+			}}`
 		} else {
-			this.#ans += `$\{${this.#nextPlaceholder}|${defaultValues
-				.map((v) => v.replace(/([\\$},|])/g, '\\$1'))
-				.join(',')}|}`
+			this.#ans += `$\{${this.#nextPlaceholder}|${
+				defaultValues
+					.map((v) => v.replace(/([\\$},|])/g, '\\$1'))
+					.join(',')
+			}|}`
 		}
 		this.#nextPlaceholder += 1
 		return this

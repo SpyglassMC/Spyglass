@@ -116,7 +116,7 @@ export const item_predicate = as(
 					}),
 				),
 			),
-		}),
+		})
 	),
 )
 
@@ -149,7 +149,7 @@ export const block_predicate = as(
 					mixedTypes: true,
 				}),
 			),
-		}),
+		})
 	),
 )
 
@@ -167,7 +167,7 @@ export const fluid_predicate = as(
 					mixedTypes: true,
 				}),
 			),
-		}),
+		})
 	),
 )
 
@@ -193,7 +193,7 @@ export const location_predicate = as(
 				}),
 			),
 			smokey: opt(versioned(ctx, '1.16', boolean)),
-		}),
+		})
 	),
 )
 
@@ -235,8 +235,7 @@ export const statistic_predicate = as(
 				custom: { stat: resource('custom_stat') },
 			}),
 			value: int_bounds,
-		}),
-	),
+		})),
 )
 
 export const player_predicate = as(
@@ -252,8 +251,7 @@ export const player_predicate = as(
 					any([
 						boolean,
 						object(criterionReference(advancement), () => boolean),
-					]),
-				),
+					])),
 			),
 			recipes: opt(object(resource('recipe'), () => boolean)),
 			stats: opt(listOf(statistic_predicate)),
@@ -264,7 +262,7 @@ export const player_predicate = as(
 					ref(() => entity_predicate),
 				),
 			),
-		}),
+		})
 	),
 )
 
@@ -333,7 +331,7 @@ export const entity_predicate = as(
 				),
 			),
 			catType: opt(simpleString),
-		}),
+		})
 	),
 )
 
@@ -382,7 +380,9 @@ export const criterion = as(
 								['impossible'],
 								{},
 								{
-									player: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+									player: opt(
+										versioned(ctx, entity_predicate, '1.16', entity),
+									),
 								},
 							),
 						),
@@ -393,9 +393,15 @@ export const criterion = as(
 								num_bees_inside: opt(int),
 							},
 							bred_animals: {
-								parent: opt(versioned(ctx, entity_predicate, '1.16', entity)),
-								partner: opt(versioned(ctx, entity_predicate, '1.16', entity)),
-								child: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								parent: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
+								partner: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
+								child: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							brewed_potion: {
 								potion: opt(resource('potion')),
@@ -406,7 +412,9 @@ export const criterion = as(
 							},
 							channeled_lightning: {
 								victims: opt(
-									listOf(versioned(ctx, entity_predicate, '1.16', entity)),
+									listOf(
+										versioned(ctx, entity_predicate, '1.16', entity),
+									),
 								),
 							},
 							construct_beacon: {
@@ -416,18 +424,27 @@ export const criterion = as(
 								item: opt(item_predicate),
 							},
 							cured_zombie_villager: {
-								villager: opt(versioned(ctx, entity_predicate, '1.16', entity)),
-								zombie: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								villager: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
+								zombie: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							effects_changed: {
 								effects: opt(
-									object(resource('mob_effect'), () => mob_effect_predicate),
+									object(resource('mob_effect'), () =>
+										mob_effect_predicate),
 								),
-								source: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								source: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							enter_block: {
 								block: opt(resource('block')),
-								state: opt(blockStateMap({ id: extract('block', props) })),
+								state: opt(
+									blockStateMap({ id: extract('block', props) }),
+								),
 							},
 							enchanted_item: {
 								levels: opt(int_bounds),
@@ -437,7 +454,9 @@ export const criterion = as(
 								damage: opt(damage_predicate),
 							},
 							entity_killed_player: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 								killing_blow: opt(damage_source_predicate),
 							},
 							fall_from_height: {
@@ -448,11 +467,15 @@ export const criterion = as(
 								item: opt(item_predicate),
 							},
 							fishing_rod_hooked: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 								item: opt(item_predicate),
 							},
 							hero_of_the_village: {
-								location: opt(versioned(ctx, '1.16', location_predicate)),
+								location: opt(
+									versioned(ctx, '1.16', location_predicate),
+								),
 							},
 							inventory_changed: {
 								slots: opt(
@@ -476,7 +499,9 @@ export const criterion = as(
 							killed_by_crossbow: {
 								unique_entity_types: opt(int_bounds),
 								victims: opt(
-									listOf(versioned(ctx, entity_predicate, '1.16', entity)),
+									listOf(
+										versioned(ctx, entity_predicate, '1.16', entity),
+									),
 								),
 							},
 							levitation: {
@@ -492,7 +517,9 @@ export const criterion = as(
 								),
 							},
 							location: {
-								location: opt(versioned(ctx, '1.16', location_predicate)),
+								location: opt(
+									versioned(ctx, '1.16', location_predicate),
+								),
 							},
 							nether_travel: {
 								...versioned(
@@ -510,7 +537,9 @@ export const criterion = as(
 							},
 							placed_block: {
 								block: opt(resource('block')),
-								state: opt(blockStateMap({ id: extract('block', props) })),
+								state: opt(
+									blockStateMap({ id: extract('block', props) }),
+								),
 								item: opt(item_predicate),
 								location: opt(location_predicate),
 							},
@@ -519,14 +548,20 @@ export const criterion = as(
 							},
 							player_hurt_entity: {
 								damage: opt(damage_predicate),
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							player_interacted_with_entity: {
 								item: opt(item_predicate),
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							player_killed_entity: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 								killing_blow: opt(damage_source_predicate),
 							},
 							recipe_unlocked: {
@@ -537,7 +572,9 @@ export const criterion = as(
 								distance: opt(distance_predicate),
 							},
 							slept_in_bed: {
-								location: opt(versioned(ctx, '1.16', location_predicate)),
+								location: opt(
+									versioned(ctx, '1.16', location_predicate),
+								),
 							},
 							slide_down_block: {
 								block: opt(resource('block')),
@@ -546,20 +583,28 @@ export const criterion = as(
 								item: opt(item_predicate),
 							},
 							summoned_entity: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							tame_animal: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 							},
 							target_hit: {
 								projectile: opt(
 									versioned(ctx, entity_predicate, '1.16', entity),
 								),
-								shooter: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								shooter: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 								signal_strength: opt(int_bounds),
 							},
 							thrown_item_picked_up_by_entity: {
-								entity: opt(versioned(ctx, entity_predicate, '1.16', entity)),
+								entity: opt(
+									versioned(ctx, entity_predicate, '1.16', entity),
+								),
 								item: opt(item_predicate),
 							},
 							used_ender_eye: {
@@ -576,7 +621,9 @@ export const criterion = as(
 								item: opt(item_predicate),
 							},
 							voluntary_exile: {
-								location: opt(versioned(ctx, '1.16', location_predicate)),
+								location: opt(
+									versioned(ctx, '1.16', location_predicate),
+								),
 							},
 						}),
 						...when(
@@ -599,9 +646,13 @@ export const criterion = as(
 										}),
 									),
 								),
-								biome: opt(deprecated(ctx, '1.16', resource('worldgen/biome'))),
+								biome: opt(
+									deprecated(ctx, '1.16', resource('worldgen/biome')),
+								),
 								feature: opt(deprecated(ctx, '1.16', simpleString)), // TODO structure features
-								dimension: opt(deprecated(ctx, '1.16', resource('dimension'))),
+								dimension: opt(
+									deprecated(ctx, '1.16', resource('dimension')),
+								),
 								block: opt(deprecated(ctx, '1.16', block_predicate)),
 								fluid: opt(deprecated(ctx, '1.16', fluid_predicate)),
 								light: opt(
@@ -616,11 +667,10 @@ export const criterion = as(
 								smokey: opt(deprecated(ctx, '1.16', boolean)),
 							},
 						),
-					}),
+					})
 				),
 			),
-		}),
-	),
+		})),
 )
 
 export const advancement = as(
@@ -631,8 +681,10 @@ export const advancement = as(
 				icon: dispatch((props) =>
 					record({
 						item: resource('item'),
-						nbt: opt(nbt({ registry: 'item', id: extract('item', props) })),
-					}),
+						nbt: opt(
+							nbt({ registry: 'item', id: extract('item', props) }),
+						),
+					})
 				),
 				title: text_component,
 				description: text_component,

@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import type * as mcf from '@spyglassmc/mcfunction'
 
-//#region Argument nodes.
+// #region Argument nodes.
 export interface BrigadierBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:bool'
 }
@@ -43,30 +43,36 @@ export interface MinecraftAngleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:angle'
 }
 export interface MinecraftBlockPosArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:block_pos'
 }
 export interface MinecraftBlockPredicateArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:block_predicate'
 }
 export interface MinecraftBlockStateArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:block_state'
 }
 export interface MinecraftColorArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:color'
 }
 export interface MinecraftColumnPosArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:column_pos'
 }
 export interface MinecraftComponentArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:component'
 }
 export interface MinecraftDimensionArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:dimension'
 }
 export interface MinecraftEntityArgumentTreeNode extends mcf.ArgumentTreeNode {
@@ -77,54 +83,66 @@ export interface MinecraftEntityArgumentTreeNode extends mcf.ArgumentTreeNode {
 	}
 }
 export interface MinecraftEntityAnchorArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:entity_anchor'
 }
 export interface MinecraftEntitySummonArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:entity_summon'
 }
 export interface MinecraftFloatRangeArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:float_range'
 }
 export interface MinecraftFunctionArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:function'
 }
 export interface MinecraftGameProfileArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:game_profile'
 }
 export interface MinecraftIntRangeArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:int_range'
 }
 export interface MinecraftItemEnchantmentArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:item_enchantment'
 }
 export interface MinecraftItemPredicateArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:item_predicate'
 }
 export interface MinecraftItemSlotArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:item_slot'
 }
 export interface MinecraftItemStackArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:item_stack'
 }
 export interface MinecraftMessageArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:message'
 }
 export interface MinecraftMobEffectArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:mob_effect'
 }
 export interface MinecraftNbtCompoundTagArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:nbt_compound_tag'
 }
 export interface MinecraftNbtPathArgumentTreeNode extends mcf.ArgumentTreeNode {
@@ -134,53 +152,63 @@ export interface MinecraftNbtTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_tag'
 }
 export interface MinecraftObjectiveArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:objective'
 }
 export interface MinecraftObjectiveCriteriaArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:objective_criteria'
 }
 export interface MinecraftOperationArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:operation'
 }
 export interface MinecraftParticleArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:particle'
 }
 export interface MinecraftResourceArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:resource'
 	properties: {
 		registry: string
 	}
 }
 export interface MinecraftResourceLocationArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:resource_location'
 	properties?: core.ResourceLocationOptions
 }
 export interface MinecraftResourceOrTagArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:resource_or_tag'
 	properties: {
 		registry: string
 	}
 }
 export interface MinecraftRotationArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:rotation'
 }
 export interface MinecraftScoreHolderArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:score_holder'
 	properties: {
 		amount: 'single' | 'multiple'
 	}
 }
 export interface MinecraftScoreboardSlotArgumentTreeNode
-	extends mcf.ArgumentTreeNode {
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:scoreboard_slot'
 }
 export interface MinecraftSwizzleArgumentTreeNode extends mcf.ArgumentTreeNode {
@@ -205,7 +233,7 @@ export interface MinecraftVec3ArgumentTreeNode extends mcf.ArgumentTreeNode {
 export interface SpyglassmcTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'spyglassmc:tag'
 }
-//#endregion
+// #endregion
 
 export type ArgumentTreeNode =
 	| BrigadierBoolArgumentTreeNode

@@ -27,8 +27,8 @@ import {
 	Direction,
 	floatProvider,
 	fluid_state,
-	HeightmapType,
 	height_provider,
+	HeightmapType,
 	inclusiveRange,
 	intProvider,
 	noise_parameters,
@@ -82,7 +82,8 @@ function blockProviderProperties(
 	switch (extract('type', node.children)?.replace(/^minecraft:/, '')) {
 		case 'dual_noise_provider':
 		case 'noise_provider':
-			const states = node.children.find((p) => p.key?.value === 'states')?.value
+			const states = node.children.find((p) => p.key?.value === 'states')
+				?.value
 			return blockStateIntProperties(states, ctx)
 		case 'noise_threshold':
 			const lowStates = node.children.find(
@@ -96,11 +97,13 @@ function blockProviderProperties(
 				blockStateIntProperties(highStates, ctx),
 			)
 		case 'randomized_int_state_provider':
-			const source = node.children.find((p) => p.key?.value === 'source')?.value
+			const source = node.children.find((p) => p.key?.value === 'source')
+				?.value
 			return blockProviderProperties(source, ctx)
 		case 'rotated_block_provider':
 		case 'simple_state_provider':
-			const state = node.children.find((p) => p.key?.value === 'state')?.value
+			const state = node.children.find((p) => p.key?.value === 'state')
+				?.value
 			return blockStateIntProperties(state, ctx)
 		case 'weighted_state_provider':
 			const entries = node.children.find(
@@ -112,7 +115,8 @@ function blockProviderProperties(
 						(n) =>
 							n.value &&
 							JsonObjectNode.is(n.value) &&
-							n.value.children.find((p) => p.key?.value === 'data')?.value,
+							n.value.children.find((p) => p.key?.value === 'data')
+								?.value,
 					)
 					.filter((n) => n)
 					.map((n) => blockStateIntProperties(n as JsonNode, ctx))
@@ -157,11 +161,11 @@ const block_state_provider = as(
 					// FIXME: Temporary solution to make tests pass when ensureBindingStarted is not given.
 					property: (ctx.ensureBindingStarted as Function | undefined)
 						? literal(
-								blockProviderProperties(
-									props.find((p) => p.key?.value === 'source')?.value,
-									ctx,
-								),
-						  )
+							blockProviderProperties(
+								props.find((p) => p.key?.value === 'source')?.value,
+								ctx,
+							),
+						)
 						: simpleString,
 					values: intProvider(),
 					source: block_state_provider,
@@ -181,8 +185,7 @@ const block_state_provider = as(
 					),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const blockPredicateOffset = {
@@ -228,8 +231,7 @@ const block_predicate_worldgen = as(
 					state: block_state,
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const block_placer = as(
@@ -252,8 +254,7 @@ const block_placer = as(
 					),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const feature_size = as(
@@ -276,8 +277,7 @@ const feature_size = as(
 					upper_size: opt(intRange(0, 16), 1),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const trunk_placer = as(
@@ -294,8 +294,7 @@ const trunk_placer = as(
 					min_height_for_leaves: opt(intRange(1, undefined), 1),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const foliage_placer = as(
@@ -303,8 +302,18 @@ const foliage_placer = as(
 	dispatch('type', (type, _, ctx) =>
 		record({
 			type: resource('worldgen/foliage_placer_type'),
-			radius: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
-			offset: versioned(ctx, uniformInt(0, 8, 8), '1.17', intProvider(0, 16)),
+			radius: versioned(
+				ctx,
+				uniformInt(0, 8, 8),
+				'1.17',
+				intProvider(0, 16),
+			),
+			offset: versioned(
+				ctx,
+				uniformInt(0, 8, 8),
+				'1.17',
+				intProvider(0, 16),
+			),
 			...pick(type, {
 				blob_foliage_placer: {
 					height: intRange(0, 16),
@@ -347,8 +356,7 @@ const foliage_placer = as(
 					),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const tree_decorator = as(
@@ -367,8 +375,7 @@ const tree_decorator = as(
 					probability: floatRange(0, 1),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const DiskConfig = (ctx: JsonCheckerContext) => ({
@@ -446,7 +453,12 @@ const OreConfig = (ctx: JsonCheckerContext) => ({
 })
 
 const CountConfig = (ctx: JsonCheckerContext) => ({
-	count: versioned(ctx, uniformInt(-10, 128, 128), '1.17', intProvider(0, 256)),
+	count: versioned(
+		ctx,
+		uniformInt(-10, 128, 128),
+		'1.17',
+		intProvider(0, 256),
+	),
 })
 
 // until 1.16
@@ -544,8 +556,7 @@ export const configured_decorator = as(
 					},
 				}),
 			),
-		}),
-	),
+		})),
 )
 
 export const placement_modifier = as(
@@ -604,8 +615,7 @@ export const placement_modifier = as(
 					max_water_depth: int,
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const configured_feature = as(
@@ -676,13 +686,17 @@ export const configured_feature = as(
 						dripstone_block_layer_thickness: intProvider(0, 128),
 						density: floatProvider(0, 2),
 						wetness: floatProvider(0, 2),
-						chance_of_dripstone_column_at_max_distance_from_center: floatRange(
-							0,
-							1,
-						),
+						chance_of_dripstone_column_at_max_distance_from_center:
+							floatRange(
+								0,
+								1,
+							),
 						max_distance_from_edge_affecting_chance_of_dripstone_column:
 							intRange(1, 64),
-						max_distance_from_center_affecting_height_bias: intRange(1, 64),
+						max_distance_from_center_affecting_height_bias: intRange(
+							1,
+							64,
+						),
 					},
 					emerald_ore: {
 						state: block_state,
@@ -824,7 +838,12 @@ export const configured_feature = as(
 						}),
 					},
 					netherrack_replace_blobs: {
-						radius: versioned(ctx, uniformInt(), '1.17', intProvider(0, 12)),
+						radius: versioned(
+							ctx,
+							uniformInt(),
+							'1.17',
+							intProvider(0, 12),
+						),
 						state: block_state,
 						target: block_state,
 					},
@@ -992,8 +1011,7 @@ export const configured_feature = as(
 					waterlogged_vegetation_patch: VegetationPatchConfig(ctx),
 				}),
 			),
-		}),
-	),
+		})),
 )
 
 export const configured_feature_ref = any([

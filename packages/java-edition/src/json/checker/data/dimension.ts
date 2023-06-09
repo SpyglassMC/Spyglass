@@ -59,8 +59,7 @@ const material_condition = as(
 					add_stone_depth: boolean,
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const material_rule = as(
@@ -80,8 +79,7 @@ const material_rule = as(
 					sequence: listOf(material_rule),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 const terrain_spline = as(
@@ -116,8 +114,7 @@ const structure_settings = as(
 				spacing: intRange(0, 4096),
 				separation: intRange(0, 4096), // TODO: validate separation < spacing
 				salt: intRange(0, undefined),
-			}),
-		),
+			})),
 	}),
 )
 
@@ -126,7 +123,7 @@ const noise_slide_settings = dispatch((_, ctx) =>
 		target: float,
 		size: versioned(ctx, int, '1.17', intRange(0, undefined)),
 		offset: int,
-	}),
+	})
 )
 
 export const noise_settings = as(
@@ -180,7 +177,7 @@ export const noise_settings = as(
 			}),
 			surface_rule: versioned(ctx, '1.18', material_rule),
 			structures: structure_settings,
-		}),
+		})
 	),
 )
 
@@ -256,8 +253,7 @@ const biome_source = as(
 					legacy_biome_init_layer: opt(boolean, false),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const dimension_type = as(
@@ -288,7 +284,7 @@ export const dimension_type = as(
 			has_raids: boolean,
 			has_skylight: boolean,
 			has_ceiling: boolean,
-		}),
+		})
 	),
 )
 
@@ -325,8 +321,7 @@ export const dimension = as(
 							biome_source: biome_source,
 						},
 					}),
-				}),
-			),
+				})),
 		),
 	}),
 )

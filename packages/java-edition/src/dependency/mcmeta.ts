@@ -108,46 +108,54 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		states: McmetaStates,
 		symbols: core.SymbolUtil,
 	): void {
-		const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(
-			1,
-		)}` as Capitalize<typeof category>
+		const capitalizedCategory = `${category[0].toUpperCase()}${
+			category.slice(
+				1,
+			)
+		}` as Capitalize<typeof category>
 
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
 			const uri = McmetaSummaryUri
 			symbols
 				.query(uri, category, core.ResourceLocation.lengthen(id))
-				.onEach(Object.entries(properties), ([state, values], blockQuery) => {
-					const defaultValue = defaults[state]!
+				.onEach(
+					Object.entries(properties),
+					([state, values], blockQuery) => {
+						const defaultValue = defaults[state]!
 
-					blockQuery.member(
-						`${uri}#${capitalizedCategory}_states`,
-						state,
-						(stateQuery) => {
-							stateQuery
-								.enter({
-									data: { subcategory: 'state' },
-									usage: { type: 'declaration' },
-								})
-								.onEach(values, (value) => {
-									stateQuery.member(value, (valueQuery) => {
-										valueQuery.enter({
-											data: { subcategory: 'state_value' },
-											usage: { type: 'declaration' },
-										})
-										if (value === defaultValue) {
-											stateQuery.amend({
-												data: {
-													relations: {
-														default: { category, path: valueQuery.path },
-													},
-												},
-											})
-										}
+						blockQuery.member(
+							`${uri}#${capitalizedCategory}_states`,
+							state,
+							(stateQuery) => {
+								stateQuery
+									.enter({
+										data: { subcategory: 'state' },
+										usage: { type: 'declaration' },
 									})
-								})
-						},
-					)
-				})
+									.onEach(values, (value) => {
+										stateQuery.member(value, (valueQuery) => {
+											valueQuery.enter({
+												data: { subcategory: 'state_value' },
+												usage: { type: 'declaration' },
+											})
+											if (value === defaultValue) {
+												stateQuery.amend({
+													data: {
+														relations: {
+															default: {
+																category,
+																path: valueQuery.path,
+															},
+														},
+													},
+												})
+											}
+										})
+									})
+							},
+						)
+					},
+				)
 		}
 	}
 
@@ -204,7 +212,7 @@ export const Fluids: McmetaStates = {
 	water: [{ falling: ['false', 'true'] }, { falling: 'false' }],
 }
 
-//#region Types
+// #region Types
 export interface McmetaVersion {
 	id: string
 	name: string
@@ -274,4 +282,4 @@ export type CommandTreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
 export interface McmetaRegistries {
 	[id: string]: string[]
 }
-//#endregion
+// #endregion

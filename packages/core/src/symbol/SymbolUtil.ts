@@ -102,8 +102,11 @@ export class SymbolUtil implements ExternalEventEmitter {
 				this.#trimmableSymbols.delete(SymbolPath.toString(symbol))
 			})
 			.on('symbolLocationCreated', ({ symbol, location }) => {
-				const cache = (this.#cache[location.contributor ?? 'undefined'] ??=
-					Object.create(null) as never)
+				const cache =
+					(this.#cache[location.contributor ?? 'undefined'] ??= Object
+						.create(
+							null,
+						) as never)
 				const fileSymbols = (cache[location.uri] ??= new Set())
 				const path = SymbolPath.toString(symbol)
 				fileSymbols.add(path)
@@ -409,7 +412,11 @@ export class SymbolUtil implements ExternalEventEmitter {
 		}
 		for (const pathString of this.#trimmableSymbols) {
 			const path = SymbolPath.fromString(pathString)
-			const { symbol } = SymbolUtil.lookupTable(table, path.category, path.path)
+			const { symbol } = SymbolUtil.lookupTable(
+				table,
+				path.category,
+				path.path,
+			)
 			trimSymbol(symbol)
 		}
 	}
@@ -651,9 +658,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 					symbol.visibility = addition.visibility
 				} else {
 					throw new Error(
-						`Cannot change visibility from ${symbol.visibility} to ${
-							addition.visibility
-						}: ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`,
+						`Cannot change visibility from ${symbol.visibility} to ${addition.visibility}: ${
+							JSON.stringify(SymbolPath.fromSymbol(symbol))
+						}`,
 					)
 				}
 			}
@@ -706,11 +713,11 @@ export class SymbolUtil implements ExternalEventEmitter {
 	resolveAlias(symbol: Symbol | undefined): Symbol | undefined {
 		return symbol?.relations?.aliasOf
 			? this.resolveAlias(
-					this.lookup(
-						symbol.relations.aliasOf.category,
-						symbol.relations.aliasOf.path,
-					).symbol,
-			  )
+				this.lookup(
+					symbol.relations.aliasOf.category,
+					symbol.relations.aliasOf.path,
+				).symbol,
+			)
 			: symbol
 	}
 
@@ -748,7 +755,10 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 * - For `Restricted` visibility, // TODO: roots.
 	 */
 	static isVisible(symbol: Symbol, uri: string): boolean
-	static isVisible(symbol: Symbol, uri: string | undefined): boolean | undefined
+	static isVisible(
+		symbol: Symbol,
+		uri: string | undefined,
+	): boolean | undefined
 	static isVisible(
 		symbol: Symbol,
 		_uri: string | undefined,
@@ -773,7 +783,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 	/**
 	 * @returns If the symbol has definitions, or declarations and implementations.
 	 */
-	static isDefined(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
+	static isDefined(
+		symbol: DeepReadonly<Symbol> | undefined,
+	): symbol is Symbol {
 		return !!(
 			symbol?.definition?.length ||
 			(symbol?.definition?.length && symbol?.implementation?.length)
@@ -810,14 +822,16 @@ export class SymbolUtil implements ExternalEventEmitter {
 	static getDeclaredLocation(symbol: DeepReadonly<Symbol>): SymbolLocation {
 		return (
 			symbol.declaration?.[0] ??
-			symbol.definition?.[0] ??
-			(() => {
-				throw new Error(
-					`Cannot get declared location of ${JSON.stringify(
-						SymbolPath.fromSymbol(symbol),
-					)}`,
-				)
-			})()
+				symbol.definition?.[0] ??
+				(() => {
+					throw new Error(
+						`Cannot get declared location of ${
+							JSON.stringify(
+								SymbolPath.fromSymbol(symbol),
+							)
+						}`,
+					)
+				})()
 		)
 	}
 
@@ -844,7 +858,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 	static forEachLocationOfSymbol(
 		symbol: Symbol,
-		fn: (data: { type: SymbolUsageType; location: SymbolLocation }) => unknown,
+		fn: (
+			data: { type: SymbolUsageType; location: SymbolLocation },
+		) => unknown,
 	): void {
 		for (const type of SymbolUsageTypes) {
 			symbol[type]?.forEach((location) => fn({ type, location }))
@@ -1046,7 +1062,10 @@ export class SymbolQuery {
 	}
 
 	if(
-		predicate: (this: void, symbol: Symbol | undefined) => symbol is undefined,
+		predicate: (
+			this: void,
+			symbol: Symbol | undefined,
+		) => symbol is undefined,
 		fn: QueryCallback<undefined>,
 	): this
 	if(
@@ -1149,8 +1168,8 @@ export class SymbolQuery {
 		): SymbolVisibility => {
 			return (
 				addition.data?.visibility ??
-				this.symbol?.visibility ??
-				SymbolVisibility.Public
+					this.symbol?.visibility ??
+					SymbolVisibility.Public
 			)
 		}
 
@@ -1174,11 +1193,15 @@ export class SymbolQuery {
 						)
 					) {
 						throw new Error(
-							`Cannot enter member “${this.getPath()}” of ${SymbolFormatter.stringifyVisibility(
-								additionVisibility,
-							)} visibility to parent of ${SymbolFormatter.stringifyVisibility(
-								this.#parentSymbol.visibility,
-							)} visibility`,
+							`Cannot enter member “${this.getPath()}” of ${
+								SymbolFormatter.stringifyVisibility(
+									additionVisibility,
+								)
+							} visibility to parent of ${
+								SymbolFormatter.stringifyVisibility(
+									this.#parentSymbol.visibility,
+								)
+							} visibility`,
 						)
 					}
 					return (this.#parentSymbol.members ??= {})
@@ -1190,9 +1213,11 @@ export class SymbolQuery {
 				} else if (additionVisibility === SymbolVisibility.File) {
 					if (!this.#node) {
 						throw new Error(
-							`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(
-								additionVisibility,
-							)} visibility as no node is supplied`,
+							`Cannot enter “${this.getPath()}” with ${
+								SymbolFormatter.stringifyVisibility(
+									additionVisibility,
+								)
+							} visibility as no node is supplied`,
 						)
 					}
 					let node: AstNode | undefined = this.#node
@@ -1205,17 +1230,21 @@ export class SymbolQuery {
 					}
 					if (!table) {
 						throw new Error(
-							`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(
-								additionVisibility,
-							)} visibility as no file node is supplied`,
+							`Cannot enter “${this.getPath()}” with ${
+								SymbolFormatter.stringifyVisibility(
+									additionVisibility,
+								)
+							} visibility as no file node is supplied`,
 						)
 					}
 				} else {
 					if (!this.#node) {
 						throw new Error(
-							`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(
-								additionVisibility,
-							)} visibility as no node is supplied`,
+							`Cannot enter “${this.getPath()}” with ${
+								SymbolFormatter.stringifyVisibility(
+									additionVisibility,
+								)
+							} visibility as no node is supplied`,
 						)
 					}
 					let node: AstNode | undefined = this.#node
@@ -1228,9 +1257,11 @@ export class SymbolQuery {
 					}
 					if (!table) {
 						throw new Error(
-							`Cannot enter “${this.getPath()}” with ${SymbolFormatter.stringifyVisibility(
-								additionVisibility,
-							)} visibility as no node with locals is supplied`,
+							`Cannot enter “${this.getPath()}” with ${
+								SymbolFormatter.stringifyVisibility(
+									additionVisibility,
+								)
+							} visibility as no node with locals is supplied`,
 						)
 					}
 				}
@@ -1300,7 +1331,9 @@ export class SymbolQuery {
 		if (this.#symbol) {
 			const result = this.util.resolveAlias(this.#symbol)
 			if (!result) {
-				throw new Error('The current symbol points to an non-existent symbol.')
+				throw new Error(
+					'The current symbol points to an non-existent symbol.',
+				)
 			}
 			this.#symbol = result
 			this.#map = result.parentMap
@@ -1322,7 +1355,9 @@ export class SymbolQuery {
 	): this
 	member(): this {
 		// Handle overloads.
-		let doc: TextDocument | string, identifier: string, fn: QueryMemberCallback
+		let doc: TextDocument | string,
+			identifier: string,
+			fn: QueryMemberCallback
 		if (arguments.length === 2) {
 			// Ensure the member query result will not unknowingly have a dummy TextDocument passed down from this class.
 			doc = this.#createdWithUri ? this.#doc.uri : this.#doc
@@ -1336,16 +1371,18 @@ export class SymbolQuery {
 
 		if (this.#symbol === undefined) {
 			throw new Error(
-				`Tried to query member symbol “${identifier}” from an undefined symbol (path “${this.path.join(
-					'.',
-				)}”)`,
+				`Tried to query member symbol “${identifier}” from an undefined symbol (path “${
+					this.path.join(
+						'.',
+					)
+				}”)`,
 			)
 		}
 
-		const memberDoc =
-			typeof doc === 'string' && doc === this.#doc.uri && !this.#createdWithUri
-				? this.#doc
-				: doc
+		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri &&
+				!this.#createdWithUri
+			? this.#doc
+			: doc
 		const memberMap = this.#symbol.members
 		const memberSymbol = memberMap?.[identifier]
 		const memberQueryResult = new SymbolQuery({
@@ -1380,8 +1417,10 @@ export class SymbolQuery {
 	forEachMember(
 		fn: (this: void, identifier: string, query: SymbolQuery) => unknown,
 	): this {
-		return this.onEach(Object.keys(this.visibleMembers), (identifier) =>
-			this.member(identifier, (query) => fn(identifier, query)),
+		return this.onEach(
+			Object.keys(this.visibleMembers),
+			(identifier) =>
+				this.member(identifier, (query) => fn(identifier, query)),
 		)
 	}
 
@@ -1455,10 +1494,12 @@ export namespace SymbolFormatter {
 				` {${symbol.category}${
 					symbol.subcategory ? ` (${symbol.subcategory})` : ''
 				}}` +
-				` [${stringifyVisibility(
-					symbol.visibility,
-					symbol.visibilityRestriction,
-				)}]`,
+				` [${
+					stringifyVisibility(
+						symbol.visibility,
+						symbol.visibilityRestriction,
+					)
+				}]`,
 		)
 		if (symbol.data) {
 			ans.push(`${IndentChar}data: ${JSON.stringify(symbol.data)}`)
@@ -1469,9 +1510,12 @@ export namespace SymbolFormatter {
 		for (const type of SymbolUsageTypes) {
 			if (symbol[type]) {
 				ans.push(
-					`${IndentChar}${type}:\n${symbol[type]!.map(
-						(v) => `${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`,
-					).join(`\n${indent}${IndentChar.repeat(2)}------------\n`)}`,
+					`${IndentChar}${type}:\n${
+						symbol[type]!.map(
+							(v) =>
+								`${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`,
+						).join(`\n${indent}${IndentChar.repeat(2)}------------\n`)
+					}`,
 				)
 			}
 		}
@@ -1480,10 +1524,12 @@ export namespace SymbolFormatter {
 		}
 		if (symbol.members) {
 			ans.push(
-				`${IndentChar}members:\n${stringifySymbolMap(
-					symbol.members,
-					`${indent}${IndentChar.repeat(2)}`,
-				)}`,
+				`${IndentChar}members:\n${
+					stringifySymbolMap(
+						symbol.members,
+						`${indent}${IndentChar.repeat(2)}`,
+					)
+				}`,
 			)
 		}
 		return ans.map((v) => `${indent}${v}`).join('\n')
@@ -1542,7 +1588,7 @@ function DelayModeSupport(
 	) => {
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
-		descripter.value = function (this: unknown, ...args: unknown[]) {
+		descripter.value = function(this: unknown, ...args: unknown[]) {
 			const util = getUtil(this)
 			if (util._inDelayMode) {
 				util._delayedOps.push(decoratedMethod.bind(this, ...args))

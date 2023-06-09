@@ -2,7 +2,8 @@ import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
 
 export interface BlockStatesNode
-	extends core.RecordBaseNode<core.StringNode, core.StringNode> {
+	extends core.RecordBaseNode<core.StringNode, core.StringNode>
+{
 	type: 'mcfunction:block/states'
 }
 export namespace BlockStatesNode {
@@ -29,7 +30,10 @@ export namespace BlockNode {
 		return (node as BlockNode | undefined)?.type === 'mcfunction:block'
 	}
 
-	export function mock(range: core.RangeLike, isPredicate: boolean): BlockNode {
+	export function mock(
+		range: core.RangeLike,
+		isPredicate: boolean,
+	): BlockNode {
 		const id = core.ResourceLocationNode.mock(range, {
 			category: 'block',
 			allowTag: isPredicate,
@@ -76,18 +80,22 @@ export const enum CoordinateSystem {
 }
 
 export interface EntitySelectorAdvancementsArgumentCriteriaNode
-	extends core.RecordBaseNode<core.StringNode, core.BooleanNode> {
+	extends core.RecordBaseNode<core.StringNode, core.BooleanNode>
+{
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
 export interface EntitySelectorAdvancementsArgumentNode
-	extends core.RecordBaseNode<
-		core.ResourceLocationNode,
-		core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
-	> {
+	extends
+		core.RecordBaseNode<
+			core.ResourceLocationNode,
+			core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
+		>
+{
 	type: 'mcfunction:entity_selector/arguments/advancements'
 }
 export interface EntitySelectorScoresArgumentNode
-	extends core.RecordBaseNode<core.SymbolNode, IntRangeNode> {
+	extends core.RecordBaseNode<core.SymbolNode, IntRangeNode>
+{
 	type: 'mcfunction:entity_selector/arguments/scores'
 }
 export interface EntitySelectorInvertableArgumentValueNode<
@@ -98,7 +106,8 @@ export interface EntitySelectorInvertableArgumentValueNode<
 	inverted: boolean
 }
 export interface EntitySelectorArgumentsNode
-	extends core.RecordBaseNode<core.StringNode, any> {
+	extends core.RecordBaseNode<core.StringNode, any>
+{
 	type: 'mcfunction:entity_selector/arguments'
 }
 export namespace EntitySelectorArgumentsNode {
@@ -106,7 +115,7 @@ export namespace EntitySelectorArgumentsNode {
 	export function is(node: core.AstNode): node is EntitySelectorArgumentsNode {
 		return (
 			(node as EntitySelectorArgumentsNode).type ===
-			'mcfunction:entity_selector/arguments'
+				'mcfunction:entity_selector/arguments'
 		)
 	}
 }
@@ -125,7 +134,9 @@ export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
 export namespace EntitySelectorAtVariable {
 	/* istanbul ignore next */
 	export function is(value: string): value is EntitySelectorAtVariable {
-		return EntitySelectorAtVariables.includes(value as EntitySelectorAtVariable)
+		return EntitySelectorAtVariables.includes(
+			value as EntitySelectorAtVariable,
+		)
 	}
 }
 export interface EntitySelectorNode extends core.AstNode {
@@ -148,7 +159,7 @@ export namespace EntitySelectorNode {
 	): node is core.NodeIsHelper<EntitySelectorNode, T> {
 		return (
 			(node as EntitySelectorNode | undefined)?.type ===
-			'mcfunction:entity_selector'
+				'mcfunction:entity_selector'
 		)
 	}
 
@@ -165,31 +176,32 @@ export namespace EntitySelectorNode {
 		}
 	}
 
-	export const ArgumentKeys = new Set([
-		'advancements',
-		'distance',
-		'gamemode',
-		'level',
-		'limit',
-		'name',
-		'nbt',
-		'predicate',
-		'scores',
-		'sort',
-		'tag',
-		'team',
-		'type',
-		'x',
-		'y',
-		'z',
-		'dx',
-		'dy',
-		'dz',
-		'x_rotation',
-		'y_rotation',
-	] as const)
-	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T>
-		? T
+	export const ArgumentKeys = new Set(
+		[
+			'advancements',
+			'distance',
+			'gamemode',
+			'level',
+			'limit',
+			'name',
+			'nbt',
+			'predicate',
+			'scores',
+			'sort',
+			'tag',
+			'team',
+			'type',
+			'x',
+			'y',
+			'z',
+			'dx',
+			'dy',
+			'dz',
+			'x_rotation',
+			'y_rotation',
+		] as const,
+	)
+	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T> ? T
 		: undefined
 
 	export const enum Result {
@@ -208,7 +220,9 @@ export namespace EntitySelectorNode {
 			!!argument.children.find(
 				(p) =>
 					p.key?.value === key &&
-					!(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)
+					!(p.value as EntitySelectorInvertableArgumentValueNode<
+						core.AstNode
+					>)
 						?.inverted,
 			)
 		switch (key) {
@@ -364,21 +378,24 @@ export interface ParticleNode extends core.AstNode {
 	id: core.ResourceLocationNode
 }
 export namespace ParticleNode {
-	const SpecialTypes = new Set([
-		'block',
-		'block_marker',
-		'dust',
-		'dust_color_transition',
-		'falling_dust',
-		'item',
-		'sculk_charge',
-		'shriek',
-		'vibration',
-	] as const)
-	export type SpecialType = typeof SpecialTypes extends Set<infer T>
-		? T
+	const SpecialTypes = new Set(
+		[
+			'block',
+			'block_marker',
+			'dust',
+			'dust_color_transition',
+			'falling_dust',
+			'item',
+			'sculk_charge',
+			'shriek',
+			'vibration',
+		] as const,
+	)
+	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T
 		: undefined
-	export function isSpecialType(type: string | undefined): type is SpecialType {
+	export function isSpecialType(
+		type: string | undefined,
+	): type is SpecialType {
 		return SpecialTypes.has(type as SpecialType)
 	}
 

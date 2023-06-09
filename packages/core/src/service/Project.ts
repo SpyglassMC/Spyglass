@@ -239,7 +239,9 @@ export class Project implements ExternalEventEmitter {
 				file.endsWith(Project.RootSuffix) &&
 				rawRoots.some((r) => file.startsWith(r))
 			) {
-				ans.add(file.slice(0, 1 - Project.RootSuffix.length) as RootUriString)
+				ans.add(
+					file.slice(0, 1 - Project.RootSuffix.length) as RootUriString,
+				)
 			}
 		}
 		this.#roots = [...ans].sort((a, b) => b.length - a.length)
@@ -316,7 +318,7 @@ export class Project implements ExternalEventEmitter {
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
 		return [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
-			extensions.includes(fileUtil.extname(file) ?? ''),
+			extensions.includes(fileUtil.extname(file) ?? '')
 		)
 	}
 
@@ -342,7 +344,8 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
+		this.downloader = downloader ??
+			new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
@@ -354,8 +357,13 @@ export class Project implements ExternalEventEmitter {
 				this.config = config
 				this.logger.info('[Project] [Config] Changed')
 			})
-			.on('error', ({ error, uri }) =>
-				this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error),
+			.on(
+				'error',
+				({ error, uri }) =>
+					this.logger.error(
+						`[Project] [Config] Failed loading “${uri}”`,
+						error,
+					),
 			)
 
 		this.setInitPromise()
@@ -371,7 +379,7 @@ export class Project implements ExternalEventEmitter {
 			// }
 			this.emit('documentErrored', {
 				errors: FileNode.getErrors(node).map((e) =>
-					LanguageError.withPosRange(e, doc),
+					LanguageError.withPosRange(e, doc)
 				),
 				uri: doc.uri,
 				version: doc.version,
@@ -448,7 +456,10 @@ export class Project implements ExternalEventEmitter {
 			const __profiler = this.profilers.get('project#init')
 
 			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
+			this.symbols = new SymbolUtil(
+				symbols,
+				this.externals.event.EventEmitter,
+			)
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
@@ -504,7 +515,11 @@ export class Project implements ExternalEventEmitter {
 				this.cacheService.checksums.roots,
 			)
 			this.fs.register('file:', fileUriSupporter, true)
-			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
+			this.fs.register(
+				ArchiveUriSupporter.Protocol,
+				archiveUriSupporter,
+				true,
+			)
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
@@ -550,8 +565,11 @@ export class Project implements ExternalEventEmitter {
 			this.updateRoots()
 			__profiler.task('List URIs')
 
-			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
-				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
+			for (
+				const [id, { checksum, registrar }] of this.meta.symbolRegistrars
+			) {
+				const cacheChecksum =
+					this.cacheService.checksums.symbolRegistrars[id]
 				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
 					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
 					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {
@@ -571,8 +589,9 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Pop Errors')
 
-			const { addedFiles, changedFiles, removedFiles } =
-				await this.cacheService.validate()
+			const { addedFiles, changedFiles, removedFiles } = await this
+				.cacheService
+				.validate()
 			for (const uri of removedFiles) {
 				this.emit('fileDeleted', { uri })
 			}
@@ -583,7 +602,9 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Bind URIs')
 
-			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
+			const files = [...addedFiles, ...changedFiles].sort(
+				this.meta.uriSorter,
+			)
 			__profiler.task('Sort URIs')
 
 			const __bindProfiler = this.profilers.get(
@@ -707,9 +728,7 @@ export class Project implements ExternalEventEmitter {
 				const result = iterator.next()
 				if (result.done) {
 					throw new Error(
-						`[Project] [read] Cache is too large with length ${
-							this.#textDocumentCacheLength
-						} even though it's empty; make sure to call 'removeCachedTextDocument()' instead of 'this.#textDocumentCache.delete()'`,
+						`[Project] [read] Cache is too large with length ${this.#textDocumentCacheLength} even though it's empty; make sure to call 'removeCachedTextDocument()' instead of 'this.#textDocumentCache.delete()'`,
 					)
 				}
 				this.removeCachedTextDocument(result.value)
@@ -835,8 +854,10 @@ export class Project implements ExternalEventEmitter {
 				}
 
 				const { ruleSeverity, ruleValue } = result
-				const { configValidator, linter, nodePredicate } =
-					this.meta.getLinter(ruleName)
+				const { configValidator, linter, nodePredicate } = this.meta
+					.getLinter(
+						ruleName,
+					)
 				if (!configValidator(ruleName, ruleValue, this.logger)) {
 					// Config value is invalid.
 					continue

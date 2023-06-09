@@ -78,8 +78,8 @@ export class CacheService {
 			}
 			try {
 				// TODO: Don't update this for every single change.
-				this.checksums.files[doc.uri] =
-					await this.project.externals.crypto.getSha1(doc.getText())
+				this.checksums.files[doc.uri] = await this.project.externals.crypto
+					.getSha1(doc.getText())
 			} catch (e) {
 				if (!this.project.externals.error.isKind(e, 'EISDIR')) {
 					this.project.logger.error(`[CacheService#hash-file] ${doc.uri}`)
@@ -236,12 +236,19 @@ export class CacheService {
 			}
 			__profiler.task('Unlink Symbols')
 
-			await fileUtil.writeGzippedJson(this.project.externals, filePath, cache)
+			await fileUtil.writeGzippedJson(
+				this.project.externals,
+				filePath,
+				cache,
+			)
 			__profiler.task('Write File').finalize()
 
 			return true
 		} catch (e) {
-			this.project.logger.error(`[CacheService#save] path = “${filePath}”`, e)
+			this.project.logger.error(
+				`[CacheService#save] path = “${filePath}”`,
+				e,
+			)
 		}
 		return false
 	}
@@ -249,7 +256,7 @@ export class CacheService {
 	async hasFileChangedSinceCache(doc: TextDocument): Promise<boolean> {
 		return (
 			this.checksums.files[doc.uri] !==
-			(await this.project.externals.crypto.getSha1(doc.getText()))
+				(await this.project.externals.crypto.getSha1(doc.getText()))
 		)
 	}
 

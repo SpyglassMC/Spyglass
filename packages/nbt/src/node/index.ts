@@ -13,16 +13,18 @@ export namespace NbtNode {
 	}
 }
 
-//#region NbtPrimitiveNode
+// #region NbtPrimitiveNode
 export type NbtPrimitiveNode = NbtNumberNode | core.StringNode
 export namespace NbtPrimitiveNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtPrimitiveNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is NbtPrimitiveNode {
 		return NbtNumberNode.is(node) || core.StringNode.is(node)
 	}
 }
 
-//#region NbtNumberNode
+// #region NbtNumberNode
 export type NbtNumberNode = NbtIntegerAlikeNode | NbtFloatAlikeNode
 export namespace NbtNumberNode {
 	/* istanbul ignore next */
@@ -31,7 +33,7 @@ export namespace NbtNumberNode {
 	}
 }
 
-//#region NbtIntegerAlikeNode
+// #region NbtIntegerAlikeNode
 export type NbtIntegerAlikeNode =
 	| NbtByteNode
 	| NbtShortNode
@@ -90,9 +92,9 @@ export namespace NbtLongNode {
 		return (node as NbtLongNode | undefined)?.type === 'nbt:long'
 	}
 }
-//#endregion
+// #endregion
 
-//#region NbtFloatAlikeNode
+// #region NbtFloatAlikeNode
 export type NbtFloatAlikeNode = NbtFloatNode | NbtDoubleNode
 export namespace NbtFloatAlikeNode {
 	/* istanbul ignore next */
@@ -122,12 +124,13 @@ export namespace NbtDoubleNode {
 		return (node as NbtDoubleNode | undefined)?.type === 'nbt:double'
 	}
 }
-//#endregion
-//#endregion
-//#endregion
+// #endregion
+// #endregion
+// #endregion
 
 export interface NbtCompoundNode
-	extends core.RecordBaseNode<core.StringNode, NbtNode> {
+	extends core.RecordBaseNode<core.StringNode, NbtNode>
+{
 	readonly type: 'nbt:compound'
 }
 export namespace NbtCompoundNode {
@@ -137,7 +140,7 @@ export namespace NbtCompoundNode {
 	}
 }
 
-//#region NbtCollectionNode
+// #region NbtCollectionNode
 export type NbtCollectionNode = NbtListNode | NbtPrimitiveArrayNode
 export namespace NbtCollectionNode {
 	/* istanbul ignore next */
@@ -159,7 +162,7 @@ export namespace NbtListNode {
 	}
 }
 
-//#region NbtPrimitiveArrayNode
+// #region NbtPrimitiveArrayNode
 export type NbtPrimitiveArrayNode =
 	| NbtByteArrayNode
 	| NbtIntArrayNode
@@ -182,7 +185,9 @@ export interface NbtByteArrayNode extends core.ListNode<NbtByteNode> {
 }
 export namespace NbtByteArrayNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtByteArrayNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is NbtByteArrayNode {
 		return (node as NbtByteArrayNode | undefined)?.type === 'nbt:byte_array'
 	}
 }
@@ -202,12 +207,14 @@ export interface NbtLongArrayNode extends core.ListNode<NbtLongNode> {
 }
 export namespace NbtLongArrayNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtLongArrayNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is NbtLongArrayNode {
 		return (node as NbtLongArrayNode | undefined)?.type === 'nbt:long_array'
 	}
 }
-//#endregion
-//#endregion
+// #endregion
+// #endregion
 
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path'
@@ -227,7 +234,9 @@ export interface NbtPathIndexNode extends core.AstNode {
 }
 export namespace NbtPathIndexNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode | undefined): node is NbtPathIndexNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is NbtPathIndexNode {
 		return (node as NbtPathIndexNode | undefined)?.type === 'nbt:path/index'
 	}
 }

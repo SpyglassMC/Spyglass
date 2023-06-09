@@ -113,8 +113,7 @@ export const configured_carver = as(
 					}),
 				}),
 			}),
-		}),
-	),
+		})),
 )
 
 export const biome = as(
@@ -141,7 +140,9 @@ export const biome = as(
 				water_fog_color: intColor(),
 				grass_color: opt(intColor()),
 				foliage_color: opt(intColor()),
-				grass_color_modifier: opt(literal(['none', 'dark_forest', 'swamp'])),
+				grass_color_modifier: opt(
+					literal(['none', 'dark_forest', 'swamp']),
+				),
 				particle: opt(
 					record({
 						options: record({
@@ -184,14 +185,12 @@ export const biome = as(
 						minCount: int,
 						maxCount: int,
 					}),
-				),
-			),
+				)),
 			spawn_costs: object(resource('entity_type'), () =>
 				record({
 					energy_budget: float,
 					charge: float,
-				}),
-			),
+				})),
 			surface_builder: versioned(
 				ctx,
 				any([
@@ -206,8 +205,7 @@ export const biome = as(
 						listOf(resource('worldgen/configured_carver')),
 						listOf(configured_carver),
 					]),
-				),
-			),
+				)),
 			starts: versioned(
 				ctx,
 				any([
@@ -224,6 +222,6 @@ export const biome = as(
 					placed_feature_list_ref,
 				),
 			),
-		}),
+		})
 	),
 )

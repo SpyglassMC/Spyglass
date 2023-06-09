@@ -13,7 +13,10 @@ describe('SymbolUtil', () => {
 			symbols.contributeAs('uri_binder', () => {
 				symbols
 					.query(fileUri, 'test', 'Bound')
-					.enter({ data: { desc: 'This symbol is URI bound.' }, usage: {} })
+					.enter({
+						data: { desc: 'This symbol is URI bound.' },
+						usage: {},
+					})
 			})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
@@ -22,7 +25,10 @@ describe('SymbolUtil', () => {
 		it('Should clear all', () => {
 			// Set up the symbol table.
 			const global: SymbolTable = {}
-			const symbols = new SymbolUtil(global, NodeJsExternals.event.EventEmitter)
+			const symbols = new SymbolUtil(
+				global,
+				NodeJsExternals.event.EventEmitter,
+			)
 			symbols
 				.query(fileUri, 'mcdoc', 'ShouldBeKept1')
 				.enter({ usage: { type: 'definition' } })
@@ -68,9 +74,7 @@ describe('SymbolUtil', () => {
 				member
 					.enter({ usage: { type: 'definition' } })
 					.member('Qux', (member) =>
-						member.enter({ usage: { type: 'definition' } }),
-					),
-			)
+						member.enter({ usage: { type: 'definition' } })))
 		// const stackSymbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		// stackSymbols
 		// 	.query(fileUri, 'advancement', 'Foo')
@@ -125,7 +129,10 @@ describe('SymbolUtil', () => {
 		]
 		for (const path of paths) {
 			it(`Should return correctly for “${path.join('.')}”`, () => {
-				const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
+				const symbols = new SymbolUtil(
+					{},
+					NodeJsExternals.event.EventEmitter,
+				)
 				symbols
 					.query(fileUri, 'advancement', 'Foo')
 					.enter({ usage: { type: 'definition' } })
@@ -133,9 +140,7 @@ describe('SymbolUtil', () => {
 						member
 							.enter({ usage: { type: 'definition' } })
 							.member('Qux', (member) =>
-								member.enter({ usage: { type: 'definition' } }),
-							),
-					)
+								member.enter({ usage: { type: 'definition' } })))
 
 				const query = symbols.query(fileUri, 'advancement', ...path)
 

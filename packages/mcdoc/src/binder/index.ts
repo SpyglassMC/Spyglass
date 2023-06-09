@@ -259,7 +259,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				`${ctx.moduleIdentifier}::${identifier.value}`,
 			)
 			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier),
+				reportDuplicatedDeclaration(ctx, symbol, identifier)
 			)
 			.elseEnter({
 				data: {
@@ -289,7 +289,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				`${ctx.moduleIdentifier}::${name}`,
 			)
 			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier ?? node),
+				reportDuplicatedDeclaration(ctx, symbol, identifier ?? node)
 			)
 			.elseEnter({
 				data: {
@@ -355,7 +355,7 @@ function bindTypeParamBlock(
 			ctx.symbols
 				.query({ doc: ctx.doc, node }, 'mcdoc', paramPath)
 				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, paramIdentifier),
+					reportDuplicatedDeclaration(ctx, symbol, paramIdentifier)
 				)
 				.elseEnter({
 					data: { visibility: SymbolVisibility.Block },
@@ -410,8 +410,9 @@ async function bindDispatchStatement(
 				.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
 				.ifDeclared((symbol) =>
 					reportDuplicatedDeclaration(ctx, symbol, key, {
-						localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key',
-					}),
+						localeString:
+							'mcdoc.binder.dispatcher-statement.duplicated-key',
+					})
 				)
 				.elseEnter({
 					data: { data },
@@ -490,11 +491,13 @@ async function bindPath(
 	node: PathNode,
 	ctx: McdocBinderContext,
 ): Promise<void> {
-	for (const { identifiers, node: identNode, indexRight } of resolvePathByStep(
-		node,
-		ctx,
-		{ reportErrors: true },
-	)) {
+	for (
+		const { identifiers, node: identNode, indexRight } of resolvePathByStep(
+			node,
+			ctx,
+			{ reportErrors: true },
+		)
+	) {
 		if (!identifiers?.length) {
 			continue
 		}
@@ -532,7 +535,7 @@ async function bindPath(
 						fullRange: node,
 						skipRenaming: LiteralNode.is(identNode),
 					},
-				}),
+				})
 			)
 			.else(() => {
 				if (indexRight === 0) {
@@ -578,12 +581,15 @@ function bindEnumBlock(
 		query.member(identifier.value, (fieldQuery) =>
 			fieldQuery
 				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, identifier),
+					reportDuplicatedDeclaration(ctx, symbol, identifier)
 				)
 				.elseEnter({
-					usage: { type: 'definition', node: identifier, fullRange: field },
-				}),
-		)
+					usage: {
+						type: 'definition',
+						node: identifier,
+						fullRange: field,
+					},
+				}))
 	}
 }
 
@@ -632,12 +638,11 @@ async function bindStructBlock(
 				query.member(key.value, (fieldQuery) =>
 					fieldQuery
 						.ifDeclared((symbol) =>
-							reportDuplicatedDeclaration(ctx, symbol, key),
+							reportDuplicatedDeclaration(ctx, symbol, key)
 						)
 						.elseEnter({
 							usage: { type: 'definition', node: key, fullRange: field },
-						}),
-				)
+						}))
 			}
 			await bindType(type, ctx)
 		} else {
@@ -728,7 +733,10 @@ function* resolvePathByStep(
 				// super
 				if (identifiers.length === 0) {
 					if (options.reportErrors) {
-						ctx.err.report(localize('mcdoc.binder.path.super-from-root'), child)
+						ctx.err.report(
+							localize('mcdoc.binder.path.super-from-root'),
+							child,
+						)
 					}
 					return
 				}
@@ -1069,8 +1077,9 @@ function convertStructPairField(
 	node: StructPairFieldNode,
 	ctx: McdocBinderContext,
 ): StructTypePairField {
-	const { attributes, key, type, isOptional } =
-		StructPairFieldNode.destruct(node)
+	const { attributes, key, type, isOptional } = StructPairFieldNode.destruct(
+		node,
+	)
 	return {
 		kind: 'pair',
 		attributes: convertAttributes(attributes, ctx),
@@ -1247,8 +1256,8 @@ function convertPrimitiveArray(
 	node: PrimitiveArrayTypeNode,
 	ctx: McdocBinderContext,
 ): McdocType {
-	const { arrayKind, lengthRange, valueRange } =
-		PrimitiveArrayTypeNode.destruct(node)
+	const { arrayKind, lengthRange, valueRange } = PrimitiveArrayTypeNode
+		.destruct(node)
 	return wrapType(
 		node,
 		{

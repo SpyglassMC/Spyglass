@@ -43,16 +43,23 @@ describe('mcdoc uriBinder()', () => {
 		},
 	]
 	for (const { uris } of suites) {
-		it(`Bind ${JSON.stringify(
-			uris.map((u) =>
-				u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u,
-			),
-		)}`, () => {
-			const ctx = UriBinderContext.create(
-				mockProjectData({ roots: ['file:///root/'] }),
-			)
-			uriBinder(uris, ctx)
-			snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
-		})
+		it(
+			`Bind ${
+				JSON.stringify(
+					uris.map((u) =>
+						u.startsWith('file:///root/')
+							? u.slice('file:///root/'.length)
+							: u
+					),
+				)
+			}`,
+			() => {
+				const ctx = UriBinderContext.create(
+					mockProjectData({ roots: ['file:///root/'] }),
+				)
+				uriBinder(uris, ctx)
+				snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
+			},
+		)
 	}
 })

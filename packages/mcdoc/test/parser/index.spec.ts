@@ -103,7 +103,15 @@ const Suites: Record<
 			],
 		},
 		string: {
-			content: ['', 'foo', '"foo', '"foo"', '"fo\no"', '"fo\\no"', '"fo\\Ao"'],
+			content: [
+				'',
+				'foo',
+				'"foo',
+				'"foo"',
+				'"fo\no"',
+				'"fo\\no"',
+				'"fo\\Ao"',
+			],
 		},
 	},
 	syntax: {
@@ -311,9 +319,11 @@ const Suites: Record<
 
 describe('mcdoc parser', async () => {
 	for (const [directory, parserSuites] of Object.entries(Suites)) {
-		for (const [parserName, { functionParams }] of Object.entries(
-			parserSuites,
-		)) {
+		for (
+			const [parserName, { functionParams }] of Object.entries(
+				parserSuites,
+			)
+		) {
 			const importedParser = (
 				(await import(
 					'@spyglassmc/mcdoc/lib/parser/index.js'
@@ -328,9 +338,11 @@ describe('mcdoc parser', async () => {
 				import.meta.url,
 			)
 			describe(describeTitle, () => {
-				for (const content of Suites[directory as keyof typeof Suites][
-					parserName
-				].content) {
+				for (
+					const content of Suites[directory as keyof typeof Suites][
+						parserName
+					].content
+				) {
 					const itTitle = `Parse "${showWhitespaceGlyph(content)}"`
 					it(itTitle, () => {
 						snapshotWithUri({

@@ -84,8 +84,9 @@ function dispatch(
 			return false
 		}
 
-		const { literalTreeNodes, argumentTreeNodes } =
-			categorizeTreeChildren(children)
+		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(
+			children,
+		)
 
 		const argumentParsers: { name: string; parser: core.Parser }[] =
 			argumentTreeNodes.map(([name, treeNode]) => ({
@@ -94,9 +95,9 @@ function dispatch(
 			}))
 		const literalParser = literalTreeNodes.length
 			? literal(
-					literalTreeNodes.map(([name, _treeNode]) => name),
-					parent.type === 'root',
-			  )
+				literalTreeNodes.map(([name, _treeNode]) => name),
+				parent.type === 'root',
+			)
 			: undefined
 
 		const parsers: core.Parser[] = [
@@ -111,7 +112,7 @@ function dispatch(
 		if (result !== core.Failure) {
 			const takenName =
 				argumentParsers[out.index - (literalParser ? 1 : 0)]?.name ??
-				(result as LiteralCommandChildNode).value
+					(result as LiteralCommandChildNode).value
 			const childPath = [...path, takenName]
 
 			ans.push({
@@ -140,7 +141,7 @@ function dispatch(
 
 			if (
 				(result as UnknownCommandChildNode).type ===
-				'mcfunction:command_child/unknown'
+					'mcfunction:command_child/unknown'
 			) {
 				// Encountered an unsupported parser. Stop parsing this command.
 				return false
@@ -223,7 +224,7 @@ export function treeNodeChildrenToStringArray(
 	executable = false,
 ): string[] {
 	const entries = Object.entries(children).map(([name, treeNode]) =>
-		wrapWithBrackets(treeNodeToString(name, treeNode), executable),
+		wrapWithBrackets(treeNodeToString(name, treeNode), executable)
 	)
 	return entries
 }

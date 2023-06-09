@@ -36,7 +36,10 @@ export const LanguageError = Object.freeze({
 	/**
 	 * @returns A {@link PosRangeLanguageError}.
 	 */
-	withPosRange(error: LanguageError, doc: TextDocument): PosRangeLanguageError {
+	withPosRange(
+		error: LanguageError,
+		doc: TextDocument,
+	): PosRangeLanguageError {
 		return {
 			posRange: PositionRange.from(error.range, doc),
 			message: error.message,

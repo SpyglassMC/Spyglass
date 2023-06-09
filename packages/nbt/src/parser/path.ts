@@ -59,9 +59,7 @@ const index: PartParser = (children, src, ctx) => {
 
 	if (!src.trySkip('[')) {
 		throw new Error(
-			`NBT path index parser called at illegal position: “${src.peek()}” at ${
-				src.cursor
-			}`,
+			`NBT path index parser called at illegal position: “${src.peek()}” at ${src.cursor}`,
 		)
 	}
 	src.skipSpace()
@@ -92,7 +90,18 @@ const key: PartParser = (children, src, ctx) => {
 		// No single quotes: https://bugs.mojang.com/browse/MC-175504
 		quotes: ['"'],
 		unquotable: {
-			blockList: new Set(['\n', '\r', '\t', ' ', '"', '[', ']', '.', '{', '}']),
+			blockList: new Set([
+				'\n',
+				'\r',
+				'\t',
+				' ',
+				'"',
+				'[',
+				']',
+				'.',
+				'{',
+				'}',
+			]),
 		},
 	})(src, ctx)
 	children.push(node)

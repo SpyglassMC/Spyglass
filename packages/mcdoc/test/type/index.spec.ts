@@ -12,32 +12,50 @@ describe('mcdoc checker/type.ts', () => {
 			target: { kind: 'string' },
 		},
 		{
-			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			source: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }],
+			},
 			target: { kind: 'string' },
 		},
 		{
 			source: { kind: 'string' },
-			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			target: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }],
+			},
 		},
 		{
 			source: {
 				kind: 'union',
 				members: [
 					{ kind: 'string' },
-					{ kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+					{
+						kind: 'union',
+						members: [{ kind: 'string' }, { kind: 'int' }],
+					},
 				],
 			},
-			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			target: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }],
+			},
 		},
 		{
 			source: {
 				kind: 'union',
 				members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
 			},
-			target: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			target: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }],
+			},
 		},
 		{
-			source: { kind: 'union', members: [{ kind: 'string' }, { kind: 'int' }] },
+			source: {
+				kind: 'union',
+				members: [{ kind: 'string' }, { kind: 'int' }],
+			},
 			target: {
 				kind: 'union',
 				members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
@@ -60,7 +78,9 @@ describe('mcdoc checker/type.ts', () => {
 					kind: 'list',
 					item: {
 						kind: 'union',
-						members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+						members: [{ kind: 'string' }, { kind: 'int' }, {
+							kind: 'boolean',
+						}],
 					},
 				},
 			},
@@ -72,7 +92,9 @@ describe('mcdoc checker/type.ts', () => {
 					kind: 'list',
 					item: {
 						kind: 'union',
-						members: [{ kind: 'string' }, { kind: 'int' }, { kind: 'boolean' }],
+						members: [{ kind: 'string' }, { kind: 'int' }, {
+							kind: 'boolean',
+						}],
 					},
 				},
 			},
@@ -90,11 +112,14 @@ describe('mcdoc checker/type.ts', () => {
 	]
 	describe('checkAssignability()', () => {
 		for (const { source, target } of cases) {
-			it(`Assign '${McdocType.toString(source)}' to '${McdocType.toString(
-				target,
-			)}'`, () => {
-				snapshot(checkAssignability({ source, target }))
-			})
+			it(
+				`Assign '${McdocType.toString(source)}' to '${
+					McdocType.toString(target)
+				}'`,
+				() => {
+					snapshot(checkAssignability({ source, target }))
+				},
+			)
 		}
 	})
 })

@@ -98,7 +98,9 @@ export class Service {
 				(node) => node.color,
 				(node) =>
 					ans.push({
-						color: Array.isArray(node.color) ? node.color : node.color!.value,
+						color: Array.isArray(node.color)
+							? node.color
+							: node.color!.value,
 						range: Array.isArray(node.color)
 							? node.range
 							: node.color!.range ?? node.range,
@@ -122,17 +124,20 @@ export class Service {
 	): ColorPresentation[] {
 		try {
 			this.debug(
-				`Getting color presentation for '${doc.uri}' # ${
-					doc.version
-				} @ ${Range.toString(range)}`,
+				`Getting color presentation for '${doc.uri}' # ${doc.version} @ ${
+					Range.toString(range)
+				}`,
 			)
-			let node = AstNode.findDeepestChild({ node: file, needle: range.start })
+			let node = AstNode.findDeepestChild({
+				node: file,
+				needle: range.start,
+			})
 			while (node) {
 				const nodeColor = node.color
 				if (nodeColor && !Array.isArray(nodeColor)) {
 					const colorRange = nodeColor.range ?? node.range
 					return nodeColor.format.map((format) =>
-						ColorPresentation.fromColorFormat(format, color, colorRange),
+						ColorPresentation.fromColorFormat(format, color, colorRange)
 					)
 				}
 				node = node.parent
@@ -209,7 +214,11 @@ export class Service {
 			const formatter = this.project.meta.getFormatter(node.type)
 			return formatter(
 				node,
-				FormatterContext.create(this.project, { doc, tabSize, insertSpaces }),
+				FormatterContext.create(this.project, {
+					doc,
+					tabSize,
+					insertSpaces,
+				}),
 			)
 		} catch (e) {
 			this.logger.error(
@@ -226,7 +235,9 @@ export class Service {
 		offset: number,
 	): Hover | undefined {
 		try {
-			this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			this.debug(
+				`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`,
+			)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {
 				const symbol = this.project.symbols.resolveAlias(node.symbol)
@@ -318,11 +329,9 @@ export class Service {
 	): Promise<SymbolLocations | undefined> {
 		try {
 			this.debug(
-				`Getting symbol locations of usage '${searchedUsages.join(',')}' for '${
-					doc.uri
-				}' # ${
-					doc.version
-				} @ ${offset} with currentFileOnly=${currentFileOnly}`,
+				`Getting symbol locations of usage '${
+					searchedUsages.join(',')
+				}' for '${doc.uri}' # ${doc.version} @ ${offset} with currentFileOnly=${currentFileOnly}`,
 			)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {

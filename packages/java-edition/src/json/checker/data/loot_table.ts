@@ -96,11 +96,21 @@ export const predicate = as(
 					predicate: damage_source_predicate,
 				},
 				entity_properties: {
-					entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
+					entity: literal([
+						'this',
+						'killer',
+						'killer_player',
+						'direct_killer',
+					]),
 					predicate: entity_predicate,
 				},
 				entity_scores: {
-					entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
+					entity: literal([
+						'this',
+						'killer',
+						'killer_player',
+						'direct_killer',
+					]),
 					scores: object(literal('objective'), () => int_bounds),
 				},
 				inverted: {
@@ -145,8 +155,7 @@ export const predicate = as(
 					thundering: opt(boolean),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const predicate_list = any([predicate, listOf(predicate)])
@@ -179,7 +188,12 @@ export const item_modifier = as(
 					}),
 				},
 				copy_name: {
-					source: literal(['this', 'killer', 'killer_player', 'block_entity']),
+					source: literal([
+						'this',
+						'killer',
+						'killer_player',
+						'block_entity',
+					]),
 				},
 				copy_nbt: {
 					source: nbt_provider,
@@ -213,7 +227,12 @@ export const item_modifier = as(
 					skip_existing_chunks: opt(boolean, true),
 				},
 				fill_player_head: {
-					entity: literal(['this', 'killer', 'killer_player', 'direct_killer']),
+					entity: literal([
+						'this',
+						'killer',
+						'killer_player',
+						'direct_killer',
+					]),
 				},
 				limit_count: {
 					limit: int_bounds,
@@ -286,8 +305,7 @@ export const item_modifier = as(
 				},
 			}),
 			conditions: opt(listOf(predicate)),
-		}),
-	),
+		})),
 )
 
 export const item_modifier_list = any([item_modifier, listOf(item_modifier)])
@@ -325,8 +343,7 @@ export const loot_entry = as(
 			}),
 			functions: opt(listOf(item_modifier), []),
 			conditions: opt(listOf(predicate), []),
-		}),
-	),
+		})),
 )
 
 export const loot_pool = as(

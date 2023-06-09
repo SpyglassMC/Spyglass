@@ -104,19 +104,35 @@ export const Categories = (() => {
 		],
 		[
 			'worldgen/noise_settings',
-			{ category: 'worldgen/noise_settings', extname: '.json', since: '1.16' },
+			{
+				category: 'worldgen/noise_settings',
+				extname: '.json',
+				since: '1.16',
+			},
 		],
 		[
 			'worldgen/placed_feature',
-			{ category: 'worldgen/placed_feature', extname: '.json', since: '1.18' },
+			{
+				category: 'worldgen/placed_feature',
+				extname: '.json',
+				since: '1.18',
+			},
 		],
 		[
 			'worldgen/processor_list',
-			{ category: 'worldgen/processor_list', extname: '.json', since: '1.16' },
+			{
+				category: 'worldgen/processor_list',
+				extname: '.json',
+				since: '1.16',
+			},
 		],
 		[
 			'worldgen/template_pool',
-			{ category: 'worldgen/template_pool', extname: '.json', since: '1.16' },
+			{
+				category: 'worldgen/template_pool',
+				extname: '.json',
+				since: '1.16',
+			},
 		],
 	])
 
@@ -191,7 +207,11 @@ export const uriBinder: UriBinder = (
 		const parts = dissectUri(uri, ctx)
 		if (parts) {
 			ctx.symbols
-				.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`)
+				.query(
+					uri,
+					parts.category,
+					`${parts.namespace}:${parts.identifier}`,
+				)
 				.enter({
 					usage: {
 						type: 'definition',

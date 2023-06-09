@@ -48,7 +48,8 @@ describe('long()', () => {
 				pattern,
 				min: 1n,
 				max: 6n,
-				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans),
+				onOutOfRange: (ans, _src, ctx) =>
+					ctx.err.report('Test message!', ans),
 			},
 		]
 		const cases: { content: string }[] = [
@@ -57,16 +58,17 @@ describe('long()', () => {
 			{ content: '9' },
 		]
 		for (const option of options) {
-			describe(`long(${option.min}, ${
-				option.max
-			}, ${!!option.onOutOfRange})`, () => {
-				for (const { content } of cases) {
-					it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-						const parser = long(option as any)
-						snapshot(testParser(parser, content))
-					})
-				}
-			})
+			describe(
+				`long(${option.min}, ${option.max}, ${!!option.onOutOfRange})`,
+				() => {
+					for (const { content } of cases) {
+						it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+							const parser = long(option as any)
+							snapshot(testParser(parser, content))
+						})
+					}
+				},
+			)
 		}
 	})
 })

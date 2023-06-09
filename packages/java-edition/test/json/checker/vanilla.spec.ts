@@ -11,7 +11,7 @@ import { Checkers } from '../../../lib/json/checker/data/index.js'
 describe.skip('Check vanilla files', async () => {
 	const root = 'node_modules/vanilla-datapack-data/data/minecraft/'
 	const summary = [...Categories.keys()].map((c) =>
-		fg.sync(`${root}${c}/**/*.json`),
+		fg.sync(`${root}${c}/**/*.json`)
 	)
 
 	const project = mockProjectData({
@@ -40,11 +40,15 @@ describe.skip('Check vanilla files', async () => {
 
 				passing = false
 				setTimeout(() => {
-					console.log(`\t${file.slice(root.length + category[0].length + 1)}`)
+					console.log(
+						`\t${file.slice(root.length + category[0].length + 1)}`,
+					)
 					const doc = TextDocument.create('', '', 0, text)
 					errors.forEach((e) => {
 						const pos = doc.positionAt(e.range.start)
-						console.log(`\t  ${pos.line + 1}:${pos.character}  ${e.message}`)
+						console.log(
+							`\t  ${pos.line + 1}:${pos.character}  ${e.message}`,
+						)
 					})
 				}, 0)
 			})

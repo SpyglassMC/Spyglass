@@ -45,8 +45,9 @@ export function signatureHelpProvider(
 
 		ans.signatures = options.map((v) => {
 			const part1 = v[selectedIndex]
-			const part2 =
-				selectedIndex + 1 < v.length ? ` ${v[selectedIndex + 1]}` : ''
+			const part2 = selectedIndex + 1 < v.length
+				? ` ${v[selectedIndex + 1]}`
+				: ''
 			const label = `${part1}${part2}`
 			return {
 				label,
@@ -96,7 +97,10 @@ function getOptions(
 		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
 		if (treeNode?.children) {
 			return mcf
-				.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable)
+				.treeNodeChildrenToStringArray(
+					treeNode.children,
+					treeNode.executable,
+				)
 				.map((v) => [...current, v])
 		}
 	}

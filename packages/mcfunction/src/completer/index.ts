@@ -54,7 +54,7 @@ export function command(
 			return Object.keys(tree.children ?? {}).map((v) =>
 				core.CompletionItem.create(v, ctx.offset, {
 					kind: core.CompletionKind.Keyword,
-				}),
+				})
 			)
 		}
 
@@ -75,12 +75,12 @@ export function command(
 			...literalTreeNodes.map(([name]) =>
 				core.CompletionItem.create(name, ctx.offset, {
 					kind: core.CompletionKind.Keyword,
-				}),
+				})
 			),
 			...argumentTreeNodes.flatMap(([_name, treeNode]) =>
 				core.Arrayable.toArray(getMockNodes(treeNode, ctx.offset)).flatMap(
 					(n) => core.completer.dispatch(n, ctx),
-				),
+				)
 			),
 		]
 	}

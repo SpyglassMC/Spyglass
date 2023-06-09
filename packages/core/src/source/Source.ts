@@ -76,7 +76,11 @@ export class ReadonlySource {
 
 	peekUntil(...terminators: string[]): string {
 		let ans = ''
-		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
+		for (
+			let cursor = this.innerCursor;
+			cursor < this.string.length;
+			cursor++
+		) {
 			const c = this.string.charAt(cursor)
 			if (terminators.includes(c)) {
 				return ans
@@ -100,7 +104,11 @@ export class ReadonlySource {
 	}
 
 	hasNonSpaceAheadInLine(): boolean {
-		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
+		for (
+			let cursor = this.innerCursor;
+			cursor < this.string.length;
+			cursor++
+		) {
 			const c = this.string.charAt(cursor)
 			if (c === CR || c === LF) {
 				break
@@ -117,10 +125,9 @@ export class ReadonlySource {
 	slice(param0: Range | RangeContainer | number, end?: number): string {
 		if (typeof param0 === 'number') {
 			const innerStart = IndexMap.toInnerOffset(this.indexMap, param0)
-			const innerEnd =
-				end !== undefined
-					? IndexMap.toInnerOffset(this.indexMap, end)
-					: undefined
+			const innerEnd = end !== undefined
+				? IndexMap.toInnerOffset(this.indexMap, end)
+				: undefined
 			return this.string.slice(innerStart, innerEnd)
 		}
 		const range = IndexMap.toInnerRange(this.indexMap, Range.get(param0))

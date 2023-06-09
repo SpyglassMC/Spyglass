@@ -58,21 +58,21 @@ export const file: Completer<FileNode<AstNode>> = (node, ctx) => {
 }
 
 export const literal: Completer<LiteralBaseNode> = (node) => {
-	const kind =
-		new Map<ColorTokenType, CompletionKind>([
-			['enum', CompletionKind.Enum],
-			['enumMember', CompletionKind.EnumMember],
-			['function', CompletionKind.Function],
-			['keyword', CompletionKind.Keyword],
-			['literal', CompletionKind.Keyword],
-			['number', CompletionKind.Constant],
-			['operator', CompletionKind.Operator],
-			['property', CompletionKind.Property],
-			['resourceLocation', CompletionKind.File],
-			['variable', CompletionKind.Variable],
-		]).get(node.options.colorTokenType ?? 'keyword') ?? CompletionKind.Keyword
+	const kind = new Map<ColorTokenType, CompletionKind>([
+		['enum', CompletionKind.Enum],
+		['enumMember', CompletionKind.EnumMember],
+		['function', CompletionKind.Function],
+		['keyword', CompletionKind.Keyword],
+		['literal', CompletionKind.Keyword],
+		['number', CompletionKind.Constant],
+		['operator', CompletionKind.Operator],
+		['property', CompletionKind.Property],
+		['resourceLocation', CompletionKind.File],
+		['variable', CompletionKind.Variable],
+	]).get(node.options.colorTokenType ?? 'keyword') ?? CompletionKind.Keyword
 	return (
-		node.options.pool.map((v) => CompletionItem.create(v, node, { kind })) ?? []
+		node.options.pool.map((v) => CompletionItem.create(v, node, { kind })) ??
+			[]
 	)
 }
 
@@ -137,10 +137,11 @@ export function record<
 		const index = binarySearch(node.children, ctx.offset, (n, o) =>
 			n.end
 				? Range.compareOffset(Range.translate(n, 0, -1), o, true)
-				: Range.compareOffset(n.range, o, true),
-		)
+				: Range.compareOffset(n.range, o, true))
 		const pair = index >= 0 ? node.children[index] : undefined
-		const hasNextPair = !!node.children.find((n) => n.range.start > ctx.offset)
+		const hasNextPair = !!node.children.find((n) =>
+			n.range.start > ctx.offset
+		)
 		if (!pair) {
 			return completePairs(undefined)
 		}
@@ -181,19 +182,20 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 		ctx.config.lint.idOmitDefaultNamespace,
 	)
 
-	const includeEmptyNamespace =
-		!node.options.isPredicate && node.namespace === ''
-	const includeDefaultNamespace =
-		node.options.isPredicate || config?.ruleValue !== true
-	const excludeDefaultNamespace =
-		!node.options.isPredicate && config?.ruleValue !== false
+	const includeEmptyNamespace = !node.options.isPredicate &&
+		node.namespace === ''
+	const includeDefaultNamespace = node.options.isPredicate ||
+		config?.ruleValue !== true
+	const excludeDefaultNamespace = !node.options.isPredicate &&
+		config?.ruleValue !== false
 
 	const getPool = (category: string) =>
 		optimizePool(
 			Object.keys(ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)),
 		)
 	const optimizePool = (pool: readonly string[]) => {
-		const defaultNsPrefix = `${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
+		const defaultNsPrefix =
+			`${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`
 		const defaultNsIds: string[] = []
 		const otherIds: string[] = []
 		for (const id of pool) {
@@ -211,12 +213,14 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 				: []),
 			...(includeEmptyNamespace
 				? defaultNsIds.map((id) =>
-						id.slice(ResourceLocation.DefaultNamespace.length),
-				  )
+					id.slice(ResourceLocation.DefaultNamespace.length)
+				)
 				: []),
 		]
 		if (node.options.namespacePathSep === '.') {
-			return ans.map((v) => v.replace(ResourceLocation.NamespacePathSep, '.'))
+			return ans.map((v) =>
+				v.replace(ResourceLocation.NamespacePathSep, '.')
+			)
 		}
 		return ans
 	}
@@ -224,16 +228,16 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 	const pool = node.options.pool
 		? optimizePool(node.options.pool)
 		: [
-				...getPool(node.options.category!),
-				...(node.options.allowTag
-					? getPool(`tag/${node.options.category}` as TagFileCategory).map(
-							(v) => `${ResourceLocation.TagPrefix}${v}`,
-					  )
-					: []),
-		  ]
+			...getPool(node.options.category!),
+			...(node.options.allowTag
+				? getPool(`tag/${node.options.category}` as TagFileCategory).map(
+					(v) => `${ResourceLocation.TagPrefix}${v}`,
+				)
+				: []),
+		]
 
 	return pool.map((v) =>
-		CompletionItem.create(v, node, { kind: CompletionKind.Function }),
+		CompletionItem.create(v, node, { kind: CompletionKind.Function })
 	)
 }
 
@@ -248,7 +252,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 			CompletionItem.create(`${q}${q}`, node, {
 				insertText: `${q}$1${q}`,
 				kind: CompletionKind.Value,
-			}),
+			})
 		)
 	}
 
@@ -263,7 +267,7 @@ export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 			...(node.options.parentPath ?? []),
 		).visibleMembers,
 	).map((v) =>
-		CompletionItem.create(v, node, { kind: CompletionKind.Variable }),
+		CompletionItem.create(v, node, { kind: CompletionKind.Variable })
 	)
 }
 

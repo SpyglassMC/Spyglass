@@ -49,10 +49,13 @@ export namespace AstNode {
 		if (!node.children) {
 			return -1
 		}
-		const comparator =
-			typeof needle === 'number' ? Range.compareOffset : Range.compare
-		return binarySearch(node.children, needle, (a, b) =>
-			comparator(a.range, b as number & Range, endInclusive),
+		const comparator = typeof needle === 'number'
+			? Range.compareOffset
+			: Range.compare
+		return binarySearch(
+			node.children,
+			needle,
+			(a, b) => comparator(a.range, b as number & Range, endInclusive),
 		)
 	}
 
@@ -100,10 +103,10 @@ export namespace AstNode {
 		needle: number | Range,
 		endInclusive = false,
 	):
-		| (N['children'] extends readonly unknown[]
-				? N['children'][number]
-				: undefined)
-		| undefined {
+		| (N['children'] extends readonly unknown[] ? N['children'][number]
+			: undefined)
+		| undefined
+	{
 		return node.children?.[
 			findLastChildIndex(node, needle, endInclusive)
 		] as any
@@ -181,8 +184,7 @@ export namespace AstNode {
 	}
 }
 
-export type Mutable<N> = N extends AstNode
-	? {
-			-readonly [K in keyof N]: Mutable<N[K]>
-	  }
+export type Mutable<N> = N extends AstNode ? {
+		-readonly [K in keyof N]: Mutable<N[K]>
+	}
 	: N

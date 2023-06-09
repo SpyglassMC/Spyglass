@@ -69,9 +69,7 @@ class TopNImpl implements Profiler {
 		const totalDuration = this.#lastTime - this.#startTime
 		this.logger.info(`[Profiler: ${this.id}] == Summary ==`)
 		this.logger.info(
-			`[Profiler: ${this.id}] Total tasks: ${
-				this.#taskCount
-			} done in ${totalDuration} ms`,
+			`[Profiler: ${this.id}] Total tasks: ${this.#taskCount} done in ${totalDuration} ms`,
 		)
 		this.logger.info(
 			`[Profiler: ${this.id}] Min/Avg/Max: ${this.#minTime} / ${
@@ -79,16 +77,20 @@ class TopNImpl implements Profiler {
 			} / ${this.#maxTime} ms`,
 		)
 		this.logger.info(
-			`[Profiler: ${this.id}] Top ${Math.min(
-				this.n,
-				this.#topTasks.length,
-			)} task(s):`,
+			`[Profiler: ${this.id}] Top ${
+				Math.min(
+					this.n,
+					this.#topTasks.length,
+				)
+			} task(s):`,
 		)
 		for (const [name, time] of this.#topTasks) {
 			this.logger.info(
-				`[Profiler: ${this.id}] ${name}${' '.repeat(
-					longestTaskNameLength - name.length,
-				)} - ${time} ms (${(time / totalDuration) * 100}%)`,
+				`[Profiler: ${this.id}] ${name}${
+					' '.repeat(
+						longestTaskNameLength - name.length,
+					)
+				} - ${time} ms (${(time / totalDuration) * 100}%)`,
 			)
 		}
 	}
@@ -133,9 +135,11 @@ class TotalImpl implements Profiler {
 		this.logger.info(`[Profiler: ${this.id}] == Summary ==`)
 		for (const [name, time] of this.#tasks) {
 			this.logger.info(
-				`[Profiler: ${this.id}] ${name}${' '.repeat(
-					this.#longestTaskNameLength - name.length,
-				)} - ${time} ms`,
+				`[Profiler: ${this.id}] ${name}${
+					' '.repeat(
+						this.#longestTaskNameLength - name.length,
+					)
+				} - ${time} ms`,
 			)
 		}
 	}

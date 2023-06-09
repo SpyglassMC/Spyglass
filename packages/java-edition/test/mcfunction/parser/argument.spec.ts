@@ -17,7 +17,9 @@ const Suites: Partial<
 	'brigadier:double': [
 		{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] },
 	],
-	'brigadier:float': [{ content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'] }],
+	'brigadier:float': [{
+		content: ['0', '1.2', '.5', '-1', '-.5', '-1234.56'],
+	}],
 	'brigadier:integer': [{ content: ['0', '123', '-123'] }],
 	'brigadier:long': [{ content: ['0', '123', '-123'] }],
 	'brigadier:string': [
@@ -60,7 +62,12 @@ const Suites: Partial<
 	],
 	'minecraft:block_state': [
 		{
-			content: ['stone', 'minecraft:stone', 'stone[foo=bar]', 'foo{bar:baz}'],
+			content: [
+				'stone',
+				'minecraft:stone',
+				'stone[foo=bar]',
+				'foo{bar:baz}',
+			],
 		},
 	],
 	'minecraft:color': [{ content: ['red', 'green'] }],
@@ -125,7 +132,12 @@ const Suites: Partial<
 	'minecraft:function': [{ content: ['foo', 'foo:bar', '#foo'] }],
 	'minecraft:game_profile': [
 		{
-			content: ['Player', '0123', 'dd12be42-52a9-4a91-a8a1-11c01849e498', '@e'],
+			content: [
+				'Player',
+				'0123',
+				'dd12be42-52a9-4a91-a8a1-11c01849e498',
+				'@e',
+			],
 		},
 	],
 	'minecraft:int_range': [
@@ -154,7 +166,11 @@ const Suites: Partial<
 	'minecraft:objective': [{ content: ['foo', '012'] }],
 	'minecraft:objective_criteria': [
 		{
-			content: ['dummy', 'used:spyglass', 'minecraft.used:minecraft.spyglass'],
+			content: [
+				'dummy',
+				'used:spyglass',
+				'minecraft.used:minecraft.spyglass',
+			],
 		},
 	],
 	'minecraft:operation': [{ content: ['=', '>', '<'] }],
@@ -173,16 +189,28 @@ const Suites: Partial<
 		},
 	],
 	'minecraft:resource': [
-		{ properties: { registry: 'bossbar' }, content: ['foo', 'foo:bar', '012'] },
+		{
+			properties: { registry: 'bossbar' },
+			content: ['foo', 'foo:bar', '012'],
+		},
 	],
 	'minecraft:resource_location': [
 		{ content: ['foo', 'foo:bar', '012'] },
-		{ properties: { category: 'bossbar' }, content: ['foo', 'foo:bar', '012'] },
+		{
+			properties: { category: 'bossbar' },
+			content: ['foo', 'foo:bar', '012'],
+		},
 	],
 	'minecraft:resource_or_tag': [
 		{
 			properties: { registry: 'bossbar' },
-			content: ['foo', 'foo:bar', '012', '#skeletons', '#minecraft:skeletons'],
+			content: [
+				'foo',
+				'foo:bar',
+				'012',
+				'#skeletons',
+				'#minecraft:skeletons',
+			],
 		},
 	],
 	'minecraft:rotation': [{ content: ['0 0', '~ ~', '~-5 ~5'] }],
@@ -281,14 +309,17 @@ describe('mcfunction argument parser', () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
 							uri: new URL(
-								`./argument/${parserName.replace(/[:_](\w)/g, (_, c) =>
-									c.toUpperCase(),
-								)}.spec.js`,
+								`./argument/${
+									parserName.replace(/[:_](\w)/g, (_, c) =>
+										c.toUpperCase())
+								}.spec.js`,
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode)!, string, {
 								project: { meta },
-								removeTopLevelChildren: RemoveExtraChildren.has(parserName),
+								removeTopLevelChildren: RemoveExtraChildren.has(
+									parserName,
+								),
 							}),
 						})
 					})

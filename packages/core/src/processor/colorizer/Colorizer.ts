@@ -71,38 +71,42 @@ export namespace ColorToken {
 
 // Built-in LSP semantic tokens: https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens
 
-export const ColorTokenTypes = Object.freeze([
-	'comment',
-	'enum',
-	'enumMember',
-	'function',
-	'keyword',
-	'modifier',
-	'number',
-	'operator',
-	'property',
-	'string',
-	'struct',
-	'type',
-	'type',
-	'variable',
-	// Below are custom types.
-	'error',
-	'literal',
-	'operator',
-	'resourceLocation',
-	'vector',
-] as const)
+export const ColorTokenTypes = Object.freeze(
+	[
+		'comment',
+		'enum',
+		'enumMember',
+		'function',
+		'keyword',
+		'modifier',
+		'number',
+		'operator',
+		'property',
+		'string',
+		'struct',
+		'type',
+		'type',
+		'variable',
+		// Below are custom types.
+		'error',
+		'literal',
+		'operator',
+		'resourceLocation',
+		'vector',
+	] as const,
+)
 export type ColorTokenType = typeof ColorTokenTypes[number]
 
-export const ColorTokenModifiers = Object.freeze([
-	'declaration',
-	'defaultLibrary',
-	'definition',
-	'deprecated',
-	'documentation',
-	'modification',
-	'readonly',
-	// Below are custom modifiers.
-] as const)
+export const ColorTokenModifiers = Object.freeze(
+	[
+		'declaration',
+		'defaultLibrary',
+		'definition',
+		'deprecated',
+		'documentation',
+		'modification',
+		'readonly',
+		// Below are custom modifiers.
+	] as const,
+)
 export type ColorTokenModifier = typeof ColorTokenModifiers[number]

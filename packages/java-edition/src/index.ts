@@ -31,7 +31,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
-				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
+				logger.error(
+					`[je.initialize] Failed loading pack.mcmeta “${uri}”`,
+					e,
+				)
 			}
 		}
 		return ans
@@ -52,10 +55,14 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		release,
 		id: version,
 		isLatest,
-	} = resolveConfiguredVersion(config.env.gameVersion, { packMcmeta, versions })
+	} = resolveConfiguredVersion(config.env.gameVersion, {
+		packMcmeta,
+		versions,
+	})
 
-	meta.registerDependencyProvider('@vanilla-mcdoc', () =>
-		getVanillaMcdoc(downloader),
+	meta.registerDependencyProvider(
+		'@vanilla-mcdoc',
+		() => getVanillaMcdoc(downloader),
 	)
 
 	const summary = await getMcmetaSummary(

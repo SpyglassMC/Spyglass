@@ -77,9 +77,11 @@ export namespace PositionRange {
 	)
 
 	export function toString(range: PositionRange): string {
-		return `[${Position.toString(range.start)}, ${Position.toString(
-			range.end,
-		)})`
+		return `[${Position.toString(range.start)}, ${
+			Position.toString(
+				range.end,
+			)
+		})`
 	}
 
 	export function contains(range: PositionRange, pos: Position): boolean {

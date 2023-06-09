@@ -70,8 +70,8 @@ export interface JsonObjectExpectation extends JsonBaseExpectation {
 	keys?: JsonStringExpectation[]
 }
 export interface JsonObjectNode
-	extends core.RecordBaseNode<JsonStringNode, JsonNode>,
-		JsonBaseAstNode {
+	extends core.RecordBaseNode<JsonStringNode, JsonNode>, JsonBaseAstNode
+{
 	readonly type: 'json:object'
 }
 export namespace JsonObjectNode {
@@ -101,8 +101,8 @@ export interface JsonArrayExpectation extends JsonBaseExpectation {
 	items?: JsonExpectation[]
 }
 export interface JsonArrayNode
-	extends core.ListNode<JsonNode>,
-		JsonBaseAstNode {
+	extends core.ListNode<JsonNode>, JsonBaseAstNode
+{
 	readonly type: 'json:array'
 }
 export namespace JsonArrayNode {

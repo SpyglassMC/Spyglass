@@ -33,7 +33,7 @@ export function SingletonPromise(
 		const decoratedMethod: (...args: unknown[]) => Promise<unknown> =
 			descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
-		descripter.value = function (...args: unknown[]) {
+		descripter.value = function(...args: unknown[]) {
 			const key = getKey(args)
 			if (promises.has(key)) {
 				return promises.get(key)!
@@ -60,7 +60,7 @@ export const Singleton: MethodDecorator = (
 	let value: unknown
 	const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 	// The `function` syntax is used to preserve `this` context from the decorated method.
-	descripter.value = function (...args: unknown[]) {
+	descripter.value = function(...args: unknown[]) {
 		return (value ??= decoratedMethod.apply(this, args))
 	}
 	return descripter
@@ -85,7 +85,7 @@ export function Delay(
 		const timeouts = new Map<unknown, IntervalId>()
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
-		descripter.value = function (...args: unknown[]) {
+		descripter.value = function(...args: unknown[]) {
 			const key = getKey(args)
 			if (timeouts.has(key)) {
 				clearTimeout(timeouts.get(key)!)
@@ -288,7 +288,7 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 	return !!(value as Iterable<unknown>)[Symbol.iterator]
 }
 
-//#region ESNext functions polyfill
+// #region ESNext functions polyfill
 export function atArray<T>(
 	array: readonly T[] | undefined,
 	index: number,
@@ -319,7 +319,7 @@ export function emplaceMap<K, V>(
 		throw new Error(`No key ${key} in map and no insert handler provided`)
 	}
 }
-//#endregion
+// #endregion
 
 /**
  * @returns If `val` is an non-null object or a callable object (i.e. function).
@@ -344,8 +344,7 @@ export type IsHelper<
 	ROOT extends object,
 	TARGET extends ROOT,
 	INPUT extends DeepReadonly<ROOT> | undefined,
-> = INPUT extends DeepReadonly<ROOT>
-	? INPUT & DeepReadonly<TARGET>
+> = INPUT extends DeepReadonly<ROOT> ? INPUT & DeepReadonly<TARGET>
 	: INPUT & TARGET
 
 /**

@@ -20,7 +20,9 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 		}
 		let start = src.cursor
 
-		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
+		if (
+			options.quotes?.length && (src.peek() === '"' || src.peek() === "'")
+		) {
 			const currentQuote = src.read() as Quote
 			const contentStart = src.cursor
 			while (src.canRead() && src.peek() !== currentQuote) {
@@ -35,7 +37,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						EscapeChar.is(options.escapable.characters, c2)
 					) {
 						ans.valueMap.push({
-							inner: Range.create(ans.value.length, ans.value.length + 1),
+							inner: Range.create(
+								ans.value.length,
+								ans.value.length + 1,
+							),
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
@@ -44,7 +49,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (/^[0-9a-f]{4}$/i.test(hex)) {
 							src.skip(4)
 							ans.valueMap.push({
-								inner: Range.create(ans.value.length, ans.value.length + 1),
+								inner: Range.create(
+									ans.value.length,
+									ans.value.length + 1,
+								),
 								outer: Range.create(cStart, src),
 							})
 							ans.value += String.fromCharCode(parseInt(hex, 16))
@@ -54,7 +62,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								Range.create(src, src.getCharRange(3).end),
 							)
 							ans.valueMap.push({
-								inner: Range.create(ans.value.length, ans.value.length + 1),
+								inner: Range.create(
+									ans.value.length,
+									ans.value.length + 1,
+								),
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
@@ -62,12 +73,18 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 					} else {
 						if (!options.escapable.allowUnknown) {
 							ctx.err.report(
-								localize('parser.string.illegal-escape', localeQuote(c2)),
+								localize(
+									'parser.string.illegal-escape',
+									localeQuote(c2),
+								),
 								src.getCharRange(-1),
 							)
 						}
 						ans.valueMap.push({
-							inner: Range.create(ans.value.length, ans.value.length + 1),
+							inner: Range.create(
+								ans.value.length,
+								ans.value.length + 1,
+							),
 							outer: Range.create(cStart, src),
 						})
 						ans.value += c2
@@ -104,7 +121,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			ctx.err.report(localize('expected', options.quotes!), src)
 		}
 
-		ans.valueMap.unshift({ inner: Range.create(0), outer: Range.create(start) })
+		ans.valueMap.unshift({
+			inner: Range.create(0),
+			outer: Range.create(start),
+		})
 
 		if (options.value?.parser) {
 			const valueResult = parseStringValue(
@@ -145,74 +165,76 @@ export function parseStringValue<T extends Returnable>(
 	return parser(valueSrc, valueCtx)
 }
 
-export const BrigadierUnquotableCharacters = Object.freeze([
-	'0',
-	'1',
-	'2',
-	'3',
-	'4',
-	'5',
-	'6',
-	'7',
-	'8',
-	'9',
-	'A',
-	'B',
-	'C',
-	'D',
-	'E',
-	'F',
-	'G',
-	'H',
-	'I',
-	'J',
-	'K',
-	'L',
-	'M',
-	'N',
-	'O',
-	'P',
-	'Q',
-	'R',
-	'S',
-	'T',
-	'U',
-	'V',
-	'W',
-	'X',
-	'Y',
-	'Z',
-	'a',
-	'b',
-	'c',
-	'd',
-	'e',
-	'f',
-	'g',
-	'h',
-	'i',
-	'j',
-	'k',
-	'l',
-	'm',
-	'n',
-	'o',
-	'p',
-	'q',
-	'r',
-	's',
-	't',
-	'u',
-	'v',
-	'w',
-	'x',
-	'y',
-	'z',
-	'_',
-	'.',
-	'+',
-	'-',
-] as const)
+export const BrigadierUnquotableCharacters = Object.freeze(
+	[
+		'0',
+		'1',
+		'2',
+		'3',
+		'4',
+		'5',
+		'6',
+		'7',
+		'8',
+		'9',
+		'A',
+		'B',
+		'C',
+		'D',
+		'E',
+		'F',
+		'G',
+		'H',
+		'I',
+		'J',
+		'K',
+		'L',
+		'M',
+		'N',
+		'O',
+		'P',
+		'Q',
+		'R',
+		'S',
+		'T',
+		'U',
+		'V',
+		'W',
+		'X',
+		'Y',
+		'Z',
+		'a',
+		'b',
+		'c',
+		'd',
+		'e',
+		'f',
+		'g',
+		'h',
+		'i',
+		'j',
+		'k',
+		'l',
+		'm',
+		'n',
+		'o',
+		'p',
+		'q',
+		'r',
+		's',
+		't',
+		'u',
+		'v',
+		'w',
+		'x',
+		'y',
+		'z',
+		'_',
+		'.',
+		'+',
+		'-',
+	] as const,
+)
 export const BrigadierUnquotableCharacterSet = new Set(
 	BrigadierUnquotableCharacters,
 )

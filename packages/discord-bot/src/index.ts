@@ -57,7 +57,9 @@ const service = new Service({
 	logger: console,
 	profilers,
 	project: {
-		cacheRoot: fileUtil.ensureEndingSlash(pathToFileURL(cacheRoot).toString()),
+		cacheRoot: fileUtil.ensureEndingSlash(
+			pathToFileURL(cacheRoot).toString(),
+		),
 		defaultConfig: ConfigService.merge(VanillaConfig, {
 			env: { dependencies: [] },
 		}),
@@ -86,7 +88,9 @@ client.on('interactionCreate', async (i) => {
 			if (!info) {
 				await i.update({
 					embeds: [
-						new MessageEmbed().setDescription('The interaction has expired!'),
+						new MessageEmbed().setDescription(
+							'The interaction has expired!',
+						),
 					],
 					components: [],
 				})
@@ -227,27 +231,25 @@ function getReplyOptions(info: InteractionInfo): {
 } {
 	const content = getReplyContent(info)
 	return {
-		content:
-			content.length > MaxContentLength
-				? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
-				: content,
-		components:
-			info.errors.length > 1
-				? [
-						new MessageActionRow().addComponents(
-							new MessageButton()
-								.setCustomId('previous')
-								.setLabel('Previous Error')
-								.setStyle('PRIMARY')
-								.setDisabled(info.activeErrorIndex <= 0),
-							new MessageButton()
-								.setCustomId('next')
-								.setLabel('Next Error')
-								.setStyle('PRIMARY')
-								.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
-						),
-				  ]
-				: [],
+		content: content.length > MaxContentLength
+			? `Skipped colorizing due to Discord length limit.\n\`\`\`\n${info.content}\n\`\`\``
+			: content,
+		components: info.errors.length > 1
+			? [
+				new MessageActionRow().addComponents(
+					new MessageButton()
+						.setCustomId('previous')
+						.setLabel('Previous Error')
+						.setStyle('PRIMARY')
+						.setDisabled(info.activeErrorIndex <= 0),
+					new MessageButton()
+						.setCustomId('next')
+						.setLabel('Next Error')
+						.setStyle('PRIMARY')
+						.setDisabled(info.activeErrorIndex >= info.errors.length - 1),
+				),
+			]
+			: [],
 		fetchReply: true,
 	}
 }
@@ -308,9 +310,11 @@ function getReplyContent(info: InteractionInfo): string {
 
 	return `\`\`\`${info.showRaw ? '' : 'ansi'}\n${ansiCode}\n\`\`\`${
 		activeError
-			? `\n\`${errorSeverityToChar(activeError.severity)} ${Range.toString(
+			? `\n\`${errorSeverityToChar(activeError.severity)} ${
+				Range.toString(
 					activeError.range,
-			  )} ${activeError.message}\``
+				)
+			} ${activeError.message}\``
 			: ''
 	}`
 }
@@ -343,10 +347,10 @@ function getAnsiCode(content: string, tokens: RenderToken[]): string {
 		.map((t) =>
 			t.range.end - t.range.start === 0
 				? {
-						range: { start: t.range.start, end: t.range.start + 1 },
-						formats: t.formats,
-				  }
-				: t,
+					range: { start: t.range.start, end: t.range.start + 1 },
+					formats: t.formats,
+				}
+				: t
 		)
 		.sort((a, b) => a.range.start - b.range.start)
 
@@ -375,8 +379,9 @@ function getAnsiCode(content: string, tokens: RenderToken[]): string {
 			})
 			if (current.range.end !== next.range.end) {
 				insertedTokens.push({
-					formats:
-						current.range.end < next.range.end ? next.formats : current.formats,
+					formats: current.range.end < next.range.end
+						? next.formats
+						: current.formats,
 					range: {
 						start: Math.min(current.range.end, next.range.end),
 						end: Math.max(current.range.end, next.range.end),

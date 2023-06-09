@@ -12,7 +12,9 @@ export function formatterContextIndentation(
 	additionalLevels = 0,
 ): string {
 	const total = ctx.indentLevel + additionalLevels
-	return ctx.insertSpaces ? ' '.repeat(total * ctx.tabSize) : '\t'.repeat(total)
+	return ctx.insertSpaces
+		? ' '.repeat(total * ctx.tabSize)
+		: '\t'.repeat(total)
 }
 
 export function indentFormatter(

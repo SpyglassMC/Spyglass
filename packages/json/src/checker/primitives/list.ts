@@ -33,11 +33,9 @@ export function uniqueListOf(
 	checker: JsonChecker,
 	options: UniqueListOptions = {},
 ): JsonChecker {
-	const getItem =
-		options.items ??
+	const getItem = options.items ??
 		((node) => [JsonStringNode.is(node) ? node.value : undefined, node])
-	const reporter =
-		options.report ??
+	const reporter = options.report ??
 		((node, ctx) =>
 			ctx.err.report(
 				localize('json.checker.item.duplicate'),

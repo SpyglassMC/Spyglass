@@ -51,7 +51,7 @@ export const object: Completer<JsonObjectNode> = core.completer.record<
 							insertValue,
 							insertComma,
 							pair?.key?.value,
-						),
+						)
 					),
 			)
 		}
@@ -78,8 +78,7 @@ export const array: Completer<JsonArrayNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) =>
 		n.sep
 			? Range.compareOffset(Range.translate(n, 0, -1), o, true)
-			: Range.compareOffset(n.range, o, true),
-	)
+			: Range.compareOffset(n.range, o, true))
 	const item = index >= 0 ? node.children[index] : undefined
 	if (item?.value) {
 		return core.completer.dispatch(item.value, ctx)
@@ -141,7 +140,7 @@ function objectCompletion(
 				...(insertValue
 					? { insertText: `${c.insertText}: ${insertComma ? ',' : ''}` }
 					: {}),
-			})),
+			}))
 		)
 	}
 	return []
@@ -201,7 +200,7 @@ function stringCompletion(
 				kind: CompletionKind.Value,
 				filterText: `"${v}"`,
 				insertText: `"${v}"`,
-			}),
+			})
 		)
 	}
 	return [simpleCompletion(range, SIMPLE_SNIPPETS[expectation.type])]

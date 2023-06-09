@@ -11,7 +11,9 @@ export const JsonStringOptions: core.StringOptions = {
 
 export const string: core.Parser<JsonStringNode> = (src, ctx) => {
 	const parser = core.string(JsonStringOptions)
-	const ans = parser(src, ctx) as core.Mutable<JsonStringNode | core.StringNode>
+	const ans = parser(src, ctx) as core.Mutable<
+		JsonStringNode | core.StringNode
+	>
 	ans.type = 'json:string'
 	return ans as JsonStringNode
 }

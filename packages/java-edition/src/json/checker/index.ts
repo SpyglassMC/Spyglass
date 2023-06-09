@@ -137,7 +137,8 @@ export function fieldValue(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 		const comparator = (a: number, b: number, exclusive: unknown) =>
 			exclusive ? a < b : a <= b
 		return (
-			comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
+			comparator(min, value, kind & 0b10) &&
+			comparator(value, max, kind & 0b01)
 		)
 	}
 

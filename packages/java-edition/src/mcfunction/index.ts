@@ -33,7 +33,19 @@ export const initialize = (
 		extensions: ['.mcfunction'],
 		parser: mcf.entry(releaseVersion, parser.argument),
 		completer: mcf.completer.entry(releaseVersion, completer.getMockNodes),
-		triggerCharacters: [' ', '[', '=', '!', ',', '{', ':', '/', '.', '"', "'"],
+		triggerCharacters: [
+			' ',
+			'[',
+			'=',
+			'!',
+			',',
+			'{',
+			':',
+			'/',
+			'.',
+			'"',
+			"'",
+		],
 	})
 
 	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)

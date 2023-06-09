@@ -75,8 +75,8 @@ describe('AstNode', () => {
 					snapshot(
 						node
 							? {
-									node: node.type,
-							  }
+								node: node.type,
+							}
 							: 'undefined',
 					)
 				})
@@ -93,8 +93,8 @@ describe('AstNode', () => {
 					snapshot(
 						node
 							? {
-									node: node.type,
-							  }
+								node: node.type,
+							}
 							: 'undefined',
 					)
 				})

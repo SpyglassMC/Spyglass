@@ -2,9 +2,9 @@ import {
 	showWhitespaceGlyph,
 	testParser,
 } from '@spyglassmc/core/test-out/utils.js'
+import { path } from '@spyglassmc/nbt/lib/parser/index.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { path } from '@spyglassmc/nbt/lib/parser/index.js'
 
 describe('nbt path()', () => {
 	const suites: { content: string }[] = [

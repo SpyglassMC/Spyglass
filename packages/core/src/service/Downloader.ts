@@ -135,7 +135,11 @@ export class Downloader {
 				}
 				try {
 					const serializer = cache.serializer ?? ((b) => b)
-					await fileUtil.writeFile(this.externals, cacheUri, serializer(buffer))
+					await fileUtil.writeFile(
+						this.externals,
+						cacheUri,
+						serializer(buffer),
+					)
 				} catch (e) {
 					this.logger.error(
 						`[Downloader] [${id}] Caching file “${cacheUri}”`,
@@ -149,7 +153,10 @@ export class Downloader {
 			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
 			if (cache && cacheUri) {
 				try {
-					const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
+					const cachedBuffer = await fileUtil.readFile(
+						this.externals,
+						cacheUri,
+					)
 					const deserializer = cache.deserializer ?? ((b) => b)
 					const ans = await transformer(deserializer(cachedBuffer))
 					this.logger.warn(

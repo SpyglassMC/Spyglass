@@ -137,19 +137,19 @@ type SP<CN extends AstNode> =
 	| InfallibleParser<CN | SyntaxUtil<CN> | undefined>
 	| Parser<CN | SyntaxUtil<CN> | undefined>
 	| {
-			get: (
-				result: SyntaxUtil<CN>,
-			) =>
-				| InfallibleParser<CN | SyntaxUtil<CN> | undefined>
-				| Parser<CN | SyntaxUtil<CN> | undefined>
-	  }
+		get: (
+			result: SyntaxUtil<CN>,
+		) =>
+			| InfallibleParser<CN | SyntaxUtil<CN> | undefined>
+			| Parser<CN | SyntaxUtil<CN> | undefined>
+	}
 type SIP<CN extends AstNode> =
 	| InfallibleParser<CN | SyntaxUtil<CN> | undefined>
 	| {
-			get: (
-				result: SyntaxUtil<CN>,
-			) => InfallibleParser<CN | SyntaxUtil<CN> | undefined>
-	  }
+		get: (
+			result: SyntaxUtil<CN>,
+		) => InfallibleParser<CN | SyntaxUtil<CN> | undefined>
+	}
 /**
  * @template CN Child node.
  *
@@ -160,17 +160,16 @@ type SIP<CN extends AstNode> =
 function syntax<PA extends SP<AstNode>[]>(
 	parsers: PA,
 	delegatesDocComments?: boolean,
-): PA extends SIP<AstNode>[]
-	? InfallibleParser<
-			SyntaxUtil<
-				{ [K in number]: PA[K] extends SIP<infer V> ? V : never }[number]
-			>
-	  >
+): PA extends SIP<AstNode>[] ? InfallibleParser<
+		SyntaxUtil<
+			{ [K in number]: PA[K] extends SIP<infer V> ? V : never }[number]
+		>
+	>
 	: Parser<
-			SyntaxUtil<
-				{ [K in number]: PA[K] extends SP<infer V> ? V : never }[number]
-			>
-	  >
+		SyntaxUtil<
+			{ [K in number]: PA[K] extends SP<infer V> ? V : never }[number]
+		>
+	>
 function syntax(
 	parsers: SP<AstNode>[],
 	delegatesDocComments = false,
@@ -193,10 +192,9 @@ function syntax(
 function syntaxRepeat<P extends Parser<AstNode | SyntaxUtil<AstNode>>>(
 	parser: P,
 	delegatesDocComments?: boolean,
-): P extends InfallibleParser
-	? { _inputParserIsInfallible: never } & void
+): P extends InfallibleParser ? { _inputParserIsInfallible: never } & void
 	: P extends Parser<infer V | SyntaxUtil<infer V>>
-	? InfallibleParser<SyntaxUtil<V>>
+		? InfallibleParser<SyntaxUtil<V>>
 	: never
 function syntaxRepeat<CN extends AstNode>(
 	parser: Parser<CN | SyntaxUtil<CN>>,
@@ -223,7 +221,7 @@ export function literal(
 		ans.value = src.readIf(
 			(c) =>
 				options?.allowedChars?.has(c) ??
-				(options?.specialChars?.has(c) || /[a-z]/i.test(c)),
+					(options?.specialChars?.has(c) || /[a-z]/i.test(c)),
 		)
 		ans.range.end = src.cursor
 		if (Arrayable.toArray(literal).every((l) => l !== ans.value)) {
@@ -363,7 +361,10 @@ export const identifier: InfallibleParser<IdentifierNode> = (src, ctx) => {
 			src.skip()
 		}
 	} else {
-		ctx.err.report(localize('expected', localize('mcdoc.node.identifier')), src)
+		ctx.err.report(
+			localize('expected', localize('mcdoc.node.identifier')),
+			src,
+		)
 	}
 
 	ans.value = src.string.slice(start, src.innerCursor)
@@ -371,7 +372,10 @@ export const identifier: InfallibleParser<IdentifierNode> = (src, ctx) => {
 
 	if (ReservedWords.has(ans.value)) {
 		ctx.err.report(
-			localize('mcdoc.parser.identifier.reserved-word', localeQuote(ans.value)),
+			localize(
+				'mcdoc.parser.identifier.reserved-word',
+				localeQuote(ans.value),
+			),
 			ans,
 		)
 	}
@@ -429,10 +433,10 @@ function indexBody(options?: {
 			prefix: '[',
 			parser: options?.noDynamic
 				? validate(
-						dynamicIndex,
-						() => false,
-						localize('mcdoc.parser.index-body.dynamic-index-not-allowed'),
-				  )
+					dynamicIndex,
+					() => false,
+					localize('mcdoc.parser.index-body.dynamic-index-not-allowed'),
+				)
 				: dynamicIndex,
 		},
 		{
@@ -508,7 +512,10 @@ const attributeNamedValue: Parser<
 		select([
 			{
 				prefix: '=',
-				parser: syntax([punctuation('='), { get: () => attributeValue }], true),
+				parser: syntax(
+					[punctuation('='), { get: () => attributeValue }],
+					true,
+				),
 			},
 			{ parser: { get: () => attributeTree } },
 		]),
@@ -821,7 +828,12 @@ const structBlock: InfallibleParser<StructBlockNode> = setType(
 export const struct: Parser<StructNode> = setType(
 	'mcdoc:struct',
 	syntax(
-		[prelim, keyword('struct'), optional(failOnEmpty(identifier)), structBlock],
+		[
+			prelim,
+			keyword('struct'),
+			optional(failOnEmpty(identifier)),
+			structBlock,
+		],
 		true,
 	),
 )
@@ -910,7 +922,10 @@ const typeArgBlock: Parser<TypeArgBlockNode> = setType(
 					[
 						{ get: () => type },
 						syntaxRepeat(
-							syntax([marker(','), { get: () => failOnEmpty(type) }], true),
+							syntax(
+								[marker(','), { get: () => failOnEmpty(type) }],
+								true,
+							),
 							true,
 						),
 						optional(marker(',')),
@@ -927,17 +942,16 @@ const typeArgBlock: Parser<TypeArgBlockNode> = setType(
 type GetTypeNode<
 	T extends string,
 	P extends Parser<AstNode | SyntaxUtil<AstNode>>,
-> = { type: T } & SyntaxUtil<
-	| AttributeNode
-	| IndexBodyNode
-	| (P extends InfallibleParser<infer V>
-			? V extends SyntaxUtil<infer U>
-				? U
-				: V extends AstNode
-				? V
-				: never
+> =
+	& { type: T }
+	& SyntaxUtil<
+		| AttributeNode
+		| IndexBodyNode
+		| (P extends InfallibleParser<infer V> ? V extends SyntaxUtil<infer U> ? U
+			: V extends AstNode ? V
+			: never
 			: never)
->
+	>
 function typeBase<
 	T extends string,
 	P extends Parser<AstNode | SyntaxUtil<AstNode>>,
@@ -992,10 +1006,8 @@ function range<
 		: never,
 	number: P,
 ): InfallibleParser<
-	P extends InfallibleParser<infer V>
-		? V extends IntegerNode
-			? IntRangeNode
-			: FloatRangeNode
+	P extends InfallibleParser<infer V> ? V extends IntegerNode ? IntRangeNode
+		: FloatRangeNode
 		: never
 >
 function range(type: string, number: InfallibleParser): InfallibleParser {
@@ -1139,7 +1151,10 @@ export const tupleType: Parser<TupleTypeNode> = typeBase(
 						[
 							{ get: () => type },
 							syntaxRepeat(
-								syntax([marker(','), { get: () => failOnEmpty(type) }], true),
+								syntax(
+									[marker(','), { get: () => failOnEmpty(type) }],
+									true,
+								),
 								true,
 							),
 							optional(marker(',')),
@@ -1170,7 +1185,10 @@ export const unionType: Parser<UnionTypeNode> = typeBase(
 					[
 						{ get: () => type },
 						syntaxRepeat(
-							syntax([marker('|'), { get: () => failOnEmpty(type) }], true),
+							syntax(
+								[marker('|'), { get: () => failOnEmpty(type) }],
+								true,
+							),
 							true,
 						),
 						optional(marker('|')),

@@ -62,8 +62,7 @@ export function attempt<N extends AstNode>(
 
 type ExtractBinder<B extends Binder<never>> = B extends Binder<
 	infer N extends AstNode
->
-	? N
+> ? N
 	: never
 export function any<Binders extends Binder<never>[]>(
 	binders: Binders,
@@ -86,7 +85,9 @@ export function any<N extends AstNode>(binders: Binder<N>[]): Binder<N> {
 	} else {
 		return AsyncBinder.create(async (node, ctx) => {
 			const attempts = (
-				await Promise.all(binders.map((binder) => attempt(binder, node, ctx)))
+				await Promise.all(
+					binders.map((binder) => attempt(binder, node, ctx)),
+				)
 			).sort(attemptSorter)
 			attempts[0].updateNodeAndCtx()
 		})
@@ -139,7 +140,9 @@ export const resourceLocation = SyncBinder.create<ResourceLocationNode>(
 			ctx.symbols
 				.query(
 					ctx.doc,
-					node.isTag ? `tag/${node.options.category}` : node.options.category,
+					node.isTag
+						? `tag/${node.options.category}`
+						: node.options.category,
 					sanitizedRaw,
 				)
 				.enter({

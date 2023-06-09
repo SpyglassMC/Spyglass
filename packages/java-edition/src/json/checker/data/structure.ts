@@ -17,7 +17,7 @@ import {
 	when,
 } from '@spyglassmc/json/lib/checker/index.js'
 import { nbt, versioned } from '../util/index.js'
-import { block_state, HeightmapType, height_provider } from './common.js'
+import { block_state, height_provider, HeightmapType } from './common.js'
 import { configured_feature_ref, placed_feature_ref } from './feature.js'
 
 export const rule_test = as(
@@ -44,8 +44,7 @@ export const rule_test = as(
 					tag: resource('tag/block'),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const pos_rule_test = as(
@@ -63,15 +62,16 @@ export const pos_rule_test = as(
 				},
 			}),
 			...when(type, ['axis_aligned_linear_pos', 'linear_pos'], {}),
-		}),
-	),
+		})),
 )
 
 const processor_rule = as(
 	'processor_rule',
 	dispatch((props) =>
 		record({
-			position_predicate: opt(pos_rule_test, { predicate_type: 'always_true' }),
+			position_predicate: opt(pos_rule_test, {
+				predicate_type: 'always_true',
+			}),
 			input_predicate: rule_test,
 			location_predicate: rule_test,
 			output_state: block_state,
@@ -81,7 +81,7 @@ const processor_rule = as(
 					id: extractNested('output_state', 'Name', props),
 				}),
 			),
-		}),
+		})
 	),
 )
 
@@ -110,8 +110,7 @@ const processor = as(
 					rules: listOf(processor_rule),
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const processor_list = as(
@@ -163,8 +162,7 @@ const template_element = as(
 					processors: processor_list_ref,
 				},
 			}),
-		}),
-	),
+		})),
 )
 
 export const template_pool = as(
@@ -232,6 +230,5 @@ export const configured_structure_feature = as(
 					}),
 				),
 			}),
-		}),
-	),
+		})),
 )

@@ -37,11 +37,16 @@ class NodeJsExternalDownloader implements ExternalDownloader {
 			backend.get(uri, options, (res: IncomingMessage) => {
 				if (res.statusCode !== 200) {
 					reject(
-						new Error(`Status code ${res.statusCode}: ${res.statusMessage}`),
+						new Error(
+							`Status code ${res.statusCode}: ${res.statusMessage}`,
+						),
 					)
 				} else {
 					resolve(
-						promisifyAsyncIterable(res, (chunks) => Buffer.concat(chunks)),
+						promisifyAsyncIterable(
+							res,
+							(chunks) => Buffer.concat(chunks),
+						),
 					)
 				}
 			})
@@ -88,7 +93,10 @@ export const NodeJsExternals: Externals = {
 		},
 		async getAllFiles(location) {
 			return (
-				await globby(toPath(location) + '**/*', { absolute: true, dot: true })
+				await globby(toPath(location) + '**/*', {
+					absolute: true,
+					dot: true,
+				})
 			).map(uriFromPath)
 		},
 		async mkdir(location, options) {

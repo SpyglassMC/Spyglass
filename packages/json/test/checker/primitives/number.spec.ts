@@ -28,7 +28,10 @@ describe('JSON number', () => {
 			{ name: 'intRange(undefined, 3)', checker: intRange(undefined, 3) },
 			{ name: 'intRange(3, undefined)', checker: intRange(3, undefined) },
 			{ name: 'floatRange(1, 2.4)', checker: floatRange(1, 2.4) },
-			{ name: 'floatRange(-5, undefined)', checker: floatRange(-5, undefined) },
+			{
+				name: 'floatRange(-5, undefined)',
+				checker: floatRange(-5, undefined),
+			},
 		],
 	)
 })

@@ -62,12 +62,15 @@ export const recipe = as(
 					result: recipe_result,
 				},
 			}),
-			...when(type, ['blasting', 'campfire_cooking', 'smelting', 'smoking'], {
-				ingredient: recipe_ingredient,
-				result: resource('item'),
-				experience: opt(float, 0),
-				cookingtime: opt(int, type === 'smelting' ? 200 : 100),
-			}),
-		}),
-	),
+			...when(
+				type,
+				['blasting', 'campfire_cooking', 'smelting', 'smoking'],
+				{
+					ingredient: recipe_ingredient,
+					result: resource('item'),
+					experience: opt(float, 0),
+					cookingtime: opt(int, type === 'smelting' ? 200 : 100),
+				},
+			),
+		})),
 )

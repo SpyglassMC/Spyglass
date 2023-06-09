@@ -29,8 +29,8 @@ function smallestEncompassingPowerOfTwo(n: number) {
 	return n + 1
 }
 
-const BITS_FOR_Y =
-	64 - 2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000))) // 12
+const BITS_FOR_Y = 64 -
+	2 * (1 + Math.log2(smallestEncompassingPowerOfTwo(30000000))) // 12
 export const Y_SIZE = (1 << BITS_FOR_Y) - 32 // 4064
 export const MAX_Y = (Y_SIZE >> 1) - 1 // 2031
 export const MIN_Y = MAX_Y - Y_SIZE + 1 // -2031
@@ -44,9 +44,9 @@ export const number_provider = as(
 				type: opt(resource('loot_number_provider_type')),
 				...(type === undefined
 					? {
-							min: number_provider,
-							max: number_provider,
-					  }
+						min: number_provider,
+						max: number_provider,
+					}
 					: {}),
 				...pick(type, {
 					constant: {
@@ -66,8 +66,7 @@ export const number_provider = as(
 						scale: opt(float),
 					},
 				}),
-			}),
-		),
+			})),
 	]),
 )
 
@@ -78,14 +77,18 @@ export const score_provider = any([
 			type: resource('loot_score_provider_type'),
 			...pick(type, {
 				context: {
-					target: literal(['this', 'killer', 'player_killer', 'direct_killer']),
+					target: literal([
+						'this',
+						'killer',
+						'player_killer',
+						'direct_killer',
+					]),
 				},
 				fixed: {
 					name: simpleString, // TODO: score holder, no selector
 				},
 			}),
-		}),
-	),
+		})),
 ])
 
 export const nbt_provider = any([
@@ -95,14 +98,18 @@ export const nbt_provider = any([
 			type: resource('loot_nbt_provider_type'),
 			...pick(type, {
 				context: {
-					target: literal(['this', 'killer', 'killer_player', 'block_entity']),
+					target: literal([
+						'this',
+						'killer',
+						'killer_player',
+						'block_entity',
+					]),
 				},
 				storage: {
 					source: resource('storage'),
 				},
 			}),
-		}),
-	),
+		})),
 ])
 
 export const int_bounds = as(
@@ -150,7 +157,7 @@ export const block_state = as(
 					requireAll: true,
 				}),
 			),
-		}),
+		})
 	),
 )
 
@@ -166,7 +173,7 @@ export const fluid_state = as(
 					requireAll: true,
 				}),
 			),
-		}),
+		})
 	),
 )
 
@@ -224,8 +231,7 @@ export const height_provider = as(
 						),
 					},
 				}),
-			}),
-		),
+			})),
 	]),
 )
 
@@ -266,8 +272,7 @@ export const floatProvider = (
 							}),
 						},
 					}),
-				}),
-			),
+				})),
 		]),
 	)
 
@@ -322,8 +327,7 @@ export const intProvider = (
 							),
 						},
 					}),
-				}),
-			),
+				})),
 		]),
 	)
 

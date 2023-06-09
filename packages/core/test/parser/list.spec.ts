@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type { StringNode } from '../../lib/index.js'
-import { string, list } from '../../lib/index.js'
+import { list, string } from '../../lib/index.js'
 import type { Options } from '../../lib/parser/list.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 

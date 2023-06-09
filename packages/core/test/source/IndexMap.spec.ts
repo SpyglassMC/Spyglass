@@ -51,9 +51,11 @@ describe('IndexMap', () => {
 	]
 	for (const method of ['toInnerOffset', 'toOuterOffset'] as const) {
 		describe(`${method}()`, () => {
-			for (const { input, expected } of method === 'toInnerOffset'
-				? toInnerCases
-				: toOuterCases) {
+			for (
+				const { input, expected } of method === 'toInnerOffset'
+					? toInnerCases
+					: toOuterCases
+			) {
 				it(`Should return ${expected} for ${input}`, () => {
 					const actual = IndexMap[method](map, input)
 					assert.strictEqual(actual, expected)

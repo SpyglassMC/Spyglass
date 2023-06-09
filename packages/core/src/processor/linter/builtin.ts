@@ -48,8 +48,8 @@ export const quote: Linter<StringBaseNode> = (node, ctx) => {
 	const config = ctx.ruleValue as QuoteConfig
 	const mustValueBeQuoted = node.options.unquotable
 		? [...node.value].some(
-				(c) => !isAllowedCharacter(c, node.options.unquotable as any),
-		  )
+			(c) => !isAllowedCharacter(c, node.options.unquotable as any),
+		)
 		: true
 	const isQuoteRequired = config.always || mustValueBeQuoted
 	const isQuoteProhibited = config.always === false && !mustValueBeQuoted
@@ -74,11 +74,13 @@ export namespace configValidator {
 	}
 
 	function wrapError(name: string, msg: string): string {
-		return `[Invalid Linter Config] [${name}] ${localize(
-			'linter-config-validator.wrapper',
-			msg,
-			getDocLink(name),
-		)}`
+		return `[Invalid Linter Config] [${name}] ${
+			localize(
+				'linter-config-validator.wrapper',
+				msg,
+				getDocLink(name),
+			)
+		}`
 	}
 
 	export function nameConvention(

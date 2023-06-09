@@ -45,34 +45,37 @@ describe('PositionRange', () => {
 	})
 	describe('endsBefore()', () => {
 		const pos = Position.create(4, 2)
-		const suites: { name: string; range: PositionRange; expected: boolean }[] =
-			[
-				{
-					name: 'ranges ending before the line',
-					range: PositionRange.create(0, 0, 3, 5),
-					expected: true,
-				},
-				{
-					name: 'ranges ending within the line and before the character',
-					range: PositionRange.create(0, 0, 4, 1),
-					expected: true,
-				},
-				{
-					name: 'ranges ending within the line and at the character',
-					range: PositionRange.create(0, 0, 4, 2),
-					expected: true,
-				},
-				{
-					name: 'ranges ending within the line and after the character',
-					range: PositionRange.create(0, 0, 4, 3),
-					expected: false,
-				},
-				{
-					name: 'ranges ending after the line',
-					range: PositionRange.create(0, 0, 5, 1),
-					expected: false,
-				},
-			]
+		const suites: {
+			name: string
+			range: PositionRange
+			expected: boolean
+		}[] = [
+			{
+				name: 'ranges ending before the line',
+				range: PositionRange.create(0, 0, 3, 5),
+				expected: true,
+			},
+			{
+				name: 'ranges ending within the line and before the character',
+				range: PositionRange.create(0, 0, 4, 1),
+				expected: true,
+			},
+			{
+				name: 'ranges ending within the line and at the character',
+				range: PositionRange.create(0, 0, 4, 2),
+				expected: true,
+			},
+			{
+				name: 'ranges ending within the line and after the character',
+				range: PositionRange.create(0, 0, 4, 3),
+				expected: false,
+			},
+			{
+				name: 'ranges ending after the line',
+				range: PositionRange.create(0, 0, 5, 1),
+				expected: false,
+			},
+		]
 		for (const { name, range, expected } of suites) {
 			it(`Should return ${expected} for ${name}`, () => {
 				const actual = PositionRange.endsBefore(range, pos)

@@ -23,7 +23,7 @@ export interface Externals {
 		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
 	}
 	event: {
-		EventEmitter: new () => ExternalEventEmitter
+		EventEmitter: new() => ExternalEventEmitter
 	}
 	fs: ExternalFileSystem
 }

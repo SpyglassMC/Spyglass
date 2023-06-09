@@ -214,10 +214,12 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 						),
 						insertText: new InsertTextBuilder()
 							.literal(k)
-							.if(insertValue, (b) => b.literal('=').placeholder(...states[k]))
-							.if(insertComma, (b) => b.literal(','))
+							.if(insertValue, (b) =>
+								b.literal('=').placeholder(...states[k]))
+							.if(insertComma, (b) =>
+								b.literal(','))
 							.build(),
-					}),
+					})
 				)
 		},
 		value: (_record, pair, ctx) => {
@@ -225,7 +227,7 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 				return states[pair.key.value].map((v) =>
 					CompletionItem.create(v, pair.value ?? ctx.offset, {
 						kind: CompletionKind.Value,
-					}),
+					})
 				)
 			}
 
@@ -248,7 +250,7 @@ const item: Completer<ItemNode> = (node, ctx) => {
 
 const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
 	const ans = ObjectiveCriteriaNode.SimpleValues.map((v) =>
-		CompletionItem.create(v, node),
+		CompletionItem.create(v, node)
 	)
 	if (
 		!node.children?.[0] ||
@@ -304,8 +306,9 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 		],
 	}
 	if (ParticleNode.isSpecialType(id)) {
-		const numParamsBefore =
-			node.children?.slice(1).filter((n) => n.range.end < ctx.offset).length ??
+		const numParamsBefore = node.children?.slice(1).filter((n) =>
+			n.range.end < ctx.offset
+		).length ??
 			0
 		const mock = map[id][numParamsBefore] as
 			| typeof map[keyof typeof map][number]
@@ -368,7 +371,7 @@ const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
 				.filter(
 					(k) =>
 						EntitySelectorNode.canKeyExist(selector, record, k) ===
-						EntitySelectorNode.Result.Ok,
+							EntitySelectorNode.Result.Ok,
 				)
 				.map((k) =>
 					CompletionItem.create(k, range, {
@@ -378,7 +381,7 @@ const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
 							.if(insertValue, (b) => b.literal('=').placeholder()) // TODO
 							.if(insertComma, (b) => b.literal(','))
 							.build(),
-					}),
+					})
 				)
 		},
 		value: (_record, pair, ctx) => {

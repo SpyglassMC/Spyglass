@@ -19,29 +19,29 @@ const FloatMaximum = (2 - 2 ** -23) * 2 ** 127
 const NumeralPatterns: (
 	| { pattern: RegExp; type: 'nbt:byte'; value: number; group: Group.Boolean }
 	| {
-			pattern: RegExp
-			type: NbtNumberNode['type']
-			hasSuffix: boolean
-			group: Group.FloatAlike
-			min?: number
-			max?: number
-	  }
+		pattern: RegExp
+		type: NbtNumberNode['type']
+		hasSuffix: boolean
+		group: Group.FloatAlike
+		min?: number
+		max?: number
+	}
 	| {
-			pattern: RegExp
-			type: NbtNumberNode['type']
-			hasSuffix: boolean
-			group: Group.IntegerAlike
-			min: number
-			max: number
-	  }
+		pattern: RegExp
+		type: NbtNumberNode['type']
+		hasSuffix: boolean
+		group: Group.IntegerAlike
+		min: number
+		max: number
+	}
 	| {
-			pattern: RegExp
-			type: NbtNumberNode['type']
-			hasSuffix: boolean
-			group: Group.LongAlike
-			min: bigint
-			max: bigint
-	  }
+		pattern: RegExp
+		type: NbtNumberNode['type']
+		hasSuffix: boolean
+		group: Group.LongAlike
+		min: bigint
+		max: bigint
+	}
 )[] = [
 	{
 		pattern: /^[-+]?(?:0|[1-9][0-9]*)b$/i,
@@ -113,8 +113,8 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 		return string(src, ctx)
 	}
 
-	const { result: unquotedResult, updateSrcAndCtx: updateUnquoted } =
-		core.attempt(string, src, ctx)
+	const { result: unquotedResult, updateSrcAndCtx: updateUnquoted } = core
+		.attempt(string, src, ctx)
 	for (const e of NumeralPatterns) {
 		if (e.pattern.test(unquotedResult.value)) {
 			if (e.group === Group.Boolean) {
@@ -130,17 +130,21 @@ export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 			const onOutOfRange = () => (isOutOfRange = true)
 			const numeralParser: core.InfallibleParser<
 				core.FloatNode | core.IntegerNode | core.LongNode
-			> =
-				e.group === Group.IntegerAlike
-					? // As we already checked the format of the value with `e.pattern` in the if-block, there is no need to check
-					  // it again here in the parser, therefore we just pass in a simple /./ regex.
-					  core.integer({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
-					: e.group === Group.LongAlike
-					? core.long({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
-					: core.float({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
+			> = e.group === Group.IntegerAlike
+				// As we already checked the format of the value with `e.pattern` in the if-block, there is no need to check
+				// it again here in the parser, therefore we just pass in a simple /./ regex.
+				? core.integer({
+					pattern: /./,
+					min: e.min,
+					max: e.max,
+					onOutOfRange,
+				})
+				: e.group === Group.LongAlike
+				? core.long({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
+				: core.float({ pattern: /./, min: e.min, max: e.max, onOutOfRange })
 
-			const { result: numeralResult, updateSrcAndCtx: updateNumeral } =
-				core.attempt(numeralParser, src, ctx)
+			const { result: numeralResult, updateSrcAndCtx: updateNumeral } = core
+				.attempt(numeralParser, src, ctx)
 			if (isOutOfRange) {
 				ctx.err.report(
 					localize(

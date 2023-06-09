@@ -17,11 +17,11 @@ export interface Options<K extends AstNode, V extends AstNode> {
 		value:
 			| Parser<V>
 			| {
-					get: (
-						recordResult: RecordNode<K, V>,
-						keyResult: K | undefined,
-					) => Parser<V>
-			  }
+				get: (
+					recordResult: RecordNode<K, V>,
+					keyResult: K | undefined,
+				) => Parser<V>
+			}
 		end: string
 		trailingEnd: boolean
 	}
@@ -74,8 +74,10 @@ export function record<K extends AstNode, V extends AstNode>({
 				) {
 					ctx.err.report(
 						localize('expected', localize('parser.record.key')),
-						Range.create(src, () =>
-							src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
+						Range.create(
+							src,
+							() =>
+								src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
 						),
 					)
 				} else {
@@ -94,10 +96,9 @@ export function record<K extends AstNode, V extends AstNode>({
 
 				// Value.
 				src.skipWhitespace()
-				const valueParser =
-					typeof pair.value === 'function'
-						? pair.value
-						: pair.value.get(ans, key)
+				const valueParser = typeof pair.value === 'function'
+					? pair.value
+					: pair.value.get(ans, key)
 				const valueStart = src.cursor
 				const {
 					result: valueResult,
@@ -113,8 +114,10 @@ export function record<K extends AstNode, V extends AstNode>({
 				) {
 					ctx.err.report(
 						localize('expected', localize('parser.record.value')),
-						Range.create(src, () =>
-							src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
+						Range.create(
+							src,
+							() =>
+								src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
 						),
 					)
 				} else {
@@ -136,8 +139,11 @@ export function record<K extends AstNode, V extends AstNode>({
 					range: Range.create(pairStart, src),
 					...(key || value
 						? {
-								children: [key, value].filter((v) => !!v) as [K, V] | [K] | [V],
-						  }
+							children: [key, value].filter((v) => !!v) as
+								| [K, V]
+								| [K]
+								| [V],
+						}
 						: {}),
 					key,
 					sep: sepCharRange,

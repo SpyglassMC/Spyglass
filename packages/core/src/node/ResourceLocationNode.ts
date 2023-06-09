@@ -10,35 +10,37 @@ import type {
 } from '../symbol/index.js'
 import type { AstNode } from './AstNode.js'
 
-export type ResourceLocationOptions = {
-	accessType?: SymbolAccessType
-	isPredicate?: boolean
-	usageType?: SymbolUsageType
-	namespacePathSep?: ':' | '.'
-} & (
-	| {
+export type ResourceLocationOptions =
+	& {
+		accessType?: SymbolAccessType
+		isPredicate?: boolean
+		usageType?: SymbolUsageType
+		namespacePathSep?: ':' | '.'
+	}
+	& (
+		| {
 			category: ResourceLocationCategory
 			pool?: undefined
 			allowTag?: false
 			allowUnknown?: false
-	  }
-	| {
+		}
+		| {
 			category: TaggableResourceLocationCategory
 			pool?: undefined
 			allowTag?: boolean
 			allowUnknown?: false
-	  }
-	| {
+		}
+		| {
 			category?: undefined
 			pool: string[]
 			allowTag?: false
 			allowUnknown?: boolean
-	  }
-)
+		}
+	)
 
 export interface ResourceLocationBaseNode
-	extends AstNode,
-		Partial<ResourceLocation> {
+	extends AstNode, Partial<ResourceLocation>
+{
 	readonly options: ResourceLocationOptions
 }
 
@@ -107,22 +109,22 @@ export namespace ResourceLocationNode {
 		switch (type) {
 			case 'origin':
 				// Use `node.namespace !== undefined`, so that empty namespaces can be correctly restored to string.
-				id =
-					node.namespace !== undefined
-						? `${node.namespace}${NamespacePathSep}${path}`
-						: path
+				id = node.namespace !== undefined
+					? `${node.namespace}${NamespacePathSep}${path}`
+					: path
 				break
 			case 'full':
 				// Use `node.namespace` before `||`, so that both undefined and empty value can result in the default namespace.
 				// Use `||` instead of `??`, so that empty namespaces can be converted to the default namespace.
-				id = `${node.namespace || DefaultNamespace}${NamespacePathSep}${path}`
+				id = `${
+					node.namespace || DefaultNamespace
+				}${NamespacePathSep}${path}`
 				break
 			case 'short':
 				// Use `node.namespace` before `&&` for the same reason stated above.
-				id =
-					node.namespace && node.namespace !== DefaultNamespace
-						? `${node.namespace}${NamespacePathSep}${path}`
-						: path
+				id = node.namespace && node.namespace !== DefaultNamespace
+					? `${node.namespace}${NamespacePathSep}${path}`
+					: path
 				break
 		}
 		return includesTagPrefix && node.isTag ? `${TagPrefix}${id}` : id

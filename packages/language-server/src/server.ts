@@ -57,9 +57,11 @@ connection.onInitialize(async (params) => {
 		`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`,
 	)
 	logger.info(
-		`[onInitialize] initializationOptions = ${JSON.stringify(
-			initializationOptions,
-		)}`,
+		`[onInitialize] initializationOptions = ${
+			JSON.stringify(
+				initializationOptions,
+			)
+		}`,
 	)
 
 	capabilities = params.capabilities
@@ -76,7 +78,9 @@ connection.onInitialize(async (params) => {
 		progressReporter = connection.window.attachWorkDoneProgress(
 			params.workDoneToken,
 		)
-		progressReporter.begin(locales.localize('server.progress.preparing.title'))
+		progressReporter.begin(
+			locales.localize('server.progress.preparing.title'),
+		)
 	}
 
 	try {
@@ -102,7 +106,9 @@ connection.onInitialize(async (params) => {
 				),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
+				projectRoot: core.fileUtil.ensureEndingSlash(
+					workspaceFolders[0].uri,
+				),
 			},
 		})
 		service.project
@@ -240,7 +246,12 @@ connection.onCompletion(
 		}
 		const { doc, node } = docAndNode
 		const offset = toCore.offset(position, doc)
-		const items = service.complete(node, doc, offset, context?.triggerCharacter)
+		const items = service.complete(
+			node,
+			doc,
+			offset,
+			context?.triggerCharacter,
+		)
 		return items.map((item) =>
 			toLS.completionItem(
 				item,
@@ -248,7 +259,7 @@ connection.onCompletion(
 				offset,
 				capabilities.textDocument?.completion?.completionItem
 					?.insertReplaceSupport,
-			),
+			)
 		)
 	},
 )
@@ -456,7 +467,11 @@ connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const help = service.getSignatureHelp(node, doc, toCore.offset(position, doc))
+	const help = service.getSignatureHelp(
+		node,
+		doc,
+		toCore.offset(position, doc),
+	)
 	return toLS.signatureHelp(help)
 })
 

@@ -81,11 +81,16 @@ describe('any()', () => {
 		},
 	]
 	for (const { content, parsers, parserToString } of suites) {
-		it(`Parse "${showWhitespaceGlyph(
-			content,
-		)}" with "${parserToString}"`, () => {
-			const parser = any(parsers)
-			snapshot(testParser(parser, content))
-		})
+		it(
+			`Parse "${
+				showWhitespaceGlyph(
+					content,
+				)
+			}" with "${parserToString}"`,
+			() => {
+				const parser = any(parsers)
+				snapshot(testParser(parser, content))
+			},
+		)
 	}
 })

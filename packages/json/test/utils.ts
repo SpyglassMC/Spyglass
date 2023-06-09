@@ -105,7 +105,11 @@ export function testCompleter(
 
 export function completerTestGrid(
 	completer: Completer<any>,
-	cases: { text: string; expectation?: JsonExpectation[]; offsets: number[] }[],
+	cases: {
+		text: string
+		expectation?: JsonExpectation[]
+		offsets: number[]
+	}[],
 ) {
 	for (const { text, expectation, offsets } of cases) {
 		for (const offset of offsets) {

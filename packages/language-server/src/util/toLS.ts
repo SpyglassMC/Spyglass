@@ -127,11 +127,11 @@ export function documentSymbol(
 		selectionRange: symLoc.posRange ?? ZeroRange,
 		children: hierarchicalSupport
 			? documentSymbols(
-					symbol.members,
-					doc,
-					hierarchicalSupport,
-					supportedKinds,
-			  )
+				symbol.members,
+				doc,
+				hierarchicalSupport,
+				supportedKinds,
+			)
 			: undefined,
 	}
 }
@@ -157,7 +157,7 @@ export function documentSymbols(
 		)
 		.filter(([_s, l]) => !!l)
 		.map(([s, l]) =>
-			documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds),
+			documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds)
 		)
 }
 
@@ -180,7 +180,7 @@ export function documentSymbolsFromTables(
 ): ls.DocumentSymbol[] {
 	return tables
 		.map((t) =>
-			documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds),
+			documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds)
 		)
 		.flat()
 }
@@ -217,17 +217,17 @@ export function completionItem(
 	insertReplaceSupport: boolean | undefined,
 ): ls.CompletionItem {
 	const insertText = completion.insertText ?? completion.label
-	const canInsertReplace =
-		insertReplaceSupport && ![core.CR, core.LF, core.CRLF].includes(insertText)
+	const canInsertReplace = insertReplaceSupport &&
+		![core.CR, core.LF, core.CRLF].includes(insertText)
 	const textEdit: ls.TextEdit | ls.InsertReplaceEdit = canInsertReplace
 		? ls.InsertReplaceEdit.create(
-				insertText,
-				/* insert  */ range(
-					core.Range.create(completion.range.start, requestedOffset),
-					doc,
-				),
-				/* replace */ range(completion.range, doc),
-		  )
+			insertText,
+			/* insert  */ range(
+				core.Range.create(completion.range.start, requestedOffset),
+				doc,
+			),
+			/* replace */ range(completion.range, doc),
+		)
 		: ls.TextEdit.replace(range(completion.range, doc), insertText)
 	const ans: ls.CompletionItem = {
 		label: completion.label,
@@ -274,14 +274,14 @@ export function locationLink(
 	return locations?.locations
 		? linkSupport
 			? locations.locations.map((loc) => ({
-					originSelectionRange: range(locations.range, doc),
-					targetUri: loc.uri,
-					targetRange: loc.fullPosRange ?? loc.posRange ?? ZeroRange,
-					targetSelectionRange: loc.posRange ?? ZeroRange,
-			  }))
+				originSelectionRange: range(locations.range, doc),
+				targetUri: loc.uri,
+				targetRange: loc.fullPosRange ?? loc.posRange ?? ZeroRange,
+				targetSelectionRange: loc.posRange ?? ZeroRange,
+			}))
 			: locations.locations.map((loc) =>
-					location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange }),
-			  )
+				location({ uri: loc.uri, posRange: loc.posRange ?? ZeroRange })
+			)
 		: undefined
 }
 
@@ -333,7 +333,12 @@ export function semanticTokens(
 			builder.push(pos.line, pos.character, length, type, modifiers)
 		} else {
 			const firstLineRemainingLength = doc.getText(
-				ls.Range.create(pos.line, pos.character, pos.line, MaxCharacterNumber),
+				ls.Range.create(
+					pos.line,
+					pos.character,
+					pos.line,
+					MaxCharacterNumber,
+				),
 			).length
 			const lastLineLeadingLength = doc.getText(
 				ls.Range.create(endPos.line, 0, endPos.line, endPos.character),

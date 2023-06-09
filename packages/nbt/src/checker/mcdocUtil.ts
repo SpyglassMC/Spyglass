@@ -69,7 +69,10 @@ const BlockItems: { [item: string]: core.FullResourceLocation[] } = {
 
 	// Torches.
 	'minecraft:torch': ['minecraft:torch', 'minecraft:wall_torch'],
-	'minecraft:soul_torch': ['minecraft:soul_torch', 'minecraft:soul_wall_torch'],
+	'minecraft:soul_torch': [
+		'minecraft:soul_torch',
+		'minecraft:soul_wall_torch',
+	],
 	'minecraft:redstone_torch': [
 		'minecraft:redstone_torch',
 		'minecraft:redstone_wall_torch',

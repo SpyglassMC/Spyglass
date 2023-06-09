@@ -101,7 +101,9 @@ const diagnosticField = StateField.define<DecorationSet>({
 				add: [
 					getDiagnosticMark(e).range(
 						e.range.start,
-						e.range.end === e.range.start ? e.range.start + 1 : e.range.end,
+						e.range.end === e.range.start
+							? e.range.start + 1
+							: e.range.end,
 					),
 				],
 			})
@@ -181,8 +183,9 @@ const colorTokenField = StateField.define<DecorationSet>({
 const getColorTokenMark = (t: ColorToken): Decoration => {
 	return Decoration.mark({
 		class: `spyglassmc-color-token-${t.type} ${
-			t.modifiers?.map((m) => `spyglassmc-color-token-modifier-${m}`).join() ??
-			''
+			t.modifiers?.map((m) => `spyglassmc-color-token-modifier-${m}`)
+				.join() ??
+				''
 		}`,
 	})
 }

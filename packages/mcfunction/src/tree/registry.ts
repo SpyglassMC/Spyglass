@@ -1,5 +1,5 @@
-import type { PartialRootTreeNode, RootTreeNode } from './type.js'
 import { merge } from '@spyglassmc/core'
+import type { PartialRootTreeNode, RootTreeNode } from './type.js'
 
 /* istanbul ignore next */
 /**
@@ -43,7 +43,9 @@ export class CommandTreeRegistry {
 	}
 	private constructor() {
 		if (CommandTreeRegistry._instance) {
-			throw new Error('Use the `instance` static property to get an instance.')
+			throw new Error(
+				'Use the `instance` static property to get an instance.',
+			)
 		}
 	}
 	private static _instance: CommandTreeRegistry

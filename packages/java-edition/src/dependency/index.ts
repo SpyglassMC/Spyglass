@@ -25,7 +25,8 @@ export async function getVersions(
 ): Promise<McmetaVersions | undefined> {
 	return downloader.download<McmetaVersions>({
 		id: 'mc-je/versions.json.gz',
-		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
+		uri:
+			'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
 		transformer: (buffer) =>
 			core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
 		cache: getCacheOptionsBasedOnGitHubCommitSha(
@@ -56,8 +57,9 @@ export async function getMcmetaSummary(
 	source: string,
 	overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {},
 ): Promise<GetMcmetaSummaryResult> {
-	type OverrideConfig =
-		core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
+	type OverrideConfig = core.EnvConfig['mcmetaSummaryOverrides'][
+		keyof core.EnvConfig['mcmetaSummaryOverrides']
+	]
 	const ref = getGitRef({
 		defaultBranch: 'summary',
 		getTag: (v) => `${v}-summary`,
@@ -103,7 +105,11 @@ export async function getMcmetaSummary(
 				uri: uris[type],
 				transformer: (buffer) =>
 					core.parseGzippedJson(externals, buffer) as Promise<T>,
-				cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
+				cache: getCacheOptionsBasedOnGitHubCommitSha(
+					'misode',
+					'mcmeta',
+					ref,
+				),
 				ttl: DownloaderTtl,
 			},
 			out,
@@ -116,7 +122,10 @@ export async function getMcmetaSummary(
 		await getResource<McmetaStates>('blocks', overridePaths.blocks),
 		await getResource<McmetaCommands>('commands', overridePaths.commands),
 		await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
-		await getResource<McmetaRegistries>('registries', overridePaths.registries),
+		await getResource<McmetaRegistries>(
+			'registries',
+			overridePaths.registries,
+		),
 	]
 
 	return { blocks, commands, fluids, registries, checksum }
@@ -158,7 +167,8 @@ function getCacheOptionsBasedOnGitHubCommitSha(
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
-			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
+			uri:
+				`https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
 			transformer: (buffer: Uint8Array) => {
 				const response = JSON.parse(
 					core.bufferToString(buffer),

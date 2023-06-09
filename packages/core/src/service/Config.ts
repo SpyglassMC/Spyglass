@@ -17,7 +17,7 @@ export interface Config {
 	 */
 	format: FormatterConfig
 	/**
-	 *t Linter rules.
+	 * t Linter rules.
 	 */
 	lint: LinterConfig
 	/**
@@ -123,10 +123,11 @@ export namespace LinterConfigValue {
 		value: LinterConfigValue<boolean | string | number | object>,
 	):
 		| {
-				ruleSeverity: ErrorSeverity
-				ruleValue: boolean | string | number | object
-		  }
-		| undefined {
+			ruleSeverity: ErrorSeverity
+			ruleValue: boolean | string | number | object
+		}
+		| undefined
+	{
 		if (value === null || value === undefined) {
 			return undefined
 		}
@@ -289,10 +290,14 @@ export namespace SymbolLinterConfig {
 		): value is DeclareAction {
 			return (
 				value !== undefined &&
-				['block', 'file', 'public'].includes((value as DeclareAction).declare)
+				['block', 'file', 'public'].includes(
+					(value as DeclareAction).declare,
+				)
 			)
 		}
-		export function isReport(value: Action | undefined): value is ReportAction {
+		export function isReport(
+			value: Action | undefined,
+		): value is ReportAction {
 			return (
 				value !== undefined &&
 				['inherit', 'hint', 'information', 'warning', 'error'].includes(
@@ -396,7 +401,9 @@ export const VanillaConfig: Config = {
 			{
 				if: [
 					{ category: RegistryCategories, namespace: 'minecraft' },
-					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+					{
+						category: [...FileCategories, 'bossbar', 'objective', 'team'],
+					},
 				],
 				then: { report: 'warning' },
 			},
@@ -417,10 +424,12 @@ type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
 export class ConfigService implements ExternalEventEmitter {
-	static readonly ConfigFileNames = Object.freeze([
-		'spyglass.json',
-		'.spyglassrc.json',
-	] as const)
+	static readonly ConfigFileNames = Object.freeze(
+		[
+			'spyglass.json',
+			'.spyglassrc.json',
+		] as const,
+	)
 
 	readonly #eventEmitter: ExternalEventEmitter
 

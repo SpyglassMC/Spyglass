@@ -14,7 +14,8 @@ export function patternKeys(props: PairNode<JsonStringNode, JsonNode>[]) {
 		...new Set(
 			(
 				props.find(
-					(p) => p.key?.value === 'pattern' && p.value?.type === 'json:array',
+					(p) =>
+						p.key?.value === 'pattern' && p.value?.type === 'json:array',
 				)?.value?.children ?? []
 			)
 				.map((n) => (n as ItemNode<JsonNode>).value)

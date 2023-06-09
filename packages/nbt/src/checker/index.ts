@@ -141,7 +141,9 @@ export function blockStates(
 					core.ErrorSeverity.Warning,
 				)
 				continue
-			} else if (valueNode.type !== 'string' && valueNode.type !== 'nbt:int') {
+			} else if (
+				valueNode.type !== 'string' && valueNode.type !== 'nbt:int'
+			) {
 				ctx.err.report(
 					localize('nbt.checker.block-states.unexpected-value-type'),
 					valueNode,
@@ -382,7 +384,8 @@ export function fieldValue(
 		const comparator = (a: number, b: number, exclusive: unknown) =>
 			exclusive ? a < b : a <= b
 		return (
-			comparator(min, value, kind & 0b10) && comparator(value, max, kind & 0b01)
+			comparator(min, value, kind & 0b10) &&
+			comparator(value, max, kind & 0b01)
 		)
 	}
 
@@ -571,8 +574,9 @@ export function fieldValue(
 					valueNode = node.parent.parent
 				}
 				if (core.PairNode.is<core.StringNode, NbtNode>(valueNode.parent)) {
-					const structMcdocPath =
-						valueNode.parent.key?.symbol?.parentSymbol?.path.join('::')
+					const structMcdocPath = valueNode.parent.key?.symbol
+						?.parentSymbol
+						?.path.join('::')
 					const key = valueNode.parent.key?.value
 					const path = `${structMcdocPath}.${key}${suffix}`
 					const parserName = getSpecialStringParser(path)

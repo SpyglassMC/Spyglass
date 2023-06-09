@@ -16,15 +16,17 @@ type Wrap<T> = T extends object ? StateProxy<T> : T
  * A new proxy can be branched off of an existing proxy using {@link StateProxy.branchOff} to have finer control
  * over what changes to be reverted.
  */
-export type StateProxy<T extends object> = {
-	[K in keyof T]: Wrap<T[K]>
-} & {
-	[BranchOff]: () => StateProxy<T>
-	[Is]: true
-	[Origin]: T
-	[Redo]: () => void
-	[Undo]: () => void
-}
+export type StateProxy<T extends object> =
+	& {
+		[K in keyof T]: Wrap<T[K]>
+	}
+	& {
+		[BranchOff]: () => StateProxy<T>
+		[Is]: true
+		[Origin]: T
+		[Redo]: () => void
+		[Undo]: () => void
+	}
 
 export const StateProxy = Object.freeze({
 	branchOff<T extends object>(proxy: StateProxy<T>): StateProxy<T> {
@@ -32,9 +34,9 @@ export const StateProxy = Object.freeze({
 	},
 	create<T extends object>(
 		obj: T,
-	): T extends StateProxy<any>
-		? void & { _cannotCreateProxyFromProxy: never }
-		: StateProxy<T> {
+	): T extends StateProxy<any> ? void & { _cannotCreateProxyFromProxy: never }
+		: StateProxy<T>
+	{
 		if (StateProxy.is(obj)) {
 			throw new TypeError(
 				'Cannot create a proxy over a proxy. You might want to use branchOff instead.',

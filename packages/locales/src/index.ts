@@ -104,10 +104,14 @@ export function arrayToMessage(
 		case 2:
 			return arr[0] + localize(`conjunction.${conjunction}_2`) + arr[1]
 		default:
-			return `${arr
-				.slice(0, -1)
-				.join(localize(`conjunction.${conjunction}_3+_1`))}${localize(
-				`conjunction.${conjunction}_3+_2`,
-			)}${arr[arr.length - 1]}`
+			return `${
+				arr
+					.slice(0, -1)
+					.join(localize(`conjunction.${conjunction}_3+_1`))
+			}${
+				localize(
+					`conjunction.${conjunction}_3+_2`,
+				)
+			}${arr[arr.length - 1]}`
 	}
 }

@@ -66,17 +66,20 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 			.map((checker) => attempt(checker, node, ctx))
 			.sort(
 				(a, b) =>
-					a.maxSeverity - b.maxSeverity || a.totalErrorSpan - b.totalErrorSpan,
+					a.maxSeverity - b.maxSeverity ||
+					a.totalErrorSpan - b.totalErrorSpan,
 			)
 		const sameTypeAttempts = attempts.filter((a) =>
-			a.expectation?.map<string>((e) => e.type).includes(node.type),
+			a.expectation?.map<string>((e) => e.type).includes(node.type)
 		)
 		const allExpectations = attempts
 			.filter((a) => a.expectation)
 			.flatMap((a) => a.expectation!)
 
 		if (sameTypeAttempts.length === 0) {
-			const allowedTypes = allExpectations.map((e) => localize(e.type.slice(5)))
+			const allowedTypes = allExpectations.map((e) =>
+				localize(e.type.slice(5))
+			)
 			ctx.err.report(
 				localize('expected', arrayToMessage(allowedTypes, false)),
 				node,

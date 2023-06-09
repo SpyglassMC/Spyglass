@@ -29,7 +29,10 @@ export function json(dumpErrors = false): core.Parser<JsonNode> {
 				parser: boolean,
 			},
 			{ predicate: (src) => src.tryPeek('null'), parser: null_ },
-			{ predicate: (src) => LegalNumberStart.has(src.peek()), parser: number },
+			{
+				predicate: (src) => LegalNumberStart.has(src.peek()),
+				parser: number,
+			},
 			{ predicate: (src) => src.tryPeek('{'), parser: object },
 			{ parser: string },
 		])(src, ctx)

@@ -98,13 +98,14 @@ const text_component_object = as('text_component', (node, ctx) =>
 						entity: simpleString, // TODO: entity selector
 						nbt: nbtPath({
 							registry:
-								'entity_type' /* FIXME: import { getTypesFromEntity } from '../../../../mcfunction/checker'; ids: getTypesFromEntity(somehowGetTheNodeHere, ctx) */,
+								'entity_type', /* FIXME: import { getTypesFromEntity } from '../../../../mcfunction/checker'; ids: getTypesFromEntity(somehowGetTheNodeHere, ctx) */
 						}),
 					},
 					storage: {
 						storage: resource('storage'),
 						nbt: nbtPath({
-							registry: 'storage' /* FIXME:, id: extract('storage', props) */,
+							registry:
+								'storage', /* FIXME:, id: extract('storage', props) */
 						}),
 					},
 				}),
@@ -141,11 +142,13 @@ const text_component_object = as('text_component', (node, ctx) =>
 							),
 						},
 						change_page: {
-							value: string('number', integer({ pattern: /\d+/, min: 0 })),
+							value: string(
+								'number',
+								integer({ pattern: /\d+/, min: 0 }),
+							),
 						},
 					}),
-				}),
-			),
+				})),
 		),
 		hoverEvent: opt(
 			dispatch('action', (action, _, ctx) =>
@@ -161,7 +164,8 @@ const text_component_object = as('text_component', (node, ctx) =>
 								ctx,
 								'1.16',
 								nbt({
-									definition: '::minecraft::util::invitem::InventoryItem',
+									definition:
+										'::minecraft::util::invitem::InventoryItem',
 								}),
 							),
 							contents: opt(
@@ -173,9 +177,12 @@ const text_component_object = as('text_component', (node, ctx) =>
 											id: resource('item'),
 											count: opt(int),
 											tag: opt(
-												nbt({ registry: 'item', id: extract('id', props) }),
+												nbt({
+													registry: 'item',
+													id: extract('id', props),
+												}),
 											),
-										}),
+										})
 									),
 								),
 							),
@@ -203,14 +210,16 @@ const text_component_object = as('text_component', (node, ctx) =>
 							),
 						},
 					}),
-				}),
-			),
+				})),
 		),
 		extra: opt(listOf(text_component)),
-	})(node, ctx),
-)
+	})(node, ctx))
 
 export const text_component = as(
 	'text_component',
-	any([simpleString, text_component_object, listOf(ref(() => text_component))]),
+	any([
+		simpleString,
+		text_component_object,
+		listOf(ref(() => text_component)),
+	]),
 )

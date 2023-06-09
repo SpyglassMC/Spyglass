@@ -10,7 +10,8 @@ export function criterionReference(advancement: string): JsonChecker {
 			return
 		}
 		const criteria = Object.values(
-			ctx.symbols.query(ctx.doc, 'advancement', advancement).symbol?.members ??
+			ctx.symbols.query(ctx.doc, 'advancement', advancement).symbol
+				?.members ??
 				{},
 		)
 			.filter((m): m is Symbol => m?.subcategory === 'criterion')

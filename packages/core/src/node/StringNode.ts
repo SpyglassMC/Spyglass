@@ -33,20 +33,20 @@ export interface StringOptions {
 	colorTokenType?: ColorTokenType
 	escapable?:
 		| {
-				/**
-				 * A list of characters that can be escaped. The current quote of the string and backslash (`\`)
-				 * will be added to this list automatically.
-				 */
-				characters?: EscapeChar[]
-				/**
-				 * Whether escapes like `\u####` where #### is a hexdecimal numeral are allowed.
-				 */
-				unicode?: boolean
-				/**
-				 * Whether unknown characters can be escaped, which would just result in the character itself.
-				 */
-				allowUnknown?: boolean
-		  }
+			/**
+			 * A list of characters that can be escaped. The current quote of the string and backslash (`\`)
+			 * will be added to this list automatically.
+			 */
+			characters?: EscapeChar[]
+			/**
+			 * Whether escapes like `\u####` where #### is a hexdecimal numeral are allowed.
+			 */
+			unicode?: boolean
+			/**
+			 * Whether unknown characters can be escaped, which would just result in the character itself.
+			 */
+			allowUnknown?: boolean
+		}
 		| false
 	/**
 	 * A list of characters that can serve as a quotation mark.
@@ -57,7 +57,11 @@ export interface StringOptions {
 	 * the string can contain. Otherwise set this to `false`.
 	 */
 	unquotable?:
-		| { allowEmpty?: boolean; allowList?: Set<string>; blockList?: Set<string> }
+		| {
+			allowEmpty?: boolean
+			allowList?: Set<string>
+			blockList?: Set<string>
+		}
 		| false
 	/**
 	 * An optional object describing the content of the string.
@@ -96,7 +100,10 @@ export namespace StringNode {
 			range,
 			options,
 			value: '',
-			valueMap: [{ inner: Range.create(0), outer: Range.create(range.start) }],
+			valueMap: [{
+				inner: Range.create(0),
+				outer: Range.create(range.start),
+			}],
 		}
 	}
 }

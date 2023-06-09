@@ -41,7 +41,10 @@ export function blockStateMap({
 			const values = mixedTypes
 				? any([boolean, simpleString, intBounds()])
 				: simpleString
-			object(simpleString, () => (requireAll ? values : opt(values)))(node, ctx)
+			object(simpleString, () => (requireAll ? values : opt(values)))(
+				node,
+				ctx,
+			)
 			return
 		}
 		const states = core.getStates(category ?? 'block', ids, ctx)
@@ -53,7 +56,10 @@ export function blockStateMap({
 					checkers.push(boolean)
 				} else if (values[0].match(/^\d+$/)) {
 					checkers.push(
-						intBounds(parseInt(values[0]), parseInt(values[values.length - 1])),
+						intBounds(
+							parseInt(values[0]),
+							parseInt(values[values.length - 1]),
+						),
 					)
 				}
 			}

@@ -29,7 +29,12 @@ describe('Color', () => {
 			snapshot(Color.fromCompositeInt(0xffaa55))
 		})
 		it('Should return white for negative number', () => {
-			assert.deepStrictEqual(Color.fromCompositeInt(-1), [1.0, 1.0, 1.0, 1.0])
+			assert.deepStrictEqual(Color.fromCompositeInt(-1), [
+				1.0,
+				1.0,
+				1.0,
+				1.0,
+			])
 		})
 	})
 })

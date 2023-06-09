@@ -18,11 +18,13 @@ export type NumericRange = {
 	max?: number
 }
 
-export const StaticIndexKeywords = Object.freeze([
-	'fallback',
-	'none',
-	'unknown',
-] as const)
+export const StaticIndexKeywords = Object.freeze(
+	[
+		'fallback',
+		'none',
+		'unknown',
+	] as const,
+)
 export type StaticIndexKeyword = (typeof StaticIndexKeywords)[number]
 export interface StaticIndex {
 	kind: 'static'
@@ -135,38 +137,42 @@ export interface StringType {
 
 export type LiteralValue =
 	| {
-			kind: 'boolean'
-			value: boolean
-	  }
+		kind: 'boolean'
+		value: boolean
+	}
 	| {
-			kind: 'string'
-			value: string
-	  }
+		kind: 'string'
+		value: string
+	}
 	| {
-			kind: 'number'
-			value: number
-			suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
-	  }
+		kind: 'number'
+		value: number
+		suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
+	}
 export interface LiteralType {
 	kind: 'literal'
 	value: LiteralValue
 }
-export const LiteralNumberSuffixes = Object.freeze([
-	'b',
-	's',
-	'l',
-	'f',
-	'd',
-] as const)
+export const LiteralNumberSuffixes = Object.freeze(
+	[
+		'b',
+		's',
+		'l',
+		'f',
+		'd',
+	] as const,
+)
 export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
-export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze([
-	...LiteralNumberSuffixes,
-	'B',
-	'S',
-	'L',
-	'F',
-	'D',
-] as const)
+export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralNumberSuffixes,
+		'B',
+		'S',
+		'L',
+		'F',
+		'D',
+	] as const,
+)
 export type LiteralNumberCaseInsensitiveSuffix =
 	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
@@ -174,19 +180,23 @@ export interface NumericType {
 	kind: NumericTypeKind
 	valueRange?: NumericRange
 }
-export const NumericTypeIntKinds = Object.freeze([
-	'byte',
-	'short',
-	'int',
-	'long',
-] as const)
+export const NumericTypeIntKinds = Object.freeze(
+	[
+		'byte',
+		'short',
+		'int',
+		'long',
+	] as const,
+)
 export type NumericTypeIntKind = (typeof NumericTypeIntKinds)[number]
 export const NumericTypeFloatKinds = Object.freeze(['float', 'double'] as const)
 export type NumericTypeFloatKind = (typeof NumericTypeFloatKinds)[number]
-export const NumericTypeKinds = Object.freeze([
-	...NumericTypeIntKinds,
-	...NumericTypeFloatKinds,
-] as const)
+export const NumericTypeKinds = Object.freeze(
+	[
+		...NumericTypeIntKinds,
+		...NumericTypeFloatKinds,
+	] as const,
+)
 export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
 export interface PrimitiveArrayType {
@@ -194,11 +204,13 @@ export interface PrimitiveArrayType {
 	valueRange?: NumericRange
 	lengthRange?: NumericRange
 }
-export const PrimitiveArrayValueKinds = Object.freeze([
-	'byte',
-	'int',
-	'long',
-] as const)
+export const PrimitiveArrayValueKinds = Object.freeze(
+	[
+		'byte',
+		'int',
+		'long',
+	] as const,
+)
 export type PrimitiveArrayValueKind = (typeof PrimitiveArrayValueKinds)[number]
 export const PrimitiveArrayKinds = Object.freeze(
 	PrimitiveArrayValueKinds.map((kind) => `${kind}_array` as const),
@@ -245,7 +257,9 @@ export namespace McdocType {
 				: ` @ ${min ?? ''}${getRangeDelimiter(kind)}${max ?? ''}`
 		}
 
-		const indicesToString = (indices: Arrayable<Index | undefined>): string => {
+		const indicesToString = (
+			indices: Arrayable<Index | undefined>,
+		): string => {
 			const strings: string[] = []
 			for (const index of Arrayable.toArray(indices)) {
 				if (index === undefined) {
@@ -254,9 +268,11 @@ export namespace McdocType {
 					strings.push(
 						index.kind === 'static'
 							? `[${index.value}]`
-							: `[[${index.accessor
+							: `[[${
+								index.accessor
 									.map((v) => (typeof v === 'string' ? v : v.keyword))
-									.join('.')}]]`,
+									.join('.')
+							}]]`,
 					)
 				}
 			}
@@ -277,9 +293,11 @@ export namespace McdocType {
 			case 'byte':
 				return `byte${rangeToString(type.valueRange)}`
 			case 'byte_array':
-				return `byte${rangeToString(type.valueRange)}[]${rangeToString(
-					type.lengthRange,
-				)}`
+				return `byte${rangeToString(type.valueRange)}[]${
+					rangeToString(
+						type.lengthRange,
+					)
+				}`
 			case 'concrete':
 				return `${toString(type.child)}${
 					type.typeArgs.length
@@ -287,9 +305,11 @@ export namespace McdocType {
 						: ''
 				}`
 			case 'dispatcher':
-				return `${type.registry ?? 'spyglass:unknown'}[${indicesToString(
-					type.parallelIndices,
-				)}]`
+				return `${type.registry ?? 'spyglass:unknown'}[${
+					indicesToString(
+						type.parallelIndices,
+					)
+				}]`
 			case 'double':
 				return `double${rangeToString(type.valueRange)}`
 			case 'enum':
@@ -297,13 +317,17 @@ export namespace McdocType {
 			case 'float':
 				return `float${rangeToString(type.valueRange)}`
 			case 'indexed':
-				return `${toString(type.child)}${indicesToString(type.parallelIndices)}`
+				return `${toString(type.child)}${
+					indicesToString(type.parallelIndices)
+				}`
 			case 'int':
 				return `int${rangeToString(type.valueRange)}`
 			case 'int_array':
-				return `int${rangeToString(type.valueRange)}[]${rangeToString(
-					type.lengthRange,
-				)}`
+				return `int${rangeToString(type.valueRange)}[]${
+					rangeToString(
+						type.lengthRange,
+					)
+				}`
 			case 'list':
 				return `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
 			case 'literal':
@@ -311,9 +335,11 @@ export namespace McdocType {
 			case 'long':
 				return `long${rangeToString(type.valueRange)}`
 			case 'long_array':
-				return `long${rangeToString(type.valueRange)}[]${rangeToString(
-					type.lengthRange,
-				)}`
+				return `long${rangeToString(type.valueRange)}[]${
+					rangeToString(
+						type.lengthRange,
+					)
+				}`
 			case 'reference':
 				return type.path ?? '<unknown_reference>'
 			case 'short':
@@ -363,11 +389,12 @@ export type TangibleType =
 /**
  * A type that is {@link TangibleType} and doesn't have any indices.
  */
-export type ResolvedType = (
-	| Exclude<McdocType, DispatcherType | ReferenceType | UnionType>
-	| UnionType<ResolvedType>
-) &
-	NoIndices
+export type ResolvedType =
+	& (
+		| Exclude<McdocType, DispatcherType | ReferenceType | UnionType>
+		| UnionType<ResolvedType>
+	)
+	& NoIndices
 type NoIndices = { indices?: undefined }
 
 export interface FlatStructType {
@@ -405,13 +432,13 @@ export const flattenUnionType = (union: UnionType): UnionType => {
 		for (const existingMember of set) {
 			if (
 				(check(data, existingMember) & CheckResult.StrictlyAssignable) ===
-				CheckResult.StrictlyAssignable
+					CheckResult.StrictlyAssignable
 			) {
 				return
 			}
 			if (
 				(check(existingMember, data) & CheckResult.StrictlyAssignable) ===
-				CheckResult.StrictlyAssignable
+					CheckResult.StrictlyAssignable
 			) {
 				set.delete(existingMember)
 			}
@@ -434,13 +461,13 @@ export const flattenUnionType = (union: UnionType): UnionType => {
 export const unionTypes = (a: McdocType, b: McdocType): McdocType => {
 	if (
 		(check(a, b) & CheckResult.StrictlyAssignable) ===
-		CheckResult.StrictlyAssignable
+			CheckResult.StrictlyAssignable
 	) {
 		return b
 	}
 	if (
 		(check(b, a) & CheckResult.StrictlyAssignable) ===
-		CheckResult.StrictlyAssignable
+			CheckResult.StrictlyAssignable
 	) {
 		return a
 	}
@@ -509,7 +536,9 @@ const check = (
 				errors,
 			)
 		} else if (t.kind === 'byte') {
-			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
+			ans = strictlyAssignableIfTrue(
+				areRangesMatch(s.valueRange, t.valueRange),
+			)
 		} else if (t.kind === 'enum') {
 			ans = assignableIfTrue(!t.enumKind || t.enumKind === 'byte')
 		} else {
@@ -546,7 +575,9 @@ const check = (
 		s.kind === 'short'
 	) {
 		if (t.kind === s.kind) {
-			ans = strictlyAssignableIfTrue(areRangesMatch(s.valueRange, t.valueRange))
+			ans = strictlyAssignableIfTrue(
+				areRangesMatch(s.valueRange, t.valueRange),
+			)
 		} else if (t.kind === 'enum') {
 			ans = assignableIfTrue(!t.enumKind || t.enumKind === s.kind)
 		} else {
@@ -604,11 +635,11 @@ export const checkAssignability = ({
 		isAssignable: errors.length === 0,
 		...(errors.length
 			? {
-					errorMessage: errors
-						.reverse()
-						.map((m, i) => `${'  '.repeat(i)}${m}`)
-						.join('\n'),
-			  }
+				errorMessage: errors
+					.reverse()
+					.map((m, i) => `${'  '.repeat(i)}${m}`)
+					.join('\n'),
+			}
 			: {}),
 	}
 }
@@ -710,12 +741,11 @@ function navigateIndex(
 	value: RuntimeValue | undefined,
 ): ResolvedType {
 	if (type.kind === 'struct') {
-		const key =
-			index.kind === 'static'
-				? typeof index.value === 'string'
-					? index.value
-					: undefined // Special static indices have no meaning on structs.
-				: resolveDynamicIndex(index, value)
+		const key = index.kind === 'static'
+			? typeof index.value === 'string'
+				? index.value
+				: undefined // Special static indices have no meaning on structs.
+			: resolveDynamicIndex(index, value)
 		if (key === undefined) {
 			// return createEmptyUnion(type.attributes)
 			return createEmptyUnion()

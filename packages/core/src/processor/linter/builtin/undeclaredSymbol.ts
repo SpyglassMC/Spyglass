@@ -66,17 +66,19 @@ function getAction(
 					? Arrayable.toArray(condition.namespace).includes(namespace)
 					: true) &&
 				(condition.excludeNamespace
-					? !Arrayable.toArray(condition.excludeNamespace).includes(namespace)
+					? !Arrayable.toArray(condition.excludeNamespace).includes(
+						namespace,
+					)
 					: true) &&
 				(condition.pattern
 					? Arrayable.toArray(condition.pattern).some((p) =>
-							new RegExp(p).test(symbol.identifier),
-					  )
+						new RegExp(p).test(symbol.identifier)
+					)
 					: true) &&
 				(condition.excludePattern
 					? !Arrayable.toArray(condition.excludePattern).some((p) =>
-							new RegExp(p).test(symbol.identifier),
-					  )
+						new RegExp(p).test(symbol.identifier)
+					)
 					: true)
 			)
 		}

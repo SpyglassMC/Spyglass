@@ -84,7 +84,8 @@ function getIds(
 	}
 	if (
 		tag &&
-		(registry === 'block' || registry === 'item' || registry === 'entity_type')
+		(registry === 'block' || registry === 'item' ||
+			registry === 'entity_type')
 	) {
 		ids = getTagValues(`tag/${registry}`, tag, ctx)
 	} else if (id) {

@@ -1,9 +1,10 @@
 {
+  "indentWidth": 3,
   "lineWidth": 80,
   "newLineKind": "lf",
   "useTabs": true,
   "typescript": {
-    "preferSingleLine": true,
+    "binaryExpression.operatorPosition": "sameLine",
     "quoteStyle": "preferSingle",
     "semiColons": "asi"
   },
@@ -11,7 +12,9 @@
     "packages/*/{src,test}/**/*.{ts,cts,mts}"
   ],
   "excludes": [
-    "**/node_modules"
+    "**/node_modules",
+    // cannot format due to bug of dprint
+    "packages/java-edition/src/mcfunction/tree/patch.ts"
   ],
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.85.0.wasm"

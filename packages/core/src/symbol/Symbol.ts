@@ -6,100 +6,108 @@ import { isIterable } from '../common/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
-//#region Mcdoc Categories
-export const McdocCategories = Object.freeze([
-	'mcdoc',
-	'mcdoc/dispatcher',
-] as const)
+// #region Mcdoc Categories
+export const McdocCategories = Object.freeze(
+	[
+		'mcdoc',
+		'mcdoc/dispatcher',
+	] as const,
+)
 export type McdocCategory = (typeof McdocCategories)[number]
-//#endregion
+// #endregion
 
-//#region Registry Categories
+// #region Registry Categories
 // Data in `java-edition/src/binder/index.ts` may need to be updated when this section is changed.
-export const RegistryCategories = Object.freeze([
-	'activity',
-	'attribute',
-	'block',
-	'block_entity_type',
-	'block_predicate_type',
-	'chunk_status',
-	'custom_stat',
-	'enchantment',
-	'entity_type',
-	'float_provider_type',
-	'fluid',
-	'game_event',
-	'height_provider_type',
-	'int_provider_type',
-	'item',
-	'loot_condition_type',
-	'loot_function_type',
-	'loot_nbt_provider_type',
-	'loot_number_provider_type',
-	'loot_pool_entry_type',
-	'loot_score_provider_type',
-	'memory_module_type',
-	'menu',
-	'mob_effect',
-	'motive',
-	'particle_type',
-	'point_of_interest_type',
-	'pos_rule_test',
-	'position_source_type',
-	'potion',
-	'recipe_serializer',
-	'recipe_type',
-	'rule_test',
-	'schedule',
-	'sensor_type',
-	'sound_event',
-	'stat_type',
-	'villager_profession',
-	'villager_type',
-	'worldgen/biome_source',
-	'worldgen/block_placer_type', // Removed from Minecraft at some point. Still used by JSON checkers.
-	'worldgen/block_state_provider_type',
-	'worldgen/carver',
-	'worldgen/chunk_generator',
-	'worldgen/decorator',
-	'worldgen/feature',
-	'worldgen/feature_size_type',
-	'worldgen/foliage_placer_type',
-	'worldgen/material_condition',
-	'worldgen/material_rule',
-	'worldgen/placement_modifier_type',
-	'worldgen/structure_feature',
-	'worldgen/structure_piece',
-	'worldgen/structure_pool_element',
-	'worldgen/structure_processor',
-	'worldgen/surface_builder', // Removed from Minecraft at some point. Still used by JSON checkers.
-	'worldgen/tree_decorator_type',
-	'worldgen/trunk_placer_type',
-] as const)
+export const RegistryCategories = Object.freeze(
+	[
+		'activity',
+		'attribute',
+		'block',
+		'block_entity_type',
+		'block_predicate_type',
+		'chunk_status',
+		'custom_stat',
+		'enchantment',
+		'entity_type',
+		'float_provider_type',
+		'fluid',
+		'game_event',
+		'height_provider_type',
+		'int_provider_type',
+		'item',
+		'loot_condition_type',
+		'loot_function_type',
+		'loot_nbt_provider_type',
+		'loot_number_provider_type',
+		'loot_pool_entry_type',
+		'loot_score_provider_type',
+		'memory_module_type',
+		'menu',
+		'mob_effect',
+		'motive',
+		'particle_type',
+		'point_of_interest_type',
+		'pos_rule_test',
+		'position_source_type',
+		'potion',
+		'recipe_serializer',
+		'recipe_type',
+		'rule_test',
+		'schedule',
+		'sensor_type',
+		'sound_event',
+		'stat_type',
+		'villager_profession',
+		'villager_type',
+		'worldgen/biome_source',
+		'worldgen/block_placer_type', // Removed from Minecraft at some point. Still used by JSON checkers.
+		'worldgen/block_state_provider_type',
+		'worldgen/carver',
+		'worldgen/chunk_generator',
+		'worldgen/decorator',
+		'worldgen/feature',
+		'worldgen/feature_size_type',
+		'worldgen/foliage_placer_type',
+		'worldgen/material_condition',
+		'worldgen/material_rule',
+		'worldgen/placement_modifier_type',
+		'worldgen/structure_feature',
+		'worldgen/structure_piece',
+		'worldgen/structure_pool_element',
+		'worldgen/structure_processor',
+		'worldgen/surface_builder', // Removed from Minecraft at some point. Still used by JSON checkers.
+		'worldgen/tree_decorator_type',
+		'worldgen/trunk_placer_type',
+	] as const,
+)
 export type RegistryCategory = (typeof RegistryCategories)[number]
-//#endregion
+// #endregion
 
-//#region Data Pack Categories
-export const WorldgenFileCategories = Object.freeze([
-	'worldgen/biome',
-	'worldgen/configured_carver',
-	'worldgen/configured_feature',
-	'worldgen/configured_structure_feature',
-	'worldgen/configured_surface_builder',
-	'worldgen/density_function',
-	'worldgen/noise',
-	'worldgen/noise_settings',
-	'worldgen/placed_feature',
-	'worldgen/processor_list',
-	'worldgen/template_pool',
-] as const)
+// #region Data Pack Categories
+export const WorldgenFileCategories = Object.freeze(
+	[
+		'worldgen/biome',
+		'worldgen/configured_carver',
+		'worldgen/configured_feature',
+		'worldgen/configured_structure_feature',
+		'worldgen/configured_surface_builder',
+		'worldgen/density_function',
+		'worldgen/noise',
+		'worldgen/noise_settings',
+		'worldgen/placed_feature',
+		'worldgen/processor_list',
+		'worldgen/template_pool',
+	] as const,
+)
 export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
 
-export const TaggableResourceLocationCategories = Object.freeze([
-	'function',
-	...RegistryCategories,
-	...WorldgenFileCategories,
-] as const)
+export const TaggableResourceLocationCategories = Object.freeze(
+	[
+		'function',
+		...RegistryCategories,
+		...WorldgenFileCategories,
+	] as const,
+)
 export type TaggableResourceLocationCategory =
 	(typeof TaggableResourceLocationCategories)[number]
 
@@ -108,53 +116,63 @@ export const TagFileCategories = Object.freeze(
 )
 export type TagFileCategory = (typeof TagFileCategories)[number]
 
-export const FileCategories = Object.freeze([
-	'advancement',
-	'dimension',
-	'dimension_type',
-	'function',
-	'item_modifier',
-	'loot_table',
-	'predicate',
-	'recipe',
-	'structure',
-	...TagFileCategories,
-	...WorldgenFileCategories,
-] as const)
+export const FileCategories = Object.freeze(
+	[
+		'advancement',
+		'dimension',
+		'dimension_type',
+		'function',
+		'item_modifier',
+		'loot_table',
+		'predicate',
+		'recipe',
+		'structure',
+		...TagFileCategories,
+		...WorldgenFileCategories,
+	] as const,
+)
 export type FileCategory = (typeof FileCategories)[number]
 
-export const MiscCategories = Object.freeze([
-	'attribute_modifier_uuid',
-	'bossbar',
-	'objective',
-	'score_holder',
-	'storage',
-	'tag',
-	'team',
-] as const)
+export const MiscCategories = Object.freeze(
+	[
+		'attribute_modifier_uuid',
+		'bossbar',
+		'objective',
+		'score_holder',
+		'storage',
+		'tag',
+		'team',
+	] as const,
+)
 export type MiscCategory = (typeof MiscCategories)[number]
 
-export const DatapackCategories = Object.freeze([
-	...FileCategories,
-	...MiscCategories,
-] as const)
+export const DatapackCategories = Object.freeze(
+	[
+		...FileCategories,
+		...MiscCategories,
+	] as const,
+)
 export type DatapackCategory = (typeof DatapackCategories)[number]
-//#endregion
+// #endregion
 
-export const AllCategories = Object.freeze([
-	...DatapackCategories,
-	...McdocCategories,
-	...RegistryCategories,
-] as const)
+export const AllCategories = Object.freeze(
+	[
+		...DatapackCategories,
+		...McdocCategories,
+		...RegistryCategories,
+	] as const,
+)
 export type AllCategory = (typeof AllCategories)[number]
 
-export const ResourceLocationCategories = Object.freeze([
-	'bossbar',
-	'storage',
-	'mcdoc/dispatcher',
-	...FileCategories,
-	...RegistryCategories,
-] as const)
+export const ResourceLocationCategories = Object.freeze(
+	[
+		'bossbar',
+		'storage',
+		'mcdoc/dispatcher',
+		...FileCategories,
+		...RegistryCategories,
+	] as const,
+)
 export type ResourceLocationCategory =
 	(typeof ResourceLocationCategories)[number]
 export namespace ResourceLocationCategory {
@@ -189,7 +207,9 @@ export namespace SymbolPath {
 	export function fromSymbol(
 		symbol: DeepReadonly<Symbol> | undefined,
 	): SymbolPath | undefined {
-		return symbol ? { category: symbol.category, path: symbol.path } : undefined
+		return symbol
+			? { category: symbol.category, path: symbol.path }
+			: undefined
 	}
 
 	/**
@@ -257,13 +277,15 @@ export interface SymbolMetadata {
 	visibilityRestriction?: string[]
 }
 
-export const SymbolUsageTypes = Object.freeze([
-	'definition',
-	'declaration',
-	'implementation',
-	'reference',
-	'typeDefinition',
-] as const)
+export const SymbolUsageTypes = Object.freeze(
+	[
+		'definition',
+		'declaration',
+		'implementation',
+		'reference',
+		'typeDefinition',
+	] as const,
+)
 export type SymbolUsageType = (typeof SymbolUsageTypes)[number]
 export namespace SymbolUsageType {
 	export function is(value: unknown): value is SymbolUsageType {
@@ -272,8 +294,8 @@ export namespace SymbolUsageType {
 }
 
 export interface Symbol
-	extends SymbolMetadata,
-		Partial<Record<SymbolUsageType, SymbolLocation[]>> {
+	extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>>
+{
 	/**
 	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
@@ -387,9 +409,9 @@ export namespace SymbolLocation {
 			...Location.create(doc, range),
 			...(fullRange
 				? {
-						fullRange: Range.get(fullRange),
-						fullPosRange: PositionRange.from(fullRange, doc),
-				  }
+					fullRange: Range.get(fullRange),
+					fullPosRange: PositionRange.from(fullRange, doc),
+				}
 				: {}),
 			...(contributor ? { contributor } : {}),
 			...(additional ? additional : {}),
@@ -405,8 +427,8 @@ export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined
 }
 
-export interface UnlinkedSymbol
-	extends Omit<
+export interface UnlinkedSymbol extends
+	Omit<
 		Symbol,
 		| 'category'
 		| 'identifier'
@@ -414,7 +436,8 @@ export interface UnlinkedSymbol
 		| 'parentMap'
 		| 'parentSymbol'
 		| 'path'
-	> {
+	>
+{
 	category?: undefined
 	identifier?: undefined
 	members?: UnlinkedSymbolMap
@@ -428,7 +451,8 @@ export interface UnlinkedSymbolMap {
 }
 
 export interface UnlinkedSymbolTable
-	extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
+	extends Partial<Record<AllCategory, UnlinkedSymbolMap>>
+{
 	[category: string]: UnlinkedSymbolMap | undefined
 }
 

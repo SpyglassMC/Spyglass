@@ -17,7 +17,11 @@ describe('ResourceLocationNode', () => {
 			{ node: { path: ['foo'] }, type: 'origin', expected: 'foo' },
 			{ node: { path: ['foo'] }, type: 'full', expected: 'minecraft:foo' },
 			{ node: { path: ['foo'] }, type: 'short', expected: 'foo' },
-			{ node: { path: ['foo', 'bar'] }, type: 'origin', expected: 'foo/bar' },
+			{
+				node: { path: ['foo', 'bar'] },
+				type: 'origin',
+				expected: 'foo/bar',
+			},
 			{
 				node: { path: ['foo', 'bar'] },
 				type: 'full',

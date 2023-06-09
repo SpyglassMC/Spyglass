@@ -52,7 +52,7 @@ export namespace LiteralCommandChildNode {
 	): node is LiteralCommandChildNode {
 		return (
 			(node as LiteralCommandChildNode | undefined)?.type ===
-			'mcfunction:command_child/literal'
+				'mcfunction:command_child/literal'
 		)
 	}
 }

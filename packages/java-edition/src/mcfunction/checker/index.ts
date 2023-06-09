@@ -33,9 +33,11 @@ const rootCommand = (
 	index: number,
 	ctx: core.CheckerContext,
 ) => {
-	for (const {
-		children: [node],
-	} of nodes) {
+	for (
+		const {
+			children: [node],
+		} of nodes
+	) {
 		if (BlockNode.is(node)) {
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
@@ -134,7 +136,7 @@ const rootCommand = (
 	}
 }
 
-//#region Checkers for argument nodes
+// #region Checkers for argument nodes
 const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 	if (!node.nbt) {
 		return
@@ -173,9 +175,9 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 	core.checker.dispatchSync(node, ctx)
 }
-//#endregion
+// #endregion
 
-//#region Checkers for command argument structure.
+// #region Checkers for command argument structure.
 /**
  * - `block <targetPos: block_pos> <nbt: nbt_compound_tag>`
  * - `entity <target: entity> <nbt: nbt_compound_tag>`
@@ -252,7 +254,9 @@ const nbtPath = (
 		case 'storage': {
 			const idNode = getNode(nodes, index + 1)
 			const nbtNode = getNode(nodes, index + 2)
-			if (core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)) {
+			if (
+				core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)
+			) {
 				nbt.checker.path(
 					'storage',
 					core.ResourceLocationNode.toString(idNode, 'full'),
@@ -283,7 +287,7 @@ const summonNbt = (
 		)(nbtNode, ctx)
 	}
 }
-//#endregion
+// #endregion
 
 export const getTypesFromEntity = (
 	entity: EntityNode,
@@ -302,7 +306,9 @@ export const getTypesFromEntity = (
 				continue
 			}
 			const valueNode = pairNode.value as
-				| EntitySelectorInvertableArgumentValueNode<core.ResourceLocationNode>
+				| EntitySelectorInvertableArgumentValueNode<
+					core.ResourceLocationNode
+				>
 				| undefined
 			if (!valueNode || valueNode.inverted) {
 				continue
@@ -313,7 +319,11 @@ export const getTypesFromEntity = (
 				true,
 			)
 			if (value.startsWith(core.ResourceLocation.TagPrefix)) {
-				const tagValues = getTagValues('tag/entity_type', value.slice(1), ctx)
+				const tagValues = getTagValues(
+					'tag/entity_type',
+					value.slice(1),
+					ctx,
+				)
 				types = types.filter((t) => tagValues.includes(t))
 			} else {
 				types = [value as core.FullResourceLocation]

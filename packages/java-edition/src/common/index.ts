@@ -26,11 +26,13 @@ export function getTagValues(
 		json.JsonStringNode.is(node)
 			? node.value
 			: (
-					node.children.find((n) => n.key?.value === 'id')!
-						.value as json.JsonStringNode
-			  ).value
+				node.children.find((n) => n.key?.value === 'id')!
+					.value as json.JsonStringNode
+			).value
 
-	const set = getUris(category, id, ctx).reduce<Set<core.FullResourceLocation>>(
+	const set = getUris(category, id, ctx).reduce<
+		Set<core.FullResourceLocation>
+	>(
 		(ans, uri) => {
 			// const result = ctx.getDocAndNode(uri)
 			const result: any = undefined // FIXME: Use global symbol table to get the result
@@ -53,7 +55,9 @@ export function getTagValues(
 			)?.value as json.JsonArrayNode
 			const replace = replaceNode?.value
 			const values = valuesNode.children.map((n) =>
-				core.ResourceLocation.lengthen(resolveValueNode(n.value as ValueNode)),
+				core.ResourceLocation.lengthen(
+					resolveValueNode(n.value as ValueNode),
+				)
 			)
 
 			if (replace) {

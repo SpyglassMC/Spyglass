@@ -24,7 +24,8 @@ export interface AttemptResult<N extends Returnable = AstNode> {
 	errorAmount: number
 }
 interface InfallibleAttemptResult<N extends Returnable = AstNode>
-	extends AttemptResult<N> {
+	extends AttemptResult<N>
+{
 	result: N
 }
 
@@ -74,17 +75,17 @@ type SP<CN extends AstNode> =
 	| SIP<CN>
 	| Parser<CN | SequenceUtil<CN> | undefined>
 	| {
-			get: (
-				result: SequenceUtil<CN>,
-			) => Parser<CN | SequenceUtil<CN> | undefined> | undefined
-	  }
+		get: (
+			result: SequenceUtil<CN>,
+		) => Parser<CN | SequenceUtil<CN> | undefined> | undefined
+	}
 type SIP<CN extends AstNode> =
 	| InfallibleParser<CN | SequenceUtil<CN> | undefined>
 	| {
-			get: (
-				result: SequenceUtil<CN>,
-			) => InfallibleParser<CN | SequenceUtil<CN> | undefined> | undefined
-	  }
+		get: (
+			result: SequenceUtil<CN>,
+		) => InfallibleParser<CN | SequenceUtil<CN> | undefined> | undefined
+	}
 /**
  * @template GN Gap node.
  * @template PA Parser array.
@@ -237,7 +238,10 @@ export function any(
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
 		const results: { attempt: AttemptResult<Returnable>; index: number }[] =
 			parsers
-				.map((parser, i) => ({ attempt: attempt(parser, src, ctx), index: i }))
+				.map((parser, i) => ({
+					attempt: attempt(parser, src, ctx),
+					index: i,
+				}))
 				.filter(({ attempt }) => attempt.result !== Failure)
 				.sort(
 					(a, b) =>
@@ -345,10 +349,8 @@ export function recover<N extends Returnable>(
 type GettableParser = Parser<Returnable> | { get: () => Parser<Returnable> }
 type ExtractFromGettableParser<T extends GettableParser> = T extends {
 	get: () => infer V
-}
-	? V
-	: T extends Parser<Returnable>
-	? T
+} ? V
+	: T extends Parser<Returnable> ? T
 	: never
 type Case = {
 	predicate?: (this: void, src: ReadonlySource) => boolean
@@ -364,22 +366,22 @@ export function select<CA extends readonly Case[]>(
 	cases: CA,
 ): ExtractFromGettableParser<
 	CA[number]['parser']
-> extends InfallibleParser<Returnable>
-	? InfallibleParser<
-			ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>
-	  >
+> extends InfallibleParser<Returnable> ? InfallibleParser<
+		ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>
+	>
 	: Parser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
 export function select(cases: readonly Case[]): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
 		for (const { predicate, prefix, parser, regex } of cases) {
 			if (
 				predicate?.(src) ??
-				(prefix !== undefined ? src.tryPeek(prefix) : undefined) ??
-				(regex && src.matchPattern(regex)) ??
-				true
+					(prefix !== undefined ? src.tryPeek(prefix) : undefined) ??
+					(regex && src.matchPattern(regex)) ??
+					true
 			) {
-				const callableParser =
-					typeof parser === 'object' ? parser.get() : parser
+				const callableParser = typeof parser === 'object'
+					? parser.get()
+					: parser
 				return callableParser(src, ctx)
 			}
 		}
@@ -539,11 +541,10 @@ export function acceptOnly<N extends Returnable>(
 export function acceptIf<P extends Parser<AstNode>>(
 	parser: P,
 	predicate: (this: void, char: string) => boolean,
-): P extends InfallibleParser<infer N>
-	? InfallibleParser<N>
-	: P extends Parser<infer N>
-	? Parser<N>
-	: never {
+): P extends InfallibleParser<infer N> ? InfallibleParser<N>
+	: P extends Parser<infer N> ? Parser<N>
+	: never
+{
 	return ((src: Source, ctx: ParserContext) => {
 		const tmpSrc = src.clone()
 		// Cut tmpSrc.string before the nearest unacceptable character.

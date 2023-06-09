@@ -42,12 +42,18 @@ function isComplex(checker: CheckerProperty): checker is ComplexProperty {
 export function object(): JsonChecker
 export function object(
 	keys: string[],
-	values: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined,
+	values: (
+		key: string,
+		ctx: JsonCheckerContext,
+	) => CheckerProperty | undefined,
 	options?: ObjectCheckerOptions,
 ): JsonChecker
 export function object(
 	keys: JsonChecker,
-	values: (key: string, ctx: JsonCheckerContext) => CheckerProperty | undefined,
+	values: (
+		key: string,
+		ctx: JsonCheckerContext,
+	) => CheckerProperty | undefined,
 	options?: ObjectCheckerOptions,
 ): JsonChecker
 export function object(
@@ -63,22 +69,28 @@ export function object(
 		if (!ctx.depth || ctx.depth <= 0) {
 			if (Array.isArray(keys) && values) {
 				const fields = keys
-					.map<[string, CheckerProperty]>((key) => [key, values(key, ctx)!])
+					.map<[string, CheckerProperty]>((
+						key,
+					) => [key, values(key, ctx)!])
 					.filter(([_, v]) => v !== undefined)
-				;(node.expectation![0] as JsonObjectExpectation).fields = fields.map(
-					([key, prop]) => {
-						return {
-							key,
-							value: expectation(isComplex(prop) ? prop.checker : prop, ctx),
-							...(isComplex(prop) && (prop.opt || prop.deprecated)
-								? { opt: true }
-								: {}),
-							...(isComplex(prop) && prop.deprecated
-								? { deprecated: true }
-								: {}),
-						}
-					},
-				)
+				;(node.expectation![0] as JsonObjectExpectation).fields = fields
+					.map(
+						([key, prop]) => {
+							return {
+								key,
+								value: expectation(
+									isComplex(prop) ? prop.checker : prop,
+									ctx,
+								),
+								...(isComplex(prop) && (prop.opt || prop.deprecated)
+									? { opt: true }
+									: {}),
+								...(isComplex(prop) && prop.deprecated
+									? { deprecated: true }
+									: {}),
+							}
+						},
+					)
 			} else if (typeof keys === 'function' && values) {
 				;(node.expectation![0] as JsonObjectExpectation).keys = expectation(
 					keys,
@@ -93,7 +105,9 @@ export function object(
 			const givenKeys = node.children.map((n) => n.key?.value)
 			keys.forEach((k) => {
 				const value = values(k, ctx)
-				if (!value || (isComplex(value) && (value.opt || value.deprecated))) {
+				if (
+					!value || (isComplex(value) && (value.opt || value.deprecated))
+				) {
 					return
 				}
 				if (!givenKeys.includes(k)) {
@@ -111,7 +125,10 @@ export function object(
 					if (!value || !keys.includes(key)) {
 						if (!options.allowUnknownProperties) {
 							ctx.err.report(
-								localize('json.checker.property.unknown', localeQuote(key)),
+								localize(
+									'json.checker.property.unknown',
+									localeQuote(key),
+								),
 								prop.key!,
 								ErrorSeverity.Warning,
 							)
@@ -120,20 +137,21 @@ export function object(
 					}
 					if (isComplex(value) && value.deprecated) {
 						ctx.err.report(
-							localize('json.checker.property.deprecated', localeQuote(key)),
+							localize(
+								'json.checker.property.deprecated',
+								localeQuote(key),
+							),
 							prop.key!,
 							ErrorSeverity.Hint,
 							{ deprecated: true },
 						)
 					}
-					const context =
-						ctx.context +
+					const context = ctx.context +
 						(isComplex(value) && value.context ? `.${value.context}` : '')
 					const doc = localize(`json.doc.${context}`)
-					const propNode: JsonNode =
-						prop.value !== undefined
-							? prop.value
-							: { type: 'json:null', range: Range.create(0) }
+					const propNode: JsonNode = prop.value !== undefined
+						? prop.value
+						: { type: 'json:null', range: Range.create(0) }
 					const checker = isComplex(value) ? value.checker : value
 					try {
 						checker(propNode, { ...ctx, context: `${context}.${key}` })
@@ -148,13 +166,14 @@ export function object(
 					const typedoc = propNode.expectation
 						?.map((e) => e.typedoc)
 						.join(' | ')
-					prop.key!.hover = `\`\`\`typescript\n${context}.${key}: ${typedoc}\n\`\`\`${
-						doc || defaultValue !== undefined ? '\n******\n ' : ''
-					}${doc}${
-						defaultValue !== undefined
-							? `\n\`@default\` ${JSON.stringify(defaultValue)}`
-							: ''
-					}`
+					prop.key!.hover =
+						`\`\`\`typescript\n${context}.${key}: ${typedoc}\n\`\`\`${
+							doc || defaultValue !== undefined ? '\n******\n ' : ''
+						}${doc}${
+							defaultValue !== undefined
+								? `\n\`@default\` ${JSON.stringify(defaultValue)}`
+								: ''
+						}`
 				})
 		} else if (typeof keys === 'function' && values) {
 			node.children
@@ -217,9 +236,9 @@ export function dispatch(
 	arg1:
 		| string
 		| ((
-				children: PairNode<JsonStringNode, JsonNode>[],
-				ctx: JsonCheckerContext,
-		  ) => JsonChecker),
+			children: PairNode<JsonStringNode, JsonNode>[],
+			ctx: JsonCheckerContext,
+		) => JsonChecker),
 	arg2?: (
 		value: string | undefined,
 		children: PairNode<JsonStringNode, JsonNode>[],
@@ -234,10 +253,9 @@ export function dispatch(
 				(p) => p.key?.value === arg1,
 			)
 			const dispatcher = node.children[dispatcherIndex]
-			const value =
-				dispatcher?.value?.type === 'json:string'
-					? dispatcher.value.value
-					: undefined
+			const value = dispatcher?.value?.type === 'json:string'
+				? dispatcher.value.value
+				: undefined
 			arg2(value, node.children, ctx)(node, ctx)
 		} else {
 			;(arg1 as Function)(node.children, ctx)(node, ctx)
@@ -301,7 +319,8 @@ export function extractNested(
 	if (wrapper?.value?.type !== 'json:object') return undefined
 	const node = wrapper.children?.find(
 		(p) =>
-			(p as unknown as PairNode<JsonStringNode, JsonNode>).key?.value === value,
+			(p as unknown as PairNode<JsonStringNode, JsonNode>).key?.value ===
+				value,
 	)
 	return node?.type === 'json:string' ? node.value : undefined
 }
@@ -312,9 +331,10 @@ export function extractStringArray(
 ): readonly string[] | undefined {
 	const node = children?.find((p) => p.key?.value === value)
 	return node?.value?.type === 'json:array' &&
-		node.value.children?.every(
-			(n): n is ItemNode<JsonStringNode> => n.value?.type === 'json:string',
-		)
+			node.value.children?.every(
+				(n): n is ItemNode<JsonStringNode> =>
+					n.value?.type === 'json:string',
+			)
 		? node.value.children.map((n) => n.value!.value)
 		: undefined
 }
