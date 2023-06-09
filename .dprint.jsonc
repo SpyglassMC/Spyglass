@@ -1,0 +1,19 @@
+{
+  "lineWidth": 80,
+  "newLineKind": "lf",
+  "useTabs": true,
+  "typescript": {
+    "preferSingleLine": true,
+    "quoteStyle": "preferSingle",
+    "semiColons": "asi"
+  },
+  "includes": [
+    "packages/*/{src,test}/**/*.{ts,cts,mts}"
+  ],
+  "excludes": [
+    "**/node_modules"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.85.0.wasm"
+  ]
+}

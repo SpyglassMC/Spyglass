@@ -7,7 +7,7 @@
 		"editor.codeActionsOnSave": {
 			"source.fixAll.eslint": true,
 		},
-		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.defaultFormatter": "dprint.dprint",
 		"editor.formatOnSave": true,
 	},
 }

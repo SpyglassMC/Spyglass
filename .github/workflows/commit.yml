@@ -28,8 +28,8 @@ jobs:
 
       - run: npm run lint
 
-  prettier:
-    name: Prettier
+  fmt-check:
+    name: Format Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +39,7 @@ jobs:
           cache: "npm"
       - run: npm ci --legacy-peer-deps
 
-      - run: npm run prettier
+      - run: npm run fmt:check
 
   test:
     name: Test
@@ -67,7 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - lint
-      - prettier
+      - fmt-check
       - test
     steps:
       - uses: actions/checkout@v3

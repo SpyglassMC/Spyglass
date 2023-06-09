@@ -2,6 +2,6 @@
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
 		"editorconfig.editorconfig",
-		"esbenp.prettier-vscode"
+		"dprint.dprint"
 	]
 }
