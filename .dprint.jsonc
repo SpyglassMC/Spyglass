@@ -4,6 +4,7 @@
   "newLineKind": "lf",
   "useTabs": true,
   "typescript": {
+    "arrowFunction.useParentheses": "force",
     "binaryExpression.operatorPosition": "sameLine",
     "quoteStyle": "preferSingle",
     "semiColons": "asi"
