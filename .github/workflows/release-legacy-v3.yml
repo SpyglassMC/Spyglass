@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: node
+          registry-url: 'https://registry.npmjs.org'
 
       - run: |
           npm ci
