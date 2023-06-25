@@ -1,21 +1,16 @@
-export type ReleaseVersion = `1.${number}`
-export namespace ReleaseVersion {
+export interface GameVersion {
 	/**
-	 * @returns
-	 * * `-1` if `a` is older than `b`.
-	 * * `0` if `a` is the same as `b`.
-	 * * `1` if `a` is newer than `b`.
+	 * ID of the version as specified in [`version_manifest.json`](https://piston-meta.mojang.com/mc/game/version_manifest.json).
+	 *
+	 * @example `1.20-rc1`
 	 */
-	export function cmp(a: ReleaseVersion, b: ReleaseVersion): number {
-		return Math.sign(Number(a.slice(2)) - Number(b.slice(2)))
-	}
-}
-
-export interface VersionInfo {
-	release: ReleaseVersion
 	id: string
+	/**
+	 * Human-readable name of the version as specified in the game client jar's `version.json` file.
+	 *
+	 * @example `1.20 Release Candidate 1`
+	 */
 	name: string
-	isLatest: boolean
 }
 
 // DOCS: Update here when format_version is changed.
@@ -43,12 +38,10 @@ export interface PackMcmeta {
 }
 export namespace PackMcmeta {
 	export function assert(data: any): asserts data is PackMcmeta {
-		const format: string | undefined = data?.pack?.pack_format?.toString()
-		if (!format) {
-			throw new Error('“pack.pack_format” undefined')
-		}
-		if (!Object.keys(PackVersionMap).includes(format)) {
-			throw new Error(`Unknown pack_format “${format}”`)
+		const format: unknown = data?.pack?.pack_format
+		// eslint-disable-next-line no-restricted-syntax
+		if (!(typeof format === 'number' && Number.isInteger(format))) {
+			throw new Error('Expected pack.pack_format to be an integer ')
 		}
 	}
 }

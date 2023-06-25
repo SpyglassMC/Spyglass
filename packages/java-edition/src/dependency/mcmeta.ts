@@ -1,6 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
-import { PackVersionMap } from './common.js'
+import type { PackMcmeta, GameVersion } from './common.js'
 
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
@@ -14,8 +13,11 @@ export function resolveConfiguredVersion(
 		packMcmeta: PackMcmeta | undefined
 		versions: McmetaVersions
 	},
-): VersionInfo {
-	function toVersionInfo(index: number): VersionInfo {
+): GameVersion {
+	function findVersion(
+		predicate?: (v: McmetaVersion) => boolean,
+	): GameVersion {
+		let index = predicate ? versions.findIndex(predicate) : 0
 		if (index < 0) {
 			index = 0
 		}
@@ -23,8 +25,6 @@ export function resolveConfiguredVersion(
 		return {
 			id: version.id,
 			name: version.name,
-			release: (version.release_target ?? '1.99') as ReleaseVersion, // FIXME: figure out how to get the release target for newer versions
-			isLatest: index === 0,
 		}
 	}
 
@@ -36,25 +36,20 @@ export function resolveConfiguredVersion(
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	if (inputVersion === 'auto') {
 		if (packMcmeta) {
-			const regex = PackVersionMap[packMcmeta.pack.pack_format]
-			if (regex) {
-				return toVersionInfo(
-					versions.findIndex((v) => regex.test(v.release_target)),
-				)
-			}
+			return findVersion(
+				(v) => v.data_pack_version === packMcmeta.pack.pack_format,
+			)
 		}
-		return toVersionInfo(0)
+		return findVersion()
 	} else if (inputVersion === 'latest release') {
-		return toVersionInfo(versions.findIndex((v) => v.type === 'release'))
+		return findVersion((v) => v.type === 'release')
 	} else if (inputVersion === 'latest snapshot') {
-		return toVersionInfo(versions.findIndex((v) => v.type === 'snapshot'))
+		return findVersion((v) => v.type === 'snapshot')
 	}
-	return toVersionInfo(
-		versions.findIndex(
-			(v) =>
-				inputVersion === v.id.toLowerCase() ||
-				inputVersion === v.name.toLowerCase(),
-		),
+	return findVersion(
+		(v) =>
+			inputVersion === v.id.toLowerCase() ||
+			inputVersion === v.name.toLowerCase(),
 	)
 }
 

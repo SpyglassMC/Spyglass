@@ -87,8 +87,11 @@ const key: PartParser = (children, src, ctx) => {
 	const node = core.string({
 		colorTokenType: 'property',
 		escapable: {},
-		// No single quotes: https://bugs.mojang.com/browse/MC-175504
-		quotes: ['"'],
+		// Single quotes are supported after 1.20 Pre-release 2
+		// https://bugs.mojang.com/browse/MC-175504
+		// FIXME: only allow single quote when version is older that 1.20-pre2
+		// using the GameVersionComparator
+		quotes: ['"', "'"],
 		unquotable: {
 			blockList: new Set([
 				'\n',

@@ -1,5 +1,6 @@
 export * from './Dev.js'
 export * from './externals/index.js'
+export * from './GameVersion.js'
 export * from './Logger.js'
 export * from './Operations.js'
 export * from './ReadonlyProxy.js'

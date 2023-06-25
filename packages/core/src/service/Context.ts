@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import type { TextDocument } from 'vscode-languageserver-textdocument'
-import type { Logger } from '../common/index.js'
+import type { Logger, GameVersionComparator } from '../common/index.js'
 import { formatterContextIndentation } from '../processor/index.js'
 import type { Range } from '../source/index.js'
 import { ReadonlySource } from '../source/index.js'
