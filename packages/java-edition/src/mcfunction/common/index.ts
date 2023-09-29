@@ -4,6 +4,8 @@ export const ColorArgumentValues = [...core.Color.ColorNames, 'reset']
 
 export const EntityAnchorArgumentValues = ['feet', 'eyes']
 
+export const GamemodeArgumentValues = ['adventure', 'survival', 'creative', 'spectator']
+
 export const ItemSlotArgumentValues = [
 	...[...Array(54).keys()].map((n) => `container.${n}`),
 	...[...Array(27).keys()].map((n) => `enderchest.${n}`),
