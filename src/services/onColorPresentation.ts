@@ -20,6 +20,8 @@ export function onColorPresentation({ textDoc, start, end, r, g, b }: { textDoc:
                 return hex.length === 1 ? `0${hex}` : hex
             }
             ans.push({ label: `#${toHex(r)}${toHex(g)}${toHex(b)}` })
+        } else if (string.startsWith('$')) {
+            ans.push({ label: `${round(r, 3)} ${round(g, 3)} ${round(b, 3)}` })
         } else {
             ans.push({ label: `${(Math.round(r * 255) << 16) + (Math.round(g * 255) << 8) + Math.round(b * 255)}` })
         }
