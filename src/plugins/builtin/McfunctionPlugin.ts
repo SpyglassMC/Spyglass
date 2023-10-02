@@ -32,19 +32,7 @@ export class CommandSyntaxComponentParser implements plugins.SyntaxComponentPars
     }
 
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<CommandComponentData> {
-        const start = reader.cursor
-        const end = ctx.textDoc.offsetAt(Position.create(ctx.textDoc.positionAt(start).line, Infinity))
-        const commandReader = new StringReader(reader.string, start, end)
-        commandReader.skipSpace()
-        while (true) {
-            const lastChar = commandReader.string.charAt(commandReader.end - 1)
-            if (StringReader.isLineSeparator(lastChar) && commandReader.end > start) {
-                commandReader.end--
-            } else {
-                break
-            }
-        }
-
+        const commandReader = prepareLineReader(reader, ctx)
         const parser = new CommandParser()
         const { data } = parser.parse(commandReader, ctx)
         reader.cursor = commandReader.cursor
@@ -60,30 +48,29 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
     }
 
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<MacroData> {
+        const macroReader = prepareLineReader(reader, ctx)
         const ans = plugins.SyntaxComponent.create<MacroData>(this.identity, MacroData.unfinished())
-        ans.range.start = reader.cursor
-        
-        const currentLine = ctx.textDoc.positionAt(reader.cursor).line
+        ans.range.start = macroReader.cursor
         let hasVariables = false
 
         try {
-            reader
+            macroReader
                 .expect('$')
                 .skip()
 
-            while (reader.canRead() && ctx.textDoc.positionAt(reader.cursor).line == currentLine) {
-                const char = reader.read()
+            while (macroReader.canRead()) {
+                const char = macroReader.read()
 
                 if (char == '$') {
-                    if (reader.peek() == '(') {
-                        reader.cursor--
+                    if (macroReader.peek() == '(') {
+                        macroReader.cursor--
                         hasVariables = true // even if the variable fails parsing, consider it to be there
-                        this.parseMacroVariable(ans, reader, ctx)
+                        this.parseMacroVariable(ans, macroReader, ctx)
                     }
                 }
             }
 
-            ans.range.end = reader.cursor
+            ans.range.end = macroReader.cursor
         }
         catch (p) {
             ans.errors.push(p)
@@ -154,4 +141,23 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
             ans.completions.push(completion)
         }
     }
+}
+
+function prepareLineReader(reader: StringReader, ctx: ParsingContext): StringReader {
+    const start = reader.cursor
+    const end = ctx.textDoc.offsetAt(Position.create(ctx.textDoc.positionAt(start).line, Infinity))
+    const lineReader = new StringReader(reader.string, start, end)
+
+    lineReader.skipSpace()
+
+    while (true) {
+        const lastChar = lineReader.string.charAt(lineReader.end - 1)
+        if (StringReader.isLineSeparator(lastChar) && lineReader.end > start) {
+            lineReader.end--
+        } else {
+            break
+        }
+    }
+
+    return lineReader
 }
