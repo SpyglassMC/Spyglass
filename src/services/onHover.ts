@@ -10,6 +10,11 @@ export function onHover({ com, ctx }: { com: SyntaxComponent, ctx: ParsingContex
             return docCom.data.doc[GetHover](ctx)
         }
     }
+
+    if (com.type === 'spgoding:mcfunction/macro') {
+        return null
+    }
+    
     const cmdCom = com as CommandComponent
     for (const { data } of cmdCom.data) {
         if (data instanceof ArgumentNode) {
