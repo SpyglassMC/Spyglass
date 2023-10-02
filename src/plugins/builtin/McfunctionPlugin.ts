@@ -64,6 +64,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
         ans.range.start = reader.cursor
         
         const currentLine = ctx.textDoc.positionAt(reader.cursor).line
+        let hasVariables = false
 
         try {
             reader
@@ -76,6 +77,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
                 if (char == '$') {
                     if (reader.peek() == '(') {
                         reader.cursor--
+                        hasVariables = true // even if the variable fails parsing, consider it to be there
                         this.parseMacroVariable(ans, reader, ctx)
                     }
                 }
@@ -87,6 +89,14 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
             ans.errors.push(p)
         }
 
+        if (!hasVariables) {
+            ans.errors.push(new ParsingError(
+                { start: ans.range.start, end: ans.range.end },
+                'Must have at least one macro variable',
+                false
+            ))
+        }
+        
         ans.data.template = reader.string.substring(ans.range.start, ans.range.end)
 
         return ans
