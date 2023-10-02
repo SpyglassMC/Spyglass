@@ -1,7 +1,7 @@
-import { Position } from 'vscode-languageserver/node'
+import { CompletionItemKind, Position } from 'vscode-languageserver/node'
 import { plugins } from '../..'
 import { CommandParser } from '../../parsers/CommandParser'
-import { CommandComponentData, MacroData, ParsingContext, ParsingError } from '../../types'
+import { CommandComponentData, MacroData, ParserSuggestion, ParsingContext, ParsingError } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 
 export class McfunctionPlugin implements plugins.Plugin {
@@ -102,6 +102,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
 
             const start = reader.cursor
             let end = reader.cursor
+            this.getMacroCompletions(ans, reader.cursor)
 
             while (reader.canRead() && reader.peek() != ')') {
                 const char = reader.peek()
@@ -128,6 +129,19 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
         }
         catch (p) {
             ans.errors.push(p)
+        }
+    }
+
+    getMacroCompletions(ans: plugins.SyntaxComponent<MacroData>, cursor: number) {
+        for (const placeholder of ans.data.placeholders) {
+            const completion: ParserSuggestion = {
+                start: cursor,
+                end: cursor,
+                label: placeholder,
+                kind: CompletionItemKind.Variable
+            }
+
+            ans.completions.push(completion)
         }
     }
 }
