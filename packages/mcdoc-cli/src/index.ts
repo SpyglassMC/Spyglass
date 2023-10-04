@@ -122,6 +122,10 @@ await CLI.scriptName('mcdoc')
 
 			if (args.dry !== true) {
 				await fs.ensureDir(out)
+
+				if (args.module) {
+					await fs.ensureDir(join(out, 'module'))
+				}
 			}
 
 			const symbols = []
