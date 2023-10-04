@@ -202,13 +202,13 @@ await CLI.scriptName('mcdoc')
 
 								child.type = _child.type
 
-								/* @ts-ignore */
 								if (Object.hasOwn(_child, 'isOptional')) {
+									/* @ts-ignore */
 									child.isOptional = _child.isOptional
 								}
 
-								/* @ts-ignore */
 								if (Object.hasOwn(_child, 'colorTokenType')) {
+									/* @ts-ignore */
 									child.colorTokenType = _child.colorTokenType
 								}
 
