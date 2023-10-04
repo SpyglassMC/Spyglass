@@ -3,6 +3,7 @@ import { dirname, join, resolve, parse } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 
 import fs from 'fs-extra'
+import lineColumn from 'line-column'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 import walk from 'klaw'
@@ -113,12 +114,16 @@ await CLI.scriptName('mcdoc')
 			const internal_locales: Record<string, string[]> = {};
 
 			const locales: Record<string, string> = {};
+
+			let errors = 0;
 			
 			for await (const doc_file of walk(projectPath)) {
 				if (doc_file.path.endsWith('.mcdoc')) {
 					const DocumentUri = pathToFileURL(doc_file.path).toString();
 
-					await service.project.onDidOpen(DocumentUri, 'mcdoc', 0, await fs.readFile(doc_file.path, 'utf-8'));
+					const doc_contents = await fs.readFile(doc_file.path, 'utf-8');
+
+					await service.project.onDidOpen(DocumentUri, 'mcdoc', 0, doc_contents);
 
 					const check = await service.project.ensureClientManagedChecked(DocumentUri);
 
@@ -134,8 +139,11 @@ await CLI.scriptName('mcdoc')
 						if (node.children[0]) {
 							const children = node.children
 
-							function flattenChild (parent: string, self: string, _child: Partial<AstNode>) {
+							function flattenChild (parent: string, self: string, _parent: Partial<AstNode> | undefined, _child: Partial<AstNode>) {
 								const child: any = {};
+
+								let known_error = false;
+
 								/* @ts-ignore */
 								child.self = self;
 
@@ -150,7 +158,7 @@ await CLI.scriptName('mcdoc')
 									child.children = [];
 									for (const [i, __child] of Object.entries(_child.children)) {
 										/* @ts-ignore */
-										child.children[Number(i)] = flattenChild(self, `${self}[${i}]`, __child)
+										child.children[Number(i)] = flattenChild(self, `${self}[${i}]`, _child, __child)
 									}
 								}
 
@@ -174,17 +182,27 @@ await CLI.scriptName('mcdoc')
 									}
 								}
 
+								if (child.type === 'mcdoc:struct/map_key' && internal_locales[parent]) {
+									locales[`mcdoc.${resource.replace(/\//g, '.')}.map_key`] = internal_locales[parent].join('\n');
+
+									delete internal_locales[parent];
+								}
+
 								if (Object.hasOwn(_child, 'comment')) {
 									/* @ts-ignore */
 									const comment: string = _child.comment.trim();
 									child.comment = comment;
 
-									if (!args.dry && args.locale && !comment.includes('TODO')) {
+									if (!args.dry && args.locale && _parent?.type === 'mcdoc:doc_comments') {
 										const key = parent.replace(/\[\d+\]$/, '');
 
 										if (!internal_locales.key) internal_locales[key] = [];
 
 										internal_locales[key].push(comment);
+									} else if (comment.startsWith('/ ')) {
+										child.type = 'error';
+										console.warn(`known error: orphaned dispatch comment`);
+										known_error = true;
 									}
 								}
 
@@ -192,16 +210,47 @@ await CLI.scriptName('mcdoc')
 
 								if (_child.color) child.color = _child.color;
 
-								if (_child.type !== 'error') return child;
+								if (child.type !== 'error') return child;
 								else {
-									console.warn(`parsing error @ ${self} ${_child.range?.start}-${_child.range?.end}\n`);
+									errors++;
+
+									const lc = lineColumn(doc_contents)
+
+									function range(range: {start: number, end: number}) {
+										const start = lc.fromIndex(range.start);
+										const end = lc.fromIndex(range.end);
+
+										return `L${start?.line}${start?.col ? `:C${start?.col}` : ''} -> L${end?.line}${end?.col ? `:C${end?.col}` : ''}`;
+									}
+
+									if (!known_error) {
+										console.warn(`mcdoc error(s):`);
+										/* @ts-ignore */
+										if (_child.parent?.parserErrors.length !== 0) {
+											console.warn('	parser:')
+											/* @ts-ignore */
+											_child.parent?.parserErrors.forEach(error => {
+												console.warn(`		${error.message}\n		Location: ${range(error.range)}. Severity ${error.severity}.`)
+											})
+										}
+
+										/* @ts-ignore */
+										if (_child.parent?.binderErrors.length !== 0) {
+											console.warn('	binder:')
+											/* @ts-ignore */
+											_child.parent?.binderErrors.forEach(error => {
+												console.warn(`		${error.message}\n		Location: ${range(error.range)}. Severity ${error.severity}.`)
+											})
+										}
+									}
+									console.warn(`error @ ${doc_file.path}\n\n`);
 									return false;
 								}
 							}
 
 							children.forEach((child, i) => {
 								/* @ts-ignore */
-								children[i] = flattenChild(resource, `${resource}.[${i}]`, child);
+								children[i] = flattenChild(resource, `${resource}.[${i}]`, undefined, child);
 							})
 
 							const symbol = {
@@ -220,7 +269,7 @@ await CLI.scriptName('mcdoc')
 								await fs.writeFile(join(out, 'module', `${resource}.mcdoc.json`), JSON.stringify(symbol));
 
 								if (args.pretty) {
-									await fs.writeFile(join(out, 'module', `${resource}.pretty.mcdoc.json`), JSON.stringify(symbol, null, 3));
+									await fs.writeFile(join(out, 'module', `${resource}.pretty.mcdoc.json`), JSON.stringify(symbol, undefined, 3));
 								}
 							}
 						}
@@ -232,7 +281,7 @@ await CLI.scriptName('mcdoc')
 				await fs.writeFile(join(out, 'generated.mcdoc.json'), JSON.stringify(symbols));
 
 				if (args.pretty) {
-					await fs.writeFile(join(out, 'generated.pretty.mcdoc.json'), JSON.stringify(symbols, null, 3));
+					await fs.writeFile(join(out, 'generated.pretty.mcdoc.json'), JSON.stringify(symbols, undefined, 3));
 				}
 
 				if (args.module) {
@@ -243,13 +292,15 @@ await CLI.scriptName('mcdoc')
 					const orphaned_doc = Object.keys(internal_locales);
 					if (orphaned_doc.length !== 0) {
 						console.warn(`parsing error, ${orphaned_doc.length} orphaned doc comments or incorrectly parsed markup comments`);
-						console.warn(orphaned_doc);
+						console.warn(internal_locales);
 					}
-					await fs.writeFile(join(out, 'locale.en-us.json'), JSON.stringify(locales, null, 3))
+					await fs.writeFile(join(out, 'locale.en-us.json'), JSON.stringify(locales, undefined, 3))
 				}
-
-				await service.project.close()
 			}
+
+			console.log(`Generated JSON files with ${errors} errors.`)
+
+			await service.project.close()
 		}
 	)
 	.strict()
