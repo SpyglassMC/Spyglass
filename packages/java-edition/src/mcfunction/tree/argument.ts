@@ -102,6 +102,9 @@ export interface MinecraftFunctionArgumentTreeNode
 {
 	parser: 'minecraft:function'
 }
+export interface MinecraftGamemodeArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:gamemode'
+}
 export interface MinecraftGameProfileArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -255,6 +258,7 @@ export type ArgumentTreeNode =
 	| MinecraftEntitySummonArgumentTreeNode
 	| MinecraftFloatRangeArgumentTreeNode
 	| MinecraftFunctionArgumentTreeNode
+	| MinecraftGamemodeArgumentTreeNode
 	| MinecraftGameProfileArgumentTreeNode
 	| MinecraftIntRangeArgumentTreeNode
 	| MinecraftItemEnchantmentArgumentTreeNode
