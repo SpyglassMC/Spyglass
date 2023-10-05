@@ -40,6 +40,7 @@
         "@mcschema/java-1.19.3": "^0.0.8",
         "@mcschema/java-1.19.4": "^0.1.11",
         "@mcschema/java-1.20": "^0.0.12",
+        "@mcschema/java-1.20.2": "^0.0.3",
         "@mcschema/locales": "^0.1.87",
         "appdata-path": "^1.0.0",
         "clone": "^2.1.2",

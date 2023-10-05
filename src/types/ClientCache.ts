@@ -94,7 +94,8 @@ export const MiscTypes = [
     'score_holder',
     'storage',
     'tag',
-    'team'
+    'team',
+    'sequence'
 ] as const
 export const DeclarableTypes = [
     ...FileTypes,
