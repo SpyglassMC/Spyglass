@@ -1229,7 +1229,39 @@ export const CommandTree: ICommandTree = {
             children: {
                 id: {
                     parser: new IdentityArgumentParser('$function', true),
-                    executable: true
+                    executable: true,
+                    children: {
+                        with: {
+                            parser: new LiteralArgumentParser('with'),
+                            children: {
+                                arguments: {
+                                    template: 'nbt_holder',
+                                    executable: true,
+                                    children: {
+                                        path: {
+                                            parser: ({ data }) => {
+                                                const type = getArgOrDefault(data, 2, 'block') as 'block' | 'entity' | 'storage'
+                                                if (type === 'entity') {
+                                                    const entity = getArgOrDefault<EntityNode>(data, 1, new EntityNode())
+                                                    const id = getNbtdocRegistryId(entity)
+                                                    return new NbtPathArgumentParser('minecraft:entity', id)
+                                                } else if (type === 'block') {
+                                                    return new NbtPathArgumentParser('minecraft:block', null)
+                                                } else {
+                                                    return new NbtPathArgumentParser('minecraft:block')
+                                                }
+                                            },
+                                            executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        arguments: {
+                            parser: new NbtArgumentParser('Compound', undefined),
+                            executable: true
+                        }
+                    }
                 }
             }
         },
