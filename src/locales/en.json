@@ -123,6 +123,7 @@
     "nbtdoc.type.Or": "Or",
     "nbtdoc.type.Short": "short",
     "nbtdoc.type.String": "string",
+    "no-macro-variables": "Must have at least one macro variable",
     "no-permission": "Permission level %0% is required, which is higher than %1% defined in config",
     "not-matching-any-child": "Invalid argument type",
     "nothing": "nothing",
