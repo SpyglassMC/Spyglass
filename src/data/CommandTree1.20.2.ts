@@ -1,7 +1,7 @@
 import { DiagnosticSeverity } from 'vscode-languageserver/node'
 import { getArgData, getArgOrDefault } from '../CommandTree'
 import { locale } from '../locales'
-import { ArgumentNode, NodeRange, VectorNode } from '../nodes'
+import { NodeRange, VectorNode } from '../nodes'
 import { EntityNode } from '../nodes/EntityNode'
 import { IdentityNode } from '../nodes/IdentityNode'
 import { StringNode } from '../nodes/StringNode'
