@@ -51,7 +51,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
             'Compound', 'List', 'ByteArray', 'IntArray', 'LongArray',
             'Byte', 'Short', 'Int', 'Long', 'String', 'Float', 'Double'
         ],
-        private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item',
+        private readonly category: 'minecraft:block' | 'minecraft:entity' | 'minecraft:item' | undefined,
         /**
          * `null`: Use compiled fallback for the registry.
          * `undefined`: No validations from registry.
@@ -159,7 +159,7 @@ export class NbtArgumentParser extends ArgumentParser<NbtNode> {
         let index: nbtdoc.Index<nbtdoc.CompoundTag> | null = null
         if (typeof this.id === 'number') {
             index = this.id
-        } else if (this.id !== undefined) {
+        } else if (this.id !== undefined && this.category !== undefined) {
             const registryDoc = helper.resolveRegistryCompound(this.category, this.id)
             index = registryDoc ? registryDoc.Compound : null
         }
