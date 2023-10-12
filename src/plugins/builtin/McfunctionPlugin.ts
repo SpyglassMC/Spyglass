@@ -1,8 +1,9 @@
-import { CompletionItemKind, Position } from 'vscode-languageserver/node'
+import { CompletionItemKind, DiagnosticSeverity, Position } from 'vscode-languageserver/node'
 import { plugins } from '../..'
 import { CommandParser } from '../../parsers/CommandParser'
 import { CommandComponentData, MacroData, ParserSuggestion, ParsingContext, ParsingError } from '../../types'
 import { StringReader } from '../../utils/StringReader'
+import { locale } from '../../locales'
 
 export class McfunctionPlugin implements plugins.Plugin {
     [plugins.PluginID] = 'spgoding:mcfunction'
@@ -79,8 +80,8 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
         if (!hasVariables) {
             ans.errors.push(new ParsingError(
                 { start: ans.range.start, end: ans.range.end },
-                'Must have at least one macro variable',
-                false
+                locale('no-macro-variables'),
+                undefined, DiagnosticSeverity.Error,
             ))
         }
         
