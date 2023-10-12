@@ -11,7 +11,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
         it('Should return examples', () => {
             const parser = new ScoreboardSlotArgumentParser()
             const actual = parser.getExamples()
-            assert.deepStrictEqual(actual, ['belowName', 'sidebar.team.red'])
+            assert.deepStrictEqual(actual, ['list', 'sidebar.team.red'])
         })
     })
 
@@ -22,8 +22,8 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
     describe('parse() Tests', () => {
         it('Should return data for normal literal slots', () => {
             const parser = new ScoreboardSlotArgumentParser()
-            const actual = parser.parse(new StringReader('belowName'), ctx)
-            assert(actual.data === 'belowName')
+            const actual = parser.parse(new StringReader('below_name'), ctx)
+            assert(actual.data === 'below_name')
             assert.deepStrictEqual(actual.errors, [])
         })
         it('Should return data for team sidebars', () => {
@@ -39,7 +39,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.data, '')
             assertCompletions('', actual.completions,
                 [
-                    { label: 'belowName', t: 'belowName' },
+                    { label: 'below_name', t: 'below_name' },
                     { label: 'list', t: 'list' },
                     { label: 'sidebar', t: 'sidebar' }
                 ]
@@ -79,7 +79,7 @@ describe('ScoreboardSlotArgumentParser Tests', () => {
             assert.deepStrictEqual(actual.errors, [
                 new ParsingError(
                     { start: 0, end: 3 },
-                    'Expected “belowName”, “list”, or “sidebar” but got “foo”'
+                    'Expected “below_name”, “list”, or “sidebar” but got “foo”'
                 )
             ])
         })

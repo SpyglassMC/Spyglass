@@ -1,5 +1,6 @@
+import { CommandTreeVersion, isBefore1202 } from './CommandTreeVersion'
+
 export namespace scoreboard {
-    export const SlotCategory = ['belowName', 'list', 'sidebar']
     export const SlotColors = ['black', 'dark_blue', 'dark_green', 'dark_aqua', 'dark_red', 'dark_purple', 'gold', 'gray', 'dark_gray', 'blue', 'green', 'aqua', 'red', 'light_purple', 'yellow', 'white']
     export const SlotSep = '.'
 
@@ -32,4 +33,8 @@ export namespace scoreboard {
     }
     export const CriteriaRegularSep = '.'
     export const CriteriaStatsSep = ':'
+
+    export function getSlotCategories(version: CommandTreeVersion) {
+        return isBefore1202(version) ? ['belowName', 'list', 'sidebar'] : ['below_name', 'list', 'sidebar']
+    }
 }
