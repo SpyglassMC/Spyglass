@@ -20,8 +20,8 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
         const ans = ArgumentParserResult.create('')
 
         const start = reader.cursor
-        const categoryResult = new ctx.parsers.Literal(...scoreboard.SlotCategory).parse(reader, ctx)
-        const category = categoryResult.data as 'list' | 'sidebar' | 'belowName' | ''
+        const categoryResult = new ctx.parsers.Literal(...scoreboard.getSlotCategories(ctx.config.env.cmdVersion)).parse(reader, ctx)
+        const category = categoryResult.data
         categoryResult.tokens = [Token.from(start, reader, TokenType.type)]
         combineArgumentParserResult(ans, categoryResult)
 
@@ -51,6 +51,6 @@ export class ScoreboardSlotArgumentParser extends ArgumentParser<string> {
     }
 
     getExamples(): string[] {
-        return ['belowName', 'sidebar.team.red']
+        return ['list', 'sidebar.team.red']
     }
 }
