@@ -29,7 +29,7 @@ export class CommandSyntaxComponentParser implements plugins.SyntaxComponentPars
     identity = 'spgoding:mcfunction/command'
 
     test(reader: StringReader, ctx: ParsingContext): [boolean, number] {
-        return [reader.peek() !== '$', 0]
+        return [reader.skipSpace().peek() !== '$', 0]
     }
 
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<CommandComponentData> {
@@ -45,7 +45,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
     identity = 'spgoding:mcfunction/macro'
 
     test(reader: StringReader, ctx: ParsingContext): [boolean, number] {
-        return [reader.peek() === '$', 0]
+        return [reader.skipSpace().peek() === '$', 0]
     }
 
     parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<MacroData> {
@@ -84,7 +84,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
                 undefined, DiagnosticSeverity.Error,
             ))
         }
-        
+
         ans.data.template = reader.string.substring(ans.range.start, ans.range.end)
 
         return ans
