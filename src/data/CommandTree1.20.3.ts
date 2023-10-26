@@ -2583,7 +2583,7 @@ export const CommandTree: ICommandTree = {
                 }
             }
         },
-		tick: {
+        tick: {
             parser: new LiteralArgumentParser('tick'),
             children: {
                 [Switchable]: true,
