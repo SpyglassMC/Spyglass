@@ -2630,7 +2630,8 @@ export const CommandTree: ICommandTree = {
                             parser: new TimeArgumentParser(),
                             executable: true
                         }
-                    }
+                    },
+                    executable: true
                 },
                 unfreeze: {
                     parser: new LiteralArgumentParser('unfreeze'),
