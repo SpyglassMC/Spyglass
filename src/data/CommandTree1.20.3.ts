@@ -1284,7 +1284,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'blockExplosionDropDecay', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doImmediateRespawn', 'doInsomnia', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doPatrolSpawning', 'doTileDrops', 'doTraderSpawning', 'doVinesSpread', 'doWardenSpawning', 'doWeatherCycle', 'drowningDamage', 'enderPearlsVanishOnDeath', 'fallDamage', 'fireDamage', 'forgiveDeadPlayers', 'freezeDamage', 'globalSoundEvents', 'keepInventory', 'lavaSourceConversion', 'logAdminCommands', 'mobExplosionDropDecay', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'tntExplosionDropDecay', 'universalAnger', 'waterSourceConversion'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'blockExplosionDropDecay', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doImmediateRespawn', 'doInsomnia', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doPatrolSpawning', 'doTileDrops', 'doTraderSpawning', 'doVinesSpread', 'doWardenSpawning', 'doWeatherCycle', 'drowningDamage', 'fallDamage', 'fireDamage', 'forgiveDeadPlayers', 'freezeDamage', 'globalSoundEvents', 'keepInventory', 'lavaSourceConversion', 'logAdminCommands', 'mobExplosionDropDecay', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'tntExplosionDropDecay', 'universalAnger', 'waterSourceConversion'),
                     executable: true,
                     children: {
                         value: {
@@ -2580,6 +2580,62 @@ export const CommandTree: ICommandTree = {
                             executable: true
                         }
                     }
+                }
+            }
+        },
+        tick: {
+            parser: new LiteralArgumentParser('tick'),
+            children: {
+                [Switchable]: true,
+                freeze: {
+                    parser: new LiteralArgumentParser('freeze'),
+                    executable: true
+                },
+                query: {
+                    parser: new LiteralArgumentParser('query'),
+                    executable: true
+                },
+                rate: {
+                    parser: new LiteralArgumentParser('rate'),
+                    children: {
+                        rate: {
+                            parser: new NumberArgumentParser('float', 1, 10_000),
+                            executable: true
+                        }
+                    }
+                },
+                sprint: {
+                    parser: new LiteralArgumentParser('sprint'),
+                    children: {
+                        [Switchable]: true,
+                        stop: {
+                            parser: new LiteralArgumentParser('stop'),
+                            executable: true
+                        },
+                        time: {
+                            parser: new TimeArgumentParser(),
+                            executable: true
+                        }
+                    }
+                },
+                step: {
+                    parser: new LiteralArgumentParser('sprint'),
+                    children: {
+                        [Switchable]: true,
+                        stop: {
+                            parser: new LiteralArgumentParser('stop'),
+                            executable: true
+                        },
+                        time: {
+                            parser: new TimeArgumentParser(),
+                            executable: true
+                        }
+                    },
+                    executable: true
+                },
+                unfreeze: {
+                    parser: new LiteralArgumentParser('unfreeze'),
+                    executable: true
                 }
             }
         },
