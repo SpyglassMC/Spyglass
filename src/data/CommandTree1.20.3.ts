@@ -2607,7 +2607,6 @@ export const CommandTree: ICommandTree = {
                 sprint: {
                     parser: new LiteralArgumentParser('sprint'),
                     children: {
-                        [Switchable]: true,
                         stop: {
                             parser: new LiteralArgumentParser('stop'),
                             executable: true
@@ -2619,9 +2618,8 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 step: {
-                    parser: new LiteralArgumentParser('sprint'),
+                    parser: new LiteralArgumentParser('step'),
                     children: {
-                        [Switchable]: true,
                         stop: {
                             parser: new LiteralArgumentParser('stop'),
                             executable: true
