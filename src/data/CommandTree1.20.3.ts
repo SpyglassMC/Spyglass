@@ -2172,6 +2172,31 @@ export const CommandTree: ICommandTree = {
                                     }
                                 }
                             }
+                        },
+                        display: {
+                            parser: new LiteralArgumentParser('display'),
+                            children: {
+                                name: {
+                                    parser: new LiteralArgumentParser('name'),
+                                    children: {
+                                        targets: {
+                                            parser: new EntityArgumentParser('multiple', 'entities', true),
+                                            children: {
+                                                objective: {
+                                                    parser: new ObjectiveArgumentParser(false),
+                                                    executable: true,
+                                                    children: {
+                                                        displayName: {
+                                                            parser: new TextComponentArgumentParser(),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
