@@ -3181,6 +3181,20 @@ export const CommandTree: ICommandTree = {
                         }
                     }
                 },
+                function: {
+                    parser: new LiteralArgumentParser('function'),
+                    children: {
+                        name: {
+                            parser: new IdentityArgumentParser('$function', true),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
                 loaded: {
                     parser: new LiteralArgumentParser('loaded'),
                     children: {
