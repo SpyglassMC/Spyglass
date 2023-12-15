@@ -1877,6 +1877,14 @@ export const CommandTree: ICommandTree = {
                 value: {
                     parser: new NumberArgumentParser('integer'),
                     executable: true
+                },
+                run: {
+                    parser: new LiteralArgumentParser('run'),
+                    children: {
+                        command: {
+                            redirect: 'commands'
+                        }
+                    }
                 }
             }
         },
