@@ -1,4 +1,4 @@
-import { SyntaxComponent, TextRange } from '.'
+import { MacroComponent, SyntaxComponent, TextRange } from '.'
 import { getEol, plugins } from '..'
 import { DocCommentComponent } from '../plugins/builtin/DocCommentPlugin'
 import { toFormattedString } from '../utils'
@@ -45,6 +45,10 @@ export function componentToLintedString(com: SyntaxComponent<unknown>, lint: Lin
         const docCom = com as DocCommentComponent
         const commands = docCom.data.commands?.map(v => v.indent + componentToLintedString(v.component, lint)).join(getEol(lint))
         return toFormattedString(docCom.data.doc, lint) + (commands ? (getEol(lint) + commands) : '')
+    }
+    if (com.type === 'spgoding:mcfunction/macro') {
+        const mcrCom = com as MacroComponent
+        return mcrCom.data.template
     }
     const cmdCom = com as CommandComponent
     return cmdCom.data.map(v => toFormattedString(v.data, lint)).join(' ')
