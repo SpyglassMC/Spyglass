@@ -1885,6 +1885,10 @@ export const CommandTree: ICommandTree = {
                             redirect: 'commands'
                         }
                     }
+                },
+                fail: {
+                    parser: new LiteralArgumentParser('fail'),
+                    executable: true
                 }
             }
         },
