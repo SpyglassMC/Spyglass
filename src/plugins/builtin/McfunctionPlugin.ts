@@ -1,7 +1,7 @@
 import { CompletionItemKind, DiagnosticSeverity, Position } from 'vscode-languageserver/node'
 import { plugins } from '../..'
 import { CommandParser } from '../../parsers/CommandParser'
-import { CommandComponentData, MacroData, ParserSuggestion, ParsingContext, ParsingError } from '../../types'
+import { CommandComponentData, MacroComponent, MacroComponentData, ParserSuggestion, ParsingContext, ParsingError } from '../../types'
 import { StringReader } from '../../utils/StringReader'
 import { locale } from '../../locales'
 
@@ -41,16 +41,16 @@ export class CommandSyntaxComponentParser implements plugins.SyntaxComponentPars
     }
 }
 
-export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser<MacroData> {
+export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser<MacroComponentData> {
     identity = 'spgoding:mcfunction/macro'
 
     test(reader: StringReader, ctx: ParsingContext): [boolean, number] {
         return [reader.skipSpace().peek() === '$', 0]
     }
 
-    parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<MacroData> {
+    parse(reader: StringReader, ctx: ParsingContext): plugins.SyntaxComponent<MacroComponentData> {
         const macroReader = prepareLineReader(reader, ctx)
-        const ans = plugins.SyntaxComponent.create<MacroData>(this.identity, MacroData.unfinished())
+        const ans = plugins.SyntaxComponent.create<MacroComponentData>(this.identity, MacroComponent.unfinished())
         ans.range.start = macroReader.cursor
         let hasVariables = false
 
@@ -81,7 +81,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
             ans.errors.push(new ParsingError(
                 { start: ans.range.start, end: ans.range.end },
                 locale('no-macro-variables'),
-                undefined, DiagnosticSeverity.Error,
+                undefined, DiagnosticSeverity.Error
             ))
         }
 
@@ -90,7 +90,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
         return ans
     }
 
-    parseMacroVariable(ans: plugins.SyntaxComponent<MacroData>, reader: StringReader, ctx: ParsingContext): void {
+    parseMacroVariable(ans: plugins.SyntaxComponent<MacroComponentData>, reader: StringReader, ctx: ParsingContext): void {
         try {
             reader
                 .expect('$')
@@ -130,7 +130,7 @@ export class MacroSyntaxComponentParser implements plugins.SyntaxComponentParser
         }
     }
 
-    getMacroCompletions(ans: plugins.SyntaxComponent<MacroData>, cursor: number) {
+    getMacroCompletions(ans: plugins.SyntaxComponent<MacroComponentData>, cursor: number) {
         for (const placeholder of ans.data.placeholders) {
             const completion: ParserSuggestion = {
                 start: cursor,
