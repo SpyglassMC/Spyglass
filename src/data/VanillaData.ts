@@ -68,7 +68,12 @@ function getReportUri(type: DataType, source: DataSource, version: string, proce
         case 'NamespaceSummary':
             return getUri(source, 'misode', 'mcmeta', `${isLatestSnapshot ? 'summary' : `${version}-summary`}/registries/data.min.json`)
         case 'Nbtdoc':
-            return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${isLatestSnapshot ? 'generated' : `${version}-gen`}/build/generated.json`)
+            let ref = isLatestSnapshot ? 'generated' : `${version}-gen`
+            if (version === '1.20.4' || version == '1.20.3') {
+                // workaround until the 1.20.4-gen tag exists
+                ref = '012cf42fe60112193d3a33b7004f01a19a6d1c93'
+            }
+            return getUri(source, 'Yurihaia', 'mc-nbtdoc', `${ref}/build/generated.json`)
         case 'Registry':
         default:
             if (processedVersions.includes(version)) {
