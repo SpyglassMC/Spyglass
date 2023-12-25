@@ -37,6 +37,7 @@ import { TokenType } from '../types/Token'
 import { getNbtdocRegistryId } from '../utils'
 import { ArgumentParser } from '../parsers/ArgumentParser'
 import { StringReader } from '../utils/StringReader'
+import { StyleArgumentParser } from '../parsers/StyleArgumentParser'
 
 /* istanbul ignore next */
 export const CommandTree: ICommandTree = {
@@ -1284,7 +1285,7 @@ export const CommandTree: ICommandTree = {
             parser: new LiteralArgumentParser('gamerule'),
             children: {
                 boolRuleName: {
-                    parser: new LiteralArgumentParser('announceAdvancements', 'blockExplosionDropDecay', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doImmediateRespawn', 'doInsomnia', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doPatrolSpawning', 'doTileDrops', 'doTraderSpawning', 'doVinesSpread', 'doWardenSpawning', 'doWeatherCycle', 'drowningDamage', 'fallDamage', 'fireDamage', 'forgiveDeadPlayers', 'freezeDamage', 'globalSoundEvents', 'keepInventory', 'lavaSourceConversion', 'logAdminCommands', 'mobExplosionDropDecay', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'tntExplosionDropDecay', 'universalAnger', 'waterSourceConversion'),
+                    parser: new LiteralArgumentParser('announceAdvancements', 'blockExplosionDropDecay', 'commandBlockOutput', 'disableElytraMovementCheck', 'disableRaids', 'doDaylightCycle', 'doEntityDrops', 'doFireTick', 'doImmediateRespawn', 'doInsomnia', 'doLimitedCrafting', 'doMobLoot', 'doMobSpawning', 'doPatrolSpawning', 'doTileDrops', 'doTraderSpawning', 'doVinesSpread', 'doWardenSpawning', 'doWeatherCycle', 'drowningDamage', 'fallDamage', 'fireDamage', 'forgiveDeadPlayers', 'freezeDamage', 'globalSoundEvents', 'keepInventory', 'lavaSourceConversion', 'logAdminCommands', 'mobExplosionDropDecay', 'mobGriefing', 'naturalRegeneration', 'reducedDebugInfo', 'projectilesCanBreakBlocks', 'sendCommandFeedback', 'showDeathMessages', 'spectatorsGenerateChunks', 'tntExplosionDropDecay', 'universalAnger', 'waterSourceConversion'),
                     executable: true,
                     children: {
                         value: {
@@ -1294,7 +1295,7 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 intRuleName: {
-                    parser: new LiteralArgumentParser('commandModificationBlockLimit', 'maxCommandChainLength', 'maxEntityCramming', 'playersSleepingPercentage', 'randomTickSpeed', 'snowAccumulationHeight', 'spawnRadius'),
+                    parser: new LiteralArgumentParser('commandModificationBlockLimit', 'maxCommandChainLength', 'maxCommandForkCount', 'maxEntityCramming', 'playersNetherPortalCreativeDelay', 'playersNetherPortalDefaultDelay', 'playersSleepingPercentage', 'randomTickSpeed', 'snowAccumulationHeight', 'spawnRadius'),
                     executable: true,
                     children: {
                         value: {
@@ -2027,6 +2028,25 @@ export const CommandTree: ICommandTree = {
                                                 }
                                             }
                                         },
+                                        displayautoupdate: {
+                                            parser: new LiteralArgumentParser('displayautoupdate'),
+                                            children: {
+                                                value: {
+                                                    template: 'templates.boolean',
+                                                    executable: true
+                                                }
+                                            }
+                                        },
+                                        numberformat: {
+                                            parser: new LiteralArgumentParser('numberformat'),
+                                            executable: true,
+                                            children: {
+                                                format: {
+                                                    template: 'number_format',
+                                                    executable: true
+                                                }
+                                            }
+                                        },
                                         rendertype: {
                                             parser: new LiteralArgumentParser('rendertype'),
                                             children: {
@@ -2180,6 +2200,7 @@ export const CommandTree: ICommandTree = {
                         display: {
                             parser: new LiteralArgumentParser('display'),
                             children: {
+                                [Switchable]: true,
                                 name: {
                                     parser: new LiteralArgumentParser('name'),
                                     children: {
@@ -2192,6 +2213,26 @@ export const CommandTree: ICommandTree = {
                                                     children: {
                                                         displayName: {
                                                             parser: new TextComponentArgumentParser(),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                numberformat: {
+                                    parser: new LiteralArgumentParser('numberformat'),
+                                    children: {
+                                        targets: {
+                                            parser: new EntityArgumentParser('multiple', 'entities', true),
+                                            children: {
+                                                objective: {
+                                                    parser: new ObjectiveArgumentParser(false),
+                                                    executable: true,
+                                                    children: {
+                                                        format: {
+                                                            template: 'number_format',
                                                             executable: true
                                                         }
                                                     }
@@ -2622,6 +2663,7 @@ export const CommandTree: ICommandTree = {
         },
         tick: {
             parser: new LiteralArgumentParser('tick'),
+            permission: 3,
             children: {
                 [Switchable]: true,
                 freeze: {
@@ -3345,6 +3387,28 @@ export const CommandTree: ICommandTree = {
             children: {
                 id: {
                     parser: new IdentityArgumentParser('$storage')
+                }
+            }
+        }
+    },
+    number_format: {
+        [Switchable]: true,
+        blank: {
+            parser: new LiteralArgumentParser('blank')
+        },
+        fixed: {
+            parser: new LiteralArgumentParser('fixed'),
+            children: {
+                contents: {
+                    parser: new TextComponentArgumentParser()
+                }
+            }
+        },
+        styled: {
+            parser: new LiteralArgumentParser('styled'),
+            children: {
+                style: {
+                    parser: new StyleArgumentParser()
                 }
             }
         }

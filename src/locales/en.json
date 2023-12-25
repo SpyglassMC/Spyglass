@@ -22,6 +22,7 @@
     "argument-type.particle": "particle",
     "argument-type.scoreboardSlot": "scoreboard slot",
     "argument-type.string": "string",
+    "argument-type.style": "style",
     "argument-type.tag": "tag",
     "argument-type.team": "team",
     "argument-type.test": "test",

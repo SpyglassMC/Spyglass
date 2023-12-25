@@ -58,6 +58,7 @@ export type JsonSchemaType =
     /* misc */
     | 'pack_mcmeta'
     | 'text_component'
+    | 'text_style'
 
 const globPatterns: Record<JsonSchemaType, string> = {
     advancement: PathPatterns.advancement,
@@ -110,7 +111,8 @@ const globPatterns: Record<JsonSchemaType, string> = {
     template_pool_tag: PathPatterns['tag/worldgen/template_pool'],
     /* misc */
     pack_mcmeta: 'pack.mcmeta',
-    text_component: 'text_component.json'
+    text_component: 'text_component.json',
+    text_style: 'text_style.json'
 }
 
 export function getJsonSchemaType(rel: string): JsonSchemaType | null {
