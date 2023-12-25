@@ -1877,6 +1877,18 @@ export const CommandTree: ICommandTree = {
                 value: {
                     parser: new NumberArgumentParser('integer'),
                     executable: true
+                },
+                run: {
+                    parser: new LiteralArgumentParser('run'),
+                    children: {
+                        command: {
+                            redirect: 'commands'
+                        }
+                    }
+                },
+                fail: {
+                    parser: new LiteralArgumentParser('fail'),
+                    executable: true
                 }
             }
         },
@@ -2160,6 +2172,31 @@ export const CommandTree: ICommandTree = {
                                         objective: {
                                             parser: new ObjectiveArgumentParser(false),
                                             executable: true
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        display: {
+                            parser: new LiteralArgumentParser('display'),
+                            children: {
+                                name: {
+                                    parser: new LiteralArgumentParser('name'),
+                                    children: {
+                                        targets: {
+                                            parser: new EntityArgumentParser('multiple', 'entities', true),
+                                            children: {
+                                                objective: {
+                                                    parser: new ObjectiveArgumentParser(false),
+                                                    executable: true,
+                                                    children: {
+                                                        displayName: {
+                                                            parser: new TextComponentArgumentParser(),
+                                                            executable: true
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -2607,7 +2644,6 @@ export const CommandTree: ICommandTree = {
                 sprint: {
                     parser: new LiteralArgumentParser('sprint'),
                     children: {
-                        [Switchable]: true,
                         stop: {
                             parser: new LiteralArgumentParser('stop'),
                             executable: true
@@ -2619,9 +2655,8 @@ export const CommandTree: ICommandTree = {
                     }
                 },
                 step: {
-                    parser: new LiteralArgumentParser('sprint'),
+                    parser: new LiteralArgumentParser('step'),
                     children: {
-                        [Switchable]: true,
                         stop: {
                             parser: new LiteralArgumentParser('stop'),
                             executable: true
@@ -3141,6 +3176,20 @@ export const CommandTree: ICommandTree = {
                     children: {
                         entities: {
                             parser: new EntityArgumentParser('multiple', 'entities'),
+                            executable: true,
+                            children: {
+                                subcommand: {
+                                    redirect: 'execute_subcommand'
+                                }
+                            }
+                        }
+                    }
+                },
+                function: {
+                    parser: new LiteralArgumentParser('function'),
+                    children: {
+                        name: {
+                            parser: new IdentityArgumentParser('$function', true),
                             executable: true,
                             children: {
                                 subcommand: {
