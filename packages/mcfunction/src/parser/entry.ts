@@ -1,5 +1,9 @@
 import * as core from '@spyglassmc/core'
-import type { CommandNode, McfunctionNode } from '../node/index.js'
+import type {
+	CommandMacroNode,
+	CommandNode,
+	McfunctionNode,
+} from '../node/index.js'
 import { CommandTreeRegistry } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
@@ -19,9 +23,16 @@ export function entry(
 		}
 
 		while (src.skipWhitespace().canReadInLine()) {
-			let result: core.CommentNode | CommandNode
+			let result: core.CommentNode | CommandNode | CommandMacroNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
+			} else if (src.peek() === '$') {
+				const start = src.cursor
+				src.skipLine()
+				result = {
+					type: 'mcfunction:command_macro',
+					range: core.Range.create(start, src),
+				}
 			} else {
 				result = command(
 					CommandTreeRegistry.instance.get(commandTreeName),
