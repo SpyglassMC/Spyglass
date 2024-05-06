@@ -8,6 +8,7 @@ import { ReleaseVersion } from '../../dependency/index.js'
 import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
+	GamemodeArgumentValues,
 	ItemSlotArgumentValues,
 	OperationArgumentValues,
 	ScoreboardSlotArgumentValues,
@@ -168,6 +169,8 @@ export const argument: mcf.ArgumentParserGetter = (
 					allowTag: true,
 				}),
 			)
+		case 'minecraft:gamemode':
+			return wrap(core.literal(...GamemodeArgumentValues))
 		case 'minecraft:game_profile':
 			return wrap(entity('multiple', 'players'))
 		case 'minecraft:int_range':
@@ -898,12 +901,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 																		.BrigadierUnquotableOption,
 																	value: {
 																		type: 'literal',
-																		parser: core.literal(
-																			'adventure',
-																			'creative',
-																			'spectator',
-																			'survival',
-																		),
+																		parser: core.literal(...GamemodeArgumentValues),
 																	},
 																}),
 															),

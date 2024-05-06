@@ -30,6 +30,7 @@ import { getTagValues } from '../../common/index.js'
 import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
+	GamemodeArgumentValues,
 	ItemSlotArgumentValues,
 	OperationArgumentValues,
 	ScoreboardSlotArgumentValues,
@@ -103,6 +104,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return ResourceLocationNode.mock(range, { category: 'entity_type' })
 		case 'minecraft:function':
 			return ResourceLocationNode.mock(range, { category: 'function' })
+		case 'minecraft:gamemode':
+			return LiteralNode.mock(range, { pool: GamemodeArgumentValues })
 		case 'minecraft:int_range':
 			return IntRangeNode.mock(range)
 		case 'minecraft:item_enchantment':

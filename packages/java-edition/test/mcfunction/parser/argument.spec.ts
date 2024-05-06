@@ -130,6 +130,7 @@ const Suites: Partial<
 		{ content: ['0..5.2', '0', '-5.4', '-100.76..', '..100', '..'] },
 	],
 	'minecraft:function': [{ content: ['foo', 'foo:bar', '#foo'] }],
+	'minecraft:gamemode': [{ content: ['adventure', 'survival', 'spectator', 'creative'] }],
 	'minecraft:game_profile': [
 		{
 			content: [
