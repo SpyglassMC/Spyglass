@@ -1,10 +1,18 @@
 {
   "name": "@spyglassmc/mcdoc-cli",
-  "version": "0.1.0-PLACEHOLDER",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Misode",
+  "contributors": [
+    {
+      "name": "Misode"
+    },
+    {
+      "name": "MulverineX",
+      "url": "http://mulverine.dev"
+    }
+  ],
   "license": "MIT",
   "directories": {
     "test": "test/"
@@ -14,12 +22,19 @@
   },
   "scripts": {
     "release": "npm publish",
-    "release:dry": "npm publish --dry-run"
+    "release:dry": "npm publish --dry-run",
+    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && ./index.ts generate ../vanilla-mcdoc/ -p -m -l"
   },
   "dependencies": {
+    "fs-extra": "^11.1.1",
+    "klaw": "^4.1.0",
+    "line-column": "^1.0.2",
     "yargs": "17.6.2"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.2",
+    "@types/klaw": "^3.0.4",
+    "@types/line-column": "^1.0.0",
     "@types/node": "18.11.17",
     "@types/yargs": "17.0.17"
   },

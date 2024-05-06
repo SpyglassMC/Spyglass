@@ -5,7 +5,7 @@
 	"json.format.keepLines": true,
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
-			"source.fixAll.eslint": true,
+			"source.fixAll.eslint": "always",
 		},
 		"editor.defaultFormatter": "dprint.dprint",
 		"editor.formatOnSave": true,
