@@ -110,4 +110,85 @@ describe('IndexMap', () => {
 			snapshot(mergedMap)
 		})
 	})
+
+	describe('to<Inner/Outer>Range', () => {
+		describe('foo"bar§qux <=> foo\\"bar\\u00a7qux', () => {
+			/*
+			 * Index Tens - 000000000011111111112
+			 * Index Ones - 012345678901234567890
+			 * Outer      - foo\"bar\u00a7qux
+			 * Inner      - foo"bar§qux
+			 */
+			const indexMap = [
+				{ inner: Range.create(3, 4), outer: Range.create(3, 5) },
+				{ inner: Range.create(7, 8), outer: Range.create(8, 14) },
+			]
+			const toInnerCases = [
+				// `f` -> `f`
+				{
+					input: Range.create(0, 1),
+					expected: Range.create(0, 1),
+					name: 'f',
+				},
+				// `\"` -> `"`
+				{
+					input: Range.create(3, 5),
+					expected: Range.create(3, 4),
+					name: '\\"',
+				},
+				// `r` -> `r` (shifted left)
+				{
+					input: Range.create(7, 8),
+					expected: Range.create(6, 7),
+					name: 'r',
+				},
+				// `\u00a7` -> `§`
+				{
+					input: Range.create(8, 14),
+					expected: Range.create(7, 8),
+					name: '\\u00a7',
+				},
+			]
+			const toOuterCases = [
+				// `f` -> `f`
+				{
+					input: Range.create(0, 1),
+					expected: Range.create(0, 1),
+					name: 'f',
+				},
+				// `"` -> `\"`
+				{
+					input: Range.create(3, 4),
+					expected: Range.create(3, 5),
+					name: '"',
+				},
+				// `r` -> `r` (shifted right)
+				{
+					input: Range.create(6, 7),
+					expected: Range.create(7, 8),
+					name: 'r',
+				},
+				// `§` -> `\u00a7`
+				{
+					input: Range.create(7, 8),
+					expected: Range.create(8, 14),
+					name: '§',
+				},
+			]
+			for (const method of ['toInnerRange', 'toOuterRange'] as const) {
+				describe(`${method}()`, () => {
+					for (
+						const { input, expected, name } of method === 'toInnerRange'
+							? toInnerCases
+							: toOuterCases
+					) {
+						it(`Should convert ${Range.toString(input)} to ${Range.toString(expected)} (${name})`, () => {
+							const actual = IndexMap[method](indexMap, input)
+							assert.deepEqual(actual, expected)
+						})
+					}
+				})
+			}
+		})
+	})
 })
