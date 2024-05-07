@@ -121,15 +121,29 @@ describe('Range', () => {
 				],
 			},
 			{
+				endInclusive: true,
+				range: Range.create(1, 2),
+				cases: [
+					{ offset: 0, expected: false },
+					{ offset: 1, expected: true },
+					{ offset: 2, expected: true },
+					{ offset: 3, expected: false },
+				],
+			},
+			{
 				range: Range.Full,
 				cases: [{ offset: 4, expected: true }],
 			},
-		] as const
-		for (const { range, cases } of suites) {
-			describe(`range ${Range.toString(range)}`, () => {
+		] as {
+			range: Range
+			cases: { offset: number; expected: boolean }[]
+			endInclusive?: boolean
+		}[]
+		for (const { range, cases, endInclusive = false } of suites) {
+			describe(`range ${Range.toString(range)}${endInclusive ? ' (endInclusive = true)' : ''}`, () => {
 				for (const { offset, expected } of cases) {
 					it(`Should return ${expected} for ${offset}`, () => {
-						const actual = Range.contains(range, offset)
+						const actual = Range.contains(range, offset, endInclusive)
 						assert.strictEqual(actual, expected)
 					})
 				}
