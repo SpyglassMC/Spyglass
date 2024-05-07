@@ -176,7 +176,7 @@ export class Source extends ReadonlySource {
 
 	/**
 	 * Skips the current character.
-	 * @param step The step to skip. @default 1
+	 * @param step The step to skip. Defaults to 1
 	 */
 	skip(step = 1): this {
 		this.innerCursor += step
