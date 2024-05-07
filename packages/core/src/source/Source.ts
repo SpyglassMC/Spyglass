@@ -110,10 +110,10 @@ export class ReadonlySource {
 			cursor++
 		) {
 			const c = this.string.charAt(cursor)
-			if (c === CR || c === LF) {
+			if (Source.isNewline(c)) {
 				break
 			}
-			if (!(c === ' ' || c === '\t')) {
+			if (!Source.isSpace(c)) {
 				return true
 			}
 		}
