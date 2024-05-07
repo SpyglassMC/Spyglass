@@ -37,20 +37,14 @@ describe('Source', () => {
 			{ ...indexMapSuite, cursor: 7, expected: Range.create(8, 14) },
 		]
 		for (const { string, cursor, expected, indexMap } of suites) {
-			it(
-				`Should return '${Range.toString(expected)}' for ${
-					markOffsetInString(
-						string,
-						cursor,
-					)
-				}`,
-				() => {
-					const src = new Source(string, indexMap)
-					src.innerCursor = cursor
-					const actual = src.getCharRange()
-					assert.deepStrictEqual(actual, expected)
-				},
-			)
+			const expectedStr = Range.toString(expected)
+			const srcWithVisibleCursor = markOffsetInString(string, cursor)
+			it(`Should return '${expectedStr}' for ${srcWithVisibleCursor}`, () => {
+				const src = new Source(string, indexMap)
+				src.innerCursor = cursor
+				const actual = src.getCharRange()
+				assert.deepStrictEqual(actual, expected)
+			})
 		}
 	})
 	describe('clone()', () => {
