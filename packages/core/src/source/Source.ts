@@ -313,24 +313,26 @@ export class Source extends ReadonlySource {
 		this.readRemaining()
 		return this
 	}
+}
 
-	static isDigit(c: string): c is Digit {
+export namespace Source {
+	export function isDigit(c: string): c is Digit {
 		return c >= '0' && c <= '9'
 	}
 
-	static isBrigadierQuote(c: string): c is '"' | "'" {
+	export function isBrigadierQuote(c: string): c is '"' | "'" {
 		return c === '"' || c === "'"
 	}
 
-	static isNewline(c: string): c is Newline {
+	export function isNewline(c: string): c is Newline {
 		return c === '\r\n' || c === '\r' || c === '\n'
 	}
 
-	static isSpace(c: string): c is Space {
+	export function isSpace(c: string): c is Space {
 		return c === ' ' || c === '\t'
 	}
 
-	static isWhitespace(c: string): c is Whitespace {
+	export function isWhitespace(c: string): c is Whitespace {
 		return Source.isSpace(c) || Source.isNewline(c)
 	}
 }
