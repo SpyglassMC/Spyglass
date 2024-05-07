@@ -35,7 +35,7 @@ export namespace IndexMap {
 	export function toInnerRange(map: IndexMap, outer: Range): Range {
 		return Range.create(
 			toInnerOffset(map, outer.start),
-			convertOffset(map, outer.end, 'outer', 'inner', true),
+			toInnerOffset(map, outer.end),
 		)
 	}
 
@@ -46,7 +46,7 @@ export namespace IndexMap {
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
 		return Range.create(
 			toOuterOffset(map, inner.start),
-			convertOffset(map, inner.end, 'inner', 'outer', true),
+			toOuterOffset(map, inner.end),
 		)
 	}
 
