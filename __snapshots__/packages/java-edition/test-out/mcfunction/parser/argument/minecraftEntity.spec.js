@@ -104,7 +104,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ ]" with {"amount":"mult
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -1378,7 +1378,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -1802,7 +1802,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -2437,7 +2437,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -2778,7 +2778,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -3762,7 +3762,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -4682,7 +4682,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -4691,7 +4691,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
         "start": 37,
         "end": 37
       },
-      "message": "Expected “adventure”, “spectator”, “creative”, or “survival”",
+      "message": "Expected “adventure”, “spectator”, “survival”, or “creative”",
       "severity": 3
     },
     {
@@ -5227,7 +5227,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -5574,7 +5574,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -5812,7 +5812,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -7022,7 +7022,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -8136,7 +8136,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -8463,7 +8463,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -9111,7 +9111,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -9341,7 +9341,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -9378,7 +9378,7 @@ exports['mcfunction argument minecraft:entity Parse "@e" with {"amount":"multipl
       ],
       "single": false,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": []
@@ -9415,7 +9415,7 @@ exports['mcfunction argument minecraft:entity Parse "@e" with {"amount":"single"
       ],
       "single": false,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": [
@@ -9665,7 +9665,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[limit=1]" with {"amount"
       ],
       "single": true,
       "typeLimited": false,
-      "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": [
@@ -9995,7 +9995,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: 😅  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": []
@@ -10029,7 +10029,7 @@ exports['mcfunction argument minecraft:entity Parse "@r" with {"amount":"single"
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -10453,7 +10453,7 @@ exports['mcfunction argument minecraft:entity Parse "@s[ limit = 0 , limit = 0 ,
       "playersOnly": false,
       "single": true,
       "typeLimited": false,
-      "hover": "**Performance**: 😌👌  \n- `currentEntity`: `true`"
+      "hover": "**Performance**: 😌👌\n- `currentEntity`: `true`"
     }
   },
   "errors": [

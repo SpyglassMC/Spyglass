@@ -30,7 +30,7 @@ exports['mcfunction argument minecraft:message Parse "@e" 1'] = {
         ],
         "single": false,
         "typeLimited": false,
-        "hover": "**Performance**: 🤢  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**: \n- `Entity::isAlive`"
+        "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
       }
     ]
   },
@@ -86,7 +86,7 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "playersOnly": true,
         "single": true,
         "typeLimited": true,
-        "hover": "**Performance**: Good  \n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+        "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
       },
       {
         "type": "string",

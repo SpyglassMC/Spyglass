@@ -901,7 +901,9 @@ function selector(): core.Parser<EntitySelectorNode> {
 																		.BrigadierUnquotableOption,
 																	value: {
 																		type: 'literal',
-																		parser: core.literal(...GamemodeArgumentValues),
+																		parser: core.literal(
+																			...GamemodeArgumentValues,
+																		),
 																	},
 																}),
 															),
@@ -1323,7 +1325,7 @@ function getEntitySelectorHover(node: EntitySelectorNode) {
 	])
 	let ans: string
 	if (node.currentEntity) {
-		ans = `**Performance**: ${grades.get(4)}  
+		ans = `**Performance**: ${grades.get(4)}
 - \`currentEntity\`: \`${node.currentEntity}\``
 	} else {
 		const amountOfTrue = [
@@ -1332,7 +1334,7 @@ function getEntitySelectorHover(node: EntitySelectorNode) {
 			node.playersOnly,
 			node.typeLimited,
 		].filter((v) => v).length
-		ans = `**Performance**: ${grades.get(amountOfTrue)}  
+		ans = `**Performance**: ${grades.get(amountOfTrue)}
 - \`chunkLimited\`: \`${!!node.chunkLimited}\`
 - \`dimensionLimited\`: \`${!!node.dimensionLimited}\`
 - \`playersOnly\`: \`${!!node.playersOnly}\`
@@ -1342,7 +1344,7 @@ function getEntitySelectorHover(node: EntitySelectorNode) {
 		ans += `
 
 ------
-**Predicates**: 
+**Predicates**:
 ${node.predicates.map((p) => `- \`${p}\``).join('\n')}`
 	}
 	return ans
