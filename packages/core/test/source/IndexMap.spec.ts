@@ -126,55 +126,47 @@ describe('IndexMap', () => {
 				{ inner: Range.create(7, 8), outer: Range.create(8, 14) },
 			]
 			const toInnerCases = [
-				// `f` -> `f`
 				{
 					input: Range.create(0, 1),
 					expected: Range.create(0, 1),
-					name: 'f',
+					name: '`f` -> `f`',
 				},
-				// `\"` -> `"`
 				{
 					input: Range.create(3, 5),
 					expected: Range.create(3, 4),
-					name: '\\"',
+					name: '`\\"` -> `"`',
 				},
-				// `r` -> `r` (shifted left)
-				{
+				{ // (shifted left)
 					input: Range.create(7, 8),
 					expected: Range.create(6, 7),
-					name: 'r',
+					name: '`r` -> `r`',
 				},
-				// `\u00a7` -> `§`
 				{
 					input: Range.create(8, 14),
 					expected: Range.create(7, 8),
-					name: '\\u00a7',
+					name: '`\\u00a7` -> `§`',
 				},
 			]
 			const toOuterCases = [
-				// `f` -> `f`
 				{
 					input: Range.create(0, 1),
 					expected: Range.create(0, 1),
-					name: 'f',
+					name: '`f` -> `f`',
 				},
-				// `"` -> `\"`
 				{
 					input: Range.create(3, 4),
 					expected: Range.create(3, 5),
-					name: '"',
+					name: '`"` -> `"`',
 				},
-				// `r` -> `r` (shifted right)
-				{
+				{ // (shifted right)
 					input: Range.create(6, 7),
 					expected: Range.create(7, 8),
-					name: 'r',
+					name: '`r` -> `r`',
 				},
-				// `§` -> `\u00a7`
 				{
 					input: Range.create(7, 8),
 					expected: Range.create(8, 14),
-					name: '§',
+					name: '`§` -> `\\u00a7`',
 				},
 			]
 			for (const method of ['toInnerRange', 'toOuterRange'] as const) {
