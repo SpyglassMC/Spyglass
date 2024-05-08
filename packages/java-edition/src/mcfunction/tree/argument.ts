@@ -102,7 +102,9 @@ export interface MinecraftFunctionArgumentTreeNode
 {
 	parser: 'minecraft:function'
 }
-export interface MinecraftGamemodeArgumentTreeNode extends mcf.ArgumentTreeNode {
+export interface MinecraftGamemodeArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
 	parser: 'minecraft:gamemode'
 }
 export interface MinecraftGameProfileArgumentTreeNode
