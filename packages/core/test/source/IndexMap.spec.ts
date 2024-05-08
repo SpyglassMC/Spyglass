@@ -146,6 +146,21 @@ describe('IndexMap', () => {
 					expected: Range.create(7, 8),
 					name: '`\\u00a7` -> `§`',
 				},
+				{
+					input: Range.create(7, 14),
+					expected: Range.create(6, 8),
+					name: '`r\\u00a7` -> `r§`',
+				},
+				{
+					input: Range.create(7, 12),
+					expected: Range.create(6, 7),
+					name: '`r\\u00` -> `r`',
+				},
+				{
+					input: Range.create(7, 15),
+					expected: Range.create(6, 9),
+					name: '`r\\u00a7q` -> `r§q`',
+				},
 			]
 			const toOuterCases = [
 				{
@@ -167,6 +182,16 @@ describe('IndexMap', () => {
 					input: Range.create(7, 8),
 					expected: Range.create(8, 14),
 					name: '`§` -> `\\u00a7`',
+				},
+				{
+					input: Range.create(6, 8),
+					expected: Range.create(7, 14),
+					name: '`r§` -> `r\\u00a7`',
+				},
+				{
+					input: Range.create(6, 9),
+					expected: Range.create(7, 15),
+					name: '`r§q` -> `r\\u00a7`',
 				},
 			]
 			for (const method of ['toInnerRange', 'toOuterRange'] as const) {
