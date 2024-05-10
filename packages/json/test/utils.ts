@@ -11,6 +11,7 @@ import {
 	Failure,
 	ParserContext,
 	Source,
+	StateProxy,
 	SymbolUtil,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
@@ -47,7 +48,8 @@ export function testChecker(
 	)
 	const result = parser(src, parserCtx)
 	if (result !== Failure) {
-		checker(result, { ...checkerCtx, context: '' })
+		const proxy = StateProxy.create(result) as JsonNode
+		checker(proxy, { ...checkerCtx, context: '' })
 	}
 
 	return {
