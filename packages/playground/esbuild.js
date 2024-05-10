@@ -23,11 +23,11 @@ try {
 	logResult(result)
 } catch (e) {
 	console.error(e)
-	process.exitCode = 1;
+	process.exitCode = 1
 }
 
 /**
- * @param {esbuild.BuildResult} result 
+ * @param {esbuild.BuildResult} result
  */
 function logResult(result) {
 	if (result.errors.length === 0) {
