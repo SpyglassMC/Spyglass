@@ -11,7 +11,7 @@
     "build:dev": "wireit",
     "release": "echo \"DO NOT PUBLISH\"",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
-    "watch": "npm run build --watch"
+    "watch": "npm run build:dev --watch"
   },
   "wireit": {
     "build": {
