@@ -13,7 +13,7 @@
     "deploy": "node deploy.js",
     "release": "echo TODO",
     "release:dry": "echo TODO",
-    "watch": "npm run build --watch"
+    "watch": "npm run build:dev --watch"
   },
   "wireit": {
     "build": {
