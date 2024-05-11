@@ -3,7 +3,7 @@ import rfdc from 'rfdc'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 import type { Externals } from './externals/index.js'
-import type { DeepReadonly } from './ReadonlyProxy.js'
+import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
 export const Uri = URL
 export type Uri = URL
@@ -335,25 +335,25 @@ export function normalizeUri(uri: string): string {
 }
 
 /**
+ * Return a read-write TARGET type if the INPUT type is read-write, and a
+ * readonly TARGET type if the INPUT type is readonly, and `never` if the INPUT
+ * type is `undefined`.
+ *
+ * It is used in the return type of an AST node
+ * [user-defined type guard](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates).
+ *
  * @example
  * ```ts
- * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is IsHelper<AstNode, CommentNode, T>
+ * export const CommentNode = Object.freeze({
+ * 	is<T extends DeepReadonly<AstNode> | undefined>(
+ * 		obj: T,
+ * 	): obj is PotentiallyReadonly<CommentNode, T> {
+ * 		return (obj as CommentNode | undefined)?.type === 'comment'
+ * 	},
+ * })
  * ```
  */
-export type IsHelper<
-	ROOT extends object,
-	TARGET extends ROOT,
-	INPUT extends DeepReadonly<ROOT> | undefined,
-> = INPUT extends DeepReadonly<ROOT> ? INPUT & DeepReadonly<TARGET>
-	: INPUT & TARGET
-
-/**
- * @example
- * ```ts
- * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is NodeIsHelper<CommentNode, T>
- * ```
- */
-export type NodeIsHelper<
+export type PotentiallyReadonly<
 	TARGET extends AstNode,
 	INPUT extends DeepReadonly<AstNode> | undefined,
-> = IsHelper<AstNode, TARGET, INPUT>
+> = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)

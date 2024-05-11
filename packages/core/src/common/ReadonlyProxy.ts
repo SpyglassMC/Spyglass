@@ -1,8 +1,12 @@
 import { emplaceMap, isObject } from './util.js'
 
-type Wrap<T> = T extends object ? DeepReadonly<T> : T
+type DeepReadonlyValue<T> = T extends object ? DeepReadonly<T> : T
 export type DeepReadonly<T extends object> = {
-	readonly [K in keyof T]: Wrap<T[K]>
+	readonly [K in keyof T]: DeepReadonlyValue<T[K]>
+}
+
+export type ReadWrite<T extends object> = {
+	-readonly [K in keyof T]: T[K]
 }
 
 export const ReadonlyProxy = Object.freeze({
