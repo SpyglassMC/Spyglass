@@ -333,6 +333,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			help: {
 				permission: 0,
 			},
+			...(ReleaseVersion.cmp(release, '1.18') >= 0
+				? {
+						jfr: {
+							permission: 4,
+						},
+				  }
+				: {}),
 			kick: {
 				permission: 3,
 			},
@@ -418,6 +425,30 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			'pardon-ip': {
 				permission: 3,
 			},
+			...(ReleaseVersion.cmp(release, '1.17') >= 0
+				? {
+						perf: {
+							permission: 4,
+						},
+				  }
+				: {}),
+			...(ReleaseVersion.cmp(release, '1.19') >= 0
+				? {
+						place: {
+							children: {
+								template: {
+									children: {
+										template: {
+											properties: {
+												category: 'structure'
+											}
+										}
+									}
+								}
+							}
+						},
+				  }
+				: {}),
 			playsound: Sound,
 			publish: {
 				permission: 4,
@@ -559,6 +590,13 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			tell: {
 				permission: 0,
 			},
+			...(ReleaseVersion.cmp(release, '1.20.2') >= 0
+				? {
+						tick: {
+							permission: 3,
+						},
+				  }
+				: {}),
 			tm: {
 				permission: 0,
 			},
