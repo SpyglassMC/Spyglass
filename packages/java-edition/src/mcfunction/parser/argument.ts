@@ -25,13 +25,16 @@ import type {
 	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
+	ItemNewNode,
 	ItemNode,
+	ItemOldNode,
 	MessageNode,
 	ParticleNode,
 	ScoreHolderNode,
 	UuidNode,
 	VectorNode,
 } from '../node/index.js'
+import { ComponentListNode } from '../node/index.js'
 import {
 	BlockStatesNode,
 	CoordinateSystem,
@@ -76,6 +79,11 @@ const PlayerNameMaxLength = 16
 function shouldValidateLength(ctx: core.ParserContext) {
 	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 	return !release || ReleaseVersion.cmp(release, '1.18') < 0
+}
+
+function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	return release === undefined || ReleaseVersion.cmp(release, '1.20.5') < 0
 }
 
 /**
@@ -473,19 +481,21 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item(isPredicate: false): core.InfallibleParser<ItemNode>
-function item(isPredicate: true): core.InfallibleParser<ItemNode>
-function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
+function item_old(isPredicate: false): core.InfallibleParser<ItemNode>
+function item_old(isPredicate: true): core.InfallibleParser<ItemNode>
+function item_old(
+	isPredicate: boolean,
+): core.InfallibleParser<ItemNode> {
 	return core.map<
 		core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>,
-		ItemNode
+		ItemOldNode
 	>(
 		core.sequence([
 			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
 			core.optional(core.failOnEmpty(nbt.parser.compound)),
 		]),
 		(res) => {
-			const ans: ItemNode = {
+			const ans: ItemOldNode = {
 				type: 'mcfunction:item',
 				range: res.range,
 				children: res.children,
@@ -496,8 +506,35 @@ function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
 		},
 	)
 }
-const itemStack: core.InfallibleParser<ItemNode> = item(false)
-const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
+
+function item_new(isPredicate: false): core.InfallibleParser<ItemNode>
+function item_new(isPredicate: true): core.InfallibleParser<ItemNode>
+function item_new(
+	isPredicate: boolean,
+): core.InfallibleParser<ItemNode> {
+	return core.map<
+		core.SequenceUtil<core.ResourceLocationNode | ComponentListNode>,
+		ItemNewNode
+	>(
+		core.sequence([
+			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
+			core.optional(core.failOnEmpty(components)),
+		]),
+		(res) => {
+			const ans: ItemNewNode = {
+				type: 'mcfunction:item',
+				range: res.range,
+				children: res.children,
+				id: res.children.find(core.ResourceLocationNode.is)!,
+				components: res.children.find(ComponentListNode.is),
+			}
+			return ans
+		},
+	)
+}
+
+const itemStack: core.InfallibleParser<ItemNode> = item_old(false)
+const itemPredicate: core.InfallibleParser<ItemNode> = item_old(true)
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
@@ -1639,4 +1676,28 @@ function vector(
 
 		return ans
 	}
+}
+
+function components(): core.InfallibleParser<ComponentListNode> {
+	return core.map(
+		core.record({
+			start: '[',
+			pair: {
+				key: core.resourceLocation({ category: 'item_component' }),
+				sep: '=',
+				value: nbt.parser.entry,
+				end: ',',
+				trailingEnd: true,
+			},
+			end: ']',
+		}),
+		(res) => {
+			const ans: ComponentListNode = {
+				type: 'mcfunction:component_list',
+				range: res.range,
+				children: res.children,
+			}
+			return ans
+		},
+	)
 }

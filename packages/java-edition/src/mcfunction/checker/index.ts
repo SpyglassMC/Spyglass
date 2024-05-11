@@ -5,8 +5,11 @@ import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { text_component } from '../../json/checker/data/text_component.js'
-import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
-import { BlockNode, EntityNode, ItemNode, ParticleNode } from '../node/index.js'
+import type {
+	EntitySelectorInvertableArgumentValueNode,
+	ItemOldNode,
+} from '../node/index.js'
+import { BlockNode, EntityNode, ParticleNode } from '../node/index.js'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -161,7 +164,7 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	nbt.checker.index('entity_type', types)(nbtValue, ctx)
 }
 
-const item: core.SyncChecker<ItemNode> = (node, ctx) => {
+const item: core.SyncChecker<ItemOldNode> = (node, ctx) => {
 	if (!node.nbt) {
 		return
 	}
@@ -339,6 +342,6 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
-	meta.registerChecker<ItemNode>('mcfunction:item', item)
+	meta.registerChecker<ItemOldNode>('mcfunction:item', item)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

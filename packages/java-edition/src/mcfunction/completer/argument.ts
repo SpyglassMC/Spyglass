@@ -39,13 +39,13 @@ import {
 import type {
 	BlockStatesNode,
 	EntitySelectorArgumentsNode,
+	ItemOldNode,
 } from '../node/index.js'
 import {
 	BlockNode,
 	CoordinateNode,
 	EntitySelectorNode,
 	IntRangeNode,
-	ItemNode,
 	ObjectiveCriteriaNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -243,7 +243,7 @@ const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
 	return [CompletionItem.create('~', node)]
 }
 
-const item: Completer<ItemNode> = (node, ctx) => {
+const item: Completer<ItemOldNode> = (node, ctx) => {
 	const ans: CompletionItem[] = []
 	if (Range.contains(node.id, ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
@@ -434,7 +434,7 @@ export function register(meta: MetaRegistry) {
 		selectorArguments,
 	)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
-	meta.registerCompleter<ItemNode>('mcfunction:item', item)
+	meta.registerCompleter<ItemOldNode>('mcfunction:item', item)
 	meta.registerCompleter<ObjectiveCriteriaNode>(
 		'mcfunction:objective_criteria',
 		objectiveCriteria,

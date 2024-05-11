@@ -279,18 +279,21 @@ export interface FloatRangeNode extends core.AstNode {
 	value: [number | undefined, number | undefined]
 }
 
-export interface ItemNode extends core.AstNode {
+export interface ItemOldNode extends core.AstNode {
 	type: 'mcfunction:item'
 	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
 	nbt?: nbt.NbtCompoundNode
 }
-export namespace ItemNode {
-	export function is(node: core.AstNode | undefined): node is ItemNode {
-		return (node as ItemNode | undefined)?.type === 'mcfunction:item'
+export namespace ItemOldNode {
+	export function is(node: core.AstNode | undefined): node is ItemOldNode {
+		return (node as ItemOldNode | undefined)?.type === 'mcfunction:item'
 	}
 
-	export function mock(range: core.RangeLike, isPredicate: boolean): ItemNode {
+	export function mock(
+		range: core.RangeLike,
+		isPredicate: boolean,
+	): ItemOldNode {
 		const id = core.ResourceLocationNode.mock(range, {
 			category: 'item',
 			allowTag: isPredicate,
@@ -301,6 +304,26 @@ export namespace ItemNode {
 			children: [id],
 			id,
 		}
+	}
+}
+
+export interface ItemNewNode extends core.AstNode {
+	type: 'mcfunction:item'
+	children: (core.ResourceLocationNode | ComponentListNode)[]
+	id: core.ResourceLocationNode
+	components?: ComponentListNode
+}
+
+export type ItemNode = ItemOldNode | ItemNewNode
+
+export interface ComponentListNode extends core.AstNode {
+	type: 'mcfunction:component_list'
+	children: core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+}
+
+export namespace ComponentListNode {
+	export function is(node: core.AstNode): node is ComponentListNode {
+		return (node as ComponentListNode).type === 'mcfunction:component_list'
 	}
 }
 
@@ -372,7 +395,7 @@ export interface ParticleNode extends core.AstNode {
 		| core.IntegerNode
 		| core.ResourceLocationNode
 		| BlockNode
-		| ItemNode
+		| ItemOldNode
 		| VectorNode
 	)[]
 	id: core.ResourceLocationNode
