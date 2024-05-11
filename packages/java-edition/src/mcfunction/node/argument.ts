@@ -395,7 +395,7 @@ export interface ParticleNode extends core.AstNode {
 		| core.IntegerNode
 		| core.ResourceLocationNode
 		| BlockNode
-		| ItemOldNode
+		| ItemNode
 		| VectorNode
 	)[]
 	id: core.ResourceLocationNode
