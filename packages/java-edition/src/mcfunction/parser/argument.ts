@@ -518,7 +518,7 @@ function item_new(
 	>(
 		core.sequence([
 			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
-			core.optional(core.failOnEmpty(components)),
+			core.optional(core.failOnEmpty(components())),
 		]),
 		(res) => {
 			const ans: ItemNewNode = {
