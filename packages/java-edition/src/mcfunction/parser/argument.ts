@@ -9,8 +9,11 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
+	HeightmapValues,
 	ItemSlotArgumentValues,
+	MirrorValues,
 	OperationArgumentValues,
+	RotationValues,
 	ScoreboardSlotArgumentValues,
 	SwizzleArgumentValues,
 } from '../common/index.js'
@@ -181,6 +184,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(core.literal(...GamemodeArgumentValues))
 		case 'minecraft:game_profile':
 			return wrap(entity('multiple', 'players'))
+		case 'minecraft:heightmap':
+			return wrap(core.literal(...HeightmapValues))
 		case 'minecraft:int_range':
 			return wrap(range('integer'))
 		case 'minecraft:item_enchantment':
@@ -229,6 +234,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:particle':
 			return wrap(particle)
 		case 'minecraft:resource':
+		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 			return wrap(
 				core.resourceLocation({
@@ -265,6 +271,10 @@ export const argument: mcf.ArgumentParserGetter = (
 						: undefined,
 				),
 			)
+		case 'minecraft:template_mirror':
+			return wrap(core.literal(...MirrorValues))
+		case 'minecraft:template_rotation':
+			return wrap(core.literal(...RotationValues))
 		case 'minecraft:time':
 			return wrap(time)
 		case 'minecraft:uuid':

@@ -112,6 +112,11 @@ export interface MinecraftGameProfileArgumentTreeNode
 {
 	parser: 'minecraft:game_profile'
 }
+export interface MinecraftHeightmapArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:heightmap'
+}
 export interface MinecraftIntRangeArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -184,6 +189,14 @@ export interface MinecraftResourceArgumentTreeNode
 		registry: string
 	}
 }
+export interface MinecraftResourceKeyArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:resource_key'
+	properties: {
+		registry: string
+	}
+}
 export interface MinecraftResourceLocationArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -221,6 +234,16 @@ export interface MinecraftSwizzleArgumentTreeNode extends mcf.ArgumentTreeNode {
 }
 export interface MinecraftTeamArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:team'
+}
+export interface MinecraftTemplateMirrorArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:template_mirror'
+}
+export interface MinecraftTemplateRotationArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:template_rotation'
 }
 export interface MinecraftTimeArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:time'
@@ -262,6 +285,7 @@ export type ArgumentTreeNode =
 	| MinecraftFunctionArgumentTreeNode
 	| MinecraftGamemodeArgumentTreeNode
 	| MinecraftGameProfileArgumentTreeNode
+	| MinecraftHeightmapArgumentTreeNode
 	| MinecraftIntRangeArgumentTreeNode
 	| MinecraftItemEnchantmentArgumentTreeNode
 	| MinecraftItemPredicateArgumentTreeNode
@@ -277,6 +301,7 @@ export type ArgumentTreeNode =
 	| MinecraftOperationArgumentTreeNode
 	| MinecraftParticleArgumentTreeNode
 	| MinecraftResourceArgumentTreeNode
+	| MinecraftResourceKeyArgumentTreeNode
 	| MinecraftResourceLocationArgumentTreeNode
 	| MinecraftResourceOrTagArgumentTreeNode
 	| MinecraftRotationArgumentTreeNode
@@ -284,6 +309,8 @@ export type ArgumentTreeNode =
 	| MinecraftScoreboardSlotArgumentTreeNode
 	| MinecraftSwizzleArgumentTreeNode
 	| MinecraftTeamArgumentTreeNode
+	| MinecraftTemplateMirrorArgumentTreeNode
+	| MinecraftTemplateRotationArgumentTreeNode
 	| MinecraftTimeArgumentTreeNode
 	| MinecraftUuidArgumentTreeNode
 	| MinecraftVec2ArgumentTreeNode

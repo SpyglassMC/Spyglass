@@ -66,3 +66,25 @@ export const SwizzleArgumentValues = [
 	'zxy',
 	'zyx',
 ]
+
+export const HeightmapValues = [
+	'motion_blocking',
+	'motion_blocking_no_leaves',
+	'ocean_floor',
+	'ocean_floor_wg',
+	'world_surface',
+	'world_surface_wg',
+]
+
+export const RotationValues = [
+	'none',
+	'clockwise_90',
+	'180',
+	'counterclockwise_90',
+]
+
+export const MirrorValues = [
+	'none',
+	'left_right',
+	'front_back',
+]

@@ -33,8 +33,11 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
+	HeightmapValues,
 	ItemSlotArgumentValues,
+	MirrorValues,
 	OperationArgumentValues,
+	RotationValues,
 	ScoreboardSlotArgumentValues,
 	SwizzleArgumentValues,
 } from '../common/index.js'
@@ -109,6 +112,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:entity':
 		case 'minecraft:game_profile':
 			return EntitySelectorNode.mock(range)
+		case 'minecraft:heightmap':
+			return LiteralNode.mock(range, { pool: HeightmapValues })
 		case 'minecraft:entity_anchor':
 			return LiteralNode.mock(range, { pool: EntityAnchorArgumentValues })
 		case 'minecraft:entity_summon':
@@ -141,6 +146,7 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:particle':
 			return ParticleNode.mock(range)
 		case 'minecraft:resource':
+		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
@@ -163,6 +169,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
 			return SymbolNode.mock(range, { category: 'team' })
+		case 'minecraft:template_mirror':
+			return LiteralNode.mock(range, { pool: MirrorValues })
+		case 'minecraft:template_rotation':
+			return LiteralNode.mock(range, { pool: RotationValues })
 		case 'minecraft:vec2':
 			return VectorNode.mock(range, { dimension: 2, integersOnly: true })
 		case 'minecraft:vec3':
