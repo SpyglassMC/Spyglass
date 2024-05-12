@@ -65,6 +65,10 @@ export function string(
 		node.expectation = [
 			{ type: 'json:string', typedoc: typedoc(name), ...expectation },
 		]
+		node.expectation = {
+			0: { type: 'json:string', typedoc: typedoc(name), ...expectation },
+		} as any
+		// console.log('ne', node.expectation[0]!.type)
 		if (!JsonStringNode.is(node)) {
 			ctx.err.report(localize('expected', localize('string')), node)
 		} else if (parser) {

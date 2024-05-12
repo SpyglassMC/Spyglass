@@ -37,10 +37,6 @@ exports['utils for JSON checkers any(boolean, string) Check ""foo"" 1'] = {
       {
         "type": "json:boolean",
         "typedoc": "Boolean"
-      },
-      {
-        "type": "json:boolean",
-        "typedoc": "Boolean"
       }
     ]
   },
@@ -66,10 +62,6 @@ exports['utils for JSON checkers any(boolean, string) Check "true" 1'] = {
     },
     "value": true,
     "expectation": [
-      {
-        "type": "json:boolean",
-        "typedoc": "Boolean"
-      },
       {
         "type": "json:boolean",
         "typedoc": "Boolean"
@@ -193,10 +185,6 @@ exports['utils for JSON checkers any(string, boolean) Check ""foo"" 1'] = {
       {
         "type": "json:string",
         "typedoc": "String"
-      },
-      {
-        "type": "json:string",
-        "typedoc": "String"
       }
     ]
   },
@@ -213,10 +201,6 @@ exports['utils for JSON checkers any(string, boolean) Check "true" 1'] = {
     },
     "value": true,
     "expectation": [
-      {
-        "type": "json:string",
-        "typedoc": "String"
-      },
       {
         "type": "json:string",
         "typedoc": "String"

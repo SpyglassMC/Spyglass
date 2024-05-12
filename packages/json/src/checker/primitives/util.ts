@@ -38,7 +38,9 @@ export function attempt(
 	checker(node, tempCtx)
 
 	const tempExpectation = node.expectation
-	StateProxy.undoChanges(node as StateProxy<JsonNode>)
+	console.log('1', { node })
+	// StateProxy.undoChanges(node as StateProxy<JsonNode>)
+	console.log('2', { node })
 
 	const totalErrorSpan = tempCtx.err.errors
 		.map((e) => e.range.end - e.range.start)
@@ -62,15 +64,18 @@ export function any(checkers: JsonChecker[] = []): JsonChecker {
 			return
 		}
 
+		const proxy = StateProxy.branchOff(
+			node as StateProxy<JsonNode>,
+		) as JsonNode
 		const attempts = checkers
-			.map((checker) => attempt(checker, node, ctx))
+			.map((checker) => attempt(checker, proxy, ctx))
 			.sort(
 				(a, b) =>
 					a.maxSeverity - b.maxSeverity ||
 					a.totalErrorSpan - b.totalErrorSpan,
 			)
 		const sameTypeAttempts = attempts.filter((a) =>
-			a.expectation?.map<string>((e) => e.type).includes(node.type)
+			a.expectation?.map<string>((e) => e.type).includes(proxy.type)
 		)
 		const allExpectations = attempts
 			.filter((a) => a.expectation)
@@ -99,11 +104,18 @@ export function expectation(
 		type: 'json:null',
 		range: Range.create(0),
 	})
+	// const emptyNode = {
+	// 	type: 'json:null',
+	// 	range: Range.create(0),
+	// }
+	// const node: JsonNode = StateProxy.is(emptyNode) ? StateProxy.create(emptyNode)
 	const tempCtx: JsonCheckerContext = {
 		...ctx,
 		err: new ErrorReporter(),
 		depth: (ctx.depth ?? 0) + 1,
 	}
 	checker(node, tempCtx)
-	return node.expectation
+	const { expectation } = node
+	// delete node
+	return expectation
 }

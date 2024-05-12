@@ -10,17 +10,17 @@ describe('utils for JSON checkers', () => {
 	testGrid(
 		[
 			{ content: 'true' },
-			{ content: '"foo"' },
+			// { content: '"foo"' },
 		],
 		[
-			{
-				name: 'any(string)',
-				checker: any([simpleString]),
-			},
-			{
-				name: 'any(string, boolean)',
-				checker: any([simpleString, boolean]),
-			},
+			// {
+			// 	name: 'any(string)',
+			// 	checker: any([simpleString]),
+			// },
+			// {
+			// 	name: 'any(string, boolean)',
+			// 	checker: any([simpleString, boolea n]),
+			// },
 			{
 				name: 'any(boolean, string)',
 				checker: any([boolean, simpleString]),

@@ -21,7 +21,13 @@ export class Operations {
 	): void {
 		const oldValue = Reflect.get(obj, key, receiver)
 		const op = () => {
-			Reflect.set(obj, key, value, receiver)
+			if (Array.isArray(oldValue) && Array.isArray(value)) {
+				console.log({ obj, key, oldValue, value, receiver })
+				Reflect.set(obj, key, Array.from(value), receiver)
+				// obj[key] = value
+			} else {
+				Reflect.set(obj, key, value, receiver)
+			}
 		}
 		const undoOp = () => {
 			Reflect.set(obj, key, oldValue, receiver)

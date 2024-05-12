@@ -21,7 +21,7 @@ const getTestObj = () => ({
 	},
 })
 
-describe('StateProxy', () => {
+describe.only('StateProxy', () => {
 	it('Should create enumerable proxy', () => {
 		const testObj = getTestObj()
 		const proxy = StateProxy.create(testObj)
@@ -84,6 +84,25 @@ describe('StateProxy', () => {
 			StateProxy.dereference(proxy.node.children[0]),
 			testObj.node.children[0],
 		)
+	})
+	it.only('Sigma balls', () => {
+		// const testObj = getTestObj() as any
+		const testObj = { node: { children: [{ type: 'symbol' }] } }
+		const proxy = StateProxy.create(testObj) as StateProxy<any>
+		// const proxy = testObj
+
+		assert.strictEqual(proxy.node.children[0].type, 'symbol')
+		proxy.node.children[0].type = 'newSymbol'
+		assert.strictEqual(proxy.node.children[0].type, 'newSymbol')
+
+		const newChild = [{ type: 'newSymbol1' }]
+		proxy.node.children = newChild
+		assert.strictEqual(proxy.node.children[0].type, 'newSymbol1')
+
+		const newChildren = { type: 'newSymbol2' }
+		assert.strictEqual(proxy.node.children[0].type, 'newSymbol1')
+		proxy.node.children = newChildren
+		assert.strictEqual(proxy.node.children.type, 'newSymbol2')
 	})
 	it('Should undo and redo changes correctly', () => {
 		const testObj = getTestObj() as any

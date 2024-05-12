@@ -47,13 +47,15 @@ export function testChecker(
 		{ doc, src },
 	)
 	const result = parser(src, parserCtx)
-	if (result !== Failure) {
-		const proxy = StateProxy.create(result) as JsonNode
+	const proxy = result !== Failure
+		? StateProxy.create(result) as JsonNode
+		: void 0
+	if (proxy) {
 		checker(proxy, { ...checkerCtx, context: '' })
 	}
 
 	return {
-		node: result === Failure ? 'FAILURE' : result,
+		node: result === Failure ? 'FAILURE' : proxy!,
 		parserErrors: parserCtx.err.dump(),
 		checkerErrors: checkerCtx.err.dump(),
 	}
