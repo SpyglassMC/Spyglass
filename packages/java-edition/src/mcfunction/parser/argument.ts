@@ -481,11 +481,11 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item_old(isPredicate: false): core.InfallibleParser<ItemNode>
-function item_old(isPredicate: true): core.InfallibleParser<ItemNode>
+function item_old(isPredicate: false): core.InfallibleParser<ItemOldNode>
+function item_old(isPredicate: true): core.InfallibleParser<ItemOldNode>
 function item_old(
 	isPredicate: boolean,
-): core.InfallibleParser<ItemNode> {
+): core.InfallibleParser<ItemOldNode> {
 	return core.map<
 		core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>,
 		ItemOldNode
@@ -507,11 +507,11 @@ function item_old(
 	)
 }
 
-function item_new(isPredicate: false): core.InfallibleParser<ItemNode>
-function item_new(isPredicate: true): core.InfallibleParser<ItemNode>
+function item_new(isPredicate: false): core.InfallibleParser<ItemNewNode>
+function item_new(isPredicate: true): core.InfallibleParser<ItemNewNode>
 function item_new(
 	isPredicate: boolean,
-): core.InfallibleParser<ItemNode> {
+): core.InfallibleParser<ItemNewNode> {
 	return core.map<
 		core.SequenceUtil<core.ResourceLocationNode | ComponentListNode>,
 		ItemNewNode
@@ -533,8 +533,16 @@ function item_new(
 	)
 }
 
-const itemStack: core.InfallibleParser<ItemNode> = item_old(false)
-const itemPredicate: core.InfallibleParser<ItemNode> = item_old(true)
+const itemStack: core.InfallibleParser<ItemNode> = (src, ctx) => {
+	return shouldUseOldItemStackFormat(ctx)
+		? item_old(false)(src, ctx)
+		: item_new(false)(src, ctx)
+}
+const itemPredicate: core.InfallibleParser<ItemNode> = (src, ctx) => {
+	return shouldUseOldItemStackFormat(ctx)
+		? item_old(true)(src, ctx)
+		: item_new(true)(src, ctx)
+}
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
@@ -1683,7 +1691,12 @@ function components(): core.InfallibleParser<ComponentListNode> {
 		core.record({
 			start: '[',
 			pair: {
-				key: core.resourceLocation({ category: 'item_component' }),
+				// TODO: Create an item_component category
+				key: core.resourceLocation({
+					pool: [],
+					allowUnknown: true,
+					namespacePathSep: '.',
+				}),
 				sep: '=',
 				value: nbt.parser.entry,
 				end: ',',

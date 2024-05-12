@@ -14,6 +14,7 @@ import {
 export type MockNodesGetter = (
 	treeNode: ArgumentTreeNode,
 	range: core.RangeLike,
+	ctx: core.CompleterContext,
 ) => core.Arrayable<core.AstNode>
 
 /**
@@ -79,9 +80,10 @@ export function command(
 				})
 			),
 			...argumentTreeNodes.flatMap(([_name, treeNode]) =>
-				core.Arrayable.toArray(getMockNodes(treeNode, ctx.offset)).flatMap(
-					(n) => core.completer.dispatch(n, ctx),
-				)
+				core.Arrayable.toArray(getMockNodes(treeNode, ctx.offset, ctx))
+					.flatMap(
+						(n) => core.completer.dispatch(n, ctx),
+					)
 			),
 		]
 	}

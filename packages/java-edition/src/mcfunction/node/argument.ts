@@ -289,22 +289,6 @@ export namespace ItemOldNode {
 	export function is(node: core.AstNode | undefined): node is ItemOldNode {
 		return (node as ItemOldNode | undefined)?.type === 'mcfunction:item'
 	}
-
-	export function mock(
-		range: core.RangeLike,
-		isPredicate: boolean,
-	): ItemOldNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'item',
-			allowTag: isPredicate,
-		})
-		return {
-			type: 'mcfunction:item',
-			range: core.Range.get(range),
-			children: [id],
-			id,
-		}
-	}
 }
 
 export interface ItemNewNode extends core.AstNode {
@@ -314,7 +298,47 @@ export interface ItemNewNode extends core.AstNode {
 	components?: ComponentListNode
 }
 
+export namespace ItemNewNode {
+	export function is(node: core.AstNode | undefined): node is ItemNewNode {
+		return (node as ItemNewNode | undefined)?.type === 'mcfunction:item'
+	}
+}
+
 export type ItemNode = ItemOldNode | ItemNewNode
+
+export namespace ItemNode {
+	export function is(node: core.AstNode | undefined): node is ItemNode {
+		return (
+			ItemOldNode.is(node) || ItemNewNode.is(node)
+		)
+	}
+
+	export function hasUserData(node: ItemNode): boolean {
+		if (ItemOldNode.is(node)) {
+			return !!node.nbt
+		} else {
+			return !!node.components
+		}
+	}
+
+	export function mock(
+		range: core.RangeLike,
+		isPredicate: boolean,
+		format: 'old' | 'new',
+	): ItemNode {
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'item',
+			allowTag: isPredicate,
+		})
+
+		return {
+			type: 'mcfunction:item',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+		}
+	}
+}
 
 export interface ComponentListNode extends core.AstNode {
 	type: 'mcfunction:component_list'

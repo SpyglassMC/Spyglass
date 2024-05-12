@@ -7,9 +7,9 @@ import { getTagValues } from '../../common/index.js'
 import { text_component } from '../../json/checker/data/text_component.js'
 import type {
 	EntitySelectorInvertableArgumentValueNode,
-	ItemOldNode,
 } from '../node/index.js'
-import { BlockNode, EntityNode, ParticleNode } from '../node/index.js'
+import { ItemOldNode } from '../node/index.js'
+import { BlockNode, EntityNode, ItemNode, ParticleNode } from '../node/index.js'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -164,15 +164,19 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	nbt.checker.index('entity_type', types)(nbtValue, ctx)
 }
 
-const item: core.SyncChecker<ItemOldNode> = (node, ctx) => {
-	if (!node.nbt) {
+const item: core.SyncChecker<ItemNode> = (node, ctx) => {
+	if (!ItemNode.hasUserData(node)) {
 		return
 	}
 
-	nbt.checker.index(
-		'item',
-		core.ResourceLocationNode.toString(node.id, 'full'),
-	)(node.nbt, ctx)
+	if (ItemOldNode.is(node)) {
+		nbt.checker.index(
+			'item',
+			core.ResourceLocationNode.toString(node.id, 'full'),
+		)(node.nbt!, ctx)
+	} else {
+		// TODO: Implement checking for item componentrs
+	}
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {

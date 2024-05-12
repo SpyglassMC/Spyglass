@@ -1,6 +1,7 @@
 import type {
 	Arrayable,
 	Completer,
+	CompleterContext,
 	MetaRegistry,
 	RegistryCategory,
 	WorldgenFileCategory,
@@ -27,6 +28,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common/index.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
@@ -46,6 +48,7 @@ import {
 	CoordinateNode,
 	EntitySelectorNode,
 	IntRangeNode,
+	ItemNode,
 	ObjectiveCriteriaNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -53,9 +56,17 @@ import {
 } from '../node/index.js'
 import type { ArgumentTreeNode } from '../tree/index.js'
 
+function getItemStackFormat(ctx: CompleterContext): 'old' | 'new' {
+	const release = ctx.config.env.gameVersion as ReleaseVersion | undefined
+	return (release === undefined || ReleaseVersion.cmp(release, '1.20.5') < 0)
+		? 'old'
+		: 'new'
+}
+
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
 	range,
+	ctx,
 ): Arrayable<AstNode> => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
@@ -111,11 +122,11 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_enchantment':
 			return ResourceLocationNode.mock(range, { category: 'enchantment' })
 		case 'minecraft:item_predicate':
-			return ItemNode.mock(range, true)
+			return ItemNode.mock(range, true, getItemStackFormat(ctx))
 		case 'minecraft:item_slot':
 			return LiteralNode.mock(range, { pool: ItemSlotArgumentValues })
 		case 'minecraft:item_stack':
-			return ItemNode.mock(range, false)
+			return ItemNode.mock(range, false, getItemStackFormat(ctx))
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
@@ -299,7 +310,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 			VectorNode.mock(ctx.offset, { dimension: 3 }),
 		],
 		falling_dust: [BlockNode.mock(ctx.offset, false)],
-		item: [ItemNode.mock(ctx.offset, false)],
+		item: [ItemNode.mock(ctx.offset, false, getItemStackFormat(ctx))],
 		sculk_charge: [FloatNode.mock(ctx.offset)],
 		shriek: [IntegerNode.mock(ctx.offset)],
 		vibration: [
