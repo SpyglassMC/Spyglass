@@ -175,7 +175,27 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 			core.ResourceLocationNode.toString(node.id, 'full'),
 		)(node.nbt!, ctx)
 	} else {
-		// TODO: Implement checking for item componentrs
+		const present = new Set<string>()
+
+		for (const component of node.components!.children) {
+			const componentName = core.ResourceLocationNode.toString(
+				component.key!,
+				'full',
+			)
+
+			if (present.has(componentName)) {
+				ctx.err.report(
+					localize(
+						'mcfunction.checker.item.duplicate-component',
+						componentName,
+					),
+					node.components!.range,
+					core.ErrorSeverity.Error,
+				)
+			} else {
+				present.add(componentName)
+			}
+		}
 	}
 }
 
@@ -346,6 +366,6 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
-	meta.registerChecker<ItemOldNode>('mcfunction:item', item)
+	meta.registerChecker<ItemNode>('mcfunction:item', item)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }
