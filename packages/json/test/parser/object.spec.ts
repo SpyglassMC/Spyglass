@@ -16,6 +16,8 @@ describe('JSON object parser', () => {
 			{ content: '{"1": {"2": "3"}, {"4": "5"}}' },
 			{ content: '{"hey": "there"}' },
 			{ content: '{"\\"": "\\u1234"}' },
+			{ content: '{"test": "\\u1z34"}' },
+			{ content: '{"\\z": "ermm"}' },
 		]
 		for (const { content } of cases) {
 			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {

@@ -770,6 +770,132 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
   "errors": []
 }
 
+exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
+  "node": {
+    "type": "json:object",
+    "range": {
+      "start": 0,
+      "end": 18
+    },
+    "children": [
+      {
+        "type": "pair",
+        "range": {
+          "start": 1,
+          "end": 17
+        },
+        "children": [
+          {
+            "type": "json:string",
+            "range": {
+              "start": 1,
+              "end": 7
+            },
+            "value": "test",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              }
+            ]
+          },
+          {
+            "type": "json:string",
+            "range": {
+              "start": 9,
+              "end": 17
+            },
+            "value": "u1z34",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 10,
+                  "end": 10
+                }
+              },
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 1
+                },
+                "outer": {
+                  "start": 10,
+                  "end": 12
+                }
+              }
+            ]
+          }
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 7
+          },
+          "value": "test",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            }
+          ]
+        },
+        "sep": {
+          "start": 7,
+          "end": 8
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 9,
+            "end": 17
+          },
+          "value": "u1z34",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 10,
+                "end": 10
+              }
+            },
+            {
+              "inner": {
+                "start": 0,
+                "end": 1
+              },
+              "outer": {
+                "start": 10,
+                "end": 12
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
   "node": {
     "type": "json:object",
@@ -914,6 +1040,141 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
     ]
   },
   "errors": []
+}
+
+exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
+  "node": {
+    "type": "json:object",
+    "range": {
+      "start": 0,
+      "end": 14
+    },
+    "children": [
+      {
+        "type": "pair",
+        "range": {
+          "start": 1,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "json:string",
+            "range": {
+              "start": 1,
+              "end": 5
+            },
+            "value": "z",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              },
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 1
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 4
+                }
+              }
+            ]
+          },
+          {
+            "type": "json:string",
+            "range": {
+              "start": 7,
+              "end": 13
+            },
+            "value": "ermm",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 8,
+                  "end": 8
+                }
+              }
+            ]
+          }
+        ],
+        "key": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 5
+          },
+          "value": "z",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            },
+            {
+              "inner": {
+                "start": 0,
+                "end": 1
+              },
+              "outer": {
+                "start": 2,
+                "end": 4
+              }
+            }
+          ]
+        },
+        "sep": {
+          "start": 5,
+          "end": 6
+        },
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 7,
+            "end": 13
+          },
+          "value": "ermm",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 8,
+                "end": 8
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 4
+      },
+      "message": "Unexpected escape character “z”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['JSON object parser object() Parse "{1: 2}" 1'] = {
