@@ -48,7 +48,7 @@ export interface DispatchStatementNode extends AstNode {
 	type: 'mcdoc:dispatch_statement'
 	children: (
 		| CommentNode
-		| AttributeNode
+		| PrelimNode
 		| LiteralNode
 		| ResourceLocationNode
 		| IndexBodyNode
