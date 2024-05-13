@@ -1173,7 +1173,7 @@ export const dispatcherType: Parser<DispatcherTypeNode> = typeBase(
 	'mcdoc:type/dispatcher',
 	syntax([
 		failOnError(resLoc({ category: 'mcdoc/dispatcher' })),
-		indexBody()
+		indexBody(),
 	]),
 )
 
@@ -1206,9 +1206,7 @@ export const unionType: Parser<UnionTypeNode> = typeBase(
 
 export const referenceType: InfallibleParser<ReferenceTypeNode> = typeBase(
 	'mcdoc:type/reference',
-	syntax([
-		path
-	]),
+	syntax([path]),
 )
 
 export const type: InfallibleParser<TypeNode> = any([

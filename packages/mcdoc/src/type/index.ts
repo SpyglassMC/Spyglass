@@ -23,7 +23,7 @@ export const StaticIndexKeywords = Object.freeze(
 		'fallback',
 		'none',
 		'unknown',
-		'spawnitem'
+		'spawnitem',
 	] as const,
 )
 export type StaticIndexKeyword = (typeof StaticIndexKeywords)[number]
