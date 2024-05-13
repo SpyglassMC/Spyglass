@@ -368,7 +368,16 @@ exports['JSON array parser array() Parse "["⧵u1z34"]" 1'] = {
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 8
+      },
+      "message": "Hexadecimal digit expected",
+      "severity": 3
+    }
+  ]
 }
 
 exports['JSON array parser array() Parse "["⧵z"]" 1'] = {
@@ -450,7 +459,16 @@ exports['JSON array parser array() Parse "["⧵z"]" 1'] = {
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 4
+      },
+      "message": "Unexpected escape character “z”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['JSON array parser array() Parse "[1,2,]" 1'] = {
