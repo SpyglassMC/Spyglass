@@ -287,7 +287,8 @@ export interface ItemOldNode extends core.AstNode {
 }
 export namespace ItemOldNode {
 	export function is(node: core.AstNode | undefined): node is ItemOldNode {
-		return (node as ItemOldNode | undefined)?.type === 'mcfunction:item'
+		return (node as ItemOldNode | undefined)?.type === 'mcfunction:item' &&
+			'nbt' in (node as ItemNode)
 	}
 }
 
@@ -300,7 +301,8 @@ export interface ItemNewNode extends core.AstNode {
 
 export namespace ItemNewNode {
 	export function is(node: core.AstNode | undefined): node is ItemNewNode {
-		return (node as ItemNewNode | undefined)?.type === 'mcfunction:item'
+		return (node as ItemNewNode | undefined)?.type === 'mcfunction:item' &&
+			'components' in (node as ItemNode)
 	}
 }
 
