@@ -47,8 +47,8 @@ export const TopLevelNode = Object.freeze({
 export interface DispatchStatementNode extends AstNode {
 	type: 'mcdoc:dispatch_statement'
 	children: (
+		| PrelimNode
 		| CommentNode
-		| AttributeNode
 		| LiteralNode
 		| ResourceLocationNode
 		| IndexBodyNode
@@ -205,8 +205,9 @@ export const TypeNode = Object.freeze({
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`
 	children: (
-		| CommentNode
+		| DocCommentsNode
 		| AttributeNode
+		| CommentNode
 		| IndexBodyNode
 		| TypeArgBlockNode
 		| CN

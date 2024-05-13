@@ -127,7 +127,7 @@ export function resourceLocation(
 
 			if (ans.isTag && !options.allowTag) {
 				ctx.err.report(
-					localize('parser.resource-location.tag-diallowed'),
+					localize('parser.resource-location.tag-disallowed'),
 					ans,
 				)
 			}
