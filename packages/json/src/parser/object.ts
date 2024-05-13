@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import type { JsonObjectNode } from '../node/index.js'
-import { entry } from './entry.js'
+import { json } from './entry.js'
 import { string } from './string.js'
 
 export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) => {
@@ -11,7 +11,7 @@ export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) => {
 			pair: {
 				key: string,
 				sep: ':',
-				value: entry,
+				value: json(),
 				end: ',',
 				trailingEnd: false,
 			},

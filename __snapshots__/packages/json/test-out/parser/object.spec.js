@@ -893,7 +893,16 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 12,
+        "end": 16
+      },
+      "message": "Hexadecimal digit expected",
+      "severity": 3
+    }
+  ]
 }
 
 exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
