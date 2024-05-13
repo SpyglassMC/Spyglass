@@ -281,6 +281,7 @@ await CLI.scriptName('mcdoc')
 											`known error: orphaned doc comment\n${comment}`,
 										)
 										console.log(_parent?.type)
+										console.log(_parent?.children)
 										known_error = true
 									}
 								}
