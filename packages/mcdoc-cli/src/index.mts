@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ts-node --esm
+#!/usr/bin/env -S tsx
 import { dirname, join, parse, resolve } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 
@@ -161,7 +161,7 @@ await CLI.scriptName('mcdoc')
 						const resource = join(
 							path.dir.replace(`${projectPath}`, ''),
 							path.name,
-						).replace(/^\//, '')
+						).replace(/\\/g, '/').replace(/^\//, '')
 
 						logger.info(`parsing ${resource}\n`)
 
@@ -206,6 +206,22 @@ await CLI.scriptName('mcdoc')
 
 								child.type = _child.type
 
+								if (child.type === 'resource_location') {
+									/* @ts-ignore */
+									child.namespace = _child.namespace
+									/* @ts-ignore */
+									child.path = _child.path
+									/* @ts-ignore */
+									// if (_child.path?.[0] === 'item') {
+									// 	const arrow = { ..._child?.symbol?.members?.['compass'] }
+
+									// 	delete arrow.parentSymbol
+									// 	delete arrow.parentMap
+									// 	/* @ts-ignore */
+									// 	if (arrow.data?.typeDef?.fields) console.log(JSON.stringify(arrow.data?.typeDef?.fields, undefined, 3))
+									// }
+								}
+
 								if (Object.hasOwn(_child, 'isOptional')) {
 									/* @ts-ignore */
 									child.isOptional = _child.isOptional
@@ -224,7 +240,7 @@ await CLI.scriptName('mcdoc')
 									if (internal_locales[parent]) {
 										locales[
 											`mcdoc.${
-												resource.replace(/\//g, '.')
+												resource.replace(/[\/\\]/g, '.')
 											}.${child.value}`
 										] = internal_locales[parent].join('\n')
 
@@ -237,7 +253,7 @@ await CLI.scriptName('mcdoc')
 									internal_locales[parent]
 								) {
 									locales[
-										`mcdoc.${resource.replace(/\//g, '.')}.map_key`
+										`mcdoc.${resource.replace(/[\/\\]/g, '.')}.map_key`
 									] = internal_locales[parent].join('\n')
 
 									delete internal_locales[parent]
@@ -254,7 +270,7 @@ await CLI.scriptName('mcdoc')
 									) {
 										const key = parent.replace(/\[\d+\]$/, '')
 
-										if (!internal_locales.key) {
+										if (!internal_locales[key]) {
 											internal_locales[key] = []
 										}
 
@@ -262,8 +278,9 @@ await CLI.scriptName('mcdoc')
 									} else if (comment.startsWith('/ ')) {
 										child.type = 'error'
 										console.warn(
-											`known error: orphaned dispatch comment`,
+											`known error: orphaned doc comment\n${comment}`,
 										)
+										console.log(_parent?.type)
 										known_error = true
 									}
 								}
