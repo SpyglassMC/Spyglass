@@ -47,8 +47,8 @@ export namespace TopLevelNode {
 export interface DispatchStatementNode extends AstNode {
 	type: 'mcdoc:dispatch_statement'
 	children: (
+		| PrelimNode
 		| CommentNode
-		| AttributeNode
 		| LiteralNode
 		| ResourceLocationNode
 		| IndexBodyNode
@@ -207,8 +207,9 @@ export namespace TypeNode {
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`
 	children: (
-		| CommentNode
+		| DocCommentsNode
 		| AttributeNode
+		| CommentNode
 		| IndexBodyNode
 		| TypeArgBlockNode
 		| CN

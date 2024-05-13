@@ -649,25 +649,6 @@ const noop: InfallibleParser<undefined> = () => undefined
 const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> =
 	select([{ prefix: '<', parser: typeParamBlock }, { parser: noop }])
 
-export const dispatchStatement: Parser<DispatchStatementNode> = setType(
-	'mcdoc:dispatch_statement',
-	syntax(
-		[
-			attributes,
-			keyword('dispatch'),
-			resLoc({
-				category: 'mcdoc/dispatcher',
-				accessType: SymbolAccessType.Write,
-			}),
-			indexBody({ noDynamic: true }),
-			optionalTypeParamBlock,
-			literal('to'),
-			{ get: () => type },
-		],
-		true,
-	),
-)
-
 export const docComment: Parser<CommentNode> = core.comment({
 	singleLinePrefixes: new Set(['///']),
 	includesEol: true,
@@ -683,6 +664,25 @@ export const docComments: InfallibleParser<DocCommentsNode> = setType(
 
 const prelim: InfallibleParser<SyntaxUtil<DocCommentsNode | AttributeNode>> =
 	syntax([optional(failOnEmpty(docComments)), attributes])
+
+export const dispatchStatement: Parser<DispatchStatementNode> = setType(
+	'mcdoc:dispatch_statement',
+	syntax(
+		[
+			prelim,
+			keyword('dispatch'),
+			resLoc({
+				category: 'mcdoc/dispatcher',
+				accessType: SymbolAccessType.Write,
+			}),
+			indexBody({ noDynamic: true }),
+			optionalTypeParamBlock,
+			literal('to'),
+			{ get: () => type },
+		],
+		true,
+	),
+)
 
 const enumType: InfallibleParser<LiteralNode> = literal(
 	['byte', 'short', 'int', 'long', 'string', 'float', 'double'],
@@ -1171,7 +1171,11 @@ export const tupleType: Parser<TupleTypeNode> = typeBase(
 
 export const dispatcherType: Parser<DispatcherTypeNode> = typeBase(
 	'mcdoc:type/dispatcher',
-	syntax([failOnError(resLoc({ category: 'mcdoc/dispatcher' })), indexBody()]),
+	syntax([
+		prelim,
+		failOnError(resLoc({ category: 'mcdoc/dispatcher' })),
+		indexBody()
+	]),
 )
 
 export const unionType: Parser<UnionTypeNode> = typeBase(
@@ -1203,7 +1207,10 @@ export const unionType: Parser<UnionTypeNode> = typeBase(
 
 export const referenceType: InfallibleParser<ReferenceTypeNode> = typeBase(
 	'mcdoc:type/reference',
-	syntax([path]),
+	syntax([
+		prelim,
+		path
+	]),
 )
 
 export const type: InfallibleParser<TypeNode> = any([
