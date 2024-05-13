@@ -6,6 +6,7 @@ import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { text_component } from '../../json/checker/data/text_component.js'
 import type {
+	ComponentListNode,
 	EntitySelectorInvertableArgumentValueNode,
 } from '../node/index.js'
 import { ItemOldNode } from '../node/index.js'
@@ -175,27 +176,35 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 			core.ResourceLocationNode.toString(node.id, 'full'),
 		)(node.nbt!, ctx)
 	} else {
-		const present = new Set<string>()
+		const groupedComponents = new Map<
+			string,
+			core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+		>()
 
-		for (const component of node.components!.children) {
+		node.components!.children.forEach(component => {
 			const componentName = core.ResourceLocationNode.toString(
 				component.key!,
 				'full',
 			)
 
-			if (present.has(componentName)) {
-				ctx.err.report(
-					localize(
-						'duplicate-components',
-						componentName,
-					),
-					node.components!.range,
-					core.ErrorSeverity.Error,
-				)
-			} else {
-				present.add(componentName)
+			if (!groupedComponents.has(componentName)) {
+				groupedComponents.set(componentName, [])
 			}
-		}
+
+			groupedComponents.get(componentName)!.push(component)
+		})
+
+		groupedComponents.forEach((components, componentName) => {
+			if (components.length > 1) {
+				components.forEach(component => {
+					ctx.err.report(
+						localize('duplicate-components', componentName),
+						component.key!.range,
+						core.ErrorSeverity.Error,
+					)
+				})
+			}
+		})
 	}
 }
 
