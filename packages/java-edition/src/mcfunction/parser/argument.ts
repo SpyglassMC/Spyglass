@@ -491,9 +491,9 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item_old(isPredicate: false): core.InfallibleParser<ItemOldNode>
-function item_old(isPredicate: true): core.InfallibleParser<ItemOldNode>
-function item_old(
+function itemOld(isPredicate: false): core.InfallibleParser<ItemOldNode>
+function itemOld(isPredicate: true): core.InfallibleParser<ItemOldNode>
+function itemOld(
 	isPredicate: boolean,
 ): core.InfallibleParser<ItemOldNode> {
 	return core.map<
@@ -517,9 +517,9 @@ function item_old(
 	)
 }
 
-function item_new(isPredicate: false): core.InfallibleParser<ItemNewNode>
-function item_new(isPredicate: true): core.InfallibleParser<ItemNewNode>
-function item_new(
+function itemNew(isPredicate: false): core.InfallibleParser<ItemNewNode>
+function itemNew(isPredicate: true): core.InfallibleParser<ItemNewNode>
+function itemNew(
 	isPredicate: boolean,
 ): core.InfallibleParser<ItemNewNode> {
 	return core.map<
@@ -545,13 +545,13 @@ function item_new(
 
 const itemStack: core.InfallibleParser<ItemNode> = (src, ctx) => {
 	return shouldUseOldItemStackFormat(ctx)
-		? item_old(false)(src, ctx)
-		: item_new(false)(src, ctx)
+		? itemOld(false)(src, ctx)
+		: itemNew(false)(src, ctx)
 }
 const itemPredicate: core.InfallibleParser<ItemNode> = (src, ctx) => {
 	return shouldUseOldItemStackFormat(ctx)
-		? item_old(true)(src, ctx)
-		: item_new(true)(src, ctx)
+		? itemOld(true)(src, ctx)
+		: itemNew(true)(src, ctx)
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
