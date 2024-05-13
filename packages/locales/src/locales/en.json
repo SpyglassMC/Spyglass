@@ -33,7 +33,7 @@
   "conjunction.or_3+_1": ", ",
   "conjunction.or_3+_2": ", or ",
   "datafix.error.command-replaceitem": "/replaceitem was removed in 20w46a (the second snapshot of 1.17) in favour of /item",
-  "duplicate-components": "Component %0% already defined",
+  "duplicate-components": "Duplicate component definitions for %0%",
   "duplicate-key": "Duplicate key %0%",
   "ending-quote": "an ending quote %0%",
   "entity": "an entity",
