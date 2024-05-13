@@ -289,6 +289,170 @@ exports['JSON array parser array() Parse "["⧵"","⧵u1234"]" 1'] = {
   "errors": []
 }
 
+exports['JSON array parser array() Parse "["⧵u1z34"]" 1'] = {
+  "node": {
+    "type": "json:array",
+    "range": {
+      "start": 0,
+      "end": 10
+    },
+    "children": [
+      {
+        "type": "item",
+        "range": {
+          "start": 1,
+          "end": 9
+        },
+        "children": [
+          {
+            "type": "json:string",
+            "range": {
+              "start": 1,
+              "end": 9
+            },
+            "value": "u1z34",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              },
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 1
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 4
+                }
+              }
+            ]
+          }
+        ],
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 9
+          },
+          "value": "u1z34",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            },
+            {
+              "inner": {
+                "start": 0,
+                "end": 1
+              },
+              "outer": {
+                "start": 2,
+                "end": 4
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['JSON array parser array() Parse "["⧵z"]" 1'] = {
+  "node": {
+    "type": "json:array",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "children": [
+      {
+        "type": "item",
+        "range": {
+          "start": 1,
+          "end": 5
+        },
+        "children": [
+          {
+            "type": "json:string",
+            "range": {
+              "start": 1,
+              "end": 5
+            },
+            "value": "z",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              },
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 1
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 4
+                }
+              }
+            ]
+          }
+        ],
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 5
+          },
+          "value": "z",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            },
+            {
+              "inner": {
+                "start": 0,
+                "end": 1
+              },
+              "outer": {
+                "start": 2,
+                "end": 4
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['JSON array parser array() Parse "[1,2,]" 1'] = {
   "node": {
     "type": "json:array",

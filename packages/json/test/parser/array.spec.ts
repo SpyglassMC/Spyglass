@@ -16,6 +16,8 @@ describe('JSON array parser', () => {
 			{ content: '[[1],2]' },
 			{ content: '["hey","there"]' },
 			{ content: '["\\"","\\u1234"]' },
+			{ content: '["\\u1z34"]' },
+			{ content: '["\\z"]' },
 		]
 		for (const { content } of cases) {
 			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
