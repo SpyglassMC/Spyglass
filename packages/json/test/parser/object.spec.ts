@@ -1,7 +1,9 @@
+import type { LanguageError } from '@spyglassmc/core'
 import {
 	showWhitespaceGlyph,
 	testParser,
 } from '@spyglassmc/core/test-out/utils.js'
+import assert from 'assert'
 import snapshot from 'snap-shot-it'
 import { object } from '../../lib/parser/object.js'
 
@@ -24,5 +26,49 @@ describe('JSON object parser', () => {
 				snapshot(testParser(object, content))
 			})
 		}
+
+		describe('should absorb and output parse errors from child parsers', () => {
+			const cases: {
+				name: string
+				content: string
+				expectedErrors: LanguageError[]
+			}[] = [
+				{
+					name: 'invalid character escape (key + value)',
+					content: '{"\\z": "\\j"}',
+					expectedErrors: [{
+						range: { start: 3, end: 4 },
+						message: 'Unexpected escape character “z”',
+						severity: 3,
+					}, {
+						range: { start: 9, end: 10 },
+						message: 'Unexpected escape character “j”',
+						severity: 3,
+					}],
+				},
+				{
+					name: 'invalid unicode escape (key + value)',
+					content: '{"\\u1z34": "\\u123p"}',
+					expectedErrors: [
+						{
+							range: { start: 4, end: 8 },
+							message: 'Hexadecimal digit expected',
+							severity: 3,
+						},
+						{
+							range: { start: 14, end: 18 },
+							message: 'Hexadecimal digit expected',
+							severity: 3,
+						},
+					],
+				},
+			]
+			for (const { name, content, expectedErrors } of cases) {
+				it(name, () => {
+					const { errors } = testParser(object, content)
+					assert.deepEqual(errors, expectedErrors)
+				})
+			}
+		})
 	})
 })
