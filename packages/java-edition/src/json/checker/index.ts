@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
-import type { JsonArrayNode, JsonNode, JsonNumberNode } from '@spyglassmc/json'
+import type { JsonArrayNode, JsonNode, JsonNumberNode, JsonStringNode } from '@spyglassmc/json'
 import { JsonObjectNode } from '@spyglassmc/json'
-import { localeQuote, localize } from '@spyglassmc/locales'
+import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../../binder/index.js'
 
@@ -82,20 +82,99 @@ export function definition(
 	identifier: `::${string}::${string}`,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
-		const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
-		const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
-		if (!typeDef) {
-			return
-		}
-		switch (typeDef.kind) {
-			case 'struct':
-				object(typeDef)(node, ctx)
-				break
-			default:
-				ctx.logger.error(
-					`[json.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
-				)
-		}
+		mcdoc.validation.validateByTypeName<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
+			context: ctx,
+			inferType: node => {
+				switch (node.type) {
+					case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
+					case 'json:number': return { kind: 'literal', value: { kind: 'number', value: node.value } }
+					case 'json:null': return { kind: 'unsafe' } // null is always invalid? 
+					case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
+					case 'json:array': return { kind: 'list', item: { kind: 'any' } }
+					case 'json:object': return { kind: 'struct', fields: [] }
+					case 'pair': return { kind: 'any' } // Should never happen
+				}
+			},
+			// TODO come up with a better way to handle ruleset, the logic is split between base validation and specific validation right now
+			isEquivalent: (inferred, def) => {
+				switch (inferred.kind) {
+					case 'list': return (['list', 'byte_array', 'int_array', 'long_array', 'tuple'] as mcdoc.McdocType['kind'][]).includes(def.kind);
+					case 'struct': return def.kind === 'struct';
+					case 'literal': return inferred.value.kind === 'number'
+						&& (
+							(['byte', 'short', 'int', 'long', 'float', 'double'] as mcdoc.McdocType['kind'][]).includes(def.kind)
+							|| def.kind === 'literal' && def.value === inferred.value
+						)
+					default: return false;
+				}
+			},
+			getChildren: node => {
+				if (node.type === 'pair') {
+					return [ node.key, node.value ].filter(n => n) as JsonNode[]
+				}
+				if (node.type === 'json:array') {
+					return node.children.filter(n => n.value).map(n => n.value as JsonNode)
+				}
+				return node.children?.filter(n => n) as JsonNode[] ?? []
+			},
+			reportError: (node, kind, params) => {
+				switch (kind) {
+					case 'typeMismatch':
+						ctx.err.report(localize('expected', arrayToMessage((params[0] as mcdoc.McdocType[]).map(t => {
+							switch (t.kind) {
+								case 'literal': 
+									return t.value.value.toString();
+								case 'boolean':
+									return localize('json.node.boolean');
+								case 'string':
+									return localize('json.node.string');
+								case 'byte':
+								case 'short':
+								case 'int':
+								case 'long':
+								case 'float':
+								case 'double':
+									return localize('json.node.number');
+								case 'list':
+								case 'tuple':
+								case 'byte_array':
+								case 'int_array':
+								case 'long_array':
+									return localize('json.node.array');
+								case 'struct':
+									return localize('json.node.object');
+								default: return localize('json.node');
+							}
+						}))), node.range)
+						break;
+					case 'invalidCollectionLength': ctx.err.report(
+						localize(
+							'expected',
+							localize('json.checker.array.length-between', localize('json.node.array'), params[0], params[1])
+						),
+						node)
+						break;
+					case 'invalidRecordKey':
+						ctx.err.report(localize('json.checker.property.unknown', node.type === 'pair' ? node.key?.value ?? '' : ''), node)
+				}
+			}, 
+			attachTypeInfo: (node, definition) => {}, //TODO
+		});
+
+		// const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
+		// const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
+		// if (!typeDef) {
+		// 	return
+		// }
+		// switch (typeDef.kind) {
+		// 	case 'struct':
+		// 		object(typeDef)(node, ctx)
+		// 		break
+		// 	default:
+		// 		ctx.logger.error(
+		// 			`[json.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
+		// 		)
+		// }
 	}
 }
 

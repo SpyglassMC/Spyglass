@@ -17,6 +17,17 @@ export type NumericRange = {
 	min?: number
 	max?: number
 }
+export namespace NumericRange {
+	export function isInRange(range: NumericRange, val: number): boolean {
+		if (range.min && (((range.kind & 0b10) > 1 && val <= range.min) || val < range.min)) {
+			return false;
+		}
+		if (range.max && (((range.kind & 0b01) > 1 && val >= range.max) || val > range.max)) {
+			return false;
+		}
+		return true;
+	}
+}
 
 export const StaticIndexKeywords = Object.freeze(
 	[

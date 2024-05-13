@@ -52,6 +52,7 @@
   "json.checker.property.unknown": "Unknown property %0%",
   "json.checker.string.hex-color": "a 6-digit hexadecimal number",
   "json.checker.tag-entry.duplicate": "Duplicate tag entry",
+  "json.node": "a json value",
   "json.node.array": "an array",
   "json.node.boolean": "a boolean",
   "json.node.null": "a null",
