@@ -186,7 +186,7 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 			if (present.has(componentName)) {
 				ctx.err.report(
 					localize(
-						'mcfunction.checker.item.duplicate-component',
+						'duplicate-components',
 						componentName,
 					),
 					node.components!.range,
