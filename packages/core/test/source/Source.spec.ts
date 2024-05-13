@@ -1,30 +1,50 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
+import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils.js'
 
 describe('Source', () => {
 	describe('getCharRange()', () => {
-		const suites: { string: string; cursor: number; expected: Range }[] = [
+		/*
+		 * Index Tens - 000000000011111111112
+		 * Index Ones - 012345678901234567890
+		 * Outer      - foo\"bar\u00a7qux
+		 * Inner      - foo"bar§qux
+		 */
+		const indexMapSuite = {
+			string: 'foo"bar§qux', // from: foo\"bar\u00a7qux
+			indexMap: [
+				{ inner: Range.create(3, 4), outer: Range.create(3, 5) },
+				{ inner: Range.create(7, 8), outer: Range.create(8, 14) },
+			],
+		}
+
+		const suites: {
+			string: string
+			cursor: number
+			expected: Range
+			indexMap?: IndexMap
+		}[] = [
 			{ string: 'foo', cursor: 0, expected: Range.create(0, 1) },
 			{ string: 'foo', cursor: 1, expected: Range.create(1, 2) },
 			{ string: 'foo', cursor: 2, expected: Range.create(2, 3) },
+			// `"` -> `\"`
+			{ ...indexMapSuite, cursor: 3, expected: Range.create(3, 5) },
+			// `r` -> `r` (shifted right)
+			{ ...indexMapSuite, cursor: 6, expected: Range.create(7, 8) },
+			// `§` -> `\u00a7`
+			{ ...indexMapSuite, cursor: 7, expected: Range.create(8, 14) },
 		]
-		for (const { string, cursor, expected } of suites) {
-			it(
-				`Should return '${Range.toString(expected)}' for ${
-					markOffsetInString(
-						string,
-						cursor,
-					)
-				}`,
-				() => {
-					const src = new Source(string)
-					src.cursor = cursor
-					const actual = src.getCharRange()
-					assert.deepStrictEqual(actual, expected)
-				},
-			)
+		for (const { string, cursor, expected, indexMap } of suites) {
+			const expectedStr = Range.toString(expected)
+			const srcWithVisibleCursor = markOffsetInString(string, cursor)
+			it(`Should return '${expectedStr}' for ${srcWithVisibleCursor}`, () => {
+				const src = new Source(string, indexMap)
+				src.innerCursor = cursor
+				const actual = src.getCharRange()
+				assert.deepStrictEqual(actual, expected)
+			})
 		}
 	})
 	describe('clone()', () => {

@@ -110,10 +110,10 @@ export class ReadonlySource {
 			cursor++
 		) {
 			const c = this.string.charAt(cursor)
-			if (c === CR || c === LF) {
+			if (Source.isNewline(c)) {
 				break
 			}
-			if (!(c === ' ' || c === '\t')) {
+			if (!Source.isSpace(c)) {
 				return true
 			}
 		}
@@ -176,7 +176,7 @@ export class Source extends ReadonlySource {
 
 	/**
 	 * Skips the current character.
-	 * @param step The step to skip. @default 1
+	 * @param step The step to skip. Defaults to 1
 	 */
 	skip(step = 1): this {
 		this.innerCursor += step
@@ -313,24 +313,26 @@ export class Source extends ReadonlySource {
 		this.readRemaining()
 		return this
 	}
+}
 
-	static isDigit(c: string): c is Digit {
+export namespace Source {
+	export function isDigit(c: string): c is Digit {
 		return c >= '0' && c <= '9'
 	}
 
-	static isBrigadierQuote(c: string): c is '"' | "'" {
+	export function isBrigadierQuote(c: string): c is '"' | "'" {
 		return c === '"' || c === "'"
 	}
 
-	static isNewline(c: string): c is Newline {
+	export function isNewline(c: string): c is Newline {
 		return c === '\r\n' || c === '\r' || c === '\n'
 	}
 
-	static isSpace(c: string): c is Space {
+	export function isSpace(c: string): c is Space {
 		return c === ' ' || c === '\t'
 	}
 
-	static isWhitespace(c: string): c is Whitespace {
+	export function isWhitespace(c: string): c is Whitespace {
 		return Source.isSpace(c) || Source.isNewline(c)
 	}
 }
