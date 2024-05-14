@@ -103,28 +103,28 @@ interface McdocBinderContext extends BinderContext, AdditionalContext {}
 interface ModuleSymbolData {
 	nextAnonymousIndex: number
 }
-const ModuleSymbolData = Object.freeze({
-	is(data: unknown): data is ModuleSymbolData {
+namespace ModuleSymbolData {
+	export function is(data: unknown): data is ModuleSymbolData {
 		return (
 			!!data &&
 			typeof data === 'object' &&
 			typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
 		)
-	},
-})
+	}
+}
 
 export interface TypeDefSymbolData {
 	typeDef: McdocType
 }
-export const TypeDefSymbolData = Object.freeze({
-	is(data: unknown): data is TypeDefSymbolData {
+export namespace TypeDefSymbolData {
+	export function is(data: unknown): data is TypeDefSymbolData {
 		return (
 			!!data &&
 			typeof data === 'object' &&
 			typeof (data as TypeDefSymbolData).typeDef === 'object'
 		)
-	},
-})
+	}
+}
 
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)

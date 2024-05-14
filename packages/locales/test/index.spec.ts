@@ -1,7 +1,25 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
-import { arrayToMessage } from '../lib/index.js'
+import { arrayToMessage, loadLocale } from '../lib/index.js'
 
+describe('loadLocale() Tests', () => {
+	it('Should treat locale case-insensitively', async () => {
+		const actual = await loadLocale('DE', true)
+		assert.strictEqual(actual, 'de')
+	})
+	it('Should load locale with subtags correctly', async () => {
+		const actual = await loadLocale('pt-br', true)
+		assert.strictEqual(actual, 'pt-br')
+	})
+	it('Should load locale without subtags correctly', async () => {
+		const actual = await loadLocale('de', true)
+		assert.strictEqual(actual, 'de')
+	})
+	it('Should fall back to locale without subtags gracefully', async () => {
+		const actual = await loadLocale('en-us', true)
+		assert.strictEqual(actual, 'en')
+	})
+})
 describe('arrayToMessage() Tests', () => {
 	it('Should return message for an empty array', () => {
 		const arr: string[] = []

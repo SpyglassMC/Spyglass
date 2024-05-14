@@ -321,7 +321,10 @@ export namespace SymbolLinterConfig {
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: ['@vanilla-mcdoc'],
+		dependencies: [
+			'@vanilla-datapack',
+			'@vanilla-mcdoc',
+		],
 		feature: {
 			codeActions: true,
 			colors: true,

@@ -44,7 +44,7 @@
     }
   },
   "extensionDependencies": [
-    "arcensoth.language-mcfunction"
+    "MinecraftCommands.syntax-mcfunction"
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",

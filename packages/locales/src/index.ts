@@ -37,11 +37,33 @@ export function localeQuote(content: string) {
 }
 
 /**
- * @param locale An [IETF language tag](https://en.wikipedia.org/wiki/IETF_language_tag). Defaults to `en`.
+ * @param locale A case-insensitive language tag following the format of
+ * `\w+(-\w+)*` that should ideally correspond to the file name of one of the
+ * files under `locales/`. Defaults to `en`.
+ * @param dry @internal Don't actually change the locale.
+ *
+ * @returns The locale loaded.
  */
-export async function loadLocale(locale = 'en'): Promise<void> {
-	if (locale !== language) {
-		return _setupLanguage(locale)
+export async function loadLocale(locale = 'en', dry = false): Promise<string> {
+	locale = locale.toLowerCase()
+
+	if (locale === language) {
+		return locale
+	}
+
+	try {
+		return await _setupLanguage(locale, dry)
+	} catch (e) {
+		// Most likely due to unknown locale.
+
+		const lastDashIndex = locale.lastIndexOf('-')
+		if (lastDashIndex === -1) {
+			// The locale has no subtags. No more locales to try.
+			throw e
+		}
+
+		// Try again with the rightmost subtag removed.
+		return loadLocale(locale.slice(0, lastDashIndex), dry)
 	}
 }
 
@@ -62,12 +84,13 @@ function _resolveLocalePlaceholders(
 	})
 }
 
-async function _setupLanguage(code: string) {
+async function _setupLanguage(code: string, dry = false) {
 	const locale = await import(`./locales/${code}.js`)
-	Locales[code] = locale
-	language = code
-
-	// console.info(`[I18N] Set to “${code}”.`)
+	if (!dry) {
+		Locales[code] = locale
+		language = code
+	}
+	return code
 }
 
 /**

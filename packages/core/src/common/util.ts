@@ -1,10 +1,21 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
+import { URL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 import type { Externals } from './externals/index.js'
-import type { DeepReadonly } from './ReadonlyProxy.js'
+import type { DeepReadonly, ReadWrite } from './ReadonlyProxy.js'
 
+// Spyglass uses the URL class provided by the
+// [spec](https://url.spec.whatwg.org/)-compliant `whatwg-url` package instead
+// of the broken one shipped with browsers that do not parse non-special scheme
+// URLs with hosts properly.
+//
+// * [Chromium bug](https://issues.chromium.org/issues/40587286)
+// * [FireFox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1374505)
+//
+// We use the name "URI" instead of "URL" when possible, since it is what
+// LSP has chosen to use for the string that uniquely identifies a file.
 export const Uri = URL
 export type Uri = URL
 
@@ -335,25 +346,25 @@ export function normalizeUri(uri: string): string {
 }
 
 /**
+ * Return a read-write TARGET type if the INPUT type is read-write, and a
+ * readonly TARGET type if the INPUT type is readonly, and `never` if the INPUT
+ * type is `undefined`.
+ *
+ * It is used in the return type of an AST node
+ * [user-defined type guard](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates).
+ *
  * @example
  * ```ts
- * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is IsHelper<AstNode, CommentNode, T>
+ * export namespace CommentNode {
+ * 	export function is<T extends DeepReadonly<AstNode> | undefined>(
+ * 		obj: T,
+ * 	): obj is InheritReadonly<CommentNode, T> {
+ * 		return (obj as CommentNode | undefined)?.type === 'comment'
+ * 	}
+ * }
  * ```
  */
-export type IsHelper<
-	ROOT extends object,
-	TARGET extends ROOT,
-	INPUT extends DeepReadonly<ROOT> | undefined,
-> = INPUT extends DeepReadonly<ROOT> ? INPUT & DeepReadonly<TARGET>
-	: INPUT & TARGET
-
-/**
- * @example
- * ```ts
- * function isCommentNode<T extends DeepReadonly<AstNode> | undefined>(node: T): node is NodeIsHelper<CommentNode, T>
- * ```
- */
-export type NodeIsHelper<
+export type InheritReadonly<
 	TARGET extends AstNode,
 	INPUT extends DeepReadonly<AstNode> | undefined,
-> = IsHelper<AstNode, TARGET, INPUT>
+> = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)

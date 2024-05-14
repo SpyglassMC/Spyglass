@@ -1,13 +1,15 @@
-export const Dev = Object.freeze({
-	assertDefined<T>(value: T): asserts value is Exclude<T, undefined> {
+export namespace Dev {
+	export function assertDefined<T>(
+		value: T,
+	): asserts value is Exclude<T, undefined> {
 		if (value === undefined) {
 			throw new Error(`'${Dev.stringify(value)}' is 'undefined'`)
 		}
-	},
-	assertNever(value: never): never {
+	}
+	export function assertNever(value: never): never {
 		throw new Error(`'${Dev.stringify(value)}' is not of type 'never'`)
-	},
-	assertTrue(value: boolean, message: string): void {
+	}
+	export function assertTrue(value: boolean, message: string): void {
 		if (!value) {
 			throw new Error(
 				`Assertion failed: ${message}. '${
@@ -17,11 +19,11 @@ export const Dev = Object.freeze({
 				}' should be true.`,
 			)
 		}
-	},
+	}
 	/**
 	 * @returns An estimate of the memory taken by the given value, assuming objects are stored as array-like structures instead of dictionaries in the V8 engine.
 	 */
-	estimateMemoryUsage(value: unknown): number {
+	export function estimateMemoryUsage(value: unknown): number {
 		const ByteToBits = 8
 		const PointerSize = 8
 
@@ -68,8 +70,8 @@ export const Dev = Object.freeze({
 		}
 
 		return ans
-	},
-	stringify(value: unknown): string {
+	}
+	export function stringify(value: unknown): string {
 		if (value && typeof value === 'object') {
 			try {
 				const seen = new Set<object>()
@@ -95,5 +97,5 @@ export const Dev = Object.freeze({
 		} else {
 			return `${value}`
 		}
-	},
-})
+	}
+}

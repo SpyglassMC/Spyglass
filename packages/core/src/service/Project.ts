@@ -512,7 +512,6 @@ export class Project implements ExternalEventEmitter {
 				dependencies,
 				this.externals,
 				this.logger,
-				this.cacheService.checksums.roots,
 			)
 			this.fs.register('file:', fileUriSupporter, true)
 			this.fs.register(
