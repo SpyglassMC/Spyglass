@@ -1215,10 +1215,10 @@ function convertLiteralValue(
 	} else if (TypedNumberNode.is(node)) {
 		const { suffix, value } = TypedNumberNode.destruct(node)
 		return {
-			kind:
-				convertLiteralNumberSuffix(suffix, ctx) ?? value.type === 'integer'
+			kind: convertLiteralNumberSuffix(suffix, ctx) ??
+				(value.type === 'integer'
 					? 'int'
-					: 'double',
+					: 'double'),
 			value: value.value,
 		}
 	} else {

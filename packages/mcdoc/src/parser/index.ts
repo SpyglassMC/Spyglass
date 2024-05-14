@@ -751,7 +751,7 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
 	select([
 		{
-			regex: /^(?:\+|-)?\d+(?![.dfDF])/,
+			regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
 			parser: sequence([
 				integer,
 				optional(
