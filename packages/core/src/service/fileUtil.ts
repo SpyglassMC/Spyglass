@@ -155,6 +155,13 @@ export namespace fileUtil {
 		return chmod(externals, path, 0o444)
 	}
 
+	export async function unlink(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<void> {
+		return externals.fs.unlink(path)
+	}
+
 	export async function readFile(
 		externals: Externals,
 		path: FsLocation,
