@@ -137,46 +137,23 @@ export interface StringType {
 	lengthRange?: NumericRange
 }
 
-export type LiteralValue =
-	| {
-		kind: 'boolean'
-		value: boolean
-	}
-	| {
-		kind: 'string'
-		value: string
-	}
-	| {
-		kind: 'number'
-		value: number
-		suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
-	}
+export type LiteralValue = LiteralBooleanValue | LiteralStringValue | LiteralNumericValue
+export interface LiteralBooleanValue {
+	kind: 'boolean'
+	value: boolean
+}
+export interface LiteralStringValue {
+	kind: 'string'
+	value: string
+}
+export interface LiteralNumericValue {
+	kind: (typeof NumericTypeKinds)[number]
+	value: number
+}
 export interface LiteralType {
 	kind: 'literal'
 	value: LiteralValue
 }
-export const LiteralNumberSuffixes = Object.freeze(
-	[
-		'b',
-		's',
-		'l',
-		'f',
-		'd',
-	] as const,
-)
-export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
-export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
-	[
-		...LiteralNumberSuffixes,
-		'B',
-		'S',
-		'L',
-		'F',
-		'D',
-	] as const,
-)
-export type LiteralNumberCaseInsensitiveSuffix =
-	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
 export interface NumericType {
 	kind: NumericTypeKind

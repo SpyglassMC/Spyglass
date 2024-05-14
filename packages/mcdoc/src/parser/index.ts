@@ -86,7 +86,6 @@ import type {
 } from '../node/index.js'
 import { RangeExclusiveChar } from '../node/index.js'
 import {
-	LiteralNumberCaseInsensitiveSuffixes,
 	NumericTypeFloatKinds,
 	NumericTypeIntKinds,
 	PrimitiveArrayValueKinds,
@@ -693,6 +692,28 @@ export const float: InfallibleParser<FloatNode> = core.float({
 	pattern:
 		/^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
 })
+export const LiteralNumberSuffixes = Object.freeze(
+	[
+		'b',
+		's',
+		'l',
+		'f',
+		'd',
+	] as const,
+)
+export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
+export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralNumberSuffixes,
+		'B',
+		'S',
+		'L',
+		'F',
+		'D',
+	] as const,
+)
+export type LiteralNumberCaseInsensitiveSuffix =
+	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
