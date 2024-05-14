@@ -137,7 +137,10 @@ export interface StringType {
 	lengthRange?: NumericRange
 }
 
-export type LiteralValue = LiteralBooleanValue | LiteralStringValue | LiteralNumericValue
+export type LiteralValue =
+	| LiteralBooleanValue
+	| LiteralStringValue
+	| LiteralNumericValue
 export interface LiteralBooleanValue {
 	kind: 'boolean'
 	value: boolean
