@@ -1,0 +1,65 @@
+[
+  {
+    "type": "document",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment",
+          "named": true
+        },
+        {
+          "type": "foo_command",
+          "named": true
+        },
+        {
+          "type": "macro_line",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macro_line",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "macro_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macro_variable",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "$",
+    "named": false
+  },
+  {
+    "type": "$(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
+  },
+  {
+    "type": "foo_command",
+    "named": true
+  }
+]
