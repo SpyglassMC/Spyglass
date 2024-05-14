@@ -20,8 +20,8 @@ export interface PosRangeLanguageError extends LanguageErrorData {
 	posRange: PositionRange
 }
 
-export const LanguageError = Object.freeze({
-	create(
+export namespace LanguageError {
+	export function create(
 		message: string,
 		range: Range,
 		severity = ErrorSeverity.Error,
@@ -32,11 +32,11 @@ export const LanguageError = Object.freeze({
 			ans.info = info
 		}
 		return ans
-	},
+	}
 	/**
 	 * @returns A {@link PosRangeLanguageError}.
 	 */
-	withPosRange(
+	export function withPosRange(
 		error: LanguageError,
 		doc: TextDocument,
 	): PosRangeLanguageError {
@@ -46,8 +46,8 @@ export const LanguageError = Object.freeze({
 			severity: error.severity,
 			...(error.info && { info: error.info }),
 		}
-	},
-})
+	}
+}
 
 export const enum ErrorSeverity {
 	Hint,

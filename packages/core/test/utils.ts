@@ -173,6 +173,8 @@ export function testParser(
 export function typing(_title: string, _fn: () => void): void {}
 
 /**
+ * Assert the type of `_value` is `T`.
+ *
  * This function should never be actually executed at runtime.
  * Enclose it inside the body of a {@link typing} function.
  */

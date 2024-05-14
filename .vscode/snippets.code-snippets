@@ -19,11 +19,11 @@
 		"scope": "javascript,typescript",
 		"prefix": "astis",
 		"body": [
-			"export const ${1:Node} = Object.freeze({",
-			"\tis(node: AstNode | undefined): node is ${1:Node} {",
+			"export namespace ${1:Node} {",
+			"\texport function is<T extends DeepReadonly<AstNode> | undefined>(node: T): node is InheritReadonly<${1:Node}, T> {",
 			"\t\treturn (node as ${1:Node} | undefined)?.type === '${2:type}'",
-			"\t},",
-			"})",
+			"\t}",
+			"}",
 		]
 	},
 	"destruct": {

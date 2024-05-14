@@ -1,4 +1,8 @@
-import type { DeepReadonly, NodeIsHelper } from '../common/index.js'
+import type {
+	DeepReadonly,
+	InheritReadonly,
+	ReadWrite,
+} from '../common/index.js'
 import type { AstNode } from './AstNode.js'
 
 export interface CommentNode extends AstNode {
@@ -9,10 +13,10 @@ export interface CommentNode extends AstNode {
 	comment: string
 }
 
-export const CommentNode = Object.freeze({
-	is<T extends DeepReadonly<AstNode> | undefined>(
+export namespace CommentNode {
+	export function is<T extends DeepReadonly<AstNode> | undefined>(
 		obj: T,
-	): obj is NodeIsHelper<CommentNode, T> {
+	): obj is InheritReadonly<CommentNode, T> {
 		return (obj as CommentNode | undefined)?.type === 'comment'
-	},
-})
+	}
+}

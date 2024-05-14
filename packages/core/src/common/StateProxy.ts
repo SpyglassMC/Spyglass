@@ -28,11 +28,13 @@ export type StateProxy<T extends object> =
 		[Undo]: () => void
 	}
 
-export const StateProxy = Object.freeze({
-	branchOff<T extends object>(proxy: StateProxy<T>): StateProxy<T> {
+export namespace StateProxy {
+	export function branchOff<T extends object>(
+		proxy: StateProxy<T>,
+	): StateProxy<T> {
 		return proxy[BranchOff]()
-	},
-	create<T extends object>(
+	}
+	export function create<T extends object>(
 		obj: T,
 	): T extends StateProxy<any> ? void & { _cannotCreateProxyFromProxy: never }
 		: StateProxy<T>
@@ -43,20 +45,20 @@ export const StateProxy = Object.freeze({
 			)
 		}
 		return _createStateProxy(obj, new Operations()) as any
-	},
-	dereference<T extends object>(value: StateProxy<T> | T): T {
+	}
+	export function dereference<T extends object>(value: StateProxy<T> | T): T {
 		return StateProxy.is(value) ? value[Origin] : value
-	},
-	is(obj: any): obj is StateProxy<object> {
+	}
+	export function is(obj: any): obj is StateProxy<object> {
 		return obj?.[Is]
-	},
-	redoChanges(proxy: StateProxy<object>): void {
+	}
+	export function redoChanges(proxy: StateProxy<object>): void {
 		proxy[Redo]()
-	},
-	undoChanges(proxy: StateProxy<object>): void {
+	}
+	export function undoChanges(proxy: StateProxy<object>): void {
 		proxy[Undo]()
-	},
-})
+	}
+}
 
 class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 	private readonly map = new Map<string | symbol, StateProxy<object>>()
