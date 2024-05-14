@@ -692,16 +692,36 @@ export const float: InfallibleParser<FloatNode> = core.float({
 	pattern:
 		/^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
 })
-export const LiteralNumberSuffixes = Object.freeze(
+
+export const integer: InfallibleParser<IntegerNode> = core.integer({
+	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
+})
+export const LiteralIntSuffixes = Object.freeze(
 	[
 		'b',
 		's',
 		'l',
+	] as const,
+)
+export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
+export const LiteralNumberSuffixes = Object.freeze(
+	[
+		...LiteralIntSuffixes,
 		'f',
 		'd',
 	] as const,
 )
 export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
+export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralIntSuffixes,
+		'B',
+		'S',
+		'L',
+	] as const,
+)
+export type LiteralIntCaseInsensitiveSuffix =
+	(typeof LiteralIntCaseInsensitiveSuffixes)[number]
 export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
 	[
 		...LiteralNumberSuffixes,
@@ -717,13 +737,28 @@ export type LiteralNumberCaseInsensitiveSuffix =
 
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
-	sequence([
-		float,
-		optional(
-			keyword(LiteralNumberCaseInsensitiveSuffixes, {
-				colorTokenType: 'keyword',
-			}),
-		),
+	select([
+		{
+			regex: /(?:+|-)?\d+(?![.dfDF])/,
+			parser: sequence([
+				integer,
+				optional(
+					keyword(LiteralIntCaseInsensitiveSuffixes, {
+						colorTokenType: 'keyword',
+					}),
+				),
+			]),
+		},
+		{
+			parser: sequence([
+				float,
+				optional(
+					keyword(LiteralNumberCaseInsensitiveSuffixes, {
+						colorTokenType: 'keyword',
+					}),
+				),
+			]),
+		},
 	]),
 )
 
@@ -1015,10 +1050,6 @@ export const booleanType: Parser<BooleanTypeNode> = typeBase(
 	'mcdoc:type/boolean',
 	keyword('boolean', { colorTokenType: 'type' }),
 )
-
-export const integer: InfallibleParser<IntegerNode> = core.integer({
-	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
-})
 
 function range<
 	P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatNode>,
