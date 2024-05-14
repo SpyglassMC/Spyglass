@@ -18,24 +18,6 @@ export interface VersionInfo {
 	isLatest: boolean
 }
 
-// DOCS: Update here when format_version is changed.
-/**
- * A map from `pack_format` numbers to a RegExp. The latest version whose `release_target` matches the RegExp should be used.
- */
-export const PackVersionMap: Record<number, RegExp | undefined> = {
-	5: /^1\.15.*$/,
-	6: /^1\.16.*$/,
-	7: /^1\.17.*$/,
-	8: /^1\.18(\.1)?$/,
-	9: /^1\.18.*$/,
-	10: /^1\.19(\.[1-3])?$/,
-	12: /^1\.19.*$/,
-	15: /^1\.20(\.1)?$/,
-	18: /^1\.20\.2$/,
-	26: /^1\.20\.[3-4]$/,
-	41: /^1\.20\.[5-6]$/,
-}
-
 export interface PackMcmeta {
 	pack: {
 		pack_format: number
@@ -46,9 +28,6 @@ export namespace PackMcmeta {
 		const format: string | undefined = data?.pack?.pack_format?.toString()
 		if (!format) {
 			throw new Error('“pack.pack_format” undefined')
-		}
-		if (!Object.keys(PackVersionMap).includes(format)) {
-			throw new Error(`Unknown pack_format “${format}”`)
 		}
 	}
 }
