@@ -17,7 +17,10 @@ try {
 		target: 'node16.13',
 		bundle: true,
 		outdir: './dist',
-		external: ['electron', 'vscode'],
+		// fsevents is a MacOS specific native extension used by chokidar for file
+		// watching and should not be bundled:
+		// https://github.com/SpyglassMC/Spyglass/issues/1143
+		external: ['electron', 'fsevents', 'vscode'],
 		sourcemap: isDev,
 		minify: !isDev,
 	})
