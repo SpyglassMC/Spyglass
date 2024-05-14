@@ -84,7 +84,7 @@ export interface ExternalFileSystem {
 }
 
 /**
- * A file file URI string or a URI object.
+ * A file URI string or a URI object.
  */
 export type FsLocation = string | Uri
 
