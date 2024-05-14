@@ -1,10 +1,10 @@
 type RemoteUriProtocol = 'http:' | 'https:'
 export type RemoteUriString = `${RemoteUriProtocol}${string}`
-export const RemoteUriString = Object.freeze({
-	is(value: string): value is RemoteUriString {
+export namespace RemoteUriString {
+	export function is(value: string): value is RemoteUriString {
 		return value.startsWith('http:') || value.startsWith('https:')
-	},
-})
+	}
+}
 
 export interface ExternalDownloaderOptions {
 	/**
@@ -23,11 +23,13 @@ export interface ExternalDownloader {
 		options?: ExternalDownloaderOptions,
 	): Promise<Uint8Array>
 }
-export const ExternalDownloader = Object.freeze({
-	mock(options: ExternalDownloaderMockOptions): ExternalDownloader {
+export namespace ExternalDownloader {
+	export function mock(
+		options: ExternalDownloaderMockOptions,
+	): ExternalDownloader {
 		return new ExternalDownloaderMock(options)
-	},
-})
+	}
+}
 
 interface ExternalDownloaderMockOptions {
 	/**

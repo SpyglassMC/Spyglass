@@ -9,11 +9,11 @@ export type ReadWrite<T extends object> = {
 	-readonly [K in keyof T]: T[K]
 }
 
-export const ReadonlyProxy = Object.freeze({
-	create<T extends object>(obj: T): DeepReadonly<T> {
+export namespace ReadonlyProxy {
+	export function create<T extends object>(obj: T): DeepReadonly<T> {
 		return new Proxy(obj, new ReadonlyProxyHandler()) as any
-	},
-})
+	}
+}
 
 class ReadonlyProxyHandler<T extends object> implements ProxyHandler<T> {
 	private readonly map = new Map<string | symbol, DeepReadonly<object>>()

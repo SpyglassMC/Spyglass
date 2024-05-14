@@ -13,10 +13,10 @@ export interface CommentNode extends AstNode {
 	comment: string
 }
 
-export const CommentNode = Object.freeze({
-	is<T extends DeepReadonly<AstNode> | undefined>(
+export namespace CommentNode {
+	export function is<T extends DeepReadonly<AstNode> | undefined>(
 		obj: T,
 	): obj is InheritReadonly<CommentNode, T> {
 		return (obj as CommentNode | undefined)?.type === 'comment'
-	},
-})
+	}
+}
