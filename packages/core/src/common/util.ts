@@ -347,13 +347,13 @@ export function normalizeUri(uri: string): string {
  * export const CommentNode = Object.freeze({
  * 	is<T extends DeepReadonly<AstNode> | undefined>(
  * 		obj: T,
- * 	): obj is PotentiallyReadonly<CommentNode, T> {
+ * 	): obj is InheritReadonly<CommentNode, T> {
  * 		return (obj as CommentNode | undefined)?.type === 'comment'
  * 	},
  * })
  * ```
  */
-export type PotentiallyReadonly<
+export type InheritReadonly<
 	TARGET extends AstNode,
 	INPUT extends DeepReadonly<AstNode> | undefined,
 > = INPUT & (INPUT extends ReadWrite<AstNode> ? TARGET : DeepReadonly<TARGET>)

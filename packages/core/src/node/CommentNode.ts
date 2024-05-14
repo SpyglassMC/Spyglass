@@ -1,6 +1,6 @@
 import type {
 	DeepReadonly,
-	PotentiallyReadonly,
+	InheritReadonly,
 	ReadWrite,
 } from '../common/index.js'
 import type { AstNode } from './AstNode.js'
@@ -16,7 +16,7 @@ export interface CommentNode extends AstNode {
 export const CommentNode = Object.freeze({
 	is<T extends DeepReadonly<AstNode> | undefined>(
 		obj: T,
-	): obj is PotentiallyReadonly<CommentNode, T> {
+	): obj is InheritReadonly<CommentNode, T> {
 		return (obj as CommentNode | undefined)?.type === 'comment'
 	},
 })

@@ -156,7 +156,7 @@ export namespace EntitySelectorNode {
 	/* istanbul ignore next */
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
 		node: T,
-	): node is core.PotentiallyReadonly<EntitySelectorNode, T> {
+	): node is core.InheritReadonly<EntitySelectorNode, T> {
 		return (
 			(node as EntitySelectorNode | undefined)?.type ===
 				'mcfunction:entity_selector'
