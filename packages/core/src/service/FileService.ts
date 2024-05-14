@@ -388,7 +388,9 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 				) {
 					const archiveName = fileUtil.basename(uri)
 					if (entries.has(archiveName)) {
-						throw new Error(`A different URI with ${archiveName} already exists`)
+						throw new Error(
+							`A different URI with ${archiveName} already exists`,
+						)
 					}
 
 					const files = await externals.archive.decompressBall(
