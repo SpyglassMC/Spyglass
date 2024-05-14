@@ -8,7 +8,6 @@ import * as core from '@spyglassmc/core'
 import type { TextDocument } from 'vscode-languageserver-textdocument'
 import * as ls from 'vscode-languageserver/node.js'
 import { InsertTextFormat } from 'vscode-languageserver/node.js'
-import type { MyLspInlayHint } from './types.js'
 
 const ZeroPosition: ls.Position = { line: 0, character: 0 }
 const ZeroRange: ls.Range = { start: ZeroPosition, end: ZeroPosition }
@@ -196,17 +195,19 @@ export function hover(hover: core.Hover, doc: TextDocument): ls.Hover {
 export function inlayHint(
 	hint: core.InlayHint,
 	doc: TextDocument,
-): MyLspInlayHint {
+): ls.InlayHint {
 	return {
 		position: doc.positionAt(hint.offset),
-		text: hint.text,
+		label: hint.label,
+		...hint.paddingLeft ? { paddingLeft: hint.paddingLeft } : {},
+		...hint.paddingRight ? { paddingRight: hint.paddingRight } : {},
 	}
 }
 
 export function inlayHints(
 	hints: core.InlayHint[],
 	doc: TextDocument,
-): MyLspInlayHint[] {
+): ls.InlayHint[] {
 	return hints.map((h) => inlayHint(h, doc))
 }
 

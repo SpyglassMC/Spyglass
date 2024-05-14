@@ -66,46 +66,6 @@ export function activate(context: vsc.ExtensionContext) {
 		() => {
 			const customCapabilities: server.CustomServerCapabilities | undefined =
 				client.initializeResult?.capabilities.experimental?.spyglassmc
-			if (
-				customCapabilities?.inlayHints &&
-				vsc.languages.registerInlayHintsProvider
-			) {
-				vsc.languages.registerInlayHintsProvider(documentSelector, {
-					async provideInlayHints(model, range): Promise<vsc.InlayHint[]> {
-						try {
-							const params: server.MyLspInlayHintRequestParams = {
-								textDocument: { uri: model.uri.toString() },
-								range: {
-									start: {
-										line: range.start.line,
-										character: range.start.character,
-									},
-									end: {
-										line: range.end.line,
-										character: range.end.character,
-									},
-								},
-							}
-							const response: server.MyLspInlayHint[] = await client
-								.sendRequest('spyglassmc/inlayHints', params)
-							return response.map(
-								(v) =>
-									new vsc.InlayHint(
-										new vsc.Position(
-											v.position.line,
-											v.position.character,
-										),
-										v.text,
-										vsc.InlayHintKind.Parameter,
-									),
-							)
-						} catch (e) {
-							console.error('[client#provideInlayHints]', e)
-						}
-						return []
-					},
-				})
-			}
 
 			if (customCapabilities?.dataHackPubify) {
 				context.subscriptions.push(
