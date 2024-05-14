@@ -1215,7 +1215,7 @@ function convertLiteralValue(
 	} else if (TypedNumberNode.is(node)) {
 		const { suffix, value } = TypedNumberNode.destruct(node)
 		return {
-			kind: convertLiteralNumberSuffix(suffix, ctx),
+			kind: convertLiteralNumberSuffix(suffix, ctx) ?? (Number.isInteger(value.value) ? 'int': 'double'),
 			value: value.value,
 		}
 	} else {
@@ -1229,7 +1229,7 @@ function convertLiteralValue(
 function convertLiteralNumberSuffix(
 	node: LiteralNode | undefined,
 	ctx: McdocBinderContext,
-): (typeof NumericTypeKinds)[number] {
+): (typeof NumericTypeKinds)[number] | undefined {
 	const suffix = node?.value as LiteralNumberCaseInsensitiveSuffix | undefined
 	switch (suffix?.toLowerCase()) {
 		case 'b': return 'byte';
@@ -1237,7 +1237,7 @@ function convertLiteralNumberSuffix(
 		case 'l': return 'long';
 		case 'f': return 'float';
 		case 'd': return 'double';
-		default: return 'int';
+		default: return undefined;
 	}
 }
 

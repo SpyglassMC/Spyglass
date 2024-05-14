@@ -147,7 +147,7 @@ export interface LiteralStringValue {
 	value: string
 }
 export interface LiteralNumericValue {
-	kind: (typeof NumericTypeKinds)[number]
+	kind: (typeof NumericTypeKinds)[number] | 'number'
 	value: number
 }
 export interface LiteralType {
