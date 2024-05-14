@@ -704,14 +704,6 @@ export const LiteralIntSuffixes = Object.freeze(
 	] as const,
 )
 export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
-export const LiteralNumberSuffixes = Object.freeze(
-	[
-		...LiteralIntSuffixes,
-		'f',
-		'd',
-	] as const,
-)
-export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
 export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
 	[
 		...LiteralIntSuffixes,
@@ -722,14 +714,34 @@ export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
 )
 export type LiteralIntCaseInsensitiveSuffix =
 	(typeof LiteralIntCaseInsensitiveSuffixes)[number]
+export const LiteralFloatSuffixes = Object.freeze(
+	[
+		'f',
+		'd',
+	] as const,
+)
+export type LiteralFloatSuffix = (typeof LiteralFloatSuffixes)[number]
+export const LiteralFloatCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralFloatSuffixes,
+		'F',
+		'D',
+	] as const,
+)
+export type LiteralFloatCaseInsensitiveSuffix =
+	(typeof LiteralFloatCaseInsensitiveSuffixes)[number]
+export const LiteralNumberSuffixes = Object.freeze(
+	[
+		...LiteralIntSuffixes,
+		...LiteralFloatSuffixes,
+	] as const,
+)
+export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
 export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
 	[
 		...LiteralNumberSuffixes,
-		'B',
-		'S',
-		'L',
-		'F',
-		'D',
+		...LiteralIntCaseInsensitiveSuffixes,
+		...LiteralFloatCaseInsensitiveSuffixes,
 	] as const,
 )
 export type LiteralNumberCaseInsensitiveSuffix =
@@ -753,7 +765,7 @@ export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 			parser: sequence([
 				float,
 				optional(
-					keyword(LiteralNumberCaseInsensitiveSuffixes, {
+					keyword(LiteralFloatCaseInsensitiveSuffixes, {
 						colorTokenType: 'keyword',
 					}),
 				),
