@@ -82,7 +82,7 @@ export function definition(
 	identifier: `::${string}::${string}`,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
-		mcdoc.validation.validateByTypeName<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
+		mcdoc.validator.validateByTypeName<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
 			context: ctx,
 			inferType: node => {
 				switch (node.type) {
@@ -116,47 +116,6 @@ export function definition(
 					return node.children.filter(n => n.value).map(n => n.value as JsonNode)
 				}
 				return node.children?.filter(n => n) as JsonNode[] ?? []
-			},
-			reportError: (node, kind, params) => {
-				switch (kind) {
-					case 'typeMismatch':
-						ctx.err.report(localize('expected', arrayToMessage((params[0] as mcdoc.McdocType[]).map(t => {
-							switch (t.kind) {
-								case 'literal': 
-									return t.value.value.toString();
-								case 'boolean':
-									return localize('json.node.boolean');
-								case 'string':
-									return localize('json.node.string');
-								case 'byte':
-								case 'short':
-								case 'int':
-								case 'long':
-								case 'float':
-								case 'double':
-									return localize('json.node.number');
-								case 'list':
-								case 'tuple':
-								case 'byte_array':
-								case 'int_array':
-								case 'long_array':
-									return localize('json.node.array');
-								case 'struct':
-									return localize('json.node.object');
-								default: return localize('json.node');
-							}
-						}))), node.range)
-						break;
-					case 'invalidCollectionLength': ctx.err.report(
-						localize(
-							'expected',
-							localize('json.checker.array.length-between', localize('json.node.array'), params[0], params[1])
-						),
-						node)
-						break;
-					case 'invalidRecordKey':
-						ctx.err.report(localize('json.checker.property.unknown', node.type === 'pair' ? node.key?.value ?? '' : ''), node)
-				}
 			}, 
 			attachTypeInfo: (node, definition) => {}, //TODO
 		});
