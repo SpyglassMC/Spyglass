@@ -11,7 +11,7 @@ export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) => {
 			pair: {
 				key: string,
 				sep: ':',
-				value: json(),
+				value: json,
 				end: ',',
 				trailingEnd: false,
 			},

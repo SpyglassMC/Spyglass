@@ -5,7 +5,7 @@ import { json } from './entry.js'
 export const array: core.Parser<JsonArrayNode> = (src, ctx) => {
 	const parser = core.list({
 		start: '[',
-		value: json(),
+		value: json,
 		sep: ',',
 		trailingSep: false,
 		end: ']',

@@ -20,7 +20,7 @@ const LegalNumberStart = new Set([
 	'9',
 	'-',
 ])
-export function json(dumpErrors = false): core.Parser<JsonNode> {
+function jsonParser(dumpErrors: boolean): core.Parser<JsonNode> {
 	return (src, ctx) => {
 		const result = core.select([
 			{ predicate: (src) => src.tryPeek('['), parser: array },
@@ -44,4 +44,19 @@ export function json(dumpErrors = false): core.Parser<JsonNode> {
 	}
 }
 
-export const entry: core.Parser<JsonNode> = json(true)
+/**
+ * A JSON parser that dumps any parser errors after it finishes parsing.
+ * This should be used when it is the root parser, e.g. for this package's
+ * initialization method (the JSON package).
+ */
+export const entry = jsonParser(true)
+
+/**
+ * A JSON parser that doesn't dump parser errors after it finishes parsing.
+ * This should be used when it is a child parser under another parent parser,
+ * e.g. in the JSON `array` parser.
+ *
+ * Since this parser doesn't dump its errors when it's done, those errors
+ * should be subsequently absorbed by the parent parser's `ParserContext`.
+ */
+export const json = jsonParser(false)

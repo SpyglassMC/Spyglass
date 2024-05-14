@@ -337,7 +337,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-export const component = json.parser.json()
+export const component = json.parser.json
 
 function double(
 	min = DoubleMin,
