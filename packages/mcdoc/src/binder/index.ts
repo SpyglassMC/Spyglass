@@ -1230,7 +1230,7 @@ function convertLiteralValue(
 function convertLiteralNumberSuffix(
 	node: LiteralNode | undefined,
 	ctx: McdocBinderContext,
-): (typeof NumericTypeKinds)[number] | undefined {
+): NumericTypeKind | undefined {
 	const suffix = node?.value as LiteralNumberCaseInsensitiveSuffix | undefined
 	switch (suffix?.toLowerCase()) {
 		case 'b':
