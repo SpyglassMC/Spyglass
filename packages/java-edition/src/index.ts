@@ -3,6 +3,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
 import type { McmetaSummary } from './dependency/index.js'
+import { getVanillaDatapack } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaMcdoc,
@@ -59,6 +60,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		packMcmeta,
 		versions,
 	})
+
+	meta.registerDependencyProvider(
+		'@vanilla-datapack',
+		() => getVanillaDatapack(downloader, version, isLatest),
+	)
 
 	meta.registerDependencyProvider(
 		'@vanilla-mcdoc',

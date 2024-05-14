@@ -1,10 +1,21 @@
 import externalBinarySearch from 'binary-search'
 import rfdc from 'rfdc'
+import { URL } from 'whatwg-url'
 import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 import type { Externals } from './externals/index.js'
 import type { DeepReadonly } from './ReadonlyProxy.js'
 
+// Spyglass uses the URL class provided by the
+// [spec](https://url.spec.whatwg.org/)-compliant `whatwg-url` package instead
+// of the broken one shipped with browsers that do not parse non-special scheme
+// URLs with hosts properly.
+//
+// * [Chromium bug](https://issues.chromium.org/issues/40587286)
+// * [FireFox bug](https://bugzilla.mozilla.org/show_bug.cgi?id=1374505)
+//
+// We use the name "URI" instead of "URL" when possible, since it is what
+// LSP has chosen to use for the string that uniquely identifies a file.
 export const Uri = URL
 export type Uri = URL
 

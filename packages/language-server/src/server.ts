@@ -113,6 +113,11 @@ connection.onInitialize(async (params) => {
 		})
 		service.project
 			.on('documentErrored', ({ errors, uri, version }) => {
+				if (!core.fileUtil.isFileUri(uri)) {
+					// Don't send errors for non-file URIs to the client.
+					return
+				}
+
 				connection.sendDiagnostics({
 					diagnostics: toLS.diagnostics(errors),
 					uri: uri,
