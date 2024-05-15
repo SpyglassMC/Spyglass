@@ -1,11 +1,11 @@
 import * as core from '@spyglassmc/core'
 import type { JsonArrayNode } from '../node/index.js'
-import { json } from './entry.js'
+import { entry } from './entry.js'
 
 export const array: core.Parser<JsonArrayNode> = (src, ctx) => {
 	const parser = core.list({
 		start: '[',
-		value: json,
+		value: entry,
 		sep: ',',
 		trailingSep: false,
 		end: ']',

@@ -560,3 +560,14 @@ export function acceptIf<P extends Parser<AstNode>>(
 		return ans
 	}) as ReturnType<typeof acceptIf<P>>
 }
+
+/**
+ * @returns A parser that dumps any parser errors after it finishes parsing.
+ */
+export function dumpErrors<P extends Parser<AstNode>>(parser: P): P {
+	return ((src: Source, ctx: ParserContext) => {
+		const ans = parser(src, ctx)
+		ctx.err.dump()
+		return ans
+	}) as ReturnType<typeof dumpErrors<P>>
+}
