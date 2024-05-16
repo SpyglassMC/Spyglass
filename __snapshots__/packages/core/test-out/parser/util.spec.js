@@ -1,4 +1,4 @@
-exports['core util parsers any() Parse "bar" with "foo | bar" 1'] = {
+exports['any() Parse "bar" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "bar",
@@ -10,7 +10,7 @@ exports['core util parsers any() Parse "bar" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['core util parsers any() Parse "foo" with "foo | bar" 1'] = {
+exports['any() Parse "foo" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -22,7 +22,7 @@ exports['core util parsers any() Parse "foo" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['core util parsers any() Parse "foo" with "foo*1 | foo*1" 1'] = {
+exports['any() Parse "foo" with "foo*1 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -44,7 +44,7 @@ exports['core util parsers any() Parse "foo" with "foo*1 | foo*1" 1'] = {
   ]
 }
 
-exports['core util parsers any() Parse "foo" with "foo*1 | foo*2" 1'] = {
+exports['any() Parse "foo" with "foo*1 | foo*2" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -66,7 +66,7 @@ exports['core util parsers any() Parse "foo" with "foo*1 | foo*2" 1'] = {
   ]
 }
 
-exports['core util parsers any() Parse "foo" with "foo*2 | foo*1" 1'] = {
+exports['any() Parse "foo" with "foo*2 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -88,12 +88,12 @@ exports['core util parsers any() Parse "foo" with "foo*2 | foo*1" 1'] = {
   ]
 }
 
-exports['core util parsers any() Parse "qux" with "foo | bar" 1'] = {
+exports['any() Parse "qux" with "foo | bar" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
 
-exports['core util parsers dumpErrors() should not output errors when wrapped with `dumpErrors()` 1'] = {
+exports['dumpErrors() should not output errors when wrapped with `dumpErrors()` 1'] = {
   "node": {
     "type": "boolean",
     "range": {
@@ -104,7 +104,7 @@ exports['core util parsers dumpErrors() should not output errors when wrapped wi
   "errors": []
 }
 
-exports['core util parsers dumpErrors() should output errors when not wrapped with `dumpErrors()` 1'] = {
+exports['dumpErrors() should output errors when not wrapped with `dumpErrors()` 1'] = {
   "node": {
     "type": "boolean",
     "range": {

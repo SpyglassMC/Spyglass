@@ -44,92 +44,78 @@ function literal(
 	}
 }
 
-describe('core util parsers', () => {
-	describe('any()', () => {
-		const suites: {
-			content: string
-			parsers: [Parser<AstNode>, ...Parser<AstNode>[]]
-			parserToString: string
-		}[] = [
-			{
-				parsers: [literal('foo'), literal('bar')],
-				content: 'foo',
-				parserToString: 'foo | bar',
+describe('any()', () => {
+	const suites: {
+		content: string
+		parsers: [Parser<AstNode>, ...Parser<AstNode>[]]
+		parserToString: string
+	}[] = [
+		{
+			parsers: [literal('foo'), literal('bar')],
+			content: 'foo',
+			parserToString: 'foo | bar',
+		},
+		{
+			parsers: [literal('foo'), literal('bar')],
+			content: 'bar',
+			parserToString: 'foo | bar',
+		},
+		{
+			parsers: [literal('foo'), literal('bar')],
+			content: 'qux',
+			parserToString: 'foo | bar',
+		},
+		{
+			parsers: [literal('foo', 'correct', 1), literal('foo', 'wrong', 1)],
+			content: 'foo',
+			parserToString: 'foo*1 | foo*1',
+		},
+		{
+			parsers: [literal('foo', 'correct', 1), literal('foo', 'wrong', 2)],
+			content: 'foo',
+			parserToString: 'foo*1 | foo*2',
+		},
+		{
+			parsers: [literal('foo', 'wrong', 2), literal('foo', 'correct', 1)],
+			content: 'foo',
+			parserToString: 'foo*2 | foo*1',
+		},
+	]
+	for (const { content, parsers, parserToString } of suites) {
+		it(
+			`Parse "${
+				showWhitespaceGlyph(
+					content,
+				)
+			}" with "${parserToString}"`,
+			() => {
+				const parser = any(parsers)
+				snapshot(testParser(parser, content))
 			},
-			{
-				parsers: [literal('foo'), literal('bar')],
-				content: 'bar',
-				parserToString: 'foo | bar',
-			},
-			{
-				parsers: [literal('foo'), literal('bar')],
-				content: 'qux',
-				parserToString: 'foo | bar',
-			},
-			{
-				parsers: [literal('foo', 'correct', 1), literal('foo', 'wrong', 1)],
-				content: 'foo',
-				parserToString: 'foo*1 | foo*1',
-			},
-			{
-				parsers: [literal('foo', 'correct', 1), literal('foo', 'wrong', 2)],
-				content: 'foo',
-				parserToString: 'foo*1 | foo*2',
-			},
-			{
-				parsers: [literal('foo', 'wrong', 2), literal('foo', 'correct', 1)],
-				content: 'foo',
-				parserToString: 'foo*2 | foo*1',
-			},
-		]
-		for (const { content, parsers, parserToString } of suites) {
-			it(
-				`Parse "${
-					showWhitespaceGlyph(
-						content,
-					)
-				}" with "${parserToString}"`,
-				() => {
-					const parser = any(parsers)
-					snapshot(testParser(parser, content))
-				},
-			)
-		}
-	})
+		)
+	}
+})
 
-	describe('dumpErrors()', () => {
-		const suites: {
-			name: string
-			parser: Parser<AstNode>
-			content: string
-			expectedErrors: any[]
-		}[] = [
-			{
-				name: 'should output errors when not wrapped with `dumpErrors()`',
-				parser: boolean,
-				content: 'bar',
-				expectedErrors: [{
-					range: {
-						start: 0,
-						end: 0,
-					},
-					message: 'Expected “false” or “true”',
-					severity: 3,
-				}],
-			},
-			{
-				name: 'should not output errors when wrapped with `dumpErrors()`',
-				parser: dumpErrors(boolean),
-				content: 'bar',
-				expectedErrors: [],
-			},
-		]
-		for (const { name, content, parser, expectedErrors } of suites) {
-			it(name, () => {
-				const res = testParser(parser, content)
-				snapshot(res)
-				assert.deepEqual(res.errors, expectedErrors)
-			})
-		}
-	})
+describe('dumpErrors()', () => {
+	const suites: {
+		name: string
+		parser: Parser<AstNode>
+		content: string
+	}[] = [
+		{
+			name: 'should output errors when not wrapped with `dumpErrors()`',
+			parser: boolean,
+			content: 'bar',
+		},
+		{
+			name: 'should not output errors when wrapped with `dumpErrors()`',
+			parser: dumpErrors(boolean),
+			content: 'bar',
+		},
+	]
+	for (const { name, content, parser } of suites) {
+		it(name, () => {
+			snapshot(testParser(parser, content))
+		})
+	}
 })
