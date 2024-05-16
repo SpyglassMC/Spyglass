@@ -92,3 +92,34 @@ exports['core util parsers any() Parse "qux" with "foo | bar" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
+
+exports['core util parsers dumpErrors() should not output errors when wrapped with `dumpErrors()` 1'] = {
+  "node": {
+    "type": "boolean",
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": []
+}
+
+exports['core util parsers dumpErrors() should output errors when not wrapped with `dumpErrors()` 1'] = {
+  "node": {
+    "type": "boolean",
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “false” or “true”",
+      "severity": 3
+    }
+  ]
+}

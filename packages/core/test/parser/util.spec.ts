@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type {
@@ -7,7 +8,7 @@ import type {
 	Result,
 	Source,
 } from '../../lib/index.js'
-import { any, Failure, Range } from '../../lib/index.js'
+import { any, boolean, dumpErrors, Failure, Range } from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 interface LiteralNode extends AstNode {
@@ -93,6 +94,42 @@ describe('core util parsers', () => {
 					snapshot(testParser(parser, content))
 				},
 			)
+		}
+	})
+
+	describe('dumpErrors()', () => {
+		const suites: {
+			name: string
+			parser: Parser<AstNode>
+			content: string
+			expectedErrors: any[]
+		}[] = [
+			{
+				name: 'should output errors when not wrapped with `dumpErrors()`',
+				parser: boolean,
+				content: 'bar',
+				expectedErrors: [{
+					range: {
+						start: 0,
+						end: 0,
+					},
+					message: 'Expected “false” or “true”',
+					severity: 3,
+				}],
+			},
+			{
+				name: 'should not output errors when wrapped with `dumpErrors()`',
+				parser: dumpErrors(boolean),
+				content: 'bar',
+				expectedErrors: [],
+			},
+		]
+		for (const { name, content, parser, expectedErrors } of suites) {
+			it(name, () => {
+				const res = testParser(parser, content)
+				snapshot(res)
+				assert.deepEqual(res.errors, expectedErrors)
+			})
 		}
 	})
 })
