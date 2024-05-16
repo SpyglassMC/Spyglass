@@ -1,6 +1,5 @@
 import * as core from '@spyglassmc/core'
 import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
-import { PackVersionMap } from './common.js'
 
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
@@ -15,16 +14,30 @@ export function resolveConfiguredVersion(
 		versions: McmetaVersions
 	},
 ): VersionInfo {
-	function toVersionInfo(index: number): VersionInfo {
-		if (index < 0) {
-			index = 0
+	function findReleaseTarget(version: McmetaVersion): string {
+		if (version.release_target) {
+			return version.release_target
 		}
-		const version = versions[index]
+		if (version.type === 'release') {
+			return version.id
+		}
+		const index = versions.findIndex((v) => v.id === version!.id)
+		for (let i = index; i >= 0; i -= 1) {
+			if (versions[i].type === 'release') {
+				return versions[i].id
+			}
+		}
+		// DOCS: Update this when a new snapshot cycle begins
+		return '1.21'
+	}
+
+	function toVersionInfo(version: McmetaVersion | undefined): VersionInfo {
+		version = version ?? versions[0]
 		return {
 			id: version.id,
 			name: version.name,
-			release: (version.release_target ?? '1.99') as ReleaseVersion, // FIXME: figure out how to get the release target for newer versions
-			isLatest: index === 0,
+			release: findReleaseTarget(version) as ReleaseVersion,
+			isLatest: version === versions[0],
 		}
 	}
 
@@ -34,23 +47,39 @@ export function resolveConfiguredVersion(
 
 	inputVersion = inputVersion.toLowerCase()
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
+	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
-		if (packMcmeta) {
-			const regex = PackVersionMap[packMcmeta.pack.pack_format]
-			if (regex) {
-				return toVersionInfo(
-					versions.findIndex((v) => regex.test(v.release_target)),
-				)
+		if (packMcmeta && latestRelease) {
+			// If the pack format is larger than the latest release, use the latest snapshot
+			if (packMcmeta.pack.pack_format > latestRelease.data_pack_version) {
+				return toVersionInfo(versions[0])
 			}
+			// Look for versions from recent to oldest, picking the most recent release that matches
+			let oldestRelease = undefined
+			for (const version of versions) {
+				if (version.type === 'release') {
+					// If we already passed the pack format, use the oldest release so far
+					if (packMcmeta.pack.pack_format > version.data_pack_version) {
+						return toVersionInfo(oldestRelease)
+					}
+					if (packMcmeta.pack.pack_format === version.data_pack_version) {
+						return toVersionInfo(version)
+					}
+					oldestRelease = version
+				}
+			}
+			// If the pack format is still lower, use the oldest known release version
+			return toVersionInfo(oldestRelease)
 		}
-		return toVersionInfo(0)
+		// Fall back to the latest release if pack mcmeta is not available
+		return toVersionInfo(latestRelease)
 	} else if (inputVersion === 'latest release') {
-		return toVersionInfo(versions.findIndex((v) => v.type === 'release'))
+		return toVersionInfo(latestRelease)
 	} else if (inputVersion === 'latest snapshot') {
-		return toVersionInfo(versions.findIndex((v) => v.type === 'snapshot'))
+		return toVersionInfo(versions[0])
 	}
 	return toVersionInfo(
-		versions.findIndex(
+		versions.find(
 			(v) =>
 				inputVersion === v.id.toLowerCase() ||
 				inputVersion === v.name.toLowerCase(),
@@ -216,7 +245,7 @@ export const Fluids: McmetaStates = {
 export interface McmetaVersion {
 	id: string
 	name: string
-	release_target: string
+	release_target: string | undefined
 	type: 'release' | 'snapshot'
 	stable: boolean
 	data_version: number
