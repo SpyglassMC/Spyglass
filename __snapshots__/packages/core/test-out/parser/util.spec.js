@@ -1,4 +1,4 @@
-exports['any() Parse "bar" with "foo | bar" 1'] = {
+exports['core util parsers any() Parse "bar" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "bar",
@@ -10,7 +10,7 @@ exports['any() Parse "bar" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['any() Parse "foo" with "foo | bar" 1'] = {
+exports['core util parsers any() Parse "foo" with "foo | bar" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -22,7 +22,7 @@ exports['any() Parse "foo" with "foo | bar" 1'] = {
   "errors": []
 }
 
-exports['any() Parse "foo" with "foo*1 | foo*1" 1'] = {
+exports['core util parsers any() Parse "foo" with "foo*1 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -44,7 +44,7 @@ exports['any() Parse "foo" with "foo*1 | foo*1" 1'] = {
   ]
 }
 
-exports['any() Parse "foo" with "foo*1 | foo*2" 1'] = {
+exports['core util parsers any() Parse "foo" with "foo*1 | foo*2" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -66,7 +66,7 @@ exports['any() Parse "foo" with "foo*1 | foo*2" 1'] = {
   ]
 }
 
-exports['any() Parse "foo" with "foo*2 | foo*1" 1'] = {
+exports['core util parsers any() Parse "foo" with "foo*2 | foo*1" 1'] = {
   "node": {
     "type": "literal",
     "literal": "foo",
@@ -88,7 +88,7 @@ exports['any() Parse "foo" with "foo*2 | foo*1" 1'] = {
   ]
 }
 
-exports['any() Parse "qux" with "foo | bar" 1'] = {
+exports['core util parsers any() Parse "qux" with "foo | bar" 1'] = {
   "node": "FAILURE",
   "errors": []
 }
