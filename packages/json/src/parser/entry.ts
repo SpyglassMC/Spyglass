@@ -20,28 +20,18 @@ const LegalNumberStart = new Set([
 	'9',
 	'-',
 ])
-export function json(dumpErrors = false): core.Parser<JsonNode> {
-	return (src, ctx) => {
-		const result = core.select([
-			{ predicate: (src) => src.tryPeek('['), parser: array },
-			{
-				predicate: (src) => src.tryPeek('false') || src.tryPeek('true'),
-				parser: boolean,
-			},
-			{ predicate: (src) => src.tryPeek('null'), parser: null_ },
-			{
-				predicate: (src) => LegalNumberStart.has(src.peek()),
-				parser: number,
-			},
-			{ predicate: (src) => src.tryPeek('{'), parser: object },
-			{ parser: string },
-		])(src, ctx)
-
-		if (dumpErrors) {
-			ctx.err.dump()
-		}
-		return result
-	}
-}
-
-export const entry: core.Parser<JsonNode> = json(true)
+export const entry: core.Parser<JsonNode> = (src, ctx) =>
+	core.select([
+		{ predicate: (src) => src.tryPeek('['), parser: array },
+		{
+			predicate: (src) => src.tryPeek('false') || src.tryPeek('true'),
+			parser: boolean,
+		},
+		{ predicate: (src) => src.tryPeek('null'), parser: null_ },
+		{
+			predicate: (src) => LegalNumberStart.has(src.peek()),
+			parser: number,
+		},
+		{ predicate: (src) => src.tryPeek('{'), parser: object },
+		{ parser: string },
+	])(src, ctx)

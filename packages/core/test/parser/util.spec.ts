@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type {
@@ -7,7 +8,7 @@ import type {
 	Result,
 	Source,
 } from '../../lib/index.js'
-import { any, Failure, Range } from '../../lib/index.js'
+import { any, boolean, dumpErrors, Failure, Range } from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 interface LiteralNode extends AstNode {
@@ -92,5 +93,29 @@ describe('any()', () => {
 				snapshot(testParser(parser, content))
 			},
 		)
+	}
+})
+
+describe('dumpErrors()', () => {
+	const suites: {
+		name: string
+		parser: Parser<AstNode>
+		content: string
+	}[] = [
+		{
+			name: 'should output errors when not wrapped with `dumpErrors()`',
+			parser: boolean,
+			content: 'bar',
+		},
+		{
+			name: 'should not output errors when wrapped with `dumpErrors()`',
+			parser: dumpErrors(boolean),
+			content: 'bar',
+		},
+	]
+	for (const { name, content, parser } of suites) {
+		it(name, () => {
+			snapshot(testParser(parser, content))
+		})
 	}
 })

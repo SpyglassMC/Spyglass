@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import * as colorizer from './colorizer/index.js'
 import * as completer from './completer/index.js'
 import * as formatter from './formatter/index.js'
@@ -16,7 +16,7 @@ export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	meta.registerLanguage('json', {
 		extensions: ['.json', '.mcmeta'],
 		triggerCharacters: completer.JsonTriggerCharacters,
-		parser: parser.entry,
+		parser: core.dumpErrors(parser.entry),
 	})
 
 	meta.registerParser('json:entry' as any, parser.entry)
