@@ -665,100 +665,6 @@ export const docComments: InfallibleParser<DocCommentsNode> = setType(
 const prelim: InfallibleParser<SyntaxUtil<DocCommentsNode | AttributeNode>> =
 	syntax([optional(failOnEmpty(docComments)), attributes])
 
-const structMapKey: InfallibleParser<StructMapKeyNode> = setType(
-	'mcdoc:struct/map_key',
-	syntax([punctuation('['), { get: () => type }, punctuation(']')], true),
-)
-
-const structKey: InfallibleParser<StructKeyNode> = select([
-	{ prefix: '"', parser: string },
-	{ prefix: '[', parser: structMapKey },
-	{ parser: identifier },
-])
-
-const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
-	let isOptional: boolean | undefined
-	const result0 = syntax([prelim, structKey], true)(src, ctx)
-	if (src.trySkip('?')) {
-		isOptional = true
-	}
-	const result1 = syntax([punctuation(':'), { get: () => type }], true)(
-		src,
-		ctx,
-	)
-	const ans: StructPairFieldNode = {
-		type: 'mcdoc:struct/field/pair',
-		children: [...result0.children, ...result1.children],
-		range: Range.span(result0, result1),
-		isOptional,
-	}
-	return ans
-}
-
-const structSpreadField: Parser<StructSpreadFieldNode> = setType(
-	'mcdoc:struct/field/spread',
-	syntax([attributes, marker('...'), { get: () => type }], true),
-)
-
-const structField: InfallibleParser<
-	StructPairFieldNode | StructSpreadFieldNode
-> = any([structSpreadField, structPairField])
-
-const structBlock: InfallibleParser<StructBlockNode> = setType(
-	'mcdoc:struct/block',
-	syntax(
-		[
-			punctuation('{'),
-			select([
-				{ prefix: '}', parser: punctuation('}') },
-				{
-					parser: syntax(
-						[
-							structField,
-							syntaxRepeat(
-								syntax([marker(','), failOnEmpty(structField)], true),
-								true,
-							),
-							optional(marker(',')),
-							punctuation('}'),
-						],
-						true,
-					),
-				},
-			]),
-		],
-		true,
-	),
-)
-
-export const struct: Parser<StructNode> = setType(
-	'mcdoc:struct',
-	syntax(
-		[
-			prelim,
-			keyword('struct'),
-			optional(failOnEmpty(identifier)),
-			structBlock,
-		],
-		true,
-	),
-)
-
-export const typeAliasStatement: Parser<TypeAliasNode> = setType(
-	'mcdoc:type_alias',
-	syntax(
-		[
-			prelim,
-			keyword('type'),
-			identifier,
-			optionalTypeParamBlock,
-			punctuation('='),
-			{ get: () => type },
-		],
-		true,
-	),
-)
-
 export const dispatchStatement: Parser<DispatchStatementNode> = setType(
 	'mcdoc:dispatch_statement',
 	syntax(
@@ -772,7 +678,7 @@ export const dispatchStatement: Parser<DispatchStatementNode> = setType(
 			indexBody({ noDynamic: true }),
 			optionalTypeParamBlock,
 			literal('to'),
-			select([{parser: struct}, {parser: typeAliasStatement}]),
+			{ get: () => type },
 		],
 		true,
 	),
@@ -853,6 +759,85 @@ export const enum_: Parser<EnumNode> = setType(
 	),
 )
 
+const structMapKey: InfallibleParser<StructMapKeyNode> = setType(
+	'mcdoc:struct/map_key',
+	syntax([punctuation('['), { get: () => type }, punctuation(']')], true),
+)
+
+const structKey: InfallibleParser<StructKeyNode> = select([
+	{ prefix: '"', parser: string },
+	{ prefix: '[', parser: structMapKey },
+	{ parser: identifier },
+])
+
+const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
+	let isOptional: boolean | undefined
+	const result0 = syntax([prelim, structKey], true)(src, ctx)
+	if (src.trySkip('?')) {
+		isOptional = true
+	}
+	const result1 = syntax([punctuation(':'), { get: () => type }], true)(
+		src,
+		ctx,
+	)
+	const ans: StructPairFieldNode = {
+		type: 'mcdoc:struct/field/pair',
+		children: [...result0.children, ...result1.children],
+		range: Range.span(result0, result1),
+		isOptional,
+	}
+	return ans
+}
+
+const structSpreadField: Parser<StructSpreadFieldNode> = setType(
+	'mcdoc:struct/field/spread',
+	syntax([attributes, marker('...'), { get: () => type }], true),
+)
+
+const structField: InfallibleParser<
+	StructPairFieldNode | StructSpreadFieldNode
+> = any([structSpreadField, structPairField])
+
+const structBlock: InfallibleParser<StructBlockNode> = setType(
+	'mcdoc:struct/block',
+	syntax(
+		[
+			punctuation('{'),
+			select([
+				{ prefix: '}', parser: punctuation('}') },
+				{
+					parser: syntax(
+						[
+							structField,
+							syntaxRepeat(
+								syntax([marker(','), failOnEmpty(structField)], true),
+								true,
+							),
+							optional(marker(',')),
+							punctuation('}'),
+						],
+						true,
+					),
+				},
+			]),
+		],
+		true,
+	),
+)
+
+export const struct: Parser<StructNode> = setType(
+	'mcdoc:struct',
+	syntax(
+		[
+			prelim,
+			keyword('struct'),
+			optional(failOnEmpty(identifier)),
+			structBlock,
+		],
+		true,
+	),
+)
+
 const enumInjection: InfallibleParser<EnumInjectionNode> = setType(
 	'mcdoc:injection/enum',
 	syntax([
@@ -879,6 +864,21 @@ export const injection: Parser<InjectionNode> = setType(
 			{ parser: structInjection },
 		]),
 	]),
+)
+
+export const typeAliasStatement: Parser<TypeAliasNode> = setType(
+	'mcdoc:type_alias',
+	syntax(
+		[
+			prelim,
+			keyword('type'),
+			identifier,
+			optionalTypeParamBlock,
+			punctuation('='),
+			{ get: () => type },
+		],
+		true,
+	),
 )
 
 export const useStatement: Parser<UseStatementNode> = setType(
