@@ -1172,6 +1172,7 @@ export const tupleType: Parser<TupleTypeNode> = typeBase(
 export const dispatcherType: Parser<DispatcherTypeNode> = typeBase(
 	'mcdoc:type/dispatcher',
 	syntax([
+		prelim,
 		failOnError(resLoc({ category: 'mcdoc/dispatcher' })),
 		indexBody(),
 	]),
