@@ -37,6 +37,9 @@ const object: Formatter<JsonObjectNode> = (node, ctx) => {
 	return `{\n${fields.join(',\n')}\n${ctx.indent()}}`
 }
 
+const number: Formatter<JsonNumberNode> = (node, ctx) =>
+	ctx.meta.getFormatter(node.value.type)(node.value, ctx)
+
 export function register(meta: MetaRegistry): void {
 	meta.registerFormatter<JsonArrayNode>('json:array', array)
 	meta.registerFormatter<JsonBooleanNode>(
@@ -44,6 +47,7 @@ export function register(meta: MetaRegistry): void {
 		core.formatter.boolean,
 	)
 	meta.registerFormatter<JsonNullNode>('json:null', () => 'null')
+	meta.registerFormatter<JsonNumberNode>('json:number', number)
 	meta.registerFormatter<JsonObjectNode>('json:object', object)
 	meta.registerFormatter<JsonStringNode>('json:string', core.formatter.string)
 }
