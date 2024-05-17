@@ -60,7 +60,7 @@ import {
 import type { ArgumentTreeNode } from '../tree/index.js'
 
 function getItemStackFormat(ctx: CompleterContext): 'old' | 'new' {
-	const release = ctx.config.env.gameVersion as ReleaseVersion | undefined
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 	return (release === undefined || ReleaseVersion.cmp(release, '1.20.5') < 0)
 		? 'old'
 		: 'new'

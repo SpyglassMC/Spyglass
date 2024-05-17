@@ -294,9 +294,16 @@ export namespace ItemOldNode {
 
 export interface ItemNewNode extends core.AstNode {
 	type: 'mcfunction:item'
-	children: (core.ResourceLocationNode | ComponentListNode)[]
+	children: (
+		| core.LiteralNode
+		| core.ResourceLocationNode
+		| ComponentListNode
+		| ComponentPredicatesNode
+	)[]
 	id: core.ResourceLocationNode
 	components?: ComponentListNode
+	componentPredicates?: ComponentPredicatesNode
+	wildcard?: boolean
 }
 
 export namespace ItemNewNode {
@@ -351,6 +358,50 @@ export namespace ComponentListNode {
 	export function is(node: core.AstNode): node is ComponentListNode {
 		return (node as ComponentListNode).type === 'mcfunction:component_list'
 	}
+}
+
+export interface ComponentPredicatesNode extends core.AstNode {
+	type: 'mcfunction:component_predicates'
+	children: ComponentTestBaseNode[]
+}
+
+export namespace ComponentPredicatesNode {
+	export function is(node: core.AstNode): node is ComponentPredicatesNode {
+		return (node as ComponentPredicatesNode).type ===
+			'mcfunction:component_predicates'
+	}
+}
+
+export interface ComponentTestBaseNode extends core.AstNode {
+	negated: boolean
+}
+
+export namespace ComponentTestBaseNode {
+	export function is(node: core.AstNode): node is ComponentTestBaseNode {
+		return (node as ComponentTestBaseNode).type.startsWith(
+			'mcfunction:component_test',
+		)
+	}
+}
+
+export interface ComponentTestExactNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_exact'
+	children: [core.ResourceLocationNode, nbt.NbtNode]
+	component: core.ResourceLocationNode
+	value: nbt.NbtNode
+}
+
+export interface ComponentTestExistsNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_exists'
+	children: [core.ResourceLocationNode]
+	component: core.ResourceLocationNode
+}
+
+export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_subpredicate'
+	children: [core.ResourceLocationNode, nbt.NbtNode]
+	component: core.ResourceLocationNode
+	subpredicate: nbt.NbtNode
 }
 
 export interface IntRangeNode extends core.AstNode {

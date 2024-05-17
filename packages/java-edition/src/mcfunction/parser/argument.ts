@@ -19,6 +19,9 @@ import {
 } from '../common/index.js'
 import type {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestExistsNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
 	EntitySelectorAdvancementsArgumentCriteriaNode,
@@ -37,7 +40,8 @@ import type {
 	UuidNode,
 	VectorNode,
 } from '../node/index.js'
-import { ComponentListNode } from '../node/index.js'
+import { ComponentPredicatesNode } from '../node/index.js'
+import { ComponentListNode, ComponentTestBaseNode } from '../node/index.js'
 import {
 	BlockStatesNode,
 	CoordinateSystem,
@@ -522,25 +526,57 @@ function itemNew(isPredicate: true): core.InfallibleParser<ItemNewNode>
 function itemNew(
 	isPredicate: boolean,
 ): core.InfallibleParser<ItemNewNode> {
-	return core.map<
-		core.SequenceUtil<core.ResourceLocationNode | ComponentListNode>,
-		ItemNewNode
-	>(
-		core.sequence([
-			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
-			core.optional(core.failOnEmpty(components())),
-		]),
-		(res) => {
-			const ans: ItemNewNode = {
-				type: 'mcfunction:item',
-				range: res.range,
-				children: res.children,
-				id: res.children.find(core.ResourceLocationNode.is)!,
-				components: res.children.find(ComponentListNode.is),
-			}
-			return ans
-		},
-	)
+	if (isPredicate) {
+		return core.map<
+			core.SequenceUtil<
+				| core.LiteralNode
+				| core.ResourceLocationNode
+				| ComponentPredicatesNode
+			>,
+			ItemNewNode
+		>(
+			core.sequence([
+				core.any([
+					core.literal('*'),
+					core.resourceLocation({ category: 'item', allowTag: true }),
+				]),
+				core.optional(core.failOnEmpty(componentTests())),
+			]),
+			(res) => {
+				const ans: ItemNewNode = {
+					type: 'mcfunction:item',
+					range: res.range,
+					children: res.children,
+					id: res.children.find(core.ResourceLocationNode.is)!,
+					componentPredicates: res.children.find(
+						ComponentPredicatesNode.is,
+					),
+					wildcard: res.children.find(core.LiteralNode.is) !== undefined,
+				}
+				return ans
+			},
+		)
+	} else {
+		return core.map<
+			core.SequenceUtil<core.ResourceLocationNode | ComponentListNode>,
+			ItemNewNode
+		>(
+			core.sequence([
+				core.resourceLocation({ category: 'item', allowTag: isPredicate }),
+				core.optional(core.failOnEmpty(components())),
+			]),
+			(res) => {
+				const ans: ItemNewNode = {
+					type: 'mcfunction:item',
+					range: res.range,
+					children: res.children,
+					id: res.children.find(core.ResourceLocationNode.is)!,
+					components: res.children.find(ComponentListNode.is),
+				}
+				return ans
+			},
+		)
+	}
 }
 
 const itemStack: core.InfallibleParser<ItemNode> = (src, ctx) => {
@@ -1720,6 +1756,147 @@ function components(): core.InfallibleParser<ComponentListNode> {
 				range: res.range,
 				children: res.children,
 			}
+			return ans
+		},
+	)
+}
+
+function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
+	const exact = core.map<
+		core.SequenceUtil<
+			core.ResourceLocationNode | core.LiteralNode | nbt.NbtNode
+		>,
+		ComponentTestExactNode
+	>(
+		core.sequence([
+			core.resourceLocation({
+				pool: [],
+				allowUnknown: true,
+				namespacePathSep: '.',
+			}),
+			core.literal('='),
+			nbt.parser.entry,
+		]),
+		(res) => {
+			const id = res.children.find(core.ResourceLocationNode.is)!
+			const value = res.children.find(nbt.NbtNode.is)!
+			const ans: ComponentTestExactNode = {
+				type: 'mcfunction:component_test_exact',
+				range: res.range,
+				children: [id, value],
+				component: id,
+				value,
+				negated: false,
+			}
+
+			return ans
+		},
+	)
+
+	const exists = core.map<
+		core.ResourceLocationNode,
+		ComponentTestExistsNode
+	>(
+		core.resourceLocation({
+			pool: [],
+			allowUnknown: true,
+			namespacePathSep: '.',
+		}),
+		(res) => {
+			const ans: ComponentTestExistsNode = {
+				type: 'mcfunction:component_test_exists',
+				range: res.range,
+				children: [res],
+				component: res,
+				negated: false,
+			}
+
+			return ans
+		},
+	)
+
+	const subpredicate = core.map<
+		core.SequenceUtil<
+			core.ResourceLocationNode | core.LiteralNode | nbt.NbtNode
+		>,
+		ComponentTestSubpredicateNode
+	>(
+		core.sequence([
+			core.resourceLocation({
+				pool: [],
+				allowUnknown: true,
+				namespacePathSep: '.',
+			}),
+			core.literal('~'),
+			nbt.parser.entry,
+		]),
+		(res) => {
+			const id = res.children.find(core.ResourceLocationNode.is)!
+			const subpredicate = res.children.find(nbt.NbtNode.is)!
+			const ans: ComponentTestSubpredicateNode = {
+				type: 'mcfunction:component_test_subpredicate',
+				range: res.range,
+				children: [id, subpredicate],
+				component: id,
+				subpredicate,
+				negated: false,
+			}
+
+			return ans
+		},
+	)
+
+	const not = core.map<
+		core.SequenceUtil<
+			| core.LiteralNode
+			| ComponentTestBaseNode
+		>,
+		ComponentTestBaseNode
+	>(
+		core.sequence([
+			core.literal('!'),
+			core.any([exact, subpredicate, exists]),
+		]),
+		(res) => {
+			const test = res.children.find(ComponentTestBaseNode.is)!
+			test.negated = true
+			return test
+		},
+	)
+
+	const test = core.select([
+		{
+			predicate: (src) => src.peek() === '!',
+			parser: not,
+		},
+		{
+			parser: core.map<
+				| ComponentTestExactNode
+				| ComponentTestExistsNode
+				| ComponentTestSubpredicateNode,
+				ComponentTestBaseNode
+			>(
+				core.any([exact, subpredicate, exists]),
+				(res) => res,
+			),
+		},
+	])
+
+	return core.map(
+		core.list({
+			start: '[',
+			value: test,
+			sep: [',', '|'],
+			end: ']',
+			trailingSep: true,
+		}),
+		(res) => {
+			const ans: ComponentPredicatesNode = {
+				type: 'mcfunction:component_predicates',
+				range: res.range,
+				children: res.children.map((c) => c.value!),
+			}
+
 			return ans
 		},
 	)
