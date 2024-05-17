@@ -44,7 +44,6 @@ export function register(meta: MetaRegistry): void {
 		core.formatter.boolean,
 	)
 	meta.registerFormatter<JsonNullNode>('json:null', () => 'null')
-	meta.registerFormatter<JsonNumberNode>('json:number', core.formatter.float)
 	meta.registerFormatter<JsonObjectNode>('json:object', object)
 	meta.registerFormatter<JsonStringNode>('json:string', core.formatter.string)
 }
