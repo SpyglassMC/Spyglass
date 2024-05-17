@@ -205,6 +205,7 @@ export const TypeNode = Object.freeze({
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`
 	children: (
+		| DocCommentsNode
 		| AttributeNode
 		| CommentNode
 		| IndexBodyNode
