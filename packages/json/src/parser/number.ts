@@ -19,6 +19,7 @@ export const number: core.Parser<JsonNumberNode> = (src, ctx) => {
 
 	return {
 		type: 'json:number',
+		children: [value],
 		value: value,
 		range: value.range,
 	}

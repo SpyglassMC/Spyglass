@@ -158,6 +158,7 @@ export interface JsonNumberExpectation extends JsonBaseExpectation {
 }
 export interface JsonNumberNode extends JsonBaseAstNode, core.AstNode {
 	readonly type: 'json:number'
+	readonly children: [core.LongNode | core.FloatNode],
 	readonly value: core.LongNode | core.FloatNode
 }
 export namespace JsonNumberNode {
