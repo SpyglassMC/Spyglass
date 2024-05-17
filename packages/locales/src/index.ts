@@ -29,7 +29,7 @@ type Parameter =
 export function localize(key: string, ...params: Parameter[]): string {
 	const value: string | undefined = Locales[language][key] ?? Locales.en[key]
 
-	return _resolveLocalePlaceholders(value, params) ?? ''
+	return _resolveLocalePlaceholders(value, params) ?? key
 }
 
 export function localeQuote(content: string) {
