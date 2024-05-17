@@ -82,16 +82,7 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
       "end": 5
     }
   },
-  "errors": [
-    {
-      "range": {
-        "start": 0,
-        "end": 0
-      },
-      "message": "Only “\"” can be used to quote strings here",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['nbt path() Parse "[ ]" 1'] = {
