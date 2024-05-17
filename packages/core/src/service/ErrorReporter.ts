@@ -16,9 +16,11 @@ export class ErrorReporter {
 		severity = ErrorSeverity.Error,
 		info?: LanguageErrorInfo,
 	): void {
-		this.errors.push(
-			LanguageError.create(message, Range.get(range), severity, info),
-		)
+		if (message.trim() !== '') {
+			this.errors.push(
+				LanguageError.create(message, Range.get(range), severity, info),
+			)
+		}
 	}
 
 	/**
