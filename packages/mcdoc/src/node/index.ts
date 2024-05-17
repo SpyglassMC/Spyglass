@@ -199,7 +199,8 @@ export namespace TypeNode {
 			StructNode.is(node) ||
 			ReferenceTypeNode.is(node) ||
 			DispatcherTypeNode.is(node) ||
-			UnionTypeNode.is(node)
+			UnionTypeNode.is(node) ||
+			TypeAliasNode.is(node)
 		)
 	}
 }
