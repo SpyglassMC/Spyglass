@@ -1203,11 +1203,28 @@ exports['JSON object parser object() Parse "{1: 2}" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 4,
+                  "end": 5
+                },
+                "value": "2"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 4,
+                "end": 5
+              },
+              "value": "2"
+            },
             "range": {
               "start": 4,
               "end": 5
-            },
-            "value": 2
+            }
           }
         ],
         "sep": {
@@ -1216,11 +1233,28 @@ exports['JSON object parser object() Parse "{1: 2}" 1'] = {
         },
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 4,
+                "end": 5
+              },
+              "value": "2"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 4,
+              "end": 5
+            },
+            "value": "2"
+          },
           "range": {
             "start": 4,
             "end": 5
-          },
-          "value": 2
+          }
         }
       }
     ]

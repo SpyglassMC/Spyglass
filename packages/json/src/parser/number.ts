@@ -4,7 +4,7 @@ import type { JsonNumberNode } from '../node/index.js'
 export const number: core.Parser<JsonNumberNode> = (src, ctx) => {
 	const value = core.select([
 		{
-			regex: /^-?(?:0|[1-9]\d*)$/,
+			regex: /^-?(?:0|[1-9]\d*)(?!\d|[.eE])/,
 			parser: core.long({
 				pattern: /^-?(?:0|[1-9]\d*)$/,
 			}),
