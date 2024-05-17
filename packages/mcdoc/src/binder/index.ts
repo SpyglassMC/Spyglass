@@ -816,6 +816,8 @@ function convertType(node: TypeNode, ctx: McdocBinderContext): McdocType {
 			return convertTuple(node, ctx)
 		case 'mcdoc:type/union':
 			return convertUnion(node, ctx)
+		case 'mcdoc:type_alias':
+			return convertTypeAlias(node, ctx)
 		default:
 			return Dev.assertNever(node)
 	}
@@ -1031,6 +1033,43 @@ function convertEnumValue(
 		return value.value
 	}
 	return node.value
+}
+
+function convertTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): McdocType {
+	const { typeParams, rhs, identifier } = TypeAliasNode.destruct(node)
+
+	// Shortcut if the typeDef has been added to the struct symbol.
+	const symbol = identifier?.symbol ?? node.symbol
+	if (
+		symbol &&
+		TypeDefSymbolData.is(symbol.data)
+	) {
+		return symbol.data.typeDef
+	}
+
+	return wrapType(
+		node,
+		{
+			kind: 'reference',
+			fields: convertTypeBlock(typeParams, ctx),
+		},
+		ctx,
+	)
+}
+
+function convertTypeBlock(
+	node: TypeParamBlockNode,
+	ctx: McdocBinderContext,
+): TypeParamNode[] {
+	const { params } = TypeParamBlockNode.destruct(node)
+	return params.map((n) => convertTypeParam(n, ctx))
+}
+
+function convertTypeParam(
+	node: TypeParamNode,
+	ctx: McdocBinderContext,
+): TypeParamNode {
+	return node
 }
 
 function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
