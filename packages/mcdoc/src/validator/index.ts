@@ -1,5 +1,5 @@
-import type { AstNode, CheckerContext, Range } from "@spyglassmc/core"
-import type { LiteralNumericValue} from "../type";
+import type { AstNode, CheckerContext } from "@spyglassmc/core"
+import type { Attribute, ListType, LiteralNumericValue, LiteralValue, PrimitiveArrayType, StringType, StructType, TupleType} from "../type";
 import { NumericRange, type LiteralType, type McdocType, type StructTypePairField } from "../type"
 import { TypeDefSymbolData } from "../binder"
 import { arrayToMessage, localize } from "@spyglassmc/locales";
@@ -16,6 +16,7 @@ export type ValidationError<T extends AstNode> =
 	  SimpleError<T>
 	| RangeError<T>
 	| TypeMismatchError<T>
+	| ValueMismatchError<T>
 	| UnknownKeyError<T>
 	| UnknownTypedefError<T>
 export interface ErrorBase<T extends AstNode> {
@@ -23,7 +24,7 @@ export interface ErrorBase<T extends AstNode> {
 	node: T
 }
 export interface SimpleError<T extends AstNode> extends ErrorBase<T> {
-	kind: 'expected_key_value_pair';
+	kind: 'expected_key_value_pair' | 'expected_noting';
 }
 export interface RangeError<T extends AstNode> extends ErrorBase<T> {
 	kind: 'invalid_collection_length' | 'number_out_of_range';
@@ -38,6 +39,11 @@ export interface TypeMismatchError<T extends AstNode> extends ErrorBase<T> {
 	received: McdocType;
 	expected: McdocType[];
 }
+export interface ValueMismatchError<T extends AstNode> extends ErrorBase<T> {
+	kind: 'value_mismatch';
+	received: LiteralValue;
+	expected: (string | boolean | number | bigint)[];
+}
 export interface UnknownTypedefError<T extends AstNode> extends ErrorBase<T> {
 	kind: 'unknown_typedef';
 	defName: string;
@@ -49,47 +55,250 @@ export interface ValidatorOptions<T extends AstNode> {
 	isEquivalent: NodeEquivalenceChecker;
 	getChildren: ChildrenGetter<T>;
 	attachTypeInfo: TypeInfoAttacher<T>;
-	disableErrorReporting?: boolean;
 }
+  
+const attributeHandlers: {
+	[key: string]: (<N extends AstNode>(
+		node: N,
+		attribute: Attribute,
+		inferred: McdocType,
+		expected: McdocType,
+		options: ValidatorOptions<N>
+	) => ValidationError<N>[])
+	| undefined
+ } = {
+	// TODO other attributes
+	id: (_n, attribute, inferred, _e, options) => {
+		if (inferred.kind === 'literal' && inferred.value.kind ==='string') {
+			// TODO check registry
+			if (!inferred.value.value.includes(':')) {
+				inferred.value.value = 'minecraft:' + inferred.value.value;
+			}
+		}
+		return [];
+	}
+};
 
-export function validateByTypeName<T extends AstNode>(node: T, typeName: string, options: ValidatorOptions<T>): ValidationError<T>[] {
+export function validateByTypeName<T extends AstNode>(node: T, typeName: string, options: ValidatorOptions<T>) {
+	const errors = internalValidateByTypeName(node, typeName, options, []);
+	reportErrors(errors, options);
+}
+function internalValidateByTypeName<T extends AstNode>(node: T, typeName: string, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
 	const symbol = options.context.symbols.query(options.context.doc, 'mcdoc', typeName);
 	const typeDefinition = symbol.getData(TypeDefSymbolData.is)?.typeDef;
 
 	let errors: ValidationError<T>[];
 	if (!typeDefinition) {
 		errors = [{ kind: 'unknown_typedef', node: node, defName: typeName }];
-		dumpErrors(errors, options);
 
 		return errors;
 	}
 
-	errors = validateTypeDef(node, typeDefinition, { ...options, disableErrorReporting: true });
-	dumpErrors(errors, options);
+	errors = internalValidateTypeDef(node, typeDefinition, options, parents);
 	return errors;
 }
 
-export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>): ValidationError<T>[] {
+export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>) {
+	const errors = internalValidateTypeDef(node, typeDef, options, []);
+
+	reportErrors(errors, options);
+}
+function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
 	const errors: ValidationError<T>[] = [];
 	const inferredType = options.inferType(node);
 
-	// TODO handle special typedefs like union, dispatcher, reference, etc
+	if (inferredType.kind === 'any' || inferredType.kind === 'unsafe') {
+		options.attachTypeInfo(node, typeDef);
+		return [];
+	}
+	
+	switch (typeDef.kind) {
+		case 'any':
+		case 'unsafe':
+			options.attachTypeInfo(node, typeDef);
+			return [];
+		case 'reference':
+			if (!typeDef.path) {
+				// TODO when does this happen?
+				return [];
+			}
+			return internalValidateByTypeName(node, typeDef.path, options, parents)
+		case 'attributed':
+			const attribute = attributeHandlers[typeDef.attribute.name];
+			if (attribute) {
+				const attributeErrors = attribute(node, typeDef.attribute, inferredType, typeDef, options);
+				if (attributeErrors.length > 0) {
+					return attributeErrors;
+				}
+			}
+			return internalValidateTypeDef(node, typeDef.child, options, parents);
+		case 'dispatcher':
+			const dispatcher = options.context.symbols.query(options.context.doc, 'mcdoc/dispatcher', typeDef.registry).symbol?.members;
+			if (!dispatcher) {
+				options.context.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`);
+				return [];
+			}
+			let dispatcherValues: McdocType[] = [];
+		
+			for (const index of typeDef.parallelIndices) {
+				let dispatcherLookup: string | undefined;
+				if (index.kind === 'static') {
+					if (index.value === '%fallback') {
+						// TODO how to properly check e.data.typeDef is a thing and a McdocType
+						dispatcherValues = Object.values(dispatcher).map(e => (e.data as any)?.typeDef).filter(e => e);
+						break;
+					}
+					dispatcherLookup = index.value;
+				} else {
+					const currentParents = [ ...parents ];
+					let current = currentParents.pop();
+					for (const entry of index.accessor) {
+						if (!current) {
+							break;
+						}
+						// TODO initial check against %parent and %key is to work around an mcdoc parser bug 
+						if (entry === '%parent' || (typeof entry != 'string' && entry.keyword === 'parent')) {
+							current = currentParents.pop();
+						} else if (entry === '%key' || (typeof entry != 'string' && entry.keyword === 'key')) {
+							// TODO
+							current = undefined;
+						}
+						else if (typeof entry === 'string') {
+							if (internalValidateTypeDef(current, { kind: 'struct', fields: [] }, options, currentParents).some(e => e.kind !== 'unknown_key')) {
+								break;
+							}
+							const child = options.getChildren(current).find(child => {
+								const kvp = options.getChildren(child);
+								if (kvp.length === 2) {
+									const childKey = options.inferType(kvp[0]);
+									return childKey.kind === 'literal' && childKey.value.kind === 'string' && childKey.value.value === entry;
+								}
+								return false;
+							});
+							currentParents.push(current);
+							current = child ? options.getChildren(child)[1] : undefined;
+						} else {
+							current = undefined;
+						}
+					}
+					if (current) {
+						const typeOfFoundValue = options.inferType(current);
+						if (typeOfFoundValue.kind === 'literal' && typeOfFoundValue.value.kind === 'string') {
+							dispatcherLookup = typeOfFoundValue.value.value;
+							if (dispatcherLookup.startsWith('minecraft:')) {
+								dispatcherLookup = dispatcherLookup.substring(10);
+							}
+						}
+					}
+				}
 
-	if (!isEquivalent(inferredType, typeDef) && !options.isEquivalent(inferredType, typeDef)) {
-		errors.push({
-			kind: 'type_mismatch',
+				const dispatcherValue = dispatcher[dispatcherLookup ?? '%unknown']
+				// TODO how to properly check e.data.typeDef is a thing and a McdocType
+				if ((dispatcherValue?.data as any)?.typeDef) {
+					dispatcherValues.push((dispatcherValue?.data as any)?.typeDef)
+				}
+			}
+			return internalValidateTypeDef(node, { kind: 'union', members: dispatcherValues }, options, parents);
+		case 'indexed':
+			// TODO
+			break;
+		case 'union':
+			if (typeDef.members.length === 0) {
+				return [{
+					kind: 'expected_noting',
+					node: node,
+				}];
+			}
+
+			let parsingResults: { typeDef: McdocType, errors: ValidationError<T>[] }[] = [];
+			for (const def of typeDef.members) {
+				const innerErrors = internalValidateTypeDef(node, def, options, parents);
+				if (innerErrors.length === 0) {
+					return [];
+				}
+				parsingResults.push({ typeDef: def, errors: innerErrors });
+			}
+			if (!parsingResults.some(r => r.errors.some(e => e.kind !== 'type_mismatch' || e.node !== node))) {
+				return [{
+					kind: 'type_mismatch',
+					node: node,
+					expected: typeDef.members,
+					received: inferredType
+				}];
+			}
+			if (!parsingResults.some(r => r.errors.some(e => e.kind !== 'value_mismatch' || e.node !== node))) {
+				return [{
+					kind: 'value_mismatch',
+					node: node,
+					expected: parsingResults.flatMap(p => p.errors).filter(e => e.kind === 'value_mismatch').flatMap(e => (e as ValueMismatchError<T>).expected),
+					received: (inferredType as LiteralType).value
+				}];
+			}
+			parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'type_mismatch' && e.node === node));
+			if (!parsingResults.some(r => r.errors.some(e => e.kind === 'unknown_key'))) {
+				parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'unknown_key'));
+			}
+			return parsingResults.sort((a, b) => a.errors.length - b.errors.length)[0].errors;
+		case 'concrete':
+			// TODO
+			break;
+		case 'template':
+			// TODO
+			break;
+	}
+
+	const typeMismatchError: TypeMismatchError<T> = {
+		kind: "type_mismatch",
+		node: node,
+		received: inferredType,
+		expected: [typeDef]
+	};
+	if (inferredType.kind === 'literal') {
+		if (typeDef.kind === 'literal') {
+			if (inferredType.value.kind !== typeDef.value.kind && !options.isEquivalent(inferredType, { kind: typeDef.value.kind })) {
+				return [typeMismatchError]
+			}
+			if (inferredType.value.value !== typeDef.value.value) {
+				return [{
+					kind: "value_mismatch",
+					node: node,
+					received: inferredType.value,
+					expected: [typeDef.value.value]
+				}]
+			}
+			return [];
+		} else if (typeDef.kind === 'enum') {
+			if (typeDef.enumKind && inferredType.value.kind !== typeDef.enumKind && !options.isEquivalent(inferredType, { kind: typeDef.enumKind })) {
+				return [typeMismatchError]
+			} else if (!typeDef.values.some(v => v.value === inferredType.value.value)) {
+				return [{
+					kind: "value_mismatch",
+					node: node,
+					received: inferredType.value,
+					expected: typeDef.values.map(v => v.value)
+				}]
+			}
+		} else if (inferredType.value.kind !== typeDef.kind && !options.isEquivalent(inferredType, typeDef)) {
+			return [{
+				kind: "type_mismatch",
+				node: node,
+				received: inferredType,
+				expected: [typeDef]
+			}]
+		}
+	} else if (inferredType.kind !== typeDef.kind && !options.isEquivalent(inferredType, typeDef)) {
+		return [{
+			kind: "type_mismatch",
 			node: node,
-			expected: [typeDef],
-			received: inferredType
-		});
-		dumpErrors(errors, options);
-		return errors;
+			received: inferredType,
+			expected: [typeDef]
+		}];
 	}
 	
 	options.attachTypeInfo(node, typeDef);
 
 	switch (typeDef.kind) {
-		case 'struct':
+		case 'struct': {
 			// TODO handle spread types
 			// TODO check duplicate fields
 			// TODO check missing fields
@@ -103,10 +312,10 @@ export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, 
 					continue;
 				}
 
-				const inferredKey = options.inferType(kvp[0]);
-				const childDefKey = findBestMatch(inferredKey, defChildren.map(c => c.key), options);
-
+				const childDefKey = findBestMatch(kvp[0], defChildren.map(c => c.key), options, [ ...parents, node ]);
+				
 				if (childDefKey === undefined) {
+					const inferredKey = options.inferType(kvp[0]);
 					errors.push({
 						kind: 'unknown_key', node: kvp[0],
 						key: inferredKey.kind === 'literal' ? inferredKey.value.value.toString() : undefined,
@@ -115,13 +324,14 @@ export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, 
 				}
 
 				const childDef = defChildren.find(d => d.key === childDefKey);
-				Array.prototype.push.apply(errors, validateTypeDef(kvp[1], childDef!.type, { ...options, disableErrorReporting: true }));
+				Array.prototype.push.apply(errors, internalValidateTypeDef(kvp[1], childDef!.type, options, [ ...parents, node ]));
 			}
 			break;
+		}
 		case 'list':
 		case 'byte_array':
 		case 'int_array':
-		case 'long_array': 
+		case 'long_array': {
 			let itemType: McdocType;
 			switch (typeDef.kind) {
 				case 'list':
@@ -139,7 +349,7 @@ export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, 
 			}
 			const children = options.getChildren(node);
 			for (const child of children) {
-				Array.prototype.push.apply(errors, validateTypeDef(child, itemType, { ...options, disableErrorReporting: true }));
+				Array.prototype.push.apply(errors, internalValidateTypeDef(child, itemType, options, [ ...parents, node ]));
 			}
 			if (typeDef.lengthRange && !NumericRange.isInRange(typeDef.lengthRange, children.length)) {
 				errors.push({
@@ -149,31 +359,39 @@ export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, 
 				})
 			}
 			break;
-		//TODO: handle all types
+		}
+		case 'tuple': {
+			const children = options.getChildren(node);
+			if (typeDef.items.length === children.length) {
+				for (let i = 0; i < typeDef.items.length; i++) {
+					const def = typeDef.items[i];
+					const child = children[i];
+					Array.prototype.push.apply(errors, internalValidateTypeDef(child, def, options, [ ...parents, node ]));
+				}
+			} else {
+				errors.push({
+					kind: 'invalid_collection_length',
+					node: node,
+					range: { kind: 0b00, max: typeDef.items.length, min: typeDef.items.length },
+				})
+			}
+			break;
+		}
 	}
-
-	dumpErrors(errors, options);
 	return errors;
 }
 
-export function findBestMatch<T extends AstNode>(searchedType: McdocType, typeDefs: (McdocType | string)[], options: ValidatorOptions<T>): McdocType | string | undefined {
-	if (searchedType.kind === 'literal' && searchedType.value.kind === 'string') {
-		for (const def of (typeDefs.filter(d => typeof d ==='string')) as string[]) {
-			if (searchedType.value.value === def) {
-				return def;
-			}
+export function findBestMatch<T extends AstNode>(node: T, typeDefs: (McdocType | string)[], options: ValidatorOptions<T>, parents: T[]): McdocType | string | undefined {
+
+	for (const def of (typeDefs.filter(d => typeof d ==='string')) as string[]) {
+		if (internalValidateTypeDef(node, { kind: 'literal', value: { kind: 'string', value: def } }, options, parents).length === 0) {
+			return def;
 		}
 	}
 	
 	const complexTypeDefs = typeDefs.filter(d => typeof d !=='string') as McdocType[];
 	for (const def of complexTypeDefs) {
-		if (isEquivalent(searchedType, def)) {
-			return def;
-		}
-	}
-	
-	for (const def of complexTypeDefs) {
-		if (options.isEquivalent(searchedType, def)) {
+		if (internalValidateTypeDef(node, def, options, parents).length === 0) {
 			return def;
 		}
 	}
@@ -181,98 +399,39 @@ export function findBestMatch<T extends AstNode>(searchedType: McdocType, typeDe
 	return undefined;
 }
 
-export function isEquivalent(first: McdocType, second: McdocType): boolean {
-	if (first.kind === 'any' || second.kind === 'any') {
-		return true;
-	}
-
-	if (first.kind === 'literal' || second.kind === 'literal') {
-		if (first.kind !== 'literal') {
-			const tmp = first;
-			first = second;
-			second = tmp;
-		}
-
-		first = first as LiteralType;
-		// TODO: Handle id attribute
-		if (second.kind === 'literal') {
-			if (first.value.kind !== second.value.kind) {
-				return false
-			}
-			if (first.value.value !== second.value.value) {
-				return false
-			}
-			if (first.value.kind === 'number' && first.value.suffix !== (second.value as LiteralNumericValue).suffix) {
-				return false
-			}
-		} else {
-			switch (first.value.kind) {
-				case 'boolean': return second.kind === 'boolean';
-				case 'string': return second.kind === 'string';
-				case 'number': {
-					switch (first.value.suffix) {
-						case 'b': return second.kind === 'byte';
-						case 's': return second.kind === 'short';
-						case undefined: return second.kind === 'int';
-						case 'l': return second.kind === 'long';
-						case 'f': return second.kind === 'float';
-						case 'd': return second.kind === 'double';
-					}
-				}
-			}
-		}
-	}
-
-	if (first.kind !== second.kind) {
-		return false;
-	}
-
-	// TODO: Handle id attribute
-	if (first.kind === 'literal') {
-		second = second as LiteralType;
-		if (first.value.kind !== second.value.kind) {
-			return false
-		}
-		if (first.value.value !== second.value.value) {
-			return false
-		}
-		if (first.value.kind === 'number' && first.value.suffix !== (second.value as LiteralNumericValue).suffix) {
-			return false
-		}
-	}
-
-	return true;
-}
-
-function dumpErrors<T extends AstNode>(errors: ValidationError<T>[], options: ValidatorOptions<T>) {
-	if (!options.disableErrorReporting) {
-		for (const err of errors) {
-			switch (err.kind) {
-				case 'unknown_typedef':
-					options.context.err.report(localize('mcdoc.validator.unknown-typedef', err.defName), err.node.range);
-					break;
-				case 'unknown_key':
-					options.context.err.report(localize('mcdoc.validator.unknown-key', err.key ?? ''), err.node.range);
-					break;
-				case 'invalid_collection_length':
-				case 'number_out_of_range':
-					const suffix = err.range.min ? err.range.max ? 'min_max' : 'min' : 'max'; 
-					options.context.err.report(
-						localize(
-							`mcdoc.validator.${err.kind.replace('_', '-')}.${suffix}`,
-							(err.range.min ?? err.range.max)!.toString(),
-							(err.range.max ?? '').toString()
-						),
-						 err.node.range);
-					break;
-				case 'type_mismatch':
-					options.context.err.report(
-						localize('expected', arrayToMessage(err.expected.map(e => localize(`mcdoc.type.${e.kind}`)), false)),
-						err.node.range
-					);
-					break;
-				default: options.context.err.report(localize(`mcdoc.validator.${err.kind.replace('_', '-')}`), err.node.range);
-			}
+function reportErrors<T extends AstNode>(errors: ValidationError<T>[], options: ValidatorOptions<T>) {
+	for (const err of errors) {
+		switch (err.kind) {
+			case 'unknown_typedef':
+				options.context.err.report(localize('mcdoc.validator.unknown-typedef', err.defName), err.node.range);
+				break;
+			case 'unknown_key':
+				options.context.err.report(localize('mcdoc.validator.unknown-key', err.key ?? ''), err.node.range);
+				break;
+			case 'invalid_collection_length':
+			case 'number_out_of_range':
+				const suffix = err.range.min ? err.range.max ? 'min_max' : 'min' : 'max'; 
+				options.context.err.report(
+					localize(
+						`mcdoc.validator.${err.kind.replace('_', '-')}.${suffix}`,
+						(err.range.min ?? err.range.max)!.toString(),
+						(err.range.max ?? '').toString()
+					),
+						err.node.range);
+				break;
+			case 'type_mismatch':
+				options.context.err.report(
+					localize('expected', arrayToMessage(err.expected.map(e => localize(`mcdoc.type.${e.kind}`)), false)),
+					err.node.range
+				);
+				break;
+			case 'value_mismatch':
+				options.context.err.report(
+					localize('expected', arrayToMessage(err.expected.map(v => v.toString()))),
+					err.node.range
+				);
+				break;
+			default: options.context.err.report(localize(`mcdoc.validator.${err.kind.replace('_', '-')}`), err.node.range);
 		}
 	}
 }

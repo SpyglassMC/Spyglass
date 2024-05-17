@@ -87,24 +87,25 @@ export function definition(
 			inferType: node => {
 				switch (node.type) {
 					case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
-					case 'json:number': return { kind: 'literal', value: { kind: 'number', value: node.value } }
-					case 'json:null': return { kind: 'unsafe' } // null is always invalid? 
+					case 'json:number': return { kind: 'literal', value: { kind: 'double', value: node.value } }
+					case 'json:null': return { kind: 'union', members: [] } // null is always invalid? 
 					case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
 					case 'json:array': return { kind: 'list', item: { kind: 'any' } }
 					case 'json:object': return { kind: 'struct', fields: [] }
-					case 'pair': return { kind: 'any' } // Should never happen
+					case 'pair': 
+						if (!node.key) {
+							return { kind: 'tuple', items: [] };
+						}
+						return { kind: 'tuple', items: [ { kind: 'literal', value: { kind: 'string', value: node.key.value }}, { kind: 'any' } ] }
 				}
 			},
-			// TODO come up with a better way to handle ruleset, the logic is split between base validation and specific validation right now
 			isEquivalent: (inferred, def) => {
 				switch (inferred.kind) {
 					case 'list': return (['list', 'byte_array', 'int_array', 'long_array', 'tuple'] as mcdoc.McdocType['kind'][]).includes(def.kind);
 					case 'struct': return def.kind === 'struct';
-					case 'literal': return inferred.value.kind === 'number'
-						&& (
-							(['byte', 'short', 'int', 'long', 'float', 'double'] as mcdoc.McdocType['kind'][]).includes(def.kind)
-							|| def.kind === 'literal' && def.value === inferred.value
-						)
+					case 'literal':
+						return inferred.value.kind === 'double'
+							&& (def.kind === inferred.value.kind || def.kind === 'literal' && !['boolean', 'string'].includes(def.value.kind))
 					default: return false;
 				}
 			},
