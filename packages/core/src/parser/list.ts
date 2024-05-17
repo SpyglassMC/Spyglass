@@ -11,7 +11,7 @@ import { attempt } from './util.js'
 export interface Options<V extends AstNode> {
 	start: string
 	value: Parser<V>
-	sep: string | string[]
+	sep: string
 	trailingSep: boolean
 	end: string
 }
@@ -41,13 +41,7 @@ export function list<V extends AstNode>({
 
 				// Item sep of the last item.
 				if (requiresValueSep && !hasValueSep) {
-					if (sep instanceof Array) {
-						sep.forEach((s) =>
-							ctx.err.report(localize('expected', localeQuote(s)), src)
-						)
-					} else {
-						ctx.err.report(localize('expected', localeQuote(sep)), src)
-					}
+					ctx.err.report(localize('expected', localeQuote(sep)), src)
 				}
 
 				// Value.
@@ -62,7 +56,7 @@ export function list<V extends AstNode>({
 						localize('expected', localize('parser.list.value')),
 						Range.create(
 							src,
-							() => src.skipUntilOrEnd(...sep, end, '\r', '\n'),
+							() => src.skipUntilOrEnd(sep, end, '\r', '\n'),
 						),
 					)
 				} else {
