@@ -182,7 +182,6 @@ export type TypeNode =
 	| ReferenceTypeNode
 	| DispatcherTypeNode
 	| UnionTypeNode
-	| TypeAliasNode
 export const TypeNode = Object.freeze({
 	is(node: AstNode | undefined): node is TypeNode {
 		return (
@@ -198,8 +197,7 @@ export const TypeNode = Object.freeze({
 			StructNode.is(node) ||
 			ReferenceTypeNode.is(node) ||
 			DispatcherTypeNode.is(node) ||
-			UnionTypeNode.is(node) ||
-			TypeAliasNode.is(node)
+			UnionTypeNode.is(node)
 		)
 	},
 })
