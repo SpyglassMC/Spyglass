@@ -253,7 +253,9 @@ await CLI.scriptName('mcdoc')
 									internal_locales[parent]
 								) {
 									locales[
-										`mcdoc.${resource.replace(/[\/\\]/g, '.')}.map_key`
+										`mcdoc.${
+											resource.replace(/[\/\\]/g, '.')
+										}.map_key`
 									] = internal_locales[parent].join('\n')
 
 									delete internal_locales[parent]
