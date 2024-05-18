@@ -89,7 +89,6 @@ import type {
 	McdocType,
 	NumericRange,
 	NumericTypeKind,
-	NumericTypeKinds,
 	ParallelIndices,
 	PrimitiveArrayValueKind,
 	StaticIndex,
