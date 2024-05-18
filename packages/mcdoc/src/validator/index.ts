@@ -1,5 +1,5 @@
 import type { AstNode, CheckerContext } from "@spyglassmc/core"
-import type { Attribute, ListType, LiteralNumericValue, LiteralValue, PrimitiveArrayType, StringType, StructType, TupleType} from "../type";
+import type { Attribute, ListType, LiteralNumericValue, LiteralValue, NumericType, PrimitiveArrayType, StringType, StructType, TupleType} from "../type";
 import { NumericRange, type LiteralType, type McdocType, type StructTypePairField } from "../type"
 import { TypeDefSymbolData } from "../binder"
 import { arrayToMessage, localize } from "@spyglassmc/locales";
@@ -11,6 +11,14 @@ export type NodeEquivalenceChecker = (inferredNode: McdocType, definition: Mcdoc
 export type TypeInfoAttacher<T extends AstNode> = (node: T, definition: McdocType) => void
 
 export type ChildrenGetter<T extends AstNode> = (node: T) => T[]
+
+export interface ValidatorOptions<T extends AstNode> {
+	context: CheckerContext;
+	inferType: McdocTypeInferrer<T>;
+	isEquivalent: NodeEquivalenceChecker;
+	getChildren: ChildrenGetter<T>;
+	attachTypeInfo: TypeInfoAttacher<T>;
+}
 
 export type ValidationError<T extends AstNode> =
 	  SimpleError<T>
@@ -41,20 +49,11 @@ export interface TypeMismatchError<T extends AstNode> extends ErrorBase<T> {
 }
 export interface ValueMismatchError<T extends AstNode> extends ErrorBase<T> {
 	kind: 'value_mismatch';
-	received: LiteralValue;
 	expected: (string | boolean | number | bigint)[];
 }
 export interface UnknownTypedefError<T extends AstNode> extends ErrorBase<T> {
 	kind: 'unknown_typedef';
 	defName: string;
-}
-
-export interface ValidatorOptions<T extends AstNode> {
-	context: CheckerContext;
-	inferType: McdocTypeInferrer<T>;
-	isEquivalent: NodeEquivalenceChecker;
-	getChildren: ChildrenGetter<T>;
-	attachTypeInfo: TypeInfoAttacher<T>;
 }
   
 const attributeHandlers: {
@@ -63,7 +62,7 @@ const attributeHandlers: {
 		attribute: Attribute,
 		inferred: McdocType,
 		expected: McdocType,
-		options: ValidatorOptions<N>
+		options: ValidatorOptions<N>,
 	) => ValidationError<N>[])
 	| undefined
  } = {
@@ -79,33 +78,34 @@ const attributeHandlers: {
 	}
 };
 
-export function validateByTypeName<T extends AstNode>(node: T, typeName: string, options: ValidatorOptions<T>) {
-	const errors = internalValidateByTypeName(node, typeName, options, []);
+export function reference<T extends AstNode>(node: T, path: string, options: ValidatorOptions<T>) {
+	const errors = internalReference(node, path, options, []);
 	reportErrors(errors, options);
 }
-function internalValidateByTypeName<T extends AstNode>(node: T, typeName: string, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
-	const symbol = options.context.symbols.query(options.context.doc, 'mcdoc', typeName);
-	const typeDefinition = symbol.getData(TypeDefSymbolData.is)?.typeDef;
+function internalReference<T extends AstNode>(node: T, path: string, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
+	const symbol = options.context.symbols.query(options.context.doc, 'mcdoc', path);
+	const typeDef = symbol.getData(TypeDefSymbolData.is)?.typeDef;
 
 	let errors: ValidationError<T>[];
-	if (!typeDefinition) {
-		errors = [{ kind: 'unknown_typedef', node: node, defName: typeName }];
+	if (!typeDef) {
+		errors = [{ kind: 'unknown_typedef', node: node, defName: path }];
 
 		return errors;
 	}
 
-	errors = internalValidateTypeDef(node, typeDefinition, options, parents);
+	const inferredType = options.inferType(node);
+	errors = internalTypeDefinition(node, typeDef, inferredType, options, parents);
 	return errors;
 }
 
-export function validateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>) {
-	const errors = internalValidateTypeDef(node, typeDef, options, []);
+export function typeDefinition<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>) {
+	const inferredType = options.inferType(node);
+	const errors = internalTypeDefinition(node, typeDef, inferredType, options, []);
 
 	reportErrors(errors, options);
 }
-function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
+function internalTypeDefinition<T extends AstNode>(node: T, typeDef: McdocType, inferredType: McdocType, options: ValidatorOptions<T>, parents: T[]): ValidationError<T>[] {
 	const errors: ValidationError<T>[] = [];
-	const inferredType = options.inferType(node);
 
 	if (inferredType.kind === 'any' || inferredType.kind === 'unsafe') {
 		options.attachTypeInfo(node, typeDef);
@@ -122,16 +122,16 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 				// TODO when does this happen?
 				return [];
 			}
-			return internalValidateByTypeName(node, typeDef.path, options, parents)
+			return internalReference(node, typeDef.path, options, parents)
 		case 'attributed':
 			const attribute = attributeHandlers[typeDef.attribute.name];
+			let attributeErrors: ValidationError<T>[] = []
 			if (attribute) {
-				const attributeErrors = attribute(node, typeDef.attribute, inferredType, typeDef, options);
-				if (attributeErrors.length > 0) {
-					return attributeErrors;
-				}
+				attributeErrors = attribute(node, typeDef.attribute, inferredType, typeDef, options);
 			}
-			return internalValidateTypeDef(node, typeDef.child, options, parents);
+			// TODO apply attrubute function? The child node needs to be aware of some attributes.
+			Array.prototype.push.apply(attributeErrors, internalTypeDefinition(node, typeDef.child, inferredType, options, parents));
+			return attributeErrors;
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(options.context.doc, 'mcdoc/dispatcher', typeDef.registry).symbol?.members;
 			if (!dispatcher) {
@@ -156,6 +156,7 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 						if (!current) {
 							break;
 						}
+						const currentType =options.inferType(current);
 						// TODO initial check against %parent and %key is to work around an mcdoc parser bug 
 						if (entry === '%parent' || (typeof entry != 'string' && entry.keyword === 'parent')) {
 							current = currentParents.pop();
@@ -164,7 +165,7 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 							current = undefined;
 						}
 						else if (typeof entry === 'string') {
-							if (internalValidateTypeDef(current, { kind: 'struct', fields: [] }, options, currentParents).some(e => e.kind !== 'unknown_key')) {
+							if (internalTypeDefinition(current, { kind: 'struct', fields: [] }, currentType, options, currentParents).some(e => e.kind !== 'unknown_key')) {
 								break;
 							}
 							const child = options.getChildren(current).find(child => {
@@ -198,7 +199,7 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 					dispatcherValues.push((dispatcherValue?.data as any)?.typeDef)
 				}
 			}
-			return internalValidateTypeDef(node, { kind: 'union', members: dispatcherValues }, options, parents);
+			return internalTypeDefinition(node, { kind: 'union', members: dispatcherValues }, inferredType, options, parents);
 		case 'indexed':
 			// TODO
 			break;
@@ -212,7 +213,7 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 
 			let parsingResults: { typeDef: McdocType, errors: ValidationError<T>[] }[] = [];
 			for (const def of typeDef.members) {
-				const innerErrors = internalValidateTypeDef(node, def, options, parents);
+				const innerErrors = internalTypeDefinition(node, def, inferredType, options, parents);
 				if (innerErrors.length === 0) {
 					return [];
 				}
@@ -231,7 +232,6 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 					kind: 'value_mismatch',
 					node: node,
 					expected: parsingResults.flatMap(p => p.errors).filter(e => e.kind === 'value_mismatch').flatMap(e => (e as ValueMismatchError<T>).expected),
-					received: (inferredType as LiteralType).value
 				}];
 			}
 			parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'type_mismatch' && e.node === node));
@@ -247,46 +247,10 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 			break;
 	}
 
-	const typeMismatchError: TypeMismatchError<T> = {
-		kind: "type_mismatch",
-		node: node,
-		received: inferredType,
-		expected: [typeDef]
-	};
-	if (inferredType.kind === 'literal') {
-		if (typeDef.kind === 'literal') {
-			if (inferredType.value.kind !== typeDef.value.kind && !options.isEquivalent(inferredType, { kind: typeDef.value.kind })) {
-				return [typeMismatchError]
-			}
-			if (inferredType.value.value !== typeDef.value.value) {
-				return [{
-					kind: "value_mismatch",
-					node: node,
-					received: inferredType.value,
-					expected: [typeDef.value.value]
-				}]
-			}
-			return [];
-		} else if (typeDef.kind === 'enum') {
-			if (typeDef.enumKind && inferredType.value.kind !== typeDef.enumKind && !options.isEquivalent(inferredType, { kind: typeDef.enumKind })) {
-				return [typeMismatchError]
-			} else if (!typeDef.values.some(v => v.value === inferredType.value.value)) {
-				return [{
-					kind: "value_mismatch",
-					node: node,
-					received: inferredType.value,
-					expected: typeDef.values.map(v => v.value)
-				}]
-			}
-		} else if (inferredType.value.kind !== typeDef.kind && !options.isEquivalent(inferredType, typeDef)) {
-			return [{
-				kind: "type_mismatch",
-				node: node,
-				received: inferredType,
-				expected: [typeDef]
-			}]
-		}
-	} else if (inferredType.kind !== typeDef.kind && !options.isEquivalent(inferredType, typeDef)) {
+	const inferredValueType = getValueType(inferredType);
+	const expectedValueType = getValueType(typeDef);
+
+	if (inferredValueType.kind !== expectedValueType.kind && !options.isEquivalent(inferredValueType, expectedValueType)) {
 		return [{
 			kind: "type_mismatch",
 			node: node,
@@ -312,10 +276,10 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 					continue;
 				}
 
-				const childDefKey = findBestMatch(kvp[0], defChildren.map(c => c.key), options, [ ...parents, node ]);
+				const inferredKey = options.inferType(kvp[0]);
+				const childDefKey = findStructKey(kvp[0], defChildren.map(c => c.key), inferredKey, options, [ ...parents, node ]);
 				
 				if (childDefKey === undefined) {
-					const inferredKey = options.inferType(kvp[0]);
 					errors.push({
 						kind: 'unknown_key', node: kvp[0],
 						key: inferredKey.kind === 'literal' ? inferredKey.value.value.toString() : undefined,
@@ -323,8 +287,9 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 					continue;
 				}
 
+				const inferredChild = options.inferType(kvp[1]);
 				const childDef = defChildren.find(d => d.key === childDefKey);
-				Array.prototype.push.apply(errors, internalValidateTypeDef(kvp[1], childDef!.type, options, [ ...parents, node ]));
+				Array.prototype.push.apply(errors, internalTypeDefinition(kvp[1], childDef!.type, inferredChild, options, [ ...parents, node ]));
 			}
 			break;
 		}
@@ -349,7 +314,8 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 			}
 			const children = options.getChildren(node);
 			for (const child of children) {
-				Array.prototype.push.apply(errors, internalValidateTypeDef(child, itemType, options, [ ...parents, node ]));
+				const inferredChild = options.inferType(child);
+				Array.prototype.push.apply(errors, internalTypeDefinition(child, itemType, inferredChild, options, [ ...parents, node ]));
 			}
 			if (typeDef.lengthRange && !NumericRange.isInRange(typeDef.lengthRange, children.length)) {
 				errors.push({
@@ -366,7 +332,8 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 				for (let i = 0; i < typeDef.items.length; i++) {
 					const def = typeDef.items[i];
 					const child = children[i];
-					Array.prototype.push.apply(errors, internalValidateTypeDef(child, def, options, [ ...parents, node ]));
+					const inferredChild = options.inferType(child);
+					Array.prototype.push.apply(errors, internalTypeDefinition(child, def, inferredChild, options, [ ...parents, node ]));
 				}
 			} else {
 				errors.push({
@@ -377,26 +344,71 @@ function internalValidateTypeDef<T extends AstNode>(node: T, typeDef: McdocType,
 			}
 			break;
 		}
+		case 'literal': {
+			if (inferredType.kind !== 'literal' || typeDef.value.value !== inferredType.value.value) {
+				return [{
+					kind: "value_mismatch",
+					node: node,
+					expected: [typeDef.value.value]
+				}];
+			}
+			break;
+		}
+		case 'enum': {
+			if (inferredType.kind === 'literal' && !typeDef.values.some(v => {
+				if (v.attributes) {
+					const enumChildType = {
+						kind: 'literal',
+						value: { kind: typeDef.enumKind ?? (typeof v.value === 'number' ? 'double' : 'string'), value: v.value}
+					} as LiteralType
+					const attributeErrors = v.attributes.flatMap(a => {
+						const h = attributeHandlers[a.name]
+						return h ? h(node, a, inferredType, enumChildType, options) : []
+					})
+					if (attributeErrors.length > 0) {
+						return false;
+					}
+				}
+				return v.value === inferredType.value.value;
+			})) {
+				return [{
+					kind: "value_mismatch",
+					node: node,
+					expected: typeDef.values.map(v => v.value)
+				}];
+			}
+		}
 	}
 	return errors;
 }
 
-export function findBestMatch<T extends AstNode>(node: T, typeDefs: (McdocType | string)[], options: ValidatorOptions<T>, parents: T[]): McdocType | string | undefined {
+function findStructKey<T extends AstNode>(node: T, typeDefs: (McdocType | string)[], inferredType: McdocType, options: ValidatorOptions<T>, parents: T[]): McdocType | string | undefined {
 
 	for (const def of (typeDefs.filter(d => typeof d ==='string')) as string[]) {
-		if (internalValidateTypeDef(node, { kind: 'literal', value: { kind: 'string', value: def } }, options, parents).length === 0) {
+		if (internalTypeDefinition(node, { kind: 'literal', value: { kind: 'string', value: def } }, inferredType, options, parents).length === 0) {
 			return def;
 		}
 	}
 	
 	const complexTypeDefs = typeDefs.filter(d => typeof d !=='string') as McdocType[];
 	for (const def of complexTypeDefs) {
-		if (internalValidateTypeDef(node, def, options, parents).length === 0) {
+		if (internalTypeDefinition(node, def, inferredType, options, parents).length === 0) {
 			return def;
 		}
 	}
 
 	return undefined;
+}
+
+function getValueType(type: McdocType): McdocType {
+	switch (type.kind) {
+		case 'literal':
+			return { kind: type.value.kind };
+		case 'enum':
+			return type.enumKind ? { kind: type.enumKind } : type;
+		default:
+			return type;
+	}
 }
 
 function reportErrors<T extends AstNode>(errors: ValidationError<T>[], options: ValidatorOptions<T>) {

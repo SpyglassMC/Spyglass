@@ -86,7 +86,7 @@ export interface EnumType extends McdocBaseType {
 }
 export interface EnumTypeField extends McdocBaseType {
 	identifier: string
-	value: string | number | bigint
+	value: string | number
 }
 
 export interface ReferenceType extends McdocBaseType {

@@ -1022,7 +1022,7 @@ function convertEnumField(
 function convertEnumValue(
 	node: EnumValueNode,
 	ctx: McdocBinderContext,
-): string | number | bigint {
+): string | number {
 	if (TypedNumberNode.is(node)) {
 		const { value } = TypedNumberNode.destruct(node)
 		return value.value

@@ -82,7 +82,7 @@ export function definition(
 	identifier: `::${string}::${string}`,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
-		mcdoc.validator.validateByTypeName<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
+		mcdoc.validator.reference<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
 			context: ctx,
 			inferType: node => {
 				switch (node.type) {
