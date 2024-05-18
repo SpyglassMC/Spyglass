@@ -24,6 +24,11 @@ const cacheRoot = join(parentPath, 'cache')
 
 const CLI = yargs(hideBin(process.argv))
 
+function removeWindowsCruft(str: string) {
+	if (str.includes('\r')) return str.replaceAll('\r', '')
+	return str
+}
+
 await CLI.scriptName('mcdoc')
 	.command(
 		'generate [source]',
@@ -118,13 +123,16 @@ await CLI.scriptName('mcdoc')
 			await service.project.ready()
 			await service.project.cacheService.save()
 
-			const out = 'out'
+			const generated = join('out', 'generated')
 
 			if (args.dry !== true) {
-				await fs.ensureDir(out)
+				await fs.ensureDir(generated)
 
 				if (args.module) {
-					await fs.ensureDir(join(out, 'module'))
+					await fs.ensureDir(join(generated, 'module'))
+				}
+				if (args.locale) {
+					await fs.ensureDir(join('out', 'locale'))
 				}
 			}
 
@@ -233,7 +241,7 @@ await CLI.scriptName('mcdoc')
 											`mcdoc.${
 												resource.replace(/[\/\\]/g, '.')
 											}.${child.value}`
-										] = internal_locales[parent].join('\n')
+										] = removeWindowsCruft(internal_locales[parent].join('').trimEnd())
 
 										delete internal_locales[parent]
 									}
@@ -247,14 +255,14 @@ await CLI.scriptName('mcdoc')
 										`mcdoc.${
 											resource.replace(/[\/\\]/g, '.')
 										}.map_key`
-									] = internal_locales[parent].join('\n')
+									] = removeWindowsCruft(internal_locales[parent].join('').trimEnd())
 
 									delete internal_locales[parent]
 								}
 
 								if (Object.hasOwn(_child, 'comment')) {
 									/* @ts-ignore */
-									const comment: string = _child.comment.trim()
+									const comment: string = _child.comment
 									child.comment = comment
 
 									if (
@@ -267,7 +275,7 @@ await CLI.scriptName('mcdoc')
 											internal_locales[key] = []
 										}
 
-										internal_locales[key].push(comment)
+										internal_locales[key].push(comment.slice(1))
 									}
 								}
 
@@ -346,19 +354,19 @@ await CLI.scriptName('mcdoc')
 							symbols.push(symbol)
 
 							if (!args.dry && args.module) {
-								const dir = parse(join(out, 'module', resource)).dir
+								const dir = parse(join(generated, 'module', resource)).dir
 
 								if (dir !== '') await fs.ensureDir(dir)
 
 								await fs.writeFile(
-									join(out, 'module', `${resource}.mcdoc.json`),
+									join(generated, 'module', `${resource}.mcdoc.json`),
 									JSON.stringify(symbol),
 								)
 
 								if (args.pretty) {
 									await fs.writeFile(
 										join(
-											out,
+											generated,
 											'module',
 											`${resource}.pretty.mcdoc.json`,
 										),
@@ -373,20 +381,20 @@ await CLI.scriptName('mcdoc')
 
 			if (!args.dry) {
 				await fs.writeFile(
-					join(out, 'generated.mcdoc.json'),
+					join(generated, 'generated.mcdoc.json'),
 					JSON.stringify(symbols),
 				)
 
 				if (args.pretty) {
 					await fs.writeFile(
-						join(out, 'generated.pretty.mcdoc.json'),
+						join(generated, 'generated.pretty.mcdoc.json'),
 						JSON.stringify(symbols, undefined, 3),
 					)
 				}
 
 				if (args.module) {
 					await fs.writeFile(
-						join(out, 'module', 'index.json'),
+						join(generated, 'module', 'index.json'),
 						JSON.stringify(symbols.map(symbol => symbol.resource)),
 					)
 				}
@@ -400,7 +408,7 @@ await CLI.scriptName('mcdoc')
 						console.warn(internal_locales)
 					}
 					await fs.writeFile(
-						join(out, 'locale.en-us.json'),
+						join('out', 'locale', 'locale.en-us.json'),
 						JSON.stringify(locales, undefined, 3),
 					)
 				}
