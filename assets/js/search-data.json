@@ -65,215 +65,215 @@
     "url": "/user/config.html",
     "relUrl": "/user/config.html"
   },"11": {
-    "doc": "Maintainer Guides",
-    "title": "Maintainer Guides",
-    "content": " ",
-    "url": "/maintainer/",
-    "relUrl": "/maintainer/"
-  },"12": {
-    "doc": "Developer Guides",
-    "title": "Developer Guides",
-    "content": " ",
-    "url": "/developer/",
-    "relUrl": "/developer/"
-  },"13": {
     "doc": "Mcdoc",
     "title": "Project root",
     "content": "Normally, the workspace (the directory where the mcdoc interpreter operates: for command line tools, this could be the working directory; for code editors like VS Code, this could be the root directory shown in the sidebar explorer) is considered as the root of a mcdoc project. If, however, there exists a folder named mcdoc directly under the workspace and all mcdoc files inside the workspace are stored under that direcotry, it will be considered as the root instead. ",
     "url": "/user/mcdoc/#project-root",
     "relUrl": "/user/mcdoc/#project-root"
-  },"14": {
+  },"12": {
     "doc": "Mcdoc",
     "title": "Syntax syntax",
     "content": "Here is the syntax used by this document to describe the syntax of mcdoc&#8201;&#8212;&#8201;syntax syntax, if you wish. Table 1. Syntax syntax | Symbol | Meaning | . | str . | Literal str . | . | U+xxxx . | Unicode character with the code point xxxx . | . | A* . | A repeated zero or more times . | . | A+ . | A repeated one or more times . | . | A? . | A repeated zero or one times . | . | A | B . | Either A or B . | . | [A B C] . | One of the literals A, B, or C . | . | [A-Z] . | Any literal from A to Z . | . | (A) . | General grouping . | . | notA . | Anything not A . | . | Aexcept: B . | A except B . | . | Alookahead: B . | A followed by B, but only consumes A . | . | Anochild: B . | A but B should not be a child of it . | . | NAME . | A referenced token rule . | . | Name . | A referenced parser rule . | . A token rule syntax cannot have any whitespaces (spaces, tabs, CRs, or LFs) or tokens in between the individual parts. A parser rule syntax can have whitespaces and COMMENTS in between. All syntax rules should be greedy (i.e. consume as many characters as possible). ",
     "url": "/user/mcdoc/#syntax-syntax",
     "relUrl": "/user/mcdoc/#syntax-syntax"
-  },"15": {
+  },"13": {
     "doc": "Mcdoc",
     "title": "Comments",
     "content": "SYNTAX (TOKEN) . COMMENTS COMMENT* . COMMENT // lookahead: not/ (notEOL)* (EOL | EOF) . EOL End of line: CR (Unicode U+000D) or LF (Unicode U+000A). EOF End of file. Comments can be used in mcdoc to write information that can be seen only by other users viewing/editing your mcdoc files. They are ignored by a mcdoc interpreter. To write a comment, simply put down two forward slashes (//)&#8201;&#8212;&#8201;everything following them, until the end of the line, is treated as part of the comment. They can be put anywhere where a whitespace is allowed. Comments, however, cannot start with triple slashes (///), as that&#8217;s reserved for Doc comments. Example 1. Comments // This is a comment. struct Foo { Bar: boolean, // This is another one. } . ",
     "url": "/user/mcdoc/#comments",
     "relUrl": "/user/mcdoc/#comments"
-  },"16": {
+  },"14": {
     "doc": "Mcdoc",
     "title": "Doc comments",
     "content": "SYNTAX . Prelim DocComments Attributes . DocComments DOC_COMMENT* Although this is a syntax rule, no regular comments are allowed between the individual DOC_COMMENT. Only whitespaces (including newlines) should be allowed. SYNTAX (TOKEN) . DOC_COMMENT /// (notEOL)* (EOL | EOF) . Doc comments are similar to comments syntax-wise&#8201;&#8212;&#8201;they start with triple slashes (///) instead. A block of doc comments can provide human-readable documentation for the component right after it to users of your mcdoc files. Unlike regular comments, doc comments can only be put in front of enum definitions, enum fields, struct definitions, struct fields, and type aliases, as part of [prelim]s. The text content of a doc comment block should be treated as a MarkDown content, with the leading triple slashes (and up to one leading space after the slashes if all lines within the block share that one leading space) stripped. Example 2. Doc comments /// This doc comment describes the struct Foo. /// External tools, like VS Code, may show this block of text when the user hovers over the name \"Foo\". struct Foo { /// This is another doc comment describing the field \"Bar\". Bar: boolean, // This is just a regular comment because it only starts with two slashes. } . | | As the content of a doc comment block is treated as MarkDown, certain characters might have special meaning. For example, if you write &lt;foo&gt; inside the doc comment, it might disappear when being shown to a user, as it may get interperted as an XML tag by a MarkDown parser. Escaping those special characters with a backslash (\\) (e.g. \\&lt;foo&gt;) will fix this. | . ",
     "url": "/user/mcdoc/#doc-comments",
     "relUrl": "/user/mcdoc/#doc-comments"
-  },"17": {
+  },"15": {
     "doc": "Mcdoc",
     "title": "Integer",
     "content": "SYNTAX (TOKEN) . INTEGER 0 | [- +]? [1-9] [0-9]* . An integer represents a whole number. Example 3. Integers 0 +123 -456 . ",
     "url": "/user/mcdoc/#integer",
     "relUrl": "/user/mcdoc/#integer"
-  },"18": {
+  },"16": {
     "doc": "Mcdoc",
     "title": "Float",
     "content": "SYNTAX (TOKEN) . FLOAT [- +]? [0-9]+ FLOAT_EXPONENT? | [- +]? [0-9]* . [0-9]+ FLOAT_EXPONENT? . FLOAT_EXPONENT [e E] [- +]? [0-9]+ . A float represents a decimal number. Scientific notation may be used with the letter e (case-insensitive). Example 4. Floats 1 +1.2 -1.2e3 // -1.2×103 . ",
     "url": "/user/mcdoc/#float",
     "relUrl": "/user/mcdoc/#float"
-  },"19": {
+  },"17": {
     "doc": "Mcdoc",
     "title": "Typed Number",
     "content": "SYNTAX (TOKEN) . TYPED_NUMBER FLOAT [b B d D f F l L s S]? . A typed number is similar to a number used in SNBTs syntax-wise. It&#8217;s a normal number followed by a suffix indicating its type: . Table 2. Suffix table | Suffix (case-insensitive) | Type | . | b . | Byte . | . | s . | Short . | . | L . | Long . | . | f . | Float . | . | d . | Double . | . | (No suffix, integer) . | Integer . | . | (No suffix, decimal) . | Double . | . Example 5. Typed numbers 1b // Byte 1 1 // Integer 1 1.2 // Double 1.2 1.2d // Double 1.2 1.2e1f // Float 12 . ",
     "url": "/user/mcdoc/#typed-number",
     "relUrl": "/user/mcdoc/#typed-number"
-  },"20": {
+  },"18": {
     "doc": "Mcdoc",
     "title": "Number range",
     "content": "SYNTAX (TOKEN) . FLOAT_RANGE RANGE_DELIMITER? FLOAT | FLOAT RANGE_DELIMITER FLOAT? . RANGE_DELIMITER .. | ..&lt; | &lt;.. | &lt;..&lt; . INT_RANGE RANGE_DELIMITER? INTEGER | INTEGER RANGE_DELIMITER INTEGER? . A number range represents a range of number. Its syntax derives from number ranges used in Minecraft commands, with additional support for signaling an exclusive end using the strictly less than symbol (&lt;). There are two types of ranges in mcdoc: float ranges, which consist of Floats, and integer ranges, which consists of Integers. Example 6. Number ranges 1 // Exactly 1 1..1 // Exactly 1 1..2 // Between 1 and 2 (inclusive on ends) 1&lt;..&lt;2 // Between 1 and 2 (exclusive on ends) 4.2.. // Greater than or equal to 4.2 4.2&lt;.. // Greater than 4.2 ..9.1 // Smaller than or equal to 9.1 ..&lt;9.1 // Smaller than 9.1 . ",
     "url": "/user/mcdoc/#number-range",
     "relUrl": "/user/mcdoc/#number-range"
-  },"21": {
+  },"19": {
     "doc": "Mcdoc",
     "title": "String",
     "content": "SYNTAX (TOKEN) . STRING \" (not[\" \\ UNICODE_CC] | (\\ [b f n r t \\ \"]))* \" . UNICODE_CC Unicode control characters. A string represents a sequence of characters. It must be surrounded by double quotation marks (\"). Certain characters need to be escaped by a backslash (\\). Table 3. Escape characters | Escape sequence | Meaning | . | \\\" . | A double quotation mark (\", Unicode U+0022) . | . | \\\\ . | A backslash (\\, Unicode U+005C) . | . | \\b . | A backspace (Unicode U+0008) . | . | \\f . | A form feed (Unicode U+000C) . | . | \\n . | A newline (Unicode U+000A) . | . | \\r . | A carriage return (Unicode U+000D) . | . | \\t . | A tab (Unicode U+0009) . | . Example 7. Strings \"foo\" // A string representing foo \"bar\\\"qux\\\\baz\" // A string representing bar\"qux\\baz . ",
     "url": "/user/mcdoc/#string",
     "relUrl": "/user/mcdoc/#string"
-  },"22": {
+  },"20": {
     "doc": "Mcdoc",
     "title": "Resource location",
     "content": "SYNTAX (TOKEN) . RES_LOC RES_LOC_CHAR* : RES_LOC_CHAR* (/ RES_LOC_CHAR*)* . RES_LOC_CHAR [a-z 0-9 - _ .] . A resource location is similar to the resource location from Minecraft syntax-wise, except that a colon (:) must exist to disambiguate this from an Identifier. Example 8. Resource locations minecraft:foo :foo // This also means minecraft:foo, and is legal in Minecraft itself. spyglassmc:bar . ",
     "url": "/user/mcdoc/#resource-location",
     "relUrl": "/user/mcdoc/#resource-location"
-  },"23": {
+  },"21": {
     "doc": "Mcdoc",
     "title": "Identifier",
     "content": "SYNTAX (TOKEN) . IDENTIFIER ((IDENT_START) (IDENT_CONTINUE)*)except: RESERVED_WORDS . IDENT_START Any character in the Unicode general categories &#8220;Letter (L)&#8221; or &#8220;Letter Number (Nl)&#8221; . IDENT_CONTINUE IDENT_START | U+200C | U+200D | (any character in the Unicode general categories &#8220;Non-Spacing Mark (Mn)&#8221;, &#8220;Spacing Combining Mark (Mc)&#8221;, &#8220;Decimal Digit Number (Nd)&#8221;, or &#8220;Connector Punctuation (Pc)&#8221;) . RESERVED_WORDS any | boolean | byte | double | enum | false | float | int | long | short | string | struct | super | true . An identifier is a case-sensitive name given to a type definition in mcdoc. It can contain any Unicode letters, numbers, and the underscore (_), but must not start with a digit. It also must not be named after a list of reserved words. Example 9. Identifiers struct Foo { // Foo is an identifier. B_1: boolean, // B_1 is an identifier. } . ",
     "url": "/user/mcdoc/#identifier",
     "relUrl": "/user/mcdoc/#identifier"
-  },"24": {
+  },"22": {
     "doc": "Mcdoc",
     "title": "Path",
     "content": "SYNTAX (TOKEN) . PATH (::)? PATH_SEGMENT (:: PATH_SEGMENT)* . PATH_SEGMENT IDENTIFIER | super . A path is used to locate a type definition across the mcdoc project. A sequence of two colons (::) is used as the path separater. If a path starts with the path separater, it is an absolute path and will be resolved from the project root. Otherwise it is a relative path and will be resolved from the absolute path of the current file. The absolute path of a file is determined by connecting the names of all its parent folders up until the root and the file&#8217;s own name (excluding the .mcdoc file extension) with the path separater, prepended by the path separater, with a special case for files named mod.mcdoc&#8201;&#8212;&#8201;they will not be part of their paths. The absolute path of a type definition is the absolute path of the file where it resides joined with the identifier of the type definition by the path separater. If multiple files/type definitions ended up having the same path, only the earliest loaded one will take effect; all subsequent ones should be warned and ignored by the mcdoc interpreter. For relative paths, the keyword super may be used to move up one level from the current absolute path. Example 10. Paths / foo.mcdoc (1) foo/ bar.mcdoc (2) mod.mcdoc (3) qux.mcdoc (4) . | 1 | The absolute path of this file is ::foo. | . | 2 | The absolute path of this file is ::foo::bar. | . | 3 | The absolute path of this file is ::foo instead of ::foo::mod, as files named mod.mcdoc are special. This has the same path as &lt;1&gt;, and as &lt;1&gt; is shallower in the file structure, it is loaded first, meaning &lt;3&gt; is ignored in favor of &lt;1&gt; and a warning should be given. | . | 4 | The absolute path of this file is ::qux. | . If the content of /foo/bar.mcdoc is . struct Foo {} (1) type Bar = super::super::qux::Something (2) . | 1 | The absolute path for struct Foo is ::foo::bar::Foo | . | 2 | The absolute path for type alias Bar is ::foo::bar::Bar. The relative path is interpreted as follows: . | Absolute path of the residing file (/foo/bar.mcdoc) is ::foo::bar. The given relative path is super::super::qux::Something. | Encounters keyword super, moves one level up to ::foo. Remaining relative path is super::qux::Something. | Encounters keyword super, moves one level up to ::. Remaining relative path is qux::Something. | Encounters identifier qux, moves down to ::qux. Remaining relative path is Something. | Encounters identifier Something, moves down to ::qux::Something. Relative path has been resolved. | The type alias Bar therefore points to the type definition named Something in file /qux.mcdoc. | . | . ",
     "url": "/user/mcdoc/#path",
     "relUrl": "/user/mcdoc/#path"
-  },"25": {
+  },"23": {
     "doc": "Mcdoc",
     "title": "Type",
     "content": "SYNTAX . Type Attributes UnattributedType (IndexBody | TypeArgBlock)* . UnattributedType KeywordType | StringType | LiteralType | NumericType | PrimitiveArrayType | ListType | TupleType | Enum | Struct | ReferenceType | DispatcherType | UnionType . TypeArgBlock &lt; &gt; | &lt; Type (, Type)* ,? &gt; . A type is an essential component of the mcdoc format. It defines a schema that actual data values must fit in to be valid. | | Mcdoc may be used to describe the format of a wide range of data. This section will only provide some JSON data as examples for each type. | . any type . SYNTAX . KeywordType any | boolean . The any type serves as the top type of mcdoc&#8217;s type system. Any another types, including any itself, are assignable to any. any cannot be assigned to any other types other than any. Example 11. Valid values for the any type null true [0, 1, 2, 3] { \"foo\": \"bar\" } . boolean type . The boolean type indicates a boolean value (false or true) is expected. Example 12. Valid values for the boolean type false true . string type . SYNTAX . StringType string (@ INT_RANGE)? . The string type indicates a string value is expected. The optional range defines the range of the length of the string. Example 13. Valid values for the string type \"foo\" \"bar\" . Literal boolean type . SYNTAX . LiteralType false | true | STRING | TYPED_NUMBER . A literal boolean type is one of the two boolean values (false and true) that the data must match to be valid. Example 14. Literal boolean types false true . Literal string type . A literal string type is a string value the data must match literally to be valid. Example 15. Literal string types \"\" \"foo\" . Literal number type . A literal number type includes a numeric value and a type the data must match literally to be valid. Example 16. Literal number types -1 1.2f 42L . Numeric type . SYNTAX . NumericType byte (@ INT_RANGE)? | short (@ INT_RANGE)? | int (@ INT_RANGE)? | long (@ INT_RANGE)? | float (@ FLOAT_RANGE)? | double (@ FLOAT_RANGE)? . A numeric type indicates the data must be of that type to be valid. If the optional range is provided, then the data must also fit into that range. Example 17. Numeric types byte short@1.. float @ 4.2..9.1 . Primitive array type . SYNTAX . PrimitiveArrayType byte (@ INT_RANGE)? [] (@ INT_RANGE)? | int (@ INT_RANGE)? [] (@ INT_RANGE)? | long (@ INT_RANGE)? [] (@ INT_RANGE)? . A primitive array type indicates the data must be a collection of certain numeric values. The first optional range defines the range the value must be in, while the second optional range defines the range of the size of the collection. Example 18. Primitive array types byte[] // A collection of bytes. byte#0..1[] // A collection of bytes 0 or 1. int[] # 4 // A collection of 4 integers. long#0..[] # 3.. // A collection of 3 or more non-negative longs. List type . SYNTAX . ListType [ Type ] (@ INT_RANGE)? . A list type indicates the data must be a collection of a certain other type. The optional range defines the range of the size of the collection. Example 19. List types [byte] // A collection of bytes. [[string]] // A collection of collections of strings. [struct Foo {}] // A collection of structs. | | Unlike NBT, JSON doesn&#8217;t distinguish between primitive arrays and lists&#8201;&#8212;&#8201;it only has an array type. Therefore, byte[] and [byte] means essentially the same thing for JSON validation. | . Tuple type . SYNTAX . TupleType [ Type , ] [ Type (, Type)+ ,? ] . A tuple type indicates the data must be a collection of certain other types arranged in a specified order. To distinguish a tuple type containing only one element from a list type, a trailing comma (,) needs to be added after the type. Alternatively, you can also use a list type with size 1 to represent a tuple with one element (e.g. [byte] @ 1). Example 20. Tuple types [byte,] // A tuple of a byte. [string, boolean] // A tuple of a string followed by a boolean. | | Tuple types are generally not useful for NBT structures, as NBT doesn&#8217;t have collections of mixed types. | . Enum . SYNTAX . Enum Prelim enum ( ENUM_TYPE ) IDENTIFIER? EnumBlock . EnumBlock { } | { EnumField (, EnumField)* ,? } . EnumField Prelim IDENTIFIER = ENUM_VALUE . SYNTAX (TOKEN) . ENUM_TYPE byte | short | int | long | string | float | double . ENUM_VALUE TYPED_NUMBER | STRING Although TYPED_NUMBER is expected as the value for enums, the user can write the numbers without the proper suffixes as the mcdoc interpreter is able to infer the proper type from the enum definition. TODO . Struct . SYNTAX . Struct Prelim struct IDENTIFIER? StructBlock . StructBlock { } | { StructField (, StructField)* ,? } . StructField Prelim StructKey ?? : Type | Attributes ... Type For the spreading syntax (...), if the type after the spread operator cannot be resolved as a struct type, only the attributes on the type will be copied over to the current struct. StructKey STRING | IDENTIFIER | [ Type ] . A struct defines the schema of a dictionary-like structure consisting of key-value pairs, like a JSON object or an NBT compound tag. If a key is duplicated, the type of the later one will override that of the former one. A question mark (?) can be added between the key and the colon (:) to indicate an optional field. Example 21. Data pack tag struct struct Tag { replace?: boolean, values: [string], } . The spread operator (three dots, ...) followed by a struct type can be used to reuse fields from another struct. Example 22. Spread syntax struct Player { ...Mob, // Reuse fields from the Mob struct here. abilities: Abilities, CustomName: (), // Overrides CustomName from the Mob struct to an empty union. } . Although type parameters are not directly allowed in struct definitions, you can inline a struct on the right hand side of a type alias definition. Example 23. Type parameter type Tag&lt;V&gt; = struct { replace?: boolean, values: [V], } type BlockTag = Tag&lt;#[id=block] string&gt; type EntityTypeTag = Tag&lt;#[id=entity_type] string&gt; type FunctionTag = Tag&lt;#[id=function] string&gt; type ItemTag = Tag&lt;#[id=item] string&gt; . Reference type . SYNTAX . ReferenceType PATH . Dispatcher type . SYNTAX . DispatcherType RES_LOC IndexBody . TODO . The fallback case is used when the index is omitted. Union type . SYNTAX . UnionType ( ) | ( Type (| Type)* |? ) A pair of empty parentheses removes this field definition from the struct.kk . TODO . Indexing on a type . SYNTAX . IndexBody [ Index (, Index)* ,? ] Multiple indices can be put inside the brackets to access multiple types from the target. Example 24. Access multiple types from a dispatcher minecraft:entity[ender_dragon, wither] &#8594; Produces a union of the type for the ender dragon and the type for the wither. minecraft:entity[[id], allay] &#8594; Produces a union of the type for the entity at id dynamically and the allay. Index STATIC_INDEX_KEY | DynamicIndex . DynamicIndex [ ACCESSOR ] . SYNTAX (TOKEN) . STATIC_INDEX_KEY %fallback | %none | %unknown | IDENTIFIER | STRING | RES_LOC . ACCESSOR ACCESSOR_KEY (. ACCESSOR_KEY)* . ACCESSOR_KEY %key | %parent | IDENTIFIER | STRING . Indices can access a type from a dispatcher or get a field type from an existing struct, both statically (i.e. the user provides the key literally in the mcdoc file) and dynamically (i.e. the user specifies a way to get the key from the given data structure at runtime). Example 25. Static and dynamic indices struct Foo { id: string, cow_data: minecraft:entity[cow], (1) dynamic_entity_data: minecraft:entity[[id]], (2) command: minecraft:block[command_block][Command], (3) dynamic_memories: minecraft:entity[[id]][Brain][memories], (4) } . | 1 | Static index on a dispatcher. | . | 2 | Dynamic index on a dispatcher. | . | 3 | Static index on a dispatcher, followed by a static index on a struct. | . | 4 | Dynamic index on a dispatcher, followed by two static indices on two structs. | . The default value used for all cases (including the two mutable special keys, %none and %unknown) is the fallback case. Example 26. Special static key: %fallback The %fallback key can be used to access the fallback case of a dispatcher. It cannot be used on the left hand side of dispatch statements, as the fallback case is generated automatically and cannot be manually declared. type AnyEntity = minecraft:entity[%fallback] . Example 27. Special static key: %none The case corresponding to %none is used when the accessor of a dynamic index gets no value at runtime. struct RandomIntGenerator { type?: (\"uniform\" | \"binomial\" | \"constant\"), (1) ...minecraft:random_int_generator[[type]], (2) } dispatch minecraft:random_int_generator[uniform, %none] to struct { min?: int, max?: int } (3) . | 1 | Note that type is defined as optional here. | . | 2 | The value of type at runtime is used as a dynamic index here. | . | 3 | The case corresponding to %none is dispatched to the struct here, so the random int generator can still get validated as a uniform generator properly when no value for type is provided at runtime. | . Example 28. Special static key: %unknown The case corresponding to %unknown is used when an unknown key is used to access the dispatcher. dispatch minecraft:block[%unknown] to () . Example 29. Special accessor key: %key The %key accessor key can be used to access the key where the current runtime value is. struct DebugStick { DebugProperty: struct { [#[id=block] string]: mcdoc:block_state_name[[%key]], // Get the type of the block state names of the block stored in the key. }, } . This struct can be used to validate the following data: . { \"DebugProperty\": { \"minecraft:anvil\": \"facing\", \"minecraft:oak_fence\": \"east\" } } . Example 30. Special accessor key: %parent The %parent accessor key can be used to access the parent value of the current runtime value. struct Item { id: #[id=item] string, tag: struct ItemTag { BlockStateTag: mcdoc:block_item_states[[%parent.id]] }, } . TODO . ",
     "url": "/user/mcdoc/#type",
     "relUrl": "/user/mcdoc/#type"
-  },"26": {
+  },"24": {
     "doc": "Mcdoc",
     "title": "File Structure",
     "content": "SYNTAX . File (Struct | Enum | TypeAlias | UseStatement | Injection | DispatchStatement)* . An mcdoc is made of structs, enums, type alias statements, use statements, injections, and dispatch statements. ",
     "url": "/user/mcdoc/#file-structure",
     "relUrl": "/user/mcdoc/#file-structure"
-  },"27": {
+  },"25": {
     "doc": "Mcdoc",
     "title": "Type alias statement",
     "content": "SYNTAX . TypeAlias Prelim type IDENTIFIER TypeParamBlock? = Type . TypeParamBlock &lt; &gt; | &lt; TypeParam (, TypeParam)* ,? &gt; . TypeParam IDENTIFIER . A type alias can be created to refer to another complicated type for better code readability and reusability. Example 31. Type aliases type Integer = (byte | short | int | long) type Float = (float | double) type Number = (Integer | Float) . Sometimes we may want to create different type definitions that have roughly the same structure and only differ in some small aspects. Instead of duplicating codes, we can create a \"template\" type alias with type parameters. The right-hand side of the type alias statement can then reference those type parameters, which will get replaced by actual types when the type alias is instantiated elsewhere. Example 32. Type aliases with type parameters type NumericRange&lt;T&gt; = ( (1) T | (2) [T, T] | (2) struct { min: T, max: T } (2) ) type FloatRange = NumericRange&lt;float&gt; (3) type IntegerRange = NumericRange&lt;int&gt; (3) type NaturalRange = NumericRange&lt;int @ 0..&gt; (3) . | 1 | The type parameter T is declared in the angle brackets. | . | 2 | The type parameter T can now be referenced on the right-hand side. | . | 3 | When the NumericRange type alias is referenced elsewhere, an actual type must be suplied for the type parameter. | . Binding type parameters . All path references are resolved by the rules described in Path, and type parameter references are no exceptions. When a type parameter is declared in a type alias statement, it is temporarily bound to the current module until the end of the statement. Therefore, just like other type definitions, type parameters should be unique at the module scope. Example 33. Duplicated type parameter identifiers // File '/example.mcdoc' struct T {} type List&lt;T&gt; = [T] (1) // ^ // WARNING: Duplicated declaration for \"::example::T\" . | 1 | The declaration for T is warned and ignored, and the reference of T on the right-hand side actually refers to the struct T defined above. | . type List&lt;T&gt; = [T] type Struct&lt;T&gt; = struct { value: T } (1) . | 1 | This is fine, as although T is also declared in the List type alias statement, the effect of that declaration only lives until the end of that statement. | . ",
     "url": "/user/mcdoc/#type-alias-statement",
     "relUrl": "/user/mcdoc/#type-alias-statement"
-  },"28": {
+  },"26": {
     "doc": "Mcdoc",
     "title": "Use statement",
     "content": "SYNTAX . UseStatement use PATH (as IDENTIFIER)? . TODO . ",
     "url": "/user/mcdoc/#use-statement",
     "relUrl": "/user/mcdoc/#use-statement"
-  },"29": {
+  },"27": {
     "doc": "Mcdoc",
     "title": "Injection",
     "content": "SYNTAX . Injection inject (EnumInjection | StructInjection) . EnumInjection enum ( ENUM_TYPE ) PATH EnumBlock . StructInjection struct PATH StructBlock . TODO . ",
     "url": "/user/mcdoc/#injection",
     "relUrl": "/user/mcdoc/#injection"
-  },"30": {
+  },"28": {
     "doc": "Mcdoc",
     "title": "Dispatch statement",
-    "content": "SYNTAX . DispatchStatement Attributes dispatch RES_LOC IndexBodynochild: DynamicIndex TypeParamBlock? to Type . A dispatcher can be used to dispatch to a specific type from a given index. Each case of a dispatcher can be declared by a DispatchStatement and accessed by a DispatcherType. Dispatchers are named after Resource locations, so unlike other values in mcdoc that are named after Identifiers which require being imported before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project. Fallback case When an unknown index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a fallback case at runtime. The union is marked with the \"nonexhaustive\" metadata. TODO . ",
+    "content": "SYNTAX . DispatchStatement Prelim dispatch RES_LOC IndexBodynochild: DynamicIndex TypeParamBlock? to Type . A dispatcher can be used to dispatch to a specific type from a given index. Each case of a dispatcher can be declared by a DispatchStatement and accessed by a DispatcherType. Dispatchers are named after Resource locations, so unlike other values in mcdoc that are named after Identifiers which require being imported before they can be used in an external file, dispatchers are inherently global and can be accessed anywhere inside an mcdoc project. Fallback case When an unknown index is used to access a dispatcher, a union consisting of all types registered under the dispatcher is generated as a fallback case at runtime. The union is marked with the \"nonexhaustive\" metadata. TODO . ",
     "url": "/user/mcdoc/#dispatch-statement",
     "relUrl": "/user/mcdoc/#dispatch-statement"
-  },"31": {
+  },"29": {
     "doc": "Mcdoc",
     "title": "Attribute",
     "content": "SYNTAX . Attributes Attribute* . Attribute #[ IDENTIFIER ] | #[ IDENTIFIER = Value ] | #[ IDENTIFIER TreeValue ] . Value Type | TreeValue . TreeValue ( TreeBody? ) | [ TreeBody? ] | { TreeBody? } . TreeBody PositionalValues ,? | NamedValues ,? | PositionalValues , NamedValues ,? . PositionalValues Value (, Value)* . NamedValues NamedValue (, NamedValue)* . NamedValue (IDENTIFIER | STRING) = Value | (IDENTIFIER | STRING) TreeValue . Example 34. Attribute examples (non-final) All following examples are syntactically legal under the current attribute proposal. Which ones should be semantically legal, however, is still under debate. struct Foo { #[id=item] id1: string, id2: #[id=item] string, // id1 and id2 will likely both be supported and have equivalent effects. blockStateValue1: ( #[serializable] string | byte | short | int | long | float | double ), #[serialize_to=string] blockStateValue2: (string | byte | short | int | long | float | double), evilUUID1: ( #[until(\"1.16\", uuid_string_to_compound)] #[parser=uuid] string | #[until(\"1.17\", uuid_compound_to_array)] MostLeastCompound | int[] @ 4 ), #[history{ (#[parser=uuid] string, until=\"1.16\", updater=uuid_string_to_compound), (MostLeastCompound, until=\"1.17\", updater=uuid_compound_to_array), }] evilUUID2: int[] @ 4 } . ",
     "url": "/user/mcdoc/#attribute",
     "relUrl": "/user/mcdoc/#attribute"
-  },"32": {
+  },"30": {
     "doc": "Mcdoc",
     "title": "Type instantiation",
     "content": "Type instantiation is the process of converting a user-defined type into a type that is easy for data validators to consume. A user-defined type can be categorized as follows for instantiation purposes: . Indexed type An indexed type. Self-contained type A type where all information needed for data validators to function are contained inside the type itself. Includes any type, boolean type, string type, Literal boolean type, Literal string type, Literal number type, Numeric type, Primitive array type, and Enum. Container type A type that provides some information on its own, but needs information from its children for the validation to be complete. Includes List type, Tuple type, and Struct. Reference type A Reference type. Dispatcher type A Dispatcher type. Union type A Union type. Different procedures are used to instantiate each category of user-defined types. Instantiate indexed type . First instantiate the part without the indices, then resolve the index on the instantiated type. Repeat until all indices are resolved. Instantiate self-contained type . Self-contained types do not need to be instantiated. Instantiate container type . Container types do not need to be instantiated. Their children are instantiated when needed lazily. Instantiate reference type . Dereference the path. If there are type parameters, replace all occurrences of them in the template type with the provided actual types. The resulted type is then instantiated again following the instantiation rules. Instantiate dispatcher type . Dispatch the type. The resulted type is then instantiated again following the instantiation rules. Union type . Each member type of the union is individually instantiated. Aftermath of instantiation . After a type is instantiated following the above rules, it should be simplified before being returned. ",
     "url": "/user/mcdoc/#type-instantiation",
     "relUrl": "/user/mcdoc/#type-instantiation"
-  },"33": {
+  },"31": {
     "doc": "Mcdoc",
     "title": "Type simplification",
     "content": "TODO . To simplify a union type, any members that can be assigned to another member will be removed from the union. Shadowed types . TODO . Although simplifying (string | \"foo\" | \"bar\") into string is sound, we lose some more specific information about the original type that could be used by processors like auto completers. Therefore, for certain special cases, types that are trimmed during simplification may be accessible under the shadowedTypes property of the simplified type. ",
     "url": "/user/mcdoc/#type-simplification",
     "relUrl": "/user/mcdoc/#type-simplification"
-  },"34": {
+  },"32": {
     "doc": "Mcdoc",
     "title": "Type assignability",
     "content": "Types in mcdoc can be think of as sets. Type A is assignable to type B if and only if A is a subset of B. any is the universal set that contains all other types, and an empty union (()) is the empty set. unsafe (well, any is TypeScript&#8217;s unknown and unsafe is TypeScript&#8217;s any. A config rule will also be added to make any equivalent to unsafe that&#8217;s enabled by default so most users don&#8217;t have to deal with a tediously sound validation mechanism, as vanilla-mcdoc will probably use any instead of unsafe for marker&#8217;s data, which would make it illegal to assign it anywhere else that&#8217;s not an any or unsafe under a sound type system. I will update the docs and code later to add the unsafe type) is a monster that&#8217;s both any and (). TODO . TODO: Data validator hooks can contribute additional type assignability rules. e.g. | For JSON: byte = short = int = long = float = double . | For NBT: boolean = (byte @ 0..1) ⊂ byte . | . ajsdhflkajgslkthisissoharddkhdgklsjhiuyra . ",
     "url": "/user/mcdoc/#type-assignability",
     "relUrl": "/user/mcdoc/#type-assignability"
-  },"35": {
+  },"33": {
     "doc": "Mcdoc",
     "title": "Branding",
     "content": "\"Mcdoc\" is a common noun and should only have its first letter capitalized when it&#8217;s grammatically required to (e.g. at the beginning of the sentence). ",
     "url": "/user/mcdoc/#branding",
     "relUrl": "/user/mcdoc/#branding"
-  },"36": {
+  },"34": {
     "doc": "Mcdoc",
     "title": "Credits",
     "content": "The mcdoc format takes heavy inspiration from the nbtdoc format created by Yurihaia, licensed under the MIT License. Misode, MulverineX, NeunEinser, and vdvman1 also have provided valuable feedback for the mcdoc format. This documentation is written with AsciiDoc. ",
     "url": "/user/mcdoc/#credits",
     "relUrl": "/user/mcdoc/#credits"
-  },"37": {
+  },"35": {
     "doc": "Mcdoc",
     "title": "Mcdoc",
     "content": "Table of Contents . | Project root | Syntax syntax | Comments | Doc comments | Integer | Float | Typed Number | Number range | String | Resource location | Identifier | Path | Type . | any type | boolean type | string type | Literal boolean type | Literal string type | Literal number type | Numeric type | Primitive array type | List type | Tuple type | Enum | Struct | Reference type | Dispatcher type | Union type | Indexing on a type | . | File Structure | Type alias statement . | Binding type parameters | . | Use statement | Injection | Dispatch statement | Attribute | Type instantiation . | Instantiate indexed type | Instantiate self-contained type | Instantiate container type | Instantiate reference type | Instantiate dispatcher type | Union type | Aftermath of instantiation | . | Type simplification . | Shadowed types | . | Type assignability | Branding | Credits | . Mcdoc is a schema format for describing data structures used by Minecraft, including its CODECs, JSONs, and NBTs. This document defines the syntax and semantics of the mcdoc format. ",
     "url": "/user/mcdoc/",
     "relUrl": "/user/mcdoc/"
-  },"38": {
+  },"36": {
     "doc": "Home",
     "title": "User Testimonials",
     "content": "By far, by a huge margin, the best extension I&#8217;ve found for it. &#8212; slicedlime during his Twitch stream ",
     "url": "/#user-testimonials",
     "relUrl": "/#user-testimonials"
-  },"39": {
+  },"37": {
     "doc": "Home",
     "title": "Getting Started",
     "content": "You can enjoy features provided by Spyglass on various text editors. Sublime Text . Follow the instructions here. VS Code . Install from the Marketplace. VSCodium . Install from the Open VSX Registry. ",
     "url": "/#getting-started",
     "relUrl": "/#getting-started"
-  },"40": {
+  },"38": {
     "doc": "Home",
     "title": "Customization",
     "content": "Main article: Config . ",
     "url": "/#customization",
     "relUrl": "/#customization"
-  },"41": {
+  },"39": {
     "doc": "Home",
     "title": "Mcdoc Specification",
     "content": "Main article: Mcdoc . ",
     "url": "/#mcdoc-specification",
     "relUrl": "/#mcdoc-specification"
-  },"42": {
+  },"40": {
     "doc": "Home",
     "title": "Playground",
     "content": "Click here. ",
     "url": "/#playground",
     "relUrl": "/#playground"
-  },"43": {
+  },"41": {
     "doc": "Home",
     "title": "Plugins",
     "content": "The cake is a lie. ALL LIES. ",
     "url": "/#plugins",
     "relUrl": "/#plugins"
-  },"44": {
+  },"42": {
     "doc": "Home",
     "title": "Contributing",
     "content": "Uh so many things to write. | Create an issue . | GitHub Repository . | Localization . | . ",
     "url": "/#contributing",
     "relUrl": "/#contributing"
-  },"45": {
+  },"43": {
     "doc": "Home",
     "title": "Home",
     "content": "Welcome to the work-in-progress documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real time diagnostics, semantic coloring and such. The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out the VS Code Marketplace. ",
     "url": "/",
     "relUrl": "/"
+  },"44": {
+    "doc": "Maintainer Guides",
+    "title": "Maintainer Guides",
+    "content": " ",
+    "url": "/maintainer/",
+    "relUrl": "/maintainer/"
+  },"45": {
+    "doc": "Developer Guides",
+    "title": "Developer Guides",
+    "content": " ",
+    "url": "/developer/",
+    "relUrl": "/developer/"
   },"46": {
     "doc": "Initialization Options",
     "title": "Initialization Options",
