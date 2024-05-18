@@ -116,13 +116,13 @@ async function shell(file: string, args: readonly string[], cwd: string, env?: R
 	return result
 }
 
-async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<unknown> {
+async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>) {
 	if (isDryRun) {
 		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
 	} else {
 		return shell(file, args, cwd, env)
 	}
-	return
+	return { stdout: '', stderr: '' }
 }
 
 async function main(): Promise<void> {
@@ -216,7 +216,10 @@ async function main(): Promise<void> {
 		console.log('Releasing changed packages...')
 		const releaseScript = isDryRun ? 'release:dry' : 'release'
 		for (const key of packagesToBump.keys()) {
-			await shell('npm', ['run', releaseScript], path.join(__dirname, `../packages/${key}`))
+			const { stderr } = await shell('npm', ['run', releaseScript], path.join(__dirname, `../packages/${key}`))
+			if (stderr) {
+				process.exit(1)
+			}
 			console.log(`Released ${key}`)
 		}
 
@@ -234,7 +237,10 @@ async function main(): Promise<void> {
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
-		await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
+		const { stderr } = await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
+		if (stderr) {
+			process.exit(1)
+		}
 		await dryRunableShell(isDryRun, 'git', ['push', '--tags'], RepoRoot)
 	} else {
 		console.log('Nothing was changed.')
