@@ -1,4 +1,4 @@
-#!/usr/bin/env -S ts-node --esm
+#!/usr/bin/env -S tsx
 import { dirname, join, parse, resolve } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 
@@ -23,6 +23,11 @@ const parentPath = dirname(fileURLToPath(import.meta.url))
 const cacheRoot = join(parentPath, 'cache')
 
 const CLI = yargs(hideBin(process.argv))
+
+function removeWindowsCruft(str: string) {
+	if (str.includes('\r')) return str.replaceAll('\r', '')
+	return str
+}
 
 await CLI.scriptName('mcdoc')
 	.command(
@@ -118,13 +123,16 @@ await CLI.scriptName('mcdoc')
 			await service.project.ready()
 			await service.project.cacheService.save()
 
-			const out = 'out'
+			const generated = join('out', 'generated')
 
 			if (args.dry !== true) {
-				await fs.ensureDir(out)
+				await fs.ensureDir(generated)
 
 				if (args.module) {
-					await fs.ensureDir(join(out, 'module'))
+					await fs.ensureDir(join(generated, 'module'))
+				}
+				if (args.locale) {
+					await fs.ensureDir(join('out', 'locale'))
 				}
 			}
 
@@ -176,7 +184,7 @@ await CLI.scriptName('mcdoc')
 							) {
 								const child: any = {}
 
-								let known_error = false
+								const known_error = false
 
 								/* @ts-ignore */
 								child.self = self
@@ -206,6 +214,13 @@ await CLI.scriptName('mcdoc')
 
 								child.type = _child.type
 
+								if (child.type === 'resource_location') {
+									/* @ts-ignore */
+									child.namespace = _child.namespace
+									/* @ts-ignore */
+									child.path = _child.path
+								}
+
 								if (Object.hasOwn(_child, 'isOptional')) {
 									/* @ts-ignore */
 									child.isOptional = _child.isOptional
@@ -224,9 +239,11 @@ await CLI.scriptName('mcdoc')
 									if (internal_locales[parent]) {
 										locales[
 											`mcdoc.${
-												resource.replace(/\//g, '.')
+												resource.replace(/[\/\\]/g, '.')
 											}.${child.value}`
-										] = internal_locales[parent].join('\n')
+										] = removeWindowsCruft(
+											internal_locales[parent].join('').trimEnd(),
+										)
 
 										delete internal_locales[parent]
 									}
@@ -237,15 +254,19 @@ await CLI.scriptName('mcdoc')
 									internal_locales[parent]
 								) {
 									locales[
-										`mcdoc.${resource.replace(/\//g, '.')}.map_key`
-									] = internal_locales[parent].join('\n')
+										`mcdoc.${
+											resource.replace(/[\/\\]/g, '.')
+										}.map_key`
+									] = removeWindowsCruft(
+										internal_locales[parent].join('').trimEnd(),
+									)
 
 									delete internal_locales[parent]
 								}
 
 								if (Object.hasOwn(_child, 'comment')) {
 									/* @ts-ignore */
-									const comment: string = _child.comment.trim()
+									const comment: string = _child.comment
 									child.comment = comment
 
 									if (
@@ -254,17 +275,11 @@ await CLI.scriptName('mcdoc')
 									) {
 										const key = parent.replace(/\[\d+\]$/, '')
 
-										if (!internal_locales.key) {
+										if (!internal_locales[key]) {
 											internal_locales[key] = []
 										}
 
-										internal_locales[key].push(comment)
-									} else if (comment.startsWith('/ ')) {
-										child.type = 'error'
-										console.warn(
-											`known error: orphaned dispatch comment`,
-										)
-										known_error = true
+										internal_locales[key].push(comment.slice(1))
 									}
 								}
 
@@ -343,19 +358,20 @@ await CLI.scriptName('mcdoc')
 							symbols.push(symbol)
 
 							if (!args.dry && args.module) {
-								const dir = parse(join(out, 'module', resource)).dir
+								const dir =
+									parse(join(generated, 'module', resource)).dir
 
 								if (dir !== '') await fs.ensureDir(dir)
 
 								await fs.writeFile(
-									join(out, 'module', `${resource}.mcdoc.json`),
+									join(generated, 'module', `${resource}.mcdoc.json`),
 									JSON.stringify(symbol),
 								)
 
 								if (args.pretty) {
 									await fs.writeFile(
 										join(
-											out,
+											generated,
 											'module',
 											`${resource}.pretty.mcdoc.json`,
 										),
@@ -370,20 +386,20 @@ await CLI.scriptName('mcdoc')
 
 			if (!args.dry) {
 				await fs.writeFile(
-					join(out, 'generated.mcdoc.json'),
+					join(generated, 'generated.mcdoc.json'),
 					JSON.stringify(symbols),
 				)
 
 				if (args.pretty) {
 					await fs.writeFile(
-						join(out, 'generated.pretty.mcdoc.json'),
+						join(generated, 'generated.pretty.mcdoc.json'),
 						JSON.stringify(symbols, undefined, 3),
 					)
 				}
 
 				if (args.module) {
 					await fs.writeFile(
-						join(out, 'module', 'index.json'),
+						join(generated, 'module', 'index.json'),
 						JSON.stringify(symbols.map(symbol => symbol.resource)),
 					)
 				}
@@ -397,7 +413,7 @@ await CLI.scriptName('mcdoc')
 						console.warn(internal_locales)
 					}
 					await fs.writeFile(
-						join(out, 'locale.en-us.json'),
+						join('out', 'locale', 'locale.en-us.json'),
 						JSON.stringify(locales, undefined, 3),
 					)
 				}

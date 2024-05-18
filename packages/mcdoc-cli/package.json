@@ -1,16 +1,17 @@
 {
   "name": "@spyglassmc/mcdoc-cli",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "contributors": [
     {
-      "name": "Misode"
+      "name": "Misode",
+      "url": "https://github.com/misode"
     },
     {
       "name": "MulverineX",
-      "url": "http://mulverine.dev"
+      "url": "https://mulverine.dev"
     }
   ],
   "license": "MIT",
@@ -18,12 +19,12 @@
     "test": "test/"
   },
   "bin": {
-    "mcdoc": "./lib/index.js"
+    "mcdoc": "lib/index.js"
   },
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
-    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && ./index.ts generate ../vanilla-mcdoc/ -p -m -l"
+    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && npx tsx src/index.mts generate ../vanilla-mcdoc/ -p -m -l"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
@@ -36,14 +37,15 @@
     "@types/klaw": "^3.0.4",
     "@types/line-column": "^1.0.0",
     "@types/node": "18.11.17",
-    "@types/yargs": "17.0.17"
+    "@types/yargs": "17.0.17",
+    "typescript": "^5.4.5"
   },
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/SpyglassMC/Spyglass.git"
+    "url": "git+https://github.com/SpyglassMC/Spyglass.git"
   },
   "homepage": "https://spyglassmc.com",
   "bugs": {

@@ -130,7 +130,7 @@
   "parser.record.value": "一個值",
   "parser.resource-location.illegal": "無效字元：%0%",
   "parser.resource-location.namespace-expected": "不可在此省略命名空間",
-  "parser.resource-location.tag-diallowed": "此處不允許使用標籤",
+  "parser.resource-location.tag-disallowed": "此處不允許使用標籤",
   "parser.string.illegal-brigadier": "在 %0% 中遇到了非 [0-9A-Za-z_.+-] 字元",
   "parser.string.illegal-escape": "預期外的跳脫字元 %0%",
   "parser.string.illegal-quote": "此處只允許使用 %0% 包裹字串",
