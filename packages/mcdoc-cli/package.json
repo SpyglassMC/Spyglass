@@ -2,8 +2,8 @@
   "name": "@spyglassmc/mcdoc-cli",
   "version": "0.1.3",
   "type": "module",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/index.mjs",
+  "types": "lib/index.d.mts",
   "contributors": [
     {
       "name": "Misode",
@@ -19,7 +19,7 @@
     "test": "test/"
   },
   "bin": {
-    "mcdoc": "lib/index.js"
+    "mcdoc": "lib/index.mjs"
   },
   "scripts": {
     "release": "npm publish",
