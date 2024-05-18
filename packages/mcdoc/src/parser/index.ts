@@ -679,6 +679,7 @@ export const dispatchStatement: Parser<DispatchStatementNode> = setType(
 			optionalTypeParamBlock,
 			literal('to'),
 			{ get: () => type },
+			// marker(';'),
 		],
 		true,
 	),
@@ -876,6 +877,7 @@ export const typeAliasStatement: Parser<TypeAliasNode> = setType(
 			optionalTypeParamBlock,
 			punctuation('='),
 			{ get: () => type },
+			// marker(';'),
 		],
 		true,
 	),
@@ -1171,11 +1173,7 @@ export const tupleType: Parser<TupleTypeNode> = typeBase(
 
 export const dispatcherType: Parser<DispatcherTypeNode> = typeBase(
 	'mcdoc:type/dispatcher',
-	syntax([
-		prelim,
-		failOnError(resLoc({ category: 'mcdoc/dispatcher' })),
-		indexBody(),
-	]),
+	syntax([failOnError(resLoc({ category: 'mcdoc/dispatcher' })),indexBody()]),
 )
 
 export const unionType: Parser<UnionTypeNode> = typeBase(
