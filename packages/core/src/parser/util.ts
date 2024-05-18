@@ -478,17 +478,17 @@ export function validate<N extends AstNode>(
  */
 export function stopBefore<N extends Returnable>(
 	parser: InfallibleParser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): InfallibleParser<N>
 export function stopBefore<N extends Returnable>(
 	parser: Parser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): Parser<N>
 export function stopBefore<N extends Returnable>(
 	parser: Parser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): Parser<N> {
-	const flatTerminators = teminators.flat()
+	const flatTerminators = terminators.flat()
 	return (src, ctx): Result<N> => {
 		const tmpSrc = src.clone()
 		// Cut tmpSrc.string before the nearest terminator.
