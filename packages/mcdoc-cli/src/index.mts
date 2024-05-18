@@ -241,7 +241,9 @@ await CLI.scriptName('mcdoc')
 											`mcdoc.${
 												resource.replace(/[\/\\]/g, '.')
 											}.${child.value}`
-										] = removeWindowsCruft(internal_locales[parent].join('').trimEnd())
+										] = removeWindowsCruft(
+											internal_locales[parent].join('').trimEnd()
+										)
 
 										delete internal_locales[parent]
 									}
@@ -354,7 +356,8 @@ await CLI.scriptName('mcdoc')
 							symbols.push(symbol)
 
 							if (!args.dry && args.module) {
-								const dir = parse(join(generated, 'module', resource)).dir
+								const dir =
+									parse(join(generated, 'module', resource)).dir
 
 								if (dir !== '') await fs.ensureDir(dir)
 
