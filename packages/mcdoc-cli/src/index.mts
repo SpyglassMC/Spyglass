@@ -37,7 +37,7 @@ await CLI.scriptName('mcdoc')
 			CLI.positional(
 				'source',
 				{
-					describe: 'path to directory containing mcdoc source',
+					describe: 'path to directory containing mcdoc source.',
 					type: 'string',
 					default: '.',
 				},
@@ -45,18 +45,18 @@ await CLI.scriptName('mcdoc')
 				'locale': {
 					alias: 'l',
 					description:
-						'en-us language key-value store of all doc comments',
+						'en-us language key-value store of all doc comments.',
 					default: false,
 				},
 				'module': {
 					alias: 'm',
 					description:
-						'file tree mirroring definitions; to optimize for web',
+						'file tree mirroring definitions; to optimize for web.',
 					default: false,
 				},
 				'pretty': {
 					alias: 'p',
-					description: 'pretty printed variants',
+					description: 'pretty printed variants.',
 					default: false,
 				},
 				'verbose': {
@@ -65,7 +65,7 @@ await CLI.scriptName('mcdoc')
 				},
 				'dry': {
 					alias: 'd',
-					description: 'will not write to disk',
+					description: 'will not write to disk.',
 					default: false,
 				},
 			}).boolean('locale').boolean('module').boolean('pretty').boolean(
