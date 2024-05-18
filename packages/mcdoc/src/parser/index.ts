@@ -977,6 +977,7 @@ function typeBase<T extends string>(
 						{ prefix: '<', parser: typeArgBlock },
 						{ parser: failOnError(indexBody()) },
 					]),
+					true,
 				),
 			],
 			true,
@@ -1105,13 +1106,13 @@ export const numericType: Parser<NumericTypeNode> = typeBase(
 			parser: syntax([
 				keyword(NumericTypeFloatKinds, { colorTokenType: 'type' }),
 				atFloatRange,
-			]),
+			], true),
 		},
 		{
 			parser: syntax([
 				keyword(NumericTypeIntKinds, { colorTokenType: 'type' }),
 				atIntRange,
-			]),
+			], true),
 		},
 	]),
 )
