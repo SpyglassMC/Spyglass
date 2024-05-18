@@ -23,7 +23,7 @@
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
-    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && ./index.ts generate ../vanilla-mcdoc/ -p -m -l"
+    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && npx tsx src/index.mts generate ../vanilla-mcdoc/ -p -m -l"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",

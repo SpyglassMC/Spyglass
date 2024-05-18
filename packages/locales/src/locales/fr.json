@@ -158,7 +158,7 @@
 	"parser.record.value": "une valeur",
 	"parser.resource-location.illegal": "Caractère(s) inattendu(s) : %0%",
 	"parser.resource-location.namespace-expected": "Les espaces de noms ne peuvent pas être omis ici",
-	"parser.resource-location.tag-diallowed": "Les tags ne sont pas autorisés ici",
+	"parser.resource-location.tag-disallowed": "Les tags ne sont pas autorisés ici",
 	"parser.string.illegal-brigadier": "Des caractères autres que [0-9A-Za-z_.+-] ont été rencontrés dans %0%",
 	"parser.string.illegal-escape": "Caractère d'échappement inattendu %0%",
 	"parser.string.illegal-quote": "Seuls %0% peuvent être utilisés pour citer des chaînes de caractères",
