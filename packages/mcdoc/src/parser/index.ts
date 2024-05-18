@@ -656,8 +656,11 @@ export const docComment: Parser<CommentNode> = core.comment({
 
 export const docComments: InfallibleParser<DocCommentsNode> = setType(
 	'mcdoc:doc_comments',
-	repeat(docComment, (src) => {
+	repeat(docComment, (src/*, ctx*/) => {
 		src.skipWhitespace()
+		// if (src.peekLine().includes('An item that can be placed as a block')) {
+		// 	ctx.logger.info('type parser @ test_1 isn\'t being greedy!')
+		// }
 		return []
 	}),
 )
