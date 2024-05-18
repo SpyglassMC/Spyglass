@@ -184,7 +184,7 @@ await CLI.scriptName('mcdoc')
 							) {
 								const child: any = {}
 
-								let known_error = false
+								// let known_error = false
 
 								/* @ts-ignore */
 								child.self = self
