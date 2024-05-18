@@ -1077,7 +1077,7 @@ TODO
 
 [[s-dispatch,_DispatchStatement_]]
 <<s-dispatch>>::
-	<<s-attributes>>
+	<<s-prelim>>
 	`dispatch` <<t-res-loc>> <<s-index-body>>~pass:n[nochild: <<s-dynamic-index>>]~ <<s-type-param-block>>^?^
 	`to` <<s-type>>
 ****
