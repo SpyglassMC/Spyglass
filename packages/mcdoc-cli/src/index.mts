@@ -242,7 +242,7 @@ await CLI.scriptName('mcdoc')
 												resource.replace(/[\/\\]/g, '.')
 											}.${child.value}`
 										] = removeWindowsCruft(
-											internal_locales[parent].join('').trimEnd()
+											internal_locales[parent].join('').trimEnd(),
 										)
 
 										delete internal_locales[parent]
@@ -257,7 +257,9 @@ await CLI.scriptName('mcdoc')
 										`mcdoc.${
 											resource.replace(/[\/\\]/g, '.')
 										}.map_key`
-									] = removeWindowsCruft(internal_locales[parent].join('').trimEnd())
+									] = removeWindowsCruft(
+										internal_locales[parent].join('').trimEnd(),
+									)
 
 									delete internal_locales[parent]
 								}
