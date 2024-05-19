@@ -2,8 +2,8 @@ import type { AstNode } from '../node/index.js'
 import { SequenceUtil, SequenceUtilDiscriminator } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorReporter } from '../service/index.js'
-import type { ErrorSeverity, ReadonlySource, Source } from '../source/index.js'
-import { Range } from '../source/index.js'
+import type { ErrorSeverity, ReadonlySource } from '../source/index.js'
+import { IndexMap, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
@@ -502,6 +502,71 @@ export function stopBefore<N extends Returnable>(
 
 		const ans = parser(tmpSrc, ctx)
 		src.cursor = tmpSrc.cursor
+		return ans
+	}
+}
+
+/**
+ * @param terminators A list of characters the parser will stop at if it finds them
+ * before a backslash
+ * @returns A parser that is based on the passed-in `parser`, but concatenates lines
+ * together when we reach, in order:
+ * - a backslash
+ * - whitespace (optional)
+ * - a newline
+ * - whitespace (optional)
+ */
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: InfallibleParser<N>,
+	terminators: string[],
+): InfallibleParser<N>
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: Parser<N>,
+	terminators: string[],
+): Parser<N>
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: Parser<N>,
+	terminators: string[],
+): Parser<N> {
+	return (src, ctx): Result<N> => {
+		let wrappedStr = src.sliceToCursor(0)
+		const wrapper = '\\'
+		const wrappedSrcCursor = wrappedStr.length
+		const indexMap: IndexMap = []
+
+		while (src.canRead() && !terminators.includes(src.peek())) {
+			wrappedStr += src.readUntil(wrapper, ...terminators)
+			if (!src.canRead() || terminators.includes(src.peek())) {
+				// Stop wrapping `src` if we reach end of file or a terminator before a wrapper
+				break
+			}
+
+			// If we get here, then `src.cursor` is at a wrapper
+			if (src.hasNonSpaceAheadInLine(1)) {
+				wrappedStr += src.read()
+				continue
+			}
+
+			// Create an index map that skips the trailing backslash + whitespace
+			const from = src.getCharRange()
+			// skip the `\`
+			src.skip()
+			// skip trailing whitespace + newline + preceding whitespace on the next line
+			src.skipWhitespace()
+			const to = src.getCharRange(-1)
+			indexMap.push({
+				inner: Range.create(wrappedStr.length),
+				outer: Range.span(from, to),
+			})
+		}
+
+		const wrappedSrc = new Source(
+			wrappedStr,
+			IndexMap.merge(src.indexMap, indexMap),
+		)
+		wrappedSrc.innerCursor = wrappedSrcCursor
+		const ans = parser(wrappedSrc, ctx)
+		src.cursor = wrappedSrc.cursor
 		return ans
 	}
 }
