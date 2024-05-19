@@ -1,4 +1,4 @@
-#!/usr/bin/env -S tsx
+#!/usr/bin/env -S node
 import { dirname, join, parse, resolve } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 
@@ -16,7 +16,6 @@ import {
 	VanillaConfig,
 } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
-import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 
 const parentPath = dirname(fileURLToPath(import.meta.url))
@@ -100,7 +99,8 @@ await CLI.scriptName('mcdoc')
 					console.trace(message, ...params),
 			}
 
-			const projectPath = resolve(parentPath, args.source)
+			const projectPath = resolve(process.cwd(), args.source)
+
 			await fileUtil.ensureDir(NodeJsExternals, projectPath)
 
 			const service = new Service({
@@ -113,7 +113,7 @@ await CLI.scriptName('mcdoc')
 						env: { dependencies: [] },
 					}),
 					externals: NodeJsExternals,
-					initializers: [mcdoc.initialize, je.initialize],
+					initializers: [mcdoc.initialize],
 					projectRoot: fileUtil.ensureEndingSlash(
 						pathToFileURL(projectPath).toString(),
 					),
