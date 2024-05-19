@@ -40,7 +40,7 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                     "value": {
                       "kind": "literal",
                       "value": {
-                        "kind": "number",
+                        "kind": "double",
                         "value": 1.17
                       }
                     }

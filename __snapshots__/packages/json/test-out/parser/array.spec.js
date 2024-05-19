@@ -488,20 +488,54 @@ exports['JSON array parser array() Parse "[1,2,]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 1,
+                  "end": 2
+                },
+                "value": "1"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            },
             "range": {
               "start": 1,
               "end": 2
-            },
-            "value": 1
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": "1"
+          },
           "range": {
             "start": 1,
             "end": 2
-          },
-          "value": 1
+          }
         },
         "sep": {
           "start": 2,
@@ -517,20 +551,54 @@ exports['JSON array parser array() Parse "[1,2,]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 3,
+                  "end": 4
+                },
+                "value": "2"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 3,
+                "end": 4
+              },
+              "value": "2"
+            },
             "range": {
               "start": 3,
               "end": 4
-            },
-            "value": 2
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 3,
+                "end": 4
+              },
+              "value": "2"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 3,
+              "end": 4
+            },
+            "value": "2"
+          },
           "range": {
             "start": 3,
             "end": 4
-          },
-          "value": 2
+          }
         },
         "sep": {
           "start": 4,
@@ -568,20 +636,54 @@ exports['JSON array parser array() Parse "[1,2]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 1,
+                  "end": 2
+                },
+                "value": "1"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            },
             "range": {
               "start": 1,
               "end": 2
-            },
-            "value": 1
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": "1"
+          },
           "range": {
             "start": 1,
             "end": 2
-          },
-          "value": 1
+          }
         },
         "sep": {
           "start": 2,
@@ -597,20 +699,54 @@ exports['JSON array parser array() Parse "[1,2]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 3,
+                  "end": 4
+                },
+                "value": "2"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 3,
+                "end": 4
+              },
+              "value": "2"
+            },
             "range": {
               "start": 3,
               "end": 4
-            },
-            "value": 2
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 3,
+                "end": 4
+              },
+              "value": "2"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 3,
+              "end": 4
+            },
+            "value": "2"
+          },
           "range": {
             "start": 3,
             "end": 4
-          },
-          "value": 2
+          }
         }
       }
     ]
@@ -635,20 +771,54 @@ exports['JSON array parser array() Parse "[1]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 1,
+                  "end": 2
+                },
+                "value": "1"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            },
             "range": {
               "start": 1,
               "end": 2
-            },
-            "value": 1
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 1,
+                "end": 2
+              },
+              "value": "1"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 1,
+              "end": 2
+            },
+            "value": "1"
+          },
           "range": {
             "start": 1,
             "end": 2
-          },
-          "value": 1
+          }
         }
       }
     ]
@@ -687,20 +857,54 @@ exports['JSON array parser array() Parse "[[1],2]" 1'] = {
                 "children": [
                   {
                     "type": "json:number",
+                    "children": [
+                      {
+                        "type": "long",
+                        "range": {
+                          "start": 2,
+                          "end": 3
+                        },
+                        "value": "1"
+                      }
+                    ],
+                    "value": {
+                      "type": "long",
+                      "range": {
+                        "start": 2,
+                        "end": 3
+                      },
+                      "value": "1"
+                    },
                     "range": {
                       "start": 2,
                       "end": 3
-                    },
-                    "value": 1
+                    }
                   }
                 ],
                 "value": {
                   "type": "json:number",
+                  "children": [
+                    {
+                      "type": "long",
+                      "range": {
+                        "start": 2,
+                        "end": 3
+                      },
+                      "value": "1"
+                    }
+                  ],
+                  "value": {
+                    "type": "long",
+                    "range": {
+                      "start": 2,
+                      "end": 3
+                    },
+                    "value": "1"
+                  },
                   "range": {
                     "start": 2,
                     "end": 3
-                  },
-                  "value": 1
+                  }
                 }
               }
             ]
@@ -722,20 +926,54 @@ exports['JSON array parser array() Parse "[[1],2]" 1'] = {
               "children": [
                 {
                   "type": "json:number",
+                  "children": [
+                    {
+                      "type": "long",
+                      "range": {
+                        "start": 2,
+                        "end": 3
+                      },
+                      "value": "1"
+                    }
+                  ],
+                  "value": {
+                    "type": "long",
+                    "range": {
+                      "start": 2,
+                      "end": 3
+                    },
+                    "value": "1"
+                  },
                   "range": {
                     "start": 2,
                     "end": 3
-                  },
-                  "value": 1
+                  }
                 }
               ],
               "value": {
                 "type": "json:number",
+                "children": [
+                  {
+                    "type": "long",
+                    "range": {
+                      "start": 2,
+                      "end": 3
+                    },
+                    "value": "1"
+                  }
+                ],
+                "value": {
+                  "type": "long",
+                  "range": {
+                    "start": 2,
+                    "end": 3
+                  },
+                  "value": "1"
+                },
                 "range": {
                   "start": 2,
                   "end": 3
-                },
-                "value": 1
+                }
               }
             }
           ]
@@ -754,20 +992,54 @@ exports['JSON array parser array() Parse "[[1],2]" 1'] = {
         "children": [
           {
             "type": "json:number",
+            "children": [
+              {
+                "type": "long",
+                "range": {
+                  "start": 5,
+                  "end": 6
+                },
+                "value": "2"
+              }
+            ],
+            "value": {
+              "type": "long",
+              "range": {
+                "start": 5,
+                "end": 6
+              },
+              "value": "2"
+            },
             "range": {
               "start": 5,
               "end": 6
-            },
-            "value": 2
+            }
           }
         ],
         "value": {
           "type": "json:number",
+          "children": [
+            {
+              "type": "long",
+              "range": {
+                "start": 5,
+                "end": 6
+              },
+              "value": "2"
+            }
+          ],
+          "value": {
+            "type": "long",
+            "range": {
+              "start": 5,
+              "end": 6
+            },
+            "value": "2"
+          },
           "range": {
             "start": 5,
             "end": 6
-          },
-          "value": 2
+          }
         }
       }
     ]

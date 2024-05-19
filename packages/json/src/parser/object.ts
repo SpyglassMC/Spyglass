@@ -3,8 +3,8 @@ import type { JsonObjectNode } from '../node/index.js'
 import { entry } from './entry.js'
 import { string } from './string.js'
 
-export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) => {
-	return core.setType(
+export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) =>
+	core.setType(
 		'json:object',
 		core.record({
 			start: '{',
@@ -18,4 +18,3 @@ export const object: core.InfallibleParser<JsonObjectNode> = (src, ctx) => {
 			end: '}',
 		}),
 	)(src, ctx)
-}

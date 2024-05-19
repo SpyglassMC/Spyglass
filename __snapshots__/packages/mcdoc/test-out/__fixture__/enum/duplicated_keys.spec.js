@@ -191,7 +191,7 @@ exports['mcdoc __fixture__ enum/duplicated keys 1'] = {
                           "type": "mcdoc:typed_number",
                           "children": [
                             {
-                              "type": "float",
+                              "type": "integer",
                               "range": {
                                 "start": 30,
                                 "end": 32
@@ -234,7 +234,7 @@ exports['mcdoc __fixture__ enum/duplicated keys 1'] = {
                           "type": "mcdoc:typed_number",
                           "children": [
                             {
-                              "type": "float",
+                              "type": "integer",
                               "range": {
                                 "start": 46,
                                 "end": 48

@@ -413,7 +413,7 @@ await CLI.scriptName('mcdoc')
 						console.warn(internal_locales)
 					}
 					await fs.writeFile(
-						join('out', 'locale', 'locale.en-us.json'),
+						join('out', 'locale', 'en-us.json'),
 						JSON.stringify(locales, undefined, 3),
 					)
 				}
