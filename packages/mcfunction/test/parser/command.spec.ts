@@ -50,6 +50,9 @@ describe('mcfunction parser command()', () => {
 		{ content: 'say hi ' },
 		{ content: 'say hi garbage text' },
 		{ content: 'execute if true if true run say hi' },
+		{ content: 'sa\\\ny hi' },
+		{ content: 'sa\\  \n  y hi' },
+		{ content: 'sa\\  \n  y h\\ \n i' },
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {

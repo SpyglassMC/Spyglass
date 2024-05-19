@@ -515,6 +515,168 @@ exports['mcfunction parser command() Parse "say" 1'] = {
   ]
 }
 
+exports['mcfunction parser command() Parse "sa⧵  ↓  y hi" 1'] = {
+  "node": {
+    "type": "mcfunction:command",
+    "range": {
+      "start": 0,
+      "end": 12
+    },
+    "children": [
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 0,
+          "end": 9
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 0,
+              "end": 9
+            },
+            "value": "say"
+          }
+        ],
+        "path": [
+          "say"
+        ]
+      },
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 10,
+          "end": 12
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 10,
+              "end": 12
+            },
+            "value": "hi"
+          }
+        ],
+        "path": [
+          "say",
+          "hi"
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['mcfunction parser command() Parse "sa⧵  ↓  y h⧵ ↓ i" 1'] = {
+  "node": {
+    "type": "mcfunction:command",
+    "range": {
+      "start": 0,
+      "end": 16
+    },
+    "children": [
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 0,
+          "end": 9
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 0,
+              "end": 9
+            },
+            "value": "say"
+          }
+        ],
+        "path": [
+          "say"
+        ]
+      },
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 10,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 10,
+              "end": 16
+            },
+            "value": "hi"
+          }
+        ],
+        "path": [
+          "say",
+          "hi"
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['mcfunction parser command() Parse "sa⧵↓y hi" 1'] = {
+  "node": {
+    "type": "mcfunction:command",
+    "range": {
+      "start": 0,
+      "end": 8
+    },
+    "children": [
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 0,
+              "end": 5
+            },
+            "value": "say"
+          }
+        ],
+        "path": [
+          "say"
+        ]
+      },
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 6,
+          "end": 8
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 6,
+              "end": 8
+            },
+            "value": "hi"
+          }
+        ],
+        "path": [
+          "say",
+          "hi"
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['mcfunction parser command() Should not exceed max call stack 1'] = {
   "node": "OMITTED",
   "errors": [
