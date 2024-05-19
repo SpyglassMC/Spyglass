@@ -305,7 +305,7 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
                     "type": "mcdoc:typed_number",
                     "children": [
                       {
-                        "type": "float",
+                        "type": "integer",
                         "range": {
                           "start": 35,
                           "end": 36
@@ -339,7 +339,7 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
                     "type": "mcdoc:typed_number",
                     "children": [
                       {
-                        "type": "float",
+                        "type": "integer",
                         "range": {
                           "start": 49,
                           "end": 50
@@ -373,7 +373,7 @@ exports['mcdoc attribute Parse "#[bitfield=enum (int) {↓⮀⮀⮀⮀⮀Foo = 1
                     "type": "mcdoc:typed_number",
                     "children": [
                       {
-                        "type": "float",
+                        "type": "integer",
                         "range": {
                           "start": 63,
                           "end": 64
@@ -565,7 +565,7 @@ exports['mcdoc attribute Parse "#[vector(dimension=3,integer=true)]" 1'] = {
                     "type": "mcdoc:typed_number",
                     "children": [
                       {
-                        "type": "float",
+                        "type": "integer",
                         "range": {
                           "start": 19,
                           "end": 20

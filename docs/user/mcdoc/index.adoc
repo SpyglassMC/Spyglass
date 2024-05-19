@@ -187,7 +187,9 @@ Scientific notation may be used with the letter `e` (case-insensitive).
 **SYNTAX (TOKEN)**
 
 [[t-typed-number,TYPED_NUMBER]]
-<<t-typed-number>>:: <<t-float>> ++[++`b` `B` `d` `D` `f` `F` `l` `L` `s` `S`++]++^?^
+<<t-typed-number>>::
+	<<t-integer>> ++[++`b` `B` `s` `S` `l` `L`++]++^?^ | +
+	<<t-float>> ++[++`d` `D` `f` `F`++]++^?^
 ****
 
 A typed number is similar to a number used in SNBTs syntax-wise.

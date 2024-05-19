@@ -86,7 +86,6 @@ import type {
 } from '../node/index.js'
 import { RangeExclusiveChar } from '../node/index.js'
 import {
-	LiteralNumberCaseInsensitiveSuffixes,
 	NumericTypeFloatKinds,
 	NumericTypeIntKinds,
 	PrimitiveArrayValueKinds,
@@ -694,15 +693,84 @@ export const float: InfallibleParser<FloatNode> = core.float({
 		/^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
 })
 
+export const integer: InfallibleParser<IntegerNode> = core.integer({
+	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
+})
+export const LiteralIntSuffixes = Object.freeze(
+	[
+		'b',
+		's',
+		'l',
+	] as const,
+)
+export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
+export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralIntSuffixes,
+		'B',
+		'S',
+		'L',
+	] as const,
+)
+export type LiteralIntCaseInsensitiveSuffix =
+	(typeof LiteralIntCaseInsensitiveSuffixes)[number]
+export const LiteralFloatSuffixes = Object.freeze(
+	[
+		'f',
+		'd',
+	] as const,
+)
+export type LiteralFloatSuffix = (typeof LiteralFloatSuffixes)[number]
+export const LiteralFloatCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralFloatSuffixes,
+		'F',
+		'D',
+	] as const,
+)
+export type LiteralFloatCaseInsensitiveSuffix =
+	(typeof LiteralFloatCaseInsensitiveSuffixes)[number]
+export const LiteralNumberSuffixes = Object.freeze(
+	[
+		...LiteralIntSuffixes,
+		...LiteralFloatSuffixes,
+	] as const,
+)
+export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
+export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
+	[
+		...LiteralNumberSuffixes,
+		...LiteralIntCaseInsensitiveSuffixes,
+		...LiteralFloatCaseInsensitiveSuffixes,
+	] as const,
+)
+export type LiteralNumberCaseInsensitiveSuffix =
+	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
+
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
-	sequence([
-		float,
-		optional(
-			keyword(LiteralNumberCaseInsensitiveSuffixes, {
-				colorTokenType: 'keyword',
-			}),
-		),
+	select([
+		{
+			regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
+			parser: sequence([
+				integer,
+				optional(
+					keyword(LiteralIntCaseInsensitiveSuffixes, {
+						colorTokenType: 'keyword',
+					}),
+				),
+			]),
+		},
+		{
+			parser: sequence([
+				float,
+				optional(
+					keyword(LiteralFloatCaseInsensitiveSuffixes, {
+						colorTokenType: 'keyword',
+					}),
+				),
+			]),
+		},
 	]),
 )
 
@@ -994,10 +1062,6 @@ export const booleanType: Parser<BooleanTypeNode> = typeBase(
 	'mcdoc:type/boolean',
 	keyword('boolean', { colorTokenType: 'type' }),
 )
-
-export const integer: InfallibleParser<IntegerNode> = core.integer({
-	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
-})
 
 function range<
 	P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatNode>,

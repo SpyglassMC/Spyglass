@@ -1,13 +1,9 @@
-import type {
-	AstNode,
-	ColorTokenType,
-	IntegerNode,
-	SymbolBaseNode,
-} from '@spyglassmc/core'
+import type { AstNode, ColorTokenType, SymbolBaseNode } from '@spyglassmc/core'
 import {
 	atArray,
 	CommentNode,
 	FloatNode,
+	IntegerNode,
 	ResourceLocationNode,
 	StringNode,
 } from '@spyglassmc/core'
@@ -427,15 +423,16 @@ export namespace LiteralTypeValueNode {
 
 export interface TypedNumberNode extends AstNode {
 	type: 'mcdoc:typed_number'
-	children: (FloatNode | LiteralNode)[]
+	children: (FloatNode | IntegerNode | LiteralNode)[]
 }
 export namespace TypedNumberNode {
 	export function destruct(node: TypedNumberNode): {
-		value: FloatNode
+		value: FloatNode | IntegerNode
 		suffix?: LiteralNode
 	} {
 		return {
-			value: node.children.find(FloatNode.is)!,
+			value: node.children.find(FloatNode.is) ??
+				node.children.find(IntegerNode.is)!,
 			suffix: node.children.find(LiteralNode.is),
 		}
 	}
