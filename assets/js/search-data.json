@@ -103,7 +103,7 @@
   },"17": {
     "doc": "Mcdoc",
     "title": "Typed Number",
-    "content": "SYNTAX (TOKEN) . TYPED_NUMBER FLOAT [b B d D f F l L s S]? . A typed number is similar to a number used in SNBTs syntax-wise. It&#8217;s a normal number followed by a suffix indicating its type: . Table 2. Suffix table | Suffix (case-insensitive) | Type | . | b . | Byte . | . | s . | Short . | . | L . | Long . | . | f . | Float . | . | d . | Double . | . | (No suffix, integer) . | Integer . | . | (No suffix, decimal) . | Double . | . Example 5. Typed numbers 1b // Byte 1 1 // Integer 1 1.2 // Double 1.2 1.2d // Double 1.2 1.2e1f // Float 12 . ",
+    "content": "SYNTAX (TOKEN) . TYPED_NUMBER INTEGER [b B s S l L]? | FLOAT [d D f F]? . A typed number is similar to a number used in SNBTs syntax-wise. It&#8217;s a normal number followed by a suffix indicating its type: . Table 2. Suffix table | Suffix (case-insensitive) | Type | . | b . | Byte . | . | s . | Short . | . | L . | Long . | . | f . | Float . | . | d . | Double . | . | (No suffix, integer) . | Integer . | . | (No suffix, decimal) . | Double . | . Example 5. Typed numbers 1b // Byte 1 1 // Integer 1 1.2 // Double 1.2 1.2d // Double 1.2 1.2e1f // Float 12 . ",
     "url": "/user/mcdoc/#typed-number",
     "relUrl": "/user/mcdoc/#typed-number"
   },"18": {
