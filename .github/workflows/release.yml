@@ -2,9 +2,9 @@ name: Release
 on:
   workflow_dispatch:
 env:
-  GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-  GIT_AUTHOR_EMAIL: ${{ secrets.BOT_EMAIL }}
-  GIT_AUTHOR_NAME: ${{ secrets.BOT_NAME }}
+  BOT_EMAIL: ${{ secrets.BOT_EMAIL }}
+  BOT_NAME: ${{ secrets.BOT_NAME }}
+  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 jobs:
   test-and-release:
