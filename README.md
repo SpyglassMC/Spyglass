@@ -35,7 +35,7 @@ If you're using VS Code to develop Spyglass:
 
 - Install the recommended [ESLint extension][eslint-extension]. Make a copy of `.vscode/settings.template.json` and rename it to `.vscode/settings.json`.
   Now your VS Code should automatically fix all linting errors every time you save the file.
-- Press F5 to run the VS Code extension in development environment. VS Code will automatically compile all packages and build the extension file in watch mode.
+- Press F5 to run the VS Code extension in development environment (`Launch Client`). VS Code will automatically compile all packages and build the extension file in watch mode.
 
 Or if you prefer the command line interface:
 
@@ -48,6 +48,8 @@ Or if you prefer the command line interface:
 - `npm run commit` to run the [`gitmoji` CLI][gitmoji]. You actually don't have to worry about commit message as long as you're creating PR, as I can always change it.
 
 Please refrain from using `mocha --watch`, as it might interface with and break the snapshot testing.
+
+You can debug tests with breakpoints by running the `Run Unit Tests` configuration and setting your breakpoints accordingly. If you want to run a specific subset of tests, add `.only` after the test block (e.g. `describe.only()`, `it.only()`).
 
 ### Code style
 
