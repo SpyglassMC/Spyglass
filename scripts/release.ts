@@ -117,7 +117,7 @@ async function shell(file: string, args: readonly string[], cwd: string, env?: R
 	return result
 }
 
-async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string | undefined>): Promise<unknown> {
+async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<unknown> {
 	if (isDryRun) {
 		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
 	} else {
@@ -225,11 +225,11 @@ async function main(): Promise<void> {
 
 		console.log('Committing changes...')
 		const commitMessage = `🔖 v${rootVersion} [ci skip]`
-		const commitEnvVariables = {
-			GIT_AUTHOR_NAME: botName,
-			GIT_AUTHOR_EMAIL: botEmail,
-			GIT_COMMITTER_NAME: botName,
-			GIT_COMMITTER_EMAIL: botEmail,
+		const commitEnvVariables = isDryRun ? undefined : {
+			GIT_AUTHOR_NAME: botName!,
+			GIT_AUTHOR_EMAIL: botEmail!,
+			GIT_COMMITTER_NAME: botName!,
+			GIT_COMMITTER_EMAIL: botEmail!,
 		} as const
 		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
