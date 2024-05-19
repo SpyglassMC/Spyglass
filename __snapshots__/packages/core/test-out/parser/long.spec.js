@@ -34,7 +34,7 @@ exports['long() long() long() Parse "+" 1'] = {
         "start": 0,
         "end": 1
       },
-      "message": "",
+      "message": "parser.long.illegal",
       "severity": 3
     }
   ]
@@ -91,7 +91,7 @@ exports['long() long() long() Parse "0123" 1'] = {
         "start": 0,
         "end": 4
       },
-      "message": "",
+      "message": "parser.long.illegal",
       "severity": 3
     }
   ]
@@ -204,7 +204,7 @@ exports['long() long(min, max, onOutOfRange) long(1, undefined, false) Parse "0"
         "start": 0,
         "end": 1
       },
-      "message": "Expected ",
+      "message": "Expected long.between",
       "severity": 3
     }
   ]
@@ -273,7 +273,7 @@ exports['long() long(min, max, onOutOfRange) long(undefined, 6, false) Parse "9"
         "start": 0,
         "end": 1
       },
-      "message": "Expected ",
+      "message": "Expected long.between",
       "severity": 3
     }
   ]
