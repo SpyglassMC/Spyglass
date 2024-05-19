@@ -28,8 +28,8 @@ jobs:
         with:
           branch: gh-pages
           folder: _site
-          git-config-name: ${{ secrets.GIT_AUTHOR_NAME }}
-          git-config-email: ${{ secrets.GIT_AUTHOR_EMAIL }}
+          git-config-name: ${{ secrets.BOT_NAME }}
+          git-config-email: ${{ secrets.BOT_EMAIL }}
           commit-message: 🚀 Deploy docs
           clean: true
           clean-exclude: |

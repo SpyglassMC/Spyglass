@@ -2,10 +2,10 @@ name: Release legacy-v3
 on:
   workflow_dispatch:
 env:
-  GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
-  GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
-  GIT_COMMITTER_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
-  GIT_COMMITTER_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
+  GIT_AUTHOR_EMAIL: ${{ secrets.BOT_EMAIL }}
+  GIT_AUTHOR_NAME: ${{ secrets.BOT_NAME }}
+  GIT_COMMITTER_EMAIL: ${{ secrets.BOT_EMAIL }}
+  GIT_COMMITTER_NAME: ${{ secrets.BOT_NAME }}
 jobs:
   release:
     runs-on: ubuntu-latest

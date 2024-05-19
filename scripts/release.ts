@@ -1,7 +1,8 @@
 // Usage: ts-node scripts/release.td [--dry-run]
 // Environment Variables:
-// - GITHUB_ACTOR
 // - GITHUB_TOKEN
+// - GITHUB_AUTHOR_EMAIL
+// - GITHUB_AUTHOR_NAME
 
 import cp from 'child_process'
 import fs from 'fs'
@@ -138,8 +139,8 @@ async function main(): Promise<void> {
 		console.log('Start releasing in 5 seconds!')
 		await new Promise<void>(resolve => setTimeout(resolve, 5000))
 		console.log('Start releasing...')
-		if (!(process.env.GITHUB_ACTOR && process.env.GITHUB_TOKEN)) {
-			throw new Error('GITHUB_ACTOR and GITHUB_TOKEN environment variables required.')
+		if (!(process.env.GITHUB_AUTHOR_EMAIL && process.env.GITHUB_AUTHOR_NAME && process.env.GITHUB_TOKEN)) {
+			throw new Error('GITHUB_AUTHOR_EMAIL, GITHUB_AUTHOR_NAME, and GITHUB_TOKEN environment variables required.')
 		}
 	}
 
@@ -226,16 +227,16 @@ async function main(): Promise<void> {
 		console.log('Committing changes...')
 		const commitMessage = `🔖 v${rootVersion} [ci skip]`
 		const commitEnvVariables = {
-			GIT_AUTHOR_NAME: 'actions-user',
-			GIT_AUTHOR_EMAIL: 'action@github.com',
-			GIT_COMMITTER_NAME: 'actions-user',
-			GIT_COMMITTER_EMAIL: 'action@github.com',
+			GIT_AUTHOR_NAME: process.env.GIT_AUTHOR_NAME!,
+			GIT_AUTHOR_EMAIL: process.env.GIT_AUTHOR_EMAIL!,
+			GIT_COMMITTER_NAME: process.env.GIT_AUTHOR_NAME!,
+			GIT_COMMITTER_EMAIL: process.env.GIT_AUTHOR_EMAIL!,
 		} as const
 		await dryRunableShell(isDryRun, 'git', ['restore', 'packages/*/package.json'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['add', '.'], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['commit', `-m ${commitMessage}\n\n${versionSummary}`], RepoRoot, commitEnvVariables)
 		await dryRunableShell(isDryRun, 'git', ['tag', `v${rootVersion}`], RepoRoot)
-		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_ACTOR}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
+		await dryRunableShell(isDryRun, 'git', ['remote', 'set-url', 'origin', `https://${process.env.GITHUB_AUTHOR_NAME}:${process.env.GITHUB_TOKEN}@github.com/SpyglassMC/Spyglass.git`], RepoRoot)
 		await dryRunableShell(isDryRun, 'git', ['pull', '--rebase'], RepoRoot, commitEnvVariables)
 		const { stderr } = await dryRunableShell(isDryRun, 'git', ['push'], RepoRoot)
 		if (stderr) {
