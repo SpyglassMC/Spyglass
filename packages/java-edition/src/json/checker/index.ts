@@ -87,7 +87,7 @@ export function definition(
 			inferType: node => {
 				switch (node.type) {
 					case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
-					case 'json:number': return { kind: 'literal', value: { kind: 'double', value: node.value } }
+					case 'json:number': return { kind: 'literal', value: { kind: 'double', value: Number(node.value.value) } }
 					case 'json:null': return { kind: 'union', members: [] } // null is always invalid? 
 					case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
 					case 'json:array': return { kind: 'list', item: { kind: 'any' } }
