@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import { ReleaseVersion } from '../../dependency'
 
 export const ColorArgumentValues = [...core.Color.ColorNames, 'reset']
 
@@ -11,27 +12,33 @@ export const GamemodeArgumentValues = [
 	'spectator',
 ]
 
-export const ItemSlotArgumentValues = [
-	...[...Array(54).keys()].map((n) => `container.${n}`),
-	...[...Array(27).keys()].map((n) => `enderchest.${n}`),
-	...[...Array(15).keys()].map((n) => `horse.${n}`),
-	...[...Array(9).keys()].map((n) => `hotbar.${n}`),
-	...[...Array(27).keys()].map((n) => `inventory.${n}`),
-	...[...Array(4).keys()].map((n) => `player.crafting.${n}`),
-	...[...Array(8).keys()].map((n) => `villager.${n}`),
-	'armor.chest',
-	'armor.feet',
-	'armor.head',
-	'armor.legs',
-	'armor.body',
-	'contents',
-	'horse.chest',
-	'horse.saddle',
-	'player.cursor',
-	'weapon',
-	'weapon.mainhand',
-	'weapon.offhand',
-]
+export function getItemSlotArgumentValues(release: ReleaseVersion) {
+	const output = [
+		...[...Array(54).keys()].map((n) => `container.${n}`),
+		...[...Array(27).keys()].map((n) => `enderchest.${n}`),
+		...[...Array(15).keys()].map((n) => `horse.${n}`),
+		...[...Array(9).keys()].map((n) => `hotbar.${n}`),
+		...[...Array(27).keys()].map((n) => `inventory.${n}`),
+		...[...Array(8).keys()].map((n) => `villager.${n}`),
+		'armor.chest',
+		'armor.feet',
+		'armor.head',
+		'armor.legs',
+		'horse.chest',
+		'horse.saddle',
+		'weapon',
+		'weapon.mainhand',
+		'weapon.offhand',
+	]
+	if (ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		output.push(...[...Array(4).keys()].map((n) => `player.crafting.${n}`),
+		            'armor.body', 
+		            'contents', 
+		            'player.cursor')
+	}
+	else { output.push('horse.armor') }
+	return output
+}
 
 export const OperationArgumentValues = [
 	'=',
