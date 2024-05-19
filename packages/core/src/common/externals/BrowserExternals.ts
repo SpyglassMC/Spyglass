@@ -19,7 +19,10 @@ import type {
 
 type Listener = (...args: unknown[]) => unknown
 class BrowserEventEmitter implements ExternalEventEmitter {
-	#listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
+	readonly #listeners = new Map<
+		string,
+		{ all: Set<Listener>; once: Set<Listener> }
+	>()
 
 	emit(eventName: string, ...args: unknown[]): boolean {
 		const listeners = this.#listeners.get(eventName)
