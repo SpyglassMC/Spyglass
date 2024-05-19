@@ -117,7 +117,7 @@ async function shell(file: string, args: readonly string[], cwd: string, env?: R
 	return result
 }
 
-async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string>): Promise<unknown> {
+async function dryRunableShell(isDryRun: boolean, file: string, args: readonly string[], cwd: string, env?: Record<string, string | undefined>): Promise<unknown> {
 	if (isDryRun) {
 		console.log(`[Dry run mode] Would have run ${file} with ${JSON.stringify(args)} at ${cwd}.`)
 	} else {
@@ -142,7 +142,7 @@ async function main(): Promise<void> {
 	}
 
 	const { BOT_EMAIL: botEmail, BOT_NAME: botName, BOT_TOKEN: botToken } = process.env
-	if (!(botEmail && botName && botToken)) {
+	if (!isDryRun && !(botEmail && botName && botToken)) {
 		throw new Error('BOT_EMAIL, BOT_NAME, BOT_TOKEN environment variables required.')
 	}
 
