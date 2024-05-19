@@ -20,6 +20,14 @@
 			"restart": true,
 			"timeout": 180000,
 			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Run Unit Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen"
 		}
 	],
 	"compounds": [
