@@ -65,6 +65,8 @@
 		"dprint": "^0.37.1",
 		"eslint": "^8.39.0",
 		"eslint-config-prettier": "^8.8.0",
+		"eslint-import-resolver-typescript": "^3.6.1",
+		"eslint-plugin-import": "^2.29.1",
 		"gitmoji-cli": "^8.1.1",
 		"mocha": "^10.2.0",
 		"node-loader": "^2.0.0",
