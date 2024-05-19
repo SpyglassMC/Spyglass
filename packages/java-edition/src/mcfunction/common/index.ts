@@ -12,7 +12,8 @@ export const GamemodeArgumentValues = [
 	'spectator',
 ]
 
-export function getItemSlotArgumentValues(release: ReleaseVersion) {
+export function getItemSlotArgumentValues(ctx: core.ContextBase) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion
 	const output = [
 		...[...Array(54).keys()].map((n) => `container.${n}`),
 		...[...Array(27).keys()].map((n) => `enderchest.${n}`),

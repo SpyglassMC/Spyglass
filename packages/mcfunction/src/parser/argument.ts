@@ -10,6 +10,7 @@ import type { ArgumentTreeNode } from '../tree/index.js'
  */
 export type ArgumentParserGetter = (
 	treeNode: ArgumentTreeNode,
+	ctx: core.ContextBase,
 ) => core.Parser | undefined
 
 export function argumentTreeNodeToString(

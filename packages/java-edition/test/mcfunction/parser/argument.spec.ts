@@ -4,6 +4,7 @@ import {
 	snapshotWithUri,
 	testParser,
 } from '@spyglassmc/core/test-out/utils.js'
+import { ContextBase } from '@spyglassmc/core'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
@@ -296,6 +297,7 @@ nbt.initialize(project)
 const { meta } = project
 
 describe('mcfunction argument parser', () => {
+	const ctx = ContextBase.create(project)
 	for (const [parserName, cases] of Object.entries(Suites)) {
 		describe(parserName, () => {
 			for (const { content, properties } of cases) {
@@ -308,6 +310,7 @@ describe('mcfunction argument parser', () => {
 					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${
 						properties ? ` with ${JSON.stringify(properties)}` : ''
 					}`
+					
 					it(itTitle, () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
@@ -318,7 +321,7 @@ describe('mcfunction argument parser', () => {
 								}.spec.js`,
 								import.meta.url,
 							),
-							value: testParser(argument(treeNode)!, string, {
+							value: testParser(argument(treeNode, ctx)!, string, {
 								project: { meta },
 								removeTopLevelChildren: RemoveExtraChildren.has(
 									parserName,

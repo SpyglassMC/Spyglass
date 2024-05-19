@@ -10,7 +10,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	HeightmapValues,
-	ItemSlotArgumentValues,
+	getItemSlotArgumentValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
@@ -87,6 +87,7 @@ function shouldValidateLength(ctx: core.ParserContext) {
  */
 export const argument: mcf.ArgumentParserGetter = (
 	rawTreeNode,
+	ctx: core.ContextBase
 ): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
@@ -189,7 +190,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap(core.literal(...ItemSlotArgumentValues))
+			return wrap(core.literal(...getItemSlotArgumentValues(ctx)))
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:message':
