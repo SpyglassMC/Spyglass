@@ -91,7 +91,7 @@ export const argument: mcf.ArgumentParserGetter = (
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser =>
-		core.failOnEmpty<T>(core.stopBefore(parser, '\r', '\n'))
+		core.failOnEmpty<T>(core.concatOnTrailingBackslash(parser, ['\r', '\n']))
 
 	switch (treeNode.parser) {
 		case 'brigadier:bool':
