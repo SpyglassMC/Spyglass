@@ -3,9 +3,9 @@
 	"private": true,
 	"version": "1.0.0",
 	"license": "MIT",
-  "engines": {
-    "node": "^18.18.0 || >=20.0.0"
-  },
+	"engines": {
+		"node": "^18.18.0 || >=20.0.0"
+	},
 	"scripts": {
 		"build": "wireit",
 		"build:dev": "wireit",

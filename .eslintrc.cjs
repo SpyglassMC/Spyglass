@@ -13,7 +13,7 @@ module.exports = {
 	},
 	"plugins": [
 		"@typescript-eslint",
-    "import"
+		"import"
 	],
 	"ignorePatterns": [
 		"**/*.js",
