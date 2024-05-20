@@ -252,7 +252,6 @@
   "activationEvents": [
     "workspaceContains:**/pack.mcmeta",
     "workspaceContains:**/*.mcdoc",
-    "workspaceContains:**/*.mcfunction",
-    "onCommand:spyglassmc.regenerateCache"
+    "workspaceContains:**/*.mcfunction"
   ]
 }
