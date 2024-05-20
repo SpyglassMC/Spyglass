@@ -1,4 +1,4 @@
-import type { RootTreeNode } from '../../lib/tree/index.js'
+import type { RootTreeNode } from '../../../java-edition/lib/dependency/mcmeta.js'
 
 export const tree: RootTreeNode = {
 	type: 'root',
