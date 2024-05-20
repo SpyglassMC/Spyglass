@@ -31,6 +31,7 @@ let capabilities!: ls.ClientCapabilities
 let workspaceFolders!: ls.WorkspaceFolder[]
 let hasShutdown = false
 let progressReporter: ls.WorkDoneProgressReporter | undefined
+let initializationOptions: CustomInitializationOptions | undefined
 
 const externals = NodeJsExternals
 const logger: core.Logger = {
@@ -46,7 +47,7 @@ const logger: core.Logger = {
 let service!: core.Service
 
 connection.onInitialize(async (params) => {
-	const initializationOptions = params.initializationOptions as
+	initializationOptions = params.initializationOptions as
 		| CustomInitializationOptions
 		| undefined
 
@@ -261,6 +262,7 @@ connection.onCompletion(
 				offset,
 				capabilities.textDocument?.completion?.completionItem
 					?.insertReplaceSupport,
+				initializationOptions?.hasFlawedMultiLineCompletionItemFiltering,
 			)
 		)
 	},

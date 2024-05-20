@@ -53,6 +53,7 @@ export function activate(context: vsc.ExtensionContext) {
 	]
 
 	const initializationOptions: server.CustomInitializationOptions = {
+		hasFlawedMultiLineCompletionItemFiltering: true,
 		inDevelopmentMode:
 			context.extensionMode === vsc.ExtensionMode.Development,
 	}
