@@ -228,8 +228,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 			if (typeParams) {
 				bindTypeParamBlock(node, typeParams, ans, ctx)
 			}
-			ans.typeDef = attributeType(ans.typeDef, attributes, ctx)
-
+			appendAttributes(ans.typeDef, attributes, ctx);
 			return ans
 		})
 	}
@@ -397,7 +396,7 @@ async function bindDispatchStatement(
 		if (typeParams) {
 			bindTypeParamBlock(node, typeParams, data, ctx)
 		}
-		data.typeDef = attributeType(data.typeDef, attributes, ctx)
+		appendAttributes(data.typeDef, attributes, ctx);
 
 		for (const key of parallelIndices) {
 			if (DynamicIndexNode.is(key)) {
@@ -848,25 +847,20 @@ function wrapType(
 			}
 		}
 	}
-	ans = attributeType(ans, attributes, ctx)
+	ans.attributes = convertAttributes(attributes, ctx)
 	return ans
 }
 
-function attributeType(
-	type: McdocType,
-	attributes: AttributeNode[],
-	ctx: McdocBinderContext,
-): McdocType {
-	for (const attribute of attributes) {
-		type = {
-			kind: 'attributed',
-			attribute: convertAttribute(attribute, ctx),
-			child: type,
+function appendAttributes(typeDef: McdocType, attributes: AttributeNode[], ctx: McdocBinderContext) {
+	const convertedAttributes = convertAttributes(attributes, ctx);
+	if (convertedAttributes) {
+		if (typeDef.attributes) {
+			typeDef.attributes = [ ...typeDef.attributes, ...convertedAttributes ];
+		} else {
+			typeDef.attributes = convertedAttributes;
 		}
 	}
-	return type
 }
-
 function convertAttributes(
 	nodes: AttributeNode[],
 	ctx: McdocBinderContext,

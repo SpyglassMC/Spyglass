@@ -618,45 +618,44 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
           "binomial": {
             "data": {
               "typeDef": {
-                "kind": "attributed",
-                "attribute": {
-                  "name": "since",
-                  "value": {
-                    "kind": "literal",
-                    "value": {
-                      "kind": "double",
-                      "value": 1.18
+                "kind": "struct",
+                "fields": [
+                  {
+                    "kind": "pair",
+                    "key": "n",
+                    "type": {
+                      "kind": "int",
+                      "valueRange": {
+                        "kind": 0,
+                        "min": 0
+                      }
+                    }
+                  },
+                  {
+                    "kind": "pair",
+                    "key": "p",
+                    "type": {
+                      "kind": "float",
+                      "valueRange": {
+                        "kind": 0,
+                        "min": 0,
+                        "max": 1
+                      }
                     }
                   }
-                },
-                "child": {
-                  "kind": "struct",
-                  "fields": [
-                    {
-                      "kind": "pair",
-                      "key": "n",
-                      "type": {
-                        "kind": "int",
-                        "valueRange": {
-                          "kind": 0,
-                          "min": 0
-                        }
-                      }
-                    },
-                    {
-                      "kind": "pair",
-                      "key": "p",
-                      "type": {
-                        "kind": "float",
-                        "valueRange": {
-                          "kind": 0,
-                          "min": 0,
-                          "max": 1
-                        }
+                ],
+                "attributes": [
+                  {
+                    "name": "since",
+                    "value": {
+                      "kind": "literal",
+                      "value": {
+                        "kind": "double",
+                        "value": 1.18
                       }
                     }
-                  ]
-                }
+                  }
+                ]
               }
             },
             "definition": [
