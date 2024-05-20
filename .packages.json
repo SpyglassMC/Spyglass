@@ -78,8 +78,8 @@
 			"mcdoc"
 		],
 		"released": {
-			"commit": "d71c65b6bc3f9756fc13d26a9b07afd1563e9927",
-			"version": "0.1.7"
+			"commit": "834d1686f943372aa8f30b0adc21619a8f4da18e",
+			"version": "0.1.8"
 		}
 	},
 	"mcfunction": {
