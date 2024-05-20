@@ -547,12 +547,11 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 				continue
 			}
 
-			// Create an index map that skips the trailing backslash + whitespace
+			// Create an index map that skips from the trailing backslash to the
+			// next line's first non-whitespace character
 			const from = src.getCharRange()
-			// skip the `\`
-			src.skip()
-			// skip trailing whitespace + newline + preceding whitespace on the next line
-			src.skipWhitespace()
+			src.nextLine()
+			src.skipSpace()
 			const to = src.getCharRange(-1)
 			indexMap.push({
 				inner: Range.create(wrappedStr.length),

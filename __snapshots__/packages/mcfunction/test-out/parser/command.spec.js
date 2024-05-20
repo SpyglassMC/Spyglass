@@ -682,53 +682,41 @@ exports['mcfunction parser command() Parse "sa⧵↓↓y h⧵ ↓ i" 1'] = {
     "type": "mcfunction:command",
     "range": {
       "start": 0,
-      "end": 13
+      "end": 4
     },
     "children": [
       {
         "type": "mcfunction:command_child",
         "range": {
           "start": 0,
-          "end": 6
+          "end": 4
         },
         "children": [
           {
             "type": "mcfunction:command_child/literal",
             "range": {
               "start": 0,
-              "end": 6
+              "end": 4
             },
-            "value": "say"
+            "value": "sa"
           }
         ],
         "path": [
-          "say"
-        ]
-      },
-      {
-        "type": "mcfunction:command_child",
-        "range": {
-          "start": 7,
-          "end": 13
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child/literal",
-            "range": {
-              "start": 7,
-              "end": 13
-            },
-            "value": "hi"
-          }
-        ],
-        "path": [
-          "say",
-          "hi"
+          "sa"
         ]
       }
     ]
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction parser command() Should not exceed max call stack 1'] = {

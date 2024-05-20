@@ -202,11 +202,19 @@ exports['concatOnTrailingBackslash() Parse "tru⧵↓↓e" 1'] = {
     "type": "boolean",
     "range": {
       "start": 0,
-      "end": 7
-    },
-    "value": true
+      "end": 0
+    }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “false” or “true”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['dumpErrors() should not output errors when wrapped with `dumpErrors()` 1'] = {
