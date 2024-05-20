@@ -154,7 +154,7 @@ describe('concatOnTrailingBackslash()', () => {
 			it(
 				`Parse "${showWhitespaceGlyph(content)}"`,
 				() => {
-					const wrappedParser = concatOnTrailingBackslash(parser, ['\n'])
+					const wrappedParser = concatOnTrailingBackslash(parser)
 					snapshot(testParser(wrappedParser, content))
 				},
 			)

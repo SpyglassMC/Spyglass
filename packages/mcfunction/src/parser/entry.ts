@@ -56,4 +56,4 @@ const comment = core.comment({
 export const entry = (
 	commandTreeName: string,
 	argument: ArgumentParserGetter,
-) => core.concatOnTrailingBackslash(mcfunction(commandTreeName, argument), [])
+) => core.concatOnTrailingBackslash(mcfunction(commandTreeName, argument))

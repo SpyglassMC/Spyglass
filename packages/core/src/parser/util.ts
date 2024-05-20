@@ -507,8 +507,6 @@ export function stopBefore<N extends Returnable>(
 }
 
 /**
- * @param terminators A list of characters the parser will stop at if it finds them
- * before a backslash
  * @returns A parser that is based on the passed-in `parser`, but concatenates lines
  * together when we reach, in order:
  * - a backslash
@@ -518,15 +516,12 @@ export function stopBefore<N extends Returnable>(
  */
 export function concatOnTrailingBackslash<N extends Returnable>(
 	parser: InfallibleParser<N>,
-	terminators: string[],
 ): InfallibleParser<N>
 export function concatOnTrailingBackslash<N extends Returnable>(
 	parser: Parser<N>,
-	terminators: string[],
 ): Parser<N>
 export function concatOnTrailingBackslash<N extends Returnable>(
 	parser: Parser<N>,
-	terminators: string[],
 ): Parser<N> {
 	return (src, ctx): Result<N> => {
 		let wrappedStr = src.sliceToCursor(0)
@@ -534,9 +529,9 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 		const wrappedSrcCursor = wrappedStr.length
 		const indexMap: IndexMap = []
 
-		while (src.canRead() && !terminators.includes(src.peek())) {
-			wrappedStr += src.readUntil(wrapper, ...terminators)
-			if (!src.canRead() || terminators.includes(src.peek())) {
+		while (src.canRead()) {
+			wrappedStr += src.readUntil(wrapper)
+			if (!src.canRead()) {
 				// Stop wrapping `src` if we reach end of file or a terminator before a wrapper
 				break
 			}
