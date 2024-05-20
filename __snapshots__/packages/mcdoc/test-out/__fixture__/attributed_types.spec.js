@@ -84,7 +84,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
               "value": {
                 "kind": "literal",
                 "value": {
-                  "kind": "number",
+                  "kind": "double",
                   "value": 1.19
                 }
               }
@@ -725,7 +725,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                               "type": "mcdoc:typed_number",
                                               "children": [
                                                 {
-                                                  "type": "float",
+                                                  "type": "integer",
                                                   "range": {
                                                     "start": 199,
                                                     "end": 200
@@ -759,7 +759,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                               "type": "mcdoc:typed_number",
                                               "children": [
                                                 {
-                                                  "type": "float",
+                                                  "type": "integer",
                                                   "range": {
                                                     "start": 214,
                                                     "end": 215

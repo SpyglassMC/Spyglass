@@ -40,7 +40,7 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                     "value": {
                       "kind": "literal",
                       "value": {
-                        "kind": "number",
+                        "kind": "double",
                         "value": 1.19
                       }
                     }

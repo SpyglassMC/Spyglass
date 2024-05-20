@@ -77,6 +77,7 @@ import {
 	UnionTypeNode,
 	UseStatementNode,
 } from '../node/index.js'
+import type { LiteralNumberCaseInsensitiveSuffix } from '../parser/index.js'
 import type {
 	Attribute,
 	AttributeTree,
@@ -84,8 +85,6 @@ import type {
 	DynamicIndex,
 	EnumTypeField,
 	Index,
-	LiteralNumberCaseInsensitiveSuffix,
-	LiteralNumberSuffix,
 	LiteralValue,
 	McdocType,
 	NumericRange,
@@ -1215,9 +1214,11 @@ function convertLiteralValue(
 	} else if (TypedNumberNode.is(node)) {
 		const { suffix, value } = TypedNumberNode.destruct(node)
 		return {
-			kind: 'number',
+			kind: convertLiteralNumberSuffix(suffix, ctx) ??
+				(value.type === 'integer'
+					? 'int'
+					: 'double'),
 			value: value.value,
-			suffix: convertLiteralNumberSuffix(suffix, ctx),
 		}
 	} else {
 		return {
@@ -1230,11 +1231,22 @@ function convertLiteralValue(
 function convertLiteralNumberSuffix(
 	node: LiteralNode | undefined,
 	ctx: McdocBinderContext,
-): LiteralNumberSuffix | undefined {
+): NumericTypeKind | undefined {
 	const suffix = node?.value as LiteralNumberCaseInsensitiveSuffix | undefined
-	return suffix?.toLowerCase() as
-		| Lowercase<Exclude<typeof suffix, undefined>>
-		| undefined
+	switch (suffix?.toLowerCase()) {
+		case 'b':
+			return 'byte'
+		case 's':
+			return 'short'
+		case 'l':
+			return 'long'
+		case 'f':
+			return 'float'
+		case 'd':
+			return 'double'
+		default:
+			return undefined
+	}
 }
 
 function convertNumericType(
