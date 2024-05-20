@@ -531,9 +531,7 @@ function simplify<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 			return {
 				kind: 'struct',
 				fields: fields.filter((f, i) =>
-					i <= fields.length - 1 - [ ...fields ]
-						.reverse()
-						.findIndex(of => isAssignable(f.key, of.key, options.context, options.isEquivalent))
+					i <= fields.findLastIndex(of => isAssignable(f.key, of.key, options.context, options.isEquivalent))
 				)
 			};
 		case 'list':
