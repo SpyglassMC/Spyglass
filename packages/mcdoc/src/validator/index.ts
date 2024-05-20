@@ -1,5 +1,5 @@
-import type { AstNode, CheckerContext, Range } from "@spyglassmc/core"
-import type { Attribute, StructTypePairField , LiteralType, McdocType, StructTypeField } from "../type/index.js";
+import type { AstNode, CheckerContext, FullResourceLocation, Range } from "@spyglassmc/core"
+import type { Attribute, StructTypePairField , LiteralType, McdocType, StructTypeField, Index, ParallelIndices } from "../type/index.js";
 import { NumericRange } from "../type/index.js"
 import { TypeDefSymbolData } from "../binder/index.js"
 import { arrayToMessage, localize } from "@spyglassmc/locales";
@@ -125,29 +125,30 @@ function internalTypeDefinition<T extends AstNode>(node: T, typeDef: McdocType, 
 			expected: [typeDef]
 		}];
 	}
+
+	if (typeDef.attributes) {
+		for (const attribute of typeDef.attributes) {
+			
+			const handler = attributeHandlers[attribute.name];
+			if (handler) {
+				errors.push(...handler(node, attribute, inferredType, typeDef, options));
+			}
+		}
+	}
 	
 	options.attachTypeInfo(node, typeDef);
 
 	switch (typeDef.kind) {
 		case 'any':
 		case 'unsafe':
-			options.attachTypeInfo(node, typeDef);
-			return [];
-		case 'attributed':
-			const attribute = attributeHandlers[typeDef.attribute.name];
-			let attributeErrors: ValidationError<T>[] = []
-			if (attribute) {
-				attributeErrors = attribute(node, typeDef.attribute, inferredType, typeDef, options);
-			}
-			// TODO pass attribute to given node? The node needs to be aware of some attributes for colorizers and completers.
-			attributeErrors.push(...internalTypeDefinition(node, typeDef.child, inferredType, options, parents));
-			return attributeErrors;
+			break;
 		case 'union':
 			if (typeDef.members.length === 0) {
-				return [{
+				errors.push({
 					kind: 'expected_noting',
 					node: node,
-				}];
+				})
+				break;
 			}
 
 			let parsingResults: { typeDef: McdocType, errors: ValidationError<T>[] }[] = [];
@@ -160,25 +161,28 @@ function internalTypeDefinition<T extends AstNode>(node: T, typeDef: McdocType, 
 				parsingResults.push({ typeDef: def, errors: innerErrors });
 			}
 			if (!parsingResults.some(r => r.errors.some(e => e.kind !== 'type_mismatch' || e.node !== node))) {
-				return [{
+				errors.push({
 					kind: 'type_mismatch',
 					node: node,
 					expected: typeDef.members,
 					received: inferredType
-				}];
+				});
 			}
-			if (!parsingResults.some(r => r.errors.some(e => e.kind !== 'value_mismatch' || e.node !== node))) {
-				return [{
+			else if (!parsingResults.some(r => r.errors.some(e => e.kind !== 'value_mismatch' || e.node !== node))) {
+				errors.push({
 					kind: 'value_mismatch',
 					node: node,
 					expected: parsingResults.flatMap(p => p.errors).filter(e => e.kind === 'value_mismatch').flatMap(e => (e as ValueMismatchError<T>).expected),
-				}];
+				});
 			}
-			parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'type_mismatch' && e.node === node));
-			if (!parsingResults.some(r => r.errors.some(e => e.kind === 'unknown_key'))) {
-				parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'unknown_key'));
+			else {
+				parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'type_mismatch' && e.node === node));
+				if (!parsingResults.some(r => r.errors.some(e => e.kind === 'unknown_key'))) {
+					parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'unknown_key'));
+				}
+				errors.push(...parsingResults.sort((a, b) => a.errors.length - b.errors.length)[0].errors);
 			}
-			return parsingResults.sort((a, b) => a.errors.length - b.errors.length)[0].errors;
+			break;
 		case 'struct': {
 			const children = options.getChildren(node);
 			const matchedToNonLiteral = [];
@@ -269,18 +273,23 @@ function internalTypeDefinition<T extends AstNode>(node: T, typeDef: McdocType, 
 				}
 				return v.value === inferredType.value.value;
 			})) {
-				return [{
+				errors.push({
 					kind: "value_mismatch",
 					node: node,
 					expected: typeDef.values.map(v => v.value)
-				}];
+				});
 			}
+			break;
 		}
 	}
 	return errors;
 }
 
 function simplify<T extends AstNode>(node: T, typeDef: McdocType, inferredType: McdocType, options: ValidatorOptions<T>, parents:T[]): McdocType {
+	if (typeDef.attributes) {
+		//TODO
+	}
+
 	switch (typeDef.kind) {
 		case 'reference':
 			if (!typeDef.path) {
@@ -295,9 +304,6 @@ function simplify<T extends AstNode>(node: T, typeDef: McdocType, inferredType: 
 			}
 
 			return simplify(node, def, inferredType, options, parents);
-		case 'attributed':
-			// TODO Basic attribute checks (mostly until/since).
-			return { ...typeDef, child: simplify(node, typeDef.child, inferredType, options, parents) };
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(options.context.doc, 'mcdoc/dispatcher', typeDef.registry).symbol?.members;
 			if (!dispatcher) {
@@ -316,10 +322,6 @@ function simplify<T extends AstNode>(node: T, typeDef: McdocType, inferredType: 
 			return simplify(node, { kind: 'indexed', parallelIndices: typeDef.parallelIndices, child: { kind: 'struct', fields: structFields } }, inferredType, options, parents);
 		case 'indexed':
 			const child = simplify(node, typeDef.child, inferredType, options, parents);
-			if (child.kind ==='attributed') {
-				const ans = simplify(node, { ...typeDef, child: child.child }, inferredType, options, parents);
-				return { ...child, child: ans };
-			}
 
 			if (child.kind !== 'struct') {
 				options.context.logger.warn(`Tried to index unindexable type ${child.kind}`);
@@ -393,21 +395,9 @@ function simplify<T extends AstNode>(node: T, typeDef: McdocType, inferredType: 
 			const members: McdocType[] = [];
 			for (const member of typeDef.members) {
 				const simplified = simplify(node, member, inferredType, options, parents);
-				const attributes: Attribute[] = [];
-				let inner = simplified;
-				// TODO figure out if we can maybe handle attributes in simplify already, so after simplify there is no attributed types
-				// Maybe it would also be worth just attaching an attributes array to type nodes and getting rid of the attributed type alltogether
-				while (inner.kind === 'attributed') {
-					attributes.push(inner.attribute);
-					inner = inner.child;
-				}
-				if (inner.kind === 'union') {
-					for (let innerMember of inner.members) {
-						for (const attribute of attributes.reverse()) {
-							innerMember = { kind: 'attributed', attribute: attribute, child: innerMember };
-						}
-						members.push(innerMember);
-					}
+
+				if (simplified.kind === 'union') {
+					members.push(...simplified.members)
 				} else {
 					members.push(simplified);
 				}
@@ -423,22 +413,21 @@ function simplify<T extends AstNode>(node: T, typeDef: McdocType, inferredType: 
 					// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
 					// cannot deterministically find for non-string keys.
 					// Instead, this method will be called by every struct child by the outer checking method.
+					const key =  typeof field.key === 'string' ? field.key : simplify(node, field.key, inferredType, options, parents);
+					if (typeof key !== 'string') {
+						if (key.kind !== 'union') {
+							
+						}
+					}
 					fields.push({
 						...field,
 						key: typeof field.key === 'string' ? field.key : simplify(node, field.key, inferredType, options, parents),
-					})
+					});
 				} else {
 					const simplified = simplify(node, field.type, inferredType, options, parents);
-					
-					let inner = simplified;
-					// TODO figure out if we can maybe handle attributes in simplify already, so after simplify there is no attributed types
-					// Maybe it would also be worth just attaching an attributes array to type nodes and getting rid of the attributed type alltogether
-					while (inner.kind === 'attributed') {
-						inner = inner.child;
-					}
 
-					if (inner.kind === 'struct') {
-						fields.push(...inner.fields);
+					if (simplified.kind === 'struct') {
+						fields.push(...simplified.fields);
 					}
 				}
 			}
