@@ -146,14 +146,14 @@ export async function generate(
 								switch (fourBack?.type) {
 									case 'mcdoc:struct/field/pair':
 										{
-											/* @ts-ignore */
 											const key = fourBack.children?.find(child =>
 												child.type === 'mcdoc:identifier'
+												/* @ts-ignore */
 											)?.value
 											const sixBack = fourBack.parent?.parent
-											/* @ts-ignore */
 											const foundRoot = sixBack?.children?.find(
 												child => child.type === 'mcdoc:identifier',
+												/* @ts-ignore */
 											)?.value
 
 											if (key) {
@@ -162,17 +162,17 @@ export async function generate(
 												} else {
 													// This is another nested anonymous struct
 													// TODO: Yeah this should be recursive and smarter but I'm lazy
-													/* @ts-ignore */
 													const parentKey = sixBack?.parent
 														?.children?.find(child =>
 															child.type === 'mcdoc:identifier'
+															/* @ts-ignore */
 														)?.value
-													/* @ts-ignore */
 													const actualRoot = sixBack?.parent
 														?.parent?.parent?.children?.find(
 															child =>
 																child.type ===
 																	'mcdoc:identifier',
+															/* @ts-ignore */
 														)?.value
 
 													container =
@@ -181,15 +181,15 @@ export async function generate(
 											} else {
 												// This is another nested anonymous struct
 												// TODO: Yeah this should be recursive and smarter but I'm lazy
-												/* @ts-ignore */
 												const parentKey = sixBack?.parent?.children
 													?.find(child =>
 														child.type === 'mcdoc:identifier'
+														/* @ts-ignore */
 													)?.value
-												/* @ts-ignore */
 												const actualRoot = sixBack?.parent?.parent
 													?.parent?.children?.find(child =>
 														child.type === 'mcdoc:identifier'
+														/* @ts-ignore */
 													)?.value
 
 												container =
@@ -202,11 +202,11 @@ export async function generate(
 											switch (fourBack?.parent?.type) {
 												case 'mcdoc:struct/field/spread':
 													{
-														/* @ts-ignore */
 														const root = fourBack?.parent?.parent
 															?.parent?.children?.find(child =>
 																child.type ===
 																	'mcdoc:identifier'
+																/* @ts-ignore */
 															)?.value
 
 														// java/server/world/entity/mob/breedable/llama.[0][2][4][2][9][0][0][1][0][0][0]
@@ -225,18 +225,18 @@ export async function generate(
 													break
 												case 'mcdoc:struct/field/pair':
 													{
-														/* @ts-ignore */
 														const parentKey = fourBack?.parent
 															?.children?.find(child =>
 																child.type ===
 																	'mcdoc:identifier'
+																/* @ts-ignore */
 															)?.value
 
-														/* @ts-ignore */
 														const root = fourBack?.parent?.parent
 															?.parent?.children?.find(child =>
 																child.type ===
 																	'mcdoc:identifier'
+																/* @ts-ignore */
 															)?.value
 
 														container =
@@ -247,18 +247,18 @@ export async function generate(
 													break
 												case 'mcdoc:dispatch_statement':
 													{
-														/* @ts-ignore */
 														const registry = fourBack.parent
 															.children?.find(child =>
 																child.type ===
 																	'resource_location'
+																/* @ts-ignore */
 															)?.path?.join('_')
 
-														/* @ts-ignore */
 														const key = fourBack.parent.children
 															?.find(child =>
 																child.type ===
 																	'mcdoc:index_body'
+																/* @ts-ignore */
 															)?.children?.[0]?.value
 
 														const indexGuess =
@@ -277,11 +277,11 @@ export async function generate(
 													break
 												case 'mcdoc:type_alias':
 													{
-														/* @ts-ignore */
 														container = fourBack?.parent?.children
 															?.find(child =>
 																child.type ===
 																	'mcdoc:identifier'
+																/* @ts-ignore */
 															)?.value
 													}
 													break
@@ -298,19 +298,19 @@ export async function generate(
 											switch (fiveBack?.type) {
 												case 'mcdoc:struct/field/pair':
 													{
-														/* @ts-ignore */
 														const key = fiveBack.children?.find(
 															child =>
 																child.type ===
 																	'mcdoc:identifier',
+															/* @ts-ignore */
 														)?.value
 														const sevenBack = fiveBack.parent
 															?.parent
-														/* @ts-ignore */
 														const foundRoot = sevenBack?.children
 															?.find(child =>
 																child.type ===
 																	'mcdoc:identifier'
+																/* @ts-ignore */
 															)?.value
 
 														if (foundRoot) {
@@ -321,7 +321,6 @@ export async function generate(
 															switch (sevenBack?.parent?.type) {
 																case 'mcdoc:type/list':
 																	{
-																		/* @ts-ignore */
 																		const nineBack = sevenBack
 																			.parent?.parent
 																		/* @ts-ignore */
@@ -330,9 +329,9 @@ export async function generate(
 																				child =>
 																					child.type ===
 																						'mcdoc:identifier',
+																				/* @ts-ignore */
 																			)?.value
 																		// Credits husk
-																		/* @ts-ignore */
 																		const actualRoot =
 																			nineBack?.parent
 																				?.parent?.parent
@@ -340,6 +339,7 @@ export async function generate(
 																				?.find(child =>
 																					child.type ===
 																						'mcdoc:identifier'
+																					/* @ts-ignore */
 																				)?.value
 																		if (actualRoot) {
 																			container =
@@ -352,12 +352,12 @@ export async function generate(
 																	}
 																	break
 																case 'mcdoc:type/union': {
-																	/* @ts-ignore */
 																	const actualRoot = sevenBack
 																		.parent?.parent?.children
 																		?.find(child =>
 																			child.type ===
 																				'mcdoc:identifier'
+																			/* @ts-ignore */
 																		)?.value
 
 																	// block state definition, this is fragile
@@ -377,11 +377,11 @@ export async function generate(
 													break
 												case 'mcdoc:type_alias':
 													{
-														/* @ts-ignore */
 														const root = fiveBack?.children?.find(
 															child =>
 																child.type ===
 																	'mcdoc:identifier',
+															/* @ts-ignore */
 														)?.value
 
 														container = `${root}.__struct_list`
@@ -392,9 +392,9 @@ export async function generate(
 										break
 									case 'mcdoc:type_alias':
 										{
-											/* @ts-ignore */
 											const root = fourBack?.children?.find(child =>
 												child.type === 'mcdoc:identifier'
+												/* @ts-ignore */
 											)?.value
 
 											if (root) {
@@ -420,14 +420,14 @@ export async function generate(
 								switch (fourBack?.type) {
 									case 'mcdoc:struct/field/pair':
 										{
-											/* @ts-ignore */
 											const key = fourBack.children?.find(child =>
 												child.type === 'mcdoc:identifier'
+												/* @ts-ignore */
 											)?.value
 											const sixBack = fourBack.parent?.parent
-											/* @ts-ignore */
 											const parentKey = sixBack?.children?.find(
 												child => child.type === 'mcdoc:identifier',
+												/* @ts-ignore */
 											)?.value
 
 											if (key) {
@@ -435,16 +435,16 @@ export async function generate(
 													container = `${parentKey}.${key}`
 												} else {
 													// memories
-													/* @ts-ignore */
 													const actualParentKey = sixBack?.parent
 														?.children?.find(child =>
 															child.type === 'mcdoc:identifier'
+															/* @ts-ignore */
 														)?.value
 
-													/* @ts-ignore */
 													const root = sixBack?.parent?.parent
 														?.parent?.children?.find(child =>
 															child.type === 'mcdoc:identifier'
+															/* @ts-ignore */
 														)?.value
 
 													container =
@@ -454,16 +454,16 @@ export async function generate(
 												// advancement criteria trigger
 												const sevenBack = fourBack?.parent?.parent
 													?.parent
-												/* @ts-ignore */
 												const parentKey = sevenBack?.children?.find(
 													child =>
 														child.type === 'mcdoc:identifier',
+													/* @ts-ignore */
 												)?.value
 
-												/* @ts-ignore */
 												const root = sevenBack?.parent?.parent
 													?.children?.find(child =>
 														child.type === 'mcdoc:identifier'
+														/* @ts-ignore */
 													)?.value
 
 												container =
@@ -477,11 +477,11 @@ export async function generate(
 												switch (fourBack?.parent?.type) {
 													case 'mcdoc:type_alias':
 														{
-															/* @ts-ignore */
 															const root = fourBack?.parent
 																?.children?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 															container =
 																`${root}.__union.__struct_${
@@ -491,19 +491,19 @@ export async function generate(
 														break
 													case 'mcdoc:struct/field/pair':
 														{
-															/* @ts-ignore */
 															const parentKey = fourBack?.parent
 																.children?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
-															/* @ts-ignore */
 															const root = fourBack?.parent
 																?.parent?.parent?.children
 																?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
 															container = `${root}.${parentKey}`
@@ -533,19 +533,19 @@ export async function generate(
 															// book lines
 															const sevenBack = fourBack?.parent
 																?.parent?.parent
-															/* @ts-ignore */
 															const parentKey = sevenBack
 																?.children?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
-															/* @ts-ignore */
 															const root = sevenBack?.parent
 																?.parent?.children?.find(
 																	child =>
 																		child.type ===
 																			'mcdoc:identifier',
+																	/* @ts-ignore */
 																)?.value
 
 															container =
@@ -555,28 +555,28 @@ export async function generate(
 													case 'mcdoc:type/list':
 														{
 															// texture meta
-															/* @ts-ignore */
 															const parentKey = fourBack?.parent
 																.parent?.children?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
-															/* @ts-ignore */
 															const rootKey = fourBack?.parent
 																?.parent?.parent?.parent?.parent
 																?.children?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
-															/* @ts-ignore */
 															const root = fourBack?.parent
 																?.parent?.parent?.parent?.parent
 																?.parent?.parent?.children
 																?.find(child =>
 																	child.type ===
 																		'mcdoc:identifier'
+																	/* @ts-ignore */
 																)?.value
 
 															container =
@@ -594,39 +594,39 @@ export async function generate(
 							switch (threeBack?.type) {
 								case 'mcdoc:enum':
 									{
-										/* @ts-ignore */
 										const root = threeBack?.children?.find(child =>
 											child.type === 'mcdoc:identifier'
+											/* @ts-ignore */
 										)?.value
 
 										if (root) {
 											container = root
 										} else {
 											// inline enum
-											/* @ts-ignore */
 											const parentKey = threeBack?.parent?.children
 												?.find(child =>
 													child.type === 'mcdoc:identifier'
+													/* @ts-ignore */
 												)?.value
-											/* @ts-ignore */
 											const root = threeBack?.parent?.parent?.parent
 												?.children?.find(child =>
 													child.type === 'mcdoc:identifier'
+													/* @ts-ignore */
 												)?.value
 
 											if (root) {
 												container = `${root}.${parentKey}`
 											} else {
-												/* @ts-ignore */
 												const rootKey = threeBack?.parent?.parent
 													?.parent?.parent?.children?.find(child =>
 														child.type === 'mcdoc:identifier'
+														/* @ts-ignore */
 													)?.value
-												/* @ts-ignore */
 												const root = threeBack?.parent?.parent
 													?.parent?.parent?.parent?.parent
 													?.children?.find(child =>
 														child.type === 'mcdoc:identifier'
+														/* @ts-ignore */
 													)?.value
 
 												container =
@@ -640,40 +640,40 @@ export async function generate(
 										switch (_parent?.type) {
 											case 'mcdoc:struct':
 												{
-													/* @ts-ignore */
 													container = _parent?.children?.find(
 														child =>
 															child.type === 'mcdoc:identifier',
+														/* @ts-ignore */
 													)?.value
 												}
 												break
 											case 'mcdoc:dispatch_statement':
 												{
 													if (_parent?.children) {
-														/* @ts-ignore */
 														container = _parent?.children?.find(
 															child =>
 																child.type ===
 																	'resource_location',
+															/* @ts-ignore */
 														)?.path?.join('_')
 													}
 												}
 												break
 											case 'mcdoc:enum':
 												{
-													/* @ts-ignore */
 													container = _parent?.children?.find(
 														child =>
 															child.type === 'mcdoc:identifier',
+														/* @ts-ignore */
 													)?.value
 												}
 												break
 											case 'mcdoc:type_alias':
 												{
-													/* @ts-ignore */
 													container = _parent?.children?.find(
 														child =>
 															child.type === 'mcdoc:identifier',
+														/* @ts-ignore */
 													)?.value
 												}
 												break
@@ -681,13 +681,13 @@ export async function generate(
 									}
 									break
 								case 'mcdoc:struct/field/pair': {
-									/* @ts-ignore */
 									const key = threeBack.children?.find(child =>
 										child.type === 'mcdoc:identifier'
+										/* @ts-ignore */
 									)?.value
-									/* @ts-ignore */
 									const root = threeBack.parent?.parent?.children
 										?.find(child => child.type === 'mcdoc:identifier')
+										/* @ts-ignore */
 										?.value
 
 									container = `${root}.${key}`
@@ -730,10 +730,10 @@ export async function generate(
 										) // THIS IS REALLY REALLY BAD
 									}
 								} else {
-									/* @ts-ignore */
 									const key = `${
-										_parent?.children?.[3]?.children?.[0].value
-									}`.replace(/[\%\, ]/, '__') // should be sanitized enough
+										/* @ts-ignore */
+										_parent?.children?.[3]?.children?.[0].value}`
+										.replace(/[\%\, ]/, '__') // should be sanitized enough
 
 									setLocale(`__dispatch.${key}`)
 								}
@@ -751,9 +751,9 @@ export async function generate(
 					internal_locales[parent]
 				) {
 					const attributes = _child.children?.[0]?.children?.[0]?.children
-					/* @ts-ignore */
 					if (
 						attributes && attributes.length === 1 &&
+						/* @ts-ignore */
 						!attributes[0].children && attributes[0].value === 'id'
 					) {
 						/* @ts-ignore */
