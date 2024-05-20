@@ -61,7 +61,7 @@
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "engines": {
-    "vscode": "^1.67.0"
+    "vscode": "^1.82.0"
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
@@ -253,11 +253,6 @@
     "workspaceContains:**/pack.mcmeta",
     "workspaceContains:**/*.mcdoc",
     "workspaceContains:**/*.mcfunction",
-    "onLanguage:mcdoc",
-    "onLanguage:mcfunction",
-    "onCommand:spyglassmc.createFile",
-    "onCommand:spyglassmc.dataHackPubify",
-    "onCommand:spyglassmc.regenerateCache",
-    "onCommand:spyglassmc.showCacheRoot"
+    "onCommand:spyglassmc.regenerateCache"
   ]
 }
