@@ -224,8 +224,11 @@ function validate<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 			}
 			else {
 				parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'type_mismatch' && e.node === node));
-				if (!parsingResults.some(r => r.errors.some(e => e.kind === 'unknown_key'))) {
+				if (parsingResults.some(r => !r.errors.some(e => e.kind === 'unknown_key'))) {
 					parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'unknown_key'));
+				}
+				if (parsingResults.some(r => !r.errors.some(e => e.kind === 'missing_key'))) {
+					parsingResults = parsingResults.filter(r => !r.errors.some(e => e.kind === 'missing_key'));
 				}
 				errors.push(...parsingResults.sort((a, b) => a.errors.length - b.errors.length)[0].errors);
 			}
@@ -423,7 +426,7 @@ function simplify<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 			let values: McdocType[] = [];
 
 			for (const index of typeDef.parallelIndices) {
-				let lookup: string | undefined;
+				let lookup: string | undefined = undefined;
 				if (index.kind === 'static') {
 					if (index.value === '%fallback') {
 						values = child.fields.filter(f => f.kind === 'pair').map(f => f.type);
