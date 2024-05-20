@@ -87,7 +87,7 @@ export function definition(
 			inferType: node => {
 				switch (node.type) {
 					case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
-					case 'json:number': return { kind: 'literal', value: { kind: 'double', value: Number(node.value.value) } }
+					case 'json:number': return { kind: 'literal', value: { kind: node.value.type, value: Number(node.value.value) } }
 					case 'json:null': return { kind: 'union', members: [] } // null is always invalid? 
 					case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
 					case 'json:array': return { kind: 'list', item: { kind: 'any' } }
@@ -101,11 +101,18 @@ export function definition(
 			},
 			isEquivalent: (inferred, def) => {
 				switch (inferred.kind) {
-					case 'list': return (['list', 'byte_array', 'int_array', 'long_array', 'tuple'] as mcdoc.McdocType['kind'][]).includes(def.kind);
-					case 'struct': return def.kind === 'struct';
-					case 'literal':
-						return inferred.value.kind === 'double'
-							&& (def.kind === inferred.value.kind || def.kind === 'literal' && !['boolean', 'string'].includes(def.value.kind))
+					case 'list':
+						return (['list', 'byte_array', 'int_array', 'long_array', 'tuple'] as mcdoc.McdocType['kind'][]).includes(def.kind);
+					case 'struct':
+						return def.kind === 'struct';
+					case 'byte':
+					case 'short':
+					case 'int':
+					case 'long':
+						return [ 'byte', 'short', 'int', 'long', 'float', 'double' ].includes(def.kind);
+					case 'float':
+					case 'double':
+						return [ 'float', 'double' ].includes(def.kind);
 					default: return false;
 				}
 			},
@@ -117,7 +124,14 @@ export function definition(
 					return node.children.filter(n => n.value).map(n => n.value as JsonNode)
 				}
 				return node.children?.filter(n => n) as JsonNode[] ?? []
-			}, 
+			},
+			getRange: (node, err) => {
+				if ((node.type === 'json:object' && err === 'missing_key')
+					|| node.type === 'json:array' && err === 'invalid_collection_length') {
+					return { start: node.range.start, end: node.range.start }
+				}
+				return node.range;
+			},
 			attachTypeInfo: (node, definition) => {}, //TODO
 		});
 

@@ -203,15 +203,15 @@ export const PrimitiveArrayKinds = Object.freeze(
 )
 export type PrimitiveArrayKind = (typeof PrimitiveArrayKinds)[number]
 
-export interface ListType extends McdocBaseType {
+export interface ListType<T extends McdocType = McdocType> extends McdocBaseType {
 	kind: 'list'
-	item: McdocType
+	item: T
 	lengthRange?: NumericRange
 }
 
-export interface TupleType extends McdocBaseType {
+export interface TupleType<T extends McdocType = McdocType> extends McdocBaseType {
 	kind: 'tuple'
-	items: McdocType[]
+	items: T[]
 }
 
 export interface McdocBaseType {
