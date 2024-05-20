@@ -83,7 +83,9 @@ export interface ReferenceType extends McdocBaseType {
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType> extends McdocBaseType {
+export interface UnionType<T extends McdocType = McdocType>
+	extends McdocBaseType
+{
 	kind: 'union'
 	members: T[]
 }
@@ -261,109 +263,113 @@ export namespace McdocType {
 		let attributesString = ''
 		if (type.attributes?.length) {
 			for (const attribute of type.attributes) {
-				attributesString += `#[${attribute.name}${attribute.value ? '=<value ...>' : ''}] `
+				attributesString += `#[${attribute.name}${
+					attribute.value ? '=<value ...>' : ''
+				}] `
 			}
 		}
-		let typeString: string;
+		let typeString: string
 		switch (type.kind) {
 			case 'any':
 			case 'boolean':
 				typeString = type.kind
-				break;
+				break
 			case 'byte':
 				typeString = `byte${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'byte_array':
 				typeString = `byte${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
-				break;
+				break
 			case 'concrete':
 				typeString = `${toString(type.child)}${
 					type.typeArgs.length
 						? `<${type.typeArgs.map(toString).join(', ')}>`
 						: ''
 				}`
-				break;
+				break
 			case 'dispatcher':
 				typeString = `${type.registry ?? 'spyglass:unknown'}[${
 					indicesToString(
 						type.parallelIndices,
 					)
 				}]`
-				break;
+				break
 			case 'double':
 				typeString = `double${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'enum':
 				typeString = '<enum ...>'
-				break;
+				break
 			case 'float':
 				typeString = `float${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'indexed':
 				typeString = `${toString(type.child)}${
 					indicesToString(type.parallelIndices)
 				}`
-				break;
+				break
 			case 'int':
 				typeString = `int${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'int_array':
 				typeString = `int${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
-				break;
+				break
 			case 'list':
-				typeString = `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
-				break;
+				typeString = `[${toString(type.item)}]${
+					rangeToString(type.lengthRange)
+				}`
+				break
 			case 'literal':
 				typeString = `${type.value}`
-				break;
+				break
 			case 'long':
 				typeString = `long${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'long_array':
 				typeString = `long${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
-				break;
+				break
 			case 'reference':
 				typeString = type.path ?? '<unknown_reference>'
-				break;
+				break
 			case 'short':
 				typeString = `short${rangeToString(type.valueRange)}`
-				break;
+				break
 			case 'string':
 				typeString = `string${rangeToString(type.lengthRange)}`
-				break;
+				break
 			case 'struct':
 				typeString = '<struct ...>'
-				break;
+				break
 			case 'template':
 				typeString = `${toString(type.child)}${
 					type.typeParams.length
 						? `<${type.typeParams.map((v) => `?${v.path}`).join(', ')}>`
 						: ''
 				}`
-				break;
+				break
 			case 'tuple':
 				typeString = `[${type.items.map((v) => toString(v)).join(',')}${
 					type.items.length === 1 ? ',' : ''
 				}]`
-				break;
+				break
 			case 'union':
 				typeString = `(${type.members.map(toString).join(' | ')})`
-				break;
+				break
 			case 'unsafe':
 				typeString = 'unsafe'
-				break;
+				break
 			default:
 				Dev.assertNever(type)
 		}
