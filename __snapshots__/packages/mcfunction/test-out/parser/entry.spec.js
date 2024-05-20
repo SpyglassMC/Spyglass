@@ -22,77 +22,13 @@ exports['mcfunction parser entry() Parse "# this is a comment ⧵ ↓ still a co
         "type": "comment",
         "range": {
           "start": 0,
-          "end": 22
-        },
-        "comment": " this is a comment \\ "
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 24,
           "end": 39
         },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 24,
-              "end": 29
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 24,
-                  "end": 29
-                },
-                "value": "still"
-              }
-            ],
-            "path": [
-              "still"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 29,
-              "end": 39
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 29,
-                  "end": 39
-                },
-                "value": " a comment"
-              }
-            ],
-            "path": []
-          }
-        ]
+        "comment": " this is a comment still a comment"
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 24,
-        "end": 29
-      },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 29,
-        "end": 39
-      },
-      "message": "Trailing data encountered: “ a comment”",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
@@ -226,76 +162,12 @@ exports['mcfunction parser entry() Parse "$ this is a macro ⧵ ↓ this is stil
         "type": "mcfunction:command_macro",
         "range": {
           "start": 0,
-          "end": 20
-        }
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 22,
           "end": 43
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 22,
-              "end": 26
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 22,
-                  "end": 26
-                },
-                "value": "this"
-              }
-            ],
-            "path": [
-              "this"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 26,
-              "end": 43
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 26,
-                  "end": 43
-                },
-                "value": " is still a macro"
-              }
-            ],
-            "path": []
-          }
-        ]
+        }
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 22,
-        "end": 26
-      },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 26,
-        "end": 43
-      },
-      "message": "Trailing data encountered: “ is still a macro”",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'] = {
@@ -676,7 +548,7 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" 1'] = {
         "type": "mcfunction:command",
         "range": {
           "start": 0,
-          "end": 14
+          "end": 20
         },
         "children": [
           {
@@ -724,48 +596,19 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" 1'] = {
             "type": "mcfunction:command_child",
             "range": {
               "start": 12,
-              "end": 14
+              "end": 20
             },
             "children": [
               {
                 "type": "mcfunction:command_child/trailing",
                 "range": {
                   "start": 12,
-                  "end": 14
+                  "end": 20
                 },
-                "value": " \\"
+                "value": " data"
               }
             ],
             "path": []
-          }
-        ]
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 16,
-          "end": 20
-        },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 16,
-              "end": 20
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 16,
-                  "end": 20
-                },
-                "value": "data"
-              }
-            ],
-            "path": [
-              "data"
-            ]
           }
         ]
       }
@@ -783,25 +626,9 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" 1'] = {
     {
       "range": {
         "start": 12,
-        "end": 14
-      },
-      "message": "Trailing data encountered: “ \\”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 16,
         "end": 20
       },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 20,
-        "end": 20
-      },
-      "message": "Expected more arguments",
+      "message": "Trailing data encountered: “ data”",
       "severity": 3
     }
   ]
@@ -869,56 +696,9 @@ exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵�
         "type": "comment",
         "range": {
           "start": 12,
-          "end": 29
-        },
-        "comment": " comment start \\"
-      },
-      {
-        "type": "mcfunction:command",
-        "range": {
-          "start": 31,
           "end": 35
         },
-        "children": [
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 31,
-              "end": 34
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/literal",
-                "range": {
-                  "start": 31,
-                  "end": 34
-                },
-                "value": "end"
-              }
-            ],
-            "path": [
-              "end"
-            ]
-          },
-          {
-            "type": "mcfunction:command_child",
-            "range": {
-              "start": 34,
-              "end": 35
-            },
-            "children": [
-              {
-                "type": "mcfunction:command_child/trailing",
-                "range": {
-                  "start": 34,
-                  "end": 35
-                },
-                "value": " "
-              }
-            ],
-            "path": []
-          }
-        ]
+        "comment": " comment start end "
       },
       {
         "type": "mcfunction:command",
@@ -972,24 +752,7 @@ exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵�
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 31,
-        "end": 34
-      },
-      "message": "Expected “execute” or “say”",
-      "severity": 3
-    },
-    {
-      "range": {
-        "start": 34,
-        "end": 35
-      },
-      "message": "Trailing data encountered: “ ”",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" 1'] = {

@@ -11,7 +11,7 @@ import { command } from './command.js'
 /**
  * @throws When there's no command tree associated with `commandTreeName`.
  */
-export function entry(
+function mcfunction(
 	commandTreeName: string,
 	argument: ArgumentParserGetter,
 ): core.Parser<McfunctionNode> {
@@ -52,3 +52,8 @@ export function entry(
 const comment = core.comment({
 	singleLinePrefixes: new Set(['#']),
 })
+
+export const entry = (
+	commandTreeName: string,
+	argument: ArgumentParserGetter,
+) => core.concatOnTrailingBackslash(mcfunction(commandTreeName, argument), [])

@@ -94,12 +94,9 @@ function dispatch(
 				parser: argument(treeNode) ?? unknown(treeNode),
 			}))
 		const literalParser = literalTreeNodes.length
-			? core.concatOnTrailingBackslash(
-				literal(
-					literalTreeNodes.map(([name, _treeNode]) => name),
-					parent.type === 'root',
-				),
-				[' ', '\n', '\r'],
+			? literal(
+				literalTreeNodes.map(([name, _treeNode]) => name),
+				parent.type === 'root',
 			)
 			: undefined
 
