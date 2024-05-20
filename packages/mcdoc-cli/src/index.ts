@@ -26,15 +26,15 @@ const cache_root = join(dirname(fileURLToPath(import.meta.url)), 'cache')
 const CLI = yargs(hideBin(process.argv))
 
 export type Logger = {
-	log: (...log_args: any[]) => void,
+	log: (...log_args: any[]) => void
 
-	warn: (...log_args: any[]) => void,
+	warn: (...log_args: any[]) => void
 
-	error: (...log_args: any[]) => void,
+	error: (...log_args: any[]) => void
 
-	info: (...log_args: any[]) => void,
+	info: (...log_args: any[]) => void
 
-	trace: (message?: any, ...params: any) => void,
+	trace: (message?: any, ...params: any) => void
 }
 
 await CLI.scriptName('mcdoc')
@@ -86,9 +86,10 @@ await CLI.scriptName('mcdoc')
 			if (args.module) include.push('modules')
 
 			console.info(
-				`Generating JSON files${args.locale || args.module
-					? `, including ${include.join(', ')}`
-					: ''
+				`Generating JSON files${
+					args.locale || args.module
+						? `, including ${include.join(', ')}`
+						: ''
 				}`,
 			)
 
@@ -144,7 +145,7 @@ await CLI.scriptName('mcdoc')
 				}
 			}
 
-			const symbols: { resource: string, children: AstNode[] }[] = []
+			const symbols: { resource: string; children: AstNode[] }[] = []
 
 			let locales: Record<string, string> = {}
 
@@ -152,7 +153,14 @@ await CLI.scriptName('mcdoc')
 
 			for await (const doc_file of walk(project_path)) {
 				if (doc_file.path.endsWith('.mcdoc')) {
-					const response = await generate(project_path, generated_path, args, doc_file, service, logger)
+					const response = await generate(
+						project_path,
+						generated_path,
+						args,
+						doc_file,
+						service,
+						logger,
+					)
 
 					symbols.push(...response[0])
 					locales = { ...locales, ...response[1] }
@@ -183,16 +191,25 @@ await CLI.scriptName('mcdoc')
 				if (args.locale) {
 					const locale_path = join('out', 'locale', 'en-us.json')
 					if (await fs.exists(locale_path)) {
-						const old_locales = JSON.parse(await fs.readFile(locale_path, 'utf-8'))
+						const old_locales = JSON.parse(
+							await fs.readFile(locale_path, 'utf-8'),
+						)
 
 						await fs.ensureDir(join('out', 'meta'))
 
-						await fs.writeFile(join('out', 'meta', 'locale.json'), JSON.stringify({
-							old_keys: Object.keys(old_locales),
-							old_values: Object.values(old_locales),
-							new_keys: Object.keys(locales),
-							new_values: Object.values(locales),
-						}, undefined, 3))
+						await fs.writeFile(
+							join('out', 'meta', 'locale.json'),
+							JSON.stringify(
+								{
+									old_keys: Object.keys(old_locales),
+									old_values: Object.values(old_locales),
+									new_keys: Object.keys(locales),
+									new_values: Object.values(locales),
+								},
+								undefined,
+								3,
+							),
+						)
 					}
 					await fs.writeFile(
 						join('out', 'locale', 'en-us.json'),

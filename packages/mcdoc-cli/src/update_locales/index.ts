@@ -6,16 +6,18 @@ import walk from 'klaw'
 import { ofetch } from 'ofetch'
 
 type MetaLocale = {
-	old_keys: string[],
-	old_values: string[],
-	new_keys: string[],
-	new_values: string[],
+	old_keys: string[]
+	old_values: string[]
+	new_keys: string[]
+	new_values: string[]
 }
 
 export async function update_locales() {
 	console.log('Reading locale diff')
 
-	const locales: MetaLocale = JSON.parse(await fs.readFile(join('out', 'meta', 'locale.json'), 'utf-8'))
+	const locales: MetaLocale = JSON.parse(
+		await fs.readFile(join('out', 'meta', 'locale.json'), 'utf-8'),
+	)
 
 	const removed_keys: [string, string][] = []
 	const added_keys: [string, string][] = []
@@ -39,7 +41,10 @@ export async function update_locales() {
 		if (keyRemoved && valueRemoved) {
 			removed_keys.push([locales.old_keys[i], locales.old_values[i]])
 		} else if (keyRemoved && !valueRemoved) {
-			if (locales.new_values.filter(value => value === locales.old_values[i]).length > 1) {
+			if (
+				locales.new_values.filter(value => value === locales.old_values[i])
+					.length > 1
+			) {
 				removed_keys.push([locales.old_keys[i], locales.old_values[i]])
 				console.log('Duplicate key removed:', locales.old_keys[i])
 			} else {
@@ -49,12 +54,18 @@ export async function update_locales() {
 			}
 		} else {
 			// value changed
-			changed_values.push([locales.old_keys[i], [locales.old_values[i], locales.new_values[keyIndex]]])
+			changed_values.push([locales.old_keys[i], [
+				locales.old_values[i],
+				locales.new_values[keyIndex],
+			]])
 			changed_values_count++
 		}
 	}
 	for (let i = 0; i < locales.new_keys.length; i++) {
-		if (!moved_keys[locales.new_keys[i]] && !locales.old_keys.includes(locales.new_keys[i])) {
+		if (
+			!moved_keys[locales.new_keys[i]] &&
+			!locales.old_keys.includes(locales.new_keys[i])
+		) {
 			added_keys.push([locales.new_keys[i], locales.new_values[i]])
 		}
 	}
@@ -66,7 +77,9 @@ export async function update_locales() {
 		console.log('Moving keys')
 		for await (const locale_file of walk(join('out', 'locale'))) {
 			if (!locale_file.path.endsWith('en-us.json')) {
-				const locale = JSON.parse(await fs.readFile(locale_file.path, 'utf-8'))
+				const locale = JSON.parse(
+					await fs.readFile(locale_file.path, 'utf-8'),
+				)
 
 				let have_moved = 0
 
@@ -79,7 +92,10 @@ export async function update_locales() {
 					}
 				}
 
-				await fs.writeFile(locale_file.path, JSON.stringify(locale, undefined, 3))
+				await fs.writeFile(
+					locale_file.path,
+					JSON.stringify(locale, undefined, 3),
+				)
 
 				if (have_moved > 0) {
 					console.log(`Moved ${have_moved} keys in ${locale_file.path}`)
@@ -98,7 +114,8 @@ export async function update_locales() {
 			const isPeriod = to.slice(-1)
 
 			if (isPeriod !== '.' && from.slice(0, -1) !== to) {
-				description += `- \`${key}\` changed, before/after:\n  - \`${from}\`\n  - \`${to}\`\n`
+				description +=
+					`- \`${key}\` changed, before/after:\n  - \`${from}\`\n  - \`${to}\`\n`
 			}
 		}
 
