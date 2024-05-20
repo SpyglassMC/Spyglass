@@ -80,6 +80,7 @@ const Suites: Partial<
 				'{"text":"hello world"}',
 				'[""]',
 				'["hello \\ \nworld"]',
+				'["hello\\\n\nworld"]',
 				'["\\u12\\  \n  34"]',
 				'["\\uab\\  \n  nd"]',
 			],

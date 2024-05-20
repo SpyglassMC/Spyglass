@@ -53,6 +53,7 @@ describe('mcfunction parser command()', () => {
 		{ content: 'sa\\\ny hi' },
 		{ content: 'sa\\  \n  y hi' },
 		{ content: 'sa\\  \n  y h\\ \n i' },
+		{ content: 'sa\\\n\ny h\\ \n i' },
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {

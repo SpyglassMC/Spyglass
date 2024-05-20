@@ -170,6 +170,68 @@ exports['mcfunction argument minecraft:component Parse "["hello ⧵ ↓world"]" 
   "errors": []
 }
 
+exports['mcfunction argument minecraft:component Parse "["hello⧵↓↓world"]" 1'] = {
+  "node": {
+    "type": "json:array",
+    "range": {
+      "start": 0,
+      "end": 17
+    },
+    "children": [
+      {
+        "type": "item",
+        "range": {
+          "start": 1,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "json:string",
+            "range": {
+              "start": 1,
+              "end": 16
+            },
+            "value": "helloworld",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 2,
+                  "end": 2
+                }
+              }
+            ]
+          }
+        ],
+        "value": {
+          "type": "json:string",
+          "range": {
+            "start": 1,
+            "end": 16
+          },
+          "value": "helloworld",
+          "valueMap": [
+            {
+              "inner": {
+                "start": 0,
+                "end": 0
+              },
+              "outer": {
+                "start": 2,
+                "end": 2
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['mcfunction argument minecraft:component Parse "["⧵u12⧵  ↓  34"]" 1'] = {
   "node": {
     "type": "json:array",

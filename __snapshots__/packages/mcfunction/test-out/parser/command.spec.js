@@ -677,6 +677,60 @@ exports['mcfunction parser command() Parse "sa⧵↓y hi" 1'] = {
   "errors": []
 }
 
+exports['mcfunction parser command() Parse "sa⧵↓↓y h⧵ ↓ i" 1'] = {
+  "node": {
+    "type": "mcfunction:command",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 0,
+              "end": 6
+            },
+            "value": "say"
+          }
+        ],
+        "path": [
+          "say"
+        ]
+      },
+      {
+        "type": "mcfunction:command_child",
+        "range": {
+          "start": 7,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child/literal",
+            "range": {
+              "start": 7,
+              "end": 13
+            },
+            "value": "hi"
+          }
+        ],
+        "path": [
+          "say",
+          "hi"
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['mcfunction parser command() Should not exceed max call stack 1'] = {
   "node": "OMITTED",
   "errors": [

@@ -145,6 +145,7 @@ describe('concatOnTrailingBackslash()', () => {
 				{ content: 'tru\\ \n e' },
 				{ content: 'tru\\ \n \\\n e' },
 				{ content: 'tru\\e \\ \n e' },
+				{ content: 'tru\\\n\ne' },
 			],
 		},
 	]
