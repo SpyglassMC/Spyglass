@@ -18,6 +18,11 @@ describe('mcfunction parser entry()', () => {
 		{ content: '$ this is a macro command' },
 		{ content: '# this is a comment\nsay hi\n$this is a macro \n' },
 		{ content: 'execute if true if true run say hi' },
+		{ content: '# this is a comment \\ \n still a comment' },
+		{ content: '$ this is a macro \\ \n this is still a macro' },
+		{ content: 'sa\\  \n  y \\ \n hi' },
+		{ content: 'say trailing \\\n data' },
+		{ content: 'say \\\n hi \n # comment start \\\n end \n say hi' },
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
