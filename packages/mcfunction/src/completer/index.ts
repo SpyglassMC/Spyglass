@@ -44,8 +44,8 @@ export function command(
 ): core.Completer<CommandNode> {
 	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
-		const selectedChildNode: DeepReadonly<core.AstNode> | undefined =
-			node.children[index]?.children[0]
+		const selectedChildNode: DeepReadonly<core.AstNode> | undefined = node
+			.children[index]?.children[0]
 		if (selectedChildNode) {
 			return core.completer.dispatch(selectedChildNode, ctx)
 		}

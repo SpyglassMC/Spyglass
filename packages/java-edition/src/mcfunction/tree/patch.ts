@@ -16,44 +16,46 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			...(ReleaseVersion.cmp(release, '1.16') >= 0
 				? {
-						attribute: {
-							children: {
-								target: {
-									children: {
-										attribute: {
-											properties: {
-												category: 'attribute',
-											},
-											children: {
-												modifier: {
-													children: {
-														add: {
-															children: {
-																uuid: {
-																	properties: {
-																		category: 'attribute_modifier_uuid',
-																		usageType: 'definition',
-																	},
+					attribute: {
+						children: {
+							target: {
+								children: {
+									attribute: {
+										properties: {
+											category: 'attribute',
+										},
+										children: {
+											modifier: {
+												children: {
+													add: {
+														children: {
+															uuid: {
+																properties: {
+																	category:
+																		'attribute_modifier_uuid',
+																	usageType: 'definition',
 																},
 															},
 														},
-														remove: {
-															children: {
-																uuid: {
-																	properties: {
-																		category: 'attribute_modifier_uuid',
-																	},
+													},
+													remove: {
+														children: {
+															uuid: {
+																properties: {
+																	category:
+																		'attribute_modifier_uuid',
 																},
 															},
 														},
-														value: {
-															children: {
-																get: {
-																	children: {
-																		uuid: {
-																			properties: {
-																				category: 'attribute_modifier_uuid',
-																			},
+													},
+													value: {
+														children: {
+															get: {
+																children: {
+																	uuid: {
+																		properties: {
+																			category:
+																				'attribute_modifier_uuid',
 																		},
 																	},
 																},
@@ -67,7 +69,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								},
 							},
 						},
-				  }
+					},
+				}
 				: {}),
 			ban: {
 				permission: 3,
@@ -182,46 +185,30 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			...(ReleaseVersion.cmp(release, '1.17') >= 0
 				? {
-						item: {
-							children: {
-								replace: {
-									children: {
-										block: {
-											children: {
-												pos: {
-													children: {
-														slot: {
-															children: {
-																from: {
-																	children: {
-																		block: {
-																			children: {
-																				source: {
-																					children: {
-																						sourceSlot: {
-																							children: {
-																								modifier: {
-																									properties: {
-																										category: 'item_modifier',
+					item: {
+						children: {
+							replace: {
+								children: {
+									block: {
+										children: {
+											pos: {
+												children: {
+													slot: {
+														children: {
+															from: {
+																children: {
+																	block: {
+																		children: {
+																			source: {
+																				children: {
+																					sourceSlot: {
+																						children: {
+																							modifier: {
+																								properties:
+																									{
+																										category:
+																											'item_modifier',
 																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
-																		entity: {
-																			children: {
-																				source: {
-																					children: {
-																						sourceSlot: {
-																							children: {
-																								modifier: {
-																									properties: {
-																										category: 'item_modifier',
-																									},
-																								},
 																							},
 																						},
 																					},
@@ -229,49 +216,18 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																			},
 																		},
 																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-										entity: {
-											children: {
-												targets: {
-													children: {
-														slot: {
-															children: {
-																from: {
-																	children: {
-																		block: {
-																			children: {
-																				source: {
-																					children: {
-																						sourceSlot: {
-																							children: {
-																								modifier: {
-																									properties: {
-																										category: 'item_modifier',
+																	entity: {
+																		children: {
+																			source: {
+																				children: {
+																					sourceSlot: {
+																						children: {
+																							modifier: {
+																								properties:
+																									{
+																										category:
+																											'item_modifier',
 																									},
-																								},
-																							},
-																						},
-																					},
-																				},
-																			},
-																		},
-																		entity: {
-																			children: {
-																				source: {
-																					children: {
-																						sourceSlot: {
-																							children: {
-																								modifier: {
-																									properties: {
-																										category: 'item_modifier',
-																									},
-																								},
 																							},
 																						},
 																					},
@@ -287,35 +243,51 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 											},
 										},
 									},
-								},
-								modify: {
-									children: {
-										block: {
-											children: {
-												pos: {
-													children: {
-														slot: {
-															children: {
-																modifier: {
-																	properties: {
-																		category: 'item_modifier',
+									entity: {
+										children: {
+											targets: {
+												children: {
+													slot: {
+														children: {
+															from: {
+																children: {
+																	block: {
+																		children: {
+																			source: {
+																				children: {
+																					sourceSlot: {
+																						children: {
+																							modifier: {
+																								properties:
+																									{
+																										category:
+																											'item_modifier',
+																									},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
 																	},
-																},
-															},
-														},
-													},
-												},
-											},
-										},
-										entity: {
-											children: {
-												targets: {
-													children: {
-														slot: {
-															children: {
-																modifier: {
-																	properties: {
-																		category: 'item_modifier',
+																	entity: {
+																		children: {
+																			source: {
+																				children: {
+																					sourceSlot: {
+																						children: {
+																							modifier: {
+																								properties:
+																									{
+																										category:
+																											'item_modifier',
+																									},
+																							},
+																						},
+																					},
+																				},
+																			},
+																		},
 																	},
 																},
 															},
@@ -327,18 +299,57 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									},
 								},
 							},
+							modify: {
+								children: {
+									block: {
+										children: {
+											pos: {
+												children: {
+													slot: {
+														children: {
+															modifier: {
+																properties: {
+																	category: 'item_modifier',
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+									entity: {
+										children: {
+											targets: {
+												children: {
+													slot: {
+														children: {
+															modifier: {
+																properties: {
+																	category: 'item_modifier',
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
 						},
-				  }
+					},
+				}
 				: {}),
 			help: {
 				permission: 0,
 			},
 			...(ReleaseVersion.cmp(release, '1.18') >= 0
 				? {
-						jfr: {
-							permission: 4,
-						},
-				  }
+					jfr: {
+						permission: 4,
+					},
+				}
 				: {}),
 			kick: {
 				permission: 3,
@@ -348,16 +359,16 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			...(ReleaseVersion.cmp(release, '1.16') >= 0
 				? {
-						locatebiome: {
-							children: {
-								biome: {
-									properties: {
-										category: 'worldgen/biome',
-									},
+					locatebiome: {
+						children: {
+							biome: {
+								properties: {
+									category: 'worldgen/biome',
 								},
 							},
 						},
-				  }
+					},
+				}
 				: {}),
 			loot: {
 				children: {
@@ -427,27 +438,27 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			...(ReleaseVersion.cmp(release, '1.17') >= 0
 				? {
-						perf: {
-							permission: 4,
-						},
-				  }
+					perf: {
+						permission: 4,
+					},
+				}
 				: {}),
 			...(ReleaseVersion.cmp(release, '1.19') >= 0
 				? {
-						place: {
-							children: {
-								template: {
-									children: {
-										template: {
-											properties: {
-												category: 'structure'
-											}
-										}
-									}
-								}
-							}
+					place: {
+						children: {
+							template: {
+								children: {
+									template: {
+										properties: {
+											category: 'structure',
+										},
+									},
+								},
+							},
 						},
-				  }
+					},
+				}
 				: {}),
 			playsound: Sound,
 			publish: {
@@ -592,10 +603,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			},
 			...(ReleaseVersion.cmp(release, '1.20.2') >= 0
 				? {
-						tick: {
-							permission: 3,
-						},
-				  }
+					tick: {
+						permission: 3,
+					},
+				}
 				: {}),
 			tm: {
 				permission: 0,
