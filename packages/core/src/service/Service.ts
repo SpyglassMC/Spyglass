@@ -55,6 +55,7 @@ export class Service {
 		this.logger = logger
 		this.profilers = profilers
 		this.project = new Project({
+			isDebugging,
 			logger,
 			profilers,
 			...project,
