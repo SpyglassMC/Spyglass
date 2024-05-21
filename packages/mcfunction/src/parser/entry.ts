@@ -53,6 +53,10 @@ const comment = core.comment({
 	singleLinePrefixes: new Set(['#']),
 })
 
+/**
+ * Concatenates lines together on trailing backslashes before running the main
+ * {@link mcfunction} parser
+ */
 export const entry = (
 	commandTreeName: string,
 	argument: ArgumentParserGetter,
