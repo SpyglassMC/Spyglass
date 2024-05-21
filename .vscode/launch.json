@@ -8,9 +8,7 @@
 			"request": "launch",
 			"name": "Launch Client",
 			"runtimeExecutable": "${execPath}",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
-			],
+			"args": ["--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"],
 			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"],
 			"preLaunchTask": "npm: watch"
 		},
@@ -28,7 +26,6 @@
 			"request": "launch",
 			"name": "Run Unit Tests",
 			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
-			"args": ["--timeout", "999999"],
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen"
 		}
