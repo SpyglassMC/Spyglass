@@ -4,7 +4,7 @@ import type {
 	CommandNode,
 	McfunctionNode,
 } from '../node/index.js'
-import { CommandTreeRegistry } from '../tree/index.js'
+import type { RootTreeNode } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 
@@ -12,7 +12,7 @@ import { command } from './command.js'
  * @throws When there's no command tree associated with `commandTreeName`.
  */
 export function entry(
-	commandTreeName: string,
+	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
 ): core.Parser<McfunctionNode> {
 	return (src, ctx) => {
@@ -35,7 +35,7 @@ export function entry(
 				}
 			} else {
 				result = command(
-					CommandTreeRegistry.instance.get(commandTreeName),
+					commandTree,
 					argument,
 				)(src, ctx)
 			}
