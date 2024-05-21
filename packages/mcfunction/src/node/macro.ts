@@ -16,21 +16,26 @@ export namespace CommandMacroNode {
 export interface MacroNode extends core.SequenceNode<MacroChildNode> {
 	type: 'mcfunction:macro'
 	slash?: core.Range
+    children: MacroChildNode[]
 }
 export namespace MacroNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is MacroNode {
-		return (node as MacroNode).type === 'mcfunction:macro'
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
+		obj: T,
+	): obj is core.InheritReadonly<MacroNode, T> {
+		return (obj as MacroNode | undefined)?.type ===
+			'mcfunction:macro'
 	}
 
 	export function mock(range: core.RangeLike): MacroNode {
 		return {
 			type: 'mcfunction:macro',
 			range: core.Range.get(range),
-			children: [],
+			children: [MacroChildNode.mock(range)],
 		}
 	}
 }
+
 
 export interface MacroOptions {
     type?: 'macro' | 'other'
@@ -47,7 +52,18 @@ export interface MacroChildNode extends core.AstNode {
 	//children: [core.AstNode]
 }
 export namespace MacroChildNode {
-	export function is(node: core.AstNode): node is MacroChildNode {
-		return (node as MacroChildNode).type === 'mcfunction:macro_child'
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
+		obj: T,
+	): obj is core.InheritReadonly<MacroChildNode, T> {
+		return (obj as MacroChildNode | undefined)?.type ===
+			'mcfunction:macro_child'
 	}
+    export function mock(range: core.RangeLike): MacroChildNode {
+        return {
+            type: 'mcfunction:macro_child',
+            range: core.Range.get(range),
+            options: {},
+            path: [],
+        }
+    }
 }

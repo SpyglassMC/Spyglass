@@ -18,18 +18,40 @@ export function macro(
 	argument: ArgumentParserGetter,
 ): core.InfallibleParser<MacroNode> {
 	return (src, ctx): MacroNode => {
-		const ans: MacroNode = {
-			type: 'mcfunction:macro',
-			range: core.Range.create(src),
-			children: [],
-		}
-
 		const start = src.cursor
-		if (src.trySkip('$')) {
-			ans.slash = core.Range.create(start, src.cursor)
-		}
 
-		dispatch(ans.children, src, ctx, [], tree, tree, argument)
+        const children: MacroChildNode[] = []
+        const strings: String[] = (src.peekUntil('\n', '\r').split(' '))
+
+        for (const str of strings) {
+            const begin = src.cursor
+            src.readUntil(' ')
+            const end = src.cursor
+            const isMacro = str.match(/\$\(.*\)/)
+            const options: MacroOptions = {
+                type: isMacro ? 'macro' : 'other',
+                colorTokenType: isMacro ? 'keyword' : 'string',
+            }
+            const child: MacroChildNode = {
+                type: 'mcfunction:macro_child',
+                range: core.Range.create(begin, end),
+                options,
+                path: [],
+            }
+            children.push(child)
+            if (isMacro) {
+                ctx.logger.info(`Macro found: ${str}`)
+            }
+        }
+        
+        const ans: MacroNode = {
+            type: 'mcfunction:macro',
+            range: core.Range.create(start, src.cursor),
+            children,
+        }
+
+
+		//dispatch(ans.children, src, ctx, [], tree, tree, argument)
 
         /*
 		if (src.canReadInLine()) {
@@ -110,7 +132,7 @@ export const parser: core.InfallibleParser<MacroChildNode> = (src, ctx): MacroCh
 
     const options: MacroOptions = {
         type: isMacro ? 'macro' : 'other',
-        colorTokenType: isMacro ? 'keyword' : 'literal',
+        colorTokenType: isMacro ? 'keyword' : 'string',
     }
 
 	const ans: MacroChildNode = {
@@ -119,6 +141,8 @@ export const parser: core.InfallibleParser<MacroChildNode> = (src, ctx): MacroCh
 		options,
         path: [],
 	}
+
+    ctx.logger.info(`Macro Child of type ${options.type} found: ${value}`)
 
 	return ans
 }
