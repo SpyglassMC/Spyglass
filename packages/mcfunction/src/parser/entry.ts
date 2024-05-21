@@ -4,7 +4,7 @@ import type {
 	CommandNode,
 	McfunctionNode,
 } from '../node/index.js'
-import { RootTreeNode } from '../tree/index.js'
+import type { RootTreeNode } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 
