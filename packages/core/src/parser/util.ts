@@ -525,17 +525,16 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 ): Parser<N> {
 	return (src, ctx): Result<N> => {
 		let wrappedStr = src.sliceToCursor(0)
-		const wrapper = '\\'
 		const wrappedSrcCursor = wrappedStr.length
 		const indexMap: IndexMap = []
 
 		while (src.canRead()) {
-			wrappedStr += src.readUntil(wrapper)
+			wrappedStr += src.readUntil('\\')
 			if (!src.canRead()) {
 				break
 			}
 
-			// If we get here, then `src.cursor` is at a wrapper
+			// If we get here, then `src.cursor` is at a backslash
 			if (src.hasNonSpaceAheadInLine(1)) {
 				wrappedStr += src.read()
 				continue
