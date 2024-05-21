@@ -532,7 +532,6 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 		while (src.canRead()) {
 			wrappedStr += src.readUntil(wrapper)
 			if (!src.canRead()) {
-				// Stop wrapping `src` if we reach end of file or a terminator before a wrapper
 				break
 			}
 
