@@ -28,6 +28,19 @@ describe('mcfunction parser entry()', () => {
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			const parser = entry(release, () => undefined, true)
+			snapshot(testParser(parser, content))
+		})
+	}
+
+	const casesWithoutBackslashContinuation: { content: string }[] = [
+		{ content: 'say hi' },
+		{ content: 'say hi\nsay hi' },
+		{ content: 'sa\\  \n  y \\ \n hi' },
+		{ content: 'say trailing \\\n data' },
+	]
+	for (const { content } of casesWithoutBackslashContinuation) {
+		it(`Parse "${showWhitespaceGlyph(content)}" without backslash continuation`, () => {
 			const parser = entry(release, () => undefined)
 			snapshot(testParser(parser, content))
 		})

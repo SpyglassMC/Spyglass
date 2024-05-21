@@ -423,7 +423,183 @@ exports['mcfunction parser entry() Parse "say hi" 1'] = {
   "errors": []
 }
 
+exports['mcfunction parser entry() Parse "say hi" without backslash continuation 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 6
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 6
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 6
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
 exports['mcfunction parser entry() Parse "say hi↓say hi" 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 13
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 6
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 6
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 6
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 7,
+          "end": 13
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 7,
+              "end": 10
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 7,
+                  "end": 10
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 11,
+              "end": 13
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 11,
+                  "end": 13
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "say",
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": []
+}
+
+exports['mcfunction parser entry() Parse "say hi↓say hi" without backslash continuation 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
@@ -634,6 +810,141 @@ exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" 1'] = {
   ]
 }
 
+exports['mcfunction parser entry() Parse "say trailing ⧵↓ data" without backslash continuation 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 20
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 14
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "say"
+              }
+            ],
+            "path": [
+              "say"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 4,
+              "end": 12
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 4,
+                  "end": 12
+                },
+                "value": "trailing"
+              }
+            ],
+            "path": [
+              "say",
+              "trailing"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 12,
+              "end": 14
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 12,
+                  "end": 14
+                },
+                "value": " \\"
+              }
+            ],
+            "path": []
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 16,
+          "end": 20
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 16,
+              "end": 20
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 16,
+                  "end": 20
+                },
+                "value": "data"
+              }
+            ],
+            "path": [
+              "data"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 4,
+        "end": 12
+      },
+      "message": "Expected “hi”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 12,
+        "end": 14
+      },
+      "message": "Trailing data encountered: “ \\”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 16,
+        "end": 20
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['mcfunction parser entry() Parse "say ⧵↓ hi ↓ # comment start ⧵↓ end ↓ say hi" 1'] = {
   "node": {
     "type": "mcfunction:entry",
@@ -816,4 +1127,181 @@ exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" 1'] = {
     ]
   },
   "errors": []
+}
+
+exports['mcfunction parser entry() Parse "sa⧵  ↓  y ⧵ ↓ hi" without backslash continuation 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 16
+    },
+    "children": [
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 0,
+                  "end": 3
+                },
+                "value": "sa\\"
+              }
+            ],
+            "path": [
+              "sa\\"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 3,
+              "end": 5
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 3,
+                  "end": 5
+                },
+                "value": "  "
+              }
+            ],
+            "path": []
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 8,
+          "end": 12
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 8,
+              "end": 9
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 8,
+                  "end": 9
+                },
+                "value": "y"
+              }
+            ],
+            "path": [
+              "y"
+            ]
+          },
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 9,
+              "end": 12
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/trailing",
+                "range": {
+                  "start": 9,
+                  "end": 12
+                },
+                "value": " \\ "
+              }
+            ],
+            "path": []
+          }
+        ]
+      },
+      {
+        "type": "mcfunction:command",
+        "range": {
+          "start": 14,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "mcfunction:command_child",
+            "range": {
+              "start": 14,
+              "end": 16
+            },
+            "children": [
+              {
+                "type": "mcfunction:command_child/literal",
+                "range": {
+                  "start": 14,
+                  "end": 16
+                },
+                "value": "hi"
+              }
+            ],
+            "path": [
+              "hi"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 3
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 3,
+        "end": 5
+      },
+      "message": "Trailing data encountered: “  ”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 8,
+        "end": 9
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 9,
+        "end": 12
+      },
+      "message": "Trailing data encountered: “ \\ ”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 14,
+        "end": 16
+      },
+      "message": "Expected “execute” or “say”",
+      "severity": 3
+    }
+  ]
 }

@@ -54,10 +54,16 @@ const comment = core.comment({
 })
 
 /**
- * Concatenates lines together on trailing backslashes before running the main
- * {@link mcfunction} parser
+ * @param supportsBackslashContinuation Whether or not to concatenate lines together on trailing backslashes.
+ * Disabled by default.
  */
 export const entry = (
 	commandTreeName: string,
 	argument: ArgumentParserGetter,
-) => core.concatOnTrailingBackslash(mcfunction(commandTreeName, argument))
+	supportsBackslashContinuation = false,
+) => {
+	const parser = mcfunction(commandTreeName, argument)
+	return supportsBackslashContinuation
+		? core.concatOnTrailingBackslash(parser)
+		: parser
+}

@@ -31,7 +31,7 @@ export const initialize = (
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.entry(releaseVersion, parser.argument),
+		parser: mcf.entry(releaseVersion, parser.argument, true),
 		completer: mcf.completer.entry(releaseVersion, completer.getMockNodes),
 		triggerCharacters: [
 			' ',
