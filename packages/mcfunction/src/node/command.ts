@@ -19,19 +19,6 @@ export namespace CommandNode {
 	}
 }
 
-export interface CommandMacroNode extends core.AstNode {
-	type: 'mcfunction:command_macro'
-}
-
-export namespace CommandMacroNode {
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
-		obj: T,
-	): obj is core.InheritReadonly<CommandMacroNode, T> {
-		return (obj as CommandMacroNode | undefined)?.type ===
-			'mcfunction:command_macro'
-	}
-}
-
 export interface CommandChildNode extends core.AstNode {
 	type: 'mcfunction:command_child'
 	/**
