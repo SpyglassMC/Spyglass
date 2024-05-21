@@ -201,6 +201,14 @@ exports['mcdoc __fixture__ use statement/unknown identifier 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
+            "relations": {
+              "aliasOf": {
+                "category": "mcdoc",
+                "path": [
+                  "::module::Foo"
+                ]
+              }
+            },
             "definition": [
               {
                 "uri": "file:///client.mcdoc",

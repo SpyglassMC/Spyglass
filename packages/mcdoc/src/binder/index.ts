@@ -247,9 +247,14 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		}
 
 		// hoistUseStatement associates the AST node with the binding definition in the file symbol table,
-		// which may get overridden by bindUseStatement in the later stage as an reference to the imported symbol in the global symbol table.
+		// which will get overridden by bindUseStatement in the later stage as an reference to the imported symbol in the global symbol table.
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
+
+		/**
+		 * String representation of the absolute path of the imported symbol.
+		 */
+		const importedPathString = pathArrayToString(resolvePath(path, ctx))
 
 		ctx.symbols
 			.query(
@@ -264,6 +269,14 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				data: {
 					subcategory: 'use_statement_binding',
 					visibility: SymbolVisibility.File,
+					relations: {
+						aliasOf: importedPathString
+							? {
+								category: 'mcdoc',
+								path: [importedPathString],
+							}
+							: undefined,
+					},
 				},
 				usage: { type: 'definition', node: identifier, fullRange: node },
 			})
@@ -526,16 +539,22 @@ async function bindPath(
 				'mcdoc',
 				pathArrayToString(identifiers),
 			)
-			.ifDeclared((_, query) =>
-				query.enter({
-					usage: {
-						type: 'reference',
-						node: identNode,
-						fullRange: node,
-						skipRenaming: LiteralNode.is(identNode),
-					},
-				})
-			)
+			.ifDeclared((_, query) => {
+				try {
+					query.resolveAlias().enter({
+						usage: {
+							type: 'reference',
+							node: identNode,
+							fullRange: node,
+							skipRenaming: LiteralNode.is(identNode),
+						},
+					})
+				} catch (_ignored) {
+					// Alias target doesn't exist. The error would have been reported
+					// where the alias symbol was created, so we can ignore the error
+					// here.
+				}
+			})
 			.else(() => {
 				if (indexRight === 0) {
 					ctx.err.report(

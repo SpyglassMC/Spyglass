@@ -972,7 +972,7 @@ type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 /* istanbul ignore next */
 export class SymbolQuery {
 	readonly category: string
-	readonly path: readonly string[]
+	path: readonly string[]
 	readonly #doc: TextDocument
 	readonly #node: AstNode | undefined
 	/**
@@ -1337,6 +1337,8 @@ export class SymbolQuery {
 			}
 			this.#symbol = result
 			this.#map = result.parentMap
+			this.#parentSymbol = result.parentSymbol
+			this.path = result.path
 		}
 		return this
 	}
