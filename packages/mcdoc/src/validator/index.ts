@@ -159,26 +159,29 @@ function validate<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 	
 	options.attachTypeInfo(node, simplified);
 
-	for (const expectedVal of expectedValueTypes) {
-		if (inferredValueTypes.length === 0) {
+	if (inferredValueTypes.length === 0 && expectedValueTypes.length > 0) {
+		return [{
+			kind: "type_mismatch",
+			node: node,
+			received: inferredType,
+			expected: simplified
+		}];
+	}
+	for (const inferredVal of inferredValueTypes) {
+
+		let foundMatch = false
+		for (const expectedVal of expectedValueTypes) {
+			if (inferredVal.kind === expectedVal.kind || options.isEquivalent(inferredVal, expectedVal)) {
+				foundMatch = true;
+			}
+		}
+		if (!foundMatch) {
 			return [{
 				kind: "type_mismatch",
 				node: node,
 				received: inferredType,
 				expected: simplified
 			}];
-		}
-
-		for (const inferredVal of inferredValueTypes) {
-			if (inferredVal.kind !== expectedVal.kind && !options.isEquivalent(inferredVal, expectedVal)) {
-				return [{
-					kind: "type_mismatch",
-					node: node,
-					received: inferredType,
-					expected: simplified
-				}];
-			}
-
 		}
 	}
 
@@ -482,6 +485,7 @@ function simplify<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 				if (value) {
 					values.push(value.type)
 				} else {
+					// fallback case
 					values = child.fields.filter(f => f.kind === 'pair').map(f => f.type);
 					break;
 				}
