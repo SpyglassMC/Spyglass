@@ -5,11 +5,13 @@ import {
 } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { initialize } from '../../../java-edition/lib/mcfunction/index.js'
+import { CommandTreeRegistry } from '../../lib/index.js'
 import { entry } from '../../lib/parser/index.js'
 import { tree } from './utils.js'
 
 describe('mcfunction parser entry()', () => {
+	const release = '1.99'
+	CommandTreeRegistry.instance.register(release, tree)
 	const cases: { content: string }[] = [
 		{ content: '' },
 		{ content: 'say hi' },
@@ -26,8 +28,6 @@ describe('mcfunction parser entry()', () => {
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const release = '1.99'
-			initialize(mockProjectData(), tree, release)
 			const parser = entry(release, () => undefined)
 			snapshot(testParser(parser, content))
 		})
