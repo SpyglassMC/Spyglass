@@ -85,7 +85,8 @@
 	"mcfunction": {
 		"dependencies": [
 			"core",
-			"locales"
+			"locales",
+			"java-edition"
 		],
 		"released": {
 			"commit": "09ee4cbc6af1c12954b9bd6da9197fc1ee4bf390",
