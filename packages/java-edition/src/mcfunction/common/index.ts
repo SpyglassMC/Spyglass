@@ -32,11 +32,13 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 		'weapon.offhand',
 	]
 	if (ReleaseVersion.cmp(release, '1.20.5') >= 0) {
-		output.push(...[...Array(4).keys()].map((n) => `player.crafting.${n}`),
-		            'armor.body', 
-		            'contents', 
-		            'player.cursor')
-	} else { 
+		output.push(
+			...[...Array(4).keys()].map((n) => `player.crafting.${n}`),
+			'armor.body',
+			'contents',
+			'player.cursor',
+		)
+	} else {
 		output.push('horse.armor')
 	}
 	return output

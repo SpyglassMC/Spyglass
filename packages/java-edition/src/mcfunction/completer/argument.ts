@@ -11,7 +11,6 @@ import {
 	BooleanNode,
 	BrigadierStringOptions,
 	completer,
-	ContextBase,
 	CompletionItem,
 	CompletionKind,
 	FloatNode,
@@ -33,8 +32,8 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
-	HeightmapValues,
 	getItemSlotArgumentValues,
+	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
@@ -60,7 +59,7 @@ import type { ArgumentTreeNode } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
-	ctx: CompleterContext
+	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
 	const range = ctx.offset
 	const treeNode = rawTreeNode as ArgumentTreeNode
@@ -121,7 +120,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_predicate':
 			return ItemNode.mock(range, true)
 		case 'minecraft:item_slot':
-			return LiteralNode.mock(range, { pool: getItemSlotArgumentValues(ctx) })
+			return LiteralNode.mock(range, {
+				pool: getItemSlotArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false)
 		case 'minecraft:mob_effect':

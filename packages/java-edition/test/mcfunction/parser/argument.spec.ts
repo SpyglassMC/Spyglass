@@ -4,7 +4,6 @@ import {
 	snapshotWithUri,
 	testParser,
 } from '@spyglassmc/core/test-out/utils.js'
-import { ContextBase } from '@spyglassmc/core'
 import { argument } from '@spyglassmc/java-edition/lib/mcfunction/parser/index.js'
 import type { ArgumentTreeNode } from '@spyglassmc/java-edition/lib/mcfunction/tree/index.js'
 import * as json from '@spyglassmc/json'
@@ -153,7 +152,9 @@ const Suites: Partial<
 			content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
 		},
 	],
-	'minecraft:item_slot': [{ content: ['container.5', 'weapon', 'armor.body'] }],
+	'minecraft:item_slot': [{
+		content: ['container.5', 'weapon', 'armor.body'],
+	}],
 	'minecraft:item_stack': [
 		{
 			content: ['stick', 'minecraft:stick', 'stick{foo:bar}'],
@@ -297,7 +298,6 @@ nbt.initialize(project)
 const { meta } = project
 
 describe('mcfunction argument parser', () => {
-	const ctx = ContextBase.create(project)
 	for (const [parserName, cases] of Object.entries(Suites)) {
 		describe(parserName, () => {
 			for (const { content, properties } of cases) {
@@ -310,7 +310,6 @@ describe('mcfunction argument parser', () => {
 					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${
 						properties ? ` with ${JSON.stringify(properties)}` : ''
 					}`
-					
 					it(itTitle, () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
