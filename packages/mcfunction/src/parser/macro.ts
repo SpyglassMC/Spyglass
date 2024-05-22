@@ -63,7 +63,7 @@ export function macro(): core.Parser<MacroNode> {
 				child.value = other.substring(0, other.length - 1) // Remove the last '$'
 			}
 			children.push(child)
-			if (subMacro) {
+			if (subMacro) { // Sub-macro added here because colorizer
 				children.push(subMacro)
 			}
 			// Prepare for the next block
