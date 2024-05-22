@@ -33,7 +33,8 @@ export function macro(): core.Parser<MacroNode> {
 
         let beginning = src.cursor
         let txt = src.readUntil('$', '\r', '\n')
-        while (txt.length > 0) {
+        let first = true
+        while (txt.length > 0 || first) {
             let wasMacro = false
             if (txt.substring(0, 2) === '$(') { // This is a macro key
                 txt += src.read()
@@ -99,7 +100,19 @@ export function macro(): core.Parser<MacroNode> {
             }
             // Prepare for the next block
             beginning = src.cursor
-            txt = src.readUntil('\r', '\n', wasMacro ? '$' : ')')
+            if (wasMacro) {
+                txt = src.readUntil('\r', '\n', '$')
+            } else {
+                txt = src.readUntil('\r', '\n', ')')
+            }
+            first = false
+        }
+
+        if (children.length < 3) {
+            ctx.err.report(
+                localize('expected', localize('macro')),
+                core.Range.create(start, src.cursor),
+            )
         }
 
         // Return the result

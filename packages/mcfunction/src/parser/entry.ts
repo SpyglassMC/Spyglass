@@ -3,10 +3,7 @@ import type {
 	CommandNode,
 	McfunctionNode,
 } from '../node/index.js'
-import type {
-	CommandMacroNode,
-	MacroNode
-} from '../node/macro.js'
+import type { MacroNode } from '../node/macro.js'
 import { CommandTreeRegistry } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
@@ -27,12 +24,9 @@ export function entry(
 		}
 
 		while (src.skipWhitespace().canReadInLine()) {
-			let result: core.CommentNode | CommandNode | CommandMacroNode | MacroNode
+			let result: core.CommentNode | CommandNode | MacroNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
-			} else if (src.peek(2) === '$$') {
-				// Pretty much ignore like a comment - too much to deal with
-				result = commandMacro(src, ctx) as CommandMacroNode
 			} else if (src.peek() === '$') {
 				// Basic macro highlighting
 				result = macro()(src, ctx) as MacroNode
@@ -55,13 +49,3 @@ export function entry(
 const comment = core.comment({
 	singleLinePrefixes: new Set(['#']),
 })
-
-const commandMacro = (src: core.Source, ctx: core.ParserContext): CommandMacroNode => {
-	const start = src.cursor
-	src.skipLine()
-	var result: CommandMacroNode = {
-		type: 'mcfunction:command_macro',
-		range: core.Range.create(start, src),
-	}
-	return result
-}

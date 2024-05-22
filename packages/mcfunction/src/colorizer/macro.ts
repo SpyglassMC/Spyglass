@@ -1,9 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { CommandMacroNode, MacroChildNode, MacroKeyNode } from '../node/macro'
-
-export const commandMacro: core.Colorizer<CommandMacroNode> = (node) => {
-	return [core.ColorToken.create(node, 'string')]
-}
+import type { MacroChildNode, MacroKeyNode } from '../node/macro'
 
 export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
 	if (node.children) {
