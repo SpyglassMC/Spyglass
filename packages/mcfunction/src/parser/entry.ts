@@ -5,7 +5,6 @@ import { CommandTreeRegistry } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 import { macro } from './macro.js'
-import { ReleaseVersion } from '../../../java-edition/lib/dependency/index.js'
 
 /**
  * @throws When there's no command tree associated with `commandTreeName`.
@@ -21,13 +20,12 @@ export function entry(
 			children: [],
 		}
 
-		const release = ctx.project['loadedVersion'] as ReleaseVersion
 		while (src.skipWhitespace().canReadInLine()) {
 			let result: core.CommentNode | CommandNode | MacroNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
-			} else if (src.peek() === '$' && ReleaseVersion.cmp(release, '1.20.2') >= 0) {
-				// Basic macro highlighting since 1.20.2
+			} else if (src.peek() === '$') {
+				// Basic macro highlighting
 				result = macro()(src, ctx) as MacroNode
 			} else {
 				result = command(
