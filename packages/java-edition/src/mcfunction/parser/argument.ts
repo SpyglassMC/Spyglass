@@ -87,7 +87,6 @@ function shouldValidateLength(ctx: core.ParserContext) {
  */
 export const argument: mcf.ArgumentParserGetter = (
 	rawTreeNode,
-	ctx: core.ContextBase
 ): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 

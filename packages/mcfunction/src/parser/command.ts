@@ -91,7 +91,7 @@ function dispatch(
 		const argumentParsers: { name: string; parser: core.Parser }[] =
 			argumentTreeNodes.map(([name, treeNode]) => ({
 				name,
-				parser: argument(treeNode, ctx) ?? unknown(treeNode),
+				parser: argument(treeNode) ?? unknown(treeNode),
 			}))
 		const literalParser = literalTreeNodes.length
 			? literal(

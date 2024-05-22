@@ -321,7 +321,7 @@ describe('mcfunction argument parser', () => {
 								}.spec.js`,
 								import.meta.url,
 							),
-							value: testParser(argument(treeNode, ctx)!, string, {
+							value: testParser(argument(treeNode)!, string, {
 								project: { meta },
 								removeTopLevelChildren: RemoveExtraChildren.has(
 									parserName,
