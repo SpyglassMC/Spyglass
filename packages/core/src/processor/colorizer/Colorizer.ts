@@ -73,20 +73,19 @@ export namespace ColorToken {
 
 export const ColorTokenTypes = Object.freeze(
 	[
-		'comment',
-		'enum',
-		'enumMember',
-		'function',
-		'keyword',
-		'modifier',
-		'number',
-		'operator',
-		'property',
-		'string',
-		'struct',
-		'type',
-		'type',
-		'variable',
+		'comment', // Green
+		'enum', // Teal
+		'enumMember', // Neon Blue
+		'function', // Purple
+		'keyword', // Purple
+		'modifier', // Purple
+		'number', // Light Green
+		'operator', // White?
+		'property', // Light Blue
+		'string', // Orange
+		'struct', // Teal
+		'type', // Teal
+		'variable', // Light Blue
 		// Below are custom types.
 		'error',
 		'literal',
