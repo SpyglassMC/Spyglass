@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import { ReleaseVersion } from '../../../java-edition/lib/dependency/index.js'
+import { ReleaseVersion } from '@spyglassmc/java-edition/lib/dependency/index.js'
 import type { CommandNode, McfunctionNode } from '../node/index.js'
 import type { MacroNode } from '../node/macro.js'
 import { CommandTreeRegistry } from '../tree/index.js'
