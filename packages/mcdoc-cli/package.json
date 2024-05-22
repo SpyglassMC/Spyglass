@@ -1,6 +1,6 @@
 {
   "name": "@spyglassmc/mcdoc-cli",
-  "version": "0.1.5",
+  "version": "0.2.0",
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -24,12 +24,14 @@
   "scripts": {
     "release": "npm publish",
     "release:dry": "npm publish --dry-run",
-    "test": "rm -rf vanilla-mcdoc && rm -rf src/out && git clone https://github.com/SpyglassMC/vanilla-mcdoc && cd src && npx tsx src/index.mts generate ../vanilla-mcdoc/ -p -m -l"
+    "setup": "git clone https://github.com/SpyglassMC/vanilla-mcdoc",
+    "test": "rm -rf out/generated/module/* && cd vanilla-mcdoc && git pull && cd .. && tsc -b && node lib/index.js generate vanilla-mcdoc/ -l -m -p"
   },
   "dependencies": {
     "fs-extra": "^11.1.1",
     "klaw": "^4.1.0",
     "line-column": "^1.0.2",
+    "ofetch": "^1.3.4",
     "yargs": "17.6.2"
   },
   "devDependencies": {
