@@ -1,8 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type {
-	CommandNode,
-	McfunctionNode,
-} from '../node/index.js'
+import type { CommandNode, McfunctionNode } from '../node/index.js'
 import type { MacroNode } from '../node/macro.js'
 import { CommandTreeRegistry } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'

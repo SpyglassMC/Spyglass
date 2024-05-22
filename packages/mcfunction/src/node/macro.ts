@@ -3,7 +3,7 @@ import * as core from '@spyglassmc/core'
 export interface MacroNode extends core.SequenceNode<MacroChildNode> {
 	type: 'mcfunction:macro'
 	slash?: core.Range
-    children: MacroChildNode[]
+	children: MacroChildNode[]
 }
 export namespace MacroNode {
 	/* istanbul ignore next */
@@ -23,16 +23,15 @@ export namespace MacroNode {
 	}
 }
 
-
 export interface MacroOptions {
-    type?: 'macro' | 'other' | 'sign'
+	type?: 'macro' | 'other' | 'sign'
 	colorTokenType?: core.ColorTokenType
 }
 
 export interface MacroChildNode extends core.AstNode {
-    readonly options: MacroOptions
+	readonly options: MacroOptions
 	type: 'mcfunction:macro_child'
-    value?: String
+	value?: String
 	children?: [core.AstNode]
 }
 export namespace MacroChildNode {
@@ -42,13 +41,13 @@ export namespace MacroChildNode {
 		return (obj as MacroChildNode | undefined)?.type ===
 			'mcfunction:macro_child'
 	}
-    export function mock(range: core.RangeLike): MacroChildNode {
-        return {
-            type: 'mcfunction:macro_child',
-            range: core.Range.get(range),
-            options: {},
-        }
-    }
+	export function mock(range: core.RangeLike): MacroChildNode {
+		return {
+			type: 'mcfunction:macro_child',
+			range: core.Range.get(range),
+			options: {},
+		}
+	}
 }
 
 export interface MacroKeyNode extends core.AstNode {

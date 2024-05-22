@@ -1,9 +1,9 @@
 import * as core from '@spyglassmc/core'
 import type {
-	MacroChildNode,
 	LiteralCommandChildNode,
-	TrailingCommandChildNode,
+	MacroChildNode,
 	MacroKeyNode,
+	TrailingCommandChildNode,
 } from '../node/index.js'
 import { macroChild, macroKey } from './macro.js'
 
@@ -18,10 +18,10 @@ export function register(meta: core.MetaRegistry) {
 	)
 	meta.registerColorizer<MacroChildNode>(
 		'mcfunction:macro_child',
-		macroChild
+		macroChild,
 	)
 	meta.registerColorizer<MacroKeyNode>(
 		'mcfunction:macro_key',
-		macroKey
+		macroKey,
 	)
 }

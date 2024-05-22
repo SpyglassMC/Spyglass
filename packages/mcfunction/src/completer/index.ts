@@ -27,7 +27,10 @@ export function entry(
 	return (node, ctx) => {
 		const tree = CommandTreeRegistry.instance.get(commandTreeName)
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
-		if (core.CommentNode.is(childNode) || MacroNode.is(childNode) || MacroChildNode.is(childNode)) {
+		if (
+			core.CommentNode.is(childNode) || MacroNode.is(childNode) ||
+			MacroChildNode.is(childNode)
+		) {
 			return []
 		} else {
 			return command(tree, getMockNodes)(

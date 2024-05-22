@@ -11,7 +11,9 @@ export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
 			node.options.colorTokenType ?? 'string',
 		)
 	} else {
-		return [core.ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+		return [
+			core.ColorToken.create(node, node.options.colorTokenType ?? 'string'),
+		]
 	}
 }
 
