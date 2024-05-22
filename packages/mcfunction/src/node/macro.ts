@@ -38,17 +38,14 @@ export namespace MacroNode {
 
 
 export interface MacroOptions {
-    type?: 'macro' | 'other'
+    type?: 'macro' | 'other' | 'sign'
 	colorTokenType?: core.ColorTokenType
 }
 
 export interface MacroChildNode extends core.AstNode {
     readonly options: MacroOptions
 	type: 'mcfunction:macro_child'
-	/**
-	 * The path of this node in the macro tree. Empty if the current node does not correspond to an actual tree node.
-	 */
-	path: string[]
+    value?: String
 	//children: [core.AstNode]
 }
 export namespace MacroChildNode {
@@ -63,7 +60,6 @@ export namespace MacroChildNode {
             type: 'mcfunction:macro_child',
             range: core.Range.get(range),
             options: {},
-            path: [],
         }
     }
 }

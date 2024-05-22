@@ -3,146 +3,106 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type {
 	MacroChildNode,
     MacroNode,
-    MacroOptions,
 } from '../node/index.js'
-import { categorizeTreeChildren, resolveParentTreeNode } from '../tree/index.js'
-import type { RootTreeNode, TreeNode } from '../tree/type.js'
-import type { ArgumentParserGetter } from './argument.js'
-import { sep } from './common.js'
 
 /**
- * @returns A parser that always takes a whole line (excluding line turn characters) and tries to parse it as a macro.
+ * Parse a macro.
  */
-export function macro(
-	tree: RootTreeNode,
-	argument: ArgumentParserGetter,
-): core.InfallibleParser<MacroNode> {
-	return (src, ctx): MacroNode => {
+export function macro(): core.Parser<MacroNode> {
+	return (src: core.Source, ctx: core.ParserContext): core.Result<MacroNode> => {
 		const start = src.cursor
-
         const children: MacroChildNode[] = []
-        const strings: String[] = (src.peekUntil('\n', '\r').split(' '))
 
-        for (const str of strings) {
-            const begin = src.cursor
-            src.readUntil(' ')
-            const end = src.cursor
-            const isMacro = str.match(/\$\(.*\)/)
-            const options: MacroOptions = {
-                type: isMacro ? 'macro' : 'other',
-                colorTokenType: isMacro ? 'keyword' : 'string',
-            }
-            const child: MacroChildNode = {
+        // Handle the starting '$'
+        if (src.peek() == '$' && src.peek(2) !== '$(') {
+            const ans: MacroChildNode = {
                 type: 'mcfunction:macro_child',
-                range: core.Range.create(begin, end),
-                options,
-                path: [],
+                range: core.Range.create(start, start + 1),
+                options: {
+                    type: 'sign',
+                    colorTokenType: 'enumMember', // Neon Blue
+                },
+                value: '$',
             }
-            children.push(child)
-            if (isMacro) {
-                ctx.logger.info(`Macro found: ${str}`)
-            }
+            src.skip()
+            children.push(ans)
         }
-        
+
+        // Handle the rest of the line
+
+        let beginning = src.cursor
+        let txt = src.readUntil('$', '\r', '\n')
+        while (txt.length > 0) {
+            let wasMacro = false
+            if (txt.substring(0, 2) === '$(') { // This is a macro key
+                txt += src.read()
+
+                // Error handling
+                const check = txt.substring(2, txt.length - 1)
+                const matchedInvalid = check.replace(/[a-zA-Z0-9_]*/, "")
+                ctx.logger.info(matchedInvalid)
+                // Invalid key
+                if (matchedInvalid.length > 0) {
+                    ctx.err.report(
+                        localize(
+                            'parser.resource-location.illegal',
+                            matchedInvalid.charAt(0),
+                        ),
+                        core.Range.create(beginning, src.cursor),
+                    )
+                }
+                // No key
+                if (check.length === 0) {
+                    ctx.err.report(
+                        localize('expected', localize('macro-key')),
+                        core.Range.create(beginning, src.cursor),
+                    )
+                }
+                // Uncompleted Macro
+                if (txt.charAt(txt.length - 1) !== ')') {
+                    ctx.err.report(
+                        localize('expected', localeQuote(')')),
+                        core.Range.create(beginning, src.cursor),
+                    )
+                }
+
+                const ans: MacroChildNode = {
+                    type: 'mcfunction:macro_child',
+                    range: core.Range.create(beginning, src.cursor),
+                    options: {
+                        type: 'macro',
+                        colorTokenType: 'property', // Light Blue
+                    },
+                    value: txt,
+                }
+                children.push(ans)
+                wasMacro = true
+            } else { // This is the rest of the line
+                const ans: MacroChildNode = {
+                    type: 'mcfunction:macro_child',
+                    range: core.Range.create(beginning, src.cursor),
+                    options: {
+                        type: 'other',
+                        colorTokenType: 'string', // Orange
+                    },
+                    value: txt,
+                }
+                children.push(ans)
+            }
+            // Prepare for the next block
+            beginning = src.cursor
+            txt = src.readUntil('\r', '\n', wasMacro ? '$' : ')')
+        }
+
+        // Return the result
         const ans: MacroNode = {
             type: 'mcfunction:macro',
-            range: core.Range.create(start, src.cursor),
-            children,
+            range: core.Range.create(start),
+            children: children,
         }
 
-
-		//dispatch(ans.children, src, ctx, [], tree, tree, argument)
-
-        /*
-		if (src.canReadInLine()) {
-			// There is trailing string after the macro.
-			const node = trailing(src, ctx)
-			ans.children.push({
-				type: 'mcfunction:macro_child',
-                range: core.Range.create(start, src),
-                options: result.options,
-                path: [],
-			})
-		}
-        */
-
 		ans.range.end = src.cursor
-
+        ctx.logger.info(children)
 		return ans
 	}
-}
-
-/**
- * Dispatch and parse based on the specified macro tree node's children.
- *
- * @param ans An array where child nodes will be pushed into.
- */
-function dispatch(
-	ans: MacroChildNode[],
-	src: core.Source,
-	ctx: core.ParserContext,
-	path: string[],
-	rootTreeNode: RootTreeNode,
-	parentTreeNode: TreeNode,
-	argument: ArgumentParserGetter,
-): void {
-	// Convention: suffix `Node` is for AST nodes; `TreeNode` is for macro tree nodes.
-
-	function _dispatch(
-		path: string[],
-		parentTreeNode: TreeNode,
-	): false | {childPath: string[]} {
-		const { treeNode: parent, path: resolvedPath } = resolveParentTreeNode(
-			parentTreeNode,
-			rootTreeNode,
-			path,
-		)
-		path = resolvedPath
-
-		const children = parent?.children
-		if (!children) {
-			return false
-		}
-
-		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(
-			children,
-		)
-
-		const out: core.AnyOutObject = { index: 0 }
-		const result = parser(src, ctx)
-
-		const childPath = path
-
-		ans.push({
-			type: 'mcfunction:macro_child',
-            range: result.range,
-            options: result.options,
-            path: [],
-		})
-
-		return false
-	}
-}
-
-export const parser: core.InfallibleParser<MacroChildNode> = (src, ctx): MacroChildNode => {
-	const start = src.cursor
-	const value = src.readUntil(' ', '\r', '\n')
-
-    const isMacro = value.match(/.*\$\(.*\).*/)
-
-    const options: MacroOptions = {
-        type: isMacro ? 'macro' : 'other',
-        colorTokenType: isMacro ? 'keyword' : 'string',
-    }
-
-	const ans: MacroChildNode = {
-        type: 'mcfunction:macro_child',
-		range: core.Range.create(start, src),
-		options,
-        path: [],
-	}
-
-    ctx.logger.info(`Macro Child of type ${options.type} found: ${value}`)
-
-	return ans
 }

@@ -30,6 +30,6 @@ export const commandMacro: core.Colorizer<CommandMacroNode> = (node, ctx) => {
 	return [core.ColorToken.create(node, 'string')]
 }
 
-export const macroChild: core.Colorizer<MacroChildNode> = (node) => {
+export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
 	return [core.ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 }
