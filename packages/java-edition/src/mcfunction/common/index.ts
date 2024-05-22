@@ -36,8 +36,9 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 		            'armor.body', 
 		            'contents', 
 		            'player.cursor')
+	} else { 
+		output.push('horse.armor')
 	}
-	else { output.push('horse.armor') }
 	return output
 }
 
