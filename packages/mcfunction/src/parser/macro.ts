@@ -18,10 +18,7 @@ export function macro(): core.Parser<MacroNode> {
 			const ans: MacroChildNode = {
 				type: 'mcfunction:macro_child',
 				range: core.Range.create(start, start + 1),
-				options: {
-					type: 'sign',
-					colorTokenType: 'literal', // Blue
-				},
+				options: { type: 'sign' },
 				value: '$',
 			}
 			src.skip()
@@ -91,7 +88,6 @@ export function macro(): core.Parser<MacroNode> {
 		}
 
 		ans.range.end = src.cursor
-		ctx.logger.info(children)
 		return ans
 	}
 }
@@ -134,17 +130,13 @@ function parse(
 		const key: MacroKeyNode = {
 			type: 'mcfunction:macro_key',
 			range: core.Range.create(beginning + 2, src.cursor - 1),
-			colorTokenType: 'property', // Light Blue
 			key: check,
 		}
 
 		const ans: MacroChildNode = {
 			type: 'mcfunction:macro_child',
 			range: core.Range.create(beginning, src.cursor),
-			options: {
-				type: 'macro',
-				colorTokenType: 'literal', // Blue
-			},
+			options: { type: 'macro' },
 			value: txt,
 			children: [key],
 		}
@@ -153,10 +145,7 @@ function parse(
 		const ans: MacroChildNode = {
 			type: 'mcfunction:macro_child',
 			range: core.Range.create(beginning, src.cursor),
-			options: {
-				type: 'other',
-				colorTokenType: 'string', // Orange
-			},
+			options: { type: 'other' },
 			value: txt,
 		}
 		return ans

@@ -25,7 +25,6 @@ export namespace MacroNode {
 
 export interface MacroOptions {
 	type?: 'macro' | 'other' | 'sign'
-	colorTokenType?: core.ColorTokenType
 }
 
 export interface MacroChildNode extends core.AstNode {
@@ -52,7 +51,6 @@ export namespace MacroChildNode {
 
 export interface MacroKeyNode extends core.AstNode {
 	type: 'mcfunction:macro_key'
-	colorTokenType?: core.ColorTokenType
 	key?: string
 }
 

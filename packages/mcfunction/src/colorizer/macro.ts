@@ -2,21 +2,22 @@ import * as core from '@spyglassmc/core'
 import type { MacroChildNode, MacroKeyNode } from '../node/macro'
 
 export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
+	const color = node.options.type === 'other' ? 'string' : 'literal'
 	if (node.children) {
 		const colorizer = ctx.meta.getColorizer(node.children[0].type)
 		const result = colorizer(node.children[0], ctx)
 		return core.ColorToken.fillGap(
 			result,
 			node.range,
-			node.options.colorTokenType ?? 'string',
+			color,
 		)
 	} else {
 		return [
-			core.ColorToken.create(node, node.options.colorTokenType ?? 'string'),
+			core.ColorToken.create(node, color),
 		]
 	}
 }
 
 export const macroKey: core.Colorizer<MacroKeyNode> = (node) => {
-	return [core.ColorToken.create(node, node.colorTokenType ?? 'string')]
+	return [core.ColorToken.create(node, 'property')]
 }
