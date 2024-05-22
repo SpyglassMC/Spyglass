@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import { ReleaseVersion } from '../../dependency'
+import { ReleaseVersion } from '../../dependency/index.js'
 
 export const ColorArgumentValues = [...core.Color.ColorNames, 'reset']
 
