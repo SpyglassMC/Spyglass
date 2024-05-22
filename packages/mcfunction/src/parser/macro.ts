@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type {
 	MacroChildNode,
+    MacroKeyNode,
     MacroNode,
 } from '../node/index.js'
 
@@ -20,7 +21,7 @@ export function macro(): core.Parser<MacroNode> {
                 range: core.Range.create(start, start + 1),
                 options: {
                     type: 'sign',
-                    colorTokenType: 'enumMember', // Neon Blue
+                    colorTokenType: 'literal', // Blue
                 },
                 value: '$',
             }
@@ -40,7 +41,6 @@ export function macro(): core.Parser<MacroNode> {
                 // Error handling
                 const check = txt.substring(2, txt.length - 1)
                 const matchedInvalid = check.replace(/[a-zA-Z0-9_]*/, "")
-                ctx.logger.info(matchedInvalid)
                 // Invalid key
                 if (matchedInvalid.length > 0) {
                     ctx.err.report(
@@ -66,14 +66,22 @@ export function macro(): core.Parser<MacroNode> {
                     )
                 }
 
+                const key: MacroKeyNode = {
+                    type: 'mcfunction:macro_key',
+                    range: core.Range.create(beginning + 2, src.cursor - 1),
+                    colorTokenType: 'property', // Light Blue
+                    key: check,
+                }
+
                 const ans: MacroChildNode = {
                     type: 'mcfunction:macro_child',
                     range: core.Range.create(beginning, src.cursor),
                     options: {
                         type: 'macro',
-                        colorTokenType: 'property', // Light Blue
+                        colorTokenType: 'literal', // Blue
                     },
                     value: txt,
+                    children: [key],
                 }
                 children.push(ans)
                 wasMacro = true

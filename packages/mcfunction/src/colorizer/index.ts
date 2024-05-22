@@ -1,17 +1,14 @@
 import * as core from '@spyglassmc/core'
 import type {
 	MacroChildNode,
-	MacroNode,
 	CommandMacroNode,
 	LiteralCommandChildNode,
 	TrailingCommandChildNode,
+	MacroKeyNode,
 } from '../node/index.js'
+import { commandMacro, macroChild, macroKey } from './macro.js'
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerColorizer<CommandMacroNode>(
-		'mcfunction:command_macro',
-		commandMacro,
-	)
 	meta.registerColorizer<LiteralCommandChildNode>(
 		'mcfunction:command_child/literal',
 		core.colorizer.literal,
@@ -20,16 +17,16 @@ export function register(meta: core.MetaRegistry) {
 		'mcfunction:command_child/trailing',
 		core.colorizer.error,
 	)
+	meta.registerColorizer<CommandMacroNode>(
+		'mcfunction:command_macro',
+		commandMacro,
+	)
 	meta.registerColorizer<MacroChildNode>(
 		'mcfunction:macro_child',
 		macroChild
 	)
-}
-
-export const commandMacro: core.Colorizer<CommandMacroNode> = (node, ctx) => {
-	return [core.ColorToken.create(node, 'string')]
-}
-
-export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
-	return [core.ColorToken.create(node, node.options.colorTokenType ?? 'string')]
+	meta.registerColorizer<MacroKeyNode>(
+		'mcfunction:macro_key',
+		macroKey
+	)
 }

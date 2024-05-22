@@ -80,18 +80,17 @@ export const ColorTokenTypes = Object.freeze(
 		'keyword', // Purple
 		'modifier', // Purple
 		'number', // Light Green
-		'operator', // White?
 		'property', // Light Blue
 		'string', // Orange
 		'struct', // Teal
 		'type', // Teal
 		'variable', // Light Blue
 		// Below are custom types.
-		'error',
-		'literal',
-		'operator',
-		'resourceLocation',
-		'vector',
+		'error', // Red
+		'literal', // Blue
+		'operator', // White?
+		'resourceLocation', // Yellow
+		'vector', // Light Green + Underline
 	] as const,
 )
 export type ColorTokenType = typeof ColorTokenTypes[number]
