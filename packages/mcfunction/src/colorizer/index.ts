@@ -1,13 +1,10 @@
 import * as core from '@spyglassmc/core'
 import type {
 	LiteralCommandChildNode,
-	MacroGapNode,
-	MacroKeyNode,
-	MacroSignNode,
-	MacroVariableNode,
+	MacroNode,
 	TrailingCommandChildNode,
 } from '../node/index.js'
-import { macroChild, macroKey } from './macro.js'
+import { macro } from './macro.js'
 
 export function register(meta: core.MetaRegistry) {
 	meta.registerColorizer<LiteralCommandChildNode>(
@@ -18,20 +15,8 @@ export function register(meta: core.MetaRegistry) {
 		'mcfunction:command_child/trailing',
 		core.colorizer.error,
 	)
-	meta.registerColorizer<MacroGapNode>(
-		'mcfunction:macro/gap',
-		macroChild,
-	)
-	meta.registerColorizer<MacroVariableNode>(
-		'mcfunction:macro/variable',
-		macroChild,
-	)
-	meta.registerColorizer<MacroSignNode>(
-		'mcfunction:macro/sign',
-		macroChild,
-	)
-	meta.registerColorizer<MacroKeyNode>(
-		'mcfunction:macro/key',
-		macroKey,
+	meta.registerColorizer<MacroNode>(
+		'mcfunction:macro',
+		macro,
 	)
 }

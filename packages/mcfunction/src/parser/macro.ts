@@ -1,12 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type {
-	MacroGapNode,
-	MacroKeyNode,
-	MacroNode,
-	MacroSignNode,
-	MacroVariableNode,
-} from '../node/index.js'
+import type { MacroNode } from '../node/index.js'
 
 /**
  * Parse a macro line.
@@ -16,33 +10,30 @@ export function macro(): core.Parser<MacroNode> {
 		src: core.Source,
 		ctx: core.ParserContext,
 	): core.Result<MacroNode> => {
-		const children:
-			(MacroGapNode | MacroVariableNode | MacroKeyNode | MacroSignNode)[] =
-				[]
+		const ans: MacroNode = {
+			type: 'mcfunction:macro',
+			range: core.Range.create(src.cursor),
+			children: [],
+			path: [],
+		}
 
 		// Skip the starting '$'
-		children.push({
-			type: 'mcfunction:macro/sign',
-			range: core.Range.create(src.cursor, src.cursor + 1),
-			value: '$',
-			path: ['$'],
-		})
 		src.skip()
 
 		let start = src.cursor
-		let hasMacroKeys = false
+		let hasMacroArgs = false
 
 		while (src.canReadInLine()) {
 			src.skipUntilOrEnd(core.LF, core.CR, '$')
 			if (src.peek(2) === '$(') {
-				// Add the gap before this macro key
-				const gap = src.sliceToCursor(start)
-				if (gap.length > 0) {
-					children.push({
-						type: 'mcfunction:macro/gap',
+				// Add the other stuff before this macro key
+				const other = src.sliceToCursor(start)
+				if (other.length > 0) {
+					ans.children.push({
+						type: 'mcfunction:macro/other',
 						range: core.Range.create(start, src.cursor),
-						value: gap,
-						path: [gap],
+						value: other,
+						path: [other],
 					})
 					start = src.cursor
 				}
@@ -74,28 +65,21 @@ export function macro(): core.Parser<MacroNode> {
 						core.Range.create(keyStart, src.cursor),
 					)
 				}
-				const keyNode: MacroKeyNode = {
-					type: 'mcfunction:macro/key',
-					range: core.Range.create(keyStart, src.cursor),
-					key: key,
-					path: [key, key],
-				}
 				src.skip()
-				children.push({
-					type: 'mcfunction:macro/variable',
+				ans.children.push({
+					type: 'mcfunction:macro/argument',
 					range: core.Range.create(start, src.cursor),
 					value: key,
-					children: [keyNode],
 					path: [key],
 				})
 				start = src.cursor
-				hasMacroKeys = true
+				hasMacroArgs = true
 			} else if (src.peek() === '$') {
 				src.skip()
 			} else {
-				// No more macro keys, add the remaining gap
-				children.push({
-					type: 'mcfunction:macro/gap',
+				// No more macro arguments, add the remaining other stuff
+				ans.children.push({
+					type: 'mcfunction:macro/other',
 					range: core.Range.create(start, src.cursor),
 					value: src.sliceToCursor(start),
 					path: [src.sliceToCursor(start)],
@@ -103,20 +87,15 @@ export function macro(): core.Parser<MacroNode> {
 			}
 		}
 
-		// A line with no macros is invalid
-		if (!hasMacroKeys) {
+		// A line with no macro arguments is invalid
+		if (!hasMacroArgs) {
 			ctx.err.report(
 				localize('expected', localize('parser.macro.at-least-one')),
 				core.Range.create(start, src.cursor),
 			)
 		}
 
-		const ans: MacroNode = {
-			type: 'mcfunction:macro',
-			range: core.Range.create(start - 1, src.cursor),
-			children: children,
-			path: [],
-		}
+		ans.range.end = src.cursor
 		return ans
 	}
 }

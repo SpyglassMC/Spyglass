@@ -1,13 +1,11 @@
 import * as core from '@spyglassmc/core'
 
-export interface MacroNode extends
-	core.SequenceNode<
-		MacroGapNode | MacroVariableNode | MacroKeyNode | MacroSignNode
-	>
+export interface MacroNode
+	extends core.SequenceNode<MacroOtherNode | MacroArgumentNode>
 {
 	type: 'mcfunction:macro'
 	slash?: core.Range
-	children: (MacroGapNode | MacroVariableNode | MacroKeyNode | MacroSignNode)[]
+	children: (MacroOtherNode | MacroArgumentNode)[]
 	path: string[]
 }
 export namespace MacroNode {
@@ -23,73 +21,20 @@ export namespace MacroNode {
 		return {
 			type: 'mcfunction:macro',
 			range: core.Range.get(range),
-			children: [MacroChildNode.mock(range)],
+			children: [],
 			path: [],
 		}
 	}
 }
 
-export interface MacroGapNode extends core.AstNode {
-	type: 'mcfunction:macro/gap'
+export interface MacroOtherNode extends core.AstNode {
+	type: 'mcfunction:macro/other'
 	value?: string
-	children?: [core.AstNode]
 	path: string[]
 }
-export namespace MacroGapNode {
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
-		obj: T,
-	): obj is core.InheritReadonly<MacroGapNode, T> {
-		const type = (obj as MacroGapNode | undefined)?.type
-		return type === 'mcfunction:macro/gap'
-	}
-	export function mock(range: core.RangeLike): MacroGapNode {
-		return {
-			type: 'mcfunction:macro/gap',
-			range: core.Range.get(range),
-			path: [],
-		}
-	}
-}
 
-export interface MacroVariableNode extends core.AstNode {
-	type: 'mcfunction:macro/variable'
+export interface MacroArgumentNode extends core.AstNode {
+	type: 'mcfunction:macro/argument'
 	value?: string
-	children?: [core.AstNode]
 	path: string[]
-}
-export namespace MacroChildNode {
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
-		obj: T,
-	): obj is core.InheritReadonly<MacroVariableNode, T> {
-		const type = (obj as MacroVariableNode | undefined)?.type
-		return type === 'mcfunction:macro/variable'
-	}
-	export function mock(range: core.RangeLike): MacroVariableNode {
-		return {
-			type: 'mcfunction:macro/variable',
-			range: core.Range.get(range),
-			path: [],
-		}
-	}
-}
-
-export interface MacroSignNode extends core.AstNode {
-	readonly value: '$'
-	type: 'mcfunction:macro/sign'
-	path: string[]
-}
-
-export interface MacroKeyNode extends core.AstNode {
-	type: 'mcfunction:macro/key'
-	key?: string
-	path: string[]
-}
-
-export namespace MacroKeyNode {
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
-		obj: T,
-	): obj is core.InheritReadonly<MacroKeyNode, T> {
-		return (obj as MacroKeyNode | undefined)?.type ===
-			'mcfunction:macro/key'
-	}
 }

@@ -210,6 +210,6 @@
   "uuid": "a UUID",
   "vector": "a vector",
   "parser.macro.key": "a macro key",
-  "parser.macro.at-least-one": "at least one macro",
+  "parser.macro.at-least-one": "at least one macro argument",
   "parser.macro.illegal": "Illegal key character: “%0%”"
 }
