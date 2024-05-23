@@ -58,7 +58,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
-		ctx: data.ctx ?? {},
+		ctx: data.ctx ?? { loadedVersion: '1.15' },
 		downloader,
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
@@ -224,11 +224,14 @@ export interface SimpleProjectState {
 }
 
 export class SimpleProject {
-	#colorTokens: ColorToken[] = []
-	#global: SymbolTable = Object.create(null)
+	readonly #colorTokens: ColorToken[] = []
+	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	#symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+	readonly #symbols = new SymbolUtil(
+		this.#global,
+		NodeJsExternals.event.EventEmitter,
+	)
 
 	#hasDumped = false
 
@@ -286,7 +289,7 @@ export class SimpleProject {
 		}
 	}
 
-	#bindingInProgressUris = new Set<string>()
+	readonly #bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(
 		uri: string,
 		content: string = this.files.find((f) => f.uri === uri)?.content!,

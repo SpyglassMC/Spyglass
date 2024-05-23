@@ -182,7 +182,7 @@ export class CacheService {
 		}
 
 		for (const [uri, checksum] of Object.entries(this.checksums.files)) {
-			if (unchangedRoots.some((root) => uri.startsWith(root))) {
+			if (unchangedRoots.some((root) => fileUtil.isSubUriOf(uri, root))) {
 				ans.unchangedFiles.push(uri)
 				continue
 			}

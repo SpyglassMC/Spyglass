@@ -1,4 +1,4 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
 import type { McmetaCommands, ReleaseVersion } from '../dependency/index.js'
 import * as checker from './checker/index.js'
@@ -22,17 +22,14 @@ export const initialize = (
 ) => {
 	const { meta } = ctx
 
+	const tree = core.merge(commands, getPatch(releaseVersion))
+
 	mcf.initialize(ctx)
-	mcf.CommandTreeRegistry.instance.register(
-		releaseVersion,
-		commands,
-		getPatch(releaseVersion),
-	)
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.entry(releaseVersion, parser.argument),
-		completer: mcf.completer.entry(releaseVersion, completer.getMockNodes),
+		parser: mcf.entry(tree, parser.argument),
+		completer: mcf.completer.entry(tree, completer.getMockNodes),
 		triggerCharacters: [
 			' ',
 			'[',
@@ -56,7 +53,7 @@ export const initialize = (
 	meta.registerParser<mcf.CommandNode>(
 		'mcfunction:command',
 		mcf.command(
-			mcf.CommandTreeRegistry.instance.get(releaseVersion),
+			tree,
 			parser.argument,
 		),
 	)
@@ -66,5 +63,5 @@ export const initialize = (
 	completer.register(meta)
 
 	meta.registerInlayHintProvider(inlayHintProvider)
-	meta.registerSignatureHelpProvider(signatureHelpProvider(releaseVersion))
+	meta.registerSignatureHelpProvider(signatureHelpProvider(tree))
 }

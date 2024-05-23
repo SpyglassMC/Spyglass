@@ -14,7 +14,10 @@ export interface DownloaderDownloadOut {
 }
 
 export class Downloader {
-	#memoryCache = new Map<string, { buffer: Uint8Array; time: number }>()
+	readonly #memoryCache = new Map<
+		string,
+		{ buffer: Uint8Array; time: number }
+	>()
 
 	constructor(
 		private readonly cacheRoot: RootUriString,
