@@ -3,9 +3,9 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
 import type { McmetaSummary } from './dependency/index.js'
-import { getVanillaDatapack } from './dependency/index.js'
 import {
 	getMcmetaSummary,
+	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVersions,
 	PackMcmeta,
