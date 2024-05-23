@@ -75,13 +75,13 @@ export function macro(): core.Parser<MacroNode> {
 		} while (nextChunk.length > 0)
 
 		// A line with no macros is invalid
-        let hasMacro = false
-        for (const child of children) {
-            if (child.type === 'mcfunction:macro_child/macro') {
-                hasMacro = true
-                break
-            }
-        }
+		let hasMacro = false
+		for (const child of children) {
+			if (child.type === 'mcfunction:macro_child/macro') {
+				hasMacro = true
+				break
+			}
+		}
 		if (!hasMacro) {
 			ctx.err.report(
 				localize('expected', localize('macro')),
