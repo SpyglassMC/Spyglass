@@ -1,6 +1,12 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { MacroChildNode, MacroKeyNode, MacroNode } from '../node/index.js'
+import type {
+	MacroGapNode,
+	MacroKeyNode,
+	MacroNode,
+	MacroSignNode,
+	MacroVariableNode,
+} from '../node/index.js'
 
 /**
  * Parse a macro line.
@@ -10,15 +16,13 @@ export function macro(): core.Parser<MacroNode> {
 		src: core.Source,
 		ctx: core.ParserContext,
 	): core.Result<MacroNode> => {
-		const ans: MacroNode = {
-			type: 'mcfunction:macro',
-			range: core.Range.create(src.cursor),
-			children: [],
-		}
+		const children:
+			(MacroGapNode | MacroVariableNode | MacroKeyNode | MacroSignNode)[] =
+				[]
 
 		// Skip the starting '$'
-		ans.children.push({
-			type: 'mcfunction:macro_child/macro',
+		children.push({
+			type: 'mcfunction:macro/sign',
 			range: core.Range.create(src.cursor, src.cursor + 1),
 			value: '$',
 		})
@@ -33,8 +37,8 @@ export function macro(): core.Parser<MacroNode> {
 				// Add the gap before this macro key
 				const gap = src.sliceToCursor(start)
 				if (gap.length > 0) {
-					ans.children.push({
-						type: 'mcfunction:macro_child/other',
+					children.push({
+						type: 'mcfunction:macro/gap',
 						range: core.Range.create(start, src.cursor),
 						value: gap,
 					})
@@ -69,13 +73,13 @@ export function macro(): core.Parser<MacroNode> {
 					)
 				}
 				const keyNode: MacroKeyNode = {
-					type: 'mcfunction:macro_key',
+					type: 'mcfunction:macro/key',
 					range: core.Range.create(keyStart, src.cursor),
 					key: key,
 				}
 				src.skip()
-				ans.children.push({
-					type: 'mcfunction:macro_child/macro',
+				children.push({
+					type: 'mcfunction:macro/variable',
 					range: core.Range.create(start, src.cursor),
 					value: key,
 					children: [keyNode],
@@ -86,8 +90,8 @@ export function macro(): core.Parser<MacroNode> {
 				src.skip()
 			} else {
 				// No more macro keys, add the remaining gap
-				ans.children.push({
-					type: 'mcfunction:macro_child/other',
+				children.push({
+					type: 'mcfunction:macro/gap',
 					range: core.Range.create(start, src.cursor),
 					value: src.sliceToCursor(start),
 				})
@@ -102,7 +106,11 @@ export function macro(): core.Parser<MacroNode> {
 			)
 		}
 
-		ans.range.end = src.cursor
+		const ans: MacroNode = {
+			type: 'mcfunction:macro',
+			range: core.Range.create(start - 1, src.cursor),
+			children: children,
+		}
 		return ans
 	}
 }

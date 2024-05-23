@@ -1,8 +1,15 @@
 import * as core from '@spyglassmc/core'
-import type { MacroChildNode, MacroKeyNode } from '../node/macro'
+import type {
+	MacroGapNode,
+	MacroKeyNode,
+	MacroSignNode,
+	MacroVariableNode,
+} from '../node/macro'
 
-export const macroChild: core.Colorizer<MacroChildNode> = (node, ctx) => {
-	const color = node.type === 'mcfunction:macro_child/other'
+export const macroChild: core.Colorizer<
+	MacroGapNode | MacroVariableNode | MacroSignNode
+> = (node, ctx) => {
+	const color = node.type === 'mcfunction:macro/gap'
 		? 'string'
 		: 'literal'
 	if (node.children) {
