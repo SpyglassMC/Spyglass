@@ -23,13 +23,11 @@ export namespace MacroNode {
 	}
 }
 
-export interface MacroOptions {
-	type?: 'macro' | 'other' | 'sign'
-}
-
 export interface MacroChildNode extends core.AstNode {
-	readonly options: MacroOptions
-	type: 'mcfunction:macro_child'
+	type:
+		| 'mcfunction:macro_child/macro'
+		| 'mcfunction:macro_child/other'
+		| 'mcfunction:macro_child/sign'
 	value?: String
 	children?: [core.AstNode]
 }
@@ -37,14 +35,15 @@ export namespace MacroChildNode {
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
 		obj: T,
 	): obj is core.InheritReadonly<MacroChildNode, T> {
-		return (obj as MacroChildNode | undefined)?.type ===
-			'mcfunction:macro_child'
+		const type = (obj as MacroChildNode | undefined)?.type
+		return type === 'mcfunction:macro_child/macro' ||
+			type === 'mcfunction:macro_child/other' ||
+			type === 'mcfunction:macro_child/sign'
 	}
 	export function mock(range: core.RangeLike): MacroChildNode {
 		return {
-			type: 'mcfunction:macro_child',
+			type: 'mcfunction:macro_child/other',
 			range: core.Range.get(range),
-			options: {},
 		}
 	}
 }

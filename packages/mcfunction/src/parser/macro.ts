@@ -3,7 +3,7 @@ import { localeQuote, localize } from '@spyglassmc/locales'
 import type { MacroChildNode, MacroKeyNode, MacroNode } from '../node/index.js'
 
 /**
- * Parse a macro.
+ * Parse a macro line.
  */
 export function macro(): core.Parser<MacroNode> {
 	return (
@@ -15,41 +15,45 @@ export function macro(): core.Parser<MacroNode> {
 
 		// Handle the starting '$'
 		if (src.peek() == '$' && src.peek(2) !== '$(') {
-			const ans: MacroChildNode = {
-				type: 'mcfunction:macro_child',
+			const sign: MacroChildNode = {
+				type: 'mcfunction:macro_child/sign',
 				range: core.Range.create(start, start + 1),
-				options: { type: 'sign' },
 				value: '$',
 			}
 			src.skip()
-			children.push(ans)
+			children.push(sign)
 		}
 
 		// Handle the rest of the line
 
 		let beginning = src.cursor
-		let txt = src.readUntil('$', '\r', '\n')
+		let nextChunk = src.readUntil('$', '\r', '\n')
 		do { // Do-while because we always want it to work the first time
 			let wasMacro = false
-			const child: MacroChildNode = parse(src, ctx, txt, beginning, wasMacro)
-			if (child.options.type === 'macro') {
+			const child: MacroChildNode = parseMacroChild(
+				src,
+				ctx,
+				nextChunk,
+				beginning,
+			)
+			if (child.type === 'mcfunction:macro_child/macro') {
 				wasMacro = true
 			}
 			// Handle a non-macro $ in the middle of the line
 			let subMacro: MacroChildNode | undefined
 			if (
-				child.options.type === 'other' && child.value?.indexOf('$') !== -1
+				child.type === 'mcfunction:macro_child/other' &&
+				child.value?.indexOf('$') !== -1
 			) {
 				const parts: String[] = child.value?.split('$') ?? []
 				let other = ''
 				for (const part of parts) {
 					if (part.charAt(0) == '(') { // We've found our macro key!
-						subMacro = parse(
+						subMacro = parseMacroChild(
 							src,
 							ctx,
 							'$' + part,
 							beginning + other.length - 1,
-							wasMacro,
 						)
 						child.range.end -= part.length + 1
 					} else { // Keep it in the normal string
@@ -66,11 +70,11 @@ export function macro(): core.Parser<MacroNode> {
 			// Prepare for the next block
 			beginning = src.cursor
 			if (wasMacro) {
-				txt = src.readUntil('\r', '\n', '$')
+				nextChunk = src.readUntil('\r', '\n', '$')
 			} else {
-				txt = src.readUntil('\r', '\n', ')')
+				nextChunk = src.readUntil('\r', '\n', ')')
 			}
-		} while (txt.length > 0)
+		} while (nextChunk.length > 0)
 
 		// No actual macro
 		if (children.length < 3) {
@@ -92,19 +96,21 @@ export function macro(): core.Parser<MacroNode> {
 	}
 }
 
-function parse(
+/**
+ * Takes in a chunk of text read from the source and returns a MacroChildNode of type macro or other.
+ */
+function parseMacroChild(
 	src: core.Source,
 	ctx: core.ParserContext,
-	txt: String,
+	chunk: String,
 	beginning: number,
-	wasMacro: Boolean,
 ): MacroChildNode {
-	if (txt.substring(0, 2) === '$(') { // This is a macro key
-		txt += src.read()
+	if (chunk.substring(0, 2) === '$(') { // This is a macro key
+		chunk += src.read()
 
 		// Error handling
-		const check = txt.substring(2, txt.length - 1)
-		const matchedInvalid = check.replace(/[a-zA-Z0-9_]*/, '')
+		const errorCheck = chunk.substring(2, chunk.length - 1)
+		const matchedInvalid = errorCheck.replace(/[a-zA-Z0-9_]*/, '')
 		if (matchedInvalid.length > 0) { // Invalid key
 			ctx.err.report(
 				localize(
@@ -114,13 +120,13 @@ function parse(
 				core.Range.create(beginning, src.cursor),
 			)
 		}
-		if (check.length === 0) { // No key
+		if (errorCheck.length === 0) { // No key
 			ctx.err.report(
 				localize('expected', localize('macro-key')),
 				core.Range.create(beginning, src.cursor),
 			)
 		}
-		if (txt.charAt(txt.length - 1) !== ')') { // Missing parenthesis
+		if (chunk.charAt(chunk.length - 1) !== ')') { // Missing parenthesis
 			ctx.err.report(
 				localize('expected', localeQuote(')')),
 				core.Range.create(beginning, src.cursor),
@@ -130,23 +136,22 @@ function parse(
 		const key: MacroKeyNode = {
 			type: 'mcfunction:macro_key',
 			range: core.Range.create(beginning + 2, src.cursor - 1),
-			key: check,
+			key: errorCheck,
 		}
 
 		const ans: MacroChildNode = {
-			type: 'mcfunction:macro_child',
+			type: 'mcfunction:macro_child/macro',
 			range: core.Range.create(beginning, src.cursor),
-			options: { type: 'macro' },
-			value: txt,
+			value: chunk,
 			children: [key],
 		}
 		return ans
-	} else { // This is the rest of the line
+	} else {
+		// This is the rest of the line
 		const ans: MacroChildNode = {
-			type: 'mcfunction:macro_child',
+			type: 'mcfunction:macro_child/other',
 			range: core.Range.create(beginning, src.cursor),
-			options: { type: 'other' },
-			value: txt,
+			value: chunk,
 		}
 		return ans
 	}
