@@ -58,7 +58,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
-		ctx: data.ctx ?? {},
+		ctx: data.ctx ?? { loadedVersion: '1.15' },
 		downloader,
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
