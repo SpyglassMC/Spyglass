@@ -184,7 +184,6 @@ export function fieldValue(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 			type.kind !== 'literal' &&
 			type.kind !== 'reference' &&
 			type.kind !== 'union' &&
-			type.kind !== 'attributed' &&
 			type.kind !== 'unsafe' &&
 			type.kind !== 'concrete' &&
 			type.kind !== 'indexed' &&
@@ -339,10 +338,6 @@ export function fieldValue(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 						) as core.SyncChecker<JsonNode>
 					)(node, ctx)
 				}
-				break
-			case 'attributed':
-				// TODO: don't just ignore the attribute
-				fieldValue(type.child)(node, ctx)
 				break
 		}
 	}

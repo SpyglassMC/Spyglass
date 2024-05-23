@@ -30,13 +30,12 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::NoValue": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "deprecated"
-            },
-            "child": {
-              "kind": "boolean"
-            }
+            "kind": "boolean",
+            "attributes": [
+              {
+                "name": "deprecated"
+              }
+            ]
           }
         },
         "subcategory": "type_alias",
@@ -78,20 +77,19 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "::test::SimpleValue": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "since",
-              "value": {
-                "kind": "literal",
+            "kind": "boolean",
+            "attributes": [
+              {
+                "name": "since",
                 "value": {
-                  "kind": "double",
-                  "value": 1.19
+                  "kind": "literal",
+                  "value": {
+                    "kind": "double",
+                    "value": 1.19
+                  }
                 }
               }
-            },
-            "child": {
-              "kind": "boolean"
-            }
+            ]
           }
         },
         "subcategory": "type_alias",
@@ -130,32 +128,32 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::test::TreeValue": {
+      "::test::Multiple": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "id",
-              "value": {
-                "kind": "tree",
-                "values": {
-                  "registry": {
-                    "kind": "literal",
-                    "value": {
-                      "kind": "string",
-                      "value": "worldgen/biome"
-                    }
-                  },
-                  "tags": {
-                    "kind": "reference",
-                    "path": "::test::allowed"
+            "kind": "boolean",
+            "attributes": [
+              {
+                "name": "since",
+                "value": {
+                  "kind": "literal",
+                  "value": {
+                    "kind": "double",
+                    "value": 1.17
+                  }
+                }
+              },
+              {
+                "name": "until",
+                "value": {
+                  "kind": "literal",
+                  "value": {
+                    "kind": "double",
+                    "value": 1.2
                   }
                 }
               }
-            },
-            "child": {
-              "kind": "string"
-            }
+            ]
           }
         },
         "subcategory": "type_alias",
@@ -164,7 +162,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
             "uri": "file:///test.mcdoc",
             "range": {
               "start": 83,
-              "end": 92
+              "end": 91
             },
             "posRange": {
               "start": {
@@ -173,12 +171,12 @@ exports['mcdoc __fixture__ attributed types 1'] = {
               },
               "end": {
                 "line": 2,
-                "character": 14
+                "character": 13
               }
             },
             "fullRange": {
               "start": 78,
-              "end": 148
+              "end": 130
             },
             "fullPosRange": {
               "start": {
@@ -194,35 +192,31 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           }
         ]
       },
-      "::test::EnumValue": {
+      "::test::TreeValue": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "bitfield",
-              "value": {
-                "kind": "tree",
-                "values": {
-                  "0": {
-                    "kind": "enum",
-                    "enumKind": "int",
-                    "values": [
-                      {
-                        "identifier": "HandAll",
-                        "value": 1
-                      },
-                      {
-                        "identifier": "BootsAll",
-                        "value": 2
+            "kind": "string",
+            "attributes": [
+              {
+                "name": "id",
+                "value": {
+                  "kind": "tree",
+                  "values": {
+                    "registry": {
+                      "kind": "literal",
+                      "value": {
+                        "kind": "string",
+                        "value": "worldgen/biome"
                       }
-                    ]
+                    },
+                    "tags": {
+                      "kind": "reference",
+                      "path": "::test::allowed"
+                    }
                   }
                 }
               }
-            },
-            "child": {
-              "kind": "int"
-            }
+            ]
           }
         },
         "subcategory": "type_alias",
@@ -230,8 +224,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           {
             "uri": "file:///test.mcdoc",
             "range": {
-              "start": 153,
-              "end": 162
+              "start": 135,
+              "end": 144
             },
             "posRange": {
               "start": {
@@ -244,8 +238,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
               }
             },
             "fullRange": {
-              "start": 148,
-              "end": 224
+              "start": 130,
+              "end": 200
             },
             "fullPosRange": {
               "start": {
@@ -253,7 +247,73 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                 "character": 0
               },
               "end": {
-                "line": 6,
+                "line": 4,
+                "character": 0
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
+      },
+      "::test::EnumValue": {
+        "data": {
+          "typeDef": {
+            "kind": "int",
+            "attributes": [
+              {
+                "name": "bitfield",
+                "value": {
+                  "kind": "tree",
+                  "values": {
+                    "0": {
+                      "kind": "enum",
+                      "enumKind": "int",
+                      "values": [
+                        {
+                          "identifier": "HandAll",
+                          "value": 1
+                        },
+                        {
+                          "identifier": "BootsAll",
+                          "value": 2
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "subcategory": "type_alias",
+        "definition": [
+          {
+            "uri": "file:///test.mcdoc",
+            "range": {
+              "start": 205,
+              "end": 214
+            },
+            "posRange": {
+              "start": {
+                "line": 4,
+                "character": 5
+              },
+              "end": {
+                "line": 4,
+                "character": 14
+              }
+            },
+            "fullRange": {
+              "start": 200,
+              "end": 276
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 4,
+                "character": 0
+              },
+              "end": {
+                "line": 7,
                 "character": 7
               }
             },
@@ -283,16 +343,16 @@ exports['mcdoc __fixture__ attributed types 1'] = {
           {
             "uri": "file:///test.mcdoc",
             "range": {
-              "start": 176,
-              "end": 180
+              "start": 228,
+              "end": 232
             },
             "posRange": {
               "start": {
-                "line": 3,
+                "line": 4,
                 "character": 28
               },
               "end": {
-                "line": 3,
+                "line": 4,
                 "character": 32
               }
             },
@@ -307,7 +367,7 @@ exports['mcdoc __fixture__ attributed types 1'] = {
       "type": "file",
       "range": {
         "start": 0,
-        "end": 224
+        "end": 276
       },
       "children": [
         {
@@ -489,7 +549,143 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                   "type": "mcdoc:identifier",
                   "range": {
                     "start": 83,
-                    "end": 92
+                    "end": 91
+                  },
+                  "value": "Multiple",
+                  "symbol": {
+                    "category": "mcdoc",
+                    "path": [
+                      "::test::Multiple"
+                    ]
+                  }
+                },
+                {
+                  "type": "mcdoc:type/boolean",
+                  "children": [
+                    {
+                      "type": "mcdoc:attribute",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 96,
+                            "end": 101
+                          },
+                          "value": "since"
+                        },
+                        {
+                          "type": "mcdoc:type/literal",
+                          "children": [
+                            {
+                              "type": "mcdoc:typed_number",
+                              "children": [
+                                {
+                                  "type": "float",
+                                  "range": {
+                                    "start": 102,
+                                    "end": 106
+                                  },
+                                  "value": 1.17
+                                }
+                              ],
+                              "range": {
+                                "start": 102,
+                                "end": 106
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 102,
+                            "end": 106
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 94,
+                        "end": 108
+                      }
+                    },
+                    {
+                      "type": "mcdoc:attribute",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 110,
+                            "end": 115
+                          },
+                          "value": "until"
+                        },
+                        {
+                          "type": "mcdoc:type/literal",
+                          "children": [
+                            {
+                              "type": "mcdoc:typed_number",
+                              "children": [
+                                {
+                                  "type": "float",
+                                  "range": {
+                                    "start": 116,
+                                    "end": 120
+                                  },
+                                  "value": 1.2
+                                }
+                              ],
+                              "range": {
+                                "start": 116,
+                                "end": 120
+                              }
+                            }
+                          ],
+                          "range": {
+                            "start": 116,
+                            "end": 120
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 108,
+                        "end": 122
+                      }
+                    },
+                    {
+                      "type": "mcdoc:literal",
+                      "range": {
+                        "start": 122,
+                        "end": 129
+                      },
+                      "value": "boolean",
+                      "colorTokenType": "type"
+                    }
+                  ],
+                  "range": {
+                    "start": 94,
+                    "end": 130
+                  }
+                }
+              ],
+              "range": {
+                "start": 78,
+                "end": 130
+              }
+            },
+            {
+              "type": "mcdoc:type_alias",
+              "children": [
+                {
+                  "type": "mcdoc:literal",
+                  "range": {
+                    "start": 130,
+                    "end": 134
+                  },
+                  "value": "type",
+                  "colorTokenType": "keyword"
+                },
+                {
+                  "type": "mcdoc:identifier",
+                  "range": {
+                    "start": 135,
+                    "end": 144
                   },
                   "value": "TreeValue",
                   "symbol": {
@@ -508,16 +704,16 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 97,
-                            "end": 99
+                            "start": 149,
+                            "end": 151
                           },
                           "value": "id"
                         },
                         {
                           "type": "mcdoc:attribute/tree",
                           "range": {
-                            "start": 100,
-                            "end": 138
+                            "start": 152,
+                            "end": 190
                           },
                           "children": [
                             {
@@ -526,8 +722,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                 {
                                   "type": "mcdoc:identifier",
                                   "range": {
-                                    "start": 100,
-                                    "end": 108
+                                    "start": 152,
+                                    "end": 160
                                   },
                                   "value": "registry"
                                 },
@@ -537,8 +733,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                     {
                                       "type": "string",
                                       "range": {
-                                        "start": 109,
-                                        "end": 125
+                                        "start": 161,
+                                        "end": 177
                                       },
                                       "value": "worldgen/biome",
                                       "valueMap": [
@@ -548,23 +744,23 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                             "end": 0
                                           },
                                           "outer": {
-                                            "start": 110,
-                                            "end": 110
+                                            "start": 162,
+                                            "end": 162
                                           }
                                         }
                                       ]
                                     }
                                   ],
                                   "range": {
-                                    "start": 109,
-                                    "end": 125
+                                    "start": 161,
+                                    "end": 177
                                   }
                                 },
                                 {
                                   "type": "mcdoc:identifier",
                                   "range": {
-                                    "start": 126,
-                                    "end": 130
+                                    "start": 178,
+                                    "end": 182
                                   },
                                   "value": "tags"
                                 },
@@ -577,27 +773,27 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                         {
                                           "type": "mcdoc:identifier",
                                           "range": {
-                                            "start": 131,
-                                            "end": 138
+                                            "start": 183,
+                                            "end": 190
                                           },
                                           "value": "allowed"
                                         }
                                       ],
                                       "range": {
-                                        "start": 131,
-                                        "end": 138
+                                        "start": 183,
+                                        "end": 190
                                       }
                                     }
                                   ],
                                   "range": {
-                                    "start": 131,
-                                    "end": 138
+                                    "start": 183,
+                                    "end": 190
                                   }
                                 }
                               ],
                               "range": {
-                                "start": 100,
-                                "end": 138
+                                "start": 152,
+                                "end": 190
                               }
                             }
                           ],
@@ -605,29 +801,29 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                         }
                       ],
                       "range": {
-                        "start": 95,
-                        "end": 141
+                        "start": 147,
+                        "end": 193
                       }
                     },
                     {
                       "type": "mcdoc:literal",
                       "range": {
-                        "start": 141,
-                        "end": 147
+                        "start": 193,
+                        "end": 199
                       },
                       "value": "string",
                       "colorTokenType": "type"
                     }
                   ],
                   "range": {
-                    "start": 95,
-                    "end": 148
+                    "start": 147,
+                    "end": 200
                   }
                 }
               ],
               "range": {
-                "start": 78,
-                "end": 148
+                "start": 130,
+                "end": 200
               }
             },
             {
@@ -636,8 +832,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                 {
                   "type": "mcdoc:literal",
                   "range": {
-                    "start": 148,
-                    "end": 152
+                    "start": 200,
+                    "end": 204
                   },
                   "value": "type",
                   "colorTokenType": "keyword"
@@ -645,8 +841,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                 {
                   "type": "mcdoc:identifier",
                   "range": {
-                    "start": 153,
-                    "end": 162
+                    "start": 205,
+                    "end": 214
                   },
                   "value": "EnumValue",
                   "symbol": {
@@ -665,16 +861,16 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                         {
                           "type": "mcdoc:identifier",
                           "range": {
-                            "start": 167,
-                            "end": 175
+                            "start": 219,
+                            "end": 227
                           },
                           "value": "bitfield"
                         },
                         {
                           "type": "mcdoc:attribute/tree",
                           "range": {
-                            "start": 176,
-                            "end": 218
+                            "start": 228,
+                            "end": 270
                           },
                           "children": [
                             {
@@ -686,8 +882,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                     {
                                       "type": "mcdoc:literal",
                                       "range": {
-                                        "start": 176,
-                                        "end": 180
+                                        "start": 228,
+                                        "end": 232
                                       },
                                       "value": "enum",
                                       "colorTokenType": "keyword",
@@ -701,8 +897,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                     {
                                       "type": "mcdoc:literal",
                                       "range": {
-                                        "start": 181,
-                                        "end": 184
+                                        "start": 233,
+                                        "end": 236
                                       },
                                       "value": "int",
                                       "colorTokenType": "type"
@@ -716,8 +912,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                             {
                                               "type": "mcdoc:identifier",
                                               "range": {
-                                                "start": 189,
-                                                "end": 196
+                                                "start": 241,
+                                                "end": 248
                                               },
                                               "value": "HandAll"
                                             },
@@ -727,21 +923,21 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                                 {
                                                   "type": "integer",
                                                   "range": {
-                                                    "start": 199,
-                                                    "end": 200
+                                                    "start": 251,
+                                                    "end": 252
                                                   },
                                                   "value": 1
                                                 }
                                               ],
                                               "range": {
-                                                "start": 199,
-                                                "end": 200
+                                                "start": 251,
+                                                "end": 252
                                               }
                                             }
                                           ],
                                           "range": {
-                                            "start": 189,
-                                            "end": 200
+                                            "start": 241,
+                                            "end": 252
                                           }
                                         },
                                         {
@@ -750,8 +946,8 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                             {
                                               "type": "mcdoc:identifier",
                                               "range": {
-                                                "start": 203,
-                                                "end": 211
+                                                "start": 255,
+                                                "end": 263
                                               },
                                               "value": "BootsAll"
                                             },
@@ -761,39 +957,39 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                                                 {
                                                   "type": "integer",
                                                   "range": {
-                                                    "start": 214,
-                                                    "end": 215
+                                                    "start": 266,
+                                                    "end": 267
                                                   },
                                                   "value": 2
                                                 }
                                               ],
                                               "range": {
-                                                "start": 214,
-                                                "end": 215
+                                                "start": 266,
+                                                "end": 267
                                               }
                                             }
                                           ],
                                           "range": {
-                                            "start": 203,
-                                            "end": 215
+                                            "start": 255,
+                                            "end": 267
                                           }
                                         }
                                       ],
                                       "range": {
-                                        "start": 186,
-                                        "end": 218
+                                        "start": 238,
+                                        "end": 270
                                       }
                                     }
                                   ],
                                   "range": {
-                                    "start": 176,
-                                    "end": 218
+                                    "start": 228,
+                                    "end": 270
                                   }
                                 }
                               ],
                               "range": {
-                                "start": 176,
-                                "end": 218
+                                "start": 228,
+                                "end": 270
                               }
                             }
                           ],
@@ -801,35 +997,35 @@ exports['mcdoc __fixture__ attributed types 1'] = {
                         }
                       ],
                       "range": {
-                        "start": 165,
-                        "end": 221
+                        "start": 217,
+                        "end": 273
                       }
                     },
                     {
                       "type": "mcdoc:literal",
                       "range": {
-                        "start": 221,
-                        "end": 224
+                        "start": 273,
+                        "end": 276
                       },
                       "value": "int",
                       "colorTokenType": "type"
                     }
                   ],
                   "range": {
-                    "start": 165,
-                    "end": 224
+                    "start": 217,
+                    "end": 276
                   }
                 }
               ],
               "range": {
-                "start": 148,
-                "end": 224
+                "start": 200,
+                "end": 276
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 224
+            "end": 276
           }
         }
       ],

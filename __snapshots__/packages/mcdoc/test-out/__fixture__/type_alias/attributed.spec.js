@@ -30,24 +30,23 @@ exports['mcdoc __fixture__ type alias/attributed 1'] = {
       "::test::Foo": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "since",
-              "value": {
-                "kind": "literal",
+            "kind": "literal",
+            "value": {
+              "kind": "boolean",
+              "value": true
+            },
+            "attributes": [
+              {
+                "name": "since",
                 "value": {
-                  "kind": "double",
-                  "value": 1.18
+                  "kind": "literal",
+                  "value": {
+                    "kind": "double",
+                    "value": 1.18
+                  }
                 }
               }
-            },
-            "child": {
-              "kind": "literal",
-              "value": {
-                "kind": "boolean",
-                "value": true
-              }
-            }
+            ]
           }
         },
         "subcategory": "type_alias",
