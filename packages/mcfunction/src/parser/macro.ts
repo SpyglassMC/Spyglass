@@ -10,138 +10,94 @@ export function macro(): core.Parser<MacroNode> {
 		src: core.Source,
 		ctx: core.ParserContext,
 	): core.Result<MacroNode> => {
-		const start = src.cursor
-		const children: MacroChildNode[] = []
+		const ans: MacroNode = {
+			type: 'mcfunction:macro',
+			range: core.Range.create(src.cursor),
+			children: [],
+		}
 
-		// Skip the initial $
+		// Skip the starting '$'
 		src.skip()
 
-		// Handle the rest of the line
+		let start = src.cursor
+		let hasMacroKeys = false
 
-		let beginning = src.cursor
-		let nextChunk = src.readUntil('$', '\r', '\n')
-		do { // Do-while because we always want it to work the first time
-			let wasMacro = false
-			if (nextChunk.substring(0, 2) === '$(') {
-				// This is a macro key
-				children.push(parseMacroChild(src, ctx, nextChunk, beginning))
+		while (src.canReadInLine()) {
+			src.skipUntilOrEnd(core.LF, core.CR, '$')
+			if (src.peek(2) === '$(') {
+				// Add the gap before this macro key
+				const gap = src.sliceToCursor(start)
+				if (gap.length > 0) {
+					ans.children.push({
+						type: 'mcfunction:macro_child/other',
+						range: core.Range.create(start, src.cursor),
+						value: gap,
+					})
+					start = src.cursor
+				}
+				// Parse the macro key
+				src.skip(2)
+				const keyStart = src.cursor
+				src.skipUntilOrEnd(core.LF, core.CR, ')')
+				if (src.peek() != ')') {
+					// Macro key was not closed
+					ctx.err.report(
+						localize('expected', localeQuote(')')),
+						core.Range.create(src),
+					)
+				} else if (src.cursor <= keyStart) {
+					// Encountered $()
+					ctx.err.report(
+						localize('expected', localize('macro-key')),
+						core.Range.create(start, src.cursor + 1),
+					)
+				}
+				const key = src.sliceToCursor(keyStart)
+				const matchedInvalid = key.replace(/[a-zA-Z0-9_]*/, '')
+				if (matchedInvalid.length > 0) {
+					ctx.err.report(
+						localize(
+							'parser.resource-location.illegal',
+							matchedInvalid.charAt(0),
+						),
+						core.Range.create(keyStart, src.cursor),
+					)
+				}
+				const keyNode: MacroKeyNode = {
+					type: 'mcfunction:macro_key',
+					range: core.Range.create(keyStart, src.cursor),
+				}
+				src.skip()
+				ans.children.push({
+					type: 'mcfunction:macro_child/macro',
+					range: core.Range.create(start, src.cursor),
+					value: key,
+					children: [keyNode],
+				})
+				start = src.cursor
+				hasMacroKeys = true
+			} else if (src.peek() === '$') {
+				src.skip()
 			} else {
-				const child: MacroChildNode = {
+				// No more macro keys, add the remaining gap
+				ans.children.push({
 					type: 'mcfunction:macro_child/other',
-					range: core.Range.create(beginning, src.cursor),
-					value: nextChunk,
-				}
-				// Handle a non-macro $ in the middle of the line
-				let subMacro: MacroChildNode | undefined
-				if (child.value?.indexOf('$') !== -1) {
-					const parts: String[] = child.value?.split('$') ?? []
-					let other = ''
-					for (const part of parts) {
-						if (part.charAt(0) == '(') { // We've found our macro key!
-							subMacro = parseMacroChild(
-								src,
-								ctx,
-								'$' + part,
-								beginning + other.length - 1,
-							)
-							child.range.end -= part.length + 1
-						} else { // Keep it in the normal string
-							other += part + '$'
-						}
-					}
-					wasMacro = true
-					child.value = other.substring(0, other.length - 1) // Remove the last '$'
-				}
-				children.push(child)
-				if (subMacro) { // Sub-macro added here because colorizer
-					children.push(subMacro)
-				}
+					range: core.Range.create(start, src.cursor),
+					value: src.sliceToCursor(start),
+				})
 			}
-			// Prepare for the next block
-			beginning = src.cursor
-			// Depending on if this last chunk contained/was a macro, we need to read until the next macro or end of the upcoming macro
-			if (wasMacro) {
-				nextChunk = src.readUntil('\r', '\n', '$')
-			} else {
-				nextChunk = src.readUntil('\r', '\n', ')')
-			}
-		} while (nextChunk.length > 0)
+		}
+
 
 		// A line with no macros is invalid
-		if (!children.some(c => c.type === 'mcfunction:macro_child/macro')) {
+		if (!hasMacroKeys) {
 			ctx.err.report(
 				localize('expected', localize('macro')),
 				core.Range.create(start, src.cursor),
 			)
 		}
 
-		// Add the sign back in
-		children.unshift({
-			type: 'mcfunction:macro_child/macro',
-			range: core.Range.create(start, start + 1),
-			value: '$',
-		})
-
-		// Return the result
-		const ans: MacroNode = {
-			type: 'mcfunction:macro',
-			range: core.Range.create(start, src.cursor),
-			children: children,
-		}
+		ans.range.end = src.cursor
 		return ans
 	}
-}
-
-/**
- * Takes in a chunk of text read from the source
- * checks for errors and returns a MacroChildNode.
- */
-function parseMacroChild(
-	src: core.Source,
-	ctx: core.ParserContext,
-	chunk: String,
-	beginning: number,
-): MacroChildNode {
-	// Append the closing parenthesis
-	const parenthesis = src.read()
-	chunk += parenthesis
-
-	// Error handling
-	const errorCheck = chunk.substring(2, chunk.length - 1)
-	const matchedInvalid = errorCheck.replace(/[a-zA-Z0-9_]*/, '')
-	if (matchedInvalid.length > 0) { // Invalid key
-		ctx.err.report(
-			localize(
-				'parser.resource-location.illegal',
-				matchedInvalid.charAt(0),
-			),
-			core.Range.create(beginning, src.cursor),
-		)
-	}
-	if (errorCheck.length === 0) { // No key
-		ctx.err.report(
-			localize('expected', localize('macro-key')),
-			core.Range.create(beginning, src.cursor),
-		)
-	}
-	if (parenthesis !== ')') { // Missing parenthesis
-		ctx.err.report(
-			localize('expected', localeQuote(')')),
-			core.Range.create(beginning, src.cursor),
-		)
-	}
-
-	// Create the key and child node
-	const key: MacroKeyNode = {
-		type: 'mcfunction:macro_key',
-		range: core.Range.create(beginning + 2, src.cursor - 1),
-		key: errorCheck,
-	}
-	const ans: MacroChildNode = {
-		type: 'mcfunction:macro_child/macro',
-		range: core.Range.create(beginning, src.cursor),
-		value: chunk,
-		children: [key],
-	}
-	return ans
 }
