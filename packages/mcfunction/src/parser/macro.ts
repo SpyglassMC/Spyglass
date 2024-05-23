@@ -59,7 +59,7 @@ export function macro(): core.Parser<MacroNode> {
 				} else if (src.cursor <= keyStart) {
 					// Encountered $()
 					ctx.err.report(
-						localize('expected', localize('macro-key')),
+						localize('expected', localize('parser.macro.key')),
 						core.Range.create(start, src.cursor + 1),
 					)
 				}
@@ -68,7 +68,7 @@ export function macro(): core.Parser<MacroNode> {
 				if (matchedInvalid.length > 0) {
 					ctx.err.report(
 						localize(
-							'parser.resource-location.illegal',
+							'parser.macro.illegal',
 							matchedInvalid.charAt(0),
 						),
 						core.Range.create(keyStart, src.cursor),
@@ -106,7 +106,7 @@ export function macro(): core.Parser<MacroNode> {
 		// A line with no macros is invalid
 		if (!hasMacroKeys) {
 			ctx.err.report(
-				localize('expected', localize('macro')),
+				localize('expected', localize('parser.macro.at-least-one')),
 				core.Range.create(start, src.cursor),
 			)
 		}
