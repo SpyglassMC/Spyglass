@@ -59,7 +59,7 @@
 		"all-contributors-cli": "^6.25.0",
 		"benchmark": "^2.1.4",
 		"circular-dependency-plugin": "^5.2.2",
-		"dprint": "^0.37.1",
+		"dprint": "^0.45.1",
 		"eslint": "^8.39.0",
 		"eslint-config-prettier": "^8.8.0",
 		"gitmoji-cli": "^8.1.1",
