@@ -24,9 +24,7 @@ export function entry(
 ): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
-		if (
-			core.CommentNode.is(childNode) || MacroNode.is(childNode)
-		) {
+		if (core.CommentNode.is(childNode) || MacroNode.is(childNode)) {
 			return []
 		} else {
 			return command(tree, getMockNodes)(
