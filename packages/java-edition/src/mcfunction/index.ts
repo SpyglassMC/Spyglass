@@ -7,7 +7,7 @@ import * as completer from './completer/index.js'
 import { inlayHintProvider } from './inlayHintProvider.js'
 import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
-import { validatePatchedTree } from './tree/patch-validator.js'
+import { validatePatchedTree } from './tree/patchValidator.js'
 import { getPatch } from './tree/patch.js'
 
 export * as checker from './checker/index.js'
