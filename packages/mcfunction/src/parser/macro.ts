@@ -14,15 +14,13 @@ export function macro(): core.Parser<MacroNode> {
 		const children: MacroChildNode[] = []
 
 		// Handle the starting '$'
-		if (src.peek() == '$' && src.peek(2) !== '$(') {
-			const sign: MacroChildNode = {
-				type: 'mcfunction:macro_child/sign',
-				range: core.Range.create(start, start + 1),
-				value: '$',
-			}
-			src.skip()
-			children.push(sign)
+		const sign: MacroChildNode = {
+			type: 'mcfunction:macro_child/sign',
+			range: core.Range.create(start, start + 1),
+			value: '$',
 		}
+		children.push(sign)
+		src.skip()
 
 		// Handle the rest of the line
 
@@ -76,8 +74,15 @@ export function macro(): core.Parser<MacroNode> {
 			}
 		} while (nextChunk.length > 0)
 
-		// No actual macro
-		if (children.length < 3) {
+		// A line with no macros is invalid
+        let hasMacro = false
+        for (const child of children) {
+            if (child.type === 'mcfunction:macro_child/macro') {
+                hasMacro = true
+                break
+            }
+        }
+		if (!hasMacro) {
 			ctx.err.report(
 				localize('expected', localize('macro')),
 				core.Range.create(start, src.cursor),
@@ -87,11 +92,9 @@ export function macro(): core.Parser<MacroNode> {
 		// Return the result
 		const ans: MacroNode = {
 			type: 'mcfunction:macro',
-			range: core.Range.create(start),
+			range: core.Range.create(start, src.cursor),
 			children: children,
 		}
-
-		ans.range.end = src.cursor
 		return ans
 	}
 }

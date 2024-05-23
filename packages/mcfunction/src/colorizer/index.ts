@@ -17,7 +17,15 @@ export function register(meta: core.MetaRegistry) {
 		core.colorizer.error,
 	)
 	meta.registerColorizer<MacroChildNode>(
-		'mcfunction:macro_child',
+		'mcfunction:macro_child/macro',
+		macroChild,
+	)
+	meta.registerColorizer<MacroChildNode>(
+		'mcfunction:macro_child/other',
+		macroChild,
+	)
+	meta.registerColorizer<MacroChildNode>(
+		'mcfunction:macro_child/sign',
 		macroChild,
 	)
 	meta.registerColorizer<MacroKeyNode>(
