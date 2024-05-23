@@ -8,6 +8,7 @@ export interface MacroNode extends
 	type: 'mcfunction:macro'
 	slash?: core.Range
 	children: (MacroGapNode | MacroVariableNode | MacroKeyNode | MacroSignNode)[]
+	path: string[]
 }
 export namespace MacroNode {
 	/* istanbul ignore next */
@@ -23,6 +24,7 @@ export namespace MacroNode {
 			type: 'mcfunction:macro',
 			range: core.Range.get(range),
 			children: [MacroChildNode.mock(range)],
+			path: [],
 		}
 	}
 }
@@ -31,6 +33,7 @@ export interface MacroGapNode extends core.AstNode {
 	type: 'mcfunction:macro/gap'
 	value?: string
 	children?: [core.AstNode]
+	path: string[]
 }
 export namespace MacroGapNode {
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
@@ -43,6 +46,7 @@ export namespace MacroGapNode {
 		return {
 			type: 'mcfunction:macro/gap',
 			range: core.Range.get(range),
+			path: [],
 		}
 	}
 }
@@ -51,6 +55,7 @@ export interface MacroVariableNode extends core.AstNode {
 	type: 'mcfunction:macro/variable'
 	value?: string
 	children?: [core.AstNode]
+	path: string[]
 }
 export namespace MacroChildNode {
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
@@ -63,6 +68,7 @@ export namespace MacroChildNode {
 		return {
 			type: 'mcfunction:macro/variable',
 			range: core.Range.get(range),
+			path: [],
 		}
 	}
 }
@@ -70,11 +76,13 @@ export namespace MacroChildNode {
 export interface MacroSignNode extends core.AstNode {
 	readonly value: '$'
 	type: 'mcfunction:macro/sign'
+	path: string[]
 }
 
 export interface MacroKeyNode extends core.AstNode {
 	type: 'mcfunction:macro/key'
 	key?: string
+	path: string[]
 }
 
 export namespace MacroKeyNode {

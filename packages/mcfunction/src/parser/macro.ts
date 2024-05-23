@@ -25,6 +25,7 @@ export function macro(): core.Parser<MacroNode> {
 			type: 'mcfunction:macro/sign',
 			range: core.Range.create(src.cursor, src.cursor + 1),
 			value: '$',
+			path: ['$'],
 		})
 		src.skip()
 
@@ -41,6 +42,7 @@ export function macro(): core.Parser<MacroNode> {
 						type: 'mcfunction:macro/gap',
 						range: core.Range.create(start, src.cursor),
 						value: gap,
+						path: [gap],
 					})
 					start = src.cursor
 				}
@@ -52,7 +54,7 @@ export function macro(): core.Parser<MacroNode> {
 					// Macro key was not closed
 					ctx.err.report(
 						localize('expected', localeQuote(')')),
-						core.Range.create(src),
+						core.Range.create(keyStart, src.cursor),
 					)
 				} else if (src.cursor <= keyStart) {
 					// Encountered $()
@@ -76,6 +78,7 @@ export function macro(): core.Parser<MacroNode> {
 					type: 'mcfunction:macro/key',
 					range: core.Range.create(keyStart, src.cursor),
 					key: key,
+					path: [key, key],
 				}
 				src.skip()
 				children.push({
@@ -83,6 +86,7 @@ export function macro(): core.Parser<MacroNode> {
 					range: core.Range.create(start, src.cursor),
 					value: key,
 					children: [keyNode],
+					path: [key],
 				})
 				start = src.cursor
 				hasMacroKeys = true
@@ -94,6 +98,7 @@ export function macro(): core.Parser<MacroNode> {
 					type: 'mcfunction:macro/gap',
 					range: core.Range.create(start, src.cursor),
 					value: src.sliceToCursor(start),
+					path: [src.sliceToCursor(start)],
 				})
 			}
 		}
@@ -110,6 +115,7 @@ export function macro(): core.Parser<MacroNode> {
 			type: 'mcfunction:macro',
 			range: core.Range.create(start - 1, src.cursor),
 			children: children,
+			path: [],
 		}
 		return ans
 	}
