@@ -6,7 +6,6 @@ import { CommandNode } from '../node/index.js'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree/index.js'
 import {
 	categorizeTreeChildren,
-	CommandTreeRegistry,
 	redirect,
 	resolveParentTreeNode,
 } from '../tree/index.js'
@@ -21,11 +20,10 @@ export type MockNodesGetter = (
  * will be used for completing the argument.
  */
 export function entry(
-	commandTreeName: string,
+	tree: RootTreeNode,
 	getMockNodes: MockNodesGetter,
 ): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
-		const tree = CommandTreeRegistry.instance.get(commandTreeName)
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
 		if (core.CommentNode.is(childNode) || CommandMacroNode.is(childNode)) {
 			return []
