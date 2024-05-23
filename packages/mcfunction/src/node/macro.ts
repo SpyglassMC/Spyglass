@@ -27,7 +27,6 @@ export interface MacroChildNode extends core.AstNode {
 	type:
 		| 'mcfunction:macro_child/macro'
 		| 'mcfunction:macro_child/other'
-		| 'mcfunction:macro_child/sign'
 	value?: String
 	children?: [core.AstNode]
 }
@@ -37,8 +36,7 @@ export namespace MacroChildNode {
 	): obj is core.InheritReadonly<MacroChildNode, T> {
 		const type = (obj as MacroChildNode | undefined)?.type
 		return type === 'mcfunction:macro_child/macro' ||
-			type === 'mcfunction:macro_child/other' ||
-			type === 'mcfunction:macro_child/sign'
+			type === 'mcfunction:macro_child/other'
 	}
 	export function mock(range: core.RangeLike): MacroChildNode {
 		return {

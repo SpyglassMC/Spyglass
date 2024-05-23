@@ -25,7 +25,6 @@ export function entry(
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
 			} else if (src.peek() === '$') {
-				// Basic macro highlighting
 				result = macro()(src, ctx) as MacroNode
 			} else {
 				result = command(

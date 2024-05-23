@@ -3,6 +3,7 @@ import type {
 	LiteralCommandChildNode,
 	MacroChildNode,
 	MacroKeyNode,
+	MacroNode,
 	TrailingCommandChildNode,
 } from '../node/index.js'
 import { macroChild, macroKey } from './macro.js'
@@ -22,10 +23,6 @@ export function register(meta: core.MetaRegistry) {
 	)
 	meta.registerColorizer<MacroChildNode>(
 		'mcfunction:macro_child/other',
-		macroChild,
-	)
-	meta.registerColorizer<MacroChildNode>(
-		'mcfunction:macro_child/sign',
 		macroChild,
 	)
 	meta.registerColorizer<MacroKeyNode>(
