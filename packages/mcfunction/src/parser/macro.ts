@@ -71,6 +71,7 @@ export function macro(): core.Parser<MacroNode> {
 				const keyNode: MacroKeyNode = {
 					type: 'mcfunction:macro_key',
 					range: core.Range.create(keyStart, src.cursor),
+					key: key,
 				}
 				src.skip()
 				ans.children.push({
@@ -92,7 +93,6 @@ export function macro(): core.Parser<MacroNode> {
 				})
 			}
 		}
-
 
 		// A line with no macros is invalid
 		if (!hasMacroKeys) {
