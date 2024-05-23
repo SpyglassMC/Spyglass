@@ -17,6 +17,11 @@ export function macro(): core.Parser<MacroNode> {
 		}
 
 		// Skip the starting '$'
+		ans.children.push({
+			type: 'mcfunction:macro_child/macro',
+			range: core.Range.create(src.cursor, src.cursor + 1),
+			value: '$',
+		})
 		src.skip()
 
 		let start = src.cursor
