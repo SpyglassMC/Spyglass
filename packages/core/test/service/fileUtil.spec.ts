@@ -18,6 +18,11 @@ describe('fileUtil', () => {
 			{ uri: 'file:///c:/Users/admin/', expected: '' },
 			{ uri: 'file:///c:/Users/admin/foo.mcdoc', expected: 'foo.mcdoc' },
 			{
+				// Should treat multiple slashes in a row in pathname as a single slash.
+				uri: 'file:///c://///Users///admin//foo.mcdoc',
+				expected: 'foo.mcdoc',
+			},
+			{
 				uri: 'file:///c:/Users/admin/foo/bar.mcdoc',
 				expected: 'foo/bar.mcdoc',
 			},

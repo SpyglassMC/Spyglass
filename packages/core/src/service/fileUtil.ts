@@ -28,12 +28,13 @@ export namespace fileUtil {
 		const targetComponents = targetUri.pathname.split('/')
 			.filter((v) => !!v)
 
-		for (const [i, c] of baseComponents.entries()) {
-			if (
-				decodeURIComponent(c) !== decodeURIComponent(targetComponents[i])
-			) {
-				return undefined
-			}
+		if (
+			baseComponents.length > targetComponents.length ||
+			baseComponents.some((bc, i) =>
+				decodeURIComponent(bc) !== decodeURIComponent(targetComponents[i])
+			)
+		) {
+			return undefined
 		}
 
 		return targetComponents.slice(baseComponents.length).map(
