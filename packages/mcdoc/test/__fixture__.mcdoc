@@ -71,6 +71,7 @@ type TupleTest1 = [string, boolean]
 //== attributed types
 type NoValue = #[deprecated] boolean
 type SimpleValue = #[since=1.19] boolean
+type Multiple = #[since=1.17] #[until=1.20] boolean
 type TreeValue = #[id(registry="worldgen/biome",tags=allowed)] string
 type EnumValue = #[bitfield(enum(int) {
 	HandAll = 1,

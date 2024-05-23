@@ -47,31 +47,30 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                   }
                 ],
                 "type": {
-                  "kind": "attributed",
-                  "attribute": {
-                    "name": "expandable"
-                  },
-                  "child": {
-                    "kind": "struct",
-                    "fields": [
-                      {
-                        "kind": "spread",
-                        "type": {
-                          "kind": "dispatcher",
-                          "parallelIndices": [
-                            {
-                              "kind": "dynamic",
-                              "accessor": [
-                                "%parent",
-                                "type"
-                              ]
-                            }
-                          ],
-                          "registry": "minecraft:carver_config"
-                        }
+                  "kind": "struct",
+                  "fields": [
+                    {
+                      "kind": "spread",
+                      "type": {
+                        "kind": "dispatcher",
+                        "parallelIndices": [
+                          {
+                            "kind": "dynamic",
+                            "accessor": [
+                              "%parent",
+                              "type"
+                            ]
+                          }
+                        ],
+                        "registry": "minecraft:carver_config"
                       }
-                    ]
-                  }
+                    }
+                  ],
+                  "attributes": [
+                    {
+                      "name": "expandable"
+                    }
+                  ]
                 }
               }
             ]
@@ -116,31 +115,30 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
       "::test::<anonymous 0>": {
         "data": {
           "typeDef": {
-            "kind": "attributed",
-            "attribute": {
-              "name": "expandable"
-            },
-            "child": {
-              "kind": "struct",
-              "fields": [
-                {
-                  "kind": "spread",
-                  "type": {
-                    "kind": "dispatcher",
-                    "parallelIndices": [
-                      {
-                        "kind": "dynamic",
-                        "accessor": [
-                          "%parent",
-                          "type"
-                        ]
-                      }
-                    ],
-                    "registry": "minecraft:carver_config"
-                  }
+            "kind": "struct",
+            "fields": [
+              {
+                "kind": "spread",
+                "type": {
+                  "kind": "dispatcher",
+                  "parallelIndices": [
+                    {
+                      "kind": "dynamic",
+                      "accessor": [
+                        "%parent",
+                        "type"
+                      ]
+                    }
+                  ],
+                  "registry": "minecraft:carver_config"
                 }
-              ]
-            }
+              }
+            ],
+            "attributes": [
+              {
+                "name": "expandable"
+              }
+            ]
           }
         },
         "subcategory": "struct",
