@@ -117,6 +117,26 @@ exports['concatOnTrailingBackslash() Parse "true↓" 1'] = {
   "errors": []
 }
 
+exports['concatOnTrailingBackslash() Parse "tru⧵ ↓ " 1'] = {
+  "node": {
+    "type": "boolean",
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “false” or “true”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['concatOnTrailingBackslash() Parse "tru⧵ ↓ e" 1'] = {
   "node": {
     "type": "boolean",
@@ -141,6 +161,34 @@ exports['concatOnTrailingBackslash() Parse "tru⧵ ↓ ⧵↓ e" 1'] = {
   "errors": []
 }
 
+exports['concatOnTrailingBackslash() Parse "tru⧵ ↓" 1'] = {
+  "node": {
+    "type": "boolean",
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 6
+      },
+      "message": "A line continuation cannot be the end of the file",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “false” or “true”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['concatOnTrailingBackslash() Parse "tru⧵ ↓e" 1'] = {
   "node": {
     "type": "boolean",
@@ -151,6 +199,34 @@ exports['concatOnTrailingBackslash() Parse "tru⧵ ↓e" 1'] = {
     "value": true
   },
   "errors": []
+}
+
+exports['concatOnTrailingBackslash() Parse "tru⧵" 1'] = {
+  "node": {
+    "type": "boolean",
+    "range": {
+      "start": 0,
+      "end": 0
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 3,
+        "end": 4
+      },
+      "message": "A line continuation cannot be the end of the file",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 0,
+        "end": 0
+      },
+      "message": "Expected “false” or “true”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['concatOnTrailingBackslash() Parse "tru⧵e ⧵ ↓ e" 1'] = {

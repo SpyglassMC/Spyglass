@@ -1,4 +1,5 @@
-import type { AstNode } from '../node/index.js'
+import { localize } from '@spyglassmc/locales'
+import type { AstNode, ErrorNode } from '../node/index.js'
 import { SequenceUtil, SequenceUtilDiscriminator } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorReporter } from '../service/index.js'
@@ -544,6 +545,20 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 			// next line's first non-whitespace character
 			const from = src.getCharRange()
 			src.nextLine()
+
+			// Minecraft raises a `Line continuation at end of file` if a backslash
+			// (+ optional whitespace to the next line) is right before the end of the file
+			if (!src.canRead()) {
+				const ans: ErrorNode = {
+					type: 'error',
+					range: Range.span(from, src),
+				}
+				ctx.err.report(
+					localize('mcfunction.parser.line-continuation-end-of-file'),
+					ans,
+				)
+			}
+
 			src.skipSpace()
 			const to = src.getCharRange(-1)
 			indexMap.push({
