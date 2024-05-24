@@ -13,11 +13,16 @@ let client: lc.LanguageClient
 export function activate(context: vsc.ExtensionContext) {
 	// The server is implemented in node
 	const serverModule = context.asAbsolutePath(path.join('dist', 'server.js'))
-	// The debug options for the server
-	// --inspect=6037: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
+
+	const runOptions = {
+		execArgv: [
+			'--enable-source-maps',
+		],
+	}
 	const debugOptions = {
 		execArgv: [
 			'--nolazy',
+			// Run the server in Node's Inspector mode so VS Code can attach to the server for debugging
 			'--inspect=6037',
 			'--expose-gc',
 			'--enable-source-maps',
@@ -30,6 +35,7 @@ export function activate(context: vsc.ExtensionContext) {
 		run: {
 			module: serverModule,
 			transport: lc.TransportKind.ipc,
+			options: runOptions,
 		},
 		debug: {
 			module: serverModule,
