@@ -57,13 +57,13 @@ export type SimplifiedMcdocType =
 type SimplifiedMcdocTypeNoUnion =
 	  SimplifiedEnum
 	| KeywordType
-	| ListType<SimplifiedMcdocType>
+	| ListType
 	| LiteralType
 	| NumericType
 	| PrimitiveArrayType
 	| StringType
 	| SimplifiedStructType
-	| TupleType<SimplifiedMcdocType>
+	| TupleType
 
 export interface SimplifiedEnum extends EnumType {
 	enumKind: EnumKind
@@ -541,10 +541,6 @@ function simplify<T>(node: T, typeDef: McdocType, inferredType: McdocType, optio
 					i <= fields.findLastIndex(of => isAssignable(f.key, of.key, options.context, options.isEquivalent))
 				)
 			};
-		case 'list':
-			return { ...typeDef, item: simplify(node, typeDef.item, inferredType, options, parents) };
-		case 'tuple':
-			return { ...typeDef, items: typeDef.items.map(i => simplify(node, i, inferredType, options, parents)) };
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
 		case 'concrete': // TODO
