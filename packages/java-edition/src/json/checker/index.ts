@@ -60,7 +60,7 @@ export const entry: core.Checker<JsonNode> = (
 	} else if (parts?.category.startsWith('tag/')) {
 		// TODO
 	} else if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		return definition('::java::Pack')(node, ctx)
+		return definition('::java::pack::Pack')(node, ctx)
 	} else {
 		return
 	}
