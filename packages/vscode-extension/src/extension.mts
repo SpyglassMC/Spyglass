@@ -16,7 +16,12 @@ export function activate(context: vsc.ExtensionContext) {
 	// The debug options for the server
 	// --inspect=6037: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging
 	const debugOptions = {
-		execArgv: ['--nolazy', '--inspect=6037', '--expose-gc', '--enable-source-maps'],
+		execArgv: [
+			'--nolazy',
+			'--inspect=6037',
+			'--expose-gc',
+			'--enable-source-maps',
+		],
 	}
 
 	// If the extension is launched in debug mode then the debug server options are used
