@@ -95,6 +95,7 @@ import type {
 	StructTypeField,
 	StructTypePairField,
 	StructTypeSpreadField,
+	UseStatementBindingData,
 } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext {}
@@ -250,11 +251,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
 
-		/**
-		 * String representation of the absolute path of the imported symbol.
-		 */
-		const importedPathString = pathArrayToString(resolvePath(path, ctx))
-
+		const target = resolvePath(path, ctx)
 		ctx.symbols
 			.query(
 				{ doc: ctx.doc, node },
@@ -268,14 +265,9 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				data: {
 					subcategory: 'use_statement_binding',
 					visibility: SymbolVisibility.File,
-					relations: {
-						aliasOf: importedPathString
-							? {
-								category: 'mcdoc',
-								path: [importedPathString],
-							}
-							: undefined,
-					},
+					data: target
+						? { target } satisfies UseStatementBindingData
+						: undefined,
 				},
 				usage: { type: 'definition', node: identifier, fullRange: node },
 			})
@@ -732,7 +724,7 @@ function* resolvePathByStep(
 	indexRight: number
 }> {
 	const { children, isAbsolute } = PathNode.destruct(path)
-	const identifiers: string[] = isAbsolute
+	let identifiers: string[] = isAbsolute
 		? []
 		: pathStringToArray(ctx.moduleIdentifier)
 	for (const [i, child] of children.entries()) {
@@ -742,9 +734,9 @@ function* resolvePathByStep(
 				// For a path node with `n` children, the first `n-1` child nodes specify
 				// the path of the module that contains the symbol. They will be pushed
 				// to the `identifiers` array and yielded as-is. The last node, however,
-				// may refer to an alias created with the `use` statement. We will query
-				// the symbol table and resolve any possible aliasing in that case
-				// before yielding the result.
+				// may be created by a use statement and points to a global symbol
+				// in a different file. We will query the symbol table and rewrite
+				// the `identifiers` array to be the target path if needed.
 				identifiers.push(child.value)
 				if (indexRight === 0) {
 					ctx.symbols.query(
@@ -754,15 +746,12 @@ function* resolvePathByStep(
 						},
 						'mcdoc',
 						pathArrayToString(identifiers),
-					).ifDeclared((_, query) => {
-						try {
-							const targetPath = query.resolveAlias().symbol!.path[0]
-							identifiers.splice(0, identifiers.length)
-							identifiers.push(...pathStringToArray(targetPath))
-						} catch {
-							// Alias target doesn't exist. The error would have been reported
-							// where the alias symbol was created, so we can ignore the error
-							// here.
+					).ifDeclared((symbol) => {
+						const data = symbol.data as
+							| UseStatementBindingData
+							| undefined
+						if (data?.target) {
+							identifiers = [...data.target]
 						}
 					})
 				}

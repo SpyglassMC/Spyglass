@@ -453,13 +453,11 @@ exports['mcdoc __fixture__ use statement/reference alias 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
-            "relations": {
-              "aliasOf": {
-                "category": "mcdoc",
-                "path": [
-                  "::module::Used"
-                ]
-              }
+            "data": {
+              "target": [
+                "module",
+                "Used"
+              ]
             },
             "definition": [
               {

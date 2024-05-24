@@ -432,13 +432,11 @@ exports['mcdoc __fixture__ use statement/double reference alias 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
-            "relations": {
-              "aliasOf": {
-                "category": "mcdoc",
-                "path": [
-                  "::test::Used0"
-                ]
-              }
+            "data": {
+              "target": [
+                "test",
+                "Used0"
+              ]
             },
             "definition": [
               {
@@ -483,13 +481,11 @@ exports['mcdoc __fixture__ use statement/double reference alias 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
-            "relations": {
-              "aliasOf": {
-                "category": "mcdoc",
-                "path": [
-                  "::test::Used0"
-                ]
-              }
+            "data": {
+              "target": [
+                "test",
+                "Used0"
+              ]
             },
             "definition": [
               {

@@ -98,7 +98,7 @@ exports['mcdoc __fixture__ use statement/use before file loaded 1'] = {
                 "key": "foo",
                 "type": {
                   "kind": "reference",
-                  "path": "::client::Used"
+                  "path": "::later::Used"
                 }
               }
             ]
@@ -450,13 +450,11 @@ exports['mcdoc __fixture__ use statement/use before file loaded 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
-            "relations": {
-              "aliasOf": {
-                "category": "mcdoc",
-                "path": [
-                  "::later::Used"
-                ]
-              }
+            "data": {
+              "target": [
+                "later",
+                "Used"
+              ]
             },
             "definition": [
               {

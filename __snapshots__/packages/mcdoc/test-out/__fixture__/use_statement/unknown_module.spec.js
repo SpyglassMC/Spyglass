@@ -107,13 +107,11 @@ exports['mcdoc __fixture__ use statement/unknown module 1'] = {
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
-            "relations": {
-              "aliasOf": {
-                "category": "mcdoc",
-                "path": [
-                  "::module::Foo"
-                ]
-              }
+            "data": {
+              "target": [
+                "module",
+                "Foo"
+              ]
             },
             "definition": [
               {
