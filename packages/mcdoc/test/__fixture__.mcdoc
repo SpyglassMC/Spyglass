@@ -55,6 +55,14 @@ struct Used0 {}
 use ::test::Used0 as Used1
 use ::test::Used1 as Used2
 
+//== use statement/use before file loaded
+//=== /client.mcdoc
+use ::later::Used
+struct { foo: Used }
+
+//=== /later.mcdoc
+struct Used {}
+
 //== hoisting
 struct Foo {
 	bar: Bar,
