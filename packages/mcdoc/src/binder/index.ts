@@ -250,7 +250,9 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
 
-		/** String representation of the absolute path of the imported symbol. */
+		/**
+		 * String representation of the absolute path of the imported symbol.
+		 */
 		const importedPathString = pathArrayToString(resolvePath(path, ctx))
 
 		ctx.symbols
