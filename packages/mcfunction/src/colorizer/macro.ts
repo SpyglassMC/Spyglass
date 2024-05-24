@@ -11,25 +11,25 @@ export const macro: core.Colorizer<MacroNode> = (node, ctx) => {
 	) // Dollar Sign
 	for (const child of node.children) {
 		if (child.type === 'mcfunction:macro/other') {
-			tokens.push(core.ColorToken.create(child.range, 'string')) // Other stuff is Orange
+			tokens.push(core.ColorToken.create(child.range, 'string'))
 		} else {
 			const start = child.range.start
 			const end = child.range.end
-			// $( is Dark Blue
+			// $(
 			tokens.push(
 				core.ColorToken.create(
 					core.Range.create(start, start + 2),
 					'literal',
 				),
 			)
-			// Key is Light Blue
+			// Key
 			tokens.push(
 				core.ColorToken.create(
 					core.Range.create(start + 2, end - 1),
 					'property',
 				),
 			)
-			// ) is Dark Blue
+			// )
 			tokens.push(
 				core.ColorToken.create(core.Range.create(end - 1, end), 'literal'),
 			)

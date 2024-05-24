@@ -16,7 +16,7 @@ export function signatureHelpProvider(
 		}
 
 		const node = getSelectedCommandNode(fileNode, ctx.offset)
-		if (node?.type === 'mcfunction:macro') {
+		if (!mcf.CommandNode.is(node)) {
 			// Not a command node.
 			return undefined
 		}
@@ -70,16 +70,13 @@ export function signatureHelpProvider(
 function getSelectedCommandNode(
 	fileNode: core.DeepReadonly<core.FileNode<mcf.McfunctionNode>>,
 	offset: number,
-): mcf.CommandNode | mcf.MacroNode | undefined {
-	return core.AstNode.findChild(fileNode.children[0], offset, true) as
-		| mcf.CommandNode
-		| mcf.MacroNode
-		| undefined
+) {
+	return core.AstNode.findChild(fileNode.children[0], offset, true)
 }
 
 function getOptions(
 	rootTreeNode: mcf.RootTreeNode,
-	argumentNodes: mcf.CommandNode['children'],
+	argumentNodes: core.DeepReadonly<mcf.CommandNode['children']>,
 ): string[][] {
 	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode

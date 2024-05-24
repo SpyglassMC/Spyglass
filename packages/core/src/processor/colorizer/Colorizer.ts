@@ -71,26 +71,29 @@ export namespace ColorToken {
 
 // Built-in LSP semantic tokens: https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens
 
+/*
+ * Hint: during development, the `Developer: Inspect Editor Tokens and Scopes` command in VS Code helps a lot with deciding on the color for nodes.
+ */
 export const ColorTokenTypes = Object.freeze(
 	[
-		'comment', // Green
-		'enum', // Teal
-		'enumMember', // Neon Blue
-		'function', // Purple
-		'keyword', // Purple
-		'modifier', // Purple
-		'number', // Light Green
-		'property', // Light Blue
-		'string', // Orange
-		'struct', // Teal
-		'type', // Teal
-		'variable', // Light Blue
+		'comment',
+		'enum',
+		'enumMember',
+		'function',
+		'keyword',
+		'modifier',
+		'number',
+		'property',
+		'string',
+		'struct',
+		'type',
+		'variable',
 		// Below are custom types.
-		'error', // Red
-		'literal', // Blue
-		'operator', // White?
-		'resourceLocation', // Yellow
-		'vector', // Light Green + Underline
+		'error',
+		'literal',
+		'operator',
+		'resourceLocation',
+		'vector',
 	] as const,
 )
 export type ColorTokenType = typeof ColorTokenTypes[number]
