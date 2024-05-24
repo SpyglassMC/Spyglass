@@ -28,6 +28,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common/index.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
@@ -297,6 +298,10 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	const child = AstNode.findChild(node, ctx.offset, true)
 	if (child) {
 		return completer.dispatch(child, ctx)
+	}
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release || ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		return []
 	}
 
 	const id = ResourceLocationNode.toString(node.id, 'short')
