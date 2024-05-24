@@ -5,6 +5,10 @@
 		"module": "ES2022",
 		"moduleResolution": "Bundler",
 		"target": "ES2022",
+		"lib": [
+			"ES2023",
+			"DOM"
+		],
 		
 		"alwaysStrict": true,
 		"experimentalDecorators": true,
