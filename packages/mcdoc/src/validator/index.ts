@@ -8,7 +8,7 @@ import type { EnumKind } from "../node/index.js";
 
 export type McdocTypeInferrer<T> = (node: T) => McdocType
 
-export type NodeEquivalenceChecker = (inferredNode: McdocType, definition: SimplifiedMcdocType) => boolean
+export type NodeEquivalenceChecker = (inferredNode: Exclude<McdocType, UnionType | LiteralType | EnumType>, definition: SimplifiedMcdocTypeNoUnion) => boolean
 
 export type TypeInfoAttacher<T> = (node: T, definition: SimplifiedMcdocType) => void
 
@@ -556,7 +556,7 @@ function simplifyKey(keyDef: SimplifiedMcdocTypeNoUnion | string): SimplifiedMcd
 	return keyDef
 }
 
-function getValueType(type: SimplifiedMcdocType): SimplifiedMcdocType[] {
+function getValueType(type: SimplifiedMcdocType): Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>[] {
 	switch (type.kind) {
 		case 'literal':
 			return [{ kind: type.value.kind }];
