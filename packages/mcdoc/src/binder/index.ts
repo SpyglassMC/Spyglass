@@ -250,9 +250,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
 
-		/**
-		 * String representation of the absolute path of the imported symbol.
-		 */
+		/** String representation of the absolute path of the imported symbol. */
 		const importedPathString = pathArrayToString(resolvePath(path, ctx))
 
 		ctx.symbols
@@ -539,20 +537,14 @@ async function bindPath(
 				pathArrayToString(identifiers),
 			)
 			.ifDeclared((_, query) => {
-				try {
-					query.resolveAlias().enter({
-						usage: {
-							type: 'reference',
-							node: identNode,
-							fullRange: node,
-							skipRenaming: LiteralNode.is(identNode),
-						},
-					})
-				} catch (_ignored) {
-					// Alias target doesn't exist. The error would have been reported
-					// where the alias symbol was created, so we can ignore the error
-					// here.
-				}
+				query.enter({
+					usage: {
+						type: 'reference',
+						node: identNode,
+						fullRange: node,
+						skipRenaming: LiteralNode.is(identNode),
+					},
+				})
 			})
 			.else(() => {
 				if (indexRight === 0) {
@@ -740,11 +732,38 @@ function* resolvePathByStep(
 	const { children, isAbsolute } = PathNode.destruct(path)
 	const identifiers: string[] = isAbsolute
 		? []
-		: ctx.moduleIdentifier.slice(2).split('::')
+		: pathStringToArray(ctx.moduleIdentifier)
 	for (const [i, child] of children.entries()) {
+		const indexRight = children.length - 1 - i
 		switch (child.type) {
 			case 'mcdoc:identifier':
+				// For a path node with `n` children, the first `n-1` child nodes specify
+				// the path of the module that contains the symbol. They will be pushed
+				// to the `identifiers` array and yielded as-is. The last node, however,
+				// may refer to an alias created with the `use` statement. We will query
+				// the symbol table and resolve any possible aliasing in that case
+				// before yielding the result.
 				identifiers.push(child.value)
+				if (indexRight === 0) {
+					ctx.symbols.query(
+						{
+							doc: ctx.doc,
+							node: child,
+						},
+						'mcdoc',
+						pathArrayToString(identifiers),
+					).ifDeclared((_, query) => {
+						try {
+							const targetPath = query.resolveAlias().symbol!.path[0]
+							identifiers.splice(0, identifiers.length)
+							identifiers.push(...pathStringToArray(targetPath))
+						} catch {
+							// Alias target doesn't exist. The error would have been reported
+							// where the alias symbol was created, so we can ignore the error
+							// here.
+						}
+					})
+				}
 				break
 			case 'mcdoc:literal':
 				// super
@@ -766,7 +785,7 @@ function* resolvePathByStep(
 			identifiers,
 			node: child,
 			index: i,
-			indexRight: children.length - 1 - i,
+			indexRight,
 		}
 	}
 }
@@ -803,6 +822,13 @@ function pathArrayToString(
 	path: readonly string[] | undefined,
 ): string | undefined {
 	return path ? `::${path.join('::')}` : undefined
+}
+
+function pathStringToArray(path: string): string[] {
+	if (!path.startsWith('::')) {
+		throw new Error('Only absolute paths are supported')
+	}
+	return path.slice(2).split('::')
 }
 
 function convertType(node: TypeNode, ctx: McdocBinderContext): McdocType {
