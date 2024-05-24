@@ -52,6 +52,7 @@ export type ProjectInitializerContext = Pick<
 	| 'config'
 	| 'downloader'
 	| 'externals'
+	| 'isDebugging'
 	| 'logger'
 	| 'meta'
 	| 'projectRoot'
@@ -75,6 +76,7 @@ export interface ProjectOptions {
 	externals: Externals
 	fs?: FileService
 	initializers?: readonly ProjectInitializer[]
+	isDebugging?: boolean
 	logger?: Logger
 	profilers?: ProfilerFactory
 	/**
@@ -115,6 +117,7 @@ export type ProjectData = Pick<
 	| 'ensureBindingStarted'
 	| 'externals'
 	| 'fs'
+	| 'isDebugging'
 	| 'logger'
 	| 'meta'
 	| 'profilers'
@@ -191,6 +194,7 @@ export class Project implements ExternalEventEmitter {
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
+	readonly isDebugging: boolean
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
@@ -329,6 +333,7 @@ export class Project implements ExternalEventEmitter {
 		externals,
 		fs = FileService.create(externals, cacheRoot),
 		initializers = [],
+		isDebugging = false,
 		logger = Logger.create(),
 		profilers = ProfilerFactory.noop(),
 		projectRoot,
@@ -338,6 +343,7 @@ export class Project implements ExternalEventEmitter {
 		this.externals = externals
 		this.fs = fs
 		this.#initializers = initializers
+		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
 		this.projectRoot = projectRoot
@@ -430,6 +436,7 @@ export class Project implements ExternalEventEmitter {
 				config: this.config,
 				downloader: this.downloader,
 				externals: this.externals,
+				isDebugging: this.isDebugging,
 				logger: this.logger,
 				meta: this.meta,
 				projectRoot: this.projectRoot,
