@@ -14,7 +14,6 @@ export function macro(): core.Parser<MacroNode> {
 			type: 'mcfunction:macro',
 			range: core.Range.create(src.cursor),
 			children: [],
-			path: [],
 		}
 
 		// Skip the starting '$'
@@ -33,7 +32,6 @@ export function macro(): core.Parser<MacroNode> {
 						type: 'mcfunction:macro/other',
 						range: core.Range.create(start, src.cursor),
 						value: other,
-						path: [other],
 					})
 					start = src.cursor
 				}
@@ -50,7 +48,7 @@ export function macro(): core.Parser<MacroNode> {
 				} else if (src.cursor <= keyStart) {
 					// Encountered $()
 					ctx.err.report(
-						localize('expected', localize('parser.macro.key')),
+						localize('expected', localize('mcfunction.parser.macro.key')),
 						core.Range.create(start, src.cursor + 1),
 					)
 				}
@@ -59,7 +57,7 @@ export function macro(): core.Parser<MacroNode> {
 				if (matchedInvalid.length > 0) {
 					ctx.err.report(
 						localize(
-							'parser.macro.illegal',
+							'mcfunction.parser.macro.illegal',
 							matchedInvalid.charAt(0),
 						),
 						core.Range.create(keyStart, src.cursor),
@@ -70,27 +68,31 @@ export function macro(): core.Parser<MacroNode> {
 					type: 'mcfunction:macro/argument',
 					range: core.Range.create(start, src.cursor),
 					value: key,
-					path: [key],
 				})
 				start = src.cursor
 				hasMacroArgs = true
-			} else if (src.peek() === '$') {
-				src.skip()
 			} else {
-				// No more macro arguments, add the remaining other stuff
-				ans.children.push({
-					type: 'mcfunction:macro/other',
-					range: core.Range.create(start, src.cursor),
-					value: src.sliceToCursor(start),
-					path: [src.sliceToCursor(start)],
-				})
+				if (src.peek() === '$') {
+					src.skip()
+				}
+				if (!src.canReadInLine()) {
+					// No more macro arguments, add the remaining other stuff
+					ans.children.push({
+						type: 'mcfunction:macro/other',
+						range: core.Range.create(start, src.cursor),
+						value: src.sliceToCursor(start),
+					})
+				}
 			}
 		}
 
 		// A line with no macro arguments is invalid
 		if (!hasMacroArgs) {
 			ctx.err.report(
-				localize('expected', localize('parser.macro.at-least-one')),
+				localize(
+					'expected',
+					localize('mcfunction.parser.macro.at-least-one'),
+				),
 				core.Range.create(start, src.cursor),
 			)
 		}

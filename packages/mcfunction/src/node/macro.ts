@@ -6,7 +6,6 @@ export interface MacroNode
 	type: 'mcfunction:macro'
 	slash?: core.Range
 	children: (MacroOtherNode | MacroArgumentNode)[]
-	path: string[]
 }
 export namespace MacroNode {
 	/* istanbul ignore next */
@@ -22,7 +21,6 @@ export namespace MacroNode {
 			type: 'mcfunction:macro',
 			range: core.Range.get(range),
 			children: [],
-			path: [],
 		}
 	}
 }
@@ -30,11 +28,9 @@ export namespace MacroNode {
 export interface MacroOtherNode extends core.AstNode {
 	type: 'mcfunction:macro/other'
 	value?: string
-	path: string[]
 }
 
 export interface MacroArgumentNode extends core.AstNode {
 	type: 'mcfunction:macro/argument'
 	value?: string
-	path: string[]
 }

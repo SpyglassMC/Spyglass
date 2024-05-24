@@ -75,6 +75,9 @@
   "mcfunction.parser.entity-selector.player-name.too-long": "Player names cannot be longer than %0% characters",
   "mcfunction.parser.eoc-unexpected": "Expected more arguments",
   "mcfunction.parser.leading-slash": "a leading slash %0%",
+  "mcfunction.parser.macro.at-least-one": "at least one macro argument",
+  "mcfunction.parser.macro.illegal": "Illegal key character: “%0%”",
+  "mcfunction.parser.macro.key": "a macro key",
   "mcfunction.parser.no-permission": "Permission level %0% is required, which is higher than %1% defined in config",
   "mcfunction.parser.objective.too-long": "Objective names cannot be longer than %0% characters",
   "mcfunction.parser.range.min>max": "The minimum value %0% is larger than the maximum value %1%",
@@ -208,8 +211,5 @@
   "unquoted-string": "an unquoted string",
   "unsorted-keys": "Unsorted keys",
   "uuid": "a UUID",
-  "vector": "a vector",
-  "parser.macro.key": "a macro key",
-  "parser.macro.at-least-one": "at least one macro argument",
-  "parser.macro.illegal": "Illegal key character: “%0%”"
+  "vector": "a vector"
 }
