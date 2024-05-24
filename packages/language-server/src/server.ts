@@ -89,7 +89,7 @@ connection.onInitialize(async (params) => {
 
 	try {
 		service = new core.Service({
-			isDebugging: initializationOptions?.inDevelopmentMode && false,
+			isDebugging: initializationOptions?.inDevelopmentMode,
 			logger,
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',

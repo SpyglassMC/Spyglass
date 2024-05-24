@@ -63,6 +63,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),
+		isDebugging: false,
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
 		profilers: data.profilers ?? ProfilerFactory.noop(),
@@ -224,11 +225,14 @@ export interface SimpleProjectState {
 }
 
 export class SimpleProject {
-	#colorTokens: ColorToken[] = []
-	#global: SymbolTable = Object.create(null)
+	readonly #colorTokens: ColorToken[] = []
+	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	#symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+	readonly #symbols = new SymbolUtil(
+		this.#global,
+		NodeJsExternals.event.EventEmitter,
+	)
 
 	#hasDumped = false
 
@@ -286,7 +290,7 @@ export class SimpleProject {
 		}
 	}
 
-	#bindingInProgressUris = new Set<string>()
+	readonly #bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(
 		uri: string,
 		content: string = this.files.find((f) => f.uri === uri)?.content!,

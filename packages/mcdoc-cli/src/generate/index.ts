@@ -4,8 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'url'
 import fs from 'fs-extra'
 import lineColumn from 'line-column'
 
-import type { AstNode } from '@spyglassmc/core'
-import type { Service } from '@spyglassmc/core'
+import type { AstNode, Service } from '@spyglassmc/core'
 import type walk from 'klaw'
 import type { Logger } from '../index.js'
 

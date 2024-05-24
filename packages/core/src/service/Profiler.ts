@@ -27,7 +27,7 @@ export interface Profiler {
 
 class TopNImpl implements Profiler {
 	#finalized = false
-	#startTime: number
+	readonly #startTime: number
 	#lastTime: number
 	#taskCount = 0
 	#topTasks: [string, number][] = []
@@ -100,9 +100,9 @@ const TotalTaskName = 'Total'
 
 class TotalImpl implements Profiler {
 	#finalized = false
-	#startTime: number
+	readonly #startTime: number
 	#lastTime: number
-	#tasks: [string, number][] = []
+	readonly #tasks: [string, number][] = []
 	#longestTaskNameLength = 0
 
 	constructor(private readonly id: string, private readonly logger: Logger) {

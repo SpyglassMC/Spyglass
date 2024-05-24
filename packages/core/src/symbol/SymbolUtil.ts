@@ -56,13 +56,13 @@ interface DocAndNode {
 }
 
 export class SymbolUtil implements ExternalEventEmitter {
-	#global: SymbolTable
+	readonly #global: SymbolTable
 
-	#eventEmitter: ExternalEventEmitter
-	#eventEmitterConstructor: Externals['event']['EventEmitter']
+	readonly #eventEmitter: ExternalEventEmitter
+	readonly #eventEmitterConstructor: Externals['event']['EventEmitter']
 
-	#trimmableSymbols = new Set<string>()
-	#cache: {
+	readonly #trimmableSymbols = new Set<string>()
+	readonly #cache: {
 		[contributor: string]: UriSymbolCache
 	} = Object.create(null)
 
@@ -987,7 +987,7 @@ export class SymbolQuery {
 	 * The map where the queried symbol is stored. `undefined` if the map hasn't been created yet.
 	 */
 	#map: SymbolMap | undefined
-	#parentSymbol: Symbol | undefined
+	readonly #parentSymbol: Symbol | undefined
 	/**
 	 * The queried symbol. `undefined` if the symbol hasn't been created yet.
 	 */

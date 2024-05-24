@@ -165,7 +165,7 @@ const uriToPath = (uri: string | Uri) =>
 const uriFromPath = (path: string) => url.pathToFileURL(path).toString()
 
 class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
-	#watcher: chokidar.FSWatcher
+	readonly #watcher: chokidar.FSWatcher
 
 	constructor(watcher: chokidar.FSWatcher) {
 		super()

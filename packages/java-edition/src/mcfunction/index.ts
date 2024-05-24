@@ -8,6 +8,7 @@ import { inlayHintProvider } from './inlayHintProvider.js'
 import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
 import { getPatch } from './tree/patch.js'
+import { validatePatchedTree } from './tree/patchValidator.js'
 
 export * as checker from './checker/index.js'
 export * as colorizer from './colorizer/index.js'
@@ -23,6 +24,9 @@ export const initialize = (
 	const { meta } = ctx
 
 	const tree = core.merge(commands, getPatch(releaseVersion))
+	if (ctx.isDebugging) {
+		validatePatchedTree(tree, ctx.logger)
+	}
 
 	mcf.initialize(ctx)
 
