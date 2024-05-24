@@ -987,7 +987,7 @@ export class SymbolQuery {
 	 * The map where the queried symbol is stored. `undefined` if the map hasn't been created yet.
 	 */
 	#map: SymbolMap | undefined
-	readonly #parentSymbol: Symbol | undefined
+	#parentSymbol: Symbol | undefined
 	/**
 	 * The queried symbol. `undefined` if the symbol hasn't been created yet.
 	 */
