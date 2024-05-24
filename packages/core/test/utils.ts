@@ -63,6 +63,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),
+		isDebugging: false,
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
 		profilers: data.profilers ?? ProfilerFactory.noop(),
