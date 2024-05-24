@@ -1,6 +1,7 @@
 import type {
 	Arrayable,
 	Completer,
+	CompleterContext,
 	MetaRegistry,
 	RegistryCategory,
 	WorldgenFileCategory,
@@ -31,8 +32,8 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
+	getItemSlotArgumentValues,
 	HeightmapValues,
-	ItemSlotArgumentValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
@@ -58,8 +59,9 @@ import type { ArgumentTreeNode } from '../tree/index.js'
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
-	range,
+	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
+	const range = ctx.offset
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	switch (treeNode.parser) {
@@ -118,7 +120,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_predicate':
 			return ItemNode.mock(range, true)
 		case 'minecraft:item_slot':
-			return LiteralNode.mock(range, { pool: ItemSlotArgumentValues })
+			return LiteralNode.mock(range, {
+				pool: getItemSlotArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false)
 		case 'minecraft:mob_effect':

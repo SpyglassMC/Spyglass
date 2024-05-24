@@ -431,7 +431,6 @@ export function fieldValue(
 			type.kind !== 'literal' &&
 			type.kind !== 'reference' &&
 			type.kind !== 'union' &&
-			type.kind !== 'attributed' &&
 			type.kind !== 'unsafe' &&
 			type.kind !== 'concrete' &&
 			type.kind !== 'indexed' &&
@@ -623,10 +622,6 @@ export function fieldValue(
 						) as core.SyncChecker<NbtNode>
 					)(node, ctx)
 				}
-				break
-			case 'attributed':
-				// TODO: don't just ignore the attribute
-				fieldValue(type.child, options)(node, ctx)
 				break
 		}
 	}

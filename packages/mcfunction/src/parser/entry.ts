@@ -4,7 +4,7 @@ import type {
 	CommandNode,
 	McfunctionNode,
 } from '../node/index.js'
-import { CommandTreeRegistry } from '../tree/index.js'
+import type { RootTreeNode } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 
@@ -12,7 +12,7 @@ import { command } from './command.js'
  * @throws When there's no command tree associated with `commandTreeName`.
  */
 function mcfunction(
-	commandTreeName: string,
+	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
 ): core.Parser<McfunctionNode> {
 	return (src, ctx) => {
@@ -35,7 +35,7 @@ function mcfunction(
 				}
 			} else {
 				result = command(
-					CommandTreeRegistry.instance.get(commandTreeName),
+					commandTree,
 					argument,
 				)(src, ctx)
 			}
@@ -58,11 +58,11 @@ const comment = core.comment({
  * Disabled by default.
  */
 export const entry = (
-	commandTreeName: string,
+	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
 	supportsBackslashContinuation = false,
 ) => {
-	const parser = mcfunction(commandTreeName, argument)
+	const parser = mcfunction(commandTree, argument)
 	return supportsBackslashContinuation
 		? core.concatOnTrailingBackslash(parser)
 		: parser

@@ -222,7 +222,7 @@ export class Project implements ExternalEventEmitter {
 		return this.#ctx
 	}
 
-	#cacheRoot: RootUriString
+	readonly #cacheRoot: RootUriString
 	/**
 	 * File URI to a directory where all cache files of Spyglass should be stored.
 	 */
@@ -683,7 +683,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private static readonly TextDocumentCacheMaxLength = 268435456
-	#textDocumentCache = new Map<
+	readonly #textDocumentCache = new Map<
 		string,
 		Promise<TextDocument | undefined> | TextDocument
 	>()
