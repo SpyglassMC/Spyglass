@@ -554,7 +554,7 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 					range: Range.span(from, src),
 				}
 				ctx.err.report(
-					localize('mcfunction.parser.line-continuation-end-of-file'),
+					localize('parser.line-continuation-end-of-file'),
 					ans,
 				)
 			}
