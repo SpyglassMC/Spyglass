@@ -38,11 +38,14 @@ export function macro(): core.Parser<MacroNode> {
 				}
 				// Parse the macro key
 				const key = validateMacroArgument(src, ctx, start)
+				if (key === core.Failure) {
+					return core.Failure
+				}
 
 				ans.children.push({
 					type: 'mcfunction:macro/argument',
 					range: core.Range.create(start, src.cursor),
-					value: key,
+					value: key as string,
 				})
 				start = src.cursor
 			} else {
@@ -69,6 +72,7 @@ export function macro(): core.Parser<MacroNode> {
 				),
 				core.Range.create(start, src.cursor),
 			)
+			return core.Failure
 		}
 
 		ans.range.end = src.cursor
@@ -83,7 +87,7 @@ function validateMacroArgument(
 	src: core.Source,
 	ctx: core.ParserContext,
 	start: number,
-): string {
+): string | Symbol {
 	src.skip(2)
 	const keyStart = src.cursor
 	src.skipUntilOrEnd(core.LF, core.CR, ')')
@@ -93,12 +97,14 @@ function validateMacroArgument(
 			localize('expected', localeQuote(')')),
 			core.Range.create(keyStart, src.cursor),
 		)
+		return core.Failure
 	} else if (src.cursor <= keyStart) {
 		// Encountered $()
 		ctx.err.report(
 			localize('expected', localize('mcfunction.parser.macro.key')),
 			core.Range.create(start, src.cursor + 1),
 		)
+		return core.Failure
 	}
 	const key = src.sliceToCursor(keyStart)
 	const matchedInvalid = key.replace(/[a-zA-Z0-9_]*/, '')
@@ -110,6 +116,7 @@ function validateMacroArgument(
 			),
 			core.Range.create(keyStart, src.cursor),
 		)
+		return core.Failure
 	}
 	src.skip()
 	return key
