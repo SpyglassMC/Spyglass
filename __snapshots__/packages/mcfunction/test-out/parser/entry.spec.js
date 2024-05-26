@@ -52,12 +52,12 @@ exports['mcfunction parser entry() Parse "# this is a comment" 1'] = {
   "errors": []
 }
 
-exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this is a macro ↓" 1'] = {
+exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this is a $(macro) ↓" 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 45
+      "end": 48
     },
     "children": [
       {
@@ -122,109 +122,146 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
         "type": "mcfunction:macro",
         "range": {
           "start": 27,
-          "end": 44
+          "end": 47
         },
         "children": [
           {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 28,
-              "end": 44
+              "end": 38
             },
-            "value": "this is a macro "
+            "value": "this is a "
+          },
+          {
+            "type": "mcfunction:macro/argument",
+            "range": {
+              "start": 38,
+              "end": 46
+            },
+            "value": "macro"
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 46,
+              "end": 47
+            },
+            "value": " "
           }
         ]
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 28,
-        "end": 44
-      },
-      "message": "Expected at least one macro argument",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
-exports['mcfunction parser entry() Parse "$ this is a macro command" 1'] = {
+exports['mcfunction parser entry() Parse "$ this is a $(macro) command" 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 25
+      "end": 28
     },
     "children": [
       {
         "type": "mcfunction:macro",
         "range": {
           "start": 0,
-          "end": 25
+          "end": 28
         },
         "children": [
           {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
-              "end": 25
+              "end": 12
             },
-            "value": " this is a macro command"
+            "value": " this is a "
+          },
+          {
+            "type": "mcfunction:macro/argument",
+            "range": {
+              "start": 12,
+              "end": 20
+            },
+            "value": "macro"
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 20,
+              "end": 28
+            },
+            "value": " command"
           }
         ]
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 1,
-        "end": 25
-      },
-      "message": "Expected at least one macro argument",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
-exports['mcfunction parser entry() Parse "$ this is a macro ⧵ ↓ this is still a macro" 1'] = {
+exports['mcfunction parser entry() Parse "$ this is a $(macro) ⧵ ↓ this is $(still) a macro" 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 43
+      "end": 49
     },
     "children": [
       {
         "type": "mcfunction:macro",
         "range": {
           "start": 0,
-          "end": 43
+          "end": 49
         },
         "children": [
           {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
-              "end": 43
+              "end": 12
             },
-            "value": " this is a macro this is still a macro"
+            "value": " this is a "
+          },
+          {
+            "type": "mcfunction:macro/argument",
+            "range": {
+              "start": 12,
+              "end": 20
+            },
+            "value": "macro"
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 20,
+              "end": 33
+            },
+            "value": " this is "
+          },
+          {
+            "type": "mcfunction:macro/argument",
+            "range": {
+              "start": 33,
+              "end": 41
+            },
+            "value": "still"
+          },
+          {
+            "type": "mcfunction:macro/other",
+            "range": {
+              "start": 41,
+              "end": 49
+            },
+            "value": " a macro"
           }
         ]
       }
     ]
   },
-  "errors": [
-    {
-      "range": {
-        "start": 1,
-        "end": 43
-      },
-      "message": "Expected at least one macro argument",
-      "severity": 3
-    }
-  ]
+  "errors": []
 }
 
 exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'] = {
