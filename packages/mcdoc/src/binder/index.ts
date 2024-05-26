@@ -530,7 +530,7 @@ async function bindPath(
 				'mcdoc',
 				pathArrayToString(identifiers),
 			)
-			.ifDeclared((_, query) => {
+			.ifDeclared((_, query) =>
 				query.enter({
 					usage: {
 						type: 'reference',
@@ -539,7 +539,7 @@ async function bindPath(
 						skipRenaming: LiteralNode.is(identNode),
 					},
 				})
-			})
+			)
 			.else(() => {
 				if (indexRight === 0) {
 					ctx.err.report(
