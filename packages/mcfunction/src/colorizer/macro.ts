@@ -13,8 +13,7 @@ export const macro: core.Colorizer<MacroNode> = (node, ctx) => {
 		if (child.type === 'mcfunction:macro/other') {
 			tokens.push(core.ColorToken.create(child.range, 'string'))
 		} else {
-			const start = child.range.start
-			const end = child.range.end
+			const { start, end } = child.range
 			// $(
 			tokens.push(
 				core.ColorToken.create(
