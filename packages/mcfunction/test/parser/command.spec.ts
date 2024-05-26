@@ -6,41 +6,9 @@ import { fail } from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { command } from '../../lib/parser/index.js'
-import type { RootTreeNode } from '../../lib/tree/index.js'
+import { tree } from './utils.js'
 
 describe('mcfunction parser command()', () => {
-	const tree: RootTreeNode = {
-		type: 'root',
-		children: {
-			execute: {
-				type: 'literal',
-				children: {
-					if: {
-						type: 'literal',
-						children: {
-							true: {
-								type: 'literal',
-								executable: true,
-								redirect: ['execute'],
-							},
-						},
-					},
-					run: {
-						type: 'literal',
-					},
-				},
-			},
-			say: {
-				type: 'literal',
-				children: {
-					hi: {
-						type: 'literal',
-						executable: true,
-					},
-				},
-			},
-		},
-	}
 	const cases: { content: string }[] = [
 		{ content: '' },
 		{ content: 's' },

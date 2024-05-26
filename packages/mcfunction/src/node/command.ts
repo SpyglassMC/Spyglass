@@ -6,8 +6,10 @@ export interface CommandNode extends core.SequenceNode<CommandChildNode> {
 }
 export namespace CommandNode {
 	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is CommandNode {
-		return (node as CommandNode).type === 'mcfunction:command'
+	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
+		node: T,
+	): node is core.InheritReadonly<CommandNode, T> {
+		return (node as CommandNode | undefined)?.type === 'mcfunction:command'
 	}
 
 	export function mock(range: core.RangeLike): CommandNode {
@@ -16,19 +18,6 @@ export namespace CommandNode {
 			range: core.Range.get(range),
 			children: [],
 		}
-	}
-}
-
-export interface CommandMacroNode extends core.AstNode {
-	type: 'mcfunction:command_macro'
-}
-
-export namespace CommandMacroNode {
-	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
-		obj: T,
-	): obj is core.InheritReadonly<CommandMacroNode, T> {
-		return (obj as CommandMacroNode | undefined)?.type ===
-			'mcfunction:command_macro'
 	}
 }
 

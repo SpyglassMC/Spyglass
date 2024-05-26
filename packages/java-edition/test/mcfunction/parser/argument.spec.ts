@@ -73,7 +73,9 @@ const Suites: Partial<
 	'minecraft:color': [{ content: ['red', 'green'] }],
 	'minecraft:column_pos': [{ content: ['0 0', '~ ~', '~1 ~-2'] }],
 	'minecraft:component': [
-		{ content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'] },
+		{
+			content: ['"hello world"', '""', '{"text":"hello world"}', '[""]'],
+		},
 	],
 	'minecraft:dimension': [
 		{ content: ['minecraft:overworld', 'minecraft:the_nether'] },

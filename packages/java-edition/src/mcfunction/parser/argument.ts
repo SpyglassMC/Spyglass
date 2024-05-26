@@ -534,7 +534,26 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	return ans
 }
 
-export const particle: core.InfallibleParser<ParticleNode> = (() => {
+export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release || ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		return core.map(
+			sequence([
+				core.resourceLocation({ category: 'particle_type' }),
+				core.optional(core.failOnEmpty(nbt.parser.compound)),
+			]),
+			(res) => {
+				const ans: ParticleNode = {
+					type: 'mcfunction:particle',
+					range: res.range,
+					children: res.children,
+					id: res.children.find(core.ResourceLocationNode.is)!,
+				}
+				return ans
+			},
+		)(src, ctx)
+	}
+
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })
@@ -591,8 +610,8 @@ export const particle: core.InfallibleParser<ParticleNode> = (() => {
 			}
 			return ans
 		},
-	)
-})()
+	)(src, ctx)
+}
 
 function range(
 	type: 'float',
