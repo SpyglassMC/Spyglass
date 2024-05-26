@@ -1,3 +1,141 @@
+exports['mcfunction parser macro() Parse "$say $() bar" 1'] = {
+  "node": {
+    "type": "mcfunction:macro",
+    "range": {
+      "start": 0,
+      "end": 12
+    },
+    "children": [
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 1,
+          "end": 5
+        },
+        "value": "say "
+      },
+      {
+        "type": "mcfunction:macro/argument",
+        "range": {
+          "start": 5,
+          "end": 8
+        },
+        "value": ""
+      },
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 8,
+          "end": 12
+        },
+        "value": " bar"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 8
+      },
+      "message": "Expected a macro key",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction parser macro() Parse "$say $(foo bar" 1'] = {
+  "node": {
+    "type": "mcfunction:macro",
+    "range": {
+      "start": 0,
+      "end": 15
+    },
+    "children": [
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 1,
+          "end": 5
+        },
+        "value": "say "
+      },
+      {
+        "type": "mcfunction:macro/argument",
+        "range": {
+          "start": 5,
+          "end": 15
+        },
+        "value": "foo bar"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 14
+      },
+      "message": "Expected “)”",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 7,
+        "end": 14
+      },
+      "message": "Illegal key character: “ ”",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction parser macro() Parse "$say $(invalid.key) bar" 1'] = {
+  "node": {
+    "type": "mcfunction:macro",
+    "range": {
+      "start": 0,
+      "end": 23
+    },
+    "children": [
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 1,
+          "end": 5
+        },
+        "value": "say "
+      },
+      {
+        "type": "mcfunction:macro/argument",
+        "range": {
+          "start": 5,
+          "end": 19
+        },
+        "value": "invalid.key"
+      },
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 19,
+          "end": 23
+        },
+        "value": " bar"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 7,
+        "end": 18
+      },
+      "message": "Illegal key character: “.”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['mcfunction parser macro() Parse "$say $(message)" 1'] = {
   "node": {
     "type": "mcfunction:macro",
@@ -25,6 +163,36 @@ exports['mcfunction parser macro() Parse "$say $(message)" 1'] = {
     ]
   },
   "errors": []
+}
+
+exports['mcfunction parser macro() Parse "$say no macro argument specified" 1'] = {
+  "node": {
+    "type": "mcfunction:macro",
+    "range": {
+      "start": 0,
+      "end": 32
+    },
+    "children": [
+      {
+        "type": "mcfunction:macro/other",
+        "range": {
+          "start": 1,
+          "end": 32
+        },
+        "value": "say no macro argument specified"
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 1,
+        "end": 32
+      },
+      "message": "Expected at least one macro argument",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction parser macro() Parse "$scoreboard players set $mode settings $(value)" 1'] = {

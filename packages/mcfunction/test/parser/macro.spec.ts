@@ -14,6 +14,10 @@ describe('mcfunction parser macro()', () => {
 		{ content: '$tellraw $(player) $(text)' },
 		{ content: '$tellraw $(players) ["$ Hello everyone! $"]' },
 		{ content: '$summon cow $(x).1 $(y)30.0 $(z).0' },
+		{ content: '$say $(foo bar' },
+		{ content: '$say $() bar' },
+		{ content: '$say $(invalid.key) bar' },
+		{ content: '$say no macro argument specified' },
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
