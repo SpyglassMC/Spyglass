@@ -1,4 +1,4 @@
-exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1'] = {
+exports['mcdoc __fixture__ use statement/reference alias 1'] = {
   "global": {
     "mcdoc": {
       "::module": {
@@ -25,7 +25,42 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
         ],
         "data": {
           "nextAnonymousIndex": 0
-        }
+        },
+        "reference": [
+          {
+            "uri": "file:///client.mcdoc",
+            "range": {
+              "start": 6,
+              "end": 12
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 6
+              },
+              "end": {
+                "line": 0,
+                "character": 12
+              }
+            },
+            "fullRange": {
+              "start": 6,
+              "end": 18
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 0,
+                "character": 6
+              },
+              "end": {
+                "line": 0,
+                "character": 18
+              }
+            },
+            "contributor": "binder",
+            "skipRenaming": false
+          }
+        ]
       },
       "::client": {
         "subcategory": "module",
@@ -52,6 +87,49 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
         "data": {
           "nextAnonymousIndex": 0
         }
+      },
+      "::client::Reference": {
+        "data": {
+          "typeDef": {
+            "kind": "reference",
+            "path": "::module::Used"
+          }
+        },
+        "subcategory": "type_alias",
+        "definition": [
+          {
+            "uri": "file:///client.mcdoc",
+            "range": {
+              "start": 25,
+              "end": 34
+            },
+            "posRange": {
+              "start": {
+                "line": 2,
+                "character": 5
+              },
+              "end": {
+                "line": 2,
+                "character": 14
+              }
+            },
+            "fullRange": {
+              "start": 20,
+              "end": 41
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 2,
+                "character": 0
+              },
+              "end": {
+                "line": 2,
+                "character": 21
+              }
+            },
+            "contributor": "binder"
+          }
+        ]
       },
       "::module::Used": {
         "data": {
@@ -94,48 +172,73 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
             },
             "contributor": "binder"
           }
-        ]
-      },
-      "::client::Used": {
-        "data": {
-          "typeDef": {
-            "kind": "struct",
-            "fields": []
-          }
-        },
-        "subcategory": "struct",
-        "definition": [
+        ],
+        "reference": [
           {
             "uri": "file:///client.mcdoc",
             "range": {
-              "start": 45,
-              "end": 49
+              "start": 14,
+              "end": 18
+            },
+            "posRange": {
+              "start": {
+                "line": 0,
+                "character": 14
+              },
+              "end": {
+                "line": 0,
+                "character": 18
+              }
+            },
+            "fullRange": {
+              "start": 6,
+              "end": 18
+            },
+            "fullPosRange": {
+              "start": {
+                "line": 0,
+                "character": 6
+              },
+              "end": {
+                "line": 0,
+                "character": 18
+              }
+            },
+            "contributor": "binder",
+            "skipRenaming": false
+          },
+          {
+            "uri": "file:///client.mcdoc",
+            "range": {
+              "start": 37,
+              "end": 41
             },
             "posRange": {
               "start": {
                 "line": 2,
-                "character": 7
+                "character": 17
               },
               "end": {
                 "line": 2,
-                "character": 11
+                "character": 21
               }
             },
             "fullRange": {
-              "start": 38,
-              "end": 53
+              "start": 37,
+              "end": 41
             },
             "fullPosRange": {
               "start": {
                 "line": 2,
-                "character": 0
+                "character": 17
               },
               "end": {
-                "line": 3,
-                "character": 0
+                "line": 2,
+                "character": 21
               }
             },
-            "contributor": "binder"
+            "contributor": "binder",
+            "skipRenaming": false
           }
         ]
       }
@@ -207,7 +310,7 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
       "type": "file",
       "range": {
         "start": 0,
-        "end": 74
+        "end": 41
       },
       "children": [
         {
@@ -229,157 +332,130 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
                   "type": "mcdoc:path",
                   "children": [
                     {
-                      "type": "mcdoc:literal",
+                      "type": "mcdoc:identifier",
                       "range": {
-                        "start": 4,
-                        "end": 9
+                        "start": 6,
+                        "end": 12
                       },
-                      "value": "super"
+                      "value": "module",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::module"
+                        ]
+                      }
                     },
                     {
                       "type": "mcdoc:identifier",
                       "range": {
-                        "start": 11,
-                        "end": 15
+                        "start": 14,
+                        "end": 18
                       },
-                      "value": "used"
-                    },
-                    {
-                      "type": "mcdoc:identifier",
-                      "range": {
-                        "start": 17,
-                        "end": 21
-                      },
-                      "value": "Used"
+                      "value": "Used",
+                      "symbol": {
+                        "category": "mcdoc",
+                        "path": [
+                          "::module::Used"
+                        ]
+                      }
                     }
                   ],
                   "range": {
-                    "start": 4,
-                    "end": 21
-                  }
-                },
+                    "start": 6,
+                    "end": 18
+                  },
+                  "isAbsolute": true
+                }
+              ],
+              "range": {
+                "start": 0,
+                "end": 20
+              }
+            },
+            {
+              "type": "mcdoc:type_alias",
+              "children": [
                 {
                   "type": "mcdoc:literal",
                   "range": {
-                    "start": 22,
+                    "start": 20,
                     "end": 24
                   },
-                  "value": "as"
+                  "value": "type",
+                  "colorTokenType": "keyword"
                 },
                 {
                   "type": "mcdoc:identifier",
                   "range": {
                     "start": 25,
-                    "end": 36
+                    "end": 34
                   },
-                  "value": "ReboundUsed",
+                  "value": "Reference",
                   "symbol": {
                     "category": "mcdoc",
                     "path": [
-                      "::client::ReboundUsed"
-                    ]
-                  }
-                }
-              ],
-              "range": {
-                "start": 0,
-                "end": 38
-              }
-            },
-            {
-              "type": "mcdoc:struct",
-              "children": [
-                {
-                  "type": "mcdoc:literal",
-                  "range": {
-                    "start": 38,
-                    "end": 44
-                  },
-                  "value": "struct",
-                  "colorTokenType": "keyword"
-                },
-                {
-                  "type": "mcdoc:identifier",
-                  "range": {
-                    "start": 45,
-                    "end": 49
-                  },
-                  "value": "Used",
-                  "symbol": {
-                    "category": "mcdoc",
-                    "path": [
-                      "::client::Used"
+                      "::client::Reference"
                     ]
                   }
                 },
                 {
-                  "type": "mcdoc:struct/block",
-                  "children": [],
+                  "type": "mcdoc:type/reference",
+                  "children": [
+                    {
+                      "type": "mcdoc:path",
+                      "children": [
+                        {
+                          "type": "mcdoc:identifier",
+                          "range": {
+                            "start": 37,
+                            "end": 41
+                          },
+                          "value": "Used",
+                          "symbol": {
+                            "category": "mcdoc",
+                            "path": [
+                              "::module::Used"
+                            ]
+                          }
+                        }
+                      ],
+                      "range": {
+                        "start": 37,
+                        "end": 41
+                      }
+                    }
+                  ],
                   "range": {
-                    "start": 50,
-                    "end": 52
+                    "start": 37,
+                    "end": 41
                   }
                 }
               ],
               "range": {
-                "start": 38,
-                "end": 53
-              }
-            },
-            {
-              "type": "mcdoc:struct",
-              "children": [
-                {
-                  "type": "mcdoc:literal",
-                  "range": {
-                    "start": 53,
-                    "end": 59
-                  },
-                  "value": "struct",
-                  "colorTokenType": "keyword"
-                },
-                {
-                  "type": "mcdoc:identifier",
-                  "range": {
-                    "start": 60,
-                    "end": 71
-                  },
-                  "value": "ReboundUsed"
-                },
-                {
-                  "type": "mcdoc:struct/block",
-                  "children": [],
-                  "range": {
-                    "start": 72,
-                    "end": 74
-                  }
-                }
-              ],
-              "range": {
-                "start": 53,
-                "end": 74
+                "start": 20,
+                "end": 41
               }
             }
           ],
           "range": {
             "start": 0,
-            "end": 74
+            "end": 41
           }
         }
       ],
       "locals": {
         "mcdoc": {
-          "::client::ReboundUsed": {
+          "::client::Used": {
             "category": "mcdoc",
-            "identifier": "::client::ReboundUsed",
+            "identifier": "::client::Used",
             "path": [
-              "::client::ReboundUsed"
+              "::client::Used"
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
             "data": {
               "target": [
-                "used",
+                "module",
                 "Used"
               ]
             },
@@ -387,22 +463,22 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
               {
                 "uri": "file:///client.mcdoc",
                 "range": {
-                  "start": 25,
-                  "end": 36
+                  "start": 14,
+                  "end": 18
                 },
                 "posRange": {
                   "start": {
                     "line": 0,
-                    "character": 25
+                    "character": 14
                   },
                   "end": {
                     "line": 0,
-                    "character": 36
+                    "character": 18
                   }
                 },
                 "fullRange": {
                   "start": 0,
-                  "end": 38
+                  "end": 20
                 },
                 "fullPosRange": {
                   "start": {
@@ -421,63 +497,7 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
         }
       },
       "parserErrors": [],
-      "binderErrors": [
-        {
-          "range": {
-            "start": 60,
-            "end": 71
-          },
-          "message": "Duplicated declaration for “::client::ReboundUsed”",
-          "severity": 2,
-          "info": {
-            "related": [
-              {
-                "location": {
-                  "uri": "file:///client.mcdoc",
-                  "range": {
-                    "start": 25,
-                    "end": 36
-                  },
-                  "posRange": {
-                    "start": {
-                      "line": 0,
-                      "character": 25
-                    },
-                    "end": {
-                      "line": 0,
-                      "character": 36
-                    }
-                  },
-                  "fullRange": {
-                    "start": 0,
-                    "end": 38
-                  },
-                  "fullPosRange": {
-                    "start": {
-                      "line": 0,
-                      "character": 0
-                    },
-                    "end": {
-                      "line": 2,
-                      "character": 0
-                    }
-                  },
-                  "contributor": "binder"
-                },
-                "message": "“::client::ReboundUsed” is already declared here"
-              }
-            ]
-          }
-        },
-        {
-          "range": {
-            "start": 4,
-            "end": 21
-          },
-          "message": "Module “::used” does not exist",
-          "severity": 2
-        }
-      ]
+      "binderErrors": []
     }
   }
 }

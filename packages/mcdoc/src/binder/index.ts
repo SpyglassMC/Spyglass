@@ -95,6 +95,7 @@ import type {
 	StructTypeField,
 	StructTypePairField,
 	StructTypeSpreadField,
+	UseStatementBindingData,
 } from '../type/index.js'
 
 interface McdocBinderContext extends BinderContext, AdditionalContext {}
@@ -246,10 +247,11 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		}
 
 		// hoistUseStatement associates the AST node with the binding definition in the file symbol table,
-		// which may get overridden by bindUseStatement in the later stage as an reference to the imported symbol in the global symbol table.
+		// which will get overridden by bindUseStatement in the later stage as an reference to the imported symbol in the global symbol table.
 		// This way when the user tries to go to definition on the path in the use statement,
 		// they will go to the definition in the imported file.
 
+		const target = resolvePath(path, ctx)
 		ctx.symbols
 			.query(
 				{ doc: ctx.doc, node },
@@ -263,6 +265,9 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				data: {
 					subcategory: 'use_statement_binding',
 					visibility: SymbolVisibility.File,
+					data: target
+						? { target } satisfies UseStatementBindingData
+						: undefined,
 				},
 				usage: { type: 'definition', node: identifier, fullRange: node },
 			})
@@ -719,13 +724,37 @@ function* resolvePathByStep(
 	indexRight: number
 }> {
 	const { children, isAbsolute } = PathNode.destruct(path)
-	const identifiers: string[] = isAbsolute
+	let identifiers: string[] = isAbsolute
 		? []
-		: ctx.moduleIdentifier.slice(2).split('::')
+		: pathStringToArray(ctx.moduleIdentifier)
 	for (const [i, child] of children.entries()) {
+		const indexRight = children.length - 1 - i
 		switch (child.type) {
 			case 'mcdoc:identifier':
+				// For a path node with `n` children, the first `n-1` child nodes specify
+				// the path of the module that contains the symbol. They will be pushed
+				// to the `identifiers` array and yielded as-is. The last node, however,
+				// may be created by a use statement and points to a global symbol
+				// in a different file. We will query the symbol table and rewrite
+				// the `identifiers` array to be the target path if needed.
 				identifiers.push(child.value)
+				if (indexRight === 0) {
+					ctx.symbols.query(
+						{
+							doc: ctx.doc,
+							node: child,
+						},
+						'mcdoc',
+						pathArrayToString(identifiers),
+					).ifDeclared((symbol) => {
+						const data = symbol.data as
+							| UseStatementBindingData
+							| undefined
+						if (data?.target) {
+							identifiers = [...data.target]
+						}
+					})
+				}
 				break
 			case 'mcdoc:literal':
 				// super
@@ -747,7 +776,7 @@ function* resolvePathByStep(
 			identifiers,
 			node: child,
 			index: i,
-			indexRight: children.length - 1 - i,
+			indexRight,
 		}
 	}
 }
@@ -784,6 +813,13 @@ function pathArrayToString(
 	path: readonly string[] | undefined,
 ): string | undefined {
 	return path ? `::${path.join('::')}` : undefined
+}
+
+function pathStringToArray(path: string): string[] {
+	if (!path.startsWith('::')) {
+		throw new Error('Only absolute paths are supported')
+	}
+	return path.slice(2).split('::')
 }
 
 function convertType(node: TypeNode, ctx: McdocBinderContext): McdocType {

@@ -972,7 +972,7 @@ type QueryMemberCallback = (this: void, query: SymbolQuery) => unknown
 /* istanbul ignore next */
 export class SymbolQuery {
 	readonly category: string
-	readonly path: readonly string[]
+	path: readonly string[]
 	readonly #doc: TextDocument
 	readonly #node: AstNode | undefined
 	/**
@@ -987,7 +987,7 @@ export class SymbolQuery {
 	 * The map where the queried symbol is stored. `undefined` if the map hasn't been created yet.
 	 */
 	#map: SymbolMap | undefined
-	readonly #parentSymbol: Symbol | undefined
+	#parentSymbol: Symbol | undefined
 	/**
 	 * The queried symbol. `undefined` if the symbol hasn't been created yet.
 	 */
@@ -1337,6 +1337,8 @@ export class SymbolQuery {
 			}
 			this.#symbol = result
 			this.#map = result.parentMap
+			this.#parentSymbol = result.parentSymbol
+			this.path = result.path
 		}
 		return this
 	}
