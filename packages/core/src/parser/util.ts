@@ -1,9 +1,10 @@
-import type { AstNode } from '../node/index.js'
+import { localize } from '@spyglassmc/locales'
+import type { AstNode, ErrorNode } from '../node/index.js'
 import { SequenceUtil, SequenceUtilDiscriminator } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import { ErrorReporter } from '../service/index.js'
-import type { ErrorSeverity, ReadonlySource, Source } from '../source/index.js'
-import { Range } from '../source/index.js'
+import type { ErrorSeverity, ReadonlySource } from '../source/index.js'
+import { IndexMap, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
@@ -478,17 +479,17 @@ export function validate<N extends AstNode>(
  */
 export function stopBefore<N extends Returnable>(
 	parser: InfallibleParser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): InfallibleParser<N>
 export function stopBefore<N extends Returnable>(
 	parser: Parser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): Parser<N>
 export function stopBefore<N extends Returnable>(
 	parser: Parser<N>,
-	...teminators: (string | readonly string[])[]
+	...terminators: (string | readonly string[])[]
 ): Parser<N> {
-	const flatTerminators = teminators.flat()
+	const flatTerminators = terminators.flat()
 	return (src, ctx): Result<N> => {
 		const tmpSrc = src.clone()
 		// Cut tmpSrc.string before the nearest terminator.
@@ -502,6 +503,77 @@ export function stopBefore<N extends Returnable>(
 
 		const ans = parser(tmpSrc, ctx)
 		src.cursor = tmpSrc.cursor
+		return ans
+	}
+}
+
+/**
+ * @returns A parser that is based on the passed-in `parser`, but concatenates lines
+ * together when we reach, in order:
+ * - a backslash
+ * - whitespace (optional)
+ * - a newline
+ * - whitespace (optional)
+ */
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: InfallibleParser<N>,
+): InfallibleParser<N>
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: Parser<N>,
+): Parser<N>
+export function concatOnTrailingBackslash<N extends Returnable>(
+	parser: Parser<N>,
+): Parser<N> {
+	return (src, ctx): Result<N> => {
+		let wrappedStr = src.sliceToCursor(0)
+		const wrappedSrcCursor = wrappedStr.length
+		const indexMap: IndexMap = []
+
+		while (src.canRead()) {
+			wrappedStr += src.readUntil('\\')
+			if (!src.canRead()) {
+				break
+			}
+
+			// If we get here, then `src.cursor` is at a backslash
+			if (src.hasNonSpaceAheadInLine(1)) {
+				wrappedStr += src.read()
+				continue
+			}
+
+			// Create an index map that skips from the trailing backslash to the
+			// next line's first non-whitespace character
+			const from = src.getCharRange()
+			src.nextLine()
+
+			// Minecraft raises a `Line continuation at end of file` if a backslash
+			// (+ optional whitespace to the next line) is right before the end of the file
+			if (!src.canRead()) {
+				const ans: ErrorNode = {
+					type: 'error',
+					range: Range.span(from, src),
+				}
+				ctx.err.report(
+					localize('parser.line-continuation-end-of-file'),
+					ans,
+				)
+			}
+
+			src.skipSpace()
+			const to = src.getCharRange(-1)
+			indexMap.push({
+				inner: Range.create(wrappedStr.length),
+				outer: Range.span(from, to),
+			})
+		}
+
+		const wrappedSrc = new Source(
+			wrappedStr,
+			IndexMap.merge(src.indexMap, indexMap),
+		)
+		wrappedSrc.innerCursor = wrappedSrcCursor
+		const ans = parser(wrappedSrc, ctx)
+		src.cursor = wrappedSrc.cursor
 		return ans
 	}
 }

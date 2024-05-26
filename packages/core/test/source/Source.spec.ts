@@ -522,6 +522,34 @@ describe('Source', () => {
 			)
 		}
 	})
+	describe('hasNonSpaceAheadInLine', () => {
+		const suites: {
+			string: string
+			cursor: number
+			offset?: number
+			expected: boolean
+		}[] = [
+			{ string: 'foo', cursor: 0, expected: true },
+			{ string: 'foo', cursor: 2, expected: true },
+			{ string: 'foo', cursor: 3, expected: false },
+			{ string: 'foo ', cursor: 3, expected: false },
+			{ string: 'fooo ', cursor: 3, expected: true },
+			{ string: 'foooo ', cursor: 3, offset: 1, expected: true },
+			{ string: 'foooo ', cursor: 3, offset: 2, expected: false },
+		]
+		for (const { string, cursor, offset, expected } of suites) {
+			it(
+				`Should return ${expected} for from ${
+					markOffsetInString(string, cursor + (offset ?? 0))
+				}}`,
+				() => {
+					const src = new Source(string)
+					src.cursor = cursor
+					assert.strictEqual(src.hasNonSpaceAheadInLine(offset), expected)
+				},
+			)
+		}
+	})
 	describe('static', () => {
 		describe('isBrigadierQuote()', () => {
 			const suites: { c: string; expected: boolean }[] = [

@@ -103,9 +103,14 @@ export class ReadonlySource {
 		return regex.test(this.peekRemaining())
 	}
 
-	hasNonSpaceAheadInLine(): boolean {
+	/**
+	 * If there is a non-space character between `cursor + offset` (inclusive) and the next newline, returns `true`. Otherwise returns `false`.
+	 *
+	 * @param offset Defaults to 0.
+	 */
+	hasNonSpaceAheadInLine(offset = 0): boolean {
 		for (
-			let cursor = this.innerCursor;
+			let cursor = this.innerCursor + offset;
 			cursor < this.string.length;
 			cursor++
 		) {

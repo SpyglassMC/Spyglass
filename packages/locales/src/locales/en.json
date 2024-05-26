@@ -155,6 +155,7 @@
   "objective-not-following-convention": "Invalid objective %0% which doesn't follow %1% convention",
   "parser.float.illegal": "Illegal float numeral that doesn't follow %0%",
   "parser.integer.illegal": "Illegal integer that doesn't follow %0%",
+  "parser.line-continuation-end-of-file": "A line continuation cannot be the end of the file",
   "parser.list.value": "a value",
   "parser.list.trailing-sep": "Trailing separation",
   "parser.long.illegal": "Illegal long numeral that doesn't follow %0%",

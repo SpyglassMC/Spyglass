@@ -8,7 +8,7 @@ import { macro } from './macro.js'
 /**
  * @throws When there's no command tree associated with `commandTreeName`.
  */
-export function entry(
+function mcfunction(
 	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
 ): core.Parser<McfunctionNode> {
@@ -44,3 +44,18 @@ export function entry(
 const comment = core.comment({
 	singleLinePrefixes: new Set(['#']),
 })
+
+/**
+ * @param supportsBackslashContinuation Whether or not to concatenate lines together on trailing backslashes.
+ * Disabled by default.
+ */
+export const entry = (
+	commandTree: RootTreeNode,
+	argument: ArgumentParserGetter,
+	supportsBackslashContinuation = false,
+) => {
+	const parser = mcfunction(commandTree, argument)
+	return supportsBackslashContinuation
+		? core.concatOnTrailingBackslash(parser)
+		: parser
+}
