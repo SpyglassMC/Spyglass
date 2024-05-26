@@ -368,12 +368,15 @@ export namespace ObjectiveCriteriaNode {
 export interface ParticleNode extends core.AstNode {
 	type: 'mcfunction:particle'
 	children?: (
+		| core.ResourceLocationNode
+		// Until 1.20.5
 		| core.FloatNode
 		| core.IntegerNode
-		| core.ResourceLocationNode
 		| BlockNode
 		| ItemNode
 		| VectorNode
+		// Since 1.20.5
+		| nbt.NbtCompoundNode
 	)[]
 	id: core.ResourceLocationNode
 }
