@@ -71,6 +71,9 @@ export namespace ColorToken {
 
 // Built-in LSP semantic tokens: https://microsoft.github.io/language-server-protocol/specifications/specification-3-17/#textDocument_semanticTokens
 
+/*
+ * Hint: during development, the `Developer: Inspect Editor Tokens and Scopes` command in VS Code helps a lot with deciding on the color for nodes.
+ */
 export const ColorTokenTypes = Object.freeze(
 	[
 		'comment',
@@ -80,11 +83,9 @@ export const ColorTokenTypes = Object.freeze(
 		'keyword',
 		'modifier',
 		'number',
-		'operator',
 		'property',
 		'string',
 		'struct',
-		'type',
 		'type',
 		'variable',
 		// Below are custom types.

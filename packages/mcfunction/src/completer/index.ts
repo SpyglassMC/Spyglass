@@ -1,7 +1,7 @@
 import type { DeepReadonly } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import type { McfunctionNode } from '../node/index.js'
-import { CommandMacroNode, CommandNode } from '../node/index.js'
+import { CommandNode, MacroNode } from '../node/index.js'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree/index.js'
 import {
 	categorizeTreeChildren,
@@ -24,7 +24,7 @@ export function entry(
 ): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
-		if (core.CommentNode.is(childNode) || CommandMacroNode.is(childNode)) {
+		if (core.CommentNode.is(childNode) || MacroNode.is(childNode)) {
 			return []
 		} else {
 			return command(tree, getMockNodes)(

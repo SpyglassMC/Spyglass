@@ -1,12 +1,9 @@
 import * as core from '@spyglassmc/core'
-import type {
-	CommandMacroNode,
-	CommandNode,
-	McfunctionNode,
-} from '../node/index.js'
+import type { CommandNode, MacroNode, McfunctionNode } from '../node/index.js'
 import type { RootTreeNode } from '../tree/index.js'
 import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
+import { macro } from './macro.js'
 
 /**
  * @throws When there's no command tree associated with `commandTreeName`.
@@ -23,16 +20,11 @@ function mcfunction(
 		}
 
 		while (src.skipWhitespace().canReadInLine()) {
-			let result: core.CommentNode | CommandNode | CommandMacroNode
+			let result: core.CommentNode | CommandNode | MacroNode
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
 			} else if (src.peek() === '$') {
-				const start = src.cursor
-				src.skipLine()
-				result = {
-					type: 'mcfunction:command_macro',
-					range: core.Range.create(start, src),
-				}
+				result = macro()(src, ctx) as MacroNode
 			} else {
 				result = command(
 					commandTree,

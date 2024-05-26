@@ -2,6 +2,7 @@
 */**
 
 !dist/*.js
+!dist/*.js.map
 !resource/*.json
 !CHANGELOG.md
 !icon.png
