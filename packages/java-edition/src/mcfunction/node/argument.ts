@@ -119,7 +119,7 @@ export namespace EntitySelectorArgumentsNode {
 		)
 	}
 }
-export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's'] as const
+export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */

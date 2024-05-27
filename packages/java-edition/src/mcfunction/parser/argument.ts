@@ -724,7 +724,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 						: undefined
 					predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
 					single = variable
-						? variable === '@p' || variable === '@r' || variable === '@s'
+						? variable === '@p' || variable === '@r' ||
+							variable === '@s' || variable === '@n'
 						: undefined
 					typeLimited = playersOnly
 
