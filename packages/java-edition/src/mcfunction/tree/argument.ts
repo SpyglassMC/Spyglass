@@ -150,16 +150,46 @@ export interface MinecraftMobEffectArgumentTreeNode
 {
 	parser: 'minecraft:mob_effect'
 }
+export interface NbtParserProperties extends Record<string, unknown> {
+	/**
+	 * The NBT checker should check this argument by dispatching on `dispatcher`
+	 * with a static index inferred from the argument that is at the index
+	 * `dispatchedBy` relative to the current argument and optionally indexing
+	 * on the dispatched type by indices inferred from the argument that is at the
+	 * index `indexedBy` relative to the current argument.
+	 */
+	dispatcher:
+		| 'minecraft:block_entity'
+		| 'minecraft:entity'
+		| 'minecraft:storage'
+	/**
+	 * Could point to a vec3, an entity, an entity resource location, or a storage
+	 * resource location.
+	 *
+	 * @see {@link NbtParserProperties.dispatcher}
+	 */
+	dispatchedBy: number
+	/**
+	 * Could point to an NBT path.
+	 *
+	 * @see {@link NbtParserProperties.dispatcher}
+	 */
+	indexedBy?: number
+	isPredicate?: boolean
+}
 export interface MinecraftNbtCompoundTagArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
 	parser: 'minecraft:nbt_compound_tag'
+	properties?: NbtParserProperties
 }
 export interface MinecraftNbtPathArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_path'
+	properties?: NbtParserProperties
 }
 export interface MinecraftNbtTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_tag'
+	properties?: NbtParserProperties
 }
 export interface MinecraftObjectiveArgumentTreeNode
 	extends mcf.ArgumentTreeNode
