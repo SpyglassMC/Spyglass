@@ -5,9 +5,6 @@ import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 import { macro } from './macro.js'
 
-/**
- * @throws When there's no command tree associated with `commandTreeName`.
- */
 function mcfunction(
 	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
