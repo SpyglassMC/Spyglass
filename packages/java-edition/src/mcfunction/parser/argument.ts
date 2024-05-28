@@ -25,7 +25,6 @@ import type {
 	EntitySelectorAdvancementsArgumentNode,
 	EntitySelectorInvertableArgumentValueNode,
 	EntitySelectorScoresArgumentNode,
-	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
 	ItemNode,
@@ -39,9 +38,9 @@ import {
 	BlockStatesNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
-	EntitySelectorAtVariable,
 	EntitySelectorAtVariables,
 	EntitySelectorNode,
+	EntitySelectorVariable,
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
@@ -424,7 +423,7 @@ function entity(
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{
@@ -445,10 +444,10 @@ function entity(
 				children: [res],
 			}
 
-			if (core.StringNode.is(res)) {
-				ans.playerName = res
-			} else if (EntitySelectorNode.is(res)) {
+			if (EntitySelectorNode.is(res)) {
 				ans.selector = res
+			} else if (core.StringNode.is(res)) {
+				ans.playerName = res
 			} else {
 				ans.uuid = res
 			}
@@ -519,7 +518,7 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (EntitySelectorAtVariable.is(src.peek(2))) {
+		if (src.peek() === '@') {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
@@ -690,6 +689,18 @@ function range(
 	)
 }
 
+function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
+	return (src: core.Source): core.LiteralNode => {
+		const start = src.cursor
+		const ans: core.LiteralNode = {
+			type: 'literal',
+			options: { pool: [] },
+			value: src.readUntil(' ', '\n', '\r', '['),
+			range: core.Range.create(start, src.cursor),
+		}
+		return ans
+	}
+}
 /**
  * Failure when not beginning with `@[parse]`
  */
@@ -707,10 +718,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 	>(
 		core.sequence([
 			core.failOnEmpty(
-				core.literal({
-					pool: EntitySelectorAtVariables,
-					colorTokenType: 'keyword',
-				}),
+				selectorPrefix(),
 			),
 			{
 				get: (res) => {
@@ -724,8 +732,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 						: undefined
 					predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
 					single = variable
-						? variable === '@p' || variable === '@r' ||
-							variable === '@s' || variable === '@n'
+						? ['@p', '@r', '@s', '@n'].includes(variable)
 						: undefined
 					typeLimited = playersOnly
 
@@ -1322,14 +1329,27 @@ function selector(): core.Parser<EntitySelectorNode> {
 				},
 			},
 		]),
-		(res) => {
+		(res, _, ctx) => {
+			const selector = res.children.find(core.LiteralNode.is)!.value.slice(1)
+			const release = ctx.project['loadedVersion'] as
+				| ReleaseVersion
+				| undefined
+			// Invalid @ selector (including @n before 1.21)
+			if (
+				!(EntitySelectorVariable.is(selector)) ||
+				(!release || ReleaseVersion.cmp(release, '1.21') < 0) &&
+					selector === 'n'
+			) {
+				ctx.err.report(
+					localize('mcfunction.parser.entity-selector.invalid', selector),
+					res.range,
+				)
+			}
 			const ans: EntitySelectorNode = {
 				type: 'mcfunction:entity_selector',
 				range: res.range,
 				children: res.children as EntitySelectorNode['children'],
-				variable: res.children
-					.find(core.LiteralNode.is)!
-					.value.slice(1) as EntitySelectorVariable,
+				variable: selector.slice(1) as EntitySelectorVariable,
 				arguments: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
 				currentEntity,
@@ -1396,7 +1416,7 @@ function scoreHolder(
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{
