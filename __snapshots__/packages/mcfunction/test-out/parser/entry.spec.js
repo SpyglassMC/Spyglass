@@ -264,6 +264,66 @@ exports['mcfunction parser entry() Parse "$ this is a $(macro) ⧵ ↓ this is $
   "errors": []
 }
 
+exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)" without macro support 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 37
+    },
+    "children": [
+      {
+        "type": "error",
+        "range": {
+          "start": 0,
+          "end": 37
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 37
+      },
+      "message": "Macro lines are only supported since 1.20.2",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction parser entry() Parse "$this is a macro command" without macro support 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 24
+    },
+    "children": [
+      {
+        "type": "error",
+        "range": {
+          "start": 0,
+          "end": 24
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 24
+      },
+      "message": "Macro lines are only supported since 1.20.2",
+      "severity": 3
+    }
+  ]
+}
+
 exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'] = {
   "node": {
     "type": "mcfunction:entry",

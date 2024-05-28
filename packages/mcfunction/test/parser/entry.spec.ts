@@ -25,19 +25,33 @@ describe('mcfunction parser entry()', () => {
 	]
 	for (const { content } of cases) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
-			const parser = entry(tree, () => undefined, true)
+			const parser = entry(tree, () => undefined, {
+				supportsBackslashContinuation: true,
+				supportsMacros: true,
+			})
 			snapshot(testParser(parser, content))
 		})
 	}
 
-	const casesWithoutBackslashContinuation: { content: string }[] = [
+	const casesWithoutBackslashContinuationSupport: { content: string }[] = [
 		{ content: 'say hi' },
 		{ content: 'say hi\nsay hi' },
 		{ content: 'sa\\  \n  y \\ \n hi' },
 		{ content: 'say trailing \\\n data' },
 	]
-	for (const { content } of casesWithoutBackslashContinuation) {
+	for (const { content } of casesWithoutBackslashContinuationSupport) {
 		it(`Parse "${showWhitespaceGlyph(content)}" without backslash continuation`, () => {
+			const parser = entry(tree, () => undefined)
+			snapshot(testParser(parser, content))
+		})
+	}
+
+	const casesWithoutMacroSupport: { content: string }[] = [
+		{ content: '$this is a macro command' },
+		{ content: '$this is a macro command $(with_args)' },
+	]
+	for (const { content } of casesWithoutMacroSupport) {
+		it(`Parse "${showWhitespaceGlyph(content)}" without macro support`, () => {
 			const parser = entry(tree, () => undefined)
 			snapshot(testParser(parser, content))
 		})
