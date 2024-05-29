@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
+import { ReleaseVersion } from '../../dependency/common.js'
 
 export interface BlockStatesNode
 	extends core.RecordBaseNode<core.StringNode, core.StringNode>
@@ -119,8 +120,21 @@ export namespace EntitySelectorArgumentsNode {
 		)
 	}
 }
-export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
+export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n']
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
+export function removeUnavailableSelectorVariables(ctx: core.ContextBase) {
+	const release = ctx.project['loadedVersion'] as
+		| ReleaseVersion
+		| undefined
+	// Remove @n if the version is lower than 1.21
+	if (
+		EntitySelectorVariables.includes('n') &&
+		(!release || ReleaseVersion.cmp(release, '1.21') < 0)
+	) {
+		EntitySelectorVariables.pop()
+		EntitySelectorAtVariables.pop()
+	}
+}
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */
 	export function is(value: string): value is EntitySelectorVariable {
