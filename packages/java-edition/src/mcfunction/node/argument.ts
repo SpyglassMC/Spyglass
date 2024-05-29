@@ -128,8 +128,8 @@ export function removeUnavailableSelectorVariables(ctx: core.ContextBase) {
 		| undefined
 	// Remove @n if the version is lower than 1.21
 	if (
-		EntitySelectorVariables.includes('n') &&
-		(!release || ReleaseVersion.cmp(release, '1.21') < 0)
+		EntitySelectorVariables.includes('n') && release &&
+		ReleaseVersion.cmp(release, '1.21') < 0
 	) {
 		EntitySelectorVariables.pop()
 		EntitySelectorAtVariables.pop()

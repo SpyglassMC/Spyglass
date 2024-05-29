@@ -695,9 +695,10 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 		const ans: core.LiteralNode = {
 			type: 'literal',
 			options: { pool: [] },
+			range: core.Range.create(start),
 			value: src.readUntil(' ', '\n', '\r', '['),
-			range: core.Range.create(start, src.cursor),
 		}
+		ans.range.end = src.cursor
 		return ans
 	}
 }
@@ -1337,8 +1338,8 @@ function selector(): core.Parser<EntitySelectorNode> {
 			// Invalid @ selector (including @n before 1.21)
 			if (
 				!(EntitySelectorVariable.is(selector)) ||
-				(!release || ReleaseVersion.cmp(release, '1.21') < 0) &&
-					selector === 'n'
+				(release && ReleaseVersion.cmp(release, '1.21') < 0 &&
+					selector === 'n')
 			) {
 				ctx.err.report(
 					localize('mcfunction.parser.entity-selector.invalid', selector),
@@ -1349,7 +1350,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 				type: 'mcfunction:entity_selector',
 				range: res.range,
 				children: res.children as EntitySelectorNode['children'],
-				variable: selector.slice(1) as EntitySelectorVariable,
+				variable: selector as EntitySelectorVariable,
 				arguments: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
 				currentEntity,

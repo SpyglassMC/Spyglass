@@ -10032,7 +10032,16 @@ exports['mcfunction argument minecraft:entity Parse "@n" with {"amount":"single"
       "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"amount":"single","type":"entities"} 1'] = {
@@ -10348,7 +10357,16 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
       "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 16
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount":"single","type":"entities"} 1'] = {
@@ -10666,7 +10684,16 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
       "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
     }
   },
-  "errors": []
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 12
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction argument minecraft:entity Parse "@r" with {"amount":"single","type":"players"} 1'] = {
