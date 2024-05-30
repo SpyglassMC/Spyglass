@@ -287,7 +287,7 @@ const componentList: Completer<ComponentListNode> = (node, ctx) => {
 
 const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
 	// TODO: improve this completer
-	return completer.dispatch(node, ctx)
+	return []
 }
 
 const coordinate: Completer<CoordinateNode> = (node, _ctx) => {

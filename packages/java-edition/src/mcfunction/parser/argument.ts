@@ -21,6 +21,7 @@ import type {
 	BlockNode,
 	ComponentTestExactNode,
 	ComponentTestExistsNode,
+	ComponentTestNode,
 	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
@@ -42,7 +43,6 @@ import type {
 import {
 	BlockStatesNode,
 	ComponentListNode,
-	ComponentTestNode,
 	ComponentTestsNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
@@ -1747,126 +1747,69 @@ const components: core.InfallibleParser<ComponentListNode> = core.map(
 	},
 )
 
-const componentTests: core.InfallibleParser<ComponentTestsNode> = (
-	src,
-	ctx,
-) => {
-	const exact = core.map<
-		core.SequenceUtil<
-			core.ResourceLocationNode | core.LiteralNode | nbt.NbtNode
-		>,
-		ComponentTestExactNode
-	>(
-		core.sequence([
-			core.resourceLocation({ category: 'data_component_type' }),
-			core.literal('='),
-			nbt.parser.entry,
-		]),
-		(res) => {
-			const id = res.children.find(core.ResourceLocationNode.is)!
-			const value = res.children.find(nbt.NbtNode.is)!
-			const ans: ComponentTestExactNode = {
-				type: 'mcfunction:component_test_exact',
-				range: res.range,
-				children: [id, value],
-				component: id,
-				value,
-				negated: false,
-			}
+const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
+	const start = src.cursor
+	src.skipWhitespace()
+	const negated = src.trySkip('!')
+	src.skipWhitespace()
 
-			return ans
-		},
+	const resLoc = core.resourceLocation({ category: 'data_component_type' })(
+		src,
+		ctx,
 	)
+	src.skipWhitespace()
 
-	const exists = core.map<
-		core.ResourceLocationNode,
-		ComponentTestExistsNode
-	>(
-		core.resourceLocation({ category: 'data_component_type' }),
-		(res) => {
-			const ans: ComponentTestExistsNode = {
-				type: 'mcfunction:component_test_exists',
-				range: res.range,
-				children: [res],
-				component: res,
-				negated: false,
-			}
-
-			return ans
-		},
-	)
-
-	const subPredicate = core.map<
-		core.SequenceUtil<
-			core.ResourceLocationNode | core.LiteralNode | nbt.NbtNode
-		>,
-		ComponentTestSubpredicateNode
-	>(
-		core.sequence([
-			core.resourceLocation({ category: 'item_sub_predicate_type' }),
-			core.literal('~'),
-			nbt.parser.entry,
-		]),
-		(res) => {
-			const id = res.children.find(core.ResourceLocationNode.is)!
-			const subpredicate = res.children.find(nbt.NbtNode.is)!
-			const ans: ComponentTestSubpredicateNode = {
-				type: 'mcfunction:component_test_sub_predicate',
-				range: res.range,
-				children: [id, subpredicate],
-				subPredicateType: id,
-				subPredicate: subpredicate,
-				negated: false,
-			}
-
-			return ans
-		},
-	)
-
-	const not = core.map<
-		core.SequenceUtil<
-			| core.LiteralNode
-			| ComponentTestNode
-		>,
-		ComponentTestNode
-	>(
-		core.sequence([
-			core.literal('!'),
-			core.any([exact, subPredicate, exists]),
-		]),
-		(res) => {
-			const test = res.children.find(ComponentTestNode.is)!
-			test.negated = true
-			return test
-		},
-	)
-
-	const test = core.select([
-		{
-			predicate: (src) => src.peek() === '!',
-			parser: not,
-		},
-		{
-			parser: core.any([exact, subPredicate, exists]),
-		},
-	])
-
-	return core.map(
-		core.list({
-			start: '[',
-			value: test,
-			sep: ',', // TODO: support |
-			end: ']',
-			trailingSep: false,
-		}),
-		(res) => {
-			const ans: ComponentTestsNode = {
-				type: 'mcfunction:component_tests',
-				range: res.range,
-				children: res.children.map(c => c.value!),
-			}
-
-			return ans
-		},
-	)(src, ctx)
+	if (src.trySkip('=')) {
+		const value = nbt.parser.compound(src, ctx)
+		src.skipWhitespace()
+		const ans: ComponentTestExactNode = {
+			type: 'mcfunction:component_test_exact',
+			range: core.Range.create(start, src),
+			children: [resLoc, value],
+			component: resLoc,
+			value: value,
+			negated,
+		}
+		return ans
+	}
+	if (src.trySkip('~')) {
+		resLoc.options.category = 'item_sub_predicate_type'
+		const predicate = nbt.parser.compound(src, ctx)
+		src.skipWhitespace()
+		const ans: ComponentTestSubpredicateNode = {
+			type: 'mcfunction:component_test_sub_predicate',
+			range: core.Range.create(start, src),
+			children: [resLoc, predicate],
+			subPredicateType: resLoc,
+			subPredicate: predicate,
+			negated,
+		}
+		return ans
+	}
+	const ans: ComponentTestExistsNode = {
+		type: 'mcfunction:component_test_exists',
+		range: core.Range.create(start, src),
+		children: [resLoc],
+		component: resLoc,
+		negated,
+	}
+	return ans
 }
+
+const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
+	core.list({
+		start: '[',
+		value: componentTest,
+		sep: ',', // TODO: support |
+		end: ']',
+		trailingSep: false,
+	}),
+	(res) => {
+		const ans: ComponentTestsNode = {
+			type: 'mcfunction:component_tests',
+			range: res.range,
+			children: res.children.filter(c => c.value).map(c => c.value!),
+		}
+		return ans
+	},
+)

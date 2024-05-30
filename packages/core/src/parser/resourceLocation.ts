@@ -14,6 +14,7 @@ const Terminators = new Set([
 	'\r',
 	'\n',
 	'=',
+	'~',
 	',',
 	'"',
 	"'",
