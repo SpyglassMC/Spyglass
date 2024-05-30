@@ -10361,7 +10361,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
     {
       "range": {
         "start": 0,
-        "end": 16
+        "end": 2
       },
       "message": "Invalid entity selector: “@n”",
       "severity": 3
@@ -10688,7 +10688,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
     {
       "range": {
         "start": 0,
-        "end": 12
+        "end": 2
       },
       "message": "Invalid entity selector: “@n”",
       "severity": 3

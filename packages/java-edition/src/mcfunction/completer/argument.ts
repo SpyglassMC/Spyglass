@@ -53,7 +53,6 @@ import {
 	ItemNode,
 	ObjectiveCriteriaNode,
 	ParticleNode,
-	removeUnavailableSelectorVariables,
 	ScoreHolderNode,
 	VectorNode,
 } from '../node/index.js'
@@ -367,7 +366,6 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 }
 
 const selector: Completer<EntitySelectorNode> = (node, ctx) => {
-	removeUnavailableSelectorVariables(ctx)
 	if (Range.contains(node.children[0], ctx.offset, true)) {
 		return completer.literal(node.children[0], ctx)
 	}

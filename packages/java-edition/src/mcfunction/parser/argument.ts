@@ -25,6 +25,7 @@ import type {
 	EntitySelectorAdvancementsArgumentNode,
 	EntitySelectorInvertableArgumentValueNode,
 	EntitySelectorScoresArgumentNode,
+	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
 	ItemNode,
@@ -38,9 +39,9 @@ import {
 	BlockStatesNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
+	EntitySelectorAtVariable,
 	EntitySelectorAtVariables,
 	EntitySelectorNode,
-	EntitySelectorVariable,
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
@@ -444,10 +445,10 @@ function entity(
 				children: [res],
 			}
 
-			if (EntitySelectorNode.is(res)) {
-				ans.selector = res
-			} else if (core.StringNode.is(res)) {
+			if (core.StringNode.is(res)) {
 				ans.playerName = res
+			} else if (EntitySelectorNode.is(res)) {
+				ans.selector = res
 			} else {
 				ans.uuid = res
 			}
@@ -690,15 +691,25 @@ function range(
 }
 
 function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
-	return (src: core.Source): core.LiteralNode => {
+	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
 		const start = src.cursor
+		const value = src.readUntil(' ', '\r', '\n', '[')
+		const allowedVariables = EntitySelectorAtVariable.filterAvailable(ctx)
+
 		const ans: core.LiteralNode = {
 			type: 'literal',
-			options: { pool: [] },
-			range: core.Range.create(start),
-			value: src.readUntil(' ', '\n', '\r', '['),
+			range: core.Range.create(start, src),
+			options: { pool: allowedVariables },
+			value,
 		}
-		ans.range.end = src.cursor
+
+		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
+			ctx.err.report(
+				localize('mcfunction.parser.entity-selector.invalid', ans.value),
+				ans,
+			)
+		}
+
 		return ans
 	}
 }
@@ -1330,27 +1341,14 @@ function selector(): core.Parser<EntitySelectorNode> {
 				},
 			},
 		]),
-		(res, _, ctx) => {
-			const selector = res.children.find(core.LiteralNode.is)!.value.slice(1)
-			const release = ctx.project['loadedVersion'] as
-				| ReleaseVersion
-				| undefined
-			// Invalid @ selector (including @n before 1.21)
-			if (
-				!(EntitySelectorVariable.is(selector)) ||
-				(release && ReleaseVersion.cmp(release, '1.21') < 0 &&
-					selector === 'n')
-			) {
-				ctx.err.report(
-					localize('mcfunction.parser.entity-selector.invalid', selector),
-					res.range,
-				)
-			}
+		(res) => {
 			const ans: EntitySelectorNode = {
 				type: 'mcfunction:entity_selector',
 				range: res.range,
 				children: res.children as EntitySelectorNode['children'],
-				variable: selector as EntitySelectorVariable,
+				variable: res.children
+					.find(core.LiteralNode.is)!
+					.value.slice(1) as EntitySelectorVariable,
 				arguments: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
 				currentEntity,
