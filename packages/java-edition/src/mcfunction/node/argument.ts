@@ -172,11 +172,11 @@ export namespace EntitySelectorNode {
 		)
 	}
 
-	export function mock(range: core.RangeLike): EntitySelectorNode {
-		const literal = core.LiteralNode.mock(range, {
-			pool: EntitySelectorAtVariables,
-			colorTokenType: 'keyword',
-		})
+	export function mock(
+		range: core.RangeLike,
+		options: core.LiteralOptions,
+	): EntitySelectorNode {
+		const literal = core.LiteralNode.mock(range, options)
 		return {
 			type: 'mcfunction:entity_selector',
 			range: core.Range.get(range),

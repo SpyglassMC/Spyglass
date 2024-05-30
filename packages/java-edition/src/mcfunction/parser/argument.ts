@@ -40,7 +40,6 @@ import {
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
-	EntitySelectorAtVariables,
 	EntitySelectorNode,
 	ObjectiveCriteriaNode,
 	TimeNode,
@@ -523,7 +522,10 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
-				core.stopBefore(greedyString, ...EntitySelectorAtVariables)(
+				core.stopBefore(
+					greedyString,
+					...EntitySelectorAtVariable.filterAvailable(ctx),
+				)(
 					src,
 					ctx,
 				),
