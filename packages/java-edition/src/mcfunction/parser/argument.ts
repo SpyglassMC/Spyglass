@@ -559,6 +559,7 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 				tests: res.children.find(
 					ComponentTestsNode.is,
 				),
+				nbt: res.children.find(nbt.NbtCompoundNode.is),
 			}
 			return ans
 		},
