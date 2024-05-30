@@ -499,7 +499,6 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 
 const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
-	// TODO
 	return core.map<
 		core.SequenceUtil<
 			core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode
@@ -528,7 +527,6 @@ const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
 
 const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
-	// TODO
 	return core.map<
 		core.SequenceUtil<
 			| core.LiteralNode
@@ -1731,12 +1729,7 @@ const components: core.InfallibleParser<ComponentListNode> = core.map(
 	core.record({
 		start: '[',
 		pair: {
-			// TODO: Create an item_component category
-			key: core.resourceLocation({
-				pool: [],
-				allowUnknown: true,
-				namespacePathSep: '.',
-			}),
+			key: core.resourceLocation({ category: 'data_component_type' }),
 			sep: '=',
 			value: nbt.parser.entry,
 			end: ',',
@@ -1765,11 +1758,7 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 		ComponentTestExactNode
 	>(
 		core.sequence([
-			core.resourceLocation({
-				pool: [],
-				allowUnknown: true,
-				namespacePathSep: '.',
-			}),
+			core.resourceLocation({ category: 'data_component_type' }),
 			core.literal('='),
 			nbt.parser.entry,
 		]),
@@ -1793,11 +1782,7 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 		core.ResourceLocationNode,
 		ComponentTestExistsNode
 	>(
-		core.resourceLocation({
-			pool: [],
-			allowUnknown: true,
-			namespacePathSep: '.',
-		}),
+		core.resourceLocation({ category: 'data_component_type' }),
 		(res) => {
 			const ans: ComponentTestExistsNode = {
 				type: 'mcfunction:component_test_exists',
@@ -1811,18 +1796,14 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 		},
 	)
 
-	const subpredicate = core.map<
+	const subPredicate = core.map<
 		core.SequenceUtil<
 			core.ResourceLocationNode | core.LiteralNode | nbt.NbtNode
 		>,
 		ComponentTestSubpredicateNode
 	>(
 		core.sequence([
-			core.resourceLocation({
-				pool: [],
-				allowUnknown: true,
-				namespacePathSep: '.',
-			}),
+			core.resourceLocation({ category: 'item_sub_predicate_type' }),
 			core.literal('~'),
 			nbt.parser.entry,
 		]),
@@ -1851,7 +1832,7 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 	>(
 		core.sequence([
 			core.literal('!'),
-			core.any([exact, subpredicate, exists]),
+			core.any([exact, subPredicate, exists]),
 		]),
 		(res) => {
 			const test = res.children.find(ComponentTestNode.is)!
@@ -1866,7 +1847,7 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 			parser: not,
 		},
 		{
-			parser: core.any([exact, subpredicate, exists]),
+			parser: core.any([exact, subPredicate, exists]),
 		},
 	])
 

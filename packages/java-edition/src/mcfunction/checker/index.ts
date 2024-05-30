@@ -191,16 +191,13 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 			groupedComponents.get(componentName)!.push(component)
 		})
 
-		groupedComponents.forEach((components, componentName) => {
+		groupedComponents.forEach((components) => {
 			if (components.length > 1) {
 				components.forEach(component => {
 					ctx.err.report(
-						localize(
-							'mcfunction.parser.duplicate-components',
-							componentName,
-						),
+						localize('mcfunction.parser.duplicate-components'),
 						component.key!.range,
-						core.ErrorSeverity.Error,
+						core.ErrorSeverity.Warning,
 					)
 				})
 			}
