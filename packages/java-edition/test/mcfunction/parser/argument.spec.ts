@@ -193,7 +193,19 @@ const Suites: Partial<
 				'sculk_charge 4.2',
 				'shriek 20',
 				'vibration 0.1 0.2 0.3 40',
+				'block{block_state:"diamond_block"} ~ ~ ~',
+				'end_rod{}',
 			],
+		},
+		{
+			content: [
+				'block stone',
+				'dust 0.2 0.4 0.6 0.8',
+				'block{block_state:"diamond_block"} ~ ~ ~',
+				'end_rod',
+				'end_rod{}',
+			],
+			version: '1.20.5',
 		},
 	],
 	'minecraft:resource': [
@@ -314,7 +326,7 @@ describe('mcfunction argument parser', () => {
 						? ` with ${JSON.stringify(properties)}`
 						: ''
 					const versionString = typeof version !== 'undefined'
-						? `in version ${version}`
+						? ` in version ${version}`
 						: ''
 					const itTitle = `Parse "${
 						showWhitespaceGlyph(string)
