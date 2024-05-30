@@ -11,7 +11,10 @@ import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'mocha'
 
 const Suites: Partial<
-	Record<ArgumentTreeNode['parser'], { properties?: any; content: string[] }[]>
+	Record<
+		ArgumentTreeNode['parser'],
+		{ content: string[]; properties?: any; version?: string }[]
+	>
 > = {
 	'brigadier:bool': [{ content: ['false', 'true'] }],
 	'brigadier:double': [
@@ -290,26 +293,32 @@ const RemoveExtraChildren = new Set([
 	'minecraft:score_holder',
 ])
 
-const project = mockProjectData()
-
-json.initialize(project)
-nbt.initialize(project)
-
-const { meta } = project
-
 describe('mcfunction argument parser', () => {
 	for (const [parserName, cases] of Object.entries(Suites)) {
 		describe(parserName, () => {
-			for (const { content, properties } of cases) {
+			for (const { content, properties, version } of cases) {
 				const treeNode: ArgumentTreeNode = {
 					type: 'argument',
 					parser: parserName as any,
 					properties,
 				}
+				const ctx = typeof version !== 'undefined'
+					? { loadedVersion: version }
+					: void 0
+				const project = mockProjectData({ ctx })
+				json.initialize(project)
+				nbt.initialize(project)
+
 				for (const string of content) {
-					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${
-						properties ? ` with ${JSON.stringify(properties)}` : ''
-					}`
+					const propertiesString = properties
+						? ` with ${JSON.stringify(properties)}`
+						: ''
+					const versionString = typeof version !== 'undefined'
+						? `in version ${version}`
+						: ''
+					const itTitle = `Parse "${
+						showWhitespaceGlyph(string)
+					}"${propertiesString}${versionString}`
 					it(itTitle, () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
@@ -321,7 +330,7 @@ describe('mcfunction argument parser', () => {
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode)!, string, {
-								project: { meta },
+								project,
 								removeTopLevelChildren: RemoveExtraChildren.has(
 									parserName,
 								),
