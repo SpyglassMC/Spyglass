@@ -5,6 +5,7 @@ import { uriBinder } from './binder/index.js'
 import type { McmetaSummary } from './dependency/index.js'
 import {
 	getMcmetaSummary,
+	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVersions,
 	PackMcmeta,
@@ -59,6 +60,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		packMcmeta,
 		versions,
 	})
+
+	meta.registerDependencyProvider(
+		'@vanilla-datapack',
+		() => getVanillaDatapack(downloader, version, isLatest),
+	)
 
 	meta.registerDependencyProvider(
 		'@vanilla-mcdoc',

@@ -23,6 +23,8 @@ export const StaticIndexKeywords = Object.freeze(
 		'fallback',
 		'none',
 		'unknown',
+		'spawnitem',
+		'blockitem',
 	] as const,
 )
 export type StaticIndexKeyword = (typeof StaticIndexKeywords)[number]
@@ -46,68 +48,61 @@ export interface DispatcherData {
 	parallelIndices: ParallelIndices
 }
 
-export interface DispatcherType extends DispatcherData {
+export interface DispatcherType extends DispatcherData, McdocBaseType {
 	kind: 'dispatcher'
 }
 
-export interface StructType {
+export interface StructType extends McdocBaseType {
 	kind: 'struct'
 	fields: StructTypeField[]
 }
 export type StructTypeField = StructTypePairField | StructTypeSpreadField
-export interface StructTypePairField {
+export interface StructTypePairField extends McdocBaseType {
 	kind: 'pair'
-	attributes?: Attribute[]
 	key: string | McdocType
 	type: McdocType
 	optional?: boolean
 }
-export interface StructTypeSpreadField {
+export interface StructTypeSpreadField extends McdocBaseType {
 	kind: 'spread'
-	attributes?: Attribute[]
 	type: McdocType
 }
 
-export interface EnumType {
+export interface EnumType extends McdocBaseType {
 	kind: 'enum'
 	enumKind?: EnumKind
 	values: EnumTypeField[]
 }
-export interface EnumTypeField {
-	attributes?: Attribute[]
+export interface EnumTypeField extends McdocBaseType {
 	identifier: string
 	value: string | number | bigint
 }
 
-export interface ReferenceType {
+export interface ReferenceType extends McdocBaseType {
 	kind: 'reference'
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType> {
+export interface UnionType<T extends McdocType = McdocType>
+	extends McdocBaseType
+{
 	kind: 'union'
 	members: T[]
 }
 
-export interface AttributedType {
-	kind: 'attributed'
-	attribute: Attribute
-	child: McdocType
-}
-
-export interface IndexedType {
+export interface IndexedType extends McdocBaseType {
 	kind: 'indexed'
 	parallelIndices: Index[]
 	child: McdocType
 }
 
-export interface TemplateType {
+export interface TemplateType extends McdocBaseType {
 	kind: 'template'
 	child: McdocType
 	typeParams: { path: string }[]
 }
 
-export interface ConcreteType {
+export interface ConcreteType extends McdocBaseType {
 	kind: 'concrete'
 	child: McdocType
 	typeArgs: McdocType[]
@@ -126,57 +121,37 @@ export function createEmptyUnion(
 	}
 }
 
-export interface KeywordType {
+export interface KeywordType extends McdocBaseType {
 	kind: 'any' | 'boolean' | 'unsafe'
 }
 
-export interface StringType {
+export interface StringType extends McdocBaseType {
 	kind: 'string'
 	lengthRange?: NumericRange
 }
 
 export type LiteralValue =
-	| {
-		kind: 'boolean'
-		value: boolean
-	}
-	| {
-		kind: 'string'
-		value: string
-	}
-	| {
-		kind: 'number'
-		value: number
-		suffix: 'b' | 's' | 'l' | 'f' | 'd' | undefined
-	}
-export interface LiteralType {
+	| LiteralBooleanValue
+	| LiteralStringValue
+	| LiteralNumericValue
+export interface LiteralBooleanValue {
+	kind: 'boolean'
+	value: boolean
+}
+export interface LiteralStringValue {
+	kind: 'string'
+	value: string
+}
+export interface LiteralNumericValue {
+	kind: NumericTypeKind
+	value: number
+}
+export interface LiteralType extends McdocBaseType {
 	kind: 'literal'
 	value: LiteralValue
 }
-export const LiteralNumberSuffixes = Object.freeze(
-	[
-		'b',
-		's',
-		'l',
-		'f',
-		'd',
-	] as const,
-)
-export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
-export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
-	[
-		...LiteralNumberSuffixes,
-		'B',
-		'S',
-		'L',
-		'F',
-		'D',
-	] as const,
-)
-export type LiteralNumberCaseInsensitiveSuffix =
-	(typeof LiteralNumberCaseInsensitiveSuffixes)[number]
 
-export interface NumericType {
+export interface NumericType extends McdocBaseType {
 	kind: NumericTypeKind
 	valueRange?: NumericRange
 }
@@ -199,7 +174,7 @@ export const NumericTypeKinds = Object.freeze(
 )
 export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
-export interface PrimitiveArrayType {
+export interface PrimitiveArrayType extends McdocBaseType {
 	kind: 'byte_array' | 'int_array' | 'long_array'
 	valueRange?: NumericRange
 	lengthRange?: NumericRange
@@ -217,15 +192,19 @@ export const PrimitiveArrayKinds = Object.freeze(
 )
 export type PrimitiveArrayKind = (typeof PrimitiveArrayKinds)[number]
 
-export interface ListType {
+export interface ListType extends McdocBaseType {
 	kind: 'list'
 	item: McdocType
 	lengthRange?: NumericRange
 }
 
-export interface TupleType {
+export interface TupleType extends McdocBaseType {
 	kind: 'tuple'
 	items: McdocType[]
+}
+
+export interface McdocBaseType {
+	attributes?: Attribute[]
 }
 
 export type McdocType =
@@ -241,7 +220,6 @@ export type McdocType =
 	| StructType
 	| TupleType
 	| UnionType
-	| AttributedType
 	| IndexedType
 	| TemplateType
 	| ConcreteType
@@ -282,90 +260,125 @@ export namespace McdocType {
 		if (type === undefined) {
 			return '<unknown>'
 		}
+		let attributesString = ''
+		if (type.attributes?.length) {
+			for (const attribute of type.attributes) {
+				attributesString += `#[${attribute.name}${
+					attribute.value ? '=<value ...>' : ''
+				}] `
+			}
+		}
+		let typeString: string
 		switch (type.kind) {
 			case 'any':
 			case 'boolean':
-				return type.kind
-			case 'attributed':
-				return `#[${type.attribute.name}${
-					type.attribute.value ? '=<value ...>' : ''
-				}] ${toString(type.child)}`
+				typeString = type.kind
+				break
 			case 'byte':
-				return `byte${rangeToString(type.valueRange)}`
+				typeString = `byte${rangeToString(type.valueRange)}`
+				break
 			case 'byte_array':
-				return `byte${rangeToString(type.valueRange)}[]${
+				typeString = `byte${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
+				break
 			case 'concrete':
-				return `${toString(type.child)}${
+				typeString = `${toString(type.child)}${
 					type.typeArgs.length
 						? `<${type.typeArgs.map(toString).join(', ')}>`
 						: ''
 				}`
+				break
 			case 'dispatcher':
-				return `${type.registry ?? 'spyglass:unknown'}[${
+				typeString = `${type.registry ?? 'spyglass:unknown'}[${
 					indicesToString(
 						type.parallelIndices,
 					)
 				}]`
+				break
 			case 'double':
-				return `double${rangeToString(type.valueRange)}`
+				typeString = `double${rangeToString(type.valueRange)}`
+				break
 			case 'enum':
-				return '<enum ...>'
+				typeString = '<enum ...>'
+				break
 			case 'float':
-				return `float${rangeToString(type.valueRange)}`
+				typeString = `float${rangeToString(type.valueRange)}`
+				break
 			case 'indexed':
-				return `${toString(type.child)}${
+				typeString = `${toString(type.child)}${
 					indicesToString(type.parallelIndices)
 				}`
+				break
 			case 'int':
-				return `int${rangeToString(type.valueRange)}`
+				typeString = `int${rangeToString(type.valueRange)}`
+				break
 			case 'int_array':
-				return `int${rangeToString(type.valueRange)}[]${
+				typeString = `int${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
+				break
 			case 'list':
-				return `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
+				typeString = `[${toString(type.item)}]${
+					rangeToString(type.lengthRange)
+				}`
+				break
 			case 'literal':
-				return `${type.value}`
+				typeString = `${type.value}`
+				break
 			case 'long':
-				return `long${rangeToString(type.valueRange)}`
+				typeString = `long${rangeToString(type.valueRange)}`
+				break
 			case 'long_array':
-				return `long${rangeToString(type.valueRange)}[]${
+				typeString = `long${rangeToString(type.valueRange)}[]${
 					rangeToString(
 						type.lengthRange,
 					)
 				}`
+				break
 			case 'reference':
-				return type.path ?? '<unknown_reference>'
+				typeString = type.path ?? '<unknown_reference>'
+				break
 			case 'short':
-				return `short${rangeToString(type.valueRange)}`
+				typeString = `short${rangeToString(type.valueRange)}`
+				break
 			case 'string':
-				return `string${rangeToString(type.lengthRange)}`
+				typeString = `string${rangeToString(type.lengthRange)}`
+				break
 			case 'struct':
-				return '<struct ...>'
+				typeString = '<struct ...>'
+				break
 			case 'template':
-				return `${toString(type.child)}${
+				typeString = `${toString(type.child)}${
 					type.typeParams.length
 						? `<${type.typeParams.map((v) => `?${v.path}`).join(', ')}>`
 						: ''
 				}`
+				break
 			case 'tuple':
-				return `[${type.items.map((v) => toString(v)).join(',')}${
+				typeString = `[${type.items.map((v) => toString(v)).join(',')}${
 					type.items.length === 1 ? ',' : ''
 				}]`
+				break
 			case 'union':
-				return `(${type.members.map(toString).join(' | ')})`
+				typeString = `(${type.members.map(toString).join(' | ')})`
+				break
 			case 'unsafe':
-				return 'unsafe'
+				typeString = 'unsafe'
+				break
 			default:
-				return Dev.assertNever(type)
+				Dev.assertNever(type)
 		}
+		return attributesString + typeString
 	}
+}
+
+export interface UseStatementBindingData {
+	target: readonly string[]
 }
 
 /**

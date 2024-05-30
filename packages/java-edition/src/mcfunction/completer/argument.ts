@@ -33,8 +33,8 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
+	getItemSlotArgumentValues,
 	HeightmapValues,
-	ItemSlotArgumentValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
@@ -68,9 +68,9 @@ function getItemStackFormat(ctx: CompleterContext): 'old' | 'new' {
 
 export const getMockNodes: mcf.completer.MockNodesGetter = (
 	rawTreeNode,
-	range,
-	ctx,
+	ctx: CompleterContext,
 ): Arrayable<AstNode> => {
+	const range = ctx.offset
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	switch (treeNode.parser) {
@@ -129,7 +129,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_predicate':
 			return ItemNode.mock(range, true, getItemStackFormat(ctx))
 		case 'minecraft:item_slot':
-			return LiteralNode.mock(range, { pool: ItemSlotArgumentValues })
+			return LiteralNode.mock(range, {
+				pool: getItemSlotArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false, getItemStackFormat(ctx))
 		case 'minecraft:mob_effect':
@@ -304,6 +306,10 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	const child = AstNode.findChild(node, ctx.offset, true)
 	if (child) {
 		return completer.dispatch(child, ctx)
+	}
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release || ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		return []
 	}
 
 	const id = ResourceLocationNode.toString(node.id, 'short')

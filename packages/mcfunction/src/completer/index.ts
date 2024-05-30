@@ -1,20 +1,17 @@
 import type { DeepReadonly } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import type { McfunctionNode } from '../node/index.js'
-import { CommandMacroNode } from '../node/index.js'
-import { CommandNode } from '../node/index.js'
+import { CommandNode, MacroNode } from '../node/index.js'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree/index.js'
 import {
 	categorizeTreeChildren,
-	CommandTreeRegistry,
 	redirect,
 	resolveParentTreeNode,
 } from '../tree/index.js'
 
 export type MockNodesGetter = (
 	treeNode: ArgumentTreeNode,
-	range: core.RangeLike,
-	ctx: core.CompleterContext,
+	range: core.CompleterContext,
 ) => core.Arrayable<core.AstNode>
 
 /**
@@ -22,13 +19,12 @@ export type MockNodesGetter = (
  * will be used for completing the argument.
  */
 export function entry(
-	commandTreeName: string,
+	tree: RootTreeNode,
 	getMockNodes: MockNodesGetter,
 ): core.Completer<McfunctionNode> {
 	return (node, ctx) => {
-		const tree = CommandTreeRegistry.instance.get(commandTreeName)
 		const childNode = core.AstNode.findChild(node, ctx.offset, true)
-		if (core.CommentNode.is(childNode) || CommandMacroNode.is(childNode)) {
+		if (core.CommentNode.is(childNode) || MacroNode.is(childNode)) {
 			return []
 		} else {
 			return command(tree, getMockNodes)(
@@ -45,8 +41,8 @@ export function command(
 ): core.Completer<CommandNode> {
 	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
-		const selectedChildNode: DeepReadonly<core.AstNode> | undefined =
-			node.children[index]?.children[0]
+		const selectedChildNode: DeepReadonly<core.AstNode> | undefined = node
+			.children[index]?.children[0]
 		if (selectedChildNode) {
 			return core.completer.dispatch(selectedChildNode, ctx)
 		}
@@ -80,10 +76,9 @@ export function command(
 				})
 			),
 			...argumentTreeNodes.flatMap(([_name, treeNode]) =>
-				core.Arrayable.toArray(getMockNodes(treeNode, ctx.offset, ctx))
-					.flatMap(
-						(n) => core.completer.dispatch(n, ctx),
-					)
+				core.Arrayable.toArray(getMockNodes(treeNode, ctx)).flatMap(
+					(n) => core.completer.dispatch(n, ctx),
+				)
 			),
 		]
 	}

@@ -41,6 +41,28 @@ use ::module::Foo
 //=== /client.mcdoc
 use super::module::Foo
 
+//== use statement/reference alias
+//=== /module.mcdoc
+struct Used {}
+
+//=== /client.mcdoc
+use ::module::Used
+
+type Reference = Used
+
+//== use statement/double reference alias
+struct Used0 {}
+use ::test::Used0 as Used1
+use ::test::Used1 as Used2
+
+//== use statement/use before file loaded
+//=== /client.mcdoc
+use ::later::Used
+struct { foo: Used }
+
+//=== /later.mcdoc
+struct Used {}
+
 //== hoisting
 struct Foo {
 	bar: Bar,
@@ -71,6 +93,7 @@ type TupleTest1 = [string, boolean]
 //== attributed types
 type NoValue = #[deprecated] boolean
 type SimpleValue = #[since=1.19] boolean
+type Multiple = #[since=1.17] #[until=1.20] boolean
 type TreeValue = #[id(registry="worldgen/biome",tags=allowed)] string
 type EnumValue = #[bitfield(enum(int) {
 	HandAll = 1,

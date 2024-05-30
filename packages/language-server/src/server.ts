@@ -12,8 +12,6 @@ import type {
 	CustomInitializationOptions,
 	CustomServerCapabilities,
 	MyLspDataHackPubifyRequestParams,
-	MyLspInlayHint,
-	MyLspInlayHintRequestParams,
 } from './util/index.js'
 import { toCore, toLS } from './util/index.js'
 
@@ -91,7 +89,7 @@ connection.onInitialize(async (params) => {
 
 	try {
 		service = new core.Service({
-			isDebugging: initializationOptions?.inDevelopmentMode && false,
+			isDebugging: initializationOptions?.inDevelopmentMode,
 			logger,
 			profilers: new core.ProfilerFactory(logger, [
 				'cache#load',
@@ -112,12 +110,16 @@ connection.onInitialize(async (params) => {
 			},
 		})
 		service.project
-			.on('documentErrored', ({ errors, uri, version }) => {
-				connection.sendDiagnostics({
-					diagnostics: toLS.diagnostics(errors),
-					uri: uri,
-					version: version,
-				})
+			.on('documentErrored', async ({ errors, uri, version }) => {
+				try {
+					await connection.sendDiagnostics({
+						diagnostics: toLS.diagnostics(errors),
+						uri: uri,
+						version: version,
+					})
+				} catch (e) {
+					console.error('[sendDiagnostics]', e)
+				}
 			})
 			.on('ready', () => {
 				progressReporter?.done()
@@ -129,7 +131,6 @@ connection.onInitialize(async (params) => {
 
 	const customCapabilities: CustomServerCapabilities = {
 		dataHackPubify: true,
-		inlayHints: true,
 		resetProjectCache: true,
 		showCacheRoot: true,
 	}
@@ -154,6 +155,7 @@ connection.onInitialize(async (params) => {
 				label: 'Spyglass',
 			},
 			hoverProvider: {},
+			inlayHintProvider: {},
 			semanticTokensProvider: {
 				documentSelector: toLS.documentSelector(service.project.meta),
 				legend: toLS.semanticTokensLegend(),
@@ -405,21 +407,15 @@ connection.onHover(async ({ textDocument: { uri }, position }) => {
 	return ans ? toLS.hover(ans, doc) : undefined
 })
 
-connection.onRequest(
-	'spyglassmc/inlayHints',
-	async ({
-		textDocument: { uri },
-		range,
-	}: MyLspInlayHintRequestParams): Promise<MyLspInlayHint[]> => {
-		const docAndNode = await service.project.ensureClientManagedChecked(uri)
-		if (!docAndNode) {
-			return []
-		}
-		const { doc, node } = docAndNode
-		const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
-		return toLS.inlayHints(hints, doc)
-	},
-)
+connection.languages.inlayHint.on(async ({ textDocument: { uri }, range }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return []
+	}
+	const { doc, node } = docAndNode
+	const hints = service.getInlayHints(node, doc, toCore.range(range, doc))
+	return toLS.inlayHints(hints, doc)
+})
 
 connection.onRequest(
 	'spyglassmc/resetProjectCache',

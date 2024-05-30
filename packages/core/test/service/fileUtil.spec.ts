@@ -3,6 +3,56 @@ import { describe, it } from 'mocha'
 import { fileUtil } from '../../lib/index.js'
 
 describe('fileUtil', () => {
+	describe('getRelativeUriFromBase()', () => {
+		const bases: string[] = [
+			'file:///c%3A/Users/admin/',
+			'file:///c:/Users/admin/',
+		]
+		const suites: { uri: string; expected: string | undefined }[] = [
+			{ uri: 'file:///c%3A/Users/admin/', expected: '' },
+			{ uri: 'file:///c%3A/Users/admin/foo.mcdoc', expected: 'foo.mcdoc' },
+			{
+				uri: 'file:///c%3A/Users/admin/foo/bar.mcdoc',
+				expected: 'foo/bar.mcdoc',
+			},
+			{ uri: 'file:///c:/Users/admin/', expected: '' },
+			{ uri: 'file:///c:/Users/admin/foo.mcdoc', expected: 'foo.mcdoc' },
+			{
+				// Should treat multiple slashes in a row in pathname as a single slash.
+				uri: 'file:///c://///Users///admin//foo.mcdoc',
+				expected: 'foo.mcdoc',
+			},
+			{
+				uri: 'file:///c:/Users/admin/foo/bar.mcdoc',
+				expected: 'foo/bar.mcdoc',
+			},
+			{ uri: 'file:///qux.mcdoc', expected: undefined },
+		]
+		for (const { uri, expected } of suites) {
+			for (const base of bases) {
+				it(`Should return '${expected}' for '${uri}' when base is '${base}'`, () => {
+					assert.strictEqual(
+						fileUtil.getRelativeUriFromBase(uri, base),
+						expected,
+					)
+				})
+			}
+		}
+	})
+	describe('isSubUriOf()', () => {
+		const root: string = 'file:///c%3A/Users/admin/'
+		const suites: { uri: string; expected: boolean }[] = [
+			{ uri: 'file:///c%3A/Users/admin/', expected: true },
+			{ uri: 'file:///c%3A/Users/admin/foo.mcdoc', expected: true },
+			{ uri: 'file:///c:/Users/admin/foo.mcdoc', expected: true },
+			{ uri: 'file:///qux.mcdoc', expected: false },
+		]
+		for (const { uri, expected } of suites) {
+			it(`Should return '${expected}' for '${uri}'`, () => {
+				assert.strictEqual(fileUtil.isSubUriOf(uri, root), expected)
+			})
+		}
+	})
 	describe('getRel()', () => {
 		const rootUris: `${string}/`[] = [
 			'file:///root1/subdir/',

@@ -9,8 +9,8 @@ import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
+	getItemSlotArgumentValues,
 	HeightmapValues,
-	ItemSlotArgumentValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
@@ -40,10 +40,11 @@ import type {
 	UuidNode,
 	VectorNode,
 } from '../node/index.js'
-import { ComponentPredicatesNode } from '../node/index.js'
-import { ComponentListNode, ComponentTestBaseNode } from '../node/index.js'
 import {
 	BlockStatesNode,
+	ComponentListNode,
+	ComponentPredicatesNode,
+	ComponentTestBaseNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
@@ -201,7 +202,9 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap(core.literal(...ItemSlotArgumentValues))
+			return wrap((src, ctx) => {
+				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
+			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:message':
@@ -349,7 +352,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-export const component = json.parser.json()
+export const component = json.parser.entry
 
 function double(
 	min = DoubleMin,
@@ -613,7 +616,26 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	return ans
 }
 
-export const particle: core.InfallibleParser<ParticleNode> = (() => {
+export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release || ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		return core.map(
+			sequence([
+				core.resourceLocation({ category: 'particle_type' }),
+				core.optional(core.failOnEmpty(nbt.parser.compound)),
+			]),
+			(res) => {
+				const ans: ParticleNode = {
+					type: 'mcfunction:particle',
+					range: res.range,
+					children: res.children,
+					id: res.children.find(core.ResourceLocationNode.is)!,
+				}
+				return ans
+			},
+		)(src, ctx)
+	}
+
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })
@@ -670,8 +692,8 @@ export const particle: core.InfallibleParser<ParticleNode> = (() => {
 			}
 			return ans
 		},
-	)
-})()
+	)(src, ctx)
+}
 
 function range(
 	type: 'float',
@@ -1886,7 +1908,7 @@ function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
 		core.list({
 			start: '[',
 			value: test,
-			sep: [',', '|'],
+			sep: ',',
 			end: ']',
 			trailingSep: true,
 		}),

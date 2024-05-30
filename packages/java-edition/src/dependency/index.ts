@@ -238,6 +238,33 @@ async function downloadGitHubRepo({
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
+export async function getVanillaDatapack(
+	downloader: core.Downloader,
+	version: string,
+	isLatest: boolean,
+): Promise<core.Dependency> {
+	const uri = await downloadGitHubRepo({
+		defaultBranch: 'data',
+		downloader,
+		getTag: (v) => `${v}-data`,
+		owner: 'misode',
+		repo: 'mcmeta',
+		isLatest,
+		version,
+	})
+	return {
+		info: { startDepth: 1 },
+		uri,
+	}
+}
+
+/**
+ * @throws Network/file system errors.
+ *
+ * @returns
+ * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
+ * 	- `uri`: URI to the `.tar.gz` file.
+ */
 export async function getVanillaMcdoc(
 	downloader: core.Downloader,
 ): Promise<core.Dependency> {

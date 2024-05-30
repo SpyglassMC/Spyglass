@@ -7,6 +7,46 @@ export type FileExtension = `.${string}`
 
 export namespace fileUtil {
 	/**
+	 * Get the relative URI of `target` based from `base`.
+	 *
+	 * @returns The relative URI, or `undefined` if `target` is not under `base`.
+	 */
+	export function getRelativeUriFromBase(
+		target: string,
+		base: string,
+	): string | undefined {
+		const baseUri = new Uri(base)
+		const targetUri = new Uri(target)
+
+		if (baseUri.origin !== targetUri.origin) {
+			// Different scheme, hostname, and/or port
+			return undefined
+		}
+
+		const baseComponents = baseUri.pathname.split('/')
+			.filter((v) => !!v)
+		const targetComponents = targetUri.pathname.split('/')
+			.filter((v) => !!v)
+
+		if (
+			baseComponents.length > targetComponents.length ||
+			baseComponents.some((bc, i) =>
+				decodeURIComponent(bc) !== decodeURIComponent(targetComponents[i])
+			)
+		) {
+			return undefined
+		}
+
+		return targetComponents.slice(baseComponents.length).map(
+			encodeURIComponent,
+		).join('/')
+	}
+
+	export function isSubUriOf(uri: string, base: string): boolean {
+		return getRelativeUriFromBase(uri, base) !== undefined
+	}
+
+	/**
 	 * @param rootUris The root URIs. Each URI in this array must end with a slash (`/`).
 	 * @param uri The target file URI.
 	 * @returns The relative path from one of the `roots` to the `uri`, or `undefined` if the `uri` is not under any roots.
@@ -25,8 +65,9 @@ export namespace fileUtil {
 		rootUris: readonly RootUriString[],
 	): Generator<string, undefined, unknown> {
 		for (const root of rootUris) {
-			if (uri.startsWith(root)) {
-				yield decodeURIComponent(uri.slice(root.length))
+			const rel = getRelativeUriFromBase(uri, root)
+			if (rel !== undefined) {
+				yield rel
 			}
 		}
 		return undefined
@@ -153,6 +194,13 @@ export namespace fileUtil {
 		path: FsLocation,
 	): Promise<void> {
 		return chmod(externals, path, 0o444)
+	}
+
+	export async function unlink(
+		externals: Externals,
+		path: FsLocation,
+	): Promise<void> {
+		return externals.fs.unlink(path)
 	}
 
 	export async function readFile(

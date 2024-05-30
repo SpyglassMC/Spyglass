@@ -13,14 +13,16 @@ export interface SyncBinder<N extends AstNode>
 {
 	[IsAsync]?: never
 }
-export const SyncBinder = Object.freeze({
-	create<N extends AstNode>(binder: SyncBinderInitializer<N>): SyncBinder<N> {
+export namespace SyncBinder {
+	export function create<N extends AstNode>(
+		binder: SyncBinderInitializer<N>,
+	): SyncBinder<N> {
 		return binder
-	},
-	is(binder: Binder<any>): binder is SyncBinder<any> {
+	}
+	export function is(binder: Binder<any>): binder is SyncBinder<any> {
 		return !(binder as AsyncBinder<any>)[IsAsync]
-	},
-})
+	}
+}
 
 interface AsyncBinderInitializer<N extends AstNode> {
 	(node: N, ctx: BinderContext): Promise<void>
@@ -30,13 +32,13 @@ export interface AsyncBinder<N extends AstNode>
 {
 	[IsAsync]: true
 }
-export const AsyncBinder = Object.freeze({
-	create<N extends AstNode>(
+export namespace AsyncBinder {
+	export function create<N extends AstNode>(
 		binder: AsyncBinderInitializer<N>,
 	): AsyncBinder<N> {
 		return Object.assign(binder, { [IsAsync]: true as const })
-	},
-	is(binder: Binder<any>): binder is AsyncBinder<any> {
+	}
+	export function is(binder: Binder<any>): binder is AsyncBinder<any> {
 		return (binder as AsyncBinder<any>)[IsAsync]
-	},
-})
+	}
+}

@@ -17,6 +17,7 @@ import type { ProjectData } from './Project.js'
 
 export interface ContextBase {
 	fs: FileService
+	isDebugging: boolean
 	logger: Logger
 	meta: MetaRegistry
 	profilers: ProfilerFactory
@@ -27,6 +28,7 @@ export namespace ContextBase {
 	export function create(project: ProjectData): ContextBase {
 		return {
 			fs: project.fs,
+			isDebugging: project.isDebugging,
 			logger: project.logger,
 			meta: project.meta,
 			profilers: project.profilers,

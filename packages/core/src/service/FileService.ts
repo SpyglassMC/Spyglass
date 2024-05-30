@@ -161,6 +161,18 @@ export class FileServiceImpl implements FileService {
 						virtualUri,
 					)
 				}`
+
+				// Delete old mapped file if it exists. This makes sure the
+				// readonly permission on the file is not removed by it being
+				// overwritten.
+				try {
+					await fileUtil.unlink(this.externals, mappedUri)
+				} catch (e) {
+					if (!this.externals.error.isKind(e, 'ENOENT')) {
+						throw e
+					}
+				}
+
 				const buffer = await this.readFile(virtualUri)
 				await fileUtil.writeFile(this.externals, mappedUri, buffer, 0o444)
 				this.map.set(mappedUri, virtualUri)
@@ -258,7 +270,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	readonly protocol = ArchiveUriSupporter.Protocol
 
 	/**
-	 * @param entries A map from archive URIs to unzipped entries.
+	 * @param entries A map from archive names to unzipped entries.
 	 */
 	private constructor(
 		private readonly externals: Externals,
@@ -266,83 +278,81 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	) {}
 
 	async hash(uri: string): Promise<string> {
-		const { archiveUri, pathInArchive } = ArchiveUriSupporter.decodeUri(
+		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(
 			new Uri(uri),
 		)
 		if (!pathInArchive) {
 			// Hash the archive itself.
-			return hashFile(this.externals, archiveUri)
+			return hashFile(this.externals, archiveName)
 		} else {
 			// Hash the corresponding file.
 			return this.externals.crypto.getSha1(
-				this.getDataInArchive(archiveUri, pathInArchive),
+				this.getDataInArchive(archiveName, pathInArchive),
 			)
 		}
 	}
 
 	async readFile(uri: string): Promise<Uint8Array> {
-		const { archiveUri, pathInArchive } = ArchiveUriSupporter.decodeUri(
+		const { archiveName, pathInArchive } = ArchiveUriSupporter.decodeUri(
 			new Uri(uri),
 		)
-		return this.getDataInArchive(archiveUri, pathInArchive)
+		return this.getDataInArchive(archiveName, pathInArchive)
 	}
 
 	/**
 	 * @throws
 	 */
 	private getDataInArchive(
-		archiveUri: string,
+		archiveName: string,
 		pathInArchive: string,
 	): Uint8Array {
-		const entries = this.entries.get(archiveUri)
+		const entries = this.entries.get(archiveName)
 		if (!entries) {
 			throw new Error(
-				`Archive “${archiveUri}” has not been loaded into the memory`,
+				`Archive “${archiveName}” has not been loaded into the memory`,
 			)
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {
 			throw new Error(
-				`Path “${pathInArchive}” does not exist in archive “${archiveUri}”`,
+				`Path “${pathInArchive}” does not exist in archive “${archiveName}”`,
 			)
 		}
 		if (entry.type !== 'file') {
 			throw new Error(
-				`Path “${pathInArchive}” in archive “${archiveUri}” is not a file`,
+				`Path “${pathInArchive}” in archive “${archiveName}” is not a file`,
 			)
 		}
 		return entry.data
 	}
 
 	*listFiles() {
-		for (const [archiveUri, files] of this.entries.entries()) {
+		for (const [archiveName, files] of this.entries.entries()) {
 			for (const file of files.values()) {
-				yield ArchiveUriSupporter.getUri(archiveUri, file.path)
+				yield ArchiveUriSupporter.getUri(archiveName, file.path)
 			}
 		}
 	}
 
 	*listRoots() {
-		for (const archiveUri of this.entries.keys()) {
-			yield ArchiveUriSupporter.getUri(archiveUri)
+		for (const archiveName of this.entries.keys()) {
+			yield ArchiveUriSupporter.getUri(archiveName)
 		}
 	}
 
-	private static getUri(archiveUri: string): RootUriString
-	private static getUri(archiveUri: string, pathInArchive: string): string
-	private static getUri(archiveUri: string, pathInArchive = '') {
-		return `${ArchiveUriSupporter.Protocol}${
-			encodeURIComponent(
-				archiveUri,
-			)
-		}?path=${encodeURIComponent(pathInArchive.replace(/\\/g, '/'))}`
+	private static getUri(archiveName: string): RootUriString
+	private static getUri(archiveName: string, pathInArchive: string): string
+	private static getUri(archiveName: string, pathInArchive = '') {
+		return `${ArchiveUriSupporter.Protocol}//${archiveName}/${
+			pathInArchive.replace(/\\/g, '/')
+		}`
 	}
 
 	/**
 	 * @throws When `uri` has the wrong protocol or hostname.
 	 */
 	private static decodeUri(uri: Uri): {
-		archiveUri: string
+		archiveName: string
 		pathInArchive: string
 	} {
 		if (uri.protocol !== ArchiveUriSupporter.Protocol) {
@@ -350,12 +360,12 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 				`Expected protocol “${ArchiveUriSupporter.Protocol}” in “${uri}”`,
 			)
 		}
-		const path = uri.searchParams.get('path')
+		const path = uri.pathname
 		if (!path) {
 			throw new Error(`Missing path in archive uri “${uri.toString()}”`)
 		}
 		return {
-			archiveUri: decodeURIComponent(uri.pathname),
+			archiveName: uri.host,
 			pathInArchive: path.charAt(0) === '/' ? path.slice(1) : path,
 		}
 	}
@@ -364,7 +374,6 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		dependencies: readonly Dependency[],
 		externals: Externals,
 		logger: Logger,
-		checksums: Record<RootUriString, string>,
 	): Promise<ArchiveUriSupporter> {
 		const entries = new Map<string, Map<string, DecompressedFile>>()
 
@@ -377,17 +386,11 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 					) &&
 					(await externals.fs.stat(uri)).isFile()
 				) {
-					const rootUri = ArchiveUriSupporter.getUri(uri)
-					const cachedChecksum: string | undefined = checksums[rootUri]
-					if (cachedChecksum !== undefined) {
-						const checksum = await hashFile(externals, uri)
-						if (cachedChecksum === checksum) {
-							// The dependency has not changed since last cache.
-							logger.info(
-								`[SpyglassUriSupporter#create] Skipped decompressing “${uri}” thanks to cache ${checksum}`,
-							)
-							continue
-						}
+					const archiveName = fileUtil.basename(uri)
+					if (entries.has(archiveName)) {
+						throw new Error(
+							`A different URI with ${archiveName} already exists`,
+						)
 					}
 
 					const files = await externals.archive.decompressBall(
@@ -399,7 +402,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 						},
 					)
 					entries.set(
-						uri,
+						archiveName,
 						new Map(files.map((f) => [f.path.replace(/\\/g, '/'), f])),
 					)
 				}

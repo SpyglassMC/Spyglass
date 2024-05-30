@@ -377,6 +377,12 @@ exports['mcdoc __fixture__ duplicated path with explicit use statement binding 1
             ],
             "subcategory": "use_statement_binding",
             "visibility": 1,
+            "data": {
+              "target": [
+                "used",
+                "Used"
+              ]
+            },
             "definition": [
               {
                 "uri": "file:///client.mcdoc",

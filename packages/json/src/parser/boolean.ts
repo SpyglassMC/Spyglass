@@ -2,7 +2,7 @@ import * as core from '@spyglassmc/core'
 import { Range } from '@spyglassmc/core'
 import type { JsonBooleanNode } from '../node/index.js'
 
-export const boolean: core.Parser<JsonBooleanNode> = (src, ctx) => {
+export const boolean: core.Parser<JsonBooleanNode> = (src, _ctx) => {
 	const start = src.cursor
 	if (src.trySkip('false')) {
 		return {

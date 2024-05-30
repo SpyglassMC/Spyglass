@@ -58,11 +58,12 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
-		ctx: data.ctx ?? {},
+		ctx: data.ctx ?? { loadedVersion: '1.15' },
 		downloader,
 		ensureBindingStarted: data.ensureBindingStarted!,
 		externals,
 		fs: data.fs ?? FileService.create(externals, cacheRoot),
+		isDebugging: false,
 		logger,
 		meta: data.meta ?? new MetaRegistry(),
 		profilers: data.profilers ?? ProfilerFactory.noop(),
@@ -173,6 +174,8 @@ export function testParser(
 export function typing(_title: string, _fn: () => void): void {}
 
 /**
+ * Assert the type of `_value` is `T`.
+ *
  * This function should never be actually executed at runtime.
  * Enclose it inside the body of a {@link typing} function.
  */
@@ -222,11 +225,14 @@ export interface SimpleProjectState {
 }
 
 export class SimpleProject {
-	#colorTokens: ColorToken[] = []
-	#global: SymbolTable = Object.create(null)
+	readonly #colorTokens: ColorToken[] = []
+	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	#symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
+	readonly #symbols = new SymbolUtil(
+		this.#global,
+		NodeJsExternals.event.EventEmitter,
+	)
 
 	#hasDumped = false
 
@@ -284,7 +290,7 @@ export class SimpleProject {
 		}
 	}
 
-	#bindingInProgressUris = new Set<string>()
+	readonly #bindingInProgressUris = new Set<string>()
 	private async bindSingleFile(
 		uri: string,
 		content: string = this.files.find((f) => f.uri === uri)?.content!,

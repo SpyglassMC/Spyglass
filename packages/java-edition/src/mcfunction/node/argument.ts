@@ -156,7 +156,7 @@ export namespace EntitySelectorNode {
 	/* istanbul ignore next */
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
 		node: T,
-	): node is core.NodeIsHelper<EntitySelectorNode, T> {
+	): node is core.InheritReadonly<EntitySelectorNode, T> {
 		return (
 			(node as EntitySelectorNode | undefined)?.type ===
 				'mcfunction:entity_selector'
@@ -468,12 +468,15 @@ export namespace ObjectiveCriteriaNode {
 export interface ParticleNode extends core.AstNode {
 	type: 'mcfunction:particle'
 	children?: (
+		| core.ResourceLocationNode
+		// Until 1.20.5
 		| core.FloatNode
 		| core.IntegerNode
-		| core.ResourceLocationNode
 		| BlockNode
 		| ItemNode
 		| VectorNode
+		// Since 1.20.5
+		| nbt.NbtCompoundNode
 	)[]
 	id: core.ResourceLocationNode
 }

@@ -142,8 +142,13 @@ Object.freeze(NodeJsExternals)
  * @returns A {@link fs.PathLike}.
  */
 function toFsPathLike(path: FsLocation): fs.PathLike {
+	if (path instanceof Uri) {
+		// Convert WHATWG URL to string so that it will be converted
+		// to Node.js URL by the next if-block.
+		path = path.toString()
+	}
 	if (typeof path === 'string' && path.startsWith('file:')) {
-		return new Uri(path)
+		return new url.URL(path)
 	}
 	return path
 }
@@ -155,11 +160,12 @@ function toPath(path: FsLocation): string {
 	return uriToPath(path)
 }
 
-const uriToPath = (uri: string | Uri) => url.fileURLToPath(uri)
+const uriToPath = (uri: string | Uri) =>
+	url.fileURLToPath(uri instanceof Uri ? new url.URL(uri.toString()) : uri)
 const uriFromPath = (path: string) => url.pathToFileURL(path).toString()
 
 class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
-	#watcher: chokidar.FSWatcher
+	readonly #watcher: chokidar.FSWatcher
 
 	constructor(watcher: chokidar.FSWatcher) {
 		super()

@@ -3,8 +3,10 @@ import type { AstNode } from '../node/index.js'
 import type { ProcessorContext } from '../service/index.js'
 
 export interface InlayHint {
+	label: string
 	offset: number
-	text: string
+	paddingLeft?: boolean
+	paddingRight?: boolean
 }
 
 export type InlayHintProvider<N extends AstNode = AstNode> = (

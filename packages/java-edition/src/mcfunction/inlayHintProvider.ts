@@ -22,7 +22,8 @@ export const inlayHintProvider: core.InlayHintProvider<
 			) {
 				ans.push({
 					offset: node.range.start,
-					text: `${node.path[node.path.length - 1]}:`,
+					label: `${node.path[node.path.length - 1]}:`,
+					paddingRight: true,
 				})
 			}
 		},

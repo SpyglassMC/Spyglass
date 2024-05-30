@@ -9,11 +9,8 @@ export const JsonStringOptions: core.StringOptions = {
 	quotes: ['"'],
 }
 
-export const string: core.Parser<JsonStringNode> = (src, ctx) => {
-	const parser = core.string(JsonStringOptions)
-	const ans = parser(src, ctx) as core.Mutable<
-		JsonStringNode | core.StringNode
-	>
-	ans.type = 'json:string'
-	return ans as JsonStringNode
-}
+export const string: core.Parser<JsonStringNode> = (src, ctx) =>
+	core.setType(
+		'json:string',
+		core.string(JsonStringOptions),
+	)(src, ctx)

@@ -10,7 +10,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"],
 			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"],
-			"preLaunchTask": "npm: watch - packages/vscode-extension"
+			"preLaunchTask": "npm: watch"
 		},
 		{
 			"type": "node",
@@ -20,6 +20,15 @@
 			"restart": true,
 			"timeout": 180000,
 			"outFiles": ["${workspaceRoot}/packages/vscode-extension/dist/**/*.js"]
+		},
+		{
+			"type": "node",
+			"request": "launch",
+			"name": "Run Unit Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"args": ["--timeout", "999999"],
+			"console": "integratedTerminal",
+			"internalConsoleOptions": "neverOpen"
 		}
 	],
 	"compounds": [

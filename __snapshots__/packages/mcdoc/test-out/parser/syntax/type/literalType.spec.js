@@ -74,7 +74,7 @@ exports['mcdoc literalType Parse "1b" 1'] = {
         "type": "mcdoc:typed_number",
         "children": [
           {
-            "type": "float",
+            "type": "integer",
             "range": {
               "start": 0,
               "end": 1
@@ -113,7 +113,7 @@ exports['mcdoc literalType Parse "42" 1'] = {
         "type": "mcdoc:typed_number",
         "children": [
           {
-            "type": "float",
+            "type": "integer",
             "range": {
               "start": 0,
               "end": 2

@@ -148,7 +148,7 @@
 	"parser.record.value": "一个值",
 	"parser.resource-location.illegal": "无效字符：%0%",
 	"parser.resource-location.namespace-expected": "不可在此省略命名空间",
-	"parser.resource-location.tag-diallowed": "此处不允许使用标签",
+	"parser.resource-location.tag-disallowed": "此处不允许使用标签",
 	"parser.string.illegal-brigadier": "在 %0% 中遇到了非 [0-9A-Za-z_.+-] 字符",
 	"parser.string.illegal-escape": "预期外的转义字符 %0%",
 	"parser.string.illegal-quote": "此处只允许使用 %0% 包裹字符串",

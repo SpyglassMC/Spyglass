@@ -156,9 +156,10 @@ export namespace JsonStringNode {
 export interface JsonNumberExpectation extends JsonBaseExpectation {
 	readonly type: 'json:number'
 }
-export interface JsonNumberNode extends core.FloatBaseNode, JsonBaseAstNode {
+export interface JsonNumberNode extends JsonBaseAstNode, core.AstNode {
 	readonly type: 'json:number'
-	readonly value: number
+	readonly children: [core.LongNode | core.FloatNode]
+	readonly value: core.LongNode | core.FloatNode
 }
 export namespace JsonNumberNode {
 	/* istanbul ignore next */

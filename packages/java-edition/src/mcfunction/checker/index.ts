@@ -4,13 +4,14 @@ import { localize } from '@spyglassmc/locales'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
-import { text_component } from '../../json/checker/data/text_component.js'
-import type {
-	ComponentListNode,
-	EntitySelectorInvertableArgumentValueNode,
+import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
+import {
+	BlockNode,
+	EntityNode,
+	ItemNode,
+	ItemOldNode,
+	ParticleNode,
 } from '../node/index.js'
-import { ItemOldNode } from '../node/index.js'
-import { BlockNode, EntityNode, ItemNode, ParticleNode } from '../node/index.js'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -51,7 +52,7 @@ const rootCommand = (
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
 		} else if (json.JsonNode.is(node)) {
-			text_component(node, { ...ctx, context: '' })
+			// TODO v4.0: check text component
 		}
 	}
 

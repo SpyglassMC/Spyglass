@@ -44,12 +44,12 @@
     }
   },
   "extensionDependencies": [
-    "arcensoth.language-mcfunction"
+    "MinecraftCommands.syntax-mcfunction"
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
     "esbuild": "^0.17.18",
-    "vscode-languageclient": "^8.0.1",
+    "vscode-languageclient": "^9.0.1",
     "vscode-test": "^1.5.2"
   },
   "repository": {
@@ -61,7 +61,7 @@
     "url": "https://github.com/SpyglassMC/Spyglass/issues"
   },
   "engines": {
-    "vscode": "^1.67.0"
+    "vscode": "^1.82.0"
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
@@ -252,12 +252,6 @@
   "activationEvents": [
     "workspaceContains:**/pack.mcmeta",
     "workspaceContains:**/*.mcdoc",
-    "workspaceContains:**/*.mcfunction",
-    "onLanguage:mcdoc",
-    "onLanguage:mcfunction",
-    "onCommand:spyglassmc.createFile",
-    "onCommand:spyglassmc.dataHackPubify",
-    "onCommand:spyglassmc.regenerateCache",
-    "onCommand:spyglassmc.showCacheRoot"
+    "workspaceContains:**/*.mcfunction"
   ]
 }

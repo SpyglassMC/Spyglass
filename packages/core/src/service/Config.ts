@@ -321,7 +321,10 @@ export namespace SymbolLinterConfig {
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: ['@vanilla-mcdoc'],
+		dependencies: [
+			'@vanilla-datapack',
+			'@vanilla-mcdoc',
+		],
 		feature: {
 			codeActions: true,
 			colors: true,
@@ -332,7 +335,16 @@ export const VanillaConfig: Config = {
 			formatting: true,
 			hover: true,
 			inlayHint: {
-				enabledNodes: ['mcfunction:command_child/unknown'],
+				enabledNodes: [
+					'boolean',
+					'double',
+					'float',
+					'integer',
+					'long',
+					'mcfunction:coordinate',
+					'mcfunction:vector',
+					'mcfunction:command_child/unknown',
+				],
 			},
 			semanticColoring: true,
 			selectionRanges: true,

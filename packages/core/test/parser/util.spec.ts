@@ -1,3 +1,4 @@
+import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import type {
@@ -7,7 +8,14 @@ import type {
 	Result,
 	Source,
 } from '../../lib/index.js'
-import { any, Failure, Range } from '../../lib/index.js'
+import {
+	any,
+	boolean,
+	concatOnTrailingBackslash,
+	dumpErrors,
+	Failure,
+	Range,
+} from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 interface LiteralNode extends AstNode {
@@ -92,5 +100,67 @@ describe('any()', () => {
 				snapshot(testParser(parser, content))
 			},
 		)
+	}
+})
+
+describe('dumpErrors()', () => {
+	const suites: {
+		name: string
+		parser: Parser<AstNode>
+		content: string
+	}[] = [
+		{
+			name: 'should output errors when not wrapped with `dumpErrors()`',
+			parser: boolean,
+			content: 'bar',
+		},
+		{
+			name: 'should not output errors when wrapped with `dumpErrors()`',
+			parser: dumpErrors(boolean),
+			content: 'bar',
+		},
+	]
+	for (const { name, content, parser } of suites) {
+		it(name, () => {
+			snapshot(testParser(parser, content))
+		})
+	}
+})
+
+describe('concatOnTrailingBackslash()', () => {
+	const parsers: {
+		parser: Parser<AstNode>
+		suites: Array<{
+			content: string
+		}>
+	}[] = [
+		{
+			parser: boolean,
+			suites: [
+				{ content: 'true' },
+				{ content: 'true\n' },
+				{ content: 'tru\\\ne' },
+				{ content: 'tru\\ \ne' },
+				{ content: 'tru\\\n e' },
+				{ content: 'tru\\ \n e' },
+				{ content: 'tru\\ \n \\\n e' },
+				{ content: 'tru\\e \\ \n e' },
+				{ content: 'tru\\\n\ne' },
+				{ content: 'tru\\' },
+				{ content: 'tru\\ \n' },
+				{ content: 'tru\\ \n ' },
+			],
+		},
+	]
+	for (const { parser, suites } of parsers) {
+		for (const { content } of suites) {
+			it(
+				`Parse "${showWhitespaceGlyph(content)}"`,
+				() => {
+					const wrappedParser = concatOnTrailingBackslash(parser)
+					snapshot(testParser(wrappedParser, content))
+				},
+			)
+		}
 	}
 })

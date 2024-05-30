@@ -1,15 +1,14 @@
 import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
+import type { RootTreeNode } from '../dependency'
 
 /**
  * Only command options that can be satisfied by the current command node will be listed in `signatures`.
  * Only parameters at and immediately after the `offset` will be listed in `parameters`.
  */
 export function signatureHelpProvider(
-	commandTreeName: string,
+	rootTreeNode: RootTreeNode,
 ): core.SignatureHelpProvider<core.FileNode<mcf.McfunctionNode>> {
-	const rootTreeNode = mcf.CommandTreeRegistry.instance.get(commandTreeName)
-
 	return (fileNode, ctx) => {
 		if (fileNode.children[0]?.type !== 'mcfunction:entry') {
 			// Not mcfunction.
@@ -17,6 +16,10 @@ export function signatureHelpProvider(
 		}
 
 		const node = getSelectedCommandNode(fileNode, ctx.offset)
+		if (!mcf.CommandNode.is(node)) {
+			// Not a command node.
+			return undefined
+		}
 		const argumentNodes = node ? node.children : []
 
 		const options = getOptions(rootTreeNode, argumentNodes)
@@ -67,15 +70,13 @@ export function signatureHelpProvider(
 function getSelectedCommandNode(
 	fileNode: core.DeepReadonly<core.FileNode<mcf.McfunctionNode>>,
 	offset: number,
-): mcf.CommandNode | undefined {
-	return core.AstNode.findChild(fileNode.children[0], offset, true) as
-		| mcf.CommandNode
-		| undefined
+) {
+	return core.AstNode.findChild(fileNode.children[0], offset, true)
 }
 
 function getOptions(
 	rootTreeNode: mcf.RootTreeNode,
-	argumentNodes: mcf.CommandNode['children'],
+	argumentNodes: core.DeepReadonly<mcf.CommandNode['children']>,
 ): string[][] {
 	const current: string[] = []
 	let treeNode: mcf.TreeNode | undefined = rootTreeNode
