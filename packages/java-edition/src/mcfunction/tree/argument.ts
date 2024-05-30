@@ -153,28 +153,36 @@ export interface MinecraftMobEffectArgumentTreeNode
 export interface NbtParserProperties extends Record<string, unknown> {
 	/**
 	 * The NBT checker should check this argument by dispatching on `dispatcher`
-	 * with a static index inferred from the argument that is at the index
-	 * `dispatchedBy` relative to the current argument and optionally indexing
-	 * on the dispatched type by indices inferred from the argument that is at the
-	 * index `indexedBy` relative to the current argument.
+	 * with a static index inferred from the argument with the name `dispatchedBy`
+	 * and optionally indexing on the dispatched type by indices inferred from the
+	 * argument named by `indexedBy`.
 	 */
 	dispatcher:
 		| 'minecraft:block_entity'
 		| 'minecraft:entity'
 		| 'minecraft:storage'
 	/**
-	 * Could point to a vec3, an entity, an entity resource location, or a storage
-	 * resource location.
+	 * The name of a vec3, an entity, an entity resource location, or a
+	 * storage resource location argument.
 	 *
 	 * @see {@link NbtParserProperties.dispatcher}
 	 */
-	dispatchedBy: number
+	dispatchedBy: string
 	/**
-	 * Could point to an NBT path.
+	 * The name of an NBT path argument.
 	 *
 	 * @see {@link NbtParserProperties.dispatcher}
 	 */
-	indexedBy?: number
+	indexedBy?: string
+	/**
+	 * @default {@link core.SymbolAccessType.Read}
+	 */
+	accessType?: core.SymbolAccessType
+	/**
+	 * `true` if the NBT checker should check this argument as a predicate. In a
+	 * predicate NBT argument, resource location strings must include the default
+	 * `minecraft:` namespace and numbers must have the exact type match.
+	 */
 	isPredicate?: boolean
 }
 export interface MinecraftNbtCompoundTagArgumentTreeNode

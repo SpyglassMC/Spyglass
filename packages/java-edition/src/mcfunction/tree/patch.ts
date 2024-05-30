@@ -128,24 +128,26 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				children: {
 					get: getDataPatch('target', 'path'),
 					merge: getDataPatch('target', 'nbt', {
-						accessType: SymbolAccessType.Write,
+						vaultAccessType: SymbolAccessType.Write,
 					}),
 					modify: getDataPatch('target', 'targetPath', {
-						accessType: SymbolAccessType.Write,
+						nbtAccessType: SymbolAccessType.Write,
+						vaultAccessType: SymbolAccessType.Write,
 						children: (type) => ({
-							append: getDataModifySource(type, -4),
+							append: getDataModifySource(type),
 							insert: {
 								children: {
-									index: getDataModifySource(type, -5),
+									index: getDataModifySource(type),
 								},
 							},
-							merge: getDataModifySource(type, -4),
-							prepend: getDataModifySource(type, -4),
-							set: getDataModifySource(type, -4),
+							merge: getDataModifySource(type),
+							prepend: getDataModifySource(type),
+							set: getDataModifySource(type),
 						}),
 					}),
 					remove: getDataPatch('target', 'path', {
-						accessType: SymbolAccessType.Write,
+						nbtAccessType: SymbolAccessType.Write,
+						vaultAccessType: SymbolAccessType.Write,
 					}),
 				},
 			},
@@ -366,7 +368,8 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							biome: {
 								properties: {
 									category: 'worldgen/biome',
-									allowTag: true,
+									// Allowed in 1.18.2-pre1 (1.18.2, pack format 9)
+									allowTag: ReleaseVersion.cmp(release, '1.18.2') >= 0,
 								},
 							},
 						},
@@ -606,7 +609,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									nbt: {
 										properties: {
 											dispatcher: 'minecraft:entity',
-											dispatchedBy: -2,
+											dispatchedBy: 'entity',
 										} satisfies NbtParserProperties,
 									},
 								},
@@ -770,28 +773,66 @@ const AdvancementTargets: PartialTreeNode = Object.freeze({
 	},
 })
 
+/**
+ * Return the command tree patch for anything related to data sources as used in
+ * `data`, `execute if` and `execute store` commands.
+ *
+ * A **vault** refers to a block, an entity, or a storage that contains NBT data.
+ *
+ * e.g., in a syntax like
+ * `block <targetPos>|entity <target>|storage <target>) <targetPath>`, the
+ * `<targetPos>` and `<target>` arguments identify a vault, and the
+ * `<targetPath>` argument is an NBT path that points to data in the vault.
+ *
+ * @param vaultKey Key of the argument identifying a vault. This argument should
+ *                 be a vec3, an entity, or a storage resource location.
+ * @param nbtKey Key of the argument containing an NBT tag or an NBT path.
+ * @param nbtAccessType Access type for the NBT argument. This is only
+ *                      meaningful for NBT paths and should be enforced by the
+ *                      NBT path checker.
+ *                      Note this usually match `vaultAccessType`. The only case
+ *                      where they don't match is in `data merge`, where the
+ *                      vault is being written to while the NBT argument is
+ *                      being read from.
+ *                      @default {@link SymbolAccessType.Read}
+ * @param vaultAccessType Access type for the vault. This is only meaningful for
+ *                        storage vaults and should be enforced by the resource
+ *                        location checker.
+ *                        @see {@link nbtAccessType}
+ *                        @default {@link SymbolAccessType.Read}
+ * @param children Optional patch for children after the NBT argument.
+ */
 function getDataPatch(
-	key: 'source' | 'target',
-	childKey: 'nbt' | 'path' | 'sourcePath' | 'targetPath' | 'value',
-	{ accessType = SymbolAccessType.Read, children }: {
-		accessType?: SymbolAccessType | undefined
+	vaultKey: 'source' | 'target',
+	nbtKey: 'nbt' | 'path' | 'sourcePath' | 'targetPath' | 'value',
+	{
+		children,
+		isPredicate = false,
+		nbtAccessType = SymbolAccessType.Read,
+		vaultAccessType = SymbolAccessType.Read,
+	}: {
 		children?:
 			| ((
 				type: 'block' | 'entity' | 'storage',
 			) => PartialTreeNode['children'])
 			| undefined
+		isPredicate?: boolean | undefined
+		nbtAccessType?: SymbolAccessType | undefined
+		vaultAccessType?: SymbolAccessType | undefined
 	} = {},
 ) {
 	return Object.freeze({
 		children: {
 			block: {
 				children: {
-					[`${key}Pos`]: {
+					[`${vaultKey}Pos`]: {
 						children: {
-							[childKey]: {
+							[nbtKey]: {
 								properties: {
 									dispatcher: 'minecraft:block_entity',
-									dispatchedBy: -1,
+									dispatchedBy: `${vaultKey}Pos`,
+									accessType: nbtAccessType,
+									isPredicate,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('block') } : {},
 							},
@@ -801,12 +842,14 @@ function getDataPatch(
 			},
 			entity: {
 				children: {
-					[key]: {
+					[vaultKey]: {
 						children: {
-							[childKey]: {
+							[nbtKey]: {
 								properties: {
 									dispatcher: 'minecraft:entity',
-									dispatchedBy: -1,
+									dispatchedBy: vaultKey,
+									accessType: nbtAccessType,
+									isPredicate,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('entity') } : {},
 							},
@@ -816,16 +859,18 @@ function getDataPatch(
 			},
 			storage: {
 				children: {
-					[key]: {
+					[vaultKey]: {
 						properties: {
 							category: 'storage',
-							accessType,
+							accessType: vaultAccessType,
 						},
 						children: {
-							[childKey]: {
+							[nbtKey]: {
 								properties: {
 									dispatcher: 'minecraft:storage',
-									dispatchedBy: -1,
+									dispatchedBy: vaultKey,
+									accessType: nbtAccessType,
+									isPredicate,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('storage') } : {},
 							},
@@ -839,7 +884,6 @@ function getDataPatch(
 
 const getDataModifySource = (
 	type: 'block' | 'entity' | 'storage',
-	index: number,
 ): PartialTreeNode =>
 	Object.freeze({
 		children: {
@@ -851,8 +895,8 @@ const getDataModifySource = (
 							dispatcher: type === 'block'
 								? 'minecraft:block_entity'
 								: `minecraft:${type}`,
-							dispatchedBy: index,
-							indexedBy: index + 1,
+							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
+							indexedBy: 'targetPath',
 						} satisfies NbtParserProperties,
 					},
 				},
@@ -862,7 +906,9 @@ const getDataModifySource = (
 
 const ExecuteCondition: PartialTreeNode = Object.freeze({
 	children: {
-		data: getDataPatch('source', 'path'),
+		data: getDataPatch('source', 'path', {
+			isPredicate: true,
+		}),
 		predicate: {
 			children: {
 				predicate: {
@@ -877,7 +923,10 @@ const ExecuteCondition: PartialTreeNode = Object.freeze({
 
 const ExecuteStoreTarget: PartialTreeNode = Object.freeze({
 	children: {
-		...getDataPatch('target', 'path', { accessType: SymbolAccessType.Write })
+		...getDataPatch('target', 'path', {
+			nbtAccessType: SymbolAccessType.Write,
+			vaultAccessType: SymbolAccessType.Write,
+		})
 			.children,
 		bossbar: {
 			children: {
