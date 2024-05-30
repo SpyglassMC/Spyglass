@@ -4,16 +4,33 @@ import type { MacroNode } from '../node/index.js'
 
 /**
  * Parse a macro line.
+ * @param supportsMacros When false, reports the entire line as an error (due to
+ * the Minecraft version not supporting macros).
  */
-export function macro(): core.Parser<MacroNode> {
+export function macro(
+	supportsMacros = true,
+): core.Parser<MacroNode | core.ErrorNode> {
 	return (
 		src: core.Source,
 		ctx: core.ParserContext,
-	): core.Result<MacroNode> => {
+	): core.Result<MacroNode | core.ErrorNode> => {
 		const ans: MacroNode = {
 			type: 'mcfunction:macro',
 			range: core.Range.create(src.cursor),
 			children: [],
+		}
+
+		if (!supportsMacros) {
+			src.skipLine()
+			ans.range.end = src.cursor
+			ctx.err.report(
+				localize('mcfunction.parser.macro.disallowed'),
+				ans.range,
+			)
+			return {
+				...ans,
+				type: 'error',
+			} as core.ErrorNode
 		}
 
 		// Skip the starting '$'
@@ -105,7 +122,7 @@ function validateMacroArgument(
 	if (matchedInvalid.length > 0) {
 		ctx.err.report(
 			localize(
-				'mcfunction.parser.macro.illegal',
+				'mcfunction.parser.macro.illegal-key',
 				matchedInvalid.charAt(0),
 			),
 			core.Range.create(keyStart, src.cursor),

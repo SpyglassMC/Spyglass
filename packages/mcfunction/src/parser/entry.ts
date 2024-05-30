@@ -5,12 +5,10 @@ import type { ArgumentParserGetter } from './argument.js'
 import { command } from './command.js'
 import { macro } from './macro.js'
 
-/**
- * @throws When there's no command tree associated with `commandTreeName`.
- */
 function mcfunction(
 	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
+	{ supportsMacros }: { supportsMacros: boolean },
 ): core.Parser<McfunctionNode> {
 	return (src, ctx) => {
 		const ans: McfunctionNode = {
@@ -24,7 +22,7 @@ function mcfunction(
 			if (src.peek() === '#') {
 				result = comment(src, ctx) as core.CommentNode
 			} else if (src.peek() === '$') {
-				result = macro()(src, ctx) as MacroNode
+				result = macro(supportsMacros)(src, ctx) as MacroNode
 			} else {
 				result = command(
 					commandTree,
@@ -47,14 +45,18 @@ const comment = core.comment({
 
 /**
  * @param supportsBackslashContinuation Whether or not to concatenate lines together on trailing backslashes.
+ * @param supportsMacros Whether or not to parse macro lines as an error.
  * Disabled by default.
  */
 export const entry = (
 	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
-	supportsBackslashContinuation = false,
+	{
+		supportsBackslashContinuation = false,
+		supportsMacros = false,
+	} = {},
 ) => {
-	const parser = mcfunction(commandTree, argument)
+	const parser = mcfunction(commandTree, argument, { supportsMacros })
 	return supportsBackslashContinuation
 		? core.concatOnTrailingBackslash(parser)
 		: parser

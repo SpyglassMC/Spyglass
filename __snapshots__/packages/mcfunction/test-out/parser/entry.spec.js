@@ -156,42 +156,42 @@ exports['mcfunction parser entry() Parse "# this is a comment↓say hi↓$this i
   "errors": []
 }
 
-exports['mcfunction parser entry() Parse "$ this is a $(macro) command" 1'] = {
+exports['mcfunction parser entry() Parse "$this is a $(macro) command" 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 28
+      "end": 27
     },
     "children": [
       {
         "type": "mcfunction:macro",
         "range": {
           "start": 0,
-          "end": 28
+          "end": 27
         },
         "children": [
           {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
-              "end": 12
+              "end": 11
             },
-            "value": " this is a "
+            "value": "this is a "
           },
           {
             "type": "mcfunction:macro/argument",
             "range": {
-              "start": 12,
-              "end": 20
+              "start": 11,
+              "end": 19
             },
             "value": "macro"
           },
           {
             "type": "mcfunction:macro/other",
             "range": {
-              "start": 20,
-              "end": 28
+              "start": 19,
+              "end": 27
             },
             "value": " command"
           }
@@ -202,58 +202,58 @@ exports['mcfunction parser entry() Parse "$ this is a $(macro) command" 1'] = {
   "errors": []
 }
 
-exports['mcfunction parser entry() Parse "$ this is a $(macro) ⧵ ↓ this is $(still) a macro" 1'] = {
+exports['mcfunction parser entry() Parse "$this is a $(macro) ⧵ ↓ this is $(still) a macro" 1'] = {
   "node": {
     "type": "mcfunction:entry",
     "range": {
       "start": 0,
-      "end": 49
+      "end": 48
     },
     "children": [
       {
         "type": "mcfunction:macro",
         "range": {
           "start": 0,
-          "end": 49
+          "end": 48
         },
         "children": [
           {
             "type": "mcfunction:macro/other",
             "range": {
               "start": 1,
-              "end": 12
+              "end": 11
             },
-            "value": " this is a "
+            "value": "this is a "
           },
           {
             "type": "mcfunction:macro/argument",
             "range": {
-              "start": 12,
-              "end": 20
+              "start": 11,
+              "end": 19
             },
             "value": "macro"
           },
           {
             "type": "mcfunction:macro/other",
             "range": {
-              "start": 20,
-              "end": 33
+              "start": 19,
+              "end": 32
             },
             "value": " this is "
           },
           {
             "type": "mcfunction:macro/argument",
             "range": {
-              "start": 33,
-              "end": 41
+              "start": 32,
+              "end": 40
             },
             "value": "still"
           },
           {
             "type": "mcfunction:macro/other",
             "range": {
-              "start": 41,
-              "end": 49
+              "start": 40,
+              "end": 48
             },
             "value": " a macro"
           }
@@ -262,6 +262,66 @@ exports['mcfunction parser entry() Parse "$ this is a $(macro) ⧵ ↓ this is $
     ]
   },
   "errors": []
+}
+
+exports['mcfunction parser entry() Parse "$this is a macro command $(with_args)" without macro support 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 37
+    },
+    "children": [
+      {
+        "type": "error",
+        "range": {
+          "start": 0,
+          "end": 37
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 37
+      },
+      "message": "Macro lines are only supported since 1.20.2",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction parser entry() Parse "$this is a macro command" without macro support 1'] = {
+  "node": {
+    "type": "mcfunction:entry",
+    "range": {
+      "start": 0,
+      "end": 24
+    },
+    "children": [
+      {
+        "type": "error",
+        "range": {
+          "start": 0,
+          "end": 24
+        },
+        "children": []
+      }
+    ]
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 24
+      },
+      "message": "Macro lines are only supported since 1.20.2",
+      "severity": 3
+    }
+  ]
 }
 
 exports['mcfunction parser entry() Parse "execute if true if true run say hi" 1'] = {
