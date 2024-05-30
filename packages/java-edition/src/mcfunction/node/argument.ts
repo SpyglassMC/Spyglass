@@ -120,7 +120,7 @@ export namespace EntitySelectorArgumentsNode {
 		)
 	}
 }
-export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
+const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */
@@ -128,7 +128,7 @@ export namespace EntitySelectorVariable {
 		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-export const EntitySelectorAtVariables = EntitySelectorVariables.map(
+const EntitySelectorAtVariables = EntitySelectorVariables.map(
 	(v) => `@${v}` as const,
 )
 export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
@@ -140,6 +140,9 @@ export namespace EntitySelectorAtVariable {
 		)
 	}
 
+	/**
+	 * Should be used to get a list of available selectors for the current version.
+	 */
 	export function filterAvailable(ctx: core.ContextBase) {
 		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 		return EntitySelectorAtVariables.filter(variable =>
