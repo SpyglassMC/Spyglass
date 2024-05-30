@@ -143,7 +143,8 @@ export namespace EntitySelectorAtVariable {
 	export function filterAvailable(ctx: core.ContextBase) {
 		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 		return EntitySelectorAtVariables.filter(variable =>
-			!(variable === '@n' && release && ReleaseVersion.cmp(release, '1.21'))
+			!(variable === '@n' && release &&
+				ReleaseVersion.cmp(release, '1.21') < 0)
 		)
 	}
 }
