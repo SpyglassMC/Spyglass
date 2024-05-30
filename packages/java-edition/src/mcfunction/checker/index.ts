@@ -8,8 +8,7 @@ import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js
 import {
 	BlockNode,
 	EntityNode,
-	ItemNode,
-	ItemOldNode,
+	ItemStackNode,
 	ParticleNode,
 } from '../node/index.js'
 
@@ -47,8 +46,8 @@ const rootCommand = (
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
 			entity(node, ctx)
-		} else if (ItemNode.is(node)) {
-			item(node, ctx)
+		} else if (ItemStackNode.is(node)) {
+			itemStack(node, ctx)
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
 		} else if (json.JsonNode.is(node)) {
@@ -166,17 +165,14 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	nbt.checker.index('entity_type', types)(nbtValue, ctx)
 }
 
-const item: core.SyncChecker<ItemNode> = (node, ctx) => {
-	if (!ItemNode.hasUserData(node)) {
-		return
-	}
-
-	if (ItemOldNode.is(node)) {
+const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
+	if (node.nbt) {
 		nbt.checker.index(
 			'item',
 			core.ResourceLocationNode.toString(node.id, 'full'),
-		)(node.nbt!, ctx)
-	} else {
+		)(node.nbt, ctx)
+	}
+	if (node.components) {
 		const groupedComponents = new Map<
 			string,
 			core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
@@ -199,7 +195,10 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 			if (components.length > 1) {
 				components.forEach(component => {
 					ctx.err.report(
-						localize('duplicate-components', componentName),
+						localize(
+							'mcfunction.parser.duplicate-components',
+							componentName,
+						),
 						component.key!.range,
 						core.ErrorSeverity.Error,
 					)
@@ -376,6 +375,6 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
-	meta.registerChecker<ItemNode>('mcfunction:item', item)
+	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

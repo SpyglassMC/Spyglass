@@ -279,69 +279,26 @@ export interface FloatRangeNode extends core.AstNode {
 	value: [number | undefined, number | undefined]
 }
 
-export interface ItemOldNode extends core.AstNode {
-	type: 'mcfunction:item'
-	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[]
+export interface ItemStackNode extends core.AstNode {
+	type: 'mcfunction:item_stack'
+	children:
+		(core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
-	nbt?: nbt.NbtCompoundNode
+	components?: ComponentListNode // since 1.20.5
+	nbt?: nbt.NbtCompoundNode // until 1.20.5
 }
-export namespace ItemOldNode {
-	export function is(node: core.AstNode | undefined): node is ItemOldNode {
-		return (node as ItemOldNode | undefined)?.type === 'mcfunction:item' &&
-			'nbt' in (node as ItemNode)
-	}
-}
-
-export interface ItemNewNode extends core.AstNode {
-	type: 'mcfunction:item'
-	children: (
-		| core.LiteralNode
-		| core.ResourceLocationNode
-		| ComponentListNode
-		| ComponentPredicatesNode
-	)[]
-	id: core.ResourceLocationNode
-	components?: ComponentListNode
-	componentPredicates?: ComponentPredicatesNode
-	wildcard?: boolean
-}
-
-export namespace ItemNewNode {
-	export function is(node: core.AstNode | undefined): node is ItemNewNode {
-		return (node as ItemNewNode | undefined)?.type === 'mcfunction:item' &&
-			'components' in (node as ItemNode)
-	}
-}
-
-export type ItemNode = ItemOldNode | ItemNewNode
-
-export namespace ItemNode {
-	export function is(node: core.AstNode | undefined): node is ItemNode {
-		return (
-			ItemOldNode.is(node) || ItemNewNode.is(node)
-		)
-	}
-
-	export function hasUserData(node: ItemNode): boolean {
-		if (ItemOldNode.is(node)) {
-			return !!node.nbt
-		} else {
-			return !!node.components
-		}
+export namespace ItemStackNode {
+	export function is(node: core.AstNode | undefined): node is ItemStackNode {
+		return (node as ItemStackNode | undefined)?.type ===
+			'mcfunction:item_stack'
 	}
 
 	export function mock(
 		range: core.RangeLike,
-		isPredicate: boolean,
-		format: 'old' | 'new',
-	): ItemNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'item',
-			allowTag: isPredicate,
-		})
-
+	): ItemStackNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'item' })
 		return {
-			type: 'mcfunction:item',
+			type: 'mcfunction:item_stack',
 			range: core.Range.get(range),
 			children: [id],
 			id,
@@ -360,14 +317,50 @@ export namespace ComponentListNode {
 	}
 }
 
-export interface ComponentPredicatesNode extends core.AstNode {
+export interface ItemPredicateNode extends core.AstNode {
+	type: 'mcfunction:item_predicate'
+	children: (
+		| core.ResourceLocationNode
+		| core.LiteralNode
+		| ComponentTestsNode
+		| nbt.NbtCompoundNode
+	)[]
+	id: core.ResourceLocationNode | core.LiteralNode
+	tests?: ComponentTestsNode // since 1.20.5
+	nbt?: nbt.NbtCompoundNode // until 1.20.5
+}
+export namespace ItemPredicateNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is ItemPredicateNode {
+		return (node as ItemPredicateNode | undefined)?.type ===
+			'mcfunction:item_predicate'
+	}
+
+	export function mock(
+		range: core.RangeLike,
+	): ItemPredicateNode {
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'item',
+			allowTag: true,
+		})
+		return {
+			type: 'mcfunction:item_predicate',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+		}
+	}
+}
+
+export interface ComponentTestsNode extends core.AstNode {
 	type: 'mcfunction:component_predicates'
 	children: ComponentTestNode[]
 }
 
-export namespace ComponentPredicatesNode {
-	export function is(node: core.AstNode): node is ComponentPredicatesNode {
-		return (node as ComponentPredicatesNode).type ===
+export namespace ComponentTestsNode {
+	export function is(node: core.AstNode): node is ComponentTestsNode {
+		return (node as ComponentTestsNode).type ===
 			'mcfunction:component_predicates'
 	}
 }
@@ -481,7 +474,7 @@ export interface ParticleNode extends core.AstNode {
 		| core.FloatNode
 		| core.IntegerNode
 		| BlockNode
-		| ItemNode
+		| ItemStackNode
 		| VectorNode
 		// Since 1.20.5
 		| nbt.NbtCompoundNode

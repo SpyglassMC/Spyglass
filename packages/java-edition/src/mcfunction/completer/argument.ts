@@ -44,14 +44,14 @@ import {
 import type {
 	BlockStatesNode,
 	EntitySelectorArgumentsNode,
-	ItemOldNode,
 } from '../node/index.js'
 import {
 	BlockNode,
 	CoordinateNode,
 	EntitySelectorNode,
 	IntRangeNode,
-	ItemNode,
+	ItemPredicateNode,
+	ItemStackNode,
 	ObjectiveCriteriaNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -127,13 +127,13 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_enchantment':
 			return ResourceLocationNode.mock(range, { category: 'enchantment' })
 		case 'minecraft:item_predicate':
-			return ItemNode.mock(range, true, getItemStackFormat(ctx))
+			return ItemPredicateNode.mock(range)
 		case 'minecraft:item_slot':
 			return LiteralNode.mock(range, {
 				pool: getItemSlotArgumentValues(ctx),
 			})
 		case 'minecraft:item_stack':
-			return ItemNode.mock(range, false, getItemStackFormat(ctx))
+			return ItemStackNode.mock(range)
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
@@ -266,9 +266,20 @@ const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
 	return [CompletionItem.create('~', node)]
 }
 
-const item: Completer<ItemOldNode> = (node, ctx) => {
+const itemStack: Completer<ItemStackNode> = (node, ctx) => {
 	const ans: CompletionItem[] = []
 	if (Range.contains(node.id, ctx.offset, true)) {
+		ans.push(...completer.resourceLocation(node.id, ctx))
+	}
+	return ans
+}
+
+const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
+	const ans: CompletionItem[] = []
+	if (
+		Range.contains(node.id, ctx.offset, true) &&
+		node.id.type === 'resource_location'
+	) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
 	}
 	return ans
@@ -326,7 +337,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 			VectorNode.mock(ctx.offset, { dimension: 3 }),
 		],
 		falling_dust: [BlockNode.mock(ctx.offset, false)],
-		item: [ItemNode.mock(ctx.offset, false, getItemStackFormat(ctx))],
+		item: [ItemStackNode.mock(ctx.offset)],
 		sculk_charge: [FloatNode.mock(ctx.offset)],
 		shriek: [IntegerNode.mock(ctx.offset)],
 		vibration: [
@@ -461,7 +472,7 @@ export function register(meta: MetaRegistry) {
 		selectorArguments,
 	)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
-	meta.registerCompleter<ItemOldNode>('mcfunction:item', item)
+	meta.registerCompleter<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerCompleter<ObjectiveCriteriaNode>(
 		'mcfunction:objective_criteria',
 		objectiveCriteria,
