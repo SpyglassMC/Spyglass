@@ -362,7 +362,7 @@ export namespace ComponentListNode {
 
 export interface ComponentPredicatesNode extends core.AstNode {
 	type: 'mcfunction:component_predicates'
-	children: ComponentTestBaseNode[]
+	children: ComponentTestNode[]
 }
 
 export namespace ComponentPredicatesNode {
@@ -374,14 +374,6 @@ export namespace ComponentPredicatesNode {
 
 export interface ComponentTestBaseNode extends core.AstNode {
 	negated: boolean
-}
-
-export namespace ComponentTestBaseNode {
-	export function is(node: core.AstNode): node is ComponentTestBaseNode {
-		return (node as ComponentTestBaseNode).type.startsWith(
-			'mcfunction:component_test',
-		)
-	}
 }
 
 export interface ComponentTestExactNode extends ComponentTestBaseNode {
@@ -398,10 +390,26 @@ export interface ComponentTestExistsNode extends ComponentTestBaseNode {
 }
 
 export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
-	type: 'mcfunction:component_test_subpredicate'
+	type: 'mcfunction:component_test_sub_predicate'
 	children: [core.ResourceLocationNode, nbt.NbtNode]
-	component: core.ResourceLocationNode
-	subpredicate: nbt.NbtNode
+	subPredicateType: core.ResourceLocationNode
+	subPredicate: nbt.NbtNode
+}
+
+export type ComponentTestNode =
+	| ComponentTestExactNode
+	| ComponentTestExistsNode
+	| ComponentTestSubpredicateNode
+
+export namespace ComponentTestNode {
+	export function is(node: core.AstNode): node is ComponentTestNode {
+		return (node as ComponentTestNode).type ===
+				'mcfunction:component_test_exact' ||
+			(node as ComponentTestNode).type ===
+				'mcfunction:component_test_exists' ||
+			(node as ComponentTestNode).type ===
+				'mcfunction:component_test_sub_predicate'
+	}
 }
 
 export interface IntRangeNode extends core.AstNode {

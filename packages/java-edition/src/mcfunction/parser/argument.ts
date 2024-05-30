@@ -44,7 +44,7 @@ import {
 	BlockStatesNode,
 	ComponentListNode,
 	ComponentPredicatesNode,
-	ComponentTestBaseNode,
+	ComponentTestNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
@@ -1856,11 +1856,11 @@ function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
 			const id = res.children.find(core.ResourceLocationNode.is)!
 			const subpredicate = res.children.find(nbt.NbtNode.is)!
 			const ans: ComponentTestSubpredicateNode = {
-				type: 'mcfunction:component_test_subpredicate',
+				type: 'mcfunction:component_test_sub_predicate',
 				range: res.range,
 				children: [id, subpredicate],
-				component: id,
-				subpredicate,
+				subPredicateType: id,
+				subPredicate: subpredicate,
 				negated: false,
 			}
 
@@ -1871,16 +1871,16 @@ function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
 	const not = core.map<
 		core.SequenceUtil<
 			| core.LiteralNode
-			| ComponentTestBaseNode
+			| ComponentTestNode
 		>,
-		ComponentTestBaseNode
+		ComponentTestNode
 	>(
 		core.sequence([
 			core.literal('!'),
 			core.any([exact, subpredicate, exists]),
 		]),
 		(res) => {
-			const test = res.children.find(ComponentTestBaseNode.is)!
+			const test = res.children.find(ComponentTestNode.is)!
 			test.negated = true
 			return test
 		},
@@ -1892,15 +1892,7 @@ function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
 			parser: not,
 		},
 		{
-			parser: core.map<
-				| ComponentTestExactNode
-				| ComponentTestExistsNode
-				| ComponentTestSubpredicateNode,
-				ComponentTestBaseNode
-			>(
-				core.any([exact, subpredicate, exists]),
-				(res) => res,
-			),
+			parser: core.any([exact, subpredicate, exists]),
 		},
 	])
 
@@ -1916,7 +1908,7 @@ function componentTests(): core.InfallibleParser<ComponentPredicatesNode> {
 			const ans: ComponentPredicatesNode = {
 				type: 'mcfunction:component_predicates',
 				range: res.range,
-				children: res.children.map((c) => c.value!),
+				children: res.children.map(c => c.value!),
 			}
 
 			return ans
