@@ -354,14 +354,14 @@ export namespace ItemPredicateNode {
 }
 
 export interface ComponentTestsNode extends core.AstNode {
-	type: 'mcfunction:component_predicates'
+	type: 'mcfunction:component_tests'
 	children: ComponentTestNode[]
 }
 
 export namespace ComponentTestsNode {
 	export function is(node: core.AstNode): node is ComponentTestsNode {
 		return (node as ComponentTestsNode).type ===
-			'mcfunction:component_predicates'
+			'mcfunction:component_tests'
 	}
 }
 

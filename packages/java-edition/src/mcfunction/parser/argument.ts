@@ -540,8 +540,8 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 			oldFormat
 				? core.resourceLocation({ category: 'item', allowTag: true })
 				: core.any([
-					core.literal('*'),
 					core.resourceLocation({ category: 'item', allowTag: true }),
+					core.literal('*'),
 				]),
 			oldFormat
 				? core.optional(core.failOnEmpty(nbt.parser.compound))
@@ -1861,7 +1861,7 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = (
 		}),
 		(res) => {
 			const ans: ComponentTestsNode = {
-				type: 'mcfunction:component_predicates',
+				type: 'mcfunction:component_tests',
 				range: res.range,
 				children: res.children.map(c => c.value!),
 			}

@@ -27,6 +27,7 @@ import {
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
+import type * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import {
@@ -43,6 +44,8 @@ import {
 } from '../common/index.js'
 import type {
 	BlockStatesNode,
+	ComponentListNode,
+	ComponentTestsNode,
 	EntitySelectorArgumentsNode,
 } from '../node/index.js'
 import {
@@ -255,6 +258,38 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 	})(node, ctx)
 }
 
+const componentList: Completer<ComponentListNode> = (node, ctx) => {
+	return completer.record<
+		ResourceLocationNode,
+		nbt.NbtNode,
+		ComponentListNode
+	>({
+		key: (
+			_record,
+			pair,
+			ctx,
+			range,
+			_insertValue,
+			_insertComma,
+			_existingKeys,
+		) => {
+			const id = pair?.key ??
+				ResourceLocationNode.mock(pair?.key ?? range, {
+					category: 'data_component_type',
+				})
+			return completer.resourceLocation(id, ctx)
+		},
+		value: () => {
+			return [] // TODO
+		},
+	})(node, ctx)
+}
+
+const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
+	// TODO: improve this completer
+	return completer.dispatch(node, ctx)
+}
+
 const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
 	return [CompletionItem.create('~', node)]
 }
@@ -264,16 +299,28 @@ const itemStack: Completer<ItemStackNode> = (node, ctx) => {
 	if (Range.contains(node.id, ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
 	}
+	if (node.components && Range.contains(node.components, ctx.offset, true)) {
+		ans.push(...componentList(node.components, ctx))
+	}
+	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
+		// TODO
+	}
 	return ans
 }
 
 const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
 	const ans: CompletionItem[] = []
-	if (
-		Range.contains(node.id, ctx.offset, true) &&
-		node.id.type === 'resource_location'
-	) {
-		ans.push(...completer.resourceLocation(node.id, ctx))
+	if (Range.contains(node.id, ctx.offset, true)) {
+		ans.push(CompletionItem.create('*', node, { sortText: '##' }))
+		if (node.id.type === 'resource_location') {
+			ans.push(...completer.resourceLocation(node.id, ctx))
+		}
+	}
+	if (node.tests && Range.contains(node.tests, ctx.offset, true)) {
+		ans.push(...componentTests(node.tests, ctx))
+	}
+	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
+		// TODO
 	}
 	return ans
 }
@@ -455,6 +502,14 @@ const vector: Completer<VectorNode> = (node, _ctx) => {
 
 export function register(meta: MetaRegistry) {
 	meta.registerCompleter<BlockNode>('mcfunction:block', block)
+	meta.registerCompleter<ComponentListNode>(
+		'mcfunction:component_list',
+		componentList,
+	)
+	meta.registerCompleter<ComponentTestsNode>(
+		'mcfunction:component_tests',
+		componentTests,
+	)
 	meta.registerCompleter<CoordinateNode>('mcfunction:coordinate', coordinate)
 	meta.registerCompleter<EntitySelectorNode>(
 		'mcfunction:entity_selector',
@@ -466,6 +521,10 @@ export function register(meta: MetaRegistry) {
 	)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
 	meta.registerCompleter<ItemStackNode>('mcfunction:item_stack', itemStack)
+	meta.registerCompleter<ItemPredicateNode>(
+		'mcfunction:item_predicate',
+		itemPredicate,
+	)
 	meta.registerCompleter<ObjectiveCriteriaNode>(
 		'mcfunction:objective_criteria',
 		objectiveCriteria,
