@@ -193,7 +193,7 @@ const Suites: Partial<
 				'sculk_charge 4.2',
 				'shriek 20',
 				'vibration 0.1 0.2 0.3 40',
-				'block{block_state:"diamond_block"} ~ ~ ~',
+				'block{block_state:"diamond_block"}',
 				'end_rod{}',
 			],
 		},
@@ -201,7 +201,7 @@ const Suites: Partial<
 			content: [
 				'block stone',
 				'dust 0.2 0.4 0.6 0.8',
-				'block{block_state:"diamond_block"} ~ ~ ~',
+				'block{block_state:"diamond_block"}',
 				'end_rod',
 				'end_rod{}',
 			],

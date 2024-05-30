@@ -93,7 +93,7 @@ exports['mcfunction argument minecraft:particle Parse "block stone" in version 1
   "errors": []
 }
 
-exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"} ~ ~ ~" 1'] = {
+exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" 1'] = {
   "node": {
     "type": "mcfunction:particle",
     "range": {
@@ -370,7 +370,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
   ]
 }
 
-exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"} ~ ~ ~" in version 1.20.5 1'] = {
+exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" in version 1.20.5 1'] = {
   "node": {
     "type": "mcfunction:particle",
     "range": {
