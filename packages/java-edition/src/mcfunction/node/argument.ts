@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import type * as nbt from '@spyglassmc/nbt'
+import { ReleaseVersion } from '../../dependency/common.js'
 
 export interface BlockStatesNode
 	extends core.RecordBaseNode<core.StringNode, core.StringNode>
@@ -119,7 +120,7 @@ export namespace EntitySelectorArgumentsNode {
 		)
 	}
 }
-export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's'] as const
+const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */
@@ -127,7 +128,7 @@ export namespace EntitySelectorVariable {
 		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-export const EntitySelectorAtVariables = EntitySelectorVariables.map(
+const EntitySelectorAtVariables = EntitySelectorVariables.map(
 	(v) => `@${v}` as const,
 )
 export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
@@ -136,6 +137,17 @@ export namespace EntitySelectorAtVariable {
 	export function is(value: string): value is EntitySelectorAtVariable {
 		return EntitySelectorAtVariables.includes(
 			value as EntitySelectorAtVariable,
+		)
+	}
+
+	/**
+	 * Should be used to get a list of available selectors for the current version.
+	 */
+	export function filterAvailable(ctx: core.ContextBase) {
+		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+		return EntitySelectorAtVariables.filter(variable =>
+			!(variable === '@n' && release &&
+				ReleaseVersion.cmp(release, '1.21') < 0)
 		)
 	}
 }
@@ -163,11 +175,11 @@ export namespace EntitySelectorNode {
 		)
 	}
 
-	export function mock(range: core.RangeLike): EntitySelectorNode {
-		const literal = core.LiteralNode.mock(range, {
-			pool: EntitySelectorAtVariables,
-			colorTokenType: 'keyword',
-		})
+	export function mock(
+		range: core.RangeLike,
+		options: core.LiteralOptions,
+	): EntitySelectorNode {
+		const literal = core.LiteralNode.mock(range, options)
 		return {
 			type: 'mcfunction:entity_selector',
 			range: core.Range.get(range),
@@ -368,12 +380,15 @@ export namespace ObjectiveCriteriaNode {
 export interface ParticleNode extends core.AstNode {
 	type: 'mcfunction:particle'
 	children?: (
+		| core.ResourceLocationNode
+		// Until 1.20.5
 		| core.FloatNode
 		| core.IntegerNode
-		| core.ResourceLocationNode
 		| BlockNode
 		| ItemNode
 		| VectorNode
+		// Since 1.20.5
+		| nbt.NbtCompoundNode
 	)[]
 	id: core.ResourceLocationNode
 }

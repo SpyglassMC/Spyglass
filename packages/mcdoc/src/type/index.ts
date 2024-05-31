@@ -392,6 +392,10 @@ export namespace McdocType {
 	}
 }
 
+export interface UseStatementBindingData {
+	target: readonly string[]
+}
+
 /**
  * A type that doesn't include a dispatcher type.
  */

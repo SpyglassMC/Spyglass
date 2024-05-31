@@ -8,7 +8,14 @@ import type {
 	Result,
 	Source,
 } from '../../lib/index.js'
-import { any, boolean, dumpErrors, Failure, Range } from '../../lib/index.js'
+import {
+	any,
+	boolean,
+	concatOnTrailingBackslash,
+	dumpErrors,
+	Failure,
+	Range,
+} from '../../lib/index.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 interface LiteralNode extends AstNode {
@@ -117,5 +124,43 @@ describe('dumpErrors()', () => {
 		it(name, () => {
 			snapshot(testParser(parser, content))
 		})
+	}
+})
+
+describe('concatOnTrailingBackslash()', () => {
+	const parsers: {
+		parser: Parser<AstNode>
+		suites: Array<{
+			content: string
+		}>
+	}[] = [
+		{
+			parser: boolean,
+			suites: [
+				{ content: 'true' },
+				{ content: 'true\n' },
+				{ content: 'tru\\\ne' },
+				{ content: 'tru\\ \ne' },
+				{ content: 'tru\\\n e' },
+				{ content: 'tru\\ \n e' },
+				{ content: 'tru\\ \n \\\n e' },
+				{ content: 'tru\\e \\ \n e' },
+				{ content: 'tru\\\n\ne' },
+				{ content: 'tru\\' },
+				{ content: 'tru\\ \n' },
+				{ content: 'tru\\ \n ' },
+			],
+		},
+	]
+	for (const { parser, suites } of parsers) {
+		for (const { content } of suites) {
+			it(
+				`Parse "${showWhitespaceGlyph(content)}"`,
+				() => {
+					const wrappedParser = concatOnTrailingBackslash(parser)
+					snapshot(testParser(wrappedParser, content))
+				},
+			)
+		}
 	}
 })

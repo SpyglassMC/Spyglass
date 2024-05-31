@@ -28,6 +28,7 @@ import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
 import { getTagValues } from '../../common/index.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import {
 	ColorArgumentValues,
 	EntityAnchorArgumentValues,
@@ -47,6 +48,7 @@ import type {
 import {
 	BlockNode,
 	CoordinateNode,
+	EntitySelectorAtVariable,
 	EntitySelectorNode,
 	IntRangeNode,
 	ItemNode,
@@ -102,7 +104,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return ResourceLocationNode.mock(range, { category: 'dimension' })
 		case 'minecraft:entity':
 		case 'minecraft:game_profile':
-			return EntitySelectorNode.mock(range)
+			return EntitySelectorNode.mock(range, {
+				pool: EntitySelectorAtVariable.filterAvailable(ctx),
+			})
 		case 'minecraft:heightmap':
 			return LiteralNode.mock(range, { pool: HeightmapValues })
 		case 'minecraft:entity_anchor':
@@ -298,6 +302,10 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	if (child) {
 		return completer.dispatch(child, ctx)
 	}
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release || ReleaseVersion.cmp(release, '1.20.5') >= 0) {
+		return []
+	}
 
 	const id = ResourceLocationNode.toString(node.id, 'short')
 	const map: Record<ParticleNode.SpecialType, AstNode[]> = {
@@ -355,7 +363,14 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 			node.fakeName ?? SymbolNode.mock(node, { category: 'score_holder' }),
 			ctx,
 		)
-		ans.push(...selector(EntitySelectorNode.mock(node), ctx))
+		ans.push(
+			...selector(
+				EntitySelectorNode.mock(node, {
+					pool: EntitySelectorAtVariable.filterAvailable(ctx),
+				}),
+				ctx,
+			),
+		)
 	}
 	return ans
 }
