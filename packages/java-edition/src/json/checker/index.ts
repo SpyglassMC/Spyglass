@@ -4,6 +4,7 @@ import { JsonObjectNode } from '@spyglassmc/json'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../../binder/index.js'
+import { getDefaultErrorReporter } from '@spyglassmc/mcdoc/lib/validator/index.js'
 
 const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
 	['advancement', '::java::data::advancement::Advancement'],
@@ -82,23 +83,8 @@ export function definition(
 	identifier: `::${string}::${string}`,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
-		mcdoc.validator.reference<JsonNode | core.PairNode<JsonStringNode, JsonNode>>(node, identifier, {
+		mcdoc.validator.reference<JsonNode>([{ originalNode: node, inferredType: inferType(node) }], identifier, {
 			context: ctx,
-			inferType: node => {
-				switch (node.type) {
-					case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
-					case 'json:number': return { kind: 'literal', value: { kind: node.value.type, value: Number(node.value.value) } }
-					case 'json:null': return { kind: 'union', members: [] } // null is always invalid? 
-					case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
-					case 'json:array': return { kind: 'list', item: { kind: 'any' } }
-					case 'json:object': return { kind: 'struct', fields: [] }
-					case 'pair': 
-						if (!node.key) {
-							return { kind: 'tuple', items: [] };
-						}
-						return { kind: 'tuple', items: [ { kind: 'literal', value: { kind: 'string', value: node.key.value }}, { kind: 'any' } ] }
-				}
-			},
 			isEquivalent: (inferred, def) => {
 				switch (inferred.kind) {
 					case 'list':
@@ -117,22 +103,28 @@ export function definition(
 				}
 			},
 			getChildren: node => {
-				if (node.type === 'pair') {
-					return [ node.key, node.value ].filter(n => n) as JsonNode[]
-				}
 				if (node.type === 'json:array') {
-					return node.children.filter(n => n.value).map(n => n.value as JsonNode)
+					return node.children.filter(n => n.value)
+						.map(n => ([{ originalNode: n.value!, inferredType: inferType(n.value!) }]))
 				}
-				return node.children?.filter(n => n) as JsonNode[] ?? []
-			},
-			getRange: (node, err) => {
-				if ((node.type === 'json:object' && err === 'missing_key')
-					|| node.type === 'json:array' && err === 'invalid_collection_length') {
-					return { start: node.range.start, end: node.range.start }
+				if (node.type === 'json:object') {
+					return node.children.filter(kvp => kvp.key).map(kvp => ({
+							key: { originalNode: kvp.key!, inferredType: inferType(kvp.key!) },
+							possibleValues: kvp.value ? [{ originalNode: kvp.value, inferredType: inferType(kvp.value) }] : []
+						})
+					)
 				}
-				return node.range;
+				return []
 			},
+			reportError: getDefaultErrorReporter(ctx, (node, err) => {
+				if ((node.originalNode.type === 'json:object' && err === 'missing_key')
+					|| node.originalNode.type === 'json:array' && err === 'invalid_collection_length') {
+					return { start: node.originalNode.range.start, end: node.originalNode.range.start }
+				}
+				return node.originalNode.range;
+			}),
 			attachTypeInfo: (node, definition) => {}, //TODO
+			// TODO json / JE specific attribute handlers
 		});
 
 		// const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
@@ -149,6 +141,17 @@ export function definition(
 		// 			`[json.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
 		// 		)
 		// }
+	}
+}
+
+function inferType(node: JsonNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+	switch (node.type) {
+		case 'json:boolean': return { kind: 'literal', value: { kind: 'boolean', value: node.value! } }
+		case 'json:number': return { kind: 'literal', value: { kind: node.value.type, value: Number(node.value.value) } }
+		case 'json:null': return { kind: 'any' } // null is always invalid? 
+		case 'json:string': return { kind: 'literal', value: { kind: 'string', value: node.value } }
+		case 'json:array': return { kind: 'list', item: { kind: 'any' } }
+		case 'json:object': return { kind: 'struct', fields: [] }
 	}
 }
 

@@ -474,6 +474,14 @@ export const RangeExclusiveChar = '<'
  * The bit is turned on if the range is exclusive on that end.
  */
 export type RangeKind = 0b00 | 0b01 | 0b10 | 0b11
+export namespace RangeKind {
+	export function isLeftExclusive(rangeKind: RangeKind): boolean {
+		return (rangeKind & 0b10) > 1;
+	}
+	export function isRightExclusive(rangeKind: RangeKind): boolean {
+		return (rangeKind & 0b01) > 1;
+	}
+}
 
 export function getRangeDelimiter(kind: RangeKind): string {
 	const prefix = kind & 0b10 ? RangeExclusiveChar : ''
