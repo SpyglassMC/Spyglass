@@ -10001,6 +10001,701 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
   "errors": []
 }
 
+exports['mcfunction argument minecraft:entity Parse "@n" with {"amount":"single","type":"entities"} 1'] = {
+  "node": {
+    "type": "mcfunction:entity",
+    "range": {
+      "start": 0,
+      "end": 2
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@n"
+        }
+      ],
+      "variable": "n",
+      "currentEntity": false,
+      "playersOnly": false,
+      "single": true,
+      "typeLimited": false,
+      "hover": "**Performance**: 🤢\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"amount":"single","type":"entities"} 1'] = {
+  "node": {
+    "type": "mcfunction:entity",
+    "range": {
+      "start": 0,
+      "end": 16
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 16
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@n"
+        },
+        {
+          "type": "mcfunction:entity_selector/arguments",
+          "range": {
+            "start": 2,
+            "end": 16
+          },
+          "children": [
+            {
+              "type": "pair",
+              "range": {
+                "start": 3,
+                "end": 15
+              },
+              "children": [
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 3,
+                    "end": 11
+                  },
+                  "value": "distance",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 3,
+                        "end": 3
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "literal",
+                      "range": {
+                        "start": 3,
+                        "end": 11
+                      },
+                      "value": "distance"
+                    }
+                  ]
+                },
+                {
+                  "type": "mcfunction:float_range",
+                  "range": {
+                    "start": 12,
+                    "end": 15
+                  },
+                  "children": [
+                    {
+                      "type": "literal",
+                      "range": {
+                        "start": 12,
+                        "end": 14
+                      },
+                      "value": ".."
+                    },
+                    {
+                      "type": "float",
+                      "range": {
+                        "start": 14,
+                        "end": 15
+                      },
+                      "value": 5
+                    }
+                  ],
+                  "value": [
+                    null,
+                    5
+                  ]
+                }
+              ],
+              "key": {
+                "type": "string",
+                "range": {
+                  "start": 3,
+                  "end": 11
+                },
+                "value": "distance",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 3,
+                      "end": 3
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 3,
+                      "end": 11
+                    },
+                    "value": "distance"
+                  }
+                ]
+              },
+              "sep": {
+                "start": 11,
+                "end": 12
+              },
+              "value": {
+                "type": "mcfunction:float_range",
+                "range": {
+                  "start": 12,
+                  "end": 15
+                },
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 12,
+                      "end": 14
+                    },
+                    "value": ".."
+                  },
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "value": 5
+                  }
+                ],
+                "value": [
+                  null,
+                  5
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "variable": "n",
+      "arguments": {
+        "type": "mcfunction:entity_selector/arguments",
+        "range": {
+          "start": 2,
+          "end": 16
+        },
+        "children": [
+          {
+            "type": "pair",
+            "range": {
+              "start": 3,
+              "end": 15
+            },
+            "children": [
+              {
+                "type": "string",
+                "range": {
+                  "start": 3,
+                  "end": 11
+                },
+                "value": "distance",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 3,
+                      "end": 3
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 3,
+                      "end": 11
+                    },
+                    "value": "distance"
+                  }
+                ]
+              },
+              {
+                "type": "mcfunction:float_range",
+                "range": {
+                  "start": 12,
+                  "end": 15
+                },
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 12,
+                      "end": 14
+                    },
+                    "value": ".."
+                  },
+                  {
+                    "type": "float",
+                    "range": {
+                      "start": 14,
+                      "end": 15
+                    },
+                    "value": 5
+                  }
+                ],
+                "value": [
+                  null,
+                  5
+                ]
+              }
+            ],
+            "key": {
+              "type": "string",
+              "range": {
+                "start": 3,
+                "end": 11
+              },
+              "value": "distance",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 3,
+                    "end": 3
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "type": "literal",
+                  "range": {
+                    "start": 3,
+                    "end": 11
+                  },
+                  "value": "distance"
+                }
+              ]
+            },
+            "sep": {
+              "start": 11,
+              "end": 12
+            },
+            "value": {
+              "type": "mcfunction:float_range",
+              "range": {
+                "start": 12,
+                "end": 15
+              },
+              "children": [
+                {
+                  "type": "literal",
+                  "range": {
+                    "start": 12,
+                    "end": 14
+                  },
+                  "value": ".."
+                },
+                {
+                  "type": "float",
+                  "range": {
+                    "start": 14,
+                    "end": 15
+                  },
+                  "value": 5
+                }
+              ],
+              "value": [
+                null,
+                5
+              ]
+            }
+          }
+        ]
+      },
+      "chunkLimited": true,
+      "currentEntity": false,
+      "dimensionLimited": true,
+      "playersOnly": false,
+      "single": true,
+      "typeLimited": false,
+      "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount":"single","type":"entities"} 1'] = {
+  "node": {
+    "type": "mcfunction:entity",
+    "range": {
+      "start": 0,
+      "end": 12
+    },
+    "selector": {
+      "type": "mcfunction:entity_selector",
+      "range": {
+        "start": 0,
+        "end": 12
+      },
+      "children": [
+        {
+          "type": "literal",
+          "range": {
+            "start": 0,
+            "end": 2
+          },
+          "value": "@n"
+        },
+        {
+          "type": "mcfunction:entity_selector/arguments",
+          "range": {
+            "start": 2,
+            "end": 12
+          },
+          "children": [
+            {
+              "type": "pair",
+              "range": {
+                "start": 3,
+                "end": 11
+              },
+              "children": [
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 3,
+                    "end": 7
+                  },
+                  "value": "type",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 3,
+                        "end": 3
+                      }
+                    }
+                  ],
+                  "children": [
+                    {
+                      "type": "literal",
+                      "range": {
+                        "start": 3,
+                        "end": 7
+                      },
+                      "value": "type"
+                    }
+                  ]
+                },
+                {
+                  "type": "mcfunction:entity_selector/arguments/value/invertable",
+                  "range": {
+                    "start": 8,
+                    "end": 11
+                  },
+                  "children": [
+                    {
+                      "type": "resource_location",
+                      "range": {
+                        "start": 8,
+                        "end": 11
+                      },
+                      "path": [
+                        "cow"
+                      ]
+                    }
+                  ],
+                  "inverted": false,
+                  "value": {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 8,
+                      "end": 11
+                    },
+                    "path": [
+                      "cow"
+                    ]
+                  }
+                }
+              ],
+              "key": {
+                "type": "string",
+                "range": {
+                  "start": 3,
+                  "end": 7
+                },
+                "value": "type",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 3,
+                      "end": 3
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 3,
+                      "end": 7
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              "sep": {
+                "start": 7,
+                "end": 8
+              },
+              "value": {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 8,
+                  "end": 11
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 8,
+                      "end": 11
+                    },
+                    "path": [
+                      "cow"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 8,
+                    "end": 11
+                  },
+                  "path": [
+                    "cow"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "variable": "n",
+      "arguments": {
+        "type": "mcfunction:entity_selector/arguments",
+        "range": {
+          "start": 2,
+          "end": 12
+        },
+        "children": [
+          {
+            "type": "pair",
+            "range": {
+              "start": 3,
+              "end": 11
+            },
+            "children": [
+              {
+                "type": "string",
+                "range": {
+                  "start": 3,
+                  "end": 7
+                },
+                "value": "type",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 3,
+                      "end": 3
+                    }
+                  }
+                ],
+                "children": [
+                  {
+                    "type": "literal",
+                    "range": {
+                      "start": 3,
+                      "end": 7
+                    },
+                    "value": "type"
+                  }
+                ]
+              },
+              {
+                "type": "mcfunction:entity_selector/arguments/value/invertable",
+                "range": {
+                  "start": 8,
+                  "end": 11
+                },
+                "children": [
+                  {
+                    "type": "resource_location",
+                    "range": {
+                      "start": 8,
+                      "end": 11
+                    },
+                    "path": [
+                      "cow"
+                    ]
+                  }
+                ],
+                "inverted": false,
+                "value": {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 8,
+                    "end": 11
+                  },
+                  "path": [
+                    "cow"
+                  ]
+                }
+              }
+            ],
+            "key": {
+              "type": "string",
+              "range": {
+                "start": 3,
+                "end": 7
+              },
+              "value": "type",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 3,
+                    "end": 3
+                  }
+                }
+              ],
+              "children": [
+                {
+                  "type": "literal",
+                  "range": {
+                    "start": 3,
+                    "end": 7
+                  },
+                  "value": "type"
+                }
+              ]
+            },
+            "sep": {
+              "start": 7,
+              "end": 8
+            },
+            "value": {
+              "type": "mcfunction:entity_selector/arguments/value/invertable",
+              "range": {
+                "start": 8,
+                "end": 11
+              },
+              "children": [
+                {
+                  "type": "resource_location",
+                  "range": {
+                    "start": 8,
+                    "end": 11
+                  },
+                  "path": [
+                    "cow"
+                  ]
+                }
+              ],
+              "inverted": false,
+              "value": {
+                "type": "resource_location",
+                "range": {
+                  "start": 8,
+                  "end": 11
+                },
+                "path": [
+                  "cow"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "currentEntity": false,
+      "playersOnly": false,
+      "single": true,
+      "typeLimited": true,
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 0,
+        "end": 2
+      },
+      "message": "Invalid entity selector: “@n”",
+      "severity": 3
+    }
+  ]
+}
+
 exports['mcfunction argument minecraft:entity Parse "@r" with {"amount":"single","type":"players"} 1'] = {
   "node": {
     "type": "mcfunction:entity",

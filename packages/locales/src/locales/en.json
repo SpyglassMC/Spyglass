@@ -71,6 +71,7 @@
   "mcfunction.parser.entity-selector.arguments.not-applicable": "%0% is not applicable here",
   "mcfunction.parser.entity-selector.arguments.unknown": "Unknown entity selector argument %0%",
   "mcfunction.parser.entity-selector.entities-disallowed": "The selector contains non-player entities",
+  "mcfunction.parser.entity-selector.invalid": "Invalid entity selector: “%0%”",
   "mcfunction.parser.entity-selector.multiple-disallowed": "The selector contains multiple entities",
   "mcfunction.parser.entity-selector.player-name.too-long": "Player names cannot be longer than %0% characters",
   "mcfunction.parser.eoc-unexpected": "Expected more arguments",
