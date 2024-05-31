@@ -308,16 +308,13 @@ const RemoveExtraChildren = new Set([
 describe('mcfunction argument parser', () => {
 	for (const [parserName, cases] of Object.entries(Suites)) {
 		describe(parserName, () => {
-			for (const { content, properties, version } of cases) {
+			for (const { content, properties, version = '1.15' } of cases) {
 				const treeNode: ArgumentTreeNode = {
 					type: 'argument',
 					parser: parserName as any,
 					properties,
 				}
-				const ctx = typeof version !== 'undefined'
-					? { loadedVersion: version }
-					: void 0
-				const project = mockProjectData({ ctx })
+				const project = mockProjectData({ ctx: { loadedVersion: version } })
 				json.initialize(project)
 				nbt.initialize(project)
 
@@ -325,7 +322,7 @@ describe('mcfunction argument parser', () => {
 					const propertiesString = properties
 						? ` with ${JSON.stringify(properties)}`
 						: ''
-					const versionString = typeof version !== 'undefined'
+					const versionString = version !== '1.15'
 						? ` in version ${version}`
 						: ''
 					const itTitle = `Parse "${
