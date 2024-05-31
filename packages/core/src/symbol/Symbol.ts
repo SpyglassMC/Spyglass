@@ -141,7 +141,9 @@ export const MiscCategories = Object.freeze(
 	[
 		'attribute_modifier_uuid',
 		'bossbar',
+		'jigsaw_block_name',
 		'objective',
+		'random_sequence',
 		'score_holder',
 		'storage',
 		'tag',
@@ -171,6 +173,8 @@ export type AllCategory = (typeof AllCategories)[number]
 export const ResourceLocationCategories = Object.freeze(
 	[
 		'bossbar',
+		'jigsaw_block_name',
+		'random_sequence',
 		'storage',
 		'mcdoc/dispatcher',
 		...FileCategories,
