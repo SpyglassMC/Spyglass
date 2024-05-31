@@ -4,7 +4,6 @@ export interface MacroNode
 	extends core.SequenceNode<MacroOtherNode | MacroArgumentNode>
 {
 	type: 'mcfunction:macro'
-	slash?: core.Range
 	children: (MacroOtherNode | MacroArgumentNode)[]
 }
 export namespace MacroNode {

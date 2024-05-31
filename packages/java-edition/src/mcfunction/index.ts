@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
-import type { McmetaCommands, ReleaseVersion } from '../dependency/index.js'
+import type { McmetaCommands } from '../dependency/index.js'
+import { ReleaseVersion } from '../dependency/index.js'
 import * as checker from './checker/index.js'
 import * as colorizer from './colorizer/index.js'
 import * as completer from './completer/index.js'
@@ -30,9 +31,16 @@ export const initialize = (
 
 	mcf.initialize(ctx)
 
+	const supportsBackslashContinuation =
+		ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
+	const supportsMacros = ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
+
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.entry(tree, parser.argument, true),
+		parser: mcf.entry(tree, parser.argument, {
+			supportsBackslashContinuation,
+			supportsMacros,
+		}),
 		completer: mcf.completer.entry(tree, completer.getMockNodes),
 		triggerCharacters: [
 			' ',

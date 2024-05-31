@@ -95,6 +95,14 @@ const Suites: Partial<
 			],
 		},
 		{
+			properties: { amount: 'single', type: 'entities' },
+			content: [
+				'@n',
+				'@n[type=cow]',
+				'@n[distance=..5]',
+			],
+		},
+		{
 			properties: { amount: 'single', type: 'players' },
 			content: [
 				'Player',
