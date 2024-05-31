@@ -60,6 +60,451 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
   "errors": []
 }
 
+exports['mcfunction argument minecraft:particle Parse "block stone" in version 1.20.5 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 5
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "path": [
+          "block"
+        ]
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "path": [
+        "block"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 34
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "path": [
+          "block"
+        ]
+      },
+      {
+        "type": "mcfunction:block",
+        "range": {
+          "start": 5,
+          "end": 34
+        },
+        "children": [
+          {
+            "type": "resource_location",
+            "range": {
+              "start": 5,
+              "end": 5
+            }
+          },
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 5,
+              "end": 34
+            },
+            "children": [
+              {
+                "type": "pair",
+                "range": {
+                  "start": 6,
+                  "end": 33
+                },
+                "children": [
+                  {
+                    "type": "string",
+                    "range": {
+                      "start": 6,
+                      "end": 17
+                    },
+                    "value": "block_state",
+                    "valueMap": [
+                      {
+                        "inner": {
+                          "start": 0,
+                          "end": 0
+                        },
+                        "outer": {
+                          "start": 6,
+                          "end": 6
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "string",
+                    "range": {
+                      "start": 18,
+                      "end": 33
+                    },
+                    "value": "diamond_block",
+                    "valueMap": [
+                      {
+                        "inner": {
+                          "start": 0,
+                          "end": 0
+                        },
+                        "outer": {
+                          "start": 19,
+                          "end": 19
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "key": {
+                  "type": "string",
+                  "range": {
+                    "start": 6,
+                    "end": 17
+                  },
+                  "value": "block_state",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 6,
+                        "end": 6
+                      }
+                    }
+                  ]
+                },
+                "sep": {
+                  "start": 17,
+                  "end": 18
+                },
+                "value": {
+                  "type": "string",
+                  "range": {
+                    "start": 18,
+                    "end": 33
+                  },
+                  "value": "diamond_block",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 19,
+                        "end": 19
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "id": {
+          "type": "resource_location",
+          "range": {
+            "start": 5,
+            "end": 5
+          }
+        },
+        "nbt": {
+          "type": "nbt:compound",
+          "range": {
+            "start": 5,
+            "end": 34
+          },
+          "children": [
+            {
+              "type": "pair",
+              "range": {
+                "start": 6,
+                "end": 33
+              },
+              "children": [
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 6,
+                    "end": 17
+                  },
+                  "value": "block_state",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 6,
+                        "end": 6
+                      }
+                    }
+                  ]
+                },
+                {
+                  "type": "string",
+                  "range": {
+                    "start": 18,
+                    "end": 33
+                  },
+                  "value": "diamond_block",
+                  "valueMap": [
+                    {
+                      "inner": {
+                        "start": 0,
+                        "end": 0
+                      },
+                      "outer": {
+                        "start": 19,
+                        "end": 19
+                      }
+                    }
+                  ]
+                }
+              ],
+              "key": {
+                "type": "string",
+                "range": {
+                  "start": 6,
+                  "end": 17
+                },
+                "value": "block_state",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 6,
+                      "end": 6
+                    }
+                  }
+                ]
+              },
+              "sep": {
+                "start": 17,
+                "end": 18
+              },
+              "value": {
+                "type": "string",
+                "range": {
+                  "start": 18,
+                  "end": 33
+                },
+                "value": "diamond_block",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "path": [
+        "block"
+      ]
+    }
+  },
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a space (“ ”)",
+      "severity": 3
+    },
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected a resource location",
+      "severity": 3
+    }
+  ]
+}
+
+exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamond_block"}" in version 1.20.5 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 34
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 5
+        },
+        "path": [
+          "block"
+        ]
+      },
+      {
+        "type": "nbt:compound",
+        "range": {
+          "start": 5,
+          "end": 34
+        },
+        "children": [
+          {
+            "type": "pair",
+            "range": {
+              "start": 6,
+              "end": 33
+            },
+            "children": [
+              {
+                "type": "string",
+                "range": {
+                  "start": 6,
+                  "end": 17
+                },
+                "value": "block_state",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 6,
+                      "end": 6
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "string",
+                "range": {
+                  "start": 18,
+                  "end": 33
+                },
+                "value": "diamond_block",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 19,
+                      "end": 19
+                    }
+                  }
+                ]
+              }
+            ],
+            "key": {
+              "type": "string",
+              "range": {
+                "start": 6,
+                "end": 17
+              },
+              "value": "block_state",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 6,
+                    "end": 6
+                  }
+                }
+              ]
+            },
+            "sep": {
+              "start": 17,
+              "end": 18
+            },
+            "value": {
+              "type": "string",
+              "range": {
+                "start": 18,
+                "end": 33
+              },
+              "value": "diamond_block",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 19,
+                    "end": 19
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 5
+      },
+      "path": [
+        "block"
+      ]
+    }
+  },
+  "errors": []
+}
+
 exports['mcfunction argument minecraft:particle Parse "cloud" 1'] = {
   "node": {
     "type": "mcfunction:particle",
@@ -166,6 +611,39 @@ exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" 1']
           "end": 20
         },
         "value": 0.8
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 4
+      },
+      "path": [
+        "dust"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "dust 0.2 0.4 0.6 0.8" in version 1.20.5 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 4
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 4
+        },
+        "path": [
+          "dust"
+        ]
       }
     ],
     "id": {
@@ -313,6 +791,113 @@ exports['mcfunction argument minecraft:particle Parse "dust_color_transition 0.1
       },
       "path": [
         "dust_color_transition"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "end_rod" in version 1.20.5 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 7
+        },
+        "path": [
+          "end_rod"
+        ]
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "path": [
+        "end_rod"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "end_rod{}" 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 7
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 7
+        },
+        "path": [
+          "end_rod"
+        ]
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "path": [
+        "end_rod"
+      ]
+    }
+  },
+  "errors": []
+}
+
+exports['mcfunction argument minecraft:particle Parse "end_rod{}" in version 1.20.5 1'] = {
+  "node": {
+    "type": "mcfunction:particle",
+    "range": {
+      "start": 0,
+      "end": 9
+    },
+    "children": [
+      {
+        "type": "resource_location",
+        "range": {
+          "start": 0,
+          "end": 7
+        },
+        "path": [
+          "end_rod"
+        ]
+      },
+      {
+        "type": "nbt:compound",
+        "range": {
+          "start": 7,
+          "end": 9
+        },
+        "children": []
+      }
+    ],
+    "id": {
+      "type": "resource_location",
+      "range": {
+        "start": 0,
+        "end": 7
+      },
+      "path": [
+        "end_rod"
       ]
     }
   },
