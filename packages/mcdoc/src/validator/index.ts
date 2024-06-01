@@ -41,7 +41,7 @@ export type ValidationError<T> =
 	| TypeMismatchError<T>
 	| MissingKeyError<T>
 export interface SimpleError<T> {
-	kind: 'unknown_key' | 'duplicate_key' | 'some_missing_keys' | 'expected_key_value_pair';
+	kind: 'unknown_key' | 'duplicate_key' | 'some_missing_keys' | 'sometimes_type_mismatch' | 'expected_key_value_pair';
 	node: RuntimeNode<T>;
 }
 export interface UnknownVariantWithKeyCombinationError<T> {
@@ -280,6 +280,7 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 		for (const runtimeValue of node.possibleRuntimeValues) {
 			let siblingErrors = runtimeValue.possibleDefinitions.map(d => ({ node: d, errors: d.errors }));
 			let parent: EvaluationGraphRuntimeNode<T> | undefined = runtimeValue;
+			let depth = 0;
 			while (parent) {
 				const { siblings, condensedErrors } = condenseErrorsAndFilterSiblings(siblingErrors, parent);
 				// TODO possible optimization: Remove entries from nodeQueue which are now no longer neccessary to evaluate.
@@ -291,20 +292,34 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 				//TypeScript is drunken (no reason for typedef here)
 				const oldParent: EvaluationGraphRuntimeNode<T>  = parent;
 				parent = oldParent.graphNode.parent?.runtimeNode;
-
-				// TODO This logic is flawed. Essentially, I am trying to condense errors of parents for the current layer.
-				// I want to do this only if the `oldParent` is the last child so I can condense all errors from all possible definitions right away.
-				// However, not all trees have the same depth, so we might be the last node of the current layer, without being the last branch of the parent
-				// Maybe I can just condense incomplete layers multiple times, this needs some more thought though
-				if (parent?.possibleDefinitions.findLast(_ => true)?.children.findLast(_ => true)?.possibleRuntimeValues.findLast(_ => true) !== oldParent) {
+				
+				const lastDefinition = parent?.possibleDefinitions[parent.possibleDefinitions.length - 1];
+				const lastChild = lastDefinition?.children.findLast(c => {
+					let values = c.possibleRuntimeValues;
+					for (let i = 0; i < depth; i++) {
+						values = values.flatMap(v => v.possibleDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
+					}
+					return values.length > 0;
+				});
+				const lastValue = lastChild?.possibleRuntimeValues.findLast(v => {
+					let values = [v];
+					for (let i = 0; i < depth; i++) {
+						values = values.flatMap(v => v.possibleDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
+					}
+					return values.length > 0;
+				})
+				
+				if (lastValue !== oldParent) {
 					// Wait for all siblings to be evaluated first
 					break;
 				}
 
-				siblingErrors = parent.possibleDefinitions.map(d => ({
+				siblingErrors = parent!.possibleDefinitions.map(d => ({
 					node: d,
-					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(v => v.condensedChildErrors ? v.condensedChildErrors[v.condensedChildErrors.length -1] : [] )
+					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(v => v.condensedChildErrors && v.condensedChildErrors.length > depth ? v.condensedChildErrors[depth] : [] )
 				}))
+				
+				depth++
 			}
 			
 			for(const def of runtimeValue.possibleDefinitions) {
@@ -323,30 +338,45 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 }
 
 function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[], parent: EvaluationGraphRuntimeNode<T>) : { siblings: EvaluationGraphDefinitionNode<T>[], condensedErrors: ValidationError<T>[] } {
-	const noTypeMismatch = siblings
-		.filter(d => !d.errors.some(e => e.kind === 'type_mismatch'));
-
-	if (noTypeMismatch.length === 0) {
-		return {
-			siblings: siblings.map(s => s.node),
-			condensedErrors: [{
-				kind: 'type_mismatch',
-				node: parent.node,
-				expected: { kind: 'union', members: parent.possibleDefinitions.map(d => d.typeDef) }
-			}]
-		}
-	}
-	let possibleDefinitions = noTypeMismatch;
+	let possibleDefinitions = siblings;
 	const errors = possibleDefinitions[0].errors.filter(e => e.kind === 'duplicate_key');
+
+	const alwaysMismatch: TypeMismatchError<T>[] = (possibleDefinitions[0].errors
+		.filter(e => e.kind === 'type_mismatch' && !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'type_mismatch' && e.node.originalNode === oe.node.originalNode))) as TypeMismatchError<T>[])
+		.map(e => {
+			const expected = possibleDefinitions
+				.map(d => (d.errors.find(oe => oe.kind === 'type_mismatch' && oe.node.originalNode === e.node.originalNode) as TypeMismatchError<T>).expected)
+				.flatMap(t => t.kind === 'union' ? t.members : [t])
+				.filter((d, i, arr) => arr.findIndex(od => od.kind === d.kind) === i);
+			return { ...e, expected: expected.length === 1 ? expected[0] : { kind: 'union', members: expected } };
+		});
+	errors.push(...alwaysMismatch);
+
+	const noCommonTypeMismatches = siblings.filter(d => !d.errors.some(e => e.kind === 'sometimes_type_mismatch' || (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))));
+	if (noCommonTypeMismatches.length !== 0) {
+		possibleDefinitions = noCommonTypeMismatches;
+	} else {
+		const typeMismatches: SimpleError<T>[] = possibleDefinitions
+			.flatMap(d => d.errors
+				.filter(e => e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
+			)
+			.map(e => e.node as RuntimeNode<T>)
+			.concat(possibleDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'sometimes_type_mismatch').map(e => e.node as RuntimeNode<T>))
+			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
+			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
+		;
+
+		errors.push(...typeMismatches)
+	}
 
 	const alwaysUnknown = possibleDefinitions[0].errors
 		.filter(e => e.kind === 'unknown_key' && !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'unknown_key' && e.node.originalNode === oe.node.originalNode))) as SimpleError<T>[];
 	errors.push(...alwaysUnknown);
 	
-	const noUnknownKeysWhichAreKnownElsewhere = possibleDefinitions
+	const noCommonUnknownKeys = possibleDefinitions
 		.filter(d => !d.errors.some(e => e.kind === 'invalid_key_combination' || (e.kind === 'unknown_key' && !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))))
-	if (noUnknownKeysWhichAreKnownElsewhere.length !== 0) {
-		possibleDefinitions = noUnknownKeysWhichAreKnownElsewhere;
+	if (noCommonUnknownKeys.length !== 0) {
+		possibleDefinitions = noCommonUnknownKeys;
 	} else {
 		const unknownKeys = possibleDefinitions
 			.flatMap(d => d.errors
@@ -366,7 +396,7 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 	} else {
 		errors.push(...possibleDefinitions
 			.flatMap(d => d.errors)
-			.filter((e, i, arr) => e.kind === 'expected_key_value_pair' && arr.findIndex(oe => oe.kind === 'expected_key_value_pair' && oe.node.originalNode === e.node.originalNode))
+			.filter((e, i, arr) => e.kind === 'expected_key_value_pair' && arr.findIndex(oe => oe.kind === 'expected_key_value_pair' && oe.node.originalNode === e.node.originalNode) === i)
 		)
 	}
 
@@ -375,14 +405,14 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 		possibleDefinitions = noUnknownTupleElements;
 	}
 
-	const missingEverywhere = possibleDefinitions[0].errors.filter(e => e.kind === 'missing_key'
+	const alwaysMissing = possibleDefinitions[0].errors.filter(e => e.kind === 'missing_key'
 		&& !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'missing_key' && oe.node.originalNode === e.node.originalNode))
 	) as MissingKeyError<T>[];
-	errors.push(...missingEverywhere);
-	const definitionsWithoutMissingEntries = possibleDefinitions
-		.filter(d => !d.errors.some(e => e.kind === 'some_missing_keys' || (e.kind === 'missing_key' && !missingEverywhere.some(oe => oe.node.originalNode === e.node.originalNode))))
-	if (definitionsWithoutMissingEntries.length !== 0) {
-		possibleDefinitions = definitionsWithoutMissingEntries;
+	errors.push(...alwaysMissing);
+	const noCommonMissing = possibleDefinitions
+		.filter(d => !d.errors.some(e => e.kind === 'some_missing_keys' || (e.kind === 'missing_key' && !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))))
+	if (noCommonMissing.length !== 0) {
+		possibleDefinitions = noCommonMissing;
 	} else {
 		// In this case we have multiple conflicting missing keys.
 		// This is a generic error message with no further info.
@@ -798,9 +828,7 @@ export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, pa
 			}
 			return {
 				kind: 'struct',
-				fields: fields.filter((f, i) =>
-					i <= fields.findLastIndex(of => isAssignable(of.key, f.key, options.context, options.isEquivalent))
-				)
+				fields: fields.filter((f, i) => fields.findIndex(of => isAssignable(of.key, f.key, options.context, options.isEquivalent)) === i)
 			};
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
