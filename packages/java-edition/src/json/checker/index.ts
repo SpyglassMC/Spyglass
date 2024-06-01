@@ -2,7 +2,6 @@ import type * as core from '@spyglassmc/core'
 import type { JsonNode } from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../../binder/index.js'
-import { getDefaultErrorReporter } from '@spyglassmc/mcdoc/lib/validator/index.js'
 
 const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
 	['advancement', '::java::data::advancement::Advancement'],
@@ -114,7 +113,7 @@ export function definition(
 				}
 				return []
 			},
-			reportError: getDefaultErrorReporter(ctx, (node, err) => {
+			reportError: mcdoc.runtime.checker.getDefaultErrorReporter(ctx, (node, err) => {
 				if ((node.originalNode.type === 'json:object' && err === 'missing_key')
 					|| node.originalNode.type === 'json:array' && err === 'invalid_collection_length') {
 					return { start: node.originalNode.range.start, end: node.originalNode.range.start }
