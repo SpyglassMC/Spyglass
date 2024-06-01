@@ -1,4 +1,4 @@
-import type { CheckerContext, FullResourceLocation , Range } from "@spyglassmc/core";
+import { ErrorSeverity, type CheckerContext, type FullResourceLocation , type Range } from "@spyglassmc/core";
 import type { Attribute, StructTypePairField , LiteralType, Index, ParallelIndices, KeywordType, UnionType, ListType, EnumType, NumericType, PrimitiveArrayType, StringType, StructType, TupleType } from "../../type/index.js";
 import { NumericRange, McdocType } from "../../type/index.js"
 import { TypeDefSymbolData } from "../../binder/index.js"
@@ -819,7 +819,11 @@ export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node:
 		const range = getRange(error.node, error.kind);
 		switch (error.kind) {
 			case 'unknown_key':
-				ctx.err.report(localize(defaultTranslationKey, error.node.inferredType.kind ==='literal' ? error.node.inferredType.value.value : `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`), range);
+				ctx.err.report(
+					localize(defaultTranslationKey, error.node.inferredType.kind ==='literal' ? error.node.inferredType.value.value : `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`),
+					range,
+					ErrorSeverity.Warning,
+				);
 				break;
 			case 'missing_key':
 				ctx.err.report(localize(defaultTranslationKey, error.key.kind ==='literal' ? error.key.value.value : `<${localize(`mcdoc.type.${error.key.kind}`)}>`), range);
