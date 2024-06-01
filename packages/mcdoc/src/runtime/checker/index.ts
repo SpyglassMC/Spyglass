@@ -285,9 +285,9 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 		});
 	errors.push(...alwaysMismatch);
 
-	const noCommonTypeMismatches = siblings.filter(d => !d.errors.some(e => e.kind === 'sometimes_type_mismatch' || (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))));
-	if (noCommonTypeMismatches.length !== 0) {
-		validDefinitions = noCommonTypeMismatches;
+	const onlyCommonTypeMismatches = siblings.filter(d => !d.errors.some(e => e.kind === 'sometimes_type_mismatch' || (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))));
+	if (onlyCommonTypeMismatches.length !== 0) {
+		validDefinitions = onlyCommonTypeMismatches;
 	} else {
 		// TODO Generic error, maybe we can keep original expected types?
 		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
@@ -309,10 +309,10 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 		.filter(e => e.kind === 'unknown_key' && !validDefinitions.some(d => !d.errors.some(oe => oe.kind === 'unknown_key' && e.node.originalNode === oe.node.originalNode))) as SimpleError<T>[];
 	errors.push(...alwaysUnknown);
 	
-	const noCommonUnknownKeys = validDefinitions
+	const onlyCommonUnknownKeys = validDefinitions
 		.filter(d => !d.errors.some(e => e.kind === 'invalid_key_combination' || (e.kind === 'unknown_key' && !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))))
-	if (noCommonUnknownKeys.length !== 0) {
-		validDefinitions = noCommonUnknownKeys;
+	if (onlyCommonUnknownKeys.length !== 0) {
+		validDefinitions = onlyCommonUnknownKeys;
 	} else {
 		const unknownKeys = validDefinitions
 			.flatMap(d => d.errors
@@ -345,10 +345,10 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 		&& !validDefinitions.some(d => !d.errors.some(oe => oe.kind === 'missing_key' && oe.node.originalNode === e.node.originalNode))
 	) as MissingKeyError<T>[];
 	errors.push(...alwaysMissing);
-	const noCommonMissing = validDefinitions
+	const onlyCommonMissing = validDefinitions
 		.filter(d => !d.errors.some(e => e.kind === 'some_missing_keys' || (e.kind === 'missing_key' && !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))))
-	if (noCommonMissing.length !== 0) {
-		validDefinitions = noCommonMissing;
+	if (onlyCommonMissing.length !== 0) {
+		validDefinitions = onlyCommonMissing;
 	} else {
 		// In this case we have multiple conflicting missing keys.
 		// This is a generic error message with no further info.
@@ -753,10 +753,10 @@ export function simplify<T>(typeDef: McdocType, options: McdocCheckerOptions<T>,
 						});
 					}
 				} else {
-					const simplified = simplify(field.type, options, parents);
+					const simplifiedSpreadType = simplify(field.type, options, parents);
 
-					if (simplified.kind === 'struct') {
-						fields.push(...simplified.fields);
+					if (simplifiedSpreadType.kind === 'struct') {
+						fields.push(...simplifiedSpreadType.fields);
 					}
 				}
 			}
