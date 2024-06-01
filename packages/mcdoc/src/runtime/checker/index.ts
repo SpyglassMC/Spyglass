@@ -9,7 +9,7 @@ export type NodeEquivalenceChecker = (inferredNode: Exclude<SimplifiedMcdocTypeN
 
 export type TypeInfoAttacher<T> = (node: T, definition: SimplifiedMcdocType) => void
 
-export type ChildrenGetter<T> = (node: T) => RuntimeUnion<T>[]
+export type ChildrenGetter<T> = (node: T, simplified: SimplifiedMcdocTypeNoUnion) => RuntimeUnion<T>[]
 
 export type ErrorReporter<T> = (error: ValidationError<T>) => void
 
@@ -134,21 +134,21 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 	const options: ValidatorOptions<McdocType> = {
 		context: ctx,
 		isEquivalent: isEquivalent ? isEquivalent : () => false,
-		getChildren: d => {
-			const simplified = simplify(d, options, []);
-			switch (simplified.kind) {
+		getChildren: (_, d) => {
+			// TODO simplifiy needs parents to work properly for dispatchers
+			switch (d.kind) {
 				case 'list':
-					const vals = getPossibleTypes(simplified.item);
-					return [ vals.map(v => ({ originalNode: v, inferredType: simplify(v, options, []) })) ]
+					const vals = getPossibleTypes(d.item);
+					return [ vals.map(v => ({ originalNode: v, inferredType: v })) ]
 				case 'byte_array': return [[ { originalNode: { kind: 'byte' }, inferredType: { kind: 'byte' } } ]]
 				case 'int_array': return [[ { originalNode: { kind: 'int' }, inferredType: { kind: 'int' } } ]]
 				case 'long_array': return [[ { originalNode: { kind: 'long' }, inferredType: { kind: 'long' } } ]]
-				case 'struct': return simplified.fields.map(f => {
+				case 'struct': return d.fields.map(f => {
 					const vals = getPossibleTypes(f.type);
-					return { key: { originalNode: f.key, inferredType: f.key }, possibleValues: vals.map(v => ({ originalNode: v, inferredType: simplify(v, options, []) })) }})
-				case 'tuple': return simplified.items.map(f => {
+					return { key: { originalNode: f.key, inferredType: f.key }, possibleValues: vals.map(v => ({ originalNode: v, inferredType: v })) }})
+				case 'tuple': return d.items.map(f => {
 					const vals = getPossibleTypes(f);
-					return vals.map(v => ({ originalNode: v, inferredType: simplify(v, options, []) }));
+					return vals.map(v => ({ originalNode: v, inferredType: v }));
 				})
 				default: return []
 			}
@@ -165,7 +165,7 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 	};
 	node.possibleRuntimeValues = getPossibleTypes(typeDef).map(v => ({
 		graphNode: node,
-		node: { originalNode: v, inferredType: simplify(v, options, []) },
+		node: { originalNode: v, inferredType: v },
 		possibleDefinitions: [],
 	}))
 
@@ -391,7 +391,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 		// the same types again and just collect the errors of the lower depth.
 		// This will currently lead to a stack overflow error when e.g. comparing two
 		// text component definitions
-		const simplifiedRuntime = simplify(inferredType, options, []);
+		const simplifiedRuntime = simplify(inferredType, options, parents);
 		const inferredValue = getValueType(simplifiedRuntime);
 		const matches = []
 		for (const simplified of simplifiedOptions) {
@@ -418,7 +418,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 			}));
 			continue;
 		}
-		const children = options.getChildren(originalNode);
+		const children = options.getChildren(originalNode, simplifiedRuntime);
 
 		for (const simplified of matches) {
 			const errors: ValidationError<T>[] = [];
@@ -674,7 +674,7 @@ export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, pa
 							for (const node of possibilities) {
 								for (const value of Array.isArray(node.node) ? node.node : node.node?.possibleValues ?? [undefined]) {
 									const child = value
-										? options.getChildren(value.originalNode).find(child => {
+										? options.getChildren(value.originalNode, simplify(value.inferredType, options, node.parents)).find(child => {
 											if (!Array.isArray(child)) {
 												return isAssignable(child.key.inferredType, { kind: 'literal', value: { kind: 'string', value: entry } }, options.context, options.isEquivalent) ;
 											}
