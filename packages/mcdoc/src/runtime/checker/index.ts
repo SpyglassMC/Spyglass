@@ -116,71 +116,6 @@ const attributeHandlers: {
 	}
 };
 
-export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node: RuntimeNode<T>, error: ValidationError<T>['kind']) => Range): ErrorReporter<T> {
-	return (error: ValidationError<T>) => {
-		const defaultTranslationKey = error.kind.replace('_', '-');
-		if (error.kind === 'unknown_tuple_element') {
-			const nodes = Array.isArray(error.node) ? error.node : [... error.node.possibleValues, error.node.key];
-			for (const node of nodes) {
-				ctx.err.report(localize('expected', localize('nothing')), getRange(node, 'unknown_tuple_element'));
-			}
-			return;
-		} else if (error.kind === 'invalid_key_combination') {
-			const message = localize(defaultTranslationKey, arrayToMessage(error.node.map(n => McdocType.toString(n.inferredType))));
-			for (const node of error.node) {
-				ctx.err.report(message, getRange(node, 'unknown_tuple_element'));
-			}
-			return;
-		}
-		const range = getRange(error.node, error.kind);
-		switch (error.kind) {
-			case 'unknown_key':
-				ctx.err.report(localize(defaultTranslationKey, error.node.inferredType.kind ==='literal' ? error.node.inferredType.value.value : `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`), range);
-				break;
-			case 'missing_key':
-				ctx.err.report(localize(defaultTranslationKey, error.key.kind ==='literal' ? error.key.value.value : `<${localize(`mcdoc.type.${error.key.kind}`)}>`), range);
-				break;
-			case 'invalid_collection_length':
-			case 'number_out_of_range':
-				const baseKey = error.kind === 'invalid_collection_length' ? 'mcdoc.runtime.range.collection' : 'mcdoc.runtime.range.number';
-				const rangeMessages = error.ranges.map(r => {
-					const left = r.min !== undefined ?
-						localize(RangeKind.isLeftExclusive(r.kind) ? 'mcdoc.runtime.range.left-exclusive' : 'mcdoc.runtime.range.left-inclusive', r.min)
-						: undefined;
-					const right = r.max !== undefined ?
-						localize(RangeKind.isLeftExclusive(r.kind) ? 'mcdoc.runtime.range.right-exclusive' : 'mcdoc.runtime.range.right-inclusive', r.max)
-						: undefined;
-
-					if (left !== undefined && right !== undefined) {
-						return localize('mcdoc.runtime.range.concat', left, right)
-					}
-					return left ?? right;
-				}).filter(r => r !== undefined) as string[]
-				ctx.err.report(localize(baseKey, arrayToMessage(rangeMessages, false)), range);
-				break;
-			case 'type_mismatch':
-				const types = (error.expected.kind === 'union' ? error.expected.members : [error.expected]);
-				ctx.err.report(
-					localize('expected', arrayToMessage(
-						types.map(e => e.kind === 'enum'
-							? arrayToMessage(e.values.map(v => v.value.toString()))
-							: e.kind === 'literal'
-								? localeQuote(e.value.value.toString())
-								: localize(`mcdoc.type.${e.kind}`)
-						),
-						false,
-					)),
-					range,
-				);
-				break;
-			case 'expected_key_value_pair':
-				ctx.err.report(localize(`mcdoc.validator.${defaultTranslationKey}`), range);
-				break;
-			default: ctx.err.report(localize(defaultTranslationKey), range);
-		}
-	}
-}
-
 export function reference<T>(node: RuntimeNode<T>[], path: string, options: ValidatorOptions<T>) {
 	typeDefinition(node, { kind: 'reference', path: path }, options);
 }
@@ -862,5 +797,70 @@ function getValueType(type: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePai
 			return { kind: type.enumKind };
 		default:
 			return type;
+	}
+}
+
+export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node: RuntimeNode<T>, error: ValidationError<T>['kind']) => Range): ErrorReporter<T> {
+	return (error: ValidationError<T>) => {
+		const defaultTranslationKey = error.kind.replace('_', '-');
+		if (error.kind === 'unknown_tuple_element') {
+			const nodes = Array.isArray(error.node) ? error.node : [... error.node.possibleValues, error.node.key];
+			for (const node of nodes) {
+				ctx.err.report(localize('expected', localize('nothing')), getRange(node, 'unknown_tuple_element'));
+			}
+			return;
+		} else if (error.kind === 'invalid_key_combination') {
+			const message = localize(defaultTranslationKey, arrayToMessage(error.node.map(n => McdocType.toString(n.inferredType))));
+			for (const node of error.node) {
+				ctx.err.report(message, getRange(node, 'unknown_tuple_element'));
+			}
+			return;
+		}
+		const range = getRange(error.node, error.kind);
+		switch (error.kind) {
+			case 'unknown_key':
+				ctx.err.report(localize(defaultTranslationKey, error.node.inferredType.kind ==='literal' ? error.node.inferredType.value.value : `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`), range);
+				break;
+			case 'missing_key':
+				ctx.err.report(localize(defaultTranslationKey, error.key.kind ==='literal' ? error.key.value.value : `<${localize(`mcdoc.type.${error.key.kind}`)}>`), range);
+				break;
+			case 'invalid_collection_length':
+			case 'number_out_of_range':
+				const baseKey = error.kind === 'invalid_collection_length' ? 'mcdoc.runtime.checker.range.collection' : 'mcdoc.runtime.checker.range.number';
+				const rangeMessages = error.ranges.map(r => {
+					const left = r.min !== undefined ?
+						localize(RangeKind.isLeftExclusive(r.kind) ? 'mcdoc.runtime.checker.range.left-exclusive' : 'mcdoc.runtime.checker.range.left-inclusive', r.min)
+						: undefined;
+					const right = r.max !== undefined ?
+						localize(RangeKind.isLeftExclusive(r.kind) ? 'mcdoc.runtime.checker.range.right-exclusive' : 'mcdoc.runtime.checker.range.right-inclusive', r.max)
+						: undefined;
+
+					if (left !== undefined && right !== undefined) {
+						return localize('mcdoc.runtime.checker.range.concat', left, right)
+					}
+					return left ?? right;
+				}).filter(r => r !== undefined) as string[]
+				ctx.err.report(localize(baseKey, arrayToMessage(rangeMessages, false)), range);
+				break;
+			case 'type_mismatch':
+				const types = (error.expected.kind === 'union' ? error.expected.members : [error.expected]);
+				ctx.err.report(
+					localize('expected', arrayToMessage(
+						types.map(e => e.kind === 'enum'
+							? arrayToMessage(e.values.map(v => v.value.toString()))
+							: e.kind === 'literal'
+								? localeQuote(e.value.value.toString())
+								: localize(`mcdoc.type.${e.kind}`)
+						),
+						false,
+					)),
+					range,
+				);
+				break;
+			case 'expected_key_value_pair':
+				ctx.err.report(localize(`mcdoc.validator.${defaultTranslationKey}`), range);
+				break;
+			default: ctx.err.report(localize(defaultTranslationKey), range);
+		}
 	}
 }
