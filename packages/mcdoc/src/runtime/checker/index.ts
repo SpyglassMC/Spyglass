@@ -147,7 +147,7 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 					return {
 						attributes: f.attributes,
 						key: { originalNode: f.key, inferredType: f.key },
-						possibleValues: vals.map(v => ({ originalNode: v, inferredType: v }))
+						possibleValues: vals.map(v => ({ originalNode: v, inferredType: v })),
 					}});
 				case 'tuple': return d.items.map(f => {
 					const vals = getPossibleTypes(f);
@@ -271,13 +271,13 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 		return { siblings: [], condensedErrors: [] };
 	}
 	
-	let possibleDefinitions = siblings;
-	const errors = possibleDefinitions[0].errors.filter(e => e.kind === 'duplicate_key');
+	let validDefinitions = siblings;
+	const errors = validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key');
 
-	const alwaysMismatch: TypeMismatchError<T>[] = (possibleDefinitions[0].errors
-		.filter(e => e.kind === 'type_mismatch' && !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'type_mismatch' && e.node.originalNode === oe.node.originalNode))) as TypeMismatchError<T>[])
+	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
+		.filter(e => e.kind === 'type_mismatch' && !validDefinitions.some(d => !d.errors.some(oe => oe.kind === 'type_mismatch' && e.node.originalNode === oe.node.originalNode))) as TypeMismatchError<T>[])
 		.map(e => {
-			const expected = possibleDefinitions
+			const expected = validDefinitions
 				.map(d => (d.errors.find(oe => oe.kind === 'type_mismatch' && oe.node.originalNode === e.node.originalNode) as TypeMismatchError<T>).expected)
 				.flatMap(t => t.kind === 'union' ? t.members : [t])
 				.filter((d, i, arr) => arr.findIndex(od => od.kind === d.kind) === i);
@@ -287,17 +287,17 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 
 	const noCommonTypeMismatches = siblings.filter(d => !d.errors.some(e => e.kind === 'sometimes_type_mismatch' || (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))));
 	if (noCommonTypeMismatches.length !== 0) {
-		possibleDefinitions = noCommonTypeMismatches;
+		validDefinitions = noCommonTypeMismatches;
 	} else {
 		// TODO Generic error, maybe we can keep original expected types?
 		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
 
-		const typeMismatches: SimpleError<T>[] = possibleDefinitions
+		const typeMismatches: SimpleError<T>[] = validDefinitions
 			.flatMap(d => d.errors
 				.filter(e => e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 			.map(e => e.node as RuntimeNode<T>)
-			.concat(possibleDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'sometimes_type_mismatch').map(e => e.node as RuntimeNode<T>))
+			.concat(validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'sometimes_type_mismatch').map(e => e.node as RuntimeNode<T>))
 			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
 		;
@@ -305,62 +305,62 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinit
 		errors.push(...typeMismatches)
 	}
 
-	const alwaysUnknown = possibleDefinitions[0].errors
-		.filter(e => e.kind === 'unknown_key' && !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'unknown_key' && e.node.originalNode === oe.node.originalNode))) as SimpleError<T>[];
+	const alwaysUnknown = validDefinitions[0].errors
+		.filter(e => e.kind === 'unknown_key' && !validDefinitions.some(d => !d.errors.some(oe => oe.kind === 'unknown_key' && e.node.originalNode === oe.node.originalNode))) as SimpleError<T>[];
 	errors.push(...alwaysUnknown);
 	
-	const noCommonUnknownKeys = possibleDefinitions
+	const noCommonUnknownKeys = validDefinitions
 		.filter(d => !d.errors.some(e => e.kind === 'invalid_key_combination' || (e.kind === 'unknown_key' && !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))))
 	if (noCommonUnknownKeys.length !== 0) {
-		possibleDefinitions = noCommonUnknownKeys;
+		validDefinitions = noCommonUnknownKeys;
 	} else {
-		const unknownKeys = possibleDefinitions
+		const unknownKeys = validDefinitions
 			.flatMap(d => d.errors
 				.filter(e => e.kind === 'unknown_key' && !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 			.map(e => e.node as RuntimeNode<T>)
-			.concat(possibleDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'invalid_key_combination').map(e => e.node as RuntimeNode<T>))
+			.concat(validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'invalid_key_combination').map(e => e.node as RuntimeNode<T>))
 			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 		;
 
 		errors.push({ kind: 'invalid_key_combination', node: unknownKeys });
 	}
 
-	const noExpectedKvp = possibleDefinitions.filter(d => !d.errors.some(e => e.kind === 'expected_key_value_pair'));
+	const noExpectedKvp = validDefinitions.filter(d => !d.errors.some(e => e.kind === 'expected_key_value_pair'));
 	if (noExpectedKvp.length !== 0) {
-		possibleDefinitions = noExpectedKvp;
+		validDefinitions = noExpectedKvp;
 	} else {
-		errors.push(...possibleDefinitions
+		errors.push(...validDefinitions
 			.flatMap(d => d.errors)
 			.filter((e, i, arr) => e.kind === 'expected_key_value_pair' && arr.findIndex(oe => oe.kind === 'expected_key_value_pair' && oe.node.originalNode === e.node.originalNode) === i)
 		)
 	}
 
-	const noUnknownTupleElements = possibleDefinitions.filter(d => d.errors.some(e => e.kind !== 'unknown_tuple_element'));
+	const noUnknownTupleElements = validDefinitions.filter(d => d.errors.some(e => e.kind !== 'unknown_tuple_element'));
 	if (noUnknownTupleElements.length !== 0) {
-		possibleDefinitions = noUnknownTupleElements;
+		validDefinitions = noUnknownTupleElements;
 	}
 
-	const alwaysMissing = possibleDefinitions[0].errors.filter(e => e.kind === 'missing_key'
-		&& !possibleDefinitions.some(d => !d.errors.some(oe => oe.kind === 'missing_key' && oe.node.originalNode === e.node.originalNode))
+	const alwaysMissing = validDefinitions[0].errors.filter(e => e.kind === 'missing_key'
+		&& !validDefinitions.some(d => !d.errors.some(oe => oe.kind === 'missing_key' && oe.node.originalNode === e.node.originalNode))
 	) as MissingKeyError<T>[];
 	errors.push(...alwaysMissing);
-	const noCommonMissing = possibleDefinitions
+	const noCommonMissing = validDefinitions
 		.filter(d => !d.errors.some(e => e.kind === 'some_missing_keys' || (e.kind === 'missing_key' && !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))))
 	if (noCommonMissing.length !== 0) {
-		possibleDefinitions = noCommonMissing;
+		validDefinitions = noCommonMissing;
 	} else {
 		// In this case we have multiple conflicting missing keys.
 		// This is a generic error message with no further info.
 		// A more informative error message would be quite complicated
 		// and look sth like this:
 		// Missing either keys ("A", "B" and "C"), ("A", and "D"), or "F"  
-		errors.push(...possibleDefinitions.map(d => ({ kind: 'some_missing_keys' as 'some_missing_keys', node: d.node.runtimeNode.node })));
+		errors.push(...validDefinitions.map(d => ({ kind: 'some_missing_keys' as 'some_missing_keys', node: d.node.runtimeNode.node })));
 	}
 
 	// TODO handle list length range and value range errors (merge ranges, could be multiple possible distinct ranges)
 
-	return { siblings: possibleDefinitions.map(d => d.node), condensedErrors: errors };
+	return { siblings: validDefinitions.map(d => d.node), condensedErrors: errors };
 }
 
 function check<T>(node: CheckerTreeEntryNode<T>, options: McdocCheckerOptions<T>) {
