@@ -217,10 +217,6 @@ export interface McdocBaseType {
 	attributes?: Attribute[]
 }
 
-export interface McdocBaseType {
-	attributes?: Attribute[]
-}
-
 export type McdocType =
 	| DispatcherType
 	| EnumType
