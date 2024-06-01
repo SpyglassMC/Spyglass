@@ -6,7 +6,7 @@ import * as uri_professors from './uri_processors.js'
 
 export * as binder from './binder/index.js'
 export * as colorizer from './colorizer/index.js'
-export * as validator from './validator/index.js'
+export * as runtime from './runtime/index.js'
 export * from './node/index.js'
 export * from './parser/index.js'
 export * from './type/index.js'

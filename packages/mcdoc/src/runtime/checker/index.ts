@@ -1,9 +1,9 @@
 import type { CheckerContext, FullResourceLocation , Range } from "@spyglassmc/core";
-import type { Attribute, StructTypePairField , LiteralType, Index, ParallelIndices, KeywordType, UnionType, ListType, EnumType, NumericType, PrimitiveArrayType, StringType, StructType, TupleType } from "../type/index.js";
-import { NumericRange, McdocType } from "../type/index.js"
-import { TypeDefSymbolData } from "../binder/index.js"
+import type { Attribute, StructTypePairField , LiteralType, Index, ParallelIndices, KeywordType, UnionType, ListType, EnumType, NumericType, PrimitiveArrayType, StringType, StructType, TupleType } from "../../type/index.js";
+import { NumericRange, McdocType } from "../../type/index.js"
+import { TypeDefSymbolData } from "../../binder/index.js"
 import { arrayToMessage, localeQuote, localize } from "@spyglassmc/locales";
-import { RangeKind, type EnumKind } from "../node/index.js";
+import { RangeKind, type EnumKind } from "../../node/index.js";
 
 export type NodeEquivalenceChecker = (inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>, definition: SimplifiedMcdocTypeNoUnion) => boolean
 
@@ -276,7 +276,7 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 
 	while (nodeQueue.length !== 0) {
 		const node = nodeQueue.splice(0, 1)[0];
-		validate(node, options);
+		check(node, options);
 		for (const runtimeValue of node.possibleRuntimeValues) {
 			let siblingErrors = runtimeValue.possibleDefinitions.map(d => ({ node: d, errors: d.errors }));
 			let parent: EvaluationGraphRuntimeNode<T> | undefined = runtimeValue;
@@ -427,7 +427,7 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 	return { siblings: possibleDefinitions.map(d => d.node), condensedErrors: errors };
 }
 
-function validate<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
+function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 	if (node.typeDef === undefined) {
 		return;
 	}

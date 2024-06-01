@@ -536,30 +536,30 @@ export function fieldValue(
 				break
 			case 'list':
 				node = node as NbtListNode
-				type = mcdoc.simplifyListType(type)
-				if (
-					type.lengthRange &&
-					!isInRange(node.children.length, type.lengthRange)
-				) {
-					ctx.err.report(
-						localize(
-							'expected',
-							localize(
-								'nbt.checker.collection.length-between',
-								localizeTag(node.type),
-								type.lengthRange.min ?? '-∞',
-								type.lengthRange.max ?? '+∞',
-							),
-						),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-				for (const { value: childNode } of node.children) {
-					if (childNode) {
-						fieldValue(type.item, options)(childNode, ctx)
-					}
-				}
+				// type = mcdoc.simplifyListType(type)
+				// if (
+				// 	type.lengthRange &&
+				// 	!isInRange(node.children.length, type.lengthRange)
+				// ) {
+				// 	ctx.err.report(
+				// 		localize(
+				// 			'expected',
+				// 			localize(
+				// 				'nbt.checker.collection.length-between',
+				// 				localizeTag(node.type),
+				// 				type.lengthRange.min ?? '-∞',
+				// 				type.lengthRange.max ?? '+∞',
+				// 			),
+				// 		),
+				// 		node,
+				// 		core.ErrorSeverity.Warning,
+				// 	)
+				// }
+				// for (const { value: childNode } of node.children) {
+				// 	if (childNode) {
+				// 		fieldValue(type.item, options)(childNode, ctx)
+				// 	}
+				// }
 				break
 			case 'string':
 				node = node as core.StringNode
@@ -606,22 +606,22 @@ export function fieldValue(
 				// }
 				break
 			case 'union':
-				type = mcdoc.flattenUnionType(type)
-				if (type.members.length === 0) {
-					ctx.err.report(
-						localize('nbt.checker.compound.field.union-empty-members'),
-						core.PairNode.is(node.parent)
-							? node.parent.key ?? node.parent
-							: node,
-						core.ErrorSeverity.Warning,
-					)
-				} else {
-					;(
-						core.checker.any(
-							type.members.map((t) => fieldValue(t, options)),
-						) as core.SyncChecker<NbtNode>
-					)(node, ctx)
-				}
+				// type = mcdoc.flattenUnionType(type)
+				// if (type.members.length === 0) {
+				// 	ctx.err.report(
+				// 		localize('nbt.checker.compound.field.union-empty-members'),
+				// 		core.PairNode.is(node.parent)
+				// 			? node.parent.key ?? node.parent
+				// 			: node,
+				// 		core.ErrorSeverity.Warning,
+				// 	)
+				// } else {
+				// 	;(
+				// 		core.checker.any(
+				// 			type.members.map((t) => fieldValue(t, options)),
+				// 		) as core.SyncChecker<NbtNode>
+				// 	)(node, ctx)
+				// }
 				break
 		}
 	}
