@@ -252,8 +252,8 @@ interface EvaluationGraphRuntimeNode<T> {
 	graphNode: EvaluationGraphNode<T>;
 	possibleDefinitions: EvaluationGraphDefinitionNode<T>[];
 	/// Each outer entry represents a layer of siblings
-	/// Each inner entry represents a specific condenced error within that layer.
-	condencedChildErrors?: ValidationError<T>[][];
+	/// Each inner entry represents a specific condensed error within that layer.
+	condensedChildErrors?: ValidationError<T>[][];
 }
 type EvaluationGraphNode<T> = EvaluationGraphStructPairNode<T> | EvaluationGraphAnonymousNode<T>
 interface EvaluationGraphStructPairNode<T> {
@@ -282,21 +282,21 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 			let siblingErrors = runtimeValue.possibleDefinitions.map(d => ({ node: d, errors: d.errors }));
 			let parent: EvaluationGraphRuntimeNode<T> | undefined = runtimeValue;
 			while (parent) {
-				const { siblings, condencedErrors } = condenceErrorsAndFilterSiblings(siblingErrors, parent);
+				const { siblings, condensedErrors } = condenseErrorsAndFilterSiblings(siblingErrors, parent);
 				// TODO possible optimization: Remove entries from nodeQueue which are now no longer neccessary to evaluate.
 				// This is quite tricky and would mess up the check at the bottom here, and maybe not worth it if this is no bottleneck
 				parent.possibleDefinitions = siblings;
-				parent.condencedChildErrors ??= [];
-				parent.condencedChildErrors.push(condencedErrors);
+				parent.condensedChildErrors ??= [];
+				parent.condensedChildErrors.push(condensedErrors);
 
 				//TypeScript is drunken (no reason for typedef here)
 				const oldParent: EvaluationGraphRuntimeNode<T>  = parent;
 				parent = oldParent.graphNode.parent?.runtimeNode;
 
-				// TODO This logic is flawed. Essentially, I am trying to condence errors of parents for the current layer.
-				// I want to do this only if the `oldParent` is the last child so I can condence all errors from all possible definitions right away.
+				// TODO This logic is flawed. Essentially, I am trying to condense errors of parents for the current layer.
+				// I want to do this only if the `oldParent` is the last child so I can condense all errors from all possible definitions right away.
 				// However, not all trees have the same depth, so we might be the last node of the current layer, without being the last branch of the parent
-				// Maybe I can just condence incomplete layers multiple times, this needs some more thought though
+				// Maybe I can just condense incomplete layers multiple times, this needs some more thought though
 				if (parent?.possibleDefinitions.findLast(_ => true)?.children.findLast(_ => true)?.possibleRuntimeValues.findLast(_ => true) !== oldParent) {
 					// Wait for all siblings to be evaluated first
 					break;
@@ -304,7 +304,7 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 
 				siblingErrors = parent.possibleDefinitions.map(d => ({
 					node: d,
-					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(v => v.condencedChildErrors ? v.condencedChildErrors[v.condencedChildErrors.length -1] : [] )
+					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(v => v.condensedChildErrors ? v.condensedChildErrors[v.condensedChildErrors.length -1] : [] )
 				}))
 			}
 			
@@ -316,21 +316,21 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 
 	// TODO iterate final graph and call `options.attachTypeInfo`
 
-	for (const error of evaluationGraph.possibleRuntimeValues.flatMap(v => v.condencedChildErrors?.flat())) {
+	for (const error of evaluationGraph.possibleRuntimeValues.flatMap(v => v.condensedChildErrors?.flat())) {
 		if (error) {
 			options.reportError(error);
 		}
 	}
 }
 
-function condenceErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[], parent: EvaluationGraphRuntimeNode<T>) : { siblings: EvaluationGraphDefinitionNode<T>[], condencedErrors: ValidationError<T>[] } {
+function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[], parent: EvaluationGraphRuntimeNode<T>) : { siblings: EvaluationGraphDefinitionNode<T>[], condensedErrors: ValidationError<T>[] } {
 	const noTypeMismatch = siblings
 		.filter(d => !d.errors.some(e => e.kind === 'type_mismatch'));
 
 	if (noTypeMismatch.length === 0) {
 		return {
 			siblings: siblings.map(s => s.node),
-			condencedErrors: [{
+			condensedErrors: [{
 				kind: 'type_mismatch',
 				node: parent.node,
 				expected: { kind: 'union', members: parent.possibleDefinitions.map(d => d.typeDef) }
@@ -385,7 +385,7 @@ function condenceErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 	if (definitionsWithoutMissingEntries.length !== 0) {
 		possibleDefinitions = definitionsWithoutMissingEntries;
 	} else {
-		// In this case we have multiple confliciting missing keys.
+		// In this case we have multiple conflicting missing keys.
 		// This is a generic error message with no further info.
 		// A more informative error message would be quite complicated
 		// and look sth like this:
@@ -395,7 +395,7 @@ function condenceErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 
 	// TODO handle list length range and value range errors (merge ranges, could be multiple possible distinct ranges)
 
-	return { siblings: possibleDefinitions.map(d => d.node), condencedErrors: errors };
+	return { siblings: possibleDefinitions.map(d => d.node), condensedErrors: errors };
 }
 
 function validate<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
