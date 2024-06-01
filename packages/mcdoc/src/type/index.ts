@@ -1,8 +1,8 @@
 import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import { EnumKind, RangeKind } from '../node/index.js'
-import { getRangeDelimiter } from '../node/index.js'
+import type { EnumKind } from '../node/index.js';
+import { RangeKind, getRangeDelimiter } from '../node/index.js'
 
 export interface Attribute {
 	name: string
