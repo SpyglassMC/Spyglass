@@ -1,5 +1,4 @@
-import type { CheckerContext, FullResourceLocation } from "@spyglassmc/core";
-import { Range } from "@spyglassmc/core"
+import type { CheckerContext, FullResourceLocation , Range } from "@spyglassmc/core";
 import type { Attribute, StructTypePairField , LiteralType, Index, ParallelIndices, KeywordType, UnionType, ListType, EnumType, NumericType, PrimitiveArrayType, StringType, StructType, TupleType } from "../type/index.js";
 import { NumericRange, McdocType } from "../type/index.js"
 import { TypeDefSymbolData } from "../binder/index.js"
@@ -273,7 +272,7 @@ interface EvaluationGraphAnonymousNode<T> {
 export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: McdocType, options: ValidatorOptions<T>) {
 	const evaluationGraph: EvaluationGraphNode<T> = { kind: 'entry', possibleRuntimeValues: [], parent: undefined, typeDef: typeDef };
 	evaluationGraph.possibleRuntimeValues = runtimeValues.map(n => ({ node: n, possibleDefinitions: [], graphNode: evaluationGraph }));
-	let nodeQueue: EvaluationGraphNode<T>[] = [evaluationGraph];
+	const nodeQueue: EvaluationGraphNode<T>[] = [evaluationGraph];
 
 	while (nodeQueue.length !== 0) {
 		const node = nodeQueue.splice(0, 1)[0];
@@ -740,7 +739,7 @@ export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, pa
 					lookup = ['%none']
 				}
 				
-				let currentValues = lookup.map(v =>
+				const currentValues = lookup.map(v =>
 					child.fields.find(f => f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === v)
 					?? child.fields.find(f => f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%unknown')
 				)
