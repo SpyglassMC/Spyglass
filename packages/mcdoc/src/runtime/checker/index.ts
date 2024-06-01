@@ -11,7 +11,7 @@ export type TypeInfoAttacher<T> = (node: T, definition: SimplifiedMcdocType) => 
 
 export type ChildrenGetter<T> = (node: T, simplified: SimplifiedMcdocTypeNoUnion) => RuntimeUnion<T>[]
 
-export type ErrorReporter<T> = (error: ValidationError<T>) => void
+export type ErrorReporter<T> = (error: McdocCheckerError<T>) => void
 
 export type RuntimeUnion<T> = RuntimeNode<T>[] | RuntimePair<T>
 
@@ -25,7 +25,7 @@ export interface RuntimePair<T> {
 	possibleValues: RuntimeNode<T>[];
 }
 
-export interface ValidatorOptions<T> {
+export interface McdocCheckerOptions<T> {
 	context: CheckerContext;
 	isEquivalent: NodeEquivalenceChecker;
 	getChildren: ChildrenGetter<T>;
@@ -33,7 +33,7 @@ export interface ValidatorOptions<T> {
 	attachTypeInfo: TypeInfoAttacher<T>;
 }
 
-export type ValidationError<T> =
+export type McdocCheckerError<T> =
 	  SimpleError<T>
 	| UnknownVariantWithKeyCombinationError<T>
 	| UnknownTupleElementError<T>
@@ -99,8 +99,8 @@ const attributeHandlers: {
 		attribute: Attribute,
 		inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
 		expected: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-		options: ValidatorOptions<N>,
-	) => ValidationError<N>[])
+		options: McdocCheckerOptions<N>,
+	) => McdocCheckerError<N>[])
 	| undefined
  } = {
 	// TODO other attributes
@@ -116,11 +116,11 @@ const attributeHandlers: {
 	}
 };
 
-export function reference<T>(node: RuntimeNode<T>[], path: string, options: ValidatorOptions<T>) {
+export function reference<T>(node: RuntimeNode<T>[], path: string, options: McdocCheckerOptions<T>) {
 	typeDefinition(node, { kind: 'reference', path: path }, options);
 }
 
-export function dispatcher<T>(node: RuntimeNode<T>[], registry: FullResourceLocation, index: string | Index | ParallelIndices, options: ValidatorOptions<T>) {
+export function dispatcher<T>(node: RuntimeNode<T>[], registry: FullResourceLocation, index: string | Index | ParallelIndices, options: McdocCheckerOptions<T>) {
 	const parallelIndices: ParallelIndices = typeof index === 'string'
 		? [{ kind: 'static', value: index }]
 		: Array.isArray(index)
@@ -131,11 +131,10 @@ export function dispatcher<T>(node: RuntimeNode<T>[], registry: FullResourceLoca
 
 export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: CheckerContext, isEquivalent?: NodeEquivalenceChecker): boolean {
 	let ans = true;
-	const options: ValidatorOptions<McdocType> = {
+	const options: McdocCheckerOptions<McdocType> = {
 		context: ctx,
 		isEquivalent: isEquivalent ? isEquivalent : () => false,
 		getChildren: (_, d) => {
-			// TODO simplifiy needs parents to work properly for dispatchers
 			switch (d.kind) {
 				case 'list':
 					const vals = getPossibleTypes(d.item);
@@ -145,7 +144,11 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 				case 'long_array': return [[ { originalNode: { kind: 'long' }, inferredType: { kind: 'long' } } ]]
 				case 'struct': return d.fields.map(f => {
 					const vals = getPossibleTypes(f.type);
-					return { key: { originalNode: f.key, inferredType: f.key }, possibleValues: vals.map(v => ({ originalNode: v, inferredType: v })) }})
+					return {
+						attributes: f.attributes,
+						key: { originalNode: f.key, inferredType: f.key },
+						possibleValues: vals.map(v => ({ originalNode: v, inferredType: v }))
+					}});
 				case 'tuple': return d.items.map(f => {
 					const vals = getPossibleTypes(f);
 					return vals.map(v => ({ originalNode: v, inferredType: v }));
@@ -157,16 +160,15 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 		attachTypeInfo: () => {}
 	}
 
-	const node: EvaluationGraphAnonymousNode<McdocType> = {
-		kind: 'entry',
+	const node: CheckerTreeEntryNode<McdocType> = {
 		parent: undefined,
 		possibleRuntimeValues: [],
 		typeDef: assignValue,
 	};
 	node.possibleRuntimeValues = getPossibleTypes(typeDef).map(v => ({
-		graphNode: node,
+		entryNode: node,
 		node: { originalNode: v, inferredType: v },
-		possibleDefinitions: [],
+		validDefinitions: [],
 	}))
 
 	// TODO add bail option to allow checking logic to bail on first error
@@ -175,71 +177,63 @@ export function isAssignable(assignValue: McdocType, typeDef: McdocType, ctx: Ch
 	return ans;
 }
 
-interface EvaluationGraphDefinitionNode<T> {
+interface CheckerTreeDefinitionNode<T> {
 	typeDef: SimplifiedMcdocTypeNoUnion;
-	runtimeNode: EvaluationGraphRuntimeNode<T>;
-	children: EvaluationGraphNode<T>[];
-	errors: ValidationError<T>[];
+	runtimeNode: CheckerTreeRuntimeNode<T>;
+	children: CheckerTreeEntryNode<T>[];
+	errors: McdocCheckerError<T>[];
 }
-interface EvaluationGraphRuntimeNode<T> {
+interface CheckerTreeRuntimeNode<T> {
 	node: RuntimeNode<T>;
-	graphNode: EvaluationGraphNode<T>;
-	possibleDefinitions: EvaluationGraphDefinitionNode<T>[];
+	entryNode: CheckerTreeEntryNode<T>;
+	validDefinitions: CheckerTreeDefinitionNode<T>[];
 	/// Each outer entry represents a layer of siblings
 	/// Each inner entry represents a specific condensed error within that layer.
-	condensedChildErrors?: ValidationError<T>[][];
+	condensedChildErrors?: McdocCheckerError<T>[][];
 }
-type EvaluationGraphNode<T> = EvaluationGraphStructPairNode<T> | EvaluationGraphAnonymousNode<T>
-interface EvaluationGraphStructPairNode<T> {
-	kind: 'pair';
-	parent: EvaluationGraphDefinitionNode<T> | undefined;
-	runtimeKey: RuntimeNode<T>;
-	possibleRuntimeValues: EvaluationGraphRuntimeNode<T>[];
-	typeDef: StructTypePairField | undefined;
-}
-interface EvaluationGraphAnonymousNode<T> {
-	kind: 'entry';
-	parent: EvaluationGraphDefinitionNode<T> | undefined;
-	possibleRuntimeValues: EvaluationGraphRuntimeNode<T>[];
+interface CheckerTreeEntryNode<T> {
+	parent: CheckerTreeDefinitionNode<T> | undefined;
+	runtimeKey?: RuntimeNode<T>;
+	possibleRuntimeValues: CheckerTreeRuntimeNode<T>[];
 	typeDef: McdocType | undefined;
 }
 
-export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: McdocType, options: ValidatorOptions<T>) {
-	const evaluationGraph: EvaluationGraphNode<T> = { kind: 'entry', possibleRuntimeValues: [], parent: undefined, typeDef: typeDef };
-	evaluationGraph.possibleRuntimeValues = runtimeValues.map(n => ({ node: n, possibleDefinitions: [], graphNode: evaluationGraph }));
-	const nodeQueue: EvaluationGraphNode<T>[] = [evaluationGraph];
+export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: McdocType, options: McdocCheckerOptions<T>) {
+	const rootNode: CheckerTreeEntryNode<T> = { possibleRuntimeValues: [], parent: undefined, typeDef: typeDef };
+	rootNode.possibleRuntimeValues = runtimeValues.map(n => ({ node: n, validDefinitions: [], entryNode: rootNode }));
+	const nodeQueue: CheckerTreeEntryNode<T>[] = [rootNode];
 
 	while (nodeQueue.length !== 0) {
 		const node = nodeQueue.splice(0, 1)[0];
 		check(node, options);
 		for (const runtimeValue of node.possibleRuntimeValues) {
-			let siblingErrors = runtimeValue.possibleDefinitions.map(d => ({ node: d, errors: d.errors }));
-			let parent: EvaluationGraphRuntimeNode<T> | undefined = runtimeValue;
+			let siblingErrors = runtimeValue.validDefinitions.map(d => ({ node: d, errors: d.errors }));
+			let parent: CheckerTreeRuntimeNode<T> | undefined = runtimeValue;
 			let depth = 0;
 			while (parent) {
 				const { siblings, condensedErrors } = condenseErrorsAndFilterSiblings(siblingErrors);
 				// TODO possible optimization: Remove entries from nodeQueue which are now no longer neccessary to evaluate.
 				// This is quite tricky and would mess up the check at the bottom here, and maybe not worth it if this is no bottleneck
-				parent.possibleDefinitions = siblings;
+				parent.validDefinitions = siblings;
 				parent.condensedChildErrors ??= [];
 				parent.condensedChildErrors.push(condensedErrors);
 
 				//TypeScript is drunken (no reason for typedef here)
-				const oldParent: EvaluationGraphRuntimeNode<T>  = parent;
-				parent = oldParent.graphNode.parent?.runtimeNode;
+				const oldParent: CheckerTreeRuntimeNode<T>  = parent;
+				parent = oldParent.entryNode.parent?.runtimeNode;
 				
-				const lastDefinition = parent?.possibleDefinitions[parent.possibleDefinitions.length - 1];
+				const lastDefinition = parent?.validDefinitions[parent.validDefinitions.length - 1];
 				const lastChild = lastDefinition?.children.findLast(c => {
 					let values = c.possibleRuntimeValues;
 					for (let i = 0; i < depth; i++) {
-						values = values.flatMap(v => v.possibleDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
+						values = values.flatMap(v => v.validDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
 					}
 					return values.length > 0;
 				});
 				const lastValue = lastChild?.possibleRuntimeValues.findLast(v => {
 					let values = [v];
 					for (let i = 0; i < depth; i++) {
-						values = values.flatMap(v => v.possibleDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
+						values = values.flatMap(v => v.validDefinitions).flatMap(v => v.children).flatMap(v => v.possibleRuntimeValues)
 					}
 					return values.length > 0;
 				})
@@ -249,7 +243,7 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 					break;
 				}
 
-				siblingErrors = parent!.possibleDefinitions.map(d => ({
+				siblingErrors = parent!.validDefinitions.map(d => ({
 					node: d,
 					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(v => v.condensedChildErrors && v.condensedChildErrors.length > depth ? v.condensedChildErrors[depth] : [] )
 				}))
@@ -257,22 +251,22 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 				depth++
 			}
 			
-			for(const def of runtimeValue.possibleDefinitions) {
+			for(const def of runtimeValue.validDefinitions) {
 				nodeQueue.push(...def.children)
 			}
 		}
 	}
 
-	// TODO iterate final graph and call `options.attachTypeInfo`
+	// TODO iterate final tree and call `options.attachTypeInfo`
 
-	for (const error of evaluationGraph.possibleRuntimeValues.flatMap(v => v.condensedChildErrors?.flat())) {
+	for (const error of rootNode.possibleRuntimeValues.flatMap(v => v.condensedChildErrors?.flat())) {
 		if (error) {
 			options.reportError(error);
 		}
 	}
 }
 
-function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[]) : { siblings: EvaluationGraphDefinitionNode<T>[], condensedErrors: ValidationError<T>[] } {
+function condenseErrorsAndFilterSiblings<T>(siblings: { node: CheckerTreeDefinitionNode<T>, errors: McdocCheckerError<T>[] }[]) : { siblings: CheckerTreeDefinitionNode<T>[], condensedErrors: McdocCheckerError<T>[] } {
 	if (siblings.length === 0) {
 		return { siblings: [], condensedErrors: [] };
 	}
@@ -369,18 +363,18 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 	return { siblings: possibleDefinitions.map(d => d.node), condensedErrors: errors };
 }
 
-function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
+function check<T>(node: CheckerTreeEntryNode<T>, options: McdocCheckerOptions<T>) {
 	if (node.typeDef === undefined) {
 		return;
 	}
 	const parents: RuntimeUnion<T>[] = []
-	let current: EvaluationGraphNode<T> | undefined = node;
+	let current: CheckerTreeEntryNode<T> | undefined = node;
 	while (current) {
 		const possibleValues = current.possibleRuntimeValues.map(v => v.node);
-		parents.unshift(current.kind === 'pair' ? { key: current.runtimeKey, possibleValues } : possibleValues);
-		current = current.parent?.runtimeNode.graphNode
+		parents.unshift(current.runtimeKey ? { key: current.runtimeKey, possibleValues } : possibleValues);
+		current = current.parent?.runtimeNode.entryNode
 	}
-	const simplifiedNode = simplify(node.kind === 'pair' ? node.typeDef.type : node.typeDef, options, parents);
+	const simplifiedNode = simplify(node.typeDef, options, parents);
 	const simplifiedOptions = simplifiedNode.kind === 'union' ? simplifiedNode.members : [simplifiedNode];
 
 	for (const possibleNode of node.possibleRuntimeValues) {
@@ -406,7 +400,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 		}
 		
 		if (matches.length === 0) {
-			possibleNode.possibleDefinitions = simplifiedOptions.map(d => ({
+			possibleNode.validDefinitions = simplifiedOptions.map(d => ({
 				typeDef: d,
 				runtimeNode: possibleNode,
 				children: [],
@@ -421,7 +415,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 		const children = options.getChildren(originalNode, simplifiedRuntime);
 
 		for (const simplified of matches) {
-			const errors: ValidationError<T>[] = [];
+			const errors: McdocCheckerError<T>[] = [];
 			if (simplified.attributes) {
 				for (const attribute of simplified.attributes) {
 					
@@ -431,25 +425,23 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 					}
 				}
 			}
-			let childNodes: EvaluationGraphNode<T>[] = children.map(c => {
+			let childNodes: CheckerTreeEntryNode<T>[] = children.map(c => {
 				if (Array.isArray(c)) {
-					const ans: EvaluationGraphNode<T> = {
-					   kind: 'entry',
+					const ans: CheckerTreeEntryNode<T> = {
 					   parent: undefined,
 					   possibleRuntimeValues: [],
 					   typeDef: undefined,
 				   }
-				   ans.possibleRuntimeValues = c.map(c => ({ node: c, possibleDefinitions: [], graphNode: ans }));
+				   ans.possibleRuntimeValues = c.map(c => ({ node: c, validDefinitions: [], entryNode: ans }));
 				   return ans;
 				}
-				const ans: EvaluationGraphNode<T> = {
-					kind: 'pair',
+				const ans: CheckerTreeEntryNode<T> = {
 					parent: undefined,
 					typeDef: undefined,
 					runtimeKey: c.key,
 					possibleRuntimeValues: [],
 				};
-				ans.possibleRuntimeValues = c.possibleValues.map(v => ({ node: v, possibleDefinitions: [], graphNode: ans }));
+				ans.possibleRuntimeValues = c.possibleValues.map(v => ({ node: v, validDefinitions: [], entryNode: ans }));
 				return ans;
 			});
 			switch (simplified.kind) {
@@ -483,7 +475,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 							}
 						}
 						for (const match of matches) {
-							childNodes[match].typeDef = pair;
+							childNodes[match].typeDef = pair.type;
 						}
 						if (matches.length === 0 && pair.optional !== true) {
 							errors.push({
@@ -495,7 +487,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 					}
 					for (const child of childNodes) {
 						if (child.typeDef === undefined) {
-							if (child.kind === 'entry') {
+							if (child.runtimeKey === undefined) {
 								errors.push(...child.possibleRuntimeValues.map(v => ({
 									kind: 'expected_key_value_pair' as 'expected_key_value_pair',
 									node: v.node,
@@ -551,7 +543,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 						} else {
 							errors.push({
 								kind: 'unknown_tuple_element',
-								node: child.kind === 'entry'
+								node: child.runtimeKey === undefined
 									? child.possibleRuntimeValues.map(c => c.node)
 									: {
 										key: child.runtimeKey,
@@ -571,7 +563,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 					break;
 				}
 			}
-			const def: EvaluationGraphDefinitionNode<T> = {
+			const def: CheckerTreeDefinitionNode<T> = {
 				typeDef: simplified,
 				runtimeNode: possibleNode,
 				children: childNodes,
@@ -580,7 +572,7 @@ function check<T>(node: EvaluationGraphNode<T>, options: ValidatorOptions<T>) {
 			for (const child of def.children) {
 				child.parent = def;
 			}
-			possibleNode.possibleDefinitions.push(def);
+			possibleNode.validDefinitions.push(def);
 		}
 	}
 }
@@ -589,9 +581,9 @@ export function getPossibleTypes(typeDef: McdocType): Exclude<McdocType, UnionTy
 	return typeDef.kind === 'union' ? typeDef.members.flatMap(m => getPossibleTypes(m)) : [typeDef]
 }
 
-export function simplify<T>(typeDef: Exclude<McdocType, UnionType>, options: ValidatorOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocTypeNoUnion 
-export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocType 
-export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocType {
+export function simplify<T>(typeDef: Exclude<McdocType, UnionType>, options: McdocCheckerOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocTypeNoUnion 
+export function simplify<T>(typeDef: McdocType, options: McdocCheckerOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocType 
+export function simplify<T>(typeDef: McdocType, options: McdocCheckerOptions<T>, parents: RuntimeUnion<T>[]): SimplifiedMcdocType {
 	if (typeDef.attributes) {
 		//TODO
 	}
@@ -621,7 +613,7 @@ export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, pa
 			const structFields: StructTypePairField[] = [];
 			for (const key in dispatcher) {
 
-				// TODO Better way to access typedef?
+				// TODO Better way to access typedef without any cast?
 				const data = dispatcher[key].data as any;
 				if (data && data.typeDef) {
 					structFields.push({ kind: 'pair', key: key, type: data.typeDef });
@@ -800,8 +792,8 @@ function getValueType(type: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePai
 	}
 }
 
-export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node: RuntimeNode<T>, error: ValidationError<T>['kind']) => Range): ErrorReporter<T> {
-	return (error: ValidationError<T>) => {
+export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node: RuntimeNode<T>, error: McdocCheckerError<T>['kind']) => Range): ErrorReporter<T> {
+	return (error: McdocCheckerError<T>) => {
 		const defaultTranslationKey = error.kind.replace('_', '-');
 		if (error.kind === 'unknown_tuple_element') {
 			const nodes = Array.isArray(error.node) ? error.node : [... error.node.possibleValues, error.node.key];
@@ -862,7 +854,7 @@ export function getDefaultErrorReporter<T>(ctx: CheckerContext, getRange: (node:
 				);
 				break;
 			case 'expected_key_value_pair':
-				ctx.err.report(localize(`mcdoc.validator.${defaultTranslationKey}`), range);
+				ctx.err.report(localize(`mcdoc.runtime.checker.${defaultTranslationKey}`), range);
 				break;
 			default: ctx.err.report(localize(defaultTranslationKey), range);
 		}
