@@ -27,23 +27,23 @@ export interface Config {
 }
 
 export interface CustomResourceConfig {
-	/*
+	/**
 	 * The entry you have dispatched from mcdoc. (eg. `picoblaze:game_event`)
 	 */
 	category: string
-	/*
+	/**
 	 * The file extension name of the dispatched resource. Only `.json` is supported for now.
 	 */
 	extname: '.json'
-	/*
+	/**
 	 * The pack type of the dispatched resource. Only `datapack` is supported for now.
 	 */
 	pack: 'datapack'
-	/*
+	/**
 	 * The version range of the dispatched resource.
 	 */
 	since?: `1.${number}`
-	/*
+	/**
 	 * The version range of the dispatched resource.
 	 */
 	until?: `1.${number}`
@@ -65,6 +65,8 @@ export interface EnvConfig {
 	 */
 	dependencies: string[]
 	/**
+	 * **Experimental feature, breaking changes could occur.**
+	 *
 	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.
 	 */
 	customResources: [
