@@ -282,7 +282,7 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 			let parent: EvaluationGraphRuntimeNode<T> | undefined = runtimeValue;
 			let depth = 0;
 			while (parent) {
-				const { siblings, condensedErrors } = condenseErrorsAndFilterSiblings(siblingErrors, parent);
+				const { siblings, condensedErrors } = condenseErrorsAndFilterSiblings(siblingErrors);
 				// TODO possible optimization: Remove entries from nodeQueue which are now no longer neccessary to evaluate.
 				// This is quite tricky and would mess up the check at the bottom here, and maybe not worth it if this is no bottleneck
 				parent.possibleDefinitions = siblings;
@@ -337,7 +337,11 @@ export function typeDefinition<T>(runtimeValues: RuntimeNode<T>[], typeDef: Mcdo
 	}
 }
 
-function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[], parent: EvaluationGraphRuntimeNode<T>) : { siblings: EvaluationGraphDefinitionNode<T>[], condensedErrors: ValidationError<T>[] } {
+function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDefinitionNode<T>, errors: ValidationError<T>[] }[]) : { siblings: EvaluationGraphDefinitionNode<T>[], condensedErrors: ValidationError<T>[] } {
+	if (siblings.length === 0) {
+		return { siblings: [], condensedErrors: [] };
+	}
+	
 	let possibleDefinitions = siblings;
 	const errors = possibleDefinitions[0].errors.filter(e => e.kind === 'duplicate_key');
 
@@ -356,6 +360,9 @@ function condenseErrorsAndFilterSiblings<T>(siblings: { node: EvaluationGraphDef
 	if (noCommonTypeMismatches.length !== 0) {
 		possibleDefinitions = noCommonTypeMismatches;
 	} else {
+		// TODO Generic error, maybe we can keep original expected types?
+		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
+
 		const typeMismatches: SimpleError<T>[] = possibleDefinitions
 			.flatMap(d => d.errors
 				.filter(e => e.kind === 'type_mismatch' && !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
@@ -828,7 +835,7 @@ export function simplify<T>(typeDef: McdocType, options: ValidatorOptions<T>, pa
 			}
 			return {
 				kind: 'struct',
-				fields: fields.filter((f, i) => fields.findIndex(of => isAssignable(of.key, f.key, options.context, options.isEquivalent)) === i)
+				fields: fields.filter((f, i) => fields.findLastIndex(of => isAssignable(of.key, f.key, options.context, options.isEquivalent)) === i)
 			};
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
