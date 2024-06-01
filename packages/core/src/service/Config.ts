@@ -26,6 +26,29 @@ export interface Config {
 	snippet: SnippetsConfig
 }
 
+export interface CustomResourceConfig {
+	/*
+	 * The entry you have dispatched from mcdoc. (eg. `picoblaze:game_event`)
+	 */
+	category: string
+	/*
+	 * The file extension name of the dispatched resource. Only `.json` is supported for now.
+	 */
+	extname: '.json'
+	/*
+	 * The pack type of the dispatched resource. Only `datapack` is supported for now.
+	 */
+	pack: 'datapack'
+	/*
+	 * The version range of the dispatched resource.
+	 */
+	since?: `1.${number}`
+	/*
+	 * The version range of the dispatched resource.
+	 */
+	until?: `1.${number}`
+}
+
 export interface EnvConfig {
 	/**
 	 * Where to download data like `mcmeta` or `vanilla-mcdoc` from (case-insensitive).
@@ -41,6 +64,13 @@ export interface EnvConfig {
 	 * to a data pack folder or data pack archive (e.g. `.zip` or `.tar.gz`), or a special string like `@vanilla-mcdoc`.
 	 */
 	dependencies: string[]
+	/**
+	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.
+	 */
+	customResources: [
+		filePath: string,
+		config: CustomResourceConfig,
+	][]
 	feature: {
 		codeActions: boolean
 		colors: boolean
@@ -325,6 +355,7 @@ export const VanillaConfig: Config = {
 			'@vanilla-datapack',
 			'@vanilla-mcdoc',
 		],
+		customResources: [],
 		feature: {
 			codeActions: true,
 			colors: true,
