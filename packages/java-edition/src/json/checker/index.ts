@@ -85,7 +85,7 @@ export function definition(
 			isEquivalent: (inferred, def) => {
 				switch (inferred.kind) {
 					case 'list':
-						return (['list', 'byte_array', 'int_array', 'long_array', 'tuple'] as mcdoc.McdocType['kind'][]).includes(def.kind);
+						return (['list', 'byte_array', 'int_array', 'long_array', 'tuple']).includes(def.kind);
 					case 'struct':
 						return def.kind === 'struct';
 					case 'byte':
