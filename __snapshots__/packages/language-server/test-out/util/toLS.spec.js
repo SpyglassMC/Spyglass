@@ -64,7 +64,14 @@ exports['semanticTokens Tokenize "foo↓bar↓qux" without multiline token suppo
     "tokenModifiers": 0
   },
   {
-    "deltaLine": 2,
+    "deltaLine": 1,
+    "deltaStartChar": 0,
+    "length": 4,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  },
+  {
+    "deltaLine": 1,
     "deltaStartChar": 0,
     "length": 3,
     "tokenType": 0,
