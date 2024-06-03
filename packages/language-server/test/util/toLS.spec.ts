@@ -52,12 +52,23 @@ describe('semanticTokens', () => {
 		{ content: 'foo\nbar' },
 		{ content: 'foo\nbar\nqux' },
 	]
-	for (const { content } of suites) {
-		const doc = TextDocument.create('file:///test', '', 0, content)
-		const itTitle = `Tokenize "${showWhitespaceGlyph(content)}"`
-		it(itTitle, () => {
-			const { data } = semanticTokens(tokens, doc, true)
-			snapshot(decodeSemanticTokens(data))
-		})
+	for (const hasMultilineTokenSupport of [true, false]) {
+		for (const { content } of suites) {
+			const doc = TextDocument.create('file:///test', '', 0, content)
+			const multilineStr = `${
+				hasMultilineTokenSupport ? 'with' : 'without'
+			} multiline token support`
+			const itTitle = `Tokenize "${
+				showWhitespaceGlyph(content)
+			}" ${multilineStr}`
+			it(itTitle, () => {
+				const { data } = semanticTokens(
+					tokens,
+					doc,
+					hasMultilineTokenSupport,
+				)
+				snapshot(decodeSemanticTokens(data))
+			})
+		}
 	}
 })
