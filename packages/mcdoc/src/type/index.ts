@@ -1,8 +1,8 @@
 import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { EnumKind } from '../node/index.js';
-import { RangeKind, getRangeDelimiter } from '../node/index.js'
+import type { EnumKind } from '../node/index.js'
+import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
 export interface Attribute {
 	name: string
@@ -19,13 +19,21 @@ export type NumericRange = {
 }
 export namespace NumericRange {
 	export function isInRange(range: NumericRange, val: number): boolean {
-		if (range.min !== undefined && (RangeKind.isLeftExclusive(range.kind) ? val <= range.min : val < range.min)) {
-			return false;
+		if (
+			range.min !== undefined && (RangeKind.isLeftExclusive(range.kind)
+				? val <= range.min
+				: val < range.min)
+		) {
+			return false
 		}
-		if (range.max !== undefined && (RangeKind.isLeftExclusive(range.kind) ? val <= range.max : val < range.max))  {
-			return false;
+		if (
+			range.max !== undefined && (RangeKind.isLeftExclusive(range.kind)
+				? val <= range.max
+				: val < range.max)
+		) {
+			return false
 		}
-		return true;
+		return true
 	}
 }
 
@@ -94,7 +102,8 @@ export interface ReferenceType extends McdocBaseType {
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType> extends McdocBaseType
+export interface UnionType<T extends McdocType = McdocType>
+	extends McdocBaseType
 {
 	kind: 'union'
 	members: T[]
