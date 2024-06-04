@@ -965,18 +965,13 @@ export function simplify<T>(
 						node: initial,
 					}]
 					for (const entry of index.accessor) {
-						// TODO initial check against %parent and %key is to work around an mcdoc binder bug, it should always be an object with keyword property
-						if (
-							entry === '%parent' ||
-							(typeof entry != 'string' && entry.keyword === 'parent')
-						) {
+						if (typeof entry != 'string' && entry.keyword === 'parent') {
 							possibilities = possibilities.map(n => {
 								const node = n.parents.pop()
 								return { parents: n.parents, node }
 							})
 						} else if (
-							entry === '%key' ||
-							(typeof entry != 'string' && entry.keyword === 'key')
+							typeof entry != 'string' && entry.keyword === 'key'
 						) {
 							lookup.push(
 								...possibilities

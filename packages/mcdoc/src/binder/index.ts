@@ -999,7 +999,12 @@ function convertDynamicIndex(
 	const { keys } = DynamicIndexNode.destruct(node)
 	return {
 		kind: 'dynamic',
-		accessor: keys.map(asString),
+		accessor: keys.map(key => {
+			if (LiteralNode.is(key) && key.value.startsWith('%')) {
+				return { keyword: key.value.slice(1) as 'key' | 'parent' }
+			}
+			return asString(key)
+		}),
 	}
 }
 
