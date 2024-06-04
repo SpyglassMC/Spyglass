@@ -15,7 +15,12 @@ describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | string | JsValue[] | {
 		[key: string]: JsValue
 	}
-	const suites: { name: string; type: McdocType; values: JsValue[] }[] = [
+	const suites: {
+		name: string
+		type: McdocType
+		init?: (symbols: core.SymbolUtil) => void
+		values: JsValue[]
+	}[] = [
 		{
 			name: 'struct { test: double }',
 			type: {
@@ -263,6 +268,101 @@ describe('mcdoc runtime checker', () => {
 				{ id: 'other', baz: true },
 			],
 		},
+		{
+			name: 'type Ref = double; struct { foo: Ref }',
+			type: {
+				kind: 'struct',
+				fields: [
+					{
+						kind: 'pair',
+						key: 'foo',
+						type: { kind: 'reference', path: '::Ref' },
+					},
+				],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Ref',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'double',
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{},
+				{ foo: 'hello' },
+				{ foo: 4.1 },
+			],
+		},
+		{
+			name:
+				'dispatch minecraft:item[elytra] to struct { Damage: double }; struct { id: string, tag?: minecraft:item[[id]] }',
+			type: {
+				kind: 'struct',
+				fields: [
+					{ kind: 'pair', key: 'id', type: { kind: 'string' } },
+					{
+						kind: 'pair',
+						key: 'tag',
+						optional: true,
+						type: {
+							kind: 'dispatcher',
+							registry: 'minecraft:item',
+							parallelIndices: [
+								{ kind: 'dynamic', accessor: ['id'] },
+							],
+						},
+					},
+				],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc/dispatcher',
+					'minecraft:item',
+				).enter({
+					usage: { type: 'reference' },
+				})
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc/dispatcher',
+					'minecraft:item',
+					'elytra',
+				).enter({
+					data: {
+						data: {
+							typeDef: {
+								kind: 'struct',
+								fields: [
+									{
+										kind: 'pair',
+										key: 'Damage',
+										type: { kind: 'double' },
+									},
+								],
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{},
+				{ id: 'diamond' },
+				{ id: 'elytra', tag: {} },
+				{ id: 'eltrya', tag: { Damage: true } },
+				{ id: 'eltrya', tag: { Damage: 20 } },
+			],
+		},
 	]
 
 	function inferType(value: JsValue): Exclude<McdocType, UnionType> {
@@ -284,13 +384,15 @@ describe('mcdoc runtime checker', () => {
 		}
 	}
 
-	for (const { name, type, values } of suites) {
+	for (const { name, type, values, init } of suites) {
 		describe(`typeDefinition ${localeQuote(name)}`, () => {
 			for (const value of values) {
 				it(`with value ${JSON.stringify(value)}`, () => {
 					const errors: McdocCheckerError<JsValue>[] = []
+					const project = mockProjectData()
+					init?.(project.symbols)
 					const options: McdocCheckerOptions<JsValue> = {
-						context: core.CheckerContext.create(mockProjectData(), {
+						context: core.CheckerContext.create(project, {
 							doc: TextDocument.create('', '', 0, ''),
 						}),
 						getChildren: (value) => {
