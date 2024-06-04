@@ -265,6 +265,46 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 2 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 3.99 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 4 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value "hello" 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": {
+      "kind": "double",
+      "valueRange": {
+        "kind": 3,
+        "min": 3,
+        "max": 6.2
+      }
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 1 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 3 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 4 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.2 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.3 1'] = []
+
 exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: double, bar: boolean }, foo: string }” with value {"foo":"hello","bar":true} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: double, bar: boolean }, foo: string }” with value {"foo":"hello"} 1'] = [

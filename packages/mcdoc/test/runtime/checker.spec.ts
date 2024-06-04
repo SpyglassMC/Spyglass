@@ -269,6 +269,41 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: 'double @ 3..6.2',
+			type: {
+				kind: 'double',
+				valueRange: {
+					kind: 0b00,
+					min: 3,
+					max: 6.2,
+				},
+			},
+			values: [
+				'hello',
+				1,
+				3,
+				4,
+				6.2,
+				6.3,
+			],
+		},
+		{
+			name: 'double @ 2..<4',
+			type: {
+				kind: 'double',
+				valueRange: {
+					kind: 0b01,
+					min: 2,
+					max: 4,
+				},
+			},
+			values: [
+				2,
+				3.99,
+				4,
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
