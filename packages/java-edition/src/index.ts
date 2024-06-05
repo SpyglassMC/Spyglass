@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
@@ -115,6 +116,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
+	json.initialize(ctx)
 	jeJson.initialize(ctx)
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
