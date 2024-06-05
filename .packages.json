@@ -37,7 +37,8 @@
 	"json": {
 		"dependencies": [
 			"core",
-			"locales"
+			"locales",
+			"mcdoc"
 		],
 		"released": {
 			"commit": "d9848358bb3a1e41b40e28e61b9c5771946e724b",
