@@ -254,6 +254,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
 			return wrap(core.literal(...ScoreboardSlotArgumentValues))
+		case 'minecraft:style':
+			return wrap(json.parser.object)
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
