@@ -1,5 +1,10 @@
 import type * as core from '@spyglassmc/core'
-import type { JsonNode } from '@spyglassmc/json'
+import type {
+	JsonExpectation,
+	JsonNode,
+	JsonObjectExpectation,
+} from '@spyglassmc/json'
+import { JsonObjectNode, JsonPairNode } from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../../binder/index.js'
 
@@ -153,7 +158,19 @@ export function definition(
 						return node.originalNode.range
 					},
 				),
-				attachTypeInfo: (node, definition) => {}, // TODO
+				attachTypeInfo: (node, definition) => {
+					node.expectation = getExpectation(definition)
+					// TODO: improve hover info
+					if (
+						node.parent && JsonPairNode?.is(node.parent) &&
+						node.parent.key
+					) {
+						node.parent.key.hover =
+							`\`\`\`typescript\n${node.parent.key.value}: ${
+								mcdoc.McdocType.toString(definition)
+							}\n\`\`\``
+					}
+				},
 				// TODO json / JE specific attribute handlers
 			},
 		)
@@ -183,5 +200,61 @@ function inferType(node: JsonNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 			return { kind: 'list', item: { kind: 'any' } }
 		case 'json:object':
 			return { kind: 'struct', fields: [] }
+	}
+}
+
+function getExpectation(
+	type: mcdoc.runtime.checker.SimplifiedMcdocType,
+): JsonExpectation[] {
+	switch (type.kind) {
+		case 'union':
+			return type.members.flatMap(m => getExpectation(m))
+		case 'string':
+			return [{ type: 'json:string', typedoc: '' }]
+		case 'struct':
+			const fields: JsonObjectExpectation['fields'] = []
+			for (const f of type.fields) {
+				if (f.key.kind === 'literal' && f.key.value.kind === 'string') {
+					fields.push({ key: f.key.value.value, opt: f.optional })
+				}
+			}
+			return [{ type: 'json:object', typedoc: '', fields }]
+		case 'list':
+		case 'tuple':
+		case 'byte_array':
+		case 'int_array':
+		case 'long_array':
+			return [{ type: 'json:array', typedoc: '' }]
+		case 'literal':
+			switch (type.value.kind) {
+				case 'string':
+					return [{
+						type: 'json:string',
+						typedoc: '',
+						pool: [type.value.value],
+					}]
+				case 'boolean':
+				case 'byte':
+				case 'short':
+				case 'int':
+				case 'long':
+				case 'float':
+				case 'double':
+					return [{ type: 'json:number', typedoc: '' }]
+				default:
+					return []
+			}
+		case 'string':
+			return [{ type: 'json:string', typedoc: '' }]
+		case 'boolean':
+		case 'byte':
+		case 'short':
+		case 'int':
+		case 'long':
+		case 'float':
+		case 'double':
+			return [{ type: 'json:number', typedoc: '' }]
+		default:
+			return []
 	}
 }

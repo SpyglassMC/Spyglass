@@ -363,6 +363,23 @@ export function typeDefinition<T>(
 		}
 	}
 
+	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
+		const typeDefs = node.validDefinitions.map(def => def.typeDef)
+		if (typeDefs.length === 0) return
+		options.attachTypeInfo(node.node.originalNode, typeDefs[0])
+		for (const def of node.validDefinitions) {
+			for (const child of def.children) {
+				for (const node of child.possibleRuntimeValues) {
+					attachTypeInfo(node)
+				}
+			}
+		}
+	}
+
+	for (const node of rootNode.possibleRuntimeValues) {
+		attachTypeInfo(node)
+	}
+
 	// TODO iterate final tree and call `options.attachTypeInfo`
 
 	for (

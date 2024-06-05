@@ -66,8 +66,9 @@ export const object: Completer<JsonObjectNode> = core.completer.record<
 				record.expectation
 					.filter(JsonExpectation.isObject)
 					.filter((e) => e.fields)
-					.map((e) => e.fields!.find((f) => f.key === pair.key?.value)!)
-					.flatMap((f) => valueCompletion(ctx.offset, f.value!, ctx)),
+					.map((e) => e.fields!.find((f) => f.key === pair.key?.value))
+					.filter((f) => f?.value)
+					.flatMap((f) => valueCompletion(ctx.offset, f!.value!, ctx)),
 			)
 		}
 		return []
