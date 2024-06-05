@@ -965,13 +965,13 @@ export function simplify<T>(
 						node: initial,
 					}]
 					for (const entry of index.accessor) {
-						if (typeof entry != 'string' && entry.keyword === 'parent') {
+						if (typeof entry !== 'string' && entry.keyword === 'parent') {
 							possibilities = possibilities.map(n => {
 								const node = n.parents.pop()
 								return { parents: n.parents, node }
 							})
 						} else if (
-							typeof entry != 'string' && entry.keyword === 'key'
+							typeof entry !== 'string' && entry.keyword === 'key'
 						) {
 							lookup.push(
 								...possibilities
@@ -1158,7 +1158,7 @@ export function simplify<T>(
 function simplifyKey(
 	keyDef: SimplifiedMcdocTypeNoUnion | string,
 ): SimplifiedMcdocTypeNoUnion {
-	if (typeof keyDef == 'string') {
+	if (typeof keyDef === 'string') {
 		return { kind: 'literal', value: { kind: 'string', value: keyDef } }
 	}
 	return keyDef
