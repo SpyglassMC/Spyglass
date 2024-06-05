@@ -70,6 +70,37 @@ exports['mcdoc runtime checker typeDefinition “( struct { text: string } | str
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 3 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 5 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 5,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 5
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 2,
+        "max": 4
+      },
+      {
+        "kind": 0,
+        "min": 8
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 9 1'] = []
+
 exports['mcdoc runtime checker typeDefinition “[struct { foo: double, bar?: boolean }]” with value [4] 1'] = [
   {
     "kind": "type_mismatch",
@@ -269,7 +300,28 @@ exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 2 
 
 exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 3.99 1'] = []
 
-exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 4 1'] = []
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 4 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 4,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 4
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 1,
+        "min": 2,
+        "max": 4
+      }
+    ]
+  }
+]
 
 exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value "hello" 1'] = [
   {
@@ -295,7 +347,28 @@ exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value "
   }
 ]
 
-exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 1 1'] = []
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 1 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 3,
+        "max": 6.2
+      }
+    ]
+  }
+]
 
 exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 3 1'] = []
 
@@ -303,7 +376,28 @@ exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 4
 
 exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.2 1'] = []
 
-exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.3 1'] = []
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.3 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 6.3,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 6.3
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 3,
+        "max": 6.2
+      }
+    ]
+  }
+]
 
 exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: double, bar: boolean }, foo: string }” with value {"foo":"hello","bar":true} 1'] = []
 

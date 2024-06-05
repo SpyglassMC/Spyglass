@@ -529,7 +529,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	const noUnknownTupleElements = validDefinitions.filter(d =>
-		d.errors.some(e => e.kind !== 'unknown_tuple_element')
+		!d.errors.some(e => e.kind === 'unknown_tuple_element')
 	)
 	if (noUnknownTupleElements.length !== 0) {
 		validDefinitions = noUnknownTupleElements
@@ -571,7 +571,36 @@ function condenseErrorsAndFilterSiblings<T>(
 		)
 	}
 
-	// TODO handle list length range and value range errors (merge ranges, could be multiple possible distinct ranges)
+	for (
+		const kind of [
+			'invalid_collection_length',
+			'number_out_of_range',
+		] as const
+	) {
+		const noRangeError = validDefinitions.filter(d =>
+			!d.errors.some(e => e.kind === kind)
+		)
+		if (noRangeError.length !== 0) {
+			validDefinitions = noRangeError
+		} else {
+			const rangesErrors = validDefinitions.map(d => {
+				return d.errors
+					.filter((e): e is RangeError<T> => e.kind === kind)
+					.reduce((a, b) => ({
+						kind,
+						node: a.node,
+						ranges: [NumericRange.intersect(a.ranges[0], b.ranges[0])],
+					}))
+			})
+			if (rangesErrors.length > 0) {
+				errors.push({
+					kind: kind,
+					node: rangesErrors[0].node,
+					ranges: rangesErrors.flatMap(e => e.ranges),
+				})
+			}
+		}
+	}
 
 	return {
 		siblings: validDefinitions.map(d => d.node),
@@ -697,6 +726,29 @@ function check<T>(
 				case 'any':
 				case 'unsafe':
 					childNodes = []
+					break
+				case 'byte':
+				case 'short':
+				case 'int':
+				case 'long':
+				case 'float':
+				case 'double':
+					if (
+						simplified.valueRange &&
+						possibleNode.node.inferredType.kind === 'literal' &&
+						typeof possibleNode.node.inferredType.value.value ===
+							'number' &&
+						!NumericRange.isInRange(
+							simplified.valueRange,
+							possibleNode.node.inferredType.value.value,
+						)
+					) {
+						errors.push({
+							kind: 'number_out_of_range',
+							node: possibleNode.node,
+							ranges: [simplified.valueRange],
+						})
+					}
 					break
 				case 'struct': {
 					const unmatchedKvps = children
@@ -1201,7 +1253,7 @@ export function getDefaultErrorReporter<T>(
 	) => Range,
 ): ErrorReporter<T> {
 	return (error: McdocCheckerError<T>) => {
-		const defaultTranslationKey = error.kind.replace('_', '-')
+		const defaultTranslationKey = error.kind.replaceAll('_', '-')
 		if (error.kind === 'unknown_tuple_element') {
 			const nodes = Array.isArray(error.node)
 				? error.node
@@ -1285,7 +1337,10 @@ export function getDefaultErrorReporter<T>(
 					return left ?? right
 				}).filter(r => r !== undefined) as string[]
 				ctx.err.report(
-					localize(baseKey, arrayToMessage(rangeMessages, false)),
+					localize(
+						'expected',
+						localize(baseKey, arrayToMessage(rangeMessages, false)),
+					),
 					range,
 				)
 				break

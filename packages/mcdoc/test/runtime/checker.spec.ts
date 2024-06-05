@@ -272,11 +272,7 @@ describe('mcdoc runtime checker', () => {
 			name: 'double @ 3..6.2',
 			type: {
 				kind: 'double',
-				valueRange: {
-					kind: 0b00,
-					min: 3,
-					max: 6.2,
-				},
+				valueRange: { kind: 0b00, min: 3, max: 6.2 },
 			},
 			values: [
 				'hello',
@@ -291,16 +287,33 @@ describe('mcdoc runtime checker', () => {
 			name: 'double @ 2..<4',
 			type: {
 				kind: 'double',
-				valueRange: {
-					kind: 0b01,
-					min: 2,
-					max: 4,
-				},
+				valueRange: { kind: 0b01, min: 2, max: 4 },
 			},
 			values: [
 				2,
 				3.99,
 				4,
+			],
+		},
+		{
+			name: '(double @ 2..4 | double @ 8..)',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'double',
+						valueRange: { kind: 0b00, min: 2, max: 4 },
+					},
+					{
+						kind: 'double',
+						valueRange: { kind: 0b00, min: 8 },
+					},
+				],
+			},
+			values: [
+				3,
+				5,
+				9,
 			],
 		},
 		{
