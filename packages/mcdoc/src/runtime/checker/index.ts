@@ -380,8 +380,6 @@ export function typeDefinition<T>(
 		attachTypeInfo(node)
 	}
 
-	// TODO iterate final tree and call `options.attachTypeInfo`
-
 	for (
 		const error of rootNode.possibleRuntimeValues.flatMap(v =>
 			v.condensedChildErrors?.flat()
