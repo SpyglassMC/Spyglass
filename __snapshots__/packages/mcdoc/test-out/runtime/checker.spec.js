@@ -287,7 +287,7 @@ exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value "
     "expected": {
       "kind": "double",
       "valueRange": {
-        "kind": 3,
+        "kind": 0,
         "min": 3,
         "max": 6.2
       }
