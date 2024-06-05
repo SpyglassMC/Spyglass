@@ -317,6 +317,37 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: '[int] @ 0..5',
+			type: {
+				kind: 'list',
+				item: { kind: 'int' },
+				lengthRange: { kind: 0b00, min: 0, max: 5 },
+			},
+			values: [
+				[],
+				[1, 2, 3],
+				[1, 2, 3, 4, 5, 6],
+			],
+		},
+		{
+			name: '[double @ 0..1] @ 1..3',
+			type: {
+				kind: 'list',
+				item: {
+					kind: 'double',
+					valueRange: { kind: 0b00, min: 0, max: 1 },
+				},
+				lengthRange: { kind: 0b00, min: 1, max: 3 },
+			},
+			values: [
+				[],
+				[0.3, 0.1],
+				[0.2, 6],
+				[0.3, 0.9, 0.1, 0.1],
+				[2, 0.9, 0.1, 0.1],
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
