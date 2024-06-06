@@ -2,6 +2,17 @@ import type { ItemNode, PairNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
 import { JsonStringOptions } from '../parser/index.js'
 
+export interface JsonFileNode extends core.AstNode {
+	readonly type: 'json:file'
+	readonly children: [JsonNode]
+}
+export namespace JsonFileNode {
+	/* istanbul ignore next */
+	export function is(obj: object | undefined): obj is JsonFileNode {
+		return (obj as JsonFileNode | undefined)?.type === 'json:file'
+	}
+}
+
 export type JsonNode =
 	| JsonObjectNode
 	| JsonArrayNode

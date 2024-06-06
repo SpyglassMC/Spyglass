@@ -1,5 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localize } from '@spyglassmc/locales'
 import { dissectUri } from '../../binder/index.js'
 
 const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
@@ -46,29 +47,20 @@ const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
 	],
 ])
 
-export const entry: core.Checker<json.JsonNode> = (
-	node: json.JsonNode,
-	ctx: core.CheckerContext,
-) => {
+export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
+	const child = node.children[0]
 	const parts = dissectUri(ctx.doc.uri, ctx)
 	if (parts && Checkers.has(parts.category)) {
 		const identifier = Checkers.get(parts.category)!
-		return json.checker.definition(identifier)(node, ctx)
+		return json.checker.definition(identifier)(child, ctx)
 	} else if (parts?.category.startsWith('tag/')) {
 		// TODO
-		return json.checker.definition('::java::data::tag::Tag')(node, ctx)
+		return json.checker.definition('::java::data::tag::Tag')(child, ctx)
 	} else if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		return json.checker.definition('::java::pack::Pack')(node, ctx)
-	} else {
-		return
+		return json.checker.definition('::java::pack::Pack')(child, ctx)
 	}
 }
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerChecker<json.JsonNode>('json:array', entry)
-	meta.registerChecker<json.JsonNode>('json:boolean', entry)
-	meta.registerChecker<json.JsonNode>('json:null', entry)
-	meta.registerChecker<json.JsonNode>('json:number', entry)
-	meta.registerChecker<json.JsonNode>('json:object', entry)
-	meta.registerChecker<json.JsonNode>('json:string', entry)
+	meta.registerChecker<json.JsonFileNode>('json:file', file)
 }
