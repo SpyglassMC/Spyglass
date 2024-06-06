@@ -48,6 +48,7 @@ import type {
 import {
 	BlockNode,
 	CoordinateNode,
+	EntitySelectorAtVariable,
 	EntitySelectorNode,
 	IntRangeNode,
 	ItemNode,
@@ -103,7 +104,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return ResourceLocationNode.mock(range, { category: 'dimension' })
 		case 'minecraft:entity':
 		case 'minecraft:game_profile':
-			return EntitySelectorNode.mock(range)
+			return EntitySelectorNode.mock(range, {
+				pool: EntitySelectorAtVariable.filterAvailable(ctx),
+			})
 		case 'minecraft:heightmap':
 			return LiteralNode.mock(range, { pool: HeightmapValues })
 		case 'minecraft:entity_anchor':
@@ -159,6 +162,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: ScoreboardSlotArgumentValues })
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
+		case 'minecraft:style':
+			return json.JsonObjectNode.mock(range)
 		case 'minecraft:swizzle':
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
@@ -360,7 +365,14 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 			node.fakeName ?? SymbolNode.mock(node, { category: 'score_holder' }),
 			ctx,
 		)
-		ans.push(...selector(EntitySelectorNode.mock(node), ctx))
+		ans.push(
+			...selector(
+				EntitySelectorNode.mock(node, {
+					pool: EntitySelectorAtVariable.filterAvailable(ctx),
+				}),
+				ctx,
+			),
+		)
 	}
 	return ans
 }

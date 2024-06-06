@@ -40,7 +40,6 @@ import {
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
-	EntitySelectorAtVariables,
 	EntitySelectorNode,
 	ObjectiveCriteriaNode,
 	TimeNode,
@@ -255,6 +254,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
 			return wrap(core.literal(...ScoreboardSlotArgumentValues))
+		case 'minecraft:style':
+			return wrap(json.parser.object)
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
@@ -424,7 +425,7 @@ function entity(
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{
@@ -519,11 +520,14 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (EntitySelectorAtVariable.is(src.peek(2))) {
+		if (src.peek() === '@') {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
-				core.stopBefore(greedyString, ...EntitySelectorAtVariables)(
+				core.stopBefore(
+					greedyString,
+					...EntitySelectorAtVariable.filterAvailable(ctx),
+				)(
 					src,
 					ctx,
 				),
@@ -690,6 +694,29 @@ function range(
 	)
 }
 
+function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
+	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
+		const start = src.cursor
+		const value = src.readUntil(' ', '\r', '\n', '[')
+		const allowedVariables = EntitySelectorAtVariable.filterAvailable(ctx)
+
+		const ans: core.LiteralNode = {
+			type: 'literal',
+			range: core.Range.create(start, src),
+			options: { pool: allowedVariables },
+			value,
+		}
+
+		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
+			ctx.err.report(
+				localize('mcfunction.parser.entity-selector.invalid', ans.value),
+				ans,
+			)
+		}
+
+		return ans
+	}
+}
 /**
  * Failure when not beginning with `@[parse]`
  */
@@ -707,10 +734,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 	>(
 		core.sequence([
 			core.failOnEmpty(
-				core.literal({
-					pool: EntitySelectorAtVariables,
-					colorTokenType: 'keyword',
-				}),
+				selectorPrefix(),
 			),
 			{
 				get: (res) => {
@@ -724,7 +748,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 						: undefined
 					predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
 					single = variable
-						? variable === '@p' || variable === '@r' || variable === '@s'
+						? ['@p', '@r', '@s', '@n'].includes(variable)
 						: undefined
 					typeLimited = playersOnly
 
@@ -1395,7 +1419,7 @@ function scoreHolder(
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{

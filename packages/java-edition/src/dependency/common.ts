@@ -9,6 +9,18 @@ export namespace ReleaseVersion {
 	export function cmp(a: ReleaseVersion, b: ReleaseVersion): number {
 		return Math.sign(Number(a.slice(2)) - Number(b.slice(2)))
 	}
+
+	/**
+	 * @returns `true` if `version` is newer than `since` (inclusive) and older
+	 * than `until` (exclusive)
+	 */
+	export function isBetween(
+		version: ReleaseVersion,
+		since: ReleaseVersion,
+		until: ReleaseVersion,
+	): boolean {
+		return cmp(version, since) >= 0 && cmp(version, until) < 0
+	}
 }
 
 export interface VersionInfo {

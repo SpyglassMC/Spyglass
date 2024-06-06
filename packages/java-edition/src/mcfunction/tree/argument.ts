@@ -150,16 +150,54 @@ export interface MinecraftMobEffectArgumentTreeNode
 {
 	parser: 'minecraft:mob_effect'
 }
+export interface NbtParserProperties extends Record<string, unknown> {
+	/**
+	 * The NBT checker should check this argument by dispatching on `dispatcher`
+	 * with a static index inferred from the argument with the name `dispatchedBy`
+	 * and optionally indexing on the dispatched type by indices inferred from the
+	 * argument named by `indexedBy`.
+	 */
+	dispatcher:
+		| 'minecraft:block_entity'
+		| 'minecraft:entity'
+		| 'minecraft:storage'
+	/**
+	 * The name of a vec3, an entity, an entity resource location, or a
+	 * storage resource location argument.
+	 *
+	 * @see {@link NbtParserProperties.dispatcher}
+	 */
+	dispatchedBy: string
+	/**
+	 * The name of an NBT path argument.
+	 *
+	 * @see {@link NbtParserProperties.dispatcher}
+	 */
+	indexedBy?: string
+	/**
+	 * @default {@link core.SymbolAccessType.Read}
+	 */
+	accessType?: core.SymbolAccessType
+	/**
+	 * `true` if the NBT checker should check this argument as a predicate. In a
+	 * predicate NBT argument, resource location strings must include the default
+	 * `minecraft:` namespace and numbers must have the exact type match.
+	 */
+	isPredicate?: boolean
+}
 export interface MinecraftNbtCompoundTagArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
 	parser: 'minecraft:nbt_compound_tag'
+	properties?: NbtParserProperties
 }
 export interface MinecraftNbtPathArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_path'
+	properties?: NbtParserProperties
 }
 export interface MinecraftNbtTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_tag'
+	properties?: NbtParserProperties
 }
 export interface MinecraftObjectiveArgumentTreeNode
 	extends mcf.ArgumentTreeNode
@@ -228,6 +266,9 @@ export interface MinecraftScoreboardSlotArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
 	parser: 'minecraft:scoreboard_slot'
+}
+export interface MinecraftStyleArgumentTreeNode extends mcf.ArgumentTreeNode {
+	parser: 'minecraft:style'
 }
 export interface MinecraftSwizzleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:swizzle'
@@ -307,6 +348,7 @@ export type ArgumentTreeNode =
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode
+	| MinecraftStyleArgumentTreeNode
 	| MinecraftSwizzleArgumentTreeNode
 	| MinecraftTeamArgumentTreeNode
 	| MinecraftTemplateMirrorArgumentTreeNode

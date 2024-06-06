@@ -454,7 +454,7 @@ export function semanticTokens(
 				type,
 				modifiers,
 			)
-			for (let i = pos.line + 1; i < endPos.line - 1; i++) {
+			for (let i = pos.line + 1; i <= endPos.line - 1; i++) {
 				const lineLength = doc.getText(
 					ls.Range.create(i, 0, i, MaxCharacterNumber),
 				).length

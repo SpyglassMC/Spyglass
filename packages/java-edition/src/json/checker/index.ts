@@ -1,8 +1,5 @@
-import * as core from '@spyglassmc/core'
-import type { JsonArrayNode, JsonNode, JsonNumberNode } from '@spyglassmc/json'
-import { JsonObjectNode } from '@spyglassmc/json'
-import { localeQuote, localize } from '@spyglassmc/locales'
-import * as mcdoc from '@spyglassmc/mcdoc'
+import type * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import { dissectUri } from '../../binder/index.js'
 
 const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
@@ -49,302 +46,29 @@ const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
 	],
 ])
 
-export const entry: core.Checker<JsonNode> = (
-	node: JsonNode,
+export const entry: core.Checker<json.JsonNode> = (
+	node: json.JsonNode,
 	ctx: core.CheckerContext,
 ) => {
 	const parts = dissectUri(ctx.doc.uri, ctx)
 	if (parts && Checkers.has(parts.category)) {
 		const identifier = Checkers.get(parts.category)!
-		return definition(identifier)(node, ctx)
+		return json.checker.definition(identifier)(node, ctx)
 	} else if (parts?.category.startsWith('tag/')) {
 		// TODO
+		return json.checker.definition('::java::data::tag::Tag')(node, ctx)
 	} else if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		return definition('::java::Pack')(node, ctx)
+		return json.checker.definition('::java::pack::Pack')(node, ctx)
 	} else {
 		return
 	}
 }
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerChecker<JsonNode>('json:array', entry)
-	meta.registerChecker<JsonNode>('json:boolean', entry)
-	meta.registerChecker<JsonNode>('json:null', entry)
-	meta.registerChecker<JsonNode>('json:number', entry)
-	meta.registerChecker<JsonNode>('json:object', entry)
-	meta.registerChecker<JsonNode>('json:string', entry)
-}
-
-/**
- * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
- */
-export function definition(
-	identifier: `::${string}::${string}`,
-): core.SyncChecker<JsonNode> {
-	return (node, ctx) => {
-		const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
-		const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
-		if (!typeDef) {
-			return
-		}
-		switch (typeDef.kind) {
-			case 'struct':
-				object(typeDef)(node, ctx)
-				break
-			default:
-				ctx.logger.error(
-					`[json.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
-				)
-		}
-	}
-}
-
-export function object(typeDef: mcdoc.StructType): core.SyncChecker<JsonNode> {
-	return (node, ctx) => {
-		if (!JsonObjectNode.is(node)) {
-			// TODO
-			return
-		}
-		for (const { key: keyNode, value: valueNode } of node.children) {
-			if (!keyNode || !valueNode) {
-				continue
-			}
-			const key = keyNode.value
-			// TODO: handle spread types
-			const fieldDef = typeDef.fields.find(
-				(p) => p.kind === 'pair' && p.key === key,
-			)
-			if (fieldDef) {
-				// TODO: enter a reference to the mcdoc key
-				fieldValue(fieldDef.type)(valueNode, ctx)
-			} else {
-				ctx.err.report(
-					localize('unknown-key', localeQuote(key)),
-					keyNode,
-					core.ErrorSeverity.Warning,
-				)
-			}
-		}
-		// TODO: check for required fields
-	}
-}
-
-export function fieldValue(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
-	const isInRange = (
-		value: number,
-		{ kind, min = -Infinity, max = Infinity }: mcdoc.NumericRange,
-	) => {
-		const comparator = (a: number, b: number, exclusive: unknown) =>
-			exclusive ? a < b : a <= b
-		return (
-			comparator(min, value, kind & 0b10) &&
-			comparator(value, max, kind & 0b01)
-		)
-	}
-
-	const ExpectedTypes: Record<
-		Exclude<
-			mcdoc.McdocType['kind'],
-			| 'any'
-			| 'dispatcher'
-			| 'enum'
-			| 'literal'
-			| 'reference'
-			| 'union'
-			| 'unsafe'
-			| 'attributed'
-			| 'concrete'
-			| 'indexed'
-			| 'template'
-		>,
-		JsonNode['type']
-	> = {
-		boolean: 'json:boolean',
-		byte: 'json:number',
-		byte_array: 'json:array',
-		double: 'json:number',
-		float: 'json:number',
-		int: 'json:number',
-		int_array: 'json:array',
-		list: 'json:array',
-		long: 'json:number',
-		long_array: 'json:array',
-		short: 'json:number',
-		string: 'json:string',
-		struct: 'json:object',
-		tuple: 'json:array',
-	}
-
-	return (node, ctx): void => {
-		// Rough type check.
-		if (
-			type.kind !== 'any' &&
-			type.kind !== 'dispatcher' &&
-			type.kind !== 'enum' &&
-			type.kind !== 'literal' &&
-			type.kind !== 'reference' &&
-			type.kind !== 'union' &&
-			type.kind !== 'unsafe' &&
-			type.kind !== 'concrete' &&
-			type.kind !== 'indexed' &&
-			type.kind !== 'template' &&
-			node.type !== ExpectedTypes[type.kind]
-		) {
-			ctx.err.report(
-				localize('expected', localizeTag(ExpectedTypes[type.kind])),
-				node,
-				core.ErrorSeverity.Warning,
-			)
-			return
-		}
-
-		switch (type.kind) {
-			case 'boolean':
-				break
-			case 'byte_array':
-			case 'int_array':
-			case 'long_array':
-				node = node as JsonArrayNode
-				if (
-					type.lengthRange &&
-					!isInRange(node.children.length, type.lengthRange)
-				) {
-					ctx.err.report(
-						localize(
-							'expected',
-							localize(
-								'json.checker.array.length-between',
-								localizeTag(node.type),
-								type.lengthRange.min ?? '-∞',
-								type.lengthRange.max ?? '+∞',
-							),
-						),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-				if (type.valueRange) {
-					for (const { value: childNode } of node.children) {
-						if (childNode?.type !== 'json:number') {
-							ctx.err.report(
-								localize('expected', localizeTag('json:number')),
-								node,
-								core.ErrorSeverity.Warning,
-							)
-						} else if (
-							childNode &&
-							!isInRange(Number(childNode.value), type.valueRange)
-						) {
-							ctx.err.report(
-								localize(
-									'number.between',
-									type.valueRange.min ?? '-∞',
-									type.valueRange.max ?? '+∞',
-								),
-								node,
-								core.ErrorSeverity.Warning,
-							)
-						}
-					}
-				}
-				break
-			case 'byte':
-			case 'short':
-			case 'int':
-			case 'long':
-			case 'float':
-			case 'double':
-				node = node as JsonNumberNode
-				if (
-					type.valueRange &&
-					!isInRange(Number(node.value), type.valueRange)
-				) {
-					ctx.err.report(
-						localize(
-							'number.between',
-							type.valueRange.min ?? '-∞',
-							type.valueRange.max ?? '+∞',
-						),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-				break
-			case 'dispatcher':
-				node = node as JsonObjectNode
-				// const id = resolveFieldPath(node.parent?.parent, type.index.path)
-				// if (type.index.registry) {
-				// 	if (ExtendableRootRegistry.is(type.index.registry)) {
-				// 		index(type.index.registry, id ? core.ResourceLocation.lengthen(id) : undefined, options)(node, ctx)
-				// 	} else if (id) {
-				// 		index(type.index.registry, core.ResourceLocation.lengthen(id), options)(node, ctx)
-				// 	}
-				// }
-				break
-			case 'list':
-				node = node as JsonArrayNode
-				type = mcdoc.simplifyListType(type)
-				if (
-					type.lengthRange &&
-					!isInRange(node.children.length, type.lengthRange)
-				) {
-					ctx.err.report(
-						localize(
-							'expected',
-							localize(
-								'json.checker.collection.length-between',
-								localizeTag(node.type),
-								type.lengthRange.min ?? '-∞',
-								type.lengthRange.max ?? '+∞',
-							),
-						),
-						node,
-						core.ErrorSeverity.Warning,
-					)
-				}
-				for (const { value: childNode } of node.children) {
-					if (childNode) {
-						fieldValue(type.item)(childNode, ctx)
-					}
-				}
-				break
-			case 'struct':
-				node = node as JsonObjectNode
-				object(type)(node, ctx)
-				break
-			case 'string':
-				break
-			case 'reference':
-				// node = node as JsonObjectNode
-				// if (type.symbol) {
-				// 	const { allowUnknownKey, value } = resolveSymbolPaths([type.symbol], ctx, node)
-				// 	compound(value, { ...options, allowUnknownKey: options.allowUnknownKey || allowUnknownKey })(node, ctx)
-				// }
-				break
-			case 'union':
-				type = mcdoc.flattenUnionType(type)
-				if (type.members.length === 0) {
-					ctx.err.report(
-						localize('json.checker.object.field.union-empty-members'),
-						core.PairNode.is(node.parent)
-							? node.parent.key ?? node.parent
-							: node,
-						core.ErrorSeverity.Warning,
-					)
-				} else {
-					;(
-						core.checker.any(
-							type.members.map((t) => fieldValue(t)),
-						) as core.SyncChecker<JsonNode>
-					)(node, ctx)
-				}
-				break
-		}
-	}
-}
-
-function localizeTag(type: JsonNode['type']) {
-	const key = `json.node.${type.replace(/^json:/, '')}`
-	const res = localize(key)
-	return res
+	meta.registerChecker<json.JsonNode>('json:array', entry)
+	meta.registerChecker<json.JsonNode>('json:boolean', entry)
+	meta.registerChecker<json.JsonNode>('json:null', entry)
+	meta.registerChecker<json.JsonNode>('json:number', entry)
+	meta.registerChecker<json.JsonNode>('json:object', entry)
+	meta.registerChecker<json.JsonNode>('json:string', entry)
 }

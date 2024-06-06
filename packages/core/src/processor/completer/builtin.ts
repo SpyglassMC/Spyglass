@@ -23,7 +23,7 @@ import type { CompleterContext, MetaRegistry } from '../../service/index.js'
 import { LinterConfigValue } from '../../service/index.js'
 import type { RangeLike } from '../../source/index.js'
 import { Range } from '../../source/index.js'
-import type { TagFileCategory } from '../../symbol/index.js'
+import { SymbolUtil, type TagFileCategory } from '../../symbol/index.js'
 import type { ColorTokenType } from '../colorizer/index.js'
 import type { Completer } from './Completer.js'
 import { CompletionItem, CompletionKind } from './Completer.js'
@@ -189,10 +189,13 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 	const excludeDefaultNamespace = !node.options.isPredicate &&
 		config?.ruleValue !== false
 
-	const getPool = (category: string) =>
-		optimizePool(
-			Object.keys(ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)),
+	const getPool = (category: string) => {
+		const symbols = ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)
+		const declarations = Object.entries(symbols).flatMap(([key, symbol]) =>
+			SymbolUtil.isDeclared(symbol) ? [key] : []
 		)
+		return optimizePool(declarations)
+	}
 	const optimizePool = (pool: readonly string[]) => {
 		const defaultNsPrefix =
 			`${ResourceLocation.DefaultNamespace}${ResourceLocation.NamespacePathSep}`

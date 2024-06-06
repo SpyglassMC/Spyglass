@@ -1,4 +1,4 @@
-exports['toLS.completionItem() Should map correctly when cursor is in first line 1'] = {
+exports['toLS completionItem Should map correctly when cursor is in first line 1'] = {
   "label": "advancement",
   "textEdit": {
     "newText": "advancement",
@@ -42,7 +42,7 @@ exports['toLS.completionItem() Should map correctly when cursor is in first line
   ]
 }
 
-exports['toLS.completionItem() Should map correctly when cursor is in second line 1'] = {
+exports['toLS completionItem Should map correctly when cursor is in second line 1'] = {
   "label": "advancement",
   "filterText": "an\\",
   "textEdit": {
@@ -100,7 +100,7 @@ exports['toLS.completionItem() Should map correctly when cursor is in second lin
   ]
 }
 
-exports['toLS.completionItem() Should map correctly when cursor is in third line 1'] = {
+exports['toLS completionItem Should map correctly when cursor is in third line 1'] = {
   "label": "advancement",
   "filterText": "ce",
   "textEdit": {
@@ -144,3 +144,83 @@ exports['toLS.completionItem() Should map correctly when cursor is in third line
     }
   ]
 }
+exports['toLS semanticTokens Tokenize "foo" with multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 100,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]
+
+exports['toLS semanticTokens Tokenize "foo" without multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 100,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]
+
+exports['toLS semanticTokens Tokenize "foo↓bar" with multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 100,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]
+
+exports['toLS semanticTokens Tokenize "foo↓bar" without multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 4,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  },
+  {
+    "deltaLine": 1,
+    "deltaStartChar": 0,
+    "length": 3,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]
+
+exports['toLS semanticTokens Tokenize "foo↓bar↓qux" with multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 100,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]
+
+exports['toLS semanticTokens Tokenize "foo↓bar↓qux" without multiline token support 1'] = [
+  {
+    "deltaLine": 0,
+    "deltaStartChar": 0,
+    "length": 4,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  },
+  {
+    "deltaLine": 1,
+    "deltaStartChar": 0,
+    "length": 4,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  },
+  {
+    "deltaLine": 1,
+    "deltaStartChar": 0,
+    "length": 3,
+    "tokenType": 0,
+    "tokenModifiers": 0
+  }
+]

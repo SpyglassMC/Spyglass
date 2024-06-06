@@ -57,7 +57,9 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                           {
                             "kind": "dynamic",
                             "accessor": [
-                              "%parent",
+                              {
+                                "keyword": "parent"
+                              },
                               "type"
                             ]
                           }
@@ -125,7 +127,9 @@ exports['mcdoc __fixture__ struct/nested spread 1'] = {
                     {
                       "kind": "dynamic",
                       "accessor": [
-                        "%parent",
+                        {
+                          "keyword": "parent"
+                        },
                         "type"
                       ]
                     }
