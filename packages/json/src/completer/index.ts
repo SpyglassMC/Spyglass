@@ -33,7 +33,7 @@ const object: core.Completer<JsonObjectNode> = (node, ctx) => {
 						),
 						sortText: field.optional ? 'z' : 'a',
 						filterText: `"${key}"`,
-						insertText: `"${key}": `,
+						insertText: `"${key}"${pair?.value ? '' : ': '}`,
 					})
 				)
 		},
