@@ -363,11 +363,15 @@ export function typeDefinition<T>(
 		}
 	}
 
+	// TODO: attach a combination of all possible definitions
+	const attached = new Set<T>()
+
 	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
-		const typeDefs = node.validDefinitions.map(def => def.typeDef)
-		if (typeDefs.length === 0) return
-		options.attachTypeInfo(node.node.originalNode, typeDefs[0])
 		for (const def of node.validDefinitions) {
+			if (!attached.has(node.node.originalNode)) {
+				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				attached.add(node.node.originalNode)
+			}
 			for (const child of def.children) {
 				for (const node of child.possibleRuntimeValues) {
 					attachTypeInfo(node)
