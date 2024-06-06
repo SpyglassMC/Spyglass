@@ -43,12 +43,27 @@ export async function generate(
 		doc_contents,
 	)
 
-	const check = await service.project.ensureClientManagedChecked(
+	const bound = await service.project.ensureClientManagedChecked(
 		DocumentUri,
 	)
 
-	if (check && check.doc && check.node) {
-		const { doc, node } = check
+	await service.project.ensureBindingStarted(
+		DocumentUri,
+	)
+
+	const disableCruft = true
+
+	if (disableCruft) {
+		const dispatched_symbol_types = Object.entries(service.project.symbols.getVisibleSymbols('mcdoc/dispatcher'))
+
+		for (const [symbol_type_name, symbol_type] of dispatched_symbol_types) {
+			for (const [symbol_name, symbol] of Object.entries(symbol_type.members ?? {})) {
+				/* @ts-ignore */
+				console.log(symbol_name, symbol.data?.typeDef)
+			}
+		}
+	} else if (bound && bound.doc && bound.node) {
+		const { doc, node } = bound
 
 		const path = parse(fileURLToPath(doc.uri))
 
