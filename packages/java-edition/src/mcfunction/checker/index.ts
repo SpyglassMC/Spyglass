@@ -46,7 +46,13 @@ const rootCommand = (
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
 		} else if (json.JsonNode.is(node)) {
-			// TODO v4.0: check text component
+			// TODO find a better way to differentiate text components and text styles
+			const parent = node.parent
+			const ref = parent && mcf.CommandChildNode.is(parent) &&
+					parent.path[parent.path.length - 1] === 'style'
+				? '::java::server::util::text::TextStyle'
+				: '::java::server::util::text::Text'
+			json.checker.definition(ref)(node, ctx)
 		}
 	}
 
