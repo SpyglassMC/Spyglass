@@ -31,7 +31,7 @@ const object: core.Completer<JsonObjectNode> = (node, ctx) => {
 						detail: mcdoc.McdocType.toString(
 							field.type as core.Mutable<mcdoc.McdocType>,
 						),
-						sortText: field.optional ? 'z' : 'a',
+						sortText: field.optional ? '$b' : '$a', // sort before hardcoded $schema
 						filterText: `"${key}"`,
 						insertText: `"${key}"${pair?.value ? '' : ': '}`,
 					})
