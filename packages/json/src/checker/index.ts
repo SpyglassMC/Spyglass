@@ -83,6 +83,7 @@ export function definition(
 					},
 				),
 				attachTypeInfo: (node, definition) => {
+					node.typeDef = definition
 					// TODO: improve hover info
 					if (
 						node.parent && JsonPairNode?.is(node.parent) &&

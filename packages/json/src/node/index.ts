@@ -1,5 +1,5 @@
-import type { ItemNode, PairNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
+import type * as mcdoc from '@spyglassmc/mcdoc'
 import { JsonStringOptions } from '../parser/index.js'
 
 export interface JsonFileNode extends core.AstNode {
@@ -11,6 +11,10 @@ export namespace JsonFileNode {
 	export function is(obj: object | undefined): obj is JsonFileNode {
 		return (obj as JsonFileNode | undefined)?.type === 'json:file'
 	}
+}
+
+interface JsonBaseNode {
+	typeDef?: mcdoc.McdocType
 }
 
 export type JsonNode =
@@ -39,7 +43,7 @@ export namespace JsonNode {
 }
 
 export interface JsonObjectNode
-	extends core.RecordBaseNode<JsonStringNode, JsonNode>
+	extends core.RecordBaseNode<JsonStringNode, JsonNode>, JsonBaseNode
 {
 	readonly type: 'json:object'
 }
@@ -57,7 +61,7 @@ export namespace JsonObjectNode {
 		}
 	}
 }
-export type JsonPairNode = PairNode<JsonStringNode, JsonNode>
+export type JsonPairNode = core.PairNode<JsonStringNode, JsonNode>
 export namespace JsonPairNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonPairNode {
@@ -65,7 +69,7 @@ export namespace JsonPairNode {
 	}
 }
 
-export interface JsonArrayNode extends core.ListNode<JsonNode> {
+export interface JsonArrayNode extends core.ListNode<JsonNode>, JsonBaseNode {
 	readonly type: 'json:array'
 }
 export namespace JsonArrayNode {
@@ -81,7 +85,7 @@ export namespace JsonArrayNode {
 		}
 	}
 }
-export type JsonItemNode = ItemNode<JsonNode>
+export type JsonItemNode = core.ItemNode<JsonNode>
 export namespace JsonItemNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonItemNode {
@@ -89,7 +93,7 @@ export namespace JsonItemNode {
 	}
 }
 
-export interface JsonStringNode extends core.StringBaseNode {
+export interface JsonStringNode extends core.StringBaseNode, JsonBaseNode {
 	readonly type: 'json:string'
 }
 export namespace JsonStringNode {
@@ -106,7 +110,7 @@ export namespace JsonStringNode {
 	}
 }
 
-export interface JsonNumberNode extends core.AstNode {
+export interface JsonNumberNode extends core.AstNode, JsonBaseNode {
 	readonly type: 'json:number'
 	readonly children: [core.LongNode | core.FloatNode]
 	readonly value: core.LongNode | core.FloatNode
@@ -118,7 +122,7 @@ export namespace JsonNumberNode {
 	}
 }
 
-export interface JsonBooleanNode extends core.BooleanBaseNode {
+export interface JsonBooleanNode extends core.BooleanBaseNode, JsonBaseNode {
 	readonly type: 'json:boolean'
 }
 export namespace JsonBooleanNode {
@@ -128,7 +132,7 @@ export namespace JsonBooleanNode {
 	}
 }
 
-export interface JsonNullNode extends core.AstNode {
+export interface JsonNullNode extends core.AstNode, JsonBaseNode {
 	readonly type: 'json:null'
 }
 export namespace JsonNullNode {
