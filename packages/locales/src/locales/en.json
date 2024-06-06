@@ -99,6 +99,7 @@
   "mcdoc.runtime.checker.range.right-exclusive": "below %0%",
   "mcdoc.runtime.checker.range.right-inclusive": "at most %0%",
   "mcdoc.runtime.checker.range.number": "numeric value to be %1%",
+  "mcdoc.type.boolean": "a boolean",
   "mcdoc.type.byte": "a byte",
   "mcdoc.type.short": "a short",
   "mcdoc.type.int": "an int",
