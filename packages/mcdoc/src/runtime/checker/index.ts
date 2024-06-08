@@ -657,18 +657,14 @@ function check<T>(
 		for (const simplified of matches) {
 			const errors: McdocCheckerError<T>[] = []
 			handleAttributes(simplified.attributes, options, (handler, config) => {
-				if (!handler.checkSimplified) return
-				handler.checkSimplified?.(
-					config,
-					simplifiedRuntime,
-					options.context,
-				).forEach(e =>
-					errors.push({
-						kind: 'custom',
-						node: possibleNode.node,
-						message: e,
-					})
-				)
+				handler.checkInferred?.(config, simplifiedRuntime, options.context)
+					.forEach(e =>
+						errors.push({
+							kind: 'custom',
+							node: possibleNode.node,
+							message: e,
+						})
+					)
 			})
 			let childNodes: CheckerTreeEntryNode<T>[] = children.map(c => {
 				if (Array.isArray(c)) {
@@ -885,8 +881,19 @@ export function simplify<T>(
 	options: McdocCheckerOptions<T>,
 	parents: RuntimeUnion<T>[],
 ): SimplifiedMcdocType {
-	if (typeDef.attributes) {
-		// TODO
+	// if (typeDef.attributes && typeDef.attributes.length > 0) {
+	// 	handleAttributes(typeDef.attributes, options, (handler, config) => {
+	// 		if (!handler.simplify) return
+	// 		typeDef = handler.simplify(config, typeDef, options.context)
+	// 	})
+	// }
+
+	function wrap(type: SimplifiedMcdocType) {
+		handleAttributes(type.attributes, options, (handler, config) => {
+			if (!handler.simplify) return
+			type = handler.simplify(config, type, options.context)
+		})
+		return type
 	}
 
 	switch (typeDef.kind) {
@@ -910,7 +917,7 @@ export function simplify<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return simplify(def, options, parents)
+			return wrap(simplify(def, options, parents))
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -931,7 +938,7 @@ export function simplify<T>(
 					structFields.push({ kind: 'pair', key: key, type: data.typeDef })
 				}
 			}
-			return simplify(
+			return wrap(simplify(
 				{
 					kind: 'indexed',
 					parallelIndices: typeDef.parallelIndices,
@@ -939,9 +946,9 @@ export function simplify<T>(
 				},
 				options,
 				parents,
-			)
+			))
 		case 'indexed':
-			const child = simplify(typeDef.child, options, parents)
+			const child = wrap(simplify(typeDef.child, options, parents))
 
 			if (child.kind !== 'struct') {
 				options.context.logger.warn(
@@ -1086,7 +1093,9 @@ export function simplify<T>(
 					values.push(...currentValues.map(v => v!.type))
 				}
 			}
-			return simplify({ kind: 'union', members: values }, options, parents)
+			return wrap(
+				simplify({ kind: 'union', members: values }, options, parents),
+			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
@@ -1101,7 +1110,7 @@ export function simplify<T>(
 			if (members.length === 1) {
 				return members[0]
 			}
-			return { kind: 'union', members: members }
+			return wrap({ ...typeDef, kind: 'union', members: members })
 		case 'struct':
 			const fields: SimplifiedStructTypePairField[] = []
 			for (const field of typeDef.fields) {
@@ -1137,26 +1146,38 @@ export function simplify<T>(
 					}
 				}
 			}
-			return {
+			return wrap({
+				...typeDef,
 				kind: 'struct',
-				fields: fields.filter((f, i) =>
-					fields.findLastIndex(of =>
-						isAssignable(
-							of.key,
-							f.key,
-							options.context,
-							options.isEquivalent,
-						)
-					) === i
-				),
-			}
+				fields: fields
+					.filter(f => {
+						let keep = true
+						handleAttributes(f.attributes, options, (handler, config) => {
+							if (!keep || !handler.filterPair) return
+							if (!handler.filterPair(config, f, options.context)) {
+								keep = false
+							}
+						})
+						return keep
+					})
+					.filter((f, i) =>
+						fields.findLastIndex(of =>
+							isAssignable(
+								of.key,
+								f.key,
+								options.context,
+								options.isEquivalent,
+							)
+						) === i
+					),
+			})
 		case 'enum':
-			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
+			return wrap({ ...typeDef, enumKind: typeDef.enumKind ?? 'int' })
 		case 'concrete': // TODO
 		case 'template': // TODO
-			return { kind: 'union', members: [] }
+			return wrap({ ...typeDef, kind: 'union', members: [] })
 		default:
-			return typeDef
+			return wrap(typeDef)
 	}
 }
 function simplifyKey(

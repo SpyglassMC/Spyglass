@@ -1,16 +1,16 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
-import type { McmetaSummary, ReleaseVersion } from './dependency/index.js'
+import type { McmetaSummary } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
 	getVanillaMcdoc,
 	getVersions,
 	PackMcmeta,
+	ReleaseVersion,
 	resolveConfiguredVersion,
 	symbolRegistrar,
 } from './dependency/index.js'
@@ -117,14 +117,36 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute(meta, 'since', {
+	mcdoc.runtime.registerAttribute<string>(meta, 'since', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
 			}
+			if (value?.kind === 'literal' && value.value.kind === 'double') {
+				return `${value.value.value}`
+			}
 			return undefined
 		},
-		// TODO: implement since attribute
+		simplify: (config, typeDef, ctx) => {
+			if (config === undefined || !config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
+				return typeDef
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) < 0) {
+				return { kind: 'union', members: [] }
+			}
+			return typeDef
+		},
+		filterPair: (config, pair, ctx) => {
+			if (config === undefined || !config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
+				return true
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) < 0) {
+				return false
+			}
+			return true
+		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'until', {
 		config: (value) => {
@@ -133,7 +155,26 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			}
 			return undefined
 		},
-		// TODO: implement until attribute
+		simplify: (config, typeDef, ctx) => {
+			if (config === undefined || !config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+				return typeDef
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+				return { kind: 'union', members: [] }
+			}
+			return typeDef
+		},
+		filterPair: (config, pair, ctx) => {
+			if (config === undefined || !config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+				return true
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+				return false
+			}
+			return true
+		},
 	})
 
 	json.initialize(ctx)

@@ -1,18 +1,29 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { AttributeValue } from '../../type/index.js'
+import type { AttributeValue, McdocType } from '../../type/index.js'
 import type {
+	SimplifiedMcdocType,
 	SimplifiedMcdocTypeNoUnion,
 	SimplifiedStructTypePairField,
 } from '../checker/index.js'
 
 export interface McdocAttribute<C = unknown> {
 	config: (value: AttributeValue | undefined) => C | undefined
-	checkSimplified?: (
+	checkInferred?: (
 		config: C | undefined,
 		inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-		options: core.CheckerContext,
+		ctx: core.CheckerContext,
 	) => string[]
+	simplify?: (
+		config: C | undefined,
+		typeDef: SimplifiedMcdocType,
+		ctx: core.CheckerContext,
+	) => SimplifiedMcdocType
+	filterPair?: (
+		config: C | undefined,
+		pair: SimplifiedStructTypePairField,
+		ctx: core.CheckerContext,
+	) => boolean
 }
 
 export function registerAttribute<C>(
@@ -41,7 +52,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			return undefined
 		},
-		checkSimplified: (config, inferred, ctx) => {
+		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
 				return []
 			}
