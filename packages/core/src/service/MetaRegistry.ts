@@ -330,7 +330,8 @@ export class MetaRegistry {
 	): void {
 		let groupRegistry = this.#custom.get(group)
 		if (!groupRegistry) {
-			groupRegistry = this.#custom.set(group, new Map())
+			groupRegistry = new Map()
+			this.#custom.set(group, groupRegistry)
 		}
 		groupRegistry.set(id, object)
 	}

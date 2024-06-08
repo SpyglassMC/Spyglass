@@ -24,6 +24,8 @@ import type {
 	UnionType,
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
+import type { McdocAttribute } from '../attribute/index.js'
+import { getAttribute } from '../attribute/index.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
@@ -69,6 +71,7 @@ export type McdocCheckerError<T> =
 	| RangeError<T>
 	| TypeMismatchError<T>
 	| MissingKeyError<T>
+	| CustomError<T>
 export interface SimpleError<T> {
 	kind:
 		| 'unknown_key'
@@ -101,12 +104,17 @@ export interface TypeMismatchError<T> {
 	kind: 'type_mismatch'
 	expected: SimplifiedMcdocType
 }
+export interface CustomError<T> {
+	kind: 'custom'
+	node: RuntimeNode<T>
+	message: string
+}
 
 export type SimplifiedMcdocType =
 	| SimplifiedMcdocTypeNoUnion
 	| UnionType<SimplifiedMcdocTypeNoUnion>
 
-type SimplifiedMcdocTypeNoUnion =
+export type SimplifiedMcdocTypeNoUnion =
 	| SimplifiedEnum
 	| KeywordType
 	| ListType
@@ -127,28 +135,20 @@ export interface SimplifiedStructTypePairField extends StructTypePairField {
 	key: SimplifiedMcdocTypeNoUnion
 }
 
-const attributeHandlers: {
-	[key: string]:
-		| (<N>(
-			node: N,
-			attribute: Attribute,
-			inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			expected: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			options: McdocCheckerOptions<N>,
-		) => McdocCheckerError<N>[])
-		| undefined
-} = {
-	// TODO other attributes
-	// TODO might need different interface, see https://discord.com/channels/666020457568403505/666037123450929163/1240827428452958209
-	id: (_n, attribute, inferred, _e, options) => {
-		if (inferred.kind === 'literal' && inferred.value.kind === 'string') {
-			// TODO check registry
-			if (!inferred.value.value.includes(':')) {
-				inferred.value.value = 'minecraft:' + inferred.value.value
-			}
+export function handleAttributes<T>(
+	attributes: Attribute[] | undefined,
+	options: McdocCheckerOptions<T>,
+	fn: <C>(handler: McdocAttribute<C>, config: C | undefined) => void,
+) {
+	for (const { name, value } of attributes ?? []) {
+		const handler = getAttribute(options.context.meta, name)
+		if (!handler) {
+			options.context.logger.warn(`Unhandled mcdoc attribute ${name}`)
+			continue
 		}
-		return []
-	},
+		const config = handler.config(value)
+		fn(handler, config)
+	}
 }
 
 export function reference<T>(
@@ -573,6 +573,12 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	// TODO handle list length range and value range errors (merge ranges, could be multiple possible distinct ranges)
 
+	errors.push(
+		...validDefinitions.flatMap(d =>
+			d.errors.filter(e => e.kind === 'custom')
+		),
+	)
+
 	return {
 		siblings: validDefinitions.map(d => d.node),
 		condensedErrors: errors,
@@ -650,22 +656,20 @@ function check<T>(
 
 		for (const simplified of matches) {
 			const errors: McdocCheckerError<T>[] = []
-			if (simplified.attributes) {
-				for (const attribute of simplified.attributes) {
-					const handler = attributeHandlers[attribute.name]
-					if (handler) {
-						errors.push(
-							...handler(
-								originalNode,
-								attribute,
-								simplifiedRuntime,
-								simplified,
-								options,
-							),
-						)
-					}
-				}
-			}
+			handleAttributes(simplified.attributes, options, (handler, config) => {
+				if (!handler.checkSimplified) return
+				handler.checkSimplified?.(
+					config,
+					simplifiedRuntime,
+					options.context,
+				).forEach(e =>
+					errors.push({
+						kind: 'custom',
+						node: possibleNode.node,
+						message: e,
+					})
+				)
+			})
 			let childNodes: CheckerTreeEntryNode<T>[] = children.map(c => {
 				if (Array.isArray(c)) {
 					const ans: CheckerTreeEntryNode<T> = {
@@ -1312,6 +1316,9 @@ export function getDefaultErrorReporter<T>(
 					localize(`mcdoc.runtime.checker.${defaultTranslationKey}`),
 					range,
 				)
+				break
+			case 'custom':
+				ctx.err.report(error.message, range, ErrorSeverity.Warning)
 				break
 			default:
 				ctx.err.report(localize(defaultTranslationKey), range)
