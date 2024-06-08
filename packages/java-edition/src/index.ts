@@ -1,9 +1,10 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
-import type { McmetaSummary } from './dependency/index.js'
+import type { McmetaSummary, ReleaseVersion } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
@@ -114,6 +115,25 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			(mcdoc.StructFieldNode.is(n.parent) &&
 				mcdoc.StructKeyNode.is(n) &&
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
+	})
+
+	mcdoc.runtime.registerAttribute(meta, 'since', {
+		config: (value) => {
+			if (value?.kind === 'literal' && value.value.kind === 'string') {
+				return value.value.value
+			}
+			return undefined
+		},
+		// TODO: implement since attribute
+	})
+	mcdoc.runtime.registerAttribute(meta, 'until', {
+		config: (value) => {
+			if (value?.kind === 'literal' && value.value.kind === 'string') {
+				return value.value.value
+			}
+			return undefined
+		},
+		// TODO: implement until attribute
 	})
 
 	json.initialize(ctx)

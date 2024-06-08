@@ -2,6 +2,7 @@ import type * as core from '@spyglassmc/core'
 import * as binder from './binder/index.js'
 import * as colorizer from './colorizer/index.js'
 import * as parser from './parser/index.js'
+import { registerBuiltinAttributes } from './runtime/attribute/index.js'
 import * as uri_professors from './uri_processors.js'
 
 export * as binder from './binder/index.js'
@@ -18,6 +19,8 @@ export const initialize = ({ meta }: { meta: core.MetaRegistry }): void => {
 		extensions: ['.mcdoc'],
 		parser: parser.module_,
 	})
+
+	registerBuiltinAttributes(meta)
 
 	meta.registerUriBinder(uri_professors.uriBinder)
 	meta.setUriSorter(uri_professors.uriSorter)
