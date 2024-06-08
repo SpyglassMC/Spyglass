@@ -317,6 +317,93 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: '(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 0, max: 5 },
+								},
+							},
+						],
+					},
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 4, max: 6 },
+								},
+							},
+						],
+					},
+				],
+			},
+			values: [
+				{ foo: 4 },
+				{ foo: 9 },
+			],
+		},
+		{
+			name:
+				'(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'union',
+									members: [
+										{
+											kind: 'int',
+											valueRange: { kind: 0b00, min: 0, max: 5 },
+										},
+										{
+											kind: 'int',
+											valueRange: { kind: 0b00, min: 20, max: 25 },
+										},
+									],
+								},
+							},
+						],
+					},
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 4, max: 6 },
+								},
+							},
+						],
+					},
+				],
+			},
+			values: [
+				{ foo: 4 },
+				{ foo: 9 },
+				{ foo: 23 },
+			],
+		},
+		{
 			name: '[int] @ 0..5',
 			type: {
 				kind: 'list',

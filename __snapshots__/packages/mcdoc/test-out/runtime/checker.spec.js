@@ -101,6 +101,73 @@ exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)�
 
 exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 9 1'] = []
 
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":23} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":4} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":9} 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "kind": 0,
+        "min": 20,
+        "max": 25
+      },
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })” with value {"foo":4} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })” with value {"foo":9} 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+
 exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [0.2,6] 1'] = [
   {
     "kind": "number_out_of_range",
