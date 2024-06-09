@@ -49,22 +49,13 @@ export function index(
 			return entityId
 				? index('entity_type', entityId, options)
 				: core.checker.noop
-			// case 'entity_type':
-			//   return (node, ctx) => {
-			//     dispatcher(node,)
-			//   }
 		default:
 			const identifier = getRegistryIdentifier(registry)
 			if (!identifier) {
 				return core.checker.noop
 			}
-			if (typeof id !== 'string') {
-				throw new Error(
-					`Malformed registry index: ${id} (fetching from ${identifier})`,
-				)
-			}
 			return (node, ctx) => {
-				definition(identifier, id, options)(node, ctx)
+				definition(identifier, options)(node, ctx)
 			}
 	}
 }
@@ -74,7 +65,7 @@ function getRegistryIdentifier(registry: string) {
 		case 'block':
 			return '::java::server::world::block::BlockEntity'
 		case 'entity_type':
-			return 'minecraft:entity'
+			return '::java::server::world::entity::AnyEntity'
 		case 'item':
 			return '::java::server::world::item::AnyItem'
 		default:
@@ -86,16 +77,13 @@ function getRegistryIdentifier(registry: string) {
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
  */
 export function definition(
-	registryIdentifier: core.FullResourceLocation,
-	index: core.FullResourceLocation,
+	identifier: `::${string}::${string}`,
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
-		console.log({ registryIdentifier, index })
-		mcdoc.runtime.checker.dispatcher<NbtNode>(
+		mcdoc.runtime.checker.reference<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
-			registryIdentifier,
-			index,
+			identifier,
 			{
 				context: ctx,
 				isEquivalent: (inferred, def) => {
