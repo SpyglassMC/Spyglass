@@ -597,7 +597,7 @@ function check<T>(
 		)
 		current = current.parent?.runtimeNode.entryNode
 	}
-	const simplifiedNode = simplify(node.typeDef, options, parents)
+	const simplifiedNode = simplify(node.typeDef, options, parents, [])
 	const simplifiedOptions = simplifiedNode.kind === 'union'
 		? simplifiedNode.members
 		: [simplifiedNode]
@@ -610,7 +610,7 @@ function check<T>(
 		// the same types again and just collect the errors of the lower depth.
 		// This will currently lead to a stack overflow error when e.g. comparing two
 		// text component definitions
-		const simplifiedRuntime = simplify(inferredType, options, parents)
+		const simplifiedRuntime = simplify(inferredType, options, parents, [])
 		const inferredValue = getValueType(simplifiedRuntime)
 		const matches = []
 		for (const simplified of simplifiedOptions) {
@@ -870,16 +870,19 @@ export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
 	options: McdocCheckerOptions<T>,
 	parents: RuntimeUnion<T>[],
+	typeArgs: McdocType[],
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
 	options: McdocCheckerOptions<T>,
 	parents: RuntimeUnion<T>[],
+	typeArgs: McdocType[],
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
 	options: McdocCheckerOptions<T>,
 	parents: RuntimeUnion<T>[],
+	typeArgs: McdocType[],
 ): SimplifiedMcdocType {
 	if (typeDef.attributes) {
 		// TODO
@@ -906,7 +909,7 @@ export function simplify<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return simplify(def, options, parents)
+			return simplify(def, options, parents, typeArgs)
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -935,9 +938,10 @@ export function simplify<T>(
 				},
 				options,
 				parents,
+				typeArgs,
 			)
 		case 'indexed':
-			const child = simplify(typeDef.child, options, parents)
+			const child = simplify(typeDef.child, options, parents, [])
 
 			if (child.kind !== 'struct') {
 				options.context.logger.warn(
@@ -1003,6 +1007,7 @@ export function simplify<T>(
 												value.inferredType,
 												options,
 												node.parents,
+												[],
 											),
 										).find(child => {
 											if (!Array.isArray(child)) {
@@ -1082,11 +1087,16 @@ export function simplify<T>(
 					values.push(...currentValues.map(v => v!.type))
 				}
 			}
-			return simplify({ kind: 'union', members: values }, options, parents)
+			return simplify(
+				{ kind: 'union', members: values },
+				options,
+				parents,
+				typeArgs,
+			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
-				const simplified = simplify(member, options, parents)
+				const simplified = simplify(member, options, parents, typeArgs)
 
 				if (simplified.kind === 'union') {
 					members.push(...simplified.members)
@@ -1107,7 +1117,7 @@ export function simplify<T>(
 					// Instead, this method will be called by every struct child by the outer checking method.
 					const key = typeof field.key === 'string'
 						? field.key
-						: simplify(field.key, options, parents)
+						: simplify(field.key, options, parents, [])
 					if (typeof key !== 'string' && key.kind === 'union') {
 						for (const subKey of key.members) {
 							fields.push({
@@ -1126,6 +1136,7 @@ export function simplify<T>(
 						field.type,
 						options,
 						parents,
+						[],
 					)
 
 					if (simplifiedSpreadType.kind === 'struct') {
@@ -1148,9 +1159,25 @@ export function simplify<T>(
 			}
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
-		case 'concrete': // TODO
-		case 'template': // TODO
-			return { kind: 'union', members: [] }
+		case 'concrete':
+			return simplify(typeDef.child, options, parents, typeDef.typeArgs)
+		case 'template':
+			if (typeArgs.length !== typeDef.typeParams.length) {
+				options.context.logger.warn(
+					`Expected ${typeDef.typeParams.length} mcdoc type args for ${
+						McdocType.toString(typeDef.child)
+					}, but got ${typeArgs.length}`,
+				)
+			}
+			typeArgs.forEach((arg, i) => {
+				const path = typeDef.typeParams[i]?.path
+				if (!path) return
+				options.context.symbols.query(options.context.doc, 'mcdoc', path)
+					.enter({
+						data: { data: { typeDef: arg } satisfies TypeDefSymbolData },
+					})
+			})
+			return simplify(typeDef.child, options, parents, [])
 		default:
 			return typeDef
 	}
