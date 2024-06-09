@@ -11,7 +11,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
-describe.only('mcdoc runtime checker', () => {
+describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | string | JsValue[] | {
 		[key: string]: JsValue
 	}
