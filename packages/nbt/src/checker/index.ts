@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtCompoundNode, NbtPathNode } from '../node/index.js'
+import type { NbtCompoundNode, NbtNode, NbtPathNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -79,22 +79,114 @@ function getRegistryIdentifier(registry: string) {
 export function definition(
 	identifier: `::${string}::${string}`,
 	options: Options = {},
-): core.SyncChecker<NbtCompoundNode> {
+): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
-		const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
-		const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
-		if (!typeDef) {
-			return
-		}
-		switch (typeDef.kind) {
-			case 'struct':
-				// TODO
-				break
-			default:
-				ctx.logger.error(
-					`[nbt.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
-				)
-		}
+		mcdoc.runtime.checker.reference<NbtNode>(
+			[{ originalNode: node, inferredType: inferType(node) }],
+			identifier,
+			{
+				context: ctx,
+				isEquivalent: (inferred, def) => {
+					switch (inferred.kind) {
+						case 'list':
+							return [
+								'list',
+								'tuple',
+							].includes(def.kind)
+						case 'struct':
+							return def.kind === 'struct'
+						case 'byte':
+						case 'short':
+						case 'int':
+						case 'long':
+							return ['byte', 'short', 'int', 'long', 'float', 'double']
+								.includes(def.kind)
+						case 'float':
+						case 'double':
+							return ['float', 'double'].includes(def.kind)
+						default:
+							return false
+					}
+				},
+				getChildren: node => {
+					// TODO `nbt:byte_array` etc
+					if (node.type === 'nbt:list') {
+						return node.children.filter(n => n.value)
+							.map(
+								n => [{
+									originalNode: n.value!,
+									inferredType: inferType(n.value!),
+								}],
+							)
+					}
+					if (node.type === 'nbt:compound') {
+						return node.children.filter(kvp => kvp.key).map(kvp => ({
+							key: {
+								originalNode: kvp.key!,
+								inferredType: inferType(kvp.key!),
+							},
+							possibleValues: kvp.value
+								? [{
+									originalNode: kvp.value,
+									inferredType: inferType(kvp.value),
+								}]
+								: [],
+						}))
+					}
+					return []
+				},
+				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
+					ctx,
+					(node, err) => {
+						if (
+							(node.originalNode.type === 'nbt:compound' &&
+								err === 'missing_key')
+							// || // TODO
+							// node.originalNode.type === 'json:array' &&
+							// err === 'invalid_collection_length'
+						) {
+							return {
+								start: node.originalNode.range.start,
+								end: node.originalNode.range.start,
+							}
+						}
+						return node.originalNode.range
+					},
+				),
+				attachTypeInfo: (node, definition) => {}, // TODO
+				// TODO json / JE specific attribute handlers
+			},
+		)
+	}
+}
+
+// TODO: add remaining types and remove default case
+function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+	switch (node.type) {
+		// case 'nbt:'
+		case 'nbt:double':
+			return {
+				kind: 'literal',
+				value: { kind: 'double', value: node.value },
+			}
+		case 'nbt:int':
+			return {
+				kind: 'literal',
+				value: { kind: 'int', value: node.value },
+			}
+		// case 'json:null':
+		// 	return { kind: 'any' } // null is always invalid?
+		case 'string':
+			return {
+				kind: 'literal',
+				value: { kind: 'string', value: node.value },
+			}
+		case 'nbt:list':
+			return { kind: 'list', item: { kind: 'any' } }
+		case 'nbt:compound':
+			return { kind: 'struct', fields: [] }
+		default:
+			return { kind: 'any' }
 	}
 }
 
