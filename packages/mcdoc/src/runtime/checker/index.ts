@@ -1169,14 +1169,7 @@ export function simplify<T>(
 					}, but got ${typeArgs.length}`,
 				)
 			}
-			typeArgs.forEach((arg, i) => {
-				const path = typeDef.typeParams[i]?.path
-				if (!path) return
-				options.context.symbols.query(options.context.doc, 'mcdoc', path)
-					.enter({
-						data: { data: { typeDef: arg } satisfies TypeDefSymbolData },
-					})
-			})
+			// TODO: resolve template paths deeper in the tree
 			return simplify(typeDef.child, options, parents, [])
 		default:
 			return typeDef
