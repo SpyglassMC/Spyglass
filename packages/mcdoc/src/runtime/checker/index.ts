@@ -1159,38 +1159,19 @@ export function simplify<T>(
 					}
 				}
 			}
-			complexFields = complexFields.filter(other =>
-				!isAssignable(
-					typeof other.key === 'string'
-						? {
-							kind: 'literal',
-							value: { kind: 'string', value: other.key },
-						}
-						: other.key,
-					{
-						kind: 'union',
-						members: [...literalFields.keys()].map(k => ({
-							kind: 'literal',
-							value: { kind: 'string', value: k },
-						})),
-					},
-					options.context,
-					options.isEquivalent,
-				)
-			)
+			// Literal fields may still be assignable to complex fields,
+			// however this is currently not seen as an issue
 			return {
 				kind: 'struct',
 				fields: [
 					...complexFields,
-					...[...literalFields.entries()].map(([key, field]) =>
-						({
-							...field,
-							key: {
-								kind: 'literal',
-								value: { kind: 'string', value: key },
-							},
-						}) satisfies SimplifiedStructTypePairField
-					),
+					...[...literalFields.entries()].map(([key, field]) => ({
+						...field,
+						key: {
+							kind: 'literal',
+							value: { kind: 'string', value: key },
+						} as const,
+					})),
 				],
 			}
 		case 'enum':
