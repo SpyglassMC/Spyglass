@@ -1111,7 +1111,9 @@ export function simplify<T>(
 				} else if (key.kind === 'literal' && key.value.kind === 'string') {
 					literalFields.set(key.value.value, field)
 				} else if (key.kind === 'union') {
-					key.members.forEach(m => addField(m, field))
+					key.members.forEach(m =>
+						addField(m, { ...field, optional: true })
+					)
 				} else {
 					complexFields = complexFields.filter(other =>
 						!isAssignable(
