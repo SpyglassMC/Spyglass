@@ -801,44 +801,74 @@ function checkShallowly<T>(
 		case 'unsafe':
 			break
 		case 'struct': {
-			const unmatchedKvps = children
-				.map((v, i) => ({ value: v, index: i }))
-				.filter(v => !Array.isArray(v.value)) as {
-					value: RuntimePair<T>
-					index: number
-				}[]
+			const literalKvps = new Map<
+				string | number | boolean,
+				{
+					values: { pair: RuntimePair<T>; index: number }[]
+					definition: McdocType | undefined
+				}
+			>()
+			const otherKvps: { value: RuntimePair<T>; index: number }[] = []
+
+			for (let i = 0; i < children.length; i++) {
+				const child = children[i]
+				if (Array.isArray(child)) {
+					continue
+				}
+				if (child.key.inferredType.kind === 'literal') {
+					const existing = literalKvps.get(
+						child.key.inferredType.value.value,
+					)
+					if (existing) {
+						// duplicate key
+						existing.values.push({ pair: child, index: i })
+					} else {
+						literalKvps.set(child.key.inferredType.value.value, {
+							values: [{ pair: child, index: i }],
+							definition: undefined,
+						})
+					}
+				} else {
+					otherKvps.push({ value: child, index: i })
+				}
+			}
 
 			for (const pair of typeDef.fields) {
-				const matches: number[] = []
-				for (let i = 0; i < unmatchedKvps.length; i++) {
-					const kvp = unmatchedKvps[i]
-					if (
-						isAssignable(
-							kvp.value.key.inferredType,
-							pair.key,
-							options.context,
-							options.isEquivalent,
-						)
-					) {
-						unmatchedKvps.splice(i, 1)
-						matches.push(kvp.index)
-						i--
+				const otherKvpMatches: number[] = []
+				let foundMatch = false
+				if (pair.key.kind === 'literal') {
+					const runtimeChild = literalKvps.get(pair.key.value.value)
+					if (runtimeChild) {
+						foundMatch = true
+						runtimeChild.definition = pair.type
 					}
 				}
-				if (matches.length > 1) {
-					if (pair.key.kind === 'literal') {
-						errors.push(...matches.map(m => ({
-							kind: 'duplicate_key',
-							node: (children[m] as RuntimePair<T>).key,
-						} as SimpleError<T>)))
-					} else {
-						// TODO
+				if (!foundMatch) {
+					for (let i = 0; i < otherKvps.length; i++) {
+						const kvp = otherKvps[i]
+						if (
+							isAssignable(
+								kvp.value.key.inferredType,
+								pair.key,
+								options.context,
+								options.isEquivalent,
+							)
+						) {
+							foundMatch = true
+							otherKvps.splice(i, 1)
+							otherKvpMatches.push(kvp.index)
+							i--
+						}
 					}
 				}
-				for (const match of matches) {
+
+				for (const match of otherKvpMatches) {
 					childDefinitions[match] = pair.type
 				}
-				if (matches.length === 0 && pair.optional !== true) {
+				if (
+					!foundMatch && pair.key.kind === 'literal' &&
+					pair.optional !== true
+				) {
 					errors.push({
 						kind: 'missing_key',
 						node: runtimeNode,
@@ -846,6 +876,20 @@ function checkShallowly<T>(
 					})
 				}
 			}
+
+			for (const kvp of literalKvps.values()) {
+				for (const value of kvp.values) {
+					childDefinitions[value.index] = kvp.definition
+
+					if (kvp.values.length > 1) {
+						errors.push({
+							kind: 'duplicate_key',
+							node: value.pair.key,
+						})
+					}
+				}
+			}
+
 			for (let i = 0; i < children.length; i++) {
 				const childDef = childDefinitions[i]
 				const child = children[i]
