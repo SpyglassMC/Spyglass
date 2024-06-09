@@ -27,9 +27,9 @@ export namespace NumericRange {
 			return false
 		}
 		if (
-			range.max !== undefined && (RangeKind.isLeftExclusive(range.kind)
-				? val <= range.max
-				: val < range.max)
+			range.max !== undefined && (RangeKind.isRightExclusive(range.kind)
+				? val >= range.max
+				: val > range.max)
 		) {
 			return false
 		}
