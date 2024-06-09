@@ -236,13 +236,13 @@ export function isAssignable(
 		parent: undefined,
 		runtimeKey: undefined,
 		possibleValues: [],
-		condensedErrors: [],
-		validDefinitions: [],
 	}
 	node.possibleValues = getPossibleTypes(typeDef).map(v => ({
 		entryNode: node,
 		node: { originalNode: v, inferredType: v },
 		children: [],
+		validDefinitions: [],
+		condensedErrors: [],
 	}))
 
 	// TODO add bail option to allow checking logic to bail on first error
@@ -263,8 +263,6 @@ interface CheckerTreeNode<T> {
 
 	runtimeKey: RuntimeNode<T> | undefined
 	possibleValues: CheckerTreeRuntimeNode<T>[]
-	validDefinitions: CheckerTreeDefinitionNode<T>[]
-	condensedErrors: CheckerTreeError<T>[][]
 }
 
 interface CheckerTreeError<T> {
@@ -276,11 +274,14 @@ interface CheckerTreeRuntimeNode<T> {
 	entryNode: CheckerTreeNode<T>
 	children: CheckerTreeNode<T>[]
 	node: RuntimeNode<T>
+
+	condensedErrors: CheckerTreeError<T>[][]
+	validDefinitions: CheckerTreeDefinitionNode<T>[]
 }
 
 interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
-	entryNode: CheckerTreeNode<T>
+	runtimeNode: CheckerTreeRuntimeNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
 }
 
@@ -293,24 +294,25 @@ export function typeDefinition<T>(
 		parent: undefined,
 		runtimeKey: undefined,
 		possibleValues: [],
-		validDefinitions: [],
-		condensedErrors: [],
 	}
 	rootNode.possibleValues = runtimeValues.map(n => ({
 		node: n,
-		parent: undefined,
+		entryNode: rootNode,
+		validDefinitions: [],
 		children: [],
-		entryNode: rootNode,
+		condensedErrors: [],
 	}))
-	const simplifiedRoot = simplify(typeDef, undefined, undefined, options)
-	const validRootDefinitions = simplifiedRoot.kind === 'union'
-		? simplifiedRoot.members
-		: [simplifiedRoot]
-	rootNode.validDefinitions = validRootDefinitions.map(d => ({
-		parent: undefined,
-		entryNode: rootNode,
-		typeDef: d,
-	}))
+	for (const value of rootNode.possibleValues) {
+		const simplifiedRoot = simplify(typeDef, undefined, undefined, options)
+		const validRootDefinitions = simplifiedRoot.kind === 'union'
+			? simplifiedRoot.members
+			: [simplifiedRoot]
+		value.validDefinitions = validRootDefinitions.map(d => ({
+			parent: undefined,
+			runtimeNode: value,
+			typeDef: d,
+		}))
+	}
 	const nodeQueue: CheckerTreeNode<T>[] = [rootNode]
 
 	while (nodeQueue.length !== 0) {
@@ -320,7 +322,7 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(
 				value.node.inferredType,
-				value.entryNode.runtimeKey,
+				node.runtimeKey,
 				node.parent,
 				options,
 			)
@@ -331,24 +333,23 @@ export function typeDefinition<T>(
 			const childNodes: CheckerTreeNode<T>[] = children.map(c => {
 				const ans: CheckerTreeNode<T> = {
 					parent: value,
-					condensedErrors: [],
 					runtimeKey: !Array.isArray(c) ? c.key : undefined,
 					possibleValues: [],
-					validDefinitions: [],
 				}
 
 				ans.possibleValues = (Array.isArray(c) ? c : c.possibleValues)
 					.map(v => ({
-						parent: value,
 						entryNode: ans,
 						node: v,
+						validDefinitions: [],
+						condensedErrors: [],
 						children: [],
 					}))
 
 				return ans
 			})
 
-			for (const def of node.validDefinitions) {
+			for (const def of value.validDefinitions) {
 				const { errors, childDefinitions } = checkShallowly(
 					value.node,
 					inferredSimplified,
@@ -365,141 +366,156 @@ export function typeDefinition<T>(
 						continue
 					}
 					const child = childNodes[i]
-					child.possibleValues
-					// TODO We need some sort of map / local cache which keeps track of the original
-					// non-simplified types and see if they have been compared yet. This is needed
-					// for structures that are cyclic, to essentially bail out once we are comparing
-					// the same types again and just collect the errors of the lower depth.
-					// This will currently lead to a stack overflow error when e.g. comparing two
-					// text component definitions
-					const simplified = simplify(
-						childDef,
-						child.runtimeKey,
-						value,
-						options,
-					)
-					// TODO this does not keep track correctly of empty unions. The child node should receive
-					// some kind of empty union valid definition with the parent set to the correct definition
-					// so that we can potentially error some valid parent defs if only some of them produce an
-					// empty union for the child.
-					const validDefs = (simplified.kind === 'union'
-						? simplified.members
-						: [simplified])
-						.map(d => ({ parent: def, entryNode: child, typeDef: d }))
-					childNodes[i].validDefinitions.push(...validDefs)
+					for (const childValue of child.possibleValues) {
+						// TODO We need some sort of map / local cache which keeps track of the original
+						// non-simplified types and see if they have been compared yet. This is needed
+						// for structures that are cyclic, to essentially bail out once we are comparing
+						// the same types again and just collect the errors of the lower depth.
+						// This will currently lead to a stack overflow error when e.g. comparing two
+						// text component definitions
+						const simplified = simplify(
+							childDef,
+							child.runtimeKey,
+							value,
+							options,
+						)
+						// TODO this does not keep track correctly of empty unions. The child node should receive
+						// some kind of empty union valid definition with the parent set to the correct definition
+						// so that we can potentially error some valid parent defs if only some of them produce an
+						// empty union for the child.
+						const validDefs = (simplified.kind === 'union'
+							? simplified.members
+							: [simplified])
+							.map(d => ({
+								parent: def,
+								runtimeNode: childValue,
+								typeDef: d,
+							}))
+						childValue.validDefinitions.push(...validDefs)
+					}
 				}
 			}
 			value.children = childNodes
 			nodeQueue.push(...childNodes)
-		}
 
-		let curNode: CheckerTreeNode<T> | undefined = node
-		let depth = 0
-		let childErrors = encounterdErrors
-		while (curNode) {
-			const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
-			const errors: CheckerTreeError<T>[] = []
+			let curNode: CheckerTreeRuntimeNode<T> | undefined = value
+			let depth = 0
+			let childErrors = encounterdErrors
+			while (curNode) {
+				const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
+				const errors: CheckerTreeError<T>[] = []
 
-			// It is only meaningful to reduce valid definitions where the union actually happened
-			const definitionGroups = curNode.validDefinitions
-				.reduce(
-					(groups, item) => {
-						const group = groups.find(g => g.parent === item.parent)
-						if (group) {
-							group.children.push(item)
-						} else {
-							groups.push({ parent: item.parent, children: [item] })
-						}
-						return groups
-					},
-					[] as {
-						parent: CheckerTreeDefinitionNode<T> | undefined
-						children: CheckerTreeDefinitionNode<T>[]
-					}[],
-				)
-
-			for (const definitionGroup of definitionGroups) {
-				const { definitions, condensedErrors } =
-					condenseErrorsAndFilterSiblings(
-						definitionGroup.children.map(c => ({
-							definition: c,
-							errors: childErrors.filter(e => e.definitionNode === c)
-								.map(e => e.error),
-						})),
+				// It is only meaningful to reduce valid definitions where the union actually happened
+				const definitionGroups = curNode.validDefinitions
+					.reduce(
+						(groups, item) => {
+							const group = groups.find(g => g.parent === item.parent)
+							if (group) {
+								group.children.push(item)
+							} else {
+								groups.push({ parent: item.parent, children: [item] })
+							}
+							return groups
+						},
+						[] as {
+							parent: CheckerTreeDefinitionNode<T> | undefined
+							children: CheckerTreeDefinitionNode<T>[]
+						}[],
 					)
 
-				definitionGroup.children = definitions
-				stillValidDefintions.push(...definitions)
-				errors.push(
-					...condensedErrors.map(e => ({
-						error: e,
-						definitionNode: definitionGroup.parent,
-					})),
-				)
-			}
-			curNode.condensedErrors.push(errors)
+				for (const definitionGroup of definitionGroups) {
+					const { definitions, condensedErrors } =
+						condenseErrorsAndFilterSiblings(
+							definitionGroup.children.map(c => ({
+								definition: c,
+								errors: childErrors.filter(e => e.definitionNode === c)
+									.map(e => e.error),
+							})),
+						)
 
-			if (curNode.validDefinitions.length !== stillValidDefintions.length) {
-				curNode.validDefinitions = stillValidDefintions
+					definitionGroup.children = definitions
+					stillValidDefintions.push(...definitions)
+					errors.push(
+						...condensedErrors.map(e => ({
+							error: e,
+							definitionNode: definitionGroup.parent,
+						})),
+					)
+				}
+				curNode.condensedErrors.push(errors)
 
-				filterChildDefinitions(
-					curNode.validDefinitions,
-					curNode.possibleValues.flatMap(v => v.children),
-				)
-
-				function filterChildDefinitions(
-					parentDefs: CheckerTreeDefinitionNode<T>[],
-					children: CheckerTreeNode<T>[],
+				if (
+					curNode.validDefinitions.length !== stillValidDefintions.length
 				) {
-					for (const child of children) {
-						child.validDefinitions = child.validDefinitions.filter(d =>
-							parentDefs.includes(d.parent!)
-						)
-						filterChildDefinitions(
-							child.validDefinitions,
-							child.possibleValues.flatMap(v => v.children),
-						)
+					curNode.validDefinitions = stillValidDefintions
+
+					filterChildDefinitions(
+						curNode.validDefinitions,
+						curNode.children,
+					)
+
+					function filterChildDefinitions(
+						parentDefs: CheckerTreeDefinitionNode<T>[],
+						children: CheckerTreeNode<T>[],
+					) {
+						for (const child of children) {
+							for (const childValue of child.possibleValues) {
+								childValue.validDefinitions = childValue
+									.validDefinitions.filter(d =>
+										parentDefs.includes(d.parent!)
+									)
+								filterChildDefinitions(
+									childValue.validDefinitions,
+									childValue.children,
+								)
+							}
+						}
 					}
 				}
+
+				const oldNode: CheckerTreeRuntimeNode<T> = curNode
+				curNode = oldNode.entryNode.parent
+
+				const lastChild = curNode?.children
+					.flatMap(v => v.possibleValues)
+					.findLast(v => {
+						if (v.condensedErrors.length > depth) {
+							return true
+						}
+
+						let children = [v]
+						for (let i = 0; i < depth; i++) {
+							children = children.flatMap(v => v.children).flatMap(v =>
+								v.possibleValues
+							)
+						}
+						return children.length > 0
+					})
+
+				if (lastChild !== oldNode) {
+					// Wait for all siblings to be evaluated first
+					break
+				}
+
+				childErrors = curNode!.children
+					.flatMap(c => c.possibleValues)
+					.flatMap(c =>
+						c.condensedErrors.length > depth
+							? c.condensedErrors[depth]
+							: []
+					)
+
+				depth++
 			}
-
-			const oldNode: CheckerTreeNode<T> = curNode
-			curNode = oldNode.parent?.entryNode
-
-			const lastChild = curNode?.possibleValues
-				.flatMap(v => v.children)
-				.findLast(c => {
-					if (c.condensedErrors.length > depth) {
-						return true
-					}
-
-					let children = [c]
-					for (let i = 0; i < depth; i++) {
-						children = children.flatMap(v => v.possibleValues).flatMap(
-							v => v.children,
-						)
-					}
-					return children.length > 0
-				})
-
-			if (lastChild !== oldNode) {
-				// Wait for all siblings to be evaluated first
-				break
-			}
-
-			childErrors = curNode!.possibleValues
-				.flatMap(v => v.children)
-				.flatMap(c =>
-					c.condensedErrors.length > depth ? c.condensedErrors[depth] : []
-				)
-
-			depth++
 		}
 	}
 
 	// TODO iterate final tree and call `options.attachTypeInfo`
 
-	for (const error of rootNode.condensedErrors.flat()) {
+	for (
+		const error of rootNode.possibleValues.flatMap(v => v.condensedErrors)
+			.flat()
+	) {
 		if (error) {
 			options.reportError(error.error)
 		}
@@ -947,8 +963,8 @@ interface SimplifyNode<T> {
  * Basically the same as a {@link CheckerTreeRuntimeNode}, just with a few fields
  * that aren't needed here removed for simplicity.
  *
- * This means {@link CheckerTreeRuntimeNode} can be used in place of this type any
- * conversions as this type is compatible with {@link CheckerTreeRuntimeNode}.
+ * This means {@link CheckerTreeRuntimeNode} can be used in place of this type without
+ * any conversions as this type is compatible with {@link CheckerTreeRuntimeNode}.
  */
 export interface SimplifyValueNode<T> {
 	entryNode: {
