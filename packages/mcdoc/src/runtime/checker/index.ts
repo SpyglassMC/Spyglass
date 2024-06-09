@@ -1115,15 +1115,16 @@ export function simplify<T>(
 						addField(m, { ...field, optional: true })
 					)
 				} else {
+					// Only keep fields where the new key is not assignable to an existing field
 					complexFields = complexFields.filter(other =>
 						!isAssignable(
+							key,
 							typeof other.key === 'string'
 								? {
 									kind: 'literal',
 									value: { kind: 'string', value: other.key },
 								}
 								: other.key,
-							key,
 							options.context,
 							options.isEquivalent,
 						)
