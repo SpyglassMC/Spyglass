@@ -616,12 +616,14 @@ function check<T>(
 		for (const simplified of simplifiedOptions) {
 			const simplifiedValue = getValueType(simplified)
 
+			const isCompatibleKind = inferredValue.kind === simplifiedValue.kind ||
+				options.isEquivalent(inferredValue, simplifiedValue)
+			const isSameLiteral = simplified.kind === 'literal' &&
+				simplifiedRuntime.kind === 'literal' &&
+				simplified.value.value === simplifiedRuntime.value.value
 			if (
-				(inferredValue.kind === simplifiedValue.kind ||
-					options.isEquivalent(inferredValue, simplifiedValue)) &&
-				(simplified.kind !== 'literal' ||
-					(simplifiedRuntime.kind === 'literal' &&
-						simplified.value.value === simplifiedRuntime.value.value)) &&
+				isCompatibleKind &&
+				(simplified.kind !== 'literal' || isSameLiteral) &&
 				// TODO handle enum field attributes
 				(simplified.kind !== 'enum' ||
 					(simplifiedRuntime.kind === 'literal' &&
