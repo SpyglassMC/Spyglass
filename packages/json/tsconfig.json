@@ -9,6 +9,9 @@
 			"path": "../locales"
 		},
 		{
+			"path": "../mcdoc"
+		},
+		{
 			"path": "src"
 		},
 		{

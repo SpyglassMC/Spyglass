@@ -1058,18 +1058,13 @@ export function simplify<T>(
 						key: key,
 					}]
 					for (const entry of index.accessor) {
-						// TODO initial check against %parent and %key is to work around an mcdoc binder bug, it should always be an object with keyword property
-						if (
-							entry === '%parent' ||
-							(typeof entry != 'string' && entry.keyword === 'parent')
-						) {
+						if (typeof entry !== 'string' && entry.keyword === 'parent') {
 							possibilities = possibilities.map(n => ({
 								value: n.value?.entryNode.parent,
 								key: n.value?.entryNode.runtimeKey,
 							}))
 						} else if (
-							entry === '%key' ||
-							(typeof entry != 'string' && entry.keyword === 'key')
+							typeof entry !== 'string' && entry.keyword === 'key'
 						) {
 							possibilities = possibilities
 								.map(p => ({
@@ -1263,7 +1258,7 @@ export function simplify<T>(
 function simplifyKey(
 	keyDef: SimplifiedMcdocTypeNoUnion | string,
 ): SimplifiedMcdocTypeNoUnion {
-	if (typeof keyDef == 'string') {
+	if (typeof keyDef === 'string') {
 		return { kind: 'literal', value: { kind: 'string', value: keyDef } }
 	}
 	return keyDef
