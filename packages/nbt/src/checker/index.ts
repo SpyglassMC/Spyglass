@@ -162,7 +162,6 @@ export function definition(
 
 function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 	switch (node.type) {
-		// case 'nbt:'
 		case 'nbt:byte':
 			return {
 				kind: 'literal',
@@ -178,12 +177,12 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 				kind: 'literal',
 				value: { kind: 'float', value: node.value },
 			}
-		// // TODO: this is unhappy because `node.value` is `bigint` type
-		// case 'nbt:long':
-		// 	return {
-		// 		kind: 'literal',
-		// 		value: { kind: 'long', value: node.value },
-		// 	}
+		case 'nbt:long':
+			return {
+				kind: 'literal',
+				// TODO: this should NOT change type from `bigint` to `number`
+				value: { kind: 'long', value: Number(node.value) },
+			}
 		case 'nbt:int':
 			return {
 				kind: 'literal',
