@@ -802,7 +802,7 @@ function checkShallowly<T>(
 			break
 		case 'struct': {
 			const literalKvps = new Map<
-				string | number | boolean,
+				string,
 				{
 					values: { pair: RuntimePair<T>; index: number }[]
 					definition: McdocType | undefined
@@ -815,7 +815,10 @@ function checkShallowly<T>(
 				if (Array.isArray(child)) {
 					continue
 				}
-				if (child.key.inferredType.kind === 'literal') {
+				if (
+					child.key.inferredType.kind === 'literal' &&
+					child.key.inferredType.value.kind === 'string'
+				) {
 					const existing = literalKvps.get(
 						child.key.inferredType.value.value,
 					)
@@ -836,7 +839,9 @@ function checkShallowly<T>(
 			for (const pair of typeDef.fields) {
 				const otherKvpMatches: number[] = []
 				let foundMatch = false
-				if (pair.key.kind === 'literal') {
+				if (
+					pair.key.kind === 'literal' && pair.key.value.kind === 'string'
+				) {
 					const runtimeChild = literalKvps.get(pair.key.value.value)
 					if (runtimeChild) {
 						foundMatch = true
@@ -858,6 +863,23 @@ function checkShallowly<T>(
 							otherKvps.splice(i, 1)
 							otherKvpMatches.push(kvp.index)
 							i--
+						}
+					}
+					for (const kvp of literalKvps.entries()) {
+						if (
+							!kvp[1].definition 
+							&& isAssignable(
+								{
+									kind: 'literal',
+									value: { kind: 'string', value: kvp[0] },
+								},
+								pair.key,
+								options.context,
+								options.isEquivalent,
+							)
+						) {
+							foundMatch = true
+							kvp[1].definition = pair.type
 						}
 					}
 				}
