@@ -109,8 +109,11 @@ export function definition(
 					}
 				},
 				getChildren: node => {
-					// TODO `nbt:byte_array` etc
-					if (node.type === 'nbt:list') {
+					const { type } = node
+					if (
+						type === 'nbt:list' || type === 'nbt:byte_array' ||
+						type === 'nbt:int_array' || type === 'nbt:long_array'
+					) {
 						return node.children.filter(n => n.value)
 							.map(
 								n => [{
@@ -119,7 +122,7 @@ export function definition(
 								}],
 							)
 					}
-					if (node.type === 'nbt:compound') {
+					if (type === 'nbt:compound') {
 						return node.children.filter(kvp => kvp.key).map(kvp => ({
 							key: {
 								originalNode: kvp.key!,
