@@ -160,22 +160,40 @@ export function definition(
 	}
 }
 
-// TODO: add remaining types and remove default case
 function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 	switch (node.type) {
 		// case 'nbt:'
+		case 'nbt:byte':
+			return {
+				kind: 'literal',
+				value: { kind: 'byte', value: node.value },
+			}
 		case 'nbt:double':
 			return {
 				kind: 'literal',
 				value: { kind: 'double', value: node.value },
 			}
+		case 'nbt:float':
+			return {
+				kind: 'literal',
+				value: { kind: 'float', value: node.value },
+			}
+		// // TODO: this is unhappy because `node.value` is `bigint` type
+		// case 'nbt:long':
+		// 	return {
+		// 		kind: 'literal',
+		// 		value: { kind: 'long', value: node.value },
+		// 	}
 		case 'nbt:int':
 			return {
 				kind: 'literal',
 				value: { kind: 'int', value: node.value },
 			}
-		// case 'json:null':
-		// 	return { kind: 'any' } // null is always invalid?
+		case 'nbt:short':
+			return {
+				kind: 'literal',
+				value: { kind: 'short', value: node.value },
+			}
 		case 'string':
 			return {
 				kind: 'literal',
@@ -185,6 +203,12 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 			return { kind: 'list', item: { kind: 'any' } }
 		case 'nbt:compound':
 			return { kind: 'struct', fields: [] }
+		case 'nbt:byte_array':
+			return { kind: 'byte_array' }
+		case 'nbt:long_array':
+			return { kind: 'long_array' }
+		case 'nbt:int_array':
+			return { kind: 'int_array' }
 		default:
 			return { kind: 'any' }
 	}
