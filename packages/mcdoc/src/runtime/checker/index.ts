@@ -867,8 +867,8 @@ function checkShallowly<T>(
 					}
 					for (const kvp of literalKvps.entries()) {
 						if (
-							!kvp[1].definition 
-							&& isAssignable(
+							!kvp[1].definition &&
+							isAssignable(
 								{
 									kind: 'literal',
 									value: { kind: 'string', value: kvp[0] },
