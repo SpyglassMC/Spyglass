@@ -152,13 +152,12 @@ class ChokidarWatcherWrapper extends EventEmitter implements FsWatcher {
 
 	constructor(watcher: chokidar.FSWatcher) {
 		super()
-		this.#watcher = watcher.on('ready', () => this.emit('ready')).on(
-			'add',
-			(path) => this.emit('add', uriFromPath(path)),
-		).on('change', (path) => this.emit('change', uriFromPath(path))).on(
-			'unlink',
-			(path) => this.emit('unlink', uriFromPath(path)),
-		).on('error', (e) => this.emit('error', e))
+		this.#watcher = watcher
+			.on('ready', () => this.emit('ready'))
+			.on('add', (path) => this.emit('add', uriFromPath(path)))
+			.on('change', (path) => this.emit('change', uriFromPath(path)))
+			.on('unlink', (path) => this.emit('unlink', uriFromPath(path)))
+			.on('error', (e) => this.emit('error', e))
 	}
 
 	close(): Promise<void> {
