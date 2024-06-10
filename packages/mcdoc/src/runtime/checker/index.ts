@@ -6,24 +6,22 @@ import {
 } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
-import { type EnumKind, RangeKind } from '../../node/index.js'
+import { RangeKind } from '../../node/index.js'
 import type {
 	Attribute,
 	EnumType,
 	Index,
-	KeywordType,
-	ListType,
 	LiteralType,
-	NumericType,
 	ParallelIndices,
-	PrimitiveArrayType,
-	StringType,
-	StructType,
 	StructTypePairField,
-	TupleType,
 	UnionType,
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
+import type {
+	SimplifiedMcdocType,
+	SimplifiedMcdocTypeNoUnion,
+	SimplifiedStructTypePairField,
+} from '../../type/simplified.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
@@ -100,31 +98,6 @@ export interface TypeMismatchError<T> {
 	node: RuntimeNode<T>
 	kind: 'type_mismatch'
 	expected: SimplifiedMcdocType
-}
-
-export type SimplifiedMcdocType =
-	| SimplifiedMcdocTypeNoUnion
-	| UnionType<SimplifiedMcdocTypeNoUnion>
-
-type SimplifiedMcdocTypeNoUnion =
-	| SimplifiedEnum
-	| KeywordType
-	| ListType
-	| LiteralType
-	| NumericType
-	| PrimitiveArrayType
-	| StringType
-	| SimplifiedStructType
-	| TupleType
-
-export interface SimplifiedEnum extends EnumType {
-	enumKind: EnumKind
-}
-export interface SimplifiedStructType extends StructType {
-	fields: SimplifiedStructTypePairField[]
-}
-export interface SimplifiedStructTypePairField extends StructTypePairField {
-	key: SimplifiedMcdocTypeNoUnion
 }
 
 const attributeHandlers: {
