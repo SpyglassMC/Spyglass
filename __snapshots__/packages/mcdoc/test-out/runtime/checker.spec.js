@@ -322,7 +322,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
       "kind": "literal",
       "value": {
         "kind": "string",
-        "value": "bar"
+        "value": "foo"
       }
     }
   },
@@ -339,7 +339,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
       "kind": "literal",
       "value": {
         "kind": "string",
-        "value": "foo"
+        "value": "bar"
       }
     }
   }
