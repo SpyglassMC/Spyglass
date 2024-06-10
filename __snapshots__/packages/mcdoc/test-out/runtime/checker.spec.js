@@ -52,19 +52,12 @@ exports['mcdoc runtime checker typeDefinition “( struct { text: string } | str
 
 exports['mcdoc runtime checker typeDefinition “( struct { text: string } | struct { selector: number })” with value {} 1'] = [
   {
-    "kind": "missing_key",
+    "kind": "some_missing_keys",
     "node": {
       "originalNode": {},
       "inferredType": {
         "kind": "struct",
         "fields": []
-      }
-    },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "text"
       }
     }
   }
@@ -196,13 +189,7 @@ exports['mcdoc runtime checker typeDefinition “[struct { foo: double, bar?: bo
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   }
 ]
 
@@ -235,13 +222,7 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "Damage"
-      }
-    }
+    "key": "Damage"
   }
 ]
 
@@ -255,13 +236,7 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "id"
-      }
-    }
+    "key": "id"
   }
 ]
 
@@ -279,13 +254,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -318,13 +287,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   },
   {
     "kind": "missing_key",
@@ -335,13 +298,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -447,13 +404,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -482,13 +433,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   },
   {
     "kind": "missing_key",
@@ -499,13 +444,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -544,13 +483,37 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "baz"
+    "key": "baz"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"test","baz":true} 1'] = [
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
       }
     }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "test",
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "config"
   }
 ]
 
@@ -587,13 +550,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
-      }
-    }
+    "key": "config"
   }
 ]
 
@@ -607,13 +564,181 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "id"
+    "key": "id"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback","data":{"baz":true}} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback","data":{"config":"hello"}} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": {
+      "kind": "double"
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback","data":{}} 1'] = [
+  {
+    "kind": "some_missing_keys",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
       }
     }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback"} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "id": "fallback"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "data"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"other","data":{"baz":"world"}} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "world",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "world"
+        }
+      }
+    },
+    "expected": {
+      "kind": "boolean"
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"other","data":{"baz":true}} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"other","data":{}} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "baz"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"test","data":{"baz":true}} 1'] = [
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "baz",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "baz"
+        }
+      }
+    }
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "baz": true
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "config"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"test","data":{"config":"hello"}} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": {
+      "kind": "double"
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"test","data":{"config":5}} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"test","data":{}} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "config"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "id"
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "key": "data"
   }
 ]
 
@@ -703,12 +828,6 @@ exports['mcdoc runtime checker typeDefinition “type Ref = double; struct { foo
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   }
 ]
