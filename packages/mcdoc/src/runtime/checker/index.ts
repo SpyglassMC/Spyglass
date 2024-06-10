@@ -1037,38 +1037,21 @@ export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
 	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
+	isMember?: boolean,
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
 	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
+	isMember?: boolean,
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
 	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
+	isMember?: boolean,
 ): SimplifiedMcdocType {
-	return simplifyInternal(typeDef, node, options, false)
-}
-
-function simplifyInternal<T>(
-	typeDef: Exclude<McdocType, UnionType>,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	simplifyingNodeMember: boolean,
-): SimplifiedMcdocTypeNoUnion
-function simplifyInternal<T>(
-	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	simplifyingNodeMember: boolean,
-): SimplifiedMcdocType
-function simplifyInternal<T>(
-	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	simplifyingNodeMember: boolean,
-): SimplifiedMcdocType {
+	isMember ??= false;
 	if (typeDef.attributes) {
 		// TODO
 	}
@@ -1094,7 +1077,7 @@ function simplifyInternal<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return simplifyInternal(def, node, options, simplifyingNodeMember)
+			return simplify(def, node, options, isMember)
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -1115,7 +1098,7 @@ function simplifyInternal<T>(
 					structFields.push({ kind: 'pair', key: key, type: data.typeDef })
 				}
 			}
-			return simplifyInternal(
+			return simplify(
 				{
 					kind: 'indexed',
 					parallelIndices: typeDef.parallelIndices,
@@ -1123,14 +1106,14 @@ function simplifyInternal<T>(
 				},
 				node,
 				options,
-				simplifyingNodeMember,
+				isMember,
 			)
 		case 'indexed':
-			const child = simplifyInternal(
+			const child = simplify(
 				typeDef.child,
 				node,
 				options,
-				simplifyingNodeMember,
+				isMember,
 			)
 
 			if (child.kind !== 'struct') {
@@ -1152,7 +1135,7 @@ function simplifyInternal<T>(
 					}
 					lookup.push(index.value)
 				} else {
-					let possibilities: SimplifyNode<T>[] = simplifyingNodeMember
+					let possibilities: SimplifyNode<T>[] = isMember
 						? [{ value: node, key: node.entryNode.runtimeKey }]
 						: [{
 							value: node.entryNode.parent,
@@ -1162,9 +1145,7 @@ function simplifyInternal<T>(
 						if (typeof entry !== 'string' && entry.keyword === 'parent') {
 							possibilities = possibilities.map(n => ({
 								value: n.value?.entryNode.parent,
-								key: simplifyingNodeMember
-									? n.value?.entryNode.parent?.entryNode.runtimeKey
-									: n.value?.entryNode.runtimeKey,
+								key: n.value?.entryNode.runtimeKey,
 							}))
 						} else if (
 							typeof entry !== 'string' && entry.keyword === 'key'
@@ -1189,11 +1170,11 @@ function simplifyInternal<T>(
 								const possibleChildren: SimplifyNode<T>[] = node.value
 									? (options.getChildren(
 										node.value.node.originalNode,
-										simplifyInternal(
+										simplify(
 											node.value.node.inferredType,
 											node.value,
 											options,
-											simplifyingNodeMember,
+											isMember,
 										),
 									)
 										.filter(child => {
@@ -1277,20 +1258,20 @@ function simplifyInternal<T>(
 					values.push(...currentValues.map(v => v!.type))
 				}
 			}
-			return simplifyInternal(
+			return simplify(
 				{ kind: 'union', members: values },
 				node,
 				options,
-				simplifyingNodeMember,
+				isMember,
 			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
-				const simplified = simplifyInternal(
+				const simplified = simplify(
 					member,
 					node,
 					options,
-					simplifyingNodeMember,
+					isMember,
 				)
 
 				if (simplified.kind === 'union') {
@@ -1344,10 +1325,10 @@ function simplifyInternal<T>(
 					// Instead, this method will be called by every struct child by the outer checking method.
 					const structKey = typeof field.key === 'string'
 						? field.key
-						: simplifyInternal(field.key, node, options, true)
+						: simplify(field.key, node, options, true)
 					addField(structKey, field)
 				} else {
-					const simplifiedSpreadType = simplifyInternal(
+					const simplifiedSpreadType = simplify(
 						field.type,
 						node,
 						options,
