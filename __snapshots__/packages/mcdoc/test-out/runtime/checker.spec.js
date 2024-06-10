@@ -52,19 +52,12 @@ exports['mcdoc runtime checker typeDefinition “( struct { text: string } | str
 
 exports['mcdoc runtime checker typeDefinition “( struct { text: string } | struct { selector: number })” with value {} 1'] = [
   {
-    "kind": "missing_key",
+    "kind": "some_missing_keys",
     "node": {
       "originalNode": {},
       "inferredType": {
         "kind": "struct",
         "fields": []
-      }
-    },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "text"
       }
     }
   }
@@ -196,13 +189,7 @@ exports['mcdoc runtime checker typeDefinition “[struct { foo: double, bar?: bo
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   }
 ]
 
@@ -235,13 +222,7 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "Damage"
-      }
-    }
+    "key": "Damage"
   }
 ]
 
@@ -255,13 +236,7 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "id"
-      }
-    }
+    "key": "id"
   }
 ]
 
@@ -279,13 +254,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -318,13 +287,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   },
   {
     "kind": "missing_key",
@@ -335,13 +298,7 @@ exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: doubl
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -447,13 +404,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -482,13 +433,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   },
   {
     "kind": "missing_key",
@@ -499,13 +444,7 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "bar"
-      }
-    }
+    "key": "bar"
   }
 ]
 
@@ -544,13 +483,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "baz"
-      }
-    }
+    "key": "baz"
   }
 ]
 
@@ -580,13 +513,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
-      }
-    }
+    "key": "config"
   }
 ]
 
@@ -623,13 +550,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
-      }
-    }
+    "key": "config"
   }
 ]
 
@@ -643,13 +564,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct 
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "id"
-      }
-    }
+    "key": "id"
   }
 ]
 
@@ -676,19 +591,12 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
 
 exports['mcdoc runtime checker typeDefinition “struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback","data":{}} 1'] = [
   {
-    "kind": "missing_key",
+    "kind": "some_missing_keys",
     "node": {
       "originalNode": {},
       "inferredType": {
         "kind": "struct",
         "fields": []
-      }
-    },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
       }
     }
   }
@@ -706,13 +614,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "data"
-      }
-    }
+    "key": "data"
   }
 ]
 
@@ -747,13 +649,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "baz"
-      }
-    }
+    "key": "baz"
   }
 ]
 
@@ -782,13 +678,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
-      }
-    }
+    "key": "config"
   }
 ]
 
@@ -823,13 +713,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "config"
-      }
-    }
+    "key": "config"
   }
 ]
 
@@ -843,13 +727,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "id"
-      }
-    }
+    "key": "id"
   },
   {
     "kind": "missing_key",
@@ -860,13 +738,7 @@ exports['mcdoc runtime checker typeDefinition “struct { id: string, data: stru
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "data"
-      }
-    }
+    "key": "data"
   }
 ]
 
@@ -956,12 +828,6 @@ exports['mcdoc runtime checker typeDefinition “type Ref = double; struct { foo
         "fields": []
       }
     },
-    "key": {
-      "kind": "literal",
-      "value": {
-        "kind": "string",
-        "value": "foo"
-      }
-    }
+    "key": "foo"
   }
 ]

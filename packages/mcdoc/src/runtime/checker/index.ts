@@ -94,7 +94,7 @@ export interface RangeError<T> {
 export interface MissingKeyError<T> {
 	kind: 'missing_key'
 	node: RuntimeNode<T>
-	key: McdocType
+	key: string
 }
 export interface TypeMismatchError<T> {
 	node: RuntimeNode<T>
@@ -680,7 +680,8 @@ function condenseErrorsAndFilterSiblings<T>(
 		!validDefinitions.some(d =>
 			!d.errors.some(oe =>
 				oe.kind === 'missing_key' &&
-				oe.node.originalNode === e.node.originalNode
+				oe.node.originalNode === e.node.originalNode &&
+				oe.key === e.key
 			)
 		)
 	) as MissingKeyError<T>[]
@@ -888,13 +889,15 @@ function checkShallowly<T>(
 					childDefinitions[match] = pair.type
 				}
 				if (
-					!foundMatch && pair.key.kind === 'literal' &&
+					!foundMatch &&
+					pair.key.kind === 'literal' &&
+					pair.key.value.kind === 'string' &&
 					pair.optional !== true
 				) {
 					errors.push({
 						kind: 'missing_key',
 						node: runtimeNode,
-						key: pair.key,
+						key: pair.key.value.value,
 					})
 				}
 			}
@@ -1051,7 +1054,7 @@ export function simplify<T>(
 	options: McdocCheckerOptions<T>,
 	isMember?: boolean,
 ): SimplifiedMcdocType {
-	isMember ??= false;
+	isMember ??= false
 	if (typeDef.attributes) {
 		// TODO
 	}
@@ -1445,12 +1448,7 @@ export function getDefaultErrorReporter<T>(
 				break
 			case 'missing_key':
 				ctx.err.report(
-					localize(
-						defaultTranslationKey,
-						error.key.kind === 'literal'
-							? error.key.value.value
-							: `<${localize(`mcdoc.type.${error.key.kind}`)}>`,
-					),
+					localize(defaultTranslationKey, error.key),
 					range,
 				)
 				break
