@@ -1457,7 +1457,9 @@ export function simplify<T>(
 				],
 			}
 		case 'list':
-			if (!context.typeMapping) return typeDef
+			if (!context.typeMapping) {
+				return typeDef
+			}
 			return {
 				...typeDef,
 				item: {
@@ -1467,7 +1469,9 @@ export function simplify<T>(
 				},
 			}
 		case 'tuple':
-			if (!context.typeMapping) return typeDef
+			if (!context.typeMapping) {
+				return typeDef
+			}
 			return {
 				...typeDef,
 				items: typeDef.items.map(item => ({
