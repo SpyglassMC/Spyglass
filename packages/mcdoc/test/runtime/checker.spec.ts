@@ -503,6 +503,60 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: 'type Bounds<T> = struct { min: T, max: T }; Bounds<int @ 1..>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Bounds' },
+				typeArgs: [{ kind: 'int', valueRange: { kind: 0b00, min: 1 } }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Bounds',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::T' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'min',
+											type: {
+												kind: 'reference',
+												path: '::T',
+											},
+										},
+										{
+											kind: 'pair',
+											key: 'max',
+											type: {
+												kind: 'reference',
+												path: '::T',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{},
+				{ min: 2, max: 5 },
+				{ min: 'hello', max: -1 },
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
