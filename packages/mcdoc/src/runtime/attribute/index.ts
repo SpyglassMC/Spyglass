@@ -14,11 +14,6 @@ export interface McdocAttribute<C = unknown> {
 		inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
 		ctx: core.CheckerContext,
 	) => string[]
-	simplify?: (
-		config: C | undefined,
-		typeDef: SimplifiedMcdocType,
-		ctx: core.CheckerContext,
-	) => SimplifiedMcdocType
 	filterElement?: (
 		config: C | undefined,
 		ctx: core.CheckerContext,

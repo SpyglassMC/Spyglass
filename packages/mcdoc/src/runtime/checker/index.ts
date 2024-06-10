@@ -836,7 +836,7 @@ function checkShallowly<T>(
 		.fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
 	handleAttributes(typeDef.attributes, options, (handler, config) => {
-		handler.checkInferred?.(config, typeDef, options.context)
+		handler.checkInferred?.(config, simplifiedInferred, options.context)
 			.forEach(e =>
 				errors.push({
 					kind: 'custom',
@@ -1126,13 +1126,6 @@ export function simplify<T>(
 	isMember?: boolean,
 ): SimplifiedMcdocType {
 	isMember ??= false
-	function wrap(type: SimplifiedMcdocType) {
-		handleAttributes(type.attributes, options, (handler, config) => {
-			if (!handler.simplify) return
-			type = handler.simplify(config, type, options.context)
-		})
-		return type
-	}
 
 	switch (typeDef.kind) {
 		case 'reference':
@@ -1155,7 +1148,7 @@ export function simplify<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return wrap(simplify(def, node, options, isMember))
+			return simplify(def, node, options, isMember)
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -1176,7 +1169,7 @@ export function simplify<T>(
 					structFields.push({ kind: 'pair', key: key, type: data.typeDef })
 				}
 			}
-			return wrap(simplify(
+			return simplify(
 				{
 					kind: 'indexed',
 					parallelIndices: typeDef.parallelIndices,
@@ -1185,14 +1178,14 @@ export function simplify<T>(
 				node,
 				options,
 				isMember,
-			))
+			)
 		case 'indexed':
-			const child = wrap(simplify(
+			const child = simplify(
 				typeDef.child,
 				node,
 				options,
 				isMember,
-			))
+			)
 
 			if (child.kind !== 'struct') {
 				options.context.logger.warn(
@@ -1336,12 +1329,12 @@ export function simplify<T>(
 					values.push(...currentValues.map(v => v!.type))
 				}
 			}
-			return wrap(simplify(
+			return simplify(
 				{ kind: 'union', members: values },
 				node,
 				options,
 				isMember,
-			))
+			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
@@ -1369,7 +1362,7 @@ export function simplify<T>(
 			if (members.length === 1) {
 				return members[0]
 			}
-			return wrap({ ...typeDef, kind: 'union', members: members })
+			return { ...typeDef, kind: 'union', members: members }
 		case 'struct':
 			const literalFields = new Map<string, StructTypePairField>()
 			let complexFields: SimplifiedStructTypePairField[] = []
@@ -1444,7 +1437,7 @@ export function simplify<T>(
 			}
 			// Literal fields may still be assignable to complex fields,
 			// however this is currently not seen as an issue
-			return wrap({
+			return {
 				kind: 'struct',
 				fields: [
 					...complexFields,
@@ -1456,7 +1449,7 @@ export function simplify<T>(
 						} as const,
 					})),
 				],
-			})
+			}
 		case 'enum':
 			const filteredValues = typeDef.values.filter(value => {
 				let keep = true
@@ -1468,16 +1461,16 @@ export function simplify<T>(
 				})
 				return keep
 			})
-			return wrap({
+			return {
 				...typeDef,
 				enumKind: typeDef.enumKind ?? 'int',
 				values: filteredValues,
-			})
+			}
 		case 'concrete': // TODO
 		case 'template': // TODO
-			return wrap({ ...typeDef, kind: 'union', members: [] })
+			return { ...typeDef, kind: 'union', members: [] }
 		default:
-			return wrap(typeDef)
+			return typeDef
 	}
 }
 
