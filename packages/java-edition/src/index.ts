@@ -122,30 +122,14 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
 			}
-			if (value?.kind === 'literal' && value.value.kind === 'double') {
-				return `${value.value.value}`
-			}
 			return undefined
 		},
-		simplify: (config, typeDef, ctx) => {
-			if (config === undefined || !config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-				return typeDef
-			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) < 0) {
-				return { kind: 'union', members: [] }
-			}
-			return typeDef
-		},
-		filterPair: (config, key, pair, ctx) => {
+		filterElement: (config, ctx) => {
 			if (config === undefined || !config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
 				return true
 			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) < 0) {
-				return false
-			}
-			return true
+			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'until', {
@@ -155,25 +139,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			}
 			return undefined
 		},
-		simplify: (config, typeDef, ctx) => {
-			if (config === undefined || !config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-				return typeDef
-			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
-				return { kind: 'union', members: [] }
-			}
-			return typeDef
-		},
-		filterPair: (config, key, pair, ctx) => {
+		filterElement: (config, ctx) => {
 			if (config === undefined || !config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
 				return true
 			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
-				return false
-			}
-			return true
+			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
 

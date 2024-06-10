@@ -1351,6 +1351,14 @@ export function simplify<T>(
 					options,
 					isMember,
 				)
+				let keep = true
+				handleAttributes(member.attributes, options, (handler, config) => {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, options.context)) {
+						keep = false
+					}
+				})
+				if (!keep) continue
 
 				if (simplified.kind === 'union') {
 					members.push(...simplified.members)
@@ -1372,8 +1380,8 @@ export function simplify<T>(
 			) {
 				let keep = true
 				handleAttributes(field.attributes, options, (handler, config) => {
-					if (!keep || !handler.filterPair) return
-					if (!handler.filterPair(config, key, field, options.context)) {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, options.context)) {
 						keep = false
 					}
 				})
@@ -1450,7 +1458,21 @@ export function simplify<T>(
 				],
 			})
 		case 'enum':
-			return wrap({ ...typeDef, enumKind: typeDef.enumKind ?? 'int' })
+			const filteredValues = typeDef.values.filter(value => {
+				let keep = true
+				handleAttributes(value.attributes, options, (handler, config) => {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, options.context)) {
+						keep = false
+					}
+				})
+				return keep
+			})
+			return wrap({
+				...typeDef,
+				enumKind: typeDef.enumKind ?? 'int',
+				values: filteredValues,
+			})
 		case 'concrete': // TODO
 		case 'template': // TODO
 			return wrap({ ...typeDef, kind: 'union', members: [] })
