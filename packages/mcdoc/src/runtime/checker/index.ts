@@ -1114,7 +1114,8 @@ export interface SimplifyValueNode<T> {
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
 	isMember?: boolean
-	typeArgs?: McdocType[]
+	typeArgs?: SimplifiedMcdocType[]
+	typeMapping?: { [path: string]: SimplifiedMcdocType }
 }
 export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
@@ -1141,6 +1142,10 @@ export function simplify<T>(
 				// TODO when does this happen?
 				options.context.logger.warn(`Tried to access empty reference`)
 				return { kind: 'union', members: [] }
+			}
+			const mapped = context.typeMapping?.[typeDef.path]
+			if (mapped) {
+				return mapped
 			}
 			// TODO Probably need to keep original symbol around in some way to support "go to definition"
 			const symbol = options.context.symbols.query(
@@ -1407,7 +1412,17 @@ export function simplify<T>(
 							isMember: true,
 							typeArgs: [],
 						})
-					addField(structKey, field)
+					const mappedField = context.typeMapping
+						? {
+							...field,
+							type: {
+								kind: 'mapped',
+								child: field.type,
+								mapping: context.typeMapping,
+							} satisfies McdocType,
+						}
+						: field
+					addField(structKey, mappedField)
 				} else {
 					const simplifiedSpreadType = simplify(
 						field.type,
@@ -1444,22 +1459,37 @@ export function simplify<T>(
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
 		case 'concrete':
-			return simplify(
-				typeDef.child,
-				options,
-				{ ...context, typeArgs: typeDef.typeArgs },
-			)
+			const simplifiedArgs = typeDef.typeArgs
+				.map(arg => simplify(arg, options, context))
+			return simplify(typeDef.child, options, {
+				...context,
+				typeArgs: simplifiedArgs,
+			})
 		case 'template':
-			const typeArgs = context.typeArgs ?? []
-			if (typeArgs.length !== typeDef.typeParams.length) {
+			if (context.typeArgs?.length !== typeDef.typeParams.length) {
 				options.context.logger.warn(
 					`Expected ${typeDef.typeParams.length} mcdoc type args for ${
 						McdocType.toString(typeDef.child)
-					}, but got ${typeArgs.length}`,
+					}, but got ${context.typeArgs?.length ?? 0}`,
 				)
 			}
-			// TODO: resolve template paths deeper in the tree
-			return simplify(typeDef.child, options, { ...context, typeArgs: [] })
+			const mapping = Object.fromEntries(
+				typeDef.typeParams.map((param, i) => {
+					const arg = context.typeArgs?.[i] ??
+						{ kind: 'union', members: [] }
+					return [param.path, arg]
+				}),
+			)
+			return simplify(typeDef.child, options, {
+				...context,
+				typeArgs: [],
+				typeMapping: mapping,
+			})
+		case 'mapped':
+			return simplify(typeDef.child, options, {
+				...context,
+				typeMapping: typeDef.mapping,
+			})
 		default:
 			return typeDef
 	}
