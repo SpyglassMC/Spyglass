@@ -1,6 +1,6 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { type JsonNode, JsonPairNode } from '../node/index.js'
+import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
 
 /**
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
@@ -93,6 +93,14 @@ export function definition(
 							`\`\`\`typescript\n${node.parent.key.value}: ${
 								mcdoc.McdocType.toString(definition)
 							}\n\`\`\``
+					}
+				},
+				stringAttacher: (node, attacher) => {
+					if (!JsonStringNode.is(node)) return
+					attacher(node)
+					if (node.children) {
+						// Because the runtime checker happens after binding, we need to manually call this
+						core.binder.dispatchSync(node, ctx)
 					}
 				},
 				// TODO json / JE specific attribute handlers

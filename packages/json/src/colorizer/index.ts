@@ -31,10 +31,19 @@ export const object: Colorizer<JsonObjectNode> = (node, ctx) => {
 	return ans
 }
 
+export const string: Colorizer<JsonStringNode> = (node, ctx) => {
+	if (node.children && node.children?.length > 0) {
+		const child = node.children[0]
+		const colorizer = ctx.meta.getColorizer(child.type)
+		return colorizer(child, ctx)
+	}
+	return core.colorizer.string(node, ctx)
+}
+
 export function register(meta: MetaRegistry): void {
 	meta.registerColorizer<JsonBooleanNode>('json:boolean', boolean)
 	meta.registerColorizer<JsonNullNode>('json:null', null_)
 	meta.registerColorizer<JsonNumberNode>('json:number', core.colorizer.number)
 	meta.registerColorizer<JsonObjectNode>('json:object', object)
-	meta.registerColorizer<JsonStringNode>('json:string', core.colorizer.string)
+	meta.registerColorizer<JsonStringNode>('json:string', string)
 }

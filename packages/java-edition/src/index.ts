@@ -117,7 +117,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute<string>(meta, 'since', {
+	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'since', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
@@ -132,7 +132,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
-	mcdoc.runtime.registerAttribute(meta, 'until', {
+	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'until', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
