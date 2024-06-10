@@ -1221,6 +1221,113 @@ exports['mcdoc runtime checker typeDefinition “type Bounds<T> = struct { min: 
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>” with value {"foo":3} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 3,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 3
+        }
+      }
+    },
+    "expected": {
+      "kind": "struct",
+      "fields": [
+        {
+          "kind": "pair",
+          "key": {
+            "kind": "literal",
+            "value": {
+              "kind": "string",
+              "value": "bar"
+            }
+          },
+          "type": {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::B"
+            },
+            "mapping": {
+              "::B": {
+                "kind": "list",
+                "item": {
+                  "kind": "mapped",
+                  "child": {
+                    "kind": "reference",
+                    "path": "::A"
+                  },
+                  "mapping": {
+                    "::A": {
+                      "kind": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>” with value {"foo":{"bar":"hello"}} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": {
+      "kind": "list",
+      "item": {
+        "kind": "mapped",
+        "child": {
+          "kind": "reference",
+          "path": "::A"
+        },
+        "mapping": {
+          "::A": {
+            "kind": "string"
+          }
+        }
+      }
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>” with value {"foo":{"bar":["hello"]}} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>” with value {"foo":{"bar":[2]}} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 2,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 2
+        }
+      }
+    },
+    "expected": {
+      "kind": "string"
+    }
+  }
+]
+
 exports['mcdoc runtime checker typeDefinition “type Ref = double; struct { foo: Ref }” with value {"foo":"hello"} 1'] = [
   {
     "kind": "type_mismatch",

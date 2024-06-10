@@ -655,6 +655,97 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name:
+				'type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Outer' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Outer',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::A' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'foo',
+											type: {
+												kind: 'concrete',
+												child: {
+													kind: 'reference',
+													path: '::Inner',
+												},
+												typeArgs: [
+													{
+														kind: 'list',
+														item: {
+															kind: 'reference',
+															path: '::A',
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Inner',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::B' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'bar',
+											type: {
+												kind: 'reference',
+												path: '::B',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{ foo: 3 },
+				{ foo: { bar: 'hello' } },
+				{ foo: { bar: ['hello'] } },
+				{ foo: { bar: [2] } },
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
