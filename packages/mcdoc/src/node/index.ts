@@ -476,10 +476,10 @@ export const RangeExclusiveChar = '<'
 export type RangeKind = 0b00 | 0b01 | 0b10 | 0b11
 export namespace RangeKind {
 	export function isLeftExclusive(rangeKind: RangeKind): boolean {
-		return (rangeKind & 0b10) > 1
+		return (rangeKind & 0b10) !== 0
 	}
 	export function isRightExclusive(rangeKind: RangeKind): boolean {
-		return (rangeKind & 0b01) > 1
+		return (rangeKind & 0b01) !== 0
 	}
 }
 

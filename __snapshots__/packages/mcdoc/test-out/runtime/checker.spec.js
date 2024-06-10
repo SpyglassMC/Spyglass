@@ -63,6 +63,258 @@ exports['mcdoc runtime checker typeDefinition “( struct { text: string } | str
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 3 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 5 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 5,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 5
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 2,
+        "max": 4
+      },
+      {
+        "kind": 0,
+        "min": 8
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “(double @ 2..4 | double @ 8..)” with value 9 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":23} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":4} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })” with value {"foo":9} 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "kind": 0,
+        "min": 20,
+        "max": 25
+      },
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })” with value {"foo":4} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })” with value {"foo":9} 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 9,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 9
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      },
+      {
+        "kind": 0,
+        "min": 4,
+        "max": 6
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [0.2,6] 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 6,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 6
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [0.3,0.1] 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [0.3,0.9,0.1,0.1] 1'] = [
+  {
+    "kind": "invalid_collection_length",
+    "node": {
+      "originalNode": [
+        0.3,
+        0.9,
+        0.1,
+        0.1
+      ],
+      "inferredType": {
+        "kind": "list",
+        "item": {
+          "kind": "any"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 1,
+        "max": 3
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [2,0.9,0.1,0.1] 1'] = [
+  {
+    "kind": "invalid_collection_length",
+    "node": {
+      "originalNode": [
+        2,
+        0.9,
+        0.1,
+        0.1
+      ],
+      "inferredType": {
+        "kind": "list",
+        "item": {
+          "kind": "any"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 1,
+        "max": 3
+      }
+    ]
+  },
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 2,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 2
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 1
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[double @ 0..1] @ 1..3” with value [] 1'] = [
+  {
+    "kind": "invalid_collection_length",
+    "node": {
+      "originalNode": [],
+      "inferredType": {
+        "kind": "list",
+        "item": {
+          "kind": "any"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 1,
+        "max": 3
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[int] @ 0..5” with value [1,2,3,4,5,6] 1'] = [
+  {
+    "kind": "invalid_collection_length",
+    "node": {
+      "originalNode": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "inferredType": {
+        "kind": "list",
+        "item": {
+          "kind": "any"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 0,
+        "max": 5
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “[int] @ 0..5” with value [1,2,3] 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “[int] @ 0..5” with value [] 1'] = []
+
 exports['mcdoc runtime checker typeDefinition “[struct { foo: double, bar?: boolean }]” with value [4] 1'] = [
   {
     "kind": "type_mismatch",
@@ -237,6 +489,109 @@ exports['mcdoc runtime checker typeDefinition “dispatch minecraft:item[elytra]
       }
     },
     "key": "id"
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 2 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 3.99 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 2..<4” with value 4 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 4,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 4
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 1,
+        "min": 2,
+        "max": 4
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value "hello" 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": {
+      "kind": "double",
+      "valueRange": {
+        "kind": 0,
+        "min": 3,
+        "max": 6.2
+      }
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 1 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 3,
+        "max": 6.2
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 3 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 4 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.2 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6.3 1'] = [
+  {
+    "kind": "number_out_of_range",
+    "node": {
+      "originalNode": 6.3,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 6.3
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "min": 3,
+        "max": 6.2
+      }
+    ]
   }
 ]
 
