@@ -303,7 +303,7 @@ export function typeDefinition<T>(
 		condensedErrors: [],
 	}))
 	for (const value of rootNode.possibleValues) {
-		const simplifiedRoot = simplify(typeDef, value, options, false, [])
+		const simplifiedRoot = simplify(typeDef, options, { node: value })
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
@@ -322,10 +322,8 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(
 				value.node.inferredType,
-				value,
 				options,
-				false,
-				[],
+				{ node: value },
 			)
 			const children = options.getChildren(
 				value.node.originalNode,
@@ -376,10 +374,8 @@ export function typeDefinition<T>(
 						// text component definitions
 						const simplified = simplify(
 							childDef,
-							childValue,
 							options,
-							false,
-							[],
+							{ node: childValue },
 						)
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
@@ -1115,26 +1111,25 @@ export interface SimplifyValueNode<T> {
 	}
 	node: RuntimeNode<T>
 }
+export interface SimplifyContext<T> {
+	node: SimplifyValueNode<T>
+	isMember?: boolean
+	typeArgs?: McdocType[]
+}
 export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
-	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	isMember: boolean,
-	typeArgs: McdocType[],
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	isMember: boolean,
-	typeArgs: McdocType[],
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	isMember: boolean,
-	typeArgs: McdocType[],
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
 	if (typeDef.attributes) {
 		// TODO
@@ -1161,7 +1156,7 @@ export function simplify<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return simplify(def, node, options, isMember, typeArgs)
+			return simplify(def, options, context)
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -1188,18 +1183,14 @@ export function simplify<T>(
 					parallelIndices: typeDef.parallelIndices,
 					child: { kind: 'struct', fields: structFields },
 				},
-				node,
 				options,
-				isMember,
-				typeArgs,
+				context,
 			)
 		case 'indexed':
 			const child = simplify(
 				typeDef.child,
-				node,
 				options,
-				isMember,
-				[],
+				{ ...context, typeArgs: [] },
 			)
 
 			if (child.kind !== 'struct') {
@@ -1221,11 +1212,14 @@ export function simplify<T>(
 					}
 					lookup.push(index.value)
 				} else {
-					let possibilities: SimplifyNode<T>[] = isMember
-						? [{ value: node, key: node.entryNode.runtimeKey }]
+					let possibilities: SimplifyNode<T>[] = context.isMember
+						? [{
+							value: context.node,
+							key: context.node.entryNode.runtimeKey,
+						}]
 						: [{
-							value: node.entryNode.parent,
-							key: node.entryNode.runtimeKey,
+							value: context.node.entryNode.parent,
+							key: context.node.entryNode.runtimeKey,
 						}]
 					for (const entry of index.accessor) {
 						if (typeof entry !== 'string' && entry.keyword === 'parent') {
@@ -1258,10 +1252,8 @@ export function simplify<T>(
 										node.value.node.originalNode,
 										simplify(
 											node.value.node.inferredType,
-											node.value,
 											options,
-											isMember,
-											[],
+											{ ...context, node: node.value },
 										),
 									)
 										.filter(child => {
@@ -1347,20 +1339,16 @@ export function simplify<T>(
 			}
 			return simplify(
 				{ kind: 'union', members: values },
-				node,
 				options,
-				isMember,
-				typeArgs,
+				context,
 			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
 				const simplified = simplify(
 					member,
-					node,
 					options,
-					isMember,
-					typeArgs,
+					context,
 				)
 
 				if (simplified.kind === 'union') {
@@ -1414,15 +1402,17 @@ export function simplify<T>(
 					// Instead, this method will be called by every struct child by the outer checking method.
 					const structKey = typeof field.key === 'string'
 						? field.key
-						: simplify(field.key, node, options, true, [])
+						: simplify(field.key, options, {
+							...context,
+							isMember: true,
+							typeArgs: [],
+						})
 					addField(structKey, field)
 				} else {
 					const simplifiedSpreadType = simplify(
 						field.type,
-						node,
 						options,
-						true,
-						[],
+						{ ...context, isMember: true, typeArgs: [] },
 					)
 					if (simplifiedSpreadType.kind === 'struct') {
 						for (const field of simplifiedSpreadType.fields) {
@@ -1456,12 +1446,11 @@ export function simplify<T>(
 		case 'concrete':
 			return simplify(
 				typeDef.child,
-				node,
 				options,
-				isMember,
-				typeDef.typeArgs,
+				{ ...context, typeArgs: typeDef.typeArgs },
 			)
 		case 'template':
+			const typeArgs = context.typeArgs ?? []
 			if (typeArgs.length !== typeDef.typeParams.length) {
 				options.context.logger.warn(
 					`Expected ${typeDef.typeParams.length} mcdoc type args for ${
@@ -1470,7 +1459,7 @@ export function simplify<T>(
 				)
 			}
 			// TODO: resolve template paths deeper in the tree
-			return simplify(typeDef.child, node, options, isMember, [])
+			return simplify(typeDef.child, options, { ...context, typeArgs: [] })
 		default:
 			return typeDef
 	}
