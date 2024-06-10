@@ -1099,7 +1099,39 @@ export function simplify<T>(
 			}
 			return { kind: 'union', members: members }
 		case 'struct':
-			const fields: SimplifiedStructTypePairField[] = []
+			const literalFields = new Map<string, StructTypePairField>()
+			let complexFields: SimplifiedStructTypePairField[] = []
+
+			function addField(
+				key: string | SimplifiedMcdocType,
+				field: StructTypePairField,
+			) {
+				if (typeof key === 'string') {
+					literalFields.set(key, field)
+				} else if (key.kind === 'literal' && key.value.kind === 'string') {
+					literalFields.set(key.value.value, field)
+				} else if (key.kind === 'union') {
+					key.members.forEach(m =>
+						addField(m, { ...field, optional: true })
+					)
+				} else {
+					// Only keep fields where the new key is not assignable to an existing field
+					complexFields = complexFields.filter(other =>
+						!isAssignable(
+							key,
+							typeof other.key === 'string'
+								? {
+									kind: 'literal',
+									value: { kind: 'string', value: other.key },
+								}
+								: other.key,
+							options.context,
+							options.isEquivalent,
+						)
+					)
+					complexFields.push({ ...field, key })
+				}
+			}
 			for (const field of typeDef.fields) {
 				if (field.kind === 'pair') {
 					// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
@@ -1108,43 +1140,39 @@ export function simplify<T>(
 					const key = typeof field.key === 'string'
 						? field.key
 						: simplify(field.key, options, parents)
-					if (typeof key !== 'string' && key.kind === 'union') {
-						for (const subKey of key.members) {
-							fields.push({
-								...field,
-								key: simplifyKey(subKey),
-							})
-						}
-					} else {
-						fields.push({
-							...field,
-							key: simplifyKey(key),
-						})
-					}
+					addField(key, field)
 				} else {
 					const simplifiedSpreadType = simplify(
 						field.type,
 						options,
 						parents,
 					)
-
 					if (simplifiedSpreadType.kind === 'struct') {
-						fields.push(...simplifiedSpreadType.fields)
+						for (const field of simplifiedSpreadType.fields) {
+							addField(field.key, field)
+						}
+					} else {
+						const type = McdocType.toString(simplifiedSpreadType)
+						options.context.logger.warn(
+							`Tried to spread non-struct type ${type}`,
+						)
 					}
 				}
 			}
+			// Literal fields may still be assignable to complex fields,
+			// however this is currently not seen as an issue
 			return {
 				kind: 'struct',
-				fields: fields.filter((f, i) =>
-					fields.findLastIndex(of =>
-						isAssignable(
-							of.key,
-							f.key,
-							options.context,
-							options.isEquivalent,
-						)
-					) === i
-				),
+				fields: [
+					...complexFields,
+					...[...literalFields.entries()].map(([key, field]) => ({
+						...field,
+						key: {
+							kind: 'literal',
+							value: { kind: 'string', value: key },
+						} as const,
+					})),
+				],
 			}
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
@@ -1154,14 +1182,6 @@ export function simplify<T>(
 		default:
 			return typeDef
 	}
-}
-function simplifyKey(
-	keyDef: SimplifiedMcdocTypeNoUnion | string,
-): SimplifiedMcdocTypeNoUnion {
-	if (typeof keyDef === 'string') {
-		return { kind: 'literal', value: { kind: 'string', value: keyDef } }
-	}
-	return keyDef
 }
 
 function getValueType(
