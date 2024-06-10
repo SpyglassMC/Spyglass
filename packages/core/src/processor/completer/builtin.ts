@@ -96,6 +96,7 @@ interface RecordOptions<
 		record: DeepReadonly<N>,
 		pair: DeepReadonly<PairNode<K, V>>,
 		ctx: CompleterContext,
+		range: RangeLike,
 	) => CompletionItem[]
 }
 export function record<
@@ -152,8 +153,7 @@ export function record<
 		}
 		if (
 			(key && Range.contains(key, ctx.offset, true)) ||
-			(sep && ctx.offset <= sep.start) ||
-			(value && ctx.offset < value.range.start)
+			(sep && ctx.offset <= sep.start)
 		) {
 			// Selected key.
 			if (!value || Range.isEmpty(value.range)) {
@@ -161,13 +161,16 @@ export function record<
 			}
 			return completeKeys(pair)
 		}
+		if (value && ctx.offset < value.range.start) {
+			return o.value(node, pair, ctx, ctx.offset)
+		}
 		if (
 			(value && Range.contains(value, ctx.offset, true)) ||
 			(sep && ctx.offset >= sep.end) ||
 			(key && ctx.offset > key.range.end)
 		) {
 			// Selected value.
-			return o.value(node, pair, ctx)
+			return o.value(node, pair, ctx, value ?? ctx.offset)
 		}
 
 		return []

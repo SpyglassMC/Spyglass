@@ -504,7 +504,26 @@ export function typeDefinition<T>(
 		}
 	}
 
-	// TODO iterate final tree and call `options.attachTypeInfo`
+	// TODO: attach a combination of all possible definitions
+	const attached = new Set<T>()
+
+	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
+		for (const def of node.validDefinitions) {
+			if (!attached.has(node.node.originalNode)) {
+				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				attached.add(node.node.originalNode)
+			}
+		}
+		for (const child of node.children) {
+			for (const node of child.possibleValues) {
+				attachTypeInfo(node)
+			}
+		}
+	}
+
+	for (const node of rootNode.possibleValues) {
+		attachTypeInfo(node)
+	}
 
 	for (
 		const error of rootNode.possibleValues.flatMap(v => v.condensedErrors)
