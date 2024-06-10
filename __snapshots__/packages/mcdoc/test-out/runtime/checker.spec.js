@@ -1255,3 +1255,175 @@ exports['mcdoc runtime checker typeDefinition “type Ref = double; struct { foo
     "key": "foo"
   }
 ]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = (V | [V]); Tag<string>” with value "hello" 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = (V | [V]); Tag<string>” with value 2 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 2,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 2
+        }
+      }
+    },
+    "expected": {
+      "kind": "union",
+      "members": [
+        {
+          "kind": "string"
+        },
+        {
+          "kind": "list",
+          "item": {
+            "kind": "mapped",
+            "child": {
+              "kind": "reference",
+              "path": "::V"
+            },
+            "mapping": {
+              "::V": {
+                "kind": "string"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = (V | [V]); Tag<string>” with value ["test"] 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = (V | [V]); Tag<string>” with value [10] 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 10,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 10
+        }
+      }
+    },
+    "expected": {
+      "kind": "string"
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = (V | [V]); Tag<string>” with value [] 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = [int, V]; Tag<string>” with value "test" 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "test",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "test"
+        }
+      }
+    },
+    "expected": {
+      "kind": "tuple",
+      "items": [
+        {
+          "kind": "mapped",
+          "child": {
+            "kind": "int"
+          },
+          "mapping": {
+            "::V": {
+              "kind": "string"
+            }
+          }
+        },
+        {
+          "kind": "mapped",
+          "child": {
+            "kind": "reference",
+            "path": "::V"
+          },
+          "mapping": {
+            "::V": {
+              "kind": "string"
+            }
+          }
+        }
+      ]
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = [int, V]; Tag<string>” with value ["foo","test"] 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "foo",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "foo"
+        }
+      }
+    },
+    "expected": {
+      "kind": "int"
+    }
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = [int, V]; Tag<string>” with value [10,"test"] 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = [int, V]; Tag<string>” with value [10] 1'] = [
+  {
+    "kind": "invalid_collection_length",
+    "node": {
+      "originalNode": [
+        10
+      ],
+      "inferredType": {
+        "kind": "list",
+        "item": {
+          "kind": "any"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "max": 2,
+        "min": 2
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type Tag<V> = [int, V]; Tag<string>” with value [4,5] 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 5,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 5
+        }
+      }
+    },
+    "expected": {
+      "kind": "string"
+    }
+  }
+]

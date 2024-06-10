@@ -1456,6 +1456,26 @@ export function simplify<T>(
 					})),
 				],
 			}
+		case 'list':
+			if (!context.typeMapping) return typeDef
+			return {
+				...typeDef,
+				item: {
+					kind: 'mapped',
+					child: typeDef.item,
+					mapping: context.typeMapping,
+				},
+			}
+		case 'tuple':
+			if (!context.typeMapping) return typeDef
+			return {
+				...typeDef,
+				items: typeDef.items.map(item => ({
+					kind: 'mapped',
+					child: item,
+					mapping: context.typeMapping!,
+				})),
+			}
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
 		case 'concrete':

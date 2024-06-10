@@ -557,6 +557,104 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: 'type Tag<V> = (V | [V]); Tag<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Tag' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Tag',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::V' },
+								],
+								child: {
+									kind: 'union',
+									members: [
+										{
+											kind: 'reference',
+											path: '::V',
+										},
+										{
+											kind: 'list',
+											item: {
+												kind: 'reference',
+												path: '::V',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				2,
+				'hello',
+				[],
+				['test'],
+				[10],
+			],
+		},
+		{
+			name: 'type Tag<V> = [int, V]; Tag<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Tag' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Tag',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::V' },
+								],
+								child: {
+									kind: 'tuple',
+									items: [
+										{
+											kind: 'int',
+										},
+										{
+											kind: 'reference',
+											path: '::V',
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				'test',
+				[4, 5],
+				[10, 'test'],
+				['foo', 'test'],
+				[10],
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
