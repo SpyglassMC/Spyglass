@@ -137,7 +137,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			}
 			return typeDef
 		},
-		filterPair: (config, pair, ctx) => {
+		filterPair: (config, key, pair, ctx) => {
 			if (config === undefined || !config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
 				return true
@@ -165,7 +165,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			}
 			return typeDef
 		},
-		filterPair: (config, pair, ctx) => {
+		filterPair: (config, key, pair, ctx) => {
 			if (config === undefined || !config.startsWith('1.')) {
 				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
 				return true
