@@ -1,6 +1,10 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { AttributeValue, McdocType } from '../../type/index.js'
+import type {
+	AttributeValue,
+	McdocType,
+	StructTypePairField,
+} from '../../type/index.js'
 import type {
 	SimplifiedMcdocType,
 	SimplifiedMcdocTypeNoUnion,
@@ -21,7 +25,8 @@ export interface McdocAttribute<C = unknown> {
 	) => SimplifiedMcdocType
 	filterPair?: (
 		config: C | undefined,
-		pair: SimplifiedStructTypePairField,
+		key: string | SimplifiedMcdocType,
+		pair: StructTypePairField,
 		ctx: core.CheckerContext,
 	) => boolean
 }

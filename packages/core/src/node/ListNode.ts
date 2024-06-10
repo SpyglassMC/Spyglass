@@ -13,7 +13,7 @@ export interface ItemNode<V extends AstNode> extends AstNode {
 }
 export namespace ItemNode {
 	export function is<V extends AstNode>(
-		node: AstNode | undefined,
+		node: object | undefined,
 	): node is ItemNode<V> {
 		return (node as ItemNode<V> | undefined)?.type === 'item'
 	}

@@ -1,6 +1,6 @@
 import type * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { JsonNode } from '../node/index.js'
+import { type JsonNode, JsonPairNode } from '../node/index.js'
 
 /**
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
@@ -82,7 +82,19 @@ export function definition(
 						return node.originalNode.range
 					},
 				),
-				attachTypeInfo: (node, definition) => {}, // TODO
+				attachTypeInfo: (node, definition) => {
+					node.typeDef = definition
+					// TODO: improve hover info
+					if (
+						node.parent && JsonPairNode?.is(node.parent) &&
+						node.parent.key
+					) {
+						node.parent.key.hover =
+							`\`\`\`typescript\n${node.parent.key.value}: ${
+								mcdoc.McdocType.toString(definition)
+							}\n\`\`\``
+					}
+				},
 				// TODO json / JE specific attribute handlers
 			},
 		)
