@@ -1,6 +1,21 @@
-import type { DeepReadonly, ItemNode, PairNode } from '@spyglassmc/core'
 import * as core from '@spyglassmc/core'
+import type * as mcdoc from '@spyglassmc/mcdoc'
 import { JsonStringOptions } from '../parser/index.js'
+
+export interface JsonFileNode extends core.AstNode {
+	readonly type: 'json:file'
+	readonly children: [JsonNode]
+}
+export namespace JsonFileNode {
+	/* istanbul ignore next */
+	export function is(obj: object | undefined): obj is JsonFileNode {
+		return (obj as JsonFileNode | undefined)?.type === 'json:file'
+	}
+}
+
+interface JsonBaseNode {
+	typeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
+}
 
 export type JsonNode =
 	| JsonObjectNode
@@ -27,50 +42,8 @@ export namespace JsonNode {
 	}
 }
 
-interface JsonBaseAstNode {
-	expectation?: JsonExpectation[]
-}
-
-export type JsonExpectation =
-	| JsonObjectExpectation
-	| JsonArrayExpectation
-	| JsonStringExpectation
-	| JsonNumberExpectation
-	| JsonBooleanExpectation
-export namespace JsonExpectation {
-	export function isArray(
-		e: DeepReadonly<JsonExpectation>,
-	): e is DeepReadonly<JsonArrayExpectation> {
-		return (e as JsonArrayExpectation).type === 'json:array'
-	}
-	export function isObject(
-		e: DeepReadonly<JsonExpectation>,
-	): e is DeepReadonly<JsonObjectExpectation> {
-		return (e as JsonObjectExpectation).type === 'json:object'
-	}
-	export function isString(
-		e: DeepReadonly<JsonExpectation>,
-	): e is DeepReadonly<JsonStringExpectation> {
-		return (e as JsonStringExpectation).type === 'json:string'
-	}
-}
-
-interface JsonBaseExpectation {
-	typedoc: string
-}
-
-export interface JsonObjectExpectation extends JsonBaseExpectation {
-	readonly type: 'json:object'
-	fields?: {
-		key: string
-		value?: JsonExpectation[]
-		opt?: boolean
-		deprecated?: boolean
-	}[]
-	keys?: JsonStringExpectation[]
-}
 export interface JsonObjectNode
-	extends core.RecordBaseNode<JsonStringNode, JsonNode>, JsonBaseAstNode
+	extends core.RecordBaseNode<JsonStringNode, JsonNode>, JsonBaseNode
 {
 	readonly type: 'json:object'
 }
@@ -88,7 +61,7 @@ export namespace JsonObjectNode {
 		}
 	}
 }
-export type JsonPairNode = PairNode<JsonStringNode, JsonNode>
+export type JsonPairNode = core.PairNode<JsonStringNode, JsonNode>
 export namespace JsonPairNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonPairNode {
@@ -96,13 +69,7 @@ export namespace JsonPairNode {
 	}
 }
 
-export interface JsonArrayExpectation extends JsonBaseExpectation {
-	readonly type: 'json:array'
-	items?: JsonExpectation[]
-}
-export interface JsonArrayNode
-	extends core.ListNode<JsonNode>, JsonBaseAstNode
-{
+export interface JsonArrayNode extends core.ListNode<JsonNode>, JsonBaseNode {
 	readonly type: 'json:array'
 }
 export namespace JsonArrayNode {
@@ -118,7 +85,7 @@ export namespace JsonArrayNode {
 		}
 	}
 }
-export type JsonItemNode = ItemNode<JsonNode>
+export type JsonItemNode = core.ItemNode<JsonNode>
 export namespace JsonItemNode {
 	/* istanbul ignore next */
 	export function is(obj: object): obj is JsonItemNode {
@@ -126,17 +93,7 @@ export namespace JsonItemNode {
 	}
 }
 
-export interface JsonStringExpectation extends JsonBaseExpectation {
-	readonly type: 'json:string'
-	pool?: string[]
-}
-export namespace JsonStringExpectation {
-	/* istanbul ignore next */
-	export function is(obj: object): obj is JsonStringExpectation {
-		return (obj as JsonStringExpectation).type === 'json:string'
-	}
-}
-export interface JsonStringNode extends core.StringBaseNode, JsonBaseAstNode {
+export interface JsonStringNode extends core.StringBaseNode, JsonBaseNode {
 	readonly type: 'json:string'
 }
 export namespace JsonStringNode {
@@ -153,10 +110,7 @@ export namespace JsonStringNode {
 	}
 }
 
-export interface JsonNumberExpectation extends JsonBaseExpectation {
-	readonly type: 'json:number'
-}
-export interface JsonNumberNode extends JsonBaseAstNode, core.AstNode {
+export interface JsonNumberNode extends core.AstNode, JsonBaseNode {
 	readonly type: 'json:number'
 	readonly children: [core.LongNode | core.FloatNode]
 	readonly value: core.LongNode | core.FloatNode
@@ -168,10 +122,7 @@ export namespace JsonNumberNode {
 	}
 }
 
-export interface JsonBooleanExpectation extends JsonBaseExpectation {
-	readonly type: 'json:boolean'
-}
-export interface JsonBooleanNode extends core.BooleanBaseNode, JsonBaseAstNode {
+export interface JsonBooleanNode extends core.BooleanBaseNode, JsonBaseNode {
 	readonly type: 'json:boolean'
 }
 export namespace JsonBooleanNode {
@@ -181,7 +132,7 @@ export namespace JsonBooleanNode {
 	}
 }
 
-export interface JsonNullNode extends core.AstNode, JsonBaseAstNode {
+export interface JsonNullNode extends core.AstNode, JsonBaseNode {
 	readonly type: 'json:null'
 }
 export namespace JsonNullNode {

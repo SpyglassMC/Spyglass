@@ -27,7 +27,7 @@ import { McdocType, NumericRange } from '../../type/index.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
-	definition: SimplifiedMcdocTypeNoUnion,
+	definition: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
 ) => boolean
 
 export type TypeInfoAttacher<T> = (
@@ -94,7 +94,7 @@ export interface RangeError<T> {
 export interface MissingKeyError<T> {
 	kind: 'missing_key'
 	node: RuntimeNode<T>
-	key: McdocType
+	key: string
 }
 export interface TypeMismatchError<T> {
 	node: RuntimeNode<T>
@@ -232,15 +232,17 @@ export function isAssignable(
 		attachTypeInfo: () => {},
 	}
 
-	const node: CheckerTreeEntryNode<McdocType> = {
+	const node: CheckerTreeNode<McdocType> = {
 		parent: undefined,
-		possibleRuntimeValues: [],
-		typeDef: assignValue,
+		runtimeKey: undefined,
+		possibleValues: [],
 	}
-	node.possibleRuntimeValues = getPossibleTypes(typeDef).map(v => ({
+	node.possibleValues = getPossibleTypes(typeDef).map(v => ({
 		entryNode: node,
 		node: { originalNode: v, inferredType: v },
+		children: [],
 		validDefinitions: [],
+		condensedErrors: [],
 	}))
 
 	// TODO add bail option to allow checking logic to bail on first error
@@ -256,25 +258,31 @@ export function isAssignable(
 	return ans
 }
 
-interface CheckerTreeDefinitionNode<T> {
-	typeDef: SimplifiedMcdocTypeNoUnion
-	runtimeNode: CheckerTreeRuntimeNode<T>
-	children: CheckerTreeEntryNode<T>[]
-	errors: McdocCheckerError<T>[]
+interface CheckerTreeNode<T> {
+	parent: CheckerTreeRuntimeNode<T> | undefined
+
+	runtimeKey: RuntimeNode<T> | undefined
+	possibleValues: CheckerTreeRuntimeNode<T>[]
 }
+
+interface CheckerTreeError<T> {
+	error: McdocCheckerError<T>
+	definitionNode: CheckerTreeDefinitionNode<T> | undefined
+}
+
 interface CheckerTreeRuntimeNode<T> {
+	entryNode: CheckerTreeNode<T>
+	children: CheckerTreeNode<T>[]
 	node: RuntimeNode<T>
-	entryNode: CheckerTreeEntryNode<T>
+
+	condensedErrors: CheckerTreeError<T>[][]
 	validDefinitions: CheckerTreeDefinitionNode<T>[]
-	/// Each outer entry represents a layer of siblings
-	/// Each inner entry represents a specific condensed error within that layer.
-	condensedChildErrors?: McdocCheckerError<T>[][]
 }
-interface CheckerTreeEntryNode<T> {
+
+interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
-	runtimeKey?: RuntimeNode<T>
-	possibleRuntimeValues: CheckerTreeRuntimeNode<T>[]
-	typeDef: McdocType | undefined
+	runtimeNode: CheckerTreeRuntimeNode<T>
+	typeDef: SimplifiedMcdocTypeNoUnion
 }
 
 export function typeDefinition<T>(
@@ -282,114 +290,273 @@ export function typeDefinition<T>(
 	typeDef: McdocType,
 	options: McdocCheckerOptions<T>,
 ) {
-	const rootNode: CheckerTreeEntryNode<T> = {
-		possibleRuntimeValues: [],
+	const rootNode: CheckerTreeNode<T> = {
 		parent: undefined,
-		typeDef: typeDef,
+		runtimeKey: undefined,
+		possibleValues: [],
 	}
-	rootNode.possibleRuntimeValues = runtimeValues.map(n => ({
+	rootNode.possibleValues = runtimeValues.map(n => ({
 		node: n,
-		validDefinitions: [],
 		entryNode: rootNode,
+		validDefinitions: [],
+		children: [],
+		condensedErrors: [],
 	}))
-	const nodeQueue: CheckerTreeEntryNode<T>[] = [rootNode]
+	for (const value of rootNode.possibleValues) {
+		const simplifiedRoot = simplify(typeDef, value, options, false, [])
+		const validRootDefinitions = simplifiedRoot.kind === 'union'
+			? simplifiedRoot.members
+			: [simplifiedRoot]
+		value.validDefinitions = validRootDefinitions.map(d => ({
+			parent: undefined,
+			runtimeNode: value,
+			typeDef: d,
+		}))
+	}
+	const nodeQueue: CheckerTreeNode<T>[] = [rootNode]
 
 	while (nodeQueue.length !== 0) {
 		const node = nodeQueue.splice(0, 1)[0]
-		check(node, options)
-		for (const runtimeValue of node.possibleRuntimeValues) {
-			let siblingErrors = runtimeValue.validDefinitions.map(d => ({
-				node: d,
-				errors: d.errors,
-			}))
-			let parent: CheckerTreeRuntimeNode<T> | undefined = runtimeValue
+		const encounterdErrors: CheckerTreeError<T>[] = []
+
+		for (const value of node.possibleValues) {
+			const inferredSimplified = simplify(
+				value.node.inferredType,
+				value,
+				options,
+				false,
+				[],
+			)
+			const children = options.getChildren(
+				value.node.originalNode,
+				inferredSimplified,
+			)
+			const childNodes: CheckerTreeNode<T>[] = children.map(c => {
+				const ans: CheckerTreeNode<T> = {
+					parent: value,
+					runtimeKey: !Array.isArray(c) ? c.key : undefined,
+					possibleValues: [],
+				}
+
+				ans.possibleValues = (Array.isArray(c) ? c : c.possibleValues)
+					.map(v => ({
+						entryNode: ans,
+						node: v,
+						validDefinitions: [],
+						condensedErrors: [],
+						children: [],
+					}))
+
+				return ans
+			})
+
+			for (const def of value.validDefinitions) {
+				const { errors, childDefinitions } = checkShallowly(
+					value.node,
+					inferredSimplified,
+					children,
+					def.typeDef,
+					options,
+				)
+				encounterdErrors.push(
+					...errors.map(e => ({ error: e, definitionNode: def })),
+				)
+				for (let i = 0; i < childDefinitions.length; i++) {
+					const childDef = childDefinitions[i]
+					if (!childDef) {
+						continue
+					}
+					const child = childNodes[i]
+					for (const childValue of child.possibleValues) {
+						// TODO We need some sort of map / local cache which keeps track of the original
+						// non-simplified types and see if they have been compared yet. This is needed
+						// for structures that are cyclic, to essentially bail out once we are comparing
+						// the same types again and just collect the errors of the lower depth.
+						// This will currently lead to a stack overflow error when e.g. comparing two
+						// text component definitions
+						const simplified = simplify(
+							childDef,
+							childValue,
+							options,
+							false,
+							[],
+						)
+						// TODO this does not keep track correctly of empty unions. The child node should receive
+						// some kind of empty union valid definition with the parent set to the correct definition
+						// so that we can potentially error some valid parent defs if only some of them produce an
+						// empty union for the child.
+						const validDefs = (simplified.kind === 'union'
+							? simplified.members
+							: [simplified])
+							.map(d => ({
+								parent: def,
+								runtimeNode: childValue,
+								typeDef: d,
+							}))
+						childValue.validDefinitions.push(...validDefs)
+					}
+				}
+			}
+			value.children = childNodes
+			nodeQueue.push(...childNodes)
+
+			let curNode: CheckerTreeRuntimeNode<T> | undefined = value
 			let depth = 0
-			while (parent) {
-				const { siblings, condensedErrors } =
-					condenseErrorsAndFilterSiblings(siblingErrors)
-				// TODO possible optimization: Remove entries from nodeQueue which are now no longer neccessary to evaluate.
-				// This is quite tricky and would mess up the check at the bottom here, and maybe not worth it if this is no bottleneck
-				parent.validDefinitions = siblings
-				parent.condensedChildErrors ??= []
-				parent.condensedChildErrors.push(condensedErrors)
+			let childErrors = encounterdErrors
+			while (curNode) {
+				const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
+				const errors: CheckerTreeError<T>[] = []
 
-				// TypeScript is drunken (no reason for typedef here)
-				const oldParent: CheckerTreeRuntimeNode<T> = parent
-				parent = oldParent.entryNode.parent?.runtimeNode
+				// It is only meaningful to reduce valid definitions where the union actually happened
+				const definitionGroups = curNode.validDefinitions
+					.reduce(
+						(groups, item) => {
+							const group = groups.find(g => g.parent === item.parent)
+							if (group) {
+								group.children.push(item)
+							} else {
+								groups.push({ parent: item.parent, children: [item] })
+							}
+							return groups
+						},
+						[] as {
+							parent: CheckerTreeDefinitionNode<T> | undefined
+							children: CheckerTreeDefinitionNode<T>[]
+						}[],
+					)
 
-				const lastDefinition = parent
-					?.validDefinitions[parent.validDefinitions.length - 1]
-				const lastChild = lastDefinition?.children.findLast(c => {
-					let values = c.possibleRuntimeValues
-					for (let i = 0; i < depth; i++) {
-						values = values.flatMap(v => v.validDefinitions).flatMap(v =>
-							v.children
-						).flatMap(v => v.possibleRuntimeValues)
+				for (const definitionGroup of definitionGroups) {
+					const { definitions, condensedErrors } =
+						condenseErrorsAndFilterSiblings(
+							definitionGroup.children.map(c => ({
+								definition: c,
+								errors: childErrors.filter(e => e.definitionNode === c)
+									.map(e => e.error),
+							})),
+						)
+
+					definitionGroup.children = definitions
+					stillValidDefintions.push(...definitions)
+					errors.push(
+						...condensedErrors.map(e => ({
+							error: e,
+							definitionNode: definitionGroup.parent,
+						})),
+					)
+				}
+				curNode.condensedErrors.push(errors)
+
+				if (
+					curNode.validDefinitions.length !== stillValidDefintions.length
+				) {
+					curNode.validDefinitions = stillValidDefintions
+
+					filterChildDefinitions(
+						curNode.validDefinitions,
+						curNode.children,
+					)
+
+					function filterChildDefinitions(
+						parentDefs: CheckerTreeDefinitionNode<T>[],
+						children: CheckerTreeNode<T>[],
+					) {
+						for (const child of children) {
+							for (const childValue of child.possibleValues) {
+								childValue.validDefinitions = childValue
+									.validDefinitions.filter(d =>
+										parentDefs.includes(d.parent!)
+									)
+								filterChildDefinitions(
+									childValue.validDefinitions,
+									childValue.children,
+								)
+							}
+						}
 					}
-					return values.length > 0
-				})
-				const lastValue = lastChild?.possibleRuntimeValues.findLast(v => {
-					let values = [v]
-					for (let i = 0; i < depth; i++) {
-						values = values.flatMap(v => v.validDefinitions).flatMap(v =>
-							v.children
-						).flatMap(v => v.possibleRuntimeValues)
-					}
-					return values.length > 0
-				})
+				}
 
-				if (lastValue !== oldParent) {
+				const oldNode: CheckerTreeRuntimeNode<T> = curNode
+				curNode = oldNode.entryNode.parent
+
+				const lastChild = curNode?.children
+					.flatMap(v => v.possibleValues)
+					.findLast(v => {
+						if (v.condensedErrors.length > depth) {
+							return true
+						}
+
+						let children = [v]
+						for (let i = 0; i < depth; i++) {
+							children = children.flatMap(v => v.children).flatMap(v =>
+								v.possibleValues
+							)
+						}
+						return children.length > 0
+					})
+
+				if (lastChild !== oldNode) {
 					// Wait for all siblings to be evaluated first
 					break
 				}
 
-				siblingErrors = parent!.validDefinitions.map(d => ({
-					node: d,
-					errors: d.children.flatMap(c => c.possibleRuntimeValues).flatMap(
-						v =>
-							v.condensedChildErrors &&
-								v.condensedChildErrors.length > depth
-								? v.condensedChildErrors[depth]
-								: [],
-					),
-				}))
+				childErrors = curNode!.children
+					.flatMap(c => c.possibleValues)
+					.flatMap(c =>
+						c.condensedErrors.length > depth
+							? c.condensedErrors[depth]
+							: []
+					)
 
 				depth++
-			}
-
-			for (const def of runtimeValue.validDefinitions) {
-				nodeQueue.push(...def.children)
 			}
 		}
 	}
 
-	// TODO iterate final tree and call `options.attachTypeInfo`
+	// TODO: attach a combination of all possible definitions
+	const attached = new Set<T>()
+
+	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
+		for (const def of node.validDefinitions) {
+			if (!attached.has(node.node.originalNode)) {
+				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				attached.add(node.node.originalNode)
+			}
+		}
+		for (const child of node.children) {
+			for (const node of child.possibleValues) {
+				attachTypeInfo(node)
+			}
+		}
+	}
+
+	for (const node of rootNode.possibleValues) {
+		attachTypeInfo(node)
+	}
 
 	for (
-		const error of rootNode.possibleRuntimeValues.flatMap(v =>
-			v.condensedChildErrors?.flat()
-		)
+		const error of rootNode.possibleValues.flatMap(v => v.condensedErrors)
+			.flat()
 	) {
 		if (error) {
-			options.reportError(error)
+			options.reportError(error.error)
 		}
 	}
 }
 
 function condenseErrorsAndFilterSiblings<T>(
-	siblings: {
-		node: CheckerTreeDefinitionNode<T>
+	definitions: {
+		definition: CheckerTreeDefinitionNode<T>
 		errors: McdocCheckerError<T>[]
 	}[],
 ): {
-	siblings: CheckerTreeDefinitionNode<T>[]
+	definitions: CheckerTreeDefinitionNode<T>[]
 	condensedErrors: McdocCheckerError<T>[]
 } {
-	if (siblings.length === 0) {
-		return { siblings: [], condensedErrors: [] }
+	if (definitions.length === 0) {
+		return { definitions: [], condensedErrors: [] }
 	}
 
-	let validDefinitions = siblings
+	let validDefinitions = definitions
 	const errors = validDefinitions[0].errors.filter(e =>
 		e.kind === 'duplicate_key'
 	)
@@ -425,7 +592,7 @@ function condenseErrorsAndFilterSiblings<T>(
 		})
 	errors.push(...alwaysMismatch)
 
-	const onlyCommonTypeMismatches = siblings.filter(d =>
+	const onlyCommonTypeMismatches = definitions.filter(d =>
 		!d.errors.some(e =>
 			e.kind === 'sometimes_type_mismatch' ||
 			(e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
@@ -529,7 +696,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	const noUnknownTupleElements = validDefinitions.filter(d =>
-		d.errors.some(e => e.kind !== 'unknown_tuple_element')
+		!d.errors.some(e => e.kind === 'unknown_tuple_element')
 	)
 	if (noUnknownTupleElements.length !== 0) {
 		validDefinitions = noUnknownTupleElements
@@ -540,7 +707,8 @@ function condenseErrorsAndFilterSiblings<T>(
 		!validDefinitions.some(d =>
 			!d.errors.some(oe =>
 				oe.kind === 'missing_key' &&
-				oe.node.originalNode === e.node.originalNode
+				oe.node.originalNode === e.node.originalNode &&
+				oe.key === e.key
 			)
 		)
 	) as MissingKeyError<T>[]
@@ -564,297 +732,354 @@ function condenseErrorsAndFilterSiblings<T>(
 		// and look sth like this:
 		// Missing either keys ("A", "B" and "C"), ("A", and "D"), or "F"
 		errors.push(
-			...validDefinitions.map(d => ({
-				kind: 'some_missing_keys' as 'some_missing_keys',
-				node: d.node.runtimeNode.node,
-			})),
+			...validDefinitions
+				.flatMap(d =>
+					d.errors
+						.filter(e =>
+							e.kind === 'missing_key' &&
+							!alwaysMissing.some(oe =>
+								oe.node.originalNode === e.node.originalNode
+							)
+						)
+				)
+				.map(e => e.node as RuntimeNode<T>)
+				.concat(
+					validDefinitions.flatMap(d => d.errors).filter(e =>
+						e.kind === 'some_missing_keys'
+					).map(e => e.node as RuntimeNode<T>),
+				)
+				.filter((v, i, arr) =>
+					arr.findIndex(o => o.originalNode === v.originalNode) === i
+				)
+				.map(n => ({
+					kind: 'some_missing_keys' as 'some_missing_keys',
+					node: n,
+				})),
 		)
 	}
 
-	// TODO handle list length range and value range errors (merge ranges, could be multiple possible distinct ranges)
+	for (
+		const kind of [
+			'invalid_collection_length',
+			'number_out_of_range',
+		] as const
+	) {
+		const noRangeError = validDefinitions.filter(d =>
+			!d.errors.some(e => e.kind === kind)
+		)
+		if (noRangeError.length !== 0) {
+			validDefinitions = noRangeError
+		} else {
+			const rangesErrors = validDefinitions.map(d => {
+				return d.errors
+					.filter((e): e is RangeError<T> => e.kind === kind)
+					.reduce((a, b) => ({
+						kind,
+						node: a.node,
+						ranges: [NumericRange.intersect(a.ranges[0], b.ranges[0])],
+					}))
+			})
+			if (rangesErrors.length > 0) {
+				errors.push({
+					kind: kind,
+					node: rangesErrors[0].node,
+					ranges: rangesErrors.flatMap(e => e.ranges),
+				})
+			}
+		}
+	}
 
 	return {
-		siblings: validDefinitions.map(d => d.node),
+		definitions: validDefinitions.map(d => d.definition),
 		condensedErrors: errors,
 	}
 }
 
-function check<T>(
-	node: CheckerTreeEntryNode<T>,
-	options: McdocCheckerOptions<T>,
-) {
-	if (node.typeDef === undefined) {
-		return
-	}
-	const parents: RuntimeUnion<T>[] = []
-	let current: CheckerTreeEntryNode<T> | undefined = node
-	while (current) {
-		const possibleValues = current.possibleRuntimeValues.map(v => v.node)
-		parents.unshift(
-			current.runtimeKey
-				? { key: current.runtimeKey, possibleValues }
-				: possibleValues,
-		)
-		current = current.parent?.runtimeNode.entryNode
-	}
-	const simplifiedNode = simplify(node.typeDef, options, parents, [])
-	const simplifiedOptions = simplifiedNode.kind === 'union'
-		? simplifiedNode.members
-		: [simplifiedNode]
+interface ValidDefintionResult<T> {
+	errors: McdocCheckerError<T>[]
+	childDefinitions: (McdocType | undefined)[]
+}
 
-	for (const possibleNode of node.possibleRuntimeValues) {
-		const { originalNode, inferredType } = possibleNode.node
-		// TODO We need some sort of map / local cache which keeps track of the original
-		// non-simplified types and see if they have been compared yet. This is needed
-		// for structures that are cyclic, to essentially bail out once we are comparing
-		// the same types again and just collect the errors of the lower depth.
-		// This will currently lead to a stack overflow error when e.g. comparing two
-		// text component definitions
-		const simplifiedRuntime = simplify(inferredType, options, parents, [])
-		const inferredValue = getValueType(simplifiedRuntime)
-		const matches = []
-		for (const simplified of simplifiedOptions) {
-			const simplifiedValue = getValueType(simplified)
+function checkShallowly<T>(
+	runtimeNode: RuntimeNode<T>,
+	simplifiedInferred: SimplifiedMcdocTypeNoUnion,
+	children: RuntimeUnion<T>[],
+	typeDef: SimplifiedMcdocTypeNoUnion,
+	options: McdocCheckerOptions<T>,
+): ValidDefintionResult<T> {
+	const typeDefValueType = getValueType(typeDef)
+	const runtimeValueType = getValueType(simplifiedInferred)
+
+	if (
+		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe' &&
+			runtimeValueType.kind !== typeDefValueType.kind &&
+			!options.isEquivalent(runtimeValueType, typeDefValueType)) ||
+		(typeDef.kind === 'literal' &&
+			(simplifiedInferred.kind !== 'literal' ||
+				typeDef.value.value !== simplifiedInferred.value.value)) ||
+		// TODO handle enum field attributes
+		(typeDef.kind === 'enum' &&
+			(simplifiedInferred.kind !== 'literal' ||
+				!typeDef.values.some(v =>
+					v.value === simplifiedInferred.value.value
+				)))
+	) {
+		return {
+			childDefinitions: Array(children.length).fill(undefined),
+			errors: [{
+				kind: 'type_mismatch',
+				node: runtimeNode,
+				expected: typeDef,
+			}],
+		}
+	}
+
+	const childDefinitions: (McdocType | undefined)[] = Array(children.length)
+		.fill(undefined)
+	const errors: McdocCheckerError<T>[] = []
+	if (typeDef.attributes) {
+		for (const attribute of typeDef.attributes) {
+			const handler = attributeHandlers[attribute.name]
+			if (handler) {
+				errors.push(
+					...handler(
+						runtimeNode.originalNode,
+						attribute,
+						simplifiedInferred,
+						typeDef,
+						options,
+					),
+				)
+			}
+		}
+	}
+	switch (typeDef.kind) {
+		case 'any':
+		case 'unsafe':
+			break
+		case 'byte':
+		case 'short':
+		case 'int':
+		case 'long':
+		case 'float':
+		case 'double':
+			if (
+				typeDef.valueRange &&
+				simplifiedInferred.kind === 'literal' &&
+				typeof simplifiedInferred.value.value ===
+					'number' &&
+				!NumericRange.isInRange(
+					typeDef.valueRange,
+					simplifiedInferred.value.value,
+				)
+			) {
+				errors.push({
+					kind: 'number_out_of_range',
+					node: runtimeNode,
+					ranges: [typeDef.valueRange],
+				})
+			}
+			break
+		case 'struct': {
+			const literalKvps = new Map<
+				string,
+				{
+					values: { pair: RuntimePair<T>; index: number }[]
+					definition: McdocType | undefined
+				}
+			>()
+			const otherKvps: { value: RuntimePair<T>; index: number }[] = []
+
+			for (let i = 0; i < children.length; i++) {
+				const child = children[i]
+				if (Array.isArray(child)) {
+					continue
+				}
+				if (
+					child.key.inferredType.kind === 'literal' &&
+					child.key.inferredType.value.kind === 'string'
+				) {
+					const existing = literalKvps.get(
+						child.key.inferredType.value.value,
+					)
+					if (existing) {
+						// duplicate key
+						existing.values.push({ pair: child, index: i })
+					} else {
+						literalKvps.set(child.key.inferredType.value.value, {
+							values: [{ pair: child, index: i }],
+							definition: undefined,
+						})
+					}
+				} else {
+					otherKvps.push({ value: child, index: i })
+				}
+			}
+
+			for (const pair of typeDef.fields) {
+				const otherKvpMatches: number[] = []
+				let foundMatch = false
+				if (
+					pair.key.kind === 'literal' && pair.key.value.kind === 'string'
+				) {
+					const runtimeChild = literalKvps.get(pair.key.value.value)
+					if (runtimeChild) {
+						foundMatch = true
+						runtimeChild.definition = pair.type
+					}
+				}
+				if (!foundMatch) {
+					for (let i = 0; i < otherKvps.length; i++) {
+						const kvp = otherKvps[i]
+						if (
+							isAssignable(
+								kvp.value.key.inferredType,
+								pair.key,
+								options.context,
+								options.isEquivalent,
+							)
+						) {
+							foundMatch = true
+							otherKvps.splice(i, 1)
+							otherKvpMatches.push(kvp.index)
+							i--
+						}
+					}
+					for (const kvp of literalKvps.entries()) {
+						if (
+							!kvp[1].definition &&
+							isAssignable(
+								{
+									kind: 'literal',
+									value: { kind: 'string', value: kvp[0] },
+								},
+								pair.key,
+								options.context,
+								options.isEquivalent,
+							)
+						) {
+							foundMatch = true
+							kvp[1].definition = pair.type
+						}
+					}
+				}
+
+				for (const match of otherKvpMatches) {
+					childDefinitions[match] = pair.type
+				}
+				if (
+					!foundMatch &&
+					pair.key.kind === 'literal' &&
+					pair.key.value.kind === 'string' &&
+					pair.optional !== true
+				) {
+					errors.push({
+						kind: 'missing_key',
+						node: runtimeNode,
+						key: pair.key.value.value,
+					})
+				}
+			}
+
+			for (const kvp of literalKvps.values()) {
+				for (const value of kvp.values) {
+					childDefinitions[value.index] = kvp.definition
+
+					if (kvp.values.length > 1) {
+						errors.push({
+							kind: 'duplicate_key',
+							node: value.pair.key,
+						})
+					}
+				}
+			}
+
+			for (let i = 0; i < children.length; i++) {
+				const childDef = childDefinitions[i]
+				const child = children[i]
+				if (childDef === undefined) {
+					if (Array.isArray(child)) {
+						errors.push(...child.map(v => ({
+							kind:
+								'expected_key_value_pair' as 'expected_key_value_pair',
+							node: v,
+						})))
+					} else {
+						errors.push({
+							kind: 'unknown_key',
+							node: child.key,
+						})
+					}
+				}
+			}
+			break
+		}
+		case 'list':
+		case 'byte_array':
+		case 'int_array':
+		case 'long_array': {
+			let itemType: McdocType
+			switch (typeDef.kind) {
+				case 'list':
+					itemType = typeDef.item
+					break
+				case 'byte_array':
+					itemType = { kind: 'byte', valueRange: typeDef.valueRange }
+					break
+				case 'int_array':
+					itemType = { kind: 'int', valueRange: typeDef.valueRange }
+					break
+				case 'long_array':
+					itemType = { kind: 'long', valueRange: typeDef.valueRange }
+					break
+			}
+
+			for (let i = 0; i < childDefinitions.length; i++) {
+				childDefinitions[i] = itemType
+			}
 
 			if (
-				(inferredValue.kind === simplifiedValue.kind ||
-					options.isEquivalent(inferredValue, simplifiedValue)) &&
-				(simplified.kind !== 'literal' ||
-					(simplifiedRuntime.kind === 'literal' &&
-						simplified.value.value === simplifiedRuntime.value.value)) &&
-				// TODO handle enum field attributes
-				(simplified.kind !== 'enum' ||
-					(simplifiedRuntime.kind === 'literal' &&
-						simplified.values.some(v =>
-							v.value === simplifiedRuntime.value.value
-						)))
+				typeDef.lengthRange &&
+				!NumericRange.isInRange(typeDef.lengthRange, children.length)
 			) {
-				matches.push(simplified)
+				errors.push({
+					kind: 'invalid_collection_length',
+					node: runtimeNode,
+					ranges: [typeDef.lengthRange],
+				})
 			}
+			break
 		}
+		case 'tuple': {
+			for (let i = 0; i < children.length; i++) {
+				const child = children[i]
+				if (i < typeDef.items.length) {
+					childDefinitions[i] = typeDef.items[i]
+				} else {
+					errors.push({
+						kind: 'unknown_tuple_element',
+						node: child,
+					})
+				}
+			}
 
-		if (matches.length === 0) {
-			possibleNode.validDefinitions = simplifiedOptions.map(d => ({
-				typeDef: d,
-				runtimeNode: possibleNode,
-				children: [],
-				errors: [{
-					kind: 'type_mismatch',
-					node: possibleNode.node,
-					expected: d,
-				}],
-			}))
-			continue
+			if (typeDef.items.length > children.length) {
+				errors.push({
+					kind: 'invalid_collection_length',
+					node: runtimeNode,
+					ranges: [{
+						kind: 0b00,
+						max: typeDef.items.length,
+						min: typeDef.items.length,
+					}],
+				})
+			}
+			break
 		}
-		const children = options.getChildren(originalNode, simplifiedRuntime)
-
-		for (const simplified of matches) {
-			const errors: McdocCheckerError<T>[] = []
-			if (simplified.attributes) {
-				for (const attribute of simplified.attributes) {
-					const handler = attributeHandlers[attribute.name]
-					if (handler) {
-						errors.push(
-							...handler(
-								originalNode,
-								attribute,
-								simplifiedRuntime,
-								simplified,
-								options,
-							),
-						)
-					}
-				}
-			}
-			let childNodes: CheckerTreeEntryNode<T>[] = children.map(c => {
-				if (Array.isArray(c)) {
-					const ans: CheckerTreeEntryNode<T> = {
-						parent: undefined,
-						possibleRuntimeValues: [],
-						typeDef: undefined,
-					}
-					ans.possibleRuntimeValues = c.map(c => ({
-						node: c,
-						validDefinitions: [],
-						entryNode: ans,
-					}))
-					return ans
-				}
-				const ans: CheckerTreeEntryNode<T> = {
-					parent: undefined,
-					typeDef: undefined,
-					runtimeKey: c.key,
-					possibleRuntimeValues: [],
-				}
-				ans.possibleRuntimeValues = c.possibleValues.map(v => ({
-					node: v,
-					validDefinitions: [],
-					entryNode: ans,
-				}))
-				return ans
-			})
-			switch (simplified.kind) {
-				case 'any':
-				case 'unsafe':
-					childNodes = []
-					break
-				case 'struct': {
-					const unmatchedKvps = children
-						.map((v, i) => ({ value: v, index: i }))
-						.filter(v => !Array.isArray(v.value)) as {
-							value: RuntimePair<T>
-							index: number
-						}[]
-
-					for (const pair of simplified.fields) {
-						const matches: number[] = []
-						for (let i = 0; i < unmatchedKvps.length; i++) {
-							const kvp = unmatchedKvps[i]
-							if (
-								isAssignable(
-									kvp.value.key.inferredType,
-									pair.key,
-									options.context,
-									options.isEquivalent,
-								)
-							) {
-								unmatchedKvps.splice(i, 1)
-								matches.push(kvp.index)
-								i--
-							}
-						}
-						if (matches.length > 1) {
-							if (pair.key.kind === 'literal') {
-								errors.push(...matches.map(m => ({
-									kind: 'duplicate_key',
-									node: (children[m] as RuntimePair<T>).key,
-								} as SimpleError<T>)))
-							} else {
-								// TODO
-							}
-						}
-						for (const match of matches) {
-							childNodes[match].typeDef = pair.type
-						}
-						if (matches.length === 0 && pair.optional !== true) {
-							errors.push({
-								kind: 'missing_key',
-								node: possibleNode.node,
-								key: pair.key,
-							})
-						}
-					}
-					for (const child of childNodes) {
-						if (child.typeDef === undefined) {
-							if (child.runtimeKey === undefined) {
-								errors.push(...child.possibleRuntimeValues.map(v => ({
-									kind:
-										'expected_key_value_pair' as 'expected_key_value_pair',
-									node: v.node,
-								})))
-							} else {
-								errors.push({
-									kind: 'unknown_key',
-									node: child.runtimeKey,
-								})
-							}
-						}
-					}
-					break
-				}
-				case 'list':
-				case 'byte_array':
-				case 'int_array':
-				case 'long_array': {
-					let itemType: McdocType
-					switch (simplified.kind) {
-						case 'list':
-							itemType = simplified.item
-							break
-						case 'byte_array':
-							itemType = {
-								kind: 'byte',
-								valueRange: simplified.valueRange,
-							}
-							break
-						case 'int_array':
-							itemType = {
-								kind: 'int',
-								valueRange: simplified.valueRange,
-							}
-							break
-						case 'long_array':
-							itemType = {
-								kind: 'long',
-								valueRange: simplified.valueRange,
-							}
-							break
-					}
-
-					for (const child of childNodes) {
-						child.typeDef = itemType
-					}
-
-					if (
-						simplified.lengthRange &&
-						!NumericRange.isInRange(
-							simplified.lengthRange,
-							children.length,
-						)
-					) {
-						errors.push({
-							kind: 'invalid_collection_length',
-							node: possibleNode.node,
-							ranges: [simplified.lengthRange],
-						})
-					}
-					break
-				}
-				case 'tuple': {
-					for (let i = 0; i < childNodes.length; i++) {
-						const child = childNodes[i]
-						if (i < simplified.items.length) {
-							child.typeDef = simplified.items[i]
-						} else {
-							errors.push({
-								kind: 'unknown_tuple_element',
-								node: child.runtimeKey === undefined
-									? child.possibleRuntimeValues.map(c => c.node)
-									: {
-										key: child.runtimeKey,
-										possibleValues: child.possibleRuntimeValues.map(
-											c => c.node,
-										),
-									},
-							})
-						}
-					}
-
-					if (simplified.items.length > children.length) {
-						errors.push({
-							kind: 'invalid_collection_length',
-							node: possibleNode.node,
-							ranges: [{
-								kind: 0b00,
-								max: simplified.items.length,
-								min: simplified.items.length,
-							}],
-						})
-					}
-					break
-				}
-			}
-			const def: CheckerTreeDefinitionNode<T> = {
-				typeDef: simplified,
-				runtimeNode: possibleNode,
-				children: childNodes,
-				errors: errors,
-			}
-			for (const child of def.children) {
-				child.parent = def
-			}
-			possibleNode.validDefinitions.push(def)
-		}
+	}
+	return {
+		childDefinitions: childDefinitions,
+		errors: errors,
 	}
 }
 
@@ -866,22 +1091,49 @@ export function getPossibleTypes(
 		: [typeDef]
 }
 
+interface SimplifyNode<T> {
+	value: SimplifyValueNode<T> | undefined
+	/**
+	 * This key facilitates the %key lookup. This key should always be a member of
+	 * {@link value} and facilitates the `%key` lookup. This is the key of the member
+	 * the dispatcher originates from, while {@link value} is the struct containing
+	 * this key with a dispatcher associated with it.
+	 */
+	key: RuntimeNode<T> | undefined
+}
+/**
+ * Basically the same as a {@link CheckerTreeRuntimeNode}, just with a few fields
+ * that aren't needed here removed for simplicity.
+ *
+ * This means {@link CheckerTreeRuntimeNode} can be used in place of this type without
+ * any conversions as this type is compatible with {@link CheckerTreeRuntimeNode}.
+ */
+export interface SimplifyValueNode<T> {
+	entryNode: {
+		parent: SimplifyValueNode<T> | undefined
+		runtimeKey: RuntimeNode<T> | undefined
+	}
+	node: RuntimeNode<T>
+}
 export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
+	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	parents: RuntimeUnion<T>[],
+	isMember: boolean,
 	typeArgs: McdocType[],
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
+	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	parents: RuntimeUnion<T>[],
+	isMember: boolean,
 	typeArgs: McdocType[],
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
+	node: SimplifyValueNode<T>,
 	options: McdocCheckerOptions<T>,
-	parents: RuntimeUnion<T>[],
+	isMember: boolean,
 	typeArgs: McdocType[],
 ): SimplifiedMcdocType {
 	if (typeDef.attributes) {
@@ -909,7 +1161,7 @@ export function simplify<T>(
 				return { kind: 'union', members: [] }
 			}
 
-			return simplify(def, options, parents, typeArgs)
+			return simplify(def, node, options, isMember, typeArgs)
 		case 'dispatcher':
 			const dispatcher = options.context.symbols.query(
 				options.context.doc,
@@ -936,12 +1188,19 @@ export function simplify<T>(
 					parallelIndices: typeDef.parallelIndices,
 					child: { kind: 'struct', fields: structFields },
 				},
+				node,
 				options,
-				parents,
+				isMember,
 				typeArgs,
 			)
 		case 'indexed':
-			const child = simplify(typeDef.child, options, parents, [])
+			const child = simplify(
+				typeDef.child,
+				node,
+				options,
+				isMember,
+				[],
+			)
 
 			if (child.kind !== 'struct') {
 				options.context.logger.warn(
@@ -962,54 +1221,50 @@ export function simplify<T>(
 					}
 					lookup.push(index.value)
 				} else {
-					const parentsCpy = [...parents]
-					const initial = parentsCpy.pop()
-					let possibilities = [{
-						parents: parentsCpy,
-						node: initial,
-					}]
+					let possibilities: SimplifyNode<T>[] = isMember
+						? [{ value: node, key: node.entryNode.runtimeKey }]
+						: [{
+							value: node.entryNode.parent,
+							key: node.entryNode.runtimeKey,
+						}]
 					for (const entry of index.accessor) {
 						if (typeof entry !== 'string' && entry.keyword === 'parent') {
-							possibilities = possibilities.map(n => {
-								const node = n.parents.pop()
-								return { parents: n.parents, node }
-							})
+							possibilities = possibilities.map(n => ({
+								value: n.value?.entryNode.parent,
+								key: n.value?.entryNode.runtimeKey,
+							}))
 						} else if (
 							typeof entry !== 'string' && entry.keyword === 'key'
 						) {
-							lookup.push(
-								...possibilities
-									.map(p =>
-										!Array.isArray(p.node) &&
-											p.node?.key.inferredType.kind === 'literal' &&
-											p.node.key.inferredType.value.kind === 'string'
-											? p.node.key.inferredType.value.value
-											: '%none'
-									).filter((k, i, arr) => arr.indexOf(k) === i),
-							)
-							possibilities = []
+							possibilities = possibilities
+								.map(p => ({
+									value: p.key
+										? {
+											node: p.key,
+											entryNode: {
+												parent: p.value,
+												runtimeKey: p.key,
+											},
+										}
+										: undefined,
+									key: undefined,
+								}))
 							break
 						} else if (typeof entry === 'string') {
-							const possibleChildren: {
-								parents: RuntimeUnion<T>[]
-								node: RuntimeUnion<T> | undefined
-							}[] = []
+							const newPossibilities: SimplifyNode<T>[] = []
 							for (const node of possibilities) {
-								for (
-									const value of Array.isArray(node.node)
-										? node.node
-										: node.node?.possibleValues ?? [undefined]
-								) {
-									const child = value
-										? options.getChildren(
-											value.originalNode,
-											simplify(
-												value.inferredType,
-												options,
-												node.parents,
-												[],
-											),
-										).find(child => {
+								const possibleChildren: SimplifyNode<T>[] = node.value
+									? (options.getChildren(
+										node.value.node.originalNode,
+										simplify(
+											node.value.node.inferredType,
+											node.value,
+											options,
+											isMember,
+											[],
+										),
+									)
+										.filter(child => {
 											if (!Array.isArray(child)) {
 												return isAssignable(
 													child.key.inferredType,
@@ -1024,29 +1279,32 @@ export function simplify<T>(
 													options.isEquivalent,
 												)
 											}
+											// TODO if it's a list, consider all list items.
+											// This should probably work recursively if we have a list of lists.
 											return false
-										})
-										: undefined
-
-									possibleChildren.push({
-										parents: node.node
-											? [...node.parents, node.node]
-											: [],
-										node: child,
-									})
-								}
+										}) as RuntimePair<T>[]) // We don't consider arrays yet, see above.
+										.flatMap(c =>
+											c.possibleValues.map(v => ({
+												value: {
+													node: v,
+													entryNode: {
+														parent: node.value,
+														runtimeKey: c.key,
+													},
+												},
+												key: undefined,
+											}))
+										)
+									: [{ value: undefined, key: undefined }]
+								newPossibilities.push(...possibleChildren)
 							}
-							possibilities = possibleChildren
+							possibilities = newPossibilities
 						} else {
 							lookup.push('%none')
 							break
 						}
 					}
-					for (
-						const value of possibilities.flatMap(p =>
-							Array.isArray(p.node) ? p.node : p.node?.possibleValues
-						)
-					) {
+					for (const value of possibilities.map(p => p.value?.node)) {
 						if (
 							value?.inferredType.kind === 'literal' &&
 							value.inferredType.value.kind === 'string'
@@ -1089,14 +1347,21 @@ export function simplify<T>(
 			}
 			return simplify(
 				{ kind: 'union', members: values },
+				node,
 				options,
-				parents,
+				isMember,
 				typeArgs,
 			)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
-				const simplified = simplify(member, options, parents, typeArgs)
+				const simplified = simplify(
+					member,
+					node,
+					options,
+					isMember,
+					typeArgs,
+				)
 
 				if (simplified.kind === 'union') {
 					members.push(...simplified.members)
@@ -1109,58 +1374,93 @@ export function simplify<T>(
 			}
 			return { kind: 'union', members: members }
 		case 'struct':
-			const fields: SimplifiedStructTypePairField[] = []
+			const literalFields = new Map<string, StructTypePairField>()
+			let complexFields: SimplifiedStructTypePairField[] = []
+
+			function addField(
+				key: string | SimplifiedMcdocType,
+				field: StructTypePairField,
+			) {
+				if (typeof key === 'string') {
+					literalFields.set(key, field)
+				} else if (key.kind === 'literal' && key.value.kind === 'string') {
+					literalFields.set(key.value.value, field)
+				} else if (key.kind === 'union') {
+					key.members.forEach(m =>
+						addField(m, { ...field, optional: true })
+					)
+				} else {
+					// Only keep fields where the new key is not assignable to an existing field
+					complexFields = complexFields.filter(other =>
+						!isAssignable(
+							key,
+							typeof other.key === 'string'
+								? {
+									kind: 'literal',
+									value: { kind: 'string', value: other.key },
+								}
+								: other.key,
+							options.context,
+							options.isEquivalent,
+						)
+					)
+					complexFields.push({ ...field, key })
+				}
+			}
 			for (const field of typeDef.fields) {
 				if (field.kind === 'pair') {
 					// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
 					// cannot deterministically find for non-string keys.
 					// Instead, this method will be called by every struct child by the outer checking method.
-					const key = typeof field.key === 'string'
+					const structKey = typeof field.key === 'string'
 						? field.key
-						: simplify(field.key, options, parents, [])
-					if (typeof key !== 'string' && key.kind === 'union') {
-						for (const subKey of key.members) {
-							fields.push({
-								...field,
-								key: simplifyKey(subKey),
-							})
-						}
-					} else {
-						fields.push({
-							...field,
-							key: simplifyKey(key),
-						})
-					}
+						: simplify(field.key, node, options, true, [])
+					addField(structKey, field)
 				} else {
 					const simplifiedSpreadType = simplify(
 						field.type,
+						node,
 						options,
-						parents,
+						true,
 						[],
 					)
-
 					if (simplifiedSpreadType.kind === 'struct') {
-						fields.push(...simplifiedSpreadType.fields)
+						for (const field of simplifiedSpreadType.fields) {
+							addField(field.key, field)
+						}
+					} else {
+						const type = McdocType.toString(simplifiedSpreadType)
+						options.context.logger.warn(
+							`Tried to spread non-struct type ${type}`,
+						)
 					}
 				}
 			}
+			// Literal fields may still be assignable to complex fields,
+			// however this is currently not seen as an issue
 			return {
 				kind: 'struct',
-				fields: fields.filter((f, i) =>
-					fields.findLastIndex(of =>
-						isAssignable(
-							of.key,
-							f.key,
-							options.context,
-							options.isEquivalent,
-						)
-					) === i
-				),
+				fields: [
+					...complexFields,
+					...[...literalFields.entries()].map(([key, field]) => ({
+						...field,
+						key: {
+							kind: 'literal',
+							value: { kind: 'string', value: key },
+						} as const,
+					})),
+				],
 			}
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
 		case 'concrete':
-			return simplify(typeDef.child, options, parents, typeDef.typeArgs)
+			return simplify(
+				typeDef.child,
+				node,
+				options,
+				isMember,
+				typeDef.typeArgs,
+			)
 		case 'template':
 			if (typeArgs.length !== typeDef.typeParams.length) {
 				options.context.logger.warn(
@@ -1170,18 +1470,10 @@ export function simplify<T>(
 				)
 			}
 			// TODO: resolve template paths deeper in the tree
-			return simplify(typeDef.child, options, parents, [])
+			return simplify(typeDef.child, node, options, isMember, [])
 		default:
 			return typeDef
 	}
-}
-function simplifyKey(
-	keyDef: SimplifiedMcdocTypeNoUnion | string,
-): SimplifiedMcdocTypeNoUnion {
-	if (typeof keyDef === 'string') {
-		return { kind: 'literal', value: { kind: 'string', value: keyDef } }
-	}
-	return keyDef
 }
 
 function getValueType(
@@ -1216,7 +1508,7 @@ export function getDefaultErrorReporter<T>(
 	) => Range,
 ): ErrorReporter<T> {
 	return (error: McdocCheckerError<T>) => {
-		const defaultTranslationKey = error.kind.replace('_', '-')
+		const defaultTranslationKey = error.kind.replaceAll('_', '-')
 		if (error.kind === 'unknown_tuple_element') {
 			const nodes = Array.isArray(error.node)
 				? error.node
@@ -1258,12 +1550,7 @@ export function getDefaultErrorReporter<T>(
 				break
 			case 'missing_key':
 				ctx.err.report(
-					localize(
-						defaultTranslationKey,
-						error.key.kind === 'literal'
-							? error.key.value.value
-							: `<${localize(`mcdoc.type.${error.key.kind}`)}>`,
-					),
+					localize(defaultTranslationKey, error.key),
 					range,
 				)
 				break
@@ -1300,7 +1587,10 @@ export function getDefaultErrorReporter<T>(
 					return left ?? right
 				}).filter(r => r !== undefined) as string[]
 				ctx.err.report(
-					localize(baseKey, arrayToMessage(rangeMessages, false)),
+					localize(
+						'expected',
+						localize(baseKey, arrayToMessage(rangeMessages, false)),
+					),
 					range,
 				)
 				break
