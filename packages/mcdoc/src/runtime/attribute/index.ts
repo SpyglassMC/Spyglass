@@ -1,6 +1,10 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type { Attribute, AttributeValue } from '../../type/index.js'
+import type {
+	Attribute,
+	AttributeValue,
+	StructTypePairField,
+} from '../../type/index.js'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import type { SimpleCompletionValue } from '../completer/index.js'
 
@@ -11,6 +15,11 @@ export interface McdocAttribute<C = unknown> {
 		inferred: SimplifiedMcdocTypeNoUnion,
 		ctx: core.CheckerContext,
 	) => void
+	mapField?: (
+		config: C,
+		field: StructTypePairField,
+		ctx: core.CheckerContext,
+	) => StructTypePairField
 	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
 	attachString?: (
 		config: C,
@@ -59,9 +68,6 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			// TODO: support non-string configs
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
-			}
-			if (value?.kind === 'reference' && value.path) {
-				return value.path.replace(/^.*::/, '')
 			}
 			return undefined
 		},

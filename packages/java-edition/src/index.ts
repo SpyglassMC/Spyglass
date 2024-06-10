@@ -147,6 +147,26 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
+	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'deprecated', {
+		config: (value) => {
+			if (value?.kind === 'literal' && value.value.kind === 'string') {
+				return value.value.value
+			}
+			return undefined
+		},
+		mapField: (config, field, ctx) => {
+			if (config === undefined || !config.startsWith('1.')) {
+				ctx.logger.warn(
+					`Invalid mcdoc attribute for "deprecated": ${config}`,
+				)
+				return field
+			}
+			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+				return { ...field, deprecated: true }
+			}
+			return field
+		},
+	})
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)

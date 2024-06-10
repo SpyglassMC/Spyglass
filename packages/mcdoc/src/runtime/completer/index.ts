@@ -4,9 +4,14 @@ import type { McdocType, StructTypePairField } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
 import type { SimplifiedMcdocType } from '../checker/index.js'
 
+export type SimpleCompletionField = {
+	key: string
+	field: core.DeepReadonly<StructTypePairField>
+}
+
 export function getFields(
 	typeDef: core.DeepReadonly<SimplifiedMcdocType>,
-): { key: string; field: core.DeepReadonly<StructTypePairField> }[] {
+): SimpleCompletionField[] {
 	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':

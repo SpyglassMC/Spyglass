@@ -1365,16 +1365,15 @@ export function simplify<T>(
 				field: StructTypePairField,
 			) {
 				let keep = true
-				handleAttributes(
-					field.attributes,
-					options.context,
-					(handler, config) => {
-						if (!keep || !handler.filterElement) return
-						if (!handler.filterElement(config, options.context)) {
-							keep = false
-						}
-					},
-				)
+				handleAttributes(field.attributes, options.context, (h, c) => {
+					if (!keep) return
+					if (h.filterElement?.(c, options.context) === false) {
+						keep = false
+					}
+					if (h.mapField) {
+						field = h.mapField(c, field, options.context)
+					}
+				})
 				if (!keep) {
 					return
 				}
