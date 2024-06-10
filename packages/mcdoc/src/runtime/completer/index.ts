@@ -1,9 +1,10 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type { McdocType, StructTypePairField } from '../../type/index.js'
+import type { SimplifiedMcdocType } from '../checker/index.js'
 
 export function getFields(
-	typeDef: core.DeepReadonly<McdocType>,
+	typeDef: core.DeepReadonly<SimplifiedMcdocType>,
 ): { key: string; field: core.DeepReadonly<StructTypePairField> }[] {
 	// TODO: handle attributes
 	switch (typeDef.kind) {
@@ -12,7 +13,6 @@ export function getFields(
 		case 'struct':
 			return typeDef.fields
 				.flatMap(field => {
-					if (field.kind === 'spread') return []
 					if (typeof field.key === 'string') {
 						return [{ key: field.key, field }]
 					}
@@ -26,6 +26,7 @@ export function getFields(
 	}
 }
 
+// TODO: only accept SimplifiedMcdocType here
 export function getValues(
 	typeDef: core.DeepReadonly<McdocType>,
 	ctx: core.CompleterContext,
