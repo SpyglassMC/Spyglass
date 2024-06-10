@@ -263,6 +263,7 @@ describe('mcdoc runtime checker', () => {
 				{ id: 'test' },
 				{ id: 'test', config: 'hello' },
 				{ id: 'test', config: 5 },
+				{ id: 'test', baz: true },
 				{ id: 'other' },
 				{ id: 'other', baz: 'world' },
 				{ id: 'other', baz: true },
@@ -432,6 +433,73 @@ describe('mcdoc runtime checker', () => {
 				[0.2, 6],
 				[0.3, 0.9, 0.1, 0.1],
 				[2, 0.9, 0.1, 0.1],
+			],
+		},
+		{
+			name:
+				'struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }',
+			type: {
+				kind: 'struct',
+				fields: [
+					{ kind: 'pair', key: 'id', type: { kind: 'string' } },
+					{
+						kind: 'pair',
+						key: 'data',
+						type: {
+							kind: 'indexed',
+							child: {
+								kind: 'struct',
+								fields: [
+									{
+										kind: 'pair',
+										key: 'test',
+										type: {
+											kind: 'struct',
+											fields: [
+												{
+													kind: 'pair',
+													key: 'config',
+													type: { kind: 'double' },
+												},
+											],
+										},
+									},
+									{
+										kind: 'pair',
+										key: 'other',
+										type: {
+											kind: 'struct',
+											fields: [
+												{
+													kind: 'pair',
+													key: 'baz',
+													type: { kind: 'boolean' },
+												},
+											],
+										},
+									},
+								],
+							},
+							parallelIndices: [
+								{ kind: 'dynamic', accessor: ['id'] },
+							],
+						},
+					},
+				],
+			},
+			values: [
+				{},
+				{ id: 'fallback' },
+				{ id: 'fallback', data: {} },
+				{ id: 'fallback', data: { config: 'hello' } },
+				{ id: 'fallback', data: { baz: true } },
+				{ id: 'test', data: {} },
+				{ id: 'test', data: { config: 'hello' } },
+				{ id: 'test', data: { config: 5 } },
+				{ id: 'test', data: { baz: true } },
+				{ id: 'other', data: {} },
+				{ id: 'other', data: { baz: 'world' } },
+				{ id: 'other', data: { baz: true } },
 			],
 		},
 		{
