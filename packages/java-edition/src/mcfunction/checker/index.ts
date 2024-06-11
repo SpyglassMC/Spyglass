@@ -5,7 +5,13 @@ import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
-import { BlockNode, EntityNode, ItemNode, ParticleNode } from '../node/index.js'
+import {
+	BlockNode,
+	EntityNode,
+	ItemNode,
+	JsonNode,
+	ParticleNode,
+} from '../node/index.js'
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -45,14 +51,8 @@ const rootCommand = (
 			item(node, ctx)
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
-		} else if (json.JsonNode.is(node)) {
-			// TODO find a better way to differentiate text components and text styles
-			const parent = node.parent
-			const ref = parent && mcf.CommandChildNode.is(parent) &&
-					parent.path[parent.path.length - 1] === 'style'
-				? '::java::server::util::text::TextStyle'
-				: '::java::server::util::text::Text'
-			json.checker.definition(ref)(node, ctx)
+		} else if (JsonNode.is(node)) {
+			jsonChecker(node, ctx)
 		}
 	}
 
@@ -175,6 +175,10 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 		'item',
 		core.ResourceLocationNode.toString(node.id, 'full'),
 	)(node.nbt, ctx)
+}
+
+const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
+	json.checker.definition(node.typeRef)(node.value, ctx)
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
@@ -345,5 +349,6 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
 	meta.registerChecker<ItemNode>('mcfunction:item', item)
+	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

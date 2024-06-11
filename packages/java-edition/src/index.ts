@@ -171,52 +171,6 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return field
 		},
 	})
-	mcdoc.runtime.registerAttribute(meta, 'command_argument', {
-		config: (value) => {
-			if (value?.kind === 'literal' && value.value.kind === 'string') {
-				return core.ResourceLocation.lengthen(value.value.value)
-			}
-			return undefined
-		},
-		attachString: (config, ctx) => {
-			if (!config) {
-				return
-			}
-			const parser = jeMcf.parser.argument({
-				type: 'argument',
-				parser: config,
-			})
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
-				if (!parser) {
-					ctx.err.report(
-						localize(
-							'mcfunction.parser.unknown-parser',
-							localeQuote(config),
-						),
-						core.Range.create(src.cursor, src.skipRemaining()),
-						core.ErrorSeverity.Hint,
-					)
-					return
-				}
-				const child = parser(src, ctx)
-				if (child === core.Failure) {
-					ctx.err.report(
-						localize('mcfunction.parser.eoc-unexpected'),
-						node,
-					)
-					return
-				}
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [child]
-			}
-		},
-	})
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)

@@ -99,8 +99,10 @@ export function definition(
 					if (!JsonStringNode.is(node)) return
 					attacher(node)
 					if (node.children) {
+						core.AstNode.setParents(node)
 						// Because the runtime checker happens after binding, we need to manually call this
 						core.binder.dispatchSync(node, ctx)
+						core.checker.dispatchSync(node, ctx)
 					}
 				},
 				// TODO json / JE specific attribute handlers
