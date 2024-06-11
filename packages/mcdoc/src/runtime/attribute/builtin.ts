@@ -2,8 +2,53 @@ import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { registerAttribute, validator } from './index.js'
 
+interface IdConfig {
+	registry: string
+	tags?: 'allowed' | 'implicit' | 'required'
+	definition?: boolean
+}
+
+// TODO: parse the resource location even without a category
+const idValidator = validator.alternatives<IdConfig>(
+	validator.map(
+		validator.string,
+		v => ({ registry: v }),
+	),
+	validator.tree({
+		registry: validator.string,
+		tags: validator.optional(
+			validator.options('allowed', 'implicit', 'required'),
+		),
+		definition: validator.optional(
+			validator.boolean,
+		),
+	}),
+)
+
+function getResourceLocationOptions(
+	{ registry, tags, definition }: IdConfig,
+	ctx: core.ContextBase,
+): core.ResourceLocationOptions | undefined {
+	if (tags === 'implicit') {
+		registry = `tag/${registry}`
+	}
+	// TODO: disallow non-tags when tags=required
+	if (tags === 'allowed' || tags === 'required') {
+		if (core.TaggableResourceLocationCategory.is(registry)) {
+			return { category: registry, allowTag: true }
+		}
+	} else if (core.ResourceLocationCategory.is(registry)) {
+		return {
+			category: registry,
+			usageType: definition ? 'definition' : 'reference',
+		}
+	}
+	ctx.logger.warn(`Invalid resource location registry ${registry}`)
+	return undefined
+}
+
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
-	registerAttribute(meta, 'id', validator.string, {
+	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
 				return
@@ -13,13 +58,13 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 		attachString: (config, ctx) => {
-			// TODO: parse the resource location even without a category
-			if (!core.ResourceLocationCategory.is(config)) {
+			const options = getResourceLocationOptions(config, ctx)
+			if (!options) {
 				return
 			}
 			return (node) => {
 				const src = new core.Source(node.value, node.valueMap)
-				const id = core.resourceLocation({ category: config })(src, ctx)
+				const id = core.resourceLocation(options)(src, ctx)
 				if (src.canRead()) {
 					ctx.err.report(
 						localize('mcdoc.runtime.checker.trailing'),
@@ -30,13 +75,17 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 		suggestValues: (config, ctx) => {
-			// TODO: re-use the resource location completer
-			const symbols = ctx.symbols.getVisibleSymbols(config, ctx.doc.uri)
-			const declarations = Object.entries(symbols).flatMap((
-				[key, symbol],
-			) => core.SymbolUtil.isDeclared(symbol) ? [key] : [])
-			// TODO: pass the possible doc comment from the dispatch statement as detail
-			return declarations.map(value => ({ value, kind: 'string' }))
+			const options = getResourceLocationOptions(config, ctx)
+			if (!options) {
+				return []
+			}
+			const mock = core.ResourceLocationNode.mock(ctx.offset, options)
+			return core.completer.dispatch(mock, ctx)
+				.map(item => ({
+					value: item.label,
+					kind: 'string',
+					completionKind: core.CompletionKind.Function,
+				}))
 		},
 	})
 }

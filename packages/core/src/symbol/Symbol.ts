@@ -27,12 +27,14 @@ export const RegistryCategories = Object.freeze(
 		'block_predicate_type',
 		'chunk_status',
 		'custom_stat',
+		'data_component_type',
 		'enchantment',
 		'entity_type',
 		'float_provider_type',
 		'fluid',
 		'game_event',
 		'height_provider_type',
+		'instrument',
 		'int_provider_type',
 		'item',
 		'loot_condition_type',
@@ -110,6 +112,15 @@ export const TaggableResourceLocationCategories = Object.freeze(
 )
 export type TaggableResourceLocationCategory =
 	(typeof TaggableResourceLocationCategories)[number]
+export namespace TaggableResourceLocationCategory {
+	export function is(
+		category: string,
+	): category is TaggableResourceLocationCategory {
+		return TaggableResourceLocationCategories.includes(
+			category as TaggableResourceLocationCategory,
+		)
+	}
+}
 
 export const TagFileCategories = Object.freeze(
 	TaggableResourceLocationCategories.map((key) => `tag/${key}` as const),

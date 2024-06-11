@@ -36,6 +36,7 @@ export type SimpleCompletionValue = {
 	value: string
 	detail?: string
 	kind?: McdocType['kind']
+	completionKind?: core.CompletionKind
 }
 
 // TODO: only accept SimplifiedMcdocType here

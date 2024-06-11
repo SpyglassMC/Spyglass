@@ -61,8 +61,11 @@ export function handleAttributes(
 			continue
 		}
 
-		const config = value ? handler.validator(value, ctx) : undefined
+		const config = handler.validator(value, ctx)
 		if (config === core.Failure) {
+			ctx.logger.warn(
+				`Invalid mcdoc attribute ${name}: ${JSON.stringify(value)}`,
+			)
 			continue
 		}
 		fn(handler.attribute, config)
