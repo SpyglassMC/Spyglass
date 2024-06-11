@@ -263,9 +263,243 @@ describe('mcdoc runtime checker', () => {
 				{ id: 'test' },
 				{ id: 'test', config: 'hello' },
 				{ id: 'test', config: 5 },
+				{ id: 'test', baz: true },
 				{ id: 'other' },
 				{ id: 'other', baz: 'world' },
 				{ id: 'other', baz: true },
+			],
+		},
+		{
+			name: 'double @ 3..6.2',
+			type: {
+				kind: 'double',
+				valueRange: { kind: 0b00, min: 3, max: 6.2 },
+			},
+			values: [
+				'hello',
+				1,
+				3,
+				4,
+				6.2,
+				6.3,
+			],
+		},
+		{
+			name: 'double @ 2..<4',
+			type: {
+				kind: 'double',
+				valueRange: { kind: 0b01, min: 2, max: 4 },
+			},
+			values: [
+				2,
+				3.99,
+				4,
+			],
+		},
+		{
+			name: '(double @ 2..4 | double @ 8..)',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'double',
+						valueRange: { kind: 0b00, min: 2, max: 4 },
+					},
+					{
+						kind: 'double',
+						valueRange: { kind: 0b00, min: 8 },
+					},
+				],
+			},
+			values: [
+				3,
+				5,
+				9,
+			],
+		},
+		{
+			name: '(struct { foo: int @ 0..5 } | struct { foo: int @ 4..6 })',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 0, max: 5 },
+								},
+							},
+						],
+					},
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 4, max: 6 },
+								},
+							},
+						],
+					},
+				],
+			},
+			values: [
+				{ foo: 4 },
+				{ foo: 9 },
+			],
+		},
+		{
+			name:
+				'(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
+			type: {
+				kind: 'union',
+				members: [
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'union',
+									members: [
+										{
+											kind: 'int',
+											valueRange: { kind: 0b00, min: 0, max: 5 },
+										},
+										{
+											kind: 'int',
+											valueRange: { kind: 0b00, min: 20, max: 25 },
+										},
+									],
+								},
+							},
+						],
+					},
+					{
+						kind: 'struct',
+						fields: [
+							{
+								kind: 'pair',
+								key: 'foo',
+								type: {
+									kind: 'int',
+									valueRange: { kind: 0b00, min: 4, max: 6 },
+								},
+							},
+						],
+					},
+				],
+			},
+			values: [
+				{ foo: 4 },
+				{ foo: 9 },
+				{ foo: 23 },
+			],
+		},
+		{
+			name: '[int] @ 0..5',
+			type: {
+				kind: 'list',
+				item: { kind: 'int' },
+				lengthRange: { kind: 0b00, min: 0, max: 5 },
+			},
+			values: [
+				[],
+				[1, 2, 3],
+				[1, 2, 3, 4, 5, 6],
+			],
+		},
+		{
+			name: '[double @ 0..1] @ 1..3',
+			type: {
+				kind: 'list',
+				item: {
+					kind: 'double',
+					valueRange: { kind: 0b00, min: 0, max: 1 },
+				},
+				lengthRange: { kind: 0b00, min: 1, max: 3 },
+			},
+			values: [
+				[],
+				[0.3, 0.1],
+				[0.2, 6],
+				[0.3, 0.9, 0.1, 0.1],
+				[2, 0.9, 0.1, 0.1],
+			],
+		},
+		{
+			name:
+				'struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }',
+			type: {
+				kind: 'struct',
+				fields: [
+					{ kind: 'pair', key: 'id', type: { kind: 'string' } },
+					{
+						kind: 'pair',
+						key: 'data',
+						type: {
+							kind: 'indexed',
+							child: {
+								kind: 'struct',
+								fields: [
+									{
+										kind: 'pair',
+										key: 'test',
+										type: {
+											kind: 'struct',
+											fields: [
+												{
+													kind: 'pair',
+													key: 'config',
+													type: { kind: 'double' },
+												},
+											],
+										},
+									},
+									{
+										kind: 'pair',
+										key: 'other',
+										type: {
+											kind: 'struct',
+											fields: [
+												{
+													kind: 'pair',
+													key: 'baz',
+													type: { kind: 'boolean' },
+												},
+											],
+										},
+									},
+								],
+							},
+							parallelIndices: [
+								{ kind: 'dynamic', accessor: ['id'] },
+							],
+						},
+					},
+				],
+			},
+			values: [
+				{},
+				{ id: 'fallback' },
+				{ id: 'fallback', data: {} },
+				{ id: 'fallback', data: { config: 'hello' } },
+				{ id: 'fallback', data: { baz: true } },
+				{ id: 'test', data: {} },
+				{ id: 'test', data: { config: 'hello' } },
+				{ id: 'test', data: { config: 5 } },
+				{ id: 'test', data: { baz: true } },
+				{ id: 'other', data: {} },
+				{ id: 'other', data: { baz: 'world' } },
+				{ id: 'other', data: { baz: true } },
 			],
 		},
 		{

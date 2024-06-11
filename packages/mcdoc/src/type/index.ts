@@ -1,6 +1,5 @@
-import type { FullResourceLocation, ProcessorContext } from '@spyglassmc/core'
+import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
-import { localeQuote, localize } from '@spyglassmc/locales'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
@@ -35,6 +34,38 @@ export namespace NumericRange {
 			return false
 		}
 		return true
+	}
+
+	export function intersect(a: NumericRange, b: NumericRange): NumericRange {
+		const min: number | undefined = a.min !== undefined && b.min !== undefined
+			? Math.max(a.min, b.min)
+			: a.min !== undefined
+			? a.min
+			: b.min
+		const max: number | undefined = a.max !== undefined && b.max !== undefined
+			? Math.min(a.max, b.max)
+			: a.max !== undefined
+			? a.max
+			: b.max
+
+		let kind: RangeKind = 0b00
+		if (min === a.min && RangeKind.isLeftExclusive(a.kind)) {
+			kind |= 0b10
+		} else if (min === b.min && RangeKind.isLeftExclusive(b.kind)) {
+			kind |= 0b10
+		}
+		if (max === a.max && RangeKind.isRightExclusive(a.kind)) {
+			kind |= 0b01
+		} else if (max === b.max && RangeKind.isRightExclusive(b.kind)) {
+			kind |= 0b01
+		}
+		return { kind: kind as RangeKind, min, max }
+	}
+
+	export function toString({ kind, min, max }: NumericRange) {
+		return min === max && kind === 0b00
+			? min !== undefined ? `${min}` : getRangeDelimiter(kind)
+			: `${min ?? ''}${getRangeDelimiter(kind)}${max ?? ''}`
 	}
 }
 
@@ -246,13 +277,7 @@ export type McdocType =
 export namespace McdocType {
 	export function toString(type: McdocType | undefined): string {
 		const rangeToString = (range: NumericRange | undefined): string => {
-			if (!range) {
-				return ''
-			}
-			const { kind, min, max } = range
-			return min === max
-				? ` @ ${min}`
-				: ` @ ${min ?? ''}${getRangeDelimiter(kind)}${max ?? ''}`
+			return range ? ` @ ${NumericRange.toString(range)}` : ''
 		}
 
 		const indicesToString = (
