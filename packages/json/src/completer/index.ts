@@ -31,7 +31,9 @@ const array: core.Completer<JsonArrayNode> = (node, ctx) => {
 const object: core.Completer<JsonObjectNode> = (node, ctx) => {
 	return core.completer.record({
 		key: (_r, pair, _c, range, iv, ipe, exitingKeys) => {
-			if (!node.typeDef) return []
+			if (!node.typeDef) {
+				return []
+			}
 			const keySet = new Set(exitingKeys.flatMap(n => {
 				return JsonStringNode.is(n) ? [n.value] : []
 			}))
@@ -71,7 +73,16 @@ const object: core.Completer<JsonObjectNode> = (node, ctx) => {
 const primitive: core.Completer<
 	JsonStringNode | JsonNumberNode | JsonBooleanNode
 > = (node, ctx) => {
-	if (!node.typeDef) return []
+	if (!node.typeDef) {
+		return []
+	}
+	if (
+		node.children && node.children.length > 0 &&
+		core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
+	) {
+		const child = node.children[0]
+		return ctx.meta.getCompleter(child.type)(child, ctx)
+	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)
 }

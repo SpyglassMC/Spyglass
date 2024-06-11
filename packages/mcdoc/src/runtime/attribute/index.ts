@@ -63,7 +63,7 @@ export function handleAttributes<T>(
 }
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
-	registerAttribute<string | undefined>(meta, 'id', {
+	registerAttribute(meta, 'id', {
 		config: (value) => {
 			// TODO: support non-string configs
 			if (value?.kind === 'literal' && value.value.kind === 'string') {

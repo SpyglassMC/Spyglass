@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
@@ -117,7 +118,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'since', {
+	mcdoc.runtime.registerAttribute(meta, 'since', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
@@ -132,7 +133,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
 	})
-	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'until', {
+	mcdoc.runtime.registerAttribute(meta, 'until', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
@@ -147,7 +148,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
 	})
-	mcdoc.runtime.registerAttribute<string | undefined>(meta, 'deprecated', {
+	mcdoc.runtime.registerAttribute(meta, 'deprecated', {
 		config: (value) => {
 			if (value?.kind === 'literal' && value.value.kind === 'string') {
 				return value.value.value
@@ -155,7 +156,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			return undefined
 		},
 		mapField: (config, field, ctx) => {
-			if (config === undefined || !config.startsWith('1.')) {
+			if (config === undefined) {
+				return { ...field, deprecated: true }
+			}
+			if (!config.startsWith('1.')) {
 				ctx.logger.warn(
 					`Invalid mcdoc attribute for "deprecated": ${config}`,
 				)
@@ -165,6 +169,52 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				return { ...field, deprecated: true }
 			}
 			return field
+		},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'command_argument', {
+		config: (value) => {
+			if (value?.kind === 'literal' && value.value.kind === 'string') {
+				return core.ResourceLocation.lengthen(value.value.value)
+			}
+			return undefined
+		},
+		attachString: (config, ctx) => {
+			if (!config) {
+				return
+			}
+			const parser = jeMcf.parser.argument({
+				type: 'argument',
+				parser: config,
+			})
+			return (node) => {
+				const src = new core.Source(node.value, node.valueMap)
+				if (!parser) {
+					ctx.err.report(
+						localize(
+							'mcfunction.parser.unknown-parser',
+							localeQuote(config),
+						),
+						core.Range.create(src.cursor, src.skipRemaining()),
+						core.ErrorSeverity.Hint,
+					)
+					return
+				}
+				const child = parser(src, ctx)
+				if (child === core.Failure) {
+					ctx.err.report(
+						localize('mcfunction.parser.eoc-unexpected'),
+						node,
+					)
+					return
+				}
+				if (src.canRead()) {
+					ctx.err.report(
+						localize('mcdoc.runtime.checker.trailing'),
+						core.Range.create(src.cursor, src.skipRemaining()),
+					)
+				}
+				node.children = [child]
+			}
 		},
 	})
 
