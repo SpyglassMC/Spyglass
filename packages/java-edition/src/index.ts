@@ -118,59 +118,58 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute(meta, 'since', {
-		config: (value) => {
-			if (value?.kind === 'literal' && value.value.kind === 'string') {
-				return value.value.value
-			}
-			return undefined
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'since',
+		mcdoc.runtime.attribute.validator.string,
+		{
+			filterElement: (config, ctx) => {
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
+					return true
+				}
+				return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
+			},
 		},
-		filterElement: (config, ctx) => {
-			if (config === undefined || !config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-				return true
-			}
-			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
+	)
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'until',
+		mcdoc.runtime.attribute.validator.string,
+		{
+			filterElement: (config, ctx) => {
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+					return true
+				}
+				return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
+			},
 		},
-	})
-	mcdoc.runtime.registerAttribute(meta, 'until', {
-		config: (value) => {
-			if (value?.kind === 'literal' && value.value.kind === 'string') {
-				return value.value.value
-			}
-			return undefined
-		},
-		filterElement: (config, ctx) => {
-			if (config === undefined || !config.startsWith('1.')) {
-				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-				return true
-			}
-			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
-		},
-	})
-	mcdoc.runtime.registerAttribute(meta, 'deprecated', {
-		config: (value) => {
-			if (value?.kind === 'literal' && value.value.kind === 'string') {
-				return value.value.value
-			}
-			return undefined
-		},
-		mapField: (config, field, ctx) => {
-			if (config === undefined) {
-				return { ...field, deprecated: true }
-			}
-			if (!config.startsWith('1.')) {
-				ctx.logger.warn(
-					`Invalid mcdoc attribute for "deprecated": ${config}`,
-				)
+	)
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'deprecated',
+		mcdoc.runtime.attribute.validator.optional(
+			mcdoc.runtime.attribute.validator.string,
+		),
+		{
+			mapField: (config, field, ctx) => {
+				if (config === undefined) {
+					return { ...field, deprecated: true }
+				}
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(
+						`Invalid mcdoc attribute for "deprecated": ${config}`,
+					)
+					return field
+				}
+				if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+					return { ...field, deprecated: true }
+				}
 				return field
-			}
-			if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
-				return { ...field, deprecated: true }
-			}
-			return field
+			},
 		},
-	})
+	)
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)

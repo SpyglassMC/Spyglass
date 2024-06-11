@@ -3,7 +3,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
 
 /**
- * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
+ * @param identifier An identifier of a mcdoc type definition
  */
 export function definition(
 	identifier: `::${string}::${string}`,
@@ -105,7 +105,6 @@ export function definition(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-				// TODO json / JE specific attribute handlers
 			},
 		)
 	}

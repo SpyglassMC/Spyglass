@@ -1,15 +1,12 @@
 import * as core from '@spyglassmc/core'
-import { localize } from '@spyglassmc/locales'
-import type {
-	Attribute,
-	AttributeValue,
-	StructTypePairField,
-} from '../../type/index.js'
+import type { Attribute, StructTypePairField } from '../../type/index.js'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import type { SimpleCompletionValue } from '../completer/index.js'
+import type { McdocAttributeValidator } from './validator.js'
+
+export * as validator from './validator.js'
 
 export interface McdocAttribute<C = unknown> {
-	config: (value: core.DeepReadonly<AttributeValue> | undefined) => C
 	checkInferred?: (
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
@@ -31,22 +28,28 @@ export interface McdocAttribute<C = unknown> {
 	) => SimpleCompletionValue[]
 }
 
-export function registerAttribute<C>(
+export function registerAttribute<C extends core.Returnable>(
 	meta: core.MetaRegistry,
 	name: string,
+	validator: McdocAttributeValidator<C>,
 	attribute: McdocAttribute<C>,
 ) {
-	meta.registerCustom('mcdoc:attribute', name, attribute)
+	meta.registerCustom('mcdoc:attribute', name, { validator, attribute })
+}
+
+interface AttributeInfo {
+	validator: McdocAttributeValidator<core.Returnable>
+	attribute: McdocAttribute
 }
 
 export function getAttribute(
 	meta: core.MetaRegistry,
 	name: string,
-): McdocAttribute | undefined {
-	return meta.getCustom<McdocAttribute>('mcdoc:attribute')?.get(name)
+) {
+	return meta.getCustom<AttributeInfo>('mcdoc:attribute')?.get(name)
 }
 
-export function handleAttributes<T>(
+export function handleAttributes(
 	attributes: core.DeepReadonly<Attribute[]> | undefined,
 	ctx: core.ContextBase,
 	fn: <C>(handler: McdocAttribute<C>, config: C) => void,
@@ -57,54 +60,11 @@ export function handleAttributes<T>(
 			ctx.logger.warn(`Unhandled mcdoc attribute ${name}`)
 			continue
 		}
-		const config = handler.config(value)
-		fn(handler, config)
-	}
-}
 
-export function registerBuiltinAttributes(meta: core.MetaRegistry) {
-	registerAttribute(meta, 'id', {
-		config: (value) => {
-			// TODO: support non-string configs
-			if (value?.kind === 'literal' && value.value.kind === 'string') {
-				return value.value.value
-			}
-			return undefined
-		},
-		checkInferred: (config, inferred, ctx) => {
-			if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
-				return
-			}
-			if (!inferred.value.value.includes(':')) {
-				inferred.value.value = 'minecraft:' + inferred.value.value
-			}
-		},
-		attachString: (config, ctx) => {
-			// TODO: parse the resource location even without a category
-			if (!config || !core.ResourceLocationCategory.is(config)) {
-				return
-			}
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
-				const id = core.resourceLocation({ category: config })(src, ctx)
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [id]
-			}
-		},
-		suggestValues: (config, ctx) => {
-			if (config === undefined) return []
-			// TODO: re-use the resource location completer
-			const symbols = ctx.symbols.getVisibleSymbols(config, ctx.doc.uri)
-			const declarations = Object.entries(symbols).flatMap((
-				[key, symbol],
-			) => core.SymbolUtil.isDeclared(symbol) ? [key] : [])
-			// TODO: pass the possible doc comment from the dispatch statement as detail
-			return declarations.map(value => ({ value, kind: 'string' }))
-		},
-	})
+		const config = value ? handler.validator(value, ctx) : undefined
+		if (config === core.Failure) {
+			continue
+		}
+		fn(handler.attribute, config)
+	}
 }
