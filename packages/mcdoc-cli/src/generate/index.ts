@@ -23,7 +23,7 @@ export async function generate(
 	service: Service,
 	logger: Logger,
 ) {
-	let errors = 0
+	// let errors = 0
 
 	const locales: Record<string, string> = {}
 
