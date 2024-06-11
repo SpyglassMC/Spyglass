@@ -23,7 +23,10 @@ import type {
 	TupleType,
 	UnionType,
 } from '../../type/index.js'
+import type { McdocCheckerError, MissingKeyError, SimpleError, TypeMismatchError, RangeError } from './error.js'
 import { McdocType, NumericRange } from '../../type/index.js'
+
+export * from './error.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
@@ -60,46 +63,6 @@ export interface McdocCheckerOptions<T> {
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
 	attachTypeInfo: TypeInfoAttacher<T>
-}
-
-export type McdocCheckerError<T> =
-	| SimpleError<T>
-	| UnknownVariantWithKeyCombinationError<T>
-	| UnknownTupleElementError<T>
-	| RangeError<T>
-	| TypeMismatchError<T>
-	| MissingKeyError<T>
-export interface SimpleError<T> {
-	kind:
-		| 'unknown_key'
-		| 'duplicate_key'
-		| 'some_missing_keys'
-		| 'sometimes_type_mismatch'
-		| 'expected_key_value_pair'
-	node: RuntimeNode<T>
-}
-export interface UnknownVariantWithKeyCombinationError<T> {
-	kind: 'invalid_key_combination'
-	node: RuntimeNode<T>[]
-}
-export interface UnknownTupleElementError<T> {
-	kind: 'unknown_tuple_element'
-	node: RuntimeUnion<T>
-}
-export interface RangeError<T> {
-	kind: 'invalid_collection_length' | 'number_out_of_range'
-	node: RuntimeNode<T>
-	ranges: NumericRange[]
-}
-export interface MissingKeyError<T> {
-	kind: 'missing_key'
-	node: RuntimeNode<T>
-	key: string
-}
-export interface TypeMismatchError<T> {
-	node: RuntimeNode<T>
-	kind: 'type_mismatch'
-	expected: SimplifiedMcdocType
 }
 
 export type SimplifiedMcdocType =
@@ -258,19 +221,19 @@ export function isAssignable(
 	return ans
 }
 
-interface CheckerTreeNode<T> {
+export interface CheckerTreeNode<T> {
 	parent: CheckerTreeRuntimeNode<T> | undefined
 
 	runtimeKey: RuntimeNode<T> | undefined
 	possibleValues: CheckerTreeRuntimeNode<T>[]
 }
 
-interface CheckerTreeError<T> {
+export interface CheckerTreeError<T> {
 	error: McdocCheckerError<T>
 	definitionNode: CheckerTreeDefinitionNode<T> | undefined
 }
 
-interface CheckerTreeRuntimeNode<T> {
+export interface CheckerTreeRuntimeNode<T> {
 	entryNode: CheckerTreeNode<T>
 	children: CheckerTreeNode<T>[]
 	node: RuntimeNode<T>
@@ -279,7 +242,7 @@ interface CheckerTreeRuntimeNode<T> {
 	validDefinitions: CheckerTreeDefinitionNode<T>[]
 }
 
-interface CheckerTreeDefinitionNode<T> {
+export interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
 	runtimeNode: CheckerTreeRuntimeNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
@@ -532,258 +495,6 @@ export function typeDefinition<T>(
 		if (error) {
 			options.reportError(error.error)
 		}
-	}
-}
-
-function condenseErrorsAndFilterSiblings<T>(
-	definitions: {
-		definition: CheckerTreeDefinitionNode<T>
-		errors: McdocCheckerError<T>[]
-	}[],
-): {
-	definitions: CheckerTreeDefinitionNode<T>[]
-	condensedErrors: McdocCheckerError<T>[]
-} {
-	if (definitions.length === 0) {
-		return { definitions: [], condensedErrors: [] }
-	}
-
-	let validDefinitions = definitions
-	const errors = validDefinitions[0].errors.filter(e =>
-		e.kind === 'duplicate_key'
-	)
-
-	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
-		.filter(e =>
-			e.kind === 'type_mismatch' &&
-			!validDefinitions.some(d =>
-				!d.errors.some(oe =>
-					oe.kind === 'type_mismatch' &&
-					e.node.originalNode === oe.node.originalNode
-				)
-			)
-		) as TypeMismatchError<T>[])
-		.map(e => {
-			const expected = validDefinitions
-				.map(d =>
-					(d.errors.find(oe =>
-						oe.kind === 'type_mismatch' &&
-						oe.node.originalNode === e.node.originalNode
-					) as TypeMismatchError<T>).expected
-				)
-				.flatMap(t => t.kind === 'union' ? t.members : [t])
-				.filter((d, i, arr) =>
-					arr.findIndex(od => od.kind === d.kind) === i
-				)
-			return {
-				...e,
-				expected: expected.length === 1
-					? expected[0]
-					: { kind: 'union', members: expected },
-			}
-		})
-	errors.push(...alwaysMismatch)
-
-	const onlyCommonTypeMismatches = definitions.filter(d =>
-		!d.errors.some(e =>
-			e.kind === 'sometimes_type_mismatch' ||
-			(e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-				oe.node.originalNode === e.node.originalNode
-			))
-		)
-	)
-	if (onlyCommonTypeMismatches.length !== 0) {
-		validDefinitions = onlyCommonTypeMismatches
-	} else {
-		// TODO Generic error, maybe we can keep original expected types?
-		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
-
-		const typeMismatches: SimpleError<T>[] = validDefinitions
-			.flatMap(d =>
-				d.errors
-					.filter(e =>
-						e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
-					)
-			)
-			.map(e => e.node as RuntimeNode<T>)
-			.concat(
-				validDefinitions.flatMap(d => d.errors).filter(e =>
-					e.kind === 'sometimes_type_mismatch'
-				).map(e => e.node as RuntimeNode<T>),
-			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
-			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
-
-		errors.push(...typeMismatches)
-	}
-
-	const alwaysUnknown = validDefinitions[0].errors
-		.filter(e =>
-			e.kind === 'unknown_key' &&
-			!validDefinitions.some(d =>
-				!d.errors.some(oe =>
-					oe.kind === 'unknown_key' &&
-					e.node.originalNode === oe.node.originalNode
-				)
-			)
-		) as SimpleError<T>[]
-	errors.push(...alwaysUnknown)
-
-	const onlyCommonUnknownKeys = validDefinitions
-		.filter(d =>
-			!d.errors.some(e =>
-				e.kind === 'invalid_key_combination' ||
-				(e.kind === 'unknown_key' &&
-					!alwaysUnknown.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
-			)
-		)
-	if (onlyCommonUnknownKeys.length !== 0) {
-		validDefinitions = onlyCommonUnknownKeys
-	} else {
-		const unknownKeys = validDefinitions
-			.flatMap(d =>
-				d.errors
-					.filter(e =>
-						e.kind === 'unknown_key' && !alwaysUnknown.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
-					)
-			)
-			.map(e => e.node as RuntimeNode<T>)
-			.concat(
-				validDefinitions.flatMap(d => d.errors).filter(e =>
-					e.kind === 'invalid_key_combination'
-				).map(e => e.node as RuntimeNode<T>),
-			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
-
-		errors.push({ kind: 'invalid_key_combination', node: unknownKeys })
-	}
-
-	const noExpectedKvp = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'expected_key_value_pair')
-	)
-	if (noExpectedKvp.length !== 0) {
-		validDefinitions = noExpectedKvp
-	} else {
-		errors.push(
-			...validDefinitions
-				.flatMap(d => d.errors)
-				.filter((e, i, arr) =>
-					e.kind === 'expected_key_value_pair' &&
-					arr.findIndex(oe =>
-							oe.kind === 'expected_key_value_pair' &&
-							oe.node.originalNode === e.node.originalNode
-						) === i
-				),
-		)
-	}
-
-	const noUnknownTupleElements = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'unknown_tuple_element')
-	)
-	if (noUnknownTupleElements.length !== 0) {
-		validDefinitions = noUnknownTupleElements
-	}
-
-	const alwaysMissing = validDefinitions[0].errors.filter(e =>
-		e.kind === 'missing_key' &&
-		!validDefinitions.some(d =>
-			!d.errors.some(oe =>
-				oe.kind === 'missing_key' &&
-				oe.node.originalNode === e.node.originalNode &&
-				oe.key === e.key
-			)
-		)
-	) as MissingKeyError<T>[]
-	errors.push(...alwaysMissing)
-	const onlyCommonMissing = validDefinitions
-		.filter(d =>
-			!d.errors.some(e =>
-				e.kind === 'some_missing_keys' ||
-				(e.kind === 'missing_key' &&
-					!alwaysMissing.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
-			)
-		)
-	if (onlyCommonMissing.length !== 0) {
-		validDefinitions = onlyCommonMissing
-	} else {
-		// In this case we have multiple conflicting missing keys.
-		// This is a generic error message with no further info.
-		// A more informative error message would be quite complicated
-		// and look sth like this:
-		// Missing either keys ("A", "B" and "C"), ("A", and "D"), or "F"
-		errors.push(
-			...validDefinitions
-				.flatMap(d =>
-					d.errors
-						.filter(e =>
-							e.kind === 'missing_key' &&
-							!alwaysMissing.some(oe =>
-								oe.node.originalNode === e.node.originalNode
-							)
-						)
-				)
-				.map(e => e.node as RuntimeNode<T>)
-				.concat(
-					validDefinitions.flatMap(d => d.errors).filter(e =>
-						e.kind === 'some_missing_keys'
-					).map(e => e.node as RuntimeNode<T>),
-				)
-				.filter((v, i, arr) =>
-					arr.findIndex(o => o.originalNode === v.originalNode) === i
-				)
-				.map(n => ({
-					kind: 'some_missing_keys' as 'some_missing_keys',
-					node: n,
-				})),
-		)
-	}
-
-	for (
-		const kind of [
-			'invalid_collection_length',
-			'number_out_of_range',
-		] as const
-	) {
-		const noRangeError = validDefinitions.filter(d =>
-			!d.errors.some(e => e.kind === kind)
-		)
-		if (noRangeError.length !== 0) {
-			validDefinitions = noRangeError
-		} else {
-			const rangesErrors = validDefinitions.map(d => {
-				return d.errors
-					.filter((e): e is RangeError<T> => e.kind === kind)
-					.reduce((a, b) => ({
-						kind,
-						node: a.node,
-						ranges: [NumericRange.intersect(a.ranges[0], b.ranges[0])],
-					}))
-			})
-			if (rangesErrors.length > 0) {
-				errors.push({
-					kind: kind,
-					node: rangesErrors[0].node,
-					ranges: rangesErrors.flatMap(e => e.ranges),
-				})
-			}
-		}
-	}
-
-	return {
-		definitions: validDefinitions.map(d => d.definition),
-		condensedErrors: errors,
 	}
 }
 
