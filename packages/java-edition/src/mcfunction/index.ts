@@ -116,6 +116,30 @@ export const initialize = (
 			},
 		},
 	)
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'command',
+		mcdoc.runtime.attribute.validator.optional(
+			mcdoc.runtime.attribute.validator.options('slash'),
+		),
+		{
+			attachString: (config, ctx) => {
+				return (node) => {
+					// TODO: validate slash
+					// TODO: fix completer and checker inside commands
+					const src = new core.Source(node.value, node.valueMap)
+					const command = mcf.command(tree, parser.argument)(src, ctx)
+					if (src.canRead()) {
+						ctx.err.report(
+							localize('mcdoc.runtime.checker.trailing'),
+							core.Range.create(src.cursor, src.skipRemaining()),
+						)
+					}
+					node.children = [command]
+				}
+			},
+		},
+	)
 
 	checker.register(meta)
 	colorizer.register(meta)
