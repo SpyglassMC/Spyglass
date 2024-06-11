@@ -81,10 +81,9 @@ const Options: (
 			node.parent && JsonPairNode?.is(node.parent) &&
 			node.parent.key
 		) {
-			node.parent.key.hover =
-				`\`\`\`typescript\n${node.parent.key.value}: ${
-					mcdoc.McdocType.toString(definition)
-				}\n\`\`\``
+			node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+				mcdoc.McdocType.toString(definition)
+			}\n\`\`\``
 		}
 	},
 	// TODO json / JE specific attribute handlers
@@ -94,7 +93,7 @@ const Options: (
  * @param category File category or tag file category.
  */
 export function resource(
-	category: core.FileCategory | core.TagFileCategory,
+	category: core.FileCategory | 'tag',
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
 		mcdoc.runtime.checker.dispatcher<JsonNode>(

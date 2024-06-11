@@ -23,7 +23,8 @@ export async function generate(
 	service: Service,
 	logger: Logger,
 ) {
-	// let errors = 0
+	// this should be a `let` if its actually used
+	const errors = 0
 
 	const locales: Record<string, string> = {}
 
