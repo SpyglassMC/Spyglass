@@ -177,7 +177,10 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 
 	const { customResources } = ctx.config.env
 
-	if (customResources.length > 0 && ctx.project['customResourcesDefined'] === undefined) {
+	if (
+		customResources.length > 0 &&
+		ctx.project['customResourcesDefined'] === undefined
+	) {
 		ctx.project['customResourcesDefined'] = 'done'
 
 		for (const [category, def] of customResources) {

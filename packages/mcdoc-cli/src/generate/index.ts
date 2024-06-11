@@ -31,7 +31,7 @@ export async function generate(
 
 	const module_paths = new Set<string>()
 
-	const modules: Record<string,{
+	const modules: Record<string, {
 		dependency_symbols: Record<string, unknown>
 		symbols: Record<string, unknown>
 	}> = {}
@@ -39,31 +39,43 @@ export async function generate(
 	const new_symbols: {
 		dependency_symbols: Record<string, unknown>
 		symbols: Record<string, {
-			available: string[],
+			available: string[]
 			members: Record<string, unknown>
 		}>
 	} = {
-		dependency_symbols: Object.fromEntries(Object.entries(service.project.symbols.getVisibleSymbols('mcdoc')).map(([key, value]) => {
-			/* @ts-ignore */
-			const _value = value.data?.typeDef as any
-			if (_value && value.definition && value.definition.length !== 0 && value.reference?.length !== 0) {
-				_value.module_path = value.definition[0].uri.split(project_path_uri)[1]
+		dependency_symbols: Object.fromEntries(
+			Object.entries(service.project.symbols.getVisibleSymbols('mcdoc')).map(
+				([key, value]) => {
+					/* @ts-ignore */
+					const _value = value.data?.typeDef as any
+					if (
+						_value && value.definition && value.definition.length !== 0 &&
+						value.reference?.length !== 0
+					) {
+						_value.module_path =
+							value.definition[0].uri.split(project_path_uri)[1]
 
-				module_paths.add(_value.module_path)
-				/* @ts-ignore */
-				return [key, _value]
-			} else {
-				return ['key', undefined]
-			}
-		})),
+						module_paths.add(_value.module_path)
+						/* @ts-ignore */
+						return [key, _value]
+					} else {
+						return ['key', undefined]
+					}
+				},
+			),
+		),
 		symbols: {},
 	}
 
 	const disableCruft = true
 
-	const dispatched_symbol_types = Object.entries(service.project.symbols.getVisibleSymbols('mcdoc/dispatcher'))
+	const dispatched_symbol_types = Object.entries(
+		service.project.symbols.getVisibleSymbols('mcdoc/dispatcher'),
+	)
 
-	const key_blacklist = new RegExp(`^(?:${[ 'parentMap', 'parent', 'parentSymbol' ].join(')|(?:')})$`)
+	const key_blacklist = new RegExp(
+		`^(?:${['parentMap', 'parent', 'parentSymbol'].join(')|(?:')})$`,
+	)
 
 	const replacer = (key: string, value: any) => {
 		const remove = key_blacklist.test(key)
@@ -78,16 +90,24 @@ export async function generate(
 			}
 		}
 
-		for (const [symbol_name, symbol] of Object.entries(symbol_type.members ?? {})) {
+		for (
+			const [symbol_name, symbol] of Object.entries(
+				symbol_type.members ?? {},
+			)
+		) {
 			/* @ts-ignore */
 			const value = symbol.data?.typeDef as any
 
 			if (value && symbol.definition && symbol.definition.length !== 0) {
 				new_symbols.symbols[symbol_type_name].available.push(symbol_name)
-				value.module_path = symbol.definition[0].uri.split(project_path_uri)[1]
+				value.module_path =
+					symbol.definition[0].uri.split(project_path_uri)[1]
 				if (args.module) {
 					if (!modules[value.module_path]) {
-						modules[value.module_path] = { symbols: {}, dependency_symbols: {} }
+						modules[value.module_path] = {
+							symbols: {},
+							dependency_symbols: {},
+						}
 					}
 					modules[value.module_path].symbols[symbol_name] = value
 				}
@@ -102,7 +122,12 @@ export async function generate(
 	// Removes unused symbols
 	for (const parsed_symbol of Object.keys(new_symbols.dependency_symbols)) {
 		if (new_symbols.dependency_symbols[parsed_symbol]) {
-			if (out_symbols.indexOf(parsed_symbol, out_symbols.indexOf(parsed_symbol) + 1)  === -1) {
+			if (
+				out_symbols.indexOf(
+					parsed_symbol,
+					out_symbols.indexOf(parsed_symbol) + 1,
+				) === -1
+			) {
 				delete new_symbols.dependency_symbols[parsed_symbol]
 			} else if (args.module) {
 				const symbol = new_symbols.dependency_symbols[parsed_symbol]! as any
@@ -117,31 +142,56 @@ export async function generate(
 	}
 
 	if (!args.dry) {
-		await fs.writeFile(join(generated_path, 'generated.mcdoc.json'), JSON.stringify(new_symbols, replacer))
+		await fs.writeFile(
+			join(generated_path, 'generated.mcdoc.json'),
+			JSON.stringify(new_symbols, replacer),
+		)
 
 		if (args.pretty) {
-			await fs.writeFile(join(generated_path, 'generated.mcdoc.pretty.json'), JSON.stringify(new_symbols, replacer, 3))
+			await fs.writeFile(
+				join(generated_path, 'generated.mcdoc.pretty.json'),
+				JSON.stringify(new_symbols, replacer, 3),
+			)
 		}
 
 		const generated_module_path = join(generated_path, 'module')
 		if (args.module) {
-			for await (const [local_module_path, module] of Object.entries(modules)) {
-
-				const dir = join(generated_module_path, local_module_path.split('/').slice(0, -1).join('/'))
+			for await (
+				const [local_module_path, module] of Object.entries(modules)
+			) {
+				const dir = join(
+					generated_module_path,
+					local_module_path.split('/').slice(0, -1).join('/'),
+				)
 
 				if (dir !== '') await fs.ensureDir(dir)
 
-				const module_key_blacklist = new RegExp(`^(?:${[ 'parentMap', 'parent', 'parentSymbol', 'module_path' ].join(')|(?:')})$`)
+				const module_key_blacklist = new RegExp(
+					`^(?:${
+						['parentMap', 'parent', 'parentSymbol', 'module_path'].join(
+							')|(?:',
+						)
+					})$`,
+				)
 
 				const module_replacer = (key: string, value: any) => {
 					const remove = module_key_blacklist.test(key)
 					return remove ? undefined : value
 				}
 
-				await fs.writeFile(join(generated_module_path, `${local_module_path}.json`), JSON.stringify(module, module_replacer))
+				await fs.writeFile(
+					join(generated_module_path, `${local_module_path}.json`),
+					JSON.stringify(module, module_replacer),
+				)
 
 				if (args.pretty) {
-					await fs.writeFile(join(generated_module_path, `${local_module_path}.pretty.json`), JSON.stringify(module, module_replacer, 3))
+					await fs.writeFile(
+						join(
+							generated_module_path,
+							`${local_module_path}.pretty.json`,
+						),
+						JSON.stringify(module, module_replacer, 3),
+					)
 				}
 			}
 
@@ -149,10 +199,10 @@ export async function generate(
 				modules: Record<string, {
 					dependency_symbols: string[]
 					symbols: string[]
-				}>,
-				dependency_symbols: Record<string, string>,
+				}>
+				dependency_symbols: Record<string, string>
 
-				symbols: Record<string, string>,
+				symbols: Record<string, string>
 			} = {
 				modules: {},
 				dependency_symbols: {},
@@ -160,7 +210,9 @@ export async function generate(
 			}
 
 			for (const module_path of module_paths) {
-				const dependency_symbols = Object.keys(modules[module_path].dependency_symbols)
+				const dependency_symbols = Object.keys(
+					modules[module_path].dependency_symbols,
+				)
 				const symbols = Object.keys(modules[module_path].symbols)
 				const module_key = module_path.split('.').slice(0, -1).join('.')
 				index.modules[module_key] = {
@@ -175,7 +227,10 @@ export async function generate(
 				}
 			}
 
-			await fs.writeFile(join(generated_module_path, 'index.json'), JSON.stringify(index))
+			await fs.writeFile(
+				join(generated_module_path, 'index.json'),
+				JSON.stringify(index),
+			)
 		}
 	}
 
