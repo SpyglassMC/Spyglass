@@ -140,21 +140,7 @@ export function definition(
 				},
 				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
 					ctx,
-					(node, err) => {
-						if (
-							(node.originalNode.type === 'nbt:compound' &&
-								err === 'missing_key')
-							// || // TODO
-							// node.originalNode.type === 'json:array' &&
-							// err === 'invalid_collection_length'
-						) {
-							return {
-								start: node.originalNode.range.start,
-								end: node.originalNode.range.start,
-							}
-						}
-						return node.originalNode.range
-					},
+					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
 				),
 				attachTypeInfo: (node, definition) => {}, // TODO
 				// TODO json / JE specific attribute handlers

@@ -1,9 +1,10 @@
-import {
-	type CheckerContext,
-	ErrorSeverity,
-	type FullResourceLocation,
-	type Range,
+import type {
+	AstNode,
+	CheckerContext,
+	FullResourceLocation,
+	Range,
 } from '@spyglassmc/core'
+import { ErrorSeverity } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import { type EnumKind, RangeKind } from '../../node/index.js'
@@ -1190,9 +1191,24 @@ function getValueType(
 	}
 }
 
+export function getErrorRangeDefault<T extends AstNode>(
+	node: RuntimeNode<T>,
+	error: McdocCheckerError<T>['kind'],
+): Range {
+	const { range } = node.originalNode
+	if (
+		error === 'missing_key' ||
+		error === 'invalid_collection_length'
+	) {
+		const { start } = range
+		return { start, end: start }
+	}
+	return range
+}
+
 export function getDefaultErrorReporter<T>(
 	ctx: CheckerContext,
-	getRange: (
+	getErrorRange: (
 		node: RuntimeNode<T>,
 		error: McdocCheckerError<T>['kind'],
 	) => Range,
@@ -1206,7 +1222,7 @@ export function getDefaultErrorReporter<T>(
 			for (const node of nodes) {
 				ctx.err.report(
 					localize('expected', localize('nothing')),
-					getRange(node, 'unknown_tuple_element'),
+					getErrorRange(node, 'unknown_tuple_element'),
 				)
 			}
 			return
@@ -1218,11 +1234,14 @@ export function getDefaultErrorReporter<T>(
 				),
 			)
 			for (const node of error.node) {
-				ctx.err.report(message, getRange(node, 'unknown_tuple_element'))
+				ctx.err.report(
+					message,
+					getErrorRange(node, 'unknown_tuple_element'),
+				)
 			}
 			return
 		}
-		const range = getRange(error.node, error.kind)
+		const range = getErrorRange(error.node, error.kind)
 		switch (error.kind) {
 			case 'unknown_key':
 				ctx.err.report(
