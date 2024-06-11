@@ -145,49 +145,40 @@ await CLI.scriptName('mcdoc')
 				}
 			}
 
-			const symbols: { resource: string; children: AstNode[] }[] = []
-
-			let locales: Record<string, string> = {}
-
-			let errors = 0
-
 			for await (const doc_file of walk(project_path)) {
 				if (doc_file.path.endsWith('.mcdoc')) {
-					const response = await generate(
-						project_path,
-						generated_path,
-						args,
-						doc_file,
-						service,
-						logger,
+					const DocumentUri = pathToFileURL(doc_file.path).toString()
+
+					const doc_contents = await fs.readFile(doc_file.path, 'utf-8')
+
+					await service.project.onDidOpen(
+						DocumentUri,
+						'mcdoc',
+						0,
+						doc_contents,
 					)
 
-					symbols.push(...response[0])
-					locales = { ...locales, ...response[1] }
-					errors += response[2]
+					await service.project.ensureClientManagedChecked(
+						DocumentUri,
+					)
+
+					await service.project.ensureBindingStarted(
+						DocumentUri,
+					)
 				}
 			}
 
+			const response = await generate(
+				project_path,
+				generated_path,
+				args,
+				service,
+				logger,
+			)
+			const locales = response[0]
+			const errors = response[1]
+
 			if (!args.dry) {
-				await fs.writeFile(
-					join(generated_path, 'generated.mcdoc.json'),
-					JSON.stringify(symbols),
-				)
-
-				if (args.pretty) {
-					await fs.writeFile(
-						join(generated_path, 'generated.pretty.mcdoc.json'),
-						JSON.stringify(symbols, undefined, 3),
-					)
-				}
-
-				if (args.module) {
-					await fs.writeFile(
-						join(generated_path, 'module', 'index.json'),
-						JSON.stringify(symbols.map(symbol => symbol.resource)),
-					)
-				}
-
 				if (args.locale) {
 					const locale_path = join('out', 'locale', 'en-us.json')
 					if (await fs.exists(locale_path)) {
