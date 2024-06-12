@@ -1404,6 +1404,8 @@ export function simplify<T>(
 						: field
 					addField(structKey, mappedField)
 				} else {
+					// TODO: potential optimization: merge unions first before simplifying them,
+					// to avoid having to simplify shared nested spread types multiple times
 					const simplifiedSpreadType = simplify(
 						field.type,
 						{ ...context, isMember: true, typeArgs: [] },
@@ -1412,12 +1414,18 @@ export function simplify<T>(
 						for (const field of simplifiedSpreadType.fields) {
 							addField(field.key, field)
 						}
-					} else {
-						const type = McdocType.toString(simplifiedSpreadType)
-						ctx.logger.warn(
-							`Tried to spread non-struct type ${type}`,
-						)
+					} else if (simplifiedSpreadType.kind === 'union') {
+						for (const member of simplifiedSpreadType.members) {
+							if (member.kind === 'struct') {
+								for (const field of member.fields) {
+									// TODO: technically, if a field is required in all members of
+									// this union, it could be added as a required field
+									addField(field.key, { ...field, optional: true })
+								}
+							}
+						}
 					}
+					// Silently ignore spreading non-struct types
 				}
 			}
 			// Literal fields may still be assignable to complex fields,
