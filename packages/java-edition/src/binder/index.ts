@@ -121,6 +121,8 @@ export const Categories = (() => {
 		// ---------
 		dataPackResource('banner_pattern', { since: '1.20.5' }),
 		dataPackResource('chat_type', { since: '1.19.1' }), // TODO: Consider supporting 1.19.0, needs changes in vanilla-mcdoc too.
+		dataPackResource('enchantment', { since: '1.21' }),
+		dataPackResource('jukebox_song', { since: '1.21' }),
 		dataPackResource('painting_variant', { since: '1.21' }),
 		dataPackResource('trim_pattern', { since: '1.19.4' }),
 		dataPackResource('trim_material', { since: '1.19.4' }),
