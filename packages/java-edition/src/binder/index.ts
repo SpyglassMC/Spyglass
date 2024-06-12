@@ -1,5 +1,4 @@
 import type {
-	ContextBase,
 	FileCategory,
 	RootUriString,
 	TagFileCategory,
@@ -12,18 +11,14 @@ import { ReleaseVersion } from '../dependency/index.js'
 
 type ScopedVersion = { since?: ReleaseVersion; until?: ReleaseVersion }
 
-function JSONResource(
-	pack: 'datapack' | 'java_resource_pack',
+function resource(
+	pack: 'data_pack',
 	dispatcher: FileCategory | TagFileCategory,
 	pathOrVersion: string | ScopedVersion,
 	version?: ScopedVersion,
 ) {
-	let _version: ScopedVersion = {}
-
 	if (typeof pathOrVersion !== 'string') {
-		_version = pathOrVersion
-	} else if (version) {
-		_version = version
+		version = pathOrVersion
 	}
 	return [
 		typeof pathOrVersion === 'string' ? pathOrVersion : dispatcher,
@@ -31,31 +26,23 @@ function JSONResource(
 			pack,
 			category: dispatcher,
 			extname: '.json',
-			..._version,
-		} as const,
-	] as readonly [FileCategory | TagFileCategory, CategoryDef]
+			...version,
+		},
+	] as readonly [string, CategoryDef]
 }
 
-function DatapackJSON(
+function dataPackResource(
 	dispatcher: FileCategory | TagFileCategory,
 	pathOrVersion: string | ScopedVersion,
 	version?: ScopedVersion,
 ) {
-	return JSONResource('datapack', dispatcher, pathOrVersion, version)
+	return resource('data_pack', dispatcher, pathOrVersion, version)
 }
-
-// function ResourcePackJSON(
-// 	dispatcher: FileCategory | TagFileCategory,
-// 	pathOrVersion: string | ScopedVersion,
-// 	version?: ScopedVersion,
-// ) {
-// 	return JSONResource('java_resource_pack', dispatcher, pathOrVersion, version)
-// }
 
 type CategoryDef = {
 	category: FileCategory | TagFileCategory
 	extname: string
-	pack: 'datapack' | 'java_resource_pack'
+	pack: 'data_pack'
 } & ScopedVersion
 
 export const Categories = (() => {
@@ -71,71 +58,78 @@ export const Categories = (() => {
 
 	const ans = new Map<string, CategoryDef>([
 		// Pre-1.21
-		DatapackJSON('advancement', 'advancements', {
+		dataPackResource('advancement', 'advancements', {
 			since: '1.16',
 			until: '1.21',
 		}),
-		DatapackJSON('dimension', 'dimension', { since: '1.16' }),
-		DatapackJSON('dimension_type', 'dimension_type', { since: '1.16' }),
+		dataPackResource('dimension', 'dimension', { since: '1.16' }),
+		dataPackResource('dimension_type', 'dimension_type', { since: '1.16' }),
 		['functions', {
 			category: 'function',
 			extname: '.mcfunction',
-			pack: 'datapack',
+			pack: 'data_pack',
 			until: '1.21',
 		}],
-		DatapackJSON('item_modifier', 'item_modifiers', {
+		dataPackResource('item_modifier', 'item_modifiers', {
 			since: '1.17',
 			until: '1.21',
 		}),
-		DatapackJSON('loot_table', 'loot_tables', {
+		dataPackResource('loot_table', 'loot_tables', {
 			since: '1.16',
 			until: '1.21',
 		}),
-		DatapackJSON('predicate', 'predicates', { since: '1.16', until: '1.21' }),
-		DatapackJSON('recipe', 'recipes', { since: '1.16', until: '1.21' }),
-		DatapackJSON('tag/block', 'tags/blocks', { until: '1.21' }),
-		DatapackJSON('tag/entity_type', 'tags/entity_types', { until: '1.21' }),
-		DatapackJSON('tag/fluid', 'tags/fluids', { until: '1.21' }),
-		DatapackJSON('tag/function', 'tags/functions', { until: '1.21' }),
-		DatapackJSON('tag/game_event', 'tags/game_events', {
+		dataPackResource('predicate', 'predicates', {
+			since: '1.16',
+			until: '1.21',
+		}),
+		dataPackResource('recipe', 'recipes', { since: '1.16', until: '1.21' }),
+		dataPackResource('tag/block', 'tags/blocks', { until: '1.21' }),
+		dataPackResource('tag/entity_type', 'tags/entity_types', {
+			until: '1.21',
+		}),
+		dataPackResource('tag/fluid', 'tags/fluids', { until: '1.21' }),
+		dataPackResource('tag/function', 'tags/functions', { until: '1.21' }),
+		dataPackResource('tag/game_event', 'tags/game_events', {
 			since: '1.17',
 			until: '1.21',
 		}),
-		DatapackJSON('tag/item', 'tags/items', { until: '1.21' }),
+		dataPackResource('tag/item', 'tags/items', { until: '1.21' }),
 
 		// Worldgen
-		DatapackJSON('worldgen/biome', { since: '1.16' }),
-		DatapackJSON('worldgen/configured_carver', { since: '1.16' }),
-		DatapackJSON('worldgen/configured_feature', { since: '1.16' }),
-		DatapackJSON('worldgen/configured_structure_feature', {
+		dataPackResource('worldgen/biome', { since: '1.16' }),
+		dataPackResource('worldgen/configured_carver', { since: '1.16' }),
+		dataPackResource('worldgen/configured_feature', { since: '1.16' }),
+		dataPackResource('worldgen/configured_structure_feature', {
 			since: '1.16',
 			until: '1.17',
 		}),
-		DatapackJSON('worldgen/density_function', { since: '1.18' }),
-		DatapackJSON('worldgen/noise', { since: '1.18' }),
-		DatapackJSON('worldgen/noise_settings', { since: '1.16' }),
-		DatapackJSON('worldgen/placed_feature', { since: '1.18' }),
-		DatapackJSON('worldgen/processor_list', { since: '1.16' }),
-		DatapackJSON('worldgen/template_pool', { since: '1.16' }),
+		dataPackResource('worldgen/density_function', { since: '1.18' }),
+		dataPackResource('worldgen/noise', { since: '1.18' }),
+		dataPackResource('worldgen/noise_settings', { since: '1.16' }),
+		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
+		dataPackResource('worldgen/processor_list', { since: '1.16' }),
+		dataPackResource('worldgen/template_pool', { since: '1.16' }),
 
 		// Post-1.21
-		DatapackJSON('advancement', { since: '1.21' }),
+		dataPackResource('advancement', { since: '1.21' }),
 		['function', {
 			category: 'function',
 			extname: '.mcfunction',
-			pack: 'datapack',
+			pack: 'data_pack',
 			since: '1.21',
 		}],
-		DatapackJSON('item_modifier', { since: '1.21' }),
-		DatapackJSON('loot_table', { since: '1.21' }),
-		DatapackJSON('predicate', { since: '1.21' }),
-		DatapackJSON('recipe', { since: '1.21' }),
-		DatapackJSON('tag/block', 'tags/block', { since: '1.21' }),
-		DatapackJSON('tag/entity_type', 'tags/entity_type', { since: '1.21' }),
-		DatapackJSON('tag/fluid', 'tags/fluid', { since: '1.21' }),
-		DatapackJSON('tag/function', 'tags/function', { since: '1.21' }),
-		DatapackJSON('tag/game_event', 'tags/game_event', { since: '1.21' }),
-		DatapackJSON('tag/item', 'tags/item', { since: '1.21' }),
+		dataPackResource('item_modifier', { since: '1.21' }),
+		dataPackResource('loot_table', { since: '1.21' }),
+		dataPackResource('predicate', { since: '1.21' }),
+		dataPackResource('recipe', { since: '1.21' }),
+		dataPackResource('tag/block', 'tags/block', { since: '1.21' }),
+		dataPackResource('tag/entity_type', 'tags/entity_type', {
+			since: '1.21',
+		}),
+		dataPackResource('tag/fluid', 'tags/fluid', { since: '1.21' }),
+		dataPackResource('tag/function', 'tags/function', { since: '1.21' }),
+		dataPackResource('tag/game_event', 'tags/game_event', { since: '1.21' }),
+		dataPackResource('tag/item', 'tags/item', { since: '1.21' }),
 	])
 
 	for (const registry of TaggableResourceLocationCategories) {
@@ -145,7 +139,7 @@ export const Categories = (() => {
 		ans.set(`tags/${registry}`, {
 			category: `tag/${registry}` as TagFileCategory,
 			extname: '.json',
-			pack: 'datapack',
+			pack: 'data_pack',
 			since: '1.18',
 		})
 	}
@@ -229,7 +223,7 @@ export const uriBinder: UriBinder = (
 ) => {
 	const { customResources } = ctx.config.env
 	for (const [category, def] of customResources) {
-		if (def.pack === 'datapack') { // TODO
+		if (def.pack === 'data_pack') { // TODO
 			Categories.set(category, def as CategoryDef)
 		}
 	}

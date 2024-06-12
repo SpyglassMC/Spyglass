@@ -36,9 +36,9 @@ export interface CustomResourceConfig {
 	 */
 	extname: '.json'
 	/**
-	 * The pack type of the dispatched resource. Only `datapack` is supported for now.
+	 * The pack type of the dispatched resource. Only `data_pack` is supported for now.
 	 */
-	pack: 'datapack'
+	pack: 'data_pack'
 	/**
 	 * The version range of the dispatched resource.
 	 */
