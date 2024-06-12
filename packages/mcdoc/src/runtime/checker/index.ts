@@ -1488,9 +1488,17 @@ export function simplify<T>(
 				typeMapping: mapping,
 			})
 		case 'mapped':
+			// Mapped types that were created in simplify are always simplified
+			// types already, in which case this will be a cheap operation, but
+			// this is necessary for type safety
+			const simplifiedMapping = Object.fromEntries(
+				Object.entries(typeDef.mapping).map(([path, param]) => {
+					return [path, simplify(param, context)]
+				}),
+			)
 			return simplify(typeDef.child, {
 				...context,
-				typeMapping: typeDef.mapping,
+				typeMapping: simplifiedMapping,
 			})
 		default:
 			return typeDef

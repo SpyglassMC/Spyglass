@@ -2,7 +2,6 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
-import type { SimplifiedMcdocType } from '../runtime/checker/index.js'
 
 export interface Attribute {
 	name: string
@@ -162,7 +161,7 @@ export interface ConcreteType extends McdocBaseType {
 export interface MappedType extends McdocBaseType {
 	kind: 'mapped'
 	child: McdocType
-	mapping: { [path: string]: SimplifiedMcdocType }
+	mapping: { [path: string]: McdocType }
 }
 
 export const EmptyUnion: UnionType<never> = Object.freeze({
