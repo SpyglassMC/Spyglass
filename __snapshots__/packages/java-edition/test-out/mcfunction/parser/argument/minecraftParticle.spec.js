@@ -140,7 +140,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                 },
                 "children": [
                   {
-                    "type": "string",
+                    "type": "nbt:string",
                     "range": {
                       "start": 6,
                       "end": 17
@@ -160,7 +160,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                     ]
                   },
                   {
-                    "type": "string",
+                    "type": "nbt:string",
                     "range": {
                       "start": 18,
                       "end": 33
@@ -181,7 +181,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                   }
                 ],
                 "key": {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 6,
                     "end": 17
@@ -205,7 +205,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                   "end": 18
                 },
                 "value": {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 18,
                     "end": 33
@@ -250,7 +250,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
               },
               "children": [
                 {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 6,
                     "end": 17
@@ -270,7 +270,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                   ]
                 },
                 {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 18,
                     "end": 33
@@ -291,7 +291,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                 }
               ],
               "key": {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 6,
                   "end": 17
@@ -315,7 +315,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                 "end": 18
               },
               "value": {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 18,
                   "end": 33
@@ -403,7 +403,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
             },
             "children": [
               {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 6,
                   "end": 17
@@ -423,7 +423,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                 ]
               },
               {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 18,
                   "end": 33
@@ -444,7 +444,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
               }
             ],
             "key": {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 6,
                 "end": 17
@@ -468,7 +468,7 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
               "end": 18
             },
             "value": {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 18,
                 "end": 33

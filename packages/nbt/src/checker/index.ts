@@ -1,7 +1,14 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtCompoundNode, NbtNode, NbtPathNode } from '../node/index.js'
+import {
+	NbtByteNode,
+	type NbtCompoundNode,
+	NbtIntNode,
+	type NbtNode,
+	type NbtPathNode,
+	NbtStringNode,
+} from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -143,6 +150,7 @@ export function definition(
 					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
 				),
 				attachTypeInfo: (node, definition) => {
+					node.typeDef = definition
 					// TODO: improve hover info
 					if (
 						core.PairNode.is(node.parent) &&
@@ -193,7 +201,7 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 				kind: 'literal',
 				value: { kind: 'short', value: node.value },
 			}
-		case 'string':
+		case 'nbt:string':
 			return {
 				kind: 'literal',
 				value: { kind: 'string', value: node.value },
@@ -225,7 +233,7 @@ export function blockStates(
 			}
 			// Type check.
 			if (
-				valueNode.type === 'nbt:byte' &&
+				NbtByteNode.is(valueNode) &&
 				(ctx.src.slice(valueNode.range).toLowerCase() === 'false' ||
 					ctx.src.slice(valueNode.range).toLowerCase() === 'true')
 			) {
@@ -235,9 +243,7 @@ export function blockStates(
 					core.ErrorSeverity.Warning,
 				)
 				continue
-			} else if (
-				valueNode.type !== 'string' && valueNode.type !== 'nbt:int'
-			) {
+			} else if (!NbtStringNode.is(valueNode) && !NbtIntNode.is(valueNode)) {
 				ctx.err.report(
 					localize('nbt.checker.block-states.unexpected-value-type'),
 					valueNode,

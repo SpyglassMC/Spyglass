@@ -1,6 +1,6 @@
 exports['nbt primitive() Parse "" 1'] = {
   "node": {
-    "type": "string",
+    "type": "nbt:string",
     "range": {
       "start": 0,
       "end": 0
@@ -24,7 +24,7 @@ exports['nbt primitive() Parse "" 1'] = {
 
 exports['nbt primitive() Parse ""quoted"" 1'] = {
   "node": {
-    "type": "string",
+    "type": "nbt:string",
     "range": {
       "start": 0,
       "end": 8
@@ -72,7 +72,7 @@ exports['nbt primitive() Parse "1024L" 1'] = {
 
 exports['nbt primitive() Parse "123456b" 1'] = {
   "node": {
-    "type": "string",
+    "type": "nbt:string",
     "range": {
       "start": 0,
       "end": 7
@@ -189,7 +189,7 @@ exports['nbt primitive() Parse "true" 1'] = {
 
 exports['nbt primitive() Parse "unquoted" 1'] = {
   "node": {
-    "type": "string",
+    "type": "nbt:string",
     "range": {
       "start": 0,
       "end": 8
