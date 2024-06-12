@@ -145,8 +145,7 @@ export function definition(
 				attachTypeInfo: (node, definition) => {
 					// TODO: improve hover info
 					if (
-						node.parent && core.PairNode.is(node.parent) &&
-						node.parent && node.parent.key &&
+						core.PairNode.is(node.parent) &&
 						core.StringNode.is(node.parent.key)
 					) {
 						node.parent.key.hover =
