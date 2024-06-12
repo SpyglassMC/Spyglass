@@ -6,12 +6,7 @@ import { NbtCompoundNode, NbtPathIndexNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
-	allowUnknownKey?: boolean
 	isPredicate?: boolean
-}
-
-interface PathOptions {
-	allowUnknownKey?: boolean
 }
 
 /**
@@ -288,7 +283,6 @@ export function path(
 		| core.FullResourceLocation
 		| readonly core.FullResourceLocation[]
 		| undefined,
-	options?: PathOptions,
 ): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
 		// TODO: support dispatcher
