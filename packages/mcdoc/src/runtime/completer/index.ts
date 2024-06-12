@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type { McdocType, StructTypePairField } from '../../type/index.js'
-import type { SimplifiedMcdocType } from '../../type/simplified.js'
+import type { SimplifiedMcdocType } from '../checker/index.js'
 
 export function getFields(
 	typeDef: core.DeepReadonly<SimplifiedMcdocType>,

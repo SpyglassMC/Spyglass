@@ -14,7 +14,7 @@ export namespace JsonFileNode {
 }
 
 interface JsonBaseNode {
-	typeDef?: mcdoc.SimplifiedMcdocType
+	typeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
 }
 
 export type JsonNode =

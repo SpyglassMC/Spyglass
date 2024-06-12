@@ -2,9 +2,7 @@ import type { FullResourceLocation } from '@spyglassmc/core'
 import { Arrayable, Dev } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
-import type { SimplifiedMcdocType } from './simplified.js'
-
-export * from './simplified.js'
+import type { SimplifiedMcdocType } from '../runtime/checker/index.js'
 
 export interface Attribute {
 	name: string
