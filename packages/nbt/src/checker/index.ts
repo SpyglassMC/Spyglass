@@ -319,7 +319,23 @@ export function path(
 			definition,
 			{
 				context: ctx,
-				isEquivalent: () => false,
+				isEquivalent: (inferred, def) => {
+					switch (inferred.kind) {
+						case 'list':
+						case 'byte_array':
+						case 'int_array':
+						case 'long_array':
+							return [
+								'list',
+								'tuple',
+								'byte_array',
+								'int_array',
+								'long_array',
+							].includes(def.kind)
+						default:
+							return false
+					}
+				},
 				getChildren: (
 					link,
 				): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
@@ -357,7 +373,10 @@ export function path(
 					return []
 				},
 				reportError: (error) => {
-					if (error.kind === 'missing_key') {
+					if (
+						error.kind === 'missing_key' ||
+						error.kind === 'invalid_collection_length'
+					) {
 						return
 					}
 					mcdoc.runtime.checker
