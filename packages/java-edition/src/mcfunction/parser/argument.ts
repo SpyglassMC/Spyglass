@@ -234,12 +234,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(
 						treeNode.properties.registry,
 					) as core.RegistryCategory | core.WorldgenFileCategory,
-					allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':

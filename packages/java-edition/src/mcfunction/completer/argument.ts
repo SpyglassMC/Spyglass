@@ -150,11 +150,14 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
-				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+				allowTag,
 			})
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(

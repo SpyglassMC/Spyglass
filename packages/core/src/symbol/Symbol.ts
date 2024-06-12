@@ -96,6 +96,7 @@ export const WorldgenFileCategories = Object.freeze(
 		'worldgen/noise_settings',
 		'worldgen/placed_feature',
 		'worldgen/processor_list',
+		'worldgen/structure',
 		'worldgen/template_pool',
 	] as const,
 )
