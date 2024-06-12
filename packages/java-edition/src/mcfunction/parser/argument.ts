@@ -198,6 +198,12 @@ export const argument: mcf.ArgumentParserGetter = (
 			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
+		case 'minecraft:loot_modifier':
+			return wrap(resourceOrInline('item_modifier'))
+		case 'minecraft:loot_predicate':
+			return wrap(resourceOrInline('predicate'))
+		case 'minecraft:loot_table':
+			return wrap(resourceOrInline('loot_table'))
 		case 'minecraft:message':
 			return wrap(message)
 		case 'minecraft:mob_effect':
@@ -700,6 +706,17 @@ function range(
 			return ans
 		},
 	)
+}
+
+function resourceOrInline(category: core.FileCategory) {
+	return core.select([
+		{
+			predicate: (src) =>
+				core.LegalResourceLocationCharacters.has(src.peek()),
+			parser: core.resourceLocation({ category }),
+		},
+		{ parser: nbt.parser.entry },
+	])
 }
 
 function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {

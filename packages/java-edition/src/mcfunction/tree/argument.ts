@@ -147,6 +147,21 @@ export interface MinecraftItemStackArgumentTreeNode
 {
 	parser: 'minecraft:item_stack'
 }
+export interface MinecraftLootModifierArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_modifier'
+}
+export interface MinecraftLootPredicateArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_predicate'
+}
+export interface MinecraftLootTableArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_table'
+}
 export interface MinecraftMessageArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:message'
 }
@@ -346,6 +361,9 @@ export type ArgumentTreeNode =
 	| MinecraftItemSlotArgumentTreeNode
 	| MinecraftItemSlotsArgumentTreeNode
 	| MinecraftItemStackArgumentTreeNode
+	| MinecraftLootModifierArgumentTreeNode
+	| MinecraftLootPredicateArgumentTreeNode
+	| MinecraftLootTableArgumentTreeNode
 	| MinecraftMessageArgumentTreeNode
 	| MinecraftMobEffectArgumentTreeNode
 	| MinecraftNbtCompoundTagArgumentTreeNode

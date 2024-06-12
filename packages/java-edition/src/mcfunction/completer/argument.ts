@@ -134,6 +134,12 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false)
+		case 'minecraft:loot_modifier':
+			return ResourceLocationNode.mock(range, { category: 'item_modifier' })
+		case 'minecraft:loot_predicate':
+			return ResourceLocationNode.mock(range, { category: 'predicate' })
+		case 'minecraft:loot_table':
+			return ResourceLocationNode.mock(range, { category: 'loot_table' })
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
