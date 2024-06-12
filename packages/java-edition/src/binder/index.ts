@@ -13,7 +13,7 @@ import { ReleaseVersion } from '../dependency/index.js'
 type ScopedVersion = { since?: ReleaseVersion; until?: ReleaseVersion }
 
 function JSONResource(
-	pack: 'datapack' | 'resource_pack',
+	pack: 'datapack' | 'java_resource_pack',
 	dispatcher: FileCategory | TagFileCategory,
 	pathOrVersion: string | ScopedVersion,
 	version?: ScopedVersion,
@@ -49,13 +49,13 @@ function DatapackJSON(
 // 	pathOrVersion: string | ScopedVersion,
 // 	version?: ScopedVersion,
 // ) {
-// 	return JSONResource('resource_pack', dispatcher, pathOrVersion, version)
+// 	return JSONResource('java_resource_pack', dispatcher, pathOrVersion, version)
 // }
 
 type CategoryDef = {
 	category: FileCategory | TagFileCategory
 	extname: string
-	pack: 'datapack' | 'resource_pack'
+	pack: 'datapack' | 'java_resource_pack'
 } & ScopedVersion
 
 export const Categories = (() => {
@@ -184,7 +184,9 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 		ctx.project['customResourcesDefined'] = 'done'
 
 		for (const [category, def] of customResources) {
-			Categories.set(category, def as CategoryDef)
+			if (def.pack === 'datapack') { // TODO
+				Categories.set(category, def as CategoryDef)
+			}
 		}
 	}
 
