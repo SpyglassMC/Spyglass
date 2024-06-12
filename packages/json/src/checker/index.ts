@@ -67,20 +67,7 @@ export function definition(
 				},
 				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
 					ctx,
-					(node, err) => {
-						if (
-							(node.originalNode.type === 'json:object' &&
-								err === 'missing_key') ||
-							node.originalNode.type === 'json:array' &&
-								err === 'invalid_collection_length'
-						) {
-							return {
-								start: node.originalNode.range.start,
-								end: node.originalNode.range.start,
-							}
-						}
-						return node.originalNode.range
-					},
+					mcdoc.runtime.checker.getErrorRangeDefault<JsonNode>,
 				),
 				attachTypeInfo: (node, definition) => {
 					node.typeDef = definition

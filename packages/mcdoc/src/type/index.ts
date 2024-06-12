@@ -18,18 +18,11 @@ export type NumericRange = {
 }
 export namespace NumericRange {
 	export function isInRange(range: NumericRange, val: number): boolean {
-		if (
-			range.min !== undefined && (RangeKind.isLeftExclusive(range.kind)
-				? val <= range.min
-				: val < range.min)
-		) {
+		const { min = -Infinity, max = Infinity } = range
+		if (RangeKind.isLeftExclusive(range.kind) ? val <= min : val < min) {
 			return false
 		}
-		if (
-			range.max !== undefined && (RangeKind.isRightExclusive(range.kind)
-				? val >= range.max
-				: val > range.max)
-		) {
+		if (RangeKind.isRightExclusive(range.kind) ? val >= max : val > max) {
 			return false
 		}
 		return true

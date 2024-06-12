@@ -19,8 +19,7 @@ import type {
 	UnionType,
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
-import type { McdocAttribute } from '../attribute/index.js'
-import { getAttribute, handleAttributes } from '../attribute/index.js'
+import { handleAttributes } from '../attribute/index.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
@@ -1498,9 +1497,24 @@ function getValueType(
 	}
 }
 
+export function getErrorRangeDefault<T extends core.AstNode>(
+	node: RuntimeNode<T>,
+	error: McdocCheckerError<T>['kind'],
+): core.Range {
+	const { range } = node.originalNode
+	if (
+		error === 'missing_key' ||
+		error === 'invalid_collection_length'
+	) {
+		const { start } = range
+		return { start, end: start }
+	}
+	return range
+}
+
 export function getDefaultErrorReporter<T>(
 	ctx: core.CheckerContext,
-	getRange: (
+	getErrorRange: (
 		node: RuntimeNode<T>,
 		error: McdocCheckerError<T>['kind'],
 	) => core.Range,
@@ -1514,7 +1528,7 @@ export function getDefaultErrorReporter<T>(
 			for (const node of nodes) {
 				ctx.err.report(
 					localize('expected', localize('nothing')),
-					getRange(node, 'unknown_tuple_element'),
+					getErrorRange(node, 'unknown_tuple_element'),
 				)
 			}
 			return
@@ -1526,11 +1540,14 @@ export function getDefaultErrorReporter<T>(
 				),
 			)
 			for (const node of error.node) {
-				ctx.err.report(message, getRange(node, 'unknown_tuple_element'))
+				ctx.err.report(
+					message,
+					getErrorRange(node, 'unknown_tuple_element'),
+				)
 			}
 			return
 		}
-		const range = getRange(error.node, error.kind)
+		const range = getErrorRange(error.node, error.kind)
 		switch (error.kind) {
 			case 'unknown_key':
 				ctx.err.report(
