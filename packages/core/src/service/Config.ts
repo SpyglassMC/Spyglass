@@ -40,11 +40,11 @@ export interface CustomResourceConfig {
 	 */
 	pack: 'data_pack'
 	/**
-	 * The version range of the dispatched resource.
+	 * The first minecraft version the dispatched resource is available in.
 	 */
 	since?: `1.${number}`
 	/**
-	 * The version range of the dispatched resource.
+	 * The first minecraft version the dispatched resource is no longer available in.
 	 */
 	until?: `1.${number}`
 }
