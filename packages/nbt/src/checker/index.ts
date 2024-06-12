@@ -142,7 +142,19 @@ export function definition(
 					ctx,
 					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
 				),
-				attachTypeInfo: (node, definition) => {}, // TODO
+				attachTypeInfo: (node, definition) => {
+					// TODO: improve hover info
+					if (
+						node.parent && core.PairNode.is(node.parent) &&
+						node.parent && node.parent.key &&
+						core.StringNode.is(node.parent.key)
+					) {
+						node.parent.key.hover =
+							`\`\`\`typescript\n${node.parent.key.value}: ${
+								mcdoc.McdocType.toString(definition)
+							}\n\`\`\``
+					}
+				},
 				// TODO json / JE specific attribute handlers
 			},
 		)
