@@ -66,7 +66,7 @@ export interface EnvConfig {
 	dependencies: string[]
 	/**
 	 * **Experimental feature, breaking changes could occur.**
-	 * 
+	 *
 	 * Track changes at [issue #1254](https://github.com/SpyglassMC/Spyglass/issues/1254).
 	 *
 	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.

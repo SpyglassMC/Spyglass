@@ -2,7 +2,9 @@ import type * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { type JsonNode, JsonPairNode } from '../node/index.js'
 
-function getOptions(ctx: core.CheckerContext): mcdoc.runtime.checker.McdocCheckerOptions<JsonNode> {
+function getOptions(
+	ctx: core.CheckerContext,
+): mcdoc.runtime.checker.McdocCheckerOptions<JsonNode> {
 	return ({
 		context: ctx,
 		isEquivalent: (inferred, def) => {
@@ -37,7 +39,7 @@ function getOptions(ctx: core.CheckerContext): mcdoc.runtime.checker.McdocChecke
 						n => [{
 							originalNode: n.value!,
 							inferredType: inferType(n.value!),
-						}]
+						}],
 					)
 			}
 			if (node.type === 'json:object') {
@@ -59,24 +61,31 @@ function getOptions(ctx: core.CheckerContext): mcdoc.runtime.checker.McdocChecke
 		reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
 			ctx,
 			(node, err) => {
-				if ((node.originalNode.type === 'json:object' &&
-					err === 'missing_key') ||
+				if (
+					(node.originalNode.type === 'json:object' &&
+						err === 'missing_key') ||
 					node.originalNode.type === 'json:array' &&
-					err === 'invalid_collection_length') {
+						err === 'invalid_collection_length'
+				) {
 					return {
 						start: node.originalNode.range.start,
 						end: node.originalNode.range.start,
 					}
 				}
 				return node.originalNode.range
-			}
+			},
 		),
 		attachTypeInfo: (node, definition) => {
 			node.typeDef = definition
 			// TODO: improve hover info
-			if (node.parent && JsonPairNode?.is(node.parent) &&
-				node.parent.key) {
-				node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${mcdoc.McdocType.toString(definition)}\n\`\`\``
+			if (
+				node.parent && JsonPairNode?.is(node.parent) &&
+				node.parent.key
+			) {
+				node.parent.key.hover =
+					`\`\`\`typescript\n${node.parent.key.value}: ${
+						mcdoc.McdocType.toString(definition)
+					}\n\`\`\``
 			}
 		},
 	})
