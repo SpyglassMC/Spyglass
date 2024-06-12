@@ -2,16 +2,13 @@ import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
 
-/**
- * @param identifier An identifier of a mcdoc type definition
- */
-export function definition(
-	identifier: `::${string}::${string}`,
+export function index(
+	type: mcdoc.McdocType,
 ): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
-		mcdoc.runtime.checker.reference<JsonNode>(
+		mcdoc.runtime.checker.typeDefinition<JsonNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
-			identifier,
+			type,
 			{
 				context: ctx,
 				isEquivalent: (inferred, def) => {

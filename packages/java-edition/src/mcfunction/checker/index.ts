@@ -178,7 +178,8 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 }
 
 const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
-	json.checker.definition(node.typeRef)(node.value, ctx)
+	const type = { kind: 'reference', path: node.typeRef } as const
+	json.checker.index(type)(node.value, ctx)
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {

@@ -1,6 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
+import type * as mcdoc from '@spyglassmc/mcdoc'
 import { dissectUri } from '../../binder/index.js'
 
 const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
@@ -47,17 +48,43 @@ const Checkers = new Map<core.FileCategory, `::${string}::${string}`>([
 	],
 ])
 
+function createTagDefinition(registry: string): mcdoc.McdocType {
+	const id: mcdoc.AttributeValue = {
+		kind: 'tree',
+		values: {
+			registry: {
+				kind: 'literal',
+				value: { kind: 'string', value: registry },
+			},
+			tags: {
+				kind: 'literal',
+				value: { kind: 'string', value: 'allowed' },
+			},
+		},
+	}
+	return {
+		kind: 'concrete',
+		child: { kind: 'reference', path: '::java::data::tag::Tag' },
+		typeArgs: [{ kind: 'string', attributes: [{ name: 'id', value: id }] }],
+	}
+}
+
 export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 	const child = node.children[0]
 	const parts = dissectUri(ctx.doc.uri, ctx)
 	if (parts && Checkers.has(parts.category)) {
 		const identifier = Checkers.get(parts.category)!
-		return json.checker.definition(identifier)(child, ctx)
+		const type: mcdoc.McdocType = { kind: 'reference', path: identifier }
+		return json.checker.index(type)(child, ctx)
 	} else if (parts?.category.startsWith('tag/')) {
-		// TODO
-		return json.checker.definition('::java::data::tag::Tag')(child, ctx)
+		const type = createTagDefinition(parts.category.slice(4))
+		return json.checker.index(type)(child, ctx)
 	} else if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		return json.checker.definition('::java::pack::Pack')(child, ctx)
+		const type: mcdoc.McdocType = {
+			kind: 'reference',
+			path: '::java::pack::Pack',
+		}
+		return json.checker.index(type)(child, ctx)
 	}
 }
 
