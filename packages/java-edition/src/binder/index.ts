@@ -9,41 +9,38 @@ import type {
 import { fileUtil, TaggableResourceLocationCategories } from '@spyglassmc/core'
 import { ReleaseVersion } from '../dependency/index.js'
 
-type ScopedVersion = { since?: ReleaseVersion; until?: ReleaseVersion }
+interface ScopedVersion {
+	since?: ReleaseVersion
+	until?: ReleaseVersion
+}
+
+interface CategoryDef extends ScopedVersion {
+	category: FileCategory | TagFileCategory
+	extname: string
+	pack: 'data_pack'
+}
 
 function resource(
 	pack: 'data_pack',
-	dispatcher: FileCategory | TagFileCategory,
-	pathOrVersion: string | ScopedVersion,
+	category: FileCategory | TagFileCategory,
+	path: string | ScopedVersion,
 	version?: ScopedVersion,
-) {
-	if (typeof pathOrVersion !== 'string') {
-		version = pathOrVersion
+): [string, CategoryDef] {
+	if (typeof path !== 'string') {
+		// Shift parameters if path is a scoped version
+		version = path
+		path = category
 	}
-	return [
-		typeof pathOrVersion === 'string' ? pathOrVersion : dispatcher,
-		{
-			pack,
-			category: dispatcher,
-			extname: '.json',
-			...version,
-		},
-	] as readonly [string, CategoryDef]
+	return [path, { pack, category, extname: '.json', ...version }]
 }
 
 function dataPackResource(
 	dispatcher: FileCategory | TagFileCategory,
-	pathOrVersion: string | ScopedVersion,
+	path: string | ScopedVersion,
 	version?: ScopedVersion,
 ) {
-	return resource('data_pack', dispatcher, pathOrVersion, version)
+	return resource('data_pack', dispatcher, path, version)
 }
-
-type CategoryDef = {
-	category: FileCategory | TagFileCategory
-	extname: string
-	pack: 'data_pack'
-} & ScopedVersion
 
 export const Categories = (() => {
 	const NonTaggableRegistries = new Set<TaggableResourceLocationCategory>([
