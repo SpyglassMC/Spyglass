@@ -503,6 +503,249 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: 'type Bounds<T> = struct { min: T, max: T }; Bounds<int @ 1..>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Bounds' },
+				typeArgs: [{ kind: 'int', valueRange: { kind: 0b00, min: 1 } }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Bounds',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::T' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'min',
+											type: {
+												kind: 'reference',
+												path: '::T',
+											},
+										},
+										{
+											kind: 'pair',
+											key: 'max',
+											type: {
+												kind: 'reference',
+												path: '::T',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{},
+				{ min: 2, max: 5 },
+				{ min: 'hello', max: -1 },
+			],
+		},
+		{
+			name: 'type Tag<V> = (V | [V]); Tag<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Tag' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Tag',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::V' },
+								],
+								child: {
+									kind: 'union',
+									members: [
+										{
+											kind: 'reference',
+											path: '::V',
+										},
+										{
+											kind: 'list',
+											item: {
+												kind: 'reference',
+												path: '::V',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				2,
+				'hello',
+				[],
+				['test'],
+				[10],
+			],
+		},
+		{
+			name: 'type Tag<V> = [int, V]; Tag<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Tag' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Tag',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::V' },
+								],
+								child: {
+									kind: 'tuple',
+									items: [
+										{
+											kind: 'int',
+										},
+										{
+											kind: 'reference',
+											path: '::V',
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				'test',
+				[4, 5],
+				[10, 'test'],
+				['foo', 'test'],
+				[10],
+			],
+		},
+		{
+			name:
+				'type Inner<B> = struct { bar: B }; type Outer<A> = struct { foo: Inner<[A]> }; Outer<string>',
+			type: {
+				kind: 'concrete',
+				child: { kind: 'reference', path: '::Outer' },
+				typeArgs: [{ kind: 'string' }],
+			},
+			init: (symbols) => {
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Outer',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::A' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'foo',
+											type: {
+												kind: 'concrete',
+												child: {
+													kind: 'reference',
+													path: '::Inner',
+												},
+												typeArgs: [
+													{
+														kind: 'list',
+														item: {
+															kind: 'reference',
+															path: '::A',
+														},
+													},
+												],
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+				symbols.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc',
+					'::Inner',
+				).enter({
+					data: {
+						subcategory: 'type_alias',
+						data: {
+							typeDef: {
+								kind: 'template',
+								typeParams: [
+									{ path: '::B' },
+								],
+								child: {
+									kind: 'struct',
+									fields: [
+										{
+											kind: 'pair',
+											key: 'bar',
+											type: {
+												kind: 'reference',
+												path: '::B',
+											},
+										},
+									],
+								},
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+			},
+			values: [
+				{ foo: 3 },
+				{ foo: { bar: 'hello' } },
+				{ foo: { bar: ['hello'] } },
+				{ foo: { bar: [2] } },
+			],
+		},
+		{
 			name: 'type Ref = double; struct { foo: Ref }',
 			type: {
 				kind: 'struct',
