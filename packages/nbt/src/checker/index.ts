@@ -1,7 +1,8 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtCompoundNode, NbtNode, NbtPathNode } from '../node/index.js'
+import type { NbtNode, NbtPathChild, NbtPathNode } from '../node/index.js'
+import { NbtCompoundNode, NbtPathIndexNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -154,7 +155,6 @@ export function definition(
 							}\n\`\`\``
 					}
 				},
-				// TODO json / JE specific attribute handlers
 			},
 		)
 	}
@@ -208,8 +208,6 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 			return { kind: 'long_array' }
 		case 'nbt:int_array':
 			return { kind: 'int_array' }
-		default:
-			return { kind: 'any' }
 	}
 }
 
@@ -276,9 +274,14 @@ export function blockStates(
 	}
 }
 
-/**
- * @param id If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
- */
+interface NbtPathLink {
+	path: NbtPathNode
+	node: NbtPathChild | { type: 'leaf'; range: core.Range }
+	prev?: NbtPathLink
+	next?: NbtPathLink
+}
+
+// TODO: check nbt index nodes and nbt compound nodes
 export function path(
 	registry: string,
 	id:
@@ -288,6 +291,109 @@ export function path(
 	options?: PathOptions,
 ): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
-		// TODO
+		// TODO: support dispatcher
+		const definition = getRegistryIdentifier(registry)
+		if (!definition) {
+			return
+		}
+		// Create a linked list representation
+		const leaf = {
+			type: 'leaf',
+			range: core.Range.create(node.range.end),
+		} as const
+		let link: NbtPathLink = { path: node, node: leaf }
+		for (let i = node.children.length - 1; i >= 0; i -= 1) {
+			link = {
+				path: node,
+				node: node.children[i],
+				next: link,
+			}
+		}
+		let prev = link
+		while (prev.next) {
+			prev.next.prev = prev
+			prev = prev.next
+		}
+		mcdoc.runtime.checker.reference<NbtPathLink>(
+			[{ originalNode: link, inferredType: inferPath(link) }],
+			definition,
+			{
+				context: ctx,
+				isEquivalent: () => false,
+				getChildren: (
+					link,
+				): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
+					while (
+						link.next && link.node.type !== 'leaf' &&
+						NbtCompoundNode.is(link.node)
+					) {
+						link = link.next
+					}
+					if (!link.next || link.node.type === 'leaf') {
+						return []
+					}
+					if (NbtPathIndexNode.is(link.node)) {
+						return [[{
+							originalNode: link.next,
+							inferredType: inferPath(link.next),
+						}]]
+					}
+					if (core.StringNode.is(link.node)) {
+						return [{
+							key: {
+								originalNode: link,
+								inferredType: {
+									kind: 'literal',
+									value: { kind: 'string', value: link.node.value },
+								},
+							},
+							possibleValues: [{
+								originalNode: link.next,
+								inferredType: inferPath(link.next),
+							}],
+						}]
+					}
+					// Never reachable
+					return []
+				},
+				reportError: (error) => {
+					if (error.kind === 'missing_key') {
+						return
+					}
+					mcdoc.runtime.checker.getDefaultErrorReporter<
+						NbtPathLink
+					>(
+						ctx,
+						({ originalNode: link }, error) => {
+							// TODO: discard errors on the leaf
+							return link.node.range
+						},
+					)(error)
+				},
+				attachTypeInfo: (link, definition) => {
+					// TODO: attach type def
+					// TODO: improve hover info
+					if (core.StringNode.is(link.prev?.node)) {
+						link.prev.node.hover =
+							`\`\`\`typescript\n${link.prev.node.value}: ${
+								mcdoc.McdocType.toString(definition)
+							}\n\`\`\``
+					}
+				},
+			},
+		)
 	}
+}
+
+function inferPath(
+	link: NbtPathLink,
+): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+	if (link.node.type === 'leaf') {
+		// TODO: fix runtime checker to work with any and unsafe
+		return { kind: 'any' }
+	}
+	if (NbtPathIndexNode.is(link.node)) {
+		return { kind: 'list', item: { kind: 'any' } }
+	}
+	return { kind: 'struct', fields: [] }
 }
