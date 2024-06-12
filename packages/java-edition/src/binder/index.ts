@@ -178,18 +178,14 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			// Try to match the category for custom resources.
 			const subFolders = match[3].split('/').slice(0, -1)
 
-			if (subFolders.length === 0) {
-				continue
-			} else {
-				for (let i = 0; i < subFolders.length - 1; i++) {
-					const customCategory = `${match[2]}/${
-						subFolders.slice(0, i + 1).join('/')
-					}`
+			for (let i = 0; i < subFolders.length - 1; i++) { // if subFolders is empty, this loop will not run
+				const customCategory = `${match[2]}/${
+					subFolders.slice(0, i + 1).join('/')
+				}`
 
-					def = Categories.get(customCategory)
+				def = Categories.get(customCategory)
 
-					// we don't break here because we want to find the most specific category
-				}
+				// we don't break here because we want to find the most specific category
 			}
 		}
 		if (!def || def.extname !== match[4]) {
