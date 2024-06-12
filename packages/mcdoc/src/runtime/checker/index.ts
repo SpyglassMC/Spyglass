@@ -807,6 +807,7 @@ function checkShallowly<T>(
 
 	if (
 		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe' &&
+			simplifiedInferred.kind !== 'unsafe' &&
 			runtimeValueType.kind !== typeDefValueType.kind &&
 			!options.isEquivalent(runtimeValueType, typeDefValueType)) ||
 		(typeDef.kind === 'literal' &&

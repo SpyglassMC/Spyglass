@@ -360,15 +360,11 @@ export function path(
 					if (error.kind === 'missing_key') {
 						return
 					}
-					mcdoc.runtime.checker.getDefaultErrorReporter<
-						NbtPathLink
-					>(
-						ctx,
-						({ originalNode: link }, error) => {
-							// TODO: discard errors on the leaf
-							return link.node.range
-						},
-					)(error)
+					mcdoc.runtime.checker
+						.getDefaultErrorReporter<NbtPathLink>(
+							ctx,
+							({ originalNode: link }) => link.node.range,
+						)(error)
 				},
 				attachTypeInfo: (link, definition) => {
 					// TODO: attach type def
@@ -389,8 +385,7 @@ function inferPath(
 	link: NbtPathLink,
 ): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 	if (link.node.type === 'leaf') {
-		// TODO: fix runtime checker to work with any and unsafe
-		return { kind: 'any' }
+		return { kind: 'unsafe' }
 	}
 	if (NbtPathIndexNode.is(link.node)) {
 		return { kind: 'list', item: { kind: 'any' } }
