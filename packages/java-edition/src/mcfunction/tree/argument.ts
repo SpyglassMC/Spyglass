@@ -137,6 +137,11 @@ export interface MinecraftItemSlotArgumentTreeNode
 {
 	parser: 'minecraft:item_slot'
 }
+export interface MinecraftItemSlotsArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:item_slots'
+}
 export interface MinecraftItemStackArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -331,6 +336,7 @@ export type ArgumentTreeNode =
 	| MinecraftItemEnchantmentArgumentTreeNode
 	| MinecraftItemPredicateArgumentTreeNode
 	| MinecraftItemSlotArgumentTreeNode
+	| MinecraftItemSlotsArgumentTreeNode
 	| MinecraftItemStackArgumentTreeNode
 	| MinecraftMessageArgumentTreeNode
 	| MinecraftMobEffectArgumentTreeNode

@@ -174,7 +174,13 @@ const Suites: Partial<
 			content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
 		},
 	],
-	'minecraft:item_slot': [{ content: ['container.5', 'weapon'] }],
+	'minecraft:item_slot': [
+		{ content: ['container.5', 'weapon', 'contents'] },
+		{ content: ['contents', 'horse.armor'], version: '1.20.5' },
+	],
+	'minecraft:item_slots': [{
+		content: ['weapon', 'container.*', 'armor.head'],
+	}],
 	'minecraft:item_stack': [
 		{
 			content: ['stick', 'minecraft:stick', 'stick{foo:bar}'],

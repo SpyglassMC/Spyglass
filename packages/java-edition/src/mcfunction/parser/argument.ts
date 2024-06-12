@@ -10,6 +10,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -190,6 +191,10 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_slot':
 			return wrap((src, ctx) => {
 				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
+			})
+		case 'minecraft:item_slots':
+			return wrap((src, ctx) => {
+				return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
 			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)

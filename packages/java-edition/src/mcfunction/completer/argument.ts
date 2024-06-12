@@ -34,6 +34,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -126,6 +127,10 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_slot':
 			return LiteralNode.mock(range, {
 				pool: getItemSlotArgumentValues(ctx),
+			})
+		case 'minecraft:item_slots':
+			return LiteralNode.mock(range, {
+				pool: getItemSlotsArgumentValues(ctx),
 			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false)
