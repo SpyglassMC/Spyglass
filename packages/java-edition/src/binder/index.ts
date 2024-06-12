@@ -174,21 +174,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 		/^data\/([^\/]+)\/((?:tags\/|worldgen\/)?[a-z_]+)\/(.*)(\.(?:mcfunction|json))$/
 
 	const rels = getRels(uri, ctx.roots)
-
 	const { customResources } = ctx.config.env
-
-	if (
-		customResources.length > 0 &&
-		ctx.project['customResourcesDefined'] === undefined
-	) {
-		ctx.project['customResourcesDefined'] = 'done'
-
-		for (const [category, def] of customResources) {
-			if (def.pack === 'datapack') { // TODO
-				Categories.set(category, def as CategoryDef)
-			}
-		}
-	}
 
 	for (const rel of rels) {
 		const match = rel.match(regex)
@@ -241,6 +227,13 @@ export const uriBinder: UriBinder = (
 	uris: readonly string[],
 	ctx: UriBinderContext,
 ) => {
+	const { customResources } = ctx.config.env
+	for (const [category, def] of customResources) {
+		if (def.pack === 'datapack') { // TODO
+			Categories.set(category, def as CategoryDef)
+		}
+	}
+
 	for (const uri of uris) {
 		const parts = dissectUri(uri, ctx)
 		if (parts) {
