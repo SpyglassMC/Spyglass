@@ -1,7 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtCompoundNode, NbtPathNode } from '../node/index.js'
+import type { NbtCompoundNode, NbtNode, NbtPathNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -79,22 +79,137 @@ function getRegistryIdentifier(registry: string) {
 export function definition(
 	identifier: `::${string}::${string}`,
 	options: Options = {},
-): core.SyncChecker<NbtCompoundNode> {
+): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
-		const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', identifier)
-		const typeDef = symbol.getData(mcdoc.binder.TypeDefSymbolData.is)?.typeDef
-		if (!typeDef) {
-			return
-		}
-		switch (typeDef.kind) {
-			case 'struct':
-				// TODO
-				break
-			default:
-				ctx.logger.error(
-					`[nbt.checker.definition] Expected a struct type, but got ${typeDef.kind}`,
-				)
-		}
+		mcdoc.runtime.checker.reference<NbtNode>(
+			[{ originalNode: node, inferredType: inferType(node) }],
+			identifier,
+			{
+				context: ctx,
+				isEquivalent: (inferred, def) => {
+					switch (inferred.kind) {
+						case 'list':
+							return [
+								'list',
+								'tuple',
+							].includes(def.kind)
+						case 'struct':
+							return def.kind === 'struct'
+						case 'byte':
+						case 'short':
+						case 'int':
+						case 'long':
+							return ['byte', 'short', 'int', 'long', 'float', 'double']
+								.includes(def.kind)
+						case 'float':
+						case 'double':
+							return ['float', 'double'].includes(def.kind)
+						default:
+							return false
+					}
+				},
+				getChildren: node => {
+					const { type } = node
+					if (
+						type === 'nbt:list' || type === 'nbt:byte_array' ||
+						type === 'nbt:int_array' || type === 'nbt:long_array'
+					) {
+						return node.children.filter(n => n.value)
+							.map(
+								n => [{
+									originalNode: n.value!,
+									inferredType: inferType(n.value!),
+								}],
+							)
+					}
+					if (type === 'nbt:compound') {
+						return node.children.filter(kvp => kvp.key).map(kvp => ({
+							key: {
+								originalNode: kvp.key!,
+								inferredType: inferType(kvp.key!),
+							},
+							possibleValues: kvp.value
+								? [{
+									originalNode: kvp.value,
+									inferredType: inferType(kvp.value),
+								}]
+								: [],
+						}))
+					}
+					return []
+				},
+				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
+					ctx,
+					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
+				),
+				attachTypeInfo: (node, definition) => {
+					// TODO: improve hover info
+					if (
+						core.PairNode.is(node.parent) &&
+						core.StringNode.is(node.parent.key)
+					) {
+						node.parent.key.hover =
+							`\`\`\`typescript\n${node.parent.key.value}: ${
+								mcdoc.McdocType.toString(definition)
+							}\n\`\`\``
+					}
+				},
+				// TODO json / JE specific attribute handlers
+			},
+		)
+	}
+}
+
+function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
+	switch (node.type) {
+		case 'nbt:byte':
+			return {
+				kind: 'literal',
+				value: { kind: 'byte', value: node.value },
+			}
+		case 'nbt:double':
+			return {
+				kind: 'literal',
+				value: { kind: 'double', value: node.value },
+			}
+		case 'nbt:float':
+			return {
+				kind: 'literal',
+				value: { kind: 'float', value: node.value },
+			}
+		case 'nbt:long':
+			return {
+				kind: 'literal',
+				// TODO: this should NOT change type from `bigint` to `number`
+				value: { kind: 'long', value: Number(node.value) },
+			}
+		case 'nbt:int':
+			return {
+				kind: 'literal',
+				value: { kind: 'int', value: node.value },
+			}
+		case 'nbt:short':
+			return {
+				kind: 'literal',
+				value: { kind: 'short', value: node.value },
+			}
+		case 'string':
+			return {
+				kind: 'literal',
+				value: { kind: 'string', value: node.value },
+			}
+		case 'nbt:list':
+			return { kind: 'list', item: { kind: 'any' } }
+		case 'nbt:compound':
+			return { kind: 'struct', fields: [] }
+		case 'nbt:byte_array':
+			return { kind: 'byte_array' }
+		case 'nbt:long_array':
+			return { kind: 'long_array' }
+		case 'nbt:int_array':
+			return { kind: 'int_array' }
+		default:
+			return { kind: 'any' }
 	}
 }
 
