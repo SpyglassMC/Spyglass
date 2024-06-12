@@ -151,6 +151,12 @@ export interface ConcreteType extends McdocBaseType {
 	typeArgs: McdocType[]
 }
 
+export interface MappedType extends McdocBaseType {
+	kind: 'mapped'
+	child: McdocType
+	mapping: { [path: string]: McdocType }
+}
+
 export const EmptyUnion: UnionType<never> = Object.freeze({
 	kind: 'union',
 	members: [],
@@ -266,6 +272,7 @@ export type McdocType =
 	| IndexedType
 	| TemplateType
 	| ConcreteType
+	| MappedType
 export namespace McdocType {
 	export function toString(type: McdocType | undefined): string {
 		const rangeToString = (range: NumericRange | undefined): string => {
@@ -376,6 +383,9 @@ export namespace McdocType {
 						type.lengthRange,
 					)
 				}`
+				break
+			case 'mapped':
+				typeString = toString(type.child)
 				break
 			case 'reference':
 				typeString = type.path ?? '<unknown_reference>'

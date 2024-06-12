@@ -304,7 +304,7 @@ export function typeDefinition<T>(
 		condensedErrors: [],
 	}))
 	for (const value of rootNode.possibleValues) {
-		const simplifiedRoot = simplify(typeDef, value, options)
+		const simplifiedRoot = simplify(typeDef, { options, node: value })
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
@@ -323,8 +323,7 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(
 				value.node.inferredType,
-				value,
-				options,
+				{ options, node: value },
 			)
 			const children = options.getChildren(
 				value.node.originalNode,
@@ -373,7 +372,10 @@ export function typeDefinition<T>(
 						// the same types again and just collect the errors of the lower depth.
 						// This will currently lead to a stack overflow error when e.g. comparing two
 						// text component definitions
-						const simplified = simplify(childDef, childValue, options)
+						const simplified = simplify(
+							childDef,
+							{ options, node: childValue },
+						)
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
 						// so that we can potentially error some valid parent defs if only some of them produce an
@@ -1108,25 +1110,26 @@ export interface SimplifyValueNode<T> {
 	}
 	node: RuntimeNode<T>
 }
+export interface SimplifyContext<T> {
+	node: SimplifyValueNode<T>
+	options: McdocCheckerOptions<T>
+	isMember?: boolean
+	typeArgs?: SimplifiedMcdocType[]
+	typeMapping?: { [path: string]: SimplifiedMcdocType }
+}
 export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	isMember ??= false
+	const ctx = context.options.context
 	if (typeDef.attributes) {
 		// TODO
 	}
@@ -1135,32 +1138,34 @@ export function simplify<T>(
 		case 'reference':
 			if (!typeDef.path) {
 				// TODO when does this happen?
-				options.context.logger.warn(`Tried to access empty reference`)
+				ctx.logger.warn(`Tried to access empty reference`)
 				return { kind: 'union', members: [] }
 			}
+			const mapped = context.typeMapping?.[typeDef.path]
+			if (mapped) {
+				return mapped
+			}
 			// TODO Probably need to keep original symbol around in some way to support "go to definition"
-			const symbol = options.context.symbols.query(
-				options.context.doc,
+			const symbol = ctx.symbols.query(
+				ctx.doc,
 				'mcdoc',
 				typeDef.path,
 			)
 			const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
 			if (!def) {
-				options.context.logger.warn(
-					`Tried to access unknown reference ${typeDef.path}`,
-				)
+				ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
 				return { kind: 'union', members: [] }
 			}
 
-			return simplify(def, node, options, isMember)
+			return simplify(def, context)
 		case 'dispatcher':
-			const dispatcher = options.context.symbols.query(
-				options.context.doc,
+			const dispatcher = ctx.symbols.query(
+				ctx.doc,
 				'mcdoc/dispatcher',
 				typeDef.registry,
 			).symbol?.members
 			if (!dispatcher) {
-				options.context.logger.warn(
+				ctx.logger.warn(
 					`Tried to access unknown dispatcher ${typeDef.registry}`,
 				)
 				return { kind: 'union', members: [] }
@@ -1179,22 +1184,13 @@ export function simplify<T>(
 					parallelIndices: typeDef.parallelIndices,
 					child: { kind: 'struct', fields: structFields },
 				},
-				node,
-				options,
-				isMember,
+				context,
 			)
 		case 'indexed':
-			const child = simplify(
-				typeDef.child,
-				node,
-				options,
-				isMember,
-			)
+			const child = simplify(typeDef.child, { ...context, typeArgs: [] })
 
 			if (child.kind !== 'struct') {
-				options.context.logger.warn(
-					`Tried to index unindexable type ${child.kind}`,
-				)
+				ctx.logger.warn(`Tried to index unindexable type ${child.kind}`)
 				return { kind: 'union', members: [] }
 			}
 			let values: McdocType[] = []
@@ -1210,11 +1206,14 @@ export function simplify<T>(
 					}
 					lookup.push(index.value)
 				} else {
-					let possibilities: SimplifyNode<T>[] = isMember
-						? [{ value: node, key: node.entryNode.runtimeKey }]
+					let possibilities: SimplifyNode<T>[] = context.isMember
+						? [{
+							value: context.node,
+							key: context.node.entryNode.runtimeKey,
+						}]
 						: [{
-							value: node.entryNode.parent,
-							key: node.entryNode.runtimeKey,
+							value: context.node.entryNode.parent,
+							key: context.node.entryNode.runtimeKey,
 						}]
 					for (const entry of index.accessor) {
 						if (typeof entry !== 'string' && entry.keyword === 'parent') {
@@ -1243,13 +1242,11 @@ export function simplify<T>(
 							const newPossibilities: SimplifyNode<T>[] = []
 							for (const node of possibilities) {
 								const possibleChildren: SimplifyNode<T>[] = node.value
-									? (options.getChildren(
+									? (context.options.getChildren(
 										node.value.node.originalNode,
 										simplify(
 											node.value.node.inferredType,
-											node.value,
-											options,
-											isMember,
+											{ ...context, node: node.value },
 										),
 									)
 										.filter(child => {
@@ -1263,8 +1260,8 @@ export function simplify<T>(
 															value: entry,
 														},
 													},
-													options.context,
-													options.isEquivalent,
+													ctx,
+													context.options.isEquivalent,
 												)
 											}
 											// TODO if it's a list, consider all list items.
@@ -1333,21 +1330,11 @@ export function simplify<T>(
 					values.push(...currentValues.map(v => v!.type))
 				}
 			}
-			return simplify(
-				{ kind: 'union', members: values },
-				node,
-				options,
-				isMember,
-			)
+			return simplify({ kind: 'union', members: values }, context)
 		case 'union':
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
-				const simplified = simplify(
-					member,
-					node,
-					options,
-					isMember,
-				)
+				const simplified = simplify(member, context)
 
 				if (simplified.kind === 'union') {
 					members.push(...simplified.members)
@@ -1386,8 +1373,8 @@ export function simplify<T>(
 									value: { kind: 'string', value: other.key },
 								}
 								: other.key,
-							options.context,
-							options.isEquivalent,
+							ctx,
+							context.options.isEquivalent,
 						)
 					)
 					complexFields.push({ ...field, key })
@@ -1400,14 +1387,26 @@ export function simplify<T>(
 					// Instead, this method will be called by every struct child by the outer checking method.
 					const structKey = typeof field.key === 'string'
 						? field.key
-						: simplify(field.key, node, options, true)
-					addField(structKey, field)
+						: simplify(field.key, {
+							...context,
+							isMember: true,
+							typeArgs: [],
+						})
+					const mappedField = context.typeMapping
+						? {
+							...field,
+							type: {
+								kind: 'mapped',
+								child: field.type,
+								mapping: context.typeMapping,
+							} satisfies McdocType,
+						}
+						: field
+					addField(structKey, mappedField)
 				} else {
 					const simplifiedSpreadType = simplify(
 						field.type,
-						node,
-						options,
-						true,
+						{ ...context, isMember: true, typeArgs: [] },
 					)
 					if (simplifiedSpreadType.kind === 'struct') {
 						for (const field of simplifiedSpreadType.fields) {
@@ -1415,7 +1414,7 @@ export function simplify<T>(
 						}
 					} else {
 						const type = McdocType.toString(simplifiedSpreadType)
-						options.context.logger.warn(
+						ctx.logger.warn(
 							`Tried to spread non-struct type ${type}`,
 						)
 					}
@@ -1436,11 +1435,72 @@ export function simplify<T>(
 					})),
 				],
 			}
+		case 'list':
+			if (!context.typeMapping) {
+				return typeDef
+			}
+			return {
+				...typeDef,
+				item: {
+					kind: 'mapped',
+					child: typeDef.item,
+					mapping: context.typeMapping,
+				},
+			}
+		case 'tuple':
+			if (!context.typeMapping) {
+				return typeDef
+			}
+			return {
+				...typeDef,
+				items: typeDef.items.map(item => ({
+					kind: 'mapped',
+					child: item,
+					mapping: context.typeMapping!,
+				})),
+			}
 		case 'enum':
 			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
-		case 'concrete': // TODO
-		case 'template': // TODO
-			return { kind: 'union', members: [] }
+		case 'concrete':
+			const simplifiedArgs = typeDef.typeArgs
+				.map(arg => simplify(arg, context))
+			return simplify(typeDef.child, {
+				...context,
+				typeArgs: simplifiedArgs,
+			})
+		case 'template':
+			if (context.typeArgs?.length !== typeDef.typeParams.length) {
+				ctx.logger.warn(
+					`Expected ${typeDef.typeParams.length} mcdoc type args for ${
+						McdocType.toString(typeDef.child)
+					}, but got ${context.typeArgs?.length ?? 0}`,
+				)
+			}
+			const mapping = Object.fromEntries(
+				typeDef.typeParams.map((param, i) => {
+					const arg = context.typeArgs?.[i] ??
+						{ kind: 'union', members: [] }
+					return [param.path, arg]
+				}),
+			)
+			return simplify(typeDef.child, {
+				...context,
+				typeArgs: [],
+				typeMapping: mapping,
+			})
+		case 'mapped':
+			// Mapped types that were created in simplify are always simplified
+			// types already, in which case this will be a cheap operation, but
+			// this is necessary for type safety
+			const simplifiedMapping = Object.fromEntries(
+				Object.entries(typeDef.mapping).map(([path, param]) => {
+					return [path, simplify(param, context)]
+				}),
+			)
+			return simplify(typeDef.child, {
+				...context,
+				typeMapping: simplifiedMapping,
+			})
 		default:
 			return typeDef
 	}
