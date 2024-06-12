@@ -119,6 +119,7 @@ export type TagFileCategory = (typeof TagFileCategories)[number]
 export const FileCategories = Object.freeze(
 	[
 		'advancement',
+		'banner_pattern',
 		'chat_type',
 		'damage_type',
 		'dimension',
@@ -126,11 +127,13 @@ export const FileCategories = Object.freeze(
 		'function',
 		'item_modifier',
 		'loot_table',
+		'painting_variant',
 		'predicate',
 		'recipe',
 		'structure',
 		'trim_material',
 		'trim_pattern',
+		'wolf_variant',
 		...TagFileCategories,
 		...WorldgenFileCategories,
 	] as const,

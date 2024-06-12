@@ -19,7 +19,6 @@ interface CategoryDef extends ScopedVersion {
 	extname: string
 	pack: 'data_pack'
 }
-
 function resource(
 	pack: 'data_pack',
 	category: FileCategory | TagFileCategory,
@@ -35,11 +34,11 @@ function resource(
 }
 
 function dataPackResource(
-	dispatcher: FileCategory | TagFileCategory,
+	category: FileCategory | TagFileCategory,
 	path: string | ScopedVersion,
 	version?: ScopedVersion,
 ) {
-	return resource('data_pack', dispatcher, path, version)
+	return resource('data_pack', category, path, version)
 }
 
 export const Categories = (() => {
@@ -54,13 +53,13 @@ export const Categories = (() => {
 	])
 
 	const ans = new Map<string, CategoryDef>([
-		// Pre-1.21
+		// ---------
+		// Pre-1.21 Data Pack plurals
+		// ---------
 		dataPackResource('advancement', 'advancements', {
 			since: '1.16',
 			until: '1.21',
 		}),
-		dataPackResource('dimension', 'dimension', { since: '1.16' }),
-		dataPackResource('dimension_type', 'dimension_type', { since: '1.16' }),
 		['functions', {
 			category: 'function',
 			extname: '.mcfunction',
@@ -91,23 +90,11 @@ export const Categories = (() => {
 			until: '1.21',
 		}),
 		dataPackResource('tag/item', 'tags/items', { until: '1.21' }),
+		// ---------
 
-		// Worldgen
-		dataPackResource('worldgen/biome', { since: '1.16' }),
-		dataPackResource('worldgen/configured_carver', { since: '1.16' }),
-		dataPackResource('worldgen/configured_feature', { since: '1.16' }),
-		dataPackResource('worldgen/configured_structure_feature', {
-			since: '1.16',
-			until: '1.17',
-		}),
-		dataPackResource('worldgen/density_function', { since: '1.18' }),
-		dataPackResource('worldgen/noise', { since: '1.18' }),
-		dataPackResource('worldgen/noise_settings', { since: '1.16' }),
-		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
-		dataPackResource('worldgen/processor_list', { since: '1.16' }),
-		dataPackResource('worldgen/template_pool', { since: '1.16' }),
-
-		// Post-1.21
+		// ---------
+		// Post-1.21 Data Pack non-plurals
+		// ---------
 		dataPackResource('advancement', { since: '1.21' }),
 		['function', {
 			category: 'function',
@@ -127,6 +114,38 @@ export const Categories = (() => {
 		dataPackResource('tag/function', 'tags/function', { since: '1.21' }),
 		dataPackResource('tag/game_event', 'tags/game_event', { since: '1.21' }),
 		dataPackResource('tag/item', 'tags/item', { since: '1.21' }),
+		// ---------
+
+		// ---------
+		// Data Pack
+		// ---------
+		dataPackResource('banner_pattern', { since: '1.20.5' }),
+		dataPackResource('chat_type', { since: '1.19.1' }), // TODO: Consider supporting 1.19.0, needs changes in vanilla-mcdoc too.
+		dataPackResource('painting_variant', { since: '1.21' }),
+		dataPackResource('trim_pattern', { since: '1.19.4' }),
+		dataPackResource('trim_material', { since: '1.19.4' }),
+		dataPackResource('wolf_variant', { since: '1.20.5' }),
+		// ---------
+
+		// ---------
+		// Worldgen
+		// ---------
+		dataPackResource('dimension', { since: '1.16' }),
+		dataPackResource('dimension_type', { since: '1.16' }),
+		dataPackResource('worldgen/biome', { since: '1.16' }),
+		dataPackResource('worldgen/configured_carver', { since: '1.16' }),
+		dataPackResource('worldgen/configured_feature', { since: '1.16' }),
+		dataPackResource('worldgen/configured_structure_feature', {
+			since: '1.16',
+			until: '1.17',
+		}),
+		dataPackResource('worldgen/density_function', { since: '1.18' }),
+		dataPackResource('worldgen/noise', { since: '1.18' }),
+		dataPackResource('worldgen/noise_settings', { since: '1.16' }),
+		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
+		dataPackResource('worldgen/processor_list', { since: '1.16' }),
+		dataPackResource('worldgen/template_pool', { since: '1.16' }),
+		// ---------
 	])
 
 	for (const registry of TaggableResourceLocationCategories) {
