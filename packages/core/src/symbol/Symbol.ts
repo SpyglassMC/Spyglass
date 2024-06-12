@@ -27,7 +27,6 @@ export const RegistryCategories = Object.freeze(
 		'block_predicate_type',
 		'chunk_status',
 		'custom_stat',
-		'enchantment',
 		'entity_type',
 		'float_provider_type',
 		'fluid',
