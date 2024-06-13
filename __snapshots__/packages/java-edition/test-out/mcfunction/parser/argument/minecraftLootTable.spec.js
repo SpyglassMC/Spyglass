@@ -30,7 +30,7 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 1,
               "end": 6
@@ -59,7 +59,7 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
           }
         ],
         "key": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 1,
             "end": 6

@@ -29,7 +29,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 1,
               "end": 10
@@ -49,7 +49,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
             ]
           },
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 11,
               "end": 26
@@ -70,7 +70,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
           }
         ],
         "key": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 1,
             "end": 10
@@ -94,7 +94,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
           "end": 11
         },
         "value": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 11,
             "end": 26
@@ -126,7 +126,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 27,
               "end": 33
@@ -155,7 +155,7 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
           }
         ],
         "key": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 27,
             "end": 33

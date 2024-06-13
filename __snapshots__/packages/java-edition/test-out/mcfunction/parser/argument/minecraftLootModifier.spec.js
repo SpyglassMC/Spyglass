@@ -28,7 +28,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                 },
                 "children": [
                   {
-                    "type": "string",
+                    "type": "nbt:string",
                     "range": {
                       "start": 2,
                       "end": 10
@@ -48,7 +48,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                     ]
                   },
                   {
-                    "type": "string",
+                    "type": "nbt:string",
                     "range": {
                       "start": 11,
                       "end": 26
@@ -69,7 +69,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                   }
                 ],
                 "key": {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 2,
                     "end": 10
@@ -93,7 +93,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                   "end": 11
                 },
                 "value": {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 11,
                     "end": 26
@@ -131,7 +131,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
               },
               "children": [
                 {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 2,
                     "end": 10
@@ -151,7 +151,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                   ]
                 },
                 {
-                  "type": "string",
+                  "type": "nbt:string",
                   "range": {
                     "start": 11,
                     "end": 26
@@ -172,7 +172,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                 }
               ],
               "key": {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 2,
                   "end": 10
@@ -196,7 +196,7 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                 "end": 11
               },
               "value": {
-                "type": "string",
+                "type": "nbt:string",
                 "range": {
                   "start": 11,
                   "end": 26
