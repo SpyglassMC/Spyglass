@@ -56,10 +56,7 @@ export const Categories = (() => {
 		// ---------
 		// Pre-1.21 Data Pack plurals
 		// ---------
-		dataPackResource('advancement', 'advancements', {
-			since: '1.16',
-			until: '1.21',
-		}),
+		dataPackResource('advancement', 'advancements', { until: '1.21' }),
 		['functions', {
 			category: 'function',
 			extname: '.mcfunction',
@@ -70,15 +67,9 @@ export const Categories = (() => {
 			since: '1.17',
 			until: '1.21',
 		}),
-		dataPackResource('loot_table', 'loot_tables', {
-			since: '1.16',
-			until: '1.21',
-		}),
-		dataPackResource('predicate', 'predicates', {
-			since: '1.16',
-			until: '1.21',
-		}),
-		dataPackResource('recipe', 'recipes', { since: '1.16', until: '1.21' }),
+		dataPackResource('loot_table', 'loot_tables', { until: '1.21' }),
+		dataPackResource('predicate', 'predicates', { until: '1.21' }),
+		dataPackResource('recipe', 'recipes', { until: '1.21' }),
 		dataPackResource('tag/block', 'tags/blocks', { until: '1.21' }),
 		dataPackResource('tag/entity_type', 'tags/entity_types', {
 			until: '1.21',
@@ -120,7 +111,7 @@ export const Categories = (() => {
 		// Data Pack
 		// ---------
 		dataPackResource('banner_pattern', { since: '1.20.5' }),
-		dataPackResource('chat_type', { since: '1.19.1' }), // TODO: Consider supporting 1.19.0, needs changes in vanilla-mcdoc too.
+		dataPackResource('chat_type', { since: '1.19' }),
 		dataPackResource('enchantment', { since: '1.21' }),
 		dataPackResource('jukebox_song', { since: '1.21' }),
 		dataPackResource('painting_variant', { since: '1.21' }),
@@ -134,19 +125,23 @@ export const Categories = (() => {
 		// ---------
 		dataPackResource('dimension', { since: '1.16' }),
 		dataPackResource('dimension_type', { since: '1.16' }),
-		dataPackResource('worldgen/biome', { since: '1.16' }),
-		dataPackResource('worldgen/configured_carver', { since: '1.16' }),
-		dataPackResource('worldgen/configured_feature', { since: '1.16' }),
+		dataPackResource('worldgen/biome', { since: '1.16.2' }),
+		dataPackResource('worldgen/configured_carver', { since: '1.16.2' }),
+		dataPackResource('worldgen/configured_feature', { since: '1.16.2' }),
 		dataPackResource('worldgen/configured_structure_feature', {
-			since: '1.16',
+			since: '1.16.2',
 			until: '1.17',
 		}),
-		dataPackResource('worldgen/density_function', { since: '1.18' }),
+		dataPackResource('worldgen/density_function', { since: '1.18.2' }),
 		dataPackResource('worldgen/noise', { since: '1.18' }),
-		dataPackResource('worldgen/noise_settings', { since: '1.16' }),
+		dataPackResource('worldgen/noise_settings', { since: '1.16.2' }),
 		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
-		dataPackResource('worldgen/processor_list', { since: '1.16' }),
-		dataPackResource('worldgen/template_pool', { since: '1.16' }),
+		dataPackResource('worldgen/processor_list', { since: '1.16.2' }),
+		dataPackResource('worldgen/configured_surface_builder', {
+			since: '1.16.2',
+			until: '1.18',
+		}),
+		dataPackResource('worldgen/template_pool', { since: '1.16.2' }),
 		// ---------
 	])
 
@@ -266,6 +261,6 @@ function matchVersion(
 	until: ReleaseVersion | undefined,
 ): boolean {
 	if (since && ReleaseVersion.cmp(target, since) < 0) return false
-	if (until && ReleaseVersion.cmp(until, target) < 0) return false
+	if (until && ReleaseVersion.cmp(until, target) <= 0) return false
 	return true
 }
