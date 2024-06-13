@@ -2,7 +2,11 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type { NbtNode, NbtPathChild, NbtPathNode } from '../node/index.js'
-import { NbtCompoundNode, NbtPathIndexNode } from '../node/index.js'
+import {
+	NbtCompoundNode,
+	NbtPathIndexNode,
+	NbtStringNode,
+} from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -152,7 +156,7 @@ export function definition(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!core.StringNode.is(node)) return
+					if (!NbtStringNode.is(node)) return
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
@@ -229,7 +233,7 @@ export function blockStates(
 			}
 			// Type check.
 			if (
-				NbtByteNode.is(valueNode) &&
+				valueNode.type === 'nbt:byte' &&
 				(ctx.src.slice(valueNode.range).toLowerCase() === 'false' ||
 					ctx.src.slice(valueNode.range).toLowerCase() === 'true')
 			) {
@@ -239,7 +243,9 @@ export function blockStates(
 					core.ErrorSeverity.Warning,
 				)
 				continue
-			} else if (!NbtStringNode.is(valueNode) && !NbtIntNode.is(valueNode)) {
+			} else if (
+				valueNode.type !== 'nbt:string' && valueNode.type !== 'nbt:int'
+			) {
 				ctx.err.report(
 					localize('nbt.checker.block-states.unexpected-value-type'),
 					valueNode,
@@ -357,7 +363,7 @@ export function path(
 							inferredType: inferPath(link.next),
 						}]]
 					}
-					if (core.StringNode.is(link.node)) {
+					if (NbtStringNode.is(link.node)) {
 						return [{
 							key: {
 								originalNode: link,
@@ -391,7 +397,7 @@ export function path(
 				attachTypeInfo: (link, definition) => {
 					// TODO: attach type def
 					// TODO: improve hover info
-					if (core.StringNode.is(link.prev?.node)) {
+					if (NbtStringNode.is(link.prev?.node)) {
 						link.prev.node.hover =
 							`\`\`\`typescript\n${link.prev.node.value}: ${
 								mcdoc.McdocType.toString(definition)
