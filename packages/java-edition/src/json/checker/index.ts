@@ -27,7 +27,10 @@ function createTagDefinition(registry: string): mcdoc.McdocType {
 export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 	const child = node.children[0]
 	if (ctx.doc.uri.endsWith('/pack.mcmeta')) {
-		const type = { kind: 'reference', path: '::java::pack::Pack' } as const
+		const type: mcdoc.McdocType = {
+			kind: 'reference',
+			path: '::java::pack::Pack',
+		}
 		return json.checker.index(type)(child, ctx)
 	}
 	const parts = dissectUri(ctx.doc.uri, ctx)
@@ -36,7 +39,11 @@ export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 			const type = createTagDefinition(parts.category.slice(4))
 			return json.checker.index(type)(child, ctx)
 		}
-		const type = { kind: 'reference', path: parts.category } as const
+		const type: mcdoc.McdocType = {
+			kind: 'dispatcher',
+			registry: 'minecraft:resource',
+			parallelIndices: [{ kind: 'static', value: parts.category }],
+		}
 		return json.checker.index(type)(child, ctx)
 	}
 }
