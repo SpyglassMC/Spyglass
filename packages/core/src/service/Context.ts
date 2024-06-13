@@ -262,12 +262,14 @@ export namespace SignatureHelpProviderContext {
 }
 
 export interface UriBinderContext extends ContextBase {
+	config: Config
 	symbols: SymbolUtil
 }
 export namespace UriBinderContext {
 	export function create(project: ProjectData): UriBinderContext {
 		return {
 			...ContextBase.create(project),
+			config: project.config,
 			symbols: project.symbols,
 		}
 	}

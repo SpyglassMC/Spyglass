@@ -1,4 +1,5 @@
 import type * as core from '@spyglassmc/core'
+import { registerMcdocAttributes } from './attributes.js'
 import * as colorizer from './colorizer/index.js'
 import type { NbtCompoundNode, NbtNode, NbtPathNode } from './node/index.js'
 import * as parser from './parser/index.js'
@@ -20,4 +21,6 @@ export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	meta.registerParser<NbtPathNode>('nbt:path', parser.path)
 
 	colorizer.register(meta)
+
+	registerMcdocAttributes(meta)
 }
