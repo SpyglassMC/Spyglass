@@ -56,7 +56,7 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 2,
               "end": 5
@@ -85,7 +85,7 @@ exports['nbt compound() Parse "{ foo: true }" 1'] = {
           }
         ],
         "key": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 2,
             "end": 5

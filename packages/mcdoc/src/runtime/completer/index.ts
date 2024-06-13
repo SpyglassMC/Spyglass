@@ -1,11 +1,17 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import type { McdocType, StructTypePairField } from '../../type/index.js'
+import { handleAttributes } from '../attribute/index.js'
 import type { SimplifiedMcdocType } from '../checker/index.js'
+
+export type SimpleCompletionField = {
+	key: string
+	field: core.DeepReadonly<StructTypePairField>
+}
 
 export function getFields(
 	typeDef: core.DeepReadonly<SimplifiedMcdocType>,
-): { key: string; field: core.DeepReadonly<StructTypePairField> }[] {
+): SimpleCompletionField[] {
 	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
@@ -26,11 +32,18 @@ export function getFields(
 	}
 }
 
+export type SimpleCompletionValue = {
+	value: string
+	detail?: string
+	kind?: McdocType['kind']
+	completionKind?: core.CompletionKind
+}
+
 // TODO: only accept SimplifiedMcdocType here
 export function getValues(
 	typeDef: core.DeepReadonly<McdocType>,
 	ctx: core.CompleterContext,
-): { value: string; detail?: string; kind?: McdocType['kind'] }[] {
+): SimpleCompletionValue[] {
 	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
@@ -49,7 +62,11 @@ export function getValues(
 		case 'boolean':
 			return ['false', 'true'].map(v => ({ value: v, kind: 'boolean' }))
 		case 'string':
-			return []
+			const ans: SimpleCompletionValue[] = []
+			handleAttributes(typeDef.attributes, ctx, (handler, config) => {
+				ans.push(...handler.suggestValues?.(config, ctx) ?? [])
+			})
+			return ans
 		case 'enum':
 			return typeDef.values.map(v => ({
 				value: `${v.value}`,

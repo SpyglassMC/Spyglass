@@ -79,6 +79,7 @@ export class MetaRegistry {
 	readonly #parsers = new Map<string, Parser<any>>()
 	readonly #signatureHelpProviders = new Set<SignatureHelpProvider<any>>()
 	readonly #symbolRegistrars = new Map<string, SymbolRegistrarRegistration>()
+	readonly #custom = new Map<string, Map<string, unknown>>()
 	readonly #uriBinders = new Set<UriBinder>()
 	#uriSorter: UriSorter = () => 0
 
@@ -320,6 +321,22 @@ export class MetaRegistry {
 	}
 	public get symbolRegistrars(): Map<string, SymbolRegistrarRegistration> {
 		return this.#symbolRegistrars
+	}
+
+	public registerCustom<T>(
+		group: string,
+		id: string,
+		object: T,
+	): void {
+		let groupRegistry = this.#custom.get(group)
+		if (!groupRegistry) {
+			groupRegistry = new Map()
+			this.#custom.set(group, groupRegistry)
+		}
+		groupRegistry.set(id, object)
+	}
+	public getCustom<T>(group: string) {
+		return this.#custom.get(group) as Map<string, T> | undefined
 	}
 
 	public registerUriBinder(uriBinder: UriBinder): void {

@@ -416,7 +416,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 1,
               "end": 9
@@ -437,7 +437,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
           }
         ],
         "value": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 1,
             "end": 9
@@ -487,7 +487,7 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
         }
       }
     ],
-    "valueType": "string"
+    "valueType": "nbt:string"
   },
   "errors": [
     {
@@ -517,7 +517,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 1,
               "end": 9
@@ -538,7 +538,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
           }
         ],
         "value": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 1,
             "end": 9
@@ -559,7 +559,7 @@ exports['nbt list() Parse "["string"]" 1'] = {
         }
       }
     ],
-    "valueType": "string"
+    "valueType": "nbt:string"
   },
   "errors": []
 }
@@ -738,7 +738,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 11,
               "end": 19
@@ -759,7 +759,7 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
           }
         ],
         "value": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 11,
             "end": 19

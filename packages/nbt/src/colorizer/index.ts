@@ -7,9 +7,11 @@ import type {
 	NbtIntNode,
 	NbtLongNode,
 	NbtShortNode,
+	NbtStringNode,
 } from '../node/index.js'
 
 export function register(meta: MetaRegistry) {
+	meta.registerColorizer<NbtStringNode>('nbt:string', core.colorizer.string)
 	meta.registerColorizer<NbtByteNode>('nbt:byte', core.colorizer.number)
 	meta.registerColorizer<NbtShortNode>('nbt:short', core.colorizer.number)
 	meta.registerColorizer<NbtIntNode>('nbt:int', core.colorizer.number)
