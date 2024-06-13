@@ -70,6 +70,12 @@ export const Categories = (() => {
 		dataPackResource('loot_table', 'loot_tables', { until: '1.21' }),
 		dataPackResource('predicate', 'predicates', { until: '1.21' }),
 		dataPackResource('recipe', 'recipes', { until: '1.21' }),
+		['structures', {
+			category: 'structure',
+			extname: '.nbt',
+			pack: 'data_pack',
+			until: '1.21',
+		}],
 		dataPackResource('tag/block', 'tags/blocks', { until: '1.21' }),
 		dataPackResource('tag/entity_type', 'tags/entity_types', {
 			until: '1.21',
@@ -97,6 +103,12 @@ export const Categories = (() => {
 		dataPackResource('loot_table', { since: '1.21' }),
 		dataPackResource('predicate', { since: '1.21' }),
 		dataPackResource('recipe', { since: '1.21' }),
+		['structure', {
+			category: 'structure',
+			extname: '.nbt',
+			pack: 'data_pack',
+			until: '1.21',
+		}],
 		dataPackResource('tag/block', 'tags/block', { since: '1.21' }),
 		dataPackResource('tag/entity_type', 'tags/entity_type', {
 			since: '1.21',
@@ -112,6 +124,7 @@ export const Categories = (() => {
 		// ---------
 		dataPackResource('banner_pattern', { since: '1.20.5' }),
 		dataPackResource('chat_type', { since: '1.19' }),
+		dataPackResource('damage_type', { since: '1.19.4' }),
 		dataPackResource('enchantment', { since: '1.21' }),
 		dataPackResource('jukebox_song', { since: '1.21' }),
 		dataPackResource('painting_variant', { since: '1.21' }),
@@ -130,9 +143,15 @@ export const Categories = (() => {
 		dataPackResource('worldgen/configured_feature', { since: '1.16.2' }),
 		dataPackResource('worldgen/configured_structure_feature', {
 			since: '1.16.2',
-			until: '1.17',
+			until: '1.19',
 		}),
 		dataPackResource('worldgen/density_function', { since: '1.18.2' }),
+		dataPackResource('worldgen/flat_level_generator_preset', {
+			since: '1.19',
+		}),
+		dataPackResource('worldgen/multi_noise_biome_source_parameter_list', {
+			since: '1.19.4',
+		}),
 		dataPackResource('worldgen/noise', { since: '1.18' }),
 		dataPackResource('worldgen/noise_settings', { since: '1.16.2' }),
 		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
@@ -141,7 +160,10 @@ export const Categories = (() => {
 			since: '1.16.2',
 			until: '1.18',
 		}),
+		dataPackResource('worldgen/structure', { since: '1.19' }),
+		dataPackResource('worldgen/structure_set', { since: '1.18.2' }),
 		dataPackResource('worldgen/template_pool', { since: '1.16.2' }),
+		dataPackResource('worldgen/world_preset', { since: '1.19' }),
 		// ---------
 	])
 
@@ -178,7 +200,7 @@ export function* getRels(
 
 export function dissectUri(uri: string, ctx: UriBinderContext) {
 	const regex =
-		/^data\/([^\/]+)\/((?:tags\/|worldgen\/)?[a-z_]+)\/(.*)(\.(?:mcfunction|json))$/
+		/^data\/([^\/]+)\/((?:tags\/)?(?:worldgen\/)?[a-z_]+)\/(.*)(\.(?:mcfunction|json|nbt))$/
 
 	const rels = getRels(uri, ctx.roots)
 	const { customResources } = ctx.config.env

@@ -25,6 +25,7 @@ export const RegistryCategories = Object.freeze(
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
+		'cat_variant',
 		'chunk_status',
 		'custom_stat',
 		'data_component_type',
@@ -85,6 +86,30 @@ export type RegistryCategory = (typeof RegistryCategories)[number]
 // #endregion
 
 // #region Data Pack Categories
+export const NormalFileCategories = Object.freeze(
+	[
+		'advancement',
+		'banner_pattern',
+		'chat_type',
+		'damage_type',
+		'dimension',
+		'dimension_type',
+		'enchantment',
+		'function',
+		'item_modifier',
+		'jukebox_song',
+		'loot_table',
+		'painting_variant',
+		'predicate',
+		'recipe',
+		'structure',
+		'trim_material',
+		'trim_pattern',
+		'wolf_variant',
+	] as const,
+)
+export type NormalFileCategory = (typeof NormalFileCategories)[number]
+
 export const WorldgenFileCategories = Object.freeze(
 	[
 		'worldgen/biome',
@@ -93,18 +118,23 @@ export const WorldgenFileCategories = Object.freeze(
 		'worldgen/configured_structure_feature',
 		'worldgen/configured_surface_builder',
 		'worldgen/density_function',
+		'worldgen/flat_level_generator_preset',
+		'worldgen/multi_noise_biome_source_parameter_list',
 		'worldgen/noise',
 		'worldgen/noise_settings',
 		'worldgen/placed_feature',
 		'worldgen/processor_list',
+		'worldgen/structure',
+		'worldgen/structure_set',
 		'worldgen/template_pool',
+		'worldgen/world_preset',
 	] as const,
 )
 export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
 
 export const TaggableResourceLocationCategories = Object.freeze(
 	[
-		'function',
+		...NormalFileCategories,
 		...RegistryCategories,
 		...WorldgenFileCategories,
 	] as const,
@@ -128,24 +158,7 @@ export type TagFileCategory = (typeof TagFileCategories)[number]
 
 export const FileCategories = Object.freeze(
 	[
-		'advancement',
-		'banner_pattern',
-		'chat_type',
-		'damage_type',
-		'dimension',
-		'dimension_type',
-		'enchantment',
-		'function',
-		'item_modifier',
-		'jukebox_song',
-		'loot_table',
-		'painting_variant',
-		'predicate',
-		'recipe',
-		'structure',
-		'trim_material',
-		'trim_pattern',
-		'wolf_variant',
+		...NormalFileCategories,
 		...TagFileCategories,
 		...WorldgenFileCategories,
 	] as const,
