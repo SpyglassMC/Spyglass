@@ -137,10 +137,30 @@ export interface MinecraftItemSlotArgumentTreeNode
 {
 	parser: 'minecraft:item_slot'
 }
+export interface MinecraftItemSlotsArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:item_slots'
+}
 export interface MinecraftItemStackArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
 	parser: 'minecraft:item_stack'
+}
+export interface MinecraftLootModifierArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_modifier'
+}
+export interface MinecraftLootPredicateArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_predicate'
+}
+export interface MinecraftLootTableArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:loot_table'
 }
 export interface MinecraftMessageArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:message'
@@ -249,6 +269,14 @@ export interface MinecraftResourceOrTagArgumentTreeNode
 		registry: string
 	}
 }
+export interface MinecraftResourceOrTagKeyArgumentTreeNode
+	extends mcf.ArgumentTreeNode
+{
+	parser: 'minecraft:resource_or_tag_key'
+	properties: {
+		registry: string
+	}
+}
 export interface MinecraftRotationArgumentTreeNode
 	extends mcf.ArgumentTreeNode
 {
@@ -331,7 +359,11 @@ export type ArgumentTreeNode =
 	| MinecraftItemEnchantmentArgumentTreeNode
 	| MinecraftItemPredicateArgumentTreeNode
 	| MinecraftItemSlotArgumentTreeNode
+	| MinecraftItemSlotsArgumentTreeNode
 	| MinecraftItemStackArgumentTreeNode
+	| MinecraftLootModifierArgumentTreeNode
+	| MinecraftLootPredicateArgumentTreeNode
+	| MinecraftLootTableArgumentTreeNode
 	| MinecraftMessageArgumentTreeNode
 	| MinecraftMobEffectArgumentTreeNode
 	| MinecraftNbtCompoundTagArgumentTreeNode
@@ -345,6 +377,7 @@ export type ArgumentTreeNode =
 	| MinecraftResourceKeyArgumentTreeNode
 	| MinecraftResourceLocationArgumentTreeNode
 	| MinecraftResourceOrTagArgumentTreeNode
+	| MinecraftResourceOrTagKeyArgumentTreeNode
 	| MinecraftRotationArgumentTreeNode
 	| MinecraftScoreHolderArgumentTreeNode
 	| MinecraftScoreboardSlotArgumentTreeNode

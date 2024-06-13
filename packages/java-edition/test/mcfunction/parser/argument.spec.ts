@@ -174,11 +174,26 @@ const Suites: Partial<
 			content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
 		},
 	],
-	'minecraft:item_slot': [{ content: ['container.5', 'weapon'] }],
+	'minecraft:item_slot': [
+		{ content: ['container.5', 'weapon', 'contents'] },
+		{ content: ['contents', 'horse.armor'], version: '1.20.5' },
+	],
+	'minecraft:item_slots': [{
+		content: ['weapon', 'container.*', 'armor.head'],
+	}],
 	'minecraft:item_stack': [
 		{
 			content: ['stick', 'minecraft:stick', 'stick{foo:bar}'],
 		},
+	],
+	'minecraft:loot_modifier': [
+		{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] },
+	],
+	'minecraft:loot_predicate': [
+		{ content: ['custom:maybe', '{condition:"random_chance",chance:0.2}'] },
+	],
+	'minecraft:loot_table': [
+		{ content: ['minecraft:blocks/crafting_table', '{pools:[]}'] },
 	],
 	'minecraft:message': [
 		{ content: ['Hello world!', 'foo', '@e', 'Hello @p :)'] },

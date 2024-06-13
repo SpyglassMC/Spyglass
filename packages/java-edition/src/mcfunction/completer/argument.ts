@@ -34,6 +34,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -127,8 +128,18 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, {
 				pool: getItemSlotArgumentValues(ctx),
 			})
+		case 'minecraft:item_slots':
+			return LiteralNode.mock(range, {
+				pool: getItemSlotsArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
 			return ItemNode.mock(range, false)
+		case 'minecraft:loot_modifier':
+			return ResourceLocationNode.mock(range, { category: 'item_modifier' })
+		case 'minecraft:loot_predicate':
+			return ResourceLocationNode.mock(range, { category: 'predicate' })
+		case 'minecraft:loot_table':
+			return ResourceLocationNode.mock(range, { category: 'loot_table' })
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
@@ -145,11 +156,14 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
-				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+				allowTag,
 			})
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(

@@ -10,6 +10,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -192,8 +193,18 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap((src, ctx) => {
 				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
 			})
+		case 'minecraft:item_slots':
+			return wrap((src, ctx) => {
+				return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
+			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
+		case 'minecraft:loot_modifier':
+			return wrap(resourceOrInline('item_modifier'))
+		case 'minecraft:loot_predicate':
+			return wrap(resourceOrInline('predicate'))
+		case 'minecraft:loot_table':
+			return wrap(resourceOrInline('loot_table'))
 		case 'minecraft:message':
 			return wrap(message)
 		case 'minecraft:mob_effect':
@@ -230,12 +241,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(
 						treeNode.properties.registry,
 					) as core.RegistryCategory | core.WorldgenFileCategory,
-					allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':
@@ -707,6 +721,17 @@ function range(
 			return ans
 		},
 	)
+}
+
+function resourceOrInline(category: core.FileCategory) {
+	return core.select([
+		{
+			predicate: (src) =>
+				core.LegalResourceLocationCharacters.has(src.peek()),
+			parser: core.resourceLocation({ category }),
+		},
+		{ parser: nbt.parser.entry },
+	])
 }
 
 function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
