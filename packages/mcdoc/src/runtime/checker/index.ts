@@ -71,7 +71,6 @@ export type McdocCheckerError<T> =
 	| RangeError<T>
 	| TypeMismatchError<T>
 	| MissingKeyError<T>
-	| CustomError<T>
 export interface SimpleError<T> {
 	kind:
 		| 'unknown_key'
@@ -79,6 +78,7 @@ export interface SimpleError<T> {
 		| 'some_missing_keys'
 		| 'sometimes_type_mismatch'
 		| 'expected_key_value_pair'
+		| 'internal'
 	node: RuntimeNode<T>
 }
 export interface UnknownVariantWithKeyCombinationError<T> {
@@ -103,11 +103,6 @@ export interface TypeMismatchError<T> {
 	node: RuntimeNode<T>
 	kind: 'type_mismatch'
 	expected: SimplifiedMcdocType
-}
-export interface CustomError<T> {
-	kind: 'custom'
-	node: RuntimeNode<T>
-	message: string
 }
 
 export type SimplifiedMcdocType =
@@ -511,6 +506,7 @@ export function typeDefinition<T>(
 				attached.add(node.node.originalNode)
 			}
 		}
+		// TODO: attach type info to keys
 		for (const child of node.children) {
 			for (const node of child.possibleValues) {
 				attachTypeInfo(node)
@@ -780,7 +776,7 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	errors.push(
 		...validDefinitions.flatMap(d =>
-			d.errors.filter(e => e.kind === 'custom')
+			d.errors.filter(e => e.kind === 'internal')
 		),
 	)
 
@@ -832,9 +828,21 @@ function checkShallowly<T>(
 	const childDefinitions: (McdocType | undefined)[] = Array(children.length)
 		.fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
+	let assignable = true
 	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-		handler.checkInferred?.(config, simplifiedInferred, options.context)
+		if (
+			handler.checkInferred?.(
+				config,
+				simplifiedInferred,
+				options.context,
+			) === false
+		) {
+			assignable = false
+		}
 	})
+	if (!assignable) {
+		errors.push({ kind: 'internal', node: runtimeNode })
+	}
 	switch (typeDef.kind) {
 		case 'any':
 		case 'unsafe':
@@ -1690,8 +1698,7 @@ export function getDefaultErrorReporter<T>(
 					range,
 				)
 				break
-			case 'custom':
-				ctx.err.report(error.message, range, core.ErrorSeverity.Warning)
+			case 'internal':
 				break
 			default:
 				ctx.err.report(localize(defaultTranslationKey), range)

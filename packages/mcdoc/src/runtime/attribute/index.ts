@@ -11,7 +11,7 @@ export interface McdocAttribute<C = unknown> {
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
 		ctx: core.CheckerContext,
-	) => void
+	) => boolean
 	mapField?: (
 		config: C,
 		field: StructTypePairField,
