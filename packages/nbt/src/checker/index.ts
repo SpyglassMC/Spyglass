@@ -147,7 +147,7 @@ export function definition(
 					// TODO: improve hover info
 					if (
 						core.PairNode.is(node.parent) &&
-						core.StringNode.is(node.parent.key)
+						NbtStringNode.is(node.parent.key)
 					) {
 						node.parent.key.hover =
 							`\`\`\`typescript\n${node.parent.key.value}: ${
@@ -405,7 +405,7 @@ export function path(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!core.StringNode.is(node)) return
+					if (!NbtStringNode.is(node)) return
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
