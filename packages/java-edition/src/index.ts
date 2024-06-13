@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
@@ -10,6 +11,7 @@ import {
 	getVanillaMcdoc,
 	getVersions,
 	PackMcmeta,
+	ReleaseVersion,
 	resolveConfiguredVersion,
 	symbolRegistrar,
 } from './dependency/index.js'
@@ -115,6 +117,59 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				mcdoc.StructKeyNode.is(n) &&
 				!n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
+
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'since',
+		mcdoc.runtime.attribute.validator.string,
+		{
+			filterElement: (config, ctx) => {
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
+					return true
+				}
+				return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
+			},
+		},
+	)
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'until',
+		mcdoc.runtime.attribute.validator.string,
+		{
+			filterElement: (config, ctx) => {
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+					return true
+				}
+				return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
+			},
+		},
+	)
+	mcdoc.runtime.registerAttribute(
+		meta,
+		'deprecated',
+		mcdoc.runtime.attribute.validator.optional(
+			mcdoc.runtime.attribute.validator.string,
+		),
+		{
+			mapField: (config, field, ctx) => {
+				if (config === undefined) {
+					return { ...field, deprecated: true }
+				}
+				if (!config.startsWith('1.')) {
+					ctx.logger.warn(
+						`Invalid mcdoc attribute for "deprecated": ${config}`,
+					)
+					return field
+				}
+				if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
+					return { ...field, deprecated: true }
+				}
+				return field
+			},
+		},
+	)
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)

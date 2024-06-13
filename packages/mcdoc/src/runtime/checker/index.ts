@@ -1,10 +1,4 @@
-import type {
-	AstNode,
-	CheckerContext,
-	FullResourceLocation,
-	Range,
-} from '@spyglassmc/core'
-import { ErrorSeverity } from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import { type EnumKind, RangeKind } from '../../node/index.js'
@@ -25,6 +19,7 @@ import type {
 	UnionType,
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
+import { handleAttributes } from '../attribute/index.js'
 
 export type NodeEquivalenceChecker = (
 	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
@@ -34,6 +29,11 @@ export type NodeEquivalenceChecker = (
 export type TypeInfoAttacher<T> = (
 	node: T,
 	definition: SimplifiedMcdocType,
+) => void
+
+export type StringAttacher<T> = (
+	node: T,
+	attacher: (node: core.StringBaseNode) => void,
 ) => void
 
 export type ChildrenGetter<T> = (
@@ -56,11 +56,12 @@ export interface RuntimePair<T> {
 }
 
 export interface McdocCheckerOptions<T> {
-	context: CheckerContext
+	context: core.CheckerContext
 	isEquivalent: NodeEquivalenceChecker
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
 	attachTypeInfo: TypeInfoAttacher<T>
+	stringAttacher: StringAttacher<T>
 }
 
 export type McdocCheckerError<T> =
@@ -77,6 +78,7 @@ export interface SimpleError<T> {
 		| 'some_missing_keys'
 		| 'sometimes_type_mismatch'
 		| 'expected_key_value_pair'
+		| 'internal'
 	node: RuntimeNode<T>
 }
 export interface UnknownVariantWithKeyCombinationError<T> {
@@ -107,7 +109,7 @@ export type SimplifiedMcdocType =
 	| SimplifiedMcdocTypeNoUnion
 	| UnionType<SimplifiedMcdocTypeNoUnion>
 
-type SimplifiedMcdocTypeNoUnion =
+export type SimplifiedMcdocTypeNoUnion =
 	| SimplifiedEnum
 	| KeywordType
 	| ListType
@@ -128,30 +130,6 @@ export interface SimplifiedStructTypePairField extends StructTypePairField {
 	key: SimplifiedMcdocTypeNoUnion
 }
 
-const attributeHandlers: {
-	[key: string]:
-		| (<N>(
-			node: N,
-			attribute: Attribute,
-			inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			expected: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			options: McdocCheckerOptions<N>,
-		) => McdocCheckerError<N>[])
-		| undefined
-} = {
-	// TODO other attributes
-	// TODO might need different interface, see https://discord.com/channels/666020457568403505/666037123450929163/1240827428452958209
-	id: (_n, attribute, inferred, _e, options) => {
-		if (inferred.kind === 'literal' && inferred.value.kind === 'string') {
-			// TODO check registry
-			if (!inferred.value.value.includes(':')) {
-				inferred.value.value = 'minecraft:' + inferred.value.value
-			}
-		}
-		return []
-	},
-}
-
 export function reference<T>(
 	node: RuntimeNode<T>[],
 	path: string,
@@ -162,7 +140,7 @@ export function reference<T>(
 
 export function dispatcher<T>(
 	node: RuntimeNode<T>[],
-	registry: FullResourceLocation,
+	registry: core.FullResourceLocation,
 	index: string | Index | ParallelIndices,
 	options: McdocCheckerOptions<T>,
 ) {
@@ -181,7 +159,7 @@ export function dispatcher<T>(
 export function isAssignable(
 	assignValue: McdocType,
 	typeDef: McdocType,
-	ctx: CheckerContext,
+	ctx: core.CheckerContext,
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
 	let ans = true
@@ -231,6 +209,7 @@ export function isAssignable(
 		},
 		reportError: () => ans = false,
 		attachTypeInfo: () => {},
+		stringAttacher: () => {},
 	}
 
 	const node: CheckerTreeNode<McdocType> = {
@@ -514,9 +493,20 @@ export function typeDefinition<T>(
 		for (const def of node.validDefinitions) {
 			if (!attached.has(node.node.originalNode)) {
 				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				handleAttributes(
+					def.typeDef.attributes,
+					options.context,
+					(handler, c) => {
+						const attacher = handler.attachString?.(c, options.context)
+						if (attacher) {
+							options.stringAttacher(node.node.originalNode, attacher)
+						}
+					},
+				)
 				attached.add(node.node.originalNode)
 			}
 		}
+		// TODO: attach type info to keys
 		for (const child of node.children) {
 			for (const node of child.possibleValues) {
 				attachTypeInfo(node)
@@ -784,6 +774,12 @@ function condenseErrorsAndFilterSiblings<T>(
 		}
 	}
 
+	errors.push(
+		...validDefinitions.flatMap(d =>
+			d.errors.filter(e => e.kind === 'internal')
+		),
+	)
+
 	return {
 		definitions: validDefinitions.map(d => d.definition),
 		condensedErrors: errors,
@@ -832,21 +828,20 @@ function checkShallowly<T>(
 	const childDefinitions: (McdocType | undefined)[] = Array(children.length)
 		.fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
-	if (typeDef.attributes) {
-		for (const attribute of typeDef.attributes) {
-			const handler = attributeHandlers[attribute.name]
-			if (handler) {
-				errors.push(
-					...handler(
-						runtimeNode.originalNode,
-						attribute,
-						simplifiedInferred,
-						typeDef,
-						options,
-					),
-				)
-			}
+	let assignable = true
+	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
+		if (
+			handler.checkInferred?.(
+				config,
+				simplifiedInferred,
+				options.context,
+			) === false
+		) {
+			assignable = false
 		}
+	})
+	if (!assignable) {
+		errors.push({ kind: 'internal', node: runtimeNode })
 	}
 	switch (typeDef.kind) {
 		case 'any':
@@ -1130,9 +1125,6 @@ export function simplify<T>(
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
 	const ctx = context.options.context
-	if (typeDef.attributes) {
-		// TODO
-	}
 
 	switch (typeDef.kind) {
 		case 'reference':
@@ -1335,6 +1327,14 @@ export function simplify<T>(
 			const members: SimplifiedMcdocTypeNoUnion[] = []
 			for (const member of typeDef.members) {
 				const simplified = simplify(member, context)
+				let keep = true
+				handleAttributes(member.attributes, ctx, (handler, config) => {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, ctx)) {
+						keep = false
+					}
+				})
+				if (!keep) continue
 
 				if (simplified.kind === 'union') {
 					members.push(...simplified.members)
@@ -1345,7 +1345,7 @@ export function simplify<T>(
 			if (members.length === 1) {
 				return members[0]
 			}
-			return { kind: 'union', members: members }
+			return { ...typeDef, kind: 'union', members: members }
 		case 'struct':
 			const literalFields = new Map<string, StructTypePairField>()
 			let complexFields: SimplifiedStructTypePairField[] = []
@@ -1354,6 +1354,19 @@ export function simplify<T>(
 				key: string | SimplifiedMcdocType,
 				field: StructTypePairField,
 			) {
+				let keep = true
+				handleAttributes(field.attributes, ctx, (handler, config) => {
+					if (!keep) return
+					if (handler.filterElement?.(config, ctx) === false) {
+						keep = false
+					}
+					if (handler.mapField) {
+						field = handler.mapField(config, field, ctx)
+					}
+				})
+				if (!keep) {
+					return
+				}
 				if (typeof key === 'string') {
 					literalFields.set(key, field)
 				} else if (key.kind === 'literal' && key.value.kind === 'string') {
@@ -1460,7 +1473,21 @@ export function simplify<T>(
 				})),
 			}
 		case 'enum':
-			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
+			const filteredValues = typeDef.values.filter(value => {
+				let keep = true
+				handleAttributes(value.attributes, ctx, (handler, config) => {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, ctx)) {
+						keep = false
+					}
+				})
+				return keep
+			})
+			return {
+				...typeDef,
+				enumKind: typeDef.enumKind ?? 'int',
+				values: filteredValues,
+			}
 		case 'concrete':
 			const simplifiedArgs = typeDef.typeArgs
 				.map(arg => simplify(arg, context))
@@ -1530,10 +1557,10 @@ function getValueType(
 	}
 }
 
-export function getErrorRangeDefault<T extends AstNode>(
+export function getErrorRangeDefault<T extends core.AstNode>(
 	node: RuntimeNode<T>,
 	error: McdocCheckerError<T>['kind'],
-): Range {
+): core.Range {
 	const { range } = node.originalNode
 	if (
 		error === 'missing_key' ||
@@ -1546,11 +1573,11 @@ export function getErrorRangeDefault<T extends AstNode>(
 }
 
 export function getDefaultErrorReporter<T>(
-	ctx: CheckerContext,
+	ctx: core.CheckerContext,
 	getErrorRange: (
 		node: RuntimeNode<T>,
 		error: McdocCheckerError<T>['kind'],
-	) => Range,
+	) => core.Range,
 ): ErrorReporter<T> {
 	return (error: McdocCheckerError<T>) => {
 		const defaultTranslationKey = error.kind.replaceAll('_', '-')
@@ -1593,7 +1620,7 @@ export function getDefaultErrorReporter<T>(
 							}>`,
 					),
 					range,
-					ErrorSeverity.Warning,
+					core.ErrorSeverity.Warning,
 				)
 				break
 			case 'missing_key':
@@ -1670,6 +1697,8 @@ export function getDefaultErrorReporter<T>(
 					localize(`mcdoc.runtime.checker.${defaultTranslationKey}`),
 					range,
 				)
+				break
+			case 'internal':
 				break
 			default:
 				ctx.err.report(localize(defaultTranslationKey), range)

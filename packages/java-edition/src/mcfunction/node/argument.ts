@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import type * as json from '@spyglassmc/json'
 import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
 
@@ -329,6 +330,19 @@ export namespace IntRangeNode {
 			children: [],
 			value: [undefined, undefined],
 		}
+	}
+}
+
+export interface JsonNode extends core.AstNode {
+	type: 'mcfunction:json'
+	children: [json.JsonNode]
+	value: json.JsonNode
+	typeRef: `::${string}::${string}`
+}
+export namespace JsonNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is JsonNode {
+		return (node as JsonNode).type === 'mcfunction:json'
 	}
 }
 

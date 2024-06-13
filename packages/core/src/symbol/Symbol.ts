@@ -21,29 +21,48 @@ export type McdocCategory = (typeof McdocCategories)[number]
 export const RegistryCategories = Object.freeze(
 	[
 		'activity',
+		'armor_material',
 		'attribute',
 		'block',
 		'block_entity_type',
 		'block_predicate_type',
+		'block_type',
+		'cat_variant',
 		'chunk_status',
+		'command_argument_type',
+		'creative_mode_tab',
 		'custom_stat',
+		'data_component_type',
+		'decorated_pot_pattern',
+		'enchantment_effect_component_type',
+		'enchantment_entity_effect_type',
+		'enchantment_level_based_value_type',
+		'enchantment_location_based_effect_type',
+		'enchantment_provider_type',
+		'enchantment_value_effect_type',
+		'entity_sub_predicate_type',
 		'entity_type',
 		'float_provider_type',
 		'fluid',
+		'frog_variant',
 		'game_event',
 		'height_provider_type',
+		'instrument',
 		'int_provider_type',
 		'item',
+		'item_sub_predicate_type',
 		'loot_condition_type',
 		'loot_function_type',
 		'loot_nbt_provider_type',
 		'loot_number_provider_type',
 		'loot_pool_entry_type',
 		'loot_score_provider_type',
+		'map_decoration_type',
 		'memory_module_type',
 		'menu',
 		'mob_effect',
-		'motive',
+		'motive', // Removed
+		'number_format_type',
 		'particle_type',
 		'point_of_interest_type',
 		'pos_rule_test',
@@ -51,30 +70,37 @@ export const RegistryCategories = Object.freeze(
 		'potion',
 		'recipe_serializer',
 		'recipe_type',
+		'rule_block_entity_modifier',
 		'rule_test',
 		'schedule',
 		'sensor_type',
 		'sound_event',
 		'stat_type',
+		'trigger_type',
 		'villager_profession',
 		'villager_type',
 		'worldgen/biome_source',
-		'worldgen/block_placer_type', // Removed from Minecraft at some point. Still used by JSON checkers.
+		'worldgen/block_placer_type', // Removed
 		'worldgen/block_state_provider_type',
 		'worldgen/carver',
 		'worldgen/chunk_generator',
-		'worldgen/decorator',
+		'worldgen/decorator', // Removed
+		'worldgen/density_function_type',
 		'worldgen/feature',
 		'worldgen/feature_size_type',
 		'worldgen/foliage_placer_type',
 		'worldgen/material_condition',
 		'worldgen/material_rule',
 		'worldgen/placement_modifier_type',
-		'worldgen/structure_feature',
+		'worldgen/pool_alias_binding',
+		'worldgen/root_placer_type',
+		'worldgen/structure_feature', // Removed
 		'worldgen/structure_piece',
+		'worldgen/structure_placement',
 		'worldgen/structure_pool_element',
 		'worldgen/structure_processor',
-		'worldgen/surface_builder', // Removed from Minecraft at some point. Still used by JSON checkers.
+		'worldgen/structure_type',
+		'worldgen/surface_builder', // Removed
 		'worldgen/tree_decorator_type',
 		'worldgen/trunk_placer_type',
 	] as const,
@@ -83,39 +109,7 @@ export type RegistryCategory = (typeof RegistryCategories)[number]
 // #endregion
 
 // #region Data Pack Categories
-export const WorldgenFileCategories = Object.freeze(
-	[
-		'worldgen/biome',
-		'worldgen/configured_carver',
-		'worldgen/configured_feature',
-		'worldgen/configured_structure_feature',
-		'worldgen/configured_surface_builder',
-		'worldgen/density_function',
-		'worldgen/noise',
-		'worldgen/noise_settings',
-		'worldgen/placed_feature',
-		'worldgen/processor_list',
-		'worldgen/template_pool',
-	] as const,
-)
-export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
-
-export const TaggableResourceLocationCategories = Object.freeze(
-	[
-		'function',
-		...RegistryCategories,
-		...WorldgenFileCategories,
-	] as const,
-)
-export type TaggableResourceLocationCategory =
-	(typeof TaggableResourceLocationCategories)[number]
-
-export const TagFileCategories = Object.freeze(
-	TaggableResourceLocationCategories.map((key) => `tag/${key}` as const),
-)
-export type TagFileCategory = (typeof TagFileCategories)[number]
-
-export const FileCategories = Object.freeze(
+export const NormalFileCategories = Object.freeze(
 	[
 		'advancement',
 		'banner_pattern',
@@ -135,6 +129,59 @@ export const FileCategories = Object.freeze(
 		'trim_material',
 		'trim_pattern',
 		'wolf_variant',
+	] as const,
+)
+export type NormalFileCategory = (typeof NormalFileCategories)[number]
+
+export const WorldgenFileCategories = Object.freeze(
+	[
+		'worldgen/biome',
+		'worldgen/configured_carver',
+		'worldgen/configured_feature',
+		'worldgen/configured_structure_feature',
+		'worldgen/configured_surface_builder',
+		'worldgen/density_function',
+		'worldgen/flat_level_generator_preset',
+		'worldgen/multi_noise_biome_source_parameter_list',
+		'worldgen/noise',
+		'worldgen/noise_settings',
+		'worldgen/placed_feature',
+		'worldgen/processor_list',
+		'worldgen/structure',
+		'worldgen/structure_set',
+		'worldgen/template_pool',
+		'worldgen/world_preset',
+	] as const,
+)
+export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
+
+export const TaggableResourceLocationCategories = Object.freeze(
+	[
+		...NormalFileCategories,
+		...RegistryCategories,
+		...WorldgenFileCategories,
+	] as const,
+)
+export type TaggableResourceLocationCategory =
+	(typeof TaggableResourceLocationCategories)[number]
+export namespace TaggableResourceLocationCategory {
+	export function is(
+		category: string,
+	): category is TaggableResourceLocationCategory {
+		return TaggableResourceLocationCategories.includes(
+			category as TaggableResourceLocationCategory,
+		)
+	}
+}
+
+export const TagFileCategories = Object.freeze(
+	TaggableResourceLocationCategories.map((key) => `tag/${key}` as const),
+)
+export type TagFileCategory = (typeof TagFileCategories)[number]
+
+export const FileCategories = Object.freeze(
+	[
+		...NormalFileCategories,
 		...TagFileCategories,
 		...WorldgenFileCategories,
 	] as const,
