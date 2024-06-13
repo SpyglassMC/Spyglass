@@ -1,11 +1,11 @@
-import { ContextBase } from '@spyglassmc/core'
+import { ContextBase, UriBinderContext } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { dissectUri } from '../../../lib/binder/index.js'
 
 describe('dissectUri()', () => {
-	const ctx = ContextBase.create(
+	const ctx = UriBinderContext.create(
 		mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: '1.17' } }),
 	)
 	const suites: { uri: string }[] = [
