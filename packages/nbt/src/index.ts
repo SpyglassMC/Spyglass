@@ -1,4 +1,5 @@
 import type * as core from '@spyglassmc/core'
+import { registerMcdocAttributes } from './attributes.js'
 import * as colorizer from './colorizer/index.js'
 import * as completer from './completer/index.js'
 import type { NbtCompoundNode, NbtNode, NbtPathNode } from './node/index.js'
@@ -23,4 +24,6 @@ export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 
 	colorizer.register(meta)
 	completer.register(meta)
+
+	registerMcdocAttributes(meta)
 }

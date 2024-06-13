@@ -29,6 +29,7 @@ import type {
 	FloatRangeNode,
 	IntRangeNode,
 	ItemNode,
+	JsonNode,
 	MessageNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -143,7 +144,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(component)
+			return wrap(jsonParser('::java::server::util::text::Text'))
 		case 'minecraft:dimension':
 			return wrap(
 				core.resourceLocation({
@@ -255,7 +256,7 @@ export const argument: mcf.ArgumentParserGetter = (
 			// But I do not want to spend time supporting them.
 			return wrap(core.literal(...ScoreboardSlotArgumentValues))
 		case 'minecraft:style':
-			return wrap(json.parser.object)
+			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
@@ -340,7 +341,21 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-export const component = json.parser.entry
+function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
+	return core.map(
+		json.parser.entry,
+		(res) => {
+			const ans: JsonNode = {
+				type: 'mcfunction:json',
+				range: res.range,
+				children: [res],
+				value: res,
+				typeRef,
+			}
+			return ans
+		},
+	)
+}
 
 function double(
 	min = DoubleMin,

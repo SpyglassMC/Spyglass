@@ -239,9 +239,11 @@ export namespace NbtLongArrayNode {
 // #endregion
 // #endregion
 
+export type NbtPathChild = NbtStringNode | NbtCompoundNode | NbtPathIndexNode
+
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path'
-	children: (NbtStringNode | NbtCompoundNode | NbtPathIndexNode)[]
+	children: NbtPathChild[]
 	targetType?: mcdoc.McdocType | undefined
 }
 export namespace NbtPathNode {
