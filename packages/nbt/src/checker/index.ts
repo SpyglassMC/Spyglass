@@ -2,7 +2,11 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type { NbtNode, NbtPathChild, NbtPathNode } from '../node/index.js'
-import { NbtCompoundNode, NbtPathIndexNode } from '../node/index.js'
+import {
+	NbtCompoundNode,
+	NbtPathIndexNode,
+	NbtStringNode,
+} from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -139,6 +143,7 @@ export function definition(
 					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
 				),
 				attachTypeInfo: (node, definition) => {
+					node.typeDef = definition
 					// TODO: improve hover info
 					if (
 						core.PairNode.is(node.parent) &&
@@ -151,7 +156,7 @@ export function definition(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!core.StringNode.is(node)) return
+					if (!NbtStringNode.is(node)) return
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
@@ -198,7 +203,7 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 				kind: 'literal',
 				value: { kind: 'short', value: node.value },
 			}
-		case 'string':
+		case 'nbt:string':
 			return {
 				kind: 'literal',
 				value: { kind: 'string', value: node.value },
@@ -239,7 +244,7 @@ export function blockStates(
 				)
 				continue
 			} else if (
-				valueNode.type !== 'string' && valueNode.type !== 'nbt:int'
+				valueNode.type !== 'nbt:string' && valueNode.type !== 'nbt:int'
 			) {
 				ctx.err.report(
 					localize('nbt.checker.block-states.unexpected-value-type'),
@@ -358,7 +363,7 @@ export function path(
 							inferredType: inferPath(link.next),
 						}]]
 					}
-					if (core.StringNode.is(link.node)) {
+					if (NbtStringNode.is(link.node)) {
 						return [{
 							key: {
 								originalNode: link,
@@ -392,7 +397,7 @@ export function path(
 				attachTypeInfo: (link, definition) => {
 					// TODO: attach type def
 					// TODO: improve hover info
-					if (core.StringNode.is(link.prev?.node)) {
+					if (NbtStringNode.is(link.prev?.node)) {
 						link.prev.node.hover =
 							`\`\`\`typescript\n${link.prev.node.value}: ${
 								mcdoc.McdocType.toString(definition)

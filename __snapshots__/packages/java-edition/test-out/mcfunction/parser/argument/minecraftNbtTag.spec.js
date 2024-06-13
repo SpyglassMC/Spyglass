@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:nbt_tag Parse ""foo"" 1'] = {
   "node": {
-    "type": "string",
+    "type": "nbt:string",
     "range": {
       "start": 0,
       "end": 5
@@ -86,7 +86,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
         },
         "children": [
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 1,
               "end": 4
@@ -106,7 +106,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
             ]
           },
           {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 5,
               "end": 8
@@ -127,7 +127,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
           }
         ],
         "key": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 1,
             "end": 4
@@ -151,7 +151,7 @@ exports['mcfunction argument minecraft:nbt_tag Parse "{foo:bar}" 1'] = {
           "end": 5
         },
         "value": {
-          "type": "string",
+          "type": "nbt:string",
           "range": {
             "start": 5,
             "end": 8

@@ -20,11 +20,7 @@ interface JsonBaseNode {
 export type JsonNode =
 	| JsonObjectNode
 	| JsonArrayNode
-	| JsonStringNode
-	| JsonNumberNode
-	| JsonBooleanNode
-	| JsonNullNode
-export type JsonRelatedNode = JsonNode | JsonPairNode | JsonItemNode
+	| JsonPrimitiveNode
 export namespace JsonNode {
 	export function is(node: core.AstNode): node is JsonNode {
 		return (
@@ -35,10 +31,6 @@ export namespace JsonNode {
 			JsonBooleanNode.is(node) ||
 			JsonNullNode.is(node)
 		)
-	}
-
-	export function isRelated(node: core.AstNode): node is JsonRelatedNode {
-		return JsonNode.is(node) || JsonPairNode.is(node) || JsonItemNode.is(node)
 	}
 }
 
@@ -85,13 +77,12 @@ export namespace JsonArrayNode {
 		}
 	}
 }
-export type JsonItemNode = core.ItemNode<JsonNode>
-export namespace JsonItemNode {
-	/* istanbul ignore next */
-	export function is(obj: object): obj is JsonItemNode {
-		return (obj as JsonItemNode).type === 'item'
-	}
-}
+
+export type JsonPrimitiveNode =
+	| JsonStringNode
+	| JsonNumberNode
+	| JsonBooleanNode
+	| JsonNullNode
 
 export interface JsonStringNode extends core.StringBaseNode, JsonBaseNode {
 	readonly type: 'json:string'

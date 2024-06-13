@@ -84,27 +84,30 @@ const index: PartParser = (children, src, ctx) => {
 }
 
 const key: PartParser = (children, src, ctx) => {
-	const node = core.string({
-		colorTokenType: 'property',
-		escapable: {},
-		// Single quotes supported since 1.20 Pre-release 2 (roughly pack format 15)
-		// https://bugs.mojang.com/browse/MC-175504
-		quotes: ['"', "'"],
-		unquotable: {
-			blockList: new Set([
-				'\n',
-				'\r',
-				'\t',
-				' ',
-				'"',
-				'[',
-				']',
-				'.',
-				'{',
-				'}',
-			]),
-		},
-	})(src, ctx)
+	const node = core.setType(
+		'nbt:string',
+		core.string({
+			colorTokenType: 'property',
+			escapable: {},
+			// Single quotes supported since 1.20 Pre-release 2 (roughly pack format 15)
+			// https://bugs.mojang.com/browse/MC-175504
+			quotes: ['"', "'"],
+			unquotable: {
+				blockList: new Set([
+					'\n',
+					'\r',
+					'\t',
+					' ',
+					'"',
+					'[',
+					']',
+					'.',
+					'{',
+					'}',
+				]),
+			},
+		}),
+	)(src, ctx)
 	children.push(node)
 
 	return src.trySkip('.') ? ['index', 'key'] : ['end', 'filter', 'index']
