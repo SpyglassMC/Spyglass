@@ -167,6 +167,7 @@
   "nbt.node.path.key": "a key",
   "nbt.node.short": "a short tag",
   "nbt.node.string": "a string tag",
+  "nbt.path": "an NBT path",
   "nbt.parser.number.out-of-range": "This looks like %0%, but it is actually %1% due to the numeral value being out of [%2%, %3%]",
   "not-matching-any-child": "Invalid argument type",
   "nothing": "nothing",

@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { entry } from './parser/entry.js'
+import { path } from './parser/path.js'
 
 const nbtValidator: mcdoc.runtime.attribute.validator.McdocAttributeValidator<
 	core.DeepReadonly<mcdoc.McdocType>
@@ -33,6 +34,28 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 					)
 				}
 				node.children = [nbt]
+			}
+		},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'nbt_path', nbtValidator, {
+		attachString: (config, ctx) => {
+			return (node) => {
+				const src = new core.Source(node.value, node.valueMap)
+				const nbtPath = path(src, ctx)
+				if (nbtPath === core.Failure) {
+					ctx.err.report(
+						localize('expected', localize('nbt.path')),
+						node,
+					)
+					return
+				}
+				if (src.canRead()) {
+					ctx.err.report(
+						localize('mcdoc.runtime.checker.trailing'),
+						core.Range.create(src.cursor, src.skipRemaining()),
+					)
+				}
+				node.children = [nbtPath]
 			}
 		},
 	})
