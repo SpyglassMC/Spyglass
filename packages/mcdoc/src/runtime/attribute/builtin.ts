@@ -43,7 +43,7 @@ function getResourceLocationOptions(
 			usageType: definition ? 'definition' : 'reference',
 		}
 	}
-	ctx.logger.warn(`Invalid resource location registry ${registry}`)
+	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
 	return undefined
 }
 

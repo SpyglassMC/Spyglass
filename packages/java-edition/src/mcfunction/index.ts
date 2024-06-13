@@ -80,10 +80,18 @@ export const initialize = (
 		),
 		{
 			attachString: (config, ctx) => {
-				const argParser = parser.argument({
-					type: 'argument',
-					parser: config,
-				})
+				let argParser
+				try {
+					argParser = parser.argument({
+						type: 'argument',
+						parser: config,
+					})
+				} catch (e) {
+					ctx.logger.warn(
+						`[mcdoc command_argument] Failed to create parser ${config}`,
+					)
+					return undefined
+				}
 				return (node) => {
 					const src = new core.Source(node.value, node.valueMap)
 					if (!argParser) {

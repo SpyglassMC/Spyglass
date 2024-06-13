@@ -57,14 +57,14 @@ export function handleAttributes(
 	for (const { name, value } of attributes ?? []) {
 		const handler = getAttribute(ctx.meta, name)
 		if (!handler) {
-			ctx.logger.warn(`Unhandled mcdoc attribute ${name}`)
+			ctx.logger.warn(`[mcdoc] Unhandled attribute ${name}`)
 			continue
 		}
 
 		const config = handler.validator(value, ctx)
 		if (config === core.Failure) {
 			ctx.logger.warn(
-				`Invalid mcdoc attribute ${name}: ${JSON.stringify(value)}`,
+				`[mcdoc] Invalid attribute ${name}: ${JSON.stringify(value)}`,
 			)
 			continue
 		}
