@@ -16,20 +16,135 @@ exports['mcfunction argument minecraft:loot_table Parse "minecraft:blocks/crafti
 
 exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
   "node": {
-    "type": "nbt:compound",
+    "type": "mcfunction:nbt_resource",
     "range": {
       "start": 0,
       "end": 10
     },
     "children": [
       {
-        "type": "pair",
+        "type": "nbt:compound",
         "range": {
-          "start": 1,
-          "end": 9
+          "start": 0,
+          "end": 10
         },
         "children": [
           {
+            "type": "pair",
+            "range": {
+              "start": 1,
+              "end": 9
+            },
+            "children": [
+              {
+                "type": "nbt:string",
+                "range": {
+                  "start": 1,
+                  "end": 6
+                },
+                "value": "pools",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 1,
+                      "end": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "nbt:list",
+                "range": {
+                  "start": 7,
+                  "end": 9
+                },
+                "children": []
+              }
+            ],
+            "key": {
+              "type": "nbt:string",
+              "range": {
+                "start": 1,
+                "end": 6
+              },
+              "value": "pools",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 1,
+                    "end": 1
+                  }
+                }
+              ]
+            },
+            "sep": {
+              "start": 6,
+              "end": 7
+            },
+            "value": {
+              "type": "nbt:list",
+              "range": {
+                "start": 7,
+                "end": 9
+              },
+              "children": []
+            }
+          }
+        ]
+      }
+    ],
+    "value": {
+      "type": "nbt:compound",
+      "range": {
+        "start": 0,
+        "end": 10
+      },
+      "children": [
+        {
+          "type": "pair",
+          "range": {
+            "start": 1,
+            "end": 9
+          },
+          "children": [
+            {
+              "type": "nbt:string",
+              "range": {
+                "start": 1,
+                "end": 6
+              },
+              "value": "pools",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 1,
+                    "end": 1
+                  }
+                }
+              ]
+            },
+            {
+              "type": "nbt:list",
+              "range": {
+                "start": 7,
+                "end": 9
+              },
+              "children": []
+            }
+          ],
+          "key": {
             "type": "nbt:string",
             "range": {
               "start": 1,
@@ -49,7 +164,11 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
               }
             ]
           },
-          {
+          "sep": {
+            "start": 6,
+            "end": 7
+          },
+          "value": {
             "type": "nbt:list",
             "range": {
               "start": 7,
@@ -57,41 +176,10 @@ exports['mcfunction argument minecraft:loot_table Parse "{pools:[]}" 1'] = {
             },
             "children": []
           }
-        ],
-        "key": {
-          "type": "nbt:string",
-          "range": {
-            "start": 1,
-            "end": 6
-          },
-          "value": "pools",
-          "valueMap": [
-            {
-              "inner": {
-                "start": 0,
-                "end": 0
-              },
-              "outer": {
-                "start": 1,
-                "end": 1
-              }
-            }
-          ]
-        },
-        "sep": {
-          "start": 6,
-          "end": 7
-        },
-        "value": {
-          "type": "nbt:list",
-          "range": {
-            "start": 7,
-            "end": 9
-          },
-          "children": []
         }
-      }
-    ]
+      ]
+    },
+    "category": "loot_table"
   },
   "errors": []
 }

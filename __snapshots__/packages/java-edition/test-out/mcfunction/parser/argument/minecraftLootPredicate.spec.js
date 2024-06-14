@@ -15,20 +15,244 @@ exports['mcfunction argument minecraft:loot_predicate Parse "custom:maybe" 1'] =
 
 exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_chance",chance:0.2}" 1'] = {
   "node": {
-    "type": "nbt:compound",
+    "type": "mcfunction:nbt_resource",
     "range": {
       "start": 0,
       "end": 38
     },
     "children": [
       {
-        "type": "pair",
+        "type": "nbt:compound",
         "range": {
-          "start": 1,
-          "end": 27
+          "start": 0,
+          "end": 38
         },
         "children": [
           {
+            "type": "pair",
+            "range": {
+              "start": 1,
+              "end": 27
+            },
+            "children": [
+              {
+                "type": "nbt:string",
+                "range": {
+                  "start": 1,
+                  "end": 10
+                },
+                "value": "condition",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 1,
+                      "end": 1
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "nbt:string",
+                "range": {
+                  "start": 11,
+                  "end": 26
+                },
+                "value": "random_chance",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 12,
+                      "end": 12
+                    }
+                  }
+                ]
+              }
+            ],
+            "key": {
+              "type": "nbt:string",
+              "range": {
+                "start": 1,
+                "end": 10
+              },
+              "value": "condition",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 1,
+                    "end": 1
+                  }
+                }
+              ]
+            },
+            "sep": {
+              "start": 10,
+              "end": 11
+            },
+            "value": {
+              "type": "nbt:string",
+              "range": {
+                "start": 11,
+                "end": 26
+              },
+              "value": "random_chance",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 12,
+                    "end": 12
+                  }
+                }
+              ]
+            },
+            "end": {
+              "start": 26,
+              "end": 27
+            }
+          },
+          {
+            "type": "pair",
+            "range": {
+              "start": 27,
+              "end": 37
+            },
+            "children": [
+              {
+                "type": "nbt:string",
+                "range": {
+                  "start": 27,
+                  "end": 33
+                },
+                "value": "chance",
+                "valueMap": [
+                  {
+                    "inner": {
+                      "start": 0,
+                      "end": 0
+                    },
+                    "outer": {
+                      "start": 27,
+                      "end": 27
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "nbt:double",
+                "range": {
+                  "start": 34,
+                  "end": 37
+                },
+                "value": 0.2
+              }
+            ],
+            "key": {
+              "type": "nbt:string",
+              "range": {
+                "start": 27,
+                "end": 33
+              },
+              "value": "chance",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 27,
+                    "end": 27
+                  }
+                }
+              ]
+            },
+            "sep": {
+              "start": 33,
+              "end": 34
+            },
+            "value": {
+              "type": "nbt:double",
+              "range": {
+                "start": 34,
+                "end": 37
+              },
+              "value": 0.2
+            }
+          }
+        ]
+      }
+    ],
+    "value": {
+      "type": "nbt:compound",
+      "range": {
+        "start": 0,
+        "end": 38
+      },
+      "children": [
+        {
+          "type": "pair",
+          "range": {
+            "start": 1,
+            "end": 27
+          },
+          "children": [
+            {
+              "type": "nbt:string",
+              "range": {
+                "start": 1,
+                "end": 10
+              },
+              "value": "condition",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 1,
+                    "end": 1
+                  }
+                }
+              ]
+            },
+            {
+              "type": "nbt:string",
+              "range": {
+                "start": 11,
+                "end": 26
+              },
+              "value": "random_chance",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 12,
+                    "end": 12
+                  }
+                }
+              ]
+            }
+          ],
+          "key": {
             "type": "nbt:string",
             "range": {
               "start": 1,
@@ -48,7 +272,11 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
               }
             ]
           },
-          {
+          "sep": {
+            "start": 10,
+            "end": 11
+          },
+          "value": {
             "type": "nbt:string",
             "range": {
               "start": 11,
@@ -67,65 +295,49 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
                 }
               }
             ]
+          },
+          "end": {
+            "start": 26,
+            "end": 27
           }
-        ],
-        "key": {
-          "type": "nbt:string",
+        },
+        {
+          "type": "pair",
           "range": {
-            "start": 1,
-            "end": 10
+            "start": 27,
+            "end": 37
           },
-          "value": "condition",
-          "valueMap": [
+          "children": [
             {
-              "inner": {
-                "start": 0,
-                "end": 0
+              "type": "nbt:string",
+              "range": {
+                "start": 27,
+                "end": 33
               },
-              "outer": {
-                "start": 1,
-                "end": 1
-              }
-            }
-          ]
-        },
-        "sep": {
-          "start": 10,
-          "end": 11
-        },
-        "value": {
-          "type": "nbt:string",
-          "range": {
-            "start": 11,
-            "end": 26
-          },
-          "value": "random_chance",
-          "valueMap": [
+              "value": "chance",
+              "valueMap": [
+                {
+                  "inner": {
+                    "start": 0,
+                    "end": 0
+                  },
+                  "outer": {
+                    "start": 27,
+                    "end": 27
+                  }
+                }
+              ]
+            },
             {
-              "inner": {
-                "start": 0,
-                "end": 0
+              "type": "nbt:double",
+              "range": {
+                "start": 34,
+                "end": 37
               },
-              "outer": {
-                "start": 12,
-                "end": 12
-              }
+              "value": 0.2
             }
-          ]
-        },
-        "end": {
-          "start": 26,
-          "end": 27
-        }
-      },
-      {
-        "type": "pair",
-        "range": {
-          "start": 27,
-          "end": 37
-        },
-        "children": [
-          {
+          ],
+          "key": {
             "type": "nbt:string",
             "range": {
               "start": 27,
@@ -145,7 +357,11 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
               }
             ]
           },
-          {
+          "sep": {
+            "start": 33,
+            "end": 34
+          },
+          "value": {
             "type": "nbt:double",
             "range": {
               "start": 34,
@@ -153,41 +369,10 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
             },
             "value": 0.2
           }
-        ],
-        "key": {
-          "type": "nbt:string",
-          "range": {
-            "start": 27,
-            "end": 33
-          },
-          "value": "chance",
-          "valueMap": [
-            {
-              "inner": {
-                "start": 0,
-                "end": 0
-              },
-              "outer": {
-                "start": 27,
-                "end": 27
-              }
-            }
-          ]
-        },
-        "sep": {
-          "start": 33,
-          "end": 34
-        },
-        "value": {
-          "type": "nbt:double",
-          "range": {
-            "start": 34,
-            "end": 37
-          },
-          "value": 0.2
         }
-      }
-    ]
+      ]
+    },
+    "category": "predicate"
   },
   "errors": []
 }
