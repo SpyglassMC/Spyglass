@@ -1197,7 +1197,11 @@ export function simplify<T>(
 						)
 						break
 					}
-					lookup.push(index.value)
+					if (index.value.startsWith('minecraft:')) {
+						lookup.push(index.value.substring(10))
+					} else {
+						lookup.push(index.value)
+					}
 				} else {
 					let possibilities: SimplifyNode<T>[] = context.isMember
 						? [{

@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
+import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
@@ -10,6 +11,8 @@ import {
 	EntityNode,
 	ItemNode,
 	JsonNode,
+	NbtNode,
+	NbtResourceNode,
 	ParticleNode,
 } from '../node/index.js'
 
@@ -32,17 +35,19 @@ const getNode = (
 ): core.AstNode | undefined => {
 	return nodes[index]?.children[0]
 }
+const getNamedNode = (
+	nodes: mcf.CommandNode['children'],
+	name: string,
+): core.AstNode | undefined => {
+	return nodes.find(n => n.path[n.path.length - 1] === name)?.children[0]
+}
 
 const rootCommand = (
 	nodes: mcf.CommandNode['children'],
 	index: number,
 	ctx: core.CheckerContext,
 ) => {
-	for (
-		const {
-			children: [node],
-		} of nodes
-	) {
+	for (const { children: [node] } of nodes) {
 		if (BlockNode.is(node)) {
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
@@ -53,91 +58,13 @@ const rootCommand = (
 			particle(node, ctx)
 		} else if (JsonNode.is(node)) {
 			jsonChecker(node, ctx)
+		} else if (NbtResourceNode.is(node)) {
+			nbtResource(node, ctx)
+		} else if (NbtNode.is(node) && node.properties) {
+			const by = getNamedNode(nodes, node.properties.dispatchedBy)
+			// TODO: support `indexedBy`
+			nbtChecker(by)(node, ctx)
 		}
-	}
-
-	if (getName(nodes, index) === 'data') {
-		if (getName(nodes, index + 1) === 'get') {
-			nbtPath(nodes, index + 2, ctx)
-		} else if (getName(nodes, index + 1) === 'merge') {
-			dataMergeTarget(nodes, index + 2, ctx)
-		} else if (getName(nodes, index + 1) === 'modify') {
-			nbtPath(nodes, index + 2, ctx)
-			const targetPath = getNode(nodes, index + 4)
-			// if (nbt.NbtPathNode.is(targetPath)) {
-			// 	const operationNode = getNode(nodes, index + 5)
-			// 	const operation = getName(nodes, index + 5) as 'append' | 'insert' | 'merge' | 'prepend' | 'set' | undefined
-			// 	const sourceTypeIndex = operation === 'insert' ? index + 7 : index + 6
-			// 	let targetMcdocType: mcdoc.McdocType | undefined = targetPath.targetType ? mcdoc.simplifyType(targetPath.targetType) : undefined
-			// 	const isType = (type: mcdoc.McdocType['kind']) => !targetMcdocType || targetMcdocType.kind === type || (targetMcdocType.type === 'union' && targetMcdocType.members.some(m => m.type === type))
-			// 	if (operation === 'merge') {
-			// 		if (!(isType('compound') || isType('index'))) {
-			// 			ctx.err.report(
-			// 				localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.compound'), localeQuote(mcdoc.McdocType.toString(targetMcdocType))),
-			// 				core.Range.span(targetPath, operationNode!),
-			// 				core.ErrorSeverity.Warning
-			// 			)
-			// 			targetMcdocType = undefined
-			// 		}
-			// 	} else if (operation === 'append' || operation === 'insert' || operation === 'prepend') {
-			// 		if (isType('list') || isType('byte_array') || isType('int_array') || isType('long_array')) {
-			// 			if (targetMcdocType?.type === 'list') {
-			// 				targetMcdocType = targetMcdocType.item
-			// 			} else if (targetMcdocType?.type === 'byte_array') {
-			// 				targetMcdocType = { type: 'byte', valueRange: targetMcdocType.valueRange }
-			// 			} else if (targetMcdocType?.type === 'int_array') {
-			// 				targetMcdocType = { type: 'int', valueRange: targetMcdocType.valueRange }
-			// 			} else if (targetMcdocType?.type === 'long_array') {
-			// 				targetMcdocType = { type: 'long', valueRange: targetMcdocType.valueRange }
-			// 			}
-			// 		} else {
-			// 			ctx.err.report(
-			// 				localize('mcfunction.checker.command.data-modify-unapplicable-operation', localeQuote(operation), localize('nbt.node.list'), localeQuote(mcdoc.McdocType.toString(targetMcdocType))),
-			// 				core.Range.span(targetPath, operationNode!),
-			// 				core.ErrorSeverity.Warning
-			// 			)
-			// 			targetMcdocType = undefined
-			// 		}
-			// 	}
-			// 	if (targetMcdocType) {
-			// 		if (getName(nodes, sourceTypeIndex) === 'from') {
-			// 			// `from <$nbtPath$>`
-			// 			nbtPath(nodes, sourceTypeIndex + 1, ctx)
-			// 			const sourcePath = getNode(nodes, sourceTypeIndex + 3)
-			// 			if (nbt.NbtPathNode.is(sourcePath)) {
-			// 				const { errorMessage } = mcdoc.checkAssignability({ source: sourcePath.targetType, target: targetMcdocType })
-			// 				if (errorMessage) {
-			// 					ctx.err.report(errorMessage, core.Range.span(targetPath, sourcePath), core.ErrorSeverity.Warning)
-			// 				}
-			// 			}
-			// 		} else if (getName(nodes, sourceTypeIndex) === 'value') {
-			// 			// `value <value: nbt_tag>`
-			// 			const valueNode = getNode(nodes, sourceTypeIndex + 1)
-			// 			if (nbt.NbtNode.is(valueNode)) {
-			// 				nbt.checker.fieldValue(targetMcdocType, { allowUnknownKey: true })(valueNode, ctx)
-			// 			}
-			// 		}
-			// 	}
-			// }
-		} else if (getName(nodes, index + 1) === 'remove') {
-			nbtPath(nodes, index + 2, ctx)
-		}
-	} else if (getName(nodes, index) === 'execute') {
-		for (let i = index + 1; i < nodes.length; i++) {
-			if (
-				(getName(nodes, i) === 'if' || getName(nodes, i) === 'unless') &&
-				getName(nodes, i + 1) === 'data'
-			) {
-				// `if|unless data <$nbtPath$>`
-				nbtPath(nodes, i + 2, ctx)
-				i += 2
-			} else if (getName(nodes, i) === 'run') {
-				rootCommand(nodes, i + 1, ctx)
-				break
-			}
-		}
-	} else if (getName(nodes, index) === 'summon') {
-		summonNbt(nodes, index + 1, ctx)
 	}
 }
 
@@ -148,22 +75,24 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 	}
 
 	nbt.checker.index(
-		'block',
+		'minecraft:block_entity',
 		core.ResourceLocationNode.toString(node.id, 'full'),
 	)(node.nbt, ctx)
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
-	const nbtPair = node.selector?.arguments?.children.find(
-		(pair) => pair.key?.value === 'nbt',
-	)
-	if (!nbtPair) {
-		return
-	}
-
-	const types = getTypesFromEntity(node, ctx)
-	const nbtValue = nbtPair.value as nbt.NbtCompoundNode
-	nbt.checker.index('entity_type', types)(nbtValue, ctx)
+	node.selector?.arguments?.children
+		.filter((pair) => pair.key?.value === 'nbt')
+		.forEach((pair) => {
+			const types = getTypesFromEntity(node, ctx)
+			if (!nbt.NbtCompoundNode.is(pair.value.value)) {
+				return
+			}
+			nbt.checker.index('minecraft:entity', types)(
+				pair.value.value,
+				ctx,
+			)
+		})
 }
 
 const item: core.SyncChecker<ItemNode> = (node, ctx) => {
@@ -172,14 +101,57 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 	}
 
 	nbt.checker.index(
-		'item',
+		'minecraft:item',
 		core.ResourceLocationNode.toString(node.id, 'full'),
 	)(node.nbt, ctx)
 }
 
 const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
-	const type = { kind: 'reference', path: node.typeRef } as const
+	const type: mcdoc.McdocType = { kind: 'reference', path: node.typeRef }
 	json.checker.index(type)(node.value, ctx)
+}
+
+const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
+	const type: mcdoc.McdocType = {
+		kind: 'dispatcher',
+		registry: 'minecraft:resource',
+		parallelIndices: [{
+			kind: 'static',
+			value: core.ResourceLocation.lengthen(node.category),
+		}],
+	}
+	nbt.checker.typeDefinition(type)(node.value, ctx)
+}
+
+function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
+	return (node, ctx) => {
+		if (!node.properties) {
+			return
+		}
+		switch (node.properties.dispatcher) {
+			case 'minecraft:entity':
+				if (nbt.NbtCompoundNode.is(node.value)) {
+					const types = (EntityNode.is(dispatchedBy) ||
+							core.ResourceLocationNode.is(dispatchedBy))
+						? getTypesFromEntity(dispatchedBy, ctx)
+						: undefined
+					nbt.checker.index('minecraft:entity', types, {
+						isPredicate: node.properties.isPredicate,
+					})(node.value, ctx)
+				}
+				break
+			case 'minecraft:block_entity':
+				if (nbt.NbtCompoundNode.is(node.value)) {
+					nbt.checker.index('minecraft:block_entity')(node.value, ctx)
+				}
+				break
+			case 'minecraft:storage':
+				if (nbt.NbtCompoundNode.is(node.value)) {
+					nbt.checker.index('minecraft:storage')(node.value, ctx)
+				}
+				break
+		}
+	}
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
@@ -187,130 +159,33 @@ const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 }
 // #endregion
 
-// #region Checkers for command argument structure.
-/**
- * - `block <targetPos: block_pos> <nbt: nbt_compound_tag>`
- * - `entity <target: entity> <nbt: nbt_compound_tag>`
- * - `storage <target: resource_location> <nbt: nbt_compound_tag>`
- */
-const dataMergeTarget = (
-	nodes: mcf.CommandNode['children'],
-	index: number,
+function getTypesFromEntity(
+	entity: EntityNode | core.ResourceLocationNode,
 	ctx: core.CheckerContext,
-) => {
-	const registry = getName(nodes, index)
-	switch (registry) {
-		case 'block': {
-			const nbtNode = getNode(nodes, index + 2)
-			if (nbt.NbtCompoundNode.is(nbtNode)) {
-				nbt.checker.index('block', undefined)(nbtNode, ctx)
-			}
-			break
+): core.FullResourceLocation[] | undefined {
+	if (core.ResourceLocationNode.is(entity)) {
+		const value = core.ResourceLocationNode.toString(
+			entity,
+			'full',
+			true,
+		)
+		if (value.startsWith(core.ResourceLocation.TagPrefix)) {
+			return getTagValues(
+				'tag/entity_type',
+				value.slice(1),
+				ctx,
+			) as core.FullResourceLocation[]
+		} else {
+			return [value as core.FullResourceLocation]
 		}
-		case 'entity': {
-			const entityNode = getNode(nodes, index + 1)
-			const nbtNode = getNode(nodes, index + 2)
-			if (EntityNode.is(entityNode) && nbt.NbtCompoundNode.is(nbtNode)) {
-				const types = getTypesFromEntity(entityNode, ctx)
-				nbt.checker.index('entity_type', types)(nbtNode, ctx)
-			}
-			break
-		}
-		case 'storage': {
-			const idNode = getNode(nodes, index + 1)
-			const nbtNode = getNode(nodes, index + 2)
-			if (
-				core.ResourceLocationNode.is(idNode) &&
-				nbt.NbtCompoundNode.is(nbtNode)
-			) {
-				nbt.checker.index(
-					'storage',
-					core.ResourceLocationNode.toString(idNode, 'full'),
-				)(nbtNode, ctx)
-			}
-			break
-		}
-	}
-}
-
-/**
- * - `block <block_pos> <nbt_path>`
- * - `entity <entity> <nbt_path>`
- * - `storage <resource_location> <nbt_path>`
- */
-const nbtPath = (
-	nodes: mcf.CommandNode['children'],
-	index: number,
-	ctx: core.CheckerContext,
-) => {
-	const registry = getName(nodes, index)
-	switch (registry) {
-		case 'block': {
-			const nbtNode = getNode(nodes, index + 2)
-			if (nbt.NbtPathNode.is(nbtNode)) {
-				nbt.checker.path('block', undefined)(nbtNode, ctx)
-			}
-			break
-		}
-		case 'entity': {
-			const entityNode = getNode(nodes, index + 1)
-			const nbtNode = getNode(nodes, index + 2)
-			if (EntityNode.is(entityNode) && nbt.NbtPathNode.is(nbtNode)) {
-				const types = getTypesFromEntity(entityNode, ctx)
-				nbt.checker.path('entity_type', types)(nbtNode, ctx)
-			}
-			break
-		}
-		case 'storage': {
-			const idNode = getNode(nodes, index + 1)
-			const nbtNode = getNode(nodes, index + 2)
-			if (
-				core.ResourceLocationNode.is(idNode) && nbt.NbtPathNode.is(nbtNode)
-			) {
-				nbt.checker.path(
-					'storage',
-					core.ResourceLocationNode.toString(idNode, 'full'),
-				)(nbtNode, ctx)
-			}
-			break
-		}
-	}
-}
-
-/**
- * - `<entity: entity_summon> [<pos: vec3>] [<nbt: nbt_compound_tag>]`
- */
-const summonNbt = (
-	nodes: mcf.CommandNode['children'],
-	index: number,
-	ctx: core.CheckerContext,
-) => {
-	const typeNode = getNode(nodes, index)
-	const nbtNode = getNode(nodes, index + 2)
-	if (
-		core.ResourceLocationNode.is(typeNode) &&
-		nbt.NbtCompoundNode.is(nbtNode)
-	) {
-		nbt.checker.index(
-			'entity_type',
-			core.ResourceLocationNode.toString(typeNode, 'full'),
-		)(nbtNode, ctx)
-	}
-}
-// #endregion
-
-export const getTypesFromEntity = (
-	entity: EntityNode,
-	ctx: core.CheckerContext,
-): core.FullResourceLocation[] | undefined => {
-	if (entity.playerName !== undefined || entity.selector?.playersOnly) {
+	} else if (entity.playerName !== undefined || entity.selector?.playersOnly) {
 		return ['minecraft:player']
 	} else if (entity.selector) {
 		const argumentsNode = entity.selector.arguments
 		if (!argumentsNode) {
 			return undefined
 		}
-		let types: core.FullResourceLocation[] = []
+		let types: core.FullResourceLocation[] | undefined = undefined
 		for (const pairNode of argumentsNode.children) {
 			if (pairNode.key?.value !== 'type') {
 				continue
@@ -334,7 +209,11 @@ export const getTypesFromEntity = (
 					value.slice(1),
 					ctx,
 				)
-				types = types.filter((t) => tagValues.includes(t))
+				if (types === undefined) {
+					types = tagValues.map(core.ResourceLocation.lengthen)
+				} else {
+					types = types.filter((t) => tagValues.includes(t))
+				}
 			} else {
 				types = [value as core.FullResourceLocation]
 			}

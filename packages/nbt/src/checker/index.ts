@@ -18,21 +18,8 @@ interface Options {
  * If set to `undefined` or an empty array, all mcdoc compound definitions for this registry will be merged for checking, and unknown keys are allowed.
  */
 export function index(
-	registry: string,
-	id:
-		| core.FullResourceLocation
-		| readonly core.FullResourceLocation[]
-		| undefined,
-	options?: Options,
-): core.SyncChecker<NbtCompoundNode>
-export function index(
-	registry: string,
-	id: core.FullResourceLocation,
-	options?: Options,
-): core.SyncChecker<NbtCompoundNode>
-export function index(
-	registry: string,
-	id:
+	registry: core.FullResourceLocation,
+	id?:
 		| core.FullResourceLocation
 		| readonly core.FullResourceLocation[]
 		| undefined,
@@ -47,43 +34,46 @@ export function index(
 		case 'custom:spawnitemtag':
 			const entityId = getEntityFromItem(id as core.FullResourceLocation)
 			return entityId
-				? index('entity_type', entityId, options)
+				? index('minecraft:entity', entityId, options)
 				: core.checker.noop
 		default:
-			const identifier = getRegistryIdentifier(registry)
-			if (!identifier) {
-				return core.checker.noop
+			const typeDef: mcdoc.McdocType = {
+				kind: 'dispatcher',
+				registry: registry,
+				parallelIndices: getIndices(id),
 			}
 			return (node, ctx) => {
-				definition(identifier, options)(node, ctx)
+				typeDefinition(typeDef, options)(node, ctx)
 			}
 	}
 }
 
-function getRegistryIdentifier(registry: string) {
-	switch (registry) {
-		case 'block':
-			return '::java::server::world::block::BlockEntity'
-		case 'entity_type':
-			return '::java::server::world::entity::AnyEntity'
-		case 'item':
-			return '::java::server::world::item::AnyItem'
-		default:
-			return undefined
+function getIndices(
+	id:
+		| core.FullResourceLocation
+		| readonly core.FullResourceLocation[]
+		| undefined,
+): mcdoc.ParallelIndices {
+	if (typeof id === 'string') {
+		return [{ kind: 'static', value: id }]
+	} else if (id === undefined || id.length === 0) {
+		return [{ kind: 'static', value: '%fallback' }]
+	} else {
+		return id.map(i => ({ kind: 'static', value: i }))
 	}
 }
 
 /**
  * @param identifier An identifier of mcdoc compound definition. e.g. `::minecraft::util::invitem::InventoryItem`
  */
-export function definition(
-	identifier: `::${string}::${string}`,
+export function typeDefinition(
+	typeDef: mcdoc.McdocType,
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
-		mcdoc.runtime.checker.reference<NbtNode>(
+		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
-			identifier,
+			typeDef,
 			{
 				context: ctx,
 				isEquivalent: (inferred, def) => {
@@ -293,7 +283,7 @@ interface NbtPathLink {
 
 // TODO: check nbt index nodes and nbt compound nodes
 export function path(
-	registry: string,
+	registry: core.FullResourceLocation,
 	id:
 		| core.FullResourceLocation
 		| readonly core.FullResourceLocation[]
@@ -301,9 +291,10 @@ export function path(
 ): core.SyncChecker<NbtPathNode> {
 	return (node, ctx) => {
 		// TODO: support dispatcher
-		const definition = getRegistryIdentifier(registry)
-		if (!definition) {
-			return
+		const typeDef: mcdoc.McdocType = {
+			kind: 'dispatcher',
+			registry: registry,
+			parallelIndices: getIndices(id),
 		}
 		// Create a linked list representation
 		const leaf = {
@@ -323,9 +314,9 @@ export function path(
 			prev.next.prev = prev
 			prev = prev.next
 		}
-		mcdoc.runtime.checker.reference<NbtPathLink>(
+		mcdoc.runtime.checker.typeDefinition<NbtPathLink>(
 			[{ originalNode: link, inferredType: inferPath(link) }],
-			definition,
+			typeDef,
 			{
 				context: ctx,
 				isEquivalent: (inferred, def) => {

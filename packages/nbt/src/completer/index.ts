@@ -44,6 +44,7 @@ const compound = core.completer.record<
 					detail: mcdoc.McdocType.toString(
 						field.type as core.Mutable<mcdoc.McdocType>,
 					),
+					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
 					filterText: key,
 					insertText: `${key}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
