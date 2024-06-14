@@ -23,19 +23,7 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	rootCommand(node.children, 0, ctx)
 }
 
-const getName = (
-	nodes: mcf.CommandNode['children'],
-	index: number,
-): string | undefined => {
-	return nodes[index]?.path[nodes[index].path.length - 1]
-}
 const getNode = (
-	nodes: mcf.CommandNode['children'],
-	index: number,
-): core.AstNode | undefined => {
-	return nodes[index]?.children[0]
-}
-const getNamedNode = (
 	nodes: mcf.CommandNode['children'],
 	name: string,
 ): core.AstNode | undefined => {
@@ -61,8 +49,8 @@ const rootCommand = (
 		} else if (NbtResourceNode.is(node)) {
 			nbtResource(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
-			const by = getNamedNode(nodes, node.properties.dispatchedBy)
-			// TODO: support `indexedBy`
+			const by = getNode(nodes, node.properties.dispatchedBy)
+			// TODO: support `indexedBy`, `isPredicate`, and `accessType`
 			nbtChecker(by)(node, ctx)
 		}
 	}
