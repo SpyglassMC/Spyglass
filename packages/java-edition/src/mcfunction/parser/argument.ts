@@ -535,7 +535,6 @@ function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
 				type: 'mcfunction:json',
 				range: res.range,
 				children: [res],
-				value: res,
 				typeRef,
 			}
 			return ans
@@ -580,7 +579,6 @@ function nbtParser(
 				type: 'mcfunction:nbt',
 				range: res.range,
 				children: [res],
-				value: res,
 				properties,
 			}
 			return ans
@@ -759,7 +757,6 @@ function resourceOrInline(category: core.FileCategory) {
 						type: 'mcfunction:nbt_resource',
 						range: res.range,
 						children: [res],
-						value: res,
 						category,
 					}
 					return ans

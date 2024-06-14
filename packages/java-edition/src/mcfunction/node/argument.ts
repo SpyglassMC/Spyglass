@@ -337,7 +337,6 @@ export namespace IntRangeNode {
 export interface JsonNode extends core.AstNode {
 	type: 'mcfunction:json'
 	children: [json.JsonNode]
-	value: json.JsonNode
 	typeRef: `::${string}::${string}`
 }
 export namespace JsonNode {
@@ -355,7 +354,6 @@ export interface MessageNode extends core.AstNode {
 export interface NbtNode extends core.AstNode {
 	type: 'mcfunction:nbt'
 	children: [nbt.NbtNode]
-	value: nbt.NbtNode
 	properties?: NbtParserProperties
 }
 export namespace NbtNode {
@@ -368,7 +366,6 @@ export namespace NbtNode {
 export interface NbtResourceNode extends core.AstNode {
 	type: 'mcfunction:nbt_resource'
 	children: [nbt.NbtNode]
-	value: nbt.NbtNode
 	category: string
 }
 export namespace NbtResourceNode {

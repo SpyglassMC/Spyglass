@@ -96,7 +96,7 @@ const item: core.SyncChecker<ItemNode> = (node, ctx) => {
 
 const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
 	const type: mcdoc.McdocType = { kind: 'reference', path: node.typeRef }
-	json.checker.index(type)(node.value, ctx)
+	json.checker.index(type)(node.children[0], ctx)
 }
 
 const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
@@ -108,7 +108,7 @@ const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
 			value: core.ResourceLocation.lengthen(node.category),
 		}],
 	}
-	nbt.checker.typeDefinition(type)(node.value, ctx)
+	nbt.checker.typeDefinition(type)(node.children[0], ctx)
 }
 
 function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
@@ -116,26 +116,27 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 		if (!node.properties) {
 			return
 		}
+		const compound = node.children[0]
 		switch (node.properties.dispatcher) {
 			case 'minecraft:entity':
-				if (nbt.NbtCompoundNode.is(node.value)) {
+				if (nbt.NbtCompoundNode.is(compound)) {
 					const types = (EntityNode.is(dispatchedBy) ||
 							core.ResourceLocationNode.is(dispatchedBy))
 						? getTypesFromEntity(dispatchedBy, ctx)
 						: undefined
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
-					})(node.value, ctx)
+					})(compound, ctx)
 				}
 				break
 			case 'minecraft:block_entity':
-				if (nbt.NbtCompoundNode.is(node.value)) {
-					nbt.checker.index('minecraft:block_entity')(node.value, ctx)
+				if (nbt.NbtCompoundNode.is(compound)) {
+					nbt.checker.index('minecraft:block_entity')(compound, ctx)
 				}
 				break
 			case 'minecraft:storage':
-				if (nbt.NbtCompoundNode.is(node.value)) {
-					nbt.checker.index('minecraft:storage')(node.value, ctx)
+				if (nbt.NbtCompoundNode.is(compound)) {
+					nbt.checker.index('minecraft:storage')(compound, ctx)
 				}
 				break
 		}
