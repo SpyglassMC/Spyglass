@@ -181,6 +181,7 @@ export interface NbtParserProperties extends Record<string, unknown> {
 		| 'minecraft:block_entity'
 		| 'minecraft:entity'
 		| 'minecraft:storage'
+		| 'minecraft:macro_function'
 	/**
 	 * The name of a vec3, an entity, an entity resource location, or a
 	 * storage resource location argument.

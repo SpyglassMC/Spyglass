@@ -176,6 +176,12 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							? {
 								children: {
 									// Added in 23w31a (1.20.2, pack format 16)
+									arguments: {
+										properties: {
+											dispatcher: 'minecraft:macro_function',
+											dispatchedBy: 'name',
+										} satisfies NbtParserProperties,
+									},
 									with: getDataPatch('source', 'path'),
 								},
 							}
@@ -888,6 +894,7 @@ const getDataModifySource = (
 	Object.freeze({
 		children: {
 			from: getDataPatch('source', 'sourcePath'),
+			string: getDataPatch('source', 'sourcePath'),
 			value: {
 				children: {
 					value: {
