@@ -32,7 +32,7 @@ export class Downloader {
 		const { id, cache, uri, options, transformer, ttl } = job
 		if (ttl && this.#memoryCache.has(uri)) {
 			const { buffer, time } = this.#memoryCache.get(uri)!
-			if (time <= performance.now() + ttl) {
+			if (performance.now() <= time + ttl) {
 				this.logger.info(
 					`[Downloader] [${id}] Skipped thanks to valid cache in memory`,
 				)
