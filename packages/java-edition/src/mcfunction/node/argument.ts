@@ -408,9 +408,9 @@ export interface ComponentTestBaseNode extends core.AstNode {
 
 export interface ComponentTestExactNode extends ComponentTestBaseNode {
 	type: 'mcfunction:component_test_exact'
-	children: [core.ResourceLocationNode, nbt.NbtNode]
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
 	component: core.ResourceLocationNode
-	value: nbt.NbtNode
+	value?: nbt.NbtNode
 }
 
 export interface ComponentTestExistsNode extends ComponentTestBaseNode {
@@ -421,9 +421,9 @@ export interface ComponentTestExistsNode extends ComponentTestBaseNode {
 
 export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
 	type: 'mcfunction:component_test_sub_predicate'
-	children: [core.ResourceLocationNode, nbt.NbtNode]
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
 	subPredicateType: core.ResourceLocationNode
-	subPredicate: nbt.NbtNode
+	subPredicate?: nbt.NbtNode
 }
 
 export type ComponentTestNode =

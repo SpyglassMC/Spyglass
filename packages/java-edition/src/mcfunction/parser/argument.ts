@@ -1845,7 +1845,7 @@ const components: core.InfallibleParser<ComponentListNode> = core.map(
 	},
 )
 
-const componentTest: core.Parser<ComponentTestNode> = (src, ctx) => {
+const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const start = src.cursor
 	src.skipWhitespace()
 	const negated = src.trySkip('!')
@@ -1858,19 +1858,19 @@ const componentTest: core.Parser<ComponentTestNode> = (src, ctx) => {
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
-		const value = nbt.parser.entry(src, ctx)
+		let value: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(src, ctx);
 
 		if (value == core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
-			return core.Failure
+			value = undefined
 		}
 
 		src.skipWhitespace()
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
 			range: core.Range.create(start, src),
-			children: [resLoc, value],
+			children: [resLoc, ...(value ? [value] : [])],
 			component: resLoc,
 			value: value,
 			negated,
@@ -1879,19 +1879,19 @@ const componentTest: core.Parser<ComponentTestNode> = (src, ctx) => {
 	}
 	if (src.trySkip('~')) {
 		resLoc.options.category = 'item_sub_predicate_type'
-		const predicate = nbt.parser.entry(src, ctx)
+		let predicate: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(src, ctx)
 
 		if (predicate == core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
-			return core.Failure
+			predicate = undefined
 		}
 
 		src.skipWhitespace()
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',
 			range: core.Range.create(start, src),
-			children: [resLoc, predicate],
+			children: [resLoc, ...(predicate ? [predicate] : [])],
 			subPredicateType: resLoc,
 			subPredicate: predicate,
 			negated,
@@ -1922,10 +1922,6 @@ const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
 		while (src.canRead()) {
 			src.skipWhitespace()
 			const testNode = componentTest(src, ctx)
-
-			if (testNode == core.Failure) {
-				continue
-			}
 
 			children.push(testNode)
 			src.skipWhitespace()
