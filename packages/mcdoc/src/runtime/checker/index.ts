@@ -167,7 +167,8 @@ export function isAssignable(
 ): boolean {
 	if (
 		assignValue.kind === 'literal' && typeDef.kind === 'literal' &&
-		assignValue.value.kind === typeDef.value.kind
+		assignValue.value.kind === typeDef.value.kind &&
+		!assignValue.attributes && !typeDef.attributes
 	) {
 		return assignValue.value.value === typeDef.value.value
 	}
