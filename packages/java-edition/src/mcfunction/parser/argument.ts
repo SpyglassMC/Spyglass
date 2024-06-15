@@ -20,6 +20,11 @@ import {
 } from '../common/index.js'
 import type {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestExistsNode,
+	ComponentTestNode,
+	ComponentTestsAllOfNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
 	EntitySelectorAdvancementsArgumentCriteriaNode,
@@ -29,7 +34,8 @@ import type {
 	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
-	ItemNode,
+	ItemPredicateNode,
+	ItemStackNode,
 	JsonNode,
 	MessageNode,
 	NbtNode,
@@ -41,6 +47,9 @@ import type {
 } from '../node/index.js'
 import {
 	BlockStatesNode,
+	ComponentListNode,
+	ComponentTestsAnyOfNode,
+	ComponentTestsNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
@@ -82,6 +91,11 @@ const PlayerNameMaxLength = 16
 function shouldValidateLength(ctx: core.ParserContext) {
 	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 	return !release || ReleaseVersion.cmp(release, '1.18') < 0
+}
+
+function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	return !release || ReleaseVersion.cmp(release, '1.20.5') < 0
 }
 
 /**
@@ -501,31 +515,72 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item(isPredicate: false): core.InfallibleParser<ItemNode>
-function item(isPredicate: true): core.InfallibleParser<ItemNode>
-function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
+const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
+	const oldFormat = shouldUseOldItemStackFormat(ctx)
 	return core.map<
-		core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>,
-		ItemNode
+		core.SequenceUtil<
+			core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode
+		>,
+		ItemStackNode
 	>(
 		core.sequence([
-			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
-			core.optional(core.failOnEmpty(nbt.parser.compound)),
+			core.resourceLocation({ category: 'item' }),
+			oldFormat
+				? core.optional(core.failOnEmpty(nbt.parser.compound))
+				: core.optional(core.failOnEmpty(components)),
 		]),
 		(res) => {
-			const ans: ItemNode = {
-				type: 'mcfunction:item',
+			const ans: ItemStackNode = {
+				type: 'mcfunction:item_stack',
 				range: res.range,
 				children: res.children,
 				id: res.children.find(core.ResourceLocationNode.is)!,
+				components: res.children.find(ComponentListNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
 			}
 			return ans
 		},
-	)
+	)(src, ctx)
 }
-const itemStack: core.InfallibleParser<ItemNode> = item(false)
-const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
+
+const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
+	const oldFormat = shouldUseOldItemStackFormat(ctx)
+	return core.map<
+		core.SequenceUtil<
+			| core.LiteralNode
+			| core.ResourceLocationNode
+			| ComponentTestsNode
+			| nbt.NbtCompoundNode
+		>,
+		ItemPredicateNode
+	>(
+		core.sequence([
+			oldFormat
+				? core.resourceLocation({ category: 'item', allowTag: true })
+				: core.any([
+					core.resourceLocation({ category: 'item', allowTag: true }),
+					core.literal('*'),
+				]),
+			oldFormat
+				? core.optional(core.failOnEmpty(nbt.parser.compound))
+				: core.optional(core.failOnEmpty(componentTests)),
+		]),
+		(res) => {
+			const ans: ItemPredicateNode = {
+				type: 'mcfunction:item_predicate',
+				range: res.range,
+				children: res.children,
+				id: (res.children.find(core.ResourceLocationNode.is) ||
+					res.children.find(core.LiteralNode.is))!,
+				tests: res.children.find(
+					ComponentTestsNode.is,
+				),
+				nbt: res.children.find(nbt.NbtCompoundNode.is),
+			}
+			return ans
+		},
+	)(src, ctx)
+}
 
 function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
 	return core.map(
@@ -1767,3 +1822,189 @@ function vector(
 		return ans
 	}
 }
+
+const components: core.InfallibleParser<ComponentListNode> = core.map(
+	core.record({
+		start: '[',
+		pair: {
+			key: core.resourceLocation({ category: 'data_component_type' }),
+			sep: '=',
+			value: nbt.parser.entry,
+			end: ',',
+			trailingEnd: true,
+		},
+		end: ']',
+	}),
+	(res) => {
+		const ans: ComponentListNode = {
+			type: 'mcfunction:component_list',
+			range: res.range,
+			children: res.children,
+		}
+		return ans
+	},
+)
+
+const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
+	const start = src.cursor
+	src.skipWhitespace()
+	const negated = src.trySkip('!')
+	src.skipWhitespace()
+
+	const resLoc = core.resourceLocation({ category: 'data_component_type' })(
+		src,
+		ctx,
+	)
+	src.skipWhitespace()
+
+	if (src.trySkip('=')) {
+		let value: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
+			src,
+			ctx,
+		)
+
+		if (value == core.Failure) {
+			ctx.err.report(localize('expected', localize('nbt.node')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+			value = undefined
+		}
+
+		src.skipWhitespace()
+		const ans: ComponentTestExactNode = {
+			type: 'mcfunction:component_test_exact',
+			range: core.Range.create(start, src),
+			children: [resLoc, ...(value ? [value] : [])],
+			component: resLoc,
+			value: value,
+			negated,
+		}
+		return ans
+	}
+	if (src.trySkip('~')) {
+		resLoc.options.category = 'item_sub_predicate_type'
+		let predicate: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
+			src,
+			ctx,
+		)
+
+		if (predicate == core.Failure) {
+			ctx.err.report(localize('expected', localize('nbt.node')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+			predicate = undefined
+		}
+
+		src.skipWhitespace()
+		const ans: ComponentTestSubpredicateNode = {
+			type: 'mcfunction:component_test_sub_predicate',
+			range: core.Range.create(start, src),
+			children: [resLoc, ...(predicate ? [predicate] : [])],
+			subPredicateType: resLoc,
+			subPredicate: predicate,
+			negated,
+		}
+		return ans
+	}
+	const ans: ComponentTestExistsNode = {
+		type: 'mcfunction:component_test_exists',
+		range: core.Range.create(start, src),
+		children: [resLoc],
+		component: resLoc,
+		negated,
+	}
+	return ans
+}
+
+const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
+	src,
+	ctx,
+) => {
+	const parser: core.InfallibleParser<ComponentTestsAllOfNode> = (
+		src,
+		ctx,
+	) => {
+		const children = []
+		const start = src.cursor
+
+		while (src.canRead()) {
+			src.skipWhitespace()
+			const testNode = componentTest(src, ctx)
+
+			children.push(testNode)
+			src.skipWhitespace()
+
+			if (src.peek() === ',') {
+				src.skip()
+			} else if (src.peek() === '|' || src.peek() === ']') {
+				break
+			} else {
+				ctx.err.report(localize('expected', localeQuote(']')), src)
+				src.skipUntilOrEnd(',', '|', ']')
+			}
+		}
+
+		const ans: ComponentTestsAllOfNode = {
+			type: 'mcfunction:component_tests_all_of',
+			range: core.Range.create(start, src),
+			children,
+		}
+
+		return ans
+	}
+
+	return parser(src, ctx)
+}
+
+const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (
+	src,
+	ctx,
+) => {
+	const parser: core.InfallibleParser<ComponentTestsAnyOfNode> = (
+		src,
+		ctx,
+	) => {
+		const children = []
+		const start = src.cursor
+
+		while (src.canRead()) {
+			src.skipWhitespace()
+			const allOfNode = componentTestsAllOf(src, ctx)
+			children.push(allOfNode)
+			src.skipWhitespace()
+
+			if (src.peek() === '|') {
+				src.skip()
+			} else if (src.peek() === ']') {
+				break
+			} else {
+				ctx.err.report(localize('expected', localeQuote(']')), src)
+				src.skipUntilOrEnd('|', ']')
+			}
+		}
+
+		const ans: ComponentTestsAnyOfNode = {
+			type: 'mcfunction:component_tests_any_of',
+			range: core.Range.create(start, src),
+			children,
+		}
+
+		return ans
+	}
+
+	return parser(src, ctx)
+}
+
+const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
+	core.sequence([
+		core.literal('['),
+		core.optional(core.failOnEmpty(componentTestsAnyOf)),
+		core.literal(']'),
+	]),
+	(res) => {
+		const ans: ComponentTestsNode = {
+			type: 'mcfunction:component_tests',
+			range: res.range,
+			children: res.children.filter(ComponentTestsAnyOfNode.is).map(c => c),
+		}
+		return ans
+	},
+)

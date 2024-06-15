@@ -116,6 +116,7 @@
   "mcdoc.type.struct": "a map-like",
   "mcfunction.checker.command.data-modify-unapplicable-operation": "Operation %0% can only be used on %1%; the target path has type %2% instead",
   "mcfunction.completer.block.states.default-value": "Default: %0%",
+  "mcfunction.parser.duplicate-components": "Duplicate component",
   "mcfunction.parser.entity-selector.arguments.not-applicable": "%0% is not applicable here",
   "mcfunction.parser.entity-selector.arguments.unknown": "Unknown entity selector argument %0%",
   "mcfunction.parser.entity-selector.entities-disallowed": "The selector contains non-player entities",
