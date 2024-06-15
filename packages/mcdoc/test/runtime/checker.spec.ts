@@ -436,6 +436,18 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
+			name: 'string @ ..8',
+			type: {
+				kind: 'string',
+				lengthRange: { kind: 0b00, max: 8 },
+			},
+			values: [
+				1,
+				'abc',
+				'abcdefghij',
+			],
+		},
+		{
 			name:
 				'struct { id: string, data: struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }',
 			type: {

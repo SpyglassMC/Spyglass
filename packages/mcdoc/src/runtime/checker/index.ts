@@ -90,7 +90,10 @@ export interface UnknownTupleElementError<T> {
 	node: RuntimeUnion<T>
 }
 export interface RangeError<T> {
-	kind: 'invalid_collection_length' | 'number_out_of_range'
+	kind:
+		| 'invalid_collection_length'
+		| 'invalid_string_length'
+		| 'number_out_of_range'
 	node: RuntimeNode<T>
 	ranges: NumericRange[]
 }
@@ -746,6 +749,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	for (
 		const kind of [
 			'invalid_collection_length',
+			'invalid_string_length',
 			'number_out_of_range',
 		] as const
 	) {
@@ -868,6 +872,23 @@ function checkShallowly<T>(
 					kind: 'number_out_of_range',
 					node: runtimeNode,
 					ranges: [typeDef.valueRange],
+				})
+			}
+			break
+		case 'string':
+			if (
+				typeDef.lengthRange &&
+				simplifiedInferred.kind === 'literal' &&
+				simplifiedInferred.value.kind === 'string' &&
+				!NumericRange.isInRange(
+					typeDef.lengthRange,
+					simplifiedInferred.value.value.length,
+				)
+			) {
+				errors.push({
+					kind: 'invalid_string_length',
+					node: runtimeNode,
+					ranges: [typeDef.lengthRange],
 				})
 			}
 			break
@@ -1579,8 +1600,7 @@ export function getErrorRangeDefault<T extends core.AstNode>(
 		error === 'missing_key' ||
 		error === 'invalid_collection_length'
 	) {
-		const { start } = range
-		return { start, end: start }
+		return { start: range.start, end: range.start + 1 }
 	}
 	return range
 }
@@ -1643,9 +1663,12 @@ export function getDefaultErrorReporter<T>(
 				)
 				break
 			case 'invalid_collection_length':
+			case 'invalid_string_length':
 			case 'number_out_of_range':
 				const baseKey = error.kind === 'invalid_collection_length'
 					? 'mcdoc.runtime.checker.range.collection'
+					: error.kind === 'invalid_string_length'
+					? 'mcdoc.runtime.checker.range.string'
 					: 'mcdoc.runtime.checker.range.number'
 				const rangeMessages = error.ranges.map(r => {
 					const left = r.min !== undefined
