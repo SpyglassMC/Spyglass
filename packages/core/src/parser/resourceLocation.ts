@@ -25,6 +25,7 @@ const Terminators = new Set([
 	'(',
 	')',
 	';',
+	'|',
 ])
 const LegalCharacters = new Set([
 	'a',

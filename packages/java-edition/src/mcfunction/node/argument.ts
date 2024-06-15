@@ -355,13 +355,36 @@ export namespace ItemPredicateNode {
 
 export interface ComponentTestsNode extends core.AstNode {
 	type: 'mcfunction:component_tests'
-	children: ComponentTestNode[]
+	children: ComponentTestsAnyOfNode[]
 }
 
 export namespace ComponentTestsNode {
 	export function is(node: core.AstNode): node is ComponentTestsNode {
-		return (node as ComponentTestsNode).type ===
-			'mcfunction:component_tests'
+		return (node as ComponentTestsNode).type === 'mcfunction:component_tests'
+	}
+}
+
+export interface ComponentTestsAnyOfNode extends core.AstNode {
+	type: 'mcfunction:component_tests_any_of'
+	children: ComponentTestsAllOfNode[]
+}
+
+export namespace ComponentTestsAnyOfNode {
+	export function is(node: core.AstNode): node is ComponentTestsAnyOfNode {
+		return (node as ComponentTestsAnyOfNode).type ===
+			'mcfunction:component_tests_any_of'
+	}
+}
+
+export interface ComponentTestsAllOfNode extends core.AstNode {
+	type: 'mcfunction:component_tests_all_of'
+	children: ComponentTestNode[]
+}
+
+export namespace ComponentTestsAllOfNode {
+	export function is(node: core.AstNode): node is ComponentTestsAllOfNode {
+		return (node as ComponentTestsAllOfNode).type ===
+			'mcfunction:component_tests_all_of'
 	}
 }
 

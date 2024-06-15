@@ -45,6 +45,7 @@ import {
 import type {
 	BlockStatesNode,
 	ComponentListNode,
+	ComponentTestsAllOfNode,
 	ComponentTestsNode,
 	EntitySelectorArgumentsNode,
 } from '../node/index.js'
