@@ -23,8 +23,8 @@ import type {
 	ComponentTestExactNode,
 	ComponentTestExistsNode,
 	ComponentTestNode,
-	ComponentTestSubpredicateNode,
 	ComponentTestsAllOfNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
 	EntitySelectorAdvancementsArgumentCriteriaNode,
@@ -43,12 +43,13 @@ import type {
 	ParticleNode,
 	ScoreHolderNode,
 	UuidNode,
-	VectorNode} from '../node/index.js';
+	VectorNode,
+} from '../node/index.js'
 import {
 	BlockStatesNode,
 	ComponentListNode,
-	ComponentTestsNode,
 	ComponentTestsAnyOfNode,
+	ComponentTestsNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
@@ -1907,8 +1908,14 @@ const componentTest: core.Parser<ComponentTestNode> = (src, ctx) => {
 	return ans
 }
 
-const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (src, ctx) => {
-	const parser: core.InfallibleParser<ComponentTestsAllOfNode> = (src, ctx) => {
+const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
+	src,
+	ctx,
+) => {
+	const parser: core.InfallibleParser<ComponentTestsAllOfNode> = (
+		src,
+		ctx,
+	) => {
 		const children = []
 		const start = src.cursor
 
@@ -1922,7 +1929,7 @@ const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (src
 
 			children.push(testNode)
 			src.skipWhitespace()
-			
+
 			if (src.peek() === ',') {
 				src.skip()
 			} else if (src.peek() === '|' || src.peek() === ']') {
@@ -1940,14 +1947,19 @@ const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (src
 		}
 
 		return ans
-	};
+	}
 
 	return parser(src, ctx)
-
 }
 
-const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (src, ctx) => {
-	const parser: core.InfallibleParser<ComponentTestsAnyOfNode> = (src, ctx) => {
+const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (
+	src,
+	ctx,
+) => {
+	const parser: core.InfallibleParser<ComponentTestsAnyOfNode> = (
+		src,
+		ctx,
+	) => {
 		const children = []
 		const start = src.cursor
 
@@ -1974,7 +1986,7 @@ const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (src
 		}
 
 		return ans
-	};
+	}
 
 	return parser(src, ctx)
 }
@@ -1992,5 +2004,5 @@ const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
 			children: res.children.filter(ComponentTestsAnyOfNode.is).map(c => c),
 		}
 		return ans
-	}
-);
+	},
+)
