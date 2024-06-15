@@ -5,10 +5,15 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
-import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
+import type {
+	EntitySelectorInvertableArgumentValueNode,
+} from '../node/index.js'
 import {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestSubpredicateNode,
 	EntityNode,
+	ItemPredicateNode,
 	ItemStackNode,
 	JsonNode,
 	NbtNode,
@@ -40,6 +45,8 @@ const rootCommand = (
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
 			entity(node, ctx)
+		} else if (ItemPredicateNode.is(node)) {
+			itemPredicate(node, ctx)
 		} else if (ItemStackNode.is(node)) {
 			itemStack(node, ctx)
 		} else if (ParticleNode.is(node)) {
@@ -81,43 +88,69 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	}
 }
 
-const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
+const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 	if (node.nbt) {
 		nbt.checker.index(
 			'minecraft:item',
 			core.ResourceLocationNode.toString(node.id, 'full'),
+			{ isPredicate: true },
 		)(node.nbt, ctx)
 	}
-	if (node.components) {
-		const groupedComponents = new Map<
-			string,
-			core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
-		>()
-
-		node.components!.children.forEach(component => {
-			const componentName = core.ResourceLocationNode.toString(
-				component.key!,
-				'full',
-			)
-
-			if (!groupedComponents.has(componentName)) {
-				groupedComponents.set(componentName, [])
-			}
-
-			groupedComponents.get(componentName)!.push(component)
-		})
-
-		groupedComponents.forEach((components) => {
-			if (components.length > 1) {
-				components.forEach(component => {
-					ctx.err.report(
-						localize('mcfunction.parser.duplicate-components'),
-						component.key!.range,
-						core.ErrorSeverity.Warning,
+	if (!node.tests) {
+		return
+	}
+	for (const anyOfTest of node.tests.children) {
+		for (const allOfTest of anyOfTest.children) {
+			for (const test of allOfTest.children) {
+				const key = core.ResourceLocationNode.toString(test.key, 'full')
+				if (ComponentTestExactNode.is(test) && test.value) {
+					nbt.checker.index('minecraft:data_component', key)(
+						test.value,
+						ctx,
 					)
-				})
+				} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
+					nbt.checker.index('minecraft:item_sub_predicate', key)(
+						test.value,
+						ctx,
+					)
+				}
 			}
-		})
+		}
+	}
+}
+
+const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
+	if (node.nbt) {
+		const id = core.ResourceLocationNode.toString(node.id, 'full')
+		nbt.checker.index('minecraft:item', id)(node.nbt, ctx)
+	}
+	if (!node.components) {
+		return
+	}
+	const groupedComponents = new Map<string, core.AstNode[]>()
+	for (const pair of node.components.children) {
+		if (!pair.key) {
+			continue
+		}
+		const key = core.ResourceLocationNode.toString(pair.key, 'full')
+		if (!groupedComponents.has(key)) {
+			groupedComponents.set(key, [])
+		}
+		groupedComponents.get(key)!.push(pair.key)
+		if (pair.value) {
+			nbt.checker.index('minecraft:data_component', key)(pair.value, ctx)
+		}
+	}
+	for (const [_, group] of groupedComponents) {
+		if (group.length > 1) {
+			for (const node of group) {
+				ctx.err.report(
+					localize('mcfunction.parser.duplicate-components'),
+					node.range,
+					core.ErrorSeverity.Warning,
+				)
+			}
+		}
 	}
 }
 
@@ -245,6 +278,10 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
+	meta.registerChecker<ItemPredicateNode>(
+		'mcfunction:item_predicate',
+		itemPredicate,
+	)
 	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

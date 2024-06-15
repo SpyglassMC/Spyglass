@@ -24,7 +24,7 @@ export function index(
 		| readonly core.FullResourceLocation[]
 		| undefined,
 	options: Options = {},
-): core.SyncChecker<NbtCompoundNode> {
+): core.SyncChecker<NbtNode> {
 	switch (registry) {
 		case 'custom:blockitemstates':
 			const blockIds = getBlocksFromItem(id as core.FullResourceLocation)
@@ -214,8 +214,11 @@ function inferType(node: NbtNode): Exclude<mcdoc.McdocType, mcdoc.UnionType> {
 export function blockStates(
 	blocks: string[],
 	_options: Options = {},
-): core.SyncChecker<NbtCompoundNode> {
+): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
+		if (!NbtCompoundNode.is(node)) {
+			return
+		}
 		const states = core.getStates('block', blocks, ctx)
 		for (const { key: keyNode, value: valueNode } of node.children) {
 			if (!keyNode || !valueNode) {

@@ -402,6 +402,11 @@ export namespace ComponentTestsAllOfNode {
 	}
 }
 
+export type ComponentTestNode =
+	| ComponentTestExactNode
+	| ComponentTestExistsNode
+	| ComponentTestSubpredicateNode
+
 export interface ComponentTestBaseNode extends core.AstNode {
 	negated: boolean
 }
@@ -409,36 +414,40 @@ export interface ComponentTestBaseNode extends core.AstNode {
 export interface ComponentTestExactNode extends ComponentTestBaseNode {
 	type: 'mcfunction:component_test_exact'
 	children: (core.ResourceLocationNode | nbt.NbtNode)[]
-	component: core.ResourceLocationNode
+	key: core.ResourceLocationNode
 	value?: nbt.NbtNode
+}
+export namespace ComponentTestExactNode {
+	export function is(node: core.AstNode): node is ComponentTestExactNode {
+		return (node as ComponentTestExactNode).type ===
+			'mcfunction:component_test_exact'
+	}
 }
 
 export interface ComponentTestExistsNode extends ComponentTestBaseNode {
 	type: 'mcfunction:component_test_exists'
 	children: [core.ResourceLocationNode]
-	component: core.ResourceLocationNode
+	key: core.ResourceLocationNode
+}
+export namespace ComponentTestExistsNode {
+	export function is(node: core.AstNode): node is ComponentTestExistsNode {
+		return (node as ComponentTestExistsNode).type ===
+			'mcfunction:component_test_exists'
+	}
 }
 
 export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
 	type: 'mcfunction:component_test_sub_predicate'
 	children: (core.ResourceLocationNode | nbt.NbtNode)[]
-	subPredicateType: core.ResourceLocationNode
-	subPredicate?: nbt.NbtNode
+	key: core.ResourceLocationNode
+	value?: nbt.NbtNode
 }
-
-export type ComponentTestNode =
-	| ComponentTestExactNode
-	| ComponentTestExistsNode
-	| ComponentTestSubpredicateNode
-
-export namespace ComponentTestNode {
-	export function is(node: core.AstNode): node is ComponentTestNode {
-		return (node as ComponentTestNode).type ===
-				'mcfunction:component_test_exact' ||
-			(node as ComponentTestNode).type ===
-				'mcfunction:component_test_exists' ||
-			(node as ComponentTestNode).type ===
-				'mcfunction:component_test_sub_predicate'
+export namespace ComponentTestSubpredicateNode {
+	export function is(
+		node: core.AstNode,
+	): node is ComponentTestSubpredicateNode {
+		return (node as ComponentTestSubpredicateNode).type ===
+			'mcfunction:component_test_sub_predicate'
 	}
 }
 

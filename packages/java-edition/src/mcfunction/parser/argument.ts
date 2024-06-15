@@ -1874,7 +1874,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			type: 'mcfunction:component_test_exact',
 			range: core.Range.create(start, src),
 			children: [resLoc, ...(value ? [value] : [])],
-			component: resLoc,
+			key: resLoc,
 			value: value,
 			negated,
 		}
@@ -1898,8 +1898,8 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			type: 'mcfunction:component_test_sub_predicate',
 			range: core.Range.create(start, src),
 			children: [resLoc, ...(predicate ? [predicate] : [])],
-			subPredicateType: resLoc,
-			subPredicate: predicate,
+			key: resLoc,
+			value: predicate,
 			negated,
 		}
 		return ans
@@ -1908,7 +1908,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 		type: 'mcfunction:component_test_exists',
 		range: core.Range.create(start, src),
 		children: [resLoc],
-		component: resLoc,
+		key: resLoc,
 		negated,
 	}
 	return ans
