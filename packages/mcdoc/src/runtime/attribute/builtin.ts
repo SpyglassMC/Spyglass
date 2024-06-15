@@ -87,13 +87,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			return true
 		},
-		attachString: (config, ctx) => {
+		stringParser: (config, ctx) => {
 			const options = getResourceLocationOptions(config, ctx)
 			if (!options) {
 				return
 			}
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
+			return (src, ctx) => {
 				const start = src.cursor
 				if (config.prefix && !src.trySkip(config.prefix)) {
 					ctx.err.report(
@@ -110,14 +109,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 						core.Range.create(start, src),
 					)
 				}
-				const id = core.resourceLocation(options)(src, ctx)
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [id]
+				return core.resourceLocation(options)(src, ctx)
 			}
 		},
 		suggestValues: (config, ctx) => {

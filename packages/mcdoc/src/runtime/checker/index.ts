@@ -496,16 +496,34 @@ export function typeDefinition<T>(
 		for (const def of node.validDefinitions) {
 			if (!attached.has(node.node.originalNode)) {
 				options.attachTypeInfo(node.node.originalNode, def.typeDef)
-				handleAttributes(
-					def.typeDef.attributes,
-					options.context,
-					(handler, c) => {
-						const attacher = handler.attachString?.(c, options.context)
-						if (attacher) {
-							options.stringAttacher(node.node.originalNode, attacher)
+				const attributes = def.typeDef.attributes
+				handleAttributes(attributes, options.context, (handler, config) => {
+					const parser = handler.stringParser?.(config, options.context)
+					if (!parser) {
+						return
+					}
+					options.stringAttacher(node.node.originalNode, (node) => {
+						const src = new core.Source(node.value, node.valueMap)
+						const start = src.cursor
+						const child = parser(src, options.context)
+						if (!child) {
+							options.context.err.report(
+								localize(
+									'expected',
+									localize('mcdoc.runtime.checker.value'),
+								),
+								core.Range.create(start, src.skipRemaining()),
+							)
+							return
+						} else if (src.canRead()) {
+							options.context.err.report(
+								localize('mcdoc.runtime.checker.trailing'),
+								core.Range.create(src.cursor, src.skipRemaining()),
+							)
 						}
-					},
-				)
+						node.children = [child]
+					})
+				})
 				attached.add(node.node.originalNode)
 			}
 		}

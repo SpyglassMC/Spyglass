@@ -101,6 +101,7 @@
   "mcdoc.runtime.checker.range.number": "numeric value to be %0%",
   "mcdoc.runtime.checker.range.string": "string length to be %0%",
   "mcdoc.runtime.checker.trailing": "Trailing data encountered",
+  "mcdoc.runtime.checker.value": "a value",
   "mcdoc.type.boolean": "a boolean",
   "mcdoc.type.byte": "a byte",
   "mcdoc.type.short": "a short",

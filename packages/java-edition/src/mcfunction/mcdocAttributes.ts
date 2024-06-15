@@ -44,49 +44,31 @@ export function registerMcdocAttributes(
 		'command_argument',
 		cmdArgValidator,
 		{
-			attachString: (config, ctx) => {
-				let argParser
+			stringParser: (config, ctx) => {
+				let argParser: core.Parser | undefined
 				try {
 					argParser = argument({
 						type: 'argument',
 						parser: core.ResourceLocation.lengthen(config.parser),
 						properties: config.properties,
 					})
+					if (!argParser) {
+						ctx.logger.warn(
+							`[mcdoc command_argument] Unhandled parser ${config.parser} with properties ${
+								JSON.stringify(config.properties)
+							}`,
+						)
+						return undefined
+					}
 				} catch (e) {
 					ctx.logger.warn(
-						`[mcdoc command_argument] Failed to create parser ${config}`,
+						`[mcdoc command_argument] Failed to create parser ${config.parser} with properties ${
+							JSON.stringify(config.properties)
+						}`,
 					)
 					return undefined
 				}
-				return (node) => {
-					const src = new core.Source(node.value, node.valueMap)
-					if (!argParser) {
-						ctx.err.report(
-							localize(
-								'mcfunction.parser.unknown-parser',
-								localeQuote(config.parser),
-							),
-							core.Range.create(src.cursor, src.skipRemaining()),
-							core.ErrorSeverity.Hint,
-						)
-						return
-					}
-					const child = argParser(src, ctx)
-					if (child === core.Failure) {
-						ctx.err.report(
-							localize('mcfunction.parser.eoc-unexpected'),
-							node,
-						)
-						return
-					}
-					if (src.canRead()) {
-						ctx.err.report(
-							localize('mcdoc.runtime.checker.trailing'),
-							core.Range.create(src.cursor, src.skipRemaining()),
-						)
-					}
-					node.children = [child]
-				}
+				return core.optional(argParser)
 			},
 		},
 	)
@@ -97,20 +79,10 @@ export function registerMcdocAttributes(
 			validator.options('slash'),
 		),
 		{
-			attachString: (config, ctx) => {
-				return (node) => {
-					// TODO: validate slash
-					// TODO: fix completer and checker inside commands
-					const src = new core.Source(node.value, node.valueMap)
-					const command = mcf.command(rootTreeNode, argument)(src, ctx)
-					if (src.canRead()) {
-						ctx.err.report(
-							localize('mcdoc.runtime.checker.trailing'),
-							core.Range.create(src.cursor, src.skipRemaining()),
-						)
-					}
-					node.children = [command]
-				}
+			// TODO: validate slash
+			// TODO: fix completer inside commands
+			stringParser: (config, ctx) => {
+				return mcf.command(rootTreeNode, argument)
 			},
 		},
 	)

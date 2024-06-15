@@ -18,10 +18,10 @@ export interface McdocAttribute<C = unknown> {
 		ctx: core.CheckerContext,
 	) => StructTypePairField
 	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
-	attachString?: (
+	stringParser?: (
 		config: C,
 		ctx: core.CheckerContext,
-	) => ((node: core.StringBaseNode) => void) | undefined
+	) => core.InfallibleParser<core.AstNode | undefined> | undefined
 	suggestValues?: (
 		config: C,
 		ctx: core.CompleterContext,
