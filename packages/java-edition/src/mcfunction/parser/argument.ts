@@ -192,13 +192,9 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap((src, ctx) => {
-				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
-			})
+			return wrap(itemSlot)
 		case 'minecraft:item_slots':
-			return wrap((src, ctx) => {
-				return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
-			})
+			return wrap(itemSlots)
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
 		case 'minecraft:loot_modifier':
@@ -501,6 +497,17 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
+const itemSlot: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
+	return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
+}
+
+export const itemSlots: core.InfallibleParser<core.LiteralNode> = (
+	src,
+	ctx,
+) => {
+	return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
+}
+
 function item(isPredicate: false): core.InfallibleParser<ItemNode>
 function item(isPredicate: true): core.InfallibleParser<ItemNode>
 function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
@@ -527,7 +534,9 @@ function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
 const itemStack: core.InfallibleParser<ItemNode> = item(false)
 const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
 
-function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
+export function jsonParser(
+	typeRef: `::${string}::${string}`,
+): core.Parser<JsonNode> {
 	return core.map(
 		json.parser.entry,
 		(res) => {
@@ -792,7 +801,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 /**
  * Failure when not beginning with `@[parse]`
  */
-function selector(): core.Parser<EntitySelectorNode> {
+export function selector(): core.Parser<EntitySelectorNode> {
 	let chunkLimited: boolean | undefined
 	let currentEntity: boolean | undefined
 	let dimensionLimited: boolean | undefined
@@ -1485,7 +1494,7 @@ export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<
 	'mcfunction.parser.score_holder.fake-name.too-long',
 )
 
-function scoreHolder(
+export function scoreHolder(
 	amount: 'multiple' | 'single',
 ): core.Parser<ScoreHolderNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
@@ -1536,7 +1545,7 @@ function symbol(
 	)
 }
 
-function objective(
+export function objective(
 	usageType?: core.SymbolUsageType,
 	terminators: string[] = [],
 ): core.InfallibleParser<core.SymbolNode> {
@@ -1647,7 +1656,7 @@ const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 
 const UuidPattern = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i
 
-const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
+export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 	const ans: UuidNode = {
 		type: 'mcfunction:uuid',
 		range: core.Range.create(src),
