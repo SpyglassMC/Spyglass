@@ -1747,7 +1747,7 @@ const components: core.InfallibleParser<ComponentListNode> = core.map(
 	},
 )
 
-const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
+const componentTest: core.Parser<ComponentTestNode> = (src, ctx) => {
 	const start = src.cursor
 	src.skipWhitespace()
 	const negated = src.trySkip('!')
@@ -1760,7 +1760,12 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
-		const value = nbt.parser.compound(src, ctx)
+		const value = nbt.parser.entry(src, ctx)
+		
+		if (value == core.Failure) {
+			return core.Failure
+		}
+
 		src.skipWhitespace()
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
