@@ -207,5 +207,8 @@ interface Job<R> {
 	}
 	transformer: (data: Uint8Array) => PromiseLike<R> | R
 	options?: ExternalDownloaderOptions
+	/**
+	 * If set, caches the result in memory. Time in milliseconds.
+	 */
 	ttl?: number
 }
