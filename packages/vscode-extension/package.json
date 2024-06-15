@@ -194,7 +194,8 @@
         "editor.semanticHighlighting.enabled": true
       },
       "[mcfunction]": {
-        "editor.semanticHighlighting.enabled": true
+        "editor.semanticHighlighting.enabled": true,
+        "editor.suggest.insertMode": "replace"
       },
       "editor.semanticTokenColorCustomizations": {
         "rules": {
