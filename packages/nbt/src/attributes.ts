@@ -1,6 +1,7 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
+import { typeDefinition } from './checker/index.js'
 import { entry } from './parser/entry.js'
 import { path } from './parser/path.js'
 
@@ -14,19 +15,24 @@ const nbtValidator: mcdoc.runtime.attribute.validator.McdocAttributeValidator<
 }
 
 export function registerMcdocAttributes(meta: core.MetaRegistry) {
-	// TODO: run the nbt checker
 	mcdoc.runtime.registerAttribute(meta, 'nbt', nbtValidator, {
-		stringParser: (config) => makeInfallible(entry, localize('nbt.node')),
+		stringParser: (config, ctx) => (src) => {
+			const res = makeInfallible(entry, localize('nbt.node'))(src, ctx)
+			if (config && res) {
+				typeDefinition(config as core.Mutable<mcdoc.McdocType>)(res, ctx)
+			}
+			return res
+		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'nbt_path', nbtValidator, {
 		stringParser: (config) => makeInfallible(path, localize('nbt.path')),
 	})
 }
 
-function makeInfallible(
-	parser: core.Parser,
+function makeInfallible<T extends core.AstNode>(
+	parser: core.Parser<T>,
 	message: string,
-): core.InfallibleParser<core.AstNode | undefined> {
+): core.InfallibleParser<T | undefined> {
 	return (src, ctx) => {
 		const start = src.cursor
 		const res = parser(src, ctx)
