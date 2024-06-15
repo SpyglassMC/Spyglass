@@ -106,6 +106,9 @@ function dispatch(
 		]
 
 		const out: core.AnyOutObject = { index: 0 }
+		if (parsers.length === 0) {
+			return false
+		}
 		const parser = parsers.length > 1 ? core.any(parsers, out) : parsers[0]
 		const result = parser(src, ctx)
 
