@@ -34,7 +34,9 @@ const compound = core.completer.record<
 	NbtCompoundNode
 >({
 	key: (record, pair, _c, range, iv, ipe, exitingKeys) => {
-		if (!record.typeDef) return []
+		if (!record.typeDef) {
+			return []
+		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
 		return mcdoc.runtime.completer.getFields(record.typeDef)
 			.filter(({ key }) => !keySet.has(key))
@@ -69,7 +71,16 @@ const compound = core.completer.record<
 })
 
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
-	if (!node.typeDef) return []
+	if (!node.typeDef) {
+		return []
+	}
+	if (
+		node.children && node.children.length > 0 &&
+		core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
+	) {
+		const child = node.children[0]
+		return ctx.meta.getCompleter(child.type)(child, ctx)
+	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)
 }

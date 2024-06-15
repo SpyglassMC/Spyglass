@@ -112,18 +112,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.resourceLocation(options)(src, ctx)
 			}
 		},
-		suggestValues: (config, ctx) => {
+		stringMocker: (config, ctx) => {
 			const options = getResourceLocationOptions(config, ctx)
 			if (!options) {
-				return []
+				return undefined
 			}
-			const mock = core.ResourceLocationNode.mock(ctx.offset, options)
-			return core.completer.dispatch(mock, ctx)
-				.map(item => ({
-					value: item.label,
-					kind: 'string',
-					completionKind: core.CompletionKind.Function,
-				}))
+			return core.ResourceLocationNode.mock(ctx.offset, options)
 		},
 	})
 }

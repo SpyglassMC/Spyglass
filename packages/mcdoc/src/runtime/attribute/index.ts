@@ -22,10 +22,10 @@ export interface McdocAttribute<C = unknown> {
 		config: C,
 		ctx: core.CheckerContext,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
-	suggestValues?: (
+	stringMocker?: (
 		config: C,
 		ctx: core.CompleterContext,
-	) => SimpleCompletionValue[]
+	) => core.AstNode | undefined
 }
 
 export function registerAttribute<C extends core.Returnable>(
