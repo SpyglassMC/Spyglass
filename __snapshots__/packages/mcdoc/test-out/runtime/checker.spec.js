@@ -595,6 +595,53 @@ exports['mcdoc runtime checker typeDefinition “double @ 3..6.2” with value 6
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “string @ ..8” with value "abc" 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “string @ ..8” with value "abcdefghij" 1'] = [
+  {
+    "kind": "invalid_string_length",
+    "node": {
+      "originalNode": "abcdefghij",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "abcdefghij"
+        }
+      }
+    },
+    "ranges": [
+      {
+        "kind": 0,
+        "max": 8
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “string @ ..8” with value 1 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": {
+      "kind": "string",
+      "lengthRange": {
+        "kind": 0,
+        "max": 8
+      }
+    }
+  }
+]
+
 exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: double, bar: boolean }, foo: string }” with value {"foo":"hello","bar":true} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “struct { ...struct { foo: double, bar: boolean }, foo: string }” with value {"foo":"hello"} 1'] = [
