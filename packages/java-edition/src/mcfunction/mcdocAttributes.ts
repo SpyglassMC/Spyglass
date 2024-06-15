@@ -4,6 +4,37 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import { argument } from './parser/index.js'
 
+const validator = mcdoc.runtime.attribute.validator
+
+interface CmdArgConfig {
+	parser: string
+	properties?: Record<string, unknown>
+}
+
+const cmdArgValidator = validator.alternatives<CmdArgConfig>(
+	validator.map(
+		validator.string,
+		(parser) => ({ parser }),
+	),
+	validator.map(
+		validator.tree({
+			parser: validator.string,
+			min: validator.optional(validator.number),
+			max: validator.optional(validator.number),
+			type: validator.optional(validator.string),
+			amount: validator.optional(validator.string),
+			registry: validator.optional(validator.string),
+			category: validator.optional(validator.string),
+		}),
+		(res) => ({
+			parser: res.parser,
+			properties: Object.fromEntries(
+				Object.entries(res).filter(([k]) => k !== 'parser'),
+			),
+		}),
+	),
+)
+
 export function registerMcdocAttributes(
 	meta: core.MetaRegistry,
 	rootTreeNode: mcf.RootTreeNode,
@@ -11,17 +42,15 @@ export function registerMcdocAttributes(
 	mcdoc.runtime.registerAttribute(
 		meta,
 		'command_argument',
-		mcdoc.runtime.attribute.validator.map(
-			mcdoc.runtime.attribute.validator.string,
-			core.ResourceLocation.lengthen,
-		),
+		cmdArgValidator,
 		{
 			attachString: (config, ctx) => {
 				let argParser
 				try {
 					argParser = argument({
 						type: 'argument',
-						parser: config,
+						parser: core.ResourceLocation.lengthen(config.parser),
+						properties: config.properties,
 					})
 				} catch (e) {
 					ctx.logger.warn(
@@ -35,7 +64,7 @@ export function registerMcdocAttributes(
 						ctx.err.report(
 							localize(
 								'mcfunction.parser.unknown-parser',
-								localeQuote(config),
+								localeQuote(config.parser),
 							),
 							core.Range.create(src.cursor, src.skipRemaining()),
 							core.ErrorSeverity.Hint,
@@ -64,8 +93,8 @@ export function registerMcdocAttributes(
 	mcdoc.runtime.registerAttribute(
 		meta,
 		'command',
-		mcdoc.runtime.attribute.validator.optional(
-			mcdoc.runtime.attribute.validator.options('slash'),
+		validator.optional(
+			validator.options('slash'),
 		),
 		{
 			attachString: (config, ctx) => {
