@@ -16,47 +16,27 @@ const nbtValidator: mcdoc.runtime.attribute.validator.McdocAttributeValidator<
 export function registerMcdocAttributes(meta: core.MetaRegistry) {
 	// TODO: run the nbt checker
 	mcdoc.runtime.registerAttribute(meta, 'nbt', nbtValidator, {
-		attachString: (config, ctx) => {
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
-				const nbt = entry(src, ctx)
-				if (nbt === core.Failure) {
-					ctx.err.report(
-						localize('expected', localize('nbt.node')),
-						node,
-					)
-					return
-				}
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [nbt]
-			}
-		},
+		stringParser: (config) => makeInfallible(entry, localize('nbt.node')),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'nbt_path', nbtValidator, {
-		attachString: (config, ctx) => {
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
-				const nbtPath = path(src, ctx)
-				if (nbtPath === core.Failure) {
-					ctx.err.report(
-						localize('expected', localize('nbt.path')),
-						node,
-					)
-					return
-				}
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [nbtPath]
-			}
-		},
+		stringParser: (config) => makeInfallible(path, localize('nbt.path')),
 	})
+}
+
+function makeInfallible(
+	parser: core.Parser,
+	message: string,
+): core.InfallibleParser<core.AstNode | undefined> {
+	return (src, ctx) => {
+		const start = src.cursor
+		const res = parser(src, ctx)
+		if (res === core.Failure) {
+			ctx.err.report(
+				localize('expected', message),
+				core.Range.create(start, src.skipRemaining()),
+			)
+			return undefined
+		}
+		return res
+	}
 }
