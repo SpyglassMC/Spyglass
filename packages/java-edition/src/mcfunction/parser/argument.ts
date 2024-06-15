@@ -1858,7 +1858,10 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
-		let value: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(src, ctx);
+		let value: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
+			src,
+			ctx,
+		)
 
 		if (value == core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
@@ -1879,7 +1882,10 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 	if (src.trySkip('~')) {
 		resLoc.options.category = 'item_sub_predicate_type'
-		let predicate: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(src, ctx)
+		let predicate: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
+			src,
+			ctx,
+		)
 
 		if (predicate == core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
