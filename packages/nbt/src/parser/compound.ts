@@ -9,10 +9,13 @@ export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
 			start: '{',
 			pair: {
 				key: core.failOnEmpty(
-					core.string({
-						...core.BrigadierStringOptions,
-						colorTokenType: 'property',
-					}),
+					core.setType(
+						'nbt:string',
+						core.string({
+							...core.BrigadierStringOptions,
+							colorTokenType: 'property',
+						}),
+					),
 				),
 				sep: ':',
 				value: entry,

@@ -1,5 +1,8 @@
 import * as core from '@spyglassmc/core'
+import type * as json from '@spyglassmc/json'
 import type * as nbt from '@spyglassmc/nbt'
+import { ReleaseVersion } from '../../dependency/common.js'
+import type { NbtParserProperties } from '../tree/argument.js'
 
 export interface BlockStatesNode
 	extends core.RecordBaseNode<core.StringNode, core.StringNode>
@@ -119,7 +122,7 @@ export namespace EntitySelectorArgumentsNode {
 		)
 	}
 }
-export const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's'] as const
+const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
 export type EntitySelectorVariable = typeof EntitySelectorVariables[number]
 export namespace EntitySelectorVariable {
 	/* istanbul ignore next */
@@ -127,7 +130,7 @@ export namespace EntitySelectorVariable {
 		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-export const EntitySelectorAtVariables = EntitySelectorVariables.map(
+const EntitySelectorAtVariables = EntitySelectorVariables.map(
 	(v) => `@${v}` as const,
 )
 export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
@@ -136,6 +139,17 @@ export namespace EntitySelectorAtVariable {
 	export function is(value: string): value is EntitySelectorAtVariable {
 		return EntitySelectorAtVariables.includes(
 			value as EntitySelectorAtVariable,
+		)
+	}
+
+	/**
+	 * Should be used to get a list of available selectors for the current version.
+	 */
+	export function filterAvailable(ctx: core.ContextBase) {
+		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+		return EntitySelectorAtVariables.filter(variable =>
+			!(variable === '@n' && release &&
+				ReleaseVersion.cmp(release, '1.21') < 0)
 		)
 	}
 }
@@ -163,11 +177,11 @@ export namespace EntitySelectorNode {
 		)
 	}
 
-	export function mock(range: core.RangeLike): EntitySelectorNode {
-		const literal = core.LiteralNode.mock(range, {
-			pool: EntitySelectorAtVariables,
-			colorTokenType: 'keyword',
-		})
+	export function mock(
+		range: core.RangeLike,
+		options: core.LiteralOptions,
+	): EntitySelectorNode {
+		const literal = core.LiteralNode.mock(range, options)
 		return {
 			type: 'mcfunction:entity_selector',
 			range: core.Range.get(range),
@@ -444,9 +458,45 @@ export namespace IntRangeNode {
 	}
 }
 
+export interface JsonNode extends core.AstNode {
+	type: 'mcfunction:json'
+	children: [json.JsonNode]
+	typeRef: `::${string}::${string}`
+}
+export namespace JsonNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is JsonNode {
+		return (node as JsonNode).type === 'mcfunction:json'
+	}
+}
+
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message'
 	children: (core.StringNode | EntitySelectorNode)[]
+}
+
+export interface NbtNode extends core.AstNode {
+	type: 'mcfunction:nbt'
+	children: [nbt.NbtNode]
+	properties?: NbtParserProperties
+}
+export namespace NbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtNode {
+		return (node as NbtNode).type === 'mcfunction:nbt'
+	}
+}
+
+export interface NbtResourceNode extends core.AstNode {
+	type: 'mcfunction:nbt_resource'
+	children: [nbt.NbtNode]
+	category: string
+}
+export namespace NbtResourceNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtResourceNode {
+		return (node as NbtResourceNode).type === 'mcfunction:nbt_resource'
+	}
 }
 
 export interface ObjectiveCriteriaNode extends core.AstNode {

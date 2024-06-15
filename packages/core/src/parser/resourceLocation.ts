@@ -27,7 +27,7 @@ const Terminators = new Set([
 	';',
 	'|',
 ])
-const LegalCharacters = new Set([
+export const LegalResourceLocationCharacters = new Set([
 	'a',
 	'b',
 	'c',
@@ -110,10 +110,10 @@ export function resourceLocation(
 			const illegalChars = [
 				...new Set([
 					...[...(ans.namespace ?? [])].filter((c) =>
-						!LegalCharacters.has(c)
+						!LegalResourceLocationCharacters.has(c)
 					),
 					...[...rawPath].filter((c) =>
-						c !== '/' && !LegalCharacters.has(c)
+						c !== '/' && !LegalResourceLocationCharacters.has(c)
 					),
 				]),
 			]

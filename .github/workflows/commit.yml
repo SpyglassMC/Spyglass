@@ -28,6 +28,8 @@ jobs:
 
       - run: npm run lint
 
+      - run: npm run fmt:check
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -38,8 +40,6 @@ jobs:
           node-version: "lts/*"
           cache: "npm"
       - run: npm ci
-
-      - run: npm run fmt:check
 
       - run: npm run build
 

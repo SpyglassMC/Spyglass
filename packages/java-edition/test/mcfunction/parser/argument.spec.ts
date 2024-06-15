@@ -11,7 +11,10 @@ import * as nbt from '@spyglassmc/nbt'
 import { describe, it } from 'mocha'
 
 const Suites: Partial<
-	Record<ArgumentTreeNode['parser'], { properties?: any; content: string[] }[]>
+	Record<
+		ArgumentTreeNode['parser'],
+		{ content: string[]; properties?: any; version?: string }[]
+	>
 > = {
 	'brigadier:bool': [{ content: ['false', 'true'] }],
 	'brigadier:double': [
@@ -92,6 +95,23 @@ const Suites: Partial<
 			],
 		},
 		{
+			properties: { amount: 'single', type: 'entities' },
+			content: [
+				'@n',
+				'@n[type=cow]',
+				'@n[distance=..5]',
+			],
+		},
+		{
+			properties: { amount: 'single', type: 'entities' },
+			content: [
+				'@n',
+				'@n[type=cow]',
+				'@n[distance=..5]',
+			],
+			version: '1.21',
+		},
+		{
 			properties: { amount: 'single', type: 'players' },
 			content: [
 				'Player',
@@ -154,11 +174,26 @@ const Suites: Partial<
 			content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
 		},
 	],
-	'minecraft:item_slot': [{ content: ['container.5', 'weapon'] }],
+	'minecraft:item_slot': [
+		{ content: ['container.5', 'weapon', 'contents'] },
+		{ content: ['contents', 'horse.armor'], version: '1.20.5' },
+	],
+	'minecraft:item_slots': [{
+		content: ['weapon', 'container.*', 'armor.head'],
+	}],
 	'minecraft:item_stack': [
 		{
 			content: ['stick', 'minecraft:stick', 'stick{foo:bar}'],
 		},
+	],
+	'minecraft:loot_modifier': [
+		{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] },
+	],
+	'minecraft:loot_predicate': [
+		{ content: ['custom:maybe', '{condition:"random_chance",chance:0.2}'] },
+	],
+	'minecraft:loot_table': [
+		{ content: ['minecraft:blocks/crafting_table', '{pools:[]}'] },
 	],
 	'minecraft:message': [
 		{ content: ['Hello world!', 'foo', '@e', 'Hello @p :)'] },
@@ -190,7 +225,19 @@ const Suites: Partial<
 				'sculk_charge 4.2',
 				'shriek 20',
 				'vibration 0.1 0.2 0.3 40',
+				'block{block_state:"diamond_block"}',
+				'end_rod{}',
 			],
+		},
+		{
+			content: [
+				'block stone',
+				'dust 0.2 0.4 0.6 0.8',
+				'block{block_state:"diamond_block"}',
+				'end_rod',
+				'end_rod{}',
+			],
+			version: '1.20.5',
 		},
 	],
 	'minecraft:resource': [
@@ -252,6 +299,9 @@ const Suites: Partial<
 			],
 		},
 	],
+	'minecraft:style': [{
+		content: ['{"bold": true}', '{ "color": "red", "italic": true }'],
+	}],
 	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
 	'minecraft:team': [{ content: ['foo', '123'] }],
 	'minecraft:time': [{ content: ['0d', '0s', '0t', '0', '0foo'] }],
@@ -290,26 +340,29 @@ const RemoveExtraChildren = new Set([
 	'minecraft:score_holder',
 ])
 
-const project = mockProjectData()
-
-json.initialize(project)
-nbt.initialize(project)
-
-const { meta } = project
-
 describe('mcfunction argument parser', () => {
 	for (const [parserName, cases] of Object.entries(Suites)) {
 		describe(parserName, () => {
-			for (const { content, properties } of cases) {
+			for (const { content, properties, version = '1.15' } of cases) {
 				const treeNode: ArgumentTreeNode = {
 					type: 'argument',
 					parser: parserName as any,
 					properties,
 				}
+				const project = mockProjectData({ ctx: { loadedVersion: version } })
+				json.initialize(project)
+				nbt.initialize(project)
+
 				for (const string of content) {
-					const itTitle = `Parse "${showWhitespaceGlyph(string)}"${
-						properties ? ` with ${JSON.stringify(properties)}` : ''
-					}`
+					const propertiesString = properties
+						? ` with ${JSON.stringify(properties)}`
+						: ''
+					const versionString = version !== '1.15'
+						? ` in version ${version}`
+						: ''
+					const itTitle = `Parse "${
+						showWhitespaceGlyph(string)
+					}"${propertiesString}${versionString}`
 					it(itTitle, () => {
 						snapshotWithUri({
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
@@ -321,7 +374,7 @@ describe('mcfunction argument parser', () => {
 								import.meta.url,
 							),
 							value: testParser(argument(treeNode)!, string, {
-								project: { meta },
+								project,
 								removeTopLevelChildren: RemoveExtraChildren.has(
 									parserName,
 								),

@@ -44,6 +44,22 @@ export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 	return output
 }
 
+// Only exists since 1.20.5
+export function getItemSlotsArgumentValues(ctx: core.ContextBase) {
+	return [
+		...getItemSlotArgumentValues(ctx),
+		'armor.*',
+		'container.*',
+		'enderchest.*',
+		'horse.*',
+		'hotbar.*',
+		'inventory.*',
+		'player.crafting.*',
+		'villager.*',
+		'weapon.*',
+	]
+}
+
 export const OperationArgumentValues = [
 	'=',
 	'+=',

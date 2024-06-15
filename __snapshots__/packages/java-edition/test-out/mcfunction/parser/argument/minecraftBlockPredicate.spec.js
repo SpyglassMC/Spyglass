@@ -155,7 +155,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
           },
           "children": [
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 16,
                 "end": 19
@@ -175,7 +175,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
               ]
             },
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 20,
                 "end": 23
@@ -196,7 +196,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             }
           ],
           "key": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 16,
               "end": 19
@@ -220,7 +220,7 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
             "end": 20
           },
           "value": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 20,
               "end": 23

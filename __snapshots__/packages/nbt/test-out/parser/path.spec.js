@@ -24,7 +24,7 @@ exports['nbt path() Parse ""foo"" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 5
@@ -57,7 +57,7 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 5
@@ -119,7 +119,7 @@ exports['nbt path() Parse "foo" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -152,7 +152,7 @@ exports['nbt path() Parse "foo.[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -192,7 +192,7 @@ exports['nbt path() Parse "foo.bar" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -212,7 +212,7 @@ exports['nbt path() Parse "foo.bar" 1'] = {
         ]
       },
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 4,
           "end": 7
@@ -245,7 +245,7 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -295,7 +295,7 @@ exports['nbt path() Parse "foo[ 0 ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -345,7 +345,7 @@ exports['nbt path() Parse "foo[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -385,7 +385,7 @@ exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -432,7 +432,7 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -459,7 +459,7 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
         }
       },
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 7,
           "end": 10
@@ -492,7 +492,7 @@ exports['nbt path() Parse "foo[ ][ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -539,7 +539,7 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -589,7 +589,7 @@ exports['nbt path() Parse "foo{ }" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 3
@@ -659,7 +659,7 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
         "children": []
       },
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 4,
           "end": 7
@@ -692,7 +692,7 @@ exports['nbt path() Parse "文字" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "string",
+        "type": "nbt:string",
         "range": {
           "start": 0,
           "end": 2

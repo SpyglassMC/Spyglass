@@ -35,6 +35,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -52,6 +53,7 @@ import type {
 import {
 	BlockNode,
 	CoordinateNode,
+	EntitySelectorAtVariable,
 	EntitySelectorNode,
 	IntRangeNode,
 	ItemPredicateNode,
@@ -108,7 +110,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return ResourceLocationNode.mock(range, { category: 'dimension' })
 		case 'minecraft:entity':
 		case 'minecraft:game_profile':
-			return EntitySelectorNode.mock(range)
+			return EntitySelectorNode.mock(range, {
+				pool: EntitySelectorAtVariable.filterAvailable(ctx),
+			})
 		case 'minecraft:heightmap':
 			return LiteralNode.mock(range, { pool: HeightmapValues })
 		case 'minecraft:entity_anchor':
@@ -129,8 +133,18 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, {
 				pool: getItemSlotArgumentValues(ctx),
 			})
+		case 'minecraft:item_slots':
+			return LiteralNode.mock(range, {
+				pool: getItemSlotsArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
 			return ItemStackNode.mock(range)
+		case 'minecraft:loot_modifier':
+			return ResourceLocationNode.mock(range, { category: 'item_modifier' })
+		case 'minecraft:loot_predicate':
+			return ResourceLocationNode.mock(range, { category: 'predicate' })
+		case 'minecraft:loot_table':
+			return ResourceLocationNode.mock(range, { category: 'loot_table' })
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
@@ -147,11 +161,14 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
-				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+				allowTag,
 			})
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(
@@ -164,6 +181,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 			return LiteralNode.mock(range, { pool: ScoreboardSlotArgumentValues })
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
+		case 'minecraft:style':
+			return json.JsonObjectNode.mock(range)
 		case 'minecraft:swizzle':
 			return LiteralNode.mock(range, { pool: SwizzleArgumentValues })
 		case 'minecraft:team':
@@ -198,6 +217,12 @@ const block: Completer<BlockNode> = (node, ctx) => {
 		Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
 	) {
 		ans.push(...blockStates(node.states, ctx))
+	}
+	if (
+		node.nbt &&
+		Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
+	) {
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }
@@ -420,7 +445,14 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 			node.fakeName ?? SymbolNode.mock(node, { category: 'score_holder' }),
 			ctx,
 		)
-		ans.push(...selector(EntitySelectorNode.mock(node), ctx))
+		ans.push(
+			...selector(
+				EntitySelectorNode.mock(node, {
+					pool: EntitySelectorAtVariable.filterAvailable(ctx),
+				}),
+				ctx,
+			),
+		)
 	}
 	return ans
 }

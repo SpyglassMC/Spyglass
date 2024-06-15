@@ -10,6 +10,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -35,7 +36,10 @@ import type {
 	IntRangeNode,
 	ItemPredicateNode,
 	ItemStackNode,
+	JsonNode,
 	MessageNode,
+	NbtNode,
+	NbtResourceNode,
 	ParticleNode,
 	ScoreHolderNode,
 	UuidNode,
@@ -48,12 +52,11 @@ import {
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
-	EntitySelectorAtVariables,
 	EntitySelectorNode,
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode } from '../tree/argument.js'
+import type { ArgumentTreeNode, NbtParserProperties } from '../tree/argument.js'
 
 const IntegerPattern = /^-?\d+$/
 
@@ -157,7 +160,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(component)
+			return wrap(jsonParser('::java::server::util::text::Text'))
 		case 'minecraft:dimension':
 			return wrap(
 				core.resourceLocation({
@@ -205,8 +208,18 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap((src, ctx) => {
 				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
 			})
+		case 'minecraft:item_slots':
+			return wrap((src, ctx) => {
+				return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
+			})
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
+		case 'minecraft:loot_modifier':
+			return wrap(resourceOrInline('item_modifier'))
+		case 'minecraft:loot_predicate':
+			return wrap(resourceOrInline('predicate'))
+		case 'minecraft:loot_table':
+			return wrap(resourceOrInline('loot_table'))
 		case 'minecraft:message':
 			return wrap(message)
 		case 'minecraft:mob_effect':
@@ -216,11 +229,11 @@ export const argument: mcf.ArgumentParserGetter = (
 				}),
 			)
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbt.parser.compound)
+			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
 			return wrap(nbt.parser.path)
 		case 'minecraft:nbt_tag':
-			return wrap(nbt.parser.entry)
+			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
@@ -243,12 +256,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(
 						treeNode.properties.registry,
 					) as core.RegistryCategory | core.WorldgenFileCategory,
-					allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':
@@ -268,6 +284,8 @@ export const argument: mcf.ArgumentParserGetter = (
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
 			return wrap(core.literal(...ScoreboardSlotArgumentValues))
+		case 'minecraft:style':
+			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
@@ -352,8 +370,6 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-export const component = json.parser.entry
-
 function double(
 	min = DoubleMin,
 	max = DoubleMax,
@@ -437,7 +453,7 @@ function entity(
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{
@@ -565,6 +581,21 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
+function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
+	return core.map(
+		json.parser.entry,
+		(res) => {
+			const ans: JsonNode = {
+				type: 'mcfunction:json',
+				range: res.range,
+				children: [res],
+				typeRef,
+			}
+			return ans
+		},
+	)
+}
+
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
 		type: 'mcfunction:message',
@@ -573,11 +604,14 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (EntitySelectorAtVariable.is(src.peek(2))) {
+		if (src.peek() === '@') {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
-				core.stopBefore(greedyString, ...EntitySelectorAtVariables)(
+				core.stopBefore(
+					greedyString,
+					...EntitySelectorAtVariable.filterAvailable(ctx),
+				)(
 					src,
 					ctx,
 				),
@@ -586,6 +620,24 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	return ans
+}
+
+function nbtParser(
+	parser: core.Parser<nbt.NbtNode>,
+	properties?: NbtParserProperties,
+): core.Parser<NbtNode> {
+	return core.map(
+		parser,
+		(res) => {
+			const ans: NbtNode = {
+				type: 'mcfunction:nbt',
+				range: res.range,
+				children: [res],
+				properties,
+			}
+			return ans
+		},
+	)
 }
 
 export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
@@ -744,6 +796,53 @@ function range(
 	)
 }
 
+function resourceOrInline(category: core.FileCategory) {
+	return core.select([
+		{
+			predicate: (src) =>
+				core.LegalResourceLocationCharacters.has(src.peek()),
+			parser: core.resourceLocation({ category }),
+		},
+		{
+			parser: core.map(
+				nbt.parser.entry,
+				(res) => {
+					const ans: NbtResourceNode = {
+						type: 'mcfunction:nbt_resource',
+						range: res.range,
+						children: [res],
+						category,
+					}
+					return ans
+				},
+			),
+		},
+	])
+}
+
+function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
+	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
+		const start = src.cursor
+		const value = src.readUntil(' ', '\r', '\n', '[')
+		const allowedVariables = EntitySelectorAtVariable.filterAvailable(ctx)
+
+		const ans: core.LiteralNode = {
+			type: 'literal',
+			range: core.Range.create(start, src),
+			options: { pool: allowedVariables },
+			value,
+		}
+
+		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
+			ctx.err.report(
+				localize('mcfunction.parser.entity-selector.invalid', ans.value),
+				ans,
+			)
+		}
+
+		return ans
+	}
+}
 /**
  * Failure when not beginning with `@[parse]`
  */
@@ -761,10 +860,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 	>(
 		core.sequence([
 			core.failOnEmpty(
-				core.literal({
-					pool: EntitySelectorAtVariables,
-					colorTokenType: 'keyword',
-				}),
+				selectorPrefix(),
 			),
 			{
 				get: (res) => {
@@ -778,7 +874,7 @@ function selector(): core.Parser<EntitySelectorNode> {
 						: undefined
 					predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
 					single = variable
-						? variable === '@p' || variable === '@r' || variable === '@s'
+						? ['@p', '@r', '@s', '@n'].includes(variable)
 						: undefined
 					typeLimited = playersOnly
 
@@ -1449,7 +1545,7 @@ function scoreHolder(
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([
 			{
-				predicate: (src) => EntitySelectorAtVariable.is(src.peek(2)),
+				predicate: (src) => src.peek() === '@',
 				parser: selector(),
 			},
 			{

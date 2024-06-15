@@ -4,6 +4,7 @@ import type {
 	NbtByteNode,
 	NbtNumberNode,
 	NbtPrimitiveNode,
+	NbtStringNode,
 } from '../node/index.js'
 import { localizeTag } from '../util.js'
 
@@ -103,7 +104,7 @@ const NumeralPatterns: (
 	{ pattern: /^false$/i, type: 'nbt:byte', value: 0, group: Group.Boolean },
 ]
 
-export const string = core.brigadierString
+export const string = core.setType('nbt:string', core.brigadierString)
 
 export const primitive: core.InfallibleParser<NbtPrimitiveNode> = (
 	src: core.Source,
