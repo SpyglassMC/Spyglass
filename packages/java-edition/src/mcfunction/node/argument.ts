@@ -2,6 +2,7 @@ import * as core from '@spyglassmc/core'
 import type * as json from '@spyglassmc/json'
 import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
+import type { NbtParserProperties } from '../tree/argument.js'
 
 export interface BlockStatesNode
 	extends core.RecordBaseNode<core.StringNode, core.StringNode>
@@ -336,7 +337,6 @@ export namespace IntRangeNode {
 export interface JsonNode extends core.AstNode {
 	type: 'mcfunction:json'
 	children: [json.JsonNode]
-	value: json.JsonNode
 	typeRef: `::${string}::${string}`
 }
 export namespace JsonNode {
@@ -349,6 +349,30 @@ export namespace JsonNode {
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message'
 	children: (core.StringNode | EntitySelectorNode)[]
+}
+
+export interface NbtNode extends core.AstNode {
+	type: 'mcfunction:nbt'
+	children: [nbt.NbtNode]
+	properties?: NbtParserProperties
+}
+export namespace NbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtNode {
+		return (node as NbtNode).type === 'mcfunction:nbt'
+	}
+}
+
+export interface NbtResourceNode extends core.AstNode {
+	type: 'mcfunction:nbt_resource'
+	children: [nbt.NbtNode]
+	category: string
+}
+export namespace NbtResourceNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtResourceNode {
+		return (node as NbtResourceNode).type === 'mcfunction:nbt_resource'
+	}
 }
 
 export interface ObjectiveCriteriaNode extends core.AstNode {

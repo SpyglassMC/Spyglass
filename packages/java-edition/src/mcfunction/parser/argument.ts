@@ -32,6 +32,8 @@ import type {
 	ItemNode,
 	JsonNode,
 	MessageNode,
+	NbtNode,
+	NbtResourceNode,
 	ParticleNode,
 	ScoreHolderNode,
 	UuidNode,
@@ -46,7 +48,7 @@ import {
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode } from '../tree/argument.js'
+import type { ArgumentTreeNode, NbtParserProperties } from '../tree/argument.js'
 
 const IntegerPattern = /^-?\d+$/
 
@@ -214,11 +216,11 @@ export const argument: mcf.ArgumentParserGetter = (
 				}),
 			)
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbt.parser.compound)
+			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
 			return wrap(nbt.parser.path)
 		case 'minecraft:nbt_tag':
-			return wrap(nbt.parser.entry)
+			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
@@ -354,22 +356,6 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 }
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
-
-function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
-	return core.map(
-		json.parser.entry,
-		(res) => {
-			const ans: JsonNode = {
-				type: 'mcfunction:json',
-				range: res.range,
-				children: [res],
-				value: res,
-				typeRef,
-			}
-			return ans
-		},
-	)
-}
 
 function double(
 	min = DoubleMin,
@@ -541,6 +527,21 @@ function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
 const itemStack: core.InfallibleParser<ItemNode> = item(false)
 const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
 
+function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
+	return core.map(
+		json.parser.entry,
+		(res) => {
+			const ans: JsonNode = {
+				type: 'mcfunction:json',
+				range: res.range,
+				children: [res],
+				typeRef,
+			}
+			return ans
+		},
+	)
+}
+
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
 		type: 'mcfunction:message',
@@ -565,6 +566,24 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	return ans
+}
+
+function nbtParser(
+	parser: core.Parser<nbt.NbtNode>,
+	properties?: NbtParserProperties,
+): core.Parser<NbtNode> {
+	return core.map(
+		parser,
+		(res) => {
+			const ans: NbtNode = {
+				type: 'mcfunction:nbt',
+				range: res.range,
+				children: [res],
+				properties,
+			}
+			return ans
+		},
+	)
 }
 
 export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
@@ -730,7 +749,20 @@ function resourceOrInline(category: core.FileCategory) {
 				core.LegalResourceLocationCharacters.has(src.peek()),
 			parser: core.resourceLocation({ category }),
 		},
-		{ parser: nbt.parser.entry },
+		{
+			parser: core.map(
+				nbt.parser.entry,
+				(res) => {
+					const ans: NbtResourceNode = {
+						type: 'mcfunction:nbt_resource',
+						range: res.range,
+						children: [res],
+						category,
+					}
+					return ans
+				},
+			),
+		},
 	])
 }
 

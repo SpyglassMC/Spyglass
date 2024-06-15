@@ -27,6 +27,7 @@ import {
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
+import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import {
@@ -212,6 +213,12 @@ const block: Completer<BlockNode> = (node, ctx) => {
 		Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
 	) {
 		ans.push(...blockStates(node.states, ctx))
+	}
+	if (
+		node.nbt &&
+		Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
+	) {
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }
