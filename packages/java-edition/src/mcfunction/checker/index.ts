@@ -9,14 +9,10 @@ import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js
 import {
 	BlockNode,
 	EntityNode,
-<<<<<<< HEAD
 	ItemStackNode,
-=======
-	ItemNode,
 	JsonNode,
 	NbtNode,
 	NbtResourceNode,
->>>>>>> upstream/main
 	ParticleNode,
 } from '../node/index.js'
 
@@ -88,7 +84,7 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 	if (node.nbt) {
 		nbt.checker.index(
-			'item',
+			'minecraft:item',
 			core.ResourceLocationNode.toString(node.id, 'full'),
 		)(node.nbt, ctx)
 	}
@@ -98,7 +94,6 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 			core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
 		>()
 
-<<<<<<< HEAD
 		node.components!.children.forEach(component => {
 			const componentName = core.ResourceLocationNode.toString(
 				component.key!,
@@ -124,12 +119,6 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 			}
 		})
 	}
-=======
-	nbt.checker.index(
-		'minecraft:item',
-		core.ResourceLocationNode.toString(node.id, 'full'),
-	)(node.nbt, ctx)
->>>>>>> upstream/main
 }
 
 const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
@@ -255,11 +244,7 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
-<<<<<<< HEAD
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
-=======
-	meta.registerChecker<ItemNode>('mcfunction:item', item)
 	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
->>>>>>> upstream/main
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }
