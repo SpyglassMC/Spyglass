@@ -69,18 +69,16 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
-	node.selector?.arguments?.children
-		.filter((pair) => pair.key?.value === 'nbt')
-		.forEach((pair) => {
-			const types = getTypesFromEntity(node, ctx)
-			if (!nbt.NbtCompoundNode.is(pair.value.value)) {
-				return
-			}
-			nbt.checker.index('minecraft:entity', types)(
-				pair.value.value,
-				ctx,
-			)
-		})
+	for (const pair of node.selector?.arguments?.children ?? []) {
+		if (pair.key?.value !== 'nbt' || !pair.value) {
+			return
+		}
+		const types = getTypesFromEntity(node, ctx)
+		if (!nbt.NbtCompoundNode.is(pair.value.value)) {
+			return
+		}
+		nbt.checker.index('minecraft:entity', types)(pair.value.value, ctx)
+	}
 }
 
 const item: core.SyncChecker<ItemNode> = (node, ctx) => {
