@@ -165,6 +165,12 @@ export function isAssignable(
 	ctx: core.CheckerContext,
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
+	if (
+		assignValue.kind === 'literal' && typeDef.kind === 'literal' &&
+		assignValue.value.kind === typeDef.value.kind
+	) {
+		return assignValue.value.value === typeDef.value.value
+	}
 	let ans = true
 	const options: McdocCheckerOptions<McdocType> = {
 		context: ctx,
