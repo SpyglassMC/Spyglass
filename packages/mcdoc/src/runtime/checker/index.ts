@@ -477,7 +477,7 @@ export function typeDefinition<T>(
 				kind: 'union',
 				members: node.validDefinitions.map(d => d.typeDef),
 			})
-			// TODO: don't ignore attributes with a stringParser?
+			// when there are multiple valid definitions, we don't run any string parsers,
 		}
 		// TODO: attach type info to keys
 		for (const child of node.children) {
