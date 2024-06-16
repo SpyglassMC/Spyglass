@@ -440,9 +440,9 @@ export function typeDefinition<T>(
 
 	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
 		if (node.validDefinitions.length === 1) {
-			options.attachTypeInfo(node.node.originalNode, node.validDefinitions[0].typeDef)
-			const attributes = node.validDefinitions[0].typeDef.attributes
-			handleAttributes(attributes, options.context, (handler, config) => {
+			const typeDef = node.validDefinitions[0].typeDef
+			options.attachTypeInfo(node.node.originalNode, typeDef)
+			handleAttributes(typeDef.attributes, options.context, (handler, config) => {
 				const parser = handler.stringParser?.(config, options.context)
 				if (!parser) {
 					return
