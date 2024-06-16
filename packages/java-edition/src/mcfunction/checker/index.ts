@@ -5,6 +5,7 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import type {
 	EntitySelectorInvertableArgumentValueNode,
 } from '../node/index.js'
@@ -205,6 +206,10 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
 	const id = core.ResourceLocationNode.toString(node.id, 'short')
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (release && ReleaseVersion.cmp(release, '1.20.5') < 0) {
+		return
+	}
 	const options = node.children?.find(nbt.NbtCompoundNode.is)
 	ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', 'minecraft:particle', id)
 		.ifDeclared(() => {
