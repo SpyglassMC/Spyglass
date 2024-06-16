@@ -920,12 +920,14 @@ export interface StructPairFieldNode extends AstNode {
 export namespace StructPairFieldNode {
 	export function destruct(node: StructPairFieldNode): {
 		attributes: AttributeNode[]
+		docComments?: DocCommentsNode
 		key: StructKeyNode
 		type: TypeNode
 		isOptional?: boolean
 	} {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
+			docComments: node.children.find(DocCommentsNode.is),
 			key: node.children.find(StructKeyNode.is)!,
 			type: node.children.find(TypeNode.is)!,
 			isOptional: node.isOptional,

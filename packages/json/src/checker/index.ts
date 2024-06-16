@@ -66,17 +66,17 @@ export function index(
 					ctx,
 					mcdoc.runtime.checker.getErrorRangeDefault<JsonNode>,
 				),
-				attachTypeInfo: (node, definition) => {
+				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (
-						node.parent && JsonPairNode?.is(node.parent) &&
+						node.parent && JsonPairNode.is(node.parent) &&
 						node.parent.key
 					) {
 						node.parent.key.hover =
 							`\`\`\`typescript\n${node.parent.key.value}: ${
 								mcdoc.McdocType.toString(definition)
-							}\n\`\`\``
+							}\n\`\`\`\n${desc}`
 					}
 				},
 				stringAttacher: (node, attacher) => {
