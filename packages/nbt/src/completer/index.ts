@@ -1,7 +1,12 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtCollectionNode, NbtCompoundNode, NbtNode, NbtPrimitiveNode } from '../node'
-import { NbtStringNode } from '../node'
+import type {
+	NbtCollectionNode,
+	NbtCompoundNode,
+	NbtNode,
+	NbtPrimitiveNode,
+} from '../node/index.js'
+import { NbtStringNode } from '../node/index.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
