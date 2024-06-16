@@ -1247,9 +1247,8 @@ function simplifyDispatcher<T>(
 	}
 	const structFields: StructTypePairField[] = []
 	for (const key in dispatcher) {
-		// TODO Better way to access typedef without any cast?
-		const data = dispatcher[key].data as any
-		if (data && data.typeDef) {
+		const data = dispatcher[key].data
+		if (TypeDefSymbolData.is(data)) {
 			structFields.push({ kind: 'pair', key, type: data.typeDef })
 		}
 	}
