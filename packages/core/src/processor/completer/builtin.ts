@@ -11,6 +11,7 @@ import type {
 	LiteralNode,
 	LongNode,
 	PairNode,
+	Quote,
 	RecordBaseNode,
 	ResourceLocationNode,
 	StringBaseNode,
@@ -208,8 +209,11 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
 	if (node.children?.length) {
-		// FIXME: Escape quotes/slashes in the result. Note that `\`, `$`, and `}` have to be escaped due to TextMate syntax.
-		return dispatch(node.children[0], ctx)
+		return dispatch(node.children[0], ctx).map(item => ({
+			...item,
+			filterText: escapeString(item.filterText ?? item.label, node.quote),
+			insertText: escapeString(item.insertText ?? item.label, node.quote),
+		}))
 	}
 
 	if (node.options.quotes && node.value === '') {
@@ -222,6 +226,13 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 	}
 
 	return []
+}
+
+function escapeString(value: string, quote?: Quote) {
+	if (!quote) {
+		return value
+	}
+	return value.replaceAll('\\', '\\\\').replaceAll(quote, '\\"')
 }
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {

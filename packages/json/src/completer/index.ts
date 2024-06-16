@@ -62,27 +62,14 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 })
 
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
+	if (node.type === 'json:string' && node.children?.length) {
+		return core.completer.string(node, ctx)
+	}
 	if (!node.typeDef) {
 		return []
 	}
-	if (
-		node.children && node.children.length > 0
-		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
-	) {
-		const child = node.children[0]
-		const items = ctx.meta.getCompleter(child.type)(child, ctx)
-		return items.map(item => ({
-			...item,
-			filterText: item.filterText ? escapeString(item.filterText) : undefined,
-			insertText: item.insertText ? escapeString(item.insertText) : undefined,
-		}))
-	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)
-}
-
-function escapeString(contents: string) {
-	return contents.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
 }
 
 function getValues(
