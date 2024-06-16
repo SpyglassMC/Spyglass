@@ -70,10 +70,19 @@ const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
 		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
 	) {
 		const child = node.children[0]
-		return ctx.meta.getCompleter(child.type)(child, ctx)
+		const items = ctx.meta.getCompleter(child.type)(child, ctx)
+		return items.map(item => ({
+			...item,
+			filterText: item.filterText ? escapeString(item.filterText) : undefined,
+			insertText: item.insertText ? escapeString(item.insertText) : undefined,
+		}))
 	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)
+}
+
+function escapeString(contents: string) {
+	return contents.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
 }
 
 function getValues(
