@@ -3,6 +3,7 @@ import type {
 	Completer,
 	CompleterContext,
 	MetaRegistry,
+	Mutable,
 	RegistryCategory,
 	WorldgenFileCategory,
 } from '@spyglassmc/core'
@@ -52,6 +53,8 @@ import type {
 } from '../node/index.js'
 import {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntitySelectorAtVariable,
 	EntitySelectorNode,
@@ -290,29 +293,36 @@ const componentList: Completer<ComponentListNode> = (node, ctx) => {
 		nbt.NbtNode,
 		ComponentListNode
 	>({
-		key: (
-			_record,
-			pair,
-			ctx,
-			range,
-			_insertValue,
-			_insertComma,
-			_existingKeys,
-		) => {
+		key: (_record, pair, ctx, range) => {
 			const id = pair?.key ??
 				ResourceLocationNode.mock(pair?.key ?? range, {
 					category: 'data_component_type',
 				})
 			return completer.resourceLocation(id, ctx)
 		},
-		value: () => {
-			return [] // TODO
+		value: (_record, pair, ctx) => {
+			if (!pair.value) {
+				return []
+			}
+			return completer.dispatch(pair.value, ctx)
 		},
 	})(node, ctx)
 }
 
 const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
 	// TODO: improve this completer
+	const test = AstNode.findShallowestChild({
+		node: node as Mutable<ComponentTestsNode>,
+		needle: ctx.offset,
+		endInclusive: true,
+		predicate: (n) =>
+			ComponentTestExactNode.is(n) || ComponentTestSubpredicateNode.is(n),
+	})
+	if (test && ComponentTestExactNode.is(test) && test.value) {
+		return completer.dispatch(test.value, ctx)
+	} else if (test && ComponentTestSubpredicateNode.is(test) && test.value) {
+		return completer.dispatch(test.value, ctx)
+	}
 	return []
 }
 
@@ -329,7 +339,7 @@ const itemStack: Completer<ItemStackNode> = (node, ctx) => {
 		ans.push(...componentList(node.components, ctx))
 	}
 	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
-		// TODO
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }
@@ -346,7 +356,7 @@ const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
 		ans.push(...componentTests(node.tests, ctx))
 	}
 	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
-		// TODO
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }

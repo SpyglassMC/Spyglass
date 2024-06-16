@@ -1860,64 +1860,60 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const negated = src.trySkip('!')
 	src.skipWhitespace()
 
-	const resLoc = core.resourceLocation({ category: 'data_component_type' })(
+	const key = core.resourceLocation({ category: 'data_component_type' })(
 		src,
 		ctx,
 	)
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
-		let value: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
-			src,
-			ctx,
-		)
-
-		if (value == core.Failure) {
-			ctx.err.report(localize('expected', localize('nbt.node')), src)
-			src.skipUntilOrEnd(',', '|', ']')
-			value = undefined
-		}
-
-		src.skipWhitespace()
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
 			range: core.Range.create(start, src),
-			children: [resLoc, ...(value ? [value] : [])],
-			component: resLoc,
-			value,
+			children: [key],
+			key,
 			negated,
 		}
-		return ans
-	}
-	if (src.trySkip('~')) {
-		resLoc.options.category = 'item_sub_predicate_type'
-		let predicate: core.Result<nbt.NbtNode> | undefined = nbt.parser.entry(
-			src,
-			ctx,
-		)
-
-		if (predicate == core.Failure) {
+		const value = nbt.parser.entry(src, ctx)
+		if (value == core.Failure) {
 			ctx.err.report(localize('expected', localize('nbt.node')), src)
 			src.skipUntilOrEnd(',', '|', ']')
-			predicate = undefined
+		} else {
+			ans.children.push(value)
+			ans.value = value
 		}
-
 		src.skipWhitespace()
+		ans.range.end = src.cursor
+		return ans
+	}
+
+	if (src.trySkip('~')) {
+		key.options.category = 'item_sub_predicate_type'
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',
 			range: core.Range.create(start, src),
-			children: [resLoc, ...(predicate ? [predicate] : [])],
-			subPredicateType: resLoc,
-			subPredicate: predicate,
+			children: [key],
+			key,
 			negated,
 		}
+		const predicate = nbt.parser.entry(src, ctx)
+		if (predicate == core.Failure) {
+			ctx.err.report(localize('expected', localize('nbt.node')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+		} else {
+			ans.children.push(predicate)
+			ans.value = predicate
+		}
+		src.skipWhitespace()
+		ans.range.end = src.cursor
 		return ans
 	}
+
 	const ans: ComponentTestExistsNode = {
 		type: 'mcfunction:component_test_exists',
 		range: core.Range.create(start, src),
-		children: [resLoc],
-		component: resLoc,
+		children: [key],
+		key,
 		negated,
 	}
 	return ans
@@ -1927,79 +1923,60 @@ const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
 	src,
 	ctx,
 ) => {
-	const parser: core.InfallibleParser<ComponentTestsAllOfNode> = (
-		src,
-		ctx,
-	) => {
-		const children = []
-		const start = src.cursor
-
-		while (src.canRead()) {
-			src.skipWhitespace()
-			const testNode = componentTest(src, ctx)
-
-			children.push(testNode)
-			src.skipWhitespace()
-
-			if (src.peek() === ',') {
-				src.skip()
-			} else if (src.peek() === '|' || src.peek() === ']') {
-				break
-			} else {
-				ctx.err.report(localize('expected', localeQuote(']')), src)
-				src.skipUntilOrEnd(',', '|', ']')
-			}
-		}
-
-		const ans: ComponentTestsAllOfNode = {
-			type: 'mcfunction:component_tests_all_of',
-			range: core.Range.create(start, src),
-			children,
-		}
-
-		return ans
+	const ans: ComponentTestsAllOfNode = {
+		type: 'mcfunction:component_tests_all_of',
+		range: core.Range.create(src),
+		children: [],
 	}
 
-	return parser(src, ctx)
+	while (src.canRead()) {
+		src.skipWhitespace()
+		const testNode = componentTest(src, ctx)
+		ans.children.push(testNode)
+		src.skipWhitespace()
+
+		if (src.peek() === ',') {
+			src.skip()
+		} else if (src.peek() === '|' || src.peek() === ']') {
+			break
+		} else {
+			ctx.err.report(localize('expected', localeQuote(']')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+		}
+	}
+
+	ans.range.end = src.cursor
+	return ans
 }
 
 const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (
 	src,
 	ctx,
 ) => {
-	const parser: core.InfallibleParser<ComponentTestsAnyOfNode> = (
-		src,
-		ctx,
-	) => {
-		const children = []
-		const start = src.cursor
-
-		while (src.canRead()) {
-			src.skipWhitespace()
-			const allOfNode = componentTestsAllOf(src, ctx)
-			children.push(allOfNode)
-			src.skipWhitespace()
-
-			if (src.peek() === '|') {
-				src.skip()
-			} else if (src.peek() === ']') {
-				break
-			} else {
-				ctx.err.report(localize('expected', localeQuote(']')), src)
-				src.skipUntilOrEnd('|', ']')
-			}
-		}
-
-		const ans: ComponentTestsAnyOfNode = {
-			type: 'mcfunction:component_tests_any_of',
-			range: core.Range.create(start, src),
-			children,
-		}
-
-		return ans
+	const ans: ComponentTestsAnyOfNode = {
+		type: 'mcfunction:component_tests_any_of',
+		range: core.Range.create(src),
+		children: [],
 	}
 
-	return parser(src, ctx)
+	while (src.canRead()) {
+		src.skipWhitespace()
+		const allOfNode = componentTestsAllOf(src, ctx)
+		ans.children.push(allOfNode)
+		src.skipWhitespace()
+
+		if (src.peek() === '|') {
+			src.skip()
+		} else if (src.peek() === ']') {
+			break
+		} else {
+			ctx.err.report(localize('expected', localeQuote(']')), src)
+			src.skipUntilOrEnd('|', ']')
+		}
+	}
+
+	ans.range.end = src.cursor
+	return ans
 }
 
 const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
