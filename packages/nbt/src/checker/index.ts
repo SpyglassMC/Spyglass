@@ -39,7 +39,7 @@ export function index(
 		default:
 			const typeDef: mcdoc.McdocType = {
 				kind: 'dispatcher',
-				registry: registry,
+				registry,
 				parallelIndices: getIndices(id),
 			}
 			return (node, ctx) => {
@@ -293,7 +293,7 @@ export function path(
 		// TODO: support dispatcher
 		const typeDef: mcdoc.McdocType = {
 			kind: 'dispatcher',
-			registry: registry,
+			registry,
 			parallelIndices: getIndices(id),
 		}
 		// Create a linked list representation

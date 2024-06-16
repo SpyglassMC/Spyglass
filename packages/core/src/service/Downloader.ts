@@ -79,8 +79,8 @@ export class Downloader {
 							if (ttl) {
 								this.#memoryCache.set(uri, {
 									buffer: cachedBuffer,
-									cacheUri: cacheUri,
-									checksum: checksum,
+									cacheUri,
+									checksum,
 									time: performance.now(),
 								})
 							}

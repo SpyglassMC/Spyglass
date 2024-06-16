@@ -83,7 +83,7 @@ function getValues(
 		.map(({ value, detail, kind }) =>
 			core.CompletionItem.create(value, range, {
 				kind: core.CompletionKind.Value,
-				detail: detail,
+				detail,
 				filterText: formatValue(value, kind),
 				insertText: formatValue(value, kind),
 			})

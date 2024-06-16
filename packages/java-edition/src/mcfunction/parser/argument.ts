@@ -1875,7 +1875,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 			range: core.Range.create(start, src),
 			children: [resLoc, ...(value ? [value] : [])],
 			component: resLoc,
-			value: value,
+			value,
 			negated,
 		}
 		return ans

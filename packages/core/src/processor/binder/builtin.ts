@@ -174,7 +174,7 @@ export const symbol = SyncBinder.create<SymbolBaseNode>((node, ctx) => {
 		ctx.symbols.query(ctx.doc, node.options.category, ...path).enter({
 			usage: {
 				type: node.options.usageType,
-				node: node,
+				node,
 				accessType: node.options.accessType,
 			},
 		})
