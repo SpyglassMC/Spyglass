@@ -32,7 +32,11 @@ export type NodeEquivalenceChecker = (
 	definition: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
 ) => boolean
 
-export type TypeInfoAttacher<T> = (node: T, definition: SimplifiedMcdocType) => void
+export type TypeInfoAttacher<T> = (
+	node: T,
+	definition: SimplifiedMcdocType,
+	description?: string,
+) => void
 
 export type StringAttacher<T> = (node: T, attacher: (node: core.StringBaseNode) => void) => void
 
@@ -249,6 +253,7 @@ interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
 	runtimeNode: CheckerTreeRuntimeNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
+	desc?: string
 }
 
 export function typeDefinition<T>(
@@ -328,7 +333,7 @@ export function typeDefinition<T>(
 						// the same types again and just collect the errors of the lower depth.
 						// This will currently lead to a stack overflow error when e.g. comparing two
 						// text component definitions
-						const simplified = simplify(childDef, { options, node: childValue })
+						const simplified = simplify(childDef.type, { options, node: childValue })
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
 						// so that we can potentially error some valid parent defs if only some of them produce an
@@ -338,6 +343,7 @@ export function typeDefinition<T>(
 								parent: def,
 								runtimeNode: childValue,
 								typeDef: d,
+								desc: childDef.desc,
 							}))
 						childValue.validDefinitions.push(...validDefs)
 					}
@@ -444,7 +450,11 @@ export function typeDefinition<T>(
 	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
 		for (const def of node.validDefinitions) {
 			if (!attached.has(node.node.originalNode)) {
-				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				options.attachTypeInfo(
+					node.node.originalNode,
+					def.typeDef,
+					def.desc,
+				)
 				const attributes = def.typeDef.attributes
 				handleAttributes(attributes, options.context, (handler, config) => {
 					const parser = handler.stringParser?.(config, options.context)
@@ -687,7 +697,7 @@ function condenseErrorsAndFilterSiblings<T>(
 
 interface ValidDefintionResult<T> {
 	errors: McdocCheckerError<T>[]
-	childDefinitions: (McdocType | undefined)[]
+	childDefinitions: ({ desc?: string; type: McdocType } | undefined)[]
 }
 
 function checkShallowly<T>(
@@ -719,7 +729,9 @@ function checkShallowly<T>(
 		}
 	}
 
-	const childDefinitions: (McdocType | undefined)[] = Array(children.length).fill(undefined)
+	const childDefinitions: ({ desc?: string; type: McdocType } | undefined)[] = Array(
+		children.length,
+	).fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
@@ -770,7 +782,10 @@ function checkShallowly<T>(
 		case 'struct': {
 			const literalKvps = new Map<
 				string,
-				{ values: { pair: RuntimePair<T>; index: number }[]; definition: McdocType | undefined }
+				{
+					values: { pair: RuntimePair<T>; index: number }[]
+					definition: { desc?: string; type: McdocType } | undefined
+				}
 			>()
 			const otherKvps: { value: RuntimePair<T>; index: number }[] = []
 
@@ -805,7 +820,7 @@ function checkShallowly<T>(
 					const runtimeChild = literalKvps.get(pair.key.value.value)
 					if (runtimeChild) {
 						foundMatch = true
-						runtimeChild.definition = pair.type
+						runtimeChild.definition = { desc: pair.desc, type: pair.type }
 					}
 				}
 				if (!foundMatch) {
@@ -836,13 +851,13 @@ function checkShallowly<T>(
 							)
 						) {
 							foundMatch = true
-							kvp[1].definition = pair.type
+							kvp[1].definition = { desc: pair.desc, type: pair.type }
 						}
 					}
 				}
 
 				for (const match of otherKvpMatches) {
-					childDefinitions[match] = pair.type
+					childDefinitions[match] = { desc: pair.desc, type: pair.type }
 				}
 				if (
 					!foundMatch
@@ -903,7 +918,7 @@ function checkShallowly<T>(
 			}
 
 			for (let i = 0; i < childDefinitions.length; i++) {
-				childDefinitions[i] = itemType
+				childDefinitions[i] = { type: itemType }
 			}
 
 			if (typeDef.lengthRange && !NumericRange.isInRange(typeDef.lengthRange, children.length)) {
@@ -919,7 +934,7 @@ function checkShallowly<T>(
 			for (let i = 0; i < children.length; i++) {
 				const child = children[i]
 				if (i < typeDef.items.length) {
-					childDefinitions[i] = typeDef.items[i]
+					childDefinitions[i] = { type: typeDef.items[i] }
 				} else {
 					errors.push({ kind: 'unknown_tuple_element', node: child })
 				}

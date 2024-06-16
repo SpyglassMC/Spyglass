@@ -106,13 +106,13 @@ export function typeDefinition(
 					ctx,
 					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
 				),
-				attachTypeInfo: (node, definition) => {
+				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (core.PairNode.is(node.parent) && NbtStringNode.is(node.parent.key)) {
 						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
 							mcdoc.McdocType.toString(definition)
-						}\n\`\`\``
+						}\n\`\`\`\n${desc}`
 					}
 				},
 				stringAttacher: (node, attacher) => {
@@ -305,13 +305,13 @@ export function path(
 						({ originalNode: link }) => link.node.range,
 					)(error)
 				},
-				attachTypeInfo: (link, definition) => {
+				attachTypeInfo: (link, definition, desc = '') => {
 					// TODO: attach type def
 					// TODO: improve hover info
 					if (NbtStringNode.is(link.prev?.node)) {
 						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.value}: ${
 							mcdoc.McdocType.toString(definition)
-						}\n\`\`\``
+						}\n\`\`\`\n${desc}`
 					}
 				},
 				stringAttacher: (node, attacher) => {
