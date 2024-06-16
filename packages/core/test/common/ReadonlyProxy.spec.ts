@@ -6,45 +6,25 @@ import { assertError } from '../utils.js'
 
 describe('ReadonlyProxy', () => {
 	it('Should create a deeply readonly proxy', () => {
-		const testObj = {
-			foo: {
-				baz: {
-					qux: true,
-				},
-				bax: true,
-			},
-			bar: true,
-		}
+		const testObj = { foo: { baz: { qux: true }, bax: true }, bar: true }
 		const proxy = ReadonlyProxy.create(testObj)
 
-		assertError(
-			() => {
-				// @ts-expect-error
-				proxy.bar = false
-			},
-			(e) => snapshot((e as Error).message),
-		)
-		assertError(
-			() => {
-				// @ts-expect-error
-				proxy.foo.bax = false
-			},
-			(e) => snapshot((e as Error).message),
-		)
-		assertError(
-			() => {
-				// @ts-expect-error
-				proxy.foo.baz.qux = false
-			},
-			(e) => snapshot((e as Error).message),
-		)
-		assertError(
-			() => {
-				// @ts-expect-error
-				delete proxy.foo.baz.qux
-			},
-			(e) => snapshot((e as Error).message),
-		)
+		assertError(() => {
+			// @ts-expect-error
+			proxy.bar = false
+		}, (e) => snapshot((e as Error).message))
+		assertError(() => {
+			// @ts-expect-error
+			proxy.foo.bax = false
+		}, (e) => snapshot((e as Error).message))
+		assertError(() => {
+			// @ts-expect-error
+			proxy.foo.baz.qux = false
+		}, (e) => snapshot((e as Error).message))
+		assertError(() => {
+			// @ts-expect-error
+			delete proxy.foo.baz.qux
+		}, (e) => snapshot((e as Error).message))
 		snapshot(testObj)
 		assert.deepStrictEqual(testObj, proxy)
 	})

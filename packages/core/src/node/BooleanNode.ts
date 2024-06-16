@@ -17,9 +17,6 @@ export namespace BooleanNode {
 	}
 
 	export function mock(range: RangeLike): BooleanNode {
-		return {
-			type: 'boolean',
-			range: Range.get(range),
-		}
+		return { type: 'boolean', range: Range.get(range) }
 	}
 }

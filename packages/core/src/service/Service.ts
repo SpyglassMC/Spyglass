@@ -2,18 +2,8 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Logger } from '../common/index.js'
 import type { FileNode } from '../node/index.js'
 import { AstNode } from '../node/index.js'
-import type {
-	Color,
-	ColorInfo,
-	ColorToken,
-	InlayHint,
-	SignatureHelp,
-} from '../processor/index.js'
-import {
-	ColorPresentation,
-	completer,
-	traversePreOrder,
-} from '../processor/index.js'
+import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor/index.js'
+import { ColorPresentation, completer, traversePreOrder } from '../processor/index.js'
 import { Range } from '../source/index.js'
 import type { SymbolLocation, SymbolUsageType } from '../symbol/index.js'
 import { SymbolUsageTypes } from '../symbol/index.js'
@@ -45,21 +35,13 @@ export class Service {
 	readonly profilers: ProfilerFactory
 	readonly project: Project
 
-	constructor({
-		isDebugging = false,
-		logger,
-		profilers = ProfilerFactory.noop(),
-		project,
-	}: Options) {
+	constructor(
+		{ isDebugging = false, logger, profilers = ProfilerFactory.noop(), project }: Options,
+	) {
 		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
-		this.project = new Project({
-			isDebugging,
-			logger,
-			profilers,
-			...project,
-		})
+		this.project = new Project({ isDebugging, logger, profilers, ...project })
 	}
 
 	private debug(message: string): void {
@@ -68,23 +50,13 @@ export class Service {
 		}
 	}
 
-	colorize(
-		node: FileNode<AstNode>,
-		doc: TextDocument,
-		range?: Range,
-	): readonly ColorToken[] {
+	colorize(node: FileNode<AstNode>, doc: TextDocument, range?: Range): readonly ColorToken[] {
 		try {
 			this.debug(`Colorizing '${doc.uri}' # ${doc.version}`)
 			const colorizer = this.project.meta.getColorizer(node.type)
-			return colorizer(
-				node,
-				ColorizerContext.create(this.project, { doc, range }),
-			)
+			return colorizer(node, ColorizerContext.create(this.project, { doc, range }))
 		} catch (e) {
-			this.logger.error(
-				`[Service] [colorize] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [colorize] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return []
 	}
@@ -99,20 +71,13 @@ export class Service {
 				(node) => node.color,
 				(node) =>
 					ans.push({
-						color: Array.isArray(node.color)
-							? node.color
-							: node.color!.value,
-						range: Array.isArray(node.color)
-							? node.range
-							: node.color!.range ?? node.range,
+						color: Array.isArray(node.color) ? node.color : node.color!.value,
+						range: Array.isArray(node.color) ? node.range : node.color!.range ?? node.range,
 					}),
 			)
 			return ans
 		} catch (e) {
-			this.logger.error(
-				`[Service] [getColorInfo] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [getColorInfo] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return []
 	}
@@ -129,10 +94,7 @@ export class Service {
 					Range.toString(range)
 				}`,
 			)
-			let node = AstNode.findDeepestChild({
-				node: file,
-				needle: range.start,
-			})
+			let node = AstNode.findDeepestChild({ node: file, needle: range.start })
 			while (node) {
 				const nodeColor = node.color
 				if (nodeColor && !Array.isArray(nodeColor)) {
@@ -152,35 +114,18 @@ export class Service {
 		return []
 	}
 
-	complete(
-		node: FileNode<AstNode>,
-		doc: TextDocument,
-		offset: number,
-		triggerCharacter?: string,
-	) {
+	complete(node: FileNode<AstNode>, doc: TextDocument, offset: number, triggerCharacter?: string) {
 		try {
-			this.debug(
-				`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`,
-			)
-			const shouldComplete = this.project.meta.shouldComplete(
-				doc.languageId,
-				triggerCharacter,
-			)
+			this.debug(`Getting completion for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			const shouldComplete = this.project.meta.shouldComplete(doc.languageId, triggerCharacter)
 			if (shouldComplete) {
 				return completer.file(
 					node,
-					CompleterContext.create(this.project, {
-						doc,
-						offset,
-						triggerCharacter,
-					}),
+					CompleterContext.create(this.project, { doc, offset, triggerCharacter }),
 				)
 			}
 		} catch (e) {
-			this.logger.error(
-				`[Service] [complete] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [complete] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return []
 	}
@@ -199,46 +144,28 @@ export class Service {
 		// Punctuation should not be treated differently from any other characters, per example:
 		// Hata &ack Sub
 		// ——  Skylinerw, 2022 https://discord.com/channels/154777837382008833/734106483104415856/955521761351454741
-		return [...initialism]
-			.map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`)
-			.join(' ')
+		return [...initialism].map((c, i) => `${c.toUpperCase()}${secrets[i % secrets.length]}`).join(
+			' ',
+		)
 	}
 
-	format(
-		node: FileNode<AstNode>,
-		doc: TextDocument,
-		tabSize: number,
-		insertSpaces: boolean,
-	) {
+	format(node: FileNode<AstNode>, doc: TextDocument, tabSize: number, insertSpaces: boolean) {
 		try {
 			this.debug(`Formatting '${doc.uri}' # ${doc.version}`)
 			const formatter = this.project.meta.getFormatter(node.type)
 			return formatter(
 				node,
-				FormatterContext.create(this.project, {
-					doc,
-					tabSize,
-					insertSpaces,
-				}),
+				FormatterContext.create(this.project, { doc, tabSize, insertSpaces }),
 			)
 		} catch (e) {
-			this.logger.error(
-				`[Service] [format] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [format] Failed for “${doc.uri}” #${doc.version}`, e)
 			throw e
 		}
 	}
 
-	getHover(
-		file: FileNode<AstNode>,
-		doc: TextDocument,
-		offset: number,
-	): Hover | undefined {
+	getHover(file: FileNode<AstNode>, doc: TextDocument, offset: number): Hover | undefined {
 		try {
-			this.debug(
-				`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`,
-			)
+			this.debug(`Getting hover for '${doc.uri}' # ${doc.version} @ ${offset}`)
 			let node = AstNode.findDeepestChild({ node: file, needle: offset })
 			while (node) {
 				const symbol = this.project.symbols.resolveAlias(node.symbol)
@@ -246,8 +173,7 @@ export class Service {
 					const hover =
 						`\`\`\`typescript\n(${symbol.category}${
 							symbol.subcategory ? `/${symbol.subcategory}` : ''
-						}) ${symbol.identifier}\n\`\`\`` +
-						(symbol.desc ? `\n******\n${symbol.desc}` : '')
+						}) ${symbol.identifier}\n\`\`\`` + (symbol.desc ? `\n******\n${symbol.desc}` : '')
 					return Hover.create(node.range, hover)
 				}
 				if (node.hover) {
@@ -256,19 +182,12 @@ export class Service {
 				node = node.parent
 			}
 		} catch (e) {
-			this.logger.error(
-				`[Service] [getHover] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [getHover] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return undefined
 	}
 
-	getInlayHints(
-		node: FileNode<AstNode>,
-		doc: TextDocument,
-		range?: Range,
-	): InlayHint[] {
+	getInlayHints(node: FileNode<AstNode>, doc: TextDocument, range?: Range): InlayHint[] {
 		try {
 			// TODO: `range` argument is not used.
 			this.debug(`Getting inlay hints for '${doc.uri}' # ${doc.version}`)
@@ -279,10 +198,7 @@ export class Service {
 			}
 			return ans
 		} catch (e) {
-			this.logger.error(
-				`[Service] [getInlayHints] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Service] [getInlayHints] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 		return []
 	}
@@ -293,13 +209,8 @@ export class Service {
 		offset: number,
 	): SignatureHelp | undefined {
 		try {
-			this.debug(
-				`Getting signature help for '${doc.uri}' # ${doc.version} @ ${offset}`,
-			)
-			const ctx = SignatureHelpProviderContext.create(this.project, {
-				doc,
-				offset,
-			})
+			this.debug(`Getting signature help for '${doc.uri}' # ${doc.version} @ ${offset}`)
+			const ctx = SignatureHelpProviderContext.create(this.project, { doc, offset })
 			for (const provider of this.project.meta.signatureHelpProviders) {
 				const result = provider(node, ctx)
 				if (result) {
@@ -355,10 +266,7 @@ export class Service {
 							locations.push({ ...loc, uri: mappedUri })
 						}
 					}
-					return SymbolLocations.create(
-						node.range,
-						locations.length ? locations : undefined,
-					)
+					return SymbolLocations.create(node.range, locations.length ? locations : undefined)
 				}
 				node = node.parent
 			}

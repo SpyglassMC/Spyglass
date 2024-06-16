@@ -7,12 +7,7 @@ import type { RangeLike } from '../source/index.js'
 import { Location, PositionRange, Range } from '../source/index.js'
 
 // #region Mcdoc Categories
-export const McdocCategories = Object.freeze(
-	[
-		'mcdoc',
-		'mcdoc/dispatcher',
-	] as const,
-)
+export const McdocCategories = Object.freeze(['mcdoc', 'mcdoc/dispatcher'] as const)
 export type McdocCategory = (typeof McdocCategories)[number]
 // #endregion
 
@@ -156,18 +151,11 @@ export const WorldgenFileCategories = Object.freeze(
 export type WorldgenFileCategory = (typeof WorldgenFileCategories)[number]
 
 export const TaggableResourceLocationCategories = Object.freeze(
-	[
-		...NormalFileCategories,
-		...RegistryCategories,
-		...WorldgenFileCategories,
-	] as const,
+	[...NormalFileCategories, ...RegistryCategories, ...WorldgenFileCategories] as const,
 )
-export type TaggableResourceLocationCategory =
-	(typeof TaggableResourceLocationCategories)[number]
+export type TaggableResourceLocationCategory = (typeof TaggableResourceLocationCategories)[number]
 export namespace TaggableResourceLocationCategory {
-	export function is(
-		category: string,
-	): category is TaggableResourceLocationCategory {
+	export function is(category: string): category is TaggableResourceLocationCategory {
 		return TaggableResourceLocationCategories.includes(
 			category as TaggableResourceLocationCategory,
 		)
@@ -180,11 +168,7 @@ export const TagFileCategories = Object.freeze(
 export type TagFileCategory = (typeof TagFileCategories)[number]
 
 export const FileCategories = Object.freeze(
-	[
-		...NormalFileCategories,
-		...TagFileCategories,
-		...WorldgenFileCategories,
-	] as const,
+	[...NormalFileCategories, ...TagFileCategories, ...WorldgenFileCategories] as const,
 )
 export type FileCategory = (typeof FileCategories)[number]
 
@@ -203,21 +187,12 @@ export const MiscCategories = Object.freeze(
 )
 export type MiscCategory = (typeof MiscCategories)[number]
 
-export const DatapackCategories = Object.freeze(
-	[
-		...FileCategories,
-		...MiscCategories,
-	] as const,
-)
+export const DatapackCategories = Object.freeze([...FileCategories, ...MiscCategories] as const)
 export type DatapackCategory = (typeof DatapackCategories)[number]
 // #endregion
 
 export const AllCategories = Object.freeze(
-	[
-		...DatapackCategories,
-		...McdocCategories,
-		...RegistryCategories,
-	] as const,
+	[...DatapackCategories, ...McdocCategories, ...RegistryCategories] as const,
 )
 export type AllCategory = (typeof AllCategories)[number]
 
@@ -232,13 +207,10 @@ export const ResourceLocationCategories = Object.freeze(
 		...RegistryCategories,
 	] as const,
 )
-export type ResourceLocationCategory =
-	(typeof ResourceLocationCategories)[number]
+export type ResourceLocationCategory = (typeof ResourceLocationCategories)[number]
 export namespace ResourceLocationCategory {
 	export function is(category: string): category is ResourceLocationCategory {
-		return ResourceLocationCategories.includes(
-			category as ResourceLocationCategory,
-		)
+		return ResourceLocationCategories.includes(category as ResourceLocationCategory)
 	}
 }
 
@@ -260,15 +232,9 @@ export interface SymbolPath {
 }
 export namespace SymbolPath {
 	export function fromSymbol(symbol: DeepReadonly<Symbol>): SymbolPath
-	export function fromSymbol(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): SymbolPath | undefined
-	export function fromSymbol(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): SymbolPath | undefined {
-		return symbol
-			? { category: symbol.category, path: symbol.path }
-			: undefined
+	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined
+	export function fromSymbol(symbol: DeepReadonly<Symbol> | undefined): SymbolPath | undefined {
+		return symbol ? { category: symbol.category, path: symbol.path } : undefined
 	}
 
 	/**
@@ -314,10 +280,7 @@ export interface SymbolMetadata {
 	 * A map of symbols that are related to the current symbol. **Only** symbols defined in the global symbol table
 	 * (i.e. visibility is {@link SymbolVisibility.Public} or {@link SymbolVisibility.Restricted}) can be specified in this map.
 	 */
-	relations?: {
-		aliasOf?: SymbolPath
-		[relationship: string]: SymbolPath | undefined
-	}
+	relations?: { aliasOf?: SymbolPath; [relationship: string]: SymbolPath | undefined }
 	/**
 	 * An optional subcategory. Symbols under the same category but having different
 	 * subcategories may be used interchangeablely in certain context. e.g. both
@@ -337,13 +300,7 @@ export interface SymbolMetadata {
 }
 
 export const SymbolUsageTypes = Object.freeze(
-	[
-		'definition',
-		'declaration',
-		'implementation',
-		'reference',
-		'typeDefinition',
-	] as const,
+	['definition', 'declaration', 'implementation', 'reference', 'typeDefinition'] as const,
 )
 export type SymbolUsageType = (typeof SymbolUsageTypes)[number]
 export namespace SymbolUsageType {
@@ -352,9 +309,7 @@ export namespace SymbolUsageType {
 	}
 }
 
-export interface Symbol
-	extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>>
-{
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
 	/**
 	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
@@ -467,10 +422,7 @@ export namespace SymbolLocation {
 		return {
 			...Location.create(doc, range),
 			...(fullRange
-				? {
-					fullRange: Range.get(fullRange),
-					fullPosRange: PositionRange.from(fullRange, doc),
-				}
+				? { fullRange: Range.get(fullRange), fullPosRange: PositionRange.from(fullRange, doc) }
 				: {}),
 			...(contributor ? { contributor } : {}),
 			...(additional ? additional : {}),
@@ -486,16 +438,9 @@ export interface SymbolTable extends Partial<Record<AllCategory, SymbolMap>> {
 	[category: string]: SymbolMap | undefined
 }
 
-export interface UnlinkedSymbol extends
-	Omit<
-		Symbol,
-		| 'category'
-		| 'identifier'
-		| 'members'
-		| 'parentMap'
-		| 'parentSymbol'
-		| 'path'
-	>
+export interface UnlinkedSymbol
+	extends
+		Omit<Symbol, 'category' | 'identifier' | 'members' | 'parentMap' | 'parentSymbol' | 'path'>
 {
 	category?: undefined
 	identifier?: undefined
@@ -509,9 +454,7 @@ export interface UnlinkedSymbolMap {
 	[identifier: string]: UnlinkedSymbol
 }
 
-export interface UnlinkedSymbolTable
-	extends Partial<Record<AllCategory, UnlinkedSymbolMap>>
-{
+export interface UnlinkedSymbolTable extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
 	[category: string]: UnlinkedSymbolMap | undefined
 }
 
@@ -549,10 +492,7 @@ export namespace SymbolTable {
 			path: string[],
 		) => {
 			for (const [identifier, childSymbol] of Object.entries(map)) {
-				linkSymbol(childSymbol, map, parentSymbol, category, [
-					...path,
-					identifier,
-				])
+				linkSymbol(childSymbol, map, parentSymbol, category, [...path, identifier])
 			}
 		}
 

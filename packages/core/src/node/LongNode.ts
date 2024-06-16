@@ -15,10 +15,6 @@ export namespace LongNode {
 	}
 
 	export function mock(range: RangeLike): LongNode {
-		return {
-			type: 'long',
-			range: Range.get(range),
-			value: 0n,
-		}
+		return { type: 'long', range: Range.get(range), value: 0n }
 	}
 }

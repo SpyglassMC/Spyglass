@@ -1,9 +1,7 @@
 interface BaseTreeNode {
 	// The following properties are provided in `commands.json` created by the data generator.
 	type: string
-	children?: {
-		[name: string]: TreeNode
-	}
+	children?: { [name: string]: TreeNode }
 	executable?: boolean
 	redirect?: readonly string[]
 
@@ -31,9 +29,7 @@ export interface RootTreeNode extends BaseTreeNode {
 
 export type TreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
 
-type RecursivePartial<T> = T extends object
-	? { [K in keyof T]?: RecursivePartial<T[K]> }
-	: T
+type RecursivePartial<T> = T extends object ? { [K in keyof T]?: RecursivePartial<T[K]> } : T
 
 export type PartialTreeNode = RecursivePartial<TreeNode>
 export type PartialRootTreeNode = RecursivePartial<RootTreeNode>

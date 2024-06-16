@@ -18,9 +18,6 @@ export namespace SymbolLocations {
 		range: RangeLike,
 		locations: SymbolLocation[] | undefined,
 	): SymbolLocations {
-		return {
-			range: Range.get(range),
-			locations,
-		}
+		return { range: Range.get(range), locations }
 	}
 }

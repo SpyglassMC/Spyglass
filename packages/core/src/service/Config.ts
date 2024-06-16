@@ -71,10 +71,7 @@ export interface EnvConfig {
 	 *
 	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.
 	 */
-	customResources: [
-		filePath: string,
-		config: CustomResourceConfig,
-	][]
+	customResources: [filePath: string, config: CustomResourceConfig][]
 	feature: {
 		codeActions: boolean
 		colors: boolean
@@ -108,10 +105,7 @@ export interface EnvConfig {
 	 * // TODO: Support file paths relative to the project root.
 	 */
 	mcmetaSummaryOverrides: Partial<
-		Record<
-			'blocks' | 'commands' | 'fluids' | 'registries',
-			{ path: string; replace?: boolean }
-		>
+		Record<'blocks' | 'commands' | 'fluids' | 'registries', { path: string; replace?: boolean }>
 	>
 	permissionLevel: 1 | 2 | 3 | 4
 	plugins: string[]
@@ -120,12 +114,10 @@ export interface EnvConfig {
 export type LinterSeverity = 'hint' | 'information' | 'warning' | 'error'
 export namespace LinterSeverity {
 	export function is(value: unknown): value is LinterSeverity {
-		return (
-			value === 'hint' ||
-			value === 'information' ||
-			value === 'warning' ||
-			value === 'error'
-		)
+		return (value === 'hint'
+			|| value === 'information'
+			|| value === 'warning'
+			|| value === 'error')
 	}
 	export function toErrorSeverity(value: LinterSeverity): ErrorSeverity {
 		switch (value) {
@@ -149,41 +141,25 @@ export type QuoteConfig = {
 	type?: 'double' | 'single'
 }
 
-type LinterConfigValue<T> = T extends boolean
-	? null | T | [LinterSeverity, T] | LinterSeverity
+type LinterConfigValue<T> = T extends boolean ? null | T | [LinterSeverity, T] | LinterSeverity
 	: null | T | [LinterSeverity, T]
 export namespace LinterConfigValue {
 	export function destruct(
 		value: LinterConfigValue<boolean | string | number | object>,
-	):
-		| {
-			ruleSeverity: ErrorSeverity
-			ruleValue: boolean | string | number | object
-		}
-		| undefined
-	{
+	): { ruleSeverity: ErrorSeverity; ruleValue: boolean | string | number | object } | undefined {
 		if (value === null || value === undefined) {
 			return undefined
 		}
 
 		if (LinterSeverity.is(value)) {
-			return {
-				ruleSeverity: LinterSeverity.toErrorSeverity(value),
-				ruleValue: true,
-			}
+			return { ruleSeverity: LinterSeverity.toErrorSeverity(value), ruleValue: true }
 		}
 
 		if (Array.isArray(value) && LinterSeverity.is(value[0])) {
-			return {
-				ruleSeverity: LinterSeverity.toErrorSeverity(value[0]),
-				ruleValue: value[1],
-			}
+			return { ruleSeverity: LinterSeverity.toErrorSeverity(value[0]), ruleValue: value[1] }
 		}
 
-		return {
-			ruleSeverity: ErrorSeverity.Warning,
-			ruleValue: value,
-		}
+		return { ruleSeverity: ErrorSeverity.Warning, ruleValue: value }
 	}
 }
 
@@ -252,9 +228,7 @@ export interface SnippetsConfig {
 	[label: string]: string
 }
 
-export type SymbolLinterConfig =
-	| Arrayable<SymbolLinterConfig.Complex>
-	| SymbolLinterConfig.Action
+export type SymbolLinterConfig = Arrayable<SymbolLinterConfig.Complex> | SymbolLinterConfig.Action
 export namespace SymbolLinterConfig {
 	export function is(value: unknown): value is SymbolLinterConfig {
 		return Arrayable.is(value, Complex.is) || Action.is(value)
@@ -274,12 +248,9 @@ export namespace SymbolLinterConfig {
 				return false
 			}
 			const value = v as Complex
-			return (
-				(value.if === undefined || Arrayable.is(value.if, Condition.is)) &&
-				(value.then === undefined || Action.is(value.then)) &&
-				(value.override === undefined ||
-					Arrayable.is(value.override, Complex.is))
-			)
+			return ((value.if === undefined || Arrayable.is(value.if, Condition.is))
+				&& (value.then === undefined || Action.is(value.then))
+				&& (value.override === undefined || Arrayable.is(value.override, Complex.is)))
 		}
 	}
 
@@ -296,18 +267,15 @@ export namespace SymbolLinterConfig {
 				return false
 			}
 			const value = v as Condition
-			return (
-				(value.category === undefined ||
-					Arrayable.is(value.category, TypePredicates.isString)) &&
-				(value.pattern === undefined ||
-					Arrayable.is(value.pattern, TypePredicates.isString)) &&
-				(value.excludePattern === undefined ||
-					Arrayable.is(value.excludePattern, TypePredicates.isString)) &&
-				(value.namespace === undefined ||
-					Arrayable.is(value.namespace, TypePredicates.isString)) &&
-				(value.excludeNamespace === undefined ||
-					Arrayable.is(value.excludeNamespace, TypePredicates.isString))
-			)
+			return ((value.category === undefined
+				|| Arrayable.is(value.category, TypePredicates.isString))
+				&& (value.pattern === undefined || Arrayable.is(value.pattern, TypePredicates.isString))
+				&& (value.excludePattern === undefined
+					|| Arrayable.is(value.excludePattern, TypePredicates.isString))
+				&& (value.namespace === undefined
+					|| Arrayable.is(value.namespace, TypePredicates.isString))
+				&& (value.excludeNamespace === undefined
+					|| Arrayable.is(value.excludeNamespace, TypePredicates.isString)))
 		}
 	}
 
@@ -319,25 +287,15 @@ export namespace SymbolLinterConfig {
 	}
 	export type Action = DeclareAction | ReportAction
 	export namespace Action {
-		export function isDeclare(
-			value: Action | undefined,
-		): value is DeclareAction {
-			return (
-				value !== undefined &&
-				['block', 'file', 'public'].includes(
-					(value as DeclareAction).declare,
-				)
-			)
+		export function isDeclare(value: Action | undefined): value is DeclareAction {
+			return (value !== undefined
+				&& ['block', 'file', 'public'].includes((value as DeclareAction).declare))
 		}
-		export function isReport(
-			value: Action | undefined,
-		): value is ReportAction {
-			return (
-				value !== undefined &&
-				['inherit', 'hint', 'information', 'warning', 'error'].includes(
+		export function isReport(value: Action | undefined): value is ReportAction {
+			return (value !== undefined
+				&& ['inherit', 'hint', 'information', 'warning', 'error'].includes(
 					(value as ReportAction).report,
-				)
-			)
+				))
 		}
 		export function is(v: unknown): v is Action {
 			if (!v || typeof v !== 'object') {
@@ -355,10 +313,7 @@ export namespace SymbolLinterConfig {
 export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
-		dependencies: [
-			'@vanilla-datapack',
-			'@vanilla-mcdoc',
-		],
+		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
 		customResources: [],
 		feature: {
 			codeActions: true,
@@ -444,20 +399,12 @@ export const VanillaConfig: Config = {
 		nbtListLengthCheck: null,
 		nbtTypeCheck: 'loosely',
 
-		undeclaredSymbol: [
-			{
-				if: [
-					{ category: RegistryCategories, namespace: 'minecraft' },
-					{
-						category: [...FileCategories, 'bossbar', 'objective', 'team'],
-					},
-				],
-				then: { report: 'warning' },
-			},
-			{
-				then: { declare: 'block' },
-			},
-		],
+		undeclaredSymbol: [{
+			if: [{ category: RegistryCategories, namespace: 'minecraft' }, {
+				category: [...FileCategories, 'bossbar', 'objective', 'team'],
+			}],
+			then: { report: 'warning' },
+		}, { then: { declare: 'block' } }],
 	},
 	snippet: {
 		executeIfScoreSet:
@@ -471,19 +418,11 @@ type ConfigEvent = { config: Config }
 type ErrorEvent = { error: unknown; uri: string }
 
 export class ConfigService implements ExternalEventEmitter {
-	static readonly ConfigFileNames = Object.freeze(
-		[
-			'spyglass.json',
-			'.spyglassrc.json',
-		] as const,
-	)
+	static readonly ConfigFileNames = Object.freeze(['spyglass.json', '.spyglassrc.json'] as const)
 
 	readonly #eventEmitter: ExternalEventEmitter
 
-	constructor(
-		private readonly project: Project,
-		private readonly defaultConfig = VanillaConfig,
-	) {
+	constructor(private readonly project: Project, private readonly defaultConfig = VanillaConfig) {
 		this.#eventEmitter = new project.externals.event.EventEmitter()
 		const handler = async ({ uri }: { uri: string }) => {
 			if (ConfigService.isConfigFile(uri)) {
@@ -520,9 +459,7 @@ export class ConfigService implements ExternalEventEmitter {
 		for (const name of ConfigService.ConfigFileNames) {
 			const uri = this.project.projectRoot + name
 			try {
-				ans = JSON.parse(
-					bufferToString(await this.project.externals.fs.readFile(uri)),
-				)
+				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
 			} catch (e) {
 				if (this.project.externals.error.isKind(e, 'ENOENT')) {
 					// File doesn't exist.

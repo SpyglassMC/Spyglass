@@ -22,32 +22,20 @@ typing('binder builtin.ts', () => {
 	typing('attempt', () => {
 		const { attempt } = binder
 		assertType<AttemptResult>(attempt(booleanSyncBinder, booleanNode, ctx))
-		assertType<Promise<AttemptResult>>(
-			attempt(booleanAsyncBinder, booleanNode, ctx),
-		)
+		assertType<Promise<AttemptResult>>(attempt(booleanAsyncBinder, booleanNode, ctx))
 	})
 
 	typing('any', () => {
 		const { any } = binder
 		assertType<SyncBinder<BooleanNode>>(any([booleanSyncBinder]))
-		assertType<SyncBinder<BooleanNode>>(
-			any([booleanSyncBinder, booleanSyncBinder]),
-		)
-		assertType<SyncBinder<BooleanNode | StringNode>>(
-			any([booleanSyncBinder, stringSyncBinder]),
-		)
+		assertType<SyncBinder<BooleanNode>>(any([booleanSyncBinder, booleanSyncBinder]))
+		assertType<SyncBinder<BooleanNode | StringNode>>(any([booleanSyncBinder, stringSyncBinder]))
 		assertType<AsyncBinder<BooleanNode>>(any([booleanAsyncBinder]))
-		assertType<AsyncBinder<BooleanNode>>(
-			any([booleanAsyncBinder, booleanAsyncBinder]),
-		)
-		assertType<AsyncBinder<BooleanNode>>(
-			any([booleanAsyncBinder, booleanSyncBinder]),
-		)
+		assertType<AsyncBinder<BooleanNode>>(any([booleanAsyncBinder, booleanAsyncBinder]))
+		assertType<AsyncBinder<BooleanNode>>(any([booleanAsyncBinder, booleanSyncBinder]))
 		assertType<AsyncBinder<BooleanNode | StringNode>>(
 			any([booleanAsyncBinder, stringAsyncBinder]),
 		)
-		assertType<AsyncBinder<BooleanNode | StringNode>>(
-			any([booleanAsyncBinder, stringSyncBinder]),
-		)
+		assertType<AsyncBinder<BooleanNode | StringNode>>(any([booleanAsyncBinder, stringSyncBinder]))
 	})
 })

@@ -16,10 +16,6 @@ export namespace FloatNode {
 	}
 
 	export function mock(range: RangeLike): FloatNode {
-		return {
-			type: 'float',
-			range: Range.get(range),
-			value: 0,
-		}
+		return { type: 'float', range: Range.get(range), value: 0 }
 	}
 }

@@ -23,11 +23,9 @@ export const fallback: Formatter = (node) => {
 }
 
 export const file: Formatter<FileNode<AstNode>> = (node, ctx) => {
-	return node.children
-		.map((child) => {
-			return ctx.meta.getFormatter(child.type)(child, ctx)
-		})
-		.join('')
+	return node.children.map((child) => {
+		return ctx.meta.getFormatter(child.type)(child, ctx)
+	}).join('')
 }
 
 export const boolean: Formatter<BooleanBaseNode> = (node) => {
@@ -71,9 +69,6 @@ export function registerFormatters(meta: MetaRegistry) {
 	meta.registerFormatter<IntegerNode>('integer', integer)
 	meta.registerFormatter<LongNode>('long', long)
 	meta.registerFormatter<LiteralNode>('literal', literal)
-	meta.registerFormatter<ResourceLocationNode>(
-		'resource_location',
-		resourceLocation,
-	)
+	meta.registerFormatter<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerFormatter<StringNode>('string', string)
 }

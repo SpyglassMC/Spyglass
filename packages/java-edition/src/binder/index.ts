@@ -63,29 +63,16 @@ export const Categories = (() => {
 			pack: 'data_pack',
 			until: '1.21',
 		}],
-		dataPackResource('item_modifier', 'item_modifiers', {
-			since: '1.17',
-			until: '1.21',
-		}),
+		dataPackResource('item_modifier', 'item_modifiers', { since: '1.17', until: '1.21' }),
 		dataPackResource('loot_table', 'loot_tables', { until: '1.21' }),
 		dataPackResource('predicate', 'predicates', { until: '1.21' }),
 		dataPackResource('recipe', 'recipes', { until: '1.21' }),
-		['structures', {
-			category: 'structure',
-			extname: '.nbt',
-			pack: 'data_pack',
-			until: '1.21',
-		}],
+		['structures', { category: 'structure', extname: '.nbt', pack: 'data_pack', until: '1.21' }],
 		dataPackResource('tag/block', 'tags/blocks', { until: '1.21' }),
-		dataPackResource('tag/entity_type', 'tags/entity_types', {
-			until: '1.21',
-		}),
+		dataPackResource('tag/entity_type', 'tags/entity_types', { until: '1.21' }),
 		dataPackResource('tag/fluid', 'tags/fluids', { until: '1.21' }),
 		dataPackResource('tag/function', 'tags/functions', { until: '1.21' }),
-		dataPackResource('tag/game_event', 'tags/game_events', {
-			since: '1.17',
-			until: '1.21',
-		}),
+		dataPackResource('tag/game_event', 'tags/game_events', { since: '1.17', until: '1.21' }),
 		dataPackResource('tag/item', 'tags/items', { until: '1.21' }),
 		// ---------
 
@@ -103,16 +90,9 @@ export const Categories = (() => {
 		dataPackResource('loot_table', { since: '1.21' }),
 		dataPackResource('predicate', { since: '1.21' }),
 		dataPackResource('recipe', { since: '1.21' }),
-		['structure', {
-			category: 'structure',
-			extname: '.nbt',
-			pack: 'data_pack',
-			until: '1.21',
-		}],
+		['structure', { category: 'structure', extname: '.nbt', pack: 'data_pack', until: '1.21' }],
 		dataPackResource('tag/block', 'tags/block', { since: '1.21' }),
-		dataPackResource('tag/entity_type', 'tags/entity_type', {
-			since: '1.21',
-		}),
+		dataPackResource('tag/entity_type', 'tags/entity_type', { since: '1.21' }),
 		dataPackResource('tag/fluid', 'tags/fluid', { since: '1.21' }),
 		dataPackResource('tag/function', 'tags/function', { since: '1.21' }),
 		dataPackResource('tag/game_event', 'tags/game_event', { since: '1.21' }),
@@ -141,25 +121,15 @@ export const Categories = (() => {
 		dataPackResource('worldgen/biome', { since: '1.16.2' }),
 		dataPackResource('worldgen/configured_carver', { since: '1.16.2' }),
 		dataPackResource('worldgen/configured_feature', { since: '1.16.2' }),
-		dataPackResource('worldgen/configured_structure_feature', {
-			since: '1.16.2',
-			until: '1.19',
-		}),
+		dataPackResource('worldgen/configured_structure_feature', { since: '1.16.2', until: '1.19' }),
 		dataPackResource('worldgen/density_function', { since: '1.18.2' }),
-		dataPackResource('worldgen/flat_level_generator_preset', {
-			since: '1.19',
-		}),
-		dataPackResource('worldgen/multi_noise_biome_source_parameter_list', {
-			since: '1.19.4',
-		}),
+		dataPackResource('worldgen/flat_level_generator_preset', { since: '1.19' }),
+		dataPackResource('worldgen/multi_noise_biome_source_parameter_list', { since: '1.19.4' }),
 		dataPackResource('worldgen/noise', { since: '1.18' }),
 		dataPackResource('worldgen/noise_settings', { since: '1.16.2' }),
 		dataPackResource('worldgen/placed_feature', { since: '1.18' }),
 		dataPackResource('worldgen/processor_list', { since: '1.16.2' }),
-		dataPackResource('worldgen/configured_surface_builder', {
-			since: '1.16.2',
-			until: '1.18',
-		}),
+		dataPackResource('worldgen/configured_surface_builder', { since: '1.16.2', until: '1.18' }),
 		dataPackResource('worldgen/structure', { since: '1.19' }),
 		dataPackResource('worldgen/structure_set', { since: '1.18.2' }),
 		dataPackResource('worldgen/template_pool', { since: '1.16.2' }),
@@ -217,9 +187,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			const subFolders = match[3].split('/').slice(0, -1)
 
 			for (let i = 0; i < subFolders.length - 1; i++) { // if subFolders is empty, this loop will not run
-				const customCategory = `${match[2]}/${
-					subFolders.slice(0, i + 1).join('/')
-				}`
+				const customCategory = `${match[2]}/${subFolders.slice(0, i + 1).join('/')}`
 
 				def = Categories.get(customCategory)
 
@@ -229,29 +197,20 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 		if (!def || def.extname !== match[4]) {
 			continue
 		}
-		const loadedVersion = ctx.project['loadedVersion'] as
-			| ReleaseVersion
-			| undefined
+		const loadedVersion = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 		if (
-			!loadedVersion || // FIXME: check why this can be undefined sometimes
-			!matchVersion(loadedVersion, def.since, def.until)
+			!loadedVersion // FIXME: check why this can be undefined sometimes
+			|| !matchVersion(loadedVersion, def.since, def.until)
 		) {
 			continue
 		}
-		return {
-			category: def.category,
-			namespace: match[1],
-			identifier: match[3],
-		}
+		return { category: def.category, namespace: match[1], identifier: match[3] }
 	}
 
 	return undefined
 }
 
-export const uriBinder: UriBinder = (
-	uris: readonly string[],
-	ctx: UriBinderContext,
-) => {
+export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
 	const { customResources } = ctx.config.env
 	for (const [category, def] of customResources) {
 		if (def.pack === 'data_pack') { // TODO
@@ -262,17 +221,9 @@ export const uriBinder: UriBinder = (
 	for (const uri of uris) {
 		const parts = dissectUri(uri, ctx)
 		if (parts) {
-			ctx.symbols
-				.query(
-					uri,
-					parts.category,
-					`${parts.namespace}:${parts.identifier}`,
-				)
-				.enter({
-					usage: {
-						type: 'definition',
-					},
-				})
+			ctx.symbols.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`).enter({
+				usage: { type: 'definition' },
+			})
 		}
 	}
 }

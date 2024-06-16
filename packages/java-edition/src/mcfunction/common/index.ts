@@ -5,12 +5,7 @@ export const ColorArgumentValues = [...core.Color.ColorNames, 'reset']
 
 export const EntityAnchorArgumentValues = ['feet', 'eyes']
 
-export const GamemodeArgumentValues = [
-	'adventure',
-	'survival',
-	'creative',
-	'spectator',
-]
+export const GamemodeArgumentValues = ['adventure', 'survival', 'creative', 'spectator']
 
 export function getItemSlotArgumentValues(ctx: core.ContextBase) {
 	const release = ctx.project['loadedVersion'] as ReleaseVersion
@@ -60,17 +55,7 @@ export function getItemSlotsArgumentValues(ctx: core.ContextBase) {
 	]
 }
 
-export const OperationArgumentValues = [
-	'=',
-	'+=',
-	'-=',
-	'*=',
-	'/=',
-	'%=',
-	'<',
-	'>',
-	'><',
-]
+export const OperationArgumentValues = ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><']
 
 export const ScoreboardSlotArgumentValues = [
 	'belowName',
@@ -106,15 +91,6 @@ export const HeightmapValues = [
 	'world_surface_wg',
 ]
 
-export const RotationValues = [
-	'none',
-	'clockwise_90',
-	'180',
-	'counterclockwise_90',
-]
+export const RotationValues = ['none', 'clockwise_90', '180', 'counterclockwise_90']
 
-export const MirrorValues = [
-	'none',
-	'left_right',
-	'front_back',
-]
+export const MirrorValues = ['none', 'left_right', 'front_back']

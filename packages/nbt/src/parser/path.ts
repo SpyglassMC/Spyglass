@@ -13,11 +13,7 @@ type PartParser = (
 ) => ExpectedPart[]
 
 export const path: core.Parser<NbtPathNode> = (src, ctx) => {
-	const ans: NbtPathNode = {
-		type: 'nbt:path',
-		children: [],
-		range: core.Range.create(src),
-	}
+	const ans: NbtPathNode = { type: 'nbt:path', children: [], range: core.Range.create(src) }
 
 	let expectedParts: ExpectedPart[] = ['filter', 'key']
 	let currentPart = nextPart(src)
@@ -71,10 +67,7 @@ const index: PartParser = (children, src, ctx) => {
 	}
 	src.skipSpace()
 	if (!src.trySkip(']')) {
-		ctx.err.report(
-			localize('expected-got', localeQuote(']'), localeQuote(src.peek())),
-			src,
-		)
+		ctx.err.report(localize('expected-got', localeQuote(']'), localeQuote(src.peek())), src)
 	}
 
 	node.range.end = src.cursor
@@ -92,20 +85,7 @@ const key: PartParser = (children, src, ctx) => {
 			// Single quotes supported since 1.20 Pre-release 2 (roughly pack format 15)
 			// https://bugs.mojang.com/browse/MC-175504
 			quotes: ['"', "'"],
-			unquotable: {
-				blockList: new Set([
-					'\n',
-					'\r',
-					'\t',
-					' ',
-					'"',
-					'[',
-					']',
-					'.',
-					'{',
-					'}',
-				]),
-			},
+			unquotable: { blockList: new Set(['\n', '\r', '\t', ' ', '"', '[', ']', '.', '{', '}']) },
 		}),
 	)(src, ctx)
 	children.push(node)
@@ -133,8 +113,4 @@ function localizePart(part: ExpectedPart): string {
 	return localize(`nbt.node.path.${part}`)
 }
 
-const PartParsers: Record<Part, PartParser> = {
-	filter,
-	index,
-	key,
-}
+const PartParsers: Record<Part, PartParser> = { filter, index, key }

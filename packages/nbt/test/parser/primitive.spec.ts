@@ -1,7 +1,4 @@
-import {
-	showWhitespaceGlyph,
-	testParser,
-} from '@spyglassmc/core/test-out/utils.js'
+import { showWhitespaceGlyph, testParser } from '@spyglassmc/core/test-out/utils.js'
 import { primitive } from '@spyglassmc/nbt/lib/parser/index.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'

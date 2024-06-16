@@ -3,11 +3,7 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 
 describe('Operations', () => {
-	const getTestObj = () => ({
-		foo: 1,
-		bar: 2,
-		baz: 3,
-	})
+	const getTestObj = () => ({ foo: 1, bar: 2, baz: 3 })
 	it('Should redo and undo correctly', () => {
 		const ops = new Operations()
 		const testObj = getTestObj()

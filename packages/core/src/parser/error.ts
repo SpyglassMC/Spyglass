@@ -16,10 +16,7 @@ export const error: InfallibleParser<ErrorNode | undefined> = (
 	if (!src.canRead()) {
 		return undefined
 	}
-	const ans: ErrorNode = {
-		type: 'error',
-		range: Range.create(src, () => src.skipRemaining()),
-	}
+	const ans: ErrorNode = { type: 'error', range: Range.create(src, () => src.skipRemaining()) }
 	ctx.err.report(localize('error.unparseable-content'), ans)
 	return ans
 }

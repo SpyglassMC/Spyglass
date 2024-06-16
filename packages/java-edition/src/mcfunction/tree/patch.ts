@@ -1,8 +1,5 @@
 import { SymbolAccessType } from '@spyglassmc/core'
-import type {
-	PartialRootTreeNode,
-	PartialTreeNode,
-} from '@spyglassmc/mcfunction'
+import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
 import type { NbtParserProperties } from './argument.js'
 
@@ -32,8 +29,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 														children: {
 															uuid: {
 																properties: {
-																	category:
-																		'attribute_modifier_uuid',
+																	category: 'attribute_modifier_uuid',
 																	usageType: 'definition',
 																},
 															},
@@ -43,8 +39,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 														children: {
 															uuid: {
 																properties: {
-																	category:
-																		'attribute_modifier_uuid',
+																	category: 'attribute_modifier_uuid',
 																},
 															},
 														},
@@ -55,8 +50,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																children: {
 																	uuid: {
 																		properties: {
-																			category:
-																				'attribute_modifier_uuid',
+																			category: 'attribute_modifier_uuid',
 																		},
 																	},
 																},
@@ -211,11 +205,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties:
-																									{
-																										category:
-																											'item_modifier',
-																									},
+																								properties: {
+																									category:
+																										'item_modifier',
+																								},
 																							},
 																						},
 																					},
@@ -230,11 +223,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties:
-																									{
-																										category:
-																											'item_modifier',
-																									},
+																								properties: {
+																									category:
+																										'item_modifier',
+																								},
 																							},
 																						},
 																					},
@@ -265,11 +257,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties:
-																									{
-																										category:
-																											'item_modifier',
-																									},
+																								properties: {
+																									category:
+																										'item_modifier',
+																								},
 																							},
 																						},
 																					},
@@ -284,11 +275,10 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 																					sourceSlot: {
 																						children: {
 																							modifier: {
-																								properties:
-																									{
-																										category:
-																											'item_modifier',
-																									},
+																								properties: {
+																									category:
+																										'item_modifier',
+																								},
 																							},
 																						},
 																					},

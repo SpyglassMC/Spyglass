@@ -105,11 +105,9 @@ interface ModuleSymbolData {
 }
 namespace ModuleSymbolData {
 	export function is(data: unknown): data is ModuleSymbolData {
-		return (
-			!!data &&
-			typeof data === 'object' &&
-			typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
-		)
+		return (!!data
+			&& typeof data === 'object'
+			&& typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number')
 	}
 }
 
@@ -118,11 +116,9 @@ export interface TypeDefSymbolData {
 }
 export namespace TypeDefSymbolData {
 	export function is(data: unknown): data is TypeDefSymbolData {
-		return (
-			!!data &&
-			typeof data === 'object' &&
-			typeof (data as TypeDefSymbolData).typeDef === 'object'
-		)
+		return (!!data
+			&& typeof data === 'object'
+			&& typeof (data as TypeDefSymbolData).typeDef === 'object')
 	}
 }
 
@@ -137,21 +133,15 @@ export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 		return
 	}
 
-	const mcdocCtx: McdocBinderContext = {
-		...ctx,
-		moduleIdentifier,
-	}
+	const mcdocCtx: McdocBinderContext = { ...ctx, moduleIdentifier }
 	return module_(node, mcdocCtx)
 })
 
-export async function module_(
-	node: ModuleNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+export async function module_(node: ModuleNode, ctx: McdocBinderContext): Promise<void> {
 	const data: ModuleSymbolData = { nextAnonymousIndex: 0 }
-	ctx.symbols
-		.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier)
-		.amend({ data: { data } })
+	ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier).amend({
+		data: { data },
+	})
 
 	hoist(node, ctx)
 
@@ -183,38 +173,29 @@ export async function module_(
  * Hoist enums, structs, type aliases, and use statements under the module scope.
  */
 function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
-	traversePreOrder(
-		node,
-		() => true,
-		TopLevelNode.is,
-		(child) => {
-			switch (child.type) {
-				case 'mcdoc:enum':
-					hoistEnum(child)
-					break
-				case 'mcdoc:struct':
-					hoistStruct(child)
-					break
-				case 'mcdoc:type_alias':
-					hoistTypeAlias(child)
-					break
-				case 'mcdoc:use_statement':
-					hoistUseStatement(child)
-					break
-			}
-		},
-	)
+	traversePreOrder(node, () => true, TopLevelNode.is, (child) => {
+		switch (child.type) {
+			case 'mcdoc:enum':
+				hoistEnum(child)
+				break
+			case 'mcdoc:struct':
+				hoistStruct(child)
+				break
+			case 'mcdoc:type_alias':
+				hoistTypeAlias(child)
+				break
+			case 'mcdoc:use_statement':
+				hoistUseStatement(child)
+				break
+		}
+	})
 
 	function hoistEnum(node: EnumNode) {
-		hoistFor('enum', node, EnumNode.destruct, (n) => ({
-			typeDef: convertEnum(n, ctx),
-		}))
+		hoistFor('enum', node, EnumNode.destruct, (n) => ({ typeDef: convertEnum(n, ctx) }))
 	}
 
 	function hoistStruct(node: StructNode) {
-		hoistFor('struct', node, StructNode.destruct, (n) => ({
-			typeDef: convertStruct(n, ctx),
-		}))
+		hoistFor('struct', node, StructNode.destruct, (n) => ({ typeDef: convertStruct(n, ctx) }))
 	}
 
 	function hoistTypeAlias(node: TypeAliasNode) {
@@ -252,54 +233,34 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		// they will go to the definition in the imported file.
 
 		const target = resolvePath(path, ctx)
-		ctx.symbols
-			.query(
-				{ doc: ctx.doc, node },
-				'mcdoc',
-				`${ctx.moduleIdentifier}::${identifier.value}`,
-			)
-			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier)
-			)
-			.elseEnter({
-				data: {
-					subcategory: 'use_statement_binding',
-					visibility: SymbolVisibility.File,
-					data: target
-						? { target } satisfies UseStatementBindingData
-						: undefined,
-				},
-				usage: { type: 'definition', node: identifier, fullRange: node },
-			})
+		ctx.symbols.query(
+			{ doc: ctx.doc, node },
+			'mcdoc',
+			`${ctx.moduleIdentifier}::${identifier.value}`,
+		).ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier)).elseEnter({
+			data: {
+				subcategory: 'use_statement_binding',
+				visibility: SymbolVisibility.File,
+				data: target ? { target } satisfies UseStatementBindingData : undefined,
+			},
+			usage: { type: 'definition', node: identifier, fullRange: node },
+		})
 	}
 
 	function hoistFor<N extends AstNode>(
 		subcategory: 'enum' | 'struct' | 'type_alias',
 		node: N,
-		destructor: (node: N) => {
-			docComments?: DocCommentsNode
-			keyword: LiteralNode
-			identifier?: IdentifierNode
-		},
+		destructor: (
+			node: N,
+		) => { docComments?: DocCommentsNode; keyword: LiteralNode; identifier?: IdentifierNode },
 		getData: (node: N) => unknown,
 	) {
 		const { docComments, identifier, keyword } = destructor(node)
 		const name = identifier?.value ?? nextAnonymousIdentifier(node, ctx)
-		ctx.symbols
-			.query(
-				{ doc: ctx.doc, node },
-				'mcdoc',
-				`${ctx.moduleIdentifier}::${name}`,
-			)
-			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier ?? node)
-			)
+		ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', `${ctx.moduleIdentifier}::${name}`)
+			.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier ?? node))
 			.elseEnter({
-				data: {
-					data: getData(node),
-					desc: DocCommentsNode.asText(docComments),
-					subcategory,
-				},
+				data: { data: getData(node), desc: DocCommentsNode.asText(docComments), subcategory },
 				// If the current syntax structure is named, then the identifier node is entered as a definition;
 				// otherwise, an anonymous identifier is generated for the symbol and the keyword node is entered as a definition.
 				usage: {
@@ -311,9 +272,9 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 	}
 
 	function nextAnonymousIndex(node: AstNode, ctx: McdocBinderContext): number {
-		const data = ctx.symbols
-			.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier)
-			.getData(ModuleSymbolData.is)
+		const data = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ctx.moduleIdentifier).getData(
+			ModuleSymbolData.is,
+		)
 		if (!data) {
 			throw new Error(`No symbol data for module '${ctx.moduleIdentifier}'`)
 		}
@@ -321,10 +282,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 		return data.nextAnonymousIndex++
 	}
 
-	function nextAnonymousIdentifier(
-		node: AstNode,
-		ctx: McdocBinderContext,
-	): string {
+	function nextAnonymousIdentifier(node: AstNode, ctx: McdocBinderContext): string {
 		return `<anonymous ${nextAnonymousIndex(node, ctx)}>`
 	}
 }
@@ -343,11 +301,7 @@ function bindTypeParamBlock(
 	node.locals = Object.create(null)
 
 	// They are also added to the type definition.
-	data.typeDef = {
-		kind: 'template',
-		child: data.typeDef,
-		typeParams: [],
-	}
+	data.typeDef = { kind: 'template', child: data.typeDef, typeParams: [] }
 
 	const { params } = TypeParamBlockNode.destruct(typeParams)
 	for (const param of params) {
@@ -355,19 +309,12 @@ function bindTypeParamBlock(
 		if (paramIdentifier.value) {
 			// Add the type parameter as a local symbol.
 			const paramPath = `${ctx.moduleIdentifier}::${paramIdentifier.value}`
-			ctx.symbols
-				.query({ doc: ctx.doc, node }, 'mcdoc', paramPath)
-				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, paramIdentifier)
-				)
-				.elseEnter({
-					data: { visibility: SymbolVisibility.Block },
-					usage: {
-						type: 'declaration',
-						node: paramIdentifier,
-						fullRange: param,
-					},
-				})
+			ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', paramPath).ifDeclared((symbol) =>
+				reportDuplicatedDeclaration(ctx, symbol, paramIdentifier)
+			).elseEnter({
+				data: { visibility: SymbolVisibility.Block },
+				usage: { type: 'declaration', node: paramIdentifier, fullRange: param },
+			})
 
 			// Also add it to the type definition.
 			data.typeDef.typeParams.push({ path: paramPath })
@@ -382,8 +329,7 @@ async function bindDispatchStatement(
 	node: DispatchStatementNode,
 	ctx: McdocBinderContext,
 ): Promise<void> {
-	const { attributes, location, index, target, typeParams } =
-		DispatchStatementNode.destruct(node)
+	const { attributes, location, index, target, typeParams } = DispatchStatementNode.destruct(node)
 	if (!(location && index && target)) {
 		return
 	}
@@ -395,9 +341,7 @@ async function bindDispatchStatement(
 
 	const { parallelIndices } = IndexBodyNode.destruct(index)
 	if (parallelIndices.length) {
-		const data: TypeDefSymbolData = {
-			typeDef: convertType(target, ctx),
-		}
+		const data: TypeDefSymbolData = { typeDef: convertType(target, ctx) }
 		if (typeParams) {
 			bindTypeParamBlock(node, typeParams, data, ctx)
 		}
@@ -409,28 +353,20 @@ async function bindDispatchStatement(
 				continue
 			}
 
-			ctx.symbols
-				.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
-				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, key, {
-						localeString:
-							'mcdoc.binder.dispatcher-statement.duplicated-key',
-					})
-				)
-				.elseEnter({
-					data: { data },
-					usage: { type: 'definition', node: key, fullRange: node },
+			ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key)).ifDeclared((
+				symbol,
+			) =>
+				reportDuplicatedDeclaration(ctx, symbol, key, {
+					localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key',
 				})
+			).elseEnter({ data: { data }, usage: { type: 'definition', node: key, fullRange: node } })
 		}
 	}
 
 	await bindType(target, ctx)
 }
 
-async function bindType(
-	node: TypeNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindType(node: TypeNode, ctx: McdocBinderContext): Promise<void> {
 	if (DispatcherTypeNode.is(node)) {
 		await bindDispatcherType(node, ctx)
 	} else if (EnumNode.is(node)) {
@@ -472,9 +408,9 @@ async function bindDispatcherType(
 ): Promise<void> {
 	const { index, location } = DispatcherTypeNode.destruct(node)
 	const locationStr = ResourceLocationNode.toString(location, 'full')
-	ctx.symbols
-		.query(ctx.doc, 'mcdoc/dispatcher', locationStr)
-		.enter({ usage: { type: 'reference', node: location, fullRange: node } })
+	ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', locationStr).enter({
+		usage: { type: 'reference', node: location, fullRange: node },
+	})
 
 	const { parallelIndices } = IndexBodyNode.destruct(index)
 	for (const key of parallelIndices) {
@@ -484,22 +420,17 @@ async function bindDispatcherType(
 			continue
 		}
 
-		ctx.symbols
-			.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
-			.enter({ usage: { type: 'reference', node: key, fullRange: node } })
+		ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key)).enter({
+			usage: { type: 'reference', node: key, fullRange: node },
+		})
 	}
 }
 
-async function bindPath(
-	node: PathNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindPath(node: PathNode, ctx: McdocBinderContext): Promise<void> {
 	for (
-		const { identifiers, node: identNode, indexRight } of resolvePathByStep(
-			node,
-			ctx,
-			{ reportErrors: true },
-		)
+		const { identifiers, node: identNode, indexRight } of resolvePathByStep(node, ctx, {
+			reportErrors: true,
+		})
 	) {
 		if (!identifiers?.length) {
 			continue
@@ -511,10 +442,7 @@ async function bindPath(
 			const referencedModuleUri = identifierToUri(referencedModuleFile, ctx)
 			if (!referencedModuleUri) {
 				ctx.err.report(
-					localize(
-						'mcdoc.binder.path.unknown-module',
-						localeQuote(referencedModuleFile),
-					),
+					localize('mcdoc.binder.path.unknown-module', localeQuote(referencedModuleFile)),
 					node,
 					ErrorSeverity.Warning,
 				)
@@ -524,12 +452,7 @@ async function bindPath(
 			await ctx.ensureBindingStarted(referencedModuleUri)
 		}
 
-		ctx.symbols
-			.query(
-				{ doc: ctx.doc, node: identNode },
-				'mcdoc',
-				pathArrayToString(identifiers),
-			)
+		ctx.symbols.query({ doc: ctx.doc, node: identNode }, 'mcdoc', pathArrayToString(identifiers))
 			.ifDeclared((_, query) =>
 				query.enter({
 					usage: {
@@ -539,8 +462,7 @@ async function bindPath(
 						skipRenaming: LiteralNode.is(identNode),
 					},
 				})
-			)
-			.else(() => {
+			).else(() => {
 				if (indexRight === 0) {
 					ctx.err.report(
 						localize(
@@ -563,11 +485,7 @@ function bindEnum(node: EnumNode, ctx: McdocBinderContext): void {
 		return
 	}
 
-	const query = ctx.symbols.query(
-		{ doc: ctx.doc, node },
-		'mcdoc',
-		...symbol.path,
-	)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...symbol.path)
 	Dev.assertDefined(query.symbol)
 	bindEnumBlock(block, ctx, query)
 }
@@ -581,25 +499,16 @@ function bindEnumBlock(
 	const { fields } = EnumBlockNode.destruct(node)
 	for (const field of fields) {
 		const { identifier } = EnumFieldNode.destruct(field)
-		query.member(identifier.value, (fieldQuery) =>
-			fieldQuery
-				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, identifier)
-				)
-				.elseEnter({
-					usage: {
-						type: 'definition',
-						node: identifier,
-						fullRange: field,
-					},
-				}))
+		query.member(
+			identifier.value,
+			(fieldQuery) =>
+				fieldQuery.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier))
+					.elseEnter({ usage: { type: 'definition', node: identifier, fullRange: field } }),
+		)
 	}
 }
 
-async function bindInjection(
-	node: InjectionNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindInjection(node: InjectionNode, ctx: McdocBinderContext): Promise<void> {
 	const { injection } = InjectionNode.destruct(node)
 	if (EnumInjectionNode.is(injection)) {
 		// TODO
@@ -608,21 +517,14 @@ async function bindInjection(
 	}
 }
 
-async function bindStruct(
-	node: StructNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindStruct(node: StructNode, ctx: McdocBinderContext): Promise<void> {
 	const { block, identifier, keyword } = StructNode.destruct(node)
 	const symbol = identifier?.symbol ?? keyword.symbol
 	if (symbol?.subcategory !== 'struct') {
 		return
 	}
 
-	const query = ctx.symbols.query(
-		{ doc: ctx.doc, node },
-		'mcdoc',
-		...symbol.path,
-	)
+	const query = ctx.symbols.query({ doc: ctx.doc, node }, 'mcdoc', ...symbol.path)
 	Dev.assertDefined(query.symbol)
 	await bindStructBlock(block, ctx, query)
 }
@@ -638,14 +540,12 @@ async function bindStructBlock(
 		if (StructPairFieldNode.is(field)) {
 			const { key, type } = StructPairFieldNode.destruct(field)
 			if (!StructMapKeyNode.is(key)) {
-				query.member(key.value, (fieldQuery) =>
-					fieldQuery
-						.ifDeclared((symbol) =>
-							reportDuplicatedDeclaration(ctx, symbol, key)
-						)
-						.elseEnter({
-							usage: { type: 'definition', node: key, fullRange: field },
-						}))
+				query.member(
+					key.value,
+					(fieldQuery) =>
+						fieldQuery.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, key))
+							.elseEnter({ usage: { type: 'definition', node: key, fullRange: field } }),
+				)
 			}
 			await bindType(type, ctx)
 		} else {
@@ -655,10 +555,7 @@ async function bindStructBlock(
 	}
 }
 
-async function bindTypeAlias(
-	node: TypeAliasNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindTypeAlias(node: TypeAliasNode, ctx: McdocBinderContext): Promise<void> {
 	const { identifier, rhs, typeParams } = TypeAliasNode.destruct(node)
 	if (!identifier?.value) {
 		return
@@ -669,10 +566,7 @@ async function bindTypeAlias(
 	}
 }
 
-async function bindUseStatement(
-	node: UseStatementNode,
-	ctx: McdocBinderContext,
-): Promise<void> {
+async function bindUseStatement(node: UseStatementNode, ctx: McdocBinderContext): Promise<void> {
 	const { path } = UseStatementNode.destruct(node)
 	if (!path) {
 		return
@@ -700,15 +594,10 @@ function reportDuplicatedDeclaration(
 		range,
 		ErrorSeverity.Warning,
 		{
-			related: [
-				{
-					location: SymbolUtil.getDeclaredLocation(symbol) as Location,
-					message: localize(
-						`${options.localeString}.related`,
-						localeQuote(symbol.identifier),
-					),
-				},
-			],
+			related: [{
+				location: SymbolUtil.getDeclaredLocation(symbol) as Location,
+				message: localize(`${options.localeString}.related`, localeQuote(symbol.identifier)),
+			}],
 		},
 	)
 }
@@ -717,16 +606,16 @@ function* resolvePathByStep(
 	path: PathNode,
 	ctx: McdocBinderContext,
 	options: { reportErrors?: boolean } = {},
-): Generator<{
-	identifiers: readonly string[]
-	node: IdentifierNode | LiteralNode
-	index: number
-	indexRight: number
-}> {
+): Generator<
+	{
+		identifiers: readonly string[]
+		node: IdentifierNode | LiteralNode
+		index: number
+		indexRight: number
+	}
+> {
 	const { children, isAbsolute } = PathNode.destruct(path)
-	let identifiers: string[] = isAbsolute
-		? []
-		: pathStringToArray(ctx.moduleIdentifier)
+	let identifiers: string[] = isAbsolute ? [] : pathStringToArray(ctx.moduleIdentifier)
 	for (const [i, child] of children.entries()) {
 		const indexRight = children.length - 1 - i
 		switch (child.type) {
@@ -740,16 +629,11 @@ function* resolvePathByStep(
 				identifiers.push(child.value)
 				if (indexRight === 0) {
 					ctx.symbols.query(
-						{
-							doc: ctx.doc,
-							node: child,
-						},
+						{ doc: ctx.doc, node: child },
 						'mcdoc',
 						pathArrayToString(identifiers),
 					).ifDeclared((symbol) => {
-						const data = symbol.data as
-							| UseStatementBindingData
-							| undefined
+						const data = symbol.data as UseStatementBindingData | undefined
 						if (data?.target) {
 							identifiers = [...data.target]
 						}
@@ -760,10 +644,7 @@ function* resolvePathByStep(
 				// super
 				if (identifiers.length === 0) {
 					if (options.reportErrors) {
-						ctx.err.report(
-							localize('mcdoc.binder.path.super-from-root'),
-							child,
-						)
+						ctx.err.report(localize('mcdoc.binder.path.super-from-root'), child)
 					}
 					return
 				}
@@ -772,12 +653,7 @@ function* resolvePathByStep(
 			default:
 				Dev.assertNever(child)
 		}
-		yield {
-			identifiers,
-			node: child,
-			index: i,
-			indexRight,
-		}
+		yield { identifiers, node: child, index: i, indexRight }
 	}
 }
 
@@ -789,29 +665,19 @@ function resolvePath(
 	return atArray([...resolvePathByStep(path, ctx, options)], -1)?.identifiers
 }
 
-function identifierToUri(
-	module: string,
-	ctx: McdocBinderContext,
-): string | undefined {
+function identifierToUri(module: string, ctx: McdocBinderContext): string | undefined {
 	return ctx.symbols.global.mcdoc?.[module]?.definition?.[0]?.uri
 }
 
 function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
 	return Object.values(ctx.symbols.global.mcdoc ?? {}).find((symbol) => {
-		return (
-			symbol.subcategory === 'module' &&
-			symbol.definition?.some((loc) => loc.uri === uri)
-		)
+		return (symbol.subcategory === 'module' && symbol.definition?.some((loc) => loc.uri === uri))
 	})?.identifier
 }
 
 function pathArrayToString(path: readonly string[]): string
-function pathArrayToString(
-	path: readonly string[] | undefined,
-): string | undefined
-function pathArrayToString(
-	path: readonly string[] | undefined,
-): string | undefined {
+function pathArrayToString(path: readonly string[] | undefined): string | undefined
+function pathArrayToString(path: readonly string[] | undefined): string | undefined {
 	return path ? `::${path.join('::')}` : undefined
 }
 
@@ -870,17 +736,9 @@ function wrapType(
 				continue
 			}
 
-			ans = {
-				kind: 'indexed',
-				child: ans,
-				parallelIndices: convertIndexBody(appendix, ctx),
-			}
+			ans = { kind: 'indexed', child: ans, parallelIndices: convertIndexBody(appendix, ctx) }
 		} else {
-			ans = {
-				kind: 'concrete',
-				child: ans,
-				typeArgs: convertTypeArgBlock(appendix, ctx),
-			}
+			ans = { kind: 'concrete', child: ans, typeArgs: convertTypeArgBlock(appendix, ctx) }
 		}
 	}
 	ans.attributes = convertAttributes(attributes, ctx)
@@ -912,35 +770,20 @@ function undefineEmptyArray<T>(array: T[]): T[] | undefined {
 	return array.length ? array : undefined
 }
 
-function convertAttribute(
-	node: AttributeNode,
-	ctx: McdocBinderContext,
-): Attribute {
+function convertAttribute(node: AttributeNode, ctx: McdocBinderContext): Attribute {
 	const { name, value } = AttributeNode.destruct(node)
-	return {
-		name: name.value,
-		value: value && convertAttributeValue(value, ctx),
-	}
+	return { name: name.value, value: value && convertAttributeValue(value, ctx) }
 }
 
-function convertAttributeValue(
-	node: AttributeValueNode,
-	ctx: McdocBinderContext,
-): AttributeValue {
+function convertAttributeValue(node: AttributeValueNode, ctx: McdocBinderContext): AttributeValue {
 	if (node.type === 'mcdoc:attribute/tree') {
-		return {
-			kind: 'tree',
-			values: convertAttributeTree(node, ctx),
-		}
+		return { kind: 'tree', values: convertAttributeTree(node, ctx) }
 	} else {
 		return convertType(node, ctx)
 	}
 }
 
-function convertAttributeTree(
-	node: AttributeTreeNode,
-	ctx: McdocBinderContext,
-): AttributeTree {
+function convertAttributeTree(node: AttributeTreeNode, ctx: McdocBinderContext): AttributeTree {
 	const ans: AttributeTree = {}
 	const { named, positional } = AttributeTreeNode.destruct(node)
 
@@ -968,34 +811,20 @@ function convertIndexBodies(
 	return undefineEmptyArray(nodes.map((n) => convertIndexBody(n, ctx)))
 }
 
-function convertIndexBody(
-	node: IndexBodyNode,
-	ctx: McdocBinderContext,
-): ParallelIndices {
+function convertIndexBody(node: IndexBodyNode, ctx: McdocBinderContext): ParallelIndices {
 	const { parallelIndices } = IndexBodyNode.destruct(node)
 	return parallelIndices.map((n) => convertIndex(n, ctx))
 }
 
 function convertIndex(node: IndexNode, ctx: McdocBinderContext): Index {
-	return StaticIndexNode.is(node)
-		? convertStaticIndex(node, ctx)
-		: convertDynamicIndex(node, ctx)
+	return StaticIndexNode.is(node) ? convertStaticIndex(node, ctx) : convertDynamicIndex(node, ctx)
 }
 
-function convertStaticIndex(
-	node: StaticIndexNode,
-	ctx: McdocBinderContext,
-): StaticIndex {
-	return {
-		kind: 'static',
-		value: asString(node),
-	}
+function convertStaticIndex(node: StaticIndexNode, ctx: McdocBinderContext): StaticIndex {
+	return { kind: 'static', value: asString(node) }
 }
 
-function convertDynamicIndex(
-	node: DynamicIndexNode,
-	ctx: McdocBinderContext,
-): DynamicIndex {
+function convertDynamicIndex(node: DynamicIndexNode, ctx: McdocBinderContext): DynamicIndex {
 	const { keys } = DynamicIndexNode.destruct(node)
 	return {
 		kind: 'dynamic',
@@ -1008,10 +837,7 @@ function convertDynamicIndex(
 	}
 }
 
-function convertTypeArgBlock(
-	node: TypeArgBlockNode,
-	ctx: McdocBinderContext,
-): McdocType[] {
+function convertTypeArgBlock(node: TypeArgBlockNode, ctx: McdocBinderContext): McdocType[] {
 	const { args } = TypeArgBlockNode.destruct(node)
 	return args.map((a) => convertType(a, ctx))
 }
@@ -1021,37 +847,19 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 
 	// Shortcut if the typeDef has been added to the enum symbol.
 	const symbol = identifier?.symbol ?? node.symbol
-	if (
-		symbol &&
-		TypeDefSymbolData.is(symbol.data) &&
-		symbol.data.typeDef.kind === 'enum'
-	) {
+	if (symbol && TypeDefSymbolData.is(symbol.data) && symbol.data.typeDef.kind === 'enum') {
 		return symbol.data.typeDef
 	}
 
-	return wrapType(
-		node,
-		{
-			kind: 'enum',
-			enumKind,
-			values: convertEnumBlock(block, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'enum', enumKind, values: convertEnumBlock(block, ctx) }, ctx)
 }
 
-function convertEnumBlock(
-	node: EnumBlockNode,
-	ctx: McdocBinderContext,
-): EnumTypeField[] {
+function convertEnumBlock(node: EnumBlockNode, ctx: McdocBinderContext): EnumTypeField[] {
 	const { fields } = EnumBlockNode.destruct(node)
 	return fields.map((n) => convertEnumField(n, ctx))
 }
 
-function convertEnumField(
-	node: EnumFieldNode,
-	ctx: McdocBinderContext,
-): EnumTypeField {
+function convertEnumField(node: EnumFieldNode, ctx: McdocBinderContext): EnumTypeField {
 	const { attributes, identifier, value } = EnumFieldNode.destruct(node)
 	return {
 		attributes: convertAttributes(attributes, ctx),
@@ -1060,10 +868,7 @@ function convertEnumField(
 	}
 }
 
-function convertEnumValue(
-	node: EnumValueNode,
-	ctx: McdocBinderContext,
-): string | number {
+function convertEnumValue(node: EnumValueNode, ctx: McdocBinderContext): string | number {
 	if (TypedNumberNode.is(node)) {
 		const { value } = TypedNumberNode.destruct(node)
 		return value.value
@@ -1076,36 +881,19 @@ function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 
 	// Shortcut if the typeDef has been added to the struct symbol.
 	const symbol = identifier?.symbol ?? node.symbol
-	if (
-		symbol &&
-		TypeDefSymbolData.is(symbol.data) &&
-		symbol.data.typeDef.kind === 'struct'
-	) {
+	if (symbol && TypeDefSymbolData.is(symbol.data) && symbol.data.typeDef.kind === 'struct') {
 		return symbol.data.typeDef
 	}
 
-	return wrapType(
-		node,
-		{
-			kind: 'struct',
-			fields: convertStructBlock(block, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'struct', fields: convertStructBlock(block, ctx) }, ctx)
 }
 
-function convertStructBlock(
-	node: StructBlockNode,
-	ctx: McdocBinderContext,
-): StructTypeField[] {
+function convertStructBlock(node: StructBlockNode, ctx: McdocBinderContext): StructTypeField[] {
 	const { fields } = StructBlockNode.destruct(node)
 	return fields.map((n) => convertStructField(n, ctx))
 }
 
-function convertStructField(
-	node: StructFieldNode,
-	ctx: McdocBinderContext,
-): StructTypeField {
+function convertStructField(node: StructFieldNode, ctx: McdocBinderContext): StructTypeField {
 	return StructPairFieldNode.is(node)
 		? convertStructPairField(node, ctx)
 		: convertStructSpreadField(node, ctx)
@@ -1115,9 +903,7 @@ function convertStructPairField(
 	node: StructPairFieldNode,
 	ctx: McdocBinderContext,
 ): StructTypePairField {
-	const { attributes, key, type, isOptional } = StructPairFieldNode.destruct(
-		node,
-	)
+	const { attributes, key, type, isOptional } = StructPairFieldNode.destruct(node)
 	return {
 		kind: 'pair',
 		attributes: convertAttributes(attributes, ctx),
@@ -1127,10 +913,7 @@ function convertStructPairField(
 	}
 }
 
-function convertStructKey(
-	node: StructKeyNode,
-	ctx: McdocBinderContext,
-): string | McdocType {
+function convertStructKey(node: StructKeyNode, ctx: McdocBinderContext): string | McdocType {
 	if (StructMapKeyNode.is(node)) {
 		const { type } = StructMapKeyNode.destruct(node)
 		return convertType(type, ctx)
@@ -1152,32 +935,14 @@ function convertStructSpreadField(
 }
 
 function convertAny(node: AnyTypeNode, ctx: McdocBinderContext): McdocType {
-	return wrapType(
-		node,
-		{
-			kind: 'any',
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'any' }, ctx)
 }
 
-function convertBoolean(
-	node: BooleanTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
-	return wrapType(
-		node,
-		{
-			kind: 'boolean',
-		},
-		ctx,
-	)
+function convertBoolean(node: BooleanTypeNode, ctx: McdocBinderContext): McdocType {
+	return wrapType(node, { kind: 'boolean' }, ctx)
 }
 
-function convertDispatcher(
-	node: DispatcherTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
+function convertDispatcher(node: DispatcherTypeNode, ctx: McdocBinderContext): McdocType {
 	const { index, location } = DispatcherTypeNode.destruct(node)
 	return wrapType(
 		node,
@@ -1193,21 +958,14 @@ function convertDispatcher(
 
 function convertList(node: ListTypeNode, ctx: McdocBinderContext): McdocType {
 	const { item, lengthRange } = ListTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: 'list',
-			item: convertType(item, ctx),
-			lengthRange: convertRange(lengthRange, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, {
+		kind: 'list',
+		item: convertType(item, ctx),
+		lengthRange: convertRange(lengthRange, ctx),
+	}, ctx)
 }
 
-function convertRange(
-	node: FloatRangeNode | IntRangeNode,
-	ctx: McdocBinderContext,
-): NumericRange
+function convertRange(node: FloatRangeNode | IntRangeNode, ctx: McdocBinderContext): NumericRange
 function convertRange(
 	node: FloatRangeNode | IntRangeNode | undefined,
 	ctx: McdocBinderContext,
@@ -1226,44 +984,23 @@ function convertRange(
 	return { kind, min: min?.value, max: max?.value }
 }
 
-function convertLiteral(
-	node: LiteralTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
+function convertLiteral(node: LiteralTypeNode, ctx: McdocBinderContext): McdocType {
 	const { value } = LiteralTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: 'literal',
-			value: convertLiteralValue(value, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'literal', value: convertLiteralValue(value, ctx) }, ctx)
 }
 
-function convertLiteralValue(
-	node: LiteralTypeValueNode,
-	ctx: McdocBinderContext,
-): LiteralValue {
+function convertLiteralValue(node: LiteralTypeValueNode, ctx: McdocBinderContext): LiteralValue {
 	if (LiteralNode.is(node)) {
-		return {
-			kind: 'boolean',
-			value: node.value === 'true',
-		}
+		return { kind: 'boolean', value: node.value === 'true' }
 	} else if (TypedNumberNode.is(node)) {
 		const { suffix, value } = TypedNumberNode.destruct(node)
 		return {
-			kind: convertLiteralNumberSuffix(suffix, ctx) ??
-				(value.type === 'integer'
-					? 'int'
-					: 'double'),
+			kind: convertLiteralNumberSuffix(suffix, ctx)
+				?? (value.type === 'integer' ? 'int' : 'double'),
 			value: value.value,
 		}
 	} else {
-		return {
-			kind: 'string',
-			value: node.value,
-		}
+		return { kind: 'string', value: node.value }
 	}
 }
 
@@ -1288,95 +1025,48 @@ function convertLiteralNumberSuffix(
 	}
 }
 
-function convertNumericType(
-	node: NumericTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
+function convertNumericType(node: NumericTypeNode, ctx: McdocBinderContext): McdocType {
 	const { numericKind, valueRange } = NumericTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: numericKind.value as NumericTypeKind,
-			valueRange: convertRange(valueRange, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, {
+		kind: numericKind.value as NumericTypeKind,
+		valueRange: convertRange(valueRange, ctx),
+	}, ctx)
 }
 
-function convertPrimitiveArray(
-	node: PrimitiveArrayTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
-	const { arrayKind, lengthRange, valueRange } = PrimitiveArrayTypeNode
-		.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: `${arrayKind.value as PrimitiveArrayValueKind}_array`,
-			lengthRange: convertRange(lengthRange, ctx),
-			valueRange: convertRange(valueRange, ctx),
-		},
-		ctx,
-	)
+function convertPrimitiveArray(node: PrimitiveArrayTypeNode, ctx: McdocBinderContext): McdocType {
+	const { arrayKind, lengthRange, valueRange } = PrimitiveArrayTypeNode.destruct(node)
+	return wrapType(node, {
+		kind: `${arrayKind.value as PrimitiveArrayValueKind}_array`,
+		lengthRange: convertRange(lengthRange, ctx),
+		valueRange: convertRange(valueRange, ctx),
+	}, ctx)
 }
 
-function convertString(
-	node: StringTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
+function convertString(node: StringTypeNode, ctx: McdocBinderContext): McdocType {
 	const { lengthRange } = StringTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: 'string',
-			lengthRange: convertRange(lengthRange, ctx),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'string', lengthRange: convertRange(lengthRange, ctx) }, ctx)
 }
 
-function convertReference(
-	node: ReferenceTypeNode,
-	ctx: McdocBinderContext,
-): McdocType {
+function convertReference(node: ReferenceTypeNode, ctx: McdocBinderContext): McdocType {
 	const { path } = ReferenceTypeNode.destruct(node)
 	return wrapType(
 		node,
-		{
-			kind: 'reference',
-			path: pathArrayToString(resolvePath(path, ctx)),
-		},
+		{ kind: 'reference', path: pathArrayToString(resolvePath(path, ctx)) },
 		ctx,
 	)
 }
 
 function convertTuple(node: TupleTypeNode, ctx: McdocBinderContext): McdocType {
 	const { items } = TupleTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: 'tuple',
-			items: items.map((n) => convertType(n, ctx)),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'tuple', items: items.map((n) => convertType(n, ctx)) }, ctx)
 }
 
 function convertUnion(node: UnionTypeNode, ctx: McdocBinderContext): McdocType {
 	const { members } = UnionTypeNode.destruct(node)
-	return wrapType(
-		node,
-		{
-			kind: 'union',
-			members: members.map((n) => convertType(n, ctx)),
-		},
-		ctx,
-	)
+	return wrapType(node, { kind: 'union', members: members.map((n) => convertType(n, ctx)) }, ctx)
 }
 
-function asString(
-	node: IdentifierNode | LiteralNode | StringNode | ResourceLocationNode,
-): string {
+function asString(node: IdentifierNode | LiteralNode | StringNode | ResourceLocationNode): string {
 	if (ResourceLocationNode.is(node)) {
 		return ResourceLocationNode.toString(node, 'short')
 	}

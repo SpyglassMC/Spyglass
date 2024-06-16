@@ -1,10 +1,10 @@
 {
   "indentWidth": 3,
-  "lineWidth": 80,
+  "lineWidth": 100,
   "newLineKind": "lf",
   "useTabs": true,
   "typescript": {
-    "binaryExpression.operatorPosition": "sameLine",
+    "binaryExpression.operatorPosition": "nextLine",
     "quoteStyle": "preferSingle",
     "semiColons": "asi"
   },

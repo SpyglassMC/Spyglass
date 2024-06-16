@@ -13,11 +13,7 @@ export namespace CommandNode {
 	}
 
 	export function mock(range: core.RangeLike): CommandNode {
-		return {
-			type: 'mcfunction:command',
-			range: core.Range.get(range),
-			children: [],
-		}
+		return { type: 'mcfunction:command', range: core.Range.get(range), children: [] }
 	}
 }
 
@@ -49,12 +45,8 @@ export interface LiteralCommandChildNode extends core.LiteralBaseNode {
 	type: 'mcfunction:command_child/literal'
 }
 export namespace LiteralCommandChildNode {
-	export function is(
-		node: core.AstNode | undefined,
-	): node is LiteralCommandChildNode {
-		return (
-			(node as LiteralCommandChildNode | undefined)?.type ===
-				'mcfunction:command_child/literal'
-		)
+	export function is(node: core.AstNode | undefined): node is LiteralCommandChildNode {
+		return ((node as LiteralCommandChildNode | undefined)?.type
+			=== 'mcfunction:command_child/literal')
 	}
 }

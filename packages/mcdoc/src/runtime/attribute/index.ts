@@ -22,10 +22,7 @@ export interface McdocAttribute<C = unknown> {
 		config: C,
 		ctx: core.CheckerContext,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
-	stringMocker?: (
-		config: C,
-		ctx: core.CompleterContext,
-	) => core.AstNode | undefined
+	stringMocker?: (config: C, ctx: core.CompleterContext) => core.AstNode | undefined
 }
 
 export function registerAttribute<C extends core.Returnable>(
@@ -42,10 +39,7 @@ interface AttributeInfo {
 	attribute: McdocAttribute
 }
 
-export function getAttribute(
-	meta: core.MetaRegistry,
-	name: string,
-) {
+export function getAttribute(meta: core.MetaRegistry, name: string) {
 	return meta.getCustom<AttributeInfo>('mcdoc:attribute')?.get(name)
 }
 
