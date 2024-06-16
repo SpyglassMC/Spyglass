@@ -37,7 +37,8 @@ exports['string() quoted_string(", ⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = {
           "end": 12
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -94,7 +95,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -127,7 +129,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo"" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -151,7 +154,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo↓" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -224,7 +228,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵nbar⧵t⧵"⧵⧵qux
           "end": 15
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -268,7 +273,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse ""foo⧵u00a7⧵abar"" 1'] = 
           "end": 12
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -309,7 +315,8 @@ exports['string() quoted_string(", ⧵n⧵t) Parse "\'foo\'" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "'"
   },
   "errors": [
     {
@@ -362,7 +369,8 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""foo⧵u00a7⧵abar"" 1'] = 
           "end": 12
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -396,7 +404,8 @@ exports['string() quoted_string(", ⧵u⧵?) Parse ""⧵uggez"" 1'] = {
           "end": 3
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -430,6 +439,7 @@ exports['string() quoted_string(quoted_string()) Parse ""foo"" 1'] = {
         }
       }
     ],
+    "quote": "\"",
     "children": [
       {
         "type": "string",
@@ -535,6 +545,7 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
         }
       }
     ],
+    "quote": "\"",
     "children": [
       {
         "type": "string",
@@ -564,7 +575,8 @@ exports['string() quoted_string(quoted_string()) Parse ""⧵"⧵u0066oo⧵⧵⧵
               "end": 15
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ]
   },

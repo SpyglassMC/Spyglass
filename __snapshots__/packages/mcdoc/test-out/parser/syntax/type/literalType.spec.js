@@ -25,7 +25,8 @@ exports['mcdoc literalType Parse ""a literal string"" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ],
     "range": {

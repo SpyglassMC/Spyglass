@@ -1449,7 +1449,8 @@ exports['mcdoc __fixture__ simple types 1'] = {
                             "end": 224
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "range": {

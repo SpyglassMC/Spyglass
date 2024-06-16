@@ -5917,7 +5917,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                             "end": 14
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "inverted": true,
@@ -5939,7 +5940,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 }
               ],
@@ -6010,7 +6012,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": true,
@@ -6032,7 +6035,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               },
               "end": {
@@ -6066,6 +6070,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       }
                     }
                   ],
+                  "quote": "\"",
                   "children": [
                     {
                       "type": "literal",
@@ -6155,6 +6160,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6259,6 +6265,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -6348,6 +6355,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6507,7 +6515,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": true,
@@ -6529,7 +6538,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ],
@@ -6600,7 +6610,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "inverted": true,
@@ -6622,7 +6633,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 14
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             },
             "end": {
@@ -6656,6 +6668,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6745,6 +6758,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   }
                 }
               ],
+              "quote": "\"",
               "children": [
                 {
                   "type": "literal",
@@ -6849,6 +6863,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6938,6 +6953,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",
@@ -7119,7 +7135,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                             "end": 12
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "inverted": false,
@@ -7141,7 +7158,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 }
               ],
@@ -7204,7 +7222,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": false,
@@ -7226,7 +7245,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               },
               "end": {
@@ -7260,6 +7280,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       }
                     }
                   ],
+                  "quote": "\"",
                   "children": [
                     {
                       "type": "literal",
@@ -7341,6 +7362,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7437,6 +7459,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -7518,6 +7541,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -7661,7 +7685,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": false,
@@ -7683,7 +7708,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ],
@@ -7746,7 +7772,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "inverted": false,
@@ -7768,7 +7795,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 12
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             },
             "end": {
@@ -7802,6 +7830,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7883,6 +7912,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   }
                 }
               ],
+              "quote": "\"",
               "children": [
                 {
                   "type": "literal",
@@ -7979,6 +8009,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -8060,6 +8091,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",

@@ -50,7 +50,8 @@ exports['mcdoc string Parse ""foo" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -83,7 +84,8 @@ exports['mcdoc string Parse ""foo"" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -107,7 +109,8 @@ exports['mcdoc string Parse ""fo↓o"" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -150,7 +153,8 @@ exports['mcdoc string Parse ""fo⧵Ao"" 1'] = {
           "end": 5
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": [
     {
@@ -193,7 +197,8 @@ exports['mcdoc string Parse ""fo⧵no"" 1'] = {
           "end": 5
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }

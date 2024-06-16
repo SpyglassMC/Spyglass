@@ -52,7 +52,8 @@ exports['JSON array parser array() Parse "["hey","there"]" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -73,7 +74,8 @@ exports['JSON array parser array() Parse "["hey","there"]" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 6,
@@ -105,7 +107,8 @@ exports['JSON array parser array() Parse "["hey","there"]" 1'] = {
                   "end": 8
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -126,7 +129,8 @@ exports['JSON array parser array() Parse "["hey","there"]" 1'] = {
                 "end": 8
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -177,7 +181,8 @@ exports['JSON array parser array() Parse "["⧵"","⧵u1234"]" 1'] = {
                   "end": 4
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -208,7 +213,8 @@ exports['JSON array parser array() Parse "["⧵"","⧵u1234"]" 1'] = {
                 "end": 4
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 5,
@@ -250,7 +256,8 @@ exports['JSON array parser array() Parse "["⧵"","⧵u1234"]" 1'] = {
                   "end": 13
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -281,7 +288,8 @@ exports['JSON array parser array() Parse "["⧵"","⧵u1234"]" 1'] = {
                 "end": 13
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -332,7 +340,8 @@ exports['JSON array parser array() Parse "["⧵u1z34"]" 1'] = {
                   "end": 4
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -363,7 +372,8 @@ exports['JSON array parser array() Parse "["⧵u1z34"]" 1'] = {
                 "end": 4
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -423,7 +433,8 @@ exports['JSON array parser array() Parse "["⧵z"]" 1'] = {
                   "end": 4
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -454,7 +465,8 @@ exports['JSON array parser array() Parse "["⧵z"]" 1'] = {
                 "end": 4
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]

@@ -52,7 +52,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -72,7 +73,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -93,7 +95,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -117,7 +120,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       },
       {
@@ -145,7 +149,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -165,7 +170,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                   "end": 27
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -186,7 +192,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -210,7 +217,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar"   "baz" : "qu
                 "end": 27
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -260,7 +268,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -280,7 +289,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -301,7 +311,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -325,7 +336,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -357,7 +369,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -377,7 +390,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 27
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -398,7 +412,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -422,7 +437,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 27
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 32,
@@ -476,7 +492,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -496,7 +513,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -517,7 +535,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -541,7 +560,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -573,7 +593,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -593,7 +614,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                   "end": 27
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -614,7 +636,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -638,7 +661,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : "qu
                 "end": 27
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -679,7 +703,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -699,7 +724,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -720,7 +746,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -744,7 +771,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -776,7 +804,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -817,7 +846,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" : }" 
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -891,7 +921,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -911,7 +942,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -932,7 +964,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -956,7 +989,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -988,7 +1022,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1029,7 +1064,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , "baz" }" 1'
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "value": {
           "type": "string",
@@ -1107,7 +1143,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1127,7 +1164,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1148,7 +1186,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -1172,7 +1211,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -1226,7 +1266,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1246,7 +1287,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1267,7 +1309,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -1291,7 +1334,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -1332,7 +1376,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1373,7 +1418,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" : }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -1447,7 +1493,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1488,7 +1535,8 @@ exports['record() record(no trailing comma) Parse "{ "foo" }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "value": {
           "type": "string",
@@ -1659,7 +1707,8 @@ exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
                   "end": 5
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -1679,7 +1728,8 @@ exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
                   "end": 13
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1700,7 +1750,8 @@ exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
                 "end": 5
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 10,
@@ -1724,7 +1775,8 @@ exports['record() record(no trailing comma) Parse "{ , "foo" : "bar" }" 1'] = {
                 "end": 13
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -1810,7 +1862,8 @@ exports['record() record(no trailing comma) Parse "{ : "bar" }" 1'] = {
                   "end": 5
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1855,7 +1908,8 @@ exports['record() record(no trailing comma) Parse "{ : "bar" }" 1'] = {
                 "end": 5
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -2061,7 +2115,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2081,7 +2136,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2102,7 +2158,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -2126,7 +2183,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -2158,7 +2216,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2178,7 +2237,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 27
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2199,7 +2259,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -2223,7 +2284,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 27
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 32,
@@ -2268,7 +2330,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2288,7 +2351,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2309,7 +2373,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -2333,7 +2398,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -2365,7 +2431,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 19
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2385,7 +2452,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                   "end": 27
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2406,7 +2474,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 19
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 24,
@@ -2430,7 +2499,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , "baz" : "qux" 
                 "end": 27
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -2471,7 +2541,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2491,7 +2562,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2512,7 +2584,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -2536,7 +2609,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" , }" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 16,
@@ -2581,7 +2655,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "string",
@@ -2601,7 +2676,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -2622,7 +2698,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -2646,7 +2723,8 @@ exports['record() record(trailing comma) Parse "{ "foo" : "bar" }" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]

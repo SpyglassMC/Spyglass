@@ -38,7 +38,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                       "end": 3
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               },
               {
                 "type": "json:string",
@@ -58,7 +59,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                       "end": 12
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             ],
             "key": {
@@ -79,7 +81,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     "end": 3
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "sep": {
               "start": 9,
@@ -103,7 +106,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     "end": 12
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "end": {
               "start": 16,
@@ -135,7 +139,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                       "end": 19
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               },
               {
                 "type": "json:boolean",
@@ -164,7 +169,8 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
                     "end": 19
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "sep": {
               "start": 26,
@@ -227,7 +233,8 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
                       "end": 2
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               },
               {
                 "type": "json:boolean",
@@ -256,7 +263,8 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
                     "end": 2
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "sep": {
               "start": 7,
