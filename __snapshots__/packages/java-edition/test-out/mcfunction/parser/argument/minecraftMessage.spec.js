@@ -86,7 +86,7 @@ exports['mcfunction argument minecraft:message Parse "Hello @p :)" 1'] = {
         "playersOnly": true,
         "single": true,
         "typeLimited": true,
-        "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+        "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
       },
       {
         "type": "string",
