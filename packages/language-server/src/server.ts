@@ -114,8 +114,8 @@ connection.onInitialize(async (params) => {
 				try {
 					await connection.sendDiagnostics({
 						diagnostics: toLS.diagnostics(errors),
-						uri: uri,
-						version: version,
+						uri,
+						version,
 					})
 				} catch (e) {
 					console.error('[sendDiagnostics]', e)

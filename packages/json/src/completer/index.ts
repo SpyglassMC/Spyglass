@@ -90,7 +90,7 @@ function getValues(
 		.map(({ value, detail, kind, completionKind }) =>
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
-				detail: detail,
+				detail,
 				filterText: kind === 'string' ? `"${value}"` : value,
 				insertText: kind === 'string' ? `"${value}"` : value,
 			})

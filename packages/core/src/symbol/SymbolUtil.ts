@@ -370,7 +370,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 			doc,
 			contributor: this.#currentContributor,
 			map: visible ? parentMap : undefined,
-			parentSymbol: parentSymbol,
+			parentSymbol,
 			path,
 			symbol: visible ? symbol : undefined,
 			util: this,
