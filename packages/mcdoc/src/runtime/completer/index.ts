@@ -12,7 +12,13 @@ export function getFields(
 	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
-			return typeDef.members.flatMap(getFields)
+			const allFields = new Map<string, SimpleCompletionField>()
+			for (const member of typeDef.members) {
+				for (const field of getFields(member)) {
+					allFields.set(field.key, field)
+				}
+			}
+			return [...allFields.values()]
 		case 'struct':
 			return typeDef.fields.flatMap(field => {
 				if (typeof field.key === 'string') {
@@ -43,7 +49,13 @@ export function getValues(
 	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
-			return typeDef.members.flatMap(m => getValues(m, ctx))
+			const allValues = new Map<string, SimpleCompletionValue>()
+			for (const member of typeDef.members) {
+				for (const value of getValues(member, ctx)) {
+					allValues.set(value.value, value)
+				}
+			}
+			return [...allValues.values()]
 		case 'reference':
 			if (!typeDef.path) return []
 			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
