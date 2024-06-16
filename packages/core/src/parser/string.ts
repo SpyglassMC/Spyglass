@@ -20,9 +20,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 		}
 		let start = src.cursor
 
-		if (
-			options.quotes?.length && (src.peek() === '"' || src.peek() === "'")
-		) {
+		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
 			const currentQuote = src.read() as Quote
 			const contentStart = src.cursor
 			while (src.canRead() && src.peek() !== currentQuote) {
@@ -32,15 +30,12 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 					src.skip()
 					const c2 = src.read()
 					if (
-						c2 === '\\' ||
-						c2 === currentQuote ||
-						EscapeChar.is(options.escapable.characters, c2)
+						c2 === '\\'
+						|| c2 === currentQuote
+						|| EscapeChar.is(options.escapable.characters, c2)
 					) {
 						ans.valueMap.push({
-							inner: Range.create(
-								ans.value.length,
-								ans.value.length + 1,
-							),
+							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(cStart, src),
 						})
 						ans.value += EscapeTable.get(c2)
@@ -49,10 +44,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 						if (/^[0-9a-f]{4}$/i.test(hex)) {
 							src.skip(4)
 							ans.valueMap.push({
-								inner: Range.create(
-									ans.value.length,
-									ans.value.length + 1,
-								),
+								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
 							ans.value += String.fromCharCode(parseInt(hex, 16))
@@ -62,10 +54,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 								Range.create(src, src.getCharRange(3).end),
 							)
 							ans.valueMap.push({
-								inner: Range.create(
-									ans.value.length,
-									ans.value.length + 1,
-								),
+								inner: Range.create(ans.value.length, ans.value.length + 1),
 								outer: Range.create(cStart, src),
 							})
 							ans.value += c2
@@ -73,18 +62,12 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 					} else {
 						if (!options.escapable.allowUnknown) {
 							ctx.err.report(
-								localize(
-									'parser.string.illegal-escape',
-									localeQuote(c2),
-								),
+								localize('parser.string.illegal-escape', localeQuote(c2)),
 								src.getCharRange(-1),
 							)
 						}
 						ans.valueMap.push({
-							inner: Range.create(
-								ans.value.length,
-								ans.value.length + 1,
-							),
+							inner: Range.create(ans.value.length, ans.value.length + 1),
 							outer: Range.create(cStart, src),
 						})
 						ans.value += c2
@@ -100,18 +83,12 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			}
 
 			if (!options.quotes.includes(currentQuote)) {
-				ctx.err.report(
-					localize('parser.string.illegal-quote', options.quotes),
-					ans,
-				)
+				ctx.err.report(localize('parser.string.illegal-quote', options.quotes), ans)
 			}
 
 			start = contentStart
 		} else if (options.unquotable) {
-			while (
-				src.canRead() &&
-				isAllowedCharacter(src.peek(), options.unquotable)
-			) {
+			while (src.canRead() && isAllowedCharacter(src.peek(), options.unquotable)) {
 				ans.value += src.read()
 			}
 			if (!ans.value && !options.unquotable.allowEmpty) {
@@ -121,18 +98,10 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 			ctx.err.report(localize('expected', options.quotes!), src)
 		}
 
-		ans.valueMap.unshift({
-			inner: Range.create(0),
-			outer: Range.create(start),
-		})
+		ans.valueMap.unshift({ inner: Range.create(0), outer: Range.create(start) })
 
 		if (options.value?.parser) {
-			const valueResult = parseStringValue(
-				options.value.parser,
-				ans.value,
-				ans.valueMap,
-				ctx,
-			)
+			const valueResult = parseStringValue(options.value.parser, ans.value, ans.valueMap, ctx)
 			/* istanbul ignore else */
 			if (valueResult !== Failure) {
 				ans.children = [valueResult]
@@ -154,12 +123,7 @@ export function parseStringValue<T extends Returnable>(
 	const valueSrc = new Source(value, map)
 	const valueCtx = {
 		...ctx,
-		doc: TextDocument.create(
-			ctx.doc.uri,
-			ctx.doc.languageId,
-			ctx.doc.version,
-			value,
-		),
+		doc: TextDocument.create(ctx.doc.uri, ctx.doc.languageId, ctx.doc.version, value),
 	}
 	// TODO: Mark trailing string as errors.
 	return parser(valueSrc, valueCtx)
@@ -235,9 +199,7 @@ export const BrigadierUnquotableCharacters = Object.freeze(
 		'-',
 	] as const,
 )
-export const BrigadierUnquotableCharacterSet = new Set(
-	BrigadierUnquotableCharacters,
-)
+export const BrigadierUnquotableCharacterSet = new Set(BrigadierUnquotableCharacters)
 export const BrigadierUnquotablePattern = /^[0-9A-Za-z_\.\+\-]*$/
 export const BrigadierUnquotableOption = {
 	allowEmpty: true,

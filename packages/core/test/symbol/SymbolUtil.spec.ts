@@ -11,12 +11,10 @@ describe('SymbolUtil', () => {
 		it('Should execute correctly', () => {
 			const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 			symbols.contributeAs('uri_binder', () => {
-				symbols
-					.query(fileUri, 'test', 'Bound')
-					.enter({
-						data: { desc: 'This symbol is URI bound.' },
-						usage: {},
-					})
+				symbols.query(fileUri, 'test', 'Bound').enter({
+					data: { desc: 'This symbol is URI bound.' },
+					usage: {},
+				})
 			})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 		})
@@ -25,39 +23,31 @@ describe('SymbolUtil', () => {
 		it('Should clear all', () => {
 			// Set up the symbol table.
 			const global: SymbolTable = {}
-			const symbols = new SymbolUtil(
-				global,
-				NodeJsExternals.event.EventEmitter,
-			)
-			symbols
-				.query(fileUri, 'mcdoc', 'ShouldBeKept1')
-				.enter({ usage: { type: 'definition' } })
+			const symbols = new SymbolUtil(global, NodeJsExternals.event.EventEmitter)
+			symbols.query(fileUri, 'mcdoc', 'ShouldBeKept1').enter({ usage: { type: 'definition' } })
 				.member('ShouldBeRemoved1', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
-				})
-				.member('ShouldBeKept2', (memberQuery) => {
+				}).member('ShouldBeKept2', (memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
 				})
-			symbols
-				.query(anotherFileUri, 'mcdoc', 'ShouldBeKept1', 'ShouldBeKept2')
-				.enter({ usage: { type: 'definition' } })
-			symbols
-				.query(anotherFileUri, 'mcdoc', 'ShouldBeKept3')
-				.enter({ usage: { type: 'definition' } })
-				.member('ShouldBeKept4', (memberQuery) => {
+			symbols.query(anotherFileUri, 'mcdoc', 'ShouldBeKept1', 'ShouldBeKept2').enter({
+				usage: { type: 'definition' },
+			})
+			symbols.query(anotherFileUri, 'mcdoc', 'ShouldBeKept3').enter({
+				usage: { type: 'definition' },
+			}).member('ShouldBeKept4', (memberQuery) => {
+				memberQuery.enter({ usage: { type: 'definition' } })
+			}).member('ShouldBeKept5', (memberQuery) => {
+				memberQuery.enter({ usage: { type: 'definition' } })
+			})
+			symbols.query(fileUri, 'mcdoc', 'ShouldBeKept3').member(
+				'ShouldBeRemoved3',
+				(memberQuery) => {
 					memberQuery.enter({ usage: { type: 'definition' } })
-				})
-				.member('ShouldBeKept5', (memberQuery) => {
-					memberQuery.enter({ usage: { type: 'definition' } })
-				})
-			symbols
-				.query(fileUri, 'mcdoc', 'ShouldBeKept3')
-				.member('ShouldBeRemoved3', (memberQuery) => {
-					memberQuery.enter({ usage: { type: 'definition' } })
-				})
-				.member('ShouldBeKept5', (memberQuery) => {
-					memberQuery.enter({ usage: { type: 'definition' } })
-				})
+				},
+			).member('ShouldBeKept5', (memberQuery) => {
+				memberQuery.enter({ usage: { type: 'definition' } })
+			})
 			snapshot(SymbolFormatter.stringifySymbolTable(symbols.global))
 
 			symbols.clear({ uri: fileUri })
@@ -67,14 +57,14 @@ describe('SymbolUtil', () => {
 	describe('lookup()', () => {
 		// Set up the symbol table.
 		const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
-		symbols
-			.query(fileUri, 'advancement', 'Foo')
-			.enter({ usage: { type: 'definition' } })
-			.member('Bar', (member) =>
-				member
-					.enter({ usage: { type: 'definition' } })
-					.member('Qux', (member) =>
-						member.enter({ usage: { type: 'definition' } })))
+		symbols.query(fileUri, 'advancement', 'Foo').enter({ usage: { type: 'definition' } }).member(
+			'Bar',
+			(member) =>
+				member.enter({ usage: { type: 'definition' } }).member(
+					'Qux',
+					(member) => member.enter({ usage: { type: 'definition' } }),
+				),
+		)
 		// const stackSymbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		// stackSymbols
 		// 	.query(fileUri, 'advancement', 'Foo')
@@ -129,18 +119,16 @@ describe('SymbolUtil', () => {
 		]
 		for (const path of paths) {
 			it(`Should return correctly for “${path.join('.')}”`, () => {
-				const symbols = new SymbolUtil(
-					{},
-					NodeJsExternals.event.EventEmitter,
-				)
-				symbols
-					.query(fileUri, 'advancement', 'Foo')
-					.enter({ usage: { type: 'definition' } })
-					.member('Bar', (member) =>
-						member
-							.enter({ usage: { type: 'definition' } })
-							.member('Qux', (member) =>
-								member.enter({ usage: { type: 'definition' } })))
+				const symbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
+				symbols.query(fileUri, 'advancement', 'Foo').enter({ usage: { type: 'definition' } })
+					.member(
+						'Bar',
+						(member) =>
+							member.enter({ usage: { type: 'definition' } }).member(
+								'Qux',
+								(member) => member.enter({ usage: { type: 'definition' } }),
+							),
+					)
 
 				const query = symbols.query(fileUri, 'advancement', ...path)
 

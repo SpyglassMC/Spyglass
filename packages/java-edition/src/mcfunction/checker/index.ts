@@ -5,9 +5,7 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
-import type {
-	EntitySelectorInvertableArgumentValueNode,
-} from '../node/index.js'
+import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
 import {
 	BlockNode,
 	ComponentTestExactNode,
@@ -28,10 +26,7 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	rootCommand(node.children, 0, ctx)
 }
 
-const getNode = (
-	nodes: mcf.CommandNode['children'],
-	name: string,
-): core.AstNode | undefined => {
+const getNode = (nodes: mcf.CommandNode['children'], name: string): core.AstNode | undefined => {
 	return nodes.find(n => n.path[n.path.length - 1] === name)?.children[0]
 }
 
@@ -69,10 +64,10 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 		return
 	}
 
-	nbt.checker.index(
-		'minecraft:block_entity',
-		core.ResourceLocationNode.toString(node.id, 'full'),
-	)(node.nbt, ctx)
+	nbt.checker.index('minecraft:block_entity', core.ResourceLocationNode.toString(node.id, 'full'))(
+		node.nbt,
+		ctx,
+	)
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
@@ -90,11 +85,9 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 
 const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 	if (node.nbt) {
-		nbt.checker.index(
-			'minecraft:item',
-			core.ResourceLocationNode.toString(node.id, 'full'),
-			{ isPredicate: true },
-		)(node.nbt, ctx)
+		nbt.checker.index('minecraft:item', core.ResourceLocationNode.toString(node.id, 'full'), {
+			isPredicate: true,
+		})(node.nbt, ctx)
 	}
 	if (!node.tests) {
 		return
@@ -104,15 +97,9 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 			for (const test of allOfTest.children) {
 				const key = core.ResourceLocationNode.toString(test.key, 'full')
 				if (ComponentTestExactNode.is(test) && test.value) {
-					nbt.checker.index('minecraft:data_component', key)(
-						test.value,
-						ctx,
-					)
+					nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
 				} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
-					nbt.checker.index('minecraft:item_sub_predicate', key)(
-						test.value,
-						ctx,
-					)
+					nbt.checker.index('minecraft:item_sub_predicate', key)(test.value, ctx)
 				}
 			}
 		}
@@ -163,10 +150,7 @@ const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
 	const type: mcdoc.McdocType = {
 		kind: 'dispatcher',
 		registry: 'minecraft:resource',
-		parallelIndices: [{
-			kind: 'static',
-			value: core.ResourceLocation.lengthen(node.category),
-		}],
+		parallelIndices: [{ kind: 'static', value: core.ResourceLocation.lengthen(node.category) }],
 	}
 	nbt.checker.typeDefinition(type)(node.children[0], ctx)
 }
@@ -180,10 +164,10 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 		switch (node.properties.dispatcher) {
 			case 'minecraft:entity':
 				if (nbt.NbtCompoundNode.is(compound)) {
-					const types = (EntityNode.is(dispatchedBy) ||
-							core.ResourceLocationNode.is(dispatchedBy))
-						? getTypesFromEntity(dispatchedBy, ctx)
-						: undefined
+					const types =
+						(EntityNode.is(dispatchedBy) || core.ResourceLocationNode.is(dispatchedBy))
+							? getTypesFromEntity(dispatchedBy, ctx)
+							: undefined
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
 					})(compound, ctx)
@@ -213,17 +197,9 @@ function getTypesFromEntity(
 	ctx: core.CheckerContext,
 ): core.FullResourceLocation[] | undefined {
 	if (core.ResourceLocationNode.is(entity)) {
-		const value = core.ResourceLocationNode.toString(
-			entity,
-			'full',
-			true,
-		)
+		const value = core.ResourceLocationNode.toString(entity, 'full', true)
 		if (value.startsWith(core.ResourceLocation.TagPrefix)) {
-			return getTagValues(
-				'tag/entity_type',
-				value.slice(1),
-				ctx,
-			) as core.FullResourceLocation[]
+			return getTagValues('tag/entity_type', value.slice(1), ctx) as core.FullResourceLocation[]
 		} else {
 			return [value as core.FullResourceLocation]
 		}
@@ -240,24 +216,14 @@ function getTypesFromEntity(
 				continue
 			}
 			const valueNode = pairNode.value as
-				| EntitySelectorInvertableArgumentValueNode<
-					core.ResourceLocationNode
-				>
+				| EntitySelectorInvertableArgumentValueNode<core.ResourceLocationNode>
 				| undefined
 			if (!valueNode || valueNode.inverted) {
 				continue
 			}
-			const value = core.ResourceLocationNode.toString(
-				valueNode.value,
-				'full',
-				true,
-			)
+			const value = core.ResourceLocationNode.toString(valueNode.value, 'full', true)
 			if (value.startsWith(core.ResourceLocation.TagPrefix)) {
-				const tagValues = getTagValues(
-					'tag/entity_type',
-					value.slice(1),
-					ctx,
-				)
+				const tagValues = getTagValues('tag/entity_type', value.slice(1), ctx)
 				if (types === undefined) {
 					types = tagValues.map(core.ResourceLocation.lengthen)
 				} else {
@@ -278,10 +244,7 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
-	meta.registerChecker<ItemPredicateNode>(
-		'mcfunction:item_predicate',
-		itemPredicate,
-	)
+	meta.registerChecker<ItemPredicateNode>('mcfunction:item_predicate', itemPredicate)
 	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

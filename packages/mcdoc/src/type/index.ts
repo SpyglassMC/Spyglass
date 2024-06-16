@@ -11,11 +11,7 @@ export interface Attribute {
 export type AttributeValue = McdocType | { kind: 'tree'; values: AttributeTree }
 export type AttributeTree = { [key: string | number]: AttributeValue }
 
-export type NumericRange = {
-	kind: RangeKind
-	min?: number
-	max?: number
-}
+export type NumericRange = { kind: RangeKind; min?: number; max?: number }
 export namespace NumericRange {
 	export function isInRange(range: NumericRange, val: number): boolean {
 		const { min = -Infinity, max = Infinity } = range
@@ -62,13 +58,7 @@ export namespace NumericRange {
 }
 
 export const StaticIndexKeywords = Object.freeze(
-	[
-		'fallback',
-		'none',
-		'unknown',
-		'spawnitem',
-		'blockitem',
-	] as const,
+	['fallback', 'none', 'unknown', 'spawnitem', 'blockitem'] as const,
 )
 export type StaticIndexKeyword = (typeof StaticIndexKeywords)[number]
 export interface StaticIndex {
@@ -79,7 +69,9 @@ export interface DynamicIndex {
 	kind: 'dynamic'
 	accessor: (string | { keyword: 'key' | 'parent' })[]
 }
-export type Index = StaticIndex | DynamicIndex
+export type Index =
+	| StaticIndex
+	| DynamicIndex
 
 /**
  * Corresponds to the IndexBodyNode
@@ -127,9 +119,7 @@ export interface ReferenceType extends McdocBaseType {
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType>
-	extends McdocBaseType
-{
+export interface UnionType<T extends McdocType = McdocType> extends McdocBaseType {
 	kind: 'union'
 	members: T[]
 }
@@ -158,13 +148,8 @@ export interface MappedType extends McdocBaseType {
 	mapping: { [path: string]: McdocType }
 }
 
-export const EmptyUnion: UnionType<never> = Object.freeze({
-	kind: 'union',
-	members: [],
-})
-export function createEmptyUnion(
-	attributes?: Attribute[],
-): UnionType<never> {
+export const EmptyUnion: UnionType<never> = Object.freeze({ kind: 'union', members: [] })
+export function createEmptyUnion(attributes?: Attribute[]): UnionType<never> {
 	return {
 		...EmptyUnion,
 		// attributes,
@@ -180,10 +165,7 @@ export interface StringType extends McdocBaseType {
 	lengthRange?: NumericRange
 }
 
-export type LiteralValue =
-	| LiteralBooleanValue
-	| LiteralStringValue
-	| LiteralNumericValue
+export type LiteralValue = LiteralBooleanValue | LiteralStringValue | LiteralNumericValue
 export interface LiteralBooleanValue {
 	kind: 'boolean'
 	value: boolean
@@ -205,22 +187,12 @@ export interface NumericType extends McdocBaseType {
 	kind: NumericTypeKind
 	valueRange?: NumericRange
 }
-export const NumericTypeIntKinds = Object.freeze(
-	[
-		'byte',
-		'short',
-		'int',
-		'long',
-	] as const,
-)
+export const NumericTypeIntKinds = Object.freeze(['byte', 'short', 'int', 'long'] as const)
 export type NumericTypeIntKind = (typeof NumericTypeIntKinds)[number]
 export const NumericTypeFloatKinds = Object.freeze(['float', 'double'] as const)
 export type NumericTypeFloatKind = (typeof NumericTypeFloatKinds)[number]
 export const NumericTypeKinds = Object.freeze(
-	[
-		...NumericTypeIntKinds,
-		...NumericTypeFloatKinds,
-	] as const,
+	[...NumericTypeIntKinds, ...NumericTypeFloatKinds] as const,
 )
 export type NumericTypeKind = (typeof NumericTypeKinds)[number]
 
@@ -229,13 +201,7 @@ export interface PrimitiveArrayType extends McdocBaseType {
 	valueRange?: NumericRange
 	lengthRange?: NumericRange
 }
-export const PrimitiveArrayValueKinds = Object.freeze(
-	[
-		'byte',
-		'int',
-		'long',
-	] as const,
-)
+export const PrimitiveArrayValueKinds = Object.freeze(['byte', 'int', 'long'] as const)
 export type PrimitiveArrayValueKind = (typeof PrimitiveArrayValueKinds)[number]
 export const PrimitiveArrayKinds = Object.freeze(
 	PrimitiveArrayValueKinds.map((kind) => `${kind}_array` as const),
@@ -280,9 +246,7 @@ export namespace McdocType {
 			return range ? ` @ ${NumericRange.toString(range)}` : ''
 		}
 
-		const indicesToString = (
-			indices: Arrayable<Index | undefined>,
-		): string => {
+		const indicesToString = (indices: Arrayable<Index | undefined>): string => {
 			const strings: string[] = []
 			for (const index of Arrayable.toArray(indices)) {
 				if (index === undefined) {
@@ -292,9 +256,7 @@ export namespace McdocType {
 						index.kind === 'static'
 							? `[${index.value}]`
 							: `[[${
-								index.accessor
-									.map((v) => (typeof v === 'string' ? v : v.keyword))
-									.join('.')
+								index.accessor.map((v) => (typeof v === 'string' ? v : v.keyword)).join('.')
 							}]]`,
 					)
 				}
@@ -308,9 +270,7 @@ export namespace McdocType {
 		let attributesString = ''
 		if (type.attributes?.length) {
 			for (const attribute of type.attributes) {
-				attributesString += `#[${attribute.name}${
-					attribute.value ? '=<value ...>' : ''
-				}] `
+				attributesString += `#[${attribute.name}${attribute.value ? '=<value ...>' : ''}] `
 			}
 		}
 		let typeString: string
@@ -323,24 +283,16 @@ export namespace McdocType {
 				typeString = `byte${rangeToString(type.valueRange)}`
 				break
 			case 'byte_array':
-				typeString = `byte${rangeToString(type.valueRange)}[]${
-					rangeToString(
-						type.lengthRange,
-					)
-				}`
+				typeString = `byte${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
 				break
 			case 'concrete':
 				typeString = `${toString(type.child)}${
-					type.typeArgs.length
-						? `<${type.typeArgs.map(toString).join(', ')}>`
-						: ''
+					type.typeArgs.length ? `<${type.typeArgs.map(toString).join(', ')}>` : ''
 				}`
 				break
 			case 'dispatcher':
 				typeString = `${type.registry ?? 'spyglass:unknown'}[${
-					indicesToString(
-						type.parallelIndices,
-					)
+					indicesToString(type.parallelIndices)
 				}]`
 				break
 			case 'double':
@@ -353,24 +305,16 @@ export namespace McdocType {
 				typeString = `float${rangeToString(type.valueRange)}`
 				break
 			case 'indexed':
-				typeString = `${toString(type.child)}${
-					indicesToString(type.parallelIndices)
-				}`
+				typeString = `${toString(type.child)}${indicesToString(type.parallelIndices)}`
 				break
 			case 'int':
 				typeString = `int${rangeToString(type.valueRange)}`
 				break
 			case 'int_array':
-				typeString = `int${rangeToString(type.valueRange)}[]${
-					rangeToString(
-						type.lengthRange,
-					)
-				}`
+				typeString = `int${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
 				break
 			case 'list':
-				typeString = `[${toString(type.item)}]${
-					rangeToString(type.lengthRange)
-				}`
+				typeString = `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
 				break
 			case 'literal':
 				typeString = `${type.value}`
@@ -379,11 +323,7 @@ export namespace McdocType {
 				typeString = `long${rangeToString(type.valueRange)}`
 				break
 			case 'long_array':
-				typeString = `long${rangeToString(type.valueRange)}[]${
-					rangeToString(
-						type.lengthRange,
-					)
-				}`
+				typeString = `long${rangeToString(type.valueRange)}[]${rangeToString(type.lengthRange)}`
 				break
 			case 'mapped':
 				typeString = toString(type.child)

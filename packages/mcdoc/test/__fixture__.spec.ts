@@ -1,8 +1,5 @@
 import { MetaRegistry } from '@spyglassmc/core'
-import {
-	SimpleProject,
-	snapshotWithUri,
-} from '@spyglassmc/core/test-out/utils.js'
+import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test-out/utils.js'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
 import { URL } from 'url'
@@ -11,10 +8,7 @@ const DefaultTestFilePath = '/test.mcdoc'
 
 describe('mcdoc __fixture__', async () => {
 	const fixture = removeComments(
-		await fs.readFile(
-			new URL('../test/__fixture__.mcdoc', import.meta.url),
-			'utf8',
-		),
+		await fs.readFile(new URL('../test/__fixture__.mcdoc', import.meta.url), 'utf8'),
 	)
 
 	const meta = new MetaRegistry()
@@ -23,22 +17,15 @@ describe('mcdoc __fixture__', async () => {
 	for (const [caseName, untrimmedCaseContent] of getSections(fixture, 2)) {
 		const caseContent = untrimmedCaseContent.trim()
 		it(caseName, async () => {
-			const files = [...getSections(caseContent, 3, DefaultTestFilePath)]
-				.map(
-					([filePath, fileContent]) => ({
-						uri: `file://${filePath}`,
-						content: fileContent.trim(),
-					}),
-				)
+			const files = [...getSections(caseContent, 3, DefaultTestFilePath)].map((
+				[filePath, fileContent],
+			) => ({ uri: `file://${filePath}`, content: fileContent.trim() }))
 			const project = new SimpleProject(meta, files)
 			project.parse()
 			await project.bind()
 			snapshotWithUri({
 				specName: `mcdoc __fixture__ ${caseName}`,
-				uri: new URL(
-					`./__fixture__/${caseNameToFileName(caseName)}.spec.js`,
-					import.meta.url,
-				),
+				uri: new URL(`./__fixture__/${caseNameToFileName(caseName)}.spec.js`, import.meta.url),
 				value: project.dumpState(['global', 'nodes']),
 			})
 		})

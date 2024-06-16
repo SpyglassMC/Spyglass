@@ -25,11 +25,6 @@ export namespace SymbolNode {
 	}
 
 	export function mock(range: RangeLike, options: SymbolOptions): SymbolNode {
-		return {
-			type: 'symbol',
-			range: Range.get(range),
-			options,
-			value: '',
-		}
+		return { type: 'symbol', range: Range.get(range), options, value: '' }
 	}
 }

@@ -31,9 +31,7 @@ export interface VersionInfo {
 }
 
 export interface PackMcmeta {
-	pack: {
-		pack_format: number
-	}
+	pack: { pack_format: number }
 }
 export namespace PackMcmeta {
 	export function assert(data: any): asserts data is PackMcmeta {

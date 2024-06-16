@@ -1,9 +1,6 @@
 import { arrayToMessage, localize } from '@spyglassmc/locales'
 import { ResourceLocation } from '../common/index.js'
-import type {
-	ResourceLocationNode,
-	ResourceLocationOptions,
-} from '../node/index.js'
+import type { ResourceLocationNode, ResourceLocationOptions } from '../node/index.js'
 import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -91,14 +88,9 @@ export function resourceLocation(
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {
-			ctx.err.report(
-				localize('expected', localize('resource-location')),
-				ans,
-			)
+			ctx.err.report(localize('expected', localize('resource-location')), ans)
 		} else {
-			const sepIndex = raw.indexOf(
-				options.namespacePathSep ?? ResourceLocation.NamespacePathSep,
-			)
+			const sepIndex = raw.indexOf(options.namespacePathSep ?? ResourceLocation.NamespacePathSep)
 			if (sepIndex >= 0) {
 				ans.namespace = raw.slice(0, sepIndex)
 			}
@@ -109,12 +101,8 @@ export function resourceLocation(
 			/* istanbul ignore next */
 			const illegalChars = [
 				...new Set([
-					...[...(ans.namespace ?? [])].filter((c) =>
-						!LegalResourceLocationCharacters.has(c)
-					),
-					...[...rawPath].filter((c) =>
-						c !== '/' && !LegalResourceLocationCharacters.has(c)
-					),
+					...[...(ans.namespace ?? [])].filter((c) => !LegalResourceLocationCharacters.has(c)),
+					...[...rawPath].filter((c) => c !== '/' && !LegalResourceLocationCharacters.has(c)),
 				]),
 			]
 			if (illegalChars.length) {
@@ -128,17 +116,11 @@ export function resourceLocation(
 			}
 
 			if (ans.isTag && !options.allowTag) {
-				ctx.err.report(
-					localize('parser.resource-location.tag-disallowed'),
-					ans,
-				)
+				ctx.err.report(localize('parser.resource-location.tag-disallowed'), ans)
 			}
 
 			if (!ans.namespace && options.isPredicate) {
-				ctx.err.report(
-					localize('parser.resource-location.namespace-expected'),
-					ans,
-				)
+				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
 			}
 		}
 

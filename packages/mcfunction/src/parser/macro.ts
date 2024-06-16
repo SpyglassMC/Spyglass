@@ -7,13 +7,8 @@ import type { MacroNode } from '../node/index.js'
  * @param supportsMacros When false, reports the entire line as an error (due to
  * the Minecraft version not supporting macros).
  */
-export function macro(
-	supportsMacros = true,
-): core.Parser<MacroNode | core.ErrorNode> {
-	return (
-		src: core.Source,
-		ctx: core.ParserContext,
-	): core.Result<MacroNode | core.ErrorNode> => {
+export function macro(supportsMacros = true): core.Parser<MacroNode | core.ErrorNode> {
+	return (src: core.Source, ctx: core.ParserContext): core.Result<MacroNode | core.ErrorNode> => {
 		const ans: MacroNode = {
 			type: 'mcfunction:macro',
 			range: core.Range.create(src.cursor),
@@ -23,14 +18,8 @@ export function macro(
 		if (!supportsMacros) {
 			src.skipLine()
 			ans.range.end = src.cursor
-			ctx.err.report(
-				localize('mcfunction.parser.macro.disallowed'),
-				ans.range,
-			)
-			return {
-				...ans,
-				type: 'error',
-			} as core.ErrorNode
+			ctx.err.report(localize('mcfunction.parser.macro.disallowed'), ans.range)
+			return { ...ans, type: 'error' } as core.ErrorNode
 		}
 
 		// Skip the starting '$'
@@ -80,10 +69,7 @@ export function macro(
 		// A line with no macro arguments is invalid
 		if (!hasMacroArgs) {
 			ctx.err.report(
-				localize(
-					'expected',
-					localize('mcfunction.parser.macro.at-least-one'),
-				),
+				localize('expected', localize('mcfunction.parser.macro.at-least-one')),
 				core.Range.create(start, src.cursor),
 			)
 		}
@@ -96,11 +82,7 @@ export function macro(
 /**
  * Error checking for a macro argument/key.
  */
-function validateMacroArgument(
-	src: core.Source,
-	ctx: core.ParserContext,
-	start: number,
-): string {
+function validateMacroArgument(src: core.Source, ctx: core.ParserContext, start: number): string {
 	src.skip(2)
 	const keyStart = src.cursor
 	src.skipUntilOrEnd(core.LF, core.CR, ')')
@@ -121,10 +103,7 @@ function validateMacroArgument(
 	const matchedInvalid = key.replace(/[a-zA-Z0-9_]*/, '')
 	if (matchedInvalid.length > 0) {
 		ctx.err.report(
-			localize(
-				'mcfunction.parser.macro.illegal-key',
-				matchedInvalid.charAt(0),
-			),
+			localize('mcfunction.parser.macro.illegal-key', matchedInvalid.charAt(0)),
 			core.Range.create(keyStart, src.cursor),
 		)
 	}

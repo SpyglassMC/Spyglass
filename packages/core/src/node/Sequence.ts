@@ -21,9 +21,7 @@ export interface SequenceUtil<CN extends AstNode = AstNode> {
 }
 
 export namespace SequenceUtil {
-	export function is<CN extends AstNode>(
-		obj: object | undefined,
-	): obj is SequenceUtil<CN> {
+	export function is<CN extends AstNode>(obj: object | undefined): obj is SequenceUtil<CN> {
 		return !!obj && (obj as SequenceUtil)[SequenceUtilDiscriminator]
 	}
 }

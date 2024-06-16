@@ -1,5 +1,10 @@
 import { NumericRange } from '../../type/index.js'
-import type { RuntimeNode, RuntimeUnion, SimplifiedMcdocType, CheckerTreeDefinitionNode } from './index.js'
+import type {
+	CheckerTreeDefinitionNode,
+	RuntimeNode,
+	RuntimeUnion,
+	SimplifiedMcdocType,
+} from './index.js'
 
 export type McdocCheckerError<T> =
 	| SimpleError<T>
@@ -35,7 +40,9 @@ export interface UnknownVariantWithKeyCombinationError<T> {
 	node: RuntimeNode<T>[]
 }
 export namespace UnknownVariantWithKeyCombinationError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is UnknownVariantWithKeyCombinationError<T> {
+	export function is<T>(
+		error: McdocCheckerError<T> | undefined,
+	): error is UnknownVariantWithKeyCombinationError<T> {
 		return error?.kind === 'invalid_key_combination'
 	}
 }
@@ -45,7 +52,9 @@ export interface UnknownTupleElementError<T> {
 	node: RuntimeUnion<T>
 }
 export namespace UnknownTupleElementError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is UnknownTupleElementError<T> {
+	export function is<T>(
+		error: McdocCheckerError<T> | undefined,
+	): error is UnknownTupleElementError<T> {
 		return error?.kind === 'unknown_tuple_element'
 	}
 }
@@ -107,17 +116,15 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	let validDefinitions = definitions
-	const errors = validDefinitions[0].errors.filter(e =>
-		e.kind === 'duplicate_key'
-	)
+	const errors = validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
 
 	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
 		.filter(e =>
-			e.kind === 'type_mismatch' &&
-			!validDefinitions.some(d =>
+			e.kind === 'type_mismatch'
+			&& !validDefinitions.some(d =>
 				!d.errors.some(oe =>
-					oe.kind === 'type_mismatch' &&
-					e.node.originalNode === oe.node.originalNode
+					oe.kind === 'type_mismatch'
+					&& e.node.originalNode === oe.node.originalNode
 				)
 			)
 		) as TypeMismatchError<T>[])
@@ -125,14 +132,12 @@ function condenseErrorsAndFilterSiblings<T>(
 			const expected = validDefinitions
 				.map(d =>
 					(d.errors.find(oe =>
-						oe.kind === 'type_mismatch' &&
-						oe.node.originalNode === e.node.originalNode
+						oe.kind === 'type_mismatch'
+						&& oe.node.originalNode === e.node.originalNode
 					) as TypeMismatchError<T>).expected
 				)
 				.flatMap(t => t.kind === 'union' ? t.members : [t])
-				.filter((d, i, arr) =>
-					arr.findIndex(od => od.kind === d.kind) === i
-				)
+				.filter((d, i, arr) => arr.findIndex(od => od.kind === d.kind) === i)
 			return {
 				...e,
 				expected: expected.length === 1
@@ -144,10 +149,9 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	const onlyCommonTypeMismatches = definitions.filter(d =>
 		!d.errors.some(e =>
-			e.kind === 'sometimes_type_mismatch' ||
-			(e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-				oe.node.originalNode === e.node.originalNode
-			))
+			e.kind === 'sometimes_type_mismatch'
+			|| (e.kind === 'type_mismatch'
+				&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
 		)
 	)
 	if (onlyCommonTypeMismatches.length !== 0) {
@@ -160,9 +164,8 @@ function condenseErrorsAndFilterSiblings<T>(
 			.flatMap(d =>
 				d.errors
 					.filter(e =>
-						e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
+						e.kind === 'type_mismatch'
+						&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode)
 					)
 			)
 			.map(e => e.node as RuntimeNode<T>)
@@ -171,9 +174,7 @@ function condenseErrorsAndFilterSiblings<T>(
 					e.kind === 'sometimes_type_mismatch'
 				).map(e => e.node as RuntimeNode<T>),
 			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
+			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
 
 		errors.push(...typeMismatches)
@@ -181,11 +182,11 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	const alwaysUnknown = validDefinitions[0].errors
 		.filter(e =>
-			e.kind === 'unknown_key' &&
-			!validDefinitions.some(d =>
+			e.kind === 'unknown_key'
+			&& !validDefinitions.some(d =>
 				!d.errors.some(oe =>
-					oe.kind === 'unknown_key' &&
-					e.node.originalNode === oe.node.originalNode
+					oe.kind === 'unknown_key'
+					&& e.node.originalNode === oe.node.originalNode
 				)
 			)
 		) as SimpleError<T>[]
@@ -194,11 +195,9 @@ function condenseErrorsAndFilterSiblings<T>(
 	const onlyCommonUnknownKeys = validDefinitions
 		.filter(d =>
 			!d.errors.some(e =>
-				e.kind === 'invalid_key_combination' ||
-				(e.kind === 'unknown_key' &&
-					!alwaysUnknown.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
+				e.kind === 'invalid_key_combination'
+				|| (e.kind === 'unknown_key'
+					&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 		)
 	if (onlyCommonUnknownKeys.length !== 0) {
@@ -208,9 +207,8 @@ function condenseErrorsAndFilterSiblings<T>(
 			.flatMap(d =>
 				d.errors
 					.filter(e =>
-						e.kind === 'unknown_key' && !alwaysUnknown.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
+						e.kind === 'unknown_key'
+						&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode)
 					)
 			)
 			.map(e => e.node as RuntimeNode<T>)
@@ -219,9 +217,7 @@ function condenseErrorsAndFilterSiblings<T>(
 					e.kind === 'invalid_key_combination'
 				).map(e => e.node as RuntimeNode<T>),
 			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
+			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 
 		errors.push({ kind: 'invalid_key_combination', node: unknownKeys })
 	}
@@ -236,10 +232,10 @@ function condenseErrorsAndFilterSiblings<T>(
 			...validDefinitions
 				.flatMap(d => d.errors)
 				.filter((e, i, arr) =>
-					e.kind === 'expected_key_value_pair' &&
-					arr.findIndex(oe =>
-							oe.kind === 'expected_key_value_pair' &&
-							oe.node.originalNode === e.node.originalNode
+					e.kind === 'expected_key_value_pair'
+					&& arr.findIndex(oe =>
+							oe.kind === 'expected_key_value_pair'
+							&& oe.node.originalNode === e.node.originalNode
 						) === i
 				),
 		)
@@ -253,12 +249,12 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	const alwaysMissing = validDefinitions[0].errors.filter(e =>
-		e.kind === 'missing_key' &&
-		!validDefinitions.some(d =>
+		e.kind === 'missing_key'
+		&& !validDefinitions.some(d =>
 			!d.errors.some(oe =>
-				oe.kind === 'missing_key' &&
-				oe.node.originalNode === e.node.originalNode &&
-				oe.key === e.key
+				oe.kind === 'missing_key'
+				&& oe.node.originalNode === e.node.originalNode
+				&& oe.key === e.key
 			)
 		)
 	) as MissingKeyError<T>[]
@@ -266,11 +262,9 @@ function condenseErrorsAndFilterSiblings<T>(
 	const onlyCommonMissing = validDefinitions
 		.filter(d =>
 			!d.errors.some(e =>
-				e.kind === 'some_missing_keys' ||
-				(e.kind === 'missing_key' &&
-					!alwaysMissing.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
+				e.kind === 'some_missing_keys'
+				|| (e.kind === 'missing_key'
+					&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 		)
 	if (onlyCommonMissing.length !== 0) {
@@ -286,21 +280,16 @@ function condenseErrorsAndFilterSiblings<T>(
 				.flatMap(d =>
 					d.errors
 						.filter(e =>
-							e.kind === 'missing_key' &&
-							!alwaysMissing.some(oe =>
-								oe.node.originalNode === e.node.originalNode
-							)
+							e.kind === 'missing_key'
+							&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode)
 						)
 				)
 				.map(e => e.node as RuntimeNode<T>)
 				.concat(
-					validDefinitions.flatMap(d => d.errors).filter(e =>
-						e.kind === 'some_missing_keys'
-					).map(e => e.node as RuntimeNode<T>),
+					validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'some_missing_keys')
+						.map(e => e.node as RuntimeNode<T>),
 				)
-				.filter((v, i, arr) =>
-					arr.findIndex(o => o.originalNode === v.originalNode) === i
-				)
+				.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 				.map(n => ({
 					kind: 'some_missing_keys' as 'some_missing_keys',
 					node: n,
@@ -315,9 +304,7 @@ function condenseErrorsAndFilterSiblings<T>(
 			'number_out_of_range',
 		] as const
 	) {
-		const noRangeError = validDefinitions.filter(d =>
-			!d.errors.some(e => e.kind === kind)
-		)
+		const noRangeError = validDefinitions.filter(d => !d.errors.some(e => e.kind === kind))
 		if (noRangeError.length !== 0) {
 			validDefinitions = noRangeError
 		} else {
@@ -341,9 +328,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	errors.push(
-		...validDefinitions.flatMap(d =>
-			d.errors.filter(e => e.kind === 'internal')
-		),
+		...validDefinitions.flatMap(d => d.errors.filter(e => e.kind === 'internal')),
 	)
 
 	return {
@@ -358,90 +343,84 @@ function condense<T extends McdocCheckerError<T>>(
 	equals: (a: T, b: T) => boolean,
 	combine: (a: T, b: T) => T,
 	combineAlternatives: (errors: T[]) => T,
-): { condensedErrors: T[], filteredDefinitions: ErrorCondensingDefinition<T>[] }  {
+): { condensedErrors: T[]; filteredDefinitions: ErrorCondensingDefinition<T>[] } {
 	// TODO a lot of O(n^2) in this function, may need optimization
 	const condensedPerDefinition = validDefinitions
 		.map(def => {
 			const errorsPerNode = def.errors
 				.filter(is)
 				.reduce((errors, error) => {
-					const i = errors.findIndex(oe => oe.node === error.node);
+					const i = errors.findIndex(oe => oe.node === error.node)
 					if (i >= 0) {
-						const existingError = errors[i];
-						errors[i] = combine(existingError, error);
+						const existingError = errors[i]
+						errors[i] = combine(existingError, error)
 					} else {
-						errors.push(error);
+						errors.push(error)
 					}
 					return errors
-				},
-				[] as T[]
-			);
+				}, [] as T[])
 
-			return { def, errors: errorsPerNode };
-		});
-	
+			return { def, errors: errorsPerNode }
+		})
+
 	if (condensedPerDefinition.some(d => d.errors.length === 0)) {
 		return {
 			condensedErrors: [],
 			filteredDefinitions: condensedPerDefinition
 				.filter(d => d.errors.length === 0)
-				.map(e => e.def)
-		};
+				.map(e => e.def),
+		}
 	}
 
 	const distinctErrorsPerNode = condensedPerDefinition
 		.flatMap(d => d.errors.map(e => ({ definition: d.def, error: e })))
 		.reduce((entries, e) => {
-			const entry = entries.find(oe => oe.errors[0].error.node === e.error.node);
+			const entry = entries.find(oe => oe.errors[0].error.node === e.error.node)
 			if (entry) {
 				const error = entry.errors.find(oe => equals(e.error, oe.error))
 				if (error) {
-					error.definitions.push(e.definition);
+					error.definitions.push(e.definition)
 				} else {
-					entry.errors.push({ error: e.error, definitions: [e.definition] });
+					entry.errors.push({ error: e.error, definitions: [e.definition] })
 				}
 			} else {
-				entries.push({ errors: [ { error: e.error, definitions: [e.definition] } ] });
+				entries.push({ errors: [{ error: e.error, definitions: [e.definition] }] })
 			}
-			
-			return entries;
-		},
-		[] as { errors: { error: T, definitions: ErrorCondensingDefinition<T>[] }[] }[])
-	;
 
-	const distinctErrors = distinctErrorsPerNode.flatMap(e => e.errors);
+			return entries
+		}, [] as { errors: { error: T; definitions: ErrorCondensingDefinition<T>[] }[] }[])
+
+	const distinctErrors = distinctErrorsPerNode.flatMap(e => e.errors)
 	const definitionsWithUncommonErrors = distinctErrors
 		.filter(e => e.definitions.length < validDefinitions.length)
 		.flatMap(e => e.definitions)
-	;
-	
+
 	const definitionsWithOnlyCommonErrors = validDefinitions
 		.filter(d => !definitionsWithUncommonErrors.includes(d))
-	;
+
 	if (definitionsWithOnlyCommonErrors.length > 0) {
 		const commonErrors = distinctErrorsPerNode
 			.map(e => {
 				const commonErrorsOfNode = e.errors
 					.filter(e => e.definitions.length === validDefinitions.length)
 					.map(e => e.error)
-				;
+
 				if (commonErrorsOfNode.length === 0) {
-					return undefined;
+					return undefined
 				}
-				return (combineAlternatives(commonErrorsOfNode));
+				return (combineAlternatives(commonErrorsOfNode))
 			})
-			.filter((e): e is  T => e !== undefined)
-		;
+			.filter((e): e is T => e !== undefined)
 		return {
 			filteredDefinitions: definitionsWithOnlyCommonErrors,
-			condensedErrors: commonErrors
+			condensedErrors: commonErrors,
 		}
 	}
 
 	const combinedErrors = distinctErrorsPerNode
 		// TODO The error needs to be marked as only sometimes applicable when there is a definition
 		// That did not report an error on this node at all.
-		.map(e => combineAlternatives(e.errors.map(err => err.error)));
+		.map(e => combineAlternatives(e.errors.map(err => err.error)))
 
-	return { filteredDefinitions: validDefinitions, condensedErrors: combinedErrors };
+	return { filteredDefinitions: validDefinitions, condensedErrors: combinedErrors }
 }

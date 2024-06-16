@@ -6,22 +6,11 @@ describe('LanguageError', () => {
 	describe('create()', () => {
 		it('Should create correctly', () => {
 			snapshot(LanguageError.create('Error message', Range.Beginning))
+			snapshot(LanguageError.create('Error message', Range.Beginning, ErrorSeverity.Warning))
 			snapshot(
-				LanguageError.create(
-					'Error message',
-					Range.Beginning,
-					ErrorSeverity.Warning,
-				),
-			)
-			snapshot(
-				LanguageError.create(
-					'Error message',
-					Range.Beginning,
-					ErrorSeverity.Warning,
-					{
-						deprecated: true,
-					},
-				),
+				LanguageError.create('Error message', Range.Beginning, ErrorSeverity.Warning, {
+					deprecated: true,
+				}),
 			)
 		})
 	})

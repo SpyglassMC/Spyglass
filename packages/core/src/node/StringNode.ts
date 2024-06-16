@@ -8,10 +8,7 @@ export const EscapeChars = ['"', "'", '\\', 'b', 'f', 'n', 'r', 't'] as const
 export type EscapeChar = (typeof EscapeChars)[number]
 export namespace EscapeChar {
 	/* istanbul ignore next */
-	export function is(
-		expected: EscapeChar[] | undefined,
-		c: string,
-	): c is EscapeChar {
+	export function is(expected: EscapeChar[] | undefined, c: string): c is EscapeChar {
 		return expected ? expected.includes(c as any) : false
 	}
 }
@@ -57,26 +54,15 @@ export interface StringOptions {
 	 * the string can contain. Otherwise set this to `false`.
 	 */
 	unquotable?:
-		| {
-			allowEmpty?: boolean
-			allowList?: Set<string>
-			blockList?: Set<string>
-		}
+		| { allowEmpty?: boolean; allowList?: Set<string>; blockList?: Set<string> }
 		| false
 	/**
 	 * An optional object describing the content of the string.
 	 */
-	value?: {
-		parser: Parser
-		type: AstNode['type']
-	}
+	value?: { parser: Parser; type: AstNode['type'] }
 }
 
-export type QuoteTypeConfig =
-	| 'always double'
-	| 'always single'
-	| 'prefer double'
-	| 'prefer single'
+export type QuoteTypeConfig = 'always double' | 'always single' | 'prefer double' | 'prefer single'
 
 export interface StringBaseNode extends AstNode {
 	readonly options: StringOptions
@@ -100,10 +86,7 @@ export namespace StringNode {
 			range,
 			options,
 			value: '',
-			valueMap: [{
-				inner: Range.create(0),
-				outer: Range.create(range.start),
-			}],
+			valueMap: [{ inner: Range.create(0), outer: Range.create(range.start) }],
 		}
 	}
 }

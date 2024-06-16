@@ -39,9 +39,7 @@ export const boolean: McdocAttributeValidator<boolean> = (value) => {
 	return core.Failure
 }
 
-export function options<C extends string>(
-	...options: C[]
-): McdocAttributeValidator<C> {
+export function options<C extends string>(...options: C[]): McdocAttributeValidator<C> {
 	return (value, ctx) => {
 		const stringValue = string(value, ctx)
 		if (stringValue === core.Failure) {
