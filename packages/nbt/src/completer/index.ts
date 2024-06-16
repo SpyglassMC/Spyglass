@@ -1,12 +1,7 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type {
-	NbtCollectionNode,
-	NbtCompoundNode,
-	NbtNode,
-	NbtPrimitiveNode,
-	NbtStringNode,
-} from '../node'
+import type { NbtCollectionNode, NbtCompoundNode, NbtNode, NbtPrimitiveNode } from '../node'
+import { NbtStringNode } from '../node'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
@@ -70,10 +65,33 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
 	) {
 		const child = node.children[0]
-		return ctx.meta.getCompleter(child.type)(child, ctx)
+		const items = ctx.meta.getCompleter(child.type)(child, ctx)
+		if (!NbtStringNode.is(node) || !node.quote) {
+			return items
+		} else if (node.quote === '"') {
+			return items.map(item => ({
+				...item,
+				filterText: item.filterText ? escapeDouble(item.filterText) : undefined,
+				insertText: item.insertText ? escapeDouble(item.insertText) : undefined,
+			}))
+		} else if (node.quote === "'") {
+			return items.map(item => ({
+				...item,
+				filterText: item.filterText ? escapeSingle(item.filterText) : undefined,
+				insertText: item.insertText ? escapeSingle(item.insertText) : undefined,
+			}))
+		}
 	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)
+}
+
+function escapeDouble(contents: string) {
+	return contents.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
+}
+
+function escapeSingle(contents: string) {
+	return contents.replace(/\\/g, '\\\\').replace(/'/g, "\\'")
 }
 
 function getValues(
