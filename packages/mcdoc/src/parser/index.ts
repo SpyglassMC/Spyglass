@@ -98,9 +98,7 @@ import {
  * `Failure` when there isn't a comment.
  */
 export const comment: Parser<CommentNode> = validate(
-	core.comment({
-		singleLinePrefixes: new Set(['//']),
-	}),
+	core.comment({ singleLinePrefixes: new Set(['//']) }),
 	(res, src) => !src.slice(res).startsWith('///'),
 	localize('mcdoc.parser.syntax.doc-comment-unexpected'),
 )
@@ -118,9 +116,7 @@ function syntaxGap(
 		src.skipWhitespace()
 
 		while (
-			src.canRead()
-			&& src.peek(2) === '//'
-			&& (!delegatesDocComments || src.peek(3) !== '///')
+			src.canRead() && src.peek(2) === '//' && (!delegatesDocComments || src.peek(3) !== '///')
 		) {
 			const result = comment(src, ctx) as CommentNode
 			ans.push(result)
@@ -144,11 +140,7 @@ type SP<CN extends AstNode> =
 	}
 type SIP<CN extends AstNode> =
 	| InfallibleParser<CN | SyntaxUtil<CN> | undefined>
-	| {
-		get: (
-			result: SyntaxUtil<CN>,
-		) => InfallibleParser<CN | SyntaxUtil<CN> | undefined>
-	}
+	| { get: (result: SyntaxUtil<CN>) => InfallibleParser<CN | SyntaxUtil<CN> | undefined> }
 /**
  * @template CN Child node.
  *
@@ -159,20 +151,10 @@ type SIP<CN extends AstNode> =
 function syntax<PA extends SP<AstNode>[]>(
 	parsers: PA,
 	delegatesDocComments?: boolean,
-): PA extends SIP<AstNode>[] ? InfallibleParser<
-		SyntaxUtil<
-			{ [K in number]: PA[K] extends SIP<infer V> ? V : never }[number]
-		>
-	>
-	: Parser<
-		SyntaxUtil<
-			{ [K in number]: PA[K] extends SP<infer V> ? V : never }[number]
-		>
-	>
-function syntax(
-	parsers: SP<AstNode>[],
-	delegatesDocComments = false,
-): Parser<SyntaxUtil<AstNode>> {
+): PA extends SIP<AstNode>[]
+	? InfallibleParser<SyntaxUtil<{ [K in number]: PA[K] extends SIP<infer V> ? V : never }[number]>>
+	: Parser<SyntaxUtil<{ [K in number]: PA[K] extends SP<infer V> ? V : never }[number]>>
+function syntax(parsers: SP<AstNode>[], delegatesDocComments = false): Parser<SyntaxUtil<AstNode>> {
 	return (src, ctx) => {
 		src.skipWhitespace()
 		const ans = sequence(parsers, syntaxGap(delegatesDocComments))(src, ctx)
@@ -216,19 +198,13 @@ export function literal(
 			value: '',
 			colorTokenType: options?.colorTokenType,
 		}
-		ans.value = src.readIf(
-			(c) =>
-				options?.allowedChars?.has(c)
-					?? (options?.specialChars?.has(c) || /[a-z]/i.test(c)),
+		ans.value = src.readIf((c) =>
+			options?.allowedChars?.has(c) ?? (options?.specialChars?.has(c) || /[a-z]/i.test(c))
 		)
 		ans.range.end = src.cursor
 		if (Arrayable.toArray(literal).every((l) => l !== ans.value)) {
 			ctx.err.report(
-				localize(
-					'expected-got',
-					arrayToMessage(literal),
-					localeQuote(ans.value),
-				),
+				localize('expected-got', arrayToMessage(literal), localeQuote(ans.value)),
 				ans,
 			)
 		}
@@ -258,11 +234,7 @@ function punctuation(punctuation: string): InfallibleParser<undefined> {
 		src.skipWhitespace()
 		if (!src.trySkip(punctuation)) {
 			ctx.err.report(
-				localize(
-					'expected-got',
-					localeQuote(punctuation),
-					localeQuote(src.peek()),
-				),
+				localize('expected-got', localeQuote(punctuation), localeQuote(src.peek())),
 				src,
 			)
 		}
@@ -280,9 +252,7 @@ function marker(punctuation: string): Parser<undefined> {
 	}
 }
 
-export function resLoc(
-	options: ResourceLocationOptions,
-): InfallibleParser<ResourceLocationNode> {
+export function resLoc(options: ResourceLocationOptions): InfallibleParser<ResourceLocationNode> {
 	return validate(
 		core.resourceLocation(options),
 		(res) => res.namespace !== undefined,
@@ -315,10 +285,7 @@ const UnicodeControlCharacters = Object.freeze([
 
 export const string: InfallibleParser<StringNode> = stopBefore(
 	core.string({
-		escapable: {
-			characters: ['b', 'f', 'n', 'r', 't', '\\', '"'],
-			unicode: true,
-		},
+		escapable: { characters: ['b', 'f', 'n', 'r', 't', '\\', '"'], unicode: true },
 		quotes: ['"'],
 	}),
 	...UnicodeControlCharacters,
@@ -358,44 +325,26 @@ export const identifier: InfallibleParser<IdentifierNode> = (src, ctx) => {
 			src.skip()
 		}
 	} else {
-		ctx.err.report(
-			localize('expected', localize('mcdoc.node.identifier')),
-			src,
-		)
+		ctx.err.report(localize('expected', localize('mcdoc.node.identifier')), src)
 	}
 
 	ans.value = src.string.slice(start, src.innerCursor)
 	ans.range.end = src.cursor
 
 	if (ReservedWords.has(ans.value)) {
-		ctx.err.report(
-			localize(
-				'mcdoc.parser.identifier.reserved-word',
-				localeQuote(ans.value),
-			),
-			ans,
-		)
+		ctx.err.report(localize('mcdoc.parser.identifier.reserved-word', localeQuote(ans.value)), ans)
 	}
 
 	return ans
 }
 
-function indexBody(options?: {
-	accessType?: SymbolAccessType
-	noDynamic?: boolean
-}): InfallibleParser<IndexBodyNode> {
+function indexBody(
+	options?: { accessType?: SymbolAccessType; noDynamic?: boolean },
+): InfallibleParser<IndexBodyNode> {
 	const accessorKey: InfallibleParser<AccessorKeyNode> = select([
-		{
-			prefix: '%',
-			parser: literal(['%key', '%parent'], { specialChars: new Set(['%']) }),
-		},
-		{
-			prefix: '"',
-			parser: string,
-		},
-		{
-			parser: identifier,
-		},
+		{ prefix: '%', parser: literal(['%key', '%parent'], { specialChars: new Set(['%']) }) },
+		{ prefix: '"', parser: string },
+		{ parser: identifier },
 	])
 
 	const dynamicIndex: InfallibleParser<DynamicIndexNode> = setType(
@@ -409,23 +358,13 @@ function indexBody(options?: {
 	)
 
 	const index: InfallibleParser<
-		| LiteralNode
-		| IdentifierNode
-		| StringNode
-		| ResourceLocationNode
-		| DynamicIndexNode
+		LiteralNode | IdentifierNode | StringNode | ResourceLocationNode | DynamicIndexNode
 	> = select([
 		{
 			prefix: '%',
-			parser: literal(
-				StaticIndexKeywords.map((v) => `%${v}`),
-				{ specialChars: new Set(['%']) },
-			),
+			parser: literal(StaticIndexKeywords.map((v) => `%${v}`), { specialChars: new Set(['%']) }),
 		},
-		{
-			prefix: '"',
-			parser: string,
-		},
+		{ prefix: '"', parser: string },
 		{
 			prefix: '[',
 			parser: options?.noDynamic
@@ -438,10 +377,7 @@ function indexBody(options?: {
 		},
 		{
 			parser: any([
-				resLoc({
-					category: 'mcdoc/dispatcher',
-					accessType: options?.accessType,
-				}),
+				resLoc({ category: 'mcdoc/dispatcher', accessType: options?.accessType }),
 				identifier,
 			]),
 		},
@@ -459,78 +395,50 @@ function indexBody(options?: {
 	)
 }
 
-const pathSegment: InfallibleParser<IdentifierNode | LiteralNode> = select([
-	{ prefix: 'super', parser: literal('super') },
-	{ parser: identifier },
-])
+const pathSegment: InfallibleParser<IdentifierNode | LiteralNode> = select([{
+	prefix: 'super',
+	parser: literal('super'),
+}, { parser: identifier }])
 
 export const path: InfallibleParser<PathNode> = (src, ctx) => {
 	let isAbsolute: boolean | undefined
 	if (src.trySkip('::')) {
 		isAbsolute = true
 	}
-	return map(
-		sequence([pathSegment, repeat(sequence([marker('::'), pathSegment]))]),
-		(res) => {
-			const ans: PathNode = {
-				type: 'mcdoc:path',
-				children: res.children,
-				range: res.range,
-				isAbsolute,
-			}
-			return ans
-		},
-	)(src, ctx)
+	return map(sequence([pathSegment, repeat(sequence([marker('::'), pathSegment]))]), (res) => {
+		const ans: PathNode = {
+			type: 'mcdoc:path',
+			children: res.children,
+			range: res.range,
+			isAbsolute,
+		}
+		return ans
+	})(src, ctx)
 }
 
 const attributeTreePosValues: InfallibleParser<AttributeTreePosValuesNode> = setType(
 	'mcdoc:attribute/tree/pos',
-	syntax(
-		[
-			{ get: () => attributeValue },
-			syntaxRepeat(
-				syntax(
-					[marker(','), { get: () => failOnEmpty(attributeValue) }],
-					true,
-				),
-				true,
-			),
-		],
-		true,
-	),
+	syntax([
+		{ get: () => attributeValue },
+		syntaxRepeat(syntax([marker(','), { get: () => failOnEmpty(attributeValue) }], true), true),
+	], true),
 )
 
-const attributeNamedValue: Parser<
-	SyntaxUtil<StringNode | IdentifierNode | AttributeValueNode>
-> = syntax(
-	[
+const attributeNamedValue: Parser<SyntaxUtil<StringNode | IdentifierNode | AttributeValueNode>> =
+	syntax([
 		select([{ prefix: '"', parser: string }, { parser: identifier }]),
-		select([
-			{
-				prefix: '=',
-				parser: syntax(
-					[punctuation('='), { get: () => attributeValue }],
-					true,
-				),
-			},
-			{ parser: { get: () => attributeTree } },
-		]),
-	],
-	true,
-)
+		select([{
+			prefix: '=',
+			parser: syntax([punctuation('='), { get: () => attributeValue }], true),
+		}, { parser: { get: () => attributeTree } }]),
+	], true)
 
 const attributeTreeNamedValues: Parser<AttributeTreeNamedValuesNode> = setType(
 	'mcdoc:attribute/tree/named',
-	syntax(
-		[
-			attributeNamedValue,
-			syntaxRepeat(
-				syntax([marker(','), failOnEmpty(attributeNamedValue)], true),
-				true,
-			),
-		],
-		true,
-	),
+	syntax([
+		attributeNamedValue,
+		syntaxRepeat(syntax([marker(','), failOnEmpty(attributeNamedValue)], true), true),
+	], true),
 )
 
 const treeBody: InfallibleParser<
@@ -546,11 +454,7 @@ const treeBody: InfallibleParser<
 	syntax([attributeTreePosValues, optional(marker(','))]),
 ])
 
-const AttributeTreeClosure = Object.freeze({
-	'(': ')',
-	'[': ']',
-	'{': '}',
-})
+const AttributeTreeClosure = Object.freeze({ '(': ')', '[': ']', '{': '}' })
 const attributeTree: Parser<AttributeTreeNode> = (src, ctx) => {
 	const delim = src.trySkip('(')
 		? '('
@@ -573,43 +477,27 @@ const attributeTree: Parser<AttributeTreeNode> = (src, ctx) => {
 	return ans
 }
 
-const attributeValue: InfallibleParser<AttributeValueNode> = select([
-	{
-		predicate: (src) => ['(', '[', '{'].includes(src.peek()),
-		parser: attributeTree as InfallibleParser<AttributeTreeNode>,
-	},
-	{ parser: { get: () => type } },
-])
+const attributeValue: InfallibleParser<AttributeValueNode> = select([{
+	predicate: (src) => ['(', '[', '{'].includes(src.peek()),
+	parser: attributeTree as InfallibleParser<AttributeTreeNode>,
+}, { parser: { get: () => type } }])
 
 export const attribute: Parser<AttributeNode> = setType(
 	'mcdoc:attribute',
-	syntax(
-		[
-			marker('#['),
-			identifier,
-			select([
-				{
-					prefix: '=',
-					parser: syntax(
-						[punctuation('='), attributeValue, punctuation(']')],
-						true,
-					),
-				},
-				{
-					predicate: (src) => ['(', '[', '{'].includes(src.peek()),
-					parser: syntax(
-						[
-							attributeTree as InfallibleParser<AttributeTreeNode>,
-							punctuation(']'),
-						],
-						true,
-					),
-				},
-				{ parser: punctuation(']') },
-			]),
-		],
-		true,
-	),
+	syntax([
+		marker('#['),
+		identifier,
+		select([{
+			prefix: '=',
+			parser: syntax([punctuation('='), attributeValue, punctuation(']')], true),
+		}, {
+			predicate: (src) => ['(', '[', '{'].includes(src.peek()),
+			parser: syntax(
+				[attributeTree as InfallibleParser<AttributeTreeNode>, punctuation(']')],
+				true,
+			),
+		}, { parser: punctuation(']') }]),
+	], true),
 )
 
 const attributes = repeat(attribute)
@@ -626,17 +514,14 @@ const typeParamBlock: InfallibleParser<TypeParamBlockNode> = setType(
 	'mcdoc:type_param_block',
 	syntax([
 		punctuation('<'),
-		select([
-			{ prefix: '>', parser: punctuation('>') },
-			{
-				parser: syntax([
-					typeParam,
-					syntaxRepeat(syntax([marker(','), failOnEmpty(typeParam)])),
-					optional(marker(',')),
-					punctuation('>'),
-				]),
-			},
-		]),
+		select([{ prefix: '>', parser: punctuation('>') }, {
+			parser: syntax([
+				typeParam,
+				syntaxRepeat(syntax([marker(','), failOnEmpty(typeParam)])),
+				optional(marker(',')),
+				punctuation('>'),
+			]),
+		}]),
 	]),
 )
 
@@ -667,27 +552,26 @@ const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> =
 
 export const dispatchStatement: Parser<DispatchStatementNode> = setType(
 	'mcdoc:dispatch_statement',
-	syntax(
-		[
-			prelim,
-			keyword('dispatch'),
-			resLoc({
-				category: 'mcdoc/dispatcher',
-				accessType: SymbolAccessType.Write,
-			}),
-			indexBody({ noDynamic: true }),
-			optionalTypeParamBlock,
-			literal('to'),
-			{ get: () => type },
-		],
-		true,
-	),
+	syntax([
+		prelim,
+		keyword('dispatch'),
+		resLoc({ category: 'mcdoc/dispatcher', accessType: SymbolAccessType.Write }),
+		indexBody({ noDynamic: true }),
+		optionalTypeParamBlock,
+		literal('to'),
+		{ get: () => type },
+	], true),
 )
 
-const enumType: InfallibleParser<LiteralNode> = literal(
-	['byte', 'short', 'int', 'long', 'string', 'float', 'double'],
-	{ colorTokenType: 'type' },
-)
+const enumType: InfallibleParser<LiteralNode> = literal([
+	'byte',
+	'short',
+	'int',
+	'long',
+	'string',
+	'float',
+	'double',
+], { colorTokenType: 'type' })
 
 export const float: InfallibleParser<FloatNode> = core.float({
 	pattern: /^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
@@ -696,43 +580,20 @@ export const float: InfallibleParser<FloatNode> = core.float({
 export const integer: InfallibleParser<IntegerNode> = core.integer({
 	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
 })
-export const LiteralIntSuffixes = Object.freeze(
-	[
-		'b',
-		's',
-		'l',
-	] as const,
-)
+export const LiteralIntSuffixes = Object.freeze(['b', 's', 'l'] as const)
 export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
 export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
-	[
-		...LiteralIntSuffixes,
-		'B',
-		'S',
-		'L',
-	] as const,
+	[...LiteralIntSuffixes, 'B', 'S', 'L'] as const,
 )
 export type LiteralIntCaseInsensitiveSuffix = (typeof LiteralIntCaseInsensitiveSuffixes)[number]
-export const LiteralFloatSuffixes = Object.freeze(
-	[
-		'f',
-		'd',
-	] as const,
-)
+export const LiteralFloatSuffixes = Object.freeze(['f', 'd'] as const)
 export type LiteralFloatSuffix = (typeof LiteralFloatSuffixes)[number]
 export const LiteralFloatCaseInsensitiveSuffixes = Object.freeze(
-	[
-		...LiteralFloatSuffixes,
-		'F',
-		'D',
-	] as const,
+	[...LiteralFloatSuffixes, 'F', 'D'] as const,
 )
 export type LiteralFloatCaseInsensitiveSuffix = (typeof LiteralFloatCaseInsensitiveSuffixes)[number]
 export const LiteralNumberSuffixes = Object.freeze(
-	[
-		...LiteralIntSuffixes,
-		...LiteralFloatSuffixes,
-	] as const,
+	[...LiteralIntSuffixes, ...LiteralFloatSuffixes] as const,
 )
 export type LiteralNumberSuffix = (typeof LiteralNumberSuffixes)[number]
 export const LiteralNumberCaseInsensitiveSuffixes = Object.freeze(
@@ -747,35 +608,23 @@ export type LiteralNumberCaseInsensitiveSuffix =
 
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
-	select([
-		{
-			regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
-			parser: sequence([
-				integer,
-				optional(
-					keyword(LiteralIntCaseInsensitiveSuffixes, {
-						colorTokenType: 'keyword',
-					}),
-				),
-			]),
-		},
-		{
-			parser: sequence([
-				float,
-				optional(
-					keyword(LiteralFloatCaseInsensitiveSuffixes, {
-						colorTokenType: 'keyword',
-					}),
-				),
-			]),
-		},
-	]),
+	select([{
+		regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
+		parser: sequence([
+			integer,
+			optional(keyword(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+		]),
+	}, {
+		parser: sequence([
+			float,
+			optional(keyword(LiteralFloatCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+		]),
+	}]),
 )
 
-const enumValue: InfallibleParser<EnumValueNode> = select([
-	{ prefix: '"', parser: string },
-	{ parser: typedNumber },
-])
+const enumValue: InfallibleParser<EnumValueNode> = select([{ prefix: '"', parser: string }, {
+	parser: typedNumber,
+}])
 
 const enumField: InfallibleParser<EnumFieldNode> = setType(
 	'mcdoc:enum/field',
@@ -784,45 +633,30 @@ const enumField: InfallibleParser<EnumFieldNode> = setType(
 
 const enumBlock: InfallibleParser<EnumBlockNode> = setType(
 	'mcdoc:enum/block',
-	syntax(
-		[
-			punctuation('{'),
-			select([
-				{ prefix: '}', parser: punctuation('}') },
-				{
-					parser: syntax(
-						[
-							enumField,
-							syntaxRepeat(
-								syntax([marker(','), failOnEmpty(enumField)], true),
-								true,
-							),
-							optional(marker(',')),
-							punctuation('}'),
-						],
-						true,
-					),
-				},
-			]),
-		],
-		true,
-	),
+	syntax([
+		punctuation('{'),
+		select([{ prefix: '}', parser: punctuation('}') }, {
+			parser: syntax([
+				enumField,
+				syntaxRepeat(syntax([marker(','), failOnEmpty(enumField)], true), true),
+				optional(marker(',')),
+				punctuation('}'),
+			], true),
+		}]),
+	], true),
 )
 
 export const enum_: Parser<EnumNode> = setType(
 	'mcdoc:enum',
-	syntax(
-		[
-			prelim,
-			keyword('enum'),
-			punctuation('('),
-			enumType,
-			punctuation(')'),
-			optional(failOnError(identifier)),
-			enumBlock,
-		],
-		true,
-	),
+	syntax([
+		prelim,
+		keyword('enum'),
+		punctuation('('),
+		enumType,
+		punctuation(')'),
+		optional(failOnError(identifier)),
+		enumBlock,
+	], true),
 )
 
 const structMapKey: InfallibleParser<StructMapKeyNode> = setType(
@@ -830,11 +664,10 @@ const structMapKey: InfallibleParser<StructMapKeyNode> = setType(
 	syntax([punctuation('['), { get: () => type }, punctuation(']')], true),
 )
 
-const structKey: InfallibleParser<StructKeyNode> = select([
-	{ prefix: '"', parser: string },
-	{ prefix: '[', parser: structMapKey },
-	{ parser: identifier },
-])
+const structKey: InfallibleParser<StructKeyNode> = select([{ prefix: '"', parser: string }, {
+	prefix: '[',
+	parser: structMapKey,
+}, { parser: identifier }])
 
 const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
 	let isOptional: boolean | undefined
@@ -842,10 +675,7 @@ const structPairField: InfallibleParser<StructPairFieldNode> = (src, ctx) => {
 	if (src.trySkip('?')) {
 		isOptional = true
 	}
-	const result1 = syntax([punctuation(':'), { get: () => type }], true)(
-		src,
-		ctx,
-	)
+	const result1 = syntax([punctuation(':'), { get: () => type }], true)(src, ctx)
 	const ans: StructPairFieldNode = {
 		type: 'mcdoc:struct/field/pair',
 		children: [...result0.children, ...result1.children],
@@ -860,60 +690,34 @@ const structSpreadField: Parser<StructSpreadFieldNode> = setType(
 	syntax([attributes, marker('...'), { get: () => type }], true),
 )
 
-const structField: InfallibleParser<
-	StructPairFieldNode | StructSpreadFieldNode
-> = any([structSpreadField, structPairField])
+const structField: InfallibleParser<StructPairFieldNode | StructSpreadFieldNode> = any([
+	structSpreadField,
+	structPairField,
+])
 
 const structBlock: InfallibleParser<StructBlockNode> = setType(
 	'mcdoc:struct/block',
-	syntax(
-		[
-			punctuation('{'),
-			select([
-				{ prefix: '}', parser: punctuation('}') },
-				{
-					parser: syntax(
-						[
-							structField,
-							syntaxRepeat(
-								syntax([marker(','), failOnEmpty(structField)], true),
-								true,
-							),
-							optional(marker(',')),
-							punctuation('}'),
-						],
-						true,
-					),
-				},
-			]),
-		],
-		true,
-	),
+	syntax([
+		punctuation('{'),
+		select([{ prefix: '}', parser: punctuation('}') }, {
+			parser: syntax([
+				structField,
+				syntaxRepeat(syntax([marker(','), failOnEmpty(structField)], true), true),
+				optional(marker(',')),
+				punctuation('}'),
+			], true),
+		}]),
+	], true),
 )
 
 export const struct: Parser<StructNode> = setType(
 	'mcdoc:struct',
-	syntax(
-		[
-			prelim,
-			keyword('struct'),
-			optional(failOnEmpty(identifier)),
-			structBlock,
-		],
-		true,
-	),
+	syntax([prelim, keyword('struct'), optional(failOnEmpty(identifier)), structBlock], true),
 )
 
 const enumInjection: InfallibleParser<EnumInjectionNode> = setType(
 	'mcdoc:injection/enum',
-	syntax([
-		literal('enum'),
-		punctuation('('),
-		enumType,
-		punctuation(')'),
-		path,
-		enumBlock,
-	]),
+	syntax([literal('enum'), punctuation('('), enumType, punctuation(')'), path, enumBlock]),
 )
 
 const structInjection: InfallibleParser<StructInjectionNode> = setType(
@@ -925,41 +729,24 @@ export const injection: Parser<InjectionNode> = setType(
 	'mcdoc:injection',
 	syntax([
 		keyword('inject'),
-		select([
-			{ prefix: 'enum', parser: enumInjection },
-			{ parser: structInjection },
-		]),
+		select([{ prefix: 'enum', parser: enumInjection }, { parser: structInjection }]),
 	]),
 )
 
 export const typeAliasStatement: Parser<TypeAliasNode> = setType(
 	'mcdoc:type_alias',
-	syntax(
-		[
-			prelim,
-			keyword('type'),
-			identifier,
-			optionalTypeParamBlock,
-			punctuation('='),
-			{ get: () => type },
-		],
-		true,
-	),
+	syntax([prelim, keyword('type'), identifier, optionalTypeParamBlock, punctuation('='), {
+		get: () => type,
+	}], true),
 )
 
 export const useStatement: Parser<UseStatementNode> = setType(
 	'mcdoc:use_statement',
-	syntax(
-		[
-			keyword('use'),
-			path,
-			select([
-				{ prefix: 'as', parser: syntax([literal('as'), identifier]) },
-				{ parser: noop },
-			]),
-		],
-		true,
-	),
+	syntax([
+		keyword('use'),
+		path,
+		select([{ prefix: 'as', parser: syntax([literal('as'), identifier]) }, { parser: noop }]),
+	], true),
 )
 
 const topLevel: Parser<TopLevelNode> = any([
@@ -972,56 +759,34 @@ const topLevel: Parser<TopLevelNode> = any([
 	useStatement,
 ])
 
-export const module_: Parser<ModuleNode> = setType(
-	'mcdoc:module',
-	syntaxRepeat(topLevel, true),
-)
+export const module_: Parser<ModuleNode> = setType('mcdoc:module', syntaxRepeat(topLevel, true))
 
 const typeArgBlock: Parser<TypeArgBlockNode> = setType(
 	'mcdoc:type_arg_block',
 	syntax([
 		marker('<'),
-		select([
-			{ prefix: '>', parser: punctuation('>') },
-			{
-				parser: syntax(
-					[
-						{ get: () => type },
-						syntaxRepeat(
-							syntax(
-								[marker(','), { get: () => failOnEmpty(type) }],
-								true,
-							),
-							true,
-						),
-						optional(marker(',')),
-						punctuation('>'),
-					],
-					true,
-				),
-			},
-		]),
+		select([{ prefix: '>', parser: punctuation('>') }, {
+			parser: syntax([
+				{ get: () => type },
+				syntaxRepeat(syntax([marker(','), { get: () => failOnEmpty(type) }], true), true),
+				optional(marker(',')),
+				punctuation('>'),
+			], true),
+		}]),
 	]),
 )
 
 /* eslint-disable @typescript-eslint/indent */
-type GetTypeNode<
-	T extends string,
-	P extends Parser<AstNode | SyntaxUtil<AstNode>>,
-> =
+type GetTypeNode<T extends string, P extends Parser<AstNode | SyntaxUtil<AstNode>>> =
 	& { type: T }
 	& SyntaxUtil<
 		| AttributeNode
 		| IndexBodyNode
-		| (P extends InfallibleParser<infer V> ? V extends SyntaxUtil<infer U> ? U
-			: V extends AstNode ? V
-			: never
+		| (P extends InfallibleParser<infer V>
+			? V extends SyntaxUtil<infer U> ? U : V extends AstNode ? V : never
 			: never)
 	>
-function typeBase<
-	T extends string,
-	P extends Parser<AstNode | SyntaxUtil<AstNode>>,
->(
+function typeBase<T extends string, P extends Parser<AstNode | SyntaxUtil<AstNode>>>(
 	type: T,
 	parser: P,
 ): P extends InfallibleParser<AstNode | SyntaxUtil<AstNode>> ? InfallibleParser<GetTypeNode<T, P>>
@@ -1033,20 +798,14 @@ function typeBase<T extends string>(
 ): Parser<{ type: T } & SyntaxUtil<AstNode>> {
 	return setType(
 		type,
-		syntax(
-			[
-				attributes,
-				parser,
-				syntaxRepeat(
-					select([
-						{ prefix: '<', parser: typeArgBlock },
-						{ parser: failOnError(indexBody()) },
-					]),
-					true,
-				),
-			],
-			true,
-		),
+		syntax([
+			attributes,
+			parser,
+			syntaxRepeat(
+				select([{ prefix: '<', parser: typeArgBlock }, { parser: failOnError(indexBody()) }]),
+				true,
+			),
+		], true),
 	)
 }
 
@@ -1060,72 +819,47 @@ export const booleanType: Parser<BooleanTypeNode> = typeBase(
 	keyword('boolean', { colorTokenType: 'type' }),
 )
 
-function range<
-	P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatNode>,
->(
-	type: P extends InfallibleParser<infer V>
-		? (V extends IntegerNode ? IntRangeNode : FloatRangeNode)['type']
+function range<P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatNode>>(
+	type: P extends InfallibleParser<infer V> ? (V extends IntegerNode ? IntRangeNode
+			: FloatRangeNode)['type']
 		: never,
 	number: P,
 ): InfallibleParser<
-	P extends InfallibleParser<infer V> ? V extends IntegerNode ? IntRangeNode
-		: FloatRangeNode
+	P extends InfallibleParser<infer V> ? V extends IntegerNode ? IntRangeNode : FloatRangeNode
 		: never
 >
 function range(type: string, number: InfallibleParser): InfallibleParser {
 	const delimiterPredicate = (src: ReadonlySource) =>
 		src.tryPeek('..') || src.tryPeek(`${RangeExclusiveChar}..`)
-	const delimiterParser = literal(
-		[
-			'..',
-			`..${RangeExclusiveChar}`,
-			`${RangeExclusiveChar}..`,
-			`${RangeExclusiveChar}..${RangeExclusiveChar}`,
-		],
-		{
-			allowedChars: new Set(['.', RangeExclusiveChar]),
-		},
-	)
+	const delimiterParser = literal([
+		'..',
+		`..${RangeExclusiveChar}`,
+		`${RangeExclusiveChar}..`,
+		`${RangeExclusiveChar}..${RangeExclusiveChar}`,
+	], { allowedChars: new Set(['.', RangeExclusiveChar]) })
 	return setType(
 		type,
-		select([
-			{
-				predicate: delimiterPredicate,
-				parser: sequence([delimiterParser, number]),
-			},
-			{
-				parser: sequence([
-					stopBefore(number, '..'),
-					select([
-						{
-							predicate: delimiterPredicate,
-							parser: sequence([
-								delimiterParser,
-								optional(failOnEmpty(number)),
-							]),
-						},
-						{ parser: noop },
-					]),
-				]),
-			},
-		]),
+		select([{ predicate: delimiterPredicate, parser: sequence([delimiterParser, number]) }, {
+			parser: sequence([
+				stopBefore(number, '..'),
+				select([{
+					predicate: delimiterPredicate,
+					parser: sequence([delimiterParser, optional(failOnEmpty(number))]),
+				}, { parser: noop }]),
+			]),
+		}]),
 	)
 }
 
-export const intRange: InfallibleParser<IntRangeNode> = range(
-	'mcdoc:int_range',
-	integer,
-)
+export const intRange: InfallibleParser<IntRangeNode> = range('mcdoc:int_range', integer)
 
-const atIntRange: InfallibleParser<IntRangeNode | undefined> = optional(
-	(src, ctx) => {
-		if (!src.trySkip('@')) {
-			return Failure
-		}
-		src.skipWhitespace()
-		return intRange(src, ctx)
-	},
-)
+const atIntRange: InfallibleParser<IntRangeNode | undefined> = optional((src, ctx) => {
+	if (!src.trySkip('@')) {
+		return Failure
+	}
+	src.skipWhitespace()
+	return intRange(src, ctx)
+})
 
 export const stringType: Parser<StringTypeNode> = typeBase(
 	'mcdoc:type/string',
@@ -1144,38 +878,27 @@ export const literalType: Parser<LiteralTypeNode> = typeBase(
 	]),
 )
 
-export const floatRange: InfallibleParser<FloatRangeNode> = range(
-	'mcdoc:float_range',
-	float,
-)
+export const floatRange: InfallibleParser<FloatRangeNode> = range('mcdoc:float_range', float)
 
-const atFloatRange: InfallibleParser<FloatRangeNode | undefined> = optional(
-	(src, ctx) => {
-		if (!src.trySkip('@')) {
-			return Failure
-		}
-		src.skipWhitespace()
-		return floatRange(src, ctx)
-	},
-)
+const atFloatRange: InfallibleParser<FloatRangeNode | undefined> = optional((src, ctx) => {
+	if (!src.trySkip('@')) {
+		return Failure
+	}
+	src.skipWhitespace()
+	return floatRange(src, ctx)
+})
 
 export const numericType: Parser<NumericTypeNode> = typeBase(
 	'mcdoc:type/numeric_type',
-	select([
-		{
-			predicate: (src) => NumericTypeFloatKinds.some((k) => src.tryPeek(k)),
-			parser: syntax([
-				keyword(NumericTypeFloatKinds, { colorTokenType: 'type' }),
-				atFloatRange,
-			], true),
-		},
-		{
-			parser: syntax([
-				keyword(NumericTypeIntKinds, { colorTokenType: 'type' }),
-				atIntRange,
-			], true),
-		},
-	]),
+	select([{
+		predicate: (src) => NumericTypeFloatKinds.some((k) => src.tryPeek(k)),
+		parser: syntax(
+			[keyword(NumericTypeFloatKinds, { colorTokenType: 'type' }), atFloatRange],
+			true,
+		),
+	}, {
+		parser: syntax([keyword(NumericTypeIntKinds, { colorTokenType: 'type' }), atIntRange], true),
+	}]),
 )
 
 export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase(
@@ -1183,52 +906,31 @@ export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase(
 	syntax([
 		literal(PrimitiveArrayValueKinds),
 		atIntRange,
-		keyword('[]', {
-			allowedChars: new Set(['[', ']']),
-			colorTokenType: 'type',
-		}),
+		keyword('[]', { allowedChars: new Set(['[', ']']), colorTokenType: 'type' }),
 		atIntRange,
 	]),
 )
 
 export const listType: Parser<ListTypeNode> = typeBase(
 	'mcdoc:type/list',
-	syntax(
-		[marker('['), { get: () => type }, punctuation(']'), atIntRange],
-		true,
-	),
+	syntax([marker('['), { get: () => type }, punctuation(']'), atIntRange], true),
 )
 
 export const tupleType: Parser<TupleTypeNode> = typeBase(
 	'mcdoc:type/tuple',
-	syntax(
-		[
-			marker('['),
-			{ get: () => type },
-			marker(','),
-			select([
-				{ prefix: ']', parser: punctuation(']') },
-				{
-					parser: syntax(
-						[
-							{ get: () => type },
-							syntaxRepeat(
-								syntax(
-									[marker(','), { get: () => failOnEmpty(type) }],
-									true,
-								),
-								true,
-							),
-							optional(marker(',')),
-							punctuation(']'),
-						],
-						true,
-					),
-				},
-			]),
-		],
-		true,
-	),
+	syntax([
+		marker('['),
+		{ get: () => type },
+		marker(','),
+		select([{ prefix: ']', parser: punctuation(']') }, {
+			parser: syntax([
+				{ get: () => type },
+				syntaxRepeat(syntax([marker(','), { get: () => failOnEmpty(type) }], true), true),
+				optional(marker(',')),
+				punctuation(']'),
+			], true),
+		}]),
+	], true),
 )
 
 export const dispatcherType: Parser<DispatcherTypeNode> = typeBase(
@@ -1240,26 +942,14 @@ export const unionType: Parser<UnionTypeNode> = typeBase(
 	'mcdoc:type/union',
 	syntax([
 		marker('('),
-		select([
-			{ prefix: ')', parser: punctuation(')') },
-			{
-				parser: syntax(
-					[
-						{ get: () => type },
-						syntaxRepeat(
-							syntax(
-								[marker('|'), { get: () => failOnEmpty(type) }],
-								true,
-							),
-							true,
-						),
-						optional(marker('|')),
-						punctuation(')'),
-					],
-					true,
-				),
-			},
-		]),
+		select([{ prefix: ')', parser: punctuation(')') }, {
+			parser: syntax([
+				{ get: () => type },
+				syntaxRepeat(syntax([marker('|'), { get: () => failOnEmpty(type) }], true), true),
+				optional(marker('|')),
+				punctuation(')'),
+			], true),
+		}]),
 	]),
 )
 

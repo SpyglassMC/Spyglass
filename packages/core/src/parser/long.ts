@@ -20,12 +20,7 @@ interface OptionsBase {
 	 *
 	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	onOutOfRange?: (
-		ans: LongNode,
-		src: Source,
-		ctx: ParserContext,
-		options: Options,
-	) => void
+	onOutOfRange?: (ans: LongNode, src: Source, ctx: ParserContext, options: Options) => void
 }
 
 interface FallibleOptions extends OptionsBase {
@@ -46,10 +41,7 @@ const fallbackOnOutOfRange = (
 	options: Options,
 ) => {
 	ctx.err.report(
-		localize(
-			'expected',
-			localize('long.between', options.min ?? '-∞', options.max ?? '+∞'),
-		),
+		localize('expected', localize('long.between', options.min ?? '-∞', options.max ?? '+∞')),
 		ans,
 		ErrorSeverity.Error,
 	)
@@ -59,11 +51,7 @@ export function long(options: InfallibleOptions): InfallibleParser<LongNode>
 export function long(options: FallibleOptions): Parser<LongNode>
 export function long(options: Options): Parser<LongNode> {
 	return (src: Source, ctx: ParserContext): Result<LongNode> => {
-		const ans: LongNode = {
-			type: 'long',
-			range: Range.create(src),
-			value: 0n,
-		}
+		const ans: LongNode = { type: 'long', range: Range.create(src), value: 0n }
 
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
@@ -92,8 +80,7 @@ export function long(options: Options): Parser<LongNode> {
 		} else if (!options.pattern.test(raw) || isOnlySign) {
 			ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
 		} else if (
-			(options.min && ans.value < options.min)
-			|| (options.max && ans.value > options.max)
+			(options.min && ans.value < options.min) || (options.max && ans.value > options.max)
 		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

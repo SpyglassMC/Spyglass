@@ -11,8 +11,5 @@ export function register(meta: core.MetaRegistry) {
 		'mcfunction:command_child/trailing',
 		core.colorizer.error,
 	)
-	meta.registerColorizer<MacroNode>(
-		'mcfunction:macro',
-		macro,
-	)
+	meta.registerColorizer<MacroNode>('mcfunction:macro', macro)
 }

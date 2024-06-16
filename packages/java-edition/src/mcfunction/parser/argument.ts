@@ -102,9 +102,7 @@ function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.ArgumentParserGetter = (
-	rawTreeNode,
-): core.Parser | undefined => {
+export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser =>
@@ -118,9 +116,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'brigadier:float':
 			return wrap(float(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:integer':
-			return wrap(
-				integer(treeNode.properties?.min, treeNode.properties?.max),
-			)
+			return wrap(integer(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:long':
 			return wrap(long(treeNode.properties?.min, treeNode.properties?.max))
 		case 'brigadier:string':
@@ -149,46 +145,32 @@ export const argument: mcf.ArgumentParserGetter = (
 			return wrap(blockState)
 		case 'minecraft:color':
 			return wrap(
-				core.map(core.literal(...ColorArgumentValues), (res) => ({
-					...res,
-					color: core.Color.NamedColors.has(res.value)
-						? core.Color.fromCompositeInt(
-							core.Color.NamedColors.get(res.value)!,
-						)
-						: undefined,
-				})),
+				core.map(
+					core.literal(...ColorArgumentValues),
+					(res) => ({
+						...res,
+						color: core.Color.NamedColors.has(res.value)
+							? core.Color.fromCompositeInt(core.Color.NamedColors.get(res.value)!)
+							: undefined,
+					}),
+				),
 			)
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
 			return wrap(jsonParser('::java::server::util::text::Text'))
 		case 'minecraft:dimension':
-			return wrap(
-				core.resourceLocation({
-					category: 'dimension',
-				}),
-			)
+			return wrap(core.resourceLocation({ category: 'dimension' }))
 		case 'minecraft:entity':
-			return wrap(
-				entity(treeNode.properties.amount, treeNode.properties.type),
-			)
+			return wrap(entity(treeNode.properties.amount, treeNode.properties.type))
 		case 'minecraft:entity_anchor':
 			return wrap(core.literal(...EntityAnchorArgumentValues))
 		case 'minecraft:entity_summon':
-			return wrap(
-				core.resourceLocation({
-					category: 'entity_type',
-				}),
-			)
+			return wrap(core.resourceLocation({ category: 'entity_type' }))
 		case 'minecraft:float_range':
 			return wrap(range('float'))
 		case 'minecraft:function':
-			return wrap(
-				core.resourceLocation({
-					category: 'function',
-					allowTag: true,
-				}),
-			)
+			return wrap(core.resourceLocation({ category: 'function', allowTag: true }))
 		case 'minecraft:gamemode':
 			return wrap(core.literal(...GamemodeArgumentValues))
 		case 'minecraft:game_profile':
@@ -198,11 +180,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:int_range':
 			return wrap(range('integer'))
 		case 'minecraft:item_enchantment':
-			return wrap(
-				core.resourceLocation({
-					category: 'enchantment',
-				}),
-			)
+			return wrap(core.resourceLocation({ category: 'enchantment' }))
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
@@ -220,11 +198,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:message':
 			return wrap(message)
 		case 'minecraft:mob_effect':
-			return wrap(
-				core.resourceLocation({
-					category: 'mob_effect',
-				}),
-			)
+			return wrap(core.resourceLocation({ category: 'mob_effect' }))
 		case 'minecraft:nbt_compound_tag':
 			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
@@ -242,12 +216,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:objective_criteria':
 			return wrap(objectiveCriteria)
 		case 'minecraft:operation':
-			return wrap(
-				core.literal({
-					pool: OperationArgumentValues,
-					colorTokenType: 'operator',
-				}),
-			)
+			return wrap(core.literal({ pool: OperationArgumentValues, colorTokenType: 'operator' }))
 		case 'minecraft:particle':
 			return wrap(particle)
 		case 'minecraft:resource':
@@ -258,21 +227,14 @@ export const argument: mcf.ArgumentParserGetter = (
 				|| treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
-					category: core.ResourceLocation.shorten(
-						treeNode.properties.registry,
-					) as core.RegistryCategory | core.WorldgenFileCategory,
+					category: core.ResourceLocation.shorten(treeNode.properties.registry) as
+						| core.RegistryCategory
+						| core.WorldgenFileCategory,
 					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':
-			return wrap(
-				core.resourceLocation(
-					treeNode.properties ?? {
-						pool: [],
-						allowUnknown: true,
-					},
-				),
-			)
+			return wrap(core.resourceLocation(treeNode.properties ?? { pool: [], allowUnknown: true }))
 		case 'minecraft:rotation':
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
@@ -315,18 +277,13 @@ export const argument: mcf.ArgumentParserGetter = (
 
 function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 	return core.map<
-		core.SequenceUtil<
-			core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode
-		>,
+		core.SequenceUtil<core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode>,
 		BlockNode
 	>(
 		core.sequence([
 			core.resourceLocation({ category: 'block', allowTag: isPredicate }),
 			core.optional(
-				core.map<
-					core.RecordNode<core.StringNode, core.StringNode>,
-					BlockStatesNode
-				>(
+				core.map<core.RecordNode<core.StringNode, core.StringNode>, BlockStatesNode>(
 					core.failOnEmpty(
 						core.record<core.StringNode, core.StringNode>({
 							start: '[',
@@ -343,10 +300,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 							end: ']',
 						}),
 					),
-					(res) => ({
-						...res,
-						type: 'mcfunction:block/states',
-					}),
+					(res) => ({ ...res, type: 'mcfunction:block/states' }),
 				),
 			),
 			core.optional(core.failOnEmpty(nbt.parser.compound)),
@@ -367,43 +321,19 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
 
-function double(
-	min = DoubleMin,
-	max = DoubleMax,
-): core.InfallibleParser<core.FloatNode> {
-	return core.float({
-		pattern: FloatPattern,
-		min,
-		max,
-	})
+function double(min = DoubleMin, max = DoubleMax): core.InfallibleParser<core.FloatNode> {
+	return core.float({ pattern: FloatPattern, min, max })
 }
 
-function float(
-	min = FloatMin,
-	max = FloatMax,
-): core.InfallibleParser<core.FloatNode> {
-	return core.float({
-		pattern: FloatPattern,
-		min,
-		max,
-	})
+function float(min = FloatMin, max = FloatMax): core.InfallibleParser<core.FloatNode> {
+	return core.float({ pattern: FloatPattern, min, max })
 }
 
-function integer(
-	min = IntegerMin,
-	max = IntegerMax,
-): core.InfallibleParser<core.IntegerNode> {
-	return core.integer({
-		pattern: IntegerPattern,
-		min,
-		max,
-	})
+function integer(min = IntegerMin, max = IntegerMax): core.InfallibleParser<core.IntegerNode> {
+	return core.integer({ pattern: IntegerPattern, min, max })
 }
 
-function long(
-	min?: number,
-	max?: number,
-): core.InfallibleParser<core.LongNode> {
+function long(min?: number, max?: number): core.InfallibleParser<core.LongNode> {
 	return core.long({
 		pattern: IntegerPattern,
 		min: BigInt(min ?? LongMin),
@@ -411,9 +341,7 @@ function long(
 	})
 }
 
-function coordinate(
-	integerOnly = false,
-): core.InfallibleParser<CoordinateNode> {
+function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> {
 	return (src, ctx): CoordinateNode => {
 		const ans: CoordinateNode = {
 			type: 'mcfunction:coordinate',
@@ -429,10 +357,7 @@ function coordinate(
 		}
 
 		if ((src.canReadInLine() && src.peek() !== ' ') || ans.notation === '') {
-			const result = (integerOnly && ans.notation === '' ? integer : double)()(
-				src,
-				ctx,
-			)
+			const result = (integerOnly && ans.notation === '' ? integer : double)()(src, ctx)
 			ans.value = Number(result.value)
 		}
 
@@ -447,28 +372,18 @@ function entity(
 	type: 'entities' | 'players',
 ): core.Parser<EntityNode> {
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
-		core.select([
-			{
-				predicate: (src) => src.peek() === '@',
-				parser: selector(),
-			},
-			{
-				parser: core.any([
-					validateLength<core.StringNode>(
-						core.brigadierString,
-						PlayerNameMaxLength,
-						'mcfunction.parser.entity-selector.player-name.too-long',
-					),
-					uuid,
-				]),
-			},
-		]),
+		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
+			parser: core.any([
+				validateLength<core.StringNode>(
+					core.brigadierString,
+					PlayerNameMaxLength,
+					'mcfunction.parser.entity-selector.player-name.too-long',
+				),
+				uuid,
+			]),
+		}]),
 		(res, _src, ctx) => {
-			const ans: EntityNode = {
-				type: 'mcfunction:entity',
-				range: res.range,
-				children: [res],
-			}
+			const ans: EntityNode = { type: 'mcfunction:entity', range: res.range, children: [res] }
 
 			if (core.StringNode.is(res)) {
 				ans.playerName = res
@@ -479,26 +394,14 @@ function entity(
 			}
 
 			if (amount === 'single' && ans.selector && !ans.selector.single) {
-				ctx.err.report(
-					localize(
-						'mcfunction.parser.entity-selector.multiple-disallowed',
-					),
-					ans,
-				)
+				ctx.err.report(localize('mcfunction.parser.entity-selector.multiple-disallowed'), ans)
 			}
 			if (
 				type === 'players'
 				&& (ans.uuid
-					|| (ans.selector
-						&& !ans.selector.playersOnly
-						&& !ans.selector.currentEntity))
+					|| (ans.selector && !ans.selector.playersOnly && !ans.selector.currentEntity))
 			) {
-				ctx.err.report(
-					localize(
-						'mcfunction.parser.entity-selector.entities-disallowed',
-					),
-					ans,
-				)
+				ctx.err.report(localize('mcfunction.parser.entity-selector.entities-disallowed'), ans)
 			}
 
 			return ans
@@ -514,19 +417,14 @@ const itemSlot: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
 	return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
 }
 
-export const itemSlots: core.InfallibleParser<core.LiteralNode> = (
-	src,
-	ctx,
-) => {
+export const itemSlots: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
 	return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
 }
 
 const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
 	return core.map<
-		core.SequenceUtil<
-			core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode
-		>,
+		core.SequenceUtil<core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode>,
 		ItemStackNode
 	>(
 		core.sequence([
@@ -553,10 +451,7 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	const oldFormat = shouldUseOldItemStackFormat(ctx)
 	return core.map<
 		core.SequenceUtil<
-			| core.LiteralNode
-			| core.ResourceLocationNode
-			| ComponentTestsNode
-			| nbt.NbtCompoundNode
+			core.LiteralNode | core.ResourceLocationNode | ComponentTestsNode | nbt.NbtCompoundNode
 		>,
 		ItemPredicateNode
 	>(
@@ -578,9 +473,7 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 				children: res.children,
 				id: (res.children.find(core.ResourceLocationNode.is)
 					|| res.children.find(core.LiteralNode.is))!,
-				tests: res.children.find(
-					ComponentTestsNode.is,
-				),
+				tests: res.children.find(ComponentTestsNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
 			}
 			return ans
@@ -588,21 +481,11 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
-export function jsonParser(
-	typeRef: `::${string}::${string}`,
-): core.Parser<JsonNode> {
-	return core.map(
-		json.parser.entry,
-		(res) => {
-			const ans: JsonNode = {
-				type: 'mcfunction:json',
-				range: res.range,
-				children: [res],
-				typeRef,
-			}
-			return ans
-		},
-	)
+export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
+	return core.map(json.parser.entry, (res) => {
+		const ans: JsonNode = { type: 'mcfunction:json', range: res.range, children: [res], typeRef }
+		return ans
+	})
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
@@ -617,10 +500,7 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
-				core.stopBefore(
-					greedyString,
-					...EntitySelectorAtVariable.filterAvailable(ctx),
-				)(
+				core.stopBefore(greedyString, ...EntitySelectorAtVariable.filterAvailable(ctx))(
 					src,
 					ctx,
 				),
@@ -635,18 +515,10 @@ function nbtParser(
 	parser: core.Parser<nbt.NbtNode>,
 	properties?: NbtParserProperties,
 ): core.Parser<NbtNode> {
-	return core.map(
-		parser,
-		(res) => {
-			const ans: NbtNode = {
-				type: 'mcfunction:nbt',
-				range: res.range,
-				children: [res],
-				properties,
-			}
-			return ans
-		},
-	)
+	return core.map(parser, (res) => {
+		const ans: NbtNode = { type: 'mcfunction:nbt', range: res.range, children: [res], properties }
+		return ans
+	})
 }
 
 export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
@@ -672,50 +544,45 @@ export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
 	type CN = Exclude<ParticleNode['children'], undefined>[number]
 	const sep = core.map(mcf.sep, () => [])
 	const vec = vector({ dimension: 3 })
-	const color = core.map<VectorNode, VectorNode>(vec, (res) => ({
-		...res,
-		color: res.children.length === 3
-			? {
-				value: core.Color.fromDecRGB(
-					res.children[0].value,
-					res.children[1].value,
-					res.children[2].value,
-				),
-				format: [core.ColorFormat.DecRGB],
-			}
-			: undefined,
-	}))
-	const map: Record<
-		ParticleNode.SpecialType,
-		core.InfallibleParser<CN | core.SequenceUtil<CN>>
-	> = {
-		block: blockState,
-		block_marker: blockState,
-		dust: sequence([color, float()], sep),
-		dust_color_transition: sequence([color, float(), color], sep),
-		falling_dust: blockState,
-		item: itemStack,
-		sculk_charge: float(),
-		shriek: integer(),
-		vibration: sequence([vec, integer()], sep),
-	}
+	const color = core.map<VectorNode, VectorNode>(
+		vec,
+		(res) => ({
+			...res,
+			color: res.children.length === 3
+				? {
+					value: core.Color.fromDecRGB(
+						res.children[0].value,
+						res.children[1].value,
+						res.children[2].value,
+					),
+					format: [core.ColorFormat.DecRGB],
+				}
+				: undefined,
+		}),
+	)
+	const map: Record<ParticleNode.SpecialType, core.InfallibleParser<CN | core.SequenceUtil<CN>>> =
+		{
+			block: blockState,
+			block_marker: blockState,
+			dust: sequence([color, float()], sep),
+			dust_color_transition: sequence([color, float(), color], sep),
+			falling_dust: blockState,
+			item: itemStack,
+			sculk_charge: float(),
+			shriek: integer(),
+			vibration: sequence([vec, integer()], sep),
+		}
 	return core.map(
-		sequence(
-			[
-				core.resourceLocation({ category: 'particle_type' }),
-				{
-					get: (res) => {
-						return map[
-							core.ResourceLocationNode.toString(
-								res.children[0] as core.ResourceLocationNode,
-								'short',
-							) as ParticleNode.SpecialType
-						] as typeof map[keyof typeof map] | undefined
-					},
-				},
-			],
-			sep,
-		),
+		sequence([core.resourceLocation({ category: 'particle_type' }), {
+			get: (res) => {
+				return map[
+					core.ResourceLocationNode.toString(
+						res.children[0] as core.ResourceLocationNode,
+						'short',
+					) as ParticleNode.SpecialType
+				] as typeof map[keyof typeof map] | undefined
+			},
+		}], sep),
 		(res) => {
 			const ans: ParticleNode = {
 				type: 'mcfunction:particle',
@@ -750,9 +617,7 @@ function range(
 		? float(min, max)
 		: integer(min, max)
 	const low = core.failOnEmpty(core.stopBefore(number, '..'))
-	const sep = core.failOnEmpty(
-		core.literal({ pool: ['..'], colorTokenType: 'keyword' }),
-	)
+	const sep = core.failOnEmpty(core.literal({ pool: ['..'], colorTokenType: 'keyword' }))
 	const high = core.failOnEmpty(number)
 	return core.map<
 		core.SequenceUtil<core.FloatNode | core.IntegerNode | core.LiteralNode>,
@@ -770,18 +635,13 @@ function range(
 				: res.children.filter(core.IntegerNode.is)
 			const sepNode = res.children.find(core.LiteralNode.is)
 			const ans: FloatRangeNode | IntRangeNode = {
-				type: type === 'float'
-					? 'mcfunction:float_range'
-					: 'mcfunction:int_range',
+				type: type === 'float' ? 'mcfunction:float_range' : 'mcfunction:int_range',
 				range: res.range,
 				children: res.children as any,
 				value: sepNode
 					? valueNodes.length === 2
 						? [valueNodes[0].value, valueNodes[1].value]
-						: core.Range.endsBefore(
-								valueNodes[0].range,
-								sepNode.range.start,
-							)
+						: core.Range.endsBefore(valueNodes[0].range, sepNode.range.start)
 						? [valueNodes[0].value, undefined]
 						: [undefined, valueNodes[0].value]
 					: [valueNodes[0].value, valueNodes[0].value],
@@ -793,11 +653,7 @@ function range(
 				&& ans.value[0] > ans.value[1]
 			) {
 				ctx.err.report(
-					localize(
-						'mcfunction.parser.range.min>max',
-						ans.value[0],
-						ans.value[1],
-					),
+					localize('mcfunction.parser.range.min>max', ans.value[0], ans.value[1]),
 					res,
 				)
 			}
@@ -807,26 +663,20 @@ function range(
 }
 
 function resourceOrInline(category: core.FileCategory) {
-	return core.select([
-		{
-			predicate: (src) => core.LegalResourceLocationCharacters.has(src.peek()),
-			parser: core.resourceLocation({ category }),
-		},
-		{
-			parser: core.map(
-				nbt.parser.entry,
-				(res) => {
-					const ans: NbtResourceNode = {
-						type: 'mcfunction:nbt_resource',
-						range: res.range,
-						children: [res],
-						category,
-					}
-					return ans
-				},
-			),
-		},
-	])
+	return core.select([{
+		predicate: (src) => core.LegalResourceLocationCharacters.has(src.peek()),
+		parser: core.resourceLocation({ category }),
+	}, {
+		parser: core.map(nbt.parser.entry, (res) => {
+			const ans: NbtResourceNode = {
+				type: 'mcfunction:nbt_resource',
+				range: res.range,
+				children: [res],
+				category,
+			}
+			return ans
+		}),
+	}])
 }
 
 function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
@@ -843,10 +693,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 		}
 
 		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
-			ctx.err.report(
-				localize('mcfunction.parser.entity-selector.invalid', ans.value),
-				ans,
-			)
+			ctx.err.report(localize('mcfunction.parser.entity-selector.invalid', ans.value), ans)
 		}
 
 		return ans
@@ -867,429 +714,289 @@ export function selector(): core.Parser<EntitySelectorNode> {
 		core.SequenceUtil<core.LiteralNode | EntitySelectorArgumentsNode>,
 		EntitySelectorNode
 	>(
-		core.sequence([
-			core.failOnEmpty(
-				selectorPrefix(),
-			),
-			{
-				get: (res) => {
-					const variable = core.LiteralNode.is(res.children?.[0])
-						? res.children[0].value
-						: undefined
+		core.sequence([core.failOnEmpty(selectorPrefix()), {
+			get: (res) => {
+				const variable = core.LiteralNode.is(res.children?.[0])
+					? res.children[0].value
+					: undefined
 
-					currentEntity = variable ? variable === '@s' : undefined
-					playersOnly = variable
-						? variable === '@p' || variable === '@a' || variable === '@r'
-						: undefined
-					predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
-					single = variable
-						? ['@p', '@r', '@s', '@n'].includes(variable)
-						: undefined
-					typeLimited = playersOnly
+				currentEntity = variable ? variable === '@s' : undefined
+				playersOnly = variable
+					? variable === '@p' || variable === '@a' || variable === '@r'
+					: undefined
+				predicates = variable === '@e' ? ['Entity::isAlive'] : undefined
+				single = variable ? ['@p', '@r', '@s', '@n'].includes(variable) : undefined
+				typeLimited = playersOnly
 
-					function invertable<T extends core.AstNode>(
-						parser: core.Parser<T>,
-					): core.Parser<EntitySelectorInvertableArgumentValueNode<T>> {
-						return core.map<
-							core.SequenceUtil<core.LiteralNode | T>,
-							EntitySelectorInvertableArgumentValueNode<T>
-						>(
-							core.sequence([
-								core.optional(
-									core.failOnEmpty(
-										core.literal({
-											pool: ['!'],
-											colorTokenType: 'keyword',
-										}),
-									),
-								),
-								(src) => {
-									src.skipSpace()
-									return undefined
-								},
-								parser,
-							]),
-							(res) => {
-								const ans: EntitySelectorInvertableArgumentValueNode<
-									T
-								> = {
-									type: 'mcfunction:entity_selector/arguments/value/invertable',
-									range: res.range,
-									children: res.children,
-									inverted: !!res.children.find(
-										(n) => core.LiteralNode.is(n) && n.value === '!',
-									),
-									value: res.children.find(
-										(n) => !core.LiteralNode.is(n) || n.value !== '!',
-									) as T,
-								}
-								return ans
+				function invertable<T extends core.AstNode>(
+					parser: core.Parser<T>,
+				): core.Parser<EntitySelectorInvertableArgumentValueNode<T>> {
+					return core.map<
+						core.SequenceUtil<core.LiteralNode | T>,
+						EntitySelectorInvertableArgumentValueNode<T>
+					>(
+						core.sequence([
+							core.optional(
+								core.failOnEmpty(core.literal({ pool: ['!'], colorTokenType: 'keyword' })),
+							),
+							(src) => {
+								src.skipSpace()
+								return undefined
 							},
-						)
-					}
+							parser,
+						]),
+						(res) => {
+							const ans: EntitySelectorInvertableArgumentValueNode<T> = {
+								type: 'mcfunction:entity_selector/arguments/value/invertable',
+								range: res.range,
+								children: res.children,
+								inverted: !!res.children.find((n) =>
+									core.LiteralNode.is(n) && n.value === '!'
+								),
+								value: res.children.find((n) =>
+									!core.LiteralNode.is(n) || n.value !== '!'
+								) as T,
+							}
+							return ans
+						},
+					)
+				}
 
-					return core.optional(
-						core.map<
-							core.RecordNode<core.StringNode, core.AstNode>,
-							EntitySelectorArgumentsNode
-						>(
-							core.failOnEmpty(
-								core.record({
-									start: '[',
-									pair: {
-										key: core.string({
-											...core.BrigadierStringOptions,
-											value: {
-												parser: core.literal({
-													pool: [
-														...EntitySelectorNode.ArgumentKeys,
-													],
-													colorTokenType: 'property',
-												}),
-												type: 'literal',
-											},
-										}),
-										sep: '=',
+				return core.optional(
+					core.map<
+						core.RecordNode<core.StringNode, core.AstNode>,
+						EntitySelectorArgumentsNode
+					>(
+						core.failOnEmpty(
+							core.record({
+								start: '[',
+								pair: {
+									key: core.string({
+										...core.BrigadierStringOptions,
 										value: {
-											get: (record, key) => {
-												const hasKey = (key: string): boolean =>
-													!!record.children.find((p) => p.key?.value === key)
-												const hasNonInvertedKey = (
-													key: string,
-												): boolean =>
-													!!record.children.find(
-														(p) =>
-															p.key?.value === key
-															&& !(
-																p.value as EntitySelectorInvertableArgumentValueNode<
-																	core.AstNode
-																>
-															)?.inverted,
-													)
-												switch (key?.value) {
-													case 'advancements':
-														return core.map<
-															core.RecordNode<
-																core.ResourceLocationNode,
-																| core.BooleanNode
-																| EntitySelectorAdvancementsArgumentCriteriaNode
-															>,
-															EntitySelectorAdvancementsArgumentNode
-														>(
-															core.record<
-																core.ResourceLocationNode,
-																| core.BooleanNode
-																| EntitySelectorAdvancementsArgumentCriteriaNode
-															>({
-																start: '{',
-																pair: {
-																	key: core.resourceLocation({
-																		category: 'advancement',
-																	}),
-																	sep: '=',
-																	value: core.select([
-																		{
-																			predicate: (src) => src.peek() === '{',
-																			parser: core.map<
-																				core.RecordNode<
-																					core.StringNode,
-																					core.BooleanNode
-																				>,
-																				EntitySelectorAdvancementsArgumentCriteriaNode
-																			>(
-																				core.record<
-																					core.StringNode,
-																					core.BooleanNode
-																				>({
-																					start: '{',
-																					pair: {
-																						key: unquotedString,
-																						sep: '=',
-																						value: core
-																							.boolean,
-																						end: ',',
-																						trailingEnd: true,
-																					},
-																					end: '}',
-																				}),
-																				(res) => {
-																					const ans:
-																						EntitySelectorAdvancementsArgumentCriteriaNode =
-																							{
-																								...res,
-																								type:
-																									'mcfunction:entity_selector/arguments/advancements/criteria',
-																							}
-																					return ans
-																				},
-																			),
-																		},
-																		{
-																			parser: core.boolean,
-																		},
-																	]),
-																	end: ',',
-																	trailingEnd: true,
-																},
-																end: '}',
-															}),
-															(res, _, ctx) => {
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																const ans: EntitySelectorAdvancementsArgumentNode =
-																	{
-																		...res,
-																		type:
-																			'mcfunction:entity_selector/arguments/advancements',
-																	}
-																return ans
-															},
-														)
-													case 'distance':
-														return core.map<FloatRangeNode>(
-															range('float', 0),
-															(res, _, ctx) => {
-																dimensionLimited = true
-																// x, y, z, dx, dy, dz take precedence over distance, so we use ??= instead of = to ensure it won't override the result.
-																chunkLimited ??= !playersOnly
-																	&& res.value[1] !== undefined
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'gamemode':
-														return core.map<
-															EntitySelectorInvertableArgumentValueNode<
-																core.StringNode
-															>
-														>(
-															invertable(
-																core.string({
-																	unquotable: core
-																		.BrigadierUnquotableOption,
-																	value: {
-																		type: 'literal',
-																		parser: core.literal(
-																			...GamemodeArgumentValues,
-																		),
-																	},
+											parser: core.literal({
+												pool: [...EntitySelectorNode.ArgumentKeys],
+												colorTokenType: 'property',
+											}),
+											type: 'literal',
+										},
+									}),
+									sep: '=',
+									value: {
+										get: (record, key) => {
+											const hasKey = (key: string): boolean =>
+												!!record.children.find((p) => p.key?.value === key)
+											const hasNonInvertedKey = (key: string): boolean =>
+												!!record.children.find((p) =>
+													p.key?.value === key
+													&& !(p.value as EntitySelectorInvertableArgumentValueNode<
+														core.AstNode
+													>)?.inverted
+												)
+											switch (key?.value) {
+												case 'advancements':
+													return core.map<
+														core.RecordNode<
+															core.ResourceLocationNode,
+															| core.BooleanNode
+															| EntitySelectorAdvancementsArgumentCriteriaNode
+														>,
+														EntitySelectorAdvancementsArgumentNode
+													>(
+														core.record<
+															core.ResourceLocationNode,
+															| core.BooleanNode
+															| EntitySelectorAdvancementsArgumentCriteriaNode
+														>({
+															start: '{',
+															pair: {
+																key: core.resourceLocation({
+																	category: 'advancement',
 																}),
-															),
-															(res, _, ctx) => {
-																playersOnly = true
-																if (
-																	res.inverted
-																		? hasNonInvertedKey(
-																			key.value,
-																		)
-																		: hasKey(key.value)
-																) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
+																sep: '=',
+																value: core.select([{
+																	predicate: (src) => src.peek() === '{',
+																	parser: core.map<
+																		core.RecordNode<
+																			core.StringNode,
+																			core.BooleanNode
+																		>,
+																		EntitySelectorAdvancementsArgumentCriteriaNode
+																	>(
+																		core.record<
+																			core.StringNode,
+																			core.BooleanNode
+																		>({
+																			start: '{',
+																			pair: {
+																				key: unquotedString,
+																				sep: '=',
+																				value: core.boolean,
+																				end: ',',
+																				trailingEnd: true,
+																			},
+																			end: '}',
+																		}),
+																		(res) => {
+																			const ans:
+																				EntitySelectorAdvancementsArgumentCriteriaNode =
+																					{
+																						...res,
+																						type:
+																							'mcfunction:entity_selector/arguments/advancements/criteria',
+																					}
+																			return ans
+																		},
+																	),
+																}, { parser: core.boolean }]),
+																end: ',',
+																trailingEnd: true,
 															},
-														)
-													case 'limit':
-														return core.map<core.IntegerNode>(
-															integer(0),
-															(res, _, ctx) => {
-																single = res.value <= 1
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																if (currentEntity) {
-																	ctx.err.report(
-																		localize(
-																			'mcfunction.parser.entity-selector.arguments.not-applicable',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'level':
-														return core.map<IntRangeNode>(
-															range('integer', 0),
-															(res, _, ctx) => {
-																playersOnly = true
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'name':
-														return core.map<
-															EntitySelectorInvertableArgumentValueNode<
-																core.StringNode
-															>
-														>(
-															invertable(core.brigadierString),
-															(res, _, ctx) => {
-																if (
-																	res.inverted
-																		? hasNonInvertedKey(
-																			key.value,
-																		)
-																		: hasKey(key.value)
-																) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'nbt':
-														return invertable(nbt.parser.compound)
-													case 'predicate':
-														return invertable(
-															core.resourceLocation({
-																category: 'predicate',
-															}),
-														)
-													case 'scores':
-														return core.map<
-															core.RecordNode<
-																core.SymbolNode,
-																IntRangeNode
-															>,
-															EntitySelectorScoresArgumentNode
-														>(
-															core.record<
-																core.SymbolNode,
-																IntRangeNode
-															>({
-																start: '{',
-																pair: {
-																	key: objective('reference', [
-																		'[',
-																		'=',
-																		',',
-																		']',
-																		'{',
-																		'}',
-																	]),
-																	sep: '=',
-																	value: range('integer'),
-																	end: ',',
-																	trailingEnd: true,
-																},
-																end: '}',
-															}),
-															(res, _, ctx) => {
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																const ans: EntitySelectorScoresArgumentNode = {
-																	...res,
-																	type:
-																		'mcfunction:entity_selector/arguments/scores',
-																}
-																return ans
-															},
-														)
-													case 'sort':
-														return core.map<core.StringNode>(
+															end: '}',
+														}),
+														(res, _, ctx) => {
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															const ans: EntitySelectorAdvancementsArgumentNode = {
+																...res,
+																type:
+																	'mcfunction:entity_selector/arguments/advancements',
+															}
+															return ans
+														},
+													)
+												case 'distance':
+													return core.map<FloatRangeNode>(
+														range('float', 0),
+														(res, _, ctx) => {
+															dimensionLimited = true
+															// x, y, z, dx, dy, dz take precedence over distance, so we use ??= instead of = to ensure it won't override the result.
+															chunkLimited ??= !playersOnly
+																&& res.value[1] !== undefined
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'gamemode':
+													return core.map<
+														EntitySelectorInvertableArgumentValueNode<core.StringNode>
+													>(
+														invertable(
 															core.string({
-																unquotable: core
-																	.BrigadierUnquotableOption,
+																unquotable: core.BrigadierUnquotableOption,
 																value: {
 																	type: 'literal',
-																	parser: core.literal(
-																		'arbitrary',
-																		'furthest',
-																		'nearest',
-																		'random',
-																	),
+																	parser: core.literal(...GamemodeArgumentValues),
 																},
 															}),
-															(res, _, ctx) => {
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																if (currentEntity) {
-																	ctx.err.report(
-																		localize(
-																			'mcfunction.parser.entity-selector.arguments.not-applicable',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'tag':
-														return invertable(
-															tag([
-																'[',
-																'=',
-																',',
-																']',
-																'{',
-																'}',
-															]),
-														)
-													case 'team':
-														return core.map<
-															EntitySelectorInvertableArgumentValueNode<
-																core.SymbolNode
-															>
-														>(
-															invertable(
-																team('reference', [
+														),
+														(res, _, ctx) => {
+															playersOnly = true
+															if (
+																res.inverted
+																	? hasNonInvertedKey(key.value)
+																	: hasKey(key.value)
+															) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'limit':
+													return core.map<core.IntegerNode>(
+														integer(0),
+														(res, _, ctx) => {
+															single = res.value <= 1
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															if (currentEntity) {
+																ctx.err.report(
+																	localize(
+																		'mcfunction.parser.entity-selector.arguments.not-applicable',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'level':
+													return core.map<IntRangeNode>(
+														range('integer', 0),
+														(res, _, ctx) => {
+															playersOnly = true
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'name':
+													return core.map<
+														EntitySelectorInvertableArgumentValueNode<core.StringNode>
+													>(invertable(core.brigadierString), (res, _, ctx) => {
+														if (
+															res.inverted
+																? hasNonInvertedKey(key.value)
+																: hasKey(key.value)
+														) {
+															ctx.err.report(
+																localize('duplicate-key', localeQuote(key.value)),
+																key,
+															)
+														}
+														return res
+													})
+												case 'nbt':
+													return invertable(nbt.parser.compound)
+												case 'predicate':
+													return invertable(
+														core.resourceLocation({ category: 'predicate' }),
+													)
+												case 'scores':
+													return core.map<
+														core.RecordNode<core.SymbolNode, IntRangeNode>,
+														EntitySelectorScoresArgumentNode
+													>(
+														core.record<core.SymbolNode, IntRangeNode>({
+															start: '{',
+															pair: {
+																key: objective('reference', [
 																	'[',
 																	'=',
 																	',',
@@ -1297,187 +1004,224 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																	'{',
 																	'}',
 																]),
-															),
-															(res, _, ctx) => {
-																if (
-																	res.inverted
-																		? hasNonInvertedKey(
-																			key.value,
-																		)
-																		: hasKey(key.value)
-																) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
+																sep: '=',
+																value: range('integer'),
+																end: ',',
+																trailingEnd: true,
 															},
-														)
-													case 'type':
-														return core.map<
-															EntitySelectorInvertableArgumentValueNode<
-																core.ResourceLocationNode
-															>
-														>(
-															invertable(
-																core.resourceLocation({
-																	category: 'entity_type',
-																	allowTag: true,
-																}),
-															),
-															(res, _, ctx) => {
-																if (typeLimited) {
-																	if (hasKey(key.value)) {
-																		ctx.err.report(
-																			localize(
-																				'duplicate-key',
-																				localeQuote(
-																					key.value,
-																				),
-																			),
-																			key,
-																		)
-																	} else {
-																		ctx.err.report(
-																			localize(
-																				'mcfunction.parser.entity-selector.arguments.not-applicable',
-																				localeQuote(
-																					key.value,
-																				),
-																			),
-																			key,
-																		)
-																	}
-																} else if (
-																	!res.inverted
-																	&& !res.value.isTag
-																) {
-																	typeLimited = true
-																	if (
-																		core.ResourceLocationNode
-																			.toString(
-																				res.value,
-																				'short',
-																			) === 'player'
-																	) {
-																		playersOnly = true
-																	}
-																}
-																return res
-															},
-														)
-													case 'x':
-													case 'y':
-													case 'z':
-														return core.map<core.FloatNode>(
-															double(),
-															(res, _, ctx) => {
-																dimensionLimited = true
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'dx':
-													case 'dy':
-													case 'dz':
-														return core.map<core.FloatNode>(
-															double(),
-															(res, _, ctx) => {
-																dimensionLimited = true
-																chunkLimited = !playersOnly
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case 'x_rotation':
-													case 'y_rotation':
-														return core.map<FloatRangeNode>(
-															range(
-																'float',
-																undefined,
-																undefined,
-																true,
-															),
-															(res, _, ctx) => {
-																if (hasKey(key.value)) {
-																	ctx.err.report(
-																		localize(
-																			'duplicate-key',
-																			localeQuote(key.value),
-																		),
-																		key,
-																	)
-																}
-																return res
-															},
-														)
-													case undefined:
-														// The key is empty. Let's just fail the value as well.
-														return (): core.Result<never> => core.Failure
-													default:
-														// The key is unknown.
-														return (
-															_src,
-															ctx,
-														): core.Result<never> => {
-															ctx.err.report(
-																localize(
-																	'mcfunction.parser.entity-selector.arguments.unknown',
-																	localeQuote(key!.value),
+															end: '}',
+														}),
+														(res, _, ctx) => {
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															const ans: EntitySelectorScoresArgumentNode = {
+																...res,
+																type: 'mcfunction:entity_selector/arguments/scores',
+															}
+															return ans
+														},
+													)
+												case 'sort':
+													return core.map<core.StringNode>(
+														core.string({
+															unquotable: core.BrigadierUnquotableOption,
+															value: {
+																type: 'literal',
+																parser: core.literal(
+																	'arbitrary',
+																	'furthest',
+																	'nearest',
+																	'random',
 																),
-																key!,
+															},
+														}),
+														(res, _, ctx) => {
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															if (currentEntity) {
+																ctx.err.report(
+																	localize(
+																		'mcfunction.parser.entity-selector.arguments.not-applicable',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'tag':
+													return invertable(tag(['[', '=', ',', ']', '{', '}']))
+												case 'team':
+													return core.map<
+														EntitySelectorInvertableArgumentValueNode<core.SymbolNode>
+													>(
+														invertable(
+															team('reference', ['[', '=', ',', ']', '{', '}']),
+														),
+														(res, _, ctx) => {
+															if (
+																res.inverted
+																	? hasNonInvertedKey(key.value)
+																	: hasKey(key.value)
+															) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case 'type':
+													return core.map<
+														EntitySelectorInvertableArgumentValueNode<
+															core.ResourceLocationNode
+														>
+													>(
+														invertable(
+															core.resourceLocation({
+																category: 'entity_type',
+																allowTag: true,
+															}),
+														),
+														(res, _, ctx) => {
+															if (typeLimited) {
+																if (hasKey(key.value)) {
+																	ctx.err.report(
+																		localize(
+																			'duplicate-key',
+																			localeQuote(key.value),
+																		),
+																		key,
+																	)
+																} else {
+																	ctx.err.report(
+																		localize(
+																			'mcfunction.parser.entity-selector.arguments.not-applicable',
+																			localeQuote(key.value),
+																		),
+																		key,
+																	)
+																}
+															} else if (!res.inverted && !res.value.isTag) {
+																typeLimited = true
+																if (
+																	core.ResourceLocationNode.toString(
+																		res.value,
+																		'short',
+																	) === 'player'
+																) {
+																	playersOnly = true
+																}
+															}
+															return res
+														},
+													)
+												case 'x':
+												case 'y':
+												case 'z':
+													return core.map<core.FloatNode>(double(), (res, _, ctx) => {
+														dimensionLimited = true
+														if (hasKey(key.value)) {
+															ctx.err.report(
+																localize('duplicate-key', localeQuote(key.value)),
+																key,
 															)
-															return core.Failure
 														}
-												}
-											},
+														return res
+													})
+												case 'dx':
+												case 'dy':
+												case 'dz':
+													return core.map<core.FloatNode>(double(), (res, _, ctx) => {
+														dimensionLimited = true
+														chunkLimited = !playersOnly
+														if (hasKey(key.value)) {
+															ctx.err.report(
+																localize('duplicate-key', localeQuote(key.value)),
+																key,
+															)
+														}
+														return res
+													})
+												case 'x_rotation':
+												case 'y_rotation':
+													return core.map<FloatRangeNode>(
+														range('float', undefined, undefined, true),
+														(res, _, ctx) => {
+															if (hasKey(key.value)) {
+																ctx.err.report(
+																	localize(
+																		'duplicate-key',
+																		localeQuote(key.value),
+																	),
+																	key,
+																)
+															}
+															return res
+														},
+													)
+												case undefined:
+													// The key is empty. Let's just fail the value as well.
+													return (): core.Result<never> => core.Failure
+												default:
+													// The key is unknown.
+													return (_src, ctx): core.Result<never> => {
+														ctx.err.report(
+															localize(
+																'mcfunction.parser.entity-selector.arguments.unknown',
+																localeQuote(key!.value),
+															),
+															key!,
+														)
+														return core.Failure
+													}
+											}
 										},
-										end: ',',
-										trailingEnd: true,
 									},
-									end: ']',
-								}),
-							),
-							(res) => {
-								const ans: EntitySelectorArgumentsNode = {
-									...res,
-									type: 'mcfunction:entity_selector/arguments',
-								}
-								return ans
-							},
+									end: ',',
+									trailingEnd: true,
+								},
+								end: ']',
+							}),
 						),
-					)
-				},
+						(res) => {
+							const ans: EntitySelectorArgumentsNode = {
+								...res,
+								type: 'mcfunction:entity_selector/arguments',
+							}
+							return ans
+						},
+					),
+				)
 			},
-		]),
+		}]),
 		(res) => {
 			const ans: EntitySelectorNode = {
 				type: 'mcfunction:entity_selector',
 				range: res.range,
 				children: res.children as EntitySelectorNode['children'],
-				variable: res.children
-					.find(core.LiteralNode.is)!
-					.value.slice(1) as EntitySelectorVariable,
+				variable: res.children.find(core.LiteralNode.is)!.value.slice(
+					1,
+				) as EntitySelectorVariable,
 				arguments: res.children.find(EntitySelectorArgumentsNode.is),
 				chunkLimited,
 				currentEntity,
@@ -1508,12 +1252,10 @@ function getEntitySelectorHover(node: EntitySelectorNode) {
 		ans = `**Performance**: ${grades.get(4)}
 - \`currentEntity\`: \`${node.currentEntity}\``
 	} else {
-		const amountOfTrue = [
-			node.chunkLimited,
-			node.dimensionLimited,
-			node.playersOnly,
-			node.typeLimited,
-		].filter((v) => v).length
+		const amountOfTrue =
+			[node.chunkLimited, node.dimensionLimited, node.playersOnly, node.typeLimited].filter((
+				v,
+			) => v).length
 		ans = `**Performance**: ${grades.get(amountOfTrue)}
 - \`chunkLimited\`: \`${!!node.chunkLimited}\`
 - \`dimensionLimited\`: \`${!!node.dimensionLimited}\`
@@ -1530,27 +1272,17 @@ ${node.predicates.map((p) => `- \`${p}\``).join('\n')}`
 	return ans
 }
 
-export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<
-	core.SymbolNode
->(
+export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<core.SymbolNode>(
 	symbol('score_holder'),
 	FakeNameMaxLength,
 	'mcfunction.parser.score_holder.fake-name.too-long',
 )
 
-export function scoreHolder(
-	amount: 'multiple' | 'single',
-): core.Parser<ScoreHolderNode> {
+export function scoreHolder(amount: 'multiple' | 'single'): core.Parser<ScoreHolderNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
-		core.select([
-			{
-				predicate: (src) => src.peek() === '@',
-				parser: selector(),
-			},
-			{
-				parser: scoreHolderFakeName,
-			},
-		]),
+		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
+			parser: scoreHolderFakeName,
+		}]),
 		(res, _src, ctx) => {
 			const ans: ScoreHolderNode = {
 				type: 'mcfunction:score_holder',
@@ -1565,12 +1297,7 @@ export function scoreHolder(
 			}
 
 			if (amount === 'single' && ans.selector && !ans.selector.single) {
-				ctx.err.report(
-					localize(
-						'mcfunction.parser.entity-selector.multiple-disallowed',
-					),
-					ans,
-				)
+				ctx.err.report(localize('mcfunction.parser.entity-selector.multiple-disallowed'), ans)
 			}
 
 			return ans
@@ -1582,11 +1309,7 @@ function symbol(
 	options: core.AllCategory | core.SymbolOptions,
 	terminators: string[] = [],
 ): core.InfallibleParser<core.SymbolNode> {
-	return core.stopBefore(
-		core.symbol(options as never),
-		core.Whitespaces,
-		terminators,
-	)
+	return core.stopBefore(core.symbol(options as never), core.Whitespaces, terminators)
 }
 
 export function objective(
@@ -1600,64 +1323,42 @@ export function objective(
 	)
 }
 
-const objectiveCriteria: core.InfallibleParser<ObjectiveCriteriaNode> = core
-	.map(
-		core.any([
-			core.sequence([
-				core.stopBefore(
-					core.resourceLocation({
-						category: 'stat_type',
-						namespacePathSep: '.',
-					}),
-					':',
-				),
-				core.failOnEmpty(core.literal(':')),
-				{
-					get: (res) => {
-						if (core.ResourceLocationNode.is(res.children[0])) {
-							const category = ObjectiveCriteriaNode.ComplexCategories
-								.get(
-									core.ResourceLocationNode.toString(
-										res.children[0],
-										'short',
-									),
-								)
-							if (category) {
-								return core.resourceLocation({
-									category,
-									namespacePathSep: '.',
-								})
-							}
+const objectiveCriteria: core.InfallibleParser<ObjectiveCriteriaNode> = core.map(
+	core.any([
+		core.sequence([
+			core.stopBefore(
+				core.resourceLocation({ category: 'stat_type', namespacePathSep: '.' }),
+				':',
+			),
+			core.failOnEmpty(core.literal(':')),
+			{
+				get: (res) => {
+					if (core.ResourceLocationNode.is(res.children[0])) {
+						const category = ObjectiveCriteriaNode.ComplexCategories.get(
+							core.ResourceLocationNode.toString(res.children[0], 'short'),
+						)
+						if (category) {
+							return core.resourceLocation({ category, namespacePathSep: '.' })
 						}
-						return core.resourceLocation({
-							pool: [],
-							allowUnknown: true,
-							namespacePathSep: '.',
-						})
-					},
+					}
+					return core.resourceLocation({ pool: [], allowUnknown: true, namespacePathSep: '.' })
 				},
-			]),
-			core.literal(...ObjectiveCriteriaNode.SimpleValues),
+			},
 		]),
-		(res) => {
-			const ans: ObjectiveCriteriaNode = {
-				type: 'mcfunction:objective_criteria',
-				range: res.range,
-			}
-			if (core.LiteralNode.is(res)) {
-				ans.simpleValue = res.value
-			} else {
-				ans.children = res.children.filter(
-					core.ResourceLocationNode.is,
-				) as typeof ans['children']
-			}
-			return ans
-		},
-	)
+		core.literal(...ObjectiveCriteriaNode.SimpleValues),
+	]),
+	(res) => {
+		const ans: ObjectiveCriteriaNode = { type: 'mcfunction:objective_criteria', range: res.range }
+		if (core.LiteralNode.is(res)) {
+			ans.simpleValue = res.value
+		} else {
+			ans.children = res.children.filter(core.ResourceLocationNode.is) as typeof ans['children']
+		}
+		return ans
+	},
+)
 
-export function tag(
-	terminators: string[] = [],
-): core.InfallibleParser<core.SymbolNode> {
+export function tag(terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
 	return unquotableSymbol('tag', terminators)
 }
 
@@ -1701,11 +1402,7 @@ const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 const UuidPattern = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i
 
 export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
-	const ans: UuidNode = {
-		type: 'mcfunction:uuid',
-		range: core.Range.create(src),
-		bits: [0n, 0n],
-	}
+	const ans: UuidNode = { type: 'mcfunction:uuid', range: core.Range.create(src), bits: [0n, 0n] }
 
 	const raw = src.readUntil(' ', '\r', '\n', '\r')
 
@@ -1722,10 +1419,7 @@ export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 			const parts = raw.split('-').map((p) => BigInt(`0x${p}`))
 			if (parts.every((p) => p <= LongMax)) {
 				isLegal = true
-				ans.bits[0] = BigInt.asIntN(
-					64,
-					(parts[0] << 32n) | (parts[1] << 16n) | parts[2],
-				)
+				ans.bits[0] = BigInt.asIntN(64, (parts[0] << 32n) | (parts[1] << 16n) | parts[2])
 				ans.bits[1] = BigInt.asIntN(64, (parts[3] << 48n) | parts[4])
 			}
 		} catch {
@@ -1766,18 +1460,13 @@ function validateUnquotable(
 ): core.InfallibleParser<core.SymbolNode> {
 	return core.map(parser, (res, _src, ctx) => {
 		if (!res.value.match(core.BrigadierUnquotablePattern)) {
-			ctx.err.report(
-				localize('parser.string.illegal-brigadier', localeQuote(res.value)),
-				res,
-			)
+			ctx.err.report(localize('parser.string.illegal-brigadier', localeQuote(res.value)), res)
 		}
 		return res
 	})
 }
 
-function vector(
-	options: VectorNode.Options,
-): core.InfallibleParser<VectorNode> {
+function vector(options: VectorNode.Options): core.InfallibleParser<VectorNode> {
 	return (src, ctx): VectorNode => {
 		const ans: VectorNode = {
 			type: 'mcfunction:vector',
@@ -1800,19 +1489,13 @@ function vector(
 				: coordinate(options.integersOnly)(src, ctx)
 			ans.children.push(coord as never)
 
-			if (
-				(ans.system === CoordinateSystem.Local)
-					!== (coord.notation === '^')
-			) {
+			if ((ans.system === CoordinateSystem.Local) !== (coord.notation === '^')) {
 				ctx.err.report(localize('mcfunction.parser.vector.mixed'), coord)
 			}
 		}
 
 		if (options.noLocal && ans.system === CoordinateSystem.Local) {
-			ctx.err.report(
-				localize('mcfunction.parser.vector.local-disallowed'),
-				ans,
-			)
+			ctx.err.report(localize('mcfunction.parser.vector.local-disallowed'), ans)
 		}
 
 		ans.range.end = src.cursor
@@ -1849,10 +1532,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const negated = src.trySkip('!')
 	src.skipWhitespace()
 
-	const key = core.resourceLocation({ category: 'data_component_type' })(
-		src,
-		ctx,
-	)
+	const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
@@ -1908,10 +1588,7 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	return ans
 }
 
-const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
-	src,
-	ctx,
-) => {
+const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (src, ctx) => {
 	const ans: ComponentTestsAllOfNode = {
 		type: 'mcfunction:component_tests_all_of',
 		range: core.Range.create(src),
@@ -1938,10 +1615,7 @@ const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
 	return ans
 }
 
-const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (
-	src,
-	ctx,
-) => {
+const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (src, ctx) => {
 	const ans: ComponentTestsAnyOfNode = {
 		type: 'mcfunction:component_tests_any_of',
 		range: core.Range.create(src),

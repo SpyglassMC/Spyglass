@@ -53,8 +53,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
-	const downloader = data.downloader
-		?? new Downloader(cacheRoot, externals, logger)
+	const downloader = data.downloader ?? new Downloader(cacheRoot, externals, logger)
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
@@ -77,11 +76,7 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
  * @returns The string with `\t`, `\r`, `\n`, and `\\` replaced with non-special characters.
  */
 export function showWhitespaceGlyph(string: string) {
-	return string
-		.replace(/\t/g, '⮀')
-		.replace(/\r/g, '←')
-		.replace(/\n/g, '↓')
-		.replace(/\\/g, '⧵') // We replace normal back slashes with ⧵ (U+29f5) here, due to the snapshots being stupid and not escaping them before exporting.
+	return string.replace(/\t/g, '⮀').replace(/\r/g, '←').replace(/\n/g, '↓').replace(/\\/g, '⧵') // We replace normal back slashes with ⧵ (U+29f5) here, due to the snapshots being stupid and not escaping them before exporting.
 }
 
 export function markOffsetInString(string: string, offset: number) {
@@ -138,10 +133,7 @@ export function testParser(
 		removeTopLevelChildren?: boolean
 		simplifySymbol?: boolean
 	} = {},
-): {
-	node: Returnable | 'FAILURE'
-	errors: readonly LanguageError[]
-} {
+): { node: Returnable | 'FAILURE'; errors: readonly LanguageError[] } {
 	/* eslint-enable @typescript-eslint/indent */
 	const src = new Source(text)
 	const ctx = ParserContext.create(mockProjectData(project), {
@@ -149,19 +141,10 @@ export function testParser(
 	})
 	const result: any = parser(src, ctx)
 	if (!noNodeReturn) {
-		removeExtraProperties(
-			result,
-			keepOptions,
-			removeTopLevelChildren,
-			simplifySymbol,
-		)
+		removeExtraProperties(result, keepOptions, removeTopLevelChildren, simplifySymbol)
 	}
 	return {
-		node: result === Failure
-			? 'FAILURE'
-			: result === undefined
-			? 'undefined'
-			: result,
+		node: result === Failure ? 'FAILURE' : result === undefined ? 'undefined' : result,
 		errors: ctx.err.dump(),
 	}
 }
@@ -185,10 +168,7 @@ export function assertType<T>(_value: T): void {
 	)
 }
 
-export function assertError(
-	fn: () => void,
-	errorCallback: (e: unknown) => void = () => {},
-) {
+export function assertError(fn: () => void, errorCallback: (e: unknown) => void = () => {}) {
 	try {
 		fn()
 		fail('Expected an error to be thrown.')
@@ -197,24 +177,15 @@ export function assertError(
 	}
 }
 
-export function snapshotWithUri({
-	specName,
-	uri,
-	value,
-}: {
-	specName: string
-	uri: URL
-	value: {}
-}): void {
+export function snapshotWithUri(
+	{ specName, uri, value }: { specName: string; uri: URL; value: {} },
+): void {
 	snapshotCore({
 		what: value,
 		file: fileURLToPath(uri),
 		specName,
 		ext: '.spec.js',
-		opts: {
-			sortSnapshots: true,
-			useRelativePath: true,
-		},
+		opts: { sortSnapshots: true, useRelativePath: true },
 	})
 }
 
@@ -229,10 +200,7 @@ export class SimpleProject {
 	readonly #global: SymbolTable = Object.create(null)
 	#nodes: Record<string, FileNode<AstNode>> = Object.create(null)
 
-	readonly #symbols = new SymbolUtil(
-		this.#global,
-		NodeJsExternals.event.EventEmitter,
-	)
+	readonly #symbols = new SymbolUtil(this.#global, NodeJsExternals.event.EventEmitter)
 
 	#hasDumped = false
 
@@ -268,12 +236,7 @@ export class SimpleProject {
 		for (const { uri, content } of this.files) {
 			const src = new Source(content)
 			const ctx = ParserContext.create(this.projectData, {
-				doc: TextDocument.create(
-					uri,
-					uri.slice(uri.lastIndexOf('.') + 1),
-					0,
-					content,
-				),
+				doc: TextDocument.create(uri, uri.slice(uri.lastIndexOf('.') + 1), 0, content),
 			})
 			const node = file()(src, ctx)
 			this.#nodes[uri] = node
@@ -338,9 +301,7 @@ export class SimpleProject {
 	public dumpState<T extends keyof SimpleProjectState>(
 		keys: readonly T[],
 	): Pick<SimpleProjectState, T>
-	public dumpState(
-		keys: readonly (keyof SimpleProjectState)[],
-	): Partial<SimpleProjectState> {
+	public dumpState(keys: readonly (keyof SimpleProjectState)[]): Partial<SimpleProjectState> {
 		this.#hasDumped = true
 
 		for (const node of Object.values(this.#nodes)) {
@@ -348,11 +309,8 @@ export class SimpleProject {
 		}
 
 		return {
-			...(keys.includes('colorTokens')
-				&& { colorTokens: this.#colorTokens }),
-			...(keys.includes('global') && {
-				global: SymbolTable.unlink(this.#global),
-			}),
+			...(keys.includes('colorTokens') && { colorTokens: this.#colorTokens }),
+			...(keys.includes('global') && { global: SymbolTable.unlink(this.#global) }),
 			...(keys.includes('nodes') && { nodes: this.#nodes }),
 		}
 	}

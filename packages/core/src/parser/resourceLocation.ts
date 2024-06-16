@@ -88,14 +88,9 @@ export function resourceLocation(
 		ans.range.end = src.cursor
 
 		if (raw.length === 0) {
-			ctx.err.report(
-				localize('expected', localize('resource-location')),
-				ans,
-			)
+			ctx.err.report(localize('expected', localize('resource-location')), ans)
 		} else {
-			const sepIndex = raw.indexOf(
-				options.namespacePathSep ?? ResourceLocation.NamespacePathSep,
-			)
+			const sepIndex = raw.indexOf(options.namespacePathSep ?? ResourceLocation.NamespacePathSep)
 			if (sepIndex >= 0) {
 				ans.namespace = raw.slice(0, sepIndex)
 			}
@@ -121,17 +116,11 @@ export function resourceLocation(
 			}
 
 			if (ans.isTag && !options.allowTag) {
-				ctx.err.report(
-					localize('parser.resource-location.tag-disallowed'),
-					ans,
-				)
+				ctx.err.report(localize('parser.resource-location.tag-disallowed'), ans)
 			}
 
 			if (!ans.namespace && options.isPredicate) {
-				ctx.err.report(
-					localize('parser.resource-location.namespace-expected'),
-					ans,
-				)
+				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
 			}
 		}
 

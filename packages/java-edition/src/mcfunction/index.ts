@@ -37,37 +37,16 @@ export const initialize = (
 
 	meta.registerLanguage('mcfunction', {
 		extensions: ['.mcfunction'],
-		parser: mcf.entry(tree, parser.argument, {
-			supportsBackslashContinuation,
-			supportsMacros,
-		}),
+		parser: mcf.entry(tree, parser.argument, { supportsBackslashContinuation, supportsMacros }),
 		completer: mcf.completer.entry(tree, completer.getMockNodes),
-		triggerCharacters: [
-			' ',
-			'[',
-			'=',
-			'!',
-			',',
-			'{',
-			':',
-			'/',
-			'.',
-			'"',
-			"'",
-		],
+		triggerCharacters: [' ', '[', '=', '!', ',', '{', ':', '/', '.', '"', "'"],
 	})
 
 	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)
 	meta.registerParser('mcfunction:particle', parser.particle)
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())
-	meta.registerParser<mcf.CommandNode>(
-		'mcfunction:command',
-		mcf.command(
-			tree,
-			parser.argument,
-		),
-	)
+	meta.registerParser<mcf.CommandNode>('mcfunction:command', mcf.command(tree, parser.argument))
 
 	registerMcdocAttributes(meta, tree)
 

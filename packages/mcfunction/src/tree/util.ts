@@ -1,13 +1,7 @@
 import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from './type.js'
 
-export function redirect(
-	rootTreeNode: TreeNode,
-	path: readonly string[],
-): TreeNode | undefined {
-	return path.reduce<TreeNode | undefined>(
-		(p, c) => p?.children?.[c],
-		rootTreeNode,
-	)
+export function redirect(rootTreeNode: TreeNode, path: readonly string[]): TreeNode | undefined {
+	return path.reduce<TreeNode | undefined>((p, c) => p?.children?.[c], rootTreeNode)
 }
 
 /**
@@ -32,11 +26,7 @@ export function resolveParentTreeNode(
 			treeNode: redirect(rootTreeNode, parentTreeNode.redirect),
 			path: [...parentTreeNode.redirect],
 		}
-	} else if (
-		parentTreeNode
-		&& !parentTreeNode.children
-		&& !parentTreeNode.executable
-	) {
+	} else if (parentTreeNode && !parentTreeNode.children && !parentTreeNode.executable) {
 		// The `execute.run` literal tree node doesn't have any property.
 		// We should use children from the root tree node in this case.
 		return { treeNode: rootTreeNode, path: [] }

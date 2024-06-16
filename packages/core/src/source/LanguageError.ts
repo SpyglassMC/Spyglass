@@ -36,10 +36,7 @@ export namespace LanguageError {
 	/**
 	 * @returns A {@link PosRangeLanguageError}.
 	 */
-	export function withPosRange(
-		error: LanguageError,
-		doc: TextDocument,
-	): PosRangeLanguageError {
+	export function withPosRange(error: LanguageError, doc: TextDocument): PosRangeLanguageError {
 		return {
 			posRange: PositionRange.from(error.range, doc),
 			message: error.message,
@@ -60,8 +57,5 @@ export interface LanguageErrorInfo {
 	codeAction?: string
 	deprecated?: boolean
 	unnecessary?: boolean
-	related?: {
-		location: Location
-		message: string
-	}[]
+	related?: { location: Location; message: string }[]
 }

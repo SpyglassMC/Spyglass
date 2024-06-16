@@ -18,9 +18,7 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	}
 	if (node.typeDef?.kind === 'list') {
 		const completions = getValues(node.typeDef.item, ctx.offset, ctx)
-		if (
-			ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0
-		) {
+		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
 		}
 		return completions
@@ -28,24 +26,17 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	return []
 }
 
-const compound = core.completer.record<
-	NbtStringNode,
-	NbtNode,
-	NbtCompoundNode
->({
+const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>({
 	key: (record, pair, _c, range, iv, ipe, exitingKeys) => {
 		if (!record.typeDef) {
 			return []
 		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
-		return mcdoc.runtime.completer.getFields(record.typeDef)
-			.filter(({ key }) => !keySet.has(key))
+		return mcdoc.runtime.completer.getFields(record.typeDef).filter(({ key }) => !keySet.has(key))
 			.map(({ key, field }) =>
 				core.CompletionItem.create(key, pair?.key ?? range, {
 					kind: core.CompletionKind.Field,
-					detail: mcdoc.McdocType.toString(
-						field.type as core.Mutable<mcdoc.McdocType>,
-					),
+					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
 					filterText: key,
@@ -59,9 +50,9 @@ const compound = core.completer.record<
 		}
 		if (pair.key && record.typeDef) {
 			const pairKey = pair.key.value
-			const field = mcdoc.runtime.completer.getFields(record.typeDef)
-				.find(({ key }) => key === pairKey)
-				?.field.type
+			const field = mcdoc.runtime.completer.getFields(record.typeDef).find(({ key }) =>
+				key === pairKey
+			)?.field.type
 			if (field) {
 				return getValues(field, range, ctx)
 			}
@@ -76,11 +67,7 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	}
 	if (
 		node.children && node.children.length > 0
-		&& core.Range.contains(
-			core.Range.translate(node, 1, -1),
-			ctx.offset,
-			true,
-		)
+		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
 	) {
 		const child = node.children[0]
 		return ctx.meta.getCompleter(child.type)(child, ctx)
@@ -94,15 +81,16 @@ function getValues(
 	range: core.RangeLike,
 	ctx: core.CompleterContext,
 ): core.CompletionItem[] {
-	return mcdoc.runtime.completer.getValues(typeDef, ctx)
-		.map(({ value, detail, kind, completionKind }) =>
-			core.CompletionItem.create(value, range, {
-				kind: completionKind ?? core.CompletionKind.Value,
-				detail,
-				filterText: formatValue(value, kind),
-				insertText: formatValue(value, kind),
-			})
-		)
+	return mcdoc.runtime.completer.getValues(typeDef, ctx).map((
+		{ value, detail, kind, completionKind },
+	) =>
+		core.CompletionItem.create(value, range, {
+			kind: completionKind ?? core.CompletionKind.Value,
+			detail,
+			filterText: formatValue(value, kind),
+			insertText: formatValue(value, kind),
+		})
+	)
 }
 
 function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {

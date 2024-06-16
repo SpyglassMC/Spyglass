@@ -13,9 +13,7 @@ import type { InfallibleParser } from './Parser.js'
 export function symbol(category: AllCategory): InfallibleParser<SymbolNode>
 export function symbol(category: string): InfallibleParser<SymbolNode>
 export function symbol(options: SymbolOptions): InfallibleParser<SymbolNode>
-export function symbol(
-	param: string | SymbolOptions,
-): InfallibleParser<SymbolNode> {
+export function symbol(param: string | SymbolOptions): InfallibleParser<SymbolNode> {
 	const options = getOptions(param)
 
 	return (src: Source, _ctx: ParserContext): SymbolNode => {

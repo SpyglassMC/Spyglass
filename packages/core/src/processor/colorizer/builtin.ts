@@ -62,10 +62,7 @@ export const number: Colorizer = (node) => {
 	return [ColorToken.create(node, 'number')]
 }
 
-export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (
-	node,
-	_ctx,
-) => {
+export const resourceLocation: Colorizer<ResourceLocationBaseNode> = (node, _ctx) => {
 	let type: ColorTokenType
 	switch (node.options.category) {
 		case 'function':
@@ -84,11 +81,7 @@ export const string: Colorizer<StringBaseNode> = (node, ctx) => {
 		const colorizer = ctx.meta.getColorizer(node.children[0].type)
 		const result = colorizer(node.children[0], ctx)
 		// TODO: Fill the gap between the last token and the ending quote with errors.
-		return ColorToken.fillGap(
-			result,
-			node.range,
-			node.options.colorTokenType ?? 'string',
-		)
+		return ColorToken.fillGap(result, node.range, node.options.colorTokenType ?? 'string')
 	} else {
 		return [ColorToken.create(node, node.options.colorTokenType ?? 'string')]
 	}
@@ -107,10 +100,7 @@ export function registerColorizers(meta: MetaRegistry) {
 	meta.registerColorizer<IntegerNode>('integer', number)
 	meta.registerColorizer<LongNode>('long', number)
 	meta.registerColorizer<LiteralNode>('literal', literal)
-	meta.registerColorizer<ResourceLocationNode>(
-		'resource_location',
-		resourceLocation,
-	)
+	meta.registerColorizer<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerColorizer<StringNode>('string', string)
 	meta.registerColorizer<SymbolNode>('symbol', symbol)
 }

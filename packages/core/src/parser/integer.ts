@@ -20,12 +20,7 @@ interface OptionsBase {
 	 *
 	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	onOutOfRange?: (
-		ans: IntegerNode,
-		src: Source,
-		ctx: ParserContext,
-		options: Options,
-	) => void
+	onOutOfRange?: (ans: IntegerNode, src: Source, ctx: ParserContext, options: Options) => void
 }
 
 interface FallibleOptions extends OptionsBase {
@@ -46,26 +41,17 @@ const fallbackOnOutOfRange = (
 	options: Options,
 ) => {
 	ctx.err.report(
-		localize(
-			'expected',
-			localize('integer.between', options.min ?? '-∞', options.max ?? '+∞'),
-		),
+		localize('expected', localize('integer.between', options.min ?? '-∞', options.max ?? '+∞')),
 		ans,
 		ErrorSeverity.Error,
 	)
 }
 
-export function integer(
-	options: InfallibleOptions,
-): InfallibleParser<IntegerNode>
+export function integer(options: InfallibleOptions): InfallibleParser<IntegerNode>
 export function integer(options: FallibleOptions): Parser<IntegerNode>
 export function integer(options: Options): Parser<IntegerNode> {
 	return (src: Source, ctx: ParserContext): Result<IntegerNode> => {
-		const ans: IntegerNode = {
-			type: 'integer',
-			range: Range.create(src),
-			value: 0,
-		}
+		const ans: IntegerNode = { type: 'integer', range: Range.create(src), value: 0 }
 
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
@@ -89,10 +75,7 @@ export function integer(options: Options): Parser<IntegerNode> {
 			}
 			ctx.err.report(localize('expected', localize('integer')), ans)
 		} else if (!options.pattern.test(raw) || isOnlySign) {
-			ctx.err.report(
-				localize('parser.integer.illegal', options.pattern),
-				ans,
-			)
+			ctx.err.report(localize('parser.integer.illegal', options.pattern), ans)
 		} else if (
 			(options.min !== undefined && ans.value < options.min)
 			|| (options.max !== undefined && ans.value > options.max)

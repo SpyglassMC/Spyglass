@@ -23,11 +23,7 @@ interface LiteralNode extends AstNode {
  *
  * `Failure` when it does not encounter the `literal`.
  */
-function literal(
-	literal: string,
-	meta?: string,
-	errorAmount = 0,
-): Parser<LiteralNode> {
+function literal(literal: string, meta?: string, errorAmount = 0): Parser<LiteralNode> {
 	return (src: Source, ctx: ParserContext): Result<LiteralNode> => {
 		const ans: LiteralNode = {
 			type: 'literal',
@@ -51,21 +47,9 @@ describe('any()', () => {
 		parsers: [Parser<AstNode>, ...Parser<AstNode>[]]
 		parserToString: string
 	}[] = [
-		{
-			parsers: [literal('foo'), literal('bar')],
-			content: 'foo',
-			parserToString: 'foo | bar',
-		},
-		{
-			parsers: [literal('foo'), literal('bar')],
-			content: 'bar',
-			parserToString: 'foo | bar',
-		},
-		{
-			parsers: [literal('foo'), literal('bar')],
-			content: 'qux',
-			parserToString: 'foo | bar',
-		},
+		{ parsers: [literal('foo'), literal('bar')], content: 'foo', parserToString: 'foo | bar' },
+		{ parsers: [literal('foo'), literal('bar')], content: 'bar', parserToString: 'foo | bar' },
+		{ parsers: [literal('foo'), literal('bar')], content: 'qux', parserToString: 'foo | bar' },
 		{
 			parsers: [literal('foo', 'correct', 1), literal('foo', 'wrong', 1)],
 			content: 'foo',
@@ -83,37 +67,23 @@ describe('any()', () => {
 		},
 	]
 	for (const { content, parsers, parserToString } of suites) {
-		it(
-			`Parse "${
-				showWhitespaceGlyph(
-					content,
-				)
-			}" with "${parserToString}"`,
-			() => {
-				const parser = any(parsers)
-				snapshot(testParser(parser, content))
-			},
-		)
+		it(`Parse "${showWhitespaceGlyph(content)}" with "${parserToString}"`, () => {
+			const parser = any(parsers)
+			snapshot(testParser(parser, content))
+		})
 	}
 })
 
 describe('dumpErrors()', () => {
-	const suites: {
-		name: string
-		parser: Parser<AstNode>
-		content: string
-	}[] = [
-		{
-			name: 'should output errors when not wrapped with `dumpErrors()`',
-			parser: boolean,
-			content: 'bar',
-		},
-		{
-			name: 'should not output errors when wrapped with `dumpErrors()`',
-			parser: dumpErrors(boolean),
-			content: 'bar',
-		},
-	]
+	const suites: { name: string; parser: Parser<AstNode>; content: string }[] = [{
+		name: 'should output errors when not wrapped with `dumpErrors()`',
+		parser: boolean,
+		content: 'bar',
+	}, {
+		name: 'should not output errors when wrapped with `dumpErrors()`',
+		parser: dumpErrors(boolean),
+		content: 'bar',
+	}]
 	for (const { name, content, parser } of suites) {
 		it(name, () => {
 			snapshot(testParser(parser, content))
@@ -122,39 +92,29 @@ describe('dumpErrors()', () => {
 })
 
 describe('concatOnTrailingBackslash()', () => {
-	const parsers: {
-		parser: Parser<AstNode>
-		suites: Array<{
-			content: string
-		}>
-	}[] = [
-		{
-			parser: boolean,
-			suites: [
-				{ content: 'true' },
-				{ content: 'true\n' },
-				{ content: 'tru\\\ne' },
-				{ content: 'tru\\ \ne' },
-				{ content: 'tru\\\n e' },
-				{ content: 'tru\\ \n e' },
-				{ content: 'tru\\ \n \\\n e' },
-				{ content: 'tru\\e \\ \n e' },
-				{ content: 'tru\\\n\ne' },
-				{ content: 'tru\\' },
-				{ content: 'tru\\ \n' },
-				{ content: 'tru\\ \n ' },
-			],
-		},
-	]
+	const parsers: { parser: Parser<AstNode>; suites: Array<{ content: string }> }[] = [{
+		parser: boolean,
+		suites: [
+			{ content: 'true' },
+			{ content: 'true\n' },
+			{ content: 'tru\\\ne' },
+			{ content: 'tru\\ \ne' },
+			{ content: 'tru\\\n e' },
+			{ content: 'tru\\ \n e' },
+			{ content: 'tru\\ \n \\\n e' },
+			{ content: 'tru\\e \\ \n e' },
+			{ content: 'tru\\\n\ne' },
+			{ content: 'tru\\' },
+			{ content: 'tru\\ \n' },
+			{ content: 'tru\\ \n ' },
+		],
+	}]
 	for (const { parser, suites } of parsers) {
 		for (const { content } of suites) {
-			it(
-				`Parse "${showWhitespaceGlyph(content)}"`,
-				() => {
-					const wrappedParser = concatOnTrailingBackslash(parser)
-					snapshot(testParser(wrappedParser, content))
-				},
-			)
+			it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+				const wrappedParser = concatOnTrailingBackslash(parser)
+				snapshot(testParser(wrappedParser, content))
+			})
 		}
 	}
 })

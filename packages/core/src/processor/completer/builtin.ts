@@ -70,19 +70,12 @@ export const literal: Completer<LiteralBaseNode> = (node) => {
 		['resourceLocation', CompletionKind.File],
 		['variable', CompletionKind.Variable],
 	]).get(node.options.colorTokenType ?? 'keyword') ?? CompletionKind.Keyword
-	return (
-		node.options.pool.map((v) => CompletionItem.create(v, node, { kind }))
-			?? []
-	)
+	return (node.options.pool.map((v) => CompletionItem.create(v, node, { kind })) ?? [])
 }
 
 export const noop: Completer<any> = () => []
 
-interface RecordOptions<
-	K extends AstNode,
-	V extends AstNode,
-	N extends RecordBaseNode<K, V>,
-> {
+interface RecordOptions<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>> {
 	key: (
 		record: DeepReadonly<N>,
 		pair: DeepReadonly<PairNode<K, V>> | undefined,
@@ -99,45 +92,31 @@ interface RecordOptions<
 		range: RangeLike,
 	) => CompletionItem[]
 }
-export function record<
-	K extends AstNode,
-	V extends AstNode,
-	N extends RecordBaseNode<K, V>,
->(o: RecordOptions<K, V, N>): Completer<N> {
+export function record<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>>(
+	o: RecordOptions<K, V, N>,
+): Completer<N> {
 	return (node, ctx) => {
 		if (!Range.contains(Range.translate(node, 1, -1), ctx.offset, true)) {
 			return []
 		}
 
 		const completeKeys = (pair: DeepReadonly<PairNode<K, V>> | undefined) =>
-			o.key(
-				node,
-				pair,
-				ctx,
-				pair?.key ?? ctx.offset,
-				false,
-				false,
-				existingKeys,
-			)
+			o.key(node, pair, ctx, pair?.key ?? ctx.offset, false, false, existingKeys)
 		const completePairs = (pair: DeepReadonly<PairNode<K, V>> | undefined) =>
-			o.key(
-				node,
-				pair,
-				ctx,
-				pair ?? ctx.offset,
-				true,
-				hasNextPair || !!pair?.end,
-				existingKeys,
-			)
-		const existingKeys = node.children
-			.filter(
-				(n): n is DeepReadonly<Omit<PairNode<K, V>, 'key'> & { key: K }> => !!n.key,
-			)
-			.map((n) => n.key as DeepReadonly<K>)
-		const index = binarySearch(node.children, ctx.offset, (n, o) =>
-			n.end
-				? Range.compareOffset(Range.translate(n, 0, -1), o, true)
-				: Range.compareOffset(n.range, o, true))
+			o.key(node, pair, ctx, pair ?? ctx.offset, true, hasNextPair || !!pair?.end, existingKeys)
+		const existingKeys = node.children.filter((
+			n,
+		): n is DeepReadonly<Omit<PairNode<K, V>, 'key'> & { key: K }> => !!n.key).map((n) =>
+			n.key as DeepReadonly<K>
+		)
+		const index = binarySearch(
+			node.children,
+			ctx.offset,
+			(n, o) =>
+				n.end
+					? Range.compareOffset(Range.translate(n, 0, -1), o, true)
+					: Range.compareOffset(n.range, o, true),
+		)
 		const pair = index >= 0 ? node.children[index] : undefined
 		const hasNextPair = !!node.children.find((n) => n.range.start > ctx.offset)
 		if (!pair) {
@@ -148,10 +127,7 @@ export function record<
 		if (!key && !sep && !value) {
 			return completePairs(undefined)
 		}
-		if (
-			(key && Range.contains(key, ctx.offset, true))
-			|| (sep && ctx.offset <= sep.start)
-		) {
+		if ((key && Range.contains(key, ctx.offset, true)) || (sep && ctx.offset <= sep.start)) {
 			// Selected key.
 			if (!value || Range.isEmpty(value.range)) {
 				return completePairs(pair)
@@ -174,20 +150,12 @@ export function record<
 	}
 }
 
-export const resourceLocation: Completer<ResourceLocationNode> = (
-	node,
-	ctx,
-) => {
-	const config = LinterConfigValue.destruct(
-		ctx.config.lint.idOmitDefaultNamespace,
-	)
+export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
+	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
 
-	const includeEmptyNamespace = !node.options.isPredicate
-		&& node.namespace === ''
-	const includeDefaultNamespace = node.options.isPredicate
-		|| config?.ruleValue !== true
-	const excludeDefaultNamespace = !node.options.isPredicate
-		&& config?.ruleValue !== false
+	const includeEmptyNamespace = !node.options.isPredicate && node.namespace === ''
+	const includeDefaultNamespace = node.options.isPredicate || config?.ruleValue !== true
+	const excludeDefaultNamespace = !node.options.isPredicate && config?.ruleValue !== false
 
 	const getPool = (category: string) => {
 		const symbols = ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)
@@ -229,8 +197,8 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 		: [
 			...getPool(node.options.category!),
 			...(node.options.allowTag
-				? getPool(`tag/${node.options.category}` as TagFileCategory).map(
-					(v) => `${ResourceLocation.TagPrefix}${v}`,
+				? getPool(`tag/${node.options.category}` as TagFileCategory).map((v) =>
+					`${ResourceLocation.TagPrefix}${v}`
 				)
 				: []),
 		]
@@ -258,11 +226,8 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 	return Object.keys(
-		ctx.symbols.query(
-			ctx.doc,
-			node.options.category,
-			...(node.options.parentPath ?? []),
-		).visibleMembers,
+		ctx.symbols.query(ctx.doc, node.options.category, ...(node.options.parentPath ?? []))
+			.visibleMembers,
 	).map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Variable }))
 }
 
@@ -273,10 +238,7 @@ export function registerCompleters(meta: MetaRegistry) {
 	meta.registerCompleter<IntegerNode>('integer', noop)
 	meta.registerCompleter<LongNode>('long', noop)
 	meta.registerCompleter<LiteralNode>('literal', literal)
-	meta.registerCompleter<ResourceLocationNode>(
-		'resource_location',
-		resourceLocation,
-	)
+	meta.registerCompleter<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerCompleter<StringNode>('string', string)
 	meta.registerCompleter<SymbolNode>('symbol', symbol)
 }

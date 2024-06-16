@@ -56,9 +56,7 @@ export type AsyncProjectInitializer = (
 	this: void,
 	ctx: ProjectInitializerContext,
 ) => PromiseLike<Record<string, string> | void>
-export type ProjectInitializer =
-	| SyncProjectInitializer
-	| AsyncProjectInitializer
+export type ProjectInitializer = SyncProjectInitializer | AsyncProjectInitializer
 
 export interface ProjectOptions {
 	cacheRoot: RootUriString
@@ -230,23 +228,15 @@ export class Project implements ExternalEventEmitter {
 		const ans = new Set(rawRoots)
 		// Identify roots indicated by `pack.mcmeta`.
 		for (const file of this.getTrackedFiles()) {
-			if (
-				file.endsWith(Project.RootSuffix)
-				&& rawRoots.some((r) => file.startsWith(r))
-			) {
-				ans.add(
-					file.slice(0, 1 - Project.RootSuffix.length) as RootUriString,
-				)
+			if (file.endsWith(Project.RootSuffix) && rawRoots.some((r) => file.startsWith(r))) {
+				ans.add(file.slice(0, 1 - Project.RootSuffix.length) as RootUriString)
 			}
 		}
 		this.#roots = [...ans].sort((a, b) => b.length - a.length)
 		this.emit('rootsUpdated', { roots: this.#roots })
 	}
 
-	on(
-		event: 'documentErrored',
-		callbackFn: (data: DocumentErrorEvent) => void,
-	): this
+	on(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
 	on(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
 	// `documentRemoved` uses a `FileEvent` instead of `DocumentEvent`, as it doesn't have access to
 	// the document anymore.
@@ -257,23 +247,14 @@ export class Project implements ExternalEventEmitter {
 	): this
 	on(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	on(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	on(
-		event: 'symbolRegistrarExecuted',
-		callbackFn: (data: SymbolRegistrarEvent) => void,
-	): this
+	on(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 	on(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.on(event, callbackFn)
 		return this
 	}
 
-	once(
-		event: 'documentErrored',
-		callbackFn: (data: DocumentErrorEvent) => void,
-	): this
-	once(
-		event: 'documentUpdated',
-		callbackFn: (data: DocumentEvent) => void,
-	): this
+	once(event: 'documentErrored', callbackFn: (data: DocumentErrorEvent) => void): this
+	once(event: 'documentUpdated', callbackFn: (data: DocumentEvent) => void): this
 	once(event: 'documentRemoved', callbackFn: (data: FileEvent) => void): this
 	once(
 		event: `file${'Created' | 'Modified' | 'Deleted'}`,
@@ -281,10 +262,7 @@ export class Project implements ExternalEventEmitter {
 	): this
 	once(event: 'ready', callbackFn: (data: EmptyEvent) => void): this
 	once(event: 'rootsUpdated', callbackFn: (data: RootsEvent) => void): this
-	once(
-		event: 'symbolRegistrarExecuted',
-		callbackFn: (data: SymbolRegistrarEvent) => void,
-	): this
+	once(event: 'symbolRegistrarExecuted', callbackFn: (data: SymbolRegistrarEvent) => void): this
 	once(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.once(event, callbackFn)
 		return this
@@ -293,10 +271,7 @@ export class Project implements ExternalEventEmitter {
 	emit(event: 'documentErrored', data: DocumentErrorEvent): boolean
 	emit(event: 'documentUpdated', data: DocumentEvent): boolean
 	emit(event: 'documentRemoved', data: FileEvent): boolean
-	emit(
-		event: `file${'Created' | 'Modified' | 'Deleted'}`,
-		data: FileEvent,
-	): boolean
+	emit(event: `file${'Created' | 'Modified' | 'Deleted'}`, data: FileEvent): boolean
 	emit(event: 'ready', data: EmptyEvent): boolean
 	emit(event: 'rootsUpdated', data: RootsEvent): boolean
 	emit(event: 'symbolRegistrarExecuted', data: SymbolRegistrarEvent): boolean
@@ -317,18 +292,20 @@ export class Project implements ExternalEventEmitter {
 		)
 	}
 
-	constructor({
-		cacheRoot,
-		defaultConfig,
-		downloader,
-		externals,
-		fs = FileService.create(externals, cacheRoot),
-		initializers = [],
-		isDebugging = false,
-		logger = Logger.create(),
-		profilers = ProfilerFactory.noop(),
-		projectRoot,
-	}: ProjectOptions) {
+	constructor(
+		{
+			cacheRoot,
+			defaultConfig,
+			downloader,
+			externals,
+			fs = FileService.create(externals, cacheRoot),
+			initializers = [],
+			isDebugging = false,
+			logger = Logger.create(),
+			profilers = ProfilerFactory.noop(),
+			projectRoot,
+		}: ProjectOptions,
+	) {
 		this.#cacheRoot = cacheRoot
 		this.#eventEmitter = new externals.event.EventEmitter()
 		this.externals = externals
@@ -341,27 +318,20 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.downloader = downloader
-			?? new Downloader(cacheRoot, externals, logger)
+		this.downloader = downloader ?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
 
 		this.logger.info(`[Project] [init] cacheRoot = “${cacheRoot}”`)
 
-		this.#configService
-			.on('changed', ({ config }) => {
-				this.config = config
-				this.logger.info('[Project] [Config] Changed')
-			})
-			.on(
-				'error',
-				({ error, uri }) =>
-					this.logger.error(
-						`[Project] [Config] Failed loading “${uri}”`,
-						error,
-					),
-			)
+		this.#configService.on('changed', ({ config }) => {
+			this.config = config
+			this.logger.info('[Project] [Config] Changed')
+		}).on(
+			'error',
+			({ error, uri }) => this.logger.error(`[Project] [Config] Failed loading “${uri}”`, error),
+		)
 
 		this.setInitPromise()
 		this.setReadyPromise()
@@ -379,40 +349,35 @@ export class Project implements ExternalEventEmitter {
 				uri: doc.uri,
 				version: doc.version,
 			})
+		}).on('documentRemoved', ({ uri }) => {
+			this.emit('documentErrored', { errors: [], uri })
+		}).on('fileCreated', async ({ uri }) => {
+			if (uri.endsWith(Project.RootSuffix)) {
+				this.updateRoots()
+			}
+			this.bindUri(uri)
+			return this.ensureBindingStarted(uri)
+		}).on('fileModified', async ({ uri }) => {
+			this.#symbolUpToDateUris.delete(uri)
+			if (this.isOnlyWatched(uri)) {
+				await this.ensureBindingStarted(uri)
+			}
+		}).on('fileDeleted', ({ uri }) => {
+			if (uri.endsWith(Project.RootSuffix)) {
+				this.updateRoots()
+			}
+			this.#symbolUpToDateUris.delete(uri)
+			this.symbols.clear({ uri })
+			this.tryClearingCache(uri)
+		}).on('ready', () => {
+			this.#isReady = true
+			// // Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
+			// const promises: Promise<unknown>[] = []
+			// for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
+			// 	promises.push(this.check(doc, node))
+			// }
+			// Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after READY', e))
 		})
-			.on('documentRemoved', ({ uri }) => {
-				this.emit('documentErrored', { errors: [], uri })
-			})
-			.on('fileCreated', async ({ uri }) => {
-				if (uri.endsWith(Project.RootSuffix)) {
-					this.updateRoots()
-				}
-				this.bindUri(uri)
-				return this.ensureBindingStarted(uri)
-			})
-			.on('fileModified', async ({ uri }) => {
-				this.#symbolUpToDateUris.delete(uri)
-				if (this.isOnlyWatched(uri)) {
-					await this.ensureBindingStarted(uri)
-				}
-			})
-			.on('fileDeleted', ({ uri }) => {
-				if (uri.endsWith(Project.RootSuffix)) {
-					this.updateRoots()
-				}
-				this.#symbolUpToDateUris.delete(uri)
-				this.symbols.clear({ uri })
-				this.tryClearingCache(uri)
-			})
-			.on('ready', () => {
-				this.#isReady = true
-				// // Recheck client managed files after the READY process, as they may have incomplete results and are user-facing.
-				// const promises: Promise<unknown>[] = []
-				// for (const { doc, node } of this.#clientManagedDocAndNodes.values()) {
-				// 	promises.push(this.check(doc, node))
-				// }
-				// Promise.all(promises).catch(e => this.logger.error('[Project#ready] Error occurred when rechecking client managed files after READY', e))
-			})
 	}
 
 	private setInitPromise(): void {
@@ -430,9 +395,7 @@ export class Project implements ExternalEventEmitter {
 				meta: this.meta,
 				projectRoot: this.projectRoot,
 			}
-			const results = await Promise.allSettled(
-				this.#initializers.map((init) => init(initCtx)),
-			)
+			const results = await Promise.allSettled(this.#initializers.map((init) => init(initCtx)))
 			let ctx: Record<string, string> = {}
 			results.forEach(async (r, i) => {
 				if (r.status === 'rejected') {
@@ -450,10 +413,7 @@ export class Project implements ExternalEventEmitter {
 			const __profiler = this.profilers.get('project#init')
 
 			const { symbols } = await this.cacheService.load()
-			this.symbols = new SymbolUtil(
-				symbols,
-				this.externals.event.EventEmitter,
-			)
+			this.symbols = new SymbolUtil(symbols, this.externals.event.EventEmitter)
 			this.symbols.buildCache()
 			__profiler.task('Load Cache')
 
@@ -508,42 +468,32 @@ export class Project implements ExternalEventEmitter {
 				this.logger,
 			)
 			this.fs.register('file:', fileUriSupporter, true)
-			this.fs.register(
-				ArchiveUriSupporter.Protocol,
-				archiveUriSupporter,
-				true,
-			)
+			this.fs.register(ArchiveUriSupporter.Protocol, archiveUriSupporter, true)
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
-				this.#watcher = this.externals.fs
-					.watch(this.projectRoot)
-					.once('ready', () => {
-						this.#watcherReady = true
-						resolve()
-					})
-					.on('add', (uri) => {
-						this.#watchedFiles.add(uri)
-						if (this.#watcherReady) {
-							this.emit('fileCreated', { uri })
-						}
-					})
-					.on('change', (uri) => {
-						if (this.#watcherReady) {
-							this.emit('fileModified', { uri })
-						}
-					})
-					.on('unlink', (uri) => {
-						this.#watchedFiles.delete(uri)
-						if (this.#watcherReady) {
-							this.emit('fileDeleted', { uri })
-						}
-					})
-					.on('error', (e) => {
-						this.logger.error('[Project] [chokidar]', e)
-					})
+				this.#watcher = this.externals.fs.watch(this.projectRoot).once('ready', () => {
+					this.#watcherReady = true
+					resolve()
+				}).on('add', (uri) => {
+					this.#watchedFiles.add(uri)
+					if (this.#watcherReady) {
+						this.emit('fileCreated', { uri })
+					}
+				}).on('change', (uri) => {
+					if (this.#watcherReady) {
+						this.emit('fileModified', { uri })
+					}
+				}).on('unlink', (uri) => {
+					this.#watchedFiles.delete(uri)
+					if (this.#watcherReady) {
+						this.emit('fileDeleted', { uri })
+					}
+				}).on('error', (e) => {
+					this.logger.error('[Project] [chokidar]', e)
+				})
 			})
 		const ready = async () => {
 			await this.init()
@@ -558,9 +508,7 @@ export class Project implements ExternalEventEmitter {
 			this.updateRoots()
 			__profiler.task('List URIs')
 
-			for (
-				const [id, { checksum, registrar }] of this.meta.symbolRegistrars
-			) {
+			for (const [id, { checksum, registrar }] of this.meta.symbolRegistrars) {
 				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
 				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
 					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
@@ -569,9 +517,7 @@ export class Project implements ExternalEventEmitter {
 					})
 					this.emit('symbolRegistrarExecuted', { id, checksum })
 				} else {
-					this.logger.info(
-						`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`,
-					)
+					this.logger.info(`[SymbolRegistrar] Skipped “${id}” thanks to cache ${checksum}`)
 				}
 			}
 			__profiler.task('Register Symbols')
@@ -581,9 +527,7 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Pop Errors')
 
-			const { addedFiles, changedFiles, removedFiles } = await this
-				.cacheService
-				.validate()
+			const { addedFiles, changedFiles, removedFiles } = await this.cacheService.validate()
 			for (const uri of removedFiles) {
 				this.emit('fileDeleted', { uri })
 			}
@@ -594,16 +538,10 @@ export class Project implements ExternalEventEmitter {
 			}
 			__profiler.task('Bind URIs')
 
-			const files = [...addedFiles, ...changedFiles].sort(
-				this.meta.uriSorter,
-			)
+			const files = [...addedFiles, ...changedFiles].sort(this.meta.uriSorter)
 			__profiler.task('Sort URIs')
 
-			const __bindProfiler = this.profilers.get(
-				'project#ready#bind',
-				'top-n',
-				50,
-			)
+			const __bindProfiler = this.profilers.get('project#ready#bind', 'top-n', 50)
 			for (const uri of files) {
 				await this.ensureBindingStarted(uri)
 				__bindProfiler.task(uri)
@@ -676,10 +614,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private static readonly TextDocumentCacheMaxLength = 268435456
-	readonly #textDocumentCache = new Map<
-		string,
-		Promise<TextDocument | undefined> | TextDocument
-	>()
+	readonly #textDocumentCache = new Map<string, Promise<TextDocument | undefined> | TextDocument>()
 	#textDocumentCacheLength = 0
 	private removeCachedTextDocument(uri: string): void {
 		const doc = this.#textDocumentCache.get(uri)
@@ -693,9 +628,7 @@ export class Project implements ExternalEventEmitter {
 			const ext = fileUtil.extname(uri) ?? '.plaintext'
 			return this.meta.getLanguageID(ext) ?? ext.slice(1)
 		}
-		const createTextDocument = async (
-			uri: string,
-		): Promise<TextDocument | undefined> => {
+		const createTextDocument = async (uri: string): Promise<TextDocument | undefined> => {
 			const languageId = getLanguageID(uri)
 			if (!this.meta.isSupportedLanguage(languageId)) {
 				return undefined
@@ -705,18 +638,13 @@ export class Project implements ExternalEventEmitter {
 				const content = bufferToString(await this.fs.readFile(uri))
 				return TextDocument.create(uri, languageId, -1, content)
 			} catch (e) {
-				this.logger.warn(
-					`[Project] [read] Failed creating TextDocument for “${uri}”`,
-					e,
-				)
+				this.logger.warn(`[Project] [read] Failed creating TextDocument for “${uri}”`, e)
 				return undefined
 			}
 		}
 		const trimCache = (): void => {
 			const iterator = this.#textDocumentCache.keys()
-			while (
-				this.#textDocumentCacheLength > Project.TextDocumentCacheMaxLength
-			) {
+			while (this.#textDocumentCacheLength > Project.TextDocumentCacheMaxLength) {
 				const result = iterator.next()
 				if (result.done) {
 					throw new Error(
@@ -726,9 +654,7 @@ export class Project implements ExternalEventEmitter {
 				this.removeCachedTextDocument(result.value)
 			}
 		}
-		const getCacheHandlingPromise = async (
-			uri: string,
-		): Promise<TextDocument | undefined> => {
+		const getCacheHandlingPromise = async (uri: string): Promise<TextDocument | undefined> => {
 			if (this.#textDocumentCache.has(uri)) {
 				const ans = this.#textDocumentCache.get(uri)!
 				// Move the entry to the end of the cache.
@@ -779,10 +705,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	@SingletonPromise()
-	private async bind(
-		doc: TextDocument,
-		node: FileNode<AstNode>,
-	): Promise<void> {
+	private async bind(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		if (node.binderErrors) {
 			return
 		}
@@ -799,18 +722,12 @@ export class Project implements ExternalEventEmitter {
 			this.#bindingInProgressUris.delete(doc.uri)
 			this.#symbolUpToDateUris.add(doc.uri)
 		} catch (e) {
-			this.logger.error(
-				`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Project] [bind] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
 	@SingletonPromise()
-	private async check(
-		doc: TextDocument,
-		node: FileNode<AstNode>,
-	): Promise<void> {
+	private async check(doc: TextDocument, node: FileNode<AstNode>): Promise<void> {
 		if (node.checkerErrors) {
 			return
 		}
@@ -824,10 +741,7 @@ export class Project implements ExternalEventEmitter {
 				this.lint(doc, node)
 			})
 		} catch (e) {
-			this.logger.error(
-				`[Project] [check] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Project] [check] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
@@ -846,10 +760,7 @@ export class Project implements ExternalEventEmitter {
 				}
 
 				const { ruleSeverity, ruleValue } = result
-				const { configValidator, linter, nodePredicate } = this.meta
-					.getLinter(
-						ruleName,
-					)
+				const { configValidator, linter, nodePredicate } = this.meta.getLinter(ruleName)
 				if (!configValidator(ruleName, ruleValue, this.logger)) {
 					// Config value is invalid.
 					continue
@@ -862,34 +773,23 @@ export class Project implements ExternalEventEmitter {
 					ruleValue,
 				})
 
-				traversePreOrder(
-					node,
-					() => true,
-					() => true,
-					(node) => {
-						if (nodePredicate(node)) {
-							const proxy = StateProxy.create(node)
-							linter(proxy, ctx)
-						}
-					},
-				)
+				traversePreOrder(node, () => true, () => true, (node) => {
+					if (nodePredicate(node)) {
+						const proxy = StateProxy.create(node)
+						linter(proxy, ctx)
+					}
+				})
 				;(node.linterErrors as LanguageError[]).push(...ctx.err.dump())
 			}
 		} catch (e) {
-			this.logger.error(
-				`[Project] [lint] Failed for “${doc.uri}” #${doc.version}`,
-				e,
-			)
+			this.logger.error(`[Project] [lint] Failed for “${doc.uri}” #${doc.version}`, e)
 		}
 	}
 
 	// @SingletonPromise()
 	async ensureBindingStarted(uri: string): Promise<void> {
 		uri = this.normalizeUri(uri)
-		if (
-			this.#symbolUpToDateUris.has(uri)
-			|| this.#bindingInProgressUris.has(uri)
-		) {
+		if (this.#symbolUpToDateUris.has(uri) || this.#bindingInProgressUris.has(uri)) {
 			return
 		}
 
@@ -986,9 +886,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	@SingletonPromise()
-	async ensureClientManagedChecked(
-		uri: string,
-	): Promise<DocAndNode | undefined> {
+	async ensureClientManagedChecked(uri: string): Promise<DocAndNode | undefined> {
 		uri = this.normalizeUri(uri)
 		const result = this.#clientManagedDocAndNodes.get(uri)
 		if (result) {
@@ -1028,18 +926,14 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private shouldRemove(uri: string): boolean {
-		return (
-			!this.#clientManagedUris.has(uri)
+		return (!this.#clientManagedUris.has(uri)
 			&& !this.#dependencyFiles.has(uri)
-			&& !this.#watchedFiles.has(uri)
-		)
+			&& !this.#watchedFiles.has(uri))
 	}
 
 	private isOnlyWatched(uri: string): boolean {
-		return (
-			this.#watchedFiles.has(uri)
+		return (this.#watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
-			&& !this.#dependencyFiles.has(uri)
-		)
+			&& !this.#dependencyFiles.has(uri))
 	}
 }

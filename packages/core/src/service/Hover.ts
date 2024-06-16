@@ -8,9 +8,6 @@ export interface Hover {
 export namespace Hover {
 	/* istanbul ignore next */
 	export function create(range: RangeLike, markdown: string): Hover {
-		return {
-			range: Range.get(range),
-			markdown,
-		}
+		return { range: Range.get(range), markdown }
 	}
 }

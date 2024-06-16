@@ -8,14 +8,11 @@ import { IndexMap, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
-type ExtractNodeType<P extends Parser<Returnable>> = P extends Parser<infer V> ? V
-	: never
+type ExtractNodeType<P extends Parser<Returnable>> = P extends Parser<infer V> ? V : never
 /**
  * @template PA Parser array.
  */
-type ExtractNodeTypes<PA extends Parser<Returnable>[]> = ExtractNodeType<
-	PA[number]
->
+type ExtractNodeTypes<PA extends Parser<Returnable>[]> = ExtractNodeType<PA[number]>
 
 export interface AttemptResult<N extends Returnable = AstNode> {
 	result: Result<N>
@@ -51,10 +48,7 @@ export function attempt<N extends Returnable = AstNode>(
 	ctx: ParserContext,
 ): AttemptResult<N> {
 	const tmpSrc = src.clone()
-	const tmpCtx = {
-		...ctx,
-		err: new ErrorReporter(),
-	}
+	const tmpCtx = { ...ctx, err: new ErrorReporter() }
 
 	const result = parser(tmpSrc, tmpCtx)
 
@@ -69,14 +63,9 @@ export function attempt<N extends Returnable = AstNode>(
 	}
 }
 
-type SP<CN extends AstNode> =
-	| SIP<CN>
-	| Parser<CN | SequenceUtil<CN> | undefined>
-	| {
-		get: (
-			result: SequenceUtil<CN>,
-		) => Parser<CN | SequenceUtil<CN> | undefined> | undefined
-	}
+type SP<CN extends AstNode> = SIP<CN> | Parser<CN | SequenceUtil<CN> | undefined> | {
+	get: (result: SequenceUtil<CN>) => Parser<CN | SequenceUtil<CN> | undefined> | undefined
+}
 type SIP<CN extends AstNode> =
 	| InfallibleParser<CN | SequenceUtil<CN> | undefined>
 	| {
@@ -94,28 +83,16 @@ type SIP<CN extends AstNode> =
  *
  * `Failure` when any of the `parsers` returns a `Failure`.
  */
-export function sequence<
-	GN extends AstNode = never,
-	PA extends SIP<AstNode>[] = SIP<AstNode>[],
->(
+export function sequence<GN extends AstNode = never, PA extends SIP<AstNode>[] = SIP<AstNode>[]>(
 	parsers: PA,
 	parseGap?: InfallibleParser<GN[]>,
 ): InfallibleParser<
-	SequenceUtil<
-		GN | { [K in number]: PA[K] extends SP<infer V> ? V : never }[number]
-	>
+	SequenceUtil<GN | { [K in number]: PA[K] extends SP<infer V> ? V : never }[number]>
 >
-export function sequence<
-	GN extends AstNode = never,
-	PA extends SP<AstNode>[] = SP<AstNode>[],
->(
+export function sequence<GN extends AstNode = never, PA extends SP<AstNode>[] = SP<AstNode>[]>(
 	parsers: PA,
 	parseGap?: InfallibleParser<GN[]>,
-): Parser<
-	SequenceUtil<
-		GN | { [K in number]: PA[K] extends SP<infer V> ? V : never }[number]
-	>
->
+): Parser<SequenceUtil<GN | { [K in number]: PA[K] extends SP<infer V> ? V : never }[number]>>
 export function sequence(
 	parsers: SP<AstNode>[],
 	parseGap?: InfallibleParser<AstNode[]>,
@@ -222,29 +199,24 @@ export interface AnyOutObject {
  *
  * `Failure` when all of the `parsers` failed.
  */
-export function any<
-	PA extends [...Parser<Returnable>[], InfallibleParser<Returnable>],
->(parsers: PA, out?: AnyOutObject): InfallibleParser<ExtractNodeTypes<PA>>
+export function any<PA extends [...Parser<Returnable>[], InfallibleParser<Returnable>]>(
+	parsers: PA,
+	out?: AnyOutObject,
+): InfallibleParser<ExtractNodeTypes<PA>>
 export function any<PA extends Parser<Returnable>[]>(
 	parsers: PA,
 	out?: AnyOutObject,
 ): Parser<ExtractNodeTypes<PA>>
-export function any(
-	parsers: Parser<Returnable>[],
-	out?: AnyOutObject,
-): Parser<Returnable> {
+export function any(parsers: Parser<Returnable>[], out?: AnyOutObject): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
-		const results: { attempt: AttemptResult<Returnable>; index: number }[] = parsers
-			.map((parser, i) => ({
-				attempt: attempt(parser, src, ctx),
-				index: i,
-			}))
-			.filter(({ attempt }) => attempt.result !== Failure)
-			.sort(
-				(a, b) =>
-					b.attempt.endCursor - a.attempt.endCursor
-					|| a.attempt.errorAmount - b.attempt.errorAmount,
-			)
+		const results: { attempt: AttemptResult<Returnable>; index: number }[] = parsers.map((
+			parser,
+			i,
+		) => ({ attempt: attempt(parser, src, ctx), index: i })).filter(({ attempt }) =>
+			attempt.result !== Failure
+		).sort((a, b) =>
+			b.attempt.endCursor - a.attempt.endCursor || a.attempt.errorAmount - b.attempt.errorAmount
+		)
 		if (results.length === 0) {
 			if (out) {
 				out.index = -1
@@ -262,9 +234,7 @@ export function any(
 /**
  * @returns A parser that fails when the passed-in parser didn't move the cursor at all.
  */
-export function failOnEmpty<T extends Returnable>(
-	parser: Parser<T>,
-): Parser<T> {
+export function failOnEmpty<T extends Returnable>(parser: Parser<T>): Parser<T> {
 	return (src, ctx) => {
 		const start = src.cursor
 		const { endCursor, updateSrcAndCtx, result } = attempt(parser, src, ctx)
@@ -279,9 +249,7 @@ export function failOnEmpty<T extends Returnable>(
 /**
  * @returns A parser that fails when the passed-in parser produced any errors.
  */
-export function failOnError<T extends Returnable>(
-	parser: Parser<T>,
-): Parser<T> {
+export function failOnError<T extends Returnable>(parser: Parser<T>): Parser<T> {
 	return (src, ctx) => {
 		const start = src.cursor
 		const { errorAmount, updateSrcAndCtx, result } = attempt(parser, src, ctx)
@@ -299,9 +267,7 @@ export function failOnError<T extends Returnable>(
 export function optional<N extends Returnable>(
 	parser: InfallibleParser<N>,
 ): { _inputParserIsInfallible: never } & void
-export function optional<N extends Returnable>(
-	parser: Parser<N>,
-): InfallibleParser<N | undefined>
+export function optional<N extends Returnable>(parser: Parser<N>): InfallibleParser<N | undefined>
 export function optional<N extends Returnable>(
 	parser: Parser<N>,
 ): InfallibleParser<N | undefined> | void {
@@ -344,9 +310,7 @@ export function recover<N extends Returnable>(
 }
 
 type GettableParser = Parser<Returnable> | { get: () => Parser<Returnable> }
-type ExtractFromGettableParser<T extends GettableParser> = T extends {
-	get: () => infer V
-} ? V
+type ExtractFromGettableParser<T extends GettableParser> = T extends { get: () => infer V } ? V
 	: T extends Parser<Returnable> ? T
 	: never
 type Case = {
@@ -361,11 +325,8 @@ type Case = {
  */
 export function select<CA extends readonly Case[]>(
 	cases: CA,
-): ExtractFromGettableParser<
-	CA[number]['parser']
-> extends InfallibleParser<Returnable> ? InfallibleParser<
-		ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>
-	>
+): ExtractFromGettableParser<CA[number]['parser']> extends InfallibleParser<Returnable>
+	? InfallibleParser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
 	: Parser<ExtractNodeType<ExtractFromGettableParser<CA[number]['parser']>>>
 export function select(cases: readonly Case[]): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
@@ -376,15 +337,11 @@ export function select(cases: readonly Case[]): Parser<Returnable> {
 					?? (regex && src.matchPattern(regex))
 					?? true
 			) {
-				const callableParser = typeof parser === 'object'
-					? parser.get()
-					: parser
+				const callableParser = typeof parser === 'object' ? parser.get() : parser
 				return callableParser(src, ctx)
 			}
 		}
-		throw new Error(
-			'The select parser util was called with non-exhaustive cases',
-		)
+		throw new Error('The select parser util was called with non-exhaustive cases')
 	}
 }
 
@@ -429,10 +386,7 @@ export function setType<N extends Omit<AstNode, 'type'>, T extends string>(
 ): Parser<Omit<N, 'type'> & { type: T }> {
 	return map(parser, (res) => {
 		const { type: _type, ...restResult } = res as N & { type: never }
-		const ans = {
-			type,
-			...restResult,
-		}
+		const ans = { type, ...restResult }
 		delete (ans as Partial<SequenceUtil>)[SequenceUtilDiscriminator]
 		return ans
 	})
@@ -514,12 +468,8 @@ export function stopBefore<N extends Returnable>(
 export function concatOnTrailingBackslash<N extends Returnable>(
 	parser: InfallibleParser<N>,
 ): InfallibleParser<N>
-export function concatOnTrailingBackslash<N extends Returnable>(
-	parser: Parser<N>,
-): Parser<N>
-export function concatOnTrailingBackslash<N extends Returnable>(
-	parser: Parser<N>,
-): Parser<N> {
+export function concatOnTrailingBackslash<N extends Returnable>(parser: Parser<N>): Parser<N>
+export function concatOnTrailingBackslash<N extends Returnable>(parser: Parser<N>): Parser<N> {
 	return (src, ctx): Result<N> => {
 		let wrappedStr = src.sliceToCursor(0)
 		const wrappedSrcCursor = wrappedStr.length
@@ -545,28 +495,16 @@ export function concatOnTrailingBackslash<N extends Returnable>(
 			// Minecraft raises a `Line continuation at end of file` if a backslash
 			// (+ optional whitespace to the next line) is right before the end of the file
 			if (!src.canRead()) {
-				const ans: ErrorNode = {
-					type: 'error',
-					range: Range.span(from, src),
-				}
-				ctx.err.report(
-					localize('parser.line-continuation-end-of-file'),
-					ans,
-				)
+				const ans: ErrorNode = { type: 'error', range: Range.span(from, src) }
+				ctx.err.report(localize('parser.line-continuation-end-of-file'), ans)
 			}
 
 			src.skipSpace()
 			const to = src.getCharRange(-1)
-			indexMap.push({
-				inner: Range.create(wrappedStr.length),
-				outer: Range.span(from, to),
-			})
+			indexMap.push({ inner: Range.create(wrappedStr.length), outer: Range.span(from, to) })
 		}
 
-		const wrappedSrc = new Source(
-			wrappedStr,
-			IndexMap.merge(src.indexMap, indexMap),
-		)
+		const wrappedSrc = new Source(wrappedStr, IndexMap.merge(src.indexMap, indexMap))
 		wrappedSrc.innerCursor = wrappedSrcCursor
 		const ans = parser(wrappedSrc, ctx)
 		src.cursor = wrappedSrc.cursor

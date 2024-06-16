@@ -15,10 +15,6 @@ export namespace IntegerNode {
 	}
 
 	export function mock(range: RangeLike): IntegerNode {
-		return {
-			type: 'integer',
-			range: Range.get(range),
-			value: 0,
-		}
+		return { type: 'integer', range: Range.get(range), value: 0 }
 	}
 }

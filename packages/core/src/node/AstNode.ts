@@ -23,12 +23,10 @@ export interface AstNode {
 export namespace AstNode {
 	/* istanbul ignore next */
 	export function is(obj: unknown): obj is AstNode {
-		return (
-			!!obj
+		return (!!obj
 			&& typeof obj === 'object'
 			&& typeof (obj as AstNode).type === 'string'
-			&& Range.is((obj as AstNode).range)
-		)
+			&& Range.is((obj as AstNode).range))
 	}
 
 	export function setParents(node: AstNode): void {
@@ -49,9 +47,7 @@ export namespace AstNode {
 		if (!node.children) {
 			return -1
 		}
-		const comparator = typeof needle === 'number'
-			? Range.compareOffset
-			: Range.compare
+		const comparator = typeof needle === 'number' ? Range.compareOffset : Range.compare
 		return binarySearch(
 			node.children,
 			needle,
@@ -102,14 +98,8 @@ export namespace AstNode {
 		node: N,
 		needle: number | Range,
 		endInclusive = false,
-	):
-		| (N['children'] extends readonly unknown[] ? N['children'][number]
-			: undefined)
-		| undefined
-	{
-		return node.children?.[
-			findLastChildIndex(node, needle, endInclusive)
-		] as any
+	): (N['children'] extends readonly unknown[] ? N['children'][number] : undefined) | undefined {
+		return node.children?.[findLastChildIndex(node, needle, endInclusive)] as any
 	}
 
 	interface FindRecursivelyOptions<P = (node: AstNode) => boolean> {
@@ -124,15 +114,10 @@ export namespace AstNode {
 	export function findDeepestChild<N extends AstNode>(
 		options: FindRecursivelyOptions<(node: AstNode) => node is N>,
 	): N | undefined
+	export function findDeepestChild(options: FindRecursivelyOptions): AstNode | undefined
 	export function findDeepestChild(
-		options: FindRecursivelyOptions,
-	): AstNode | undefined
-	export function findDeepestChild({
-		node,
-		needle,
-		endInclusive = false,
-		predicate = () => true,
-	}: FindRecursivelyOptions): AstNode | undefined {
+		{ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions,
+	): AstNode | undefined {
 		let last: AstNode | undefined
 		let head = Range.contains(node, needle, endInclusive) ? node : undefined
 		while (head && predicate(head)) {
@@ -148,15 +133,10 @@ export namespace AstNode {
 	export function findShallowestChild<N extends AstNode>(
 		options: FindRecursivelyOptions<(node: AstNode) => node is N>,
 	): N | undefined
+	export function findShallowestChild(options: FindRecursivelyOptions): AstNode | undefined
 	export function findShallowestChild(
-		options: FindRecursivelyOptions,
-	): AstNode | undefined
-	export function findShallowestChild({
-		node,
-		needle,
-		endInclusive = false,
-		predicate = () => true,
-	}: FindRecursivelyOptions): AstNode | undefined {
+		{ node, needle, endInclusive = false, predicate = () => true }: FindRecursivelyOptions,
+	): AstNode | undefined {
 		let head = Range.contains(node, needle, endInclusive) ? node : undefined
 		while (head && !predicate(head)) {
 			head = findChild(head, needle, endInclusive)
@@ -184,7 +164,4 @@ export namespace AstNode {
 	}
 }
 
-export type Mutable<N> = N extends AstNode ? {
-		-readonly [K in keyof N]: Mutable<N[K]>
-	}
-	: N
+export type Mutable<N> = N extends AstNode ? { -readonly [K in keyof N]: Mutable<N[K]> } : N

@@ -84,21 +84,13 @@ function dispatch(
 			return false
 		}
 
-		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(
-			children,
-		)
+		const { literalTreeNodes, argumentTreeNodes } = categorizeTreeChildren(children)
 
 		const argumentParsers: { name: string; parser: core.Parser }[] = argumentTreeNodes.map((
 			[name, treeNode],
-		) => ({
-			name,
-			parser: argument(treeNode) ?? unknown(treeNode),
-		}))
+		) => ({ name, parser: argument(treeNode) ?? unknown(treeNode) }))
 		const literalParser = literalTreeNodes.length
-			? literal(
-				literalTreeNodes.map(([name, _treeNode]) => name),
-				parent.type === 'root',
-			)
+			? literal(literalTreeNodes.map(([name, _treeNode]) => name), parent.type === 'root')
 			: undefined
 
 		const parsers: core.Parser[] = [
@@ -142,10 +134,7 @@ function dispatch(
 				)
 			}
 
-			if (
-				(result as UnknownCommandChildNode).type
-					=== 'mcfunction:command_child/unknown'
-			) {
+			if ((result as UnknownCommandChildNode).type === 'mcfunction:command_child/unknown') {
 				// Encountered an unsupported parser. Stop parsing this command.
 				return false
 			}
@@ -177,26 +166,17 @@ function dispatch(
 	}
 }
 
-function unknown(
-	treeNode: ArgumentTreeNode,
-): core.InfallibleParser<UnknownCommandChildNode> {
+function unknown(treeNode: ArgumentTreeNode): core.InfallibleParser<UnknownCommandChildNode> {
 	return (src, ctx): UnknownCommandChildNode => {
 		const start = src.cursor
 		const value = src.readUntilLineEnd()
 		const range = core.Range.create(start, src)
 		ctx.err.report(
-			localize(
-				'mcfunction.parser.unknown-parser',
-				localeQuote(treeNode.parser),
-			),
+			localize('mcfunction.parser.unknown-parser', localeQuote(treeNode.parser)),
 			range,
 			core.ErrorSeverity.Hint,
 		)
-		return {
-			type: 'mcfunction:command_child/unknown',
-			range,
-			value,
-		}
+		return { type: 'mcfunction:command_child/unknown', range, value }
 	}
 }
 
@@ -207,15 +187,8 @@ const trailing: core.InfallibleParser<TrailingCommandChildNode> = (
 	const start = src.cursor
 	const value = src.readUntilLineEnd()
 	const range = core.Range.create(start, src)
-	ctx.err.report(
-		localize('mcfunction.parser.trailing', localeQuote(value)),
-		range,
-	)
-	return {
-		type: 'mcfunction:command_child/trailing',
-		range,
-		value,
-	}
+	ctx.err.report(localize('mcfunction.parser.trailing', localeQuote(value)), range)
+	return { type: 'mcfunction:command_child/trailing', range, value }
 }
 
 function wrapWithBrackets(syntax: string, executable: boolean): string {

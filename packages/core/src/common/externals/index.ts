@@ -19,12 +19,8 @@ export interface Externals {
 		getSha1: (data: string | Uint8Array) => Promise<string>
 	}
 	downloader: ExternalDownloader
-	error: {
-		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
-	}
-	event: {
-		EventEmitter: new() => ExternalEventEmitter
-	}
+	error: { isKind: (e: unknown, kind: ExternalErrorKind) => boolean }
+	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 }
 
@@ -56,10 +52,7 @@ export interface ExternalFileSystem {
 	/**
 	 * @param options `mode` - File mode bit mask (e.g. `0o775`).
 	 */
-	mkdir(
-		location: FsLocation,
-		options?: { mode?: number; recursive?: boolean },
-	): Promise<void>
+	mkdir(location: FsLocation, options?: { mode?: number; recursive?: boolean }): Promise<void>
 	readFile(location: FsLocation): Promise<Uint8Array>
 	/**
 	 * Show the file/directory in the platform-specific explorer program.
@@ -67,10 +60,7 @@ export interface ExternalFileSystem {
 	 * Should not be called with unsanitized user-input path due to the possibility of arbitrary code execution.
 	 */
 	showFile(path: FsLocation): Promise<void>
-	stat(location: FsLocation): Promise<{
-		isDirectory(): boolean
-		isFile(): boolean
-	}>
+	stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }>
 	unlink(location: FsLocation): Promise<void>
 	watch(location: FsLocation): FsWatcher
 	/**

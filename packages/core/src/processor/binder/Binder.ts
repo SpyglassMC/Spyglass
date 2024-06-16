@@ -12,9 +12,7 @@ export interface SyncBinder<N extends AstNode> extends SyncBinderInitializer<N> 
 	[IsAsync]?: never
 }
 export namespace SyncBinder {
-	export function create<N extends AstNode>(
-		binder: SyncBinderInitializer<N>,
-	): SyncBinder<N> {
+	export function create<N extends AstNode>(binder: SyncBinderInitializer<N>): SyncBinder<N> {
 		return binder
 	}
 	export function is(binder: Binder<any>): binder is SyncBinder<any> {
@@ -29,9 +27,7 @@ export interface AsyncBinder<N extends AstNode> extends AsyncBinderInitializer<N
 	[IsAsync]: true
 }
 export namespace AsyncBinder {
-	export function create<N extends AstNode>(
-		binder: AsyncBinderInitializer<N>,
-	): AsyncBinder<N> {
+	export function create<N extends AstNode>(binder: AsyncBinderInitializer<N>): AsyncBinder<N> {
 		return Object.assign(binder, { [IsAsync]: true as const })
 	}
 	export function is(binder: Binder<any>): binder is AsyncBinder<any> {

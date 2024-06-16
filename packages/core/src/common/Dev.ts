@@ -1,7 +1,5 @@
 export namespace Dev {
-	export function assertDefined<T>(
-		value: T,
-	): asserts value is Exclude<T, undefined> {
+	export function assertDefined<T>(value: T): asserts value is Exclude<T, undefined> {
 		if (value === undefined) {
 			throw new Error(`'${Dev.stringify(value)}' is 'undefined'`)
 		}
@@ -11,13 +9,7 @@ export namespace Dev {
 	}
 	export function assertTrue(value: boolean, message: string): void {
 		if (!value) {
-			throw new Error(
-				`Assertion failed: ${message}. '${
-					Dev.stringify(
-						value,
-					)
-				}' should be true.`,
-			)
+			throw new Error(`Assertion failed: ${message}. '${Dev.stringify(value)}' should be true.`)
 		}
 	}
 	/**
@@ -36,8 +28,7 @@ export namespace Dev {
 			switch (typeof current) {
 				case 'bigint': {
 					const bits = Math.ceil(Math.log2(Number(current)))
-					ans += (2 + Math.ceil(bits / (ByteToBits * PointerSize)))
-						* PointerSize // https://stackoverflow.com/a/54298760
+					ans += (2 + Math.ceil(bits / (ByteToBits * PointerSize))) * PointerSize // https://stackoverflow.com/a/54298760
 					break
 				}
 				case 'boolean':
@@ -86,9 +77,7 @@ export namespace Dev {
 				// Most likely "Maximum callstack size exceeded".
 				// Fall back to a shallow string representation.
 				return `{ ${
-					Object.entries(value)
-						.map(([k, v]) => `'${k}': '${String(v)}'`)
-						.join(', ')
+					Object.entries(value).map(([k, v]) => `'${k}': '${String(v)}'`).join(', ')
 				} }`
 			}
 		} else if (typeof value === 'symbol') {

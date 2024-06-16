@@ -16,10 +16,7 @@ import type {
 
 type Listener = (...args: unknown[]) => unknown
 class BrowserEventEmitter implements ExternalEventEmitter {
-	readonly #listeners = new Map<
-		string,
-		{ all: Set<Listener>; once: Set<Listener> }
-	>()
+	readonly #listeners = new Map<string, { all: Set<Listener>; once: Set<Listener> }>()
 
 	emit(eventName: string, ...args: unknown[]): boolean {
 		const listeners = this.#listeners.get(eventName)
@@ -57,10 +54,7 @@ class BrowserEventEmitter implements ExternalEventEmitter {
 }
 
 class BrowserExternalDownloader implements ExternalDownloader {
-	async get(
-		uri: RemoteUriString,
-		options: ExternalDownloaderOptions = {},
-	): Promise<Uint8Array> {
+	async get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
 		const headers = new Headers()
 		for (const [name, value] of Object.entries(options?.headers ?? {})) {
 			const values = typeof value === 'string' ? [value] : value
@@ -68,10 +62,7 @@ class BrowserExternalDownloader implements ExternalDownloader {
 				headers.append(name, v)
 			}
 		}
-		const res = await fetch(uri, {
-			headers,
-			redirect: 'follow',
-		})
+		const res = await fetch(uri, { headers, redirect: 'follow' })
 		if (!res.ok) {
 			throw new Error(`Status code ${res.status}: ${res.ok}`)
 		} else {
@@ -100,22 +91,14 @@ class BrowserFsWatcher implements FsWatcher {
 
 class BrowserFileSystem implements ExternalFileSystem {
 	private static readonly LocalStorageKey = 'spyglassmc-browser-fs'
-	private states: Record<
-		string,
-		{ type: 'file'; content: string } | { type: 'directory' }
-	>
+	private states: Record<string, { type: 'file'; content: string } | { type: 'directory' }>
 
 	constructor() {
-		this.states = JSON.parse(
-			localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}',
-		)
+		this.states = JSON.parse(localStorage.getItem(BrowserFileSystem.LocalStorageKey) ?? '{}')
 	}
 
 	private saveStates() {
-		localStorage.setItem(
-			BrowserFileSystem.LocalStorageKey,
-			JSON.stringify(this.states),
-		)
+		localStorage.setItem(BrowserFileSystem.LocalStorageKey, JSON.stringify(this.states))
 	}
 
 	async chmod(_location: FsLocation, _mode: number): Promise<void> {
@@ -126,9 +109,7 @@ class BrowserFileSystem implements ExternalFileSystem {
 	}
 	async mkdir(
 		location: FsLocation,
-		_options?:
-			| { mode?: number | undefined; recursive?: boolean | undefined }
-			| undefined,
+		_options?: { mode?: number | undefined; recursive?: boolean | undefined } | undefined,
 	): Promise<void> {
 		location = fileUtil.ensureEndingSlash(location.toString())
 		if (this.states[location]) {
@@ -150,18 +131,13 @@ class BrowserFileSystem implements ExternalFileSystem {
 	async showFile(_path: FsLocation): Promise<void> {
 		throw new Error('showFile not supported on browser')
 	}
-	async stat(
-		location: FsLocation,
-	): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
+	async stat(location: FsLocation): Promise<{ isDirectory(): boolean; isFile(): boolean }> {
 		location = location.toString()
 		const entry = this.states[location]
 		if (!entry) {
 			throw new Error(`ENOENT: ${location}`)
 		}
-		return {
-			isDirectory: () => entry.type === 'directory',
-			isFile: () => entry.type === 'file',
-		}
+		return { isDirectory: () => entry.type === 'directory', isFile: () => entry.type === 'file' }
 	}
 	async unlink(location: FsLocation): Promise<void> {
 		location = location.toString()
@@ -217,9 +193,7 @@ export const BrowserExternals: Externals = {
 			return e instanceof Error && e.message.startsWith(kind)
 		},
 	},
-	event: {
-		EventEmitter: BrowserEventEmitter,
-	},
+	event: { EventEmitter: BrowserEventEmitter },
 	fs: new BrowserFileSystem(),
 }
 

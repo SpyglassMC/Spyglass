@@ -4,22 +4,10 @@ import { describe, it } from 'mocha'
 
 describe('mcdoc common.ts', () => {
 	const suites: { identifier: string; segments: string[] }[] = [
-		{
-			identifier: '::',
-			segments: [],
-		},
-		{
-			identifier: '::foo',
-			segments: ['foo'],
-		},
-		{
-			identifier: '::foo::bar',
-			segments: ['foo', 'bar'],
-		},
-		{
-			identifier: '::foo::bar::qux',
-			segments: ['foo', 'bar', 'qux'],
-		},
+		{ identifier: '::', segments: [] },
+		{ identifier: '::foo', segments: ['foo'] },
+		{ identifier: '::foo::bar', segments: ['foo', 'bar'] },
+		{ identifier: '::foo::bar::qux', segments: ['foo', 'bar', 'qux'] },
 	]
 	describe('identifierToSeg()', () => {
 		for (const { identifier, segments } of suites) {

@@ -25,40 +25,23 @@ describe('JSON array parser', () => {
 		}
 
 		describe('should absorb and output parse errors from child parsers', () => {
-			const cases: {
-				name: string
-				content: string
-				expectedErrors: LanguageError[]
-			}[] = [
-				{
-					name: 'invalid character escape',
-					content: '["\\z"]',
-					expectedErrors: [
-						{
-							range: {
-								start: 3,
-								end: 4,
-							},
-							message: 'Unexpected escape character “z”',
-							severity: 3,
-						},
-					],
-				},
-				{
-					name: 'invalid unicode escape',
-					content: '["\\u1z34"]',
-					expectedErrors: [
-						{
-							range: {
-								start: 4,
-								end: 8,
-							},
-							message: 'Hexadecimal digit expected',
-							severity: 3,
-						},
-					],
-				},
-			]
+			const cases: { name: string; content: string; expectedErrors: LanguageError[] }[] = [{
+				name: 'invalid character escape',
+				content: '["\\z"]',
+				expectedErrors: [{
+					range: { start: 3, end: 4 },
+					message: 'Unexpected escape character “z”',
+					severity: 3,
+				}],
+			}, {
+				name: 'invalid unicode escape',
+				content: '["\\u1z34"]',
+				expectedErrors: [{
+					range: { start: 4, end: 8 },
+					message: 'Hexadecimal digit expected',
+					severity: 3,
+				}],
+			}]
 			for (const { name, content, expectedErrors } of cases) {
 				it(name, () => {
 					const { errors } = testParser(array, content)

@@ -28,12 +28,7 @@ describe('mcdoc uriBinder()', () => {
 				'file:///root/mcdoc/minecraft/bar.mcdoc',
 			],
 		},
-		{
-			uris: [
-				'file:///root/mcdoc/foo.mcdoc',
-				'file:///root/mcdoc/minecraft/bar.mcdoc',
-			],
-		},
+		{ uris: ['file:///root/mcdoc/foo.mcdoc', 'file:///root/mcdoc/minecraft/bar.mcdoc'] },
 		{
 			uris: [
 				'file:///root/mcdoc/mod.mcdoc',
@@ -46,17 +41,11 @@ describe('mcdoc uriBinder()', () => {
 		it(
 			`Bind ${
 				JSON.stringify(
-					uris.map((u) =>
-						u.startsWith('file:///root/')
-							? u.slice('file:///root/'.length)
-							: u
-					),
+					uris.map((u) => u.startsWith('file:///root/') ? u.slice('file:///root/'.length) : u),
 				)
 			}`,
 			() => {
-				const ctx = UriBinderContext.create(
-					mockProjectData({ roots: ['file:///root/'] }),
-				)
+				const ctx = UriBinderContext.create(mockProjectData({ roots: ['file:///root/'] }))
 				uriBinder(uris, ctx)
 				snapshot(SymbolFormatter.stringifySymbolTable(ctx.symbols.global))
 			},

@@ -27,9 +27,10 @@ export function attempt<N extends AstNode>(
 
 	StateProxy.undoChanges(node as StateProxy<N>)
 
-	const totalErrorSpan = tempCtx.err.errors
-		.map((e) => e.range.end - e.range.start)
-		.reduce((a, b) => a + b, 0)
+	const totalErrorSpan = tempCtx.err.errors.map((e) => e.range.end - e.range.start).reduce(
+		(a, b) => a + b,
+		0,
+	)
 
 	return {
 		errorAmount: tempCtx.err.errors.length,
@@ -47,13 +48,9 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 		throw new Error('Expected at least one checker')
 	}
 	return (node, ctx) => {
-		const attempts = checkers
-			.map((checker) => attempt(checker, node, ctx))
-			.sort(
-				(a, b) =>
-					a.errorAmount - b.errorAmount
-					|| a.totalErrorSpan - b.totalErrorSpan,
-			)
+		const attempts = checkers.map((checker) => attempt(checker, node, ctx)).sort((a, b) =>
+			a.errorAmount - b.errorAmount || a.totalErrorSpan - b.totalErrorSpan
+		)
 		attempts[0].updateNodeAndCtx()
 	}
 }
@@ -107,9 +104,6 @@ export const symbol: Checker<SymbolBaseNode> = (_node, _ctx) => {
 }
 
 export function registerCheckers(meta: MetaRegistry) {
-	meta.registerChecker<ResourceLocationNode>(
-		'resource_location',
-		resourceLocation,
-	)
+	meta.registerChecker<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerChecker<SymbolNode>('symbol', symbol)
 }

@@ -35,11 +35,7 @@ export type IntervalId = any
 export function SingletonPromise(
 	getKey: (args: any[]) => any = (args) => args[0],
 ): MethodDecorator {
-	return (
-		_target: Object,
-		_key: string | symbol,
-		descripter: PropertyDescriptor,
-	) => {
+	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
 		const promises = new Map<unknown, Promise<unknown>>()
 		const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
@@ -87,11 +83,7 @@ export function Delay(
 	ms: number,
 	getKey: (args: any[]) => any = (args) => args[0],
 ): MethodDecorator {
-	return (
-		_target: Object,
-		_key: string | symbol,
-		descripter: PropertyDescriptor,
-	) => {
+	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
 		const timeouts = new Map<unknown, IntervalId>()
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
@@ -195,10 +187,7 @@ export function promisifyAsyncIterable<T, U>(
 	})()
 }
 
-export async function parseGzippedJson(
-	externals: Externals,
-	buffer: Uint8Array,
-): Promise<unknown> {
+export async function parseGzippedJson(externals: Externals, buffer: Uint8Array): Promise<unknown> {
 	return JSON.parse(bufferToString(await externals.archive.gunzip(buffer)))
 }
 
@@ -209,10 +198,7 @@ export function isPojo(value: unknown): value is Record<string, unknown> {
 	return !!value && typeof value === 'object' && !Array.isArray(value)
 }
 
-export function merge<T extends Record<string, any>>(
-	a: T,
-	b: Record<string, any>,
-): T {
+export function merge<T extends Record<string, any>>(a: T, b: Record<string, any>): T {
 	const ans = rfdc()(a)
 	for (const [key, value] of Object.entries(b) as [keyof typeof ans, any][]) {
 		if (isPojo(ans[key]) && isPojo(value)) {
@@ -241,10 +227,7 @@ export namespace Lazy {
 	export type ComplexLazy<T> = ResolvedLazy<T> | UnresolvedLazy<T>
 
 	export function create<T>(getter: (this: void) => T): UnresolvedLazy<T> {
-		return {
-			discriminator: LazyDiscriminator,
-			getter,
-		}
+		return { discriminator: LazyDiscriminator, getter }
 	}
 
 	export function isComplex<T = any>(lazy: any): lazy is ComplexLazy<T> {
@@ -256,9 +239,7 @@ export namespace Lazy {
 	}
 
 	export function resolve<T>(lazy: Lazy<T>): T {
-		return isUnresolved(lazy)
-			? ((lazy as ResolvedLazy<T>).value = lazy.getter())
-			: lazy
+		return isUnresolved(lazy) ? ((lazy as ResolvedLazy<T>).value = lazy.getter()) : lazy
 	}
 }
 
@@ -275,19 +256,17 @@ export function getStates(
 	const ans: Record<string, Set<string>> = {}
 	ids = ids.map(ResourceLocation.lengthen)
 	for (const id of ids) {
-		ctx.symbols
-			.query(ctx.doc, category, id)
-			.forEachMember((state, stateQuery) => {
-				const values = Object.keys(stateQuery.visibleMembers)
-				const set = (ans[state] ??= new Set())
-				const defaultValue = stateQuery.symbol?.relations?.default
-				if (defaultValue) {
-					set.add(defaultValue.path[defaultValue.path.length - 1])
-				}
-				for (const value of values) {
-					set.add(value)
-				}
-			})
+		ctx.symbols.query(ctx.doc, category, id).forEachMember((state, stateQuery) => {
+			const values = Object.keys(stateQuery.visibleMembers)
+			const set = (ans[state] ??= new Set())
+			const defaultValue = stateQuery.symbol?.relations?.default
+			if (defaultValue) {
+				set.add(defaultValue.path[defaultValue.path.length - 1])
+			}
+			for (const value of values) {
+				set.add(value)
+			}
+		})
 	}
 	return Object.fromEntries(Object.entries(ans).map(([k, v]) => [k, [...v]]))
 }
@@ -299,10 +278,7 @@ export function isIterable(value: unknown): value is Iterable<unknown> {
 }
 
 // #region ESNext functions polyfill
-export function atArray<T>(
-	array: readonly T[] | undefined,
-	index: number,
-): T | undefined {
+export function atArray<T>(array: readonly T[] | undefined, index: number): T | undefined {
 	return index >= 0 ? array?.[index] : array?.[array.length + index]
 }
 

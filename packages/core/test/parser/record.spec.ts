@@ -7,12 +7,8 @@ import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 describe('record()', () => {
 	const quotedString = string({ quotes: ['"'] })
-	const suites: {
-		title: string
-		options: Options<StringNode, StringNode>
-		contents: string[]
-	}[] = [
-		{
+	const suites: { title: string; options: Options<StringNode, StringNode>; contents: string[] }[] =
+		[{
 			title: 'record(no trailing comma)',
 			options: {
 				start: '{',
@@ -42,18 +38,11 @@ describe('record()', () => {
 				'{ "foo" : "bar"   "baz" : "qux" }',
 				'{ "foo" : "bar" , "baz" : "qux" , }',
 			],
-		},
-		{
+		}, {
 			title: 'record(trailing comma)',
 			options: {
 				start: '{',
-				pair: {
-					key: quotedString,
-					sep: ':',
-					value: quotedString,
-					end: ',',
-					trailingEnd: true,
-				},
+				pair: { key: quotedString, sep: ':', value: quotedString, end: ',', trailingEnd: true },
 				end: '}',
 			},
 			contents: [
@@ -62,8 +51,7 @@ describe('record()', () => {
 				'{ "foo" : "bar" , "baz" : "qux" }',
 				'{ "foo" : "bar" , "baz" : "qux" , }',
 			],
-		},
-	]
+		}]
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {

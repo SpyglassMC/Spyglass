@@ -133,13 +133,9 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_predicate':
 			return ItemPredicateNode.mock(range)
 		case 'minecraft:item_slot':
-			return LiteralNode.mock(range, {
-				pool: getItemSlotArgumentValues(ctx),
-			})
+			return LiteralNode.mock(range, { pool: getItemSlotArgumentValues(ctx) })
 		case 'minecraft:item_slots':
-			return LiteralNode.mock(range, {
-				pool: getItemSlotsArgumentValues(ctx),
-			})
+			return LiteralNode.mock(range, { pool: getItemSlotsArgumentValues(ctx) })
 		case 'minecraft:item_stack':
 			return ItemStackNode.mock(range)
 		case 'minecraft:loot_modifier':
@@ -215,16 +211,10 @@ const block: Completer<BlockNode> = (node, ctx) => {
 	if (Range.contains(node.id, ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
 	}
-	if (
-		node.states
-		&& Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
-	) {
+	if (node.states && Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)) {
 		ans.push(...blockStates(node.states, ctx))
 	}
-	if (
-		node.nbt
-		&& Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
-	) {
+	if (node.nbt && Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)) {
 		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
@@ -241,42 +231,27 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 	const states = getStates('block', blocks, ctx)
 
 	return completer.record<StringNode, StringNode, BlockStatesNode>({
-		key: (
-			_record,
-			pair,
-			_ctx,
-			range,
-			insertValue,
-			insertComma,
-			existingKeys,
-		) => {
-			return Object.keys(states)
-				.filter(
-					(k) =>
-						pair?.key?.value === k
-						|| !existingKeys.some((ek) => ek.value === k),
-				)
-				.map((k) =>
-					CompletionItem.create(k, range, {
-						kind: CompletionKind.Property,
-						detail: localize(
-							'mcfunction.completer.block.states.default-value',
-							localeQuote(states[k][0]),
-						),
-						insertText: new InsertTextBuilder()
-							.literal(k)
-							.if(insertValue, (b) => b.literal('=').placeholder(...states[k]))
-							.if(insertComma, (b) => b.literal(','))
-							.build(),
-					})
-				)
+		key: (_record, pair, _ctx, range, insertValue, insertComma, existingKeys) => {
+			return Object.keys(states).filter((k) =>
+				pair?.key?.value === k || !existingKeys.some((ek) => ek.value === k)
+			).map((k) =>
+				CompletionItem.create(k, range, {
+					kind: CompletionKind.Property,
+					detail: localize(
+						'mcfunction.completer.block.states.default-value',
+						localeQuote(states[k][0]),
+					),
+					insertText: new InsertTextBuilder().literal(k).if(
+						insertValue,
+						(b) => b.literal('=').placeholder(...states[k]),
+					).if(insertComma, (b) => b.literal(',')).build(),
+				})
+			)
 		},
 		value: (_record, pair, ctx) => {
 			if (pair.key && states[pair.key.value]) {
 				return states[pair.key.value].map((v) =>
-					CompletionItem.create(v, pair.value ?? ctx.offset, {
-						kind: CompletionKind.Value,
-					})
+					CompletionItem.create(v, pair.value ?? ctx.offset, { kind: CompletionKind.Value })
 				)
 			}
 
@@ -286,16 +261,10 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 }
 
 const componentList: Completer<ComponentListNode> = (node, ctx) => {
-	return completer.record<
-		ResourceLocationNode,
-		nbt.NbtNode,
-		ComponentListNode
-	>({
+	return completer.record<ResourceLocationNode, nbt.NbtNode, ComponentListNode>({
 		key: (_record, pair, ctx, range) => {
 			const id = pair?.key
-				?? ResourceLocationNode.mock(pair?.key ?? range, {
-					category: 'data_component_type',
-				})
+				?? ResourceLocationNode.mock(pair?.key ?? range, { category: 'data_component_type' })
 			return completer.resourceLocation(id, ctx)
 		},
 		value: (_record, pair, ctx) => {
@@ -360,25 +329,16 @@ const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
 
 const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
 	const ans = ObjectiveCriteriaNode.SimpleValues.map((v) => CompletionItem.create(v, node))
-	if (
-		!node.children?.[0]
-		|| Range.contains(node.children[0], ctx.offset, true)
-	) {
+	if (!node.children?.[0] || Range.contains(node.children[0], ctx.offset, true)) {
 		ans.push(
 			...completer.resourceLocation(
 				node.children?.[0]
-					?? ResourceLocationNode.mock(node, {
-						category: 'stat_type',
-						namespacePathSep: '.',
-					}),
+					?? ResourceLocationNode.mock(node, { category: 'stat_type', namespacePathSep: '.' }),
 				ctx,
 			),
 		)
 	}
-	if (
-		node.children?.[1]
-		&& Range.contains(node.children[1], ctx.offset, true)
-	) {
+	if (node.children?.[1] && Range.contains(node.children[1], ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.children[1], ctx))
 	}
 	return ans
@@ -398,10 +358,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	const map: Record<ParticleNode.SpecialType, AstNode[]> = {
 		block: [BlockNode.mock(ctx.offset, false)],
 		block_marker: [BlockNode.mock(ctx.offset, false)],
-		dust: [
-			VectorNode.mock(ctx.offset, { dimension: 3 }),
-			FloatNode.mock(ctx.offset),
-		],
+		dust: [VectorNode.mock(ctx.offset, { dimension: 3 }), FloatNode.mock(ctx.offset)],
 		dust_color_transition: [
 			VectorNode.mock(ctx.offset, { dimension: 3 }),
 			FloatNode.mock(ctx.offset),
@@ -420,9 +377,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	if (ParticleNode.isSpecialType(id)) {
 		const numParamsBefore = node.children?.slice(1).filter((n) => n.range.end < ctx.offset).length
 			?? 0
-		const mock = map[id][numParamsBefore] as
-			| typeof map[keyof typeof map][number]
-			| undefined
+		const mock = map[id][numParamsBefore] as typeof map[keyof typeof map][number] | undefined
 		if (mock) {
 			return completer.dispatch(mock, ctx)
 		}
@@ -436,12 +391,7 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 	if (node.selector && Range.contains(node.selector, ctx.offset, true)) {
 		ans = selector(node.selector, ctx)
 		if (Range.contains(node.children[0], ctx.offset, true)) {
-			ans.push(
-				...completer.symbol(
-					SymbolNode.mock(node, { category: 'score_holder' }),
-					ctx,
-				),
-			)
+			ans.push(...completer.symbol(SymbolNode.mock(node, { category: 'score_holder' }), ctx))
 		}
 	} else {
 		ans = completer.symbol(
@@ -450,9 +400,7 @@ const scoreHolder: Completer<ScoreHolderNode> = (node, ctx) => {
 		)
 		ans.push(
 			...selector(
-				EntitySelectorNode.mock(node, {
-					pool: EntitySelectorAtVariable.filterAvailable(ctx),
-				}),
+				EntitySelectorNode.mock(node, { pool: EntitySelectorAtVariable.filterAvailable(ctx) }),
 				ctx,
 			),
 		)
@@ -464,23 +412,13 @@ const selector: Completer<EntitySelectorNode> = (node, ctx) => {
 	if (Range.contains(node.children[0], ctx.offset, true)) {
 		return completer.literal(node.children[0], ctx)
 	}
-	if (
-		node.arguments
-		&& Range.contains(
-			Range.translate(node.arguments, 1, -1),
-			ctx.offset,
-			true,
-		)
-	) {
+	if (node.arguments && Range.contains(Range.translate(node.arguments, 1, -1), ctx.offset, true)) {
 		return selectorArguments(node.arguments, ctx)
 	}
 	return []
 }
 
-const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
-	node,
-	ctx,
-) => {
+const selectorArguments: Completer<EntitySelectorArgumentsNode> = (node, ctx) => {
 	const selector = node.parent
 	if (!EntitySelectorNode.is(selector)) {
 		return []
@@ -488,22 +426,18 @@ const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
 
 	return completer.record<StringNode, any, EntitySelectorArgumentsNode>({
 		key: (record, pair, _ctx, range, insertValue, insertComma) => {
-			return [...EntitySelectorNode.ArgumentKeys]
-				.filter(
-					(k) =>
-						EntitySelectorNode.canKeyExist(selector, record, k)
-							=== EntitySelectorNode.Result.Ok,
-				)
-				.map((k) =>
-					CompletionItem.create(k, range, {
-						kind: CompletionKind.Property,
-						insertText: new InsertTextBuilder()
-							.literal(k)
-							.if(insertValue, (b) => b.literal('=').placeholder()) // TODO
-							.if(insertComma, (b) => b.literal(','))
-							.build(),
-					})
-				)
+			return [...EntitySelectorNode.ArgumentKeys].filter((k) =>
+				EntitySelectorNode.canKeyExist(selector, record, k) === EntitySelectorNode.Result.Ok
+			).map((k) =>
+				CompletionItem.create(k, range, {
+					kind: CompletionKind.Property,
+					insertText: new InsertTextBuilder().literal(k).if(
+						insertValue,
+						(b) => b.literal('=').placeholder(),
+					) // TODO
+						.if(insertComma, (b) => b.literal(',')).build(),
+				})
+			)
 		},
 		value: (_record, pair, ctx) => {
 			if (pair.value) {
@@ -516,19 +450,15 @@ const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
 
 const intRange: Completer<IntRangeNode> = (node, _ctx) => {
 	return [
-		CompletionItem.create('-2147483648..2147483647', node, {
-			kind: CompletionKind.Constant,
-		}),
+		CompletionItem.create('-2147483648..2147483647', node, { kind: CompletionKind.Constant }),
 	]
 }
 
 const vector: Completer<VectorNode> = (node, _ctx) => {
 	const createCompletion = (coordinate: '~' | '^' | '0.0', sortText: string) =>
-		CompletionItem.create(
-			new Array(node.options.dimension).fill(coordinate).join(' '),
-			node,
-			{ sortText },
-		)
+		CompletionItem.create(new Array(node.options.dimension).fill(coordinate).join(' '), node, {
+			sortText,
+		})
 
 	const ans: CompletionItem[] = []
 	ans.push(createCompletion('~', 'a'))
@@ -542,37 +472,19 @@ const vector: Completer<VectorNode> = (node, _ctx) => {
 
 export function register(meta: MetaRegistry) {
 	meta.registerCompleter<BlockNode>('mcfunction:block', block)
-	meta.registerCompleter<ComponentListNode>(
-		'mcfunction:component_list',
-		componentList,
-	)
-	meta.registerCompleter<ComponentTestsNode>(
-		'mcfunction:component_tests',
-		componentTests,
-	)
+	meta.registerCompleter<ComponentListNode>('mcfunction:component_list', componentList)
+	meta.registerCompleter<ComponentTestsNode>('mcfunction:component_tests', componentTests)
 	meta.registerCompleter<CoordinateNode>('mcfunction:coordinate', coordinate)
-	meta.registerCompleter<EntitySelectorNode>(
-		'mcfunction:entity_selector',
-		selector,
-	)
+	meta.registerCompleter<EntitySelectorNode>('mcfunction:entity_selector', selector)
 	meta.registerCompleter<EntitySelectorArgumentsNode>(
 		'mcfunction:entity_selector/arguments',
 		selectorArguments,
 	)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
 	meta.registerCompleter<ItemStackNode>('mcfunction:item_stack', itemStack)
-	meta.registerCompleter<ItemPredicateNode>(
-		'mcfunction:item_predicate',
-		itemPredicate,
-	)
-	meta.registerCompleter<ObjectiveCriteriaNode>(
-		'mcfunction:objective_criteria',
-		objectiveCriteria,
-	)
+	meta.registerCompleter<ItemPredicateNode>('mcfunction:item_predicate', itemPredicate)
+	meta.registerCompleter<ObjectiveCriteriaNode>('mcfunction:objective_criteria', objectiveCriteria)
 	meta.registerCompleter<ParticleNode>('mcfunction:particle', particle)
-	meta.registerCompleter<ScoreHolderNode>(
-		'mcfunction:score_holder',
-		scoreHolder,
-	)
+	meta.registerCompleter<ScoreHolderNode>('mcfunction:score_holder', scoreHolder)
 	meta.registerCompleter<VectorNode>('mcfunction:vector', vector)
 }

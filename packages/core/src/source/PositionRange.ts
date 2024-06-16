@@ -72,16 +72,10 @@ export namespace PositionRange {
 	 * }
 	 * ```
 	 */
-	export const Full = Object.freeze(
-		PositionRange.create(Position.Beginning, Position.Infinity),
-	)
+	export const Full = Object.freeze(PositionRange.create(Position.Beginning, Position.Infinity))
 
 	export function toString(range: PositionRange): string {
-		return `[${Position.toString(range.start)}, ${
-			Position.toString(
-				range.end,
-			)
-		})`
+		return `[${Position.toString(range.start)}, ${Position.toString(range.end)})`
 	}
 
 	export function contains(range: PositionRange, pos: Position): boolean {
@@ -94,16 +88,11 @@ export namespace PositionRange {
 			return true
 		}
 		// Now `pos` is in the same line as `start` and/or `end`.
-		return (
-			(pos.line === start.line ? pos.character >= start.character : true)
-			&& (pos.line === end.line ? pos.character < end.character : true)
-		)
+		return ((pos.line === start.line ? pos.character >= start.character : true)
+			&& (pos.line === end.line ? pos.character < end.character : true))
 	}
 
 	export function endsBefore(range: PositionRange, pos: Position): boolean {
-		return Position.isBefore(
-			Position.create(range.end.line, range.end.character - 1),
-			pos,
-		)
+		return Position.isBefore(Position.create(range.end.line, range.end.character - 1), pos)
 	}
 }

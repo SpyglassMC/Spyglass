@@ -10,21 +10,12 @@ interface IdConfig {
 }
 
 const idValidator = validator.alternatives<IdConfig>(
-	validator.map(
-		validator.string,
-		v => ({ registry: v }),
-	),
+	validator.map(validator.string, v => ({ registry: v })),
 	validator.tree({
 		registry: validator.string,
-		tags: validator.optional(
-			validator.options('allowed', 'implicit', 'required'),
-		),
-		definition: validator.optional(
-			validator.boolean,
-		),
-		prefix: validator.optional(
-			validator.options('!'),
-		),
+		tags: validator.optional(validator.options('allowed', 'implicit', 'required')),
+		definition: validator.optional(validator.boolean),
+		prefix: validator.optional(validator.options('!')),
 	}),
 	() => ({}),
 )
@@ -46,10 +37,7 @@ function getResourceLocationOptions(
 			return { category: registry, allowTag: true }
 		}
 	} else if (core.ResourceLocationCategory.is(registry)) {
-		return {
-			category: registry,
-			usageType: definition ? 'definition' : 'reference',
-		}
+		return { category: registry, usageType: definition ? 'definition' : 'reference' }
 	}
 	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
 	return undefined
@@ -63,8 +51,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				const idAttr = inferred.attributes?.find(a => a.name === 'id')
 				if (idAttr) {
 					const inferredConfig = idValidator(idAttr.value, ctx)
-					return inferredConfig === core.Failure
-						|| inferredConfig.prefix === config.prefix
+					return inferredConfig === core.Failure || inferredConfig.prefix === config.prefix
 					// Prefix doesn't match
 				}
 			}
@@ -95,17 +82,10 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			return (src, ctx) => {
 				const start = src.cursor
 				if (config.prefix && !src.trySkip(config.prefix)) {
-					ctx.err.report(
-						localize('expected', localeQuote(config.prefix)),
-						src,
-					)
+					ctx.err.report(localize('expected', localeQuote(config.prefix)), src)
 				} else if (!config.prefix && src.trySkip('!')) {
 					ctx.err.report(
-						localize(
-							'expected-got',
-							localize('resource-location'),
-							localeQuote('!'),
-						),
+						localize('expected-got', localize('resource-location'), localeQuote('!')),
 						core.Range.create(start, src),
 					)
 				}

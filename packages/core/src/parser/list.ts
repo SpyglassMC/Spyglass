@@ -16,19 +16,11 @@ export interface Options<V extends AstNode> {
 	end: string
 }
 
-export function list<V extends AstNode>({
-	start,
-	value,
-	sep,
-	trailingSep,
-	end,
-}: Options<V>): InfallibleParser<ListNode<V>> {
+export function list<V extends AstNode>(
+	{ start, value, sep, trailingSep, end }: Options<V>,
+): InfallibleParser<ListNode<V>> {
 	return (src: Source, ctx: ParserContext): ListNode<V> => {
-		const ans: ListNode<V> = {
-			type: 'list',
-			range: Range.create(src),
-			children: [],
-		}
+		const ans: ListNode<V> = { type: 'list', range: Range.create(src), children: [] }
 
 		if (src.trySkip(start)) {
 			src.skipWhitespace()
@@ -37,7 +29,9 @@ export function list<V extends AstNode>({
 			let hasValueSep = false
 			while (src.canRead() && src.peek(end.length) !== end) {
 				const itemStart = src.cursor
-				let valueNode: V | undefined
+				let valueNode:
+					| V
+					| undefined
 
 				// Item sep of the last item.
 				if (requiresValueSep && !hasValueSep) {
@@ -46,18 +40,11 @@ export function list<V extends AstNode>({
 
 				// Value.
 				src.skipWhitespace()
-				const { result, endCursor, updateSrcAndCtx } = attempt(
-					value,
-					src,
-					ctx,
-				)
+				const { result, endCursor, updateSrcAndCtx } = attempt(value, src, ctx)
 				if (result === Failure || endCursor === src.cursor) {
 					ctx.err.report(
 						localize('expected', localize('parser.list.value')),
-						Range.create(
-							src,
-							() => src.skipUntilOrEnd(sep, end, '\r', '\n'),
-						),
+						Range.create(src, () => src.skipUntilOrEnd(sep, end, '\r', '\n')),
 					)
 				} else {
 					updateSrcAndCtx()

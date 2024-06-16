@@ -36,12 +36,7 @@ export namespace Color {
 	 * @param b A decimal within [0.0, 1.0].
 	 * @param a A decimal within [0.0, 1.0].
 	 */
-	export function fromDecRGBA(
-		r: number,
-		g: number,
-		b: number,
-		a: number,
-	): Color {
+	export function fromDecRGBA(r: number, g: number, b: number, a: number): Color {
 		return [r, g, b, a]
 	}
 
@@ -60,12 +55,7 @@ export namespace Color {
 	 * @param b An integer within [0, 255].
 	 * @param a An integer within [0, 255].
 	 */
-	export function fromIntRGBA(
-		r: number,
-		g: number,
-		b: number,
-		a: number,
-	): Color {
+	export function fromIntRGBA(r: number, g: number, b: number, a: number): Color {
 		return fromDecRGBA(r / 255, g / 255, b / 255, a / 255)
 	}
 
@@ -125,17 +115,9 @@ export enum ColorFormat {
 	CompositeInt,
 }
 
-export type FormattableColor = {
-	value: Color
-	format: ColorFormat[]
-	range?: Range
-}
+export type FormattableColor = { value: Color; format: ColorFormat[]; range?: Range }
 
-export type ColorPresentation = {
-	label: string
-	text: string
-	range: Range
-}
+export type ColorPresentation = { label: string; text: string; range: Range }
 export namespace ColorPresentation {
 	export function fromColorFormat(
 		format: ColorFormat,
@@ -143,11 +125,7 @@ export namespace ColorPresentation {
 		range: Range,
 	): ColorPresentation {
 		const presentation = colorPresentation(format, color)
-		return {
-			label: presentation,
-			text: presentation,
-			range,
-		}
+		return { label: presentation, text: presentation, range }
 	}
 
 	function colorPresentation(format: ColorFormat, color: Color): string {
@@ -156,43 +134,26 @@ export namespace ColorPresentation {
 			case ColorFormat.DecRGBA:
 				return color.map((c) => round(c)).join(' ')
 			case ColorFormat.DecRGB:
-				return color
-					.slice(0, 3)
-					.map((c) => round(c))
-					.join(' ')
+				return color.slice(0, 3).map((c) => round(c)).join(' ')
 			case ColorFormat.IntRGBA:
 				return color.map((c) => Math.round(c * 255)).join(' ')
 			case ColorFormat.IntRGB:
-				return color
-					.slice(0, 3)
-					.map((c) => Math.round(c * 255))
-					.join(' ')
+				return color.slice(0, 3).map((c) => Math.round(c * 255)).join(' ')
 			case ColorFormat.HexRGBA:
 				return `#${
 					Math.round(
-						(((color[0] * 255) << 24)
-							+ ((color[1] * 255) << 16)
-							+ color[2] * 255)
+						(((color[0] * 255) << 24) + ((color[1] * 255) << 16) + color[2] * 255)
 							<< (8 + color[3] * 255),
-					)
-						.toString(16)
-						.padStart(8, '0')
+					).toString(16).padStart(8, '0')
 				}`
 			case ColorFormat.HexRGB:
 				return `#${
-					Math.round(
-						((color[0] * 255) << 16) + ((color[1] * 255) << 8)
-							+ color[2] * 255,
-					)
-						.toString(16)
-						.padStart(6, '0')
+					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
+						.toString(16).padStart(6, '0')
 				}`
 			case ColorFormat.CompositeInt:
 				return `${
-					Math.round(
-						((color[0] * 255) << 16) + ((color[1] * 255) << 8)
-							+ color[2] * 255,
-					)
+					Math.round(((color[0] * 255) << 16) + ((color[1] * 255) << 8) + color[2] * 255)
 				}`
 		}
 	}

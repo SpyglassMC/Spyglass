@@ -16,9 +16,7 @@ export const noop: Linter<AstNode> = () => {}
 export function nameConvention(key: string): Linter<AstNode> {
 	return (node, ctx) => {
 		if (typeof (node as any)[key] !== 'string') {
-			throw new Error(
-				`Trying to access property "${key}" of node type "${node.type}"`,
-			)
+			throw new Error(`Trying to access property "${key}" of node type "${node.type}"`)
 		}
 		const name: string = (node as any)[key]
 
@@ -47,9 +45,7 @@ export function nameConvention(key: string): Linter<AstNode> {
 export const quote: Linter<StringBaseNode> = (node, ctx) => {
 	const config = ctx.ruleValue as QuoteConfig
 	const mustValueBeQuoted = node.options.unquotable
-		? [...node.value].some(
-			(c) => !isAllowedCharacter(c, node.options.unquotable as any),
-		)
+		? [...node.value].some((c) => !isAllowedCharacter(c, node.options.unquotable as any))
 		: true
 	const isQuoteRequired = config.always || mustValueBeQuoted
 	const isQuoteProhibited = config.always === false && !mustValueBeQuoted
@@ -75,26 +71,13 @@ export namespace configValidator {
 
 	function wrapError(name: string, msg: string): string {
 		return `[Invalid Linter Config] [${name}] ${
-			localize(
-				'linter-config-validator.wrapper',
-				msg,
-				getDocLink(name),
-			)
+			localize('linter-config-validator.wrapper', msg, getDocLink(name))
 		}`
 	}
 
-	export function nameConvention(
-		name: string,
-		val: unknown,
-		logger: Logger,
-	): boolean {
+	export function nameConvention(name: string, val: unknown, logger: Logger): boolean {
 		if (typeof val !== 'string') {
-			logger.error(
-				wrapError(
-					name,
-					localize('linter-config-validator.name-convention.type'),
-				),
-			)
+			logger.error(wrapError(name, localize('linter-config-validator.name-convention.type')))
 			return false
 		}
 
@@ -115,11 +98,7 @@ export namespace configValidator {
 		return true
 	}
 
-	export function symbolLinterConfig(
-		_name: string,
-		value: unknown,
-		_logger: Logger,
-	): boolean {
+	export function symbolLinterConfig(_name: string, value: unknown, _logger: Logger): boolean {
 		return SymbolLinterConfig.is(value)
 	}
 }

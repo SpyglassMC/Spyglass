@@ -20,12 +20,7 @@ interface OptionsBase {
 	 *
 	 * Defaults to a function that marks an `Error` at the range of the node.
 	 */
-	onOutOfRange?: (
-		ans: FloatNode,
-		src: Source,
-		ctx: ParserContext,
-		options: Options,
-	) => void
+	onOutOfRange?: (ans: FloatNode, src: Source, ctx: ParserContext, options: Options) => void
 }
 
 interface FallibleOptions extends OptionsBase {
@@ -46,10 +41,7 @@ const fallbackOnOutOfRange = (
 	options: Options,
 ) => {
 	ctx.err.report(
-		localize(
-			'expected',
-			localize('float.between', options.min ?? '-∞', options.max ?? '+∞'),
-		),
+		localize('expected', localize('float.between', options.min ?? '-∞', options.max ?? '+∞')),
 		ans,
 		ErrorSeverity.Error,
 	)
@@ -59,11 +51,7 @@ export function float(options: InfallibleOptions): InfallibleParser<FloatNode>
 export function float(options: FallibleOptions): Parser<FloatNode>
 export function float(options: Options): Parser<FloatNode> {
 	return (src: Source, ctx: ParserContext): Result<FloatNode> => {
-		const ans: FloatNode = {
-			type: 'float',
-			range: Range.create(src),
-			value: 0,
-		}
+		const ans: FloatNode = { type: 'float', range: Range.create(src), value: 0 }
 
 		if (src.peek() === '-' || src.peek() === '+') {
 			src.skip()
@@ -100,8 +88,7 @@ export function float(options: Options): Parser<FloatNode> {
 		} else if (!options.pattern.test(raw)) {
 			ctx.err.report(localize('parser.float.illegal', options.pattern), ans)
 		} else if (
-			(options.min && ans.value < options.min)
-			|| (options.max && ans.value > options.max)
+			(options.min && ans.value < options.min) || (options.max && ans.value > options.max)
 		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

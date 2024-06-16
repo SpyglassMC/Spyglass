@@ -35,10 +35,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
-				logger.error(
-					`[je.initialize] Failed loading pack.mcmeta “${uri}”`,
-					e,
-				)
+				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
 			}
 		}
 		return ans
@@ -55,11 +52,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	const packMcmeta = await getPackMcmeta()
-	const {
-		release,
-		id: version,
-		isLatest,
-	} = resolveConfiguredVersion(config.env.gameVersion, {
+	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, {
 		packMcmeta,
 		versions,
 	})
@@ -69,10 +62,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		() => getVanillaDatapack(downloader, version, isLatest),
 	)
 
-	meta.registerDependencyProvider(
-		'@vanilla-mcdoc',
-		() => getVanillaMcdoc(downloader),
-	)
+	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
 
 	const summary = await getMcmetaSummary(
 		ctx.externals,
@@ -83,12 +73,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
-	if (
-		!summary.blocks
-		|| !summary.commands
-		|| !summary.fluids
-		|| !summary.registries
-	) {
+	if (!summary.blocks || !summary.commands || !summary.fluids || !summary.registries) {
 		ctx.logger.error(
 			'[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.',
 		)
@@ -109,58 +94,42 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 				&& n.parent?.parent?.type === 'nbt:compound'
 				&& core.PairNode.is(n.parent)
 				&& n.type === 'string'
-				&& n.parent.key === n)
-			// nbt path keys without mcdoc definition.
-			|| (!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string')
-			// mcdoc compound key definition outside of `::minecraft` modules.
+				&& n.parent.key === n) // nbt path keys without mcdoc definition.
+			|| (!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') // mcdoc compound key definition outside of `::minecraft` modules.
 			|| (mcdoc.StructFieldNode.is(n.parent)
 				&& mcdoc.StructKeyNode.is(n)
 				&& !n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
-	mcdoc.runtime.registerAttribute(
-		meta,
-		'since',
-		mcdoc.runtime.attribute.validator.string,
-		{
-			filterElement: (config, ctx) => {
-				if (!config.startsWith('1.')) {
-					ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
-					return true
-				}
-				return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
-			},
+	mcdoc.runtime.registerAttribute(meta, 'since', mcdoc.runtime.attribute.validator.string, {
+		filterElement: (config, ctx) => {
+			if (!config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "since": ${config}`)
+				return true
+			}
+			return ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0
 		},
-	)
-	mcdoc.runtime.registerAttribute(
-		meta,
-		'until',
-		mcdoc.runtime.attribute.validator.string,
-		{
-			filterElement: (config, ctx) => {
-				if (!config.startsWith('1.')) {
-					ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
-					return true
-				}
-				return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
-			},
+	})
+	mcdoc.runtime.registerAttribute(meta, 'until', mcdoc.runtime.attribute.validator.string, {
+		filterElement: (config, ctx) => {
+			if (!config.startsWith('1.')) {
+				ctx.logger.warn(`Invalid mcdoc attribute for "until": ${config}`)
+				return true
+			}
+			return ReleaseVersion.cmp(release, config as ReleaseVersion) < 0
 		},
-	)
+	})
 	mcdoc.runtime.registerAttribute(
 		meta,
 		'deprecated',
-		mcdoc.runtime.attribute.validator.optional(
-			mcdoc.runtime.attribute.validator.string,
-		),
+		mcdoc.runtime.attribute.validator.optional(mcdoc.runtime.attribute.validator.string),
 		{
 			mapField: (config, field, ctx) => {
 				if (config === undefined) {
 					return { ...field, deprecated: true }
 				}
 				if (!config.startsWith('1.')) {
-					ctx.logger.warn(
-						`Invalid mcdoc attribute for "deprecated": ${config}`,
-					)
+					ctx.logger.warn(`Invalid mcdoc attribute for "deprecated": ${config}`)
 					return field
 				}
 				if (ReleaseVersion.cmp(release, config as ReleaseVersion) >= 0) {
@@ -176,7 +145,5 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	jeMcf.initialize(ctx, summary.commands, release)
 	nbt.initialize(ctx)
 
-	return {
-		loadedVersion: release,
-	}
+	return { loadedVersion: release }
 }

@@ -8,27 +8,11 @@ export const tree: RootTreeNode = {
 			children: {
 				if: {
 					type: 'literal',
-					children: {
-						true: {
-							type: 'literal',
-							executable: true,
-							redirect: ['execute'],
-						},
-					},
+					children: { true: { type: 'literal', executable: true, redirect: ['execute'] } },
 				},
-				run: {
-					type: 'literal',
-				},
+				run: { type: 'literal' },
 			},
 		},
-		say: {
-			type: 'literal',
-			children: {
-				hi: {
-					type: 'literal',
-					executable: true,
-				},
-			},
-		},
+		say: { type: 'literal', children: { hi: { type: 'literal', executable: true } } },
 	},
 }

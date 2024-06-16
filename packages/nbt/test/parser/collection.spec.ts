@@ -4,12 +4,9 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 
 describe('nbt list()', () => {
-	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: '[]' },
-		{ content: '["string"]' },
-		{ content: '["string", 1b]' },
-	]
+	const suites: { content: string }[] = [{ content: '' }, { content: '[]' }, {
+		content: '["string"]',
+	}, { content: '["string", 1b]' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = list
@@ -19,12 +16,9 @@ describe('nbt list()', () => {
 })
 
 describe('nbt byteArray()', () => {
-	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: '[B;]' },
-		{ content: '[B; true, 1b]' },
-		{ content: '[B; true, 1b, 2]' },
-	]
+	const suites: { content: string }[] = [{ content: '' }, { content: '[B;]' }, {
+		content: '[B; true, 1b]',
+	}, { content: '[B; true, 1b, 2]' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = byteArray
@@ -34,12 +28,9 @@ describe('nbt byteArray()', () => {
 })
 
 describe('nbt intArray()', () => {
-	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: '[I;]' },
-		{ content: '[I; 0, 1]' },
-		{ content: '[I; 0, 1.]' },
-	]
+	const suites: { content: string }[] = [{ content: '' }, { content: '[I;]' }, {
+		content: '[I; 0, 1]',
+	}, { content: '[I; 0, 1.]' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = intArray
@@ -49,12 +40,9 @@ describe('nbt intArray()', () => {
 })
 
 describe('nbt longArray()', () => {
-	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: '[L;]' },
-		{ content: '[L; 0L, 1L]' },
-		{ content: '[L; 0L, 2, "string"]' },
-	]
+	const suites: { content: string }[] = [{ content: '' }, { content: '[L;]' }, {
+		content: '[L; 0L, 1L]',
+	}, { content: '[L; 0L, 2, "string"]' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			const parser = longArray

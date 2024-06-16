@@ -5,9 +5,7 @@ import Fallback from './locales/en.js'
 
 type Locale = Record<string, string>
 
-const Locales: Record<string, Locale> = {
-	en: Fallback,
-}
+const Locales: Record<string, Locale> = { en: Fallback }
 
 let language = 'en'
 
@@ -74,10 +72,7 @@ function _resolveLocalePlaceholders(
 	return val?.replace(/%\d+%/g, (match) => {
 		const index = parseInt(match.slice(1, -1))
 		let param: Parameter | undefined = params[index]
-		if (
-			typeof param !== 'string'
-			&& (param as Iterable<string>)?.[Symbol.iterator]
-		) {
+		if (typeof param !== 'string' && (param as Iterable<string>)?.[Symbol.iterator]) {
 			param = arrayToMessage(param as Iterable<string>)
 		}
 		return `${param ?? match}`
@@ -116,9 +111,7 @@ export function arrayToMessage(
 	conjunction: 'and' | 'or' = 'or',
 ) {
 	const getPart = (str: string) => (quoted ? localeQuote(str) : str)
-	const arr = (typeof param === 'string' ? [param] : Array.from(param)).map(
-		getPart,
-	)
+	const arr = (typeof param === 'string' ? [param] : Array.from(param)).map(getPart)
 	switch (arr.length) {
 		case 0:
 			return localize('nothing')
@@ -127,14 +120,8 @@ export function arrayToMessage(
 		case 2:
 			return arr[0] + localize(`conjunction.${conjunction}_2`) + arr[1]
 		default:
-			return `${
-				arr
-					.slice(0, -1)
-					.join(localize(`conjunction.${conjunction}_3+_1`))
-			}${
-				localize(
-					`conjunction.${conjunction}_3+_2`,
-				)
+			return `${arr.slice(0, -1).join(localize(`conjunction.${conjunction}_3+_1`))}${
+				localize(`conjunction.${conjunction}_3+_2`)
 			}${arr[arr.length - 1]}`
 	}
 }

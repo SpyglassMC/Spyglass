@@ -6,13 +6,7 @@ import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
  */
 export function resolveConfiguredVersion(
 	inputVersion: string,
-	{
-		packMcmeta,
-		versions,
-	}: {
-		packMcmeta: PackMcmeta | undefined
-		versions: McmetaVersions
-	},
+	{ packMcmeta, versions }: { packMcmeta: PackMcmeta | undefined; versions: McmetaVersions },
 ): VersionInfo {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
@@ -79,10 +73,8 @@ export function resolveConfiguredVersion(
 		return toVersionInfo(versions[0])
 	}
 	return toVersionInfo(
-		versions.find(
-			(v) =>
-				inputVersion === v.id.toLowerCase()
-				|| inputVersion === v.name.toLowerCase(),
+		versions.find((v) =>
+			inputVersion === v.id.toLowerCase() || inputVersion === v.name.toLowerCase()
 		),
 	)
 }
@@ -106,15 +98,12 @@ export function getMcmetaSummaryUris(
 
 	function getUri(path: string): core.RemoteUriString {
 		const template = DataSources[source.toLowerCase()] ?? source
-		const ans = template
-			.replace(/\${user}/g, 'misode')
-			.replace(/\${repo}/g, 'mcmeta')
-			.replace(/\${tag}/g, tag)
-			.replace(/\${path}/g, path)
+		const ans = template.replace(/\${user}/g, 'misode').replace(/\${repo}/g, 'mcmeta').replace(
+			/\${tag}/g,
+			tag,
+		).replace(/\${path}/g, path)
 		if (!core.RemoteUriString.is(ans)) {
-			throw new Error(
-				`Expected a remote URI from data source template but got ${ans}`,
-			)
+			throw new Error(`Expected a remote URI from data source template but got ${ans}`)
 		}
 		return ans
 	}
@@ -137,78 +126,51 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		states: McmetaStates,
 		symbols: core.SymbolUtil,
 	): void {
-		const capitalizedCategory = `${category[0].toUpperCase()}${
-			category.slice(
-				1,
-			)
-		}` as Capitalize<typeof category>
+		const capitalizedCategory = `${category[0].toUpperCase()}${category.slice(1)}` as Capitalize<
+			typeof category
+		>
 
 		for (const [id, [properties, defaults]] of Object.entries(states)) {
 			const uri = McmetaSummaryUri
-			symbols
-				.query(uri, category, core.ResourceLocation.lengthen(id))
-				.onEach(
-					Object.entries(properties),
-					([state, values], blockQuery) => {
-						const defaultValue = defaults[state]!
+			symbols.query(uri, category, core.ResourceLocation.lengthen(id)).onEach(
+				Object.entries(properties),
+				([state, values], blockQuery) => {
+					const defaultValue = defaults[state]!
 
-						blockQuery.member(
-							`${uri}#${capitalizedCategory}_states`,
-							state,
-							(stateQuery) => {
-								stateQuery
-									.enter({
-										data: { subcategory: 'state' },
-										usage: { type: 'declaration' },
+					blockQuery.member(`${uri}#${capitalizedCategory}_states`, state, (stateQuery) => {
+						stateQuery.enter({
+							data: { subcategory: 'state' },
+							usage: { type: 'declaration' },
+						}).onEach(values, (value) => {
+							stateQuery.member(value, (valueQuery) => {
+								valueQuery.enter({
+									data: { subcategory: 'state_value' },
+									usage: { type: 'declaration' },
+								})
+								if (value === defaultValue) {
+									stateQuery.amend({
+										data: { relations: { default: { category, path: valueQuery.path } } },
 									})
-									.onEach(values, (value) => {
-										stateQuery.member(value, (valueQuery) => {
-											valueQuery.enter({
-												data: { subcategory: 'state_value' },
-												usage: { type: 'declaration' },
-											})
-											if (value === defaultValue) {
-												stateQuery.amend({
-													data: {
-														relations: {
-															default: {
-																category,
-																path: valueQuery.path,
-															},
-														},
-													},
-												})
-											}
-										})
-									})
-							},
-						)
-					},
-				)
+								}
+							})
+						})
+					})
+				},
+			)
 		}
 	}
 
-	function addRegistriesSymbols(
-		registries: McmetaRegistries,
-		symbols: core.SymbolUtil,
-	) {
+	function addRegistriesSymbols(registries: McmetaRegistries, symbols: core.SymbolUtil) {
 		type Category = core.FileCategory | core.RegistryCategory
 		function isCategory(str: string): str is Category {
-			return (
-				core.FileCategories.includes(str as any)
-				|| core.RegistryCategories.includes(str as any)
-			)
+			return (core.FileCategories.includes(str as any)
+				|| core.RegistryCategories.includes(str as any))
 		}
 
 		for (const [registryId, registry] of Object.entries(registries)) {
 			if (isCategory(registryId)) {
 				for (const entryId of registry) {
-					symbols
-						.query(
-							McmetaSummaryUri,
-							registryId,
-							core.ResourceLocation.lengthen(entryId),
-						)
+					symbols.query(McmetaSummaryUri, registryId, core.ResourceLocation.lengthen(entryId))
 						.enter({ usage: { type: 'declaration' } })
 				}
 			}
@@ -223,18 +185,12 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 }
 
 export const Fluids: McmetaStates = {
-	flowing_lava: [
-		{
-			falling: ['false', 'true'],
-			level: ['1', '2', '3', '4', '5', '6', '7', '8'],
-		},
-		{ falling: 'false', level: '1' },
-	],
+	flowing_lava: [{ falling: ['false', 'true'], level: ['1', '2', '3', '4', '5', '6', '7', '8'] }, {
+		falling: 'false',
+		level: '1',
+	}],
 	flowing_water: [
-		{
-			falling: ['false', 'true'],
-			level: ['1', '2', '3', '4', '5', '6', '7', '8'],
-		},
+		{ falling: ['false', 'true'], level: ['1', '2', '3', '4', '5', '6', '7', '8'] },
 		{ falling: 'false', level: '1' },
 	],
 	lava: [{ falling: ['false', 'true'] }, { falling: 'false' }],
@@ -266,23 +222,14 @@ export interface McmetaSummary {
 }
 
 export interface McmetaStates {
-	[id: string]: [
-		{
-			[name: string]: string[]
-		},
-		{
-			[name: string]: string
-		},
-	]
+	[id: string]: [{ [name: string]: string[] }, { [name: string]: string }]
 }
 
 export type McmetaCommands = RootTreeNode
 
 interface BaseTreeNode {
 	type: string
-	children?: {
-		[name: string]: CommandTreeNode
-	}
+	children?: { [name: string]: CommandTreeNode }
 	executable?: boolean
 	redirect?: [string]
 }
@@ -290,9 +237,7 @@ interface BaseTreeNode {
 export interface ArgumentTreeNode extends BaseTreeNode {
 	type: 'argument'
 	parser: string
-	properties?: {
-		[name: string]: any
-	}
+	properties?: { [name: string]: any }
 }
 
 export interface LiteralTreeNode extends BaseTreeNode {
@@ -301,9 +246,7 @@ export interface LiteralTreeNode extends BaseTreeNode {
 
 export interface RootTreeNode extends BaseTreeNode {
 	type: 'root'
-	children: {
-		[command: string]: LiteralTreeNode
-	}
+	children: { [command: string]: LiteralTreeNode }
 }
 
 export type CommandTreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode

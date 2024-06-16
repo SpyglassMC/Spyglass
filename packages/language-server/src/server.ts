@@ -47,16 +47,8 @@ connection.onInitialize(async (params) => {
 		| undefined
 
 	logger.info(`[onInitialize] processId = ${JSON.stringify(params.processId)}`)
-	logger.info(
-		`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`,
-	)
-	logger.info(
-		`[onInitialize] initializationOptions = ${
-			JSON.stringify(
-				initializationOptions,
-			)
-		}`,
-	)
+	logger.info(`[onInitialize] clientInfo = ${JSON.stringify(params.clientInfo)}`)
+	logger.info(`[onInitialize] initializationOptions = ${JSON.stringify(initializationOptions)}`)
 
 	capabilities = params.capabilities
 	workspaceFolders = params.workspaceFolders ?? []
@@ -69,12 +61,8 @@ connection.onInitialize(async (params) => {
 	}
 
 	if (params.workDoneToken) {
-		progressReporter = connection.window.attachWorkDoneProgress(
-			params.workDoneToken,
-		)
-		progressReporter.begin(
-			locales.localize('server.progress.preparing.title'),
-		)
+		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
+		progressReporter.begin(locales.localize('server.progress.preparing.title'))
 	}
 
 	try {
@@ -95,31 +83,25 @@ connection.onInitialize(async (params) => {
 				'project#ready#bind',
 			]),
 			project: {
-				cacheRoot: fileUtil.ensureEndingSlash(
-					url.pathToFileURL(cacheRoot).toString(),
-				),
+				cacheRoot: fileUtil.ensureEndingSlash(url.pathToFileURL(cacheRoot).toString()),
 				externals,
 				initializers: [mcdoc.initialize, je.initialize],
-				projectRoot: core.fileUtil.ensureEndingSlash(
-					workspaceFolders[0].uri,
-				),
+				projectRoot: core.fileUtil.ensureEndingSlash(workspaceFolders[0].uri),
 			},
 		})
-		service.project
-			.on('documentErrored', async ({ errors, uri, version }) => {
-				try {
-					await connection.sendDiagnostics({
-						diagnostics: toLS.diagnostics(errors),
-						uri,
-						version,
-					})
-				} catch (e) {
-					console.error('[sendDiagnostics]', e)
-				}
-			})
-			.on('ready', () => {
-				progressReporter?.done()
-			})
+		service.project.on('documentErrored', async ({ errors, uri, version }) => {
+			try {
+				await connection.sendDiagnostics({
+					diagnostics: toLS.diagnostics(errors),
+					uri,
+					version,
+				})
+			} catch (e) {
+				console.error('[sendDiagnostics]', e)
+			}
+		}).on('ready', () => {
+			progressReporter?.done()
+		})
 		await service.project.init()
 	} catch (e) {
 		logger.error('[new Service]', e)
@@ -132,14 +114,10 @@ connection.onInitialize(async (params) => {
 	}
 
 	const ans: ls.InitializeResult = {
-		serverInfo: {
-			name: 'Spyglass Language Server',
-		},
+		serverInfo: { name: 'Spyglass Language Server' },
 		capabilities: {
 			colorProvider: {},
-			completionProvider: {
-				triggerCharacters: service.project.meta.getTriggerCharacters(),
-			},
+			completionProvider: { triggerCharacters: service.project.meta.getTriggerCharacters() },
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
@@ -147,9 +125,7 @@ connection.onInitialize(async (params) => {
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},
-			documentSymbolProvider: {
-				label: 'Spyglass',
-			},
+			documentSymbolProvider: { label: 'Spyglass' },
 			hoverProvider: {},
 			inlayHintProvider: {},
 			semanticTokensProvider: {
@@ -158,26 +134,16 @@ connection.onInitialize(async (params) => {
 				full: { delta: false },
 				range: true,
 			},
-			signatureHelpProvider: {
-				triggerCharacters: [' '],
-			},
-			textDocumentSync: {
-				change: ls.TextDocumentSyncKind.Incremental,
-				openClose: true,
-			},
+			signatureHelpProvider: { triggerCharacters: [' '] },
+			textDocumentSync: { change: ls.TextDocumentSyncKind.Incremental, openClose: true },
 			workspaceSymbolProvider: {},
-			experimental: {
-				spyglassmc: customCapabilities,
-			},
+			experimental: { spyglassmc: customCapabilities },
 		},
 	}
 
 	if (capabilities.workspace?.workspaceFolders) {
 		ans.capabilities.workspace = {
-			workspaceFolders: {
-				supported: true,
-				changeNotifications: true,
-			},
+			workspaceFolders: { supported: true, changeNotifications: true },
 		}
 	}
 
@@ -199,33 +165,29 @@ connection.onDidOpenTextDocument(
 		return service.project.onDidOpen(uri, languageID, version, text)
 	},
 )
-connection.onDidChangeTextDocument(
-	({ contentChanges, textDocument: { uri, version } }) => {
-		return service.project.onDidChange(uri, contentChanges, version)
-	},
-)
+connection.onDidChangeTextDocument(({ contentChanges, textDocument: { uri, version } }) => {
+	return service.project.onDidChange(uri, contentChanges, version)
+})
 connection.onDidCloseTextDocument(({ textDocument: { uri } }) => {
 	service.project.onDidClose(uri)
 })
 
 connection.workspace.onDidRenameFiles(({}) => {})
 
-connection.onColorPresentation(
-	async ({ textDocument: { uri }, color, range }) => {
-		const docAndNode = await service.project.ensureClientManagedChecked(uri)
-		if (!docAndNode) {
-			return undefined
-		}
-		const { doc, node } = docAndNode
-		const presentation = service.getColorPresentation(
-			node,
-			doc,
-			toCore.range(range, doc),
-			toCore.color(color),
-		)
-		return toLS.colorPresentationArray(presentation, doc)
-	},
-)
+connection.onColorPresentation(async ({ textDocument: { uri }, color, range }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	const presentation = service.getColorPresentation(
+		node,
+		doc,
+		toCore.range(range, doc),
+		toCore.color(color),
+	)
+	return toLS.colorPresentationArray(presentation, doc)
+})
 connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
 	if (!docAndNode) {
@@ -236,31 +198,23 @@ connection.onDocumentColor(async ({ textDocument: { uri } }) => {
 	return toLS.colorInformationArray(info, doc)
 })
 
-connection.onCompletion(
-	async ({ textDocument: { uri }, position, context }) => {
-		const docAndNode = await service.project.ensureClientManagedChecked(uri)
-		if (!docAndNode) {
-			return undefined
-		}
-		const { doc, node } = docAndNode
-		const offset = toCore.offset(position, doc)
-		const items = service.complete(
-			node,
+connection.onCompletion(async ({ textDocument: { uri }, position, context }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return undefined
+	}
+	const { doc, node } = docAndNode
+	const offset = toCore.offset(position, doc)
+	const items = service.complete(node, doc, offset, context?.triggerCharacter)
+	return items.map((item) =>
+		toLS.completionItem(
+			item,
 			doc,
 			offset,
-			context?.triggerCharacter,
+			capabilities.textDocument?.completion?.completionItem?.insertReplaceSupport,
 		)
-		return items.map((item) =>
-			toLS.completionItem(
-				item,
-				doc,
-				offset,
-				capabilities.textDocument?.completion?.completionItem
-					?.insertReplaceSupport,
-			)
-		)
-	},
-)
+	)
+})
 
 connection.onRequest(
 	'spyglassmc/dataHackPubify',
@@ -275,17 +229,11 @@ connection.onDeclaration(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(
-		node,
-		doc,
-		toCore.offset(position, doc),
-		['declaration', 'definition'],
-	)
-	return toLS.locationLink(
-		ans,
-		doc,
-		capabilities.textDocument?.declaration?.linkSupport,
-	)
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), [
+		'declaration',
+		'definition',
+	])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.declaration?.linkSupport)
 })
 connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -293,17 +241,13 @@ connection.onDefinition(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(
-		node,
-		doc,
-		toCore.offset(position, doc),
-		['definition', 'declaration', 'implementation', 'typeDefinition'],
-	)
-	return toLS.locationLink(
-		ans,
-		doc,
-		capabilities.textDocument?.definition?.linkSupport,
-	)
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), [
+		'definition',
+		'declaration',
+		'implementation',
+		'typeDefinition',
+	])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.definition?.linkSupport)
 })
 connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -311,24 +255,14 @@ connection.onImplementation(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(
-		node,
-		doc,
-		toCore.offset(position, doc),
-		['implementation', 'definition'],
-	)
-	return toLS.locationLink(
-		ans,
-		doc,
-		capabilities.textDocument?.implementation?.linkSupport,
-	)
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), [
+		'implementation',
+		'definition',
+	])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.implementation?.linkSupport)
 })
 connection.onReferences(
-	async ({
-		textDocument: { uri },
-		position,
-		context: { includeDeclaration },
-	}) => {
+	async ({ textDocument: { uri }, position, context: { includeDeclaration } }) => {
 		const docAndNode = await service.project.ensureClientManagedChecked(uri)
 		if (!docAndNode) {
 			return undefined
@@ -349,17 +283,10 @@ connection.onTypeDefinition(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const ans = await service.getSymbolLocations(
-		node,
-		doc,
-		toCore.offset(position, doc),
-		['typeDefinition'],
-	)
-	return toLS.locationLink(
-		ans,
-		doc,
-		capabilities.textDocument?.typeDefinition?.linkSupport,
-	)
+	const ans = await service.getSymbolLocations(node, doc, toCore.offset(position, doc), [
+		'typeDefinition',
+	])
+	return toLS.locationLink(ans, doc, capabilities.textDocument?.typeDefinition?.linkSupport)
 })
 
 connection.onDocumentHighlight(async ({ textDocument: { uri }, position }) => {
@@ -387,8 +314,7 @@ connection.onDocumentSymbol(async ({ textDocument: { uri } }) => {
 	return toLS.documentSymbolsFromTables(
 		[service.project.symbols.global, ...core.AstNode.getLocalsToLeaves(node)],
 		doc,
-		capabilities.textDocument?.documentSymbol
-			?.hierarchicalDocumentSymbolSupport,
+		capabilities.textDocument?.documentSymbol?.hierarchicalDocumentSymbolSupport,
 		capabilities.textDocument?.documentSymbol?.symbolKind?.valueSet,
 	)
 })
@@ -413,12 +339,9 @@ connection.languages.inlayHint.on(async ({ textDocument: { uri }, range }) => {
 	return toLS.inlayHints(hints, doc)
 })
 
-connection.onRequest(
-	'spyglassmc/resetProjectCache',
-	async (): Promise<void> => {
-		return service.project.resetCache()
-	},
-)
+connection.onRequest('spyglassmc/resetProjectCache', async (): Promise<void> => {
+	return service.project.resetCache()
+})
 
 connection.onRequest('spyglassmc/showCacheRoot', async (): Promise<void> => {
 	return service.project.showCacheRoot()
@@ -437,21 +360,19 @@ connection.languages.semanticTokens.on(async ({ textDocument: { uri } }) => {
 		capabilities.textDocument?.semanticTokens?.multilineTokenSupport,
 	)
 })
-connection.languages.semanticTokens.onRange(
-	async ({ textDocument: { uri }, range }) => {
-		const docAndNode = await service.project.ensureClientManagedChecked(uri)
-		if (!docAndNode) {
-			return { data: [] }
-		}
-		const { doc, node } = docAndNode
-		const tokens = service.colorize(node, doc, toCore.range(range, doc))
-		return toLS.semanticTokens(
-			tokens,
-			doc,
-			capabilities.textDocument?.semanticTokens?.multilineTokenSupport,
-		)
-	},
-)
+connection.languages.semanticTokens.onRange(async ({ textDocument: { uri }, range }) => {
+	const docAndNode = await service.project.ensureClientManagedChecked(uri)
+	if (!docAndNode) {
+		return { data: [] }
+	}
+	const { doc, node } = docAndNode
+	const tokens = service.colorize(node, doc, toCore.range(range, doc))
+	return toLS.semanticTokens(
+		tokens,
+		doc,
+		capabilities.textDocument?.semanticTokens?.multilineTokenSupport,
+	)
+})
 
 connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 	const docAndNode = await service.project.ensureClientManagedChecked(uri)
@@ -459,11 +380,7 @@ connection.onSignatureHelp(async ({ textDocument: { uri }, position }) => {
 		return undefined
 	}
 	const { doc, node } = docAndNode
-	const help = service.getSignatureHelp(
-		node,
-		doc,
-		toCore.offset(position, doc),
-	)
+	const help = service.getSignatureHelp(node, doc, toCore.offset(position, doc))
 	return toLS.signatureHelp(help)
 })
 

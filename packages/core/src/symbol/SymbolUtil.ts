@@ -20,12 +20,16 @@ export interface LookupResult {
 	 * The {@link SymbolMap} that contains the symbol. If `symbol` is `undefined`, this property will be the map that could
 	 * potentially store the symbol if it's ever created. `undefined` if no such map exists.
 	 */
-	parentMap: SymbolMap | undefined
+	parentMap:
+		| SymbolMap
+		| undefined
 	/**
 	 * The {@link Symbol} of which `symbol` is a member. If `symbol` is `undefined`, this property will be the symbol that could
 	 * potentially store the symbol as a member if it's ever created. `undefined` if no such symbol exists.
 	 */
-	parentSymbol: Symbol | undefined
+	parentSymbol:
+		| Symbol
+		| undefined
 	/**
 	 * The {@link Symbol} corresponding to the `path`. `undefined` if no such symbol exists.
 	 */
@@ -53,11 +57,11 @@ export class SymbolUtil implements ExternalEventEmitter {
 	readonly #eventEmitterConstructor: Externals['event']['EventEmitter']
 
 	readonly #trimmableSymbols = new Set<string>()
-	readonly #cache: {
-		[contributor: string]: UriSymbolCache
-	} = Object.create(null)
+	readonly #cache: { [contributor: string]: UriSymbolCache } = Object.create(null)
 
-	#currentContributor: string | undefined
+	#currentContributor:
+		| string
+		| undefined
 
 	/**
 	 * @internal
@@ -88,37 +92,26 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 		this.on('symbolCreated', ({ symbol }) => {
 			this.#trimmableSymbols.add(SymbolPath.toString(symbol))
+		}).on('symbolRemoved', ({ symbol }) => {
+			this.#trimmableSymbols.delete(SymbolPath.toString(symbol))
+		}).on('symbolLocationCreated', ({ symbol, location }) => {
+			const cache =
+				(this.#cache[location.contributor ?? 'undefined'] ??= Object.create(null) as never)
+			const fileSymbols = (cache[location.uri] ??= new Set())
+			const path = SymbolPath.toString(symbol)
+			fileSymbols.add(path)
+			this.#trimmableSymbols.delete(path)
+		}).on('symbolLocationRemoved', ({ symbol }) => {
+			const path = SymbolPath.toString(symbol)
+			this.#trimmableSymbols.add(path)
 		})
-			.on('symbolRemoved', ({ symbol }) => {
-				this.#trimmableSymbols.delete(SymbolPath.toString(symbol))
-			})
-			.on('symbolLocationCreated', ({ symbol, location }) => {
-				const cache = (this.#cache[location.contributor ?? 'undefined'] ??= Object
-					.create(
-						null,
-					) as never)
-				const fileSymbols = (cache[location.uri] ??= new Set())
-				const path = SymbolPath.toString(symbol)
-				fileSymbols.add(path)
-				this.#trimmableSymbols.delete(path)
-			})
-			.on('symbolLocationRemoved', ({ symbol }) => {
-				const path = SymbolPath.toString(symbol)
-				this.#trimmableSymbols.add(path)
-			})
 	}
 
 	on(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
 	on(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
 	on(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	on(
-		event: 'symbolLocationCreated',
-		callbackFn: (data: SymbolLocationEvent) => void,
-	): this
-	on(
-		event: 'symbolLocationRemoved',
-		callbackFn: (data: SymbolLocationEvent) => void,
-	): this
+	on(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	on(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
 	on(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.on(event, callbackFn)
 		return this
@@ -127,14 +120,8 @@ export class SymbolUtil implements ExternalEventEmitter {
 	once(event: 'symbolCreated', callbackFn: (data: SymbolEvent) => void): this
 	once(event: 'symbolAmended', callbackFn: (data: SymbolEvent) => void): this
 	once(event: 'symbolRemoved', callbackFn: (data: SymbolEvent) => void): this
-	once(
-		event: 'symbolLocationCreated',
-		callbackFn: (data: SymbolLocationEvent) => void,
-	): this
-	once(
-		event: 'symbolLocationRemoved',
-		callbackFn: (data: SymbolLocationEvent) => void,
-	): this
+	once(event: 'symbolLocationCreated', callbackFn: (data: SymbolLocationEvent) => void): this
+	once(event: 'symbolLocationRemoved', callbackFn: (data: SymbolLocationEvent) => void): this
 	once(event: string, callbackFn: (...args: any[]) => unknown): this {
 		this.#eventEmitter.once(event, callbackFn)
 		return this
@@ -193,10 +180,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 * @param fn All symbols added in this function will be considered as URI bound.
 	 * @param keepExisting Default to `false`, indicating existing symbols contributed by the specified contributor will be removed first. Set to `true` to keep them instead.
 	 */
-	contributeAs(
-		contributor: SymbolLocationBuiltInContributor,
-		fn: () => unknown,
-	): this
+	contributeAs(contributor: SymbolLocationBuiltInContributor, fn: () => unknown): this
 	contributeAs(contributor: string, fn: () => unknown): this
 	contributeAs(contributor: string, fn: () => unknown): this {
 		const originalValue = this.#currentContributor
@@ -216,14 +200,8 @@ export class SymbolUtil implements ExternalEventEmitter {
 		contributor: SymbolLocationBuiltInContributor,
 		fn: () => PromiseLike<unknown>,
 	): Promise<this>
-	async contributeAsAsync(
-		contributor: string,
-		fn: () => PromiseLike<unknown>,
-	): Promise<this>
-	async contributeAsAsync(
-		contributor: string,
-		fn: () => PromiseLike<unknown>,
-	): Promise<this> {
+	async contributeAsAsync(contributor: string, fn: () => PromiseLike<unknown>): Promise<this>
+	async contributeAsAsync(contributor: string, fn: () => PromiseLike<unknown>): Promise<this> {
 		const originalValue = this.#currentContributor
 		this.#currentContributor = contributor
 		try {
@@ -242,15 +220,13 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 * 	- `predicate` - clear symbol locations matching this predicate
 	 */
 	@DelayModeSupport()
-	clear({
-		uri,
-		contributor,
-		predicate = () => true,
-	}: {
-		contributor?: string
-		uri?: string
-		predicate?: (this: void, data: SymbolLocationEvent) => boolean
-	}): void {
+	clear(
+		{ uri, contributor, predicate = () => true }: {
+			contributor?: string
+			uri?: string
+			predicate?: (this: void, data: SymbolLocationEvent) => boolean
+		},
+	): void {
 		const getCaches = (): UriSymbolCache[] => {
 			if (contributor) {
 				return this.#cache[contributor] ? [this.#cache[contributor]] : []
@@ -263,10 +239,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 			const sets: Set<string>[] = uri
 				? caches.map((cache) => cache[uri] ?? new Set())
 				: caches.map((cache) => Object.values(cache)).flat()
-			return sets
-				.map((s) => [...s])
-				.flat()
-				.map(SymbolPath.fromString)
+			return sets.map((s) => [...s]).flat().map(SymbolPath.fromString)
 		}
 		const getTables = (): SymbolTable[] => {
 			return uri ? [this.#global] : [this.#global]
@@ -275,19 +248,13 @@ export class SymbolUtil implements ExternalEventEmitter {
 		const tables = getTables()
 		for (const table of tables) {
 			for (const path of paths) {
-				const { symbol } = SymbolUtil.lookupTable(
-					table,
-					path.category,
-					path.path,
-				)
+				const { symbol } = SymbolUtil.lookupTable(table, path.category, path.path)
 				if (!symbol) {
 					continue
 				}
 				this.removeLocationsFromSymbol(
 					symbol,
-					uri
-						? (data) => data.location.uri === uri && predicate(data)
-						: predicate,
+					uri ? (data) => data.location.uri === uri && predicate(data) : predicate,
 				)
 			}
 			this.trim(table)
@@ -299,21 +266,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 *
 	 * @returns A {@link LookupResult}
 	 */
-	lookup(
-		category: AllCategory,
-		path: readonly string[],
-		node?: AstNode,
-	): LookupResult
-	lookup(
-		category: string,
-		path: readonly string[],
-		node?: AstNode,
-	): LookupResult
-	lookup(
-		category: string,
-		path: readonly string[],
-		node?: AstNode,
-	): LookupResult {
+	lookup(category: AllCategory, path: readonly string[], node?: AstNode): LookupResult
+	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult
+	lookup(category: string, path: readonly string[], node?: AstNode): LookupResult {
 		while (node) {
 			if (node.locals) {
 				const result = SymbolUtil.lookupTable(node.locals, category, path)
@@ -338,11 +293,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 		category: AllCategory,
 		...path: string[]
 	): SymbolQuery
-	query(
-		doc: DocAndNode | TextDocument | string,
-		category: string,
-		...path: string[]
-	): SymbolQuery
+	query(doc: DocAndNode | TextDocument | string, category: string, ...path: string[]): SymbolQuery
 	query(
 		doc: DocAndNode | TextDocument | string,
 		category: string,
@@ -402,11 +353,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 		}
 		for (const pathString of this.#trimmableSymbols) {
 			const path = SymbolPath.fromString(pathString)
-			const { symbol } = SymbolUtil.lookupTable(
-				table,
-				path.category,
-				path.path,
-			)
+			const { symbol } = SymbolUtil.lookupTable(table, path.category, path.path)
 			trimSymbol(symbol)
 		}
 	}
@@ -420,17 +367,14 @@ export class SymbolUtil implements ExternalEventEmitter {
 			if (!symbol[type]) {
 				continue
 			}
-			symbol[type] = symbol[type]!.reduce<SymbolLocation[]>(
-				(result, location) => {
-					if (predicate({ location, symbol, type })) {
-						this.emit('symbolLocationRemoved', { symbol, type, location })
-					} else {
-						result.push(location)
-					}
-					return result
-				},
-				[],
-			)
+			symbol[type] = symbol[type]!.reduce<SymbolLocation[]>((result, location) => {
+				if (predicate({ location, symbol, type })) {
+					this.emit('symbolLocationRemoved', { symbol, type, location })
+				} else {
+					result.push(location)
+				}
+				return result
+			}, [])
 		}
 	}
 
@@ -506,16 +450,8 @@ export class SymbolUtil implements ExternalEventEmitter {
 		category: AllCategory,
 		path: readonly string[],
 	): LookupResult
-	static lookupTable(
-		table: SymbolTable,
-		category: string,
-		path: readonly string[],
-	): LookupResult
-	static lookupTable(
-		table: SymbolTable,
-		category: string,
-		path: readonly string[],
-	): LookupResult {
+	static lookupTable(table: SymbolTable, category: string, path: readonly string[]): LookupResult
+	static lookupTable(table: SymbolTable, category: string, path: readonly string[]): LookupResult {
 		let parentMap: SymbolMap | undefined = table[category]
 		let parentSymbol: Symbol | undefined
 		let symbol: Symbol | undefined
@@ -558,7 +494,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 		path: readonly string[],
 	): LookupResult {
 		let parentMap: SymbolMap | undefined
-		let parentSymbol: Symbol | undefined
+		let parentSymbol:
+			| Symbol
+			| undefined
 
 		// Traverse from the last table to the first one.
 		for (let i = tables.length - 1; i >= 0; i--) {
@@ -567,11 +505,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 			if (result.symbol) {
 				return result
 			}
-			if (
-				!parentSymbol
-				&& !parentMap
-				&& (result.parentSymbol || result.parentMap)
-			) {
+			if (!parentSymbol && !parentMap && (result.parentSymbol || result.parentMap)) {
 				parentSymbol = result.parentSymbol
 				parentMap = result.parentMap
 			}
@@ -613,10 +547,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 		this.amendSymbolUsage(symbol, addition.usage, doc, contributor)
 	}
 
-	private amendSymbolMetadata(
-		symbol: Symbol,
-		addition: SymbolAddition['data'],
-	): void {
+	private amendSymbolMetadata(symbol: Symbol, addition: SymbolAddition['data']): void {
 		if (addition) {
 			if ('data' in addition) {
 				symbol.data = addition.data
@@ -637,13 +568,10 @@ export class SymbolUtil implements ExternalEventEmitter {
 				// Visibility changes are only accepted if the change wouldn't result in the
 				// symbol being stored in a different symbol table.
 				const inGlobalTable = (v: SymbolVisibility | undefined) =>
-					v === undefined
-					|| v === SymbolVisibility.Public
-					|| v === SymbolVisibility.Restricted
+					v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted
 				if (
 					symbol.visibility === addition.visibility
-					|| (inGlobalTable(symbol.visibility)
-						&& inGlobalTable(addition.visibility))
+					|| (inGlobalTable(symbol.visibility) && inGlobalTable(addition.visibility))
 				) {
 					symbol.visibility = addition.visibility
 				} else {
@@ -655,9 +583,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 				}
 			}
 			if (addition.visibilityRestriction?.length) {
-				symbol.visibilityRestriction = (
-					symbol.visibilityRestriction ?? []
-				).concat(addition.visibilityRestriction)
+				symbol.visibilityRestriction = (symbol.visibilityRestriction ?? []).concat(
+					addition.visibilityRestriction,
+				)
 			}
 		}
 	}
@@ -672,20 +600,12 @@ export class SymbolUtil implements ExternalEventEmitter {
 			const type = addition.type ?? 'reference'
 			const arr = (symbol[type] ??= [])
 			const range = Range.get(
-				(SymbolAdditionUsageWithNode.is(addition)
-					? addition.node
-					: addition.range) ?? 0,
+				(SymbolAdditionUsageWithNode.is(addition) ? addition.node : addition.range) ?? 0,
 			)
-			const location = SymbolLocation.create(
-				doc,
-				range,
-				addition.fullRange,
-				contributor,
-				{
-					accessType: addition.accessType,
-					skipRenaming: addition.skipRenaming,
-				},
-			)
+			const location = SymbolLocation.create(doc, range, addition.fullRange, contributor, {
+				accessType: addition.accessType,
+				skipRenaming: addition.skipRenaming,
+			})
 			if (!doc.uri.startsWith('file:')) {
 				delete location.range
 				delete location.posRange
@@ -703,18 +623,12 @@ export class SymbolUtil implements ExternalEventEmitter {
 	resolveAlias(symbol: Symbol | undefined): Symbol | undefined {
 		return symbol?.relations?.aliasOf
 			? this.resolveAlias(
-				this.lookup(
-					symbol.relations.aliasOf.category,
-					symbol.relations.aliasOf.path,
-				).symbol,
+				this.lookup(symbol.relations.aliasOf.category, symbol.relations.aliasOf.path).symbol,
 			)
 			: symbol
 	}
 
-	static filterVisibleSymbols(
-		uri: string | undefined,
-		map: SymbolMap = {},
-	): SymbolMap {
+	static filterVisibleSymbols(uri: string | undefined, map: SymbolMap = {}): SymbolMap {
 		const ans: SymbolMap = {}
 
 		for (const [identifier, symbol] of Object.entries(map)) {
@@ -727,14 +641,12 @@ export class SymbolUtil implements ExternalEventEmitter {
 	}
 
 	static isTrimmable(symbol: Symbol): boolean {
-		return (
-			!Object.keys(symbol.members ?? {}).length
+		return (!Object.keys(symbol.members ?? {}).length
 			&& !symbol.declaration?.length
 			&& !symbol.definition?.length
 			&& !symbol.implementation?.length
 			&& !symbol.reference?.length
-			&& !symbol.typeDefinition?.length
-		)
+			&& !symbol.typeDefinition?.length)
 	}
 
 	/**
@@ -745,14 +657,8 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 * - For `Restricted` visibility, // TODO: roots.
 	 */
 	static isVisible(symbol: Symbol, uri: string): boolean
-	static isVisible(
-		symbol: Symbol,
-		uri: string | undefined,
-	): boolean | undefined
-	static isVisible(
-		symbol: Symbol,
-		_uri: string | undefined,
-	): boolean | undefined {
+	static isVisible(symbol: Symbol, uri: string | undefined): boolean | undefined
+	static isVisible(symbol: Symbol, _uri: string | undefined): boolean | undefined {
 		switch (symbol.visibility) {
 			case SymbolVisibility.Restricted:
 				return false // FIXME: check with workspace root URIs.
@@ -773,36 +679,26 @@ export class SymbolUtil implements ExternalEventEmitter {
 	/**
 	 * @returns If the symbol has definitions, or declarations and implementations.
 	 */
-	static isDefined(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): symbol is Symbol {
-		return !!(
-			symbol?.definition?.length
-			|| (symbol?.definition?.length && symbol?.implementation?.length)
-		)
+	static isDefined(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
+		return !!(symbol?.definition?.length
+			|| (symbol?.definition?.length && symbol?.implementation?.length))
 	}
 	/**
 	 * @returns If the symbol has implementations or definitions.
 	 */
-	static isImplemented(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): symbol is Symbol {
+	static isImplemented(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!(symbol?.implementation?.length || symbol?.definition?.length)
 	}
 	/**
 	 * @returns If the symbol has references.
 	 */
-	static isReferenced(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): symbol is Symbol {
+	static isReferenced(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!symbol?.reference?.length
 	}
 	/**
 	 * @returns If the symbol has type definitions.
 	 */
-	static isTypeDefined(
-		symbol: DeepReadonly<Symbol> | undefined,
-	): symbol is Symbol {
+	static isTypeDefined(symbol: DeepReadonly<Symbol> | undefined): symbol is Symbol {
 		return !!symbol?.typeDefinition?.length
 	}
 
@@ -810,25 +706,14 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 * @throws If the symbol does not have any declarations or definitions.
 	 */
 	static getDeclaredLocation(symbol: DeepReadonly<Symbol>): SymbolLocation {
-		return (
-			symbol.declaration?.[0]
-				?? symbol.definition?.[0]
-				?? (() => {
-					throw new Error(
-						`Cannot get declared location of ${
-							JSON.stringify(
-								SymbolPath.fromSymbol(symbol),
-							)
-						}`,
-					)
-				})()
-		)
+		return (symbol.declaration?.[0] ?? symbol.definition?.[0] ?? (() => {
+			throw new Error(
+				`Cannot get declared location of ${JSON.stringify(SymbolPath.fromSymbol(symbol))}`,
+			)
+		})())
 	}
 
-	static forEachSymbolInMap(
-		map: SymbolMap,
-		fn: (symbol: Symbol) => unknown,
-	): void {
+	static forEachSymbolInMap(map: SymbolMap, fn: (symbol: Symbol) => unknown): void {
 		for (const symbol of Object.values(map!)) {
 			fn(symbol)
 			if (symbol.members) {
@@ -837,10 +722,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 		}
 	}
 
-	static forEachSymbol(
-		table: SymbolTable,
-		fn: (symbol: Symbol) => unknown,
-	): void {
+	static forEachSymbol(table: SymbolTable, fn: (symbol: Symbol) => unknown): void {
 		for (const map of Object.values(table)) {
 			this.forEachSymbolInMap(map!, fn)
 		}
@@ -848,9 +730,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 	static forEachLocationOfSymbol(
 		symbol: Symbol,
-		fn: (
-			data: { type: SymbolUsageType; location: SymbolLocation },
-		) => unknown,
+		fn: (data: { type: SymbolUsageType; location: SymbolLocation }) => unknown,
 	): void {
 		for (const type of SymbolUsageTypes) {
 			symbol[type]?.forEach((location) => fn({ type, location }))
@@ -858,22 +738,16 @@ export class SymbolUtil implements ExternalEventEmitter {
 	}
 
 	static isVisibilityInGlobal(v: SymbolVisibility | undefined) {
-		return (
-			v === undefined
-			|| v === SymbolVisibility.Public
-			|| v === SymbolVisibility.Restricted
-		)
+		return (v === undefined || v === SymbolVisibility.Public || v === SymbolVisibility.Restricted)
 	}
 
 	static areVisibilitiesCompatible(
 		v1: SymbolVisibility | undefined,
 		v2: SymbolVisibility | undefined,
 	) {
-		return (
-			(this.isVisibilityInGlobal(v1) && this.isVisibilityInGlobal(v2))
+		return ((this.isVisibilityInGlobal(v1) && this.isVisibilityInGlobal(v2))
 			|| (v1 === SymbolVisibility.Block && v2 === SymbolVisibility.Block)
-			|| (v1 === SymbolVisibility.File && v2 === SymbolVisibility.File)
-		)
+			|| (v1 === SymbolVisibility.File && v2 === SymbolVisibility.File))
 	}
 }
 
@@ -881,9 +755,7 @@ interface SymbolAddition {
 	data?: SymbolMetadata
 	usage?: SymbolAdditionUsage
 }
-type SymbolAdditionUsage =
-	| SymbolAdditionUsageWithRange
-	| SymbolAdditionUsageWithNode
+type SymbolAdditionUsage = SymbolAdditionUsageWithRange | SymbolAdditionUsageWithNode
 interface SymbolAdditionUsageBase extends SymbolLocationMetadata {
 	/**
 	 * The type of this usage. Use `definition` when the usage consists both a `declaration` and an `implementation`.
@@ -964,7 +836,9 @@ export class SymbolQuery {
 	readonly category: string
 	path: readonly string[]
 	readonly #doc: TextDocument
-	readonly #node: AstNode | undefined
+	readonly #node:
+		| AstNode
+		| undefined
 	/**
 	 * If only a string URI (instead of a {@link TextDocument}) is provided when constructing this class.
 	 *
@@ -977,11 +851,15 @@ export class SymbolQuery {
 	 * The map where the queried symbol is stored. `undefined` if the map hasn't been created yet.
 	 */
 	#map: SymbolMap | undefined
-	#parentSymbol: Symbol | undefined
+	#parentSymbol:
+		| Symbol
+		| undefined
 	/**
 	 * The queried symbol. `undefined` if the symbol hasn't been created yet.
 	 */
-	#symbol: Symbol | undefined
+	#symbol:
+		| Symbol
+		| undefined
 	/**
 	 * The {@link SymbolUtil} where this query was created.
 	 */
@@ -998,25 +876,18 @@ export class SymbolQuery {
 		)
 	}
 
-	constructor({
-		category,
-		contributor,
-		doc,
-		map,
-		parentSymbol,
-		path,
-		symbol,
-		util,
-	}: {
-		category: string
-		contributor: string | undefined
-		doc: DocAndNode | TextDocument | string
-		map: SymbolMap | undefined
-		parentSymbol: Symbol | undefined
-		path: readonly string[]
-		symbol: Symbol | undefined
-		util: SymbolUtil
-	}) {
+	constructor(
+		{ category, contributor, doc, map, parentSymbol, path, symbol, util }: {
+			category: string
+			contributor: string | undefined
+			doc: DocAndNode | TextDocument | string
+			map: SymbolMap | undefined
+			parentSymbol: Symbol | undefined
+			path: readonly string[]
+			symbol: Symbol | undefined
+			util: SymbolUtil
+		},
+	) {
 		this.category = category
 		this.path = path
 
@@ -1039,9 +910,7 @@ export class SymbolQuery {
 		return this.#symbol
 	}
 
-	getData<T>(
-		predicate: (this: void, value: unknown) => value is T,
-	): T | undefined {
+	getData<T>(predicate: (this: void, value: unknown) => value is T): T | undefined {
 		const data = this.#symbol?.data
 		return predicate(data) ? data : undefined
 	}
@@ -1052,10 +921,7 @@ export class SymbolQuery {
 	}
 
 	if(
-		predicate: (
-			this: void,
-			symbol: Symbol | undefined,
-		) => symbol is undefined,
+		predicate: (this: void, symbol: Symbol | undefined) => symbol is undefined,
 		fn: QueryCallback<undefined>,
 	): this
 	if(
@@ -1153,24 +1019,15 @@ export class SymbolQuery {
 		 * * If the visibility is specified, use it.
 		 * * If the visibility is `undefined`, use the visibility of the symbol, or `Public` if unapplicable.
 		 */
-		const getAdditionVisibility = (
-			addition: SymbolAddition,
-		): SymbolVisibility => {
-			return (
-				addition.data?.visibility
-					?? this.symbol?.visibility
-					?? SymbolVisibility.Public
-			)
+		const getAdditionVisibility = (addition: SymbolAddition): SymbolVisibility => {
+			return (addition.data?.visibility ?? this.symbol?.visibility ?? SymbolVisibility.Public)
 		}
 
 		const getMap = (addition: SymbolAddition): SymbolMap => {
 			const additionVisibility = getAdditionVisibility(addition)
 			if (
 				this.#map
-				&& SymbolUtil.areVisibilitiesCompatible(
-					additionVisibility,
-					this.#symbol?.visibility,
-				)
+				&& SymbolUtil.areVisibilitiesCompatible(additionVisibility, this.#symbol?.visibility)
 			) {
 				return this.#map
 			}
@@ -1184,13 +1041,9 @@ export class SymbolQuery {
 					) {
 						throw new Error(
 							`Cannot enter member “${this.getPath()}” of ${
-								SymbolFormatter.stringifyVisibility(
-									additionVisibility,
-								)
+								SymbolFormatter.stringifyVisibility(additionVisibility)
 							} visibility to parent of ${
-								SymbolFormatter.stringifyVisibility(
-									this.#parentSymbol.visibility,
-								)
+								SymbolFormatter.stringifyVisibility(this.#parentSymbol.visibility)
 							} visibility`,
 						)
 					}
@@ -1204,9 +1057,7 @@ export class SymbolQuery {
 					if (!this.#node) {
 						throw new Error(
 							`Cannot enter “${this.getPath()}” with ${
-								SymbolFormatter.stringifyVisibility(
-									additionVisibility,
-								)
+								SymbolFormatter.stringifyVisibility(additionVisibility)
 							} visibility as no node is supplied`,
 						)
 					}
@@ -1221,9 +1072,7 @@ export class SymbolQuery {
 					if (!table) {
 						throw new Error(
 							`Cannot enter “${this.getPath()}” with ${
-								SymbolFormatter.stringifyVisibility(
-									additionVisibility,
-								)
+								SymbolFormatter.stringifyVisibility(additionVisibility)
 							} visibility as no file node is supplied`,
 						)
 					}
@@ -1231,9 +1080,7 @@ export class SymbolQuery {
 					if (!this.#node) {
 						throw new Error(
 							`Cannot enter “${this.getPath()}” with ${
-								SymbolFormatter.stringifyVisibility(
-									additionVisibility,
-								)
+								SymbolFormatter.stringifyVisibility(additionVisibility)
 							} visibility as no node is supplied`,
 						)
 					}
@@ -1248,9 +1095,7 @@ export class SymbolQuery {
 					if (!table) {
 						throw new Error(
 							`Cannot enter “${this.getPath()}” with ${
-								SymbolFormatter.stringifyVisibility(
-									additionVisibility,
-								)
+								SymbolFormatter.stringifyVisibility(additionVisibility)
 							} visibility as no node with locals is supplied`,
 						)
 					}
@@ -1262,10 +1107,7 @@ export class SymbolQuery {
 		}
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
-		if (
-			this.#createdWithUri
-			&& SymbolAdditionUsageWithRange.is(addition.usage)
-		) {
+		if (this.#createdWithUri && SymbolAdditionUsageWithRange.is(addition.usage)) {
 			addition.usage.range = Range.create(0, 0)
 		}
 
@@ -1321,9 +1163,7 @@ export class SymbolQuery {
 		if (this.#symbol) {
 			const result = this.util.resolveAlias(this.#symbol)
 			if (!result) {
-				throw new Error(
-					'The current symbol points to an non-existent symbol.',
-				)
+				throw new Error('The current symbol points to an non-existent symbol.')
 			}
 			this.#symbol = result
 			this.#map = result.parentMap
@@ -1340,16 +1180,10 @@ export class SymbolQuery {
 	 * @throws If the current queried symbol doesn't exist.
 	 */
 	member(identifier: string, fn: QueryMemberCallback): this
-	member(
-		doc: TextDocument | string,
-		identifier: string,
-		fn: QueryMemberCallback,
-	): this
+	member(doc: TextDocument | string, identifier: string, fn: QueryMemberCallback): this
 	member(): this {
 		// Handle overloads.
-		let doc: TextDocument | string,
-			identifier: string,
-			fn: QueryMemberCallback
+		let doc: TextDocument | string, identifier: string, fn: QueryMemberCallback
 		if (arguments.length === 2) {
 			// Ensure the member query result will not unknowingly have a dummy TextDocument passed down from this class.
 			doc = this.#createdWithUri ? this.#doc.uri : this.#doc
@@ -1364,15 +1198,12 @@ export class SymbolQuery {
 		if (this.#symbol === undefined) {
 			throw new Error(
 				`Tried to query member symbol “${identifier}” from an undefined symbol (path “${
-					this.path.join(
-						'.',
-					)
+					this.path.join('.')
 				}”)`,
 			)
 		}
 
-		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri
-				&& !this.#createdWithUri
+		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri && !this.#createdWithUri
 			? this.#doc
 			: doc
 		const memberMap = this.#symbol.members
@@ -1396,19 +1227,14 @@ export class SymbolQuery {
 	 * Do something with this query on each value in a given iterable. The query itself will be included
 	 * in the callback function as the second parameter.
 	 */
-	onEach<T>(
-		values: Iterable<T>,
-		fn: (this: this, value: T, query: this) => unknown,
-	): this {
+	onEach<T>(values: Iterable<T>, fn: (this: this, value: T, query: this) => unknown): this {
 		for (const value of values) {
 			fn.call(this, value, this)
 		}
 		return this
 	}
 
-	forEachMember(
-		fn: (this: void, identifier: string, query: SymbolQuery) => unknown,
-	): this {
+	forEachMember(fn: (this: void, identifier: string, query: SymbolQuery) => unknown): this {
 		return this.onEach(
 			Object.keys(this.visibleMembers),
 			(identifier) => this.member(identifier, (query) => fn(identifier, query)),
@@ -1434,31 +1260,20 @@ export namespace SymbolFormatter {
 	}
 
 	export function stringifySymbolStack(stack: SymbolStack): string {
-		return stack
-			.map((table) => stringifySymbolTable(table))
-			.join('\n------------\n')
+		return stack.map((table) => stringifySymbolTable(table)).join('\n------------\n')
 	}
 
-	export function stringifySymbolTable(
-		table: SymbolTable,
-		indent = '',
-	): string {
+	export function stringifySymbolTable(table: SymbolTable, indent = ''): string {
 		const ans: [string, string][] = []
 		for (const category of Object.keys(table)) {
 			const map = table[category]!
 			ans.push([category, stringifySymbolMap(map, `${indent}${IndentChar}`)])
 		}
-		return (
-			ans
-				.map((v) => `CATEGORY ${v[0]}\n${v[1]}`)
-				.join(`\n${indent}------------\n`) || 'EMPTY TABLE'
-		)
+		return (ans.map((v) => `CATEGORY ${v[0]}\n${v[1]}`).join(`\n${indent}------------\n`)
+			|| 'EMPTY TABLE')
 	}
 
-	export function stringifySymbolMap(
-		map: SymbolMap | undefined,
-		indent = '',
-	): string {
+	export function stringifySymbolMap(map: SymbolMap | undefined, indent = ''): string {
 		if (!map) {
 			return 'undefined'
 		}
@@ -1471,10 +1286,7 @@ export namespace SymbolFormatter {
 		return ans.join(`\n${indent}------------\n`)
 	}
 
-	export function stringifySymbol(
-		symbol: Symbol | undefined,
-		indent = '',
-	): string {
+	export function stringifySymbol(symbol: Symbol | undefined, indent = ''): string {
 		if (!symbol) {
 			return 'undefined'
 		}
@@ -1483,12 +1295,7 @@ export namespace SymbolFormatter {
 		ans.push(
 			`SYMBOL ${symbol.path.join('.')}`
 				+ ` {${symbol.category}${symbol.subcategory ? ` (${symbol.subcategory})` : ''}}`
-				+ ` [${
-					stringifyVisibility(
-						symbol.visibility,
-						symbol.visibilityRestriction,
-					)
-				}]`,
+				+ ` [${stringifyVisibility(symbol.visibility, symbol.visibilityRestriction)}]`,
 		)
 		if (symbol.data) {
 			ans.push(`${IndentChar}data: ${JSON.stringify(symbol.data)}`)
@@ -1500,9 +1307,8 @@ export namespace SymbolFormatter {
 			if (symbol[type]) {
 				ans.push(
 					`${IndentChar}${type}:\n${
-						symbol[type]!.map(
-							(v) => `${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`,
-						).join(`\n${indent}${IndentChar.repeat(2)}------------\n`)
+						symbol[type]!.map((v) => `${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`)
+							.join(`\n${indent}${IndentChar.repeat(2)}------------\n`)
 					}`,
 				)
 			}
@@ -1513,10 +1319,7 @@ export namespace SymbolFormatter {
 		if (symbol.members) {
 			ans.push(
 				`${IndentChar}members:\n${
-					stringifySymbolMap(
-						symbol.members,
-						`${indent}${IndentChar.repeat(2)}`,
-					)
+					stringifySymbolMap(symbol.members, `${indent}${IndentChar.repeat(2)}`)
 				}`,
 			)
 		}
@@ -1544,9 +1347,7 @@ export namespace SymbolFormatter {
 				break
 		}
 		return `${stringVisibility}${
-			visibilityRestriction
-				? ` ${visibilityRestriction.map((v) => `“${v}”`).join(', ')}`
-				: ''
+			visibilityRestriction ? ` ${visibilityRestriction.map((v) => `“${v}”`).join(', ')}` : ''
 		}`
 	}
 
@@ -1566,14 +1367,8 @@ ${stringifySymbol(result.symbol, IndentChar)}`
  *
  * The decorated method MUST have return type `void`.
  */
-function DelayModeSupport(
-	getUtil: (self: any) => SymbolUtil = (self) => self,
-): MethodDecorator {
-	return (
-		_target: Object,
-		_key: string | symbol,
-		descripter: PropertyDescriptor,
-	) => {
+function DelayModeSupport(getUtil: (self: any) => SymbolUtil = (self) => self): MethodDecorator {
+	return (_target: Object, _key: string | symbol, descripter: PropertyDescriptor) => {
 		const decoratedMethod: (...args: unknown[]) => unknown = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
 		descripter.value = function(this: unknown, ...args: unknown[]) {
@@ -1588,8 +1383,6 @@ function DelayModeSupport(
 	}
 }
 
-function isDocAndNode(
-	doc: string | TextDocument | DocAndNode,
-): doc is DocAndNode {
+function isDocAndNode(doc: string | TextDocument | DocAndNode): doc is DocAndNode {
 	return !!(doc as DocAndNode).doc
 }

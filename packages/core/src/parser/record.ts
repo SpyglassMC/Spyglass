@@ -14,14 +14,9 @@ export interface Options<K extends AstNode, V extends AstNode> {
 	pair: {
 		key: Parser<K>
 		sep: string
-		value:
-			| Parser<V>
-			| {
-				get: (
-					recordResult: RecordNode<K, V>,
-					keyResult: K | undefined,
-				) => Parser<V>
-			}
+		value: Parser<V> | {
+			get: (recordResult: RecordNode<K, V>, keyResult: K | undefined) => Parser<V>
+		}
 		end: string
 		trailingEnd: boolean
 	}
@@ -31,17 +26,11 @@ export interface Options<K extends AstNode, V extends AstNode> {
 /**
  * @returns A parser that parses something coming in a key-value pair form. e.g. SNBT objects, entity selector arguments.
  */
-export function record<K extends AstNode, V extends AstNode>({
-	start,
-	pair,
-	end,
-}: Options<K, V>): InfallibleParser<RecordNode<K, V>> {
+export function record<K extends AstNode, V extends AstNode>(
+	{ start, pair, end }: Options<K, V>,
+): InfallibleParser<RecordNode<K, V>> {
 	return (src: Source, ctx: ParserContext): RecordNode<K, V> => {
-		const ans: RecordNode<K, V> = {
-			type: 'record',
-			range: Range.create(src),
-			children: [],
-		}
+		const ans: RecordNode<K, V> = { type: 'record', range: Range.create(src), children: [] }
 
 		if (src.trySkip(start)) {
 			src.skipWhitespace()
@@ -51,7 +40,9 @@ export function record<K extends AstNode, V extends AstNode>({
 			while (src.canRead() && src.peek(end.length) !== end) {
 				const pairStart = src.cursor
 				let key: K | undefined
-				let value: V | undefined
+				let value:
+					| V
+					| undefined
 
 				// Pair end of the last pair.
 				if (requiresPairEnd && !hasPairEnd) {
@@ -60,24 +51,19 @@ export function record<K extends AstNode, V extends AstNode>({
 
 				// Key.
 				const keyStart = src.cursor
-				const {
-					result: keyResult,
-					updateSrcAndCtx: updateForKey,
-					endCursor: keyEnd,
-				} = attempt(pair.key, src, ctx)
+				const { result: keyResult, updateSrcAndCtx: updateForKey, endCursor: keyEnd } = attempt(
+					pair.key,
+					src,
+					ctx,
+				)
 				if (
 					keyResult === Failure
 					|| (keyEnd - keyStart === 0
-						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
-							src.peek(),
-						))
+						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))
 				) {
 					ctx.err.report(
 						localize('expected', localize('parser.record.key')),
-						Range.create(
-							src,
-							() => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
-						),
+						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n')),
 					)
 				} else {
 					updateForKey()
@@ -99,24 +85,16 @@ export function record<K extends AstNode, V extends AstNode>({
 					? pair.value
 					: pair.value.get(ans, key)
 				const valueStart = src.cursor
-				const {
-					result: valueResult,
-					updateSrcAndCtx: updateForValue,
-					endCursor: valueEnd,
-				} = attempt(valueParser, src, ctx)
+				const { result: valueResult, updateSrcAndCtx: updateForValue, endCursor: valueEnd } =
+					attempt(valueParser, src, ctx)
 				if (
 					valueResult === Failure
 					|| (valueEnd - valueStart === 0
-						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
-							src.peek(),
-						))
+						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(src.peek()))
 				) {
 					ctx.err.report(
 						localize('expected', localize('parser.record.value')),
-						Range.create(
-							src,
-							() => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
-						),
+						Range.create(src, () => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n')),
 					)
 				} else {
 					updateForValue()
@@ -136,12 +114,7 @@ export function record<K extends AstNode, V extends AstNode>({
 					type: 'pair',
 					range: Range.create(pairStart, src),
 					...(key || value
-						? {
-							children: [key, value].filter((v) => !!v) as
-								| [K, V]
-								| [K]
-								| [V],
-						}
+						? { children: [key, value].filter((v) => !!v) as [K, V] | [K] | [V] }
 						: {}),
 					key,
 					sep: sepCharRange,

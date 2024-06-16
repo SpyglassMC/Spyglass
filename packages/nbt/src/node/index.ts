@@ -5,18 +5,11 @@ interface NbtBaseNode {
 	typeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
 }
 
-export type NbtNode =
-	| NbtPrimitiveNode
-	| NbtCompoundNode
-	| NbtCollectionNode
+export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode
 export namespace NbtNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtNode {
-		return (
-			NbtPrimitiveNode.is(node)
-			|| NbtCompoundNode.is(node)
-			|| NbtCollectionNode.is(node)
-		)
+		return (NbtPrimitiveNode.is(node) || NbtCompoundNode.is(node) || NbtCollectionNode.is(node))
 	}
 }
 
@@ -24,9 +17,7 @@ export namespace NbtNode {
 export type NbtPrimitiveNode = NbtNumberNode | NbtStringNode
 export namespace NbtPrimitiveNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtPrimitiveNode {
+	export function is(node: core.AstNode | undefined): node is NbtPrimitiveNode {
 		return NbtNumberNode.is(node) || NbtStringNode.is(node)
 	}
 }
@@ -51,22 +42,14 @@ export namespace NbtNumberNode {
 }
 
 // #region NbtIntegerAlikeNode
-export type NbtIntegerAlikeNode =
-	| NbtByteNode
-	| NbtShortNode
-	| NbtIntNode
-	| NbtLongNode
+export type NbtIntegerAlikeNode = NbtByteNode | NbtShortNode | NbtIntNode | NbtLongNode
 export namespace NbtIntegerAlikeNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtIntegerAlikeNode {
-		return (
-			NbtByteNode.is(node)
+	export function is(node: core.AstNode | undefined): node is NbtIntegerAlikeNode {
+		return (NbtByteNode.is(node)
 			|| NbtShortNode.is(node)
 			|| NbtIntNode.is(node)
-			|| NbtLongNode.is(node)
-		)
+			|| NbtLongNode.is(node))
 	}
 }
 
@@ -115,9 +98,7 @@ export namespace NbtLongNode {
 export type NbtFloatAlikeNode = NbtFloatNode | NbtDoubleNode
 export namespace NbtFloatAlikeNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtFloatAlikeNode {
+	export function is(node: core.AstNode | undefined): node is NbtFloatAlikeNode {
 		return NbtFloatNode.is(node) || NbtDoubleNode.is(node)
 	}
 }
@@ -159,9 +140,7 @@ export namespace NbtCompoundNode {
 export type NbtCollectionNode = NbtListNode | NbtPrimitiveArrayNode
 export namespace NbtCollectionNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtCollectionNode {
+	export function is(node: core.AstNode | undefined): node is NbtCollectionNode {
 		return NbtListNode.is(node) || NbtPrimitiveArrayNode.is(node)
 	}
 }
@@ -178,20 +157,11 @@ export namespace NbtListNode {
 }
 
 // #region NbtPrimitiveArrayNode
-export type NbtPrimitiveArrayNode =
-	| NbtByteArrayNode
-	| NbtIntArrayNode
-	| NbtLongArrayNode
+export type NbtPrimitiveArrayNode = NbtByteArrayNode | NbtIntArrayNode | NbtLongArrayNode
 export namespace NbtPrimitiveArrayNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtPrimitiveArrayNode {
-		return (
-			NbtByteArrayNode.is(node)
-			|| NbtIntArrayNode.is(node)
-			|| NbtLongArrayNode.is(node)
-		)
+	export function is(node: core.AstNode | undefined): node is NbtPrimitiveArrayNode {
+		return (NbtByteArrayNode.is(node) || NbtIntArrayNode.is(node) || NbtLongArrayNode.is(node))
 	}
 }
 
@@ -200,9 +170,7 @@ export interface NbtByteArrayNode extends core.ListNode<NbtByteNode>, NbtBaseNod
 }
 export namespace NbtByteArrayNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtByteArrayNode {
+	export function is(node: core.AstNode | undefined): node is NbtByteArrayNode {
 		return (node as NbtByteArrayNode | undefined)?.type === 'nbt:byte_array'
 	}
 }
@@ -222,9 +190,7 @@ export interface NbtLongArrayNode extends core.ListNode<NbtLongNode>, NbtBaseNod
 }
 export namespace NbtLongArrayNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtLongArrayNode {
+	export function is(node: core.AstNode | undefined): node is NbtLongArrayNode {
 		return (node as NbtLongArrayNode | undefined)?.type === 'nbt:long_array'
 	}
 }
@@ -251,9 +217,7 @@ export interface NbtPathIndexNode extends core.AstNode {
 }
 export namespace NbtPathIndexNode {
 	/* istanbul ignore next */
-	export function is(
-		node: core.AstNode | undefined,
-	): node is NbtPathIndexNode {
+	export function is(node: core.AstNode | undefined): node is NbtPathIndexNode {
 		return (node as NbtPathIndexNode | undefined)?.type === 'nbt:path/index'
 	}
 }

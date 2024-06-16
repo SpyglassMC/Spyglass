@@ -25,18 +25,15 @@ export function attempt<N extends AstNode>(
 	node: N,
 	ctx: BinderContext,
 ): AttemptResult | Promise<AttemptResult> {
-	const tempCtx: BinderContext = {
-		...ctx,
-		err: new ErrorReporter(),
-		symbols: ctx.symbols.clone(),
-	}
+	const tempCtx: BinderContext = { ...ctx, err: new ErrorReporter(), symbols: ctx.symbols.clone() }
 
 	const processAfterBinder = () => {
 		StateProxy.undoChanges(node as StateProxy<N>)
 
-		const totalErrorSpan = tempCtx.err.errors
-			.map((e) => e.range.end - e.range.start)
-			.reduce((a, b) => a + b, 0)
+		const totalErrorSpan = tempCtx.err.errors.map((e) => e.range.end - e.range.start).reduce(
+			(a, b) => a + b,
+			0,
+		)
 
 		return {
 			errorAmount: tempCtx.err.errors.length,
@@ -60,10 +57,7 @@ export function attempt<N extends AstNode>(
 	}
 }
 
-type ExtractBinder<B extends Binder<never>> = B extends Binder<
-	infer N extends AstNode
-> ? N
-	: never
+type ExtractBinder<B extends Binder<never>> = B extends Binder<infer N extends AstNode> ? N : never
 export function any<Binders extends Binder<never>[]>(
 	binders: Binders,
 ): Binders extends SyncBinder<never>[] ? SyncBinder<ExtractBinder<Binders[number]>>
@@ -76,18 +70,13 @@ export function any<N extends AstNode>(binders: Binder<N>[]): Binder<N> {
 		a.errorAmount - b.errorAmount || a.totalErrorSpan - b.totalErrorSpan
 	if (binders.every(SyncBinder.is)) {
 		return SyncBinder.create((node, ctx) => {
-			const attempts = binders
-				.map((binder) => attempt(binder, node, ctx))
-				.sort(attemptSorter)
+			const attempts = binders.map((binder) => attempt(binder, node, ctx)).sort(attemptSorter)
 			attempts[0].updateNodeAndCtx()
 		})
 	} else {
 		return AsyncBinder.create(async (node, ctx) => {
-			const attempts = (
-				await Promise.all(
-					binders.map((binder) => attempt(binder, node, ctx)),
-				)
-			).sort(attemptSorter)
+			const attempts = (await Promise.all(binders.map((binder) => attempt(binder, node, ctx))))
+				.sort(attemptSorter)
 			attempts[0].updateNodeAndCtx()
 		})
 	}
@@ -127,63 +116,40 @@ export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {
 	}
 })
 
-export const resourceLocation = SyncBinder.create<ResourceLocationNode>(
-	(node, ctx) => {
-		const raw = ResourceLocationNode.toString(node, 'full')
-		const sanitizedRaw = ResourceLocation.lengthen(
-			node.options.namespacePathSep === '.'
-				? raw.replace(/\./g, ResourceLocation.NamespacePathSep)
-				: raw,
-		)
-		if (node.options.category) {
-			ctx.symbols
-				.query(
-					ctx.doc,
-					node.isTag
-						? `tag/${node.options.category}`
-						: node.options.category,
-					sanitizedRaw,
-				)
-				.enter({
-					usage: {
-						type: node.options.usageType,
-						node,
-						accessType: node.options.accessType,
-					},
-				})
+export const resourceLocation = SyncBinder.create<ResourceLocationNode>((node, ctx) => {
+	const raw = ResourceLocationNode.toString(node, 'full')
+	const sanitizedRaw = ResourceLocation.lengthen(
+		node.options.namespacePathSep === '.'
+			? raw.replace(/\./g, ResourceLocation.NamespacePathSep)
+			: raw,
+	)
+	if (node.options.category) {
+		ctx.symbols.query(
+			ctx.doc,
+			node.isTag ? `tag/${node.options.category}` : node.options.category,
+			sanitizedRaw,
+		).enter({
+			usage: { type: node.options.usageType, node, accessType: node.options.accessType },
+		})
+	}
+	if (node.options.pool && !node.options.allowUnknown) {
+		if (!node.options.pool.includes(sanitizedRaw)) {
+			ctx.err.report(localize('expected', node.options.pool), node, ErrorSeverity.Error)
 		}
-		if (node.options.pool && !node.options.allowUnknown) {
-			if (!node.options.pool.includes(sanitizedRaw)) {
-				ctx.err.report(
-					localize('expected', node.options.pool),
-					node,
-					ErrorSeverity.Error,
-				)
-			}
-			return
-		}
-	},
-)
+		return
+	}
+})
 
 export const symbol = SyncBinder.create<SymbolBaseNode>((node, ctx) => {
 	if (node.value) {
-		const path = node.options.parentPath
-			? [...node.options.parentPath, node.value]
-			: [node.value]
+		const path = node.options.parentPath ? [...node.options.parentPath, node.value] : [node.value]
 		ctx.symbols.query(ctx.doc, node.options.category, ...path).enter({
-			usage: {
-				type: node.options.usageType,
-				node,
-				accessType: node.options.accessType,
-			},
+			usage: { type: node.options.usageType, node, accessType: node.options.accessType },
 		})
 	}
 })
 
 export function registerBinders(meta: MetaRegistry) {
-	meta.registerBinder<ResourceLocationNode>(
-		'resource_location',
-		resourceLocation,
-	)
+	meta.registerBinder<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerBinder<SymbolNode>('symbol', symbol)
 }

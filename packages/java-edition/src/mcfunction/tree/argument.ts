@@ -7,37 +7,23 @@ export interface BrigadierBoolArgumentTreeNode extends mcf.ArgumentTreeNode {
 }
 export interface BrigadierDoubleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:double'
-	properties?: {
-		min: number
-		max: number
-	}
+	properties?: { min: number; max: number }
 }
 export interface BrigadierFloatArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:float'
-	properties?: {
-		min: number
-		max: number
-	}
+	properties?: { min: number; max: number }
 }
 export interface BrigadierIntegerArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:integer'
-	properties?: {
-		min: number
-		max: number
-	}
+	properties?: { min: number; max: number }
 }
 export interface BrigadierLongArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:long'
-	properties?: {
-		min: number
-		max: number
-	}
+	properties?: { min: number; max: number }
 }
 export interface BrigadierStringArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'brigadier:string'
-	properties: {
-		type: 'word' | 'phrase' | 'greedy'
-	}
+	properties: { type: 'word' | 'phrase' | 'greedy' }
 }
 export interface MinecraftAngleArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:angle'
@@ -65,10 +51,7 @@ export interface MinecraftDimensionArgumentTreeNode extends mcf.ArgumentTreeNode
 }
 export interface MinecraftEntityArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity'
-	properties: {
-		amount: 'multiple' | 'single'
-		type: 'entities' | 'players'
-	}
+	properties: { amount: 'multiple' | 'single'; type: 'entities' | 'players' }
 }
 export interface MinecraftEntityAnchorArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:entity_anchor'
@@ -186,15 +169,11 @@ export interface MinecraftParticleArgumentTreeNode extends mcf.ArgumentTreeNode 
 }
 export interface MinecraftResourceArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource'
-	properties: {
-		registry: string
-	}
+	properties: { registry: string }
 }
 export interface MinecraftResourceKeyArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource_key'
-	properties: {
-		registry: string
-	}
+	properties: { registry: string }
 }
 export interface MinecraftResourceLocationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource_location'
@@ -202,24 +181,18 @@ export interface MinecraftResourceLocationArgumentTreeNode extends mcf.ArgumentT
 }
 export interface MinecraftResourceOrTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource_or_tag'
-	properties: {
-		registry: string
-	}
+	properties: { registry: string }
 }
 export interface MinecraftResourceOrTagKeyArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:resource_or_tag_key'
-	properties: {
-		registry: string
-	}
+	properties: { registry: string }
 }
 export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:rotation'
 }
 export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:score_holder'
-	properties: {
-		amount: 'single' | 'multiple'
-	}
+	properties: { amount: 'single' | 'multiple' }
 }
 export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:scoreboard_slot'

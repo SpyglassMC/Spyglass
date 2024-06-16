@@ -16,29 +16,21 @@ type Wrap<T> = T extends object ? StateProxy<T> : T
  * A new proxy can be branched off of an existing proxy using {@link StateProxy.branchOff} to have finer control
  * over what changes to be reverted.
  */
-export type StateProxy<T extends object> =
-	& {
-		[K in keyof T]: Wrap<T[K]>
-	}
-	& {
-		[BranchOff]: () => StateProxy<T>
-		[Is]: true
-		[Origin]: T
-		[Redo]: () => void
-		[Undo]: () => void
-	}
+export type StateProxy<T extends object> = { [K in keyof T]: Wrap<T[K]> } & {
+	[BranchOff]: () => StateProxy<T>
+	[Is]: true
+	[Origin]: T
+	[Redo]: () => void
+	[Undo]: () => void
+}
 
 export namespace StateProxy {
-	export function branchOff<T extends object>(
-		proxy: StateProxy<T>,
-	): StateProxy<T> {
+	export function branchOff<T extends object>(proxy: StateProxy<T>): StateProxy<T> {
 		return proxy[BranchOff]()
 	}
 	export function create<T extends object>(
 		obj: T,
-	): T extends StateProxy<any> ? void & { _cannotCreateProxyFromProxy: never }
-		: StateProxy<T>
-	{
+	): T extends StateProxy<any> ? void & { _cannotCreateProxyFromProxy: never } : StateProxy<T> {
 		if (StateProxy.is(obj)) {
 			throw new TypeError(
 				'Cannot create a proxy over a proxy. You might want to use branchOff instead.',
@@ -89,36 +81,20 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 		}
 		const value = Reflect.get(target, p, receiver)
 		if (p !== 'prototype' && isObject(value)) {
-			return emplaceMap(this.map, p, {
-				insert: () => _createStateProxy(value, this.rootOps),
-			})
+			return emplaceMap(this.map, p, { insert: () => _createStateProxy(value, this.rootOps) })
 		}
 		return value
 	}
 
 	set(target: T, p: string | symbol, value: any, receiver: any): boolean {
-		if (
-			p === BranchOff
-			|| p === Is
-			|| p === Origin
-			|| p === Redo
-			|| p === Undo
-		) {
+		if (p === BranchOff || p === Is || p === Origin || p === Redo || p === Undo) {
 			throw new TypeError(`Cannot set ${String(p)}`)
 		}
-		this.rootOps.set(
-			target,
-			p as keyof T,
-			StateProxy.dereference(value),
-			receiver,
-		)
+		this.rootOps.set(target, p as keyof T, StateProxy.dereference(value), receiver)
 		return true
 	}
 }
 
-function _createStateProxy<T extends object>(
-	target: T,
-	operations: Operations,
-): StateProxy<T> {
+function _createStateProxy<T extends object>(target: T, operations: Operations): StateProxy<T> {
 	return new Proxy(target, new StateProxyHandler(operations)) as StateProxy<T>
 }

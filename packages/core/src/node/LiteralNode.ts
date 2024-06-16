@@ -22,15 +22,7 @@ export namespace LiteralNode {
 		return (obj as LiteralNode | undefined)?.type === 'literal'
 	}
 
-	export function mock(
-		range: RangeLike,
-		options: LiteralOptions,
-	): LiteralNode {
-		return {
-			type: 'literal',
-			range: Range.get(range),
-			options,
-			value: '',
-		}
+	export function mock(range: RangeLike, options: LiteralOptions): LiteralNode {
+		return { type: 'literal', range: Range.get(range), options, value: '' }
 	}
 }
