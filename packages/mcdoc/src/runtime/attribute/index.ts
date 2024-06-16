@@ -18,14 +18,14 @@ export interface McdocAttribute<C = unknown> {
 		ctx: core.CheckerContext,
 	) => StructTypePairField
 	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
-	attachString?: (
+	stringParser?: (
 		config: C,
 		ctx: core.CheckerContext,
-	) => ((node: core.StringBaseNode) => void) | undefined
-	suggestValues?: (
+	) => core.InfallibleParser<core.AstNode | undefined> | undefined
+	stringMocker?: (
 		config: C,
 		ctx: core.CompleterContext,
-	) => SimpleCompletionValue[]
+	) => core.AstNode | undefined
 }
 
 export function registerAttribute<C extends core.Returnable>(
@@ -57,15 +57,11 @@ export function handleAttributes(
 	for (const { name, value } of attributes ?? []) {
 		const handler = getAttribute(ctx.meta, name)
 		if (!handler) {
-			ctx.logger.warn(`[mcdoc] Unhandled attribute ${name}`)
 			continue
 		}
 
 		const config = handler.validator(value, ctx)
 		if (config === core.Failure) {
-			ctx.logger.warn(
-				`[mcdoc] Invalid attribute ${name}: ${JSON.stringify(value)}`,
-			)
 			continue
 		}
 		fn(handler.attribute, config)

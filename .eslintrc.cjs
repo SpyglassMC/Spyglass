@@ -60,6 +60,7 @@ module.exports = {
 				"message": "Import from the `lib` dir instead of the `src` dir."
 			},
 		],
+		"object-shorthand": "warn",
 		"prefer-const": "warn",
 		"prefer-object-spread": "warn",
 	}

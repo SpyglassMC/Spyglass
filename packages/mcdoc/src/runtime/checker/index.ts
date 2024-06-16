@@ -138,7 +138,7 @@ export function reference<T>(
 	path: string,
 	options: McdocCheckerOptions<T>,
 ) {
-	typeDefinition(node, { kind: 'reference', path: path }, options)
+	typeDefinition(node, { kind: 'reference', path }, options)
 }
 
 export function dispatcher<T>(
@@ -154,8 +154,8 @@ export function dispatcher<T>(
 		: [index]
 	typeDefinition(node, {
 		kind: 'dispatcher',
-		registry: registry,
-		parallelIndices: parallelIndices,
+		registry,
+		parallelIndices,
 	}, options)
 }
 
@@ -165,6 +165,13 @@ export function isAssignable(
 	ctx: core.CheckerContext,
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
+	if (
+		assignValue.kind === 'literal' && typeDef.kind === 'literal' &&
+		assignValue.value.kind === typeDef.value.kind &&
+		!assignValue.attributes && !typeDef.attributes
+	) {
+		return assignValue.value.value === typeDef.value.value
+	}
 	let ans = true
 	const options: McdocCheckerOptions<McdocType> = {
 		context: ctx,
@@ -496,16 +503,34 @@ export function typeDefinition<T>(
 		for (const def of node.validDefinitions) {
 			if (!attached.has(node.node.originalNode)) {
 				options.attachTypeInfo(node.node.originalNode, def.typeDef)
-				handleAttributes(
-					def.typeDef.attributes,
-					options.context,
-					(handler, c) => {
-						const attacher = handler.attachString?.(c, options.context)
-						if (attacher) {
-							options.stringAttacher(node.node.originalNode, attacher)
+				const attributes = def.typeDef.attributes
+				handleAttributes(attributes, options.context, (handler, config) => {
+					const parser = handler.stringParser?.(config, options.context)
+					if (!parser) {
+						return
+					}
+					options.stringAttacher(node.node.originalNode, (node) => {
+						const src = new core.Source(node.value, node.valueMap)
+						const start = src.cursor
+						const child = parser(src, options.context)
+						if (!child) {
+							options.context.err.report(
+								localize(
+									'expected',
+									localize('mcdoc.runtime.checker.value'),
+								),
+								core.Range.create(start, src.skipRemaining()),
+							)
+							return
+						} else if (src.canRead()) {
+							options.context.err.report(
+								localize('mcdoc.runtime.checker.trailing'),
+								core.Range.create(src.cursor, src.skipRemaining()),
+							)
 						}
-					},
-				)
+						node.children = [child]
+					})
+				})
 				attached.add(node.node.originalNode)
 			}
 		}
@@ -770,7 +795,7 @@ function condenseErrorsAndFilterSiblings<T>(
 			})
 			if (rangesErrors.length > 0) {
 				errors.push({
-					kind: kind,
+					kind,
 					node: rangesErrors[0].node,
 					ranges: rangesErrors.flatMap(e => e.ranges),
 				})
@@ -1090,8 +1115,8 @@ function checkShallowly<T>(
 		}
 	}
 	return {
-		childDefinitions: childDefinitions,
-		errors: errors,
+		childDefinitions,
+		errors,
 	}
 }
 
@@ -1189,7 +1214,7 @@ export function simplify<T>(
 				// TODO Better way to access typedef without any cast?
 				const data = dispatcher[key].data as any
 				if (data && data.typeDef) {
-					structFields.push({ kind: 'pair', key: key, type: data.typeDef })
+					structFields.push({ kind: 'pair', key, type: data.typeDef })
 				}
 			}
 			return simplify(
@@ -1371,7 +1396,7 @@ export function simplify<T>(
 			if (members.length === 1) {
 				return members[0]
 			}
-			return { ...typeDef, kind: 'union', members: members }
+			return { ...typeDef, kind: 'union', members }
 		case 'struct':
 			const literalFields = new Map<string, StructTypePairField>()
 			let complexFields: SimplifiedStructTypePairField[] = []

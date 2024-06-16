@@ -87,13 +87,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			return true
 		},
-		attachString: (config, ctx) => {
+		stringParser: (config, ctx) => {
 			const options = getResourceLocationOptions(config, ctx)
 			if (!options) {
 				return
 			}
-			return (node) => {
-				const src = new core.Source(node.value, node.valueMap)
+			return (src, ctx) => {
 				const start = src.cursor
 				if (config.prefix && !src.trySkip(config.prefix)) {
 					ctx.err.report(
@@ -110,28 +109,15 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 						core.Range.create(start, src),
 					)
 				}
-				const id = core.resourceLocation(options)(src, ctx)
-				if (src.canRead()) {
-					ctx.err.report(
-						localize('mcdoc.runtime.checker.trailing'),
-						core.Range.create(src.cursor, src.skipRemaining()),
-					)
-				}
-				node.children = [id]
+				return core.resourceLocation(options)(src, ctx)
 			}
 		},
-		suggestValues: (config, ctx) => {
+		stringMocker: (config, ctx) => {
 			const options = getResourceLocationOptions(config, ctx)
 			if (!options) {
-				return []
+				return undefined
 			}
-			const mock = core.ResourceLocationNode.mock(ctx.offset, options)
-			return core.completer.dispatch(mock, ctx)
-				.map(item => ({
-					value: item.label,
-					kind: 'string',
-					completionKind: core.CompletionKind.Function,
-				}))
+			return core.ResourceLocationNode.mock(ctx.offset, options)
 		},
 	})
 }
