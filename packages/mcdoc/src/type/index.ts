@@ -98,6 +98,7 @@ export interface StructTypePairField extends McdocBaseType {
 	type: McdocType
 	optional?: boolean
 	deprecated?: boolean
+	desc?: string
 }
 export interface StructTypeSpreadField extends McdocBaseType {
 	kind: 'spread'
