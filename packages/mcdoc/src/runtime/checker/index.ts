@@ -26,13 +26,8 @@ import type {
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
-import type {
-	McdocCheckerError,
-	MissingKeyError,
-	RangeError,
-	SimpleError,
-	TypeMismatchError,
-} from './error.js'
+import type { McdocCheckerError } from './error.js'
+import { condenseErrorsAndFilterSiblings } from './error.js'
 
 export * from './error.js'
 

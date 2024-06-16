@@ -102,7 +102,7 @@ export interface ErrorCondensingDefinition<T> {
 	errors: McdocCheckerError<T>[]
 }
 
-function condenseErrorsAndFilterSiblings<T>(
+export function condenseErrorsAndFilterSiblings<T>(
 	definitions: {
 		definition: CheckerTreeDefinitionNode<T>
 		errors: McdocCheckerError<T>[]
