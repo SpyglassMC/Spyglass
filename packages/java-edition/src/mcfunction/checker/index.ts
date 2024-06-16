@@ -5,6 +5,7 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
+import { ReleaseVersion } from '../../dependency/common.js'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
 import {
 	BlockNode,
@@ -188,7 +189,24 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
-	core.checker.dispatchSync(node, ctx)
+	const id = core.ResourceLocationNode.toString(node.id, 'short')
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (release && ReleaseVersion.cmp(release, '1.20.5') < 0) {
+		return
+	}
+	const options = node.children?.find(nbt.NbtCompoundNode.is)
+	if (ParticleNode.requiresOptions(id)) {
+		if (options) {
+			nbt.checker.index('minecraft:particle', core.ResourceLocation.lengthen(id))(options, ctx)
+		} else {
+			ctx.err.report(
+				localize('expected', localize('nbt.node.compound')),
+				core.Range.create(node.id.range.end, node.id.range.end + 1),
+			)
+		}
+	} else if (options) {
+		ctx.err.report(localize('expected', localize('nothing')), options)
+	}
 }
 // #endregion
 
