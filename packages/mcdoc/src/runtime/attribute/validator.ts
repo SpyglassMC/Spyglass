@@ -19,6 +19,16 @@ export const string: McdocAttributeValidator<string> = (value) => {
 	return core.Failure
 }
 
+export const number: McdocAttributeValidator<number> = (value) => {
+	if (value === undefined) {
+		return core.Failure
+	}
+	if (value.kind === 'literal' && typeof value.value.value === 'number') {
+		return value.value.value
+	}
+	return core.Failure
+}
+
 export const boolean: McdocAttributeValidator<boolean> = (value) => {
 	if (value === undefined) {
 		return core.Failure
