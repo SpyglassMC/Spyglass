@@ -1260,7 +1260,7 @@ function getEntitySelectorHover(node: EntitySelectorNode) {
 - \`chunkLimited\`: \`${!!node.chunkLimited}\`
 - \`dimensionLimited\`: \`${!!node.dimensionLimited}\`
 - \`playersOnly\`: \`${!!node.playersOnly}\`
-- \`typeLimited\`: \`${!!node.chunkLimited}\``
+- \`typeLimited\`: \`${!!node.typeLimited}\``
 	}
 	if (node.predicates?.length) {
 		ans += `

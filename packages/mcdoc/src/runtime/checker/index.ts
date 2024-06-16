@@ -1518,6 +1518,10 @@ export function getDefaultErrorReporter<T>(
 			case 'expected_key_value_pair':
 				ctx.err.report(localize(`mcdoc.runtime.checker.${defaultTranslationKey}`), range)
 				break
+			case 'duplicate_key':
+				// Vscode already reports duplicate keys in JSON files
+				// TODO: figure out how to report these errors in mcfunction files
+				break
 			case 'internal':
 				break
 			default:
