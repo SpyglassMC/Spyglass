@@ -11,6 +11,7 @@ import type {
 } from './mcmeta.js'
 import { Fluids, getMcmetaSummaryUris } from './mcmeta.js'
 
+// Memory cache TTL in milliseconds
 const DownloaderTtl = 15_000
 
 /* istanbul ignore next */

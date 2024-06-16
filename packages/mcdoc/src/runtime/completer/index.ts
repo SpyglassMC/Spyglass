@@ -64,7 +64,19 @@ export function getValues(
 		case 'string':
 			const ans: SimpleCompletionValue[] = []
 			handleAttributes(typeDef.attributes, ctx, (handler, config) => {
-				ans.push(...handler.suggestValues?.(config, ctx) ?? [])
+				const mock = handler.stringMocker?.(config, ctx)
+				if (!mock) {
+					return
+				}
+				const items = ctx.meta.getCompleter(mock.type)(mock, ctx)
+				ans.push(
+					...items.map<SimpleCompletionValue>(item => ({
+						value: item.label,
+						kind: 'string',
+						detail: item.detail,
+						completionKind: item.kind,
+					})),
+				)
 			})
 			return ans
 		case 'enum':

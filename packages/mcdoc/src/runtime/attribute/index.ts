@@ -18,14 +18,14 @@ export interface McdocAttribute<C = unknown> {
 		ctx: core.CheckerContext,
 	) => StructTypePairField
 	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
-	attachString?: (
+	stringParser?: (
 		config: C,
 		ctx: core.CheckerContext,
-	) => ((node: core.StringBaseNode) => void) | undefined
-	suggestValues?: (
+	) => core.InfallibleParser<core.AstNode | undefined> | undefined
+	stringMocker?: (
 		config: C,
 		ctx: core.CompleterContext,
-	) => SimpleCompletionValue[]
+	) => core.AstNode | undefined
 }
 
 export function registerAttribute<C extends core.Returnable>(

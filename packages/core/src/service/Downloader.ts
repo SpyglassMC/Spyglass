@@ -13,11 +13,15 @@ export interface DownloaderDownloadOut {
 	checksum?: string
 }
 
+interface MemoryCacheEntry {
+	buffer: Uint8Array
+	time: number
+	cacheUri?: string
+	checksum?: string
+}
+
 export class Downloader {
-	readonly #memoryCache = new Map<
-		string,
-		{ buffer: Uint8Array; time: number }
-	>()
+	readonly #memoryCache = new Map<string, MemoryCacheEntry>()
 
 	constructor(
 		private readonly cacheRoot: RootUriString,
@@ -31,11 +35,14 @@ export class Downloader {
 	): Promise<R | undefined> {
 		const { id, cache, uri, options, transformer, ttl } = job
 		if (ttl && this.#memoryCache.has(uri)) {
-			const { buffer, time } = this.#memoryCache.get(uri)!
-			if (time <= performance.now() + ttl) {
+			const memoryCacheEntry = this.#memoryCache.get(uri)!
+			const { buffer, time, cacheUri, checksum } = memoryCacheEntry
+			if (performance.now() <= time + ttl) {
 				this.logger.info(
 					`[Downloader] [${id}] Skipped thanks to valid cache in memory`,
 				)
+				out.cacheUri = cacheUri
+				out.checksum = checksum
 				return await transformer(buffer)
 			} else {
 				this.#memoryCache.delete(uri)
@@ -72,6 +79,8 @@ export class Downloader {
 							if (ttl) {
 								this.#memoryCache.set(uri, {
 									buffer: cachedBuffer,
+									cacheUri,
+									checksum,
 									time: performance.now(),
 								})
 							}
@@ -198,5 +207,8 @@ interface Job<R> {
 	}
 	transformer: (data: Uint8Array) => PromiseLike<R> | R
 	options?: ExternalDownloaderOptions
+	/**
+	 * If set, caches the result in memory. Time in milliseconds.
+	 */
 	ttl?: number
 }
