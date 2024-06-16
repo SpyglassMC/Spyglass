@@ -83,7 +83,7 @@
         "fileMatch": [
           "pack.mcmeta",
           "data/*/advancement/**/*.json",
-          "data/*/advancement/**/*.json",
+          "data/*/advancements/**/*.json",
           "data/*/banner_pattern/**/*.json",
           "data/*/chat_type/**/*.json",
           "data/*/damage_type/**/*.json",
