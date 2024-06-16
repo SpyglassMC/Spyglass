@@ -66,8 +66,7 @@ type ExtractBinder<B extends Binder<never>> = B extends Binder<
 	: never
 export function any<Binders extends Binder<never>[]>(
 	binders: Binders,
-): Binders extends SyncBinder<never>[]
-	? SyncBinder<ExtractBinder<Binders[number]>>
+): Binders extends SyncBinder<never>[] ? SyncBinder<ExtractBinder<Binders[number]>>
 	: AsyncBinder<ExtractBinder<Binders[number]>>
 export function any<N extends AstNode>(binders: Binder<N>[]): Binder<N> {
 	if (binders.length === 0) {

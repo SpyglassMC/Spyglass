@@ -10,24 +10,13 @@ import type {
 	Completer,
 	InlayHintProvider,
 } from '../processor/index.js'
-import {
-	binder,
-	checker,
-	colorizer,
-	completer,
-	formatter,
-	linter,
-} from '../processor/index.js'
+import { binder, checker, colorizer, completer, formatter, linter } from '../processor/index.js'
 import type { Linter } from '../processor/linter/Linter.js'
 import type { SignatureHelpProvider } from '../processor/SignatureHelpProvider.js'
 import type { DependencyKey, DependencyProvider } from './Dependency.js'
 import type { FileExtension } from './fileUtil.js'
 import type { SymbolRegistrar } from './SymbolRegistrar.js'
-import type {
-	UriBinder,
-	UriSorter,
-	UriSorterRegistration,
-} from './UriProcessor.js'
+import type { UriBinder, UriSorter, UriSorterRegistration } from './UriProcessor.js'
 
 export interface LanguageOptions {
 	/**

@@ -32,8 +32,7 @@ describe('float()', () => {
 				pattern,
 				min: 1,
 				max: 6,
-				onOutOfRange: (ans, _src, ctx) =>
-					ctx.err.report('Testing MESSAGE', ans),
+				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Testing MESSAGE', ans),
 			},
 		]
 		const cases: { content: string }[] = [

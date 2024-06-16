@@ -53,8 +53,7 @@ export function activate(context: vsc.ExtensionContext) {
 	]
 
 	const initializationOptions: server.CustomInitializationOptions = {
-		inDevelopmentMode:
-			context.extensionMode === vsc.ExtensionMode.Development,
+		inDevelopmentMode: context.extensionMode === vsc.ExtensionMode.Development,
 	}
 
 	// Options to control the language client
@@ -75,8 +74,8 @@ export function activate(context: vsc.ExtensionContext) {
 	// Start the client. This will also launch the server
 	client.start().then(
 		() => {
-			const customCapabilities: server.CustomServerCapabilities | undefined =
-				client.initializeResult?.capabilities.experimental?.spyglassmc
+			const customCapabilities: server.CustomServerCapabilities | undefined = client
+				.initializeResult?.capabilities.experimental?.spyglassmc
 
 			if (customCapabilities?.dataHackPubify) {
 				context.subscriptions.push(
@@ -91,10 +90,9 @@ export function activate(context: vsc.ExtensionContext) {
 									return
 								}
 
-								const params: server.MyLspDataHackPubifyRequestParams =
-									{
-										initialism,
-									}
+								const params: server.MyLspDataHackPubifyRequestParams = {
+									initialism,
+								}
 								const response: string = await client.sendRequest(
 									'spyglassmc/dataHackPubify',
 									params,

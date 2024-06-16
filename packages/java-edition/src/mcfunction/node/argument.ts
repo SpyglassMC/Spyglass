@@ -4,9 +4,7 @@ import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { NbtParserProperties } from '../tree/argument.js'
 
-export interface BlockStatesNode
-	extends core.RecordBaseNode<core.StringNode, core.StringNode>
-{
+export interface BlockStatesNode extends core.RecordBaseNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
 }
 export namespace BlockStatesNode {
@@ -87,12 +85,11 @@ export interface EntitySelectorAdvancementsArgumentCriteriaNode
 {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
-export interface EntitySelectorAdvancementsArgumentNode
-	extends
-		core.RecordBaseNode<
-			core.ResourceLocationNode,
-			core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
-		>
+export interface EntitySelectorAdvancementsArgumentNode extends
+	core.RecordBaseNode<
+		core.ResourceLocationNode,
+		core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
+	>
 {
 	type: 'mcfunction:entity_selector/arguments/advancements'
 }
@@ -108,9 +105,7 @@ export interface EntitySelectorInvertableArgumentValueNode<
 	value: T
 	inverted: boolean
 }
-export interface EntitySelectorArgumentsNode
-	extends core.RecordBaseNode<core.StringNode, any>
-{
+export interface EntitySelectorArgumentsNode extends core.RecordBaseNode<core.StringNode, any> {
 	type: 'mcfunction:entity_selector/arguments'
 }
 export namespace EntitySelectorArgumentsNode {
@@ -228,8 +223,7 @@ export namespace EntitySelectorNode {
 		argument: core.DeepReadonly<EntitySelectorArgumentsNode>,
 		key: string,
 	): Result {
-		const hasKey = (key: string): boolean =>
-			!!argument.children.find((p) => p.key?.value === key)
+		const hasKey = (key: string): boolean => !!argument.children.find((p) => p.key?.value === key)
 		const hasNonInvertedKey = (key: string): boolean =>
 			!!argument.children.find(
 				(p) =>
@@ -295,8 +289,7 @@ export interface FloatRangeNode extends core.AstNode {
 
 export interface ItemStackNode extends core.AstNode {
 	type: 'mcfunction:item_stack'
-	children:
-		(core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
+	children: (core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
 	components?: ComponentListNode // since 1.20.5
 	nbt?: nbt.NbtCompoundNode // until 1.20.5

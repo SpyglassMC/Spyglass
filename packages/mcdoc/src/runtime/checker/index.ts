@@ -416,14 +416,13 @@ export function typeDefinition<T>(
 					)
 
 				for (const definitionGroup of definitionGroups) {
-					const { definitions, condensedErrors } =
-						condenseErrorsAndFilterSiblings(
-							definitionGroup.children.map(c => ({
-								definition: c,
-								errors: childErrors.filter(e => e.definitionNode === c)
-									.map(e => e.error),
-							})),
-						)
+					const { definitions, condensedErrors } = condenseErrorsAndFilterSiblings(
+						definitionGroup.children.map(c => ({
+							definition: c,
+							errors: childErrors.filter(e => e.definitionNode === c)
+								.map(e => e.error),
+						})),
+					)
 
 					definitionGroup.children = definitions
 					stillValidDefintions.push(...definitions)
@@ -453,9 +452,7 @@ export function typeDefinition<T>(
 						for (const child of children) {
 							for (const childValue of child.possibleValues) {
 								childValue.validDefinitions = childValue
-									.validDefinitions.filter(d =>
-										parentDefs.includes(d.parent!)
-									)
+									.validDefinitions.filter(d => parentDefs.includes(d.parent!))
 								filterChildDefinitions(
 									childValue.validDefinitions,
 									childValue.children,
@@ -477,9 +474,7 @@ export function typeDefinition<T>(
 
 						let children = [v]
 						for (let i = 0; i < depth; i++) {
-							children = children.flatMap(v => v.children).flatMap(v =>
-								v.possibleValues
-							)
+							children = children.flatMap(v => v.children).flatMap(v => v.possibleValues)
 						}
 						return children.length > 0
 					})
@@ -576,9 +571,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	let validDefinitions = definitions
-	const errors = validDefinitions[0].errors.filter(e =>
-		e.kind === 'duplicate_key'
-	)
+	const errors = validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
 
 	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
 		.filter(e =>
@@ -599,9 +592,7 @@ function condenseErrorsAndFilterSiblings<T>(
 					) as TypeMismatchError<T>).expected
 				)
 				.flatMap(t => t.kind === 'union' ? t.members : [t])
-				.filter((d, i, arr) =>
-					arr.findIndex(od => od.kind === d.kind) === i
-				)
+				.filter((d, i, arr) => arr.findIndex(od => od.kind === d.kind) === i)
 			return {
 				...e,
 				expected: expected.length === 1
@@ -614,9 +605,8 @@ function condenseErrorsAndFilterSiblings<T>(
 	const onlyCommonTypeMismatches = definitions.filter(d =>
 		!d.errors.some(e =>
 			e.kind === 'sometimes_type_mismatch'
-			|| (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-				oe.node.originalNode === e.node.originalNode
-			))
+			|| (e.kind === 'type_mismatch'
+				&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
 		)
 	)
 	if (onlyCommonTypeMismatches.length !== 0) {
@@ -629,9 +619,8 @@ function condenseErrorsAndFilterSiblings<T>(
 			.flatMap(d =>
 				d.errors
 					.filter(e =>
-						e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
+						e.kind === 'type_mismatch'
+						&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode)
 					)
 			)
 			.map(e => e.node as RuntimeNode<T>)
@@ -640,9 +629,7 @@ function condenseErrorsAndFilterSiblings<T>(
 					e.kind === 'sometimes_type_mismatch'
 				).map(e => e.node as RuntimeNode<T>),
 			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
+			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
 
 		errors.push(...typeMismatches)
@@ -665,9 +652,7 @@ function condenseErrorsAndFilterSiblings<T>(
 			!d.errors.some(e =>
 				e.kind === 'invalid_key_combination'
 				|| (e.kind === 'unknown_key'
-					&& !alwaysUnknown.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
+					&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 		)
 	if (onlyCommonUnknownKeys.length !== 0) {
@@ -677,9 +662,8 @@ function condenseErrorsAndFilterSiblings<T>(
 			.flatMap(d =>
 				d.errors
 					.filter(e =>
-						e.kind === 'unknown_key' && !alwaysUnknown.some(oe =>
-							oe.node.originalNode === e.node.originalNode
-						)
+						e.kind === 'unknown_key'
+						&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode)
 					)
 			)
 			.map(e => e.node as RuntimeNode<T>)
@@ -688,9 +672,7 @@ function condenseErrorsAndFilterSiblings<T>(
 					e.kind === 'invalid_key_combination'
 				).map(e => e.node as RuntimeNode<T>),
 			)
-			.filter((v, i, arr) =>
-				arr.findIndex(o => o.originalNode === v.originalNode) === i
-			)
+			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 
 		errors.push({ kind: 'invalid_key_combination', node: unknownKeys })
 	}
@@ -737,9 +719,7 @@ function condenseErrorsAndFilterSiblings<T>(
 			!d.errors.some(e =>
 				e.kind === 'some_missing_keys'
 				|| (e.kind === 'missing_key'
-					&& !alwaysMissing.some(oe =>
-						oe.node.originalNode === e.node.originalNode
-					))
+					&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))
 			)
 		)
 	if (onlyCommonMissing.length !== 0) {
@@ -756,20 +736,15 @@ function condenseErrorsAndFilterSiblings<T>(
 					d.errors
 						.filter(e =>
 							e.kind === 'missing_key'
-							&& !alwaysMissing.some(oe =>
-								oe.node.originalNode === e.node.originalNode
-							)
+							&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode)
 						)
 				)
 				.map(e => e.node as RuntimeNode<T>)
 				.concat(
-					validDefinitions.flatMap(d => d.errors).filter(e =>
-						e.kind === 'some_missing_keys'
-					).map(e => e.node as RuntimeNode<T>),
+					validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'some_missing_keys')
+						.map(e => e.node as RuntimeNode<T>),
 				)
-				.filter((v, i, arr) =>
-					arr.findIndex(o => o.originalNode === v.originalNode) === i
-				)
+				.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
 				.map(n => ({
 					kind: 'some_missing_keys' as 'some_missing_keys',
 					node: n,
@@ -784,9 +759,7 @@ function condenseErrorsAndFilterSiblings<T>(
 			'number_out_of_range',
 		] as const
 	) {
-		const noRangeError = validDefinitions.filter(d =>
-			!d.errors.some(e => e.kind === kind)
-		)
+		const noRangeError = validDefinitions.filter(d => !d.errors.some(e => e.kind === kind))
 		if (noRangeError.length !== 0) {
 			validDefinitions = noRangeError
 		} else {
@@ -810,9 +783,7 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	errors.push(
-		...validDefinitions.flatMap(d =>
-			d.errors.filter(e => e.kind === 'internal')
-		),
+		...validDefinitions.flatMap(d => d.errors.filter(e => e.kind === 'internal')),
 	)
 
 	return {
@@ -847,9 +818,7 @@ function checkShallowly<T>(
 		// TODO handle enum field attributes
 		|| (typeDef.kind === 'enum'
 			&& (simplifiedInferred.kind !== 'literal'
-				|| !typeDef.values.some(v =>
-					v.value === simplifiedInferred.value.value
-				)))
+				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
 	) {
 		return {
 			childDefinitions: Array(children.length).fill(undefined),
@@ -1043,8 +1012,7 @@ function checkShallowly<T>(
 				if (childDef === undefined) {
 					if (Array.isArray(child)) {
 						errors.push(...child.map(v => ({
-							kind:
-								'expected_key_value_pair' as 'expected_key_value_pair',
+							kind: 'expected_key_value_pair' as 'expected_key_value_pair',
 							node: v,
 						})))
 					} else {
@@ -1280,9 +1248,7 @@ function simplifyIndexed<T>(
 		let lookup: string[] = []
 		if (index.kind === 'static') {
 			if (index.value === '%fallback') {
-				values = child.fields.filter(f => f.kind === 'pair').map(f =>
-					f.type
-				)
+				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
 				break
 			}
 			if (index.value.startsWith('minecraft:')) {
@@ -1763,9 +1729,7 @@ export function getDefaultErrorReporter<T>(
 						defaultTranslationKey,
 						error.node.inferredType.kind === 'literal'
 							? error.node.inferredType.value.value
-							: `<${
-								localize(`mcdoc.type.${error.node.inferredType.kind}`)
-							}>`,
+							: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
 					),
 					range,
 					core.ErrorSeverity.Warning,

@@ -442,9 +442,7 @@ export namespace TypedNumberNode {
 	}
 }
 
-export interface NumericTypeNode
-	extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode>
-{
+export interface NumericTypeNode extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode> {
 	type: 'mcdoc:type/numeric_type'
 }
 export namespace NumericTypeNode {
@@ -552,9 +550,7 @@ export namespace FloatRangeNode {
 	}
 }
 
-export interface PrimitiveArrayTypeNode
-	extends TypeBaseNode<LiteralNode | IntRangeNode>
-{
+export interface PrimitiveArrayTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/primitive_array'
 }
 export namespace PrimitiveArrayTypeNode {
@@ -611,9 +607,7 @@ export namespace ListTypeNode {
 	}
 }
 
-export interface StringTypeNode
-	extends TypeBaseNode<LiteralNode | IntRangeNode>
-{
+export interface StringTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/string'
 }
 export namespace StringTypeNode {
@@ -993,9 +987,7 @@ export namespace StructSpreadFieldNode {
 	}
 }
 
-export interface DispatcherTypeNode
-	extends TypeBaseNode<ResourceLocationNode | IndexBodyNode>
-{
+export interface DispatcherTypeNode extends TypeBaseNode<ResourceLocationNode | IndexBodyNode> {
 	type: 'mcdoc:type/dispatcher'
 }
 export namespace DispatcherTypeNode {

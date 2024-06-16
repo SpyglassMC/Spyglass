@@ -32,8 +32,7 @@ export const initialize = (
 
 	mcf.initialize(ctx)
 
-	const supportsBackslashContinuation =
-		ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
+	const supportsBackslashContinuation = ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
 	const supportsMacros = ReleaseVersion.cmp(releaseVersion, '1.20.2') >= 0
 
 	meta.registerLanguage('mcfunction', {

@@ -145,9 +145,7 @@ export namespace NbtDoubleNode {
 // #endregion
 // #endregion
 
-export interface NbtCompoundNode
-	extends core.RecordBaseNode<NbtStringNode, NbtNode>, NbtBaseNode
-{
+export interface NbtCompoundNode extends core.RecordBaseNode<NbtStringNode, NbtNode>, NbtBaseNode {
 	readonly type: 'nbt:compound'
 }
 export namespace NbtCompoundNode {
@@ -197,9 +195,7 @@ export namespace NbtPrimitiveArrayNode {
 	}
 }
 
-export interface NbtByteArrayNode
-	extends core.ListNode<NbtByteNode>, NbtBaseNode
-{
+export interface NbtByteArrayNode extends core.ListNode<NbtByteNode>, NbtBaseNode {
 	type: 'nbt:byte_array'
 }
 export namespace NbtByteArrayNode {
@@ -211,9 +207,7 @@ export namespace NbtByteArrayNode {
 	}
 }
 
-export interface NbtIntArrayNode
-	extends core.ListNode<NbtIntNode>, NbtBaseNode
-{
+export interface NbtIntArrayNode extends core.ListNode<NbtIntNode>, NbtBaseNode {
 	type: 'nbt:int_array'
 }
 export namespace NbtIntArrayNode {
@@ -223,9 +217,7 @@ export namespace NbtIntArrayNode {
 	}
 }
 
-export interface NbtLongArrayNode
-	extends core.ListNode<NbtLongNode>, NbtBaseNode
-{
+export interface NbtLongArrayNode extends core.ListNode<NbtLongNode>, NbtBaseNode {
 	type: 'nbt:long_array'
 }
 export namespace NbtLongArrayNode {

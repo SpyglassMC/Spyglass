@@ -258,9 +258,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				'mcdoc',
 				`${ctx.moduleIdentifier}::${identifier.value}`,
 			)
-			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier)
-			)
+			.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier))
 			.elseEnter({
 				data: {
 					subcategory: 'use_statement_binding',
@@ -291,9 +289,7 @@ function hoist(node: ModuleNode, ctx: McdocBinderContext): void {
 				'mcdoc',
 				`${ctx.moduleIdentifier}::${name}`,
 			)
-			.ifDeclared((symbol) =>
-				reportDuplicatedDeclaration(ctx, symbol, identifier ?? node)
-			)
+			.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier ?? node))
 			.elseEnter({
 				data: {
 					data: getData(node),
@@ -357,9 +353,7 @@ function bindTypeParamBlock(
 			const paramPath = `${ctx.moduleIdentifier}::${paramIdentifier.value}`
 			ctx.symbols
 				.query({ doc: ctx.doc, node }, 'mcdoc', paramPath)
-				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, paramIdentifier)
-				)
+				.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, paramIdentifier))
 				.elseEnter({
 					data: { visibility: SymbolVisibility.Block },
 					usage: {
@@ -382,8 +376,7 @@ async function bindDispatchStatement(
 	node: DispatchStatementNode,
 	ctx: McdocBinderContext,
 ): Promise<void> {
-	const { attributes, location, index, target, typeParams } =
-		DispatchStatementNode.destruct(node)
+	const { attributes, location, index, target, typeParams } = DispatchStatementNode.destruct(node)
 	if (!(location && index && target)) {
 		return
 	}
@@ -413,8 +406,7 @@ async function bindDispatchStatement(
 				.query(ctx.doc, 'mcdoc/dispatcher', locationStr, asString(key))
 				.ifDeclared((symbol) =>
 					reportDuplicatedDeclaration(ctx, symbol, key, {
-						localeString:
-							'mcdoc.binder.dispatcher-statement.duplicated-key',
+						localeString: 'mcdoc.binder.dispatcher-statement.duplicated-key',
 					})
 				)
 				.elseEnter({
@@ -583,9 +575,7 @@ function bindEnumBlock(
 		const { identifier } = EnumFieldNode.destruct(field)
 		query.member(identifier.value, (fieldQuery) =>
 			fieldQuery
-				.ifDeclared((symbol) =>
-					reportDuplicatedDeclaration(ctx, symbol, identifier)
-				)
+				.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, identifier))
 				.elseEnter({
 					usage: {
 						type: 'definition',
@@ -640,9 +630,7 @@ async function bindStructBlock(
 			if (!StructMapKeyNode.is(key)) {
 				query.member(key.value, (fieldQuery) =>
 					fieldQuery
-						.ifDeclared((symbol) =>
-							reportDuplicatedDeclaration(ctx, symbol, key)
-						)
+						.ifDeclared((symbol) => reportDuplicatedDeclaration(ctx, symbol, key))
 						.elseEnter({
 							usage: { type: 'definition', node: key, fullRange: field },
 						}))

@@ -343,9 +343,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 	private static getUri(archiveName: string): RootUriString
 	private static getUri(archiveName: string, pathInArchive: string): string
 	private static getUri(archiveName: string, pathInArchive = '') {
-		return `${ArchiveUriSupporter.Protocol}//${archiveName}/${
-			pathInArchive.replace(/\\/g, '/')
-		}`
+		return `${ArchiveUriSupporter.Protocol}//${archiveName}/${pathInArchive.replace(/\\/g, '/')}`
 	}
 
 	/**
@@ -381,9 +379,7 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 			try {
 				if (
 					uri.startsWith('file:')
-					&& ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) =>
-						uri.endsWith(ext)
-					)
+					&& ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) => uri.endsWith(ext))
 					&& (await externals.fs.stat(uri)).isFile()
 				) {
 					const archiveName = fileUtil.basename(uri)

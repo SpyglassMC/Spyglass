@@ -73,8 +73,7 @@ describe('SymbolUtil', () => {
 			.member('Bar', (member) =>
 				member
 					.enter({ usage: { type: 'definition' } })
-					.member('Qux', (member) =>
-						member.enter({ usage: { type: 'definition' } })))
+					.member('Qux', (member) => member.enter({ usage: { type: 'definition' } })))
 		// const stackSymbols = new SymbolUtil({}, NodeJsExternals.event.EventEmitter)
 		// stackSymbols
 		// 	.query(fileUri, 'advancement', 'Foo')
@@ -139,8 +138,7 @@ describe('SymbolUtil', () => {
 					.member('Bar', (member) =>
 						member
 							.enter({ usage: { type: 'definition' } })
-							.member('Qux', (member) =>
-								member.enter({ usage: { type: 'definition' } })))
+							.member('Qux', (member) => member.enter({ usage: { type: 'definition' } })))
 
 				const query = symbols.query(fileUri, 'advancement', ...path)
 

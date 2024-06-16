@@ -1,8 +1,5 @@
 import { MetaRegistry } from '@spyglassmc/core'
-import {
-	SimpleProject,
-	snapshotWithUri,
-} from '@spyglassmc/core/test-out/utils.js'
+import { SimpleProject, snapshotWithUri } from '@spyglassmc/core/test-out/utils.js'
 import { initialize } from '@spyglassmc/mcdoc'
 import fs from 'fs/promises'
 import { URL } from 'url'

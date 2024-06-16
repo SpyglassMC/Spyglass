@@ -1,8 +1,6 @@
 import * as core from '@spyglassmc/core'
 
-export interface MacroNode
-	extends core.SequenceNode<MacroOtherNode | MacroArgumentNode>
-{
+export interface MacroNode extends core.SequenceNode<MacroOtherNode | MacroArgumentNode> {
 	type: 'mcfunction:macro'
 	children: (MacroOtherNode | MacroArgumentNode)[]
 }

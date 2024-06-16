@@ -1,7 +1,4 @@
-import {
-	decode as arrayBufferFromBase64,
-	encode as arrayBufferToBase64,
-} from 'base64-arraybuffer'
+import { decode as arrayBufferFromBase64, encode as arrayBufferToBase64 } from 'base64-arraybuffer'
 import pako from 'pako'
 import { fileUtil } from '../../service/fileUtil.js'
 import type {

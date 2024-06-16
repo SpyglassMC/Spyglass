@@ -1,9 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type {
-	CoordinateNode,
-	ObjectiveCriteriaNode,
-	VectorNode,
-} from '../node/index.js'
+import type { CoordinateNode, ObjectiveCriteriaNode, VectorNode } from '../node/index.js'
 
 export const objectiveCriterion: core.Colorizer<ObjectiveCriteriaNode> = (
 	node,

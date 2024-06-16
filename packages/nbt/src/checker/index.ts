@@ -2,11 +2,7 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type { NbtNode, NbtPathChild, NbtPathNode } from '../node/index.js'
-import {
-	NbtCompoundNode,
-	NbtPathIndexNode,
-	NbtStringNode,
-} from '../node/index.js'
+import { NbtCompoundNode, NbtPathIndexNode, NbtStringNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -139,10 +135,9 @@ export function typeDefinition(
 						core.PairNode.is(node.parent)
 						&& NbtStringNode.is(node.parent.key)
 					) {
-						node.parent.key.hover =
-							`\`\`\`typescript\n${node.parent.key.value}: ${
-								mcdoc.McdocType.toString(definition)
-							}\n\`\`\``
+						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+							mcdoc.McdocType.toString(definition)
+						}\n\`\`\``
 					}
 				},
 				stringAttacher: (node, attacher) => {
@@ -392,10 +387,9 @@ export function path(
 					// TODO: attach type def
 					// TODO: improve hover info
 					if (NbtStringNode.is(link.prev?.node)) {
-						link.prev.node.hover =
-							`\`\`\`typescript\n${link.prev.node.value}: ${
-								mcdoc.McdocType.toString(definition)
-							}\n\`\`\``
+						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.value}: ${
+							mcdoc.McdocType.toString(definition)
+						}\n\`\`\``
 					}
 				},
 				stringAttacher: (node, attacher) => {

@@ -114,8 +114,7 @@ export async function update_locales() {
 			const isPeriod = to.slice(-1)
 
 			if (isPeriod !== '.' && from.slice(0, -1) !== to) {
-				description +=
-					`- \`${key}\` changed, before/after:\n  - \`${from}\`\n  - \`${to}\`\n`
+				description += `- \`${key}\` changed, before/after:\n  - \`${from}\`\n  - \`${to}\`\n`
 			}
 		}
 

@@ -131,8 +131,7 @@ export function record<
 			)
 		const existingKeys = node.children
 			.filter(
-				(n): n is DeepReadonly<Omit<PairNode<K, V>, 'key'> & { key: K }> =>
-					!!n.key,
+				(n): n is DeepReadonly<Omit<PairNode<K, V>, 'key'> & { key: K }> => !!n.key,
 			)
 			.map((n) => n.key as DeepReadonly<K>)
 		const index = binarySearch(node.children, ctx.offset, (n, o) =>
@@ -140,9 +139,7 @@ export function record<
 				? Range.compareOffset(Range.translate(n, 0, -1), o, true)
 				: Range.compareOffset(n.range, o, true))
 		const pair = index >= 0 ? node.children[index] : undefined
-		const hasNextPair = !!node.children.find((n) =>
-			n.range.start > ctx.offset
-		)
+		const hasNextPair = !!node.children.find((n) => n.range.start > ctx.offset)
 		if (!pair) {
 			return completePairs(undefined)
 		}
@@ -218,15 +215,11 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 				? defaultNsIds.map((id) => id.slice(defaultNsPrefix.length))
 				: []),
 			...(includeEmptyNamespace
-				? defaultNsIds.map((id) =>
-					id.slice(ResourceLocation.DefaultNamespace.length)
-				)
+				? defaultNsIds.map((id) => id.slice(ResourceLocation.DefaultNamespace.length))
 				: []),
 		]
 		if (node.options.namespacePathSep === '.') {
-			return ans.map((v) =>
-				v.replace(ResourceLocation.NamespacePathSep, '.')
-			)
+			return ans.map((v) => v.replace(ResourceLocation.NamespacePathSep, '.'))
 		}
 		return ans
 	}
@@ -242,9 +235,7 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 				: []),
 		]
 
-	return pool.map((v) =>
-		CompletionItem.create(v, node, { kind: CompletionKind.Function })
-	)
+	return pool.map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Function }))
 }
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {
@@ -272,9 +263,7 @@ export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
 			node.options.category,
 			...(node.options.parentPath ?? []),
 		).visibleMembers,
-	).map((v) =>
-		CompletionItem.create(v, node, { kind: CompletionKind.Variable })
-	)
+	).map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Variable }))
 }
 
 export function registerCompleters(meta: MetaRegistry) {

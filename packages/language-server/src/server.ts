@@ -34,14 +34,10 @@ let progressReporter: ls.WorkDoneProgressReporter | undefined
 
 const externals = NodeJsExternals
 const logger: core.Logger = {
-	error: (msg: any, ...args: any[]): void =>
-		connection.console.error(util.format(msg, ...args)),
-	info: (msg: any, ...args: any[]): void =>
-		connection.console.info(util.format(msg, ...args)),
-	log: (msg: any, ...args: any[]): void =>
-		connection.console.log(util.format(msg, ...args)),
-	warn: (msg: any, ...args: any[]): void =>
-		connection.console.warn(util.format(msg, ...args)),
+	error: (msg: any, ...args: any[]): void => connection.console.error(util.format(msg, ...args)),
+	info: (msg: any, ...args: any[]): void => connection.console.info(util.format(msg, ...args)),
+	log: (msg: any, ...args: any[]): void => connection.console.log(util.format(msg, ...args)),
+	warn: (msg: any, ...args: any[]): void => connection.console.warn(util.format(msg, ...args)),
 }
 let service!: core.Service
 

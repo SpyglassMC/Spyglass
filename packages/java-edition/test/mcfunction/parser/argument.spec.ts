@@ -368,8 +368,7 @@ describe('mcfunction argument parser', () => {
 							specName: `mcfunction argument ${parserName} ${itTitle}`,
 							uri: new URL(
 								`./argument/${
-									parserName.replace(/[:_](\w)/g, (_, c) =>
-										c.toUpperCase())
+									parserName.replace(/[:_](\w)/g, (_, c) => c.toUpperCase())
 								}.spec.js`,
 								import.meta.url,
 							),

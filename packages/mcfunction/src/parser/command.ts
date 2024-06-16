@@ -88,11 +88,12 @@ function dispatch(
 			children,
 		)
 
-		const argumentParsers: { name: string; parser: core.Parser }[] =
-			argumentTreeNodes.map(([name, treeNode]) => ({
-				name,
-				parser: argument(treeNode) ?? unknown(treeNode),
-			}))
+		const argumentParsers: { name: string; parser: core.Parser }[] = argumentTreeNodes.map((
+			[name, treeNode],
+		) => ({
+			name,
+			parser: argument(treeNode) ?? unknown(treeNode),
+		}))
 		const literalParser = literalTreeNodes.length
 			? literal(
 				literalTreeNodes.map(([name, _treeNode]) => name),
@@ -113,9 +114,8 @@ function dispatch(
 		const result = parser(src, ctx)
 
 		if (result !== core.Failure) {
-			const takenName =
-				argumentParsers[out.index - (literalParser ? 1 : 0)]?.name
-					?? (result as LiteralCommandChildNode).value
+			const takenName = argumentParsers[out.index - (literalParser ? 1 : 0)]?.name
+				?? (result as LiteralCommandChildNode).value
 			const childPath = [...path, takenName]
 
 			ans.push({

@@ -162,8 +162,7 @@ export const TaggableResourceLocationCategories = Object.freeze(
 		...WorldgenFileCategories,
 	] as const,
 )
-export type TaggableResourceLocationCategory =
-	(typeof TaggableResourceLocationCategories)[number]
+export type TaggableResourceLocationCategory = (typeof TaggableResourceLocationCategories)[number]
 export namespace TaggableResourceLocationCategory {
 	export function is(
 		category: string,
@@ -232,8 +231,7 @@ export const ResourceLocationCategories = Object.freeze(
 		...RegistryCategories,
 	] as const,
 )
-export type ResourceLocationCategory =
-	(typeof ResourceLocationCategories)[number]
+export type ResourceLocationCategory = (typeof ResourceLocationCategories)[number]
 export namespace ResourceLocationCategory {
 	export function is(category: string): category is ResourceLocationCategory {
 		return ResourceLocationCategories.includes(
@@ -352,9 +350,7 @@ export namespace SymbolUsageType {
 	}
 }
 
-export interface Symbol
-	extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>>
-{
+export interface Symbol extends SymbolMetadata, Partial<Record<SymbolUsageType, SymbolLocation[]>> {
 	/**
 	 * The main category of this {@link Symbol}. Symbols in different categories are definitely
 	 * independent with each other. e.g. advancements and functions.
@@ -509,9 +505,7 @@ export interface UnlinkedSymbolMap {
 	[identifier: string]: UnlinkedSymbol
 }
 
-export interface UnlinkedSymbolTable
-	extends Partial<Record<AllCategory, UnlinkedSymbolMap>>
-{
+export interface UnlinkedSymbolTable extends Partial<Record<AllCategory, UnlinkedSymbolMap>> {
 	[category: string]: UnlinkedSymbolMap | undefined
 }
 

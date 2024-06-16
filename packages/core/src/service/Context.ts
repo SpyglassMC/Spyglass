@@ -213,9 +213,7 @@ export namespace FormatterContext {
 }
 
 export interface ColorizerContext extends ProcessorWithRangeContext {}
-export interface ColorizerContextOptions
-	extends ProcessorWithRangeContextOptions
-{}
+export interface ColorizerContextOptions extends ProcessorWithRangeContextOptions {}
 export namespace ColorizerContext {
 	export function create(
 		project: ProjectData,
@@ -246,12 +244,8 @@ export namespace CompleterContext {
 	}
 }
 
-export interface SignatureHelpProviderContext
-	extends ProcessorWithOffsetContext
-{}
-export interface SignatureHelpProviderContextOptions
-	extends ProcessorWithOffsetContextOptions
-{}
+export interface SignatureHelpProviderContext extends ProcessorWithOffsetContext {}
+export interface SignatureHelpProviderContextOptions extends ProcessorWithOffsetContextOptions {}
 export namespace SignatureHelpProviderContext {
 	export function create(
 		project: ProjectData,

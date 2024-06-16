@@ -265,10 +265,8 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 						),
 						insertText: new InsertTextBuilder()
 							.literal(k)
-							.if(insertValue, (b) =>
-								b.literal('=').placeholder(...states[k]))
-							.if(insertComma, (b) =>
-								b.literal(','))
+							.if(insertValue, (b) => b.literal('=').placeholder(...states[k]))
+							.if(insertComma, (b) => b.literal(','))
 							.build(),
 					})
 				)
@@ -315,8 +313,7 @@ const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
 		node: node as Mutable<ComponentTestsNode>,
 		needle: ctx.offset,
 		endInclusive: true,
-		predicate: (n) =>
-			ComponentTestExactNode.is(n) || ComponentTestSubpredicateNode.is(n),
+		predicate: (n) => ComponentTestExactNode.is(n) || ComponentTestSubpredicateNode.is(n),
 	})
 	if (test && ComponentTestExactNode.is(test) && test.value) {
 		return completer.dispatch(test.value, ctx)
@@ -362,9 +359,7 @@ const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
 }
 
 const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
-	const ans = ObjectiveCriteriaNode.SimpleValues.map((v) =>
-		CompletionItem.create(v, node)
-	)
+	const ans = ObjectiveCriteriaNode.SimpleValues.map((v) => CompletionItem.create(v, node))
 	if (
 		!node.children?.[0]
 		|| Range.contains(node.children[0], ctx.offset, true)
@@ -423,9 +418,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 		],
 	}
 	if (ParticleNode.isSpecialType(id)) {
-		const numParamsBefore = node.children?.slice(1).filter((n) =>
-			n.range.end < ctx.offset
-		).length
+		const numParamsBefore = node.children?.slice(1).filter((n) => n.range.end < ctx.offset).length
 			?? 0
 		const mock = map[id][numParamsBefore] as
 			| typeof map[keyof typeof map][number]

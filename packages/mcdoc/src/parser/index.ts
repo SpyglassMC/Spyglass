@@ -192,8 +192,7 @@ function syntaxRepeat<P extends Parser<AstNode | SyntaxUtil<AstNode>>>(
 	parser: P,
 	delegatesDocComments?: boolean,
 ): P extends InfallibleParser ? { _inputParserIsInfallible: never } & void
-	: P extends Parser<infer V | SyntaxUtil<infer V>>
-		? InfallibleParser<SyntaxUtil<V>>
+	: P extends Parser<infer V | SyntaxUtil<infer V>> ? InfallibleParser<SyntaxUtil<V>>
 	: never
 function syntaxRepeat<CN extends AstNode>(
 	parser: Parser<CN | SyntaxUtil<CN>>,
@@ -328,8 +327,7 @@ export const string: InfallibleParser<StringNode> = stopBefore(
 export const identifier: InfallibleParser<IdentifierNode> = (src, ctx) => {
 	// https://spyglassmc.com/user/mcdoc/#identifier
 	const IdentifierStart = /^[\p{L}\p{Nl}]$/u
-	const IdentifierContinue =
-		/^[\p{L}\p{Nl}\u200C\u200D\p{Mn}\p{Mc}\p{Nd}\p{Pc}]$/u
+	const IdentifierContinue = /^[\p{L}\p{Nl}\u200C\u200D\p{Mn}\p{Mc}\p{Nd}\p{Pc}]$/u
 	const ReservedWords = new Set([
 		'any',
 		'boolean',
@@ -485,23 +483,22 @@ export const path: InfallibleParser<PathNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
-const attributeTreePosValues: InfallibleParser<AttributeTreePosValuesNode> =
-	setType(
-		'mcdoc:attribute/tree/pos',
-		syntax(
-			[
-				{ get: () => attributeValue },
-				syntaxRepeat(
-					syntax(
-						[marker(','), { get: () => failOnEmpty(attributeValue) }],
-						true,
-					),
+const attributeTreePosValues: InfallibleParser<AttributeTreePosValuesNode> = setType(
+	'mcdoc:attribute/tree/pos',
+	syntax(
+		[
+			{ get: () => attributeValue },
+			syntaxRepeat(
+				syntax(
+					[marker(','), { get: () => failOnEmpty(attributeValue) }],
 					true,
 				),
-			],
-			true,
-		),
-	)
+				true,
+			),
+		],
+		true,
+	),
+)
 
 const attributeNamedValue: Parser<
 	SyntaxUtil<StringNode | IdentifierNode | AttributeValueNode>
@@ -658,11 +655,15 @@ export const docComments: InfallibleParser<DocCommentsNode> = setType(
 	}),
 )
 
-const prelim: InfallibleParser<SyntaxUtil<DocCommentsNode | AttributeNode>> =
-	syntax([optional(failOnEmpty(docComments)), attributes])
+const prelim: InfallibleParser<SyntaxUtil<DocCommentsNode | AttributeNode>> = syntax([
+	optional(failOnEmpty(docComments)),
+	attributes,
+])
 
-const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> =
-	select([{ prefix: '<', parser: typeParamBlock }, { parser: noop }])
+const optionalTypeParamBlock: InfallibleParser<TypeParamBlockNode | undefined> = select([{
+	prefix: '<',
+	parser: typeParamBlock,
+}, { parser: noop }])
 
 export const dispatchStatement: Parser<DispatchStatementNode> = setType(
 	'mcdoc:dispatch_statement',
@@ -689,8 +690,7 @@ const enumType: InfallibleParser<LiteralNode> = literal(
 )
 
 export const float: InfallibleParser<FloatNode> = core.float({
-	pattern:
-		/^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
+	pattern: /^[-+]?(?:[0-9]+(?:[eE][-+]?[0-9]+)?|[0-9]*\.[0-9]+(?:[eE][-+]?[0-9]+)?)$/,
 })
 
 export const integer: InfallibleParser<IntegerNode> = core.integer({
@@ -712,8 +712,7 @@ export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
 		'L',
 	] as const,
 )
-export type LiteralIntCaseInsensitiveSuffix =
-	(typeof LiteralIntCaseInsensitiveSuffixes)[number]
+export type LiteralIntCaseInsensitiveSuffix = (typeof LiteralIntCaseInsensitiveSuffixes)[number]
 export const LiteralFloatSuffixes = Object.freeze(
 	[
 		'f',
@@ -728,8 +727,7 @@ export const LiteralFloatCaseInsensitiveSuffixes = Object.freeze(
 		'D',
 	] as const,
 )
-export type LiteralFloatCaseInsensitiveSuffix =
-	(typeof LiteralFloatCaseInsensitiveSuffixes)[number]
+export type LiteralFloatCaseInsensitiveSuffix = (typeof LiteralFloatCaseInsensitiveSuffixes)[number]
 export const LiteralNumberSuffixes = Object.freeze(
 	[
 		...LiteralIntSuffixes,
@@ -1026,8 +1024,7 @@ function typeBase<
 >(
 	type: T,
 	parser: P,
-): P extends InfallibleParser<AstNode | SyntaxUtil<AstNode>>
-	? InfallibleParser<GetTypeNode<T, P>>
+): P extends InfallibleParser<AstNode | SyntaxUtil<AstNode>> ? InfallibleParser<GetTypeNode<T, P>>
 	: Parser<GetTypeNode<T, P>>
 /* eslint-enable @typescript-eslint/indent */
 function typeBase<T extends string>(

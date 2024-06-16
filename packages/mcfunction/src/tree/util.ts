@@ -1,9 +1,4 @@
-import type {
-	ArgumentTreeNode,
-	LiteralTreeNode,
-	RootTreeNode,
-	TreeNode,
-} from './type.js'
+import type { ArgumentTreeNode, LiteralTreeNode, RootTreeNode, TreeNode } from './type.js'
 
 export function redirect(
 	rootTreeNode: TreeNode,

@@ -31,8 +31,7 @@ export interface RootTreeNode extends BaseTreeNode {
 
 export type TreeNode = ArgumentTreeNode | LiteralTreeNode | RootTreeNode
 
-type RecursivePartial<T> = T extends object
-	? { [K in keyof T]?: RecursivePartial<T[K]> }
+type RecursivePartial<T> = T extends object ? { [K in keyof T]?: RecursivePartial<T[K]> }
 	: T
 
 export type PartialTreeNode = RecursivePartial<TreeNode>

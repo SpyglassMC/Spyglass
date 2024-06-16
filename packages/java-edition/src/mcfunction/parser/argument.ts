@@ -429,11 +429,10 @@ function coordinate(
 		}
 
 		if ((src.canReadInLine() && src.peek() !== ' ') || ans.notation === '') {
-			const result =
-				(integerOnly && ans.notation === '' ? integer : double)()(
-					src,
-					ctx,
-				)
+			const result = (integerOnly && ans.notation === '' ? integer : double)()(
+				src,
+				ctx,
+			)
 			ans.value = Number(result.value)
 		}
 
@@ -747,8 +746,9 @@ function range(
 	max?: number,
 	cycleable?: boolean,
 ): core.Parser<FloatRangeNode | IntRangeNode> {
-	const number: core.Parser<core.FloatNode | core.IntegerNode> =
-		type === 'float' ? float(min, max) : integer(min, max)
+	const number: core.Parser<core.FloatNode | core.IntegerNode> = type === 'float'
+		? float(min, max)
+		: integer(min, max)
 	const low = core.failOnEmpty(core.stopBefore(number, '..'))
 	const sep = core.failOnEmpty(
 		core.literal({ pool: ['..'], colorTokenType: 'keyword' }),
@@ -809,8 +809,7 @@ function range(
 function resourceOrInline(category: core.FileCategory) {
 	return core.select([
 		{
-			predicate: (src) =>
-				core.LegalResourceLocationCharacters.has(src.peek()),
+			predicate: (src) => core.LegalResourceLocationCharacters.has(src.peek()),
 			parser: core.resourceLocation({ category }),
 		},
 		{
@@ -914,8 +913,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 								const ans: EntitySelectorInvertableArgumentValueNode<
 									T
 								> = {
-									type:
-										'mcfunction:entity_selector/arguments/value/invertable',
+									type: 'mcfunction:entity_selector/arguments/value/invertable',
 									range: res.range,
 									children: res.children,
 									inverted: !!res.children.find(
@@ -955,9 +953,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 										value: {
 											get: (record, key) => {
 												const hasKey = (key: string): boolean =>
-													!!record.children.find((p) =>
-														p.key?.value === key
-													)
+													!!record.children.find((p) => p.key?.value === key)
 												const hasNonInvertedKey = (
 													key: string,
 												): boolean =>
@@ -993,8 +989,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																	sep: '=',
 																	value: core.select([
 																		{
-																			predicate: (src) =>
-																				src.peek() === '{',
+																			predicate: (src) => src.peek() === '{',
 																			parser: core.map<
 																				core.RecordNode<
 																					core.StringNode,
@@ -1008,14 +1003,12 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																				>({
 																					start: '{',
 																					pair: {
-																						key:
-																							unquotedString,
+																						key: unquotedString,
 																						sep: '=',
 																						value: core
 																							.boolean,
 																						end: ',',
-																						trailingEnd:
-																							true,
+																						trailingEnd: true,
 																					},
 																					end: '}',
 																				}),
@@ -1050,13 +1043,12 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																		key,
 																	)
 																}
-																const ans:
-																	EntitySelectorAdvancementsArgumentNode =
-																		{
-																			...res,
-																			type:
-																				'mcfunction:entity_selector/arguments/advancements',
-																		}
+																const ans: EntitySelectorAdvancementsArgumentNode =
+																	{
+																		...res,
+																		type:
+																			'mcfunction:entity_selector/arguments/advancements',
+																	}
 																return ans
 															},
 														)
@@ -1234,13 +1226,11 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																		key,
 																	)
 																}
-																const ans:
-																	EntitySelectorScoresArgumentNode =
-																		{
-																			...res,
-																			type:
-																				'mcfunction:entity_selector/arguments/scores',
-																		}
+																const ans: EntitySelectorScoresArgumentNode = {
+																	...res,
+																	type:
+																		'mcfunction:entity_selector/arguments/scores',
+																}
 																return ans
 															},
 														)
@@ -1443,8 +1433,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 														)
 													case undefined:
 														// The key is empty. Let's just fail the value as well.
-														return (): core.Result<never> =>
-															core.Failure
+														return (): core.Result<never> => core.Failure
 													default:
 														// The key is unknown.
 														return (

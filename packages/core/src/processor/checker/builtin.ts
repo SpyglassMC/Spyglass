@@ -1,10 +1,5 @@
 import { StateProxy } from '../../common/index.js'
-import type {
-	AstNode,
-	ResourceLocationNode,
-	SymbolBaseNode,
-	SymbolNode,
-} from '../../node/index.js'
+import type { AstNode, ResourceLocationNode, SymbolBaseNode, SymbolNode } from '../../node/index.js'
 import type { CheckerContext, MetaRegistry } from '../../service/index.js'
 import { ErrorReporter } from '../../service/index.js'
 import { traversePreOrder } from '../util.js'

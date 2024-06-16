@@ -14,8 +14,7 @@ describe('dissectUri()', () => {
 		{ uri: 'file:///data/minecraft/tags/block/bar.json', version: '1.21' },
 		{ uri: 'file:///data/qux/dimension/foo/baz.json', version: '1.16' },
 		{
-			uri:
-				'file:///data/minecraft/advancements/data/foo/predicates/bar.json',
+			uri: 'file:///data/minecraft/advancements/data/foo/predicates/bar.json',
 		},
 		{ uri: 'file:///pack.mcmeta' },
 		{ uri: 'file:///data/loot_tables/foo.json' },

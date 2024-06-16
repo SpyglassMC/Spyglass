@@ -41,8 +41,7 @@ export function SingletonPromise(
 		descripter: PropertyDescriptor,
 	) => {
 		const promises = new Map<unknown, Promise<unknown>>()
-		const decoratedMethod: (...args: unknown[]) => Promise<unknown> =
-			descripter.value
+		const decoratedMethod: (...args: unknown[]) => Promise<unknown> = descripter.value
 		// The `function` syntax is used to preserve `this` context from the decorated method.
 		descripter.value = function(...args: unknown[]) {
 			const key = getKey(args)

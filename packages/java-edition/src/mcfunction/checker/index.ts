@@ -5,9 +5,7 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
-import type {
-	EntitySelectorInvertableArgumentValueNode,
-} from '../node/index.js'
+import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
 import {
 	BlockNode,
 	ComponentTestExactNode,

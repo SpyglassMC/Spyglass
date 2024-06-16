@@ -26,10 +26,8 @@ export async function getVersions(
 ): Promise<McmetaVersions | undefined> {
 	return downloader.download<McmetaVersions>({
 		id: 'mc-je/versions.json.gz',
-		uri:
-			'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
-		transformer: (buffer) =>
-			core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
+		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
+		transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
 		cache: getCacheOptionsBasedOnGitHubCommitSha(
 			'misode',
 			'mcmeta',
@@ -104,8 +102,7 @@ export async function getMcmetaSummary(
 			{
 				id: `mc-je/${version}/${type}.json.gz`,
 				uri: uris[type],
-				transformer: (buffer) =>
-					core.parseGzippedJson(externals, buffer) as Promise<T>,
+				transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<T>,
 				cache: getCacheOptionsBasedOnGitHubCommitSha(
 					'misode',
 					'mcmeta',
@@ -168,8 +165,7 @@ function getCacheOptionsBasedOnGitHubCommitSha(
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
-			uri:
-				`https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
+			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
 			transformer: (buffer: Uint8Array) => {
 				const response = JSON.parse(
 					core.bufferToString(buffer),

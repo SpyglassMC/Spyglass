@@ -174,8 +174,7 @@ export async function generate(
 															/* @ts-ignore */
 														)?.value
 
-													container =
-														`${actualRoot}.${parentKey}.${key}`
+													container = `${actualRoot}.${parentKey}.${key}`
 												}
 											} else {
 												// This is another nested anonymous struct
@@ -191,8 +190,7 @@ export async function generate(
 														/* @ts-ignore */
 													)?.value
 
-												container =
-													`${actualRoot}.${parentKey}.__map_key.__struct`
+												container = `${actualRoot}.${parentKey}.__map_key.__struct`
 											}
 										}
 										break
@@ -211,10 +209,9 @@ export async function generate(
 														// java/server/world/entity/mob/breedable/llama.[0][2][4][2][9][0][0][1][0][0][0]
 														// java/server/world/entity/mob/breedable/llama.[0][2][4][2][9][0][1][1][0][0][0]
 														if (root) {
-															container =
-																`${root}.__spread.__union.__struct_${
-																	self.split('][').slice(-4)[0]
-																}` // THIS IS REALLY REALLY BAD
+															container = `${root}.__spread.__union.__struct_${
+																self.split('][').slice(-4)[0]
+															}` // THIS IS REALLY REALLY BAD
 														} else {
 															logger.warn(
 																'Could not find root for union spread',
@@ -238,10 +235,9 @@ export async function generate(
 																/* @ts-ignore */
 															)?.value
 
-														container =
-															`${root}.${parentKey}.__union.__struct_${
-																self.split('][').slice(-2)[0]
-															}` // THIS IS REALLY REALLY BAD
+														container = `${root}.${parentKey}.__union.__struct_${
+															self.split('][').slice(-2)[0]
+														}` // THIS IS REALLY REALLY BAD
 													}
 													break
 												case 'mcdoc:dispatch_statement':
@@ -260,8 +256,7 @@ export async function generate(
 																/* @ts-ignore */
 															)?.children?.[0]?.value
 
-														const indexGuess =
-															self.split('][').slice(-6)[0] // THIS IS REALLY REALLY BAD
+														const indexGuess = self.split('][').slice(-6)[0] // THIS IS REALLY REALLY BAD
 
 														if (indexGuess === '45') {
 															container =
@@ -313,8 +308,7 @@ export async function generate(
 															)?.value
 
 														if (foundRoot) {
-															container =
-																`${foundRoot}.${key}.__struct_list`
+															container = `${foundRoot}.${key}.__struct_list`
 														} else {
 															// This is another nested anonymous struct
 															switch (sevenBack?.parent?.type) {
@@ -331,15 +325,14 @@ export async function generate(
 																				/* @ts-ignore */
 																			)?.value
 																		// Credits husk
-																		const actualRoot =
-																			nineBack?.parent
-																				?.parent?.parent
-																				?.parent?.children
-																				?.find(child =>
-																					child.type
-																						=== 'mcdoc:identifier'
-																					/* @ts-ignore */
-																				)?.value
+																		const actualRoot = nineBack?.parent
+																			?.parent?.parent
+																			?.parent?.children
+																			?.find(child =>
+																				child.type
+																					=== 'mcdoc:identifier'
+																				/* @ts-ignore */
+																			)?.value
 																		if (actualRoot) {
 																			container =
 																				`${actualRoot}.__struct_list.${parentKey}.__struct_list.${key}.__struct_list`
@@ -409,9 +402,7 @@ export async function generate(
 									case 'mcdoc:dispatch_statement':
 										{
 											// anonymous struct
-											container = `__dispatch.__struct${
-												self.split('][').slice(-5)[0]
-											}` // THIS IS REALLY REALLY BAD
+											container = `__dispatch.__struct${self.split('][').slice(-5)[0]}` // THIS IS REALLY REALLY BAD
 										}
 										break
 								}
@@ -446,16 +437,14 @@ export async function generate(
 															/* @ts-ignore */
 														)?.value
 
-													container =
-														`${root}.${actualParentKey}.${key}`
+													container = `${root}.${actualParentKey}.${key}`
 												}
 											} else {
 												// advancement criteria trigger
 												const sevenBack = fourBack?.parent?.parent
 													?.parent
 												const parentKey = sevenBack?.children?.find(
-													child =>
-														child.type === 'mcdoc:identifier',
+													child => child.type === 'mcdoc:identifier',
 													/* @ts-ignore */
 												)?.value
 
@@ -465,8 +454,7 @@ export async function generate(
 														/* @ts-ignore */
 													)?.value
 
-												container =
-													`${root}.${parentKey}.__map_key.__struct`
+												container = `${root}.${parentKey}.__map_key.__struct`
 											}
 										}
 										break
@@ -482,10 +470,9 @@ export async function generate(
 																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
-															container =
-																`${root}.__union.__struct_${
-																	self.split('][').slice(-4)[0]
-																}` // THIS IS REALLY REALLY BAD
+															container = `${root}.__union.__struct_${
+																self.split('][').slice(-4)[0]
+															}` // THIS IS REALLY REALLY BAD
 														}
 														break
 													case 'mcdoc:struct/field/pair':
@@ -512,18 +499,15 @@ export async function generate(
 														{
 															// kill
 
-															const indexGuess =
-																self.split('][').slice(-6)[0]
+															const indexGuess = self.split('][').slice(-6)[0]
 															if (indexGuess === '45') {
-																container =
-																	`__dispatch.__struct_${
-																		self.split('][').slice(
-																			-4,
-																		)[0]
-																	}`
+																container = `__dispatch.__struct_${
+																	self.split('][').slice(
+																		-4,
+																	)[0]
+																}`
 															} else {
-																container =
-																	`__dispatch.__struct_${indexGuess}` // THIS IS REALLY REALLY BAD
+																container = `__dispatch.__struct_${indexGuess}` // THIS IS REALLY REALLY BAD
 															}
 														}
 														break
@@ -628,8 +612,7 @@ export async function generate(
 														/* @ts-ignore */
 													)?.value
 
-												container =
-													`${root}.${rootKey}.${parentKey}`
+												container = `${root}.${rootKey}.${parentKey}`
 											}
 										}
 									}
@@ -640,8 +623,7 @@ export async function generate(
 											case 'mcdoc:struct':
 												{
 													container = _parent?.children?.find(
-														child =>
-															child.type === 'mcdoc:identifier',
+														child => child.type === 'mcdoc:identifier',
 														/* @ts-ignore */
 													)?.value
 												}
@@ -661,8 +643,7 @@ export async function generate(
 											case 'mcdoc:enum':
 												{
 													container = _parent?.children?.find(
-														child =>
-															child.type === 'mcdoc:identifier',
+														child => child.type === 'mcdoc:identifier',
 														/* @ts-ignore */
 													)?.value
 												}
@@ -670,8 +651,7 @@ export async function generate(
 											case 'mcdoc:type_alias':
 												{
 													container = _parent?.children?.find(
-														child =>
-															child.type === 'mcdoc:identifier',
+														child => child.type === 'mcdoc:identifier',
 														/* @ts-ignore */
 													)?.value
 												}
@@ -802,9 +782,9 @@ export async function generate(
 						const start = lc.fromIndex(range.start)
 						const end = lc.fromIndex(range.end)
 
-						return `L${start?.line}${
-							start?.col ? `:C${start?.col}` : ''
-						} -> L${end?.line}${end?.col ? `:C${end?.col}` : ''}`
+						return `L${start?.line}${start?.col ? `:C${start?.col}` : ''} -> L${end?.line}${
+							end?.col ? `:C${end?.col}` : ''
+						}`
 					}
 
 					if (!known_error) {

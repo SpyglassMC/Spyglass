@@ -217,9 +217,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			const subFolders = match[3].split('/').slice(0, -1)
 
 			for (let i = 0; i < subFolders.length - 1; i++) { // if subFolders is empty, this loop will not run
-				const customCategory = `${match[2]}/${
-					subFolders.slice(0, i + 1).join('/')
-				}`
+				const customCategory = `${match[2]}/${subFolders.slice(0, i + 1).join('/')}`
 
 				def = Categories.get(customCategory)
 

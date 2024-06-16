@@ -2,18 +2,8 @@ import type { TextDocument } from 'vscode-languageserver-textdocument'
 import type { Logger } from '../common/index.js'
 import type { FileNode } from '../node/index.js'
 import { AstNode } from '../node/index.js'
-import type {
-	Color,
-	ColorInfo,
-	ColorToken,
-	InlayHint,
-	SignatureHelp,
-} from '../processor/index.js'
-import {
-	ColorPresentation,
-	completer,
-	traversePreOrder,
-} from '../processor/index.js'
+import type { Color, ColorInfo, ColorToken, InlayHint, SignatureHelp } from '../processor/index.js'
+import { ColorPresentation, completer, traversePreOrder } from '../processor/index.js'
 import { Range } from '../source/index.js'
 import type { SymbolLocation, SymbolUsageType } from '../symbol/index.js'
 import { SymbolUsageTypes } from '../symbol/index.js'

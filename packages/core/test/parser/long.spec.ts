@@ -48,8 +48,7 @@ describe('long()', () => {
 				pattern,
 				min: 1n,
 				max: 6n,
-				onOutOfRange: (ans, _src, ctx) =>
-					ctx.err.report('Test message!', ans),
+				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans),
 			},
 		]
 		const cases: { content: string }[] = [

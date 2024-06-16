@@ -155,9 +155,7 @@ export function documentSymbols(
 				] as const,
 		)
 		.filter(([_s, l]) => !!l)
-		.map(([s, l]) =>
-			documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds)
-		)
+		.map(([s, l]) => documentSymbol(s, l!, doc, hierarchicalSupport, supportedKinds))
 }
 
 export function documentSymbolsFromTable(
@@ -178,9 +176,7 @@ export function documentSymbolsFromTables(
 	supportedKinds: ls.SymbolKind[] = [],
 ): ls.DocumentSymbol[] {
 	return tables
-		.map((t) =>
-			documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds)
-		)
+		.map((t) => documentSymbolsFromTable(t, doc, hierarchicalSupport, supportedKinds))
 		.flat()
 }
 

@@ -58,9 +58,7 @@ describe('semanticTokens', () => {
 			const multilineStr = `${
 				hasMultilineTokenSupport ? 'with' : 'without'
 			} multiline token support`
-			const itTitle = `Tokenize "${
-				showWhitespaceGlyph(content)
-			}" ${multilineStr}`
+			const itTitle = `Tokenize "${showWhitespaceGlyph(content)}" ${multilineStr}`
 			it(itTitle, () => {
 				const { data } = semanticTokens(
 					tokens,

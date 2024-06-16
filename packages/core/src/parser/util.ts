@@ -8,8 +8,7 @@ import { IndexMap, Range, Source } from '../source/index.js'
 import type { InfallibleParser, Parser, Result, Returnable } from './Parser.js'
 import { Failure } from './Parser.js'
 
-type ExtractNodeType<P extends Parser<Returnable>> = P extends Parser<infer V>
-	? V
+type ExtractNodeType<P extends Parser<Returnable>> = P extends Parser<infer V> ? V
 	: never
 /**
  * @template PA Parser array.
@@ -24,9 +23,7 @@ export interface AttemptResult<N extends Returnable = AstNode> {
 	endCursor: number
 	errorAmount: number
 }
-interface InfallibleAttemptResult<N extends Returnable = AstNode>
-	extends AttemptResult<N>
-{
+interface InfallibleAttemptResult<N extends Returnable = AstNode> extends AttemptResult<N> {
 	result: N
 }
 
@@ -237,18 +234,17 @@ export function any(
 	out?: AnyOutObject,
 ): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
-		const results: { attempt: AttemptResult<Returnable>; index: number }[] =
-			parsers
-				.map((parser, i) => ({
-					attempt: attempt(parser, src, ctx),
-					index: i,
-				}))
-				.filter(({ attempt }) => attempt.result !== Failure)
-				.sort(
-					(a, b) =>
-						b.attempt.endCursor - a.attempt.endCursor
-						|| a.attempt.errorAmount - b.attempt.errorAmount,
-				)
+		const results: { attempt: AttemptResult<Returnable>; index: number }[] = parsers
+			.map((parser, i) => ({
+				attempt: attempt(parser, src, ctx),
+				index: i,
+			}))
+			.filter(({ attempt }) => attempt.result !== Failure)
+			.sort(
+				(a, b) =>
+					b.attempt.endCursor - a.attempt.endCursor
+					|| a.attempt.errorAmount - b.attempt.errorAmount,
+			)
 		if (results.length === 0) {
 			if (out) {
 				out.index = -1

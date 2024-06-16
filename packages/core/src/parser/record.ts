@@ -76,8 +76,7 @@ export function record<K extends AstNode, V extends AstNode>({
 						localize('expected', localize('parser.record.key')),
 						Range.create(
 							src,
-							() =>
-								src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
+							() => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
 						),
 					)
 				} else {
@@ -116,8 +115,7 @@ export function record<K extends AstNode, V extends AstNode>({
 						localize('expected', localize('parser.record.value')),
 						Range.create(
 							src,
-							() =>
-								src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
+							() => src.skipUntilOrEnd(pair.sep, pair.end, end, '\r', '\n'),
 						),
 					)
 				} else {

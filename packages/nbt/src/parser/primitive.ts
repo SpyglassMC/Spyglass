@@ -1,11 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
-import type {
-	NbtByteNode,
-	NbtNumberNode,
-	NbtPrimitiveNode,
-	NbtStringNode,
-} from '../node/index.js'
+import type { NbtByteNode, NbtNumberNode, NbtPrimitiveNode, NbtStringNode } from '../node/index.js'
 import { localizeTag } from '../util.js'
 
 const enum Group {

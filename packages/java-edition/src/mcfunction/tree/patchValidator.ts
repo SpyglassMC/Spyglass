@@ -24,9 +24,7 @@ export function validatePatchedTree(tree: RootTreeNode, logger: core.Logger) {
 			&& !node.properties
 		) {
 			logger.warn(
-				`[validatePatchedTree] Patch required: ${node.parser} at ${
-					path.join('.')
-				}`,
+				`[validatePatchedTree] Patch required: ${node.parser} at ${path.join('.')}`,
 			)
 		}
 

@@ -1,11 +1,6 @@
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type {
-	ExternalEventEmitter,
-	Externals,
-	FsWatcher,
-	IntervalId,
-} from '../common/index.js'
+import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
 import {
 	bufferToString,
 	Logger,
@@ -34,11 +29,7 @@ import type { Dependency } from './Dependency.js'
 import { DependencyKey } from './Dependency.js'
 import { Downloader } from './Downloader.js'
 import { LinterErrorReporter } from './ErrorReporter.js'
-import {
-	ArchiveUriSupporter,
-	FileService,
-	FileUriSupporter,
-} from './FileService.js'
+import { ArchiveUriSupporter, FileService, FileUriSupporter } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import { MetaRegistry } from './MetaRegistry.js'
@@ -384,9 +375,7 @@ export class Project implements ExternalEventEmitter {
 			// 	return
 			// }
 			this.emit('documentErrored', {
-				errors: FileNode.getErrors(node).map((e) =>
-					LanguageError.withPosRange(e, doc)
-				),
+				errors: FileNode.getErrors(node).map((e) => LanguageError.withPosRange(e, doc)),
 				uri: doc.uri,
 				version: doc.version,
 			})
@@ -448,9 +437,7 @@ export class Project implements ExternalEventEmitter {
 			results.forEach(async (r, i) => {
 				if (r.status === 'rejected') {
 					this.logger.error(
-						`[Project] [callInitializers] [${i}] “${
-							this.#initializers[i].name
-						}”`,
+						`[Project] [callInitializers] [${i}] “${this.#initializers[i].name}”`,
 						r.reason,
 					)
 				} else if (r.value) {
@@ -574,8 +561,7 @@ export class Project implements ExternalEventEmitter {
 			for (
 				const [id, { checksum, registrar }] of this.meta.symbolRegistrars
 			) {
-				const cacheChecksum =
-					this.cacheService.checksums.symbolRegistrars[id]
+				const cacheChecksum = this.cacheService.checksums.symbolRegistrars[id]
 				if (cacheChecksum === undefined || checksum !== cacheChecksum) {
 					this.symbols.clear({ contributor: `symbol_registrar/${id}` })
 					this.symbols.contributeAs(`symbol_registrar/${id}`, () => {

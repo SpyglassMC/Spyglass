@@ -3,10 +3,7 @@ import type { DeepReadonly } from '../../../common/index.js'
 import { Arrayable, ResourceLocation } from '../../../common/index.js'
 import type { AstNode } from '../../../node/index.js'
 import type { LinterContext } from '../../../service/index.js'
-import {
-	LinterSeverity,
-	SymbolLinterConfig as Config,
-} from '../../../service/index.js'
+import { LinterSeverity, SymbolLinterConfig as Config } from '../../../service/index.js'
 import type { Symbol } from '../../../symbol/index.js'
 import { SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
 import type { Linter } from '../Linter.js'

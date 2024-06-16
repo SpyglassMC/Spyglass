@@ -38,9 +38,7 @@ export type ResourceLocationOptions =
 		}
 	)
 
-export interface ResourceLocationBaseNode
-	extends AstNode, Partial<ResourceLocation>
-{
+export interface ResourceLocationBaseNode extends AstNode, Partial<ResourceLocation> {
 	readonly options: ResourceLocationOptions
 }
 
@@ -116,9 +114,7 @@ export namespace ResourceLocationNode {
 			case 'full':
 				// Use `node.namespace` before `||`, so that both undefined and empty value can result in the default namespace.
 				// Use `||` instead of `??`, so that empty namespaces can be converted to the default namespace.
-				id = `${
-					node.namespace || DefaultNamespace
-				}${NamespacePathSep}${path}`
+				id = `${node.namespace || DefaultNamespace}${NamespacePathSep}${path}`
 				break
 			case 'short':
 				// Use `node.namespace` before `&&` for the same reason stated above.

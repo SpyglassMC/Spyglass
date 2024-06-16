@@ -7,12 +7,7 @@ import walk from 'klaw'
 import yargs from 'yargs'
 import { hideBin } from 'yargs/helpers'
 
-import {
-	ConfigService,
-	fileUtil,
-	Service,
-	VanillaConfig,
-} from '@spyglassmc/core'
+import { ConfigService, fileUtil, Service, VanillaConfig } from '@spyglassmc/core'
 import { NodeJsExternals } from '@spyglassmc/core/lib/nodejs.js'
 import * as mcdoc from '@spyglassmc/mcdoc'
 
@@ -52,14 +47,12 @@ await CLI.scriptName('mcdoc')
 			).options({
 				'locale': {
 					alias: 'l',
-					description:
-						'en-us language key-value store of all doc comments.',
+					description: 'en-us language key-value store of all doc comments.',
 					default: false,
 				},
 				'module': {
 					alias: 'm',
-					description:
-						'file tree mirroring definitions; to optimize for web.',
+					description: 'file tree mirroring definitions; to optimize for web.',
 					default: false,
 				},
 				'pretty': {
@@ -94,18 +87,15 @@ await CLI.scriptName('mcdoc')
 			)
 
 			const logger: Logger = {
-				log: (...log_args: any[]) =>
-					args.verbose ? console.log(...log_args) : false,
+				log: (...log_args: any[]) => args.verbose ? console.log(...log_args) : false,
 
 				warn: (...log_args: any[]) => console.warn(...log_args),
 
 				error: (...log_args: any[]) => console.error(...log_args),
 
-				info: (...log_args: any[]) =>
-					args.verbose ? console.info(...log_args) : false,
+				info: (...log_args: any[]) => args.verbose ? console.info(...log_args) : false,
 
-				trace: (message?: any, ...params: any) =>
-					console.trace(message, ...params),
+				trace: (message?: any, ...params: any) => console.trace(message, ...params),
 			}
 
 			const project_path = resolve(process.cwd(), args.source)

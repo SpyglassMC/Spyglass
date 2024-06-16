@@ -73,10 +73,9 @@ export function index(
 						node.parent && JsonPairNode?.is(node.parent)
 						&& node.parent.key
 					) {
-						node.parent.key.hover =
-							`\`\`\`typescript\n${node.parent.key.value}: ${
-								mcdoc.McdocType.toString(definition)
-							}\n\`\`\``
+						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+							mcdoc.McdocType.toString(definition)
+						}\n\`\`\``
 					}
 				},
 				stringAttacher: (node, attacher) => {

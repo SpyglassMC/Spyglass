@@ -1,9 +1,5 @@
 import { TextDocument } from 'vscode-languageserver-textdocument'
-import type {
-	DeepReadonly,
-	ExternalEventEmitter,
-	Externals,
-} from '../common/index.js'
+import type { DeepReadonly, ExternalEventEmitter, Externals } from '../common/index.js'
 import type { AstNode } from '../node/index.js'
 import type { RangeLike } from '../source/index.js'
 import { Range } from '../source/index.js'
@@ -17,12 +13,7 @@ import type {
 	SymbolTable,
 	SymbolUsageType,
 } from './Symbol.js'
-import {
-	SymbolLocation,
-	SymbolPath,
-	SymbolUsageTypes,
-	SymbolVisibility,
-} from './Symbol.js'
+import { SymbolLocation, SymbolPath, SymbolUsageTypes, SymbolVisibility } from './Symbol.js'
 
 export interface LookupResult {
 	/**
@@ -102,11 +93,10 @@ export class SymbolUtil implements ExternalEventEmitter {
 				this.#trimmableSymbols.delete(SymbolPath.toString(symbol))
 			})
 			.on('symbolLocationCreated', ({ symbol, location }) => {
-				const cache =
-					(this.#cache[location.contributor ?? 'undefined'] ??= Object
-						.create(
-							null,
-						) as never)
+				const cache = (this.#cache[location.contributor ?? 'undefined'] ??= Object
+					.create(
+						null,
+					) as never)
 				const fileSymbols = (cache[location.uri] ??= new Set())
 				const path = SymbolPath.toString(symbol)
 				fileSymbols.add(path)
@@ -1421,8 +1411,7 @@ export class SymbolQuery {
 	): this {
 		return this.onEach(
 			Object.keys(this.visibleMembers),
-			(identifier) =>
-				this.member(identifier, (query) => fn(identifier, query)),
+			(identifier) => this.member(identifier, (query) => fn(identifier, query)),
 		)
 	}
 
@@ -1493,9 +1482,7 @@ export namespace SymbolFormatter {
 		assertEqual(symbol.path[symbol.path.length - 1], symbol.identifier)
 		ans.push(
 			`SYMBOL ${symbol.path.join('.')}`
-				+ ` {${symbol.category}${
-					symbol.subcategory ? ` (${symbol.subcategory})` : ''
-				}}`
+				+ ` {${symbol.category}${symbol.subcategory ? ` (${symbol.subcategory})` : ''}}`
 				+ ` [${
 					stringifyVisibility(
 						symbol.visibility,
@@ -1514,8 +1501,7 @@ export namespace SymbolFormatter {
 				ans.push(
 					`${IndentChar}${type}:\n${
 						symbol[type]!.map(
-							(v) =>
-								`${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`,
+							(v) => `${indent}${IndentChar.repeat(2)}${JSON.stringify(v)}`,
 						).join(`\n${indent}${IndentChar.repeat(2)}------------\n`)
 					}`,
 				)

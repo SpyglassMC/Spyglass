@@ -1,7 +1,4 @@
-import {
-	identifierToSeg,
-	segToIdentifier,
-} from '@spyglassmc/mcdoc/lib/common.js'
+import { identifierToSeg, segToIdentifier } from '@spyglassmc/mcdoc/lib/common.js'
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
 

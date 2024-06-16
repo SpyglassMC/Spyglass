@@ -148,7 +148,6 @@ export function registerLinters(meta: MetaRegistry) {
 	meta.registerLinter('undeclaredSymbol', {
 		configValidator: configValidator.symbolLinterConfig,
 		linter: undeclaredSymbol,
-		nodePredicate: (n) =>
-			n.symbol && !McdocCategories.includes(n.symbol.category as any),
+		nodePredicate: (n) => n.symbol && !McdocCategories.includes(n.symbol.category as any),
 	})
 }

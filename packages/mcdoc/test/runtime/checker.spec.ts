@@ -111,8 +111,7 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
-			name:
-				'struct { pages: ([struct { raw: string, filtered?: string }] | [string]) }',
+			name: 'struct { pages: ([struct { raw: string, filtered?: string }] | [string]) }',
 			type: {
 				kind: 'struct',
 				fields: [
@@ -160,8 +159,7 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
-			name:
-				'struct { ...struct { foo: double, bar: boolean }, foo: string }',
+			name: 'struct { ...struct { foo: double, bar: boolean }, foo: string }',
 			type: {
 				kind: 'struct',
 				fields: [
@@ -356,8 +354,7 @@ describe('mcdoc runtime checker', () => {
 			],
 		},
 		{
-			name:
-				'(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
+			name: '(struct { foo: (int @ 0..5 | int @ 20..25) } | struct { foo: int @ 4..6 })',
 			type: {
 				kind: 'union',
 				members: [

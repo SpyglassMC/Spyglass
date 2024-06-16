@@ -4,11 +4,7 @@ import {
 	SlashCommandStringOption,
 } from '@discordjs/builders'
 import { REST } from '@discordjs/rest'
-import type {
-	ColorToken,
-	ColorTokenType,
-	LanguageError,
-} from '@spyglassmc/core'
+import type { ColorToken, ColorTokenType, LanguageError } from '@spyglassmc/core'
 import {
 	ConfigService,
 	ErrorSeverity,
@@ -24,13 +20,7 @@ import * as je from '@spyglassmc/java-edition'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { Routes } from 'discord-api-types/rest/v9'
 import type { Snowflake } from 'discord.js'
-import {
-	Client,
-	Intents,
-	MessageActionRow,
-	MessageButton,
-	MessageEmbed,
-} from 'discord.js'
+import { Client, Intents, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js'
 import { dirname, join } from 'path'
 import { fileURLToPath, pathToFileURL } from 'url'
 

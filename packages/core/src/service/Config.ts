@@ -149,8 +149,7 @@ export type QuoteConfig = {
 	type?: 'double' | 'single'
 }
 
-type LinterConfigValue<T> = T extends boolean
-	? null | T | [LinterSeverity, T] | LinterSeverity
+type LinterConfigValue<T> = T extends boolean ? null | T | [LinterSeverity, T] | LinterSeverity
 	: null | T | [LinterSeverity, T]
 export namespace LinterConfigValue {
 	export function destruct(

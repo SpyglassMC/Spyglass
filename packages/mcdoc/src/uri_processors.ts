@@ -1,8 +1,4 @@
-import type {
-	UriBinder,
-	UriBinderContext,
-	UriSorterRegistration,
-} from '@spyglassmc/core'
+import type { UriBinder, UriBinderContext, UriSorterRegistration } from '@spyglassmc/core'
 import { fileUtil } from '@spyglassmc/core'
 import { segToIdentifier } from './common.js'
 

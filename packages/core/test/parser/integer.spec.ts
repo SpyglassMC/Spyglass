@@ -44,8 +44,7 @@ describe('integer()', () => {
 				pattern,
 				min: 1,
 				max: 6,
-				onOutOfRange: (ans, _src, ctx) =>
-					ctx.err.report('Test message!', ans),
+				onOutOfRange: (ans, _src, ctx) => ctx.err.report('Test message!', ans),
 			},
 		]
 		const cases: { content: string }[] = [

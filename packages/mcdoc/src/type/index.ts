@@ -127,9 +127,7 @@ export interface ReferenceType extends McdocBaseType {
 	path?: string
 }
 
-export interface UnionType<T extends McdocType = McdocType>
-	extends McdocBaseType
-{
+export interface UnionType<T extends McdocType = McdocType> extends McdocBaseType {
 	kind: 'union'
 	members: T[]
 }
@@ -308,9 +306,7 @@ export namespace McdocType {
 		let attributesString = ''
 		if (type.attributes?.length) {
 			for (const attribute of type.attributes) {
-				attributesString += `#[${attribute.name}${
-					attribute.value ? '=<value ...>' : ''
-				}] `
+				attributesString += `#[${attribute.name}${attribute.value ? '=<value ...>' : ''}] `
 			}
 		}
 		let typeString: string
@@ -353,9 +349,7 @@ export namespace McdocType {
 				typeString = `float${rangeToString(type.valueRange)}`
 				break
 			case 'indexed':
-				typeString = `${toString(type.child)}${
-					indicesToString(type.parallelIndices)
-				}`
+				typeString = `${toString(type.child)}${indicesToString(type.parallelIndices)}`
 				break
 			case 'int':
 				typeString = `int${rangeToString(type.valueRange)}`
@@ -368,9 +362,7 @@ export namespace McdocType {
 				}`
 				break
 			case 'list':
-				typeString = `[${toString(type.item)}]${
-					rangeToString(type.lengthRange)
-				}`
+				typeString = `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
 				break
 			case 'literal':
 				typeString = `${type.value}`

@@ -1,13 +1,7 @@
 import assert from 'assert'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import type {
-	AstNode,
-	Parser,
-	ParserContext,
-	Result,
-	Source,
-} from '../../lib/index.js'
+import type { AstNode, Parser, ParserContext, Result, Source } from '../../lib/index.js'
 import {
 	any,
 	boolean,
