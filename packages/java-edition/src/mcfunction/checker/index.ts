@@ -204,7 +204,16 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 }
 
 const particle: core.SyncChecker<ParticleNode> = (node, ctx) => {
-	core.checker.dispatchSync(node, ctx)
+	const id = core.ResourceLocationNode.toString(node.id, 'full')
+	const options = node.children?.find(nbt.NbtCompoundNode.is)
+	if (options) {
+		nbt.checker.index('minecraft:particle', id)(options, ctx)
+	} else if (ParticleNode.hasConfig(core.ResourceLocation.shorten(id))) {
+		ctx.err.report(
+			localize('expected', localize('nbt.node.compound')),
+			core.Range.create(node.id.range.end, node.id.range.end + 1),
+		)
+	}
 }
 // #endregion
 
