@@ -27,27 +27,15 @@ const gunzip = promisify(zlib.gunzip)
 const gzip = promisify(zlib.gzip)
 
 class NodeJsExternalDownloader implements ExternalDownloader {
-	get(
-		uri: RemoteUriString,
-		options: ExternalDownloaderOptions = {},
-	): Promise<Uint8Array> {
+	get(uri: RemoteUriString, options: ExternalDownloaderOptions = {}): Promise<Uint8Array> {
 		const protocol = new Uri(uri).protocol
 		return new Promise((resolve, reject) => {
 			const backend = protocol === 'http:' ? http : https
 			backend.get(uri, options, (res: IncomingMessage) => {
 				if (res.statusCode !== 200) {
-					reject(
-						new Error(
-							`Status code ${res.statusCode}: ${res.statusMessage}`,
-						),
-					)
+					reject(new Error(`Status code ${res.statusCode}: ${res.statusMessage}`))
 				} else {
-					resolve(
-						promisifyAsyncIterable(
-							res,
-							(chunks) => Buffer.concat(chunks),
-						),
-					)
+					resolve(promisifyAsyncIterable(res, (chunks) => Buffer.concat(chunks)))
 				}
 			})
 		})
@@ -84,20 +72,15 @@ export const NodeJsExternals: Externals = {
 			return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
 		},
 	},
-	event: {
-		EventEmitter,
-	},
+	event: { EventEmitter },
 	fs: {
 		chmod(location, mode) {
 			return fsp.chmod(toFsPathLike(location), mode)
 		},
 		async getAllFiles(location) {
-			return (
-				await globby(toPath(location) + '**/*', {
-					absolute: true,
-					dot: true,
-				})
-			).map(uriFromPath)
+			return (await globby(toPath(location) + '**/*', { absolute: true, dot: true })).map(
+				uriFromPath,
+			)
 		},
 		async mkdir(location, options) {
 			return void (await fsp.mkdir(toFsPathLike(location), options))

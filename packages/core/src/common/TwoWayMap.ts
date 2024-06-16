@@ -56,10 +56,7 @@ export class TwoWayMap<K, V> implements Map<K, V> {
 		return this
 	}
 
-	forEach(
-		callbackfn: (value: V, key: K, map: TwoWayMap<K, V>) => void,
-		thisArg?: any,
-	): void {
+	forEach(callbackfn: (value: V, key: K, map: TwoWayMap<K, V>) => void, thisArg?: any): void {
 		for (const [key, value] of this._map) {
 			callbackfn.apply(thisArg, [value, key, this])
 		}

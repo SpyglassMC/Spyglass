@@ -32,10 +32,7 @@ export namespace IndexMap {
 	}
 
 	export function toInnerRange(map: IndexMap, outer: Range): Range {
-		return Range.create(
-			toInnerOffset(map, outer.start),
-			toInnerOffset(map, outer.end),
-		)
+		return Range.create(toInnerOffset(map, outer.start), toInnerOffset(map, outer.end))
 	}
 
 	export function toOuterOffset(map: IndexMap, offset: number): number {
@@ -43,16 +40,10 @@ export namespace IndexMap {
 	}
 
 	export function toOuterRange(map: IndexMap, inner: Range): Range {
-		return Range.create(
-			toOuterOffset(map, inner.start),
-			toOuterOffset(map, inner.end),
-		)
+		return Range.create(toOuterOffset(map, inner.start), toOuterOffset(map, inner.end))
 	}
 
 	export function merge(outerMap: IndexMap, innerMap: IndexMap): IndexMap {
-		return innerMap.map((p) => ({
-			inner: p.inner,
-			outer: toOuterRange(outerMap, p.outer),
-		}))
+		return innerMap.map((p) => ({ inner: p.inner, outer: toOuterRange(outerMap, p.outer) }))
 	}
 }

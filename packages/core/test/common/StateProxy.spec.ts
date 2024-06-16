@@ -4,21 +4,8 @@ import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 
 const getTestObj = () => ({
-	symbols: {
-		advancement: {
-			foo: {
-				category: 'advancement',
-			},
-		},
-	},
-	node: {
-		type: 'file',
-		children: [
-			{
-				type: 'symbol',
-			},
-		],
-	},
+	symbols: { advancement: { foo: { category: 'advancement' } } },
+	node: { type: 'file', children: [{ type: 'symbol' }] },
 })
 
 describe('StateProxy', () => {
@@ -34,14 +21,8 @@ describe('StateProxy', () => {
 		assert.strictEqual(proxy.symbols, proxy.symbols)
 		assert(StateProxy.is(proxy.symbols), 'proxy.symbols is a StateProxy')
 		assert.strictEqual(proxy.symbols.advancement, proxy.symbols.advancement)
-		assert(
-			StateProxy.is(proxy.symbols.advancement),
-			'proxy.symbols.advancement is a StateProxy',
-		)
-		assert.strictEqual(
-			proxy.symbols.advancement.foo,
-			proxy.symbols.advancement.foo,
-		)
+		assert(StateProxy.is(proxy.symbols.advancement), 'proxy.symbols.advancement is a StateProxy')
+		assert.strictEqual(proxy.symbols.advancement.foo, proxy.symbols.advancement.foo)
 		assert(
 			StateProxy.is(proxy.symbols.advancement.foo),
 			'proxy.symbols.advancement.foo is a StateProxy',
@@ -51,15 +32,9 @@ describe('StateProxy', () => {
 		assert(StateProxy.is(proxy.node), 'proxy.node is a StateProxy')
 		assert.strictEqual(proxy.node.type, 'file')
 		assert.strictEqual(proxy.node.children, proxy.node.children)
-		assert(
-			StateProxy.is(proxy.node.children),
-			'proxy.node.children is a StateProxy',
-		)
+		assert(StateProxy.is(proxy.node.children), 'proxy.node.children is a StateProxy')
 		assert.strictEqual(proxy.node.children[0], proxy.node.children[0])
-		assert(
-			StateProxy.is(proxy.node.children[0]),
-			'proxy.node.children[0] is a StateProxy',
-		)
+		assert(StateProxy.is(proxy.node.children[0]), 'proxy.node.children[0] is a StateProxy')
 		assert.strictEqual(proxy.node.children[0].type, 'symbol')
 	})
 	it('Should return the correct origin', () => {
@@ -76,24 +51,15 @@ describe('StateProxy', () => {
 			testObj.symbols.advancement.foo,
 		)
 		assert.strictEqual(StateProxy.dereference(proxy.node), testObj.node)
-		assert.strictEqual(
-			StateProxy.dereference(proxy.node.children),
-			testObj.node.children,
-		)
-		assert.strictEqual(
-			StateProxy.dereference(proxy.node.children[0]),
-			testObj.node.children[0],
-		)
+		assert.strictEqual(StateProxy.dereference(proxy.node.children), testObj.node.children)
+		assert.strictEqual(StateProxy.dereference(proxy.node.children[0]), testObj.node.children[0])
 	})
 	it('Should undo and redo changes correctly', () => {
 		const testObj = getTestObj() as any
 		const proxy = StateProxy.create(testObj) as StateProxy<any>
 		snapshot(proxy)
 
-		const barSymbol = {
-			category: 'advancement',
-			data: 1,
-		}
+		const barSymbol = { category: 'advancement', data: 1 }
 		proxy.symbols.advancement.bar = barSymbol
 		proxy.node.children[0].symbol = barSymbol
 		proxy.symbols.advancement.bar.data = 42

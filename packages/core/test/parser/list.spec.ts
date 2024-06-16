@@ -7,50 +7,26 @@ import { showWhitespaceGlyph, testParser } from '../utils.js'
 
 describe('list()', () => {
 	const quotedString = string({ quotes: ['"'] })
-	const suites: {
-		title: string
-		options: Options<StringNode>
-		contents: string[]
-	}[] = [
-		{
-			title: 'list(no trailing comma)',
-			options: {
-				start: '[',
-				value: quotedString,
-				sep: ',',
-				trailingSep: false,
-				end: ']',
-			},
-			contents: [
-				'',
-				'[',
-				'[ ]',
-				'[ , ]',
-				'[ , "foo" ]',
-				'[ "foo" ]',
-				'[ "foo" , ]',
-				'[ "foo"   "bar" ]',
-				'[ "foo" , "bar" ]',
-				'[ "foo" , "bar" , ]',
-			],
-		},
-		{
-			title: 'list(trailing comma)',
-			options: {
-				start: '[',
-				value: quotedString,
-				sep: ',',
-				trailingSep: true,
-				end: ']',
-			},
-			contents: [
-				'[ "foo" ]',
-				'[ "foo" , ]',
-				'[ "foo" , "bar" ]',
-				'[ "foo" , "bar" , ]',
-			],
-		},
-	]
+	const suites: { title: string; options: Options<StringNode>; contents: string[] }[] = [{
+		title: 'list(no trailing comma)',
+		options: { start: '[', value: quotedString, sep: ',', trailingSep: false, end: ']' },
+		contents: [
+			'',
+			'[',
+			'[ ]',
+			'[ , ]',
+			'[ , "foo" ]',
+			'[ "foo" ]',
+			'[ "foo" , ]',
+			'[ "foo"   "bar" ]',
+			'[ "foo" , "bar" ]',
+			'[ "foo" , "bar" , ]',
+		],
+	}, {
+		title: 'list(trailing comma)',
+		options: { start: '[', value: quotedString, sep: ',', trailingSep: true, end: ']' },
+		contents: ['[ "foo" ]', '[ "foo" , ]', '[ "foo" , "bar" ]', '[ "foo" , "bar" , ]'],
+	}]
 	for (const { title, options, contents } of suites) {
 		describe(title, () => {
 			for (const content of contents) {

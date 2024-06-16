@@ -24,10 +24,7 @@ function mcfunction(
 			} else if (src.peek() === '$') {
 				result = macro(supportsMacros)(src, ctx) as MacroNode
 			} else {
-				result = command(
-					commandTree,
-					argument,
-				)(src, ctx)
+				result = command(commandTree, argument)(src, ctx)
 			}
 			ans.children.push(result)
 			src.nextLine()
@@ -39,9 +36,7 @@ function mcfunction(
 	}
 }
 
-const comment = core.comment({
-	singleLinePrefixes: new Set(['#']),
-})
+const comment = core.comment({ singleLinePrefixes: new Set(['#']) })
 
 /**
  * @param supportsBackslashContinuation Whether or not to concatenate lines together on trailing backslashes.
@@ -51,13 +46,8 @@ const comment = core.comment({
 export const entry = (
 	commandTree: RootTreeNode,
 	argument: ArgumentParserGetter,
-	{
-		supportsBackslashContinuation = false,
-		supportsMacros = false,
-	} = {},
+	{ supportsBackslashContinuation = false, supportsMacros = false } = {},
 ) => {
 	const parser = mcfunction(commandTree, argument, { supportsMacros })
-	return supportsBackslashContinuation
-		? core.concatOnTrailingBackslash(parser)
-		: parser
+	return supportsBackslashContinuation ? core.concatOnTrailingBackslash(parser) : parser
 }

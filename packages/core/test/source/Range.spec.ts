@@ -79,21 +79,9 @@ describe('Range', () => {
 	describe('endsBefore()', () => {
 		const offset = 2
 		const suites: { name: string; range: Range; expected: boolean }[] = [
-			{
-				name: 'ranges ending before the offset',
-				range: Range.create(0, 1),
-				expected: true,
-			},
-			{
-				name: 'ranges ending at the offset',
-				range: Range.create(0, 2),
-				expected: true,
-			},
-			{
-				name: 'ranges ending after the offset',
-				range: Range.create(0, 3),
-				expected: false,
-			},
+			{ name: 'ranges ending before the offset', range: Range.create(0, 1), expected: true },
+			{ name: 'ranges ending at the offset', range: Range.create(0, 2), expected: true },
+			{ name: 'ranges ending after the offset', range: Range.create(0, 3), expected: false },
 		]
 		for (const { name, range, expected } of suites) {
 			it(`Should return ${expected} for ${name}`, () => {
@@ -110,31 +98,20 @@ describe('Range', () => {
 		})
 	})
 	describe('contains()', () => {
-		const suites = [
-			{
-				range: Range.create(1, 2),
-				cases: [
-					{ offset: 0, expected: false },
-					{ offset: 1, expected: true },
-					{ offset: 2, expected: false },
-					{ offset: 3, expected: false },
-				],
-			},
-			{
-				endInclusive: true,
-				range: Range.create(1, 2),
-				cases: [
-					{ offset: 0, expected: false },
-					{ offset: 1, expected: true },
-					{ offset: 2, expected: true },
-					{ offset: 3, expected: false },
-				],
-			},
-			{
-				range: Range.Full,
-				cases: [{ offset: 4, expected: true }],
-			},
-		] as {
+		const suites = [{
+			range: Range.create(1, 2),
+			cases: [{ offset: 0, expected: false }, { offset: 1, expected: true }, {
+				offset: 2,
+				expected: false,
+			}, { offset: 3, expected: false }],
+		}, {
+			endInclusive: true,
+			range: Range.create(1, 2),
+			cases: [{ offset: 0, expected: false }, { offset: 1, expected: true }, {
+				offset: 2,
+				expected: true,
+			}, { offset: 3, expected: false }],
+		}, { range: Range.Full, cases: [{ offset: 4, expected: true }] }] as {
 			range: Range
 			cases: { offset: number; expected: boolean }[]
 			endInclusive?: boolean
@@ -151,29 +128,23 @@ describe('Range', () => {
 		}
 	})
 	describe('intersects()', () => {
-		const suites = [
-			{
-				baseRange: Range.create(1, 3),
-				cases: [
-					{ range: Range.create(0, 1), expected: false },
-					{ range: Range.create(1, 1), expected: true },
-					{ range: Range.create(0, 2), expected: true },
-					{ range: Range.create(1, 2), expected: true },
-					{ range: Range.create(2, 2), expected: true },
-					{ range: Range.create(1, 3), expected: true },
-					{ range: Range.create(2, 3), expected: true },
-					{ range: Range.create(3, 3), expected: false },
-					{ range: Range.create(1, 4), expected: true },
-					{ range: Range.create(2, 4), expected: true },
-					{ range: Range.create(3, 4), expected: false },
-					{ range: Range.create(4, 4), expected: false },
-				],
-			},
-			{
-				baseRange: Range.Full,
-				cases: [{ range: Range.create(4, 4), expected: true }],
-			},
-		] as const
+		const suites = [{
+			baseRange: Range.create(1, 3),
+			cases: [
+				{ range: Range.create(0, 1), expected: false },
+				{ range: Range.create(1, 1), expected: true },
+				{ range: Range.create(0, 2), expected: true },
+				{ range: Range.create(1, 2), expected: true },
+				{ range: Range.create(2, 2), expected: true },
+				{ range: Range.create(1, 3), expected: true },
+				{ range: Range.create(2, 3), expected: true },
+				{ range: Range.create(3, 3), expected: false },
+				{ range: Range.create(1, 4), expected: true },
+				{ range: Range.create(2, 4), expected: true },
+				{ range: Range.create(3, 4), expected: false },
+				{ range: Range.create(4, 4), expected: false },
+			],
+		}, { baseRange: Range.Full, cases: [{ range: Range.create(4, 4), expected: true }] }] as const
 		for (const { baseRange, cases } of suites) {
 			describe(`intersects ${Range.toString(baseRange)}`, () => {
 				for (const { range, expected } of cases) {
@@ -219,16 +190,10 @@ describe('RangeContainer', () => {
 			assert.strictEqual(RangeContainer.is({ start: 1, end: 1 }), false)
 		})
 		it('Should return false for keys with wrong type', () => {
-			assert.strictEqual(
-				RangeContainer.is({ range: { start: undefined, end: 1 } }),
-				false,
-			)
+			assert.strictEqual(RangeContainer.is({ range: { start: undefined, end: 1 } }), false)
 		})
 		it('Should return true for range container', () => {
-			assert.strictEqual(
-				RangeContainer.is({ range: { start: 1, end: 1 } }),
-				true,
-			)
+			assert.strictEqual(RangeContainer.is({ range: { start: 1, end: 1 } }), true)
 		})
 	})
 })

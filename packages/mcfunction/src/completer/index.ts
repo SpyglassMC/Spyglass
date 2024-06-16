@@ -3,11 +3,7 @@ import * as core from '@spyglassmc/core'
 import type { McfunctionNode } from '../node/index.js'
 import { CommandNode, MacroNode } from '../node/index.js'
 import type { ArgumentTreeNode, RootTreeNode } from '../tree/index.js'
-import {
-	categorizeTreeChildren,
-	redirect,
-	resolveParentTreeNode,
-} from '../tree/index.js'
+import { categorizeTreeChildren, redirect, resolveParentTreeNode } from '../tree/index.js'
 
 export type MockNodesGetter = (
 	treeNode: ArgumentTreeNode,
@@ -27,10 +23,7 @@ export function entry(
 		if (core.CommentNode.is(childNode) || MacroNode.is(childNode)) {
 			return []
 		} else {
-			return command(tree, getMockNodes)(
-				childNode ?? CommandNode.mock(ctx.offset),
-				ctx,
-			)
+			return command(tree, getMockNodes)(childNode ?? CommandNode.mock(ctx.offset), ctx)
 		}
 	}
 }
@@ -41,8 +34,8 @@ export function command(
 ): core.Completer<CommandNode> {
 	return (node, ctx) => {
 		const index = core.AstNode.findChildIndex(node, ctx.offset, true)
-		const selectedChildNode: DeepReadonly<core.AstNode> | undefined = node
-			.children[index]?.children[0]
+		const selectedChildNode: DeepReadonly<core.AstNode> | undefined = node.children[index]
+			?.children[0]
 		if (selectedChildNode) {
 			return core.completer.dispatch(selectedChildNode, ctx)
 		}
@@ -50,17 +43,12 @@ export function command(
 		const lastChildNode = core.AstNode.findLastChild(node, ctx.offset)
 		if (!lastChildNode) {
 			return Object.keys(tree.children ?? {}).map((v) =>
-				core.CompletionItem.create(v, ctx.offset, {
-					kind: core.CompletionKind.Keyword,
-				})
+				core.CompletionItem.create(v, ctx.offset, { kind: core.CompletionKind.Keyword })
 			)
 		}
 
 		const treePath = lastChildNode.path
-		const { treeNode: parentTreeNode } = resolveParentTreeNode(
-			redirect(tree, treePath),
-			tree,
-		)
+		const { treeNode: parentTreeNode } = resolveParentTreeNode(redirect(tree, treePath), tree)
 		if (!parentTreeNode?.children) {
 			return []
 		}
@@ -71,13 +59,11 @@ export function command(
 
 		return [
 			...literalTreeNodes.map(([name]) =>
-				core.CompletionItem.create(name, ctx.offset, {
-					kind: core.CompletionKind.Keyword,
-				})
+				core.CompletionItem.create(name, ctx.offset, { kind: core.CompletionKind.Keyword })
 			),
 			...argumentTreeNodes.flatMap(([_name, treeNode]) =>
-				core.Arrayable.toArray(getMockNodes(treeNode, ctx)).flatMap(
-					(n) => core.completer.dispatch(n, ctx),
+				core.Arrayable.toArray(getMockNodes(treeNode, ctx)).flatMap((n) =>
+					core.completer.dispatch(n, ctx)
 				)
 			),
 		]

@@ -4,9 +4,7 @@ import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { NbtParserProperties } from '../tree/argument.js'
 
-export interface BlockStatesNode
-	extends core.RecordBaseNode<core.StringNode, core.StringNode>
-{
+export interface BlockStatesNode extends core.RecordBaseNode<core.StringNode, core.StringNode> {
 	type: 'mcfunction:block/states'
 }
 export namespace BlockStatesNode {
@@ -17,36 +15,19 @@ export namespace BlockStatesNode {
 }
 export interface BlockNode extends core.AstNode {
 	type: 'mcfunction:block'
-	children: (
-		| core.ResourceLocationNode
-		| BlockStatesNode
-		| nbt.NbtCompoundNode
-	)[]
+	children: (core.ResourceLocationNode | BlockStatesNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
 	states?: BlockStatesNode
 	nbt?: nbt.NbtCompoundNode
 }
 export namespace BlockNode {
-	export function is(
-		node: core.DeepReadonly<core.AstNode> | undefined,
-	): node is BlockNode {
+	export function is(node: core.DeepReadonly<core.AstNode> | undefined): node is BlockNode {
 		return (node as BlockNode | undefined)?.type === 'mcfunction:block'
 	}
 
-	export function mock(
-		range: core.RangeLike,
-		isPredicate: boolean,
-	): BlockNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'block',
-			allowTag: isPredicate,
-		})
-		return {
-			type: 'mcfunction:block',
-			range: core.Range.get(range),
-			children: [id],
-			id,
-		}
+	export function mock(range: core.RangeLike, isPredicate: boolean): BlockNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'block', allowTag: isPredicate })
+		return { type: 'mcfunction:block', range: core.Range.get(range), children: [id], id }
 	}
 }
 
@@ -59,12 +40,7 @@ export interface CoordinateNode extends core.FloatBaseNode {
 }
 export namespace CoordinateNode {
 	export function mock(range: core.RangeLike): CoordinateNode {
-		return {
-			type: 'mcfunction:coordinate',
-			range: core.Range.get(range),
-			notation: '',
-			value: 0,
-		}
+		return { type: 'mcfunction:coordinate', range: core.Range.get(range), notation: '', value: 0 }
 	}
 
 	/**
@@ -87,12 +63,11 @@ export interface EntitySelectorAdvancementsArgumentCriteriaNode
 {
 	type: 'mcfunction:entity_selector/arguments/advancements/criteria'
 }
-export interface EntitySelectorAdvancementsArgumentNode
-	extends
-		core.RecordBaseNode<
-			core.ResourceLocationNode,
-			core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
-		>
+export interface EntitySelectorAdvancementsArgumentNode extends
+	core.RecordBaseNode<
+		core.ResourceLocationNode,
+		core.BooleanNode | EntitySelectorAdvancementsArgumentCriteriaNode
+	>
 {
 	type: 'mcfunction:entity_selector/arguments/advancements'
 }
@@ -101,25 +76,20 @@ export interface EntitySelectorScoresArgumentNode
 {
 	type: 'mcfunction:entity_selector/arguments/scores'
 }
-export interface EntitySelectorInvertableArgumentValueNode<
-	T extends core.AstNode,
-> extends core.SequenceNode<core.LiteralNode | T> {
+export interface EntitySelectorInvertableArgumentValueNode<T extends core.AstNode>
+	extends core.SequenceNode<core.LiteralNode | T>
+{
 	type: 'mcfunction:entity_selector/arguments/value/invertable'
 	value: T
 	inverted: boolean
 }
-export interface EntitySelectorArgumentsNode
-	extends core.RecordBaseNode<core.StringNode, any>
-{
+export interface EntitySelectorArgumentsNode extends core.RecordBaseNode<core.StringNode, any> {
 	type: 'mcfunction:entity_selector/arguments'
 }
 export namespace EntitySelectorArgumentsNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode): node is EntitySelectorArgumentsNode {
-		return (
-			(node as EntitySelectorArgumentsNode).type ===
-				'mcfunction:entity_selector/arguments'
-		)
+		return ((node as EntitySelectorArgumentsNode).type === 'mcfunction:entity_selector/arguments')
 	}
 }
 const EntitySelectorVariables = ['a', 'e', 'p', 'r', 's', 'n'] as const
@@ -130,16 +100,12 @@ export namespace EntitySelectorVariable {
 		return EntitySelectorVariables.includes(value as EntitySelectorVariable)
 	}
 }
-const EntitySelectorAtVariables = EntitySelectorVariables.map(
-	(v) => `@${v}` as const,
-)
+const EntitySelectorAtVariables = EntitySelectorVariables.map((v) => `@${v}` as const)
 export type EntitySelectorAtVariable = typeof EntitySelectorAtVariables[number]
 export namespace EntitySelectorAtVariable {
 	/* istanbul ignore next */
 	export function is(value: string): value is EntitySelectorAtVariable {
-		return EntitySelectorAtVariables.includes(
-			value as EntitySelectorAtVariable,
-		)
+		return EntitySelectorAtVariables.includes(value as EntitySelectorAtVariable)
 	}
 
 	/**
@@ -148,8 +114,7 @@ export namespace EntitySelectorAtVariable {
 	export function filterAvailable(ctx: core.ContextBase) {
 		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 		return EntitySelectorAtVariables.filter(variable =>
-			!(variable === '@n' && release &&
-				ReleaseVersion.cmp(release, '1.21') < 0)
+			!(variable === '@n' && release && ReleaseVersion.cmp(release, '1.21') < 0)
 		)
 	}
 }
@@ -171,16 +136,10 @@ export namespace EntitySelectorNode {
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
 		node: T,
 	): node is core.InheritReadonly<EntitySelectorNode, T> {
-		return (
-			(node as EntitySelectorNode | undefined)?.type ===
-				'mcfunction:entity_selector'
-		)
+		return ((node as EntitySelectorNode | undefined)?.type === 'mcfunction:entity_selector')
 	}
 
-	export function mock(
-		range: core.RangeLike,
-		options: core.LiteralOptions,
-	): EntitySelectorNode {
+	export function mock(range: core.RangeLike, options: core.LiteralOptions): EntitySelectorNode {
 		const literal = core.LiteralNode.mock(range, options)
 		return {
 			type: 'mcfunction:entity_selector',
@@ -215,8 +174,7 @@ export namespace EntitySelectorNode {
 			'y_rotation',
 		] as const,
 	)
-	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T> ? T
-		: undefined
+	export type ArgumentKey = typeof ArgumentKeys extends Set<infer T> ? T : undefined
 
 	export const enum Result {
 		Ok,
@@ -228,16 +186,11 @@ export namespace EntitySelectorNode {
 		argument: core.DeepReadonly<EntitySelectorArgumentsNode>,
 		key: string,
 	): Result {
-		const hasKey = (key: string): boolean =>
-			!!argument.children.find((p) => p.key?.value === key)
+		const hasKey = (key: string): boolean => !!argument.children.find((p) => p.key?.value === key)
 		const hasNonInvertedKey = (key: string): boolean =>
-			!!argument.children.find(
-				(p) =>
-					p.key?.value === key &&
-					!(p.value as EntitySelectorInvertableArgumentValueNode<
-						core.AstNode
-					>)
-						?.inverted,
+			!!argument.children.find((p) =>
+				p.key?.value === key
+				&& !(p.value as EntitySelectorInvertableArgumentValueNode<core.AstNode>)?.inverted
 			)
 		switch (key) {
 			case 'advancements':
@@ -266,9 +219,7 @@ export namespace EntitySelectorNode {
 					: Result.Ok
 			case 'type':
 				return selector.typeLimited
-					? hasKey(key)
-						? Result.Duplicated
-						: Result.NotApplicable
+					? hasKey(key) ? Result.Duplicated : Result.NotApplicable
 					: Result.Ok
 		}
 		return Result.Ok
@@ -295,28 +246,19 @@ export interface FloatRangeNode extends core.AstNode {
 
 export interface ItemStackNode extends core.AstNode {
 	type: 'mcfunction:item_stack'
-	children:
-		(core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
+	children: (core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
 	components?: ComponentListNode // since 1.20.5
 	nbt?: nbt.NbtCompoundNode // until 1.20.5
 }
 export namespace ItemStackNode {
 	export function is(node: core.AstNode | undefined): node is ItemStackNode {
-		return (node as ItemStackNode | undefined)?.type ===
-			'mcfunction:item_stack'
+		return (node as ItemStackNode | undefined)?.type === 'mcfunction:item_stack'
 	}
 
-	export function mock(
-		range: core.RangeLike,
-	): ItemStackNode {
+	export function mock(range: core.RangeLike): ItemStackNode {
 		const id = core.ResourceLocationNode.mock(range, { category: 'item' })
-		return {
-			type: 'mcfunction:item_stack',
-			range: core.Range.get(range),
-			children: [id],
-			id,
-		}
+		return { type: 'mcfunction:item_stack', range: core.Range.get(range), children: [id], id }
 	}
 }
 
@@ -333,37 +275,20 @@ export namespace ComponentListNode {
 
 export interface ItemPredicateNode extends core.AstNode {
 	type: 'mcfunction:item_predicate'
-	children: (
-		| core.ResourceLocationNode
-		| core.LiteralNode
-		| ComponentTestsNode
-		| nbt.NbtCompoundNode
-	)[]
+	children:
+		(core.ResourceLocationNode | core.LiteralNode | ComponentTestsNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode | core.LiteralNode
 	tests?: ComponentTestsNode // since 1.20.5
 	nbt?: nbt.NbtCompoundNode // until 1.20.5
 }
 export namespace ItemPredicateNode {
-	export function is(
-		node: core.AstNode | undefined,
-	): node is ItemPredicateNode {
-		return (node as ItemPredicateNode | undefined)?.type ===
-			'mcfunction:item_predicate'
+	export function is(node: core.AstNode | undefined): node is ItemPredicateNode {
+		return (node as ItemPredicateNode | undefined)?.type === 'mcfunction:item_predicate'
 	}
 
-	export function mock(
-		range: core.RangeLike,
-	): ItemPredicateNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'item',
-			allowTag: true,
-		})
-		return {
-			type: 'mcfunction:item_predicate',
-			range: core.Range.get(range),
-			children: [id],
-			id,
-		}
+	export function mock(range: core.RangeLike): ItemPredicateNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'item', allowTag: true })
+		return { type: 'mcfunction:item_predicate', range: core.Range.get(range), children: [id], id }
 	}
 }
 
@@ -385,8 +310,7 @@ export interface ComponentTestsAnyOfNode extends core.AstNode {
 
 export namespace ComponentTestsAnyOfNode {
 	export function is(node: core.AstNode): node is ComponentTestsAnyOfNode {
-		return (node as ComponentTestsAnyOfNode).type ===
-			'mcfunction:component_tests_any_of'
+		return (node as ComponentTestsAnyOfNode).type === 'mcfunction:component_tests_any_of'
 	}
 }
 
@@ -397,8 +321,7 @@ export interface ComponentTestsAllOfNode extends core.AstNode {
 
 export namespace ComponentTestsAllOfNode {
 	export function is(node: core.AstNode): node is ComponentTestsAllOfNode {
-		return (node as ComponentTestsAllOfNode).type ===
-			'mcfunction:component_tests_all_of'
+		return (node as ComponentTestsAllOfNode).type === 'mcfunction:component_tests_all_of'
 	}
 }
 
@@ -419,8 +342,7 @@ export interface ComponentTestExactNode extends ComponentTestBaseNode {
 }
 export namespace ComponentTestExactNode {
 	export function is(node: core.AstNode): node is ComponentTestExactNode {
-		return (node as ComponentTestExactNode).type ===
-			'mcfunction:component_test_exact'
+		return (node as ComponentTestExactNode).type === 'mcfunction:component_test_exact'
 	}
 }
 
@@ -431,8 +353,7 @@ export interface ComponentTestExistsNode extends ComponentTestBaseNode {
 }
 export namespace ComponentTestExistsNode {
 	export function is(node: core.AstNode): node is ComponentTestExistsNode {
-		return (node as ComponentTestExistsNode).type ===
-			'mcfunction:component_test_exists'
+		return (node as ComponentTestExistsNode).type === 'mcfunction:component_test_exists'
 	}
 }
 
@@ -443,11 +364,9 @@ export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
 	value?: nbt.NbtNode
 }
 export namespace ComponentTestSubpredicateNode {
-	export function is(
-		node: core.AstNode,
-	): node is ComponentTestSubpredicateNode {
-		return (node as ComponentTestSubpredicateNode).type ===
-			'mcfunction:component_test_sub_predicate'
+	export function is(node: core.AstNode): node is ComponentTestSubpredicateNode {
+		return (node as ComponentTestSubpredicateNode).type
+			=== 'mcfunction:component_test_sub_predicate'
 	}
 }
 
@@ -541,10 +460,7 @@ export namespace ObjectiveCriteriaNode {
 	export const ComplexSep = ':'
 
 	export function mock(range: core.RangeLike): ObjectiveCriteriaNode {
-		return {
-			type: 'mcfunction:objective_criteria',
-			range: core.Range.get(range),
-		}
+		return { type: 'mcfunction:objective_criteria', range: core.Range.get(range) }
 	}
 }
 
@@ -577,11 +493,8 @@ export namespace ParticleNode {
 			'vibration',
 		] as const,
 	)
-	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T
-		: undefined
-	export function isSpecialType(
-		type: string | undefined,
-	): type is SpecialType {
+	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined
+	export function isSpecialType(type: string | undefined): type is SpecialType {
 		return SpecialTypes.has(type as SpecialType)
 	}
 
@@ -590,15 +503,8 @@ export namespace ParticleNode {
 	}
 
 	export function mock(range: core.RangeLike): ParticleNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'particle_type',
-		})
-		return {
-			type: 'mcfunction:particle',
-			range: core.Range.get(range),
-			children: [id],
-			id,
-		}
+		const id = core.ResourceLocationNode.mock(range, { category: 'particle_type' })
+		return { type: 'mcfunction:particle', range: core.Range.get(range), children: [id], id }
 	}
 }
 
@@ -627,12 +533,7 @@ export interface TimeNode extends core.AstNode {
 	unit?: string
 }
 export namespace TimeNode {
-	export const UnitToTicks = new Map<string, number>([
-		['', 1],
-		['t', 1],
-		['s', 20],
-		['d', 24000],
-	])
+	export const UnitToTicks = new Map<string, number>([['', 1], ['t', 1], ['s', 20], ['d', 24000]])
 	export const Units = [...UnitToTicks.keys()]
 }
 

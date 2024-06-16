@@ -41,25 +41,17 @@ export function signatureHelpProvider(
 			return undefined
 		}
 
-		const ans: core.SignatureHelp = {
-			activeSignature: 0,
-			signatures: [],
-		}
+		const ans: core.SignatureHelp = { activeSignature: 0, signatures: [] }
 
 		ans.signatures = options.map((v) => {
 			const part1 = v[selectedIndex]
-			const part2 = selectedIndex + 1 < v.length
-				? ` ${v[selectedIndex + 1]}`
-				: ''
+			const part2 = selectedIndex + 1 < v.length ? ` ${v[selectedIndex + 1]}` : ''
 			const label = `${part1}${part2}`
 			return {
 				label,
 				activeParameter: 0,
 				// documentation: localize('mcfunction.signature-help.command-documentation', v[0]),
-				parameters: [
-					{ label: [0, part1.length] },
-					{ label: [part1.length, label.length] },
-				],
+				parameters: [{ label: [0, part1.length] }, { label: [part1.length, label.length] }],
 			}
 		})
 
@@ -86,8 +78,7 @@ function getOptions(
 		if (!name) {
 			break
 		}
-		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
-			?.children?.[name]
+		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode?.children?.[name]
 		if (!treeNode) {
 			break
 		}
@@ -97,12 +88,9 @@ function getOptions(
 	if (treeNode) {
 		treeNode = mcf.resolveParentTreeNode(treeNode, rootTreeNode).treeNode
 		if (treeNode?.children) {
-			return mcf
-				.treeNodeChildrenToStringArray(
-					treeNode.children,
-					treeNode.executable,
-				)
-				.map((v) => [...current, v])
+			return mcf.treeNodeChildrenToStringArray(treeNode.children, treeNode.executable).map((
+				v,
+			) => [...current, v])
 		}
 	}
 

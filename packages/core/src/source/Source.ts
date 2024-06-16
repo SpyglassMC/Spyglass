@@ -16,10 +16,7 @@ export const Whitespaces = Object.freeze([' ', '\n', '\r', '\t'] as const)
 export class ReadonlySource {
 	public innerCursor = 0
 
-	constructor(
-		public readonly string: string,
-		public readonly indexMap: IndexMap = [],
-	) {}
+	constructor(public readonly string: string, public readonly indexMap: IndexMap = []) {}
 
 	get cursor() {
 		return IndexMap.toOuterOffset(this.indexMap, this.innerCursor)
@@ -48,10 +45,7 @@ export class ReadonlySource {
 	 * @param offset The index to offset from cursor. Defaults to 0
 	 */
 	peek(length = 1, offset = 0) {
-		return this.string.slice(
-			this.innerCursor + offset,
-			this.innerCursor + offset + length,
-		)
+		return this.string.slice(this.innerCursor + offset, this.innerCursor + offset + length)
 	}
 
 	/**
@@ -76,11 +70,7 @@ export class ReadonlySource {
 
 	peekUntil(...terminators: string[]): string {
 		let ans = ''
-		for (
-			let cursor = this.innerCursor;
-			cursor < this.string.length;
-			cursor++
-		) {
+		for (let cursor = this.innerCursor; cursor < this.string.length; cursor++) {
 			const c = this.string.charAt(cursor)
 			if (terminators.includes(c)) {
 				return ans
@@ -109,11 +99,7 @@ export class ReadonlySource {
 	 * @param offset Defaults to 0.
 	 */
 	hasNonSpaceAheadInLine(offset = 0): boolean {
-		for (
-			let cursor = this.innerCursor + offset;
-			cursor < this.string.length;
-			cursor++
-		) {
+		for (let cursor = this.innerCursor + offset; cursor < this.string.length; cursor++) {
 			const c = this.string.charAt(cursor)
 			if (Source.isNewline(c)) {
 				break
@@ -130,9 +116,7 @@ export class ReadonlySource {
 	slice(param0: Range | RangeContainer | number, end?: number): string {
 		if (typeof param0 === 'number') {
 			const innerStart = IndexMap.toInnerOffset(this.indexMap, param0)
-			const innerEnd = end !== undefined
-				? IndexMap.toInnerOffset(this.indexMap, end)
-				: undefined
+			const innerEnd = end !== undefined ? IndexMap.toInnerOffset(this.indexMap, end) : undefined
 			return this.string.slice(innerStart, innerEnd)
 		}
 		const range = IndexMap.toInnerRange(this.indexMap, Range.get(param0))
@@ -146,10 +130,7 @@ export class ReadonlySource {
 }
 
 export class Source extends ReadonlySource {
-	constructor(
-		public override string: string,
-		public override indexMap: IndexMap = [],
-	) {
+	constructor(public override string: string, public override indexMap: IndexMap = []) {
 		super(string, indexMap)
 	}
 

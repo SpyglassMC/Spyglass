@@ -3,10 +3,7 @@ import type { DeepReadonly } from '../../../common/index.js'
 import { Arrayable, ResourceLocation } from '../../../common/index.js'
 import type { AstNode } from '../../../node/index.js'
 import type { LinterContext } from '../../../service/index.js'
-import {
-	LinterSeverity,
-	SymbolLinterConfig as Config,
-} from '../../../service/index.js'
+import { LinterSeverity, SymbolLinterConfig as Config } from '../../../service/index.js'
 import type { Symbol } from '../../../symbol/index.js'
 import { SymbolUtil, SymbolVisibility } from '../../../symbol/index.js'
 import type { Linter } from '../Linter.js'
@@ -17,16 +14,10 @@ export const undeclaredSymbol: Linter<AstNode> = (node, ctx) => {
 	}
 	const action = getAction(ctx.ruleValue as Config, node.symbol, ctx)
 	if (Config.Action.isDeclare(action)) {
-		ctx.symbols
-			.query(
-				{ doc: ctx.doc, node },
-				node.symbol.category,
-				...node.symbol.path,
-			)
-			.amend({
-				data: { visibility: getVisibility(action.declare) },
-				usage: { type: 'declaration', node },
-			})
+		ctx.symbols.query({ doc: ctx.doc, node }, node.symbol.category, ...node.symbol.path).amend({
+			data: { visibility: getVisibility(action.declare) },
+			usage: { type: 'declaration', node },
+		})
 	}
 	if (Config.Action.isReport(action)) {
 		const severityOverride = action.report === 'inherit'
@@ -61,29 +52,25 @@ function getAction(
 				0,
 				resourceLocation.indexOf(ResourceLocation.NamespacePathSep),
 			)
-			return (
-				(condition.category
-					? Arrayable.toArray(condition.category).includes(symbol.category)
-					: true) &&
-				(condition.namespace
+			return ((condition.category
+				? Arrayable.toArray(condition.category).includes(symbol.category)
+				: true)
+				&& (condition.namespace
 					? Arrayable.toArray(condition.namespace).includes(namespace)
-					: true) &&
-				(condition.excludeNamespace
-					? !Arrayable.toArray(condition.excludeNamespace).includes(
-						namespace,
-					)
-					: true) &&
-				(condition.pattern
+					: true)
+				&& (condition.excludeNamespace
+					? !Arrayable.toArray(condition.excludeNamespace).includes(namespace)
+					: true)
+				&& (condition.pattern
 					? Arrayable.toArray(condition.pattern).some((p) =>
 						new RegExp(p).test(symbol.identifier)
 					)
-					: true) &&
-				(condition.excludePattern
+					: true)
+				&& (condition.excludePattern
 					? !Arrayable.toArray(condition.excludePattern).some((p) =>
 						new RegExp(p).test(symbol.identifier)
 					)
-					: true)
-			)
+					: true))
 		}
 		try {
 			return Arrayable.toArray(conditions).some(testSingleCondition)
@@ -97,9 +84,7 @@ function getAction(
 		}
 	}
 
-	function evaluateComplexes(
-		complexes: Arrayable<Config.Complex>,
-	): Config.Action | undefined {
+	function evaluateComplexes(complexes: Arrayable<Config.Complex>): Config.Action | undefined {
 		for (const complex of Arrayable.toArray(complexes)) {
 			if (complex.if && !test(complex.if)) {
 				continue

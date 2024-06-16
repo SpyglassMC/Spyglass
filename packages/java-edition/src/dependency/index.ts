@@ -26,15 +26,9 @@ export async function getVersions(
 ): Promise<McmetaVersions | undefined> {
 	return downloader.download<McmetaVersions>({
 		id: 'mc-je/versions.json.gz',
-		uri:
-			'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
-		transformer: (buffer) =>
-			core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
-		cache: getCacheOptionsBasedOnGitHubCommitSha(
-			'misode',
-			'mcmeta',
-			'refs/heads/summary',
-		),
+		uri: 'https://raw.githubusercontent.com/misode/mcmeta/summary/versions/data.json.gz',
+		transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<McmetaVersions>,
+		cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', 'refs/heads/summary'),
 		ttl: DownloaderTtl,
 	})
 }
@@ -58,9 +52,8 @@ export async function getMcmetaSummary(
 	source: string,
 	overridePaths: core.EnvConfig['mcmetaSummaryOverrides'] = {},
 ): Promise<GetMcmetaSummaryResult> {
-	type OverrideConfig = core.EnvConfig['mcmetaSummaryOverrides'][
-		keyof core.EnvConfig['mcmetaSummaryOverrides']
-	]
+	type OverrideConfig =
+		core.EnvConfig['mcmetaSummaryOverrides'][keyof core.EnvConfig['mcmetaSummaryOverrides']]
 	const ref = getGitRef({
 		defaultBranch: 'summary',
 		getTag: (v) => `${v}-summary`,
@@ -70,16 +63,10 @@ export async function getMcmetaSummary(
 	const uris = getMcmetaSummaryUris(version, isLatest, source)
 	let checksum: string | undefined
 
-	async function handleOverride<T>(
-		currentValue: T,
-		overrideConfig: OverrideConfig,
-	) {
+	async function handleOverride<T>(currentValue: T, overrideConfig: OverrideConfig) {
 		if (overrideConfig) {
 			try {
-				const override = (await core.fileUtil.readJson(
-					externals,
-					overrideConfig.path,
-				)) as any
+				const override = (await core.fileUtil.readJson(externals, overrideConfig.path)) as any
 				if (overrideConfig.replace) {
 					return override
 				} else {
@@ -100,21 +87,13 @@ export async function getMcmetaSummary(
 		overrideConfig: OverrideConfig,
 	): Promise<T | undefined> => {
 		const out: core.DownloaderDownloadOut = {}
-		const data = await downloader.download<T>(
-			{
-				id: `mc-je/${version}/${type}.json.gz`,
-				uri: uris[type],
-				transformer: (buffer) =>
-					core.parseGzippedJson(externals, buffer) as Promise<T>,
-				cache: getCacheOptionsBasedOnGitHubCommitSha(
-					'misode',
-					'mcmeta',
-					ref,
-				),
-				ttl: DownloaderTtl,
-			},
-			out,
-		)
+		const data = await downloader.download<T>({
+			id: `mc-je/${version}/${type}.json.gz`,
+			uri: uris[type],
+			transformer: (buffer) => core.parseGzippedJson(externals, buffer) as Promise<T>,
+			cache: getCacheOptionsBasedOnGitHubCommitSha('misode', 'mcmeta', ref),
+			ttl: DownloaderTtl,
+		}, out)
 		checksum ||= out.checksum
 		return handleOverride(data, overrideConfig)
 	}
@@ -123,57 +102,40 @@ export async function getMcmetaSummary(
 		await getResource<McmetaStates>('blocks', overridePaths.blocks),
 		await getResource<McmetaCommands>('commands', overridePaths.commands),
 		await handleOverride<McmetaStates>(Fluids, overridePaths.fluids),
-		await getResource<McmetaRegistries>(
-			'registries',
-			overridePaths.registries,
-		),
+		await getResource<McmetaRegistries>('registries', overridePaths.registries),
 	]
 
 	return { blocks, commands, fluids, registries, checksum }
 }
 
-type GitHubRefResponse =
-	| { message: string }
-	| { message?: undefined; ref: string; object: { sha: string } }
-	| { message?: undefined; ref: string; object: { sha: string } }[]
+type GitHubRefResponse = { message: string } | {
+	message?: undefined
+	ref: string
+	object: { sha: string }
+} | { message?: undefined; ref: string; object: { sha: string } }[]
 
-function getGitRef({
-	defaultBranch,
-	getTag,
-	isLatest,
-	version,
-}: {
-	defaultBranch: string
-	getTag: (version: string) => string
-	isLatest: boolean
-	version: string
-}): string {
-	return isLatest
-		? `refs/heads/${defaultBranch}`
-		: `refs/tags/${getTag(version)}`
+function getGitRef(
+	{ defaultBranch, getTag, isLatest, version }: {
+		defaultBranch: string
+		getTag: (version: string) => string
+		isLatest: boolean
+		version: string
+	},
+): string {
+	return isLatest ? `refs/heads/${defaultBranch}` : `refs/tags/${getTag(version)}`
 }
 
 const GitHubApiDownloadOptions = {
-	headers: {
-		Accept: 'application/vnd.github.v3+json',
-		'User-Agent': 'SpyglassMC',
-	},
+	headers: { Accept: 'application/vnd.github.v3+json', 'User-Agent': 'SpyglassMC' },
 }
 
-function getCacheOptionsBasedOnGitHubCommitSha(
-	owner: string,
-	repo: string,
-	ref: string,
-) {
+function getCacheOptionsBasedOnGitHubCommitSha(owner: string, repo: string, ref: string) {
 	return {
 		checksumExtension: '.commit-sha' as const,
 		checksumJob: {
-			uri:
-				`https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
+			uri: `https://api.github.com/repos/${owner}/${repo}/git/${ref}` as const,
 			transformer: (buffer: Uint8Array) => {
-				const response = JSON.parse(
-					core.bufferToString(buffer),
-				) as GitHubRefResponse
+				const response = JSON.parse(core.bufferToString(buffer)) as GitHubRefResponse
 				if (Array.isArray(response)) {
 					return response[0].object.sha
 				} else if (response.message === undefined) {
@@ -196,37 +158,28 @@ function getCacheOptionsBasedOnGitHubCommitSha(
  *
  * @returns The URI to the `.tar.gz` file.
  */
-async function downloadGitHubRepo({
-	defaultBranch,
-	downloader,
-	getTag,
-	repo,
-	isLatest,
-	owner,
-	version,
-}: {
-	defaultBranch: string
-	downloader: core.Downloader
-	getTag: (version: string) => string
-	owner: string
-	repo: string
-	isLatest: boolean
-	version: string
-}): Promise<string> {
+async function downloadGitHubRepo(
+	{ defaultBranch, downloader, getTag, repo, isLatest, owner, version }: {
+		defaultBranch: string
+		downloader: core.Downloader
+		getTag: (version: string) => string
+		owner: string
+		repo: string
+		isLatest: boolean
+		version: string
+	},
+): Promise<string> {
 	const ref = getGitRef({ defaultBranch, getTag, isLatest, version })
 
 	const out: core.DownloaderDownloadOut = {}
-	await downloader.download<Uint8Array>(
-		{
-			id: `mc-je/${version}/${repo}.tar.gz`,
-			uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
-			transformer: (b) => b,
-			cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
-			options: GitHubApiDownloadOptions,
-			ttl: DownloaderTtl,
-		},
-		out,
-	)
+	await downloader.download<Uint8Array>({
+		id: `mc-je/${version}/${repo}.tar.gz`,
+		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
+		transformer: (b) => b,
+		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: GitHubApiDownloadOptions,
+		ttl: DownloaderTtl,
+	}, out)
 
 	return out.cacheUri!
 }
@@ -253,10 +206,7 @@ export async function getVanillaDatapack(
 		isLatest,
 		version,
 	})
-	return {
-		info: { startDepth: 1 },
-		uri,
-	}
+	return { info: { startDepth: 1 }, uri }
 }
 
 /**
@@ -266,27 +216,19 @@ export async function getVanillaDatapack(
  * 	- `startDepth`: The amount of level to skip when unzipping the tarball.
  * 	- `uri`: URI to the `.tar.gz` file.
  */
-export async function getVanillaMcdoc(
-	downloader: core.Downloader,
-): Promise<core.Dependency> {
+export async function getVanillaMcdoc(downloader: core.Downloader): Promise<core.Dependency> {
 	const owner = 'SpyglassMC'
 	const repo = 'vanilla-mcdoc'
 	const ref = 'refs/heads/main'
 	const out: core.DownloaderDownloadOut = {}
-	await downloader.download<Uint8Array>(
-		{
-			id: 'mc-je/vanilla-mcdoc.tar.gz',
-			uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
-			transformer: (b) => b,
-			cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
-			options: GitHubApiDownloadOptions,
-			ttl: DownloaderTtl,
-		},
-		out,
-	)
+	await downloader.download<Uint8Array>({
+		id: 'mc-je/vanilla-mcdoc.tar.gz',
+		uri: `https://api.github.com/repos/${owner}/${repo}/tarball/${ref}`,
+		transformer: (b) => b,
+		cache: getCacheOptionsBasedOnGitHubCommitSha(owner, repo, ref),
+		options: GitHubApiDownloadOptions,
+		ttl: DownloaderTtl,
+	}, out)
 
-	return {
-		info: { startDepth: 1 },
-		uri: out.cacheUri!,
-	}
+	return { info: { startDepth: 1 }, uri: out.cacheUri! }
 }

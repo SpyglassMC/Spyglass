@@ -11,11 +11,10 @@ describe('IndexMap', () => {
 		 * Outer      -             "foo\"bar\u00a7qux"
 		 * Inner      - foo"bar§qux
 		 */
-		const map: IndexMap = [
-			{ outer: Range.create(13, 13), inner: Range.create(0, 0) },
-			{ outer: Range.create(16, 18), inner: Range.create(3, 4) },
-			{ outer: Range.create(21, 27), inner: Range.create(7, 8) },
-		]
+		const map: IndexMap = [{ outer: Range.create(13, 13), inner: Range.create(0, 0) }, {
+			outer: Range.create(16, 18),
+			inner: Range.create(3, 4),
+		}, { outer: Range.create(21, 27), inner: Range.create(7, 8) }]
 		const toInnerCases: { input: number; expected: number }[] = [
 			{ input: 13, expected: 0 },
 			{ input: 14, expected: 1 },
@@ -75,14 +74,11 @@ describe('IndexMap', () => {
 			 * Middle     - helloworld::"foo\"bar\u00a7qux"
 			 * Inner      - foo"bar§qux
 			 */
-			const outerMap: IndexMap = [
-				{ inner: Range.create(0, 0), outer: Range.create(8, 8) },
-			]
-			const innerMap: IndexMap = [
-				{ inner: Range.create(0, 0), outer: Range.create(13, 13) },
-				{ inner: Range.create(3, 4), outer: Range.create(16, 18) },
-				{ inner: Range.create(7, 8), outer: Range.create(21, 27) },
-			]
+			const outerMap: IndexMap = [{ inner: Range.create(0, 0), outer: Range.create(8, 8) }]
+			const innerMap: IndexMap = [{ inner: Range.create(0, 0), outer: Range.create(13, 13) }, {
+				inner: Range.create(3, 4),
+				outer: Range.create(16, 18),
+			}, { inner: Range.create(7, 8), outer: Range.create(21, 27) }]
 			const mergedMap = IndexMap.merge(outerMap, innerMap)
 			snapshot(mergedMap)
 		})
@@ -103,11 +99,10 @@ describe('IndexMap', () => {
 				{ inner: Range.create(20, 21), outer: Range.create(32, 34) },
 				{ inner: Range.create(21, 22), outer: Range.create(34, 36) },
 			]
-			const innerMap: IndexMap = [
-				{ inner: Range.create(0, 0), outer: Range.create(11, 11) },
-				{ inner: Range.create(4, 5), outer: Range.create(15, 17) },
-				{ inner: Range.create(7, 8), outer: Range.create(19, 21) },
-			]
+			const innerMap: IndexMap = [{ inner: Range.create(0, 0), outer: Range.create(11, 11) }, {
+				inner: Range.create(4, 5),
+				outer: Range.create(15, 17),
+			}, { inner: Range.create(7, 8), outer: Range.create(19, 21) }]
 			const mergedMap = IndexMap.merge(outerMap, innerMap)
 			snapshot(mergedMap)
 		})
@@ -121,41 +116,25 @@ describe('IndexMap', () => {
 			 * Outer      - foo\"bar\u00a7qux
 			 * Inner      - foo"bar§qux
 			 */
-			const indexMap = [
-				{ inner: Range.create(3, 4), outer: Range.create(3, 5) },
-				{ inner: Range.create(7, 8), outer: Range.create(8, 14) },
-			]
+			const indexMap = [{ inner: Range.create(3, 4), outer: Range.create(3, 5) }, {
+				inner: Range.create(7, 8),
+				outer: Range.create(8, 14),
+			}]
 			const toInnerCases = [
-				{
-					input: Range.create(0, 1),
-					expected: Range.create(0, 1),
-					name: '`f` -> `f`',
-				},
-				{
-					input: Range.create(3, 5),
-					expected: Range.create(3, 4),
-					name: '`\\"` -> `"`',
-				},
+				{ input: Range.create(0, 1), expected: Range.create(0, 1), name: '`f` -> `f`' },
+				{ input: Range.create(3, 5), expected: Range.create(3, 4), name: '`\\"` -> `"`' },
 				{ // (shifted left)
 					input: Range.create(7, 8),
 					expected: Range.create(6, 7),
 					name: '`r` -> `r`',
 				},
-				{
-					input: Range.create(8, 14),
-					expected: Range.create(7, 8),
-					name: '`\\u00a7` -> `§`',
-				},
+				{ input: Range.create(8, 14), expected: Range.create(7, 8), name: '`\\u00a7` -> `§`' },
 				{
 					input: Range.create(7, 14),
 					expected: Range.create(6, 8),
 					name: '`r\\u00a7` -> `r§`',
 				},
-				{
-					input: Range.create(7, 12),
-					expected: Range.create(6, 7),
-					name: '`r\\u00` -> `r`',
-				},
+				{ input: Range.create(7, 12), expected: Range.create(6, 7), name: '`r\\u00` -> `r`' },
 				{
 					input: Range.create(7, 15),
 					expected: Range.create(6, 9),
@@ -163,26 +142,14 @@ describe('IndexMap', () => {
 				},
 			]
 			const toOuterCases = [
-				{
-					input: Range.create(0, 1),
-					expected: Range.create(0, 1),
-					name: '`f` -> `f`',
-				},
-				{
-					input: Range.create(3, 4),
-					expected: Range.create(3, 5),
-					name: '`"` -> `"`',
-				},
+				{ input: Range.create(0, 1), expected: Range.create(0, 1), name: '`f` -> `f`' },
+				{ input: Range.create(3, 4), expected: Range.create(3, 5), name: '`"` -> `"`' },
 				{ // (shifted right)
 					input: Range.create(6, 7),
 					expected: Range.create(7, 8),
 					name: '`r` -> `r`',
 				},
-				{
-					input: Range.create(7, 8),
-					expected: Range.create(8, 14),
-					name: '`§` -> `\\u00a7`',
-				},
+				{ input: Range.create(7, 8), expected: Range.create(8, 14), name: '`§` -> `\\u00a7`' },
 				{
 					input: Range.create(6, 8),
 					expected: Range.create(7, 14),

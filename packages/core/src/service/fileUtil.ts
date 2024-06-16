@@ -11,10 +11,7 @@ export namespace fileUtil {
 	 *
 	 * @returns The relative URI, or `undefined` if `target` is not under `base`.
 	 */
-	export function getRelativeUriFromBase(
-		target: string,
-		base: string,
-	): string | undefined {
+	export function getRelativeUriFromBase(target: string, base: string): string | undefined {
 		const baseUri = new Uri(base)
 		const targetUri = new Uri(target)
 
@@ -23,23 +20,19 @@ export namespace fileUtil {
 			return undefined
 		}
 
-		const baseComponents = baseUri.pathname.split('/')
-			.filter((v) => !!v)
-		const targetComponents = targetUri.pathname.split('/')
-			.filter((v) => !!v)
+		const baseComponents = baseUri.pathname.split('/').filter((v) => !!v)
+		const targetComponents = targetUri.pathname.split('/').filter((v) => !!v)
 
 		if (
-			baseComponents.length > targetComponents.length ||
-			baseComponents.some((bc, i) =>
+			baseComponents.length > targetComponents.length
+			|| baseComponents.some((bc, i) =>
 				decodeURIComponent(bc) !== decodeURIComponent(targetComponents[i])
 			)
 		) {
 			return undefined
 		}
 
-		return targetComponents.slice(baseComponents.length).map(
-			encodeURIComponent,
-		).join('/')
+		return targetComponents.slice(baseComponents.length).map(encodeURIComponent).join('/')
 	}
 
 	export function isSubUriOf(uri: string, base: string): boolean {
@@ -79,10 +72,7 @@ export namespace fileUtil {
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///root/foo/bar/qux.json') // -> 'bar/qux.json'
 	 * getRel(['file:///root/foo/', 'file:///root/'], 'file:///outsider.json') // -> undefined
 	 */
-	export function getRel(
-		uri: string,
-		rootUris: readonly RootUriString[],
-	): string | undefined {
+	export function getRel(uri: string, rootUris: readonly RootUriString[]): string | undefined {
 		return getRels(uri, rootUris).next().value
 	}
 
@@ -95,10 +85,7 @@ export namespace fileUtil {
 	}
 
 	export function join(fromUri: string, toUri: string): string {
-		return (
-			ensureEndingSlash(fromUri) +
-			(toUri.startsWith('/') ? toUri.slice(1) : toUri)
-		)
+		return (ensureEndingSlash(fromUri) + (toUri.startsWith('/') ? toUri.slice(1) : toUri))
 	}
 
 	/**
@@ -125,10 +112,7 @@ export namespace fileUtil {
 	}
 
 	/* istanbul ignore next */
-	export function getParentOfFile(
-		externals: Externals,
-		path: FsLocation,
-	): FsLocation {
+	export function getParentOfFile(externals: Externals, path: FsLocation): FsLocation {
 		return new Uri('.', path)
 	}
 
@@ -176,10 +160,7 @@ export namespace fileUtil {
 		return externals.fs.chmod(path, mode)
 	}
 
-	export async function ensureWritable(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<void> {
+	export async function ensureWritable(externals: Externals, path: FsLocation): Promise<void> {
 		try {
 			await chmod(externals, path, 0o666)
 		} catch (e) {
@@ -189,24 +170,15 @@ export namespace fileUtil {
 		}
 	}
 
-	export async function markReadOnly(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<void> {
+	export async function markReadOnly(externals: Externals, path: FsLocation): Promise<void> {
 		return chmod(externals, path, 0o444)
 	}
 
-	export async function unlink(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<void> {
+	export async function unlink(externals: Externals, path: FsLocation): Promise<void> {
 		return externals.fs.unlink(path)
 	}
 
-	export async function readFile(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<Uint8Array> {
+	export async function readFile(externals: Externals, path: FsLocation): Promise<Uint8Array> {
 		return externals.fs.readFile(path)
 	}
 
@@ -238,10 +210,7 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 */
-	export async function readJson(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<unknown> {
+	export async function readJson(externals: Externals, path: FsLocation): Promise<unknown> {
 		return JSON.parse(bufferToString(await readFile(externals, path)))
 	}
 
@@ -286,10 +255,7 @@ export namespace fileUtil {
 	/**
 	 * @throws
 	 */
-	export async function readGzippedJson(
-		externals: Externals,
-		path: FsLocation,
-	): Promise<unknown> {
+	export async function readGzippedJson(externals: Externals, path: FsLocation): Promise<unknown> {
 		return JSON.parse(bufferToString(await readGzippedFile(externals, path)))
 	}
 
