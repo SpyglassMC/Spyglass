@@ -1,9 +1,6 @@
 import { ReadonlySource } from './Source.js'
 
-export type OffsetLike =
-	| number
-	| ReadonlySource
-	| ((this: void) => number | ReadonlySource)
+export type OffsetLike = number | ReadonlySource | ((this: void) => number | ReadonlySource)
 
 export namespace Offset {
 	/**

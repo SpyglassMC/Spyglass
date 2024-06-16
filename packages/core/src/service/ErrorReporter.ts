@@ -19,9 +19,7 @@ export class ErrorReporter {
 		if (message.trim() === '') {
 			throw new Error('Tried to report an error with no message')
 		}
-		this.errors.push(
-			LanguageError.create(message, Range.get(range), severity, info),
-		)
+		this.errors.push(LanguageError.create(message, Range.get(range), severity, info))
 	}
 
 	/**

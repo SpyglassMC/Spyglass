@@ -2,44 +2,17 @@ import type * as core from '@spyglassmc/core'
 
 const BlockItems: { [item: string]: core.FullResourceLocation[] } = {
 	// Coral fans.
-	'minecraft:brain_coral_fan': [
-		'minecraft:brain_coral_fan',
-		'minecraft:brain_coral_wall_fan',
-	],
-	'minecraft:bubble_coral_fan': [
-		'minecraft:bubble_coral_fan',
-		'minecraft:bubble_coral_wall_fan',
-	],
-	'minecraft:fire_coral_fan': [
-		'minecraft:fire_coral_fan',
-		'minecraft:fire_coral_wall_fan',
-	],
-	'minecraft:horn_coral_fan': [
-		'minecraft:horn_coral_fan',
-		'minecraft:horn_coral_wall_fan',
-	],
-	'minecraft:tube_coral_fan': [
-		'minecraft:tube_coral_fan',
-		'minecraft:tube_coral_wall_fan',
-	],
+	'minecraft:brain_coral_fan': ['minecraft:brain_coral_fan', 'minecraft:brain_coral_wall_fan'],
+	'minecraft:bubble_coral_fan': ['minecraft:bubble_coral_fan', 'minecraft:bubble_coral_wall_fan'],
+	'minecraft:fire_coral_fan': ['minecraft:fire_coral_fan', 'minecraft:fire_coral_wall_fan'],
+	'minecraft:horn_coral_fan': ['minecraft:horn_coral_fan', 'minecraft:horn_coral_wall_fan'],
+	'minecraft:tube_coral_fan': ['minecraft:tube_coral_fan', 'minecraft:tube_coral_wall_fan'],
 
 	// Heads and skulls.
-	'minecraft:creeper_head': [
-		'minecraft:creeper_head',
-		'minecraft:creeper_wall_head',
-	],
-	'minecraft:dragon_head': [
-		'minecraft:dragon_head',
-		'minecraft:dragon_wall_head',
-	],
-	'minecraft:player_head': [
-		'minecraft:player_head',
-		'minecraft:player_wall_head',
-	],
-	'minecraft:skeleton_skull': [
-		'minecraft:skeleton_skull',
-		'minecraft:skeleton_wall_skull',
-	],
+	'minecraft:creeper_head': ['minecraft:creeper_head', 'minecraft:creeper_wall_head'],
+	'minecraft:dragon_head': ['minecraft:dragon_head', 'minecraft:dragon_wall_head'],
+	'minecraft:player_head': ['minecraft:player_head', 'minecraft:player_wall_head'],
+	'minecraft:skeleton_skull': ['minecraft:skeleton_skull', 'minecraft:skeleton_wall_skull'],
 	'minecraft:wither_skeleton_skull': [
 		'minecraft:wither_skeleton_skull',
 		'minecraft:wither_skeleton_wall_skull',
@@ -69,14 +42,8 @@ const BlockItems: { [item: string]: core.FullResourceLocation[] } = {
 
 	// Torches.
 	'minecraft:torch': ['minecraft:torch', 'minecraft:wall_torch'],
-	'minecraft:soul_torch': [
-		'minecraft:soul_torch',
-		'minecraft:soul_wall_torch',
-	],
-	'minecraft:redstone_torch': [
-		'minecraft:redstone_torch',
-		'minecraft:redstone_wall_torch',
-	],
+	'minecraft:soul_torch': ['minecraft:soul_torch', 'minecraft:soul_wall_torch'],
+	'minecraft:redstone_torch': ['minecraft:redstone_torch', 'minecraft:redstone_wall_torch'],
 
 	'minecraft:beetroot_seeds': ['minecraft:beetroots'],
 	'minecraft:carrot': ['minecraft:carrots'],

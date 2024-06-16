@@ -26,11 +26,7 @@ describe('ErrorReporter', () => {
 			err.report('Error message 2', Range.Beginning, ErrorSeverity.Warning)
 			const tmpErr = new ErrorReporter()
 			tmpErr.report('Error message 3', Range.Beginning)
-			tmpErr.report(
-				'Error message 4',
-				Range.Beginning,
-				ErrorSeverity.Warning,
-			)
+			tmpErr.report('Error message 4', Range.Beginning, ErrorSeverity.Warning)
 			err.absorb(tmpErr)
 			snapshot(err)
 			snapshot(tmpErr)

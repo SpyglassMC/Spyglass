@@ -19,12 +19,9 @@ describe('file()', () => {
 			}
 		},
 	})
-	const suites: { content: string }[] = [
-		{ content: '' },
-		{ content: '{test content}' },
-		{ content: '{test content}\n\t' },
-		{ content: '{test content}\nWhoops errors!' },
-	]
+	const suites: { content: string }[] = [{ content: '' }, { content: '{test content}' }, {
+		content: '{test content}\n\t',
+	}, { content: '{test content}\nWhoops errors!' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
 			snapshot(

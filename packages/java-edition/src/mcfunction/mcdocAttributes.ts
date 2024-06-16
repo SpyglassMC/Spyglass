@@ -3,17 +3,10 @@ import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import { getItemSlotsArgumentValues } from './common/index.js'
-import {
-	EntitySelectorAtVariable,
-	EntitySelectorNode,
-	ScoreHolderNode,
-} from './node/argument.js'
+import { EntitySelectorAtVariable, EntitySelectorNode, ScoreHolderNode } from './node/argument.js'
 import * as parser from './parser/index.js'
 
-export function registerMcdocAttributes(
-	meta: core.MetaRegistry,
-	rootTreeNode: mcf.RootTreeNode,
-) {
+export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: mcf.RootTreeNode) {
 	mcdoc.runtime.registerAttribute(meta, 'command', () => undefined, {
 		// TODO: validate slash
 		// TODO: fix completer inside commands
@@ -30,25 +23,18 @@ export function registerMcdocAttributes(
 	})
 	mcdoc.runtime.registerAttribute(meta, 'objective', () => undefined, {
 		stringParser: () => parser.objective('reference'),
-		stringMocker: (_, ctx) =>
-			core.SymbolNode.mock(ctx.offset, { category: 'objective' }),
+		stringMocker: (_, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'objective' }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'team', () => undefined, {
 		stringParser: () => parser.team('reference'),
-		stringMocker: (_, ctx) =>
-			core.SymbolNode.mock(ctx.offset, { category: 'team' }),
+		stringMocker: (_, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'team' }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'score_holder', () => undefined, {
-		stringParser: () =>
-			makeInfallible(
-				parser.scoreHolder('multiple'),
-				localize('score-holder'),
-			),
+		stringParser: () => makeInfallible(parser.scoreHolder('multiple'), localize('score-holder')),
 		stringMocker: (_, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'selector', () => undefined, {
-		stringParser: () =>
-			makeInfallible(parser.selector(), localize('selector')),
+		stringParser: () => makeInfallible(parser.selector(), localize('selector')),
 		stringMocker: (_, ctx) =>
 			EntitySelectorNode.mock(ctx.offset, {
 				pool: EntitySelectorAtVariable.filterAvailable(ctx),
@@ -57,9 +43,7 @@ export function registerMcdocAttributes(
 	mcdoc.runtime.registerAttribute(meta, 'item_slots', () => undefined, {
 		stringParser: () => parser.itemSlots,
 		stringMocker: (_, ctx) =>
-			core.LiteralNode.mock(ctx.offset, {
-				pool: getItemSlotsArgumentValues(ctx),
-			}),
+			core.LiteralNode.mock(ctx.offset, { pool: getItemSlotsArgumentValues(ctx) }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'uuid', () => undefined, {
 		stringParser: () => parser.uuid,

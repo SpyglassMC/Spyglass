@@ -29,18 +29,13 @@ export class Downloader {
 		private readonly logger: Logger,
 	) {}
 
-	async download<R>(
-		job: Job<R>,
-		out: DownloaderDownloadOut = {},
-	): Promise<R | undefined> {
+	async download<R>(job: Job<R>, out: DownloaderDownloadOut = {}): Promise<R | undefined> {
 		const { id, cache, uri, options, transformer, ttl } = job
 		if (ttl && this.#memoryCache.has(uri)) {
 			const memoryCacheEntry = this.#memoryCache.get(uri)!
 			const { buffer, time, cacheUri, checksum } = memoryCacheEntry
 			if (performance.now() <= time + ttl) {
-				this.logger.info(
-					`[Downloader] [${id}] Skipped thanks to valid cache in memory`,
-				)
+				this.logger.info(`[Downloader] [${id}] Skipped thanks to valid cache in memory`)
 				out.cacheUri = cacheUri
 				out.checksum = checksum
 				return await transformer(buffer)
@@ -53,14 +48,9 @@ export class Downloader {
 		let cacheChecksumUri: string | undefined
 		if (cache) {
 			const { checksumJob, checksumExtension } = cache
-			out.cacheUri = cacheUri = new Uri(
-				`downloader/${id}`,
-				this.cacheRoot,
-			).toString()
-			cacheChecksumUri = new Uri(
-				`downloader/${id}${checksumExtension}`,
-				this.cacheRoot,
-			).toString()
+			out.cacheUri = cacheUri = new Uri(`downloader/${id}`, this.cacheRoot).toString()
+			cacheChecksumUri = new Uri(`downloader/${id}${checksumExtension}`, this.cacheRoot)
+				.toString()
 			try {
 				out.checksum = checksum = await this.download({
 					...checksumJob,
@@ -72,10 +62,7 @@ export class Downloader {
 					).slice(0, -1) // Remove ending newline
 					if (checksum === cacheChecksum) {
 						try {
-							const cachedBuffer = await fileUtil.readFile(
-								this.externals,
-								cacheUri,
-							)
+							const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
 							if (ttl) {
 								this.#memoryCache.set(uri, {
 									buffer: cachedBuffer,
@@ -91,10 +78,7 @@ export class Downloader {
 							)
 							return ans
 						} catch (e) {
-							this.logger.error(
-								`[Downloader] [${id}] Loading cached file “${cacheUri}”`,
-								e,
-							)
+							this.logger.error(`[Downloader] [${id}] Loading cached file “${cacheUri}”`, e)
 							if (this.externals.error.isKind(e, 'ENOENT')) {
 								// Cache checksum exists, but cached file doesn't.
 								// Remove the invalid cache checksum.
@@ -133,11 +117,7 @@ export class Downloader {
 			if (cache && cacheUri && cacheChecksumUri) {
 				if (checksum) {
 					try {
-						await fileUtil.writeFile(
-							this.externals,
-							cacheChecksumUri,
-							`${checksum}\n`,
-						)
+						await fileUtil.writeFile(this.externals, cacheChecksumUri, `${checksum}\n`)
 					} catch (e) {
 						this.logger.error(
 							`[Downloader] [${id}] Saving cache checksum “${cacheChecksumUri}”`,
@@ -147,16 +127,9 @@ export class Downloader {
 				}
 				try {
 					const serializer = cache.serializer ?? ((b) => b)
-					await fileUtil.writeFile(
-						this.externals,
-						cacheUri,
-						serializer(buffer),
-					)
+					await fileUtil.writeFile(this.externals, cacheUri, serializer(buffer))
 				} catch (e) {
-					this.logger.error(
-						`[Downloader] [${id}] Caching file “${cacheUri}”`,
-						e,
-					)
+					this.logger.error(`[Downloader] [${id}] Caching file “${cacheUri}”`, e)
 				}
 			}
 			this.logger.info(`[Downloader] [${id}] Downloaded from “${uri}”`)
@@ -165,15 +138,10 @@ export class Downloader {
 			this.logger.error(`[Downloader] [${id}] Downloading “${uri}”`, e)
 			if (cache && cacheUri) {
 				try {
-					const cachedBuffer = await fileUtil.readFile(
-						this.externals,
-						cacheUri,
-					)
+					const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
 					const deserializer = cache.deserializer ?? ((b) => b)
 					const ans = await transformer(deserializer(cachedBuffer))
-					this.logger.warn(
-						`[Downloader] [${id}] Fell back to cached file “${cacheUri}”`,
-					)
+					this.logger.warn(`[Downloader] [${id}] Fell back to cached file “${cacheUri}”`)
 					return ans
 				} catch (e) {
 					this.logger.error(

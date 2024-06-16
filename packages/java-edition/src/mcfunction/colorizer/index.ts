@@ -1,9 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type {
-	CoordinateNode,
-	ObjectiveCriteriaNode,
-	VectorNode,
-} from '../node/index.js'
+import type { CoordinateNode, ObjectiveCriteriaNode, VectorNode } from '../node/index.js'
 
 export const objectiveCriterion: core.Colorizer<ObjectiveCriteriaNode> = (
 	node,
@@ -14,10 +10,7 @@ export const vector: core.Colorizer<VectorNode> = (node) => {
 }
 
 export function register(meta: core.MetaRegistry) {
-	meta.registerColorizer<CoordinateNode>(
-		'mcfunction:coordinate',
-		core.colorizer.number,
-	)
+	meta.registerColorizer<CoordinateNode>('mcfunction:coordinate', core.colorizer.number)
 	meta.registerColorizer<VectorNode>('mcfunction:vector', vector)
 	meta.registerColorizer<ObjectiveCriteriaNode>(
 		'mcfunction:objective_criteria',

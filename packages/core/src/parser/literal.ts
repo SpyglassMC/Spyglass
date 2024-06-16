@@ -7,17 +7,10 @@ import type { InfallibleParser } from './Parser.js'
 
 export function literal(...pool: string[]): InfallibleParser<LiteralNode>
 export function literal(options: LiteralOptions): InfallibleParser<LiteralNode>
-export function literal(
-	...param: [LiteralOptions] | string[]
-): InfallibleParser<LiteralNode> {
+export function literal(...param: [LiteralOptions] | string[]): InfallibleParser<LiteralNode> {
 	const options = getOptions(param)
 	return (src: Source, ctx: ParserContext): LiteralNode => {
-		const ans: LiteralNode = {
-			type: 'literal',
-			range: Range.create(src),
-			options,
-			value: '',
-		}
+		const ans: LiteralNode = { type: 'literal', range: Range.create(src), options, value: '' }
 
 		for (const expected of options.pool) {
 			if (src.trySkip(expected)) {
@@ -38,9 +31,7 @@ function getOptions(param: string[] | [LiteralOptions]): LiteralOptions {
 	if (typeof param[0] === 'object') {
 		ans = param[0]
 	} else {
-		ans = {
-			pool: param as string[],
-		}
+		ans = { pool: param as string[] }
 	}
 	// Sort the pool from longest to shortest.
 	ans.pool = ans.pool.sort((a, b) => b.length - a.length)

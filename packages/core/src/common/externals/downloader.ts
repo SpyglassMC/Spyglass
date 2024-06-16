@@ -18,15 +18,10 @@ export interface ExternalDownloader {
 	/**
 	 * @throws
 	 */
-	get(
-		uri: RemoteUriString,
-		options?: ExternalDownloaderOptions,
-	): Promise<Uint8Array>
+	get(uri: RemoteUriString, options?: ExternalDownloaderOptions): Promise<Uint8Array>
 }
 export namespace ExternalDownloader {
-	export function mock(
-		options: ExternalDownloaderMockOptions,
-	): ExternalDownloader {
+	export function mock(options: ExternalDownloaderMockOptions): ExternalDownloader {
 		return new ExternalDownloaderMock(options)
 	}
 }

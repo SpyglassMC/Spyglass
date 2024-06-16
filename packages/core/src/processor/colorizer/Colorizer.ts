@@ -21,11 +21,7 @@ export namespace ColorToken {
 		type: ColorTokenType,
 		modifiers?: ColorTokenModifier[],
 	): ColorToken {
-		return {
-			range: Range.get(range),
-			type,
-			modifiers,
-		}
+		return { range: Range.get(range), type, modifiers }
 	}
 
 	/**
@@ -39,31 +35,16 @@ export namespace ColorToken {
 		modifiers?: ColorTokenModifier[],
 	): ColorToken[] {
 		const ans: ColorToken[] = []
-		let nextStart = Math.min(
-			targetRange.start,
-			tokens[0]?.range.start ?? Infinity,
-		)
+		let nextStart = Math.min(targetRange.start, tokens[0]?.range.start ?? Infinity)
 		for (const t of tokens) {
 			if (t.range.start > nextStart) {
-				ans.push(
-					ColorToken.create(
-						Range.create(nextStart, t.range.start),
-						type,
-						modifiers,
-					),
-				)
+				ans.push(ColorToken.create(Range.create(nextStart, t.range.start), type, modifiers))
 			}
 			ans.push(t)
 			nextStart = t.range.end
 		}
 		if (nextStart < targetRange.end) {
-			ans.push(
-				ColorToken.create(
-					Range.create(nextStart, targetRange.end),
-					type,
-					modifiers,
-				),
-			)
+			ans.push(ColorToken.create(Range.create(nextStart, targetRange.end), type, modifiers))
 		}
 		return ans
 	}

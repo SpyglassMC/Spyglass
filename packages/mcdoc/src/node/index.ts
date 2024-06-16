@@ -28,15 +28,13 @@ export type TopLevelNode =
 	| UseStatementNode
 export namespace TopLevelNode {
 	export function is(node: AstNode | undefined): node is TopLevelNode {
-		return (
-			CommentNode.is(node) ||
-			DispatchStatementNode.is(node) ||
-			EnumNode.is(node) ||
-			InjectionNode.is(node) ||
-			StructNode.is(node) ||
-			TypeAliasNode.is(node) ||
-			UseStatementNode.is(node)
-		)
+		return (CommentNode.is(node)
+			|| DispatchStatementNode.is(node)
+			|| EnumNode.is(node)
+			|| InjectionNode.is(node)
+			|| StructNode.is(node)
+			|| TypeAliasNode.is(node)
+			|| UseStatementNode.is(node))
 	}
 }
 
@@ -53,7 +51,9 @@ export interface DispatchStatementNode extends AstNode {
 	)[]
 }
 export namespace DispatchStatementNode {
-	export function destruct(node: DispatchStatementNode): {
+	export function destruct(
+		node: DispatchStatementNode,
+	): {
 		attributes: AttributeNode[]
 		location?: ResourceLocationNode
 		index?: IndexBodyNode
@@ -68,13 +68,8 @@ export namespace DispatchStatementNode {
 			typeParams: node.children.find(TypeParamBlockNode.is),
 		}
 	}
-	export function is(
-		node: AstNode | undefined,
-	): node is DispatchStatementNode {
-		return (
-			(node as DispatchStatementNode | undefined)?.type ===
-				'mcdoc:dispatch_statement'
-		)
+	export function is(node: AstNode | undefined): node is DispatchStatementNode {
+		return ((node as DispatchStatementNode | undefined)?.type === 'mcdoc:dispatch_statement')
 	}
 }
 
@@ -94,12 +89,8 @@ export interface IndexBodyNode extends AstNode {
 	children: (CommentNode | IndexNode)[]
 }
 export namespace IndexBodyNode {
-	export function destruct(node: IndexBodyNode): {
-		parallelIndices: IndexNode[]
-	} {
-		return {
-			parallelIndices: node.children.filter(IndexNode.is),
-		}
+	export function destruct(node: IndexBodyNode): { parallelIndices: IndexNode[] } {
+		return { parallelIndices: node.children.filter(IndexNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is IndexBodyNode {
 		return (node as IndexBodyNode | undefined)?.type === 'mcdoc:index_body'
@@ -113,19 +104,13 @@ export namespace IndexNode {
 	}
 }
 
-export type StaticIndexNode =
-	| LiteralNode
-	| IdentifierNode
-	| StringNode
-	| ResourceLocationNode
+export type StaticIndexNode = LiteralNode | IdentifierNode | StringNode | ResourceLocationNode
 export namespace StaticIndexNode {
 	export function is(node: AstNode | undefined): node is StaticIndexNode {
-		return (
-			LiteralNode.is(node) ||
-			IdentifierNode.is(node) ||
-			StringNode.is(node) ||
-			ResourceLocationNode.is(node)
-		)
+		return (LiteralNode.is(node)
+			|| IdentifierNode.is(node)
+			|| StringNode.is(node)
+			|| ResourceLocationNode.is(node))
 	}
 }
 
@@ -143,26 +128,18 @@ export interface DynamicIndexNode extends AstNode {
 	children: (CommentNode | AccessorKeyNode)[]
 }
 export namespace DynamicIndexNode {
-	export function destruct(node: DynamicIndexNode): {
-		keys: AccessorKeyNode[]
-	} {
-		return {
-			keys: node.children.filter(AccessorKeyNode.is),
-		}
+	export function destruct(node: DynamicIndexNode): { keys: AccessorKeyNode[] } {
+		return { keys: node.children.filter(AccessorKeyNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is DynamicIndexNode {
-		return (
-			(node as DynamicIndexNode | undefined)?.type === 'mcdoc:dynamic_index'
-		)
+		return ((node as DynamicIndexNode | undefined)?.type === 'mcdoc:dynamic_index')
 	}
 }
 
 export type AccessorKeyNode = LiteralNode | IdentifierNode | StringNode
 export namespace AccessorKeyNode {
 	export function is(node: AstNode | undefined): node is AccessorKeyNode {
-		return (
-			LiteralNode.is(node) || IdentifierNode.is(node) || StringNode.is(node)
-		)
+		return (LiteralNode.is(node) || IdentifierNode.is(node) || StringNode.is(node))
 	}
 }
 
@@ -182,43 +159,33 @@ export type TypeNode =
 	| UnionTypeNode
 export namespace TypeNode {
 	export function is(node: AstNode | undefined): node is TypeNode {
-		return (
-			AnyTypeNode.is(node) ||
-			BooleanTypeNode.is(node) ||
-			StringTypeNode.is(node) ||
-			LiteralTypeNode.is(node) ||
-			NumericTypeNode.is(node) ||
-			PrimitiveArrayTypeNode.is(node) ||
-			ListTypeNode.is(node) ||
-			TupleTypeNode.is(node) ||
-			EnumNode.is(node) ||
-			StructNode.is(node) ||
-			ReferenceTypeNode.is(node) ||
-			DispatcherTypeNode.is(node) ||
-			UnionTypeNode.is(node)
-		)
+		return (AnyTypeNode.is(node)
+			|| BooleanTypeNode.is(node)
+			|| StringTypeNode.is(node)
+			|| LiteralTypeNode.is(node)
+			|| NumericTypeNode.is(node)
+			|| PrimitiveArrayTypeNode.is(node)
+			|| ListTypeNode.is(node)
+			|| TupleTypeNode.is(node)
+			|| EnumNode.is(node)
+			|| StructNode.is(node)
+			|| ReferenceTypeNode.is(node)
+			|| DispatcherTypeNode.is(node)
+			|| UnionTypeNode.is(node))
 	}
 }
 
 export interface TypeBaseNode<CN extends AstNode> extends AstNode {
 	type: `mcdoc:${string}`
-	children: (
-		| CommentNode
-		| AttributeNode
-		| IndexBodyNode
-		| TypeArgBlockNode
-		| CN
-	)[]
+	children: (CommentNode | AttributeNode | IndexBodyNode | TypeArgBlockNode | CN)[]
 }
 export namespace TypeBaseNode {
-	export function destruct(node: TypeBaseNode<any>): {
-		appendixes: (IndexBodyNode | TypeArgBlockNode)[]
-		attributes: AttributeNode[]
-	} {
+	export function destruct(
+		node: TypeBaseNode<any>,
+	): { appendixes: (IndexBodyNode | TypeArgBlockNode)[]; attributes: AttributeNode[] } {
 		return {
-			appendixes: node.children.filter(
-				(n): n is IndexBodyNode | TypeArgBlockNode =>
-					IndexBodyNode.is(n) || TypeArgBlockNode.is(n),
+			appendixes: node.children.filter((n): n is IndexBodyNode | TypeArgBlockNode =>
+				IndexBodyNode.is(n) || TypeArgBlockNode.is(n)
 			),
 			attributes: node.children.filter(AttributeNode.is),
 		}
@@ -230,10 +197,9 @@ export interface AttributeNode extends AstNode {
 	children: (CommentNode | IdentifierNode | AttributeValueNode)[]
 }
 export namespace AttributeNode {
-	export function destruct(node: AttributeNode): {
-		name: IdentifierNode
-		value: AttributeValueNode | undefined
-	} {
+	export function destruct(
+		node: AttributeNode,
+	): { name: IdentifierNode; value: AttributeValueNode | undefined } {
 		return {
 			name: node.children.find(IdentifierNode.is)!,
 			value: node.children.find(AttributeValueNode.is),
@@ -253,28 +219,20 @@ export namespace AttributeValueNode {
 
 export interface AttributeTreeNode extends AstNode {
 	type: 'mcdoc:attribute/tree'
-	children: (
-		| CommentNode
-		| AttributeTreePosValuesNode
-		| AttributeTreeNamedValuesNode
-	)[]
+	children: (CommentNode | AttributeTreePosValuesNode | AttributeTreeNamedValuesNode)[]
 	delim: '(' | '[' | '{'
 }
 export namespace AttributeTreeNode {
-	export function destruct(node: AttributeTreeNode): {
-		positional?: AttributeTreePosValuesNode
-		named?: AttributeTreeNamedValuesNode
-	} {
+	export function destruct(
+		node: AttributeTreeNode,
+	): { positional?: AttributeTreePosValuesNode; named?: AttributeTreeNamedValuesNode } {
 		return {
 			positional: node.children.find(AttributeTreePosValuesNode.is),
 			named: node.children.find(AttributeTreeNamedValuesNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is AttributeTreeNode {
-		return (
-			(node as AttributeTreeNode | undefined)?.type ===
-				'mcdoc:attribute/tree'
-		)
+		return ((node as AttributeTreeNode | undefined)?.type === 'mcdoc:attribute/tree')
 	}
 }
 
@@ -283,20 +241,11 @@ export interface AttributeTreePosValuesNode extends AstNode {
 	children: (CommentNode | AttributeValueNode)[]
 }
 export namespace AttributeTreePosValuesNode {
-	export function destruct(node: AttributeTreePosValuesNode): {
-		values: AttributeValueNode[]
-	} {
-		return {
-			values: node.children.filter(AttributeValueNode.is),
-		}
+	export function destruct(node: AttributeTreePosValuesNode): { values: AttributeValueNode[] } {
+		return { values: node.children.filter(AttributeValueNode.is) }
 	}
-	export function is(
-		node: AstNode | undefined,
-	): node is AttributeTreePosValuesNode {
-		return (
-			(node as AttributeTreePosValuesNode | undefined)?.type ===
-				'mcdoc:attribute/tree/pos'
-		)
+	export function is(node: AstNode | undefined): node is AttributeTreePosValuesNode {
+		return ((node as AttributeTreePosValuesNode | undefined)?.type === 'mcdoc:attribute/tree/pos')
 	}
 }
 
@@ -305,12 +254,10 @@ export interface AttributeTreeNamedValuesNode extends AstNode {
 	children: (CommentNode | IdentifierNode | StringNode | AttributeValueNode)[]
 }
 export namespace AttributeTreeNamedValuesNode {
-	export function destruct(node: AttributeTreeNamedValuesNode): {
-		values: AttributeTreeNamedKeyValuePair[]
-	} {
-		const ans: { values: AttributeTreeNamedKeyValuePair[] } = {
-			values: [],
-		}
+	export function destruct(
+		node: AttributeTreeNamedValuesNode,
+	): { values: AttributeTreeNamedKeyValuePair[] } {
+		const ans: { values: AttributeTreeNamedKeyValuePair[] } = { values: [] }
 		let key: IdentifierNode | StringNode | undefined
 		for (const child of node.children) {
 			if (CommentNode.is(child)) {
@@ -326,13 +273,9 @@ export namespace AttributeTreeNamedValuesNode {
 		}
 		return ans
 	}
-	export function is(
-		node: AstNode | undefined,
-	): node is AttributeTreeNamedValuesNode {
-		return (
-			(node as AttributeTreeNamedValuesNode | undefined)?.type ===
-				'mcdoc:attribute/tree/named'
-		)
+	export function is(node: AstNode | undefined): node is AttributeTreeNamedValuesNode {
+		return ((node as AttributeTreeNamedValuesNode | undefined)?.type
+			=== 'mcdoc:attribute/tree/named')
 	}
 }
 export interface AttributeTreeNamedKeyValuePair {
@@ -345,17 +288,11 @@ export interface TypeArgBlockNode extends AstNode {
 	children: (CommentNode | TypeNode)[]
 }
 export namespace TypeArgBlockNode {
-	export function destruct(node: TypeArgBlockNode): {
-		args: TypeNode[]
-	} {
-		return {
-			args: node.children.filter(TypeNode.is),
-		}
+	export function destruct(node: TypeArgBlockNode): { args: TypeNode[] } {
+		return { args: node.children.filter(TypeNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is TypeArgBlockNode {
-		return (
-			(node as TypeArgBlockNode | undefined)?.type === 'mcdoc:type_arg_block'
-		)
+		return ((node as TypeArgBlockNode | undefined)?.type === 'mcdoc:type_arg_block')
 	}
 }
 
@@ -373,8 +310,7 @@ export interface BooleanTypeNode extends TypeBaseNode<LiteralNode> {
 }
 export namespace BooleanTypeNode {
 	export function is(node: AstNode | undefined): node is BooleanTypeNode {
-		return (node as BooleanTypeNode | undefined)?.type ===
-			'mcdoc:type/boolean'
+		return (node as BooleanTypeNode | undefined)?.type === 'mcdoc:type/boolean'
 	}
 }
 
@@ -383,11 +319,9 @@ export interface IntRangeNode extends AstNode {
 	children: (IntegerNode | LiteralNode)[]
 }
 export namespace IntRangeNode {
-	export function destruct(node: IntRangeNode): {
-		kind: RangeKind
-		min?: IntegerNode
-		max?: IntegerNode
-	} {
+	export function destruct(
+		node: IntRangeNode,
+	): { kind: RangeKind; min?: IntegerNode; max?: IntegerNode } {
 		return destructRangeNode(node)
 	}
 	export function is(node: AstNode | undefined): node is IntRangeNode {
@@ -399,25 +333,18 @@ export interface LiteralTypeNode extends TypeBaseNode<LiteralTypeValueNode> {
 	type: 'mcdoc:type/literal'
 }
 export namespace LiteralTypeNode {
-	export function destruct(node: LiteralTypeNode): {
-		value: LiteralTypeValueNode
-	} {
-		return {
-			value: node.children.find(LiteralTypeValueNode.is)!,
-		}
+	export function destruct(node: LiteralTypeNode): { value: LiteralTypeValueNode } {
+		return { value: node.children.find(LiteralTypeValueNode.is)! }
 	}
 	export function is(node: AstNode | undefined): node is LiteralTypeNode {
-		return (node as LiteralTypeNode | undefined)?.type ===
-			'mcdoc:type/literal'
+		return (node as LiteralTypeNode | undefined)?.type === 'mcdoc:type/literal'
 	}
 }
 
 export type LiteralTypeValueNode = LiteralNode | TypedNumberNode | StringNode
 export namespace LiteralTypeValueNode {
 	export function is(node: AstNode | undefined): node is LiteralTypeValueNode {
-		return (
-			LiteralNode.is(node) || TypedNumberNode.is(node) || StringNode.is(node)
-		)
+		return (LiteralNode.is(node) || TypedNumberNode.is(node) || StringNode.is(node))
 	}
 }
 
@@ -426,43 +353,33 @@ export interface TypedNumberNode extends AstNode {
 	children: (FloatNode | IntegerNode | LiteralNode)[]
 }
 export namespace TypedNumberNode {
-	export function destruct(node: TypedNumberNode): {
-		value: FloatNode | IntegerNode
-		suffix?: LiteralNode
-	} {
+	export function destruct(
+		node: TypedNumberNode,
+	): { value: FloatNode | IntegerNode; suffix?: LiteralNode } {
 		return {
-			value: node.children.find(FloatNode.is) ??
-				node.children.find(IntegerNode.is)!,
+			value: node.children.find(FloatNode.is) ?? node.children.find(IntegerNode.is)!,
 			suffix: node.children.find(LiteralNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is TypedNumberNode {
-		return (node as TypedNumberNode | undefined)?.type ===
-			'mcdoc:typed_number'
+		return (node as TypedNumberNode | undefined)?.type === 'mcdoc:typed_number'
 	}
 }
 
-export interface NumericTypeNode
-	extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode>
-{
+export interface NumericTypeNode extends TypeBaseNode<LiteralNode | FloatRangeNode | IntRangeNode> {
 	type: 'mcdoc:type/numeric_type'
 }
 export namespace NumericTypeNode {
-	export function destruct(node: NumericTypeNode): {
-		numericKind: LiteralNode
-		valueRange?: FloatRangeNode | IntRangeNode
-	} {
+	export function destruct(
+		node: NumericTypeNode,
+	): { numericKind: LiteralNode; valueRange?: FloatRangeNode | IntRangeNode } {
 		return {
 			numericKind: node.children.find(LiteralNode.is)!,
-			valueRange: node.children.find(FloatRangeNode.is) ||
-				node.children.find(IntRangeNode.is),
+			valueRange: node.children.find(FloatRangeNode.is) || node.children.find(IntRangeNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is NumericTypeNode {
-		return (
-			(node as NumericTypeNode | undefined)?.type ===
-				'mcdoc:type/numeric_type'
-		)
+		return ((node as NumericTypeNode | undefined)?.type === 'mcdoc:type/numeric_type')
 	}
 }
 
@@ -517,11 +434,7 @@ function destructRangeNode<N extends FloatRangeNode | IntRangeNode>(
 		kind = getKind(node.children[1] as LiteralNode)
 		min = node.children[0] as FloatNode & IntegerNode
 	}
-	return {
-		kind,
-		min,
-		max,
-	}
+	return { kind, min, max }
 
 	function getKind(delimiter: LiteralNode): RangeKind {
 		let ans: number = 0b00
@@ -540,11 +453,9 @@ export interface FloatRangeNode extends AstNode {
 	children: (FloatNode | LiteralNode)[]
 }
 export namespace FloatRangeNode {
-	export function destruct(node: FloatRangeNode): {
-		kind: RangeKind
-		min?: FloatNode
-		max?: FloatNode
-	} {
+	export function destruct(
+		node: FloatRangeNode,
+	): { kind: RangeKind; min?: FloatNode; max?: FloatNode } {
 		return destructRangeNode(node)
 	}
 	export function is(node: AstNode | undefined): node is FloatRangeNode {
@@ -552,17 +463,13 @@ export namespace FloatRangeNode {
 	}
 }
 
-export interface PrimitiveArrayTypeNode
-	extends TypeBaseNode<LiteralNode | IntRangeNode>
-{
+export interface PrimitiveArrayTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/primitive_array'
 }
 export namespace PrimitiveArrayTypeNode {
-	export function destruct(node: PrimitiveArrayTypeNode): {
-		arrayKind: LiteralNode
-		lengthRange?: IntRangeNode
-		valueRange?: IntRangeNode
-	} {
+	export function destruct(
+		node: PrimitiveArrayTypeNode,
+	): { arrayKind: LiteralNode; lengthRange?: IntRangeNode; valueRange?: IntRangeNode } {
 		let lengthRange: IntRangeNode | undefined
 		let valueRange: IntRangeNode | undefined
 		let afterBrackets = false
@@ -577,19 +484,10 @@ export namespace PrimitiveArrayTypeNode {
 				}
 			}
 		}
-		return {
-			arrayKind: node.children.find(LiteralNode.is)!,
-			lengthRange,
-			valueRange,
-		}
+		return { arrayKind: node.children.find(LiteralNode.is)!, lengthRange, valueRange }
 	}
-	export function is(
-		node: AstNode | undefined,
-	): node is PrimitiveArrayTypeNode {
-		return (
-			(node as PrimitiveArrayTypeNode | undefined)?.type ===
-				'mcdoc:type/primitive_array'
-		)
+	export function is(node: AstNode | undefined): node is PrimitiveArrayTypeNode {
+		return ((node as PrimitiveArrayTypeNode | undefined)?.type === 'mcdoc:type/primitive_array')
 	}
 }
 
@@ -597,10 +495,7 @@ export interface ListTypeNode extends TypeBaseNode<TypeNode | IntRangeNode> {
 	type: 'mcdoc:type/list'
 }
 export namespace ListTypeNode {
-	export function destruct(node: ListTypeNode): {
-		item: TypeNode
-		lengthRange?: IntRangeNode
-	} {
+	export function destruct(node: ListTypeNode): { item: TypeNode; lengthRange?: IntRangeNode } {
 		return {
 			item: node.children.find(TypeNode.is)!,
 			lengthRange: node.children.find(IntRangeNode.is),
@@ -611,18 +506,12 @@ export namespace ListTypeNode {
 	}
 }
 
-export interface StringTypeNode
-	extends TypeBaseNode<LiteralNode | IntRangeNode>
-{
+export interface StringTypeNode extends TypeBaseNode<LiteralNode | IntRangeNode> {
 	type: 'mcdoc:type/string'
 }
 export namespace StringTypeNode {
-	export function destruct(node: StringTypeNode): {
-		lengthRange?: IntRangeNode
-	} {
-		return {
-			lengthRange: node.children.find(IntRangeNode.is),
-		}
+	export function destruct(node: StringTypeNode): { lengthRange?: IntRangeNode } {
+		return { lengthRange: node.children.find(IntRangeNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is StringTypeNode {
 		return (node as StringTypeNode | undefined)?.type === 'mcdoc:type/string'
@@ -633,39 +522,27 @@ export interface TupleTypeNode extends TypeBaseNode<TypeNode> {
 	type: 'mcdoc:type/tuple'
 }
 export namespace TupleTypeNode {
-	export function destruct(node: TupleTypeNode): {
-		items: TypeNode[]
-	} {
-		return {
-			items: node.children.filter(TypeNode.is),
-		}
+	export function destruct(node: TupleTypeNode): { items: TypeNode[] } {
+		return { items: node.children.filter(TypeNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is TupleTypeNode {
 		return (node as TupleTypeNode | undefined)?.type === 'mcdoc:type/tuple'
 	}
 }
 
-export interface EnumNode extends
-	TypeBaseNode<
-		DocCommentsNode | LiteralNode | IdentifierNode | EnumBlockNode
-	>
+export interface EnumNode
+	extends TypeBaseNode<DocCommentsNode | LiteralNode | IdentifierNode | EnumBlockNode>
 {
 	type: 'mcdoc:enum'
 }
 export type EnumKind = typeof EnumNode.Kinds extends Set<infer V> ? V : never
 export namespace EnumNode {
 	export const Kinds = new Set(
-		[
-			'byte',
-			'short',
-			'int',
-			'long',
-			'float',
-			'double',
-			'string',
-		] as const,
+		['byte', 'short', 'int', 'long', 'float', 'double', 'string'] as const,
 	)
-	export function destruct(node: EnumNode): {
+	export function destruct(
+		node: EnumNode,
+	): {
 		block: EnumBlockNode
 		docComments?: DocCommentsNode
 		enumKind?: EnumKind
@@ -702,9 +579,7 @@ export namespace DocCommentsNode {
 	/**
 	 * @returns The text content of this doc comment block.
 	 */
-	export function asText(
-		node: DocCommentsNode | undefined,
-	): string | undefined {
+	export function asText(node: DocCommentsNode | undefined): string | undefined {
 		if (!node) {
 			return undefined
 		}
@@ -723,8 +598,7 @@ export namespace DocCommentsNode {
 		return comments.join('\n')
 	}
 	export function is(node: AstNode | undefined): node is DocCommentsNode {
-		return (node as DocCommentsNode | undefined)?.type ===
-			'mcdoc:doc_comments'
+		return (node as DocCommentsNode | undefined)?.type === 'mcdoc:doc_comments'
 	}
 }
 
@@ -733,12 +607,8 @@ export interface EnumBlockNode extends AstNode {
 	children: (CommentNode | EnumFieldNode)[]
 }
 export namespace EnumBlockNode {
-	export function destruct(node: EnumBlockNode): {
-		fields: EnumFieldNode[]
-	} {
-		return {
-			fields: node.children.filter(EnumFieldNode.is),
-		}
+	export function destruct(node: EnumBlockNode): { fields: EnumFieldNode[] } {
+		return { fields: node.children.filter(EnumFieldNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is EnumBlockNode {
 		return (node as EnumBlockNode | undefined)?.type === 'mcdoc:enum/block'
@@ -750,11 +620,9 @@ export interface EnumFieldNode extends AstNode {
 	children: (CommentNode | PrelimNode | IdentifierNode | EnumValueNode)[]
 }
 export namespace EnumFieldNode {
-	export function destruct(node: EnumFieldNode): {
-		attributes: AttributeNode[]
-		identifier: IdentifierNode
-		value: EnumValueNode
-	} {
+	export function destruct(
+		node: EnumFieldNode,
+	): { attributes: AttributeNode[]; identifier: IdentifierNode; value: EnumValueNode } {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
 			identifier: node.children.find(IdentifierNode.is)!,
@@ -780,15 +648,15 @@ export namespace PrelimNode {
 	}
 }
 
-export interface StructNode extends
-	TypeBaseNode<
-		DocCommentsNode | LiteralNode | IdentifierNode | StructBlockNode
-	>
+export interface StructNode
+	extends TypeBaseNode<DocCommentsNode | LiteralNode | IdentifierNode | StructBlockNode>
 {
 	type: 'mcdoc:struct'
 }
 export namespace StructNode {
-	export function destruct(node: StructNode): {
+	export function destruct(
+		node: StructNode,
+	): {
 		block: StructBlockNode
 		docComments?: DocCommentsNode
 		identifier?: IdentifierNode
@@ -810,18 +678,11 @@ export interface ReferenceTypeNode extends TypeBaseNode<PathNode> {
 	type: 'mcdoc:type/reference'
 }
 export namespace ReferenceTypeNode {
-	export function destruct(node: ReferenceTypeNode): {
-		path: PathNode
-	} {
-		return {
-			path: node.children.find(PathNode.is)!,
-		}
+	export function destruct(node: ReferenceTypeNode): { path: PathNode } {
+		return { path: node.children.find(PathNode.is)! }
 	}
 	export function is(node: AstNode | undefined): node is ReferenceTypeNode {
-		return (
-			(node as ReferenceTypeNode | undefined)?.type ===
-				'mcdoc:type/reference'
-		)
+		return ((node as ReferenceTypeNode | undefined)?.type === 'mcdoc:type/reference')
 	}
 }
 
@@ -830,18 +691,11 @@ export interface TypeParamBlockNode extends AstNode {
 	children: (CommentNode | TypeParamNode)[]
 }
 export namespace TypeParamBlockNode {
-	export function destruct(node: TypeParamBlockNode): {
-		params: TypeParamNode[]
-	} {
-		return {
-			params: node.children.filter(TypeParamNode.is),
-		}
+	export function destruct(node: TypeParamBlockNode): { params: TypeParamNode[] } {
+		return { params: node.children.filter(TypeParamNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is TypeParamBlockNode {
-		return (
-			(node as TypeParamBlockNode | undefined)?.type ===
-				'mcdoc:type_param_block'
-		)
+		return ((node as TypeParamBlockNode | undefined)?.type === 'mcdoc:type_param_block')
 	}
 }
 
@@ -870,7 +724,9 @@ export interface PathNode extends AstNode {
 	isAbsolute?: boolean
 }
 export namespace PathNode {
-	export function destruct(node: PathNode | undefined): {
+	export function destruct(
+		node: PathNode | undefined,
+	): {
 		children: (LiteralNode | IdentifierNode)[]
 		isAbsolute?: boolean
 		lastIdentifier?: IdentifierNode
@@ -892,16 +748,11 @@ export interface StructBlockNode extends AstNode {
 	children: (CommentNode | StructFieldNode)[]
 }
 export namespace StructBlockNode {
-	export function destruct(node: StructBlockNode): {
-		fields: StructFieldNode[]
-	} {
-		return {
-			fields: node.children.filter(StructFieldNode.is),
-		}
+	export function destruct(node: StructBlockNode): { fields: StructFieldNode[] } {
+		return { fields: node.children.filter(StructFieldNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is StructBlockNode {
-		return (node as StructBlockNode | undefined)?.type ===
-			'mcdoc:struct/block'
+		return (node as StructBlockNode | undefined)?.type === 'mcdoc:struct/block'
 	}
 }
 
@@ -918,7 +769,9 @@ export interface StructPairFieldNode extends AstNode {
 	isOptional?: boolean
 }
 export namespace StructPairFieldNode {
-	export function destruct(node: StructPairFieldNode): {
+	export function destruct(
+		node: StructPairFieldNode,
+	): {
 		attributes: AttributeNode[]
 		docComments?: DocCommentsNode
 		key: StructKeyNode
@@ -934,21 +787,14 @@ export namespace StructPairFieldNode {
 		}
 	}
 	export function is(node: AstNode | undefined): node is StructPairFieldNode {
-		return (
-			(node as StructPairFieldNode | undefined)?.type ===
-				'mcdoc:struct/field/pair'
-		)
+		return ((node as StructPairFieldNode | undefined)?.type === 'mcdoc:struct/field/pair')
 	}
 }
 
 export type StructKeyNode = StringNode | IdentifierNode | StructMapKeyNode
 export namespace StructKeyNode {
 	export function is(node: AstNode | undefined): node is StructKeyNode {
-		return (
-			StringNode.is(node) ||
-			IdentifierNode.is(node) ||
-			StructMapKeyNode.is(node)
-		)
+		return (StringNode.is(node) || IdentifierNode.is(node) || StructMapKeyNode.is(node))
 	}
 }
 
@@ -957,17 +803,11 @@ export interface StructMapKeyNode extends AstNode {
 	children: (CommentNode | TypeNode)[]
 }
 export namespace StructMapKeyNode {
-	export function destruct(node: StructMapKeyNode): {
-		type: TypeNode
-	} {
-		return {
-			type: node.children.find(TypeNode.is)!,
-		}
+	export function destruct(node: StructMapKeyNode): { type: TypeNode } {
+		return { type: node.children.find(TypeNode.is)! }
 	}
 	export function is(node: AstNode | undefined): node is StructMapKeyNode {
-		return (
-			(node as StructMapKeyNode | undefined)?.type === 'mcdoc:struct/map_key'
-		)
+		return ((node as StructMapKeyNode | undefined)?.type === 'mcdoc:struct/map_key')
 	}
 }
 
@@ -976,45 +816,33 @@ export interface StructSpreadFieldNode extends AstNode {
 	children: (CommentNode | AttributeNode | TypeNode)[]
 }
 export namespace StructSpreadFieldNode {
-	export function destruct(node: StructSpreadFieldNode): {
-		attributes: AttributeNode[]
-		type: TypeNode
-	} {
+	export function destruct(
+		node: StructSpreadFieldNode,
+	): { attributes: AttributeNode[]; type: TypeNode } {
 		return {
 			attributes: node.children.filter(AttributeNode.is),
 			type: node.children.find(TypeNode.is)!,
 		}
 	}
-	export function is(
-		node: AstNode | undefined,
-	): node is StructSpreadFieldNode {
-		return (
-			(node as StructSpreadFieldNode | undefined)?.type ===
-				'mcdoc:struct/field/spread'
-		)
+	export function is(node: AstNode | undefined): node is StructSpreadFieldNode {
+		return ((node as StructSpreadFieldNode | undefined)?.type === 'mcdoc:struct/field/spread')
 	}
 }
 
-export interface DispatcherTypeNode
-	extends TypeBaseNode<ResourceLocationNode | IndexBodyNode>
-{
+export interface DispatcherTypeNode extends TypeBaseNode<ResourceLocationNode | IndexBodyNode> {
 	type: 'mcdoc:type/dispatcher'
 }
 export namespace DispatcherTypeNode {
-	export function destruct(node: DispatcherTypeNode): {
-		location: ResourceLocationNode
-		index: IndexBodyNode
-	} {
+	export function destruct(
+		node: DispatcherTypeNode,
+	): { location: ResourceLocationNode; index: IndexBodyNode } {
 		return {
 			location: node.children.find(ResourceLocationNode.is)!,
 			index: node.children.find(IndexBodyNode.is)!,
 		}
 	}
 	export function is(node: AstNode | undefined): node is DispatcherTypeNode {
-		return (
-			(node as DispatcherTypeNode | undefined)?.type ===
-				'mcdoc:type/dispatcher'
-		)
+		return ((node as DispatcherTypeNode | undefined)?.type === 'mcdoc:type/dispatcher')
 	}
 }
 
@@ -1022,12 +850,8 @@ export interface UnionTypeNode extends TypeBaseNode<TypeNode> {
 	type: 'mcdoc:type/union'
 }
 export namespace UnionTypeNode {
-	export function destruct(node: UnionTypeNode): {
-		members: TypeNode[]
-	} {
-		return {
-			members: node.children.filter(TypeNode.is),
-		}
+	export function destruct(node: UnionTypeNode): { members: TypeNode[] } {
+		return { members: node.children.filter(TypeNode.is) }
 	}
 	export function is(node: AstNode | undefined): node is UnionTypeNode {
 		return (node as UnionTypeNode | undefined)?.type === 'mcdoc:type/union'
@@ -1039,12 +863,8 @@ export interface InjectionNode extends AstNode {
 	children: (CommentNode | LiteralNode | InjectionContentNode)[]
 }
 export namespace InjectionNode {
-	export function destruct(node: InjectionNode): {
-		injection: InjectionContentNode
-	} {
-		return {
-			injection: node.children.find(InjectionContentNode.is)!,
-		}
+	export function destruct(node: InjectionNode): { injection: InjectionContentNode } {
+		return { injection: node.children.find(InjectionContentNode.is)! }
 	}
 	export function is(node: AstNode | undefined): node is InjectionNode {
 		return (node as InjectionNode | undefined)?.type === 'mcdoc:injection'
@@ -1064,10 +884,7 @@ export interface EnumInjectionNode extends AstNode {
 }
 export namespace EnumInjectionNode {
 	export function is(node: AstNode | undefined): node is EnumInjectionNode {
-		return (
-			(node as EnumInjectionNode | undefined)?.type ===
-				'mcdoc:injection/enum'
-		)
+		return ((node as EnumInjectionNode | undefined)?.type === 'mcdoc:injection/enum')
 	}
 }
 
@@ -1077,26 +894,19 @@ export interface StructInjectionNode extends AstNode {
 }
 export namespace StructInjectionNode {
 	export function is(node: AstNode | undefined): node is StructInjectionNode {
-		return (
-			(node as StructInjectionNode | undefined)?.type ===
-				'mcdoc:injection/struct'
-		)
+		return ((node as StructInjectionNode | undefined)?.type === 'mcdoc:injection/struct')
 	}
 }
 
 export interface TypeAliasNode extends AstNode {
 	type: 'mcdoc:type_alias'
-	children: (
-		| CommentNode
-		| PrelimNode
-		| LiteralNode
-		| IdentifierNode
-		| TypeParamBlockNode
-		| TypeNode
-	)[]
+	children:
+		(CommentNode | PrelimNode | LiteralNode | IdentifierNode | TypeParamBlockNode | TypeNode)[]
 }
 export namespace TypeAliasNode {
-	export function destruct(node: TypeAliasNode): {
+	export function destruct(
+		node: TypeAliasNode,
+	): {
 		attributes: AttributeNode[]
 		docComments?: DocCommentsNode
 		identifier: IdentifierNode
@@ -1123,18 +933,13 @@ export interface UseStatementNode extends AstNode {
 	children: (CommentNode | LiteralNode | PathNode | IdentifierNode)[]
 }
 export namespace UseStatementNode {
-	export function destruct(node: UseStatementNode): {
-		binding?: IdentifierNode
-		path?: PathNode
-	} {
+	export function destruct(node: UseStatementNode): { binding?: IdentifierNode; path?: PathNode } {
 		return {
 			binding: node.children.find(IdentifierNode.is),
 			path: node.children.find(PathNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is UseStatementNode {
-		return (
-			(node as UseStatementNode | undefined)?.type === 'mcdoc:use_statement'
-		)
+		return ((node as UseStatementNode | undefined)?.type === 'mcdoc:use_statement')
 	}
 }

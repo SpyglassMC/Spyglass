@@ -17,9 +17,7 @@ interface DecodedSemanticToken {
 	tokenType: number
 	tokenModifiers: number
 }
-const decodeSemanticTokens = (
-	tokens: ls.SemanticTokens['data'],
-): DecodedSemanticToken[] => {
+const decodeSemanticTokens = (tokens: ls.SemanticTokens['data']): DecodedSemanticToken[] => {
 	if (tokens.length % 5 !== 0) {
 		throw new Error('Array of semantic tokens must be divisible by 5')
 	}
@@ -38,35 +36,19 @@ const decodeSemanticTokens = (
 }
 
 describe('semanticTokens', () => {
-	const tokens: core.ColorToken[] = [
-		{
-			range: {
-				start: 0,
-				end: 100,
-			},
-			type: 'comment',
-		},
-	]
-	const suites: { content: string }[] = [
-		{ content: 'foo' },
-		{ content: 'foo\nbar' },
-		{ content: 'foo\nbar\nqux' },
-	]
+	const tokens: core.ColorToken[] = [{ range: { start: 0, end: 100 }, type: 'comment' }]
+	const suites: { content: string }[] = [{ content: 'foo' }, { content: 'foo\nbar' }, {
+		content: 'foo\nbar\nqux',
+	}]
 	for (const hasMultilineTokenSupport of [true, false]) {
 		for (const { content } of suites) {
 			const doc = TextDocument.create('file:///test', '', 0, content)
 			const multilineStr = `${
 				hasMultilineTokenSupport ? 'with' : 'without'
 			} multiline token support`
-			const itTitle = `Tokenize "${
-				showWhitespaceGlyph(content)
-			}" ${multilineStr}`
+			const itTitle = `Tokenize "${showWhitespaceGlyph(content)}" ${multilineStr}`
 			it(itTitle, () => {
-				const { data } = semanticTokens(
-					tokens,
-					doc,
-					hasMultilineTokenSupport,
-				)
+				const { data } = semanticTokens(tokens, doc, hasMultilineTokenSupport)
 				snapshot(decodeSemanticTokens(data))
 			})
 		}

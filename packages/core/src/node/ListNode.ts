@@ -12,9 +12,7 @@ export interface ItemNode<V extends AstNode> extends AstNode {
 	readonly sep?: Range
 }
 export namespace ItemNode {
-	export function is<V extends AstNode>(
-		node: object | undefined,
-	): node is ItemNode<V> {
+	export function is<V extends AstNode>(node: object | undefined): node is ItemNode<V> {
 		return (node as ItemNode<V> | undefined)?.type === 'item'
 	}
 }

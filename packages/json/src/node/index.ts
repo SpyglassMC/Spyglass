@@ -17,20 +17,15 @@ interface JsonBaseNode {
 	typeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
 }
 
-export type JsonNode =
-	| JsonObjectNode
-	| JsonArrayNode
-	| JsonPrimitiveNode
+export type JsonNode = JsonObjectNode | JsonArrayNode | JsonPrimitiveNode
 export namespace JsonNode {
 	export function is(node: core.AstNode): node is JsonNode {
-		return (
-			JsonObjectNode.is(node) ||
-			JsonArrayNode.is(node) ||
-			JsonStringNode.is(node) ||
-			JsonNumberNode.is(node) ||
-			JsonBooleanNode.is(node) ||
-			JsonNullNode.is(node)
-		)
+		return (JsonObjectNode.is(node)
+			|| JsonArrayNode.is(node)
+			|| JsonStringNode.is(node)
+			|| JsonNumberNode.is(node)
+			|| JsonBooleanNode.is(node)
+			|| JsonNullNode.is(node))
 	}
 }
 
@@ -46,11 +41,7 @@ export namespace JsonObjectNode {
 	}
 
 	export function mock(range: core.RangeLike): JsonObjectNode {
-		return {
-			type: 'json:object',
-			range: core.Range.get(range),
-			children: [],
-		}
+		return { type: 'json:object', range: core.Range.get(range), children: [] }
 	}
 }
 export type JsonPairNode = core.PairNode<JsonStringNode, JsonNode>
@@ -70,19 +61,11 @@ export namespace JsonArrayNode {
 	}
 
 	export function mock(range: core.RangeLike): JsonArrayNode {
-		return {
-			type: 'json:array',
-			range: core.Range.get(range),
-			children: [],
-		}
+		return { type: 'json:array', range: core.Range.get(range), children: [] }
 	}
 }
 
-export type JsonPrimitiveNode =
-	| JsonStringNode
-	| JsonNumberNode
-	| JsonBooleanNode
-	| JsonNullNode
+export type JsonPrimitiveNode = JsonStringNode | JsonNumberNode | JsonBooleanNode | JsonNullNode
 
 export interface JsonStringNode extends core.StringBaseNode, JsonBaseNode {
 	readonly type: 'json:string'
@@ -94,10 +77,7 @@ export namespace JsonStringNode {
 	}
 
 	export function mock(range: core.RangeLike): JsonStringNode {
-		return {
-			...core.StringNode.mock(range, JsonStringOptions),
-			type: 'json:string',
-		}
+		return { ...core.StringNode.mock(range, JsonStringOptions), type: 'json:string' }
 	}
 }
 

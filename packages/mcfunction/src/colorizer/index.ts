@@ -1,9 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type {
-	LiteralCommandChildNode,
-	MacroNode,
-	TrailingCommandChildNode,
-} from '../node/index.js'
+import type { LiteralCommandChildNode, MacroNode, TrailingCommandChildNode } from '../node/index.js'
 import { macro } from './macro.js'
 
 export function register(meta: core.MetaRegistry) {
@@ -15,8 +11,5 @@ export function register(meta: core.MetaRegistry) {
 		'mcfunction:command_child/trailing',
 		core.colorizer.error,
 	)
-	meta.registerColorizer<MacroNode>(
-		'mcfunction:macro',
-		macro,
-	)
+	meta.registerColorizer<MacroNode>('mcfunction:macro', macro)
 }
