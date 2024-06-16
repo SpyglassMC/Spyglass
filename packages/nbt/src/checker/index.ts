@@ -65,6 +65,10 @@ export function typeDefinition(
 			{
 				context: ctx,
 				isEquivalent: (inferred, def) => {
+					if (def.kind === 'boolean') {
+						// TODO: this should check whether the value is 0 or 1
+						return inferred.kind === 'byte'
+					}
 					switch (inferred.kind) {
 						case 'list':
 							return ['list', 'tuple'].includes(def.kind)
