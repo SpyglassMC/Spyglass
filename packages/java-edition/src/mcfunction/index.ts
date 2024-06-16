@@ -6,6 +6,7 @@ import * as checker from './checker/index.js'
 import * as colorizer from './colorizer/index.js'
 import * as completer from './completer/index.js'
 import { inlayHintProvider } from './inlayHintProvider.js'
+import { registerMcdocAttributes } from './mcdocAttributes.js'
 import * as parser from './parser/index.js'
 import { signatureHelpProvider } from './signatureHelpProvider.js'
 import { getPatch } from './tree/patch.js'
@@ -58,7 +59,6 @@ export const initialize = (
 	})
 
 	meta.registerParser('mcfunction:block_predicate', parser.blockPredicate)
-	meta.registerParser('mcfunction:component', parser.component)
 	meta.registerParser('mcfunction:particle', parser.particle)
 	meta.registerParser('mcfunction:tag', parser.tag())
 	meta.registerParser('mcfunction:team', parser.team())
@@ -69,6 +69,8 @@ export const initialize = (
 			parser.argument,
 		),
 	)
+
+	registerMcdocAttributes(meta, tree)
 
 	checker.register(meta)
 	colorizer.register(meta)

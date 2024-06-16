@@ -1,14 +1,14 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type {
-	JsonArrayNode,
-	JsonNode,
-	JsonObjectNode,
-	JsonPrimitiveNode,
-	JsonStringNode,
-} from '../node/index.js'
+	NbtCollectionNode,
+	NbtCompoundNode,
+	NbtNode,
+	NbtPrimitiveNode,
+	NbtStringNode,
+} from '../node'
 
-const array: core.Completer<JsonArrayNode> = (node, ctx) => {
+const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
 		return core.Range.compareOffset(n.range, o, true)
 	})
@@ -28,7 +28,11 @@ const array: core.Completer<JsonArrayNode> = (node, ctx) => {
 	return []
 }
 
-const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
+const compound = core.completer.record<
+	NbtStringNode,
+	NbtNode,
+	NbtCompoundNode
+>({
 	key: (record, pair, _c, range, iv, ipe, exitingKeys) => {
 		if (!record.typeDef) {
 			return []
@@ -44,8 +48,8 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 					),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
-					filterText: `"${key}"`,
-					insertText: `"${key}"${iv ? ': ' : ''}${ipe ? '$1,' : ''}`,
+					filterText: key,
+					insertText: `${key}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
 				})
 			)
 	},
@@ -66,7 +70,7 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 	},
 })
 
-const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
+const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	if (!node.typeDef) {
 		return []
 	}
@@ -91,17 +95,40 @@ function getValues(
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				detail,
-				filterText: kind === 'string' ? `"${value}"` : value,
-				insertText: kind === 'string' ? `"${value}"` : value,
+				filterText: formatValue(value, kind),
+				insertText: formatValue(value, kind),
 			})
 		)
 }
 
+function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
+	switch (kind) {
+		case 'string':
+			return `"${value}"`
+		case 'byte':
+			return `${value}b`
+		case 'short':
+			return `${value}s`
+		case 'long':
+			return `${value}L`
+		case 'float':
+			return `${value}f`
+		default:
+			return value
+	}
+}
+
 export function register(meta: core.MetaRegistry): void {
-	meta.registerCompleter('json:array', array)
-	meta.registerCompleter('json:boolean', primitive)
-	meta.registerCompleter('json:number', primitive)
-	meta.registerCompleter('json:null', primitive)
-	meta.registerCompleter('json:object', object)
-	meta.registerCompleter('json:string', primitive)
+	meta.registerCompleter('nbt:byte', primitive)
+	meta.registerCompleter('nbt:byte_array', collection)
+	meta.registerCompleter('nbt:compound', compound)
+	meta.registerCompleter('nbt:double', primitive)
+	meta.registerCompleter('nbt:int', primitive)
+	meta.registerCompleter('nbt:int_array', collection)
+	meta.registerCompleter('nbt:list', collection)
+	meta.registerCompleter('nbt:long', primitive)
+	meta.registerCompleter('nbt:long_array', collection)
+	meta.registerCompleter('nbt:string', primitive)
+	meta.registerCompleter('nbt:short', primitive)
+	meta.registerCompleter('nbt:float', primitive)
 }

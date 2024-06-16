@@ -289,7 +289,7 @@ export function locationLink(
 export function markupContent(value: string): ls.MarkupContent {
 	return {
 		kind: ls.MarkupKind.Markdown,
-		value: value,
+		value,
 	}
 }
 

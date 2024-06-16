@@ -30,7 +30,7 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
           },
           "children": [
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 4,
                 "end": 7
@@ -50,7 +50,7 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
               ]
             },
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 8,
                 "end": 11
@@ -71,7 +71,7 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
             }
           ],
           "key": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 4,
               "end": 7
@@ -95,7 +95,7 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
             "end": 8
           },
           "value": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 8,
               "end": 11

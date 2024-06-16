@@ -10,6 +10,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -19,6 +20,11 @@ import {
 } from '../common/index.js'
 import type {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestExistsNode,
+	ComponentTestNode,
+	ComponentTestsAllOfNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
 	EntitySelectorAdvancementsArgumentCriteriaNode,
@@ -28,8 +34,12 @@ import type {
 	EntitySelectorVariable,
 	FloatRangeNode,
 	IntRangeNode,
-	ItemNode,
+	ItemPredicateNode,
+	ItemStackNode,
+	JsonNode,
 	MessageNode,
+	NbtNode,
+	NbtResourceNode,
 	ParticleNode,
 	ScoreHolderNode,
 	UuidNode,
@@ -37,6 +47,9 @@ import type {
 } from '../node/index.js'
 import {
 	BlockStatesNode,
+	ComponentListNode,
+	ComponentTestsAnyOfNode,
+	ComponentTestsNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
 	EntitySelectorAtVariable,
@@ -44,7 +57,7 @@ import {
 	ObjectiveCriteriaNode,
 	TimeNode,
 } from '../node/index.js'
-import type { ArgumentTreeNode } from '../tree/argument.js'
+import type { ArgumentTreeNode, NbtParserProperties } from '../tree/argument.js'
 
 const IntegerPattern = /^-?\d+$/
 
@@ -78,6 +91,11 @@ const PlayerNameMaxLength = 16
 function shouldValidateLength(ctx: core.ParserContext) {
 	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 	return !release || ReleaseVersion.cmp(release, '1.18') < 0
+}
+
+function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	return !release || ReleaseVersion.cmp(release, '1.20.5') < 0
 }
 
 /**
@@ -143,7 +161,7 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:column_pos':
 			return wrap(vector({ dimension: 2, integersOnly: true }))
 		case 'minecraft:component':
-			return wrap(component)
+			return wrap(jsonParser('::java::server::util::text::Text'))
 		case 'minecraft:dimension':
 			return wrap(
 				core.resourceLocation({
@@ -188,11 +206,17 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:item_predicate':
 			return wrap(itemPredicate)
 		case 'minecraft:item_slot':
-			return wrap((src, ctx) => {
-				return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
-			})
+			return wrap(itemSlot)
+		case 'minecraft:item_slots':
+			return wrap(itemSlots)
 		case 'minecraft:item_stack':
 			return wrap(itemStack)
+		case 'minecraft:loot_modifier':
+			return wrap(resourceOrInline('item_modifier'))
+		case 'minecraft:loot_predicate':
+			return wrap(resourceOrInline('predicate'))
+		case 'minecraft:loot_table':
+			return wrap(resourceOrInline('loot_table'))
 		case 'minecraft:message':
 			return wrap(message)
 		case 'minecraft:mob_effect':
@@ -202,11 +226,11 @@ export const argument: mcf.ArgumentParserGetter = (
 				}),
 			)
 		case 'minecraft:nbt_compound_tag':
-			return wrap(nbt.parser.compound)
+			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
 			return wrap(nbt.parser.path)
 		case 'minecraft:nbt_tag':
-			return wrap(nbt.parser.entry)
+			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
 			return wrap(
 				objective(
@@ -229,12 +253,15 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(
 						treeNode.properties.registry,
 					) as core.RegistryCategory | core.WorldgenFileCategory,
-					allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+					allowTag,
 				}),
 			)
 		case 'minecraft:resource_location':
@@ -255,7 +282,7 @@ export const argument: mcf.ArgumentParserGetter = (
 			// But I do not want to spend time supporting them.
 			return wrap(core.literal(...ScoreboardSlotArgumentValues))
 		case 'minecraft:style':
-			return wrap(json.parser.object)
+			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
 			return wrap(core.literal(...SwizzleArgumentValues))
 		case 'minecraft:team':
@@ -339,8 +366,6 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 }
 const blockState: core.InfallibleParser<BlockNode> = block(false)
 export const blockPredicate: core.InfallibleParser<BlockNode> = block(true)
-
-export const component = json.parser.entry
 
 function double(
 	min = DoubleMin,
@@ -486,31 +511,100 @@ const greedyString: core.InfallibleParser<core.StringNode> = core.string({
 	unquotable: { blockList: new Set(['\n', '\r']) },
 })
 
-function item(isPredicate: false): core.InfallibleParser<ItemNode>
-function item(isPredicate: true): core.InfallibleParser<ItemNode>
-function item(isPredicate: boolean): core.InfallibleParser<ItemNode> {
+const itemSlot: core.InfallibleParser<core.LiteralNode> = (src, ctx) => {
+	return core.literal(...getItemSlotArgumentValues(ctx))(src, ctx)
+}
+
+export const itemSlots: core.InfallibleParser<core.LiteralNode> = (
+	src,
+	ctx,
+) => {
+	return core.literal(...getItemSlotsArgumentValues(ctx))(src, ctx)
+}
+
+const itemStack: core.InfallibleParser<ItemStackNode> = (src, ctx) => {
+	const oldFormat = shouldUseOldItemStackFormat(ctx)
 	return core.map<
-		core.SequenceUtil<core.ResourceLocationNode | nbt.NbtCompoundNode>,
-		ItemNode
+		core.SequenceUtil<
+			core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode
+		>,
+		ItemStackNode
 	>(
 		core.sequence([
-			core.resourceLocation({ category: 'item', allowTag: isPredicate }),
-			core.optional(core.failOnEmpty(nbt.parser.compound)),
+			core.resourceLocation({ category: 'item' }),
+			oldFormat
+				? core.optional(core.failOnEmpty(nbt.parser.compound))
+				: core.optional(core.failOnEmpty(components)),
 		]),
 		(res) => {
-			const ans: ItemNode = {
-				type: 'mcfunction:item',
+			const ans: ItemStackNode = {
+				type: 'mcfunction:item_stack',
 				range: res.range,
 				children: res.children,
 				id: res.children.find(core.ResourceLocationNode.is)!,
+				components: res.children.find(ComponentListNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
+			}
+			return ans
+		},
+	)(src, ctx)
+}
+
+const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
+	const oldFormat = shouldUseOldItemStackFormat(ctx)
+	return core.map<
+		core.SequenceUtil<
+			| core.LiteralNode
+			| core.ResourceLocationNode
+			| ComponentTestsNode
+			| nbt.NbtCompoundNode
+		>,
+		ItemPredicateNode
+	>(
+		core.sequence([
+			oldFormat
+				? core.resourceLocation({ category: 'item', allowTag: true })
+				: core.any([
+					core.resourceLocation({ category: 'item', allowTag: true }),
+					core.literal('*'),
+				]),
+			oldFormat
+				? core.optional(core.failOnEmpty(nbt.parser.compound))
+				: core.optional(core.failOnEmpty(componentTests)),
+		]),
+		(res) => {
+			const ans: ItemPredicateNode = {
+				type: 'mcfunction:item_predicate',
+				range: res.range,
+				children: res.children,
+				id: (res.children.find(core.ResourceLocationNode.is) ||
+					res.children.find(core.LiteralNode.is))!,
+				tests: res.children.find(
+					ComponentTestsNode.is,
+				),
+				nbt: res.children.find(nbt.NbtCompoundNode.is),
+			}
+			return ans
+		},
+	)(src, ctx)
+}
+
+export function jsonParser(
+	typeRef: `::${string}::${string}`,
+): core.Parser<JsonNode> {
+	return core.map(
+		json.parser.entry,
+		(res) => {
+			const ans: JsonNode = {
+				type: 'mcfunction:json',
+				range: res.range,
+				children: [res],
+				typeRef,
 			}
 			return ans
 		},
 	)
 }
-const itemStack: core.InfallibleParser<ItemNode> = item(false)
-const itemPredicate: core.InfallibleParser<ItemNode> = item(true)
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	const ans: MessageNode = {
@@ -536,6 +630,24 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	return ans
+}
+
+function nbtParser(
+	parser: core.Parser<nbt.NbtNode>,
+	properties?: NbtParserProperties,
+): core.Parser<NbtNode> {
+	return core.map(
+		parser,
+		(res) => {
+			const ans: NbtNode = {
+				type: 'mcfunction:nbt',
+				range: res.range,
+				children: [res],
+				properties,
+			}
+			return ans
+		},
+	)
 }
 
 export const particle: core.InfallibleParser<ParticleNode> = (src, ctx) => {
@@ -694,6 +806,30 @@ function range(
 	)
 }
 
+function resourceOrInline(category: core.FileCategory) {
+	return core.select([
+		{
+			predicate: (src) =>
+				core.LegalResourceLocationCharacters.has(src.peek()),
+			parser: core.resourceLocation({ category }),
+		},
+		{
+			parser: core.map(
+				nbt.parser.entry,
+				(res) => {
+					const ans: NbtResourceNode = {
+						type: 'mcfunction:nbt_resource',
+						range: res.range,
+						children: [res],
+						category,
+					}
+					return ans
+				},
+			),
+		},
+	])
+}
+
 function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
 		const start = src.cursor
@@ -720,7 +856,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 /**
  * Failure when not beginning with `@[parse]`
  */
-function selector(): core.Parser<EntitySelectorNode> {
+export function selector(): core.Parser<EntitySelectorNode> {
 	let chunkLimited: boolean | undefined
 	let currentEntity: boolean | undefined
 	let dimensionLimited: boolean | undefined
@@ -1413,7 +1549,7 @@ export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<
 	'mcfunction.parser.score_holder.fake-name.too-long',
 )
 
-function scoreHolder(
+export function scoreHolder(
 	amount: 'multiple' | 'single',
 ): core.Parser<ScoreHolderNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
@@ -1464,7 +1600,7 @@ function symbol(
 	)
 }
 
-function objective(
+export function objective(
 	usageType?: core.SymbolUsageType,
 	terminators: string[] = [],
 ): core.InfallibleParser<core.SymbolNode> {
@@ -1575,7 +1711,7 @@ const unquotedString: core.InfallibleParser<core.StringNode> = core.string({
 
 const UuidPattern = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/i
 
-const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
+export const uuid: core.InfallibleParser<UuidNode> = (src, ctx): UuidNode => {
 	const ans: UuidNode = {
 		type: 'mcfunction:uuid',
 		range: core.Range.create(src),
@@ -1695,3 +1831,166 @@ function vector(
 		return ans
 	}
 }
+
+const components: core.InfallibleParser<ComponentListNode> = core.map(
+	core.record({
+		start: '[',
+		pair: {
+			key: core.resourceLocation({ category: 'data_component_type' }),
+			sep: '=',
+			value: nbt.parser.entry,
+			end: ',',
+			trailingEnd: true,
+		},
+		end: ']',
+	}),
+	(res) => {
+		const ans: ComponentListNode = {
+			type: 'mcfunction:component_list',
+			range: res.range,
+			children: res.children,
+		}
+		return ans
+	},
+)
+
+const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
+	const start = src.cursor
+	src.skipWhitespace()
+	const negated = src.trySkip('!')
+	src.skipWhitespace()
+
+	const key = core.resourceLocation({ category: 'data_component_type' })(
+		src,
+		ctx,
+	)
+	src.skipWhitespace()
+
+	if (src.trySkip('=')) {
+		const ans: ComponentTestExactNode = {
+			type: 'mcfunction:component_test_exact',
+			range: core.Range.create(start, src),
+			children: [key],
+			key,
+			negated,
+		}
+		const value = nbt.parser.entry(src, ctx)
+		if (value == core.Failure) {
+			ctx.err.report(localize('expected', localize('nbt.node')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+		} else {
+			ans.children.push(value)
+			ans.value = value
+		}
+		src.skipWhitespace()
+		ans.range.end = src.cursor
+		return ans
+	}
+
+	if (src.trySkip('~')) {
+		key.options.category = 'item_sub_predicate_type'
+		const ans: ComponentTestSubpredicateNode = {
+			type: 'mcfunction:component_test_sub_predicate',
+			range: core.Range.create(start, src),
+			children: [key],
+			key,
+			negated,
+		}
+		const predicate = nbt.parser.entry(src, ctx)
+		if (predicate == core.Failure) {
+			ctx.err.report(localize('expected', localize('nbt.node')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+		} else {
+			ans.children.push(predicate)
+			ans.value = predicate
+		}
+		src.skipWhitespace()
+		ans.range.end = src.cursor
+		return ans
+	}
+
+	const ans: ComponentTestExistsNode = {
+		type: 'mcfunction:component_test_exists',
+		range: core.Range.create(start, src),
+		children: [key],
+		key,
+		negated,
+	}
+	return ans
+}
+
+const componentTestsAllOf: core.InfallibleParser<ComponentTestsAllOfNode> = (
+	src,
+	ctx,
+) => {
+	const ans: ComponentTestsAllOfNode = {
+		type: 'mcfunction:component_tests_all_of',
+		range: core.Range.create(src),
+		children: [],
+	}
+
+	while (src.canRead()) {
+		src.skipWhitespace()
+		const testNode = componentTest(src, ctx)
+		ans.children.push(testNode)
+		src.skipWhitespace()
+
+		if (src.peek() === ',') {
+			src.skip()
+		} else if (src.peek() === '|' || src.peek() === ']') {
+			break
+		} else {
+			ctx.err.report(localize('expected', localeQuote(']')), src)
+			src.skipUntilOrEnd(',', '|', ']')
+		}
+	}
+
+	ans.range.end = src.cursor
+	return ans
+}
+
+const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (
+	src,
+	ctx,
+) => {
+	const ans: ComponentTestsAnyOfNode = {
+		type: 'mcfunction:component_tests_any_of',
+		range: core.Range.create(src),
+		children: [],
+	}
+
+	while (src.canRead()) {
+		src.skipWhitespace()
+		const allOfNode = componentTestsAllOf(src, ctx)
+		ans.children.push(allOfNode)
+		src.skipWhitespace()
+
+		if (src.peek() === '|') {
+			src.skip()
+		} else if (src.peek() === ']') {
+			break
+		} else {
+			ctx.err.report(localize('expected', localeQuote(']')), src)
+			src.skipUntilOrEnd('|', ']')
+		}
+	}
+
+	ans.range.end = src.cursor
+	return ans
+}
+
+const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
+	core.sequence([
+		core.literal('['),
+		core.optional(core.failOnEmpty(componentTestsAnyOf)),
+		core.literal(']'),
+	]),
+	(res) => {
+		const ans: ComponentTestsNode = {
+			type: 'mcfunction:component_tests',
+			range: res.range,
+			children: res.children.filter(ComponentTestsAnyOfNode.is).map(c => c),
+		}
+		return ans
+	},
+)

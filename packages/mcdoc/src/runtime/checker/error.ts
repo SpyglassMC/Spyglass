@@ -8,6 +8,7 @@ export type McdocCheckerError<T> =
 	| RangeError<T>
 	| TypeMismatchError<T>
 	| MissingKeyError<T>
+
 export interface SimpleError<T> {
 	kind:
 		| 'unknown_key'
@@ -15,6 +16,7 @@ export interface SimpleError<T> {
 		| 'some_missing_keys'
 		| 'sometimes_type_mismatch'
 		| 'expected_key_value_pair'
+		| 'internal'
 	node: RuntimeNode<T>
 }
 export namespace SimpleError {
@@ -24,6 +26,7 @@ export namespace SimpleError {
 			|| error?.kind === 'some_missing_keys'
 			|| error?.kind === 'sometimes_type_mismatch'
 			|| error?.kind === 'expected_key_value_pair'
+			|| error?.kind === 'internal'
 	}
 }
 
@@ -48,13 +51,17 @@ export namespace UnknownTupleElementError {
 }
 
 export interface RangeError<T> {
-	kind: 'invalid_collection_length' | 'number_out_of_range'
+	kind:
+		| 'invalid_collection_length'
+		| 'invalid_string_length'
+		| 'number_out_of_range'
 	node: RuntimeNode<T>
 	ranges: NumericRange[]
 }
 export namespace RangeError {
 	export function is<T>(error: McdocCheckerError<T> | undefined): error is RangeError<T> {
 		return error?.kind === 'invalid_collection_length'
+			|| error?.kind === 'invalid_string_length'
 			|| error?.kind === 'number_out_of_range'
 	}
 }
@@ -86,9 +93,13 @@ export interface ErrorCondensingDefinition<T> {
 	errors: McdocCheckerError<T>[]
 }
 
-export function condenseAndFilterDefinitions<T>(definitions: ErrorCondensingDefinition<T>[]) :
-{
-	definitions: CheckerTreeDefinitionNode<T>[],
+function condenseErrorsAndFilterSiblings<T>(
+	definitions: {
+		definition: CheckerTreeDefinitionNode<T>
+		errors: McdocCheckerError<T>[]
+	}[],
+): {
+	definitions: CheckerTreeDefinitionNode<T>[]
 	condensedErrors: McdocCheckerError<T>[]
 } {
 	if (definitions.length === 0) {
@@ -143,8 +154,7 @@ export function condenseAndFilterDefinitions<T>(definitions: ErrorCondensingDefi
 		validDefinitions = onlyCommonTypeMismatches
 	} else {
 		// TODO Generic error, maybe we can keep original expected types?
-		// Error could be sth like Expected a string, a list or a different key in this file to have
-		// a different type.
+		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
 
 		const typeMismatches: SimpleError<T>[] = validDefinitions
 			.flatMap(d =>
@@ -301,6 +311,7 @@ export function condenseAndFilterDefinitions<T>(definitions: ErrorCondensingDefi
 	for (
 		const kind of [
 			'invalid_collection_length',
+			'invalid_string_length',
 			'number_out_of_range',
 		] as const
 	) {
@@ -321,13 +332,19 @@ export function condenseAndFilterDefinitions<T>(definitions: ErrorCondensingDefi
 			})
 			if (rangesErrors.length > 0) {
 				errors.push({
-					kind: kind,
+					kind,
 					node: rangesErrors[0].node,
 					ranges: rangesErrors.flatMap(e => e.ranges),
 				})
 			}
 		}
 	}
+
+	errors.push(
+		...validDefinitions.flatMap(d =>
+			d.errors.filter(e => e.kind === 'internal')
+		),
+	)
 
 	return {
 		definitions: validDefinitions.map(d => d.definition),

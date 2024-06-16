@@ -1,6 +1,8 @@
 import * as core from '@spyglassmc/core'
+import type * as json from '@spyglassmc/json'
 import type * as nbt from '@spyglassmc/nbt'
 import { ReleaseVersion } from '../../dependency/common.js'
+import type { NbtParserProperties } from '../tree/argument.js'
 
 export interface BlockStatesNode
 	extends core.RecordBaseNode<core.StringNode, core.StringNode>
@@ -291,28 +293,161 @@ export interface FloatRangeNode extends core.AstNode {
 	value: [number | undefined, number | undefined]
 }
 
-export interface ItemNode extends core.AstNode {
-	type: 'mcfunction:item'
-	children: (core.ResourceLocationNode | nbt.NbtCompoundNode)[]
+export interface ItemStackNode extends core.AstNode {
+	type: 'mcfunction:item_stack'
+	children:
+		(core.ResourceLocationNode | ComponentListNode | nbt.NbtCompoundNode)[]
 	id: core.ResourceLocationNode
-	nbt?: nbt.NbtCompoundNode
+	components?: ComponentListNode // since 1.20.5
+	nbt?: nbt.NbtCompoundNode // until 1.20.5
 }
-export namespace ItemNode {
-	export function is(node: core.AstNode | undefined): node is ItemNode {
-		return (node as ItemNode | undefined)?.type === 'mcfunction:item'
+export namespace ItemStackNode {
+	export function is(node: core.AstNode | undefined): node is ItemStackNode {
+		return (node as ItemStackNode | undefined)?.type ===
+			'mcfunction:item_stack'
 	}
 
-	export function mock(range: core.RangeLike, isPredicate: boolean): ItemNode {
-		const id = core.ResourceLocationNode.mock(range, {
-			category: 'item',
-			allowTag: isPredicate,
-		})
+	export function mock(
+		range: core.RangeLike,
+	): ItemStackNode {
+		const id = core.ResourceLocationNode.mock(range, { category: 'item' })
 		return {
-			type: 'mcfunction:item',
+			type: 'mcfunction:item_stack',
 			range: core.Range.get(range),
 			children: [id],
 			id,
 		}
+	}
+}
+
+export interface ComponentListNode extends core.AstNode {
+	type: 'mcfunction:component_list'
+	children: core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+}
+
+export namespace ComponentListNode {
+	export function is(node: core.AstNode): node is ComponentListNode {
+		return (node as ComponentListNode).type === 'mcfunction:component_list'
+	}
+}
+
+export interface ItemPredicateNode extends core.AstNode {
+	type: 'mcfunction:item_predicate'
+	children: (
+		| core.ResourceLocationNode
+		| core.LiteralNode
+		| ComponentTestsNode
+		| nbt.NbtCompoundNode
+	)[]
+	id: core.ResourceLocationNode | core.LiteralNode
+	tests?: ComponentTestsNode // since 1.20.5
+	nbt?: nbt.NbtCompoundNode // until 1.20.5
+}
+export namespace ItemPredicateNode {
+	export function is(
+		node: core.AstNode | undefined,
+	): node is ItemPredicateNode {
+		return (node as ItemPredicateNode | undefined)?.type ===
+			'mcfunction:item_predicate'
+	}
+
+	export function mock(
+		range: core.RangeLike,
+	): ItemPredicateNode {
+		const id = core.ResourceLocationNode.mock(range, {
+			category: 'item',
+			allowTag: true,
+		})
+		return {
+			type: 'mcfunction:item_predicate',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+		}
+	}
+}
+
+export interface ComponentTestsNode extends core.AstNode {
+	type: 'mcfunction:component_tests'
+	children: ComponentTestsAnyOfNode[]
+}
+
+export namespace ComponentTestsNode {
+	export function is(node: core.AstNode): node is ComponentTestsNode {
+		return (node as ComponentTestsNode).type === 'mcfunction:component_tests'
+	}
+}
+
+export interface ComponentTestsAnyOfNode extends core.AstNode {
+	type: 'mcfunction:component_tests_any_of'
+	children: ComponentTestsAllOfNode[]
+}
+
+export namespace ComponentTestsAnyOfNode {
+	export function is(node: core.AstNode): node is ComponentTestsAnyOfNode {
+		return (node as ComponentTestsAnyOfNode).type ===
+			'mcfunction:component_tests_any_of'
+	}
+}
+
+export interface ComponentTestsAllOfNode extends core.AstNode {
+	type: 'mcfunction:component_tests_all_of'
+	children: ComponentTestNode[]
+}
+
+export namespace ComponentTestsAllOfNode {
+	export function is(node: core.AstNode): node is ComponentTestsAllOfNode {
+		return (node as ComponentTestsAllOfNode).type ===
+			'mcfunction:component_tests_all_of'
+	}
+}
+
+export type ComponentTestNode =
+	| ComponentTestExactNode
+	| ComponentTestExistsNode
+	| ComponentTestSubpredicateNode
+
+export interface ComponentTestBaseNode extends core.AstNode {
+	negated: boolean
+}
+
+export interface ComponentTestExactNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_exact'
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
+	key: core.ResourceLocationNode
+	value?: nbt.NbtNode
+}
+export namespace ComponentTestExactNode {
+	export function is(node: core.AstNode): node is ComponentTestExactNode {
+		return (node as ComponentTestExactNode).type ===
+			'mcfunction:component_test_exact'
+	}
+}
+
+export interface ComponentTestExistsNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_exists'
+	children: [core.ResourceLocationNode]
+	key: core.ResourceLocationNode
+}
+export namespace ComponentTestExistsNode {
+	export function is(node: core.AstNode): node is ComponentTestExistsNode {
+		return (node as ComponentTestExistsNode).type ===
+			'mcfunction:component_test_exists'
+	}
+}
+
+export interface ComponentTestSubpredicateNode extends ComponentTestBaseNode {
+	type: 'mcfunction:component_test_sub_predicate'
+	children: (core.ResourceLocationNode | nbt.NbtNode)[]
+	key: core.ResourceLocationNode
+	value?: nbt.NbtNode
+}
+export namespace ComponentTestSubpredicateNode {
+	export function is(
+		node: core.AstNode,
+	): node is ComponentTestSubpredicateNode {
+		return (node as ComponentTestSubpredicateNode).type ===
+			'mcfunction:component_test_sub_predicate'
 	}
 }
 
@@ -332,9 +467,45 @@ export namespace IntRangeNode {
 	}
 }
 
+export interface JsonNode extends core.AstNode {
+	type: 'mcfunction:json'
+	children: [json.JsonNode]
+	typeRef: `::${string}::${string}`
+}
+export namespace JsonNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is JsonNode {
+		return (node as JsonNode).type === 'mcfunction:json'
+	}
+}
+
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message'
 	children: (core.StringNode | EntitySelectorNode)[]
+}
+
+export interface NbtNode extends core.AstNode {
+	type: 'mcfunction:nbt'
+	children: [nbt.NbtNode]
+	properties?: NbtParserProperties
+}
+export namespace NbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtNode {
+		return (node as NbtNode).type === 'mcfunction:nbt'
+	}
+}
+
+export interface NbtResourceNode extends core.AstNode {
+	type: 'mcfunction:nbt_resource'
+	children: [nbt.NbtNode]
+	category: string
+}
+export namespace NbtResourceNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtResourceNode {
+		return (node as NbtResourceNode).type === 'mcfunction:nbt_resource'
+	}
 }
 
 export interface ObjectiveCriteriaNode extends core.AstNode {
@@ -385,7 +556,7 @@ export interface ParticleNode extends core.AstNode {
 		| core.FloatNode
 		| core.IntegerNode
 		| BlockNode
-		| ItemNode
+		| ItemStackNode
 		| VectorNode
 		// Since 1.20.5
 		| nbt.NbtCompoundNode

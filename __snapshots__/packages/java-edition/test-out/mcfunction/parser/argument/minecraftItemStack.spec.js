@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:item_stack Parse "minecraft:stick" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_stack",
     "range": {
       "start": 0,
       "end": 15
@@ -22,7 +22,7 @@ exports['mcfunction argument minecraft:item_stack Parse "minecraft:stick" 1'] = 
 
 exports['mcfunction argument minecraft:item_stack Parse "stick" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_stack",
     "range": {
       "start": 0,
       "end": 5
@@ -43,7 +43,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick" 1'] = {
 
 exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_stack",
     "range": {
       "start": 0,
       "end": 14
@@ -73,7 +73,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
           },
           "children": [
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 6,
                 "end": 9
@@ -93,7 +93,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
               ]
             },
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 10,
                 "end": 13
@@ -114,7 +114,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
             }
           ],
           "key": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 6,
               "end": 9
@@ -138,7 +138,7 @@ exports['mcfunction argument minecraft:item_stack Parse "stick{foo:bar}" 1'] = {
             "end": 10
           },
           "value": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 10,
               "end": 13

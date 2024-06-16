@@ -1,30 +1,32 @@
-import {
-	type CheckerContext,
-	ErrorSeverity,
-	type FullResourceLocation,
-	type Range,
-} from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import { type EnumKind, RangeKind } from '../../node/index.js'
 import type {
 	Attribute,
+	ConcreteType,
+	DispatcherType,
 	EnumType,
 	Index,
+	IndexedType,
 	KeywordType,
 	ListType,
 	LiteralType,
+	MappedType,
 	NumericType,
 	ParallelIndices,
 	PrimitiveArrayType,
+	ReferenceType,
 	StringType,
 	StructType,
 	StructTypePairField,
+	TemplateType,
 	TupleType,
 	UnionType,
 } from '../../type/index.js'
 import type { McdocCheckerError, MissingKeyError, SimpleError, TypeMismatchError, RangeError } from './error.js'
 import { McdocType, NumericRange } from '../../type/index.js'
+import { handleAttributes } from '../attribute/index.js'
 
 export * from './error.js'
 
@@ -36,6 +38,11 @@ export type NodeEquivalenceChecker = (
 export type TypeInfoAttacher<T> = (
 	node: T,
 	definition: SimplifiedMcdocType,
+) => void
+
+export type StringAttacher<T> = (
+	node: T,
+	attacher: (node: core.StringBaseNode) => void,
 ) => void
 
 export type ChildrenGetter<T> = (
@@ -58,18 +65,19 @@ export interface RuntimePair<T> {
 }
 
 export interface McdocCheckerOptions<T> {
-	context: CheckerContext
+	context: core.CheckerContext
 	isEquivalent: NodeEquivalenceChecker
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
 	attachTypeInfo: TypeInfoAttacher<T>
+	stringAttacher: StringAttacher<T>
 }
 
 export type SimplifiedMcdocType =
 	| SimplifiedMcdocTypeNoUnion
 	| UnionType<SimplifiedMcdocTypeNoUnion>
 
-type SimplifiedMcdocTypeNoUnion =
+export type SimplifiedMcdocTypeNoUnion =
 	| SimplifiedEnum
 	| KeywordType
 	| ListType
@@ -90,41 +98,17 @@ export interface SimplifiedStructTypePairField extends StructTypePairField {
 	key: SimplifiedMcdocTypeNoUnion
 }
 
-const attributeHandlers: {
-	[key: string]:
-		| (<N>(
-			node: N,
-			attribute: Attribute,
-			inferred: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			expected: SimplifiedMcdocTypeNoUnion | SimplifiedStructTypePairField,
-			options: McdocCheckerOptions<N>,
-		) => McdocCheckerError<N>[])
-		| undefined
-} = {
-	// TODO other attributes
-	// TODO might need different interface, see https://discord.com/channels/666020457568403505/666037123450929163/1240827428452958209
-	id: (_n, attribute, inferred, _e, options) => {
-		if (inferred.kind === 'literal' && inferred.value.kind === 'string') {
-			// TODO check registry
-			if (!inferred.value.value.includes(':')) {
-				inferred.value.value = 'minecraft:' + inferred.value.value
-			}
-		}
-		return []
-	},
-}
-
 export function reference<T>(
 	node: RuntimeNode<T>[],
 	path: string,
 	options: McdocCheckerOptions<T>,
 ) {
-	typeDefinition(node, { kind: 'reference', path: path }, options)
+	typeDefinition(node, { kind: 'reference', path }, options)
 }
 
 export function dispatcher<T>(
 	node: RuntimeNode<T>[],
-	registry: FullResourceLocation,
+	registry: core.FullResourceLocation,
 	index: string | Index | ParallelIndices,
 	options: McdocCheckerOptions<T>,
 ) {
@@ -135,17 +119,24 @@ export function dispatcher<T>(
 		: [index]
 	typeDefinition(node, {
 		kind: 'dispatcher',
-		registry: registry,
-		parallelIndices: parallelIndices,
+		registry,
+		parallelIndices,
 	}, options)
 }
 
 export function isAssignable(
 	assignValue: McdocType,
 	typeDef: McdocType,
-	ctx: CheckerContext,
+	ctx: core.CheckerContext,
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
+	if (
+		assignValue.kind === 'literal' && typeDef.kind === 'literal' &&
+		assignValue.value.kind === typeDef.value.kind &&
+		!assignValue.attributes && !typeDef.attributes
+	) {
+		return assignValue.value.value === typeDef.value.value
+	}
 	let ans = true
 	const options: McdocCheckerOptions<McdocType> = {
 		context: ctx,
@@ -193,6 +184,7 @@ export function isAssignable(
 		},
 		reportError: () => ans = false,
 		attachTypeInfo: () => {},
+		stringAttacher: () => {},
 	}
 
 	const node: CheckerTreeNode<McdocType> = {
@@ -266,7 +258,7 @@ export function typeDefinition<T>(
 		condensedErrors: [],
 	}))
 	for (const value of rootNode.possibleValues) {
-		const simplifiedRoot = simplify(typeDef, value, options)
+		const simplifiedRoot = simplify(typeDef, { options, node: value })
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
@@ -285,8 +277,7 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(
 				value.node.inferredType,
-				value,
-				options,
+				{ options, node: value },
 			)
 			const children = options.getChildren(
 				value.node.originalNode,
@@ -335,7 +326,10 @@ export function typeDefinition<T>(
 						// the same types again and just collect the errors of the lower depth.
 						// This will currently lead to a stack overflow error when e.g. comparing two
 						// text component definitions
-						const simplified = simplify(childDef, childValue, options)
+						const simplified = simplify(
+							childDef,
+							{ options, node: childValue },
+						)
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
 						// so that we can potentially error some valid parent defs if only some of them produce an
@@ -474,9 +468,38 @@ export function typeDefinition<T>(
 		for (const def of node.validDefinitions) {
 			if (!attached.has(node.node.originalNode)) {
 				options.attachTypeInfo(node.node.originalNode, def.typeDef)
+				const attributes = def.typeDef.attributes
+				handleAttributes(attributes, options.context, (handler, config) => {
+					const parser = handler.stringParser?.(config, options.context)
+					if (!parser) {
+						return
+					}
+					options.stringAttacher(node.node.originalNode, (node) => {
+						const src = new core.Source(node.value, node.valueMap)
+						const start = src.cursor
+						const child = parser(src, options.context)
+						if (!child) {
+							options.context.err.report(
+								localize(
+									'expected',
+									localize('mcdoc.runtime.checker.value'),
+								),
+								core.Range.create(start, src.skipRemaining()),
+							)
+							return
+						} else if (src.canRead()) {
+							options.context.err.report(
+								localize('mcdoc.runtime.checker.trailing'),
+								core.Range.create(src.cursor, src.skipRemaining()),
+							)
+						}
+						node.children = [child]
+					})
+				})
 				attached.add(node.node.originalNode)
 			}
 		}
+		// TODO: attach type info to keys
 		for (const child of node.children) {
 			for (const node of child.possibleValues) {
 				attachTypeInfo(node)
@@ -515,6 +538,7 @@ function checkShallowly<T>(
 
 	if (
 		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe' &&
+			simplifiedInferred.kind !== 'unsafe' &&
 			runtimeValueType.kind !== typeDefValueType.kind &&
 			!options.isEquivalent(runtimeValueType, typeDefValueType)) ||
 		(typeDef.kind === 'literal' &&
@@ -540,21 +564,20 @@ function checkShallowly<T>(
 	const childDefinitions: (McdocType | undefined)[] = Array(children.length)
 		.fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
-	if (typeDef.attributes) {
-		for (const attribute of typeDef.attributes) {
-			const handler = attributeHandlers[attribute.name]
-			if (handler) {
-				errors.push(
-					...handler(
-						runtimeNode.originalNode,
-						attribute,
-						simplifiedInferred,
-						typeDef,
-						options,
-					),
-				)
-			}
+	let assignable = true
+	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
+		if (
+			handler.checkInferred?.(
+				config,
+				simplifiedInferred,
+				options.context,
+			) === false
+		) {
+			assignable = false
 		}
+	})
+	if (!assignable) {
+		errors.push({ kind: 'internal', node: runtimeNode })
 	}
 	switch (typeDef.kind) {
 		case 'any':
@@ -580,6 +603,23 @@ function checkShallowly<T>(
 					kind: 'number_out_of_range',
 					node: runtimeNode,
 					ranges: [typeDef.valueRange],
+				})
+			}
+			break
+		case 'string':
+			if (
+				typeDef.lengthRange &&
+				simplifiedInferred.kind === 'literal' &&
+				simplifiedInferred.value.kind === 'string' &&
+				!NumericRange.isInRange(
+					typeDef.lengthRange,
+					simplifiedInferred.value.value.length,
+				)
+			) {
+				errors.push({
+					kind: 'invalid_string_length',
+					node: runtimeNode,
+					ranges: [typeDef.lengthRange],
 				})
 			}
 			break
@@ -781,8 +821,8 @@ function checkShallowly<T>(
 		}
 	}
 	return {
-		childDefinitions: childDefinitions,
-		errors: errors,
+		childDefinitions,
+		errors,
 	}
 }
 
@@ -818,342 +858,528 @@ export interface SimplifyValueNode<T> {
 	}
 	node: RuntimeNode<T>
 }
+export interface SimplifyContext<T> {
+	node: SimplifyValueNode<T>
+	options: McdocCheckerOptions<T>
+	isMember?: boolean
+	typeArgs?: SimplifiedMcdocType[]
+	typeMapping?: { [path: string]: SimplifiedMcdocType }
+}
 export function simplify<T>(
 	typeDef: Exclude<McdocType, UnionType>,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType
 export function simplify<T>(
 	typeDef: McdocType,
-	node: SimplifyValueNode<T>,
-	options: McdocCheckerOptions<T>,
-	isMember?: boolean,
+	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	isMember ??= false
-	if (typeDef.attributes) {
-		// TODO
-	}
-
 	switch (typeDef.kind) {
 		case 'reference':
-			if (!typeDef.path) {
-				// TODO when does this happen?
-				options.context.logger.warn(`Tried to access empty reference`)
-				return { kind: 'union', members: [] }
-			}
-			// TODO Probably need to keep original symbol around in some way to support "go to definition"
-			const symbol = options.context.symbols.query(
-				options.context.doc,
-				'mcdoc',
-				typeDef.path,
-			)
-			const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
-			if (!def) {
-				options.context.logger.warn(
-					`Tried to access unknown reference ${typeDef.path}`,
-				)
-				return { kind: 'union', members: [] }
-			}
-
-			return simplify(def, node, options, isMember)
+			return simplifyReference(typeDef, context)
 		case 'dispatcher':
-			const dispatcher = options.context.symbols.query(
-				options.context.doc,
-				'mcdoc/dispatcher',
-				typeDef.registry,
-			).symbol?.members
-			if (!dispatcher) {
-				options.context.logger.warn(
-					`Tried to access unknown dispatcher ${typeDef.registry}`,
-				)
-				return { kind: 'union', members: [] }
-			}
-			const structFields: StructTypePairField[] = []
-			for (const key in dispatcher) {
-				// TODO Better way to access typedef without any cast?
-				const data = dispatcher[key].data as any
-				if (data && data.typeDef) {
-					structFields.push({ kind: 'pair', key: key, type: data.typeDef })
-				}
-			}
-			return simplify(
-				{
-					kind: 'indexed',
-					parallelIndices: typeDef.parallelIndices,
-					child: { kind: 'struct', fields: structFields },
-				},
-				node,
-				options,
-				isMember,
-			)
+			return simplifyDispatcher(typeDef, context)
 		case 'indexed':
-			const child = simplify(
-				typeDef.child,
-				node,
-				options,
-				isMember,
-			)
-
-			if (child.kind !== 'struct') {
-				options.context.logger.warn(
-					`Tried to index unindexable type ${child.kind}`,
-				)
-				return { kind: 'union', members: [] }
-			}
-			let values: McdocType[] = []
-
-			for (const index of typeDef.parallelIndices) {
-				let lookup: string[] = []
-				if (index.kind === 'static') {
-					if (index.value === '%fallback') {
-						values = child.fields.filter(f => f.kind === 'pair').map(f =>
-							f.type
-						)
-						break
-					}
-					lookup.push(index.value)
-				} else {
-					let possibilities: SimplifyNode<T>[] = isMember
-						? [{ value: node, key: node.entryNode.runtimeKey }]
-						: [{
-							value: node.entryNode.parent,
-							key: node.entryNode.runtimeKey,
-						}]
-					for (const entry of index.accessor) {
-						if (typeof entry !== 'string' && entry.keyword === 'parent') {
-							possibilities = possibilities.map(n => ({
-								value: n.value?.entryNode.parent,
-								key: n.value?.entryNode.runtimeKey,
-							}))
-						} else if (
-							typeof entry !== 'string' && entry.keyword === 'key'
-						) {
-							possibilities = possibilities
-								.map(p => ({
-									value: p.key
-										? {
-											node: p.key,
-											entryNode: {
-												parent: p.value,
-												runtimeKey: p.key,
-											},
-										}
-										: undefined,
-									key: undefined,
-								}))
-							break
-						} else if (typeof entry === 'string') {
-							const newPossibilities: SimplifyNode<T>[] = []
-							for (const node of possibilities) {
-								const possibleChildren: SimplifyNode<T>[] = node.value
-									? (options.getChildren(
-										node.value.node.originalNode,
-										simplify(
-											node.value.node.inferredType,
-											node.value,
-											options,
-											isMember,
-										),
-									)
-										.filter(child => {
-											if (!Array.isArray(child)) {
-												return isAssignable(
-													child.key.inferredType,
-													{
-														kind: 'literal',
-														value: {
-															kind: 'string',
-															value: entry,
-														},
-													},
-													options.context,
-													options.isEquivalent,
-												)
-											}
-											// TODO if it's a list, consider all list items.
-											// This should probably work recursively if we have a list of lists.
-											return false
-										}) as RuntimePair<T>[]) // We don't consider arrays yet, see above.
-										.flatMap(c =>
-											c.possibleValues.map(v => ({
-												value: {
-													node: v,
-													entryNode: {
-														parent: node.value,
-														runtimeKey: c.key,
-													},
-												},
-												key: undefined,
-											}))
-										)
-									: [{ value: undefined, key: undefined }]
-								newPossibilities.push(...possibleChildren)
-							}
-							possibilities = newPossibilities
-						} else {
-							lookup.push('%none')
-							break
-						}
-					}
-					for (const value of possibilities.map(p => p.value?.node)) {
-						if (
-							value?.inferredType.kind === 'literal' &&
-							value.inferredType.value.kind === 'string'
-						) {
-							const ans = value.inferredType.value.value
-							if (ans.startsWith('minecraft:')) {
-								lookup.push(ans.substring(10))
-							} else {
-								lookup.push(ans)
-							}
-						} else {
-							lookup.push('%none')
-						}
-					}
-				}
-
-				if (lookup.length === 0) {
-					lookup = ['%none']
-				}
-
-				const currentValues = lookup.map(v =>
-					child.fields.find(f =>
-						f.kind === 'pair' && f.key.kind === 'literal' &&
-						f.key.value.value === v
-					) ??
-						child.fields.find(f =>
-							f.kind === 'pair' && f.key.kind === 'literal' &&
-							f.key.value.value === '%unknown'
-						)
-				)
-				if (currentValues.includes(undefined)) {
-					// fallback case
-					values = child.fields.filter(f => f.kind === 'pair').map(f =>
-						f.type
-					)
-					break
-				} else {
-					values.push(...currentValues.map(v => v!.type))
-				}
-			}
-			return simplify(
-				{ kind: 'union', members: values },
-				node,
-				options,
-				isMember,
-			)
+			return simplifyIndexed(typeDef, context)
 		case 'union':
-			const members: SimplifiedMcdocTypeNoUnion[] = []
-			for (const member of typeDef.members) {
-				const simplified = simplify(
-					member,
-					node,
-					options,
-					isMember,
-				)
-
-				if (simplified.kind === 'union') {
-					members.push(...simplified.members)
-				} else {
-					members.push(simplified)
-				}
-			}
-			if (members.length === 1) {
-				return members[0]
-			}
-			return { kind: 'union', members: members }
+			return simplifyUnion(typeDef, context)
 		case 'struct':
-			const literalFields = new Map<string, StructTypePairField>()
-			let complexFields: SimplifiedStructTypePairField[] = []
-
-			function addField(
-				key: string | SimplifiedMcdocType,
-				field: StructTypePairField,
-			) {
-				if (typeof key === 'string') {
-					literalFields.set(key, field)
-				} else if (key.kind === 'literal' && key.value.kind === 'string') {
-					literalFields.set(key.value.value, field)
-				} else if (key.kind === 'union') {
-					key.members.forEach(m =>
-						addField(m, { ...field, optional: true })
-					)
-				} else {
-					// Only keep fields where the new key is not assignable to an existing field
-					complexFields = complexFields.filter(other =>
-						!isAssignable(
-							key,
-							typeof other.key === 'string'
-								? {
-									kind: 'literal',
-									value: { kind: 'string', value: other.key },
-								}
-								: other.key,
-							options.context,
-							options.isEquivalent,
-						)
-					)
-					complexFields.push({ ...field, key })
-				}
-			}
-			for (const field of typeDef.fields) {
-				if (field.kind === 'pair') {
-					// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
-					// cannot deterministically find for non-string keys.
-					// Instead, this method will be called by every struct child by the outer checking method.
-					const structKey = typeof field.key === 'string'
-						? field.key
-						: simplify(field.key, node, options, true)
-					addField(structKey, field)
-				} else {
-					const simplifiedSpreadType = simplify(
-						field.type,
-						node,
-						options,
-						true,
-					)
-					if (simplifiedSpreadType.kind === 'struct') {
-						for (const field of simplifiedSpreadType.fields) {
-							addField(field.key, field)
-						}
-					} else {
-						const type = McdocType.toString(simplifiedSpreadType)
-						options.context.logger.warn(
-							`Tried to spread non-struct type ${type}`,
-						)
-					}
-				}
-			}
-			// Literal fields may still be assignable to complex fields,
-			// however this is currently not seen as an issue
-			return {
-				kind: 'struct',
-				fields: [
-					...complexFields,
-					...[...literalFields.entries()].map(([key, field]) => ({
-						...field,
-						key: {
-							kind: 'literal',
-							value: { kind: 'string', value: key },
-						} as const,
-					})),
-				],
-			}
+			return simplifyStruct(typeDef, context)
+		case 'list':
+			return simplifyList(typeDef, context)
+		case 'tuple':
+			return simplifyTuple(typeDef, context)
 		case 'enum':
-			return { ...typeDef, enumKind: typeDef.enumKind ?? 'int' }
-		case 'concrete': // TODO
-		case 'template': // TODO
-			return { kind: 'union', members: [] }
+			return simplifyEnum(typeDef, context)
+		case 'concrete':
+			return simplifyConcrete(typeDef, context)
+		case 'template':
+			return simplifyTemplate(typeDef, context)
+		case 'mapped':
+			return simplifyMapped(typeDef, context)
 		default:
 			return typeDef
 	}
+}
+
+function simplifyReference<T>(
+	typeDef: ReferenceType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	const ctx = context.options.context
+	if (!typeDef.path) {
+		// TODO when does this happen?
+		ctx.logger.warn(`Tried to access empty reference`)
+		return { kind: 'union', members: [] }
+	}
+	const mapped = context.typeMapping?.[typeDef.path]
+	if (mapped) {
+		return mapped
+	}
+	// TODO Probably need to keep original symbol around in some way to support "go to definition"
+	const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
+	const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
+	if (!def) {
+		ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
+		return { kind: 'union', members: [] }
+	}
+	return simplify(def, context)
+}
+
+function simplifyDispatcher<T>(
+	typeDef: DispatcherType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	const ctx = context.options.context
+	const dispatcher = ctx.symbols.query(
+		ctx.doc,
+		'mcdoc/dispatcher',
+		typeDef.registry,
+	).symbol?.members
+	if (!dispatcher) {
+		ctx.logger.warn(
+			`Tried to access unknown dispatcher ${typeDef.registry}`,
+		)
+		return { kind: 'union', members: [] }
+	}
+	const structFields: StructTypePairField[] = []
+	for (const key in dispatcher) {
+		const data = dispatcher[key].data
+		if (TypeDefSymbolData.is(data)) {
+			structFields.push({ kind: 'pair', key, type: data.typeDef })
+		}
+	}
+	return simplifyIndexed(
+		{
+			kind: 'indexed',
+			parallelIndices: typeDef.parallelIndices,
+			child: { kind: 'struct', fields: structFields },
+		},
+		context,
+	)
+}
+
+function simplifyIndexed<T>(
+	typeDef: IndexedType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	const child = simplify(typeDef.child, { ...context, typeArgs: [] })
+
+	if (child.kind !== 'struct') {
+		context.options.context.logger.warn(
+			`Tried to index unindexable type ${child.kind}`,
+		)
+		return { kind: 'union', members: [] }
+	}
+	let values: McdocType[] = []
+
+	for (const index of typeDef.parallelIndices) {
+		let lookup: string[] = []
+		if (index.kind === 'static') {
+			if (index.value === '%fallback') {
+				values = child.fields.filter(f => f.kind === 'pair').map(f =>
+					f.type
+				)
+				break
+			}
+			if (index.value.startsWith('minecraft:')) {
+				lookup.push(index.value.substring(10))
+			} else {
+				lookup.push(index.value)
+			}
+		} else {
+			let possibilities: SimplifyNode<T>[] = context.isMember
+				? [{
+					value: context.node,
+					key: context.node.entryNode.runtimeKey,
+				}]
+				: [{
+					value: context.node.entryNode.parent,
+					key: context.node.entryNode.runtimeKey,
+				}]
+			for (const entry of index.accessor) {
+				if (typeof entry !== 'string' && entry.keyword === 'parent') {
+					possibilities = possibilities.map(n => ({
+						value: n.value?.entryNode.parent,
+						key: n.value?.entryNode.runtimeKey,
+					}))
+				} else if (
+					typeof entry !== 'string' && entry.keyword === 'key'
+				) {
+					possibilities = possibilities
+						.map(p => ({
+							value: p.key
+								? {
+									node: p.key,
+									entryNode: {
+										parent: p.value,
+										runtimeKey: p.key,
+									},
+								}
+								: undefined,
+							key: undefined,
+						}))
+					break
+				} else if (typeof entry === 'string') {
+					const newPossibilities: SimplifyNode<T>[] = []
+					for (const node of possibilities) {
+						const possibleChildren: SimplifyNode<T>[] = node.value
+							? (context.options.getChildren(
+								node.value.node.originalNode,
+								simplify(
+									node.value.node.inferredType,
+									{ ...context, node: node.value },
+								),
+							)
+								.filter(child => {
+									if (!Array.isArray(child)) {
+										return isAssignable(
+											child.key.inferredType,
+											{
+												kind: 'literal',
+												value: {
+													kind: 'string',
+													value: entry,
+												},
+											},
+											context.options.context,
+											context.options.isEquivalent,
+										)
+									}
+									// TODO if it's a list, consider all list items.
+									// This should probably work recursively if we have a list of lists.
+									return false
+								}) as RuntimePair<T>[]) // We don't consider arrays yet, see above.
+								.flatMap(c =>
+									c.possibleValues.map(v => ({
+										value: {
+											node: v,
+											entryNode: {
+												parent: node.value,
+												runtimeKey: c.key,
+											},
+										},
+										key: undefined,
+									}))
+								)
+							: [{ value: undefined, key: undefined }]
+						newPossibilities.push(...possibleChildren)
+					}
+					possibilities = newPossibilities
+				} else {
+					lookup.push('%none')
+					break
+				}
+			}
+			for (const value of possibilities.map(p => p.value?.node)) {
+				if (
+					value?.inferredType.kind === 'literal' &&
+					value.inferredType.value.kind === 'string'
+				) {
+					const ans = value.inferredType.value.value
+					if (ans.startsWith('minecraft:')) {
+						lookup.push(ans.substring(10))
+					} else {
+						lookup.push(ans)
+					}
+				} else {
+					lookup.push('%none')
+				}
+			}
+		}
+
+		if (lookup.length === 0) {
+			lookup = ['%none']
+		}
+
+		const currentValues = lookup.map(v =>
+			child.fields.find(f =>
+				f.kind === 'pair' && f.key.kind === 'literal' &&
+				f.key.value.value === v
+			) ??
+				child.fields.find(f =>
+					f.kind === 'pair' && f.key.kind === 'literal' &&
+					f.key.value.value === '%unknown'
+				)
+		)
+		if (currentValues.includes(undefined)) {
+			// fallback case
+			values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
+			break
+		} else {
+			values.push(...currentValues.map(v => v!.type))
+		}
+	}
+	return simplifyUnion({ kind: 'union', members: values }, context)
+}
+
+function simplifyUnion<T>(
+	typeDef: UnionType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	const members: SimplifiedMcdocTypeNoUnion[] = []
+	for (const member of typeDef.members) {
+		const simplified = simplify(member, context)
+		let keep = true
+		handleAttributes(
+			member.attributes,
+			context.options.context,
+			(handler, config) => {
+				if (!keep || !handler.filterElement) return
+				if (!handler.filterElement(config, context.options.context)) {
+					keep = false
+				}
+			},
+		)
+		if (!keep) continue
+
+		if (simplified.kind === 'union') {
+			members.push(...simplified.members)
+		} else {
+			members.push(simplified)
+		}
+	}
+	if (members.length === 1) {
+		return members[0]
+	}
+	return { ...typeDef, kind: 'union', members }
+}
+
+function simplifyStruct<T>(
+	typeDef: StructType,
+	context: SimplifyContext<T>,
+): SimplifiedStructType {
+	const literalFields = new Map<string, StructTypePairField>()
+	let complexFields: SimplifiedStructTypePairField[] = []
+
+	function addField(
+		key: string | SimplifiedMcdocType,
+		field: StructTypePairField,
+	) {
+		let keep = true
+		handleAttributes(
+			field.attributes,
+			context.options.context,
+			(handler, config) => {
+				if (!keep) return
+				if (
+					handler.filterElement?.(config, context.options.context) ===
+						false
+				) {
+					keep = false
+				}
+				if (handler.mapField) {
+					field = handler.mapField(config, field, context.options.context)
+				}
+			},
+		)
+		if (!keep) {
+			return
+		}
+		if (typeof key === 'string') {
+			literalFields.set(key, field)
+		} else if (key.kind === 'literal' && key.value.kind === 'string') {
+			literalFields.set(key.value.value, field)
+		} else if (key.kind === 'union') {
+			key.members.forEach(m => addField(m, { ...field, optional: true }))
+		} else {
+			// Only keep fields where the new key is not assignable to an existing field
+			complexFields = complexFields.filter(other =>
+				!isAssignable(
+					key,
+					typeof other.key === 'string'
+						? {
+							kind: 'literal',
+							value: { kind: 'string', value: other.key },
+						}
+						: other.key,
+					context.options.context,
+					context.options.isEquivalent,
+				)
+			)
+			complexFields.push({ ...field, key })
+		}
+	}
+	for (const field of typeDef.fields) {
+		if (field.kind === 'pair') {
+			// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
+			// cannot deterministically find for non-string keys.
+			// Instead, this method will be called by every struct child by the outer checking method.
+			const structKey = typeof field.key === 'string'
+				? field.key
+				: simplify(field.key, {
+					...context,
+					isMember: true,
+					typeArgs: [],
+				})
+			const mappedField = context.typeMapping
+				? {
+					...field,
+					type: {
+						kind: 'mapped',
+						child: field.type,
+						mapping: context.typeMapping,
+					} satisfies McdocType,
+				}
+				: field
+			addField(structKey, mappedField)
+		} else {
+			// TODO: potential optimization: merge unions first before simplifying them,
+			// to avoid having to simplify shared nested spread types multiple times
+			const simplifiedSpreadType = simplify(
+				field.type,
+				{ ...context, isMember: true, typeArgs: [] },
+			)
+			if (simplifiedSpreadType.kind === 'struct') {
+				for (const field of simplifiedSpreadType.fields) {
+					addField(field.key, field)
+				}
+			} else if (simplifiedSpreadType.kind === 'union') {
+				for (const member of simplifiedSpreadType.members) {
+					if (member.kind === 'struct') {
+						for (const field of member.fields) {
+							// TODO: technically, if a field is required in all members of
+							// this union, it could be added as a required field
+							addField(field.key, { ...field, optional: true })
+						}
+					}
+				}
+			}
+			// Silently ignore spreading non-struct types
+		}
+	}
+	// Literal fields may still be assignable to complex fields,
+	// however this is currently not seen as an issue
+	return {
+		kind: 'struct',
+		fields: [
+			...complexFields,
+			...[...literalFields.entries()].map(([key, field]) => ({
+				...field,
+				key: {
+					kind: 'literal',
+					value: { kind: 'string', value: key },
+				} as const,
+			})),
+		],
+	}
+}
+
+function simplifyList<T>(
+	typeDef: ListType,
+	context: SimplifyContext<T>,
+): ListType {
+	if (!context.typeMapping) {
+		return typeDef
+	}
+	return {
+		...typeDef,
+		item: {
+			kind: 'mapped',
+			child: typeDef.item,
+			mapping: context.typeMapping,
+		},
+	}
+}
+
+function simplifyTuple<T>(
+	typeDef: TupleType,
+	context: SimplifyContext<T>,
+): TupleType {
+	if (!context.typeMapping) {
+		return typeDef
+	}
+	return {
+		...typeDef,
+		items: typeDef.items.map(item => ({
+			kind: 'mapped',
+			child: item,
+			mapping: context.typeMapping!,
+		})),
+	}
+}
+
+function simplifyEnum<T>(
+	typeDef: EnumType,
+	context: SimplifyContext<T>,
+): SimplifiedEnum {
+	const filteredValues = typeDef.values.filter(value => {
+		let keep = true
+		handleAttributes(
+			value.attributes,
+			context.options.context,
+			(handler, config) => {
+				if (!keep || !handler.filterElement) return
+				if (!handler.filterElement(config, context.options.context)) {
+					keep = false
+				}
+			},
+		)
+		return keep
+	})
+	return {
+		...typeDef,
+		enumKind: typeDef.enumKind ?? 'int',
+		values: filteredValues,
+	}
+}
+
+function simplifyConcrete<T>(
+	typeDef: ConcreteType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	const simplifiedArgs = typeDef.typeArgs
+		.map(arg => simplify(arg, context))
+	return simplify(typeDef.child, {
+		...context,
+		typeArgs: simplifiedArgs,
+	})
+}
+
+function simplifyTemplate<T>(
+	typeDef: TemplateType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	if (context.typeArgs?.length !== typeDef.typeParams.length) {
+		context.options.context.logger.warn(
+			`Expected ${typeDef.typeParams.length} mcdoc type args for ${
+				McdocType.toString(typeDef.child)
+			}, but got ${context.typeArgs?.length ?? 0}`,
+		)
+	}
+	const mapping = Object.fromEntries(
+		typeDef.typeParams.map((param, i) => {
+			const arg = context.typeArgs?.[i] ??
+				{ kind: 'union', members: [] }
+			return [param.path, arg]
+		}),
+	)
+	return simplify(typeDef.child, {
+		...context,
+		typeArgs: [],
+		typeMapping: mapping,
+	})
+}
+
+function simplifyMapped<T>(
+	typeDef: MappedType,
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
+	// Mapped types that were created in simplify are always simplified
+	// types already, in which case this will be a cheap operation, but
+	// this is necessary for type safety
+	const simplifiedMapping = Object.fromEntries(
+		Object.entries(typeDef.mapping).map(([path, param]) => {
+			return [path, simplify(param, context)]
+		}),
+	)
+	return simplify(typeDef.child, {
+		...context,
+		typeMapping: simplifiedMapping,
+	})
 }
 
 function getValueType(
@@ -1180,12 +1406,26 @@ function getValueType(
 	}
 }
 
+export function getErrorRangeDefault<T extends core.AstNode>(
+	node: RuntimeNode<T>,
+	error: McdocCheckerError<T>['kind'],
+): core.Range {
+	const { range } = node.originalNode
+	if (
+		error === 'missing_key' ||
+		error === 'invalid_collection_length'
+	) {
+		return { start: range.start, end: range.start + 1 }
+	}
+	return range
+}
+
 export function getDefaultErrorReporter<T>(
-	ctx: CheckerContext,
-	getRange: (
+	ctx: core.CheckerContext,
+	getErrorRange: (
 		node: RuntimeNode<T>,
 		error: McdocCheckerError<T>['kind'],
-	) => Range,
+	) => core.Range,
 ): ErrorReporter<T> {
 	return (error: McdocCheckerError<T>) => {
 		const defaultTranslationKey = error.kind.replaceAll('_', '-')
@@ -1196,7 +1436,7 @@ export function getDefaultErrorReporter<T>(
 			for (const node of nodes) {
 				ctx.err.report(
 					localize('expected', localize('nothing')),
-					getRange(node, 'unknown_tuple_element'),
+					getErrorRange(node, 'unknown_tuple_element'),
 				)
 			}
 			return
@@ -1208,11 +1448,14 @@ export function getDefaultErrorReporter<T>(
 				),
 			)
 			for (const node of error.node) {
-				ctx.err.report(message, getRange(node, 'unknown_tuple_element'))
+				ctx.err.report(
+					message,
+					getErrorRange(node, 'unknown_tuple_element'),
+				)
 			}
 			return
 		}
-		const range = getRange(error.node, error.kind)
+		const range = getErrorRange(error.node, error.kind)
 		switch (error.kind) {
 			case 'unknown_key':
 				ctx.err.report(
@@ -1225,7 +1468,7 @@ export function getDefaultErrorReporter<T>(
 							}>`,
 					),
 					range,
-					ErrorSeverity.Warning,
+					core.ErrorSeverity.Warning,
 				)
 				break
 			case 'missing_key':
@@ -1235,9 +1478,12 @@ export function getDefaultErrorReporter<T>(
 				)
 				break
 			case 'invalid_collection_length':
+			case 'invalid_string_length':
 			case 'number_out_of_range':
 				const baseKey = error.kind === 'invalid_collection_length'
 					? 'mcdoc.runtime.checker.range.collection'
+					: error.kind === 'invalid_string_length'
+					? 'mcdoc.runtime.checker.range.string'
 					: 'mcdoc.runtime.checker.range.number'
 				const rangeMessages = error.ranges.map(r => {
 					const left = r.min !== undefined
@@ -1302,6 +1548,8 @@ export function getDefaultErrorReporter<T>(
 					localize(`mcdoc.runtime.checker.${defaultTranslationKey}`),
 					range,
 				)
+				break
+			case 'internal':
 				break
 			default:
 				ctx.err.report(localize(defaultTranslationKey), range)

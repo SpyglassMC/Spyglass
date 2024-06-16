@@ -3,6 +3,7 @@ import type {
 	Completer,
 	CompleterContext,
 	MetaRegistry,
+	Mutable,
 	RegistryCategory,
 	WorldgenFileCategory,
 } from '@spyglassmc/core'
@@ -27,6 +28,7 @@ import {
 import * as json from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import type * as mcf from '@spyglassmc/mcfunction'
+import type * as nbt from '@spyglassmc/nbt'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import {
@@ -34,6 +36,7 @@ import {
 	EntityAnchorArgumentValues,
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
+	getItemSlotsArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
@@ -43,15 +46,21 @@ import {
 } from '../common/index.js'
 import type {
 	BlockStatesNode,
+	ComponentListNode,
+	ComponentTestsAllOfNode,
+	ComponentTestsNode,
 	EntitySelectorArgumentsNode,
 } from '../node/index.js'
 import {
 	BlockNode,
+	ComponentTestExactNode,
+	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntitySelectorAtVariable,
 	EntitySelectorNode,
 	IntRangeNode,
-	ItemNode,
+	ItemPredicateNode,
+	ItemStackNode,
 	ObjectiveCriteriaNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -122,13 +131,23 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:item_enchantment':
 			return ResourceLocationNode.mock(range, { category: 'enchantment' })
 		case 'minecraft:item_predicate':
-			return ItemNode.mock(range, true)
+			return ItemPredicateNode.mock(range)
 		case 'minecraft:item_slot':
 			return LiteralNode.mock(range, {
 				pool: getItemSlotArgumentValues(ctx),
 			})
+		case 'minecraft:item_slots':
+			return LiteralNode.mock(range, {
+				pool: getItemSlotsArgumentValues(ctx),
+			})
 		case 'minecraft:item_stack':
-			return ItemNode.mock(range, false)
+			return ItemStackNode.mock(range)
+		case 'minecraft:loot_modifier':
+			return ResourceLocationNode.mock(range, { category: 'item_modifier' })
+		case 'minecraft:loot_predicate':
+			return ResourceLocationNode.mock(range, { category: 'predicate' })
+		case 'minecraft:loot_table':
+			return ResourceLocationNode.mock(range, { category: 'loot_table' })
 		case 'minecraft:mob_effect':
 			return ResourceLocationNode.mock(range, { category: 'mob_effect' })
 		case 'minecraft:objective':
@@ -145,11 +164,14 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource':
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
+		case 'minecraft:resource_or_tag_key':
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
+				treeNode.parser === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
 					| RegistryCategory
 					| WorldgenFileCategory,
-				allowTag: treeNode.parser === 'minecraft:resource_or_tag',
+				allowTag,
 			})
 		case 'minecraft:resource_location':
 			return ResourceLocationNode.mock(
@@ -198,6 +220,12 @@ const block: Completer<BlockNode> = (node, ctx) => {
 		Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
 	) {
 		ans.push(...blockStates(node.states, ctx))
+	}
+	if (
+		node.nbt &&
+		Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
+	) {
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }
@@ -259,14 +287,76 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 	})(node, ctx)
 }
 
+const componentList: Completer<ComponentListNode> = (node, ctx) => {
+	return completer.record<
+		ResourceLocationNode,
+		nbt.NbtNode,
+		ComponentListNode
+	>({
+		key: (_record, pair, ctx, range) => {
+			const id = pair?.key ??
+				ResourceLocationNode.mock(pair?.key ?? range, {
+					category: 'data_component_type',
+				})
+			return completer.resourceLocation(id, ctx)
+		},
+		value: (_record, pair, ctx) => {
+			if (!pair.value) {
+				return []
+			}
+			return completer.dispatch(pair.value, ctx)
+		},
+	})(node, ctx)
+}
+
+const componentTests: Completer<ComponentTestsNode> = (node, ctx) => {
+	// TODO: improve this completer
+	const test = AstNode.findShallowestChild({
+		node: node as Mutable<ComponentTestsNode>,
+		needle: ctx.offset,
+		endInclusive: true,
+		predicate: (n) =>
+			ComponentTestExactNode.is(n) || ComponentTestSubpredicateNode.is(n),
+	})
+	if (test && ComponentTestExactNode.is(test) && test.value) {
+		return completer.dispatch(test.value, ctx)
+	} else if (test && ComponentTestSubpredicateNode.is(test) && test.value) {
+		return completer.dispatch(test.value, ctx)
+	}
+	return []
+}
+
 const coordinate: Completer<CoordinateNode> = (node, _ctx) => {
 	return [CompletionItem.create('~', node)]
 }
 
-const item: Completer<ItemNode> = (node, ctx) => {
+const itemStack: Completer<ItemStackNode> = (node, ctx) => {
 	const ans: CompletionItem[] = []
 	if (Range.contains(node.id, ctx.offset, true)) {
 		ans.push(...completer.resourceLocation(node.id, ctx))
+	}
+	if (node.components && Range.contains(node.components, ctx.offset, true)) {
+		ans.push(...componentList(node.components, ctx))
+	}
+	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
+		ans.push(...completer.dispatch(node.nbt, ctx))
+	}
+	return ans
+}
+
+const itemPredicate: Completer<ItemPredicateNode> = (node, ctx) => {
+	const ans: CompletionItem[] = []
+	if (Range.contains(node.id, ctx.offset, true)) {
+		ans.push(CompletionItem.create('*', node, { sortText: '##' }))
+		if (node.id.type === 'resource_location') {
+			ans.push(...completer.resourceLocation(node.id, ctx))
+		}
+	}
+	if (node.tests && Range.contains(node.tests, ctx.offset, true)) {
+		ans.push(...componentTests(node.tests, ctx))
+	}
+	if (node.nbt && Range.contains(node.nbt, ctx.offset, true)) {
+		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
 	return ans
 }
@@ -323,7 +413,7 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 			VectorNode.mock(ctx.offset, { dimension: 3 }),
 		],
 		falling_dust: [BlockNode.mock(ctx.offset, false)],
-		item: [ItemNode.mock(ctx.offset, false)],
+		item: [ItemStackNode.mock(ctx.offset)],
 		sculk_charge: [FloatNode.mock(ctx.offset)],
 		shriek: [IntegerNode.mock(ctx.offset)],
 		vibration: [
@@ -455,6 +545,14 @@ const vector: Completer<VectorNode> = (node, _ctx) => {
 
 export function register(meta: MetaRegistry) {
 	meta.registerCompleter<BlockNode>('mcfunction:block', block)
+	meta.registerCompleter<ComponentListNode>(
+		'mcfunction:component_list',
+		componentList,
+	)
+	meta.registerCompleter<ComponentTestsNode>(
+		'mcfunction:component_tests',
+		componentTests,
+	)
 	meta.registerCompleter<CoordinateNode>('mcfunction:coordinate', coordinate)
 	meta.registerCompleter<EntitySelectorNode>(
 		'mcfunction:entity_selector',
@@ -465,7 +563,11 @@ export function register(meta: MetaRegistry) {
 		selectorArguments,
 	)
 	meta.registerCompleter<IntRangeNode>('mcfunction:int_range', intRange)
-	meta.registerCompleter<ItemNode>('mcfunction:item', item)
+	meta.registerCompleter<ItemStackNode>('mcfunction:item_stack', itemStack)
+	meta.registerCompleter<ItemPredicateNode>(
+		'mcfunction:item_predicate',
+		itemPredicate,
+	)
 	meta.registerCompleter<ObjectiveCriteriaNode>(
 		'mcfunction:objective_criteria',
 		objectiveCriteria,

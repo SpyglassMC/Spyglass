@@ -18,18 +18,11 @@ export type NumericRange = {
 }
 export namespace NumericRange {
 	export function isInRange(range: NumericRange, val: number): boolean {
-		if (
-			range.min !== undefined && (RangeKind.isLeftExclusive(range.kind)
-				? val <= range.min
-				: val < range.min)
-		) {
+		const { min = -Infinity, max = Infinity } = range
+		if (RangeKind.isLeftExclusive(range.kind) ? val <= min : val < min) {
 			return false
 		}
-		if (
-			range.max !== undefined && (RangeKind.isRightExclusive(range.kind)
-				? val >= range.max
-				: val > range.max)
-		) {
+		if (RangeKind.isRightExclusive(range.kind) ? val >= max : val > max) {
 			return false
 		}
 		return true
@@ -112,6 +105,7 @@ export interface StructTypePairField extends McdocBaseType {
 	key: string | McdocType
 	type: McdocType
 	optional?: boolean
+	deprecated?: boolean
 }
 export interface StructTypeSpreadField extends McdocBaseType {
 	kind: 'spread'
@@ -156,6 +150,12 @@ export interface ConcreteType extends McdocBaseType {
 	kind: 'concrete'
 	child: McdocType
 	typeArgs: McdocType[]
+}
+
+export interface MappedType extends McdocBaseType {
+	kind: 'mapped'
+	child: McdocType
+	mapping: { [path: string]: McdocType }
 }
 
 export const EmptyUnion: UnionType<never> = Object.freeze({
@@ -273,6 +273,7 @@ export type McdocType =
 	| IndexedType
 	| TemplateType
 	| ConcreteType
+	| MappedType
 export namespace McdocType {
 	export function toString(type: McdocType | undefined): string {
 		const rangeToString = (range: NumericRange | undefined): string => {
@@ -383,6 +384,9 @@ export namespace McdocType {
 						type.lengthRange,
 					)
 				}`
+				break
+			case 'mapped':
+				typeString = toString(type.child)
 				break
 			case 'reference':
 				typeString = type.path ?? '<unknown_reference>'

@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:item_predicate Parse "#stick" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_predicate",
     "range": {
       "start": 0,
       "end": 6
@@ -22,7 +22,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick" 1'] = {
 
 exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_predicate",
     "range": {
       "start": 0,
       "end": 15
@@ -53,7 +53,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
           },
           "children": [
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 7,
                 "end": 10
@@ -73,7 +73,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
               ]
             },
             {
-              "type": "string",
+              "type": "nbt:string",
               "range": {
                 "start": 11,
                 "end": 14
@@ -94,7 +94,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
             }
           ],
           "key": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 7,
               "end": 10
@@ -118,7 +118,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
             "end": 11
           },
           "value": {
-            "type": "string",
+            "type": "nbt:string",
             "range": {
               "start": 11,
               "end": 14
@@ -146,7 +146,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "#stick{foo:bar}" 1'
 
 exports['mcfunction argument minecraft:item_predicate Parse "minecraft:stick" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_predicate",
     "range": {
       "start": 0,
       "end": 15
@@ -168,7 +168,7 @@ exports['mcfunction argument minecraft:item_predicate Parse "minecraft:stick" 1'
 
 exports['mcfunction argument minecraft:item_predicate Parse "stick" 1'] = {
   "node": {
-    "type": "mcfunction:item",
+    "type": "mcfunction:item_predicate",
     "range": {
       "start": 0,
       "end": 5
