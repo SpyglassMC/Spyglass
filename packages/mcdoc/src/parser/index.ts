@@ -118,9 +118,9 @@ function syntaxGap(
 		src.skipWhitespace()
 
 		while (
-			src.canRead() &&
-			src.peek(2) === '//' &&
-			(!delegatesDocComments || src.peek(3) !== '///')
+			src.canRead()
+			&& src.peek(2) === '//'
+			&& (!delegatesDocComments || src.peek(3) !== '///')
 		) {
 			const result = comment(src, ctx) as CommentNode
 			ans.push(result)
@@ -219,8 +219,8 @@ export function literal(
 		}
 		ans.value = src.readIf(
 			(c) =>
-				options?.allowedChars?.has(c) ??
-					(options?.specialChars?.has(c) || /[a-z]/i.test(c)),
+				options?.allowedChars?.has(c)
+					?? (options?.specialChars?.has(c) || /[a-z]/i.test(c)),
 		)
 		ans.range.end = src.cursor
 		if (Arrayable.toArray(literal).every((l) => l !== ans.value)) {

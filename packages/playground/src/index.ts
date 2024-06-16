@@ -184,8 +184,8 @@ const getColorTokenMark = (t: ColorToken): Decoration => {
 	return Decoration.mark({
 		class: `spyglassmc-color-token-${t.type} ${
 			t.modifiers?.map((m) => `spyglassmc-color-token-modifier-${m}`)
-				.join() ??
-				''
+				.join()
+				?? ''
 		}`,
 	})
 }

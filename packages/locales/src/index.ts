@@ -75,8 +75,8 @@ function _resolveLocalePlaceholders(
 		const index = parseInt(match.slice(1, -1))
 		let param: Parameter | undefined = params[index]
 		if (
-			typeof param !== 'string' &&
-			(param as Iterable<string>)?.[Symbol.iterator]
+			typeof param !== 'string'
+			&& (param as Iterable<string>)?.[Symbol.iterator]
 		) {
 			param = arrayToMessage(param as Iterable<string>)
 		}

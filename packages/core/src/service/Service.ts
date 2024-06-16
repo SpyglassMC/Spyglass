@@ -246,8 +246,8 @@ export class Service {
 					const hover =
 						`\`\`\`typescript\n(${symbol.category}${
 							symbol.subcategory ? `/${symbol.subcategory}` : ''
-						}) ${symbol.identifier}\n\`\`\`` +
-						(symbol.desc ? `\n******\n${symbol.desc}` : '')
+						}) ${symbol.identifier}\n\`\`\``
+						+ (symbol.desc ? `\n******\n${symbol.desc}` : '')
 					return Hover.create(node.range, hover)
 				}
 				if (node.hover) {

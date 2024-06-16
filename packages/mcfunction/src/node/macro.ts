@@ -11,8 +11,8 @@ export namespace MacroNode {
 	export function is<T extends core.DeepReadonly<core.AstNode> | undefined>(
 		obj: T,
 	): obj is core.InheritReadonly<MacroNode, T> {
-		return (obj as MacroNode | undefined)?.type ===
-			'mcfunction:macro'
+		return (obj as MacroNode | undefined)?.type
+			=== 'mcfunction:macro'
 	}
 
 	export function mock(range: core.RangeLike): MacroNode {

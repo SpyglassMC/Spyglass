@@ -100,8 +100,8 @@ export function float(options: Options): Parser<FloatNode> {
 		} else if (!options.pattern.test(raw)) {
 			ctx.err.report(localize('parser.float.illegal', options.pattern), ans)
 		} else if (
-			(options.min && ans.value < options.min) ||
-			(options.max && ans.value > options.max)
+			(options.min && ans.value < options.min)
+			|| (options.max && ans.value > options.max)
 		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

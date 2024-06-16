@@ -92,8 +92,8 @@ export function long(options: Options): Parser<LongNode> {
 		} else if (!options.pattern.test(raw) || isOnlySign) {
 			ctx.err.report(localize('parser.long.illegal', options.pattern), ans)
 		} else if (
-			(options.min && ans.value < options.min) ||
-			(options.max && ans.value > options.max)
+			(options.min && ans.value < options.min)
+			|| (options.max && ans.value > options.max)
 		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

@@ -36,8 +36,8 @@ export namespace Dev {
 			switch (typeof current) {
 				case 'bigint': {
 					const bits = Math.ceil(Math.log2(Number(current)))
-					ans += (2 + Math.ceil(bits / (ByteToBits * PointerSize))) *
-						PointerSize // https://stackoverflow.com/a/54298760
+					ans += (2 + Math.ceil(bits / (ByteToBits * PointerSize)))
+						* PointerSize // https://stackoverflow.com/a/54298760
 					break
 				}
 				case 'boolean':

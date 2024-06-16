@@ -172,9 +172,9 @@ export function isAssignable(
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
 	if (
-		assignValue.kind === 'literal' && typeDef.kind === 'literal' &&
-		assignValue.value.kind === typeDef.value.kind &&
-		!assignValue.attributes && !typeDef.attributes
+		assignValue.kind === 'literal' && typeDef.kind === 'literal'
+		&& assignValue.value.kind === typeDef.value.kind
+		&& !assignValue.attributes && !typeDef.attributes
 	) {
 		return assignValue.value.value === typeDef.value.value
 	}
@@ -582,11 +582,11 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
 		.filter(e =>
-			e.kind === 'type_mismatch' &&
-			!validDefinitions.some(d =>
+			e.kind === 'type_mismatch'
+			&& !validDefinitions.some(d =>
 				!d.errors.some(oe =>
-					oe.kind === 'type_mismatch' &&
-					e.node.originalNode === oe.node.originalNode
+					oe.kind === 'type_mismatch'
+					&& e.node.originalNode === oe.node.originalNode
 				)
 			)
 		) as TypeMismatchError<T>[])
@@ -594,8 +594,8 @@ function condenseErrorsAndFilterSiblings<T>(
 			const expected = validDefinitions
 				.map(d =>
 					(d.errors.find(oe =>
-						oe.kind === 'type_mismatch' &&
-						oe.node.originalNode === e.node.originalNode
+						oe.kind === 'type_mismatch'
+						&& oe.node.originalNode === e.node.originalNode
 					) as TypeMismatchError<T>).expected
 				)
 				.flatMap(t => t.kind === 'union' ? t.members : [t])
@@ -613,8 +613,8 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	const onlyCommonTypeMismatches = definitions.filter(d =>
 		!d.errors.some(e =>
-			e.kind === 'sometimes_type_mismatch' ||
-			(e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
+			e.kind === 'sometimes_type_mismatch'
+			|| (e.kind === 'type_mismatch' && !alwaysMismatch.some(oe =>
 				oe.node.originalNode === e.node.originalNode
 			))
 		)
@@ -650,11 +650,11 @@ function condenseErrorsAndFilterSiblings<T>(
 
 	const alwaysUnknown = validDefinitions[0].errors
 		.filter(e =>
-			e.kind === 'unknown_key' &&
-			!validDefinitions.some(d =>
+			e.kind === 'unknown_key'
+			&& !validDefinitions.some(d =>
 				!d.errors.some(oe =>
-					oe.kind === 'unknown_key' &&
-					e.node.originalNode === oe.node.originalNode
+					oe.kind === 'unknown_key'
+					&& e.node.originalNode === oe.node.originalNode
 				)
 			)
 		) as SimpleError<T>[]
@@ -663,9 +663,9 @@ function condenseErrorsAndFilterSiblings<T>(
 	const onlyCommonUnknownKeys = validDefinitions
 		.filter(d =>
 			!d.errors.some(e =>
-				e.kind === 'invalid_key_combination' ||
-				(e.kind === 'unknown_key' &&
-					!alwaysUnknown.some(oe =>
+				e.kind === 'invalid_key_combination'
+				|| (e.kind === 'unknown_key'
+					&& !alwaysUnknown.some(oe =>
 						oe.node.originalNode === e.node.originalNode
 					))
 			)
@@ -705,10 +705,10 @@ function condenseErrorsAndFilterSiblings<T>(
 			...validDefinitions
 				.flatMap(d => d.errors)
 				.filter((e, i, arr) =>
-					e.kind === 'expected_key_value_pair' &&
-					arr.findIndex(oe =>
-							oe.kind === 'expected_key_value_pair' &&
-							oe.node.originalNode === e.node.originalNode
+					e.kind === 'expected_key_value_pair'
+					&& arr.findIndex(oe =>
+							oe.kind === 'expected_key_value_pair'
+							&& oe.node.originalNode === e.node.originalNode
 						) === i
 				),
 		)
@@ -722,12 +722,12 @@ function condenseErrorsAndFilterSiblings<T>(
 	}
 
 	const alwaysMissing = validDefinitions[0].errors.filter(e =>
-		e.kind === 'missing_key' &&
-		!validDefinitions.some(d =>
+		e.kind === 'missing_key'
+		&& !validDefinitions.some(d =>
 			!d.errors.some(oe =>
-				oe.kind === 'missing_key' &&
-				oe.node.originalNode === e.node.originalNode &&
-				oe.key === e.key
+				oe.kind === 'missing_key'
+				&& oe.node.originalNode === e.node.originalNode
+				&& oe.key === e.key
 			)
 		)
 	) as MissingKeyError<T>[]
@@ -735,9 +735,9 @@ function condenseErrorsAndFilterSiblings<T>(
 	const onlyCommonMissing = validDefinitions
 		.filter(d =>
 			!d.errors.some(e =>
-				e.kind === 'some_missing_keys' ||
-				(e.kind === 'missing_key' &&
-					!alwaysMissing.some(oe =>
+				e.kind === 'some_missing_keys'
+				|| (e.kind === 'missing_key'
+					&& !alwaysMissing.some(oe =>
 						oe.node.originalNode === e.node.originalNode
 					))
 			)
@@ -755,8 +755,8 @@ function condenseErrorsAndFilterSiblings<T>(
 				.flatMap(d =>
 					d.errors
 						.filter(e =>
-							e.kind === 'missing_key' &&
-							!alwaysMissing.some(oe =>
+							e.kind === 'missing_key'
+							&& !alwaysMissing.some(oe =>
 								oe.node.originalNode === e.node.originalNode
 							)
 						)
@@ -837,17 +837,17 @@ function checkShallowly<T>(
 	const runtimeValueType = getValueType(simplifiedInferred)
 
 	if (
-		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe' &&
-			simplifiedInferred.kind !== 'unsafe' &&
-			runtimeValueType.kind !== typeDefValueType.kind &&
-			!options.isEquivalent(runtimeValueType, typeDefValueType)) ||
-		(typeDef.kind === 'literal' &&
-			(simplifiedInferred.kind !== 'literal' ||
-				typeDef.value.value !== simplifiedInferred.value.value)) ||
+		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
+			&& simplifiedInferred.kind !== 'unsafe'
+			&& runtimeValueType.kind !== typeDefValueType.kind
+			&& !options.isEquivalent(runtimeValueType, typeDefValueType))
+		|| (typeDef.kind === 'literal'
+			&& (simplifiedInferred.kind !== 'literal'
+				|| typeDef.value.value !== simplifiedInferred.value.value))
 		// TODO handle enum field attributes
-		(typeDef.kind === 'enum' &&
-			(simplifiedInferred.kind !== 'literal' ||
-				!typeDef.values.some(v =>
+		|| (typeDef.kind === 'enum'
+			&& (simplifiedInferred.kind !== 'literal'
+				|| !typeDef.values.some(v =>
 					v.value === simplifiedInferred.value.value
 				)))
 	) {
@@ -890,11 +890,11 @@ function checkShallowly<T>(
 		case 'float':
 		case 'double':
 			if (
-				typeDef.valueRange &&
-				simplifiedInferred.kind === 'literal' &&
-				typeof simplifiedInferred.value.value ===
-					'number' &&
-				!NumericRange.isInRange(
+				typeDef.valueRange
+				&& simplifiedInferred.kind === 'literal'
+				&& typeof simplifiedInferred.value.value
+					=== 'number'
+				&& !NumericRange.isInRange(
 					typeDef.valueRange,
 					simplifiedInferred.value.value,
 				)
@@ -908,10 +908,10 @@ function checkShallowly<T>(
 			break
 		case 'string':
 			if (
-				typeDef.lengthRange &&
-				simplifiedInferred.kind === 'literal' &&
-				simplifiedInferred.value.kind === 'string' &&
-				!NumericRange.isInRange(
+				typeDef.lengthRange
+				&& simplifiedInferred.kind === 'literal'
+				&& simplifiedInferred.value.kind === 'string'
+				&& !NumericRange.isInRange(
 					typeDef.lengthRange,
 					simplifiedInferred.value.value.length,
 				)
@@ -939,8 +939,8 @@ function checkShallowly<T>(
 					continue
 				}
 				if (
-					child.key.inferredType.kind === 'literal' &&
-					child.key.inferredType.value.kind === 'string'
+					child.key.inferredType.kind === 'literal'
+					&& child.key.inferredType.value.kind === 'string'
 				) {
 					const existing = literalKvps.get(
 						child.key.inferredType.value.value,
@@ -990,8 +990,8 @@ function checkShallowly<T>(
 					}
 					for (const kvp of literalKvps.entries()) {
 						if (
-							!kvp[1].definition &&
-							isAssignable(
+							!kvp[1].definition
+							&& isAssignable(
 								{
 									kind: 'literal',
 									value: { kind: 'string', value: kvp[0] },
@@ -1011,10 +1011,10 @@ function checkShallowly<T>(
 					childDefinitions[match] = pair.type
 				}
 				if (
-					!foundMatch &&
-					pair.key.kind === 'literal' &&
-					pair.key.value.kind === 'string' &&
-					pair.optional !== true
+					!foundMatch
+					&& pair.key.kind === 'literal'
+					&& pair.key.value.kind === 'string'
+					&& pair.optional !== true
 				) {
 					errors.push({
 						kind: 'missing_key',
@@ -1082,8 +1082,8 @@ function checkShallowly<T>(
 			}
 
 			if (
-				typeDef.lengthRange &&
-				!NumericRange.isInRange(typeDef.lengthRange, children.length)
+				typeDef.lengthRange
+				&& !NumericRange.isInRange(typeDef.lengthRange, children.length)
 			) {
 				errors.push({
 					kind: 'invalid_collection_length',
@@ -1376,8 +1376,8 @@ function simplifyIndexed<T>(
 			}
 			for (const value of possibilities.map(p => p.value?.node)) {
 				if (
-					value?.inferredType.kind === 'literal' &&
-					value.inferredType.value.kind === 'string'
+					value?.inferredType.kind === 'literal'
+					&& value.inferredType.value.kind === 'string'
 				) {
 					const ans = value.inferredType.value.value
 					if (ans.startsWith('minecraft:')) {
@@ -1397,12 +1397,12 @@ function simplifyIndexed<T>(
 
 		const currentValues = lookup.map(v =>
 			child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' &&
-				f.key.value.value === v
-			) ??
-				child.fields.find(f =>
-					f.kind === 'pair' && f.key.kind === 'literal' &&
-					f.key.value.value === '%unknown'
+				f.kind === 'pair' && f.key.kind === 'literal'
+				&& f.key.value.value === v
+			)
+				?? child.fields.find(f =>
+					f.kind === 'pair' && f.key.kind === 'literal'
+					&& f.key.value.value === '%unknown'
 				)
 		)
 		if (currentValues.includes(undefined)) {
@@ -1466,8 +1466,8 @@ function simplifyStruct<T>(
 			(handler, config) => {
 				if (!keep) return
 				if (
-					handler.filterElement?.(config, context.options.context) ===
-						false
+					handler.filterElement?.(config, context.options.context)
+						=== false
 				) {
 					keep = false
 				}
@@ -1652,8 +1652,8 @@ function simplifyTemplate<T>(
 	}
 	const mapping = Object.fromEntries(
 		typeDef.typeParams.map((param, i) => {
-			const arg = context.typeArgs?.[i] ??
-				{ kind: 'union', members: [] }
+			const arg = context.typeArgs?.[i]
+				?? { kind: 'union', members: [] }
 			return [param.path, arg]
 		}),
 	)
@@ -1712,8 +1712,8 @@ export function getErrorRangeDefault<T extends core.AstNode>(
 ): core.Range {
 	const { range } = node.originalNode
 	if (
-		error === 'missing_key' ||
-		error === 'invalid_collection_length'
+		error === 'missing_key'
+		|| error === 'invalid_collection_length'
 	) {
 		return { start: range.start, end: range.start + 1 }
 	}

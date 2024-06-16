@@ -63,8 +63,8 @@ export async function update_locales() {
 	}
 	for (let i = 0; i < locales.new_keys.length; i++) {
 		if (
-			!moved_keys[locales.new_keys[i]] &&
-			!locales.old_keys.includes(locales.new_keys[i])
+			!moved_keys[locales.new_keys[i]]
+			&& !locales.old_keys.includes(locales.new_keys[i])
 		) {
 			added_keys.push([locales.new_keys[i], locales.new_values[i]])
 		}

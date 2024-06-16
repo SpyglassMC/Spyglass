@@ -29,13 +29,13 @@ export type TopLevelNode =
 export namespace TopLevelNode {
 	export function is(node: AstNode | undefined): node is TopLevelNode {
 		return (
-			CommentNode.is(node) ||
-			DispatchStatementNode.is(node) ||
-			EnumNode.is(node) ||
-			InjectionNode.is(node) ||
-			StructNode.is(node) ||
-			TypeAliasNode.is(node) ||
-			UseStatementNode.is(node)
+			CommentNode.is(node)
+			|| DispatchStatementNode.is(node)
+			|| EnumNode.is(node)
+			|| InjectionNode.is(node)
+			|| StructNode.is(node)
+			|| TypeAliasNode.is(node)
+			|| UseStatementNode.is(node)
 		)
 	}
 }
@@ -72,8 +72,8 @@ export namespace DispatchStatementNode {
 		node: AstNode | undefined,
 	): node is DispatchStatementNode {
 		return (
-			(node as DispatchStatementNode | undefined)?.type ===
-				'mcdoc:dispatch_statement'
+			(node as DispatchStatementNode | undefined)?.type
+				=== 'mcdoc:dispatch_statement'
 		)
 	}
 }
@@ -121,10 +121,10 @@ export type StaticIndexNode =
 export namespace StaticIndexNode {
 	export function is(node: AstNode | undefined): node is StaticIndexNode {
 		return (
-			LiteralNode.is(node) ||
-			IdentifierNode.is(node) ||
-			StringNode.is(node) ||
-			ResourceLocationNode.is(node)
+			LiteralNode.is(node)
+			|| IdentifierNode.is(node)
+			|| StringNode.is(node)
+			|| ResourceLocationNode.is(node)
 		)
 	}
 }
@@ -183,19 +183,19 @@ export type TypeNode =
 export namespace TypeNode {
 	export function is(node: AstNode | undefined): node is TypeNode {
 		return (
-			AnyTypeNode.is(node) ||
-			BooleanTypeNode.is(node) ||
-			StringTypeNode.is(node) ||
-			LiteralTypeNode.is(node) ||
-			NumericTypeNode.is(node) ||
-			PrimitiveArrayTypeNode.is(node) ||
-			ListTypeNode.is(node) ||
-			TupleTypeNode.is(node) ||
-			EnumNode.is(node) ||
-			StructNode.is(node) ||
-			ReferenceTypeNode.is(node) ||
-			DispatcherTypeNode.is(node) ||
-			UnionTypeNode.is(node)
+			AnyTypeNode.is(node)
+			|| BooleanTypeNode.is(node)
+			|| StringTypeNode.is(node)
+			|| LiteralTypeNode.is(node)
+			|| NumericTypeNode.is(node)
+			|| PrimitiveArrayTypeNode.is(node)
+			|| ListTypeNode.is(node)
+			|| TupleTypeNode.is(node)
+			|| EnumNode.is(node)
+			|| StructNode.is(node)
+			|| ReferenceTypeNode.is(node)
+			|| DispatcherTypeNode.is(node)
+			|| UnionTypeNode.is(node)
 		)
 	}
 }
@@ -272,8 +272,8 @@ export namespace AttributeTreeNode {
 	}
 	export function is(node: AstNode | undefined): node is AttributeTreeNode {
 		return (
-			(node as AttributeTreeNode | undefined)?.type ===
-				'mcdoc:attribute/tree'
+			(node as AttributeTreeNode | undefined)?.type
+				=== 'mcdoc:attribute/tree'
 		)
 	}
 }
@@ -294,8 +294,8 @@ export namespace AttributeTreePosValuesNode {
 		node: AstNode | undefined,
 	): node is AttributeTreePosValuesNode {
 		return (
-			(node as AttributeTreePosValuesNode | undefined)?.type ===
-				'mcdoc:attribute/tree/pos'
+			(node as AttributeTreePosValuesNode | undefined)?.type
+				=== 'mcdoc:attribute/tree/pos'
 		)
 	}
 }
@@ -330,8 +330,8 @@ export namespace AttributeTreeNamedValuesNode {
 		node: AstNode | undefined,
 	): node is AttributeTreeNamedValuesNode {
 		return (
-			(node as AttributeTreeNamedValuesNode | undefined)?.type ===
-				'mcdoc:attribute/tree/named'
+			(node as AttributeTreeNamedValuesNode | undefined)?.type
+				=== 'mcdoc:attribute/tree/named'
 		)
 	}
 }
@@ -373,8 +373,8 @@ export interface BooleanTypeNode extends TypeBaseNode<LiteralNode> {
 }
 export namespace BooleanTypeNode {
 	export function is(node: AstNode | undefined): node is BooleanTypeNode {
-		return (node as BooleanTypeNode | undefined)?.type ===
-			'mcdoc:type/boolean'
+		return (node as BooleanTypeNode | undefined)?.type
+			=== 'mcdoc:type/boolean'
 	}
 }
 
@@ -407,8 +407,8 @@ export namespace LiteralTypeNode {
 		}
 	}
 	export function is(node: AstNode | undefined): node is LiteralTypeNode {
-		return (node as LiteralTypeNode | undefined)?.type ===
-			'mcdoc:type/literal'
+		return (node as LiteralTypeNode | undefined)?.type
+			=== 'mcdoc:type/literal'
 	}
 }
 
@@ -431,14 +431,14 @@ export namespace TypedNumberNode {
 		suffix?: LiteralNode
 	} {
 		return {
-			value: node.children.find(FloatNode.is) ??
-				node.children.find(IntegerNode.is)!,
+			value: node.children.find(FloatNode.is)
+				?? node.children.find(IntegerNode.is)!,
 			suffix: node.children.find(LiteralNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is TypedNumberNode {
-		return (node as TypedNumberNode | undefined)?.type ===
-			'mcdoc:typed_number'
+		return (node as TypedNumberNode | undefined)?.type
+			=== 'mcdoc:typed_number'
 	}
 }
 
@@ -454,14 +454,14 @@ export namespace NumericTypeNode {
 	} {
 		return {
 			numericKind: node.children.find(LiteralNode.is)!,
-			valueRange: node.children.find(FloatRangeNode.is) ||
-				node.children.find(IntRangeNode.is),
+			valueRange: node.children.find(FloatRangeNode.is)
+				|| node.children.find(IntRangeNode.is),
 		}
 	}
 	export function is(node: AstNode | undefined): node is NumericTypeNode {
 		return (
-			(node as NumericTypeNode | undefined)?.type ===
-				'mcdoc:type/numeric_type'
+			(node as NumericTypeNode | undefined)?.type
+				=== 'mcdoc:type/numeric_type'
 		)
 	}
 }
@@ -587,8 +587,8 @@ export namespace PrimitiveArrayTypeNode {
 		node: AstNode | undefined,
 	): node is PrimitiveArrayTypeNode {
 		return (
-			(node as PrimitiveArrayTypeNode | undefined)?.type ===
-				'mcdoc:type/primitive_array'
+			(node as PrimitiveArrayTypeNode | undefined)?.type
+				=== 'mcdoc:type/primitive_array'
 		)
 	}
 }
@@ -723,8 +723,8 @@ export namespace DocCommentsNode {
 		return comments.join('\n')
 	}
 	export function is(node: AstNode | undefined): node is DocCommentsNode {
-		return (node as DocCommentsNode | undefined)?.type ===
-			'mcdoc:doc_comments'
+		return (node as DocCommentsNode | undefined)?.type
+			=== 'mcdoc:doc_comments'
 	}
 }
 
@@ -819,8 +819,8 @@ export namespace ReferenceTypeNode {
 	}
 	export function is(node: AstNode | undefined): node is ReferenceTypeNode {
 		return (
-			(node as ReferenceTypeNode | undefined)?.type ===
-				'mcdoc:type/reference'
+			(node as ReferenceTypeNode | undefined)?.type
+				=== 'mcdoc:type/reference'
 		)
 	}
 }
@@ -839,8 +839,8 @@ export namespace TypeParamBlockNode {
 	}
 	export function is(node: AstNode | undefined): node is TypeParamBlockNode {
 		return (
-			(node as TypeParamBlockNode | undefined)?.type ===
-				'mcdoc:type_param_block'
+			(node as TypeParamBlockNode | undefined)?.type
+				=== 'mcdoc:type_param_block'
 		)
 	}
 }
@@ -900,8 +900,8 @@ export namespace StructBlockNode {
 		}
 	}
 	export function is(node: AstNode | undefined): node is StructBlockNode {
-		return (node as StructBlockNode | undefined)?.type ===
-			'mcdoc:struct/block'
+		return (node as StructBlockNode | undefined)?.type
+			=== 'mcdoc:struct/block'
 	}
 }
 
@@ -933,8 +933,8 @@ export namespace StructPairFieldNode {
 	}
 	export function is(node: AstNode | undefined): node is StructPairFieldNode {
 		return (
-			(node as StructPairFieldNode | undefined)?.type ===
-				'mcdoc:struct/field/pair'
+			(node as StructPairFieldNode | undefined)?.type
+				=== 'mcdoc:struct/field/pair'
 		)
 	}
 }
@@ -943,9 +943,9 @@ export type StructKeyNode = StringNode | IdentifierNode | StructMapKeyNode
 export namespace StructKeyNode {
 	export function is(node: AstNode | undefined): node is StructKeyNode {
 		return (
-			StringNode.is(node) ||
-			IdentifierNode.is(node) ||
-			StructMapKeyNode.is(node)
+			StringNode.is(node)
+			|| IdentifierNode.is(node)
+			|| StructMapKeyNode.is(node)
 		)
 	}
 }
@@ -987,8 +987,8 @@ export namespace StructSpreadFieldNode {
 		node: AstNode | undefined,
 	): node is StructSpreadFieldNode {
 		return (
-			(node as StructSpreadFieldNode | undefined)?.type ===
-				'mcdoc:struct/field/spread'
+			(node as StructSpreadFieldNode | undefined)?.type
+				=== 'mcdoc:struct/field/spread'
 		)
 	}
 }
@@ -1010,8 +1010,8 @@ export namespace DispatcherTypeNode {
 	}
 	export function is(node: AstNode | undefined): node is DispatcherTypeNode {
 		return (
-			(node as DispatcherTypeNode | undefined)?.type ===
-				'mcdoc:type/dispatcher'
+			(node as DispatcherTypeNode | undefined)?.type
+				=== 'mcdoc:type/dispatcher'
 		)
 	}
 }
@@ -1063,8 +1063,8 @@ export interface EnumInjectionNode extends AstNode {
 export namespace EnumInjectionNode {
 	export function is(node: AstNode | undefined): node is EnumInjectionNode {
 		return (
-			(node as EnumInjectionNode | undefined)?.type ===
-				'mcdoc:injection/enum'
+			(node as EnumInjectionNode | undefined)?.type
+				=== 'mcdoc:injection/enum'
 		)
 	}
 }
@@ -1076,8 +1076,8 @@ export interface StructInjectionNode extends AstNode {
 export namespace StructInjectionNode {
 	export function is(node: AstNode | undefined): node is StructInjectionNode {
 		return (
-			(node as StructInjectionNode | undefined)?.type ===
-				'mcdoc:injection/struct'
+			(node as StructInjectionNode | undefined)?.type
+				=== 'mcdoc:injection/struct'
 		)
 	}
 }

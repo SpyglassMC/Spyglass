@@ -64,21 +64,21 @@ function getAction(
 			return (
 				(condition.category
 					? Arrayable.toArray(condition.category).includes(symbol.category)
-					: true) &&
-				(condition.namespace
+					: true)
+				&& (condition.namespace
 					? Arrayable.toArray(condition.namespace).includes(namespace)
-					: true) &&
-				(condition.excludeNamespace
+					: true)
+				&& (condition.excludeNamespace
 					? !Arrayable.toArray(condition.excludeNamespace).includes(
 						namespace,
 					)
-					: true) &&
-				(condition.pattern
+					: true)
+				&& (condition.pattern
 					? Arrayable.toArray(condition.pattern).some((p) =>
 						new RegExp(p).test(symbol.identifier)
 					)
-					: true) &&
-				(condition.excludePattern
+					: true)
+				&& (condition.excludePattern
 					? !Arrayable.toArray(condition.excludePattern).some((p) =>
 						new RegExp(p).test(symbol.identifier)
 					)

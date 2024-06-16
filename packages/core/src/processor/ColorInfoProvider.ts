@@ -170,10 +170,10 @@ export namespace ColorPresentation {
 			case ColorFormat.HexRGBA:
 				return `#${
 					Math.round(
-						(((color[0] * 255) << 24) +
-							((color[1] * 255) << 16) +
-							color[2] * 255) <<
-							(8 + color[3] * 255),
+						(((color[0] * 255) << 24)
+							+ ((color[1] * 255) << 16)
+							+ color[2] * 255)
+							<< (8 + color[3] * 255),
 					)
 						.toString(16)
 						.padStart(8, '0')
@@ -181,8 +181,8 @@ export namespace ColorPresentation {
 			case ColorFormat.HexRGB:
 				return `#${
 					Math.round(
-						((color[0] * 255) << 16) + ((color[1] * 255) << 8) +
-							color[2] * 255,
+						((color[0] * 255) << 16) + ((color[1] * 255) << 8)
+							+ color[2] * 255,
 					)
 						.toString(16)
 						.padStart(6, '0')
@@ -190,8 +190,8 @@ export namespace ColorPresentation {
 			case ColorFormat.CompositeInt:
 				return `${
 					Math.round(
-						((color[0] * 255) << 16) + ((color[1] * 255) << 8) +
-							color[2] * 255,
+						((color[0] * 255) << 16) + ((color[1] * 255) << 8)
+							+ color[2] * 255,
 					)
 				}`
 		}

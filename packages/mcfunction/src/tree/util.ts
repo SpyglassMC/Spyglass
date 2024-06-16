@@ -38,9 +38,9 @@ export function resolveParentTreeNode(
 			path: [...parentTreeNode.redirect],
 		}
 	} else if (
-		parentTreeNode &&
-		!parentTreeNode.children &&
-		!parentTreeNode.executable
+		parentTreeNode
+		&& !parentTreeNode.children
+		&& !parentTreeNode.executable
 	) {
 		// The `execute.run` literal tree node doesn't have any property.
 		// We should use children from the root tree node in this case.

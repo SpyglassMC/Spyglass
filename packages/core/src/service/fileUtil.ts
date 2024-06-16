@@ -29,8 +29,8 @@ export namespace fileUtil {
 			.filter((v) => !!v)
 
 		if (
-			baseComponents.length > targetComponents.length ||
-			baseComponents.some((bc, i) =>
+			baseComponents.length > targetComponents.length
+			|| baseComponents.some((bc, i) =>
 				decodeURIComponent(bc) !== decodeURIComponent(targetComponents[i])
 			)
 		) {
@@ -96,8 +96,8 @@ export namespace fileUtil {
 
 	export function join(fromUri: string, toUri: string): string {
 		return (
-			ensureEndingSlash(fromUri) +
-			(toUri.startsWith('/') ? toUri.slice(1) : toUri)
+			ensureEndingSlash(fromUri)
+			+ (toUri.startsWith('/') ? toUri.slice(1) : toUri)
 		)
 	}
 

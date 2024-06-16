@@ -81,8 +81,8 @@ export function resolveConfiguredVersion(
 	return toVersionInfo(
 		versions.find(
 			(v) =>
-				inputVersion === v.id.toLowerCase() ||
-				inputVersion === v.name.toLowerCase(),
+				inputVersion === v.id.toLowerCase()
+				|| inputVersion === v.name.toLowerCase(),
 		),
 	)
 }
@@ -195,8 +195,8 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		type Category = core.FileCategory | core.RegistryCategory
 		function isCategory(str: string): str is Category {
 			return (
-				core.FileCategories.includes(str as any) ||
-				core.RegistryCategories.includes(str as any)
+				core.FileCategories.includes(str as any)
+				|| core.RegistryCategories.includes(str as any)
 			)
 		}
 

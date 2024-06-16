@@ -95,8 +95,8 @@ export namespace PositionRange {
 		}
 		// Now `pos` is in the same line as `start` and/or `end`.
 		return (
-			(pos.line === start.line ? pos.character >= start.character : true) &&
-			(pos.line === end.line ? pos.character < end.character : true)
+			(pos.line === start.line ? pos.character >= start.character : true)
+			&& (pos.line === end.line ? pos.character < end.character : true)
 		)
 	}
 

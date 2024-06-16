@@ -70,8 +70,8 @@ export function index(
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (
-						node.parent && JsonPairNode?.is(node.parent) &&
-						node.parent.key
+						node.parent && JsonPairNode?.is(node.parent)
+						&& node.parent.key
 					) {
 						node.parent.key.hover =
 							`\`\`\`typescript\n${node.parent.key.value}: ${

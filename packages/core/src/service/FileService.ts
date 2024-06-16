@@ -234,8 +234,8 @@ export class FileUriSupporter implements UriProtocolSupporter {
 		for (let { uri } of dependencies) {
 			try {
 				if (
-					fileUtil.isFileUri(uri) &&
-					(await externals.fs.stat(uri)).isDirectory()
+					fileUtil.isFileUri(uri)
+					&& (await externals.fs.stat(uri)).isDirectory()
 				) {
 					uri = fileUtil.ensureEndingSlash(uri)
 					roots.push(uri as RootUriString)
@@ -380,11 +380,11 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		for (const { uri, info } of dependencies) {
 			try {
 				if (
-					uri.startsWith('file:') &&
-					ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) =>
+					uri.startsWith('file:')
+					&& ArchiveUriSupporter.SupportedArchiveExtnames.some((ext) =>
 						uri.endsWith(ext)
-					) &&
-					(await externals.fs.stat(uri)).isFile()
+					)
+					&& (await externals.fs.stat(uri)).isFile()
 				) {
 					const archiveName = fileUtil.basename(uri)
 					if (entries.has(archiveName)) {

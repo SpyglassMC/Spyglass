@@ -121,10 +121,10 @@ export type LinterSeverity = 'hint' | 'information' | 'warning' | 'error'
 export namespace LinterSeverity {
 	export function is(value: unknown): value is LinterSeverity {
 		return (
-			value === 'hint' ||
-			value === 'information' ||
-			value === 'warning' ||
-			value === 'error'
+			value === 'hint'
+			|| value === 'information'
+			|| value === 'warning'
+			|| value === 'error'
 		)
 	}
 	export function toErrorSeverity(value: LinterSeverity): ErrorSeverity {
@@ -275,10 +275,10 @@ export namespace SymbolLinterConfig {
 			}
 			const value = v as Complex
 			return (
-				(value.if === undefined || Arrayable.is(value.if, Condition.is)) &&
-				(value.then === undefined || Action.is(value.then)) &&
-				(value.override === undefined ||
-					Arrayable.is(value.override, Complex.is))
+				(value.if === undefined || Arrayable.is(value.if, Condition.is))
+				&& (value.then === undefined || Action.is(value.then))
+				&& (value.override === undefined
+					|| Arrayable.is(value.override, Complex.is))
 			)
 		}
 	}
@@ -297,16 +297,16 @@ export namespace SymbolLinterConfig {
 			}
 			const value = v as Condition
 			return (
-				(value.category === undefined ||
-					Arrayable.is(value.category, TypePredicates.isString)) &&
-				(value.pattern === undefined ||
-					Arrayable.is(value.pattern, TypePredicates.isString)) &&
-				(value.excludePattern === undefined ||
-					Arrayable.is(value.excludePattern, TypePredicates.isString)) &&
-				(value.namespace === undefined ||
-					Arrayable.is(value.namespace, TypePredicates.isString)) &&
-				(value.excludeNamespace === undefined ||
-					Arrayable.is(value.excludeNamespace, TypePredicates.isString))
+				(value.category === undefined
+					|| Arrayable.is(value.category, TypePredicates.isString))
+				&& (value.pattern === undefined
+					|| Arrayable.is(value.pattern, TypePredicates.isString))
+				&& (value.excludePattern === undefined
+					|| Arrayable.is(value.excludePattern, TypePredicates.isString))
+				&& (value.namespace === undefined
+					|| Arrayable.is(value.namespace, TypePredicates.isString))
+				&& (value.excludeNamespace === undefined
+					|| Arrayable.is(value.excludeNamespace, TypePredicates.isString))
 			)
 		}
 	}
@@ -323,8 +323,8 @@ export namespace SymbolLinterConfig {
 			value: Action | undefined,
 		): value is DeclareAction {
 			return (
-				value !== undefined &&
-				['block', 'file', 'public'].includes(
+				value !== undefined
+				&& ['block', 'file', 'public'].includes(
 					(value as DeclareAction).declare,
 				)
 			)
@@ -333,8 +333,8 @@ export namespace SymbolLinterConfig {
 			value: Action | undefined,
 		): value is ReportAction {
 			return (
-				value !== undefined &&
-				['inherit', 'hint', 'information', 'warning', 'error'].includes(
+				value !== undefined
+				&& ['inherit', 'hint', 'information', 'warning', 'error'].includes(
 					(value as ReportAction).report,
 				)
 			)

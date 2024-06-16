@@ -165,8 +165,8 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 		case 'minecraft:resource_or_tag_key':
-			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
-				treeNode.parser === 'minecraft:resource_or_tag_key'
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag'
+				|| treeNode.parser === 'minecraft:resource_or_tag_key'
 			return ResourceLocationNode.mock(range, {
 				category: ResourceLocation.shorten(treeNode.properties.registry) as
 					| RegistryCategory
@@ -216,14 +216,14 @@ const block: Completer<BlockNode> = (node, ctx) => {
 		ans.push(...completer.resourceLocation(node.id, ctx))
 	}
 	if (
-		node.states &&
-		Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
+		node.states
+		&& Range.contains(Range.translate(node.states, 1, -1), ctx.offset, true)
 	) {
 		ans.push(...blockStates(node.states, ctx))
 	}
 	if (
-		node.nbt &&
-		Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
+		node.nbt
+		&& Range.contains(Range.translate(node.nbt, 1, -1), ctx.offset, true)
 	) {
 		ans.push(...completer.dispatch(node.nbt, ctx))
 	}
@@ -253,8 +253,8 @@ const blockStates: Completer<BlockStatesNode> = (node, ctx) => {
 			return Object.keys(states)
 				.filter(
 					(k) =>
-						pair?.key?.value === k ||
-						!existingKeys.some((ek) => ek.value === k),
+						pair?.key?.value === k
+						|| !existingKeys.some((ek) => ek.value === k),
 				)
 				.map((k) =>
 					CompletionItem.create(k, range, {
@@ -294,8 +294,8 @@ const componentList: Completer<ComponentListNode> = (node, ctx) => {
 		ComponentListNode
 	>({
 		key: (_record, pair, ctx, range) => {
-			const id = pair?.key ??
-				ResourceLocationNode.mock(pair?.key ?? range, {
+			const id = pair?.key
+				?? ResourceLocationNode.mock(pair?.key ?? range, {
 					category: 'data_component_type',
 				})
 			return completer.resourceLocation(id, ctx)
@@ -366,13 +366,13 @@ const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
 		CompletionItem.create(v, node)
 	)
 	if (
-		!node.children?.[0] ||
-		Range.contains(node.children[0], ctx.offset, true)
+		!node.children?.[0]
+		|| Range.contains(node.children[0], ctx.offset, true)
 	) {
 		ans.push(
 			...completer.resourceLocation(
-				node.children?.[0] ??
-					ResourceLocationNode.mock(node, {
+				node.children?.[0]
+					?? ResourceLocationNode.mock(node, {
 						category: 'stat_type',
 						namespacePathSep: '.',
 					}),
@@ -381,8 +381,8 @@ const objectiveCriteria: Completer<ObjectiveCriteriaNode> = (node, ctx) => {
 		)
 	}
 	if (
-		node.children?.[1] &&
-		Range.contains(node.children[1], ctx.offset, true)
+		node.children?.[1]
+		&& Range.contains(node.children[1], ctx.offset, true)
 	) {
 		ans.push(...completer.resourceLocation(node.children[1], ctx))
 	}
@@ -425,8 +425,8 @@ const particle: Completer<ParticleNode> = (node, ctx) => {
 	if (ParticleNode.isSpecialType(id)) {
 		const numParamsBefore = node.children?.slice(1).filter((n) =>
 			n.range.end < ctx.offset
-		).length ??
-			0
+		).length
+			?? 0
 		const mock = map[id][numParamsBefore] as
 			| typeof map[keyof typeof map][number]
 			| undefined
@@ -472,8 +472,12 @@ const selector: Completer<EntitySelectorNode> = (node, ctx) => {
 		return completer.literal(node.children[0], ctx)
 	}
 	if (
-		node.arguments &&
-		Range.contains(Range.translate(node.arguments, 1, -1), ctx.offset, true)
+		node.arguments
+		&& Range.contains(
+			Range.translate(node.arguments, 1, -1),
+			ctx.offset,
+			true,
+		)
 	) {
 		return selectorArguments(node.arguments, ctx)
 	}
@@ -494,8 +498,8 @@ const selectorArguments: Completer<EntitySelectorArgumentsNode> = (
 			return [...EntitySelectorNode.ArgumentKeys]
 				.filter(
 					(k) =>
-						EntitySelectorNode.canKeyExist(selector, record, k) ===
-							EntitySelectorNode.Result.Ok,
+						EntitySelectorNode.canKeyExist(selector, record, k)
+							=== EntitySelectorNode.Result.Ok,
 				)
 				.map((k) =>
 					CompletionItem.create(k, range, {

@@ -71,8 +71,8 @@ export const literal: Completer<LiteralBaseNode> = (node) => {
 		['variable', CompletionKind.Variable],
 	]).get(node.options.colorTokenType ?? 'keyword') ?? CompletionKind.Keyword
 	return (
-		node.options.pool.map((v) => CompletionItem.create(v, node, { kind })) ??
-			[]
+		node.options.pool.map((v) => CompletionItem.create(v, node, { kind }))
+			?? []
 	)
 }
 
@@ -152,8 +152,8 @@ export function record<
 			return completePairs(undefined)
 		}
 		if (
-			(key && Range.contains(key, ctx.offset, true)) ||
-			(sep && ctx.offset <= sep.start)
+			(key && Range.contains(key, ctx.offset, true))
+			|| (sep && ctx.offset <= sep.start)
 		) {
 			// Selected key.
 			if (!value || Range.isEmpty(value.range)) {
@@ -165,9 +165,9 @@ export function record<
 			return o.value(node, pair, ctx, ctx.offset)
 		}
 		if (
-			(value && Range.contains(value, ctx.offset, true)) ||
-			(sep && ctx.offset >= sep.end) ||
-			(key && ctx.offset > key.range.end)
+			(value && Range.contains(value, ctx.offset, true))
+			|| (sep && ctx.offset >= sep.end)
+			|| (key && ctx.offset > key.range.end)
 		) {
 			// Selected value.
 			return o.value(node, pair, ctx, value ?? ctx.offset)
@@ -185,12 +185,12 @@ export const resourceLocation: Completer<ResourceLocationNode> = (
 		ctx.config.lint.idOmitDefaultNamespace,
 	)
 
-	const includeEmptyNamespace = !node.options.isPredicate &&
-		node.namespace === ''
-	const includeDefaultNamespace = node.options.isPredicate ||
-		config?.ruleValue !== true
-	const excludeDefaultNamespace = !node.options.isPredicate &&
-		config?.ruleValue !== false
+	const includeEmptyNamespace = !node.options.isPredicate
+		&& node.namespace === ''
+	const includeDefaultNamespace = node.options.isPredicate
+		|| config?.ruleValue !== true
+	const excludeDefaultNamespace = !node.options.isPredicate
+		&& config?.ruleValue !== false
 
 	const getPool = (category: string) => {
 		const symbols = ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)

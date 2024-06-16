@@ -53,8 +53,8 @@ export namespace LiteralCommandChildNode {
 		node: core.AstNode | undefined,
 	): node is LiteralCommandChildNode {
 		return (
-			(node as LiteralCommandChildNode | undefined)?.type ===
-				'mcfunction:command_child/literal'
+			(node as LiteralCommandChildNode | undefined)?.type
+				=== 'mcfunction:command_child/literal'
 		)
 	}
 }

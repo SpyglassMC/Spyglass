@@ -75,8 +75,12 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 		return []
 	}
 	if (
-		node.children && node.children.length > 0 &&
-		core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
+		node.children && node.children.length > 0
+		&& core.Range.contains(
+			core.Range.translate(node, 1, -1),
+			ctx.offset,
+			true,
+		)
 	) {
 		const child = node.children[0]
 		return ctx.meta.getCompleter(child.type)(child, ctx)

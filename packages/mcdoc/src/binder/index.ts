@@ -106,9 +106,9 @@ interface ModuleSymbolData {
 namespace ModuleSymbolData {
 	export function is(data: unknown): data is ModuleSymbolData {
 		return (
-			!!data &&
-			typeof data === 'object' &&
-			typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
+			!!data
+			&& typeof data === 'object'
+			&& typeof (data as ModuleSymbolData).nextAnonymousIndex === 'number'
 		)
 	}
 }
@@ -119,9 +119,9 @@ export interface TypeDefSymbolData {
 export namespace TypeDefSymbolData {
 	export function is(data: unknown): data is TypeDefSymbolData {
 		return (
-			!!data &&
-			typeof data === 'object' &&
-			typeof (data as TypeDefSymbolData).typeDef === 'object'
+			!!data
+			&& typeof data === 'object'
+			&& typeof (data as TypeDefSymbolData).typeDef === 'object'
 		)
 	}
 }
@@ -799,8 +799,8 @@ function identifierToUri(
 function uriToIdentifier(uri: string, ctx: CheckerContext): string | undefined {
 	return Object.values(ctx.symbols.global.mcdoc ?? {}).find((symbol) => {
 		return (
-			symbol.subcategory === 'module' &&
-			symbol.definition?.some((loc) => loc.uri === uri)
+			symbol.subcategory === 'module'
+			&& symbol.definition?.some((loc) => loc.uri === uri)
 		)
 	})?.identifier
 }
@@ -1022,9 +1022,9 @@ function convertEnum(node: EnumNode, ctx: McdocBinderContext): McdocType {
 	// Shortcut if the typeDef has been added to the enum symbol.
 	const symbol = identifier?.symbol ?? node.symbol
 	if (
-		symbol &&
-		TypeDefSymbolData.is(symbol.data) &&
-		symbol.data.typeDef.kind === 'enum'
+		symbol
+		&& TypeDefSymbolData.is(symbol.data)
+		&& symbol.data.typeDef.kind === 'enum'
 	) {
 		return symbol.data.typeDef
 	}
@@ -1077,9 +1077,9 @@ function convertStruct(node: StructNode, ctx: McdocBinderContext): McdocType {
 	// Shortcut if the typeDef has been added to the struct symbol.
 	const symbol = identifier?.symbol ?? node.symbol
 	if (
-		symbol &&
-		TypeDefSymbolData.is(symbol.data) &&
-		symbol.data.typeDef.kind === 'struct'
+		symbol
+		&& TypeDefSymbolData.is(symbol.data)
+		&& symbol.data.typeDef.kind === 'struct'
 	) {
 		return symbol.data.typeDef
 	}
@@ -1253,8 +1253,8 @@ function convertLiteralValue(
 	} else if (TypedNumberNode.is(node)) {
 		const { suffix, value } = TypedNumberNode.destruct(node)
 		return {
-			kind: convertLiteralNumberSuffix(suffix, ctx) ??
-				(value.type === 'integer'
+			kind: convertLiteralNumberSuffix(suffix, ctx)
+				?? (value.type === 'integer'
 					? 'int'
 					: 'double'),
 			value: value.value,

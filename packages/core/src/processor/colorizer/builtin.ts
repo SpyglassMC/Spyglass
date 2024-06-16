@@ -29,8 +29,8 @@ export const fallback: Colorizer = (node, ctx) => {
 	traversePreOrder(
 		node as AstNode,
 		(node) =>
-			!ctx.meta.hasColorizer(node.type) &&
-			(!ctx.range || Range.intersects(node.range, ctx.range)),
+			!ctx.meta.hasColorizer(node.type)
+			&& (!ctx.range || Range.intersects(node.range, ctx.range)),
 		(node) => ctx.meta.hasColorizer(node.type),
 		(node) => {
 			const colorizer = ctx.meta.getColorizer(node.type)

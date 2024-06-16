@@ -117,8 +117,8 @@ export namespace EntitySelectorArgumentsNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode): node is EntitySelectorArgumentsNode {
 		return (
-			(node as EntitySelectorArgumentsNode).type ===
-				'mcfunction:entity_selector/arguments'
+			(node as EntitySelectorArgumentsNode).type
+				=== 'mcfunction:entity_selector/arguments'
 		)
 	}
 }
@@ -148,8 +148,8 @@ export namespace EntitySelectorAtVariable {
 	export function filterAvailable(ctx: core.ContextBase) {
 		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
 		return EntitySelectorAtVariables.filter(variable =>
-			!(variable === '@n' && release &&
-				ReleaseVersion.cmp(release, '1.21') < 0)
+			!(variable === '@n' && release
+				&& ReleaseVersion.cmp(release, '1.21') < 0)
 		)
 	}
 }
@@ -172,8 +172,8 @@ export namespace EntitySelectorNode {
 		node: T,
 	): node is core.InheritReadonly<EntitySelectorNode, T> {
 		return (
-			(node as EntitySelectorNode | undefined)?.type ===
-				'mcfunction:entity_selector'
+			(node as EntitySelectorNode | undefined)?.type
+				=== 'mcfunction:entity_selector'
 		)
 	}
 
@@ -233,8 +233,8 @@ export namespace EntitySelectorNode {
 		const hasNonInvertedKey = (key: string): boolean =>
 			!!argument.children.find(
 				(p) =>
-					p.key?.value === key &&
-					!(p.value as EntitySelectorInvertableArgumentValueNode<
+					p.key?.value === key
+					&& !(p.value as EntitySelectorInvertableArgumentValueNode<
 						core.AstNode
 					>)
 						?.inverted,
@@ -303,8 +303,8 @@ export interface ItemStackNode extends core.AstNode {
 }
 export namespace ItemStackNode {
 	export function is(node: core.AstNode | undefined): node is ItemStackNode {
-		return (node as ItemStackNode | undefined)?.type ===
-			'mcfunction:item_stack'
+		return (node as ItemStackNode | undefined)?.type
+			=== 'mcfunction:item_stack'
 	}
 
 	export function mock(
@@ -347,8 +347,8 @@ export namespace ItemPredicateNode {
 	export function is(
 		node: core.AstNode | undefined,
 	): node is ItemPredicateNode {
-		return (node as ItemPredicateNode | undefined)?.type ===
-			'mcfunction:item_predicate'
+		return (node as ItemPredicateNode | undefined)?.type
+			=== 'mcfunction:item_predicate'
 	}
 
 	export function mock(
@@ -385,8 +385,8 @@ export interface ComponentTestsAnyOfNode extends core.AstNode {
 
 export namespace ComponentTestsAnyOfNode {
 	export function is(node: core.AstNode): node is ComponentTestsAnyOfNode {
-		return (node as ComponentTestsAnyOfNode).type ===
-			'mcfunction:component_tests_any_of'
+		return (node as ComponentTestsAnyOfNode).type
+			=== 'mcfunction:component_tests_any_of'
 	}
 }
 
@@ -397,8 +397,8 @@ export interface ComponentTestsAllOfNode extends core.AstNode {
 
 export namespace ComponentTestsAllOfNode {
 	export function is(node: core.AstNode): node is ComponentTestsAllOfNode {
-		return (node as ComponentTestsAllOfNode).type ===
-			'mcfunction:component_tests_all_of'
+		return (node as ComponentTestsAllOfNode).type
+			=== 'mcfunction:component_tests_all_of'
 	}
 }
 
@@ -419,8 +419,8 @@ export interface ComponentTestExactNode extends ComponentTestBaseNode {
 }
 export namespace ComponentTestExactNode {
 	export function is(node: core.AstNode): node is ComponentTestExactNode {
-		return (node as ComponentTestExactNode).type ===
-			'mcfunction:component_test_exact'
+		return (node as ComponentTestExactNode).type
+			=== 'mcfunction:component_test_exact'
 	}
 }
 
@@ -431,8 +431,8 @@ export interface ComponentTestExistsNode extends ComponentTestBaseNode {
 }
 export namespace ComponentTestExistsNode {
 	export function is(node: core.AstNode): node is ComponentTestExistsNode {
-		return (node as ComponentTestExistsNode).type ===
-			'mcfunction:component_test_exists'
+		return (node as ComponentTestExistsNode).type
+			=== 'mcfunction:component_test_exists'
 	}
 }
 
@@ -446,8 +446,8 @@ export namespace ComponentTestSubpredicateNode {
 	export function is(
 		node: core.AstNode,
 	): node is ComponentTestSubpredicateNode {
-		return (node as ComponentTestSubpredicateNode).type ===
-			'mcfunction:component_test_sub_predicate'
+		return (node as ComponentTestSubpredicateNode).type
+			=== 'mcfunction:component_test_sub_predicate'
 	}
 }
 

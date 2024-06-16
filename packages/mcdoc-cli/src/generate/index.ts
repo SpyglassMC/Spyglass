@@ -169,8 +169,8 @@ export async function generate(
 													const actualRoot = sixBack?.parent
 														?.parent?.parent?.children?.find(
 															child =>
-																child.type ===
-																	'mcdoc:identifier',
+																child.type
+																	=== 'mcdoc:identifier',
 															/* @ts-ignore */
 														)?.value
 
@@ -203,8 +203,8 @@ export async function generate(
 													{
 														const root = fourBack?.parent?.parent
 															?.parent?.children?.find(child =>
-																child.type ===
-																	'mcdoc:identifier'
+																child.type
+																	=== 'mcdoc:identifier'
 																/* @ts-ignore */
 															)?.value
 
@@ -226,15 +226,15 @@ export async function generate(
 													{
 														const parentKey = fourBack?.parent
 															?.children?.find(child =>
-																child.type ===
-																	'mcdoc:identifier'
+																child.type
+																	=== 'mcdoc:identifier'
 																/* @ts-ignore */
 															)?.value
 
 														const root = fourBack?.parent?.parent
 															?.parent?.children?.find(child =>
-																child.type ===
-																	'mcdoc:identifier'
+																child.type
+																	=== 'mcdoc:identifier'
 																/* @ts-ignore */
 															)?.value
 
@@ -248,15 +248,15 @@ export async function generate(
 													{
 														const registry = fourBack.parent
 															.children?.find(child =>
-																child.type ===
-																	'resource_location'
+																child.type
+																	=== 'resource_location'
 																/* @ts-ignore */
 															)?.path?.join('_')
 
 														const key = fourBack.parent.children
 															?.find(child =>
-																child.type ===
-																	'mcdoc:index_body'
+																child.type
+																	=== 'mcdoc:index_body'
 																/* @ts-ignore */
 															)?.children?.[0]?.value
 
@@ -278,8 +278,8 @@ export async function generate(
 													{
 														container = fourBack?.parent?.children
 															?.find(child =>
-																child.type ===
-																	'mcdoc:identifier'
+																child.type
+																	=== 'mcdoc:identifier'
 																/* @ts-ignore */
 															)?.value
 													}
@@ -299,16 +299,16 @@ export async function generate(
 													{
 														const key = fiveBack.children?.find(
 															child =>
-																child.type ===
-																	'mcdoc:identifier',
+																child.type
+																	=== 'mcdoc:identifier',
 															/* @ts-ignore */
 														)?.value
 														const sevenBack = fiveBack.parent
 															?.parent
 														const foundRoot = sevenBack?.children
 															?.find(child =>
-																child.type ===
-																	'mcdoc:identifier'
+																child.type
+																	=== 'mcdoc:identifier'
 																/* @ts-ignore */
 															)?.value
 
@@ -326,8 +326,8 @@ export async function generate(
 																		const parentKey = nineBack
 																			?.children?.find(
 																				child =>
-																					child.type ===
-																						'mcdoc:identifier',
+																					child.type
+																						=== 'mcdoc:identifier',
 																				/* @ts-ignore */
 																			)?.value
 																		// Credits husk
@@ -336,8 +336,8 @@ export async function generate(
 																				?.parent?.parent
 																				?.parent?.children
 																				?.find(child =>
-																					child.type ===
-																						'mcdoc:identifier'
+																					child.type
+																						=== 'mcdoc:identifier'
 																					/* @ts-ignore */
 																				)?.value
 																		if (actualRoot) {
@@ -354,8 +354,8 @@ export async function generate(
 																	const actualRoot = sevenBack
 																		.parent?.parent?.children
 																		?.find(child =>
-																			child.type ===
-																				'mcdoc:identifier'
+																			child.type
+																				=== 'mcdoc:identifier'
 																			/* @ts-ignore */
 																		)?.value
 
@@ -378,8 +378,8 @@ export async function generate(
 													{
 														const root = fiveBack?.children?.find(
 															child =>
-																child.type ===
-																	'mcdoc:identifier',
+																child.type
+																	=== 'mcdoc:identifier',
 															/* @ts-ignore */
 														)?.value
 
@@ -400,8 +400,8 @@ export async function generate(
 												container = root
 											} else {
 												logger.warn(
-													'Could not find root for type alias, hint:' +
-														self,
+													'Could not find root for type alias, hint:'
+														+ self,
 												)
 											}
 										}
@@ -478,8 +478,8 @@ export async function generate(
 														{
 															const root = fourBack?.parent
 																?.children?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 															container =
@@ -492,16 +492,16 @@ export async function generate(
 														{
 															const parentKey = fourBack?.parent
 																.children?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
 															const root = fourBack?.parent
 																?.parent?.parent?.children
 																?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
@@ -534,16 +534,16 @@ export async function generate(
 																?.parent?.parent
 															const parentKey = sevenBack
 																?.children?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
 															const root = sevenBack?.parent
 																?.parent?.children?.find(
 																	child =>
-																		child.type ===
-																			'mcdoc:identifier',
+																		child.type
+																			=== 'mcdoc:identifier',
 																	/* @ts-ignore */
 																)?.value
 
@@ -556,16 +556,16 @@ export async function generate(
 															// texture meta
 															const parentKey = fourBack?.parent
 																.parent?.children?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
 															const rootKey = fourBack?.parent
 																?.parent?.parent?.parent?.parent
 																?.children?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
@@ -573,8 +573,8 @@ export async function generate(
 																?.parent?.parent?.parent?.parent
 																?.parent?.parent?.children
 																?.find(child =>
-																	child.type ===
-																		'mcdoc:identifier'
+																	child.type
+																		=== 'mcdoc:identifier'
 																	/* @ts-ignore */
 																)?.value
 
@@ -651,8 +651,8 @@ export async function generate(
 													if (_parent?.children) {
 														container = _parent?.children?.find(
 															child =>
-																child.type ===
-																	'resource_location',
+																child.type
+																	=== 'resource_location',
 															/* @ts-ignore */
 														)?.path?.join('_')
 													}
@@ -746,14 +746,14 @@ export async function generate(
 				}
 
 				if (
-					child.type === 'mcdoc:struct/map_key' &&
-					internal_locales[parent]
+					child.type === 'mcdoc:struct/map_key'
+					&& internal_locales[parent]
 				) {
 					const attributes = _child.children?.[0]?.children?.[0]?.children
 					if (
-						attributes && attributes.length === 1 &&
+						attributes && attributes.length === 1
 						/* @ts-ignore */
-						!attributes[0].children && attributes[0].value === 'id'
+						&& !attributes[0].children && attributes[0].value === 'id'
 					) {
 						/* @ts-ignore */
 						setLocale(_child.children?.[0].children?.[1].value)
@@ -773,8 +773,8 @@ export async function generate(
 					child.comment = comment
 
 					if (
-						!args.dry && args.locale &&
-						_parent?.type === 'mcdoc:doc_comments'
+						!args.dry && args.locale
+						&& _parent?.type === 'mcdoc:doc_comments'
 					) {
 						const key = parent.replace(/\[\d+\]$/, '')
 

@@ -114,8 +114,8 @@ function dispatch(
 
 		if (result !== core.Failure) {
 			const takenName =
-				argumentParsers[out.index - (literalParser ? 1 : 0)]?.name ??
-					(result as LiteralCommandChildNode).value
+				argumentParsers[out.index - (literalParser ? 1 : 0)]?.name
+					?? (result as LiteralCommandChildNode).value
 			const childPath = [...path, takenName]
 
 			ans.push({
@@ -143,8 +143,8 @@ function dispatch(
 			}
 
 			if (
-				(result as UnknownCommandChildNode).type ===
-					'mcfunction:command_child/unknown'
+				(result as UnknownCommandChildNode).type
+					=== 'mcfunction:command_child/unknown'
 			) {
 				// Encountered an unsupported parser. Stop parsing this command.
 				return false

@@ -56,8 +56,8 @@ export function any<N extends AstNode>(checkers: Checker<N>[]): Checker<N> {
 			.map((checker) => attempt(checker, node, ctx))
 			.sort(
 				(a, b) =>
-					a.errorAmount - b.errorAmount ||
-					a.totalErrorSpan - b.totalErrorSpan,
+					a.errorAmount - b.errorAmount
+					|| a.totalErrorSpan - b.totalErrorSpan,
 			)
 		attempts[0].updateNodeAndCtx()
 	}

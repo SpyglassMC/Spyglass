@@ -20,8 +20,8 @@ export function validatePatchedTree(tree: RootTreeNode, logger: core.Logger) {
 
 	function walk(node: TreeNode, path: readonly string[]) {
 		if (
-			node.type === 'argument' && PatchRequiredParsers.has(node.parser) &&
-			!node.properties
+			node.type === 'argument' && PatchRequiredParsers.has(node.parser)
+			&& !node.properties
 		) {
 			logger.warn(
 				`[validatePatchedTree] Patch required: ${node.parser} at ${

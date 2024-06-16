@@ -578,9 +578,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 				return result
 			}
 			if (
-				!parentSymbol &&
-				!parentMap &&
-				(result.parentSymbol || result.parentMap)
+				!parentSymbol
+				&& !parentMap
+				&& (result.parentSymbol || result.parentMap)
 			) {
 				parentSymbol = result.parentSymbol
 				parentMap = result.parentMap
@@ -647,13 +647,13 @@ export class SymbolUtil implements ExternalEventEmitter {
 				// Visibility changes are only accepted if the change wouldn't result in the
 				// symbol being stored in a different symbol table.
 				const inGlobalTable = (v: SymbolVisibility | undefined) =>
-					v === undefined ||
-					v === SymbolVisibility.Public ||
-					v === SymbolVisibility.Restricted
+					v === undefined
+					|| v === SymbolVisibility.Public
+					|| v === SymbolVisibility.Restricted
 				if (
-					symbol.visibility === addition.visibility ||
-					(inGlobalTable(symbol.visibility) &&
-						inGlobalTable(addition.visibility))
+					symbol.visibility === addition.visibility
+					|| (inGlobalTable(symbol.visibility)
+						&& inGlobalTable(addition.visibility))
 				) {
 					symbol.visibility = addition.visibility
 				} else {
@@ -738,12 +738,12 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 	static isTrimmable(symbol: Symbol): boolean {
 		return (
-			!Object.keys(symbol.members ?? {}).length &&
-			!symbol.declaration?.length &&
-			!symbol.definition?.length &&
-			!symbol.implementation?.length &&
-			!symbol.reference?.length &&
-			!symbol.typeDefinition?.length
+			!Object.keys(symbol.members ?? {}).length
+			&& !symbol.declaration?.length
+			&& !symbol.definition?.length
+			&& !symbol.implementation?.length
+			&& !symbol.reference?.length
+			&& !symbol.typeDefinition?.length
 		)
 	}
 
@@ -787,8 +787,8 @@ export class SymbolUtil implements ExternalEventEmitter {
 		symbol: DeepReadonly<Symbol> | undefined,
 	): symbol is Symbol {
 		return !!(
-			symbol?.definition?.length ||
-			(symbol?.definition?.length && symbol?.implementation?.length)
+			symbol?.definition?.length
+			|| (symbol?.definition?.length && symbol?.implementation?.length)
 		)
 	}
 	/**
@@ -821,9 +821,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 	 */
 	static getDeclaredLocation(symbol: DeepReadonly<Symbol>): SymbolLocation {
 		return (
-			symbol.declaration?.[0] ??
-				symbol.definition?.[0] ??
-				(() => {
+			symbol.declaration?.[0]
+				?? symbol.definition?.[0]
+				?? (() => {
 					throw new Error(
 						`Cannot get declared location of ${
 							JSON.stringify(
@@ -869,9 +869,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 
 	static isVisibilityInGlobal(v: SymbolVisibility | undefined) {
 		return (
-			v === undefined ||
-			v === SymbolVisibility.Public ||
-			v === SymbolVisibility.Restricted
+			v === undefined
+			|| v === SymbolVisibility.Public
+			|| v === SymbolVisibility.Restricted
 		)
 	}
 
@@ -880,9 +880,9 @@ export class SymbolUtil implements ExternalEventEmitter {
 		v2: SymbolVisibility | undefined,
 	) {
 		return (
-			(this.isVisibilityInGlobal(v1) && this.isVisibilityInGlobal(v2)) ||
-			(v1 === SymbolVisibility.Block && v2 === SymbolVisibility.Block) ||
-			(v1 === SymbolVisibility.File && v2 === SymbolVisibility.File)
+			(this.isVisibilityInGlobal(v1) && this.isVisibilityInGlobal(v2))
+			|| (v1 === SymbolVisibility.Block && v2 === SymbolVisibility.Block)
+			|| (v1 === SymbolVisibility.File && v2 === SymbolVisibility.File)
 		)
 	}
 }
@@ -1167,17 +1167,17 @@ export class SymbolQuery {
 			addition: SymbolAddition,
 		): SymbolVisibility => {
 			return (
-				addition.data?.visibility ??
-					this.symbol?.visibility ??
-					SymbolVisibility.Public
+				addition.data?.visibility
+					?? this.symbol?.visibility
+					?? SymbolVisibility.Public
 			)
 		}
 
 		const getMap = (addition: SymbolAddition): SymbolMap => {
 			const additionVisibility = getAdditionVisibility(addition)
 			if (
-				this.#map &&
-				SymbolUtil.areVisibilitiesCompatible(
+				this.#map
+				&& SymbolUtil.areVisibilitiesCompatible(
 					additionVisibility,
 					this.#symbol?.visibility,
 				)
@@ -1273,8 +1273,8 @@ export class SymbolQuery {
 
 		// Treat `usage.range` as `[0, 0)` if this class was constructed with a string URI (instead of a `TextDocument`).
 		if (
-			this.#createdWithUri &&
-			SymbolAdditionUsageWithRange.is(addition.usage)
+			this.#createdWithUri
+			&& SymbolAdditionUsageWithRange.is(addition.usage)
 		) {
 			addition.usage.range = Range.create(0, 0)
 		}
@@ -1381,8 +1381,8 @@ export class SymbolQuery {
 			)
 		}
 
-		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri &&
-				!this.#createdWithUri
+		const memberDoc = typeof doc === 'string' && doc === this.#doc.uri
+				&& !this.#createdWithUri
 			? this.#doc
 			: doc
 		const memberMap = this.#symbol.members
@@ -1492,11 +1492,11 @@ export namespace SymbolFormatter {
 		const ans: string[] = []
 		assertEqual(symbol.path[symbol.path.length - 1], symbol.identifier)
 		ans.push(
-			`SYMBOL ${symbol.path.join('.')}` +
-				` {${symbol.category}${
+			`SYMBOL ${symbol.path.join('.')}`
+				+ ` {${symbol.category}${
 					symbol.subcategory ? ` (${symbol.subcategory})` : ''
-				}}` +
-				` [${
+				}}`
+				+ ` [${
 					stringifyVisibility(
 						symbol.visibility,
 						symbol.visibilityRestriction,

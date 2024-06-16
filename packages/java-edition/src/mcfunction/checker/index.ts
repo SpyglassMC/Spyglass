@@ -180,8 +180,8 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 		switch (node.properties.dispatcher) {
 			case 'minecraft:entity':
 				if (nbt.NbtCompoundNode.is(compound)) {
-					const types = (EntityNode.is(dispatchedBy) ||
-							core.ResourceLocationNode.is(dispatchedBy))
+					const types = (EntityNode.is(dispatchedBy)
+							|| core.ResourceLocationNode.is(dispatchedBy))
 						? getTypesFromEntity(dispatchedBy, ctx)
 						: undefined
 					nbt.checker.index('minecraft:entity', types, {

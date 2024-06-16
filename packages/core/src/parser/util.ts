@@ -246,8 +246,8 @@ export function any(
 				.filter(({ attempt }) => attempt.result !== Failure)
 				.sort(
 					(a, b) =>
-						b.attempt.endCursor - a.attempt.endCursor ||
-						a.attempt.errorAmount - b.attempt.errorAmount,
+						b.attempt.endCursor - a.attempt.endCursor
+						|| a.attempt.errorAmount - b.attempt.errorAmount,
 				)
 		if (results.length === 0) {
 			if (out) {
@@ -375,10 +375,10 @@ export function select(cases: readonly Case[]): Parser<Returnable> {
 	return (src: Source, ctx: ParserContext): Result<Returnable> => {
 		for (const { predicate, prefix, parser, regex } of cases) {
 			if (
-				predicate?.(src) ??
-					(prefix !== undefined ? src.tryPeek(prefix) : undefined) ??
-					(regex && src.matchPattern(regex)) ??
-					true
+				predicate?.(src)
+					?? (prefix !== undefined ? src.tryPeek(prefix) : undefined)
+					?? (regex && src.matchPattern(regex))
+					?? true
 			) {
 				const callableParser = typeof parser === 'object'
 					? parser.get()

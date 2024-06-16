@@ -196,8 +196,8 @@ export class CacheService {
 				}
 			} catch (e) {
 				if (
-					this.project.externals.error.isKind(e, 'ENOENT') ||
-					this.project.externals.error.isKind(e, 'EISDIR')
+					this.project.externals.error.isKind(e, 'ENOENT')
+					|| this.project.externals.error.isKind(e, 'EISDIR')
 				) {
 					ans.removedFiles.push(uri)
 				} else {
@@ -255,8 +255,8 @@ export class CacheService {
 
 	async hasFileChangedSinceCache(doc: TextDocument): Promise<boolean> {
 		return (
-			this.checksums.files[doc.uri] !==
-				(await this.project.externals.crypto.getSha1(doc.getText()))
+			this.checksums.files[doc.uri]
+				!== (await this.project.externals.crypto.getSha1(doc.getText()))
 		)
 	}
 

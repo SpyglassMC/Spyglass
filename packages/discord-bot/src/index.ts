@@ -148,9 +148,9 @@ async function loadConfig(): Promise<Config> {
 	const config = (await fileUtil.readJson(NodeJsExternals, path)) as Config
 	if (
 		!(
-			typeof config.clientId === 'string' &&
-			typeof config.guildId === 'string' &&
-			typeof config.token === 'string'
+			typeof config.clientId === 'string'
+			&& typeof config.guildId === 'string'
+			&& typeof config.token === 'string'
 		)
 	) {
 		throw new Error(`Bad config: ${JSON.stringify(config)}`)

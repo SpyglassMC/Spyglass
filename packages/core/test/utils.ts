@@ -53,8 +53,8 @@ export function mockProjectData(data: Partial<ProjectData> = {}): ProjectData {
 	const cacheRoot: RootUriString = data.cacheRoot ?? 'file:///cache/'
 	const externals = data.externals ?? NodeJsExternals
 	const logger = data.logger ?? Logger.create()
-	const downloader = data.downloader ??
-		new Downloader(cacheRoot, externals, logger)
+	const downloader = data.downloader
+		?? new Downloader(cacheRoot, externals, logger)
 	return {
 		cacheRoot,
 		config: data.config ?? VanillaConfig,
@@ -348,8 +348,8 @@ export class SimpleProject {
 		}
 
 		return {
-			...(keys.includes('colorTokens') &&
-				{ colorTokens: this.#colorTokens }),
+			...(keys.includes('colorTokens')
+				&& { colorTokens: this.#colorTokens }),
 			...(keys.includes('global') && {
 				global: SymbolTable.unlink(this.#global),
 			}),

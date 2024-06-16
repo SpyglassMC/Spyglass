@@ -37,9 +37,9 @@ export function getTagValues(
 			// const result = ctx.getDocAndNode(uri)
 			const result: any = undefined // FIXME: Use global symbol table to get the result
 			if (
-				!result ||
-				result.node.parserErrors.length ||
-				result.node.checkerErrors?.length
+				!result
+				|| result.node.parserErrors.length
+				|| result.node.checkerErrors?.length
 			) {
 				return ans
 			}

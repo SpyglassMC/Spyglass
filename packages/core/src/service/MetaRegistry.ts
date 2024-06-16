@@ -200,8 +200,8 @@ export class MetaRegistry {
 	): boolean {
 		const language = this.#languages.get(languageID)
 		return (
-			!triggerCharacter ||
-			!!language?.triggerCharacters?.includes(triggerCharacter)
+			!triggerCharacter
+			|| !!language?.triggerCharacters?.includes(triggerCharacter)
 		)
 	}
 	public getCompleterForLanguageID(languageID: string): Completer<any> {

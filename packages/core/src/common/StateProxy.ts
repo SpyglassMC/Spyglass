@@ -98,11 +98,11 @@ class StateProxyHandler<T extends object> implements ProxyHandler<T> {
 
 	set(target: T, p: string | symbol, value: any, receiver: any): boolean {
 		if (
-			p === BranchOff ||
-			p === Is ||
-			p === Origin ||
-			p === Redo ||
-			p === Undo
+			p === BranchOff
+			|| p === Is
+			|| p === Origin
+			|| p === Redo
+			|| p === Undo
 		) {
 			throw new TypeError(`Cannot set ${String(p)}`)
 		}

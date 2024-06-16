@@ -48,8 +48,8 @@ export namespace Position {
 
 	export function isBefore(pos1: Position, pos2: Position): boolean {
 		return (
-			pos1.line < pos2.line ||
-			(pos1.line === pos2.line && pos1.character < pos2.character)
+			pos1.line < pos2.line
+			|| (pos1.line === pos2.line && pos1.character < pos2.character)
 		)
 	}
 }

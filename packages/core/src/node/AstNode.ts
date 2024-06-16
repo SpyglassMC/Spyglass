@@ -24,10 +24,10 @@ export namespace AstNode {
 	/* istanbul ignore next */
 	export function is(obj: unknown): obj is AstNode {
 		return (
-			!!obj &&
-			typeof obj === 'object' &&
-			typeof (obj as AstNode).type === 'string' &&
-			Range.is((obj as AstNode).range)
+			!!obj
+			&& typeof obj === 'object'
+			&& typeof (obj as AstNode).type === 'string'
+			&& Range.is((obj as AstNode).range)
 		)
 	}
 

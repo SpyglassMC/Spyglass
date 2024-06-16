@@ -94,8 +94,8 @@ export function integer(options: Options): Parser<IntegerNode> {
 				ans,
 			)
 		} else if (
-			(options.min !== undefined && ans.value < options.min) ||
-			(options.max !== undefined && ans.value > options.max)
+			(options.min !== undefined && ans.value < options.min)
+			|| (options.max !== undefined && ans.value > options.max)
 		) {
 			const onOutOfRange = options.onOutOfRange ?? fallbackOnOutOfRange
 			onOutOfRange(ans, src, ctx, options)

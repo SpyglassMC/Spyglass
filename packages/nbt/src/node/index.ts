@@ -13,9 +13,9 @@ export namespace NbtNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtNode {
 		return (
-			NbtPrimitiveNode.is(node) ||
-			NbtCompoundNode.is(node) ||
-			NbtCollectionNode.is(node)
+			NbtPrimitiveNode.is(node)
+			|| NbtCompoundNode.is(node)
+			|| NbtCollectionNode.is(node)
 		)
 	}
 }
@@ -62,10 +62,10 @@ export namespace NbtIntegerAlikeNode {
 		node: core.AstNode | undefined,
 	): node is NbtIntegerAlikeNode {
 		return (
-			NbtByteNode.is(node) ||
-			NbtShortNode.is(node) ||
-			NbtIntNode.is(node) ||
-			NbtLongNode.is(node)
+			NbtByteNode.is(node)
+			|| NbtShortNode.is(node)
+			|| NbtIntNode.is(node)
+			|| NbtLongNode.is(node)
 		)
 	}
 }
@@ -190,9 +190,9 @@ export namespace NbtPrimitiveArrayNode {
 		node: core.AstNode | undefined,
 	): node is NbtPrimitiveArrayNode {
 		return (
-			NbtByteArrayNode.is(node) ||
-			NbtIntArrayNode.is(node) ||
-			NbtLongArrayNode.is(node)
+			NbtByteArrayNode.is(node)
+			|| NbtIntArrayNode.is(node)
+			|| NbtLongArrayNode.is(node)
 		)
 	}
 }

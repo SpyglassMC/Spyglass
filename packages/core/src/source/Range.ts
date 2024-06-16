@@ -55,10 +55,10 @@ export namespace Range {
 
 	export function is(obj: unknown): obj is Range {
 		return (
-			!!obj &&
-			typeof obj === 'object' &&
-			typeof (obj as Range).start === 'number' &&
-			typeof (obj as Range).end === 'number'
+			!!obj
+			&& typeof obj === 'object'
+			&& typeof (obj as Range).start === 'number'
+			&& typeof (obj as Range).end === 'number'
 		)
 	}
 
@@ -87,8 +87,8 @@ export namespace Range {
 	): boolean {
 		range = get(range)
 		return (
-			range.start <= offset &&
-			(endInclusive ? offset <= range.end : offset < range.end)
+			range.start <= offset
+			&& (endInclusive ? offset <= range.end : offset < range.end)
 		)
 	}
 
@@ -184,9 +184,9 @@ export interface RangeContainer {
 export namespace RangeContainer {
 	export function is(obj: unknown): obj is RangeContainer {
 		return (
-			!!obj &&
-			typeof obj === 'object' &&
-			Range.is((obj as RangeContainer).range)
+			!!obj
+			&& typeof obj === 'object'
+			&& Range.is((obj as RangeContainer).range)
 		)
 	}
 }

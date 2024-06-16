@@ -101,8 +101,8 @@ export function typeDefinition(
 				getChildren: node => {
 					const { type } = node
 					if (
-						type === 'nbt:list' || type === 'nbt:byte_array' ||
-						type === 'nbt:int_array' || type === 'nbt:long_array'
+						type === 'nbt:list' || type === 'nbt:byte_array'
+						|| type === 'nbt:int_array' || type === 'nbt:long_array'
 					) {
 						return node.children.filter(n => n.value)
 							.map(
@@ -136,8 +136,8 @@ export function typeDefinition(
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (
-						core.PairNode.is(node.parent) &&
-						NbtStringNode.is(node.parent.key)
+						core.PairNode.is(node.parent)
+						&& NbtStringNode.is(node.parent.key)
 					) {
 						node.parent.key.hover =
 							`\`\`\`typescript\n${node.parent.key.value}: ${
@@ -226,9 +226,9 @@ export function blockStates(
 			}
 			// Type check.
 			if (
-				valueNode.type === 'nbt:byte' &&
-				(ctx.src.slice(valueNode.range).toLowerCase() === 'false' ||
-					ctx.src.slice(valueNode.range).toLowerCase() === 'true')
+				valueNode.type === 'nbt:byte'
+				&& (ctx.src.slice(valueNode.range).toLowerCase() === 'false'
+					|| ctx.src.slice(valueNode.range).toLowerCase() === 'true')
 			) {
 				ctx.err.report(
 					localize('nbt.checker.block-states.fake-boolean'),
@@ -343,8 +343,8 @@ export function path(
 					link,
 				): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
 					while (
-						link.next && link.node.type !== 'leaf' &&
-						NbtCompoundNode.is(link.node)
+						link.next && link.node.type !== 'leaf'
+						&& NbtCompoundNode.is(link.node)
 					) {
 						link = link.next
 					}
@@ -377,8 +377,8 @@ export function path(
 				},
 				reportError: (error) => {
 					if (
-						error.kind === 'missing_key' ||
-						error.kind === 'invalid_collection_length'
+						error.kind === 'missing_key'
+						|| error.kind === 'invalid_collection_length'
 					) {
 						return
 					}

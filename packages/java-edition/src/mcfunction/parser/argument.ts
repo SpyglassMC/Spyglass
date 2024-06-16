@@ -254,8 +254,8 @@ export const argument: mcf.ArgumentParserGetter = (
 		case 'minecraft:resource_key':
 		case 'minecraft:resource_or_tag':
 		case 'minecraft:resource_or_tag_key':
-			const allowTag = treeNode.parser === 'minecraft:resource_or_tag' ||
-				treeNode.parser === 'minecraft:resource_or_tag_key'
+			const allowTag = treeNode.parser === 'minecraft:resource_or_tag'
+				|| treeNode.parser === 'minecraft:resource_or_tag_key'
 			return wrap(
 				core.resourceLocation({
 					category: core.ResourceLocation.shorten(
@@ -488,11 +488,11 @@ function entity(
 				)
 			}
 			if (
-				type === 'players' &&
-				(ans.uuid ||
-					(ans.selector &&
-						!ans.selector.playersOnly &&
-						!ans.selector.currentEntity))
+				type === 'players'
+				&& (ans.uuid
+					|| (ans.selector
+						&& !ans.selector.playersOnly
+						&& !ans.selector.currentEntity))
 			) {
 				ctx.err.report(
 					localize(
@@ -577,8 +577,8 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 				type: 'mcfunction:item_predicate',
 				range: res.range,
 				children: res.children,
-				id: (res.children.find(core.ResourceLocationNode.is) ||
-					res.children.find(core.LiteralNode.is))!,
+				id: (res.children.find(core.ResourceLocationNode.is)
+					|| res.children.find(core.LiteralNode.is))!,
 				tests: res.children.find(
 					ComponentTestsNode.is,
 				),
@@ -787,10 +787,10 @@ function range(
 					: [valueNodes[0].value, valueNodes[0].value],
 			}
 			if (
-				!cycleable &&
-				ans.value[0] !== undefined &&
-				ans.value[1] !== undefined &&
-				ans.value[0] > ans.value[1]
+				!cycleable
+				&& ans.value[0] !== undefined
+				&& ans.value[1] !== undefined
+				&& ans.value[0] > ans.value[1]
 			) {
 				ctx.err.report(
 					localize(
@@ -963,8 +963,8 @@ export function selector(): core.Parser<EntitySelectorNode> {
 												): boolean =>
 													!!record.children.find(
 														(p) =>
-															p.key?.value === key &&
-															!(
+															p.key?.value === key
+															&& !(
 																p.value as EntitySelectorInvertableArgumentValueNode<
 																	core.AstNode
 																>
@@ -1066,8 +1066,8 @@ export function selector(): core.Parser<EntitySelectorNode> {
 															(res, _, ctx) => {
 																dimensionLimited = true
 																// x, y, z, dx, dy, dz take precedence over distance, so we use ??= instead of = to ensure it won't override the result.
-																chunkLimited ??= !playersOnly &&
-																	res.value[1] !== undefined
+																chunkLimited ??= !playersOnly
+																	&& res.value[1] !== undefined
 																if (hasKey(key.value)) {
 																	ctx.err.report(
 																		localize(
@@ -1363,8 +1363,8 @@ export function selector(): core.Parser<EntitySelectorNode> {
 																		)
 																	}
 																} else if (
-																	!res.inverted &&
-																	!res.value.isTag
+																	!res.inverted
+																	&& !res.value.isTag
 																) {
 																	typeLimited = true
 																	if (
@@ -1812,8 +1812,8 @@ function vector(
 			ans.children.push(coord as never)
 
 			if (
-				(ans.system === CoordinateSystem.Local) !==
-					(coord.notation === '^')
+				(ans.system === CoordinateSystem.Local)
+					!== (coord.notation === '^')
 			) {
 				ctx.err.report(localize('mcfunction.parser.vector.mixed'), coord)
 			}

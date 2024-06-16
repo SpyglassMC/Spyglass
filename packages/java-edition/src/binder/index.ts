@@ -233,8 +233,8 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 			| ReleaseVersion
 			| undefined
 		if (
-			!loadedVersion || // FIXME: check why this can be undefined sometimes
-			!matchVersion(loadedVersion, def.since, def.until)
+			!loadedVersion // FIXME: check why this can be undefined sometimes
+			|| !matchVersion(loadedVersion, def.since, def.until)
 		) {
 			continue
 		}

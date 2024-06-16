@@ -66,9 +66,9 @@ export function record<K extends AstNode, V extends AstNode>({
 					endCursor: keyEnd,
 				} = attempt(pair.key, src, ctx)
 				if (
-					keyResult === Failure ||
-					(keyEnd - keyStart === 0 &&
-						![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
+					keyResult === Failure
+					|| (keyEnd - keyStart === 0
+						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
 							src.peek(),
 						))
 				) {
@@ -106,9 +106,9 @@ export function record<K extends AstNode, V extends AstNode>({
 					endCursor: valueEnd,
 				} = attempt(valueParser, src, ctx)
 				if (
-					valueResult === Failure ||
-					(valueEnd - valueStart === 0 &&
-						![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
+					valueResult === Failure
+					|| (valueEnd - valueStart === 0
+						&& ![pair.sep, pair.end, end, '\r', '\n', '\t', ' '].includes(
 							src.peek(),
 						))
 				) {

@@ -240,8 +240,8 @@ export class Project implements ExternalEventEmitter {
 		// Identify roots indicated by `pack.mcmeta`.
 		for (const file of this.getTrackedFiles()) {
 			if (
-				file.endsWith(Project.RootSuffix) &&
-				rawRoots.some((r) => file.startsWith(r))
+				file.endsWith(Project.RootSuffix)
+				&& rawRoots.some((r) => file.startsWith(r))
 			) {
 				ans.add(
 					file.slice(0, 1 - Project.RootSuffix.length) as RootUriString,
@@ -350,8 +350,8 @@ export class Project implements ExternalEventEmitter {
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
-		this.downloader = downloader ??
-			new Downloader(cacheRoot, externals, logger)
+		this.downloader = downloader
+			?? new Downloader(cacheRoot, externals, logger)
 		this.symbols = new SymbolUtil({}, externals.event.EventEmitter)
 
 		this.#ctx = {}
@@ -901,8 +901,8 @@ export class Project implements ExternalEventEmitter {
 	async ensureBindingStarted(uri: string): Promise<void> {
 		uri = this.normalizeUri(uri)
 		if (
-			this.#symbolUpToDateUris.has(uri) ||
-			this.#bindingInProgressUris.has(uri)
+			this.#symbolUpToDateUris.has(uri)
+			|| this.#bindingInProgressUris.has(uri)
 		) {
 			return
 		}
@@ -1043,17 +1043,17 @@ export class Project implements ExternalEventEmitter {
 
 	private shouldRemove(uri: string): boolean {
 		return (
-			!this.#clientManagedUris.has(uri) &&
-			!this.#dependencyFiles.has(uri) &&
-			!this.#watchedFiles.has(uri)
+			!this.#clientManagedUris.has(uri)
+			&& !this.#dependencyFiles.has(uri)
+			&& !this.#watchedFiles.has(uri)
 		)
 	}
 
 	private isOnlyWatched(uri: string): boolean {
 		return (
-			this.#watchedFiles.has(uri) &&
-			!this.#clientManagedUris.has(uri) &&
-			!this.#dependencyFiles.has(uri)
+			this.#watchedFiles.has(uri)
+			&& !this.#clientManagedUris.has(uri)
+			&& !this.#dependencyFiles.has(uri)
 		)
 	}
 }

@@ -63,8 +63,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				const idAttr = inferred.attributes?.find(a => a.name === 'id')
 				if (idAttr) {
 					const inferredConfig = idValidator(idAttr.value, ctx)
-					return inferredConfig === core.Failure ||
-						inferredConfig.prefix === config.prefix
+					return inferredConfig === core.Failure
+						|| inferredConfig.prefix === config.prefix
 					// Prefix doesn't match
 				}
 			}
@@ -79,8 +79,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			if (!inferred.value.value.includes(':')) {
 				if (config.prefix) {
-					inferred.value.value = config.prefix + 'minecraft:' +
-						inferred.value.value.slice(config.prefix.length)
+					inferred.value.value = config.prefix + 'minecraft:'
+						+ inferred.value.value.slice(config.prefix.length)
 				} else {
 					inferred.value.value = 'minecraft:' + inferred.value.value
 				}

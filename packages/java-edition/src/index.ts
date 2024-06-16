@@ -84,10 +84,10 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		config.env.mcmetaSummaryOverrides,
 	)
 	if (
-		!summary.blocks ||
-		!summary.commands ||
-		!summary.fluids ||
-		!summary.registries
+		!summary.blocks
+		|| !summary.commands
+		|| !summary.fluids
+		|| !summary.registries
 	) {
 		ctx.logger.error(
 			'[je-initialize] Failed loading mcmeta summaries. Expect everything to be broken.',
@@ -105,17 +105,17 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		linter: core.linter.nameConvention('value'),
 		nodePredicate: (n) =>
 			// nbt compound keys without mcdoc definition.
-			(!n.symbol &&
-				n.parent?.parent?.type === 'nbt:compound' &&
-				core.PairNode.is(n.parent) &&
-				n.type === 'string' &&
-				n.parent.key === n) ||
+			(!n.symbol
+				&& n.parent?.parent?.type === 'nbt:compound'
+				&& core.PairNode.is(n.parent)
+				&& n.type === 'string'
+				&& n.parent.key === n)
 			// nbt path keys without mcdoc definition.
-			(!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string') ||
+			|| (!n.symbol && n.parent?.type === 'nbt:path' && n.type === 'string')
 			// mcdoc compound key definition outside of `::minecraft` modules.
-			(mcdoc.StructFieldNode.is(n.parent) &&
-				mcdoc.StructKeyNode.is(n) &&
-				!n.symbol?.path[0]?.startsWith('::minecraft')),
+			|| (mcdoc.StructFieldNode.is(n.parent)
+				&& mcdoc.StructKeyNode.is(n)
+				&& !n.symbol?.path[0]?.startsWith('::minecraft')),
 	})
 
 	mcdoc.runtime.registerAttribute(
