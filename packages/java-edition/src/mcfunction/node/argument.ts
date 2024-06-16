@@ -585,10 +585,6 @@ export namespace ParticleNode {
 		return SpecialTypes.has(type as SpecialType)
 	}
 
-	export function hasConfig(type: string) {
-		return SpecialTypes.has(type as SpecialType) || type === 'entity_effect'
-	}
-
 	export function is(node: core.AstNode | undefined): node is ParticleNode {
 		return (node as ParticleNode | undefined)?.type === 'mcfunction:particle'
 	}
