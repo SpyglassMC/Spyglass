@@ -438,40 +438,40 @@ export function typeDefinition<T>(
 		}
 	}
 
-	// TODO: attach a combination of all possible definitions
-	const attached = new Set<T>()
-
 	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
-		for (const def of node.validDefinitions) {
-			if (!attached.has(node.node.originalNode)) {
-				options.attachTypeInfo(node.node.originalNode, def.typeDef)
-				const attributes = def.typeDef.attributes
-				handleAttributes(attributes, options.context, (handler, config) => {
-					const parser = handler.stringParser?.(config, options.context)
-					if (!parser) {
+		if (node.validDefinitions.length === 1) {
+			options.attachTypeInfo(node.node.originalNode, node.validDefinitions[0].typeDef)
+			const attributes = node.validDefinitions[0].typeDef.attributes
+			handleAttributes(attributes, options.context, (handler, config) => {
+				const parser = handler.stringParser?.(config, options.context)
+				if (!parser) {
+					return
+				}
+				options.stringAttacher(node.node.originalNode, (node) => {
+					const src = new core.Source(node.value, node.valueMap)
+					const start = src.cursor
+					const child = parser(src, options.context)
+					if (!child) {
+						options.context.err.report(
+							localize('expected', localize('mcdoc.runtime.checker.value')),
+							core.Range.create(start, src.skipRemaining()),
+						)
 						return
+					} else if (src.canRead()) {
+						options.context.err.report(
+							localize('mcdoc.runtime.checker.trailing'),
+							core.Range.create(src.cursor, src.skipRemaining()),
+						)
 					}
-					options.stringAttacher(node.node.originalNode, (node) => {
-						const src = new core.Source(node.value, node.valueMap)
-						const start = src.cursor
-						const child = parser(src, options.context)
-						if (!child) {
-							options.context.err.report(
-								localize('expected', localize('mcdoc.runtime.checker.value')),
-								core.Range.create(start, src.skipRemaining()),
-							)
-							return
-						} else if (src.canRead()) {
-							options.context.err.report(
-								localize('mcdoc.runtime.checker.trailing'),
-								core.Range.create(src.cursor, src.skipRemaining()),
-							)
-						}
-						node.children = [child]
-					})
+					node.children = [child]
 				})
-				attached.add(node.node.originalNode)
-			}
+			})
+		} else if (node.validDefinitions.length > 1) {
+			options.attachTypeInfo(node.node.originalNode, {
+				kind: 'union',
+				members: node.validDefinitions.map(d => d.typeDef),
+			})
+			// TODO: don't ignore attributes with a stringParser?
 		}
 		// TODO: attach type info to keys
 		for (const child of node.children) {
