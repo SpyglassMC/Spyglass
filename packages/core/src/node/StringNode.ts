@@ -66,6 +66,7 @@ export type QuoteTypeConfig = 'always double' | 'always single' | 'prefer double
 
 export interface StringBaseNode extends AstNode {
 	readonly options: StringOptions
+	quote?: Quote
 	value: string
 	readonly valueMap: IndexMap
 }

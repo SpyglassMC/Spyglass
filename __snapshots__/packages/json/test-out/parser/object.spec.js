@@ -52,7 +52,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -72,7 +73,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                   "end": 7
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -93,7 +95,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 4,
@@ -117,7 +120,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                 "end": 7
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "end": {
           "start": 9,
@@ -149,7 +153,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                   "end": 12
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -169,7 +174,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                   "end": 17
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -190,7 +196,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                 "end": 12
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 14,
@@ -214,7 +221,8 @@ exports['JSON object parser object() Parse "{"1": "2", "3": "4"}" 1'] = {
                 "end": 17
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -255,7 +263,8 @@ exports['JSON object parser object() Parse "{"1": "2"}" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -275,7 +284,8 @@ exports['JSON object parser object() Parse "{"1": "2"}" 1'] = {
                   "end": 7
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -296,7 +306,8 @@ exports['JSON object parser object() Parse "{"1": "2"}" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 4,
@@ -320,7 +331,8 @@ exports['JSON object parser object() Parse "{"1": "2"}" 1'] = {
                 "end": 7
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -361,7 +373,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:object",
@@ -395,7 +408,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                           "end": 8
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   },
                   {
                     "type": "json:string",
@@ -415,7 +429,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                           "end": 13
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "key": {
@@ -436,7 +451,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                         "end": 8
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 },
                 "sep": {
                   "start": 10,
@@ -460,7 +476,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                         "end": 13
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ]
@@ -484,7 +501,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 4,
@@ -522,7 +540,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                         "end": 8
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 },
                 {
                   "type": "json:string",
@@ -542,7 +561,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                         "end": 13
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "key": {
@@ -563,7 +583,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                       "end": 8
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               },
               "sep": {
                 "start": 10,
@@ -587,7 +608,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                       "end": 13
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             }
           ]
@@ -622,7 +644,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                   "end": 25
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "sep": {
@@ -647,7 +670,8 @@ exports['JSON object parser object() Parse "{"1": {"2": "3"}, {"4": "5"}}" 1'] =
                 "end": 25
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -697,7 +721,8 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -717,7 +742,8 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
                   "end": 9
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -738,7 +764,8 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 6,
@@ -762,7 +789,8 @@ exports['JSON object parser object() Parse "{"hey": "there"}" 1'] = {
                 "end": 9
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -803,7 +831,8 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -833,7 +862,8 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
                   "end": 12
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -854,7 +884,8 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 7,
@@ -888,7 +919,8 @@ exports['JSON object parser object() Parse "{"test": "⧵u1z34"}" 1'] = {
                 "end": 12
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -948,7 +980,8 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
                   "end": 4
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -978,7 +1011,8 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
                   "end": 14
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1009,7 +1043,8 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
                 "end": 4
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 5,
@@ -1043,7 +1078,8 @@ exports['JSON object parser object() Parse "{"⧵"": "⧵u1234"}" 1'] = {
                 "end": 14
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -1094,7 +1130,8 @@ exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
                   "end": 4
                 }
               }
-            ]
+            ],
+            "quote": "\""
           },
           {
             "type": "json:string",
@@ -1114,7 +1151,8 @@ exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
                   "end": 8
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "key": {
@@ -1145,7 +1183,8 @@ exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
                 "end": 4
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 5,
@@ -1169,7 +1208,8 @@ exports['JSON object parser object() Parse "{"⧵z": "ermm"}" 1'] = {
                 "end": 8
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]

@@ -296,7 +296,8 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                                 "end": 62
                               }
                             }
-                          ]
+                          ],
+                          "quote": "\""
                         }
                       ],
                       "range": {
@@ -340,7 +341,8 @@ exports['mcdoc __fixture__ enum/string 1'] = {
                                 "end": 110
                               }
                             }
-                          ]
+                          ],
+                          "quote": "\""
                         }
                       ],
                       "range": {

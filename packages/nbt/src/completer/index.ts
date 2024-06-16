@@ -6,7 +6,7 @@ import type {
 	NbtNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
-} from '../node'
+} from '../node/index.js'
 
 const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
@@ -62,15 +62,11 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 })
 
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
+	if (node.type === 'nbt:string' && node.children?.length) {
+		return core.completer.string(node, ctx)
+	}
 	if (!node.typeDef) {
 		return []
-	}
-	if (
-		node.children && node.children.length > 0
-		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
-	) {
-		const child = node.children[0]
-		return ctx.meta.getCompleter(child.type)(child, ctx)
 	}
 	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
 	return getValues(node.typeDef, range, ctx)

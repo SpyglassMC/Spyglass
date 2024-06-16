@@ -17,7 +17,8 @@ exports['mcfunction argument brigadier:string Parse """" with {"type":"phrase"} 
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }
@@ -65,7 +66,8 @@ exports['mcfunction argument brigadier:string Parse ""quoted phrase"" with {"typ
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }

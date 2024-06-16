@@ -1446,7 +1446,8 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                                             "end": 228
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "quote": "\""
                                     }
                                   ],
                                   "range": {
@@ -1475,7 +1476,8 @@ exports['mcdoc __fixture__ dispatcher/random number generator 1'] = {
                                             "end": 240
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "quote": "\""
                                     }
                                   ],
                                   "range": {

@@ -433,7 +433,8 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -454,7 +455,8 @@ exports['nbt list() Parse "["string", 1b]" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 9,
@@ -534,7 +536,8 @@ exports['nbt list() Parse "["string"]" 1'] = {
                   "end": 2
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -555,7 +558,8 @@ exports['nbt list() Parse "["string"]" 1'] = {
                 "end": 2
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ],
@@ -755,7 +759,8 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
                   "end": 12
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -776,7 +781,8 @@ exports['nbt longArray() Parse "[L; 0L, 2, "string"]" 1'] = {
                 "end": 12
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
