@@ -923,7 +923,7 @@ exports['mcfunction argument minecraft:particle Parse "item carrot_on_a_stick" 1
         ]
       },
       {
-        "type": "mcfunction:item",
+        "type": "mcfunction:item_stack",
         "range": {
           "start": 5,
           "end": 22

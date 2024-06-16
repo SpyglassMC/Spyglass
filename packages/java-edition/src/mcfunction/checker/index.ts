@@ -9,7 +9,7 @@ import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js
 import {
 	BlockNode,
 	EntityNode,
-	ItemNode,
+	ItemStackNode,
 	JsonNode,
 	NbtNode,
 	NbtResourceNode,
@@ -40,8 +40,8 @@ const rootCommand = (
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
 			entity(node, ctx)
-		} else if (ItemNode.is(node)) {
-			item(node, ctx)
+		} else if (ItemStackNode.is(node)) {
+			itemStack(node, ctx)
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
 		} else if (JsonNode.is(node)) {
@@ -81,15 +81,44 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	}
 }
 
-const item: core.SyncChecker<ItemNode> = (node, ctx) => {
-	if (!node.nbt) {
-		return
+const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
+	if (node.nbt) {
+		nbt.checker.index(
+			'minecraft:item',
+			core.ResourceLocationNode.toString(node.id, 'full'),
+		)(node.nbt, ctx)
 	}
+	if (node.components) {
+		const groupedComponents = new Map<
+			string,
+			core.PairNode<core.ResourceLocationNode, nbt.NbtNode>[]
+		>()
 
-	nbt.checker.index(
-		'minecraft:item',
-		core.ResourceLocationNode.toString(node.id, 'full'),
-	)(node.nbt, ctx)
+		node.components!.children.forEach(component => {
+			const componentName = core.ResourceLocationNode.toString(
+				component.key!,
+				'full',
+			)
+
+			if (!groupedComponents.has(componentName)) {
+				groupedComponents.set(componentName, [])
+			}
+
+			groupedComponents.get(componentName)!.push(component)
+		})
+
+		groupedComponents.forEach((components) => {
+			if (components.length > 1) {
+				components.forEach(component => {
+					ctx.err.report(
+						localize('mcfunction.parser.duplicate-components'),
+						component.key!.range,
+						core.ErrorSeverity.Warning,
+					)
+				})
+			}
+		})
+	}
 }
 
 const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
@@ -215,7 +244,7 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
-	meta.registerChecker<ItemNode>('mcfunction:item', item)
+	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

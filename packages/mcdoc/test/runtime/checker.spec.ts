@@ -863,7 +863,7 @@ describe('mcdoc runtime checker', () => {
 				value: { kind: 'double', value: Number(value) },
 			}
 		} else if (typeof value === 'string') {
-			return { kind: 'literal', value: { kind: 'string', value: value } }
+			return { kind: 'literal', value: { kind: 'string', value } }
 		} else if (Array.isArray(value)) {
 			return { kind: 'list', item: { kind: 'any' } }
 		} else if (typeof value === 'object') {

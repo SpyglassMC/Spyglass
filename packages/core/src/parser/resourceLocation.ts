@@ -14,6 +14,7 @@ const Terminators = new Set([
 	'\r',
 	'\n',
 	'=',
+	'~',
 	',',
 	'"',
 	"'",
@@ -24,6 +25,7 @@ const Terminators = new Set([
 	'(',
 	')',
 	';',
+	'|',
 ])
 export const LegalResourceLocationCharacters = new Set([
 	'a',
