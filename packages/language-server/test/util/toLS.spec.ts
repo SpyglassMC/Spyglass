@@ -1,9 +1,9 @@
-import type * as core from '@spyglassmc/core'
+import * as core from '@spyglassmc/core'
 import { showWhitespaceGlyph } from '@spyglassmc/core/test-out/utils.js'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type * as ls from 'vscode-languageserver/node.js'
-import { semanticTokens } from '../../lib/util/toLS.js'
+import * as toLS from '../../lib/util/toLS.js'
 
 /**
  * The result of decoding a semantic token from an integer list.
@@ -37,7 +37,7 @@ const decodeSemanticTokens = (
 	return decodedTokens
 }
 
-describe('semanticTokens', () => {
+describe('toLS semanticTokens', () => {
 	const tokens: core.ColorToken[] = [
 		{
 			range: {
@@ -62,7 +62,7 @@ describe('semanticTokens', () => {
 				showWhitespaceGlyph(content)
 			}" ${multilineStr}`
 			it(itTitle, () => {
-				const { data } = semanticTokens(
+				const { data } = toLS.semanticTokens(
 					tokens,
 					doc,
 					hasMultilineTokenSupport,
@@ -71,4 +71,26 @@ describe('semanticTokens', () => {
 			})
 		}
 	}
+})
+
+describe('toLS completionItem', () => {
+	const doc = TextDocument.create(
+		'spyglassmc:///test.mcfunction',
+		'mcfunction',
+		0,
+		'adv\\\nan\\\nce',
+	)
+	const item = core.CompletionItem.create(
+		'advancement',
+		core.Range.create(0, 11),
+	)
+	it('Should map correctly when cursor is in first line', () => {
+		snapshot(toLS.completionItem(item, doc, 1, true, true))
+	})
+	it('Should map correctly when cursor is in second line', () => {
+		snapshot(toLS.completionItem(item, doc, 6, true, true))
+	})
+	it('Should map correctly when cursor is in third line', () => {
+		snapshot(toLS.completionItem(item, doc, 10, true, true))
+	})
 })

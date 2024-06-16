@@ -216,30 +216,133 @@ export function completionItem(
 	doc: TextDocument,
 	requestedOffset: number,
 	insertReplaceSupport: boolean | undefined,
+	hasFlawedMultiLineSupport: boolean | undefined,
 ): ls.CompletionItem {
 	const insertText = completion.insertText ?? completion.label
-	const canInsertReplace = insertReplaceSupport &&
-		![core.CR, core.LF, core.CRLF].includes(insertText)
-	const textEdit: ls.TextEdit | ls.InsertReplaceEdit = canInsertReplace
+
+	/**
+	 * When VS Code receives a list of `CompletionItem`s, it filters the items
+	 * by checking if they start with a prefix. The prefix is the content between
+	 * the start of the item's ranges (which is required to be the same position
+	 * for insert range and replace range) and the cursor. It additionally
+	 * imposes the restrictions that (1) the prefix must be within one line and
+	 * (2) the prefix range must contain the cursor.
+	 * (See also VS Code's documentation for [vscode.CompletionItem#range](https://github.com/microsoft/vscode/blob/47b1183dfda519c32d78b591cfa721d3b0b874ae/src/vs/vscode.d.ts#L3803))
+	 *
+	 * Spyglass can provide `CompletionItem`s that have `textEdit` ranges
+	 * spanning multiple lines in cases such as a mcfunction literal with a
+	 * backslash and newline in itself. Such ranges cannot be used as the prefix
+	 * by VS Code and will cause no completions getting displayed to the user.
+	 *
+	 * To fix the problem, this function breaks down the actual range of the
+	 * `CompletionItem` into a `leadingRange` (that may be `undefined` or
+	 * multi-line), a `filterRange` (that is for VS Code's prefix matching
+	 * filtering, is single-line and contains the cursor), and a `trailingRange`
+	 * (that may be `undefined` or multi-line). The `filterRange` will be used as
+	 * the ranges in the main `textEdit` property of the `CompletionItem`, where
+	 * the `insertText` will be edited into, and the `leadingRange` and
+	 * `trailingRange` will be used in `additionalTextEdits` to delete their
+	 * contents. This will result in the same net edit as a single `TextEdit`
+	 * that replaces the content of the actual range with `insertText`.
+	 */
+	function breakDownRange(): {
+		leadingRange?: ls.Range | undefined
+		filterRange: ls.Range
+		trailingRange?: ls.Range | undefined
+	} {
+		const fullRange = range(completion.range, doc)
+
+		if (!hasFlawedMultiLineSupport) {
+			// No need to break down the range.
+			return { filterRange: fullRange }
+		}
+
+		// Find the `ls.Position` of the last and the next newline characters
+		// before the cursor within the replace range, if any.
+		const originalText = doc.getText(fullRange)
+		// Indexing (instead of iterating) here is appropriate, since LSP offset
+		// is calculated by UTF-16 code units, not by Unicode code points.
+		const lastLFRelativeOffset = originalText.slice(0, requestedOffset)
+			.lastIndexOf(core.LF)
+		const filterLineStartPosition = lastLFRelativeOffset === -1
+			? undefined
+			: doc.positionAt(completion.range.start + lastLFRelativeOffset + 1)
+		const nextCRLFRelativeOffset = originalText.indexOf(
+			core.CRLF,
+			requestedOffset,
+		)
+		const nextLFRelativeOffset = originalText.indexOf(
+			core.LF,
+			requestedOffset,
+		)
+		const nextNewlineRelativeOffset = nextCRLFRelativeOffset !== -1 &&
+				nextCRLFRelativeOffset < nextLFRelativeOffset
+			? nextCRLFRelativeOffset
+			: nextLFRelativeOffset
+		const filterLineEndPosition = nextNewlineRelativeOffset === -1
+			? undefined
+			: doc.positionAt(completion.range.start + nextNewlineRelativeOffset)
+
+		// Break down the full range according to the two newline positions.
+		return {
+			leadingRange: filterLineStartPosition
+				? ls.Range.create(fullRange.start, filterLineStartPosition)
+				: undefined,
+			// Clamp `filterRange` between the two newlines to make sure it is
+			// single-line.
+			filterRange: ls.Range.create(
+				filterLineStartPosition ?? fullRange.start,
+				filterLineEndPosition ?? fullRange.end,
+			),
+			trailingRange: filterLineEndPosition
+				? ls.Range.create(filterLineEndPosition, fullRange.end)
+				: undefined,
+		}
+	}
+
+	const { leadingRange, filterRange, trailingRange } = breakDownRange()
+	const textEdit: ls.TextEdit | ls.InsertReplaceEdit = insertReplaceSupport
 		? ls.InsertReplaceEdit.create(
 			insertText,
-			/* insert  */ range(
-				core.Range.create(completion.range.start, requestedOffset),
-				doc,
-			),
-			/* replace */ range(completion.range, doc),
+			ls.Range.create(filterRange.start, doc.positionAt(requestedOffset)),
+			filterRange,
 		)
-		: ls.TextEdit.replace(range(completion.range, doc), insertText)
+		: ls.TextEdit.replace(filterRange, insertText)
 	const ans: ls.CompletionItem = {
 		label: completion.label,
 		kind: completion.kind,
 		detail: completion.detail,
 		documentation: completion.documentation,
-		filterText: completion.filterText,
+		/*
+		 * When the `filterRange` starts at the start of the actual range, the
+		 * text content in `filterRange` is the actual prefix of the completed
+		 * value and VS Code filtering will work properly.
+		 *
+		 * However, when there is a `leadingRange`, the text content in the
+		 * `filterRange` will be in the middle of the completed value. VS Code's
+		 * prefix matching will fail, resulting in this `CompletionItem` not
+		 * getting displayed to the user. This is fixed by overwriting the
+		 * `filterText` to be the exact value as the content of `filterRange` so
+		 * that the `CompletionItem`s will be shown.
+		 *
+		 * TODO: Improve mcfunction completers so that they keep the user's insane
+		 * backslashes and we can implement our own proper prefix checking here
+		 * to make the filtering and sorting more correct for editors with flawed
+		 * multi-line support.
+		 */
+		filterText: hasFlawedMultiLineSupport && leadingRange
+			? doc.getText(filterRange)
+			: completion.filterText,
 		sortText: completion.sortText,
 		textEdit,
 		insertTextFormat: InsertTextFormat.Snippet,
 		insertTextMode: ls.InsertTextMode.adjustIndentation,
+		additionalTextEdits: (leadingRange || trailingRange)
+			? [
+				...leadingRange ? [ls.TextEdit.del(leadingRange)] : [],
+				...trailingRange ? [ls.TextEdit.del(trailingRange)] : [],
+			]
+			: undefined,
 		...(completion.deprecated
 			? { tags: [ls.CompletionItemTag.Deprecated] }
 			: {}),
