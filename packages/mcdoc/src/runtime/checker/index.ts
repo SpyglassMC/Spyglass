@@ -450,62 +450,8 @@ export function typeDefinition<T>(
 		}
 	}
 
-	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
-		function handleStringAttachers(
-			runtimeValue: RuntimeNode<T>,
-			typeDef: SimplifiedMcdocTypeNoUnion,
-		) {
-			return handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-				const parser = handler.stringParser?.(config, options.context)
-				if (!parser) {
-					return
-				}
-				options.stringAttacher(runtimeValue.originalNode, (node) => {
-					const src = new core.Source(node.value, node.valueMap)
-					const start = src.cursor
-					const child = parser(src, options.context)
-					if (!child) {
-						options.context.err.report(
-							localize('expected', localize('mcdoc.runtime.checker.value')),
-							core.Range.create(start, src.skipRemaining()),
-						)
-						return
-					} else if (src.canRead()) {
-						options.context.err.report(
-							localize('mcdoc.runtime.checker.trailing'),
-							core.Range.create(src.cursor, src.skipRemaining()),
-						)
-					}
-					node.children = [child]
-				})
-			})
-		}
-
-		if (node.validDefinitions.length === 1) {
-			const { typeDef, desc } = node.validDefinitions[0]
-			options.attachTypeInfo(node.node.originalNode, typeDef, desc)
-			handleStringAttachers(node.node, typeDef)
-		} else if (node.validDefinitions.length > 1) {
-			options.attachTypeInfo(node.node.originalNode, {
-				kind: 'union',
-				members: node.validDefinitions.map(d => d.typeDef),
-			})
-			// when there are multiple valid definitions, we don't run any string parsers,
-		}
-		for (const child of node.children) {
-			if (child.key && child.key.typeDef) {
-				options.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
-				handleStringAttachers(child.key.runtimeValue, child.key.typeDef)
-			}
-
-			for (const node of child.possibleValues) {
-				attachTypeInfo(node)
-			}
-		}
-	}
-
 	for (const node of rootNode.possibleValues) {
-		attachTypeInfo(node)
+		attachTypeInfo(node, options)
 	}
 
 	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
@@ -513,6 +459,61 @@ export function typeDefinition<T>(
 			options.reportError(error.error)
 		}
 	}
+}
+
+function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, options: McdocCheckerOptions<T>) {
+	if (node.validDefinitions.length === 1) {
+		const { typeDef, desc } = node.validDefinitions[0]
+		options.attachTypeInfo(node.node.originalNode, typeDef, desc)
+		handleStringAttachers(node.node, typeDef, options)
+	} else if (node.validDefinitions.length > 1) {
+		options.attachTypeInfo(node.node.originalNode, {
+			kind: 'union',
+			members: node.validDefinitions.map(d => d.typeDef),
+		})
+		// when there are multiple valid definitions, we don't run any string parsers,
+	}
+	for (const child of node.children) {
+		if (child.key && child.key.typeDef) {
+			options.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
+			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, options)
+		}
+
+		for (const node of child.possibleValues) {
+			attachTypeInfo(node, options)
+		}
+	}
+}
+
+function handleStringAttachers<T>(
+	runtimeValue: RuntimeNode<T>,
+	typeDef: SimplifiedMcdocTypeNoUnion,
+	options: McdocCheckerOptions<T>,
+) {
+	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
+		const parser = handler.stringParser?.(config, options.context)
+		if (!parser) {
+			return
+		}
+		options.stringAttacher(runtimeValue.originalNode, (node) => {
+			const src = new core.Source(node.value, node.valueMap)
+			const start = src.cursor
+			const child = parser(src, options.context)
+			if (!child) {
+				options.context.err.report(
+					localize('expected', localize('mcdoc.runtime.checker.value')),
+					core.Range.create(start, src.skipRemaining()),
+				)
+				return
+			} else if (src.canRead()) {
+				options.context.err.report(
+					localize('mcdoc.runtime.checker.trailing'),
+					core.Range.create(src.cursor, src.skipRemaining()),
+				)
+			}
+			node.children = [child]
+		})
+	})
 }
 
 function condenseErrorsAndFilterSiblings<T>(
@@ -708,15 +709,15 @@ function condenseErrorsAndFilterSiblings<T>(
 	return { definitions: validDefinitions.map(d => d.definition), condensedErrors: errors }
 }
 
-interface ValidDefintionResultChildDefintion {
+interface ShallowCheckResultChildDefinition {
 	type: McdocType
 	keyType?: SimplifiedMcdocTypeNoUnion
 	desc?: string
 }
 
-interface ValidDefintionResult<T> {
+interface ShallowCheckResult<T> {
 	errors: McdocCheckerError<T>[]
-	childDefinitions: (ValidDefintionResultChildDefintion | undefined)[]
+	childDefinitions: (ShallowCheckResultChildDefinition | undefined)[]
 }
 
 function checkShallowly<T>(
@@ -725,7 +726,7 @@ function checkShallowly<T>(
 	children: RuntimeUnion<T>[],
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	options: McdocCheckerOptions<T>,
-): ValidDefintionResult<T> {
+): ShallowCheckResult<T> {
 	const typeDefValueType = getValueType(typeDef)
 	const runtimeValueType = getValueType(simplifiedInferred)
 
@@ -748,7 +749,7 @@ function checkShallowly<T>(
 		}
 	}
 
-	const childDefinitions: (ValidDefintionResultChildDefintion | undefined)[] = Array(
+	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
 		children.length,
 	).fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
@@ -803,7 +804,7 @@ function checkShallowly<T>(
 				string,
 				{
 					values: { pair: RuntimePair<T>; index: number }[]
-					definition: ValidDefintionResultChildDefintion | undefined
+					definition: ShallowCheckResultChildDefinition | undefined
 				}
 			>()
 			const otherKvps: { value: RuntimePair<T>; index: number }[] = []
