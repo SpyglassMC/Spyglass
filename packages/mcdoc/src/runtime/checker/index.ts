@@ -451,7 +451,10 @@ export function typeDefinition<T>(
 	}
 
 	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
-		function handleStringAttachers(runtimeValue: RuntimeNode<T>, typeDef: SimplifiedMcdocTypeNoUnion) {
+		function handleStringAttachers(
+			runtimeValue: RuntimeNode<T>,
+			typeDef: SimplifiedMcdocTypeNoUnion,
+		) {
 			return handleAttributes(typeDef.attributes, options.context, (handler, config) => {
 				const parser = handler.stringParser?.(config, options.context)
 				if (!parser) {
@@ -481,7 +484,7 @@ export function typeDefinition<T>(
 		if (node.validDefinitions.length === 1) {
 			const { typeDef, desc } = node.validDefinitions[0]
 			options.attachTypeInfo(node.node.originalNode, typeDef, desc)
-			handleStringAttachers(node.node, typeDef);
+			handleStringAttachers(node.node, typeDef)
 		} else if (node.validDefinitions.length > 1) {
 			options.attachTypeInfo(node.node.originalNode, {
 				kind: 'union',
@@ -492,7 +495,7 @@ export function typeDefinition<T>(
 		for (const child of node.children) {
 			if (child.key && child.key.typeDef) {
 				options.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
-				handleStringAttachers(child.key.runtimeValue, child.key.typeDef);
+				handleStringAttachers(child.key.runtimeValue, child.key.typeDef)
 			}
 
 			for (const node of child.possibleValues) {
