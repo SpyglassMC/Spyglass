@@ -145,12 +145,6 @@
     ],
     "commands": [
       {
-        "command": "spyglassmc.createFile",
-        "title": "%spyglassmc.commands.createFile.title%",
-        "category": "Spyglass",
-        "enablement": "workspaceFolderCount != 0"
-      },
-      {
         "command": "spyglassmc.dataHackPubify",
         "title": "%spyglassmc.commands.dataHackPubify.title%",
         "category": "Spyglass"
@@ -169,10 +163,6 @@
     ],
     "menus": {
       "commandPalette": [
-        {
-          "command": "spyglassmc.createFile",
-          "when": "workspaceFolderCount != 0"
-        },
         {
           "command": "spyglassmc.dataHackPubify"
         },
