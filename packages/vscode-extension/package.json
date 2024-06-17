@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "type": "commonjs",
   "main": "dist/extension.js",
-  "author": "SPGoding",
+  "author": "Spyglass Contributers",
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
