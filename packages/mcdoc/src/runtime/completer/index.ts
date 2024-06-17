@@ -29,10 +29,7 @@ export function getFields(
 				}
 				if (field.key.kind === 'string') {
 					return getStringCompletions(field.key, ctx)
-						.map(c => ({
-							key: c.value,
-							field,
-						}))
+						.map(c => ({ key: c.value, field }))
 				}
 				return []
 			})
