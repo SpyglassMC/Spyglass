@@ -10,7 +10,6 @@ export function getFields(
 	typeDef: core.DeepReadonly<SimplifiedMcdocType>,
 	ctx: core.CompleterContext,
 ): SimpleCompletionField[] {
-	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
 			const allFields = new Map<string, SimpleCompletionField>()
@@ -54,7 +53,6 @@ export function getValues(
 	typeDef: core.DeepReadonly<McdocType>,
 	ctx: core.CompleterContext,
 ): SimpleCompletionValue[] {
-	// TODO: handle attributes
 	switch (typeDef.kind) {
 		case 'union':
 			const allValues = new Map<string, SimpleCompletionValue>()
