@@ -24,6 +24,7 @@ import type {
 	ComponentTestExistsNode,
 	ComponentTestNode,
 	ComponentTestsAllOfNode,
+	ComponentTestsAnyOfNode,
 	ComponentTestSubpredicateNode,
 	CoordinateNode,
 	EntityNode,
@@ -48,7 +49,6 @@ import type {
 import {
 	BlockStatesNode,
 	ComponentListNode,
-	ComponentTestsAnyOfNode,
 	ComponentTestsNode,
 	CoordinateSystem,
 	EntitySelectorArgumentsNode,
@@ -464,7 +464,7 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 				]),
 			oldFormat
 				? core.optional(core.failOnEmpty(nbt.parser.compound))
-				: core.optional(core.failOnEmpty(componentTests)),
+				: core.optional(componentTests),
 		]),
 		(res) => {
 			const ans: ItemPredicateNode = {
@@ -1642,18 +1642,21 @@ const componentTestsAnyOf: core.InfallibleParser<ComponentTestsAnyOfNode> = (src
 	return ans
 }
 
-const componentTests: core.InfallibleParser<ComponentTestsNode> = core.map(
-	core.sequence([
-		core.literal('['),
-		core.optional(core.failOnEmpty(componentTestsAnyOf)),
-		core.literal(']'),
-	]),
-	(res) => {
-		const ans: ComponentTestsNode = {
-			type: 'mcfunction:component_tests',
-			range: res.range,
-			children: res.children.filter(ComponentTestsAnyOfNode.is).map(c => c),
-		}
-		return ans
-	},
-)
+const componentTests: core.Parser<ComponentTestsNode> = (src, ctx) => {
+	const ans: ComponentTestsNode = {
+		type: 'mcfunction:component_tests',
+		range: core.Range.create(src),
+		children: [],
+	}
+
+	if (!src.trySkip('[')) {
+		return core.Failure
+	}
+	src.skipWhitespace()
+	ans.children.push(componentTestsAnyOf(src, ctx))
+	src.skipWhitespace()
+	core.literal(']')(src, ctx)
+
+	ans.range.end = src.cursor
+	return ans
+}
