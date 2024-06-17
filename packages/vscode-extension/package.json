@@ -65,7 +65,7 @@
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
-  "icon": "icon.png",
+  "icon": "resource/icon.png",
   "categories": [
     "Formatters",
     "Linters",
