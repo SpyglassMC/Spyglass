@@ -1,8 +1,7 @@
 {
-	"spyglassmc.commands.createFile.title": "Créer un fichier",
 	"spyglassmc.commands.resetProjectCache.title": "Réinitialiser le cache du projet",
 	"spyglassmc.commands.showCacheRoot.title": "Ouvrir le dossier du Cache",
 	"spyglassmc.description": "Fonctionnalités linguistiques pour les data packs Minecraft : Java Edition",
-	"spyglassmc.displayName": "Spyglass",
+	"spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
 	"spyglassmc.trace.server": "Trace la communication entre VS Code et le Serveur de Language Spyglass."
 }

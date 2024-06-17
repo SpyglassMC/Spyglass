@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "type": "commonjs",
   "main": "dist/extension.js",
-  "author": "SPGoding",
+  "author": "Spyglass Contributors",
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
@@ -65,7 +65,7 @@
   },
   "displayName": "%spyglassmc.displayName%",
   "description": "%spyglassmc.description%",
-  "icon": "icon.png",
+  "icon": "resource/icon.png",
   "categories": [
     "Formatters",
     "Linters",
@@ -145,12 +145,6 @@
     ],
     "commands": [
       {
-        "command": "spyglassmc.createFile",
-        "title": "%spyglassmc.commands.createFile.title%",
-        "category": "Spyglass",
-        "enablement": "workspaceFolderCount != 0"
-      },
-      {
         "command": "spyglassmc.dataHackPubify",
         "title": "%spyglassmc.commands.dataHackPubify.title%",
         "category": "Spyglass"
@@ -169,10 +163,6 @@
     ],
     "menus": {
       "commandPalette": [
-        {
-          "command": "spyglassmc.createFile",
-          "when": "workspaceFolderCount != 0"
-        },
         {
           "command": "spyglassmc.dataHackPubify"
         },
