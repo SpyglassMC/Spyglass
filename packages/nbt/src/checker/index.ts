@@ -43,7 +43,7 @@ function getIndices(
 	id: core.FullResourceLocation | readonly core.FullResourceLocation[] | undefined,
 ): mcdoc.ParallelIndices {
 	if (typeof id === 'string') {
-		return [{ kind: 'static', value: id }]
+		return [{ kind: 'static', value: core.ResourceLocation.shorten(id) }]
 	} else if (id === undefined || id.length === 0) {
 		return [{ kind: 'static', value: '%fallback' }]
 	} else {
