@@ -31,7 +31,7 @@
   },"5": {
     "doc": "Commands",
     "title": "Commands",
-    "content": "spyglassmc.createFile . Nah I haven&#8217;t made this yet. Create a new resource in the data pack. spyglassmc.showCacheRoot . Show the cache folder of Spyglass in the platform-specific explorer program. spyglassmc.resetProjectCache . Reset the symbols cache for the current project. spyglassmc.dataHackPubify . Data Hack Pubify a string. ",
+    "content": "spyglassmc.showCacheRoot . Show the cache folder of Spyglass in the platform-specific explorer program. spyglassmc.resetProjectCache . Reset the symbols cache for the current project. spyglassmc.dataHackPubify . Data Hack Pubify a string. ",
     "url": "/user/commands.html#commands",
     "relUrl": "/user/commands.html#commands"
   },"6": {
