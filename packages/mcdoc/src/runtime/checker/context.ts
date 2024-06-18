@@ -36,6 +36,7 @@ export type ErrorReporter<T> = (error: McdocCheckerError<T>) => void
 
 export interface McdocCheckerContext<T> extends core.CheckerContext {
 	allowMissingKeys: boolean
+	requireCanonical: boolean
 	isEquivalent: NodeEquivalenceChecker
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
@@ -51,6 +52,7 @@ export namespace McdocCheckerContext {
 		return {
 			...ctx,
 			allowMissingKeys: options.allowMissingKeys ?? false,
+			requireCanonical: options.requireCanonical ?? false,
 			isEquivalent: options.isEquivalent ?? (() => false),
 			getChildren: options.getChildren ?? (() => []),
 			reportError: options.reportError ?? (() => {}),

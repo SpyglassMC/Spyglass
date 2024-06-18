@@ -1,26 +1,25 @@
 import * as core from '@spyglassmc/core'
 import type { Attribute, StructTypePairField } from '../../type/index.js'
-import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
-import type { SimpleCompletionValue } from '../completer/index.js'
+import type { McdocCheckerContext, SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import type { McdocAttributeValidator } from './validator.js'
 
 export * as validator from './validator.js'
 
 export interface McdocAttribute<C = unknown> {
-	checkInferred?: (
+	checkInferred?: <T>(
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
-		ctx: core.CheckerContext,
+		ctx: McdocCheckerContext<T>,
 	) => boolean
-	mapField?: (
+	mapField?: <T>(
 		config: C,
 		field: StructTypePairField,
-		ctx: core.CheckerContext,
+		ctx: McdocCheckerContext<T>,
 	) => StructTypePairField
-	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
-	stringParser?: (
+	filterElement?: <T>(config: C, ctx: McdocCheckerContext<T>) => boolean
+	stringParser?: <T>(
 		config: C,
-		ctx: core.CheckerContext,
+		ctx: McdocCheckerContext<T>,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
 	stringMocker?: (config: C, ctx: core.CompleterContext) => core.AstNode | undefined
 }
