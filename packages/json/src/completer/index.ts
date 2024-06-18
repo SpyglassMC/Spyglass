@@ -66,14 +66,14 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 })
 
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
-	if (node.type === 'json:string' && node.children?.length) {
+	const insideRange = core.Range.contains(node, ctx.offset, true)
+	if (node.type === 'json:string' && node.children?.length && insideRange) {
 		return core.completer.string(node, ctx)
 	}
 	if (!node.typeDef) {
 		return []
 	}
-	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
-	return getValues(node.typeDef, range, ctx)
+	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
 }
 
 function getValues(
