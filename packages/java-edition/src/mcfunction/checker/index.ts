@@ -118,9 +118,14 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 								core.ErrorSeverity.Warning,
 							)
 						} else if (nbt.NbtCompoundNode.is(test.value)) {
-							test.value.children.filter(p => p.key?.value !== 'min' && p.key?.value !== 'max').forEach(node => {
+							test.value.children.filter(p =>
+								p.key?.value !== 'min' && p.key?.value !== 'max'
+							).forEach(node => {
 								ctx.err.report(
-									localize('mcfunction.checker.item-predicate.count-unknown-key', node.key!.value),
+									localize(
+										'mcfunction.checker.item-predicate.count-unknown-key',
+										node.key!.value,
+									),
 									node.key!.range,
 									core.ErrorSeverity.Warning,
 								)
