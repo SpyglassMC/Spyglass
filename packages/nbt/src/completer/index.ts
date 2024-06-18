@@ -27,12 +27,14 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 }
 
 const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>({
-	key: (record, pair, _c, range, iv, ipe, exitingKeys) => {
+	key: (record, pair, ctx, range, iv, ipe, exitingKeys) => {
 		if (!record.typeDef) {
 			return []
 		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
-		return mcdoc.runtime.completer.getFields(record.typeDef).filter(({ key }) => !keySet.has(key))
+		return mcdoc.runtime.completer
+			.getFields(record.typeDef, ctx)
+			.filter(({ key }) => !keySet.has(key))
 			.map(({ key, field }) =>
 				core.CompletionItem.create(key, pair?.key ?? range, {
 					kind: core.CompletionKind.Field,
@@ -50,9 +52,10 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 		}
 		if (pair.key && record.typeDef) {
 			const pairKey = pair.key.value
-			const field = mcdoc.runtime.completer.getFields(record.typeDef).find(({ key }) =>
-				key === pairKey
-			)?.field.type
+			const field = mcdoc.runtime.completer.getFields(record.typeDef, ctx)
+				.find(({ key }) => key === pairKey)
+				?.field
+				.type
 			if (field) {
 				return getValues(field, range, ctx)
 			}
