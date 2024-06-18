@@ -35,7 +35,7 @@ export function activate(context: vsc.ExtensionContext) {
 	const documentSelector: lc.DocumentSelector = [
 		{ language: 'mcfunction' },
 		{ language: 'mcdoc' },
-		{ language: 'nbt' },
+		{ language: 'snbt' },
 		{ pattern: '**/pack.mcmeta' },
 		{ pattern: '**/data/*/*/**/*.json' },
 	]

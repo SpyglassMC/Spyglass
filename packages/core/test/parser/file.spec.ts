@@ -24,8 +24,9 @@ describe('file()', () => {
 	}, { content: '{test content}\nWhoops errors!' }]
 	for (const { content } of suites) {
 		it(`Parse "${showWhitespaceGlyph(content)}"`, () => {
+			const parser = meta.getParserForLanguageId('@spyglassmc/core#file-test')!
 			snapshot(
-				testParser(file(), content, {
+				testParser(file(parser), content, {
 					languageID: '@spyglassmc/core#file-test',
 					project: { meta },
 				}),

@@ -24,7 +24,7 @@ export interface LanguageOptions {
 	 */
 	extensions: FileExtension[]
 	triggerCharacters?: string[]
-	parser: Parser<AstNode>
+	parser?: Parser<AstNode>
 	completer?: Completer<any>
 }
 
@@ -236,9 +236,9 @@ export class MetaRegistry {
 	 * @returns The corresponding `Parser` for the language ID.
 	 * @throws If there's no such language in the registry.
 	 */
-	public getParserForLanguageId<N extends AstNode>(languageID: string): Parser<N> {
+	public getParserForLanguageId<N extends AstNode>(languageID: string): Parser<N> | undefined {
 		if (this.#languages.has(languageID)) {
-			return this.#languages.get(languageID)!.parser as Parser<N>
+			return this.#languages.get(languageID)!.parser as Parser<N> | undefined
 		}
 		throw new Error(`There is no parser registered for language ID '${languageID}'`)
 	}

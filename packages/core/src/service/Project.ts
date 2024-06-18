@@ -13,7 +13,7 @@ import { FileNode } from '../node/index.js'
 import { file } from '../parser/index.js'
 import { traversePreOrder } from '../processor/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
-import { LanguageError, Source } from '../source/index.js'
+import { LanguageError, Range, Source } from '../source/index.js'
 import { SymbolUtil } from '../symbol/index.js'
 import { CacheService } from './CacheService.js'
 import type { Config } from './Config.js'
@@ -699,9 +699,18 @@ export class Project implements ExternalEventEmitter {
 
 	private parse(doc: TextDocument): FileNode<AstNode> {
 		const ctx = ParserContext.create(this, { doc })
+		const parser = ctx.meta.getParserForLanguageId<AstNode>(ctx.doc.languageId)
+		if (!parser) {
+			return {
+				type: 'file',
+				range: Range.create(0),
+				children: [],
+				locals: Object.create(null),
+				parserErrors: [],
+			}
+		}
 		const src = new Source(doc.getText())
-		const node = file()(src, ctx)
-		return node
+		return file(parser)(src, ctx)
 	}
 
 	@SingletonPromise()

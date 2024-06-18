@@ -126,11 +126,11 @@
         "configuration": "./mcdoc-language-configuration.json"
       },
       {
-        "id": "nbt",
+        "id": "snbt",
         "extensions": [
           ".snbt"
         ],
-        "configuration": "./nbt-language-configuration.json"
+        "configuration": "./snbt-language-configuration.json"
       },
       {
         "id": "json",
