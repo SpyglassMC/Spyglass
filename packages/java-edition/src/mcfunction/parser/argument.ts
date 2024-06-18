@@ -313,6 +313,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 				id: res.children.find(core.ResourceLocationNode.is)!,
 				states: res.children.find(BlockStatesNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
+				isPredicate,
 			}
 			return ans
 		},

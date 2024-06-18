@@ -65,10 +65,8 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 		return
 	}
 
-	nbt.checker.index('minecraft:block', core.ResourceLocationNode.toString(node.id, 'full'))(
-		node.nbt,
-		ctx,
-	)
+	const type = core.ResourceLocationNode.toString(node.id, 'full')
+	nbt.checker.index('minecraft:block', type, { isPredicate: node.isPredicate })(node.nbt, ctx)
 }
 
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
@@ -80,15 +78,14 @@ const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 		if (!nbt.NbtCompoundNode.is(pair.value.value)) {
 			return
 		}
-		nbt.checker.index('minecraft:entity', types)(pair.value.value, ctx)
+		nbt.checker.index('minecraft:entity', types, { isPredicate: true })(pair.value.value, ctx)
 	}
 }
 
 const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 	if (node.nbt) {
-		nbt.checker.index('minecraft:item', core.ResourceLocationNode.toString(node.id, 'full'), {
-			isPredicate: true,
-		})(node.nbt, ctx)
+		const type = core.ResourceLocationNode.toString(node.id, 'full')
+		nbt.checker.index('minecraft:item', type, { isPredicate: true })(node.nbt, ctx)
 	}
 	if (!node.tests) {
 		return
@@ -176,7 +173,9 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 				break
 			case 'minecraft:block':
 				if (nbt.NbtCompoundNode.is(compound)) {
-					nbt.checker.index('minecraft:block')(compound, ctx)
+					nbt.checker.index('minecraft:block', undefined, {
+						isPredicate: node.properties.isPredicate,
+					})(compound, ctx)
 				}
 				break
 			case 'minecraft:storage':
@@ -184,7 +183,9 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 					const storage = core.ResourceLocationNode.is(dispatchedBy)
 						? core.ResourceLocationNode.toString(dispatchedBy)
 						: undefined
-					nbt.checker.index('minecraft:storage', storage)(compound, ctx)
+					nbt.checker.index('minecraft:storage', storage, {
+						isPredicate: node.properties.isPredicate,
+					})(compound, ctx)
 				}
 				break
 		}

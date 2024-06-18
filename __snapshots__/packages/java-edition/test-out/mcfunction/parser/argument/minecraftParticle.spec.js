@@ -43,7 +43,8 @@ exports['mcfunction argument minecraft:particle Parse "block stone" 1'] = {
           "path": [
             "stone"
           ]
-        }
+        },
+        "isPredicate": false
       }
     ],
     "id": {
@@ -340,7 +341,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
               }
             }
           ]
-        }
+        },
+        "isPredicate": false
       }
     ],
     "id": {
