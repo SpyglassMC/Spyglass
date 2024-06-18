@@ -480,6 +480,7 @@ export interface ParticleNode extends core.AstNode {
 	id: core.ResourceLocationNode
 }
 export namespace ParticleNode {
+	// until 1.20.5
 	const SpecialTypes = new Set(
 		[
 			'block',
@@ -496,6 +497,18 @@ export namespace ParticleNode {
 	export type SpecialType = typeof SpecialTypes extends Set<infer T> ? T : undefined
 	export function isSpecialType(type: string | undefined): type is SpecialType {
 		return SpecialTypes.has(type as SpecialType)
+	}
+
+	// since 1.20.5
+	const OptionTypes = new Set(
+		[
+			...SpecialTypes,
+			'entity_effect',
+		],
+	)
+	export type OptionType = typeof SpecialTypes extends Set<infer T> ? T : undefined
+	export function requiresOptions(type: string | undefined): type is OptionType {
+		return OptionTypes.has(type as OptionType)
 	}
 
 	export function is(node: core.AstNode | undefined): node is ParticleNode {

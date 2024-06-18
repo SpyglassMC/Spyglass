@@ -235,10 +235,12 @@ export class SimpleProject {
 
 		for (const { uri, content } of this.files) {
 			const src = new Source(content)
+			const languageId = uri.slice(uri.lastIndexOf('.') + 1)
 			const ctx = ParserContext.create(this.projectData, {
-				doc: TextDocument.create(uri, uri.slice(uri.lastIndexOf('.') + 1), 0, content),
+				doc: TextDocument.create(uri, languageId, 0, content),
 			})
-			const node = file()(src, ctx)
+			const parser = this.meta.getParserForLanguageId(languageId)!
+			const node = file(parser)(src, ctx)
 			this.#nodes[uri] = node
 		}
 	}

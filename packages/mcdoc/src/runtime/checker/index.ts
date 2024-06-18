@@ -36,7 +36,11 @@ export type NodeEquivalenceChecker = (
 	definition: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
 ) => boolean
 
-export type TypeInfoAttacher<T> = (node: T, definition: SimplifiedMcdocType) => void
+export type TypeInfoAttacher<T> = (
+	node: T,
+	definition: SimplifiedMcdocType,
+	description?: string,
+) => void
 
 export type StringAttacher<T> = (node: T, attacher: (node: core.StringBaseNode) => void) => void
 
@@ -168,7 +172,7 @@ export function isAssignable(
 
 	const node: CheckerTreeNode<McdocType> = {
 		parent: undefined,
-		runtimeKey: undefined,
+		key: undefined,
 		possibleValues: [],
 	}
 	node.possibleValues = getPossibleTypes(typeDef).map(v => ({
@@ -192,7 +196,10 @@ export function isAssignable(
 export interface CheckerTreeNode<T> {
 	parent: CheckerTreeRuntimeNode<T> | undefined
 
-	runtimeKey: RuntimeNode<T> | undefined
+	key: {
+		runtimeValue: RuntimeNode<T>
+		typeDef: SimplifiedMcdocTypeNoUnion | undefined
+	} | undefined
 	possibleValues: CheckerTreeRuntimeNode<T>[]
 }
 
@@ -214,6 +221,7 @@ export interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
 	runtimeNode: CheckerTreeRuntimeNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
+	desc?: string
 }
 
 export function typeDefinition<T>(
@@ -223,7 +231,7 @@ export function typeDefinition<T>(
 ) {
 	const rootNode: CheckerTreeNode<T> = {
 		parent: undefined,
-		runtimeKey: undefined,
+		key: undefined,
 		possibleValues: [],
 	}
 	rootNode.possibleValues = runtimeValues.map(n => ({
@@ -253,10 +261,10 @@ export function typeDefinition<T>(
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(value.node.inferredType, { options, node: value })
 			const children = options.getChildren(value.node.originalNode, inferredSimplified)
-			const childNodes: CheckerTreeNode<T>[] = children.map(c => {
+			const childNodes = children.map(c => {
 				const ans: CheckerTreeNode<T> = {
 					parent: value,
-					runtimeKey: !Array.isArray(c) ? c.key : undefined,
+					key: !Array.isArray(c) ? { runtimeValue: c.key, typeDef: undefined } : undefined,
 					possibleValues: [],
 				}
 
@@ -286,6 +294,9 @@ export function typeDefinition<T>(
 						continue
 					}
 					const child = childNodes[i]
+					if (child.key) {
+						child.key.typeDef = childDef.keyType
+					}
 					for (const childValue of child.possibleValues) {
 						// TODO We need some sort of map / local cache which keeps track of the original
 						// non-simplified types and see if they have been compared yet. This is needed
@@ -293,7 +304,7 @@ export function typeDefinition<T>(
 						// the same types again and just collect the errors of the lower depth.
 						// This will currently lead to a stack overflow error when e.g. comparing two
 						// text component definitions
-						const simplified = simplify(childDef, { options, node: childValue })
+						const simplified = simplify(childDef.type, { options, node: childValue })
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
 						// so that we can potentially error some valid parent defs if only some of them produce an
@@ -303,6 +314,7 @@ export function typeDefinition<T>(
 								parent: def,
 								runtimeNode: childValue,
 								typeDef: d,
+								desc: childDef.desc,
 							}))
 						childValue.validDefinitions.push(...validDefs)
 					}
@@ -403,51 +415,8 @@ export function typeDefinition<T>(
 		}
 	}
 
-	// TODO: attach a combination of all possible definitions
-	const attached = new Set<T>()
-
-	function attachTypeInfo(node: CheckerTreeRuntimeNode<T>) {
-		for (const def of node.validDefinitions) {
-			if (!attached.has(node.node.originalNode)) {
-				options.attachTypeInfo(node.node.originalNode, def.typeDef)
-				const attributes = def.typeDef.attributes
-				handleAttributes(attributes, options.context, (handler, config) => {
-					const parser = handler.stringParser?.(config, options.context)
-					if (!parser) {
-						return
-					}
-					options.stringAttacher(node.node.originalNode, (node) => {
-						const src = new core.Source(node.value, node.valueMap)
-						const start = src.cursor
-						const child = parser(src, options.context)
-						if (!child) {
-							options.context.err.report(
-								localize('expected', localize('mcdoc.runtime.checker.value')),
-								core.Range.create(start, src.skipRemaining()),
-							)
-							return
-						} else if (src.canRead()) {
-							options.context.err.report(
-								localize('mcdoc.runtime.checker.trailing'),
-								core.Range.create(src.cursor, src.skipRemaining()),
-							)
-						}
-						node.children = [child]
-					})
-				})
-				attached.add(node.node.originalNode)
-			}
-		}
-		// TODO: attach type info to keys
-		for (const child of node.children) {
-			for (const node of child.possibleValues) {
-				attachTypeInfo(node)
-			}
-		}
-	}
-
 	for (const node of rootNode.possibleValues) {
-		attachTypeInfo(node)
+		attachTypeInfo(node, options)
 	}
 
 	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
@@ -457,9 +426,70 @@ export function typeDefinition<T>(
 	}
 }
 
-interface ValidDefintionResult<T> {
+function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, options: McdocCheckerOptions<T>) {
+	if (node.validDefinitions.length === 1) {
+		const { typeDef, desc } = node.validDefinitions[0]
+		options.attachTypeInfo(node.node.originalNode, typeDef, desc)
+		handleStringAttachers(node.node, typeDef, options)
+	} else if (node.validDefinitions.length > 1) {
+		options.attachTypeInfo(node.node.originalNode, {
+			kind: 'union',
+			members: node.validDefinitions.map(d => d.typeDef),
+		})
+		// when there are multiple valid definitions, we don't run any string parsers,
+	}
+	for (const child of node.children) {
+		if (child.key && child.key.typeDef) {
+			options.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
+			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, options)
+		}
+
+		for (const node of child.possibleValues) {
+			attachTypeInfo(node, options)
+		}
+	}
+}
+
+function handleStringAttachers<T>(
+	runtimeValue: RuntimeNode<T>,
+	typeDef: SimplifiedMcdocTypeNoUnion,
+	options: McdocCheckerOptions<T>,
+) {
+	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
+		const parser = handler.stringParser?.(config, options.context)
+		if (!parser) {
+			return
+		}
+		options.stringAttacher(runtimeValue.originalNode, (node) => {
+			const src = new core.Source(node.value, node.valueMap)
+			const start = src.cursor
+			const child = parser(src, options.context)
+			if (!child) {
+				options.context.err.report(
+					localize('expected', localize('mcdoc.runtime.checker.value')),
+					core.Range.create(start, src.skipRemaining()),
+				)
+				return
+			} else if (src.canRead()) {
+				options.context.err.report(
+					localize('mcdoc.runtime.checker.trailing'),
+					core.Range.create(src.cursor, src.skipRemaining()),
+				)
+			}
+			node.children = [child]
+		})
+	})
+}
+
+interface ShallowCheckResultChildDefinition {
+	type: McdocType
+	keyType?: SimplifiedMcdocTypeNoUnion
+	desc?: string
+}
+
+interface ShallowCheckResult<T> {
 	errors: McdocCheckerError<T>[]
-	childDefinitions: (McdocType | undefined)[]
+	childDefinitions: (ShallowCheckResultChildDefinition | undefined)[]
 }
 
 function checkShallowly<T>(
@@ -468,7 +498,7 @@ function checkShallowly<T>(
 	children: RuntimeUnion<T>[],
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	options: McdocCheckerOptions<T>,
-): ValidDefintionResult<T> {
+): ShallowCheckResult<T> {
 	const typeDefValueType = getValueType(typeDef)
 	const runtimeValueType = getValueType(simplifiedInferred)
 
@@ -491,7 +521,9 @@ function checkShallowly<T>(
 		}
 	}
 
-	const childDefinitions: (McdocType | undefined)[] = Array(children.length).fill(undefined)
+	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
+		children.length,
+	).fill(undefined)
 	const errors: McdocCheckerError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
@@ -542,7 +574,10 @@ function checkShallowly<T>(
 		case 'struct': {
 			const literalKvps = new Map<
 				string,
-				{ values: { pair: RuntimePair<T>; index: number }[]; definition: McdocType | undefined }
+				{
+					values: { pair: RuntimePair<T>; index: number }[]
+					definition: ShallowCheckResultChildDefinition | undefined
+				}
 			>()
 			const otherKvps: { value: RuntimePair<T>; index: number }[] = []
 
@@ -577,7 +612,7 @@ function checkShallowly<T>(
 					const runtimeChild = literalKvps.get(pair.key.value.value)
 					if (runtimeChild) {
 						foundMatch = true
-						runtimeChild.definition = pair.type
+						runtimeChild.definition = { keyType: pair.key, type: pair.type, desc: pair.desc }
 					}
 				}
 				if (!foundMatch) {
@@ -608,13 +643,13 @@ function checkShallowly<T>(
 							)
 						) {
 							foundMatch = true
-							kvp[1].definition = pair.type
+							kvp[1].definition = { keyType: pair.key, type: pair.type, desc: pair.desc }
 						}
 					}
 				}
 
 				for (const match of otherKvpMatches) {
-					childDefinitions[match] = pair.type
+					childDefinitions[match] = { keyType: pair.key, type: pair.type, desc: pair.desc }
 				}
 				if (
 					!foundMatch
@@ -675,7 +710,7 @@ function checkShallowly<T>(
 			}
 
 			for (let i = 0; i < childDefinitions.length; i++) {
-				childDefinitions[i] = itemType
+				childDefinitions[i] = { type: itemType }
 			}
 
 			if (typeDef.lengthRange && !NumericRange.isInRange(typeDef.lengthRange, children.length)) {
@@ -691,7 +726,7 @@ function checkShallowly<T>(
 			for (let i = 0; i < children.length; i++) {
 				const child = children[i]
 				if (i < typeDef.items.length) {
-					childDefinitions[i] = typeDef.items[i]
+					childDefinitions[i] = { type: typeDef.items[i] }
 				} else {
 					errors.push({ kind: 'unknown_tuple_element', node: child })
 				}
@@ -734,7 +769,10 @@ interface SimplifyNode<T> {
  * any conversions as this type is compatible with {@link CheckerTreeRuntimeNode}.
  */
 export interface SimplifyValueNode<T> {
-	entryNode: { parent: SimplifyValueNode<T> | undefined; runtimeKey: RuntimeNode<T> | undefined }
+	entryNode: {
+		parent: SimplifyValueNode<T> | undefined
+		key: { runtimeValue: RuntimeNode<T> } | undefined
+	}
 	node: RuntimeNode<T>
 }
 export interface SimplifyContext<T> {
@@ -853,18 +891,21 @@ function simplifyIndexed<T>(
 			}
 		} else {
 			let possibilities: SimplifyNode<T>[] = context.isMember
-				? [{ value: context.node, key: context.node.entryNode.runtimeKey }]
-				: [{ value: context.node.entryNode.parent, key: context.node.entryNode.runtimeKey }]
+				? [{ value: context.node, key: context.node.entryNode.key?.runtimeValue }]
+				: [{
+					value: context.node.entryNode.parent,
+					key: context.node.entryNode.key?.runtimeValue,
+				}]
 			for (const entry of index.accessor) {
 				if (typeof entry !== 'string' && entry.keyword === 'parent') {
 					possibilities = possibilities.map(n => ({
 						value: n.value?.entryNode.parent,
-						key: n.value?.entryNode.runtimeKey,
+						key: n.value?.entryNode.key?.runtimeValue,
 					}))
 				} else if (typeof entry !== 'string' && entry.keyword === 'key') {
 					possibilities = possibilities.map(p => ({
 						value: p.key
-							? { node: p.key, entryNode: { parent: p.value, runtimeKey: p.key } }
+							? { node: p.key, entryNode: { parent: p.value, key: { runtimeValue: p.key } } }
 							: undefined,
 						key: undefined,
 					}))
@@ -893,7 +934,7 @@ function simplifyIndexed<T>(
 									c.possibleValues.map(v => ({
 										value: {
 											node: v,
-											entryNode: { parent: node.value, runtimeKey: c.key },
+											entryNode: { parent: node.value, key: { runtimeValue: c.key } },
 										},
 										key: undefined,
 									}))
@@ -1278,6 +1319,10 @@ export function getDefaultErrorReporter<T>(
 				break
 			case 'expected_key_value_pair':
 				ctx.err.report(localize(`mcdoc.runtime.checker.${defaultTranslationKey}`), range)
+				break
+			case 'duplicate_key':
+				// Vscode already reports duplicate keys in JSON files
+				// TODO: figure out how to report these errors in mcfunction files
 				break
 			case 'internal':
 				break

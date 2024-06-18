@@ -52,7 +52,8 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -73,7 +74,8 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       },
       {
@@ -101,7 +103,8 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -122,7 +125,8 @@ exports['list() list(no trailing comma) Parse "[ "foo"   "bar" ]" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -172,7 +176,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -193,7 +198,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -225,7 +231,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -246,7 +253,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 16,
@@ -300,7 +308,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -321,7 +330,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -353,7 +363,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -374,7 +385,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -415,7 +427,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -436,7 +449,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" , ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -490,7 +504,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -511,7 +526,8 @@ exports['list() list(no trailing comma) Parse "[ "foo" ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -563,7 +579,8 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
                   "end": 5
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -584,7 +601,8 @@ exports['list() list(no trailing comma) Parse "[ , "foo" ]" 1'] = {
                 "end": 5
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -708,7 +726,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -729,7 +748,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -761,7 +781,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -782,7 +803,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" , ]" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 16,
@@ -827,7 +849,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -848,7 +871,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -880,7 +904,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                   "end": 11
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -901,7 +926,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , "bar" ]" 1'] = {
                 "end": 11
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]
@@ -942,7 +968,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -963,7 +990,8 @@ exports['list() list(trailing comma) Parse "[ "foo" , ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         },
         "sep": {
           "start": 8,
@@ -1008,7 +1036,8 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
                   "end": 3
                 }
               }
-            ]
+            ],
+            "quote": "\""
           }
         ],
         "value": {
@@ -1029,7 +1058,8 @@ exports['list() list(trailing comma) Parse "[ "foo" ]" 1'] = {
                 "end": 3
               }
             }
-          ]
+          ],
+          "quote": "\""
         }
       }
     ]

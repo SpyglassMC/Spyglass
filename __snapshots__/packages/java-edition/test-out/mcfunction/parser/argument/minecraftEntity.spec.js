@@ -104,7 +104,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ ]" with {"amount":"mult
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -1378,7 +1378,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { minecr
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -1802,7 +1802,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ advancements = { } , ad
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -2437,7 +2437,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..-1 , dista
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -2778,7 +2778,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ distance = ..1 , ]" wit
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -3762,7 +3762,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = ! creative ,
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -4682,7 +4682,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ gamemode = creative , g
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -5227,7 +5227,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = -1 , level = -1
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -5574,7 +5574,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ level = 1.. , ]" with {
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -5812,7 +5812,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ limit = 1 , ]" with {"a
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -5917,7 +5917,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                             "end": 14
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "inverted": true,
@@ -5939,7 +5940,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 }
               ],
@@ -6010,7 +6012,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": true,
@@ -6032,7 +6035,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               },
               "end": {
@@ -6066,6 +6070,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       }
                     }
                   ],
+                  "quote": "\"",
                   "children": [
                     {
                       "type": "literal",
@@ -6155,6 +6160,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6259,6 +6265,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -6348,6 +6355,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6507,7 +6515,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                           "end": 14
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": true,
@@ -6529,7 +6538,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ],
@@ -6600,7 +6610,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                         "end": 14
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "inverted": true,
@@ -6622,7 +6633,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                       "end": 14
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             },
             "end": {
@@ -6656,6 +6668,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -6745,6 +6758,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   }
                 }
               ],
+              "quote": "\"",
               "children": [
                 {
                   "type": "literal",
@@ -6849,6 +6863,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -6938,6 +6953,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",
@@ -7022,7 +7038,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = ! "SPGoding" , "
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -7119,7 +7135,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                             "end": 12
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "inverted": false,
@@ -7141,7 +7158,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 }
               ],
@@ -7204,7 +7222,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": false,
@@ -7226,7 +7245,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               },
               "end": {
@@ -7260,6 +7280,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       }
                     }
                   ],
+                  "quote": "\"",
                   "children": [
                     {
                       "type": "literal",
@@ -7341,6 +7362,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7437,6 +7459,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       }
                     }
                   ],
+                  "quote": "'",
                   "children": [
                     {
                       "type": "literal",
@@ -7518,6 +7541,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -7661,7 +7685,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "inverted": false,
@@ -7683,7 +7708,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ],
@@ -7746,7 +7772,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                         "end": 12
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "inverted": false,
@@ -7768,7 +7795,8 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                       "end": 12
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             },
             "end": {
@@ -7802,6 +7830,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "\"",
                 "children": [
                   {
                     "type": "literal",
@@ -7883,6 +7912,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   }
                 }
               ],
+              "quote": "\"",
               "children": [
                 {
                   "type": "literal",
@@ -7979,6 +8009,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                     }
                   }
                 ],
+                "quote": "'",
                 "children": [
                   {
                     "type": "literal",
@@ -8060,6 +8091,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
                   }
                 }
               ],
+              "quote": "'",
               "children": [
                 {
                   "type": "literal",
@@ -8136,7 +8168,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ name = "SPGoding" , "na
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -8463,7 +8495,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ nbt = {} , ]" with {"am
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -9111,7 +9143,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[ predicate = spgoding:fo
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -9341,7 +9373,7 @@ exports['mcfunction argument minecraft:entity Parse "@a[limit=1]" with {"amount"
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -9995,7 +10027,7 @@ exports['mcfunction argument minecraft:entity Parse "@e[type=foo]" with {"amount
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `true`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": []
@@ -10388,7 +10420,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
       "playersOnly": false,
       "single": true,
       "typeLimited": false,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
     }
   },
   "errors": [
@@ -10713,7 +10745,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[distance=..5]" with {"am
       "playersOnly": false,
       "single": true,
       "typeLimited": false,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `true`\n- `dimensionLimited`: `true`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
     }
   },
   "errors": []
@@ -11031,7 +11063,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
       "playersOnly": false,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -11358,7 +11390,7 @@ exports['mcfunction argument minecraft:entity Parse "@n[type=cow]" with {"amount
       "playersOnly": false,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -11392,7 +11424,7 @@ exports['mcfunction argument minecraft:entity Parse "@r" with {"amount":"single"
       "playersOnly": true,
       "single": true,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []

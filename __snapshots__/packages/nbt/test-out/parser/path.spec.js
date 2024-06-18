@@ -41,7 +41,8 @@ exports['nbt path() Parse ""foo"" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ],
     "range": {
@@ -74,7 +75,8 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "'"
       }
     ],
     "range": {

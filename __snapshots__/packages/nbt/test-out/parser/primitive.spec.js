@@ -41,7 +41,8 @@ exports['nbt primitive() Parse ""quoted"" 1'] = {
           "end": 1
         }
       }
-    ]
+    ],
+    "quote": "\""
   },
   "errors": []
 }

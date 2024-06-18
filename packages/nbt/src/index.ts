@@ -13,7 +13,14 @@ export * as parser from './parser/index.js'
 
 /* istanbul ignore next */
 export const initialize: core.SyncProjectInitializer = ({ meta }) => {
-	meta.registerLanguage('nbt', { extensions: ['.snbt'], parser: parser.entry })
+	meta.registerLanguage('snbt', {
+		extensions: ['.snbt'],
+		parser: parser.entry,
+	})
+
+	meta.registerLanguage('nbt', {
+		extensions: ['.nbt'],
+	})
 
 	meta.registerParser<NbtNode>('nbt:entry' as any, parser.entry)
 	meta.registerParser<NbtCompoundNode>('nbt:compound', parser.compound)

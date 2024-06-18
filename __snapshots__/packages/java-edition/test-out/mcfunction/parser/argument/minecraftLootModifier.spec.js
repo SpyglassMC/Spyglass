@@ -72,7 +72,8 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                               "end": 12
                             }
                           }
-                        ]
+                        ],
+                        "quote": "\""
                       }
                     ],
                     "key": {
@@ -117,7 +118,8 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                             "end": 12
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   }
                 ]
@@ -175,7 +177,8 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                             "end": 12
                           }
                         }
-                      ]
+                      ],
+                      "quote": "\""
                     }
                   ],
                   "key": {
@@ -220,7 +223,8 @@ exports['mcfunction argument minecraft:loot_modifier Parse "[{function:"furnace_
                           "end": 12
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 }
               ]

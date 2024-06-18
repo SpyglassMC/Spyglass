@@ -177,7 +177,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                           "end": 19
                         }
                       }
-                    ]
+                    ],
+                    "quote": "\""
                   }
                 ],
                 "key": {
@@ -222,7 +223,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                         "end": 19
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               }
             ]
@@ -287,7 +289,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                         "end": 19
                       }
                     }
-                  ]
+                  ],
+                  "quote": "\""
                 }
               ],
               "key": {
@@ -332,7 +335,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                       "end": 19
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             }
           ]
@@ -440,7 +444,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                       "end": 19
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             ],
             "key": {
@@ -485,7 +490,8 @@ exports['mcfunction argument minecraft:particle Parse "block{block_state:"diamon
                     "end": 19
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             }
           }
         ]

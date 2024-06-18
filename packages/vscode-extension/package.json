@@ -3,7 +3,7 @@
   "version": "4.0.0",
   "type": "commonjs",
   "main": "dist/extension.js",
-  "author": "SPGoding",
+  "author": "Spyglass Contributors",
   "publisher": "SPGoding",
   "license": "MIT",
   "scripts": {
@@ -82,16 +82,30 @@
       {
         "fileMatch": [
           "pack.mcmeta",
-          "data/*/advancements/*.json",
-          "data/*/dimension/*.json",
-          "data/*/dimension_type/*.json",
-          "data/*/item_modifiers/*.json",
-          "data/*/loot_tables/*.json",
-          "data/*/predicates/*.json",
-          "data/*/recipes/*.json",
-          "data/*/tags/*.json",
-          "data/*/worldgen/*.json",
-          "data/minecraft/*.json"
+          "data/*/advancement/**/*.json",
+          "data/*/advancements/**/*.json",
+          "data/*/banner_pattern/**/*.json",
+          "data/*/chat_type/**/*.json",
+          "data/*/damage_type/**/*.json",
+          "data/*/dimension/**/*.json",
+          "data/*/dimension_type/**/*.json",
+          "data/*/enchantment/**/*.json",
+          "data/*/item_modifier/**/*.json",
+          "data/*/item_modifiers/**/*.json",
+          "data/*/jukebox_song/**/*.json",
+          "data/*/loot_table/**/*.json",
+          "data/*/loot_tables/**/*.json",
+          "data/*/painting_variant/**/*.json",
+          "data/*/predicate/**/*.json",
+          "data/*/predicates/**/*.json",
+          "data/*/recipe/**/*.json",
+          "data/*/recipes/**/*.json",
+          "data/*/tags/**/*.json",
+          "data/*/trim_material/**/*.json",
+          "data/*/trim_pattern/**/*.json",
+          "data/*/wolf_variant/**/*.json",
+          "data/*/worldgen/**/*.json",
+          "data/minecraft/**/*.json"
         ],
         "url": "./resource/empty-object.json"
       }
@@ -112,11 +126,11 @@
         "configuration": "./mcdoc-language-configuration.json"
       },
       {
-        "id": "nbt",
+        "id": "snbt",
         "extensions": [
           ".snbt"
         ],
-        "configuration": "./nbt-language-configuration.json"
+        "configuration": "./snbt-language-configuration.json"
       },
       {
         "id": "json",
@@ -130,12 +144,6 @@
       }
     ],
     "commands": [
-      {
-        "command": "spyglassmc.createFile",
-        "title": "%spyglassmc.commands.createFile.title%",
-        "category": "Spyglass",
-        "enablement": "workspaceFolderCount != 0"
-      },
       {
         "command": "spyglassmc.dataHackPubify",
         "title": "%spyglassmc.commands.dataHackPubify.title%",
@@ -155,10 +163,6 @@
     ],
     "menus": {
       "commandPalette": [
-        {
-          "command": "spyglassmc.createFile",
-          "when": "workspaceFolderCount != 0"
-        },
         {
           "command": "spyglassmc.dataHackPubify"
         },

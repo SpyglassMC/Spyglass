@@ -98,6 +98,7 @@ export interface StructTypePairField extends McdocBaseType {
 	type: McdocType
 	optional?: boolean
 	deprecated?: boolean
+	desc?: string
 }
 export interface StructTypeSpreadField extends McdocBaseType {
 	kind: 'spread'
@@ -317,7 +318,7 @@ export namespace McdocType {
 				typeString = `[${toString(type.item)}]${rangeToString(type.lengthRange)}`
 				break
 			case 'literal':
-				typeString = `${type.value}`
+				typeString = `${type.value.value}`
 				break
 			case 'long':
 				typeString = `long${rangeToString(type.valueRange)}`

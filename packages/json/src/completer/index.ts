@@ -27,12 +27,14 @@ const array: core.Completer<JsonArrayNode> = (node, ctx) => {
 }
 
 const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
-	key: (record, pair, _c, range, iv, ipe, exitingKeys) => {
+	key: (record, pair, ctx, range, iv, ipe, exitingKeys) => {
 		if (!record.typeDef) {
 			return []
 		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
-		return mcdoc.runtime.completer.getFields(record.typeDef).filter(({ key }) => !keySet.has(key))
+		return mcdoc.runtime.completer
+			.getFields(record.typeDef, ctx)
+			.filter(({ key }) => !keySet.has(key))
 			.map(({ key, field }) =>
 				core.CompletionItem.create(key, pair?.key ?? range, {
 					kind: core.CompletionKind.Field,
@@ -50,9 +52,11 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 		}
 		if (pair.key && record.typeDef) {
 			const pairKey = pair.key.value
-			const field = mcdoc.runtime.completer.getFields(record.typeDef).find(({ key }) =>
-				key === pairKey
-			)?.field.type
+			const field = mcdoc.runtime.completer
+				.getFields(record.typeDef, ctx)
+				.find(({ key }) => key === pairKey)
+				?.field
+				.type
 			if (field) {
 				return getValues(field, range, ctx)
 			}
@@ -62,18 +66,14 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 })
 
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
+	const insideRange = core.Range.contains(node, ctx.offset, true)
+	if (node.type === 'json:string' && node.children?.length && insideRange) {
+		return core.completer.string(node, ctx)
+	}
 	if (!node.typeDef) {
 		return []
 	}
-	if (
-		node.children && node.children.length > 0
-		&& core.Range.contains(core.Range.translate(node, 1, -1), ctx.offset, true)
-	) {
-		const child = node.children[0]
-		return ctx.meta.getCompleter(child.type)(child, ctx)
-	}
-	const range = core.Range.contains(node, ctx.offset, true) ? node : ctx.offset
-	return getValues(node.typeDef, range, ctx)
+	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
 }
 
 function getValues(

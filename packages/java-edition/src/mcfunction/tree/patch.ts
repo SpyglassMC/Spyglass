@@ -825,7 +825,7 @@ function getDataPatch(
 						children: {
 							[nbtKey]: {
 								properties: {
-									dispatcher: 'minecraft:block_entity',
+									dispatcher: 'minecraft:block',
 									dispatchedBy: `${vaultKey}Pos`,
 									accessType: nbtAccessType,
 									isPredicate,
@@ -889,9 +889,7 @@ const getDataModifySource = (
 				children: {
 					value: {
 						properties: {
-							dispatcher: type === 'block'
-								? 'minecraft:block_entity'
-								: `minecraft:${type}`,
+							dispatcher: `minecraft:${type}`,
 							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
 							indexedBy: 'targetPath',
 						} satisfies NbtParserProperties,

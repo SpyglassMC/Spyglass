@@ -70,6 +70,12 @@ The `build` script at the root level does the following steps in series:
 	1. Run the `build` script in `./packages/playground`.
 	2. Run the `build` script in `./packages/vscode-extension`.
 
+### Module system
+
+The whole Spyglass project, including its source code and output, uses ES module.
+However, as VS Code cannot consume ES modules as extensions ([microsoft/vscode#130367](https://github.com/microsoft/vscode/issues/130367)),
+the `vscode-extension` package defaults to use CommonJS modules, with file extensions `mjs` and `mts` to explicitly override that,
+
 ## Credits
 
 The original Spyglass logo was provided by [BlackNight0315](https://github.com/BlackNight0315).

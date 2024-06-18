@@ -1,9 +1,8 @@
 {
-    "spyglassmc.commands.createFile.title": "Create File",
     "spyglassmc.commands.dataHackPubify.title": "Data Hack Pubify",
     "spyglassmc.commands.resetProjectCache.title": "Reset Project Cache",
     "spyglassmc.commands.showCacheRoot.title": "Open Cache Folder",
     "spyglassmc.description": "Heavy language features for Minecraft: Java Edition data pack files",
-    "spyglassmc.displayName": "Spyglass",
+    "spyglassmc.displayName": "Datapack Helper Plus by Spyglass",
     "spyglassmc.trace.server": "Traces the communication between VS Code and the Spyglass Language Server."
 }

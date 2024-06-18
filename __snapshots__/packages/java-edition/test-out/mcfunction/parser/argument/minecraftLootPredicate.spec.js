@@ -73,7 +73,8 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
                       "end": 12
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             ],
             "key": {
@@ -118,7 +119,8 @@ exports['mcfunction argument minecraft:loot_predicate Parse "{condition:"random_
                     "end": 12
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "end": {
               "start": 26,

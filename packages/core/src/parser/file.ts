@@ -4,14 +4,14 @@ import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
 import { Range } from '../source/index.js'
 import { error } from './error.js'
-import type { InfallibleParser } from './Parser.js'
+import type { InfallibleParser, Parser } from './Parser.js'
 import { Failure } from './Parser.js'
 
 /**
  * Dispatches to the corresponding parser for the language.
  * @throws If there's no parser registered for this language ID.
  */
-export function file(): InfallibleParser<FileNode<AstNode>> {
+export function file(parser: Parser<AstNode>): InfallibleParser<FileNode<AstNode>> {
 	return (src: Source, ctx: ParserContext): FileNode<AstNode> => {
 		const fullRange = Range.create(src, src.string.length)
 		const ans: FileNode<AstNode> = {
@@ -24,7 +24,6 @@ export function file(): InfallibleParser<FileNode<AstNode>> {
 
 		src.skipWhitespace()
 
-		const parser = ctx.meta.getParserForLanguageId<AstNode>(ctx.doc.languageId)
 		const result = parser(src, ctx)
 		if (result && result !== Failure) {
 			ans.children.push(result)

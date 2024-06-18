@@ -22,6 +22,7 @@ export function string(options: StringOptions): InfallibleParser<StringNode> {
 
 		if (options.quotes?.length && (src.peek() === '"' || src.peek() === "'")) {
 			const currentQuote = src.read() as Quote
+			ans.quote = currentQuote
 			const contentStart = src.cursor
 			while (src.canRead() && src.peek() !== currentQuote) {
 				const c = src.peek()

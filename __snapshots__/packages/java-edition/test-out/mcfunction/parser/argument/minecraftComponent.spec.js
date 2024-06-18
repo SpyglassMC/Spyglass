@@ -24,7 +24,8 @@ exports['mcfunction argument minecraft:component Parse """" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ],
     "typeRef": "::java::server::util::text::Text"
@@ -58,7 +59,8 @@ exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ],
     "typeRef": "::java::server::util::text::Text"
@@ -106,7 +108,8 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
                       "end": 2
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             ],
             "value": {
@@ -127,7 +130,8 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
                     "end": 2
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             }
           }
         ]
@@ -178,7 +182,8 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                       "end": 2
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               },
               {
                 "type": "json:string",
@@ -198,7 +203,8 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                       "end": 9
                     }
                   }
-                ]
+                ],
+                "quote": "\""
               }
             ],
             "key": {
@@ -219,7 +225,8 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                     "end": 2
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             },
             "sep": {
               "start": 7,
@@ -243,7 +250,8 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
                     "end": 9
                   }
                 }
-              ]
+              ],
+              "quote": "\""
             }
           }
         ]

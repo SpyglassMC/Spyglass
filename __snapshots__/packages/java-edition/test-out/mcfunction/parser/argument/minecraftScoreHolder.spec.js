@@ -274,7 +274,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ = 1 , ]" with {"a
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -897,7 +897,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { foo = 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -1321,7 +1321,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ scores = { } , sc
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -1656,7 +1656,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ sort = arbitrary 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -2256,7 +2256,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ tag = foo , tag =
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -2888,7 +2888,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = ! foo , te
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -3456,7 +3456,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ team = foo , team
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -3783,7 +3783,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ type = zombie ]" 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -3998,7 +3998,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ unknown = 1 , ]" 
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -4813,7 +4813,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , x = 0.0
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -6000,7 +6000,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x = 0.0 , y = 0.0
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Great\n- `chunkLimited`: `false`\n- `dimensionLimited`: `true`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -6656,7 +6656,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": [
@@ -7321,7 +7321,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@a[ x_rotation = 179.
       "playersOnly": true,
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`"
     }
   },
   "errors": []
@@ -9011,7 +9011,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = player ]" 
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: Good\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `true`\n- `typeLimited`: `true`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": []
@@ -9614,7 +9614,7 @@ exports['mcfunction argument minecraft:score_holder Parse "@e[ type = skeleton ,
       ],
       "single": false,
       "typeLimited": true,
-      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `false`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
+      "hover": "**Performance**: 😅\n- `chunkLimited`: `false`\n- `dimensionLimited`: `false`\n- `playersOnly`: `false`\n- `typeLimited`: `true`\n\n------\n**Predicates**:\n- `Entity::isAlive`"
     }
   },
   "errors": [

@@ -24,7 +24,8 @@ exports['mcfunction argument minecraft:nbt_tag Parse ""foo"" 1'] = {
               "end": 1
             }
           }
-        ]
+        ],
+        "quote": "\""
       }
     ]
   },
