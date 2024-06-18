@@ -181,7 +181,10 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 				break
 			case 'minecraft:storage':
 				if (nbt.NbtCompoundNode.is(compound)) {
-					nbt.checker.index('minecraft:storage')(compound, ctx)
+					const storage = core.ResourceLocationNode.is(dispatchedBy)
+						? core.ResourceLocationNode.toString(dispatchedBy)
+						: undefined
+					nbt.checker.index('minecraft:storage', storage)(compound, ctx)
 				}
 				break
 		}
