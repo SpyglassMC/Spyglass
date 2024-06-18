@@ -1,11 +1,8 @@
 import * as core from '@spyglassmc/core/lib/index.js'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { localeQuote } from '@spyglassmc/locales'
-import type {
-	McdocCheckerError,
-	McdocCheckerOptions,
-} from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
-import { typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
+import type { McdocCheckerError } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
+import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
@@ -518,10 +515,10 @@ describe('mcdoc runtime checker', () => {
 					const errors: McdocCheckerError<JsValue>[] = []
 					const project = mockProjectData()
 					init?.(project.symbols)
-					const options: McdocCheckerOptions<JsValue> = {
-						context: core.CheckerContext.create(project, {
-							doc: TextDocument.create('', '', 0, ''),
-						}),
+					const checkerCtx = core.CheckerContext.create(project, {
+						doc: TextDocument.create('', '', 0, ''),
+					})
+					const ctx = McdocCheckerContext.create<JsValue>(checkerCtx, {
 						getChildren: (value) => {
 							if (Array.isArray(value)) {
 								return value.map((e) => [{ originalNode: e, inferredType: inferType(e) }])
@@ -553,11 +550,11 @@ describe('mcdoc runtime checker', () => {
 						},
 						attachTypeInfo: () => {},
 						stringAttacher: () => {},
-					}
+					})
 					typeDefinition(
 						[{ originalNode: value, inferredType: inferType(value) }],
 						type,
-						options,
+						ctx,
 					)
 					snapshot(errors)
 				})

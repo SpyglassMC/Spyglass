@@ -62,8 +62,7 @@ export function typeDefinition(
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				allowMissingKeys: options.isPredicate,
 				isEquivalent: (inferred, def) => {
 					if (def.kind === 'boolean') {
@@ -134,7 +133,7 @@ export function typeDefinition(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }
@@ -262,8 +261,7 @@ export function path(
 		mcdoc.runtime.checker.typeDefinition<NbtPathLink>(
 			[{ originalNode: link, inferredType: inferPath(link) }],
 			typeDef,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -333,7 +331,7 @@ export function path(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }
