@@ -66,6 +66,7 @@ export interface McdocCheckerOptions<T> {
 	reportError: ErrorReporter<T>
 	attachTypeInfo: TypeInfoAttacher<T>
 	stringAttacher: StringAttacher<T>
+	allowMissingKeys?: boolean
 }
 
 export type McdocCheckerError<T> =
@@ -881,6 +882,7 @@ function checkShallowly<T>(
 				}
 				if (
 					!foundMatch
+					&& !options.allowMissingKeys
 					&& pair.key.kind === 'literal'
 					&& pair.key.value.kind === 'string'
 					&& pair.optional !== true

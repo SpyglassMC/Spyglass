@@ -64,6 +64,7 @@ export function typeDefinition(
 			typeDef,
 			{
 				context: ctx,
+				allowMissingKeys: options.isPredicate,
 				isEquivalent: (inferred, def) => {
 					if (def.kind === 'boolean') {
 						// TODO: this should check whether the value is 0 or 1
