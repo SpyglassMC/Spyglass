@@ -65,7 +65,7 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 		return
 	}
 
-	nbt.checker.index('minecraft:block_entity', core.ResourceLocationNode.toString(node.id, 'full'))(
+	nbt.checker.index('minecraft:block', core.ResourceLocationNode.toString(node.id, 'full'))(
 		node.nbt,
 		ctx,
 	)
@@ -174,9 +174,9 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 					})(compound, ctx)
 				}
 				break
-			case 'minecraft:block_entity':
+			case 'minecraft:block':
 				if (nbt.NbtCompoundNode.is(compound)) {
-					nbt.checker.index('minecraft:block_entity')(compound, ctx)
+					nbt.checker.index('minecraft:block')(compound, ctx)
 				}
 				break
 			case 'minecraft:storage':

@@ -115,7 +115,7 @@ export interface NbtParserProperties extends Record<string, unknown> {
 	 * argument named by `indexedBy`.
 	 */
 	dispatcher:
-		| 'minecraft:block_entity'
+		| 'minecraft:block'
 		| 'minecraft:entity'
 		| 'minecraft:storage'
 		| 'minecraft:macro_function'
