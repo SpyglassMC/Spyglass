@@ -6,7 +6,6 @@ import { McdocType, NumericRange } from '../../type/index.js'
 import type {
 	CheckerTreeDefinitionNode,
 	ErrorReporter,
-	McdocCheckerContext,
 	RuntimeNode,
 	SimplifiedMcdocTypeNoUnion,
 } from './index.js'
@@ -106,13 +105,7 @@ export interface ErrorCondensingDefinition<T> {
 	errors: McdocRuntimeError<T>[]
 }
 
-export function condenseErrorsAndFilterSiblings<T>(
-	definitions: {
-		definition: CheckerTreeDefinitionNode<T>
-		errors: McdocRuntimeError<T>[]
-	}[],
-	context: McdocCheckerContext<T>,
-): {
+export function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingDefinition<T>[]): {
 	definitions: CheckerTreeDefinitionNode<T>[]
 	condensedErrors: McdocRuntimeError<T>[]
 } {
@@ -125,7 +118,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 
 	const typeMismatchResult = condense(
 		validDefinitions,
-		context,
 		TypeMismatchError.is,
 		(a, b) =>
 			a.expected.length === b.expected.length
@@ -151,7 +143,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 	) {
 		const simpleErrorResult = condense(
 			validDefinitions,
-			context,
 			(e): e is SimpleError<T> => e.kind === kind,
 			_ => true,
 		)
@@ -161,7 +152,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 
 	const missingKeyResult = condense(
 		validDefinitions,
-		context,
 		MissingKeyError.is,
 		(a, b) => !a.keys.some(k => !b.keys.includes(k)),
 		errors => ({
@@ -182,7 +172,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 	) {
 		const rangeErrorResult = condense(
 			validDefinitions,
-			context,
 			(e): e is RangeError<T> => e.kind === kind,
 			(a, b) =>
 				a.ranges.length === b.ranges.length
@@ -203,7 +192,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 
 	const internalErrorResult = condense(
 		validDefinitions,
-		context,
 		(e): e is SimpleError<T> => e.kind === 'internal',
 		_ => false,
 	)
@@ -218,7 +206,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 
 function condense<T, E extends McdocRuntimeError<T>>(
 	validDefinitions: ErrorCondensingDefinition<T>[],
-	context: McdocCheckerContext<T>,
 	is: (e: McdocRuntimeError<T>) => e is E,
 	equals: (a: E, b: E) => boolean,
 	combineAlternatives?: (errors: E[]) => E,
