@@ -33,6 +33,12 @@ function getResourceLocationOptions(
 				allowUnknown: true, // the mcdoc checker will already report errors for this
 			}
 		}
+		if (typeDef?.kind === 'literal' && typeDef.value.kind === 'string') {
+			return {
+				pool: [core.ResourceLocation.lengthen(typeDef.value.value)],
+				allowUnknown: true,
+			}
+		}
 		return { pool: [], allowUnknown: true }
 	}
 	if (tags === 'implicit') {

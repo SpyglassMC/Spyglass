@@ -733,6 +733,9 @@ function checkShallowly<T>(
 	const typeDefValueType = getValueType(typeDef)
 	const runtimeValueType = getValueType(simplifiedInferred)
 
+	const childDefinitions = Array<ShallowCheckResultChildDefinition | undefined>(children.length)
+		.fill(undefined)
+
 	if (
 		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
 			&& simplifiedInferred.kind !== 'unsafe'
@@ -740,7 +743,7 @@ function checkShallowly<T>(
 			&& !options.isEquivalent(runtimeValueType, typeDefValueType))
 	) {
 		return {
-			childDefinitions: Array(children.length).fill(undefined),
+			childDefinitions,
 			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: typeDef }],
 		}
 	}
@@ -766,14 +769,10 @@ function checkShallowly<T>(
 				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
 	) {
 		return {
-			childDefinitions: Array(children.length).fill(undefined),
+			childDefinitions,
 			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: typeDef }],
 		}
 	}
-
-	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
-		children.length,
-	).fill(undefined)
 
 	switch (typeDef.kind) {
 		case 'any':
@@ -1280,7 +1279,7 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 		}
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
-		} else if (key.kind === 'literal' && key.value.kind === 'string') {
+		} else if (key.kind === 'literal' && key.value.kind === 'string' && !key.attributes?.length) {
 			literalFields.set(key.value.value, field)
 		} else if (key.kind === 'union') {
 			key.members.forEach(m => addField(m, { ...field, optional: true }))

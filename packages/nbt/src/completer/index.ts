@@ -41,7 +41,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
-					filterText: key,
+					filterText: key, // TODO: add quotes if neccessary
 					insertText: `${key}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
 				})
 			)
