@@ -1187,7 +1187,12 @@ function simplifyIndexed<T>(
 
 function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): SimplifiedMcdocType {
 	const members: SimplifiedMcdocTypeNoUnion[] = []
+	const filterCanonical = context.ctx.requireCanonical
+		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
 	for (const member of typeDef.members) {
+		if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
+			continue
+		}
 		const simplified = simplify(member, context)
 		let keep = true
 		handleAttributes(member.attributes, context.ctx, (handler, config) => {

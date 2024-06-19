@@ -53,6 +53,9 @@ function getResourceLocationOptions(
 }
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
+	registerAttribute(meta, 'canonical', () => undefined, {
+		// Has hardcoded behavior in the runtime checker
+	})
 	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind === 'string') {
