@@ -379,15 +379,19 @@ export function getDefaultErrorReporter<T>(
 						'invalid-key-combination',
 						arrayToMessage(
 							error.nodesWithConflictingErrors.map(n => McdocType.toString(n.inferredType)),
+							true,
+							'and',
 						),
 					)
+				} else {
+					localizedText = localize(
+						defaultTranslationKey,
+						error.node.inferredType.kind === 'literal'
+							? localeQuote(error.node.inferredType.value.value.toString())
+							: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
+					)
+					severity = ErrorSeverity.Warning
 				}
-				localizedText = localize(
-					defaultTranslationKey,
-					error.node.inferredType.kind === 'literal'
-						? localeQuote(error.node.inferredType.value.value.toString())
-						: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
-				), severity = ErrorSeverity.Warning
 				break
 			case 'missing_key':
 				if (error.keys.length === 1) {
