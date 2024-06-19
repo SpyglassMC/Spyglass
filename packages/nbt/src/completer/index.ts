@@ -41,8 +41,8 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
-					filterText: formatKey(key),
-					insertText: `${formatKey(key)}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
+					filterText: formatKey(key, pair?.key?.quote),
+					insertText: `${formatKey(key, pair?.key?.quote)}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
 				})
 			)
 	},
@@ -93,11 +93,12 @@ function getValues(
 		)
 }
 
-function formatKey(key: string) {
-	if (core.BrigadierUnquotablePattern.test(key)) {
+function formatKey(key: string, quote?: core.Quote) {
+	if (!quote && core.BrigadierUnquotablePattern.test(key)) {
 		return key
 	}
-	return `"${core.completer.escapeString(key, '"')}"`
+	const q = quote ?? '"'
+	return q + core.completer.escapeString(key, q) + q
 }
 
 function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
