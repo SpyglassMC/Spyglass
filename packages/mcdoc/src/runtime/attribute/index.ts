@@ -7,9 +7,10 @@ import type { McdocAttributeValidator } from './validator.js'
 export * as validator from './validator.js'
 
 export interface McdocAttribute<C = unknown> {
-	checkInferred?: (
+	checkType?: (
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
+		expected: SimplifiedMcdocTypeNoUnion,
 		ctx: core.CheckerContext,
 	) => boolean
 	mapField?: (
@@ -20,6 +21,7 @@ export interface McdocAttribute<C = unknown> {
 	filterElement?: (config: C, ctx: core.CheckerContext) => boolean
 	stringParser?: (
 		config: C,
+		typeDef: SimplifiedMcdocTypeNoUnion,
 		ctx: core.CheckerContext,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
 	stringMocker?: (config: C, ctx: core.CompleterContext) => core.AstNode | undefined

@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
+import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
 interface IdConfig {
@@ -23,8 +24,15 @@ const idValidator = validator.alternatives<IdConfig>(
 function getResourceLocationOptions(
 	{ registry, tags, definition }: IdConfig,
 	ctx: core.ContextBase,
+	typeDef?: SimplifiedMcdocTypeNoUnion,
 ): core.ResourceLocationOptions | undefined {
 	if (!registry) {
+		if (typeDef?.kind === 'enum' && typeDef.enumKind === 'string') {
+			return {
+				pool: typeDef.values.map(v => core.ResourceLocation.lengthen(`${v.value}`)),
+				allowUnknown: true, // the mcdoc checker will already report errors for this
+			}
+		}
 		return { pool: [], allowUnknown: true }
 	}
 	if (tags === 'implicit') {
@@ -44,7 +52,7 @@ function getResourceLocationOptions(
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'id', idValidator, {
-		checkInferred: (config, inferred, ctx) => {
+		checkType: (config, inferred, expected, ctx) => {
 			if (inferred.kind === 'string') {
 				// Internal mcdoc isAssignable check
 				const idAttr = inferred.attributes?.find(a => a.name === 'id')
@@ -71,10 +79,23 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 					inferred.value.value = 'minecraft:' + inferred.value.value
 				}
 			}
+			if (
+				expected.kind === 'literal' && expected.value.kind === 'string'
+				&& !expected.value.value.includes(':')
+			) {
+				expected.value.value = 'minecraft:' + expected.value.value
+			}
+			if (expected.kind === 'enum' && expected.enumKind === 'string') {
+				for (const value of expected.values) {
+					if (typeof value.value === 'string' && !value.value.includes(':')) {
+						value.value = 'minecraft:' + value.value
+					}
+				}
+			}
 			return true
 		},
-		stringParser: (config, ctx) => {
-			const options = getResourceLocationOptions(config, ctx)
+		stringParser: (config, typeDef, ctx) => {
+			const options = getResourceLocationOptions(config, ctx, typeDef)
 			if (!options) {
 				return
 			}

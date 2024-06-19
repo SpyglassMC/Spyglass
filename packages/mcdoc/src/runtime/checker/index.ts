@@ -165,6 +165,9 @@ export function isAssignable(
 		&& assignValue.value.kind === typeDef.value.kind
 		&& !assignValue.attributes && !typeDef.attributes
 	) {
+		if (assignValue.value.value === 'minecraft:enchantments') {
+			assignValue
+		}
 		return assignValue.value.value === typeDef.value.value
 	}
 	let ans = true
@@ -491,7 +494,7 @@ function handleStringAttachers<T>(
 	options: McdocCheckerOptions<T>,
 ) {
 	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-		const parser = handler.stringParser?.(config, options.context)
+		const parser = handler.stringParser?.(config, typeDef, options.context)
 		if (!parser) {
 			return
 		}
@@ -735,7 +738,26 @@ function checkShallowly<T>(
 			&& simplifiedInferred.kind !== 'unsafe'
 			&& runtimeValueType.kind !== typeDefValueType.kind
 			&& !options.isEquivalent(runtimeValueType, typeDefValueType))
-		|| (typeDef.kind === 'literal'
+	) {
+		return {
+			childDefinitions: Array(children.length).fill(undefined),
+			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: typeDef }],
+		}
+	}
+
+	const errors: McdocCheckerError<T>[] = []
+	let assignable = true
+	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
+		if (handler.checkType?.(config, simplifiedInferred, typeDef, options.context) === false) {
+			assignable = false
+		}
+	})
+	if (!assignable) {
+		errors.push({ kind: 'internal', node: runtimeNode })
+	}
+
+	if (
+		(typeDef.kind === 'literal'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| typeDef.value.value !== simplifiedInferred.value.value))
 		// TODO handle enum field attributes
@@ -752,16 +774,7 @@ function checkShallowly<T>(
 	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
 		children.length,
 	).fill(undefined)
-	const errors: McdocCheckerError<T>[] = []
-	let assignable = true
-	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-		if (handler.checkInferred?.(config, simplifiedInferred, options.context) === false) {
-			assignable = false
-		}
-	})
-	if (!assignable) {
-		errors.push({ kind: 'internal', node: runtimeNode })
-	}
+
 	switch (typeDef.kind) {
 		case 'any':
 		case 'unsafe':
@@ -1541,7 +1554,9 @@ export function getDefaultErrorReporter<T>(
 						arrayToMessage(
 							types.map(e =>
 								e.kind === 'enum'
-									? arrayToMessage(e.values.map(v => v.value.toString()))
+									? arrayToMessage(
+										e.values.map(v => core.ResourceLocation.shorten(v.value.toString())),
+									)
 									: e.kind === 'literal'
 									? localeQuote(e.value.value.toString())
 									: localize(`mcdoc.type.${e.kind}`)
