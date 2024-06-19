@@ -10,7 +10,6 @@ import type {
 	RuntimeNode,
 	SimplifiedMcdocTypeNoUnion,
 } from './index.js'
-import { isAssignable } from './index.js'
 
 export type McdocRuntimeError<T> =
 	| SimpleError<T>
@@ -130,15 +129,13 @@ export function condenseErrorsAndFilterSiblings<T>(
 		TypeMismatchError.is,
 		(a, b) =>
 			a.expected.length === b.expected.length
-			&& !a.expected.some(d =>
-				!b.expected.some(od => isAssignable(d, od, context) && isAssignable(od, d, context))
-			),
+			&& !a.expected.some(d => !b.expected.some(od => McdocType.equals(d, od))),
 		errors => ({
 			kind: 'type_mismatch',
 			node: errors[0].node,
 			expected: deduplicateGroups(
 				errors.map(e => e.expected),
-				(a, b) => isAssignable(a, b, context) && isAssignable(b, a, context),
+				McdocType.equals,
 			),
 		}),
 	)
@@ -219,40 +216,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 	}
 }
 
-/**
- * Deduplicates groups assuming:
- * - There are no duplicates within a group
- * - A group with 1 element implies there is no duplicated group of length 1 with the same element
- *
- * When calling {@link condense}, if a group stems from an error, this should automatically be the
- * case.
- */
-function deduplicateGroups<T>(
-	definitionGroups: T[][],
-	predicate?: (a: T, b: T) => boolean,
-): T[] {
-	const definitions: T[] = []
-	for (let i = 0; i < definitionGroups.length; i++) {
-		const group = definitionGroups[i]
-		if (group.length === 1) {
-			definitions.push(group[0])
-			continue
-		}
-		definitions.push(
-			...group
-				.filter(v =>
-					!definitionGroups.some((og, oi) =>
-						(oi > i || og.length === 1)
-							&& predicate
-							? og.some(ov => predicate(v, ov))
-							: og.includes(v)
-					)
-				),
-		)
-	}
-	return definitions
-}
-
 function condense<T, E extends McdocRuntimeError<T>>(
 	validDefinitions: ErrorCondensingDefinition<T>[],
 	context: McdocCheckerContext<T>,
@@ -312,9 +275,7 @@ function condense<T, E extends McdocRuntimeError<T>>(
 			.map(e => {
 				const uniqueDefinitions = deduplicateGroups(
 					e.errors.map(e => e.definitions),
-					(a, b) =>
-						isAssignable(a.definition.typeDef, b.definition.typeDef, context)
-						&& isAssignable(b.definition.typeDef, a.definition.typeDef, context),
+					(a, b) => McdocType.equals(a.definition.typeDef, b.definition.typeDef),
 				)
 				const ans = {
 					definitions: uniqueDefinitions,
@@ -353,6 +314,40 @@ function condense<T, E extends McdocRuntimeError<T>>(
 		filteredDefinitions: validDefinitions,
 		condensedErrors: [...commonErrors, ...combinedErrors.map(e => e.error)],
 	}
+}
+
+/**
+ * Deduplicates groups assuming:
+ * - There are no duplicates within a group
+ * - A group with 1 element implies there is no duplicated group of length 1 with the same element
+ *
+ * When calling {@link condense}, if a group stems from an error, this should automatically be the
+ * case.
+ */
+function deduplicateGroups<T>(
+	definitionGroups: T[][],
+	predicate?: (a: T, b: T) => boolean,
+): T[] {
+	const definitions: T[] = []
+	for (let i = 0; i < definitionGroups.length; i++) {
+		const group = definitionGroups[i]
+		if (group.length === 1) {
+			definitions.push(group[0])
+			continue
+		}
+		definitions.push(
+			...group
+				.filter(v =>
+					!definitionGroups.some((og, oi) =>
+						(oi > i || og.length === 1)
+							&& predicate
+							? og.some(ov => predicate(v, ov))
+							: og.includes(v)
+					)
+				),
+		)
+	}
+	return definitions
 }
 
 export function getErrorRangeDefault<T extends AstNode>(

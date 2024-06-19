@@ -3,13 +3,78 @@ import { Arrayable, Dev } from '@spyglassmc/core'
 import type { EnumKind } from '../node/index.js'
 import { getRangeDelimiter, RangeKind } from '../node/index.js'
 
+export type Attributes = Attribute[]
+export namespace Attributes {
+	export function equals(a: Attributes | undefined, b: Attributes | undefined): boolean {
+		if (a?.length !== b?.length) {
+			return false
+		}
+
+		if (!a || !b) {
+			return true
+		}
+
+		for (let i = 0; i < a.length; i++) {
+			if (!Attribute.equals(a[i], b[i])) {
+				return false
+			}
+		}
+		return true
+	}
+}
+
 export interface Attribute {
 	name: string
 	value?: AttributeValue
 }
+export namespace Attribute {
+	export function equals(a: Attribute, b: Attribute): boolean {
+		if (a.name !== b.name) {
+			return false
+		}
 
-export type AttributeValue = McdocType | { kind: 'tree'; values: AttributeTree }
-export type AttributeTree = { [key: string | number]: AttributeValue }
+		if (a.value && b.value) {
+			return AttributeValue.equals(a.value, b.value)
+		}
+		return a.value === b.value
+	}
+}
+
+export type AttributeValue = McdocType | AttributeTreeValue
+export interface AttributeTreeValue {
+	kind: 'tree'
+	values: AttributeTree
+}
+export interface AttributeTree {
+	[key: string | number]: AttributeValue
+}
+export namespace AttributeValue {
+	export function equals(a: AttributeValue, b: AttributeValue): boolean {
+		if (a.kind !== b.kind) {
+			return false
+		}
+
+		if (a.kind === 'tree') {
+			if (
+				Object.keys(a.values).length !== Object.keys((b as AttributeTreeValue).values).length
+			) {
+				return false
+			}
+			for (const kvp of Object.entries(a.values)) {
+				const other = (b as AttributeTreeValue).values[kvp[0]]
+				if (!other) {
+					return false
+				}
+				if (!equals(kvp[1], other)) {
+					return false
+				}
+			}
+			return true
+		} else {
+			return McdocType.equals(a, b as McdocType)
+		}
+	}
+}
 
 export type NumericRange = { kind: RangeKind; min?: number; max?: number }
 export namespace NumericRange {
@@ -83,6 +148,39 @@ export type Index =
  * Corresponds to the IndexBodyNode
  */
 export type ParallelIndices = Index[]
+export namespace ParallelIndices {
+	export function equals(a: ParallelIndices, b: ParallelIndices): boolean {
+		if (a.length !== b.length) {
+			return false
+		}
+		for (let i = 0; i < a.length; i++) {
+			const first = a[i]
+			const second = b[i]
+			if (first.kind !== second.kind) {
+				return false
+			}
+			if (first.kind === 'static') {
+				return first.value !== (second as StaticIndex).value
+			}
+			if (first.accessor.length !== (second as DynamicIndex).accessor.length) {
+				return false
+			}
+			for (let j = 0; j < first.accessor.length; j++) {
+				const firstAcc = first.accessor[j]
+				const secondAcc = (second as DynamicIndex).accessor[j]
+
+				if (typeof firstAcc === 'string' || typeof secondAcc === 'string') {
+					if (firstAcc !== secondAcc) {
+						return false
+					}
+				} else if (firstAcc.keyword !== secondAcc.keyword) {
+					return false
+				}
+			}
+		}
+		return true
+	}
+}
 
 export interface DispatcherData {
 	registry: FullResourceLocation
@@ -156,7 +254,7 @@ export interface MappedType extends McdocBaseType {
 }
 
 export const EmptyUnion: UnionType<never> = Object.freeze({ kind: 'union', members: [] })
-export function createEmptyUnion(attributes?: Attribute[]): UnionType<never> {
+export function createEmptyUnion(attributes?: Attributes): UnionType<never> {
 	return {
 		...EmptyUnion,
 		// attributes,
@@ -227,7 +325,7 @@ export interface TupleType extends McdocBaseType {
 }
 
 export interface McdocBaseType {
-	attributes?: Attribute[]
+	attributes?: Attributes
 }
 
 export type McdocType =
@@ -248,6 +346,148 @@ export type McdocType =
 	| ConcreteType
 	| MappedType
 export namespace McdocType {
+	export function equals(a: McdocType, b: McdocType): boolean {
+		if (a.kind !== b.kind) {
+			return false
+		}
+
+		if (!Attributes.equals(a.attributes, b.attributes)) {
+			return false
+		}
+
+		switch (a.kind) {
+			case 'literal':
+				return a.value.kind === (b as LiteralType).value.kind
+					&& a.value.value === (b as LiteralType).value.value
+			case 'byte':
+			case 'short':
+			case 'int':
+			case 'long':
+			case 'float':
+			case 'double':
+				return a.valueRange === (b as NumericType).valueRange
+			case 'string':
+				return a.lengthRange === (b as StringType).lengthRange
+			case 'byte_array':
+			case 'int_array':
+			case 'long_array':
+				return a.lengthRange === (b as PrimitiveArrayType).lengthRange
+					&& a.valueRange === (b as PrimitiveArrayType).valueRange
+			case 'list':
+				return a.lengthRange === (b as ListType).lengthRange
+					&& equals(a.item, (b as ListType).item)
+			case 'tuple':
+				if (a.items.length !== (b as TupleType).items.length) {
+					return false
+				}
+				for (let i = 0; i < a.items.length; i++) {
+					if (!equals(a.items[i], (b as TupleType).items[i])) {
+						return false
+					}
+				}
+				return true
+			case 'struct':
+				return a.fields.length === (b as StructType).fields.length && !a.fields.some(f => {
+					if (f.kind === 'pair') {
+						return !(b as StructType).fields.some(of =>
+							of.kind === 'pair'
+							&& f.optional === of.optional
+							&& f.deprecated === of.deprecated
+							&& Attributes.equals(f.attributes, of.attributes)
+							&& (typeof f.key === 'string' || typeof of.key === 'string'
+								? f.key === of.key
+								: equals(f.key, of.key))
+							&& equals(f.type, of.type)
+						)
+					}
+					return !(b as StructType).fields.some(of =>
+						of.kind === 'spread'
+						&& Attributes.equals(f.attributes, of.attributes)
+						&& equals(f.type, of.type)
+					)
+				})
+			case 'union':
+				if (a.members.length !== (b as UnionType).members.length) {
+					return false
+				}
+				for (let i = 0; i < a.members.length; i++) {
+					if (!equals(a.members[i], (b as UnionType).members[i])) {
+						return false
+					}
+				}
+				return true
+			case 'enum':
+				if (
+					a.enumKind !== (b as EnumType).enumKind
+					|| a.values.length !== (b as EnumType).values.length
+				) {
+					return false
+				}
+				for (let i = 0; i < a.values.length; i++) {
+					const first = a.values[i]
+					const second = (b as EnumType).values[i]
+
+					if (
+						first.identifier !== second.identifier || first.value !== second.value
+						|| !Attributes.equals(first.attributes, second.attributes)
+					) {
+						return false
+					}
+				}
+				return true
+			case 'reference':
+				return a.path === (b as ReferenceType).path
+			case 'template':
+				if (a.typeParams.length !== (b as TemplateType).typeParams.length) {
+					return false
+				}
+				for (let i = 0; i < a.typeParams.length; i++) {
+					if (a.typeParams[i].path !== (b as TemplateType).typeParams[i].path) {
+						return false
+					}
+				}
+				return equals(a.child, (b as TemplateType).child)
+			case 'concrete':
+				if (a.typeArgs.length !== (b as ConcreteType).typeArgs.length) {
+					return false
+				}
+				for (let i = 0; i < a.typeArgs.length; i++) {
+					if (!equals(a.typeArgs[i], (b as ConcreteType).typeArgs[i])) {
+						return false
+					}
+				}
+				return equals(a.child, (b as ConcreteType).child)
+			case 'indexed':
+				if (ParallelIndices.equals(a.parallelIndices, (b as IndexedType).parallelIndices)) {
+					return false
+				}
+				return equals(a.child, (b as IndexedType).child)
+			case 'dispatcher':
+				if (a.registry !== (b as DispatcherType).registry) {
+					return false
+				}
+				return ParallelIndices.equals(a.parallelIndices, (b as IndexedType).parallelIndices)
+			case 'mapped':
+				if (
+					Object.keys(a.mapping).length !== Object.keys((b as MappedType).mapping).length
+				) {
+					return false
+				}
+				for (const kvp of Object.entries(a.mapping)) {
+					const other = (b as MappedType).mapping[kvp[0]]
+					if (!other) {
+						return false
+					}
+					if (!equals(kvp[1], other)) {
+						return false
+					}
+				}
+				return equals(a.child, (b as MappedType).child)
+			default:
+				return true
+		}
+	}
+
 	export function toString(type: McdocType | undefined): string {
 		const rangeToString = (range: NumericRange | undefined): string => {
 			return range ? ` @ ${NumericRange.toString(range)}` : ''
