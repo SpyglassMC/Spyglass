@@ -78,9 +78,9 @@ export const NodeJsExternals: Externals = {
 			return fsp.chmod(toFsPathLike(location), mode)
 		},
 		async getAllFiles(location) {
-			return (await globby(toPath(location) + '**/*', { absolute: true, dot: true })).map(
-				uriFromPath,
-			)
+			const path = toPath(location).replaceAll('\\', '/') + '**/*'
+			const files = await globby(path, { absolute: true, dot: true })
+			return files.map(uriFromPath)
 		},
 		async mkdir(location, options) {
 			return void (await fsp.mkdir(toFsPathLike(location), options))
