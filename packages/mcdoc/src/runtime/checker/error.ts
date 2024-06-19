@@ -393,7 +393,10 @@ export function getDefaultErrorReporter<T>(
 				if (error.keys.length === 1) {
 					localizedText = localize(defaultTranslationKey, localeQuote(error.keys[0]))
 				} else {
-					localizedText = localize('some-missing-keys', arrayToMessage(error.keys))
+					localizedText = localize(
+						'mcdoc.runtime.checker.some-missing-keys',
+						arrayToMessage(error.keys),
+					)
 				}
 				break
 			case 'invalid_collection_length':
