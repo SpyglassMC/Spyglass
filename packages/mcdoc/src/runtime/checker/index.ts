@@ -993,29 +993,40 @@ export function simplify<T>(
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(typeDef: McdocType, context: SimplifyContext<T>): SimplifiedMcdocType
 export function simplify<T>(typeDef: McdocType, context: SimplifyContext<T>): SimplifiedMcdocType {
+	function wrap(typeDef: SimplifiedMcdocType) {
+		if (!typeDef.attributes?.length) {
+			return typeDef
+		}
+		handleAttributes(typeDef.attributes, context.ctx, (handler, config) => {
+			if (handler.mapType) {
+				typeDef = handler.mapType(config, typeDef, context.ctx)
+			}
+		})
+		return typeDef
+	}
 	switch (typeDef.kind) {
 		case 'reference':
-			return simplifyReference(typeDef, context)
+			return wrap(simplifyReference(typeDef, context))
 		case 'dispatcher':
-			return simplifyDispatcher(typeDef, context)
+			return wrap(simplifyDispatcher(typeDef, context))
 		case 'indexed':
-			return simplifyIndexed(typeDef, context)
+			return wrap(simplifyIndexed(typeDef, context))
 		case 'union':
-			return simplifyUnion(typeDef, context)
+			return wrap(simplifyUnion(typeDef, context))
 		case 'struct':
-			return simplifyStruct(typeDef, context)
+			return wrap(simplifyStruct(typeDef, context))
 		case 'list':
-			return simplifyList(typeDef, context)
+			return wrap(simplifyList(typeDef, context))
 		case 'tuple':
-			return simplifyTuple(typeDef, context)
+			return wrap(simplifyTuple(typeDef, context))
 		case 'enum':
-			return simplifyEnum(typeDef, context)
+			return wrap(simplifyEnum(typeDef, context))
 		case 'concrete':
-			return simplifyConcrete(typeDef, context)
+			return wrap(simplifyConcrete(typeDef, context))
 		case 'template':
-			return simplifyTemplate(typeDef, context)
+			return wrap(simplifyTemplate(typeDef, context))
 		case 'mapped':
-			return simplifyMapped(typeDef, context)
+			return wrap(simplifyMapped(typeDef, context))
 		default:
 			return typeDef
 	}

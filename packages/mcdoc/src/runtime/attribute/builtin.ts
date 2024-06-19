@@ -99,6 +99,20 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			return true
 		},
+		mapType: (config, typeDef, ctx) => {
+			if (typeDef.kind === 'literal' && typeDef.value.kind === 'string') {
+				const value = core.ResourceLocation.lengthen(typeDef.value.value)
+				return { ...typeDef, value: { kind: 'string', value } }
+			}
+			if (typeDef.kind === 'enum' && typeDef.enumKind === 'string') {
+				const values = typeDef.values.map(v => ({
+					...v,
+					value: core.ResourceLocation.lengthen(`${v.value}`),
+				}))
+				return { ...typeDef, values }
+			}
+			return typeDef
+		},
 		stringParser: (config, typeDef, ctx) => {
 			const options = getResourceLocationOptions(config, ctx.requireCanonical, ctx, typeDef)
 			if (!options) {

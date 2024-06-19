@@ -1,6 +1,10 @@
 import * as core from '@spyglassmc/core'
 import type { Attribute, StructTypePairField } from '../../type/index.js'
-import type { McdocCheckerContext, SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
+import type {
+	McdocCheckerContext,
+	SimplifiedMcdocType,
+	SimplifiedMcdocTypeNoUnion,
+} from '../checker/index.js'
 import type { McdocAttributeValidator } from './validator.js'
 
 export * as validator from './validator.js'
@@ -11,6 +15,11 @@ export interface McdocAttribute<C = unknown> {
 		inferred: SimplifiedMcdocTypeNoUnion,
 		ctx: McdocCheckerContext<T>,
 	) => boolean
+	mapType?: <T>(
+		config: C,
+		typeDef: SimplifiedMcdocType,
+		ctx: McdocCheckerContext<T>,
+	) => SimplifiedMcdocType
 	mapField?: <T>(
 		config: C,
 		field: StructTypePairField,
