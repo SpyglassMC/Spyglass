@@ -165,9 +165,6 @@ export function isAssignable(
 		&& assignValue.value.kind === typeDef.value.kind
 		&& !assignValue.attributes && !typeDef.attributes
 	) {
-		if (assignValue.value.value === 'minecraft:enchantments') {
-			assignValue
-		}
 		return assignValue.value.value === typeDef.value.value
 	}
 	let ans = true
