@@ -57,7 +57,7 @@ export function index(
 					}
 					mcdoc.runtime.checker.getDefaultErrorReporter(
 						ctx,
-						mcdoc.runtime.checker.getErrorRangeDefault<JsonNode>,
+						mcdoc.runtime.checker.getDefaultErrorRange<JsonNode>,
 					)(err)
 				},
 				attachTypeInfo: (node, definition, desc = '') => {
