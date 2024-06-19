@@ -417,8 +417,10 @@ export function typeDefinition<T>(
 		}
 	}
 
-	for (const node of rootNode.possibleValues) {
-		attachTypeInfo(node, ctx)
+	if (ctx.attachTypeInfo) {
+		for (const node of rootNode.possibleValues) {
+			attachTypeInfo(node, ctx)
+		}
 	}
 
 	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
@@ -431,10 +433,10 @@ export function typeDefinition<T>(
 function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerContext<T>) {
 	if (node.validDefinitions.length === 1) {
 		const { typeDef, desc } = node.validDefinitions[0]
-		ctx.attachTypeInfo(node.node.originalNode, typeDef, desc)
+		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, desc)
 		handleStringAttachers(node.node, typeDef, ctx)
 	} else if (node.validDefinitions.length > 1) {
-		ctx.attachTypeInfo(node.node.originalNode, {
+		ctx.attachTypeInfo?.(node.node.originalNode, {
 			kind: 'union',
 			members: node.validDefinitions.map(d => d.typeDef),
 		})
@@ -442,7 +444,7 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 	}
 	for (const child of node.children) {
 		if (child.key && child.key.typeDef) {
-			ctx.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
+			ctx.attachTypeInfo?.(child.key.runtimeValue.originalNode, child.key.typeDef)
 			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, ctx)
 		}
 
@@ -457,12 +459,16 @@ function handleStringAttachers<T>(
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	ctx: McdocCheckerContext<T>,
 ) {
+	const { stringAttacher } = ctx
+	if (!stringAttacher) {
+		return
+	}
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
 		const parser = handler.stringParser?.(config, typeDef, ctx)
 		if (!parser) {
 			return
 		}
-		ctx.stringAttacher(runtimeValue.originalNode, (node) => {
+		stringAttacher(runtimeValue.originalNode, (node) => {
 			const src = new core.Source(node.value, node.valueMap)
 			const start = src.cursor
 			const child = parser(src, ctx)

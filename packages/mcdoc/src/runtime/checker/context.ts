@@ -40,8 +40,8 @@ export interface McdocCheckerContext<T> extends core.CheckerContext {
 	isEquivalent: NodeEquivalenceChecker
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
-	attachTypeInfo: TypeInfoAttacher<T>
-	stringAttacher: StringAttacher<T>
+	attachTypeInfo?: TypeInfoAttacher<T>
+	stringAttacher?: StringAttacher<T>
 }
 type McdocCheckerContextOptions<T> = Partial<McdocCheckerContext<T>>
 export namespace McdocCheckerContext {
@@ -56,8 +56,8 @@ export namespace McdocCheckerContext {
 			isEquivalent: options.isEquivalent ?? (() => false),
 			getChildren: options.getChildren ?? (() => []),
 			reportError: options.reportError ?? (() => {}),
-			attachTypeInfo: options.attachTypeInfo ?? (() => {}),
-			stringAttacher: options.stringAttacher ?? (() => {}),
+			attachTypeInfo: options.attachTypeInfo,
+			stringAttacher: options.stringAttacher,
 		}
 	}
 }
