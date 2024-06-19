@@ -197,28 +197,6 @@ export function condenseErrorsAndFilterSiblings<T>(
 		)
 		validDefinitions = rangeErrorResult.filteredDefinitions
 		errors.push(...rangeErrorResult.condensedErrors)
-
-		const noRangeError = validDefinitions.filter(d => !d.errors.some(e => e.kind === kind))
-		if (noRangeError.length !== 0) {
-			validDefinitions = noRangeError
-		} else {
-			const rangesErrors = validDefinitions.map(d => {
-				return d.errors
-					.filter((e): e is RangeError<T> => e.kind === kind)
-					.reduce((a, b) => ({
-						kind,
-						node: a.node,
-						ranges: [NumericRange.intersect(a.ranges[0], b.ranges[0])],
-					}))
-			})
-			if (rangesErrors.length > 0) {
-				errors.push({
-					kind,
-					node: rangesErrors[0].node,
-					ranges: rangesErrors.flatMap(e => e.ranges),
-				})
-			}
-		}
 	}
 
 	// No condensing needed for duplicate key. If a key is a duplicate in one definition, it really
