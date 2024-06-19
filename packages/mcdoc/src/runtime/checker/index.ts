@@ -1245,19 +1245,11 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 	let complexFields: SimplifiedStructTypePairField[] = []
 
 	function addField(key: string | SimplifiedMcdocType, field: StructTypePairField) {
-		let keep = true
 		handleAttributes(field.attributes, context.options.context, (handler, config) => {
-			if (!keep) return
-			if (handler.filterElement?.(config, context.options.context) === false) {
-				keep = false
-			}
 			if (handler.mapField) {
 				field = handler.mapField(config, field, context.options.context)
 			}
 		})
-		if (!keep) {
-			return
-		}
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
 		} else if (key.kind === 'literal' && key.value.kind === 'string') {
@@ -1280,6 +1272,15 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 		}
 	}
 	for (const field of typeDef.fields) {
+		let keep = true
+		handleAttributes(field.attributes, context.options.context, (handler, config) => {
+			if (keep && handler.filterElement?.(config, context.options.context) === false) {
+				keep = false
+			}
+		})
+		if (!keep) {
+			continue
+		}
 		if (field.kind === 'pair') {
 			// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
 			// cannot deterministically find for non-string keys.
