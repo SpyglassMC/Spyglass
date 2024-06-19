@@ -24,7 +24,7 @@ const idValidator = validator.alternatives<IdConfig>(
 function getResourceLocationOptions(
 	{ registry, tags, definition }: IdConfig,
 	ctx: core.ContextBase,
-	typeDef?: SimplifiedMcdocTypeNoUnion,
+	typeDef?: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
 ): core.ResourceLocationOptions | undefined {
 	if (!registry) {
 		if (typeDef?.kind === 'enum' && typeDef.enumKind === 'string') {
@@ -118,8 +118,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.resourceLocation(options)(src, ctx)
 			}
 		},
-		stringMocker: (config, ctx) => {
-			const options = getResourceLocationOptions(config, ctx)
+		stringMocker: (config, typeDef, ctx) => {
+			const options = getResourceLocationOptions(config, ctx, typeDef)
 			if (!options) {
 				return undefined
 			}

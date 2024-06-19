@@ -1,8 +1,8 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
-import type { McdocType, StringType, StructTypePairField } from '../../type/index.js'
+import type { LiteralType, McdocType, StringType, StructTypePairField } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
-import type { SimplifiedMcdocType } from '../checker/index.js'
+import type { SimplifiedEnum, SimplifiedMcdocType } from '../checker/index.js'
 
 export type SimpleCompletionField = { key: string; field: core.DeepReadonly<StructTypePairField> }
 
@@ -23,6 +23,16 @@ export function getFields(
 			return typeDef.fields.flatMap(field => {
 				if (typeof field.key === 'string') {
 					return [{ key: field.key, field }]
+				}
+				if (
+					field.key.kind === 'string'
+					|| (field.key.kind === 'literal' && field.key.value.kind === 'string')
+					|| (field.key.kind === 'enum' && field.key.enumKind === 'string')
+				) {
+					const ans = getStringCompletions(field.key, ctx)
+					if (ans.length > 0) {
+						return ans.map(c => ({ key: c.value, field }))
+					}
 				}
 				if (field.key.kind === 'literal') {
 					return [{ key: `${field.key.value.value}`, field }]
@@ -50,7 +60,18 @@ export function getValues(
 	typeDef: core.DeepReadonly<McdocType>,
 	ctx: core.CompleterContext,
 ): SimpleCompletionValue[] {
+	if (
+		typeDef.kind === 'string'
+		|| (typeDef.kind === 'literal' && typeDef.value.kind === 'string')
+		|| (typeDef.kind === 'enum' && typeDef.enumKind === 'string')
+	) {
+		const ans = getStringCompletions(typeDef as any, ctx)
+		if (ans.length > 0) {
+			return ans
+		}
+	}
 	switch (typeDef.kind) {
+		// TODO: de-duplicate this logic from the runtime simplifier
 		case 'union':
 			const allValues = new Map<string, SimpleCompletionValue>()
 			for (const member of typeDef.members) {
@@ -64,16 +85,17 @@ export function getValues(
 			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
 			const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
 			if (!def) return []
+			if (typeDef.attributes?.length) {
+				return getValues({
+					...def,
+					attributes: [...typeDef.attributes, ...def.attributes ?? []],
+				}, ctx)
+			}
 			return getValues(def, ctx)
 		case 'literal':
-			if (typeDef.value.kind === 'string') {
-				return [{ value: typeDef.value.value, kind: 'string' }]
-			}
-			return [{ value: `${typeDef.value.value}` }]
+			return [{ value: `${typeDef.value.value}`, kind: typeDef.value.kind }]
 		case 'boolean':
 			return ['false', 'true'].map(v => ({ value: v, kind: 'boolean' }))
-		case 'string':
-			return getStringCompletions(typeDef, ctx)
 		case 'enum':
 			return typeDef.values.map(v => ({
 				value: `${v.value}`,
@@ -85,10 +107,13 @@ export function getValues(
 	}
 }
 
-function getStringCompletions(typeDef: core.DeepReadonly<StringType>, ctx: core.CompleterContext) {
+function getStringCompletions(
+	typeDef: core.DeepReadonly<StringType | SimplifiedEnum | LiteralType>,
+	ctx: core.CompleterContext,
+) {
 	const ans: SimpleCompletionValue[] = []
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
-		const mock = handler.stringMocker?.(config, ctx)
+		const mock = handler.stringMocker?.(config, typeDef, ctx)
 		if (!mock) {
 			return
 		}
@@ -102,5 +127,8 @@ function getStringCompletions(typeDef: core.DeepReadonly<StringType>, ctx: core.
 			})),
 		)
 	})
+	if (ans.length === 0 && typeDef.kind === 'literal') {
+		ans.push({ value: `${typeDef.value.value}`, kind: 'string' })
+	}
 	return ans
 }

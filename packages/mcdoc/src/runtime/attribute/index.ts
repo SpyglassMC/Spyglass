@@ -24,7 +24,11 @@ export interface McdocAttribute<C = unknown> {
 		typeDef: SimplifiedMcdocTypeNoUnion,
 		ctx: core.CheckerContext,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
-	stringMocker?: (config: C, ctx: core.CompleterContext) => core.AstNode | undefined
+	stringMocker?: (
+		config: C,
+		typeDef: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
+		ctx: core.CompleterContext,
+	) => core.AstNode | undefined
 }
 
 export function registerAttribute<C extends core.Returnable>(
