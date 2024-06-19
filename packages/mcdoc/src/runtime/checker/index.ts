@@ -1028,7 +1028,7 @@ export function simplify<T>(typeDef: McdocType, context: SimplifyContext<T>): Si
 		case 'mapped':
 			return wrap(simplifyMapped(typeDef, context))
 		default:
-			return typeDef
+			return wrap(typeDef)
 	}
 }
 
