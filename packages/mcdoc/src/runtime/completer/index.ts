@@ -71,7 +71,6 @@ export function getValues(
 		}
 	}
 	switch (typeDef.kind) {
-		// TODO: de-duplicate this logic from the runtime simplifier
 		case 'union':
 			const allValues = new Map<string, SimpleCompletionValue>()
 			for (const member of typeDef.members) {
@@ -81,6 +80,7 @@ export function getValues(
 			}
 			return [...allValues.values()]
 		case 'reference':
+			// TODO: de-duplicate this logic from the runtime simplifier
 			if (!typeDef.path) return []
 			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
 			const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
