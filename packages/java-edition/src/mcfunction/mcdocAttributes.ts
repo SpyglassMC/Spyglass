@@ -23,26 +23,26 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 	})
 	mcdoc.runtime.registerAttribute(meta, 'objective', () => undefined, {
 		stringParser: () => parser.objective('reference'),
-		stringMocker: (_, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'objective' }),
+		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'objective' }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'team', () => undefined, {
 		stringParser: () => parser.team('reference'),
-		stringMocker: (_, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'team' }),
+		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'team' }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'score_holder', () => undefined, {
 		stringParser: () => makeInfallible(parser.scoreHolder('multiple'), localize('score-holder')),
-		stringMocker: (_, ctx) => ScoreHolderNode.mock(ctx.offset),
+		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'selector', () => undefined, {
 		stringParser: () => makeInfallible(parser.selector(), localize('selector')),
-		stringMocker: (_, ctx) =>
+		stringMocker: (_, __, ctx) =>
 			EntitySelectorNode.mock(ctx.offset, {
 				pool: EntitySelectorAtVariable.filterAvailable(ctx),
 			}),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'item_slots', () => undefined, {
 		stringParser: () => parser.itemSlots,
-		stringMocker: (_, ctx) =>
+		stringMocker: (_, __, ctx) =>
 			core.LiteralNode.mock(ctx.offset, { pool: getItemSlotsArgumentValues(ctx) }),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'uuid', () => undefined, {
