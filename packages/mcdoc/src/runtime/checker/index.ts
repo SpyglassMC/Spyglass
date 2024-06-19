@@ -891,12 +891,9 @@ function simplifyIndexed<T>(
 								simplify(node.value.node.inferredType, { ...context, node: node.value }),
 							).filter(child => {
 								if (!Array.isArray(child)) {
-									return isAssignable(
-										child.key.inferredType,
-										{ kind: 'literal', value: { kind: 'string', value: entry } },
-										context.ctx,
-										context.ctx.isEquivalent,
-									)
+									return child.key.inferredType.kind === 'literal'
+										&& child.key.inferredType.value.kind === 'string'
+										&& child.key.inferredType.value.value === entry
 								}
 								// TODO if it's a list, consider all list items.
 								// This should probably work recursively if we have a list of lists.
@@ -1008,13 +1005,11 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 		} else {
 			// Only keep fields where the new key is not assignable to an existing field
 			complexFields = complexFields.filter(other =>
-				!isAssignable(
+				!McdocType.equals(
 					key,
 					typeof other.key === 'string'
 						? { kind: 'literal', value: { kind: 'string', value: other.key } }
 						: other.key,
-					context.ctx,
-					context.ctx.isEquivalent,
 				)
 			)
 			complexFields.push({ ...field, key })
