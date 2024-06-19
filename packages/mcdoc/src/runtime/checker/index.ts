@@ -1065,7 +1065,14 @@ function simplifyReference<T>(
 		ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
 		return { kind: 'union', members: [] }
 	}
-	return simplify(def, context)
+	const simplifiedDef = simplify(def, context)
+	if (typeDef.attributes?.length) {
+		return {
+			...simplifiedDef,
+			attributes: [...typeDef.attributes, ...simplifiedDef.attributes ?? []],
+		}
+	}
+	return simplifiedDef
 }
 
 function simplifyDispatcher<T>(
