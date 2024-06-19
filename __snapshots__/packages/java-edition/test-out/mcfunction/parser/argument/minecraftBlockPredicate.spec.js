@@ -15,7 +15,8 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone" 1'] = {
       "path": [
         "stone"
       ]
-    }
+    },
+    "isPredicate": true
   },
   "errors": []
 }
@@ -241,7 +242,8 @@ exports['mcfunction argument minecraft:block_predicate Parse "#stone[foo=bar]{ba
           }
         }
       ]
-    }
+    },
+    "isPredicate": true
   },
   "errors": []
 }
@@ -263,7 +265,8 @@ exports['mcfunction argument minecraft:block_predicate Parse "minecraft:stone" 1
       "path": [
         "stone"
       ]
-    }
+    },
+    "isPredicate": true
   },
   "errors": []
 }
@@ -284,7 +287,8 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone" 1'] = {
       "path": [
         "stone"
       ]
-    }
+    },
+    "isPredicate": true
   },
   "errors": []
 }
@@ -407,7 +411,8 @@ exports['mcfunction argument minecraft:block_predicate Parse "stone[foo=bar]" 1'
           }
         }
       ]
-    }
+    },
+    "isPredicate": true
   },
   "errors": []
 }

@@ -11,7 +11,7 @@
 		"build:dev": "wireit",
 		"watch": "npm run build:dev --watch",
 		"clean": "tsc -b packages --clean",
-		"clean:full": "rm -rf packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
+		"clean:full": "rm -rf node_modules packages/*/lib packages/*/out packages/*/dist packages/*/test-out packages/*/*.tsbuildinfo .wireit packages/*/.wireit",
 		"commit": "gitmoji -c",
 		"docs:install": "cd docs && (bundle || true) && cd ..",
 		"docs:start": "cd docs && (bundle exec jekyll serve --incremental || true) && cd ..",

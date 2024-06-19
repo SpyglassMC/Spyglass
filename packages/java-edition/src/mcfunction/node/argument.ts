@@ -19,6 +19,7 @@ export interface BlockNode extends core.AstNode {
 	id: core.ResourceLocationNode
 	states?: BlockStatesNode
 	nbt?: nbt.NbtCompoundNode
+	isPredicate: boolean
 }
 export namespace BlockNode {
 	export function is(node: core.DeepReadonly<core.AstNode> | undefined): node is BlockNode {
@@ -27,7 +28,13 @@ export namespace BlockNode {
 
 	export function mock(range: core.RangeLike, isPredicate: boolean): BlockNode {
 		const id = core.ResourceLocationNode.mock(range, { category: 'block', allowTag: isPredicate })
-		return { type: 'mcfunction:block', range: core.Range.get(range), children: [id], id }
+		return {
+			type: 'mcfunction:block',
+			range: core.Range.get(range),
+			children: [id],
+			id,
+			isPredicate: false,
+		}
 	}
 }
 

@@ -14,8 +14,7 @@ export function index(
 		mcdoc.runtime.checker.typeDefinition<JsonNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			type,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -80,7 +79,7 @@ export function index(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }

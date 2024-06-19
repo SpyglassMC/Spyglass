@@ -22,6 +22,7 @@ const idValidator = validator.alternatives<IdConfig>(
 
 function getResourceLocationOptions(
 	{ registry, tags, definition }: IdConfig,
+	requireCanonical: boolean,
 	ctx: core.ContextBase,
 ): core.ResourceLocationOptions | undefined {
 	if (!registry) {
@@ -34,16 +35,27 @@ function getResourceLocationOptions(
 	// TODO: disallow non-tags when tags=required
 	if (tags === 'allowed' || tags === 'required') {
 		if (core.TaggableResourceLocationCategory.is(registry)) {
-			return { category: registry, allowTag: true }
+			return {
+				category: registry,
+				requireCanonical,
+				allowTag: true,
+			}
 		}
 	} else if (core.ResourceLocationCategory.is(registry)) {
-		return { category: registry, usageType: definition ? 'definition' : 'reference' }
+		return {
+			category: registry,
+			requireCanonical,
+			usageType: definition ? 'definition' : 'reference',
+		}
 	}
 	ctx.logger.warn(`[mcdoc id] Unhandled registry ${registry}`)
 	return undefined
 }
 
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
+	registerAttribute(meta, 'canonical', () => undefined, {
+		// Has hardcoded behavior in the runtime checker
+	})
 	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind === 'string') {
@@ -75,7 +87,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			return true
 		},
 		stringParser: (config, ctx) => {
-			const options = getResourceLocationOptions(config, ctx)
+			const options = getResourceLocationOptions(config, ctx.requireCanonical, ctx)
 			if (!options) {
 				return
 			}
@@ -93,7 +105,9 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 		stringMocker: (config, ctx) => {
-			const options = getResourceLocationOptions(config, ctx)
+			// The completer doesn't know whether it should require canonical in this situation,
+			// so we will have to accept that it will also suggest entries with missing namespaces
+			const options = getResourceLocationOptions(config, false, ctx)
 			if (!options) {
 				return undefined
 			}

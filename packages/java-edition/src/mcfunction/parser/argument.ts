@@ -313,6 +313,7 @@ function block(isPredicate: boolean): core.InfallibleParser<BlockNode> {
 				id: res.children.find(core.ResourceLocationNode.is)!,
 				states: res.children.find(BlockStatesNode.is),
 				nbt: res.children.find(nbt.NbtCompoundNode.is),
+				isPredicate,
 			}
 			return ans
 		},
@@ -1533,6 +1534,13 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	src.skipWhitespace()
 
 	const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+
+	// hack: if the key is minecraft:count, change the node's options. there has to be a better way to do this
+	if (core.ResourceLocationNode.toString(key, 'full') === 'minecraft:count') {
+		key.options.category = undefined
+		key.options.pool = ['minecraft:count']
+	}
+
 	src.skipWhitespace()
 
 	if (src.trySkip('=')) {

@@ -13,7 +13,7 @@ import type { AstNode } from './AstNode.js'
 export type ResourceLocationOptions =
 	& {
 		accessType?: SymbolAccessType
-		isPredicate?: boolean
+		requireCanonical?: boolean
 		usageType?: SymbolUsageType
 		namespacePathSep?: ':' | '.'
 	}

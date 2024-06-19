@@ -6,6 +6,7 @@ import { McdocType, NumericRange } from '../../type/index.js'
 import type {
 	CheckerTreeDefinitionNode,
 	ErrorReporter,
+	McdocCheckerContext,
 	RuntimeNode,
 	SimplifiedMcdocTypeNoUnion,
 } from './index.js'
@@ -111,7 +112,7 @@ export function condenseErrorsAndFilterSiblings<T>(
 		definition: CheckerTreeDefinitionNode<T>
 		errors: McdocRuntimeError<T>[]
 	}[],
-	context: CheckerContext,
+	context: McdocCheckerContext<T>,
 ): {
 	definitions: CheckerTreeDefinitionNode<T>[]
 	condensedErrors: McdocRuntimeError<T>[]
@@ -254,7 +255,7 @@ function deduplicateGroups<T>(
 
 function condense<T, E extends McdocRuntimeError<T>>(
 	validDefinitions: ErrorCondensingDefinition<T>[],
-	context: CheckerContext,
+	context: McdocCheckerContext<T>,
 	is: (e: McdocRuntimeError<T>) => e is E,
 	equals: (a: E, b: E) => boolean,
 	combineAlternatives?: (errors: E[]) => E,

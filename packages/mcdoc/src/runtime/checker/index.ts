@@ -1,10 +1,9 @@
 import { Range, Source } from '@spyglassmc/core'
-import type { CheckerContext, FullResourceLocation, StringBaseNode } from '@spyglassmc/core'
+import type { CheckerContext, FullResourceLocation } from '@spyglassmc/core'
 import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
 import { type EnumKind } from '../../node/index.js'
 import type {
-	Attribute,
 	ConcreteType,
 	DispatcherType,
 	EnumType,
@@ -27,51 +26,13 @@ import type {
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
+import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
+import { McdocCheckerContext } from './context.js'
 import type { McdocRuntimeError } from './error.js'
 import { condenseErrorsAndFilterSiblings } from './error.js'
 
+export * from './context.js'
 export * from './error.js'
-
-export type NodeEquivalenceChecker = (
-	inferredNode: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
-	definition: Exclude<SimplifiedMcdocTypeNoUnion, LiteralType | EnumType>,
-) => boolean
-
-export type TypeInfoAttacher<T> = (
-	node: T,
-	definition: SimplifiedMcdocType,
-	description?: string,
-) => void
-
-export type StringAttacher<T> = (node: T, attacher: (node: StringBaseNode) => void) => void
-
-export type ChildrenGetter<T> = (
-	node: T,
-	simplified: SimplifiedMcdocTypeNoUnion,
-) => RuntimeUnion<T>[]
-
-export type ErrorReporter<T> = (error: McdocRuntimeError<T>) => void
-
-export type RuntimeUnion<T> = RuntimeNode<T>[] | RuntimePair<T>
-
-export interface RuntimeNode<T> {
-	originalNode: T
-	inferredType: Exclude<McdocType, UnionType>
-}
-export interface RuntimePair<T> {
-	attributes?: Attribute[]
-	key: RuntimeNode<T>
-	possibleValues: RuntimeNode<T>[]
-}
-
-export interface McdocCheckerOptions<T> {
-	context: CheckerContext
-	isEquivalent: NodeEquivalenceChecker
-	getChildren: ChildrenGetter<T>
-	reportError: ErrorReporter<T>
-	attachTypeInfo: TypeInfoAttacher<T>
-	stringAttacher: StringAttacher<T>
-}
 
 export type SimplifiedMcdocType =
 	| SimplifiedMcdocTypeNoUnion
@@ -101,23 +62,23 @@ export interface SimplifiedStructTypePairField extends StructTypePairField {
 export function reference<T>(
 	node: RuntimeNode<T>[],
 	path: string,
-	options: McdocCheckerOptions<T>,
+	ctx: McdocCheckerContext<T>,
 ) {
-	typeDefinition(node, { kind: 'reference', path }, options)
+	typeDefinition(node, { kind: 'reference', path }, ctx)
 }
 
 export function dispatcher<T>(
 	node: RuntimeNode<T>[],
 	registry: FullResourceLocation,
 	index: string | Index | ParallelIndices,
-	options: McdocCheckerOptions<T>,
+	ctx: McdocCheckerContext<T>,
 ) {
 	const parallelIndices: ParallelIndices = typeof index === 'string'
 		? [{ kind: 'static', value: index }]
 		: Array.isArray(index)
 		? index
 		: [index]
-	typeDefinition(node, { kind: 'dispatcher', registry, parallelIndices }, options)
+	typeDefinition(node, { kind: 'dispatcher', registry, parallelIndices }, ctx)
 }
 
 export function isAssignable(
@@ -134,9 +95,8 @@ export function isAssignable(
 		return assignValue.value.value === typeDef.value.value
 	}
 	let ans = true
-	const options: McdocCheckerOptions<McdocType> = {
-		context: ctx,
-		isEquivalent: isEquivalent ? isEquivalent : () => false,
+	const newCtx = McdocCheckerContext.create(ctx, {
+		isEquivalent,
 		getChildren: (_, d) => {
 			switch (d.kind) {
 				case 'list':
@@ -166,10 +126,10 @@ export function isAssignable(
 					return []
 			}
 		},
-		reportError: () => ans = false,
-		attachTypeInfo: () => {},
-		stringAttacher: () => {},
-	}
+		reportError: () => {
+			ans = false
+		},
+	})
 
 	const node: CheckerTreeNode<McdocType> = {
 		parent: undefined,
@@ -188,7 +148,7 @@ export function isAssignable(
 	typeDefinition(
 		getPossibleTypes(assignValue).map(v => ({ originalNode: v, inferredType: v })),
 		typeDef,
-		options,
+		newCtx,
 	)
 
 	return ans
@@ -228,7 +188,7 @@ export interface CheckerTreeDefinitionNode<T> {
 export function typeDefinition<T>(
 	runtimeValues: RuntimeNode<T>[],
 	typeDef: McdocType,
-	options: McdocCheckerOptions<T>,
+	ctx: McdocCheckerContext<T>,
 ) {
 	const rootNode: CheckerTreeNode<T> = {
 		parent: undefined,
@@ -243,7 +203,7 @@ export function typeDefinition<T>(
 		condensedErrors: [],
 	}))
 	for (const value of rootNode.possibleValues) {
-		const simplifiedRoot = simplify(typeDef, { options, node: value })
+		const simplifiedRoot = simplify(typeDef, { ctx, node: value })
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
@@ -260,8 +220,8 @@ export function typeDefinition<T>(
 		const encounterdErrors: CheckerTreeError<T>[] = []
 
 		for (const value of node.possibleValues) {
-			const inferredSimplified = simplify(value.node.inferredType, { options, node: value })
-			const children = options.getChildren(value.node.originalNode, inferredSimplified)
+			const inferredSimplified = simplify(value.node.inferredType, { ctx, node: value })
+			const children = ctx.getChildren(value.node.originalNode, inferredSimplified)
 			const childNodes = children.map(c => {
 				const ans: CheckerTreeNode<T> = {
 					parent: value,
@@ -286,7 +246,7 @@ export function typeDefinition<T>(
 					inferredSimplified,
 					children,
 					def.typeDef,
-					options,
+					ctx,
 				)
 				encounterdErrors.push(...errors.map(e => ({ error: e, definitionNode: def })))
 				for (let i = 0; i < childDefinitions.length; i++) {
@@ -305,7 +265,7 @@ export function typeDefinition<T>(
 						// the same types again and just collect the errors of the lower depth.
 						// This will currently lead to a stack overflow error when e.g. comparing two
 						// text component definitions
-						const simplified = simplify(childDef.type, { options, node: childValue })
+						const simplified = simplify(childDef.type, { ctx, node: childValue })
 						// TODO this does not keep track correctly of empty unions. The child node should receive
 						// some kind of empty union valid definition with the parent set to the correct definition
 						// so that we can potentially error some valid parent defs if only some of them produce an
@@ -354,7 +314,7 @@ export function typeDefinition<T>(
 							definition: c,
 							errors: childErrors.filter(e => e.definitionNode === c).map(e => e.error),
 						})),
-						options.context,
+						ctx,
 					)
 
 					definitionGroup.children = definitions
@@ -418,23 +378,23 @@ export function typeDefinition<T>(
 	}
 
 	for (const node of rootNode.possibleValues) {
-		attachTypeInfo(node, options)
+		attachTypeInfo(node, ctx)
 	}
 
 	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
 		if (error) {
-			options.reportError(error.error)
+			ctx.reportError(error.error)
 		}
 	}
 }
 
-function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, options: McdocCheckerOptions<T>) {
+function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerContext<T>) {
 	if (node.validDefinitions.length === 1) {
 		const { typeDef, desc } = node.validDefinitions[0]
-		options.attachTypeInfo(node.node.originalNode, typeDef, desc)
-		handleStringAttachers(node.node, typeDef, options)
+		ctx.attachTypeInfo(node.node.originalNode, typeDef, desc)
+		handleStringAttachers(node.node, typeDef, ctx)
 	} else if (node.validDefinitions.length > 1) {
-		options.attachTypeInfo(node.node.originalNode, {
+		ctx.attachTypeInfo(node.node.originalNode, {
 			kind: 'union',
 			members: node.validDefinitions.map(d => d.typeDef),
 		})
@@ -442,12 +402,12 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, options: McdocChecke
 	}
 	for (const child of node.children) {
 		if (child.key && child.key.typeDef) {
-			options.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
-			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, options)
+			ctx.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
+			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, ctx)
 		}
 
 		for (const node of child.possibleValues) {
-			attachTypeInfo(node, options)
+			attachTypeInfo(node, ctx)
 		}
 	}
 }
@@ -455,25 +415,25 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, options: McdocChecke
 function handleStringAttachers<T>(
 	runtimeValue: RuntimeNode<T>,
 	typeDef: SimplifiedMcdocTypeNoUnion,
-	options: McdocCheckerOptions<T>,
+	ctx: McdocCheckerContext<T>,
 ) {
-	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-		const parser = handler.stringParser?.(config, options.context)
+	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
+		const parser = handler.stringParser?.(config, ctx)
 		if (!parser) {
 			return
 		}
-		options.stringAttacher(runtimeValue.originalNode, (node) => {
+		ctx.stringAttacher(runtimeValue.originalNode, (node) => {
 			const src = new Source(node.value, node.valueMap)
 			const start = src.cursor
-			const child = parser(src, options.context)
+			const child = parser(src, ctx)
 			if (!child) {
-				options.context.err.report(
+				ctx.err.report(
 					localize('expected', localize('mcdoc.runtime.checker.value')),
 					Range.create(start, src.skipRemaining()),
 				)
 				return
 			} else if (src.canRead()) {
-				options.context.err.report(
+				ctx.err.report(
 					localize('mcdoc.runtime.checker.trailing'),
 					Range.create(src.cursor, src.skipRemaining()),
 				)
@@ -499,7 +459,7 @@ function checkShallowly<T>(
 	simplifiedInferred: SimplifiedMcdocTypeNoUnion,
 	children: RuntimeUnion<T>[],
 	typeDef: SimplifiedMcdocTypeNoUnion,
-	options: McdocCheckerOptions<T>,
+	ctx: McdocCheckerContext<T>,
 ): ShallowCheckResult<T> {
 	const typeDefValueType = getValueType(typeDef)
 	const runtimeValueType = getValueType(simplifiedInferred)
@@ -508,7 +468,7 @@ function checkShallowly<T>(
 		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
 			&& simplifiedInferred.kind !== 'unsafe'
 			&& runtimeValueType.kind !== typeDefValueType.kind
-			&& !options.isEquivalent(runtimeValueType, typeDefValueType))
+			&& !ctx.isEquivalent(runtimeValueType, typeDefValueType))
 		|| (typeDef.kind === 'literal'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| typeDef.value.value !== simplifiedInferred.value.value))
@@ -528,8 +488,8 @@ function checkShallowly<T>(
 	).fill(undefined)
 	const errors: McdocRuntimeError<T>[] = []
 	let assignable = true
-	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
-		if (handler.checkInferred?.(config, simplifiedInferred, options.context) === false) {
+	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
+		if (handler.checkInferred?.(config, simplifiedInferred, ctx) === false) {
 			assignable = false
 		}
 	})
@@ -624,8 +584,8 @@ function checkShallowly<T>(
 							isAssignable(
 								kvp.value.key.inferredType,
 								pair.key,
-								options.context,
-								options.isEquivalent,
+								ctx,
+								ctx.isEquivalent,
 							)
 						) {
 							foundMatch = true
@@ -640,8 +600,8 @@ function checkShallowly<T>(
 							&& isAssignable(
 								{ kind: 'literal', value: { kind: 'string', value: kvp[0] } },
 								pair.key,
-								options.context,
-								options.isEquivalent,
+								ctx,
+								ctx.isEquivalent,
 							)
 						) {
 							foundMatch = true
@@ -655,6 +615,7 @@ function checkShallowly<T>(
 				}
 				if (
 					!foundMatch
+					&& !ctx.allowMissingKeys
 					&& pair.key.kind === 'literal'
 					&& pair.key.value.kind === 'string'
 					&& pair.optional !== true
@@ -787,7 +748,7 @@ export interface SimplifyValueNode<T> {
 }
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
-	options: McdocCheckerOptions<T>
+	ctx: McdocCheckerContext<T>
 	isMember?: boolean
 	typeArgs?: SimplifiedMcdocType[]
 	typeMapping?: { [path: string]: SimplifiedMcdocType }
@@ -830,10 +791,9 @@ function simplifyReference<T>(
 	typeDef: ReferenceType,
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	const ctx = context.options.context
 	if (!typeDef.path) {
 		// TODO when does this happen?
-		ctx.logger.warn(`Tried to access empty reference`)
+		context.ctx.logger.warn(`Tried to access empty reference`)
 		return { kind: 'union', members: [] }
 	}
 	const mapped = context.typeMapping?.[typeDef.path]
@@ -841,10 +801,10 @@ function simplifyReference<T>(
 		return mapped
 	}
 	// TODO Probably need to keep original symbol around in some way to support "go to definition"
-	const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
+	const symbol = context.ctx.symbols.query(context.ctx.doc, 'mcdoc', typeDef.path)
 	const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
 	if (!def) {
-		ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
+		context.ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
 		return { kind: 'union', members: [] }
 	}
 	return simplify(def, context)
@@ -854,11 +814,14 @@ function simplifyDispatcher<T>(
 	typeDef: DispatcherType,
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	const ctx = context.options.context
-	const dispatcher = ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', typeDef.registry).symbol
+	const dispatcher = context.ctx.symbols.query(
+		context.ctx.doc,
+		'mcdoc/dispatcher',
+		typeDef.registry,
+	).symbol
 		?.members
 	if (!dispatcher) {
-		ctx.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`)
+		context.ctx.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`)
 		return { kind: 'union', members: [] }
 	}
 	const structFields: StructTypePairField[] = []
@@ -882,7 +845,7 @@ function simplifyIndexed<T>(
 	const child = simplify(typeDef.child, { ...context, typeArgs: [] })
 
 	if (child.kind !== 'struct') {
-		context.options.context.logger.warn(`Tried to index unindexable type ${child.kind}`)
+		context.ctx.logger.warn(`Tried to index unindexable type ${child.kind}`)
 		return { kind: 'union', members: [] }
 	}
 	let values: McdocType[] = []
@@ -924,7 +887,7 @@ function simplifyIndexed<T>(
 					const newPossibilities: SimplifyNode<T>[] = []
 					for (const node of possibilities) {
 						const possibleChildren: SimplifyNode<T>[] = node.value
-							? (context.options.getChildren(
+							? (context.ctx.getChildren(
 								node.value.node.originalNode,
 								simplify(node.value.node.inferredType, { ...context, node: node.value }),
 							).filter(child => {
@@ -932,8 +895,8 @@ function simplifyIndexed<T>(
 									return isAssignable(
 										child.key.inferredType,
 										{ kind: 'literal', value: { kind: 'string', value: entry } },
-										context.options.context,
-										context.options.isEquivalent,
+										context.ctx,
+										context.ctx.isEquivalent,
 									)
 								}
 								// TODO if it's a list, consider all list items.
@@ -999,12 +962,17 @@ function simplifyIndexed<T>(
 
 function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): SimplifiedMcdocType {
 	const members: SimplifiedMcdocTypeNoUnion[] = []
+	const filterCanonical = context.ctx.requireCanonical
+		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
 	for (const member of typeDef.members) {
+		if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
+			continue
+		}
 		const simplified = simplify(member, context)
 		let keep = true
-		handleAttributes(member.attributes, context.options.context, (handler, config) => {
+		handleAttributes(member.attributes, context.ctx, (handler, config) => {
 			if (!keep || !handler.filterElement) return
-			if (!handler.filterElement(config, context.options.context)) {
+			if (!handler.filterElement(config, context.ctx)) {
 				keep = false
 			}
 		})
@@ -1027,19 +995,11 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 	let complexFields: SimplifiedStructTypePairField[] = []
 
 	function addField(key: string | SimplifiedMcdocType, field: StructTypePairField) {
-		let keep = true
-		handleAttributes(field.attributes, context.options.context, (handler, config) => {
-			if (!keep) return
-			if (handler.filterElement?.(config, context.options.context) === false) {
-				keep = false
-			}
+		handleAttributes(field.attributes, context.ctx, (handler, config) => {
 			if (handler.mapField) {
-				field = handler.mapField(config, field, context.options.context)
+				field = handler.mapField(config, field, context.ctx)
 			}
 		})
-		if (!keep) {
-			return
-		}
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
 		} else if (key.kind === 'literal' && key.value.kind === 'string') {
@@ -1054,14 +1014,23 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 					typeof other.key === 'string'
 						? { kind: 'literal', value: { kind: 'string', value: other.key } }
 						: other.key,
-					context.options.context,
-					context.options.isEquivalent,
+					context.ctx,
+					context.ctx.isEquivalent,
 				)
 			)
 			complexFields.push({ ...field, key })
 		}
 	}
 	for (const field of typeDef.fields) {
+		let keep = true
+		handleAttributes(field.attributes, context.ctx, (handler, config) => {
+			if (keep && handler.filterElement?.(config, context.ctx) === false) {
+				keep = false
+			}
+		})
+		if (!keep) {
+			continue
+		}
 		if (field.kind === 'pair') {
 			// Don't simplify the value here. We need to have the correct `node` and `parents`, which we
 			// cannot deterministically find for non-string keys.
@@ -1147,9 +1116,9 @@ function simplifyTuple<T>(typeDef: TupleType, context: SimplifyContext<T>): Tupl
 function simplifyEnum<T>(typeDef: EnumType, context: SimplifyContext<T>): SimplifiedEnum {
 	const filteredValues = typeDef.values.filter(value => {
 		let keep = true
-		handleAttributes(value.attributes, context.options.context, (handler, config) => {
+		handleAttributes(value.attributes, context.ctx, (handler, config) => {
 			if (!keep || !handler.filterElement) return
-			if (!handler.filterElement(config, context.options.context)) {
+			if (!handler.filterElement(config, context.ctx)) {
 				keep = false
 			}
 		})
@@ -1171,7 +1140,7 @@ function simplifyTemplate<T>(
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
 	if (context.typeArgs?.length !== typeDef.typeParams.length) {
-		context.options.context.logger.warn(
+		context.ctx.logger.warn(
 			`Expected ${typeDef.typeParams.length} mcdoc type args for ${
 				McdocType.toString(typeDef.child)
 			}, but got ${context.typeArgs?.length ?? 0}`,
