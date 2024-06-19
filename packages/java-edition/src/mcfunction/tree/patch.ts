@@ -544,6 +544,18 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 			'save-on': {
 				permission: 4,
 			},
+			schedule: {
+				children: {
+					clear: {
+						children: {
+							function: {
+								parser: 'minecraft:function',
+								properties: undefined,
+							},
+						},
+					},
+				},
+			},
 			scoreboard: {
 				children: {
 					objectives: {
