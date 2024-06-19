@@ -314,7 +314,6 @@ export function typeDefinition<T>(
 							definition: c,
 							errors: childErrors.filter(e => e.definitionNode === c).map(e => e.error),
 						})),
-						ctx,
 					)
 
 					definitionGroup.children = definitions
