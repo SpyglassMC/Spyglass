@@ -70,7 +70,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 		// Has hardcoded behavior in the runtime checker
 	})
 	registerAttribute(meta, 'id', idValidator, {
-		checkType: (config, inferred, expected, ctx) => {
+		checkType: (config, inferred, ctx) => {
 			if (inferred.kind === 'string') {
 				// Internal mcdoc isAssignable check
 				const idAttr = inferred.attributes?.find(a => a.name === 'id')
@@ -95,19 +95,6 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 						+ inferred.value.value.slice(config.prefix.length)
 				} else {
 					inferred.value.value = 'minecraft:' + inferred.value.value
-				}
-			}
-			if (
-				expected.kind === 'literal' && expected.value.kind === 'string'
-				&& !expected.value.value.includes(':')
-			) {
-				expected.value.value = 'minecraft:' + expected.value.value
-			}
-			if (expected.kind === 'enum' && expected.enumKind === 'string') {
-				for (const value of expected.values) {
-					if (typeof value.value === 'string' && !value.value.includes(':')) {
-						value.value = 'minecraft:' + value.value
-					}
 				}
 			}
 			return true

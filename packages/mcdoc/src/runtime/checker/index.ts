@@ -715,7 +715,7 @@ function checkShallowly<T>(
 	const errors: McdocCheckerError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
-		if (handler.checkType?.(config, simplifiedInferred, typeDef, ctx) === false) {
+		if (handler.checkType?.(config, simplifiedInferred, ctx) === false) {
 			assignable = false
 		}
 	})

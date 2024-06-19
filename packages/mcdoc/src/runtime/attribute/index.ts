@@ -9,7 +9,6 @@ export interface McdocAttribute<C = unknown> {
 	checkType?: <T>(
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
-		expected: SimplifiedMcdocTypeNoUnion,
 		ctx: McdocCheckerContext<T>,
 	) => boolean
 	mapField?: <T>(
