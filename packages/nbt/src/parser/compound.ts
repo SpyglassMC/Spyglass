@@ -17,7 +17,7 @@ export const compound: core.InfallibleParser<NbtCompoundNode> = (src, ctx) => {
 				sep: ':',
 				value: entry,
 				end: ',',
-				trailingEnd: false,
+				trailingEnd: true,
 			},
 			end: '}',
 		}),
