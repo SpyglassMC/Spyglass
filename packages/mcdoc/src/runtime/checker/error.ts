@@ -60,6 +60,10 @@ export interface RangeError<T> extends McdocRuntimeBaseError<T> {
 		| 'invalid_collection_length'
 		| 'invalid_string_length'
 		| 'number_out_of_range'
+	/**
+	 * A list of multiple mean the number (or length) has to be within one of these ranges. This is
+	 * a result of merging errors from two conflicting definitions for the same value.
+	 */
 	ranges: NumericRange[]
 }
 export namespace RangeError {
@@ -92,6 +96,9 @@ export namespace MissingKeyError {
 
 export interface TypeMismatchError<T> extends McdocRuntimeBaseError<T> {
 	kind: 'type_mismatch'
+	/**
+	 * These are all valid definitions. The node needs to only fullfill one of them.
+	 */
 	expected: SimplifiedMcdocTypeNoUnion[]
 }
 export namespace TypeMismatchError {
@@ -176,6 +183,7 @@ export function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingD
 			(a, b) =>
 				a.ranges.length === b.ranges.length
 				&& !a.ranges.some(r => !b.ranges.some(or => NumericRange.equals(r, or))),
+			// TODO merge overlapping ranges better?
 			errors => ({
 				kind,
 				node: errors[0].node,
