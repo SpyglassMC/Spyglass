@@ -7,8 +7,7 @@ export function index(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 		mcdoc.runtime.checker.typeDefinition<JsonNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			type,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -68,7 +67,7 @@ export function index(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }

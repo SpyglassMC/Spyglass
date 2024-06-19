@@ -62,16 +62,21 @@ export function typeDefinition(
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
+				allowMissingKeys: options.isPredicate,
+				requireCanonical: options.isPredicate,
 				isEquivalent: (inferred, def) => {
 					if (def.kind === 'boolean') {
 						// TODO: this should check whether the value is 0 or 1
 						return inferred.kind === 'byte'
 					}
+					if (inferred.kind === 'list') {
+						return def.kind === 'list' || def.kind === 'tuple'
+					}
+					if (options.isPredicate) {
+						return inferred.kind === def.kind
+					}
 					switch (inferred.kind) {
-						case 'list':
-							return ['list', 'tuple'].includes(def.kind)
 						case 'struct':
 							return def.kind === 'struct'
 						case 'byte':
@@ -129,7 +134,7 @@ export function typeDefinition(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }
@@ -257,8 +262,7 @@ export function path(
 		mcdoc.runtime.checker.typeDefinition<NbtPathLink>(
 			[{ originalNode: link, inferredType: inferPath(link) }],
 			typeDef,
-			{
-				context: ctx,
+			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -328,7 +332,7 @@ export function path(
 						core.checker.dispatchSync(node, ctx)
 					}
 				},
-			},
+			}),
 		)
 	}
 }

@@ -119,7 +119,7 @@ export function resourceLocation(
 				ctx.err.report(localize('parser.resource-location.tag-disallowed'), ans)
 			}
 
-			if (!ans.namespace && options.isPredicate) {
+			if (!ans.namespace && options.requireCanonical) {
 				ctx.err.report(localize('parser.resource-location.namespace-expected'), ans)
 			}
 		}
