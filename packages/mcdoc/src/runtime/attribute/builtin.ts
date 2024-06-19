@@ -70,7 +70,7 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 		// Has hardcoded behavior in the runtime checker
 	})
 	registerAttribute(meta, 'id', idValidator, {
-		checkType: (config, inferred, ctx) => {
+		checkInferred: (config, inferred, ctx) => {
 			if (inferred.kind === 'string') {
 				// Internal mcdoc isAssignable check
 				const idAttr = inferred.attributes?.find(a => a.name === 'id')

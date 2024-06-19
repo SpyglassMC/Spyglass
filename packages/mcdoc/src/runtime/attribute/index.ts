@@ -10,7 +10,7 @@ import type { McdocAttributeValidator } from './validator.js'
 export * as validator from './validator.js'
 
 export interface McdocAttribute<C = unknown> {
-	checkType?: <T>(
+	checkInferred?: <T>(
 		config: C,
 		inferred: SimplifiedMcdocTypeNoUnion,
 		ctx: McdocCheckerContext<T>,
