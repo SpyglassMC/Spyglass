@@ -154,9 +154,9 @@ export function record<K extends AstNode, V extends AstNode, N extends RecordBas
 export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => {
 	const config = LinterConfigValue.destruct(ctx.config.lint.idOmitDefaultNamespace)
 
-	const includeEmptyNamespace = !node.options.isPredicate && node.namespace === ''
-	const includeDefaultNamespace = node.options.isPredicate || config?.ruleValue !== true
-	const excludeDefaultNamespace = !node.options.isPredicate && config?.ruleValue !== false
+	const includeEmptyNamespace = !node.options.requireCanonical && node.namespace === ''
+	const includeDefaultNamespace = node.options.requireCanonical || config?.ruleValue !== true
+	const excludeDefaultNamespace = !node.options.requireCanonical && config?.ruleValue !== false
 
 	const getPool = (category: string) => {
 		const symbols = ctx.symbols.getVisibleSymbols(category, ctx.doc.uri)

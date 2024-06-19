@@ -116,7 +116,8 @@ exports['mcfunction argument minecraft:block_state Parse "foo{bar:baz}" 1'] = {
           }
         }
       ]
-    }
+    },
+    "isPredicate": false
   },
   "errors": []
 }
@@ -138,7 +139,8 @@ exports['mcfunction argument minecraft:block_state Parse "minecraft:stone" 1'] =
       "path": [
         "stone"
       ]
-    }
+    },
+    "isPredicate": false
   },
   "errors": []
 }
@@ -159,7 +161,8 @@ exports['mcfunction argument minecraft:block_state Parse "stone" 1'] = {
       "path": [
         "stone"
       ]
-    }
+    },
+    "isPredicate": false
   },
   "errors": []
 }
@@ -282,7 +285,8 @@ exports['mcfunction argument minecraft:block_state Parse "stone[foo=bar]" 1'] = 
           }
         }
       ]
-    }
+    },
+    "isPredicate": false
   },
   "errors": []
 }
