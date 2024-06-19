@@ -24,6 +24,12 @@ export namespace NumericRange {
 		return true
 	}
 
+	export function equals(a: NumericRange, b: NumericRange): boolean {
+		return a.kind === b.kind
+			&& a.min === b.min
+			&& a.max === b.max
+	}
+
 	export function intersect(a: NumericRange, b: NumericRange): NumericRange {
 		const min: number | undefined = a.min !== undefined && b.min !== undefined
 			? Math.max(a.min, b.min)

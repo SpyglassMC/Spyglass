@@ -1,301 +1,177 @@
+import { boolean, type CheckerContext } from '@spyglassmc/core'
 import { NumericRange } from '../../type/index.js'
-import type {
-	CheckerTreeDefinitionNode,
-	RuntimeNode,
-	RuntimeUnion,
-	SimplifiedMcdocType,
+import {
+	type CheckerTreeDefinitionNode,
+	isAssignable,
+	McdocCheckerOptions,
+	type RuntimeNode,
+	type RuntimeUnion,
+	type SimplifiedMcdocTypeNoUnion,
 } from './index.js'
 
-export type McdocCheckerError<T> =
+export type McdocRuntimeError<T> =
 	| SimpleError<T>
-	| UnknownVariantWithKeyCombinationError<T>
-	| UnknownTupleElementError<T>
+	| UnknownKeyError<T>
 	| RangeError<T>
 	| TypeMismatchError<T>
 	| MissingKeyError<T>
 
-export interface SimpleError<T> {
-	kind:
-		| 'unknown_key'
-		| 'duplicate_key'
-		| 'some_missing_keys'
-		| 'sometimes_type_mismatch'
-		| 'expected_key_value_pair'
-		| 'internal'
+export interface McdocRuntimeBaseError<T> {
 	node: RuntimeNode<T>
+	/**
+	 * This is set when this error may not need to be fixed if another error of the same kind is
+	 * fixed instead. This contains a list of nodes with conflicting
+	 */
+	nodesWithConflictingErrors?: RuntimeNode<T>[]
+}
+
+export interface SimpleError<T> extends McdocRuntimeBaseError<T> {
+	kind:
+		| 'duplicate_key'
+		| 'unknown_key'
+		| 'expected_key_value_pair'
+		| 'unknown_tuple_element'
+		| 'internal'
 }
 export namespace SimpleError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is SimpleError<T> {
-		return error?.kind === 'unknown_key'
-			|| error?.kind === 'duplicate_key'
-			|| error?.kind === 'some_missing_keys'
-			|| error?.kind === 'sometimes_type_mismatch'
+	export function is<T>(error: McdocRuntimeError<T> | undefined): error is SimpleError<T> {
+		return error?.kind === 'duplicate_key'
+			|| error?.kind === 'unknown_key'
 			|| error?.kind === 'expected_key_value_pair'
+			|| error?.kind === 'unknown_tuple_element'
 			|| error?.kind === 'internal'
 	}
 }
 
-export interface UnknownVariantWithKeyCombinationError<T> {
-	kind: 'invalid_key_combination'
-	node: RuntimeNode<T>[]
+export interface UnknownKeyError<T> extends McdocRuntimeBaseError<T> {
+	kind: 'unknown_key'
 }
-export namespace UnknownVariantWithKeyCombinationError {
+export namespace UnknownKeyError {
 	export function is<T>(
-		error: McdocCheckerError<T> | undefined,
-	): error is UnknownVariantWithKeyCombinationError<T> {
-		return error?.kind === 'invalid_key_combination'
+		error: McdocRuntimeError<T> | undefined,
+	): error is UnknownKeyError<T> {
+		return error?.kind === 'unknown_key'
 	}
 }
 
-export interface UnknownTupleElementError<T> {
-	kind: 'unknown_tuple_element'
-	node: RuntimeUnion<T>
-}
-export namespace UnknownTupleElementError {
-	export function is<T>(
-		error: McdocCheckerError<T> | undefined,
-	): error is UnknownTupleElementError<T> {
-		return error?.kind === 'unknown_tuple_element'
-	}
-}
-
-export interface RangeError<T> {
+export interface RangeError<T> extends McdocRuntimeBaseError<T> {
 	kind:
 		| 'invalid_collection_length'
 		| 'invalid_string_length'
 		| 'number_out_of_range'
-	node: RuntimeNode<T>
 	ranges: NumericRange[]
 }
 export namespace RangeError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is RangeError<T> {
+	export function is<T>(error: McdocRuntimeError<T> | undefined): error is RangeError<T> {
 		return error?.kind === 'invalid_collection_length'
 			|| error?.kind === 'invalid_string_length'
 			|| error?.kind === 'number_out_of_range'
 	}
 }
 
-export interface MissingKeyError<T> {
+export interface MissingKeyError<T> extends McdocRuntimeBaseError<T> {
 	kind: 'missing_key'
-	node: RuntimeNode<T>
-	key: string
+	/**
+	 * A list of multiple are an alternative, and at least on e needs to be fixed, not neccessarily
+	 * all of them.
+	 *
+	 * In case there are multiple non-conflicting missing keys, multiple errors will be reported on
+	 * the same node instead.
+	 *
+	 * If this has a length > 1, there is at least one error that needs to be fixed, and at least one
+	 * error that does not neccassarily need to be fixed.
+	 */
+	keys: string[]
 }
 export namespace MissingKeyError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is MissingKeyError<T> {
+	export function is<T>(error: McdocRuntimeError<T> | undefined): error is MissingKeyError<T> {
 		return error?.kind === 'missing_key'
 	}
 }
 
-export interface TypeMismatchError<T> {
-	node: RuntimeNode<T>
+export interface TypeMismatchError<T> extends McdocRuntimeBaseError<T> {
 	kind: 'type_mismatch'
-	expected: SimplifiedMcdocType
+	expected: SimplifiedMcdocTypeNoUnion[]
 }
 export namespace TypeMismatchError {
-	export function is<T>(error: McdocCheckerError<T> | undefined): error is TypeMismatchError<T> {
+	export function is<T>(error: McdocRuntimeError<T> | undefined): error is TypeMismatchError<T> {
 		return error?.kind === 'type_mismatch'
 	}
 }
 
 export interface ErrorCondensingDefinition<T> {
 	definition: CheckerTreeDefinitionNode<T>
-	errors: McdocCheckerError<T>[]
+	errors: McdocRuntimeError<T>[]
 }
 
 export function condenseErrorsAndFilterSiblings<T>(
 	definitions: {
 		definition: CheckerTreeDefinitionNode<T>
-		errors: McdocCheckerError<T>[]
+		errors: McdocRuntimeError<T>[]
 	}[],
+	context: CheckerContext,
 ): {
 	definitions: CheckerTreeDefinitionNode<T>[]
-	condensedErrors: McdocCheckerError<T>[]
+	condensedErrors: McdocRuntimeError<T>[]
 } {
 	if (definitions.length === 0) {
 		return { definitions: [], condensedErrors: [] }
 	}
 
 	let validDefinitions = definitions
-	const errors = validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
+	const errors = []
 
-	const alwaysMismatch: TypeMismatchError<T>[] = (validDefinitions[0].errors
-		.filter(e =>
-			e.kind === 'type_mismatch'
-			&& !validDefinitions.some(d =>
-				!d.errors.some(oe =>
-					oe.kind === 'type_mismatch'
-					&& e.node.originalNode === oe.node.originalNode
-				)
-			)
-		) as TypeMismatchError<T>[])
-		.map(e => {
-			const expected = validDefinitions
-				.map(d =>
-					(d.errors.find(oe =>
-						oe.kind === 'type_mismatch'
-						&& oe.node.originalNode === e.node.originalNode
-					) as TypeMismatchError<T>).expected
-				)
-				.flatMap(t => t.kind === 'union' ? t.members : [t])
-				.filter((d, i, arr) => arr.findIndex(od => od.kind === d.kind) === i)
-			return {
-				...e,
-				expected: expected.length === 1
-					? expected[0]
-					: { kind: 'union', members: expected },
-			}
-		})
-	errors.push(...alwaysMismatch)
-
-	const onlyCommonTypeMismatches = definitions.filter(d =>
-		!d.errors.some(e =>
-			e.kind === 'sometimes_type_mismatch'
-			|| (e.kind === 'type_mismatch'
-				&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
-		)
+	const typeMismatchResult = condense(
+		validDefinitions,
+		context,
+		TypeMismatchError.is,
+		(a, b) =>
+			a.expected.length === b.expected.length
+			&& !a.expected.some(d =>
+				!b.expected.some(od => isAssignable(d, od, context) && isAssignable(od, d, context))
+			),
+		errors => ({
+			kind: 'type_mismatch',
+			node: errors[0].node,
+			expected: deduplicateGroups(
+				errors.map(e => e.expected),
+				(a, b) => isAssignable(a, b, context) && isAssignable(b, a, context),
+			),
+		}),
 	)
-	if (onlyCommonTypeMismatches.length !== 0) {
-		validDefinitions = onlyCommonTypeMismatches
-	} else {
-		// TODO Generic error, maybe we can keep original expected types?
-		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
+	validDefinitions = typeMismatchResult.filteredDefinitions
+	errors.push(...typeMismatchResult.condensedErrors)
 
-		const typeMismatches: SimpleError<T>[] = validDefinitions
-			.flatMap(d =>
-				d.errors
-					.filter(e =>
-						e.kind === 'type_mismatch'
-						&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode)
-					)
-			)
-			.map(e => e.node as RuntimeNode<T>)
-			.concat(
-				validDefinitions.flatMap(d => d.errors).filter(e =>
-					e.kind === 'sometimes_type_mismatch'
-				).map(e => e.node as RuntimeNode<T>),
-			)
-			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
-			.map(n => ({ kind: 'sometimes_type_mismatch', node: n }))
-
-		errors.push(...typeMismatches)
-	}
-
-	const alwaysUnknown = validDefinitions[0].errors
-		.filter(e =>
-			e.kind === 'unknown_key'
-			&& !validDefinitions.some(d =>
-				!d.errors.some(oe =>
-					oe.kind === 'unknown_key'
-					&& e.node.originalNode === oe.node.originalNode
-				)
-			)
-		) as SimpleError<T>[]
-	errors.push(...alwaysUnknown)
-
-	const onlyCommonUnknownKeys = validDefinitions
-		.filter(d =>
-			!d.errors.some(e =>
-				e.kind === 'invalid_key_combination'
-				|| (e.kind === 'unknown_key'
-					&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))
-			)
+	for (
+		const kind of [
+			'unknown_key',
+			'expected_key_value_pair',
+			'unknown_tuple_element',
+		] as const
+	) {
+		const simpleErrorResult = condense(
+			validDefinitions,
+			context,
+			(e): e is SimpleError<T> => e.kind === kind,
+			_ => true,
 		)
-	if (onlyCommonUnknownKeys.length !== 0) {
-		validDefinitions = onlyCommonUnknownKeys
-	} else {
-		const unknownKeys = validDefinitions
-			.flatMap(d =>
-				d.errors
-					.filter(e =>
-						e.kind === 'unknown_key'
-						&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode)
-					)
-			)
-			.map(e => e.node as RuntimeNode<T>)
-			.concat(
-				validDefinitions.flatMap(d => d.errors).filter(e =>
-					e.kind === 'invalid_key_combination'
-				).map(e => e.node as RuntimeNode<T>),
-			)
-			.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
-
-		errors.push({ kind: 'invalid_key_combination', node: unknownKeys })
+		validDefinitions = simpleErrorResult.filteredDefinitions
+		errors.push(...simpleErrorResult.condensedErrors)
 	}
 
-	const noExpectedKvp = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'expected_key_value_pair')
+	const missingKeyResult = condense(
+		validDefinitions,
+		context,
+		MissingKeyError.is,
+		(a, b) => !a.keys.some(k => !b.keys.includes(k)),
+		errors => ({
+			kind: 'missing_key',
+			node: errors[0].node,
+			keys: deduplicateGroups(errors.map(e => e.keys)),
+		}),
 	)
-	if (noExpectedKvp.length !== 0) {
-		validDefinitions = noExpectedKvp
-	} else {
-		errors.push(
-			...validDefinitions
-				.flatMap(d => d.errors)
-				.filter((e, i, arr) =>
-					e.kind === 'expected_key_value_pair'
-					&& arr.findIndex(oe =>
-							oe.kind === 'expected_key_value_pair'
-							&& oe.node.originalNode === e.node.originalNode
-						) === i
-				),
-		)
-	}
-
-	const noUnknownTupleElements = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'unknown_tuple_element')
-	)
-	if (noUnknownTupleElements.length !== 0) {
-		validDefinitions = noUnknownTupleElements
-	}
-
-	const alwaysMissing = validDefinitions[0].errors.filter(e =>
-		e.kind === 'missing_key'
-		&& !validDefinitions.some(d =>
-			!d.errors.some(oe =>
-				oe.kind === 'missing_key'
-				&& oe.node.originalNode === e.node.originalNode
-				&& oe.key === e.key
-			)
-		)
-	) as MissingKeyError<T>[]
-	errors.push(...alwaysMissing)
-	const onlyCommonMissing = validDefinitions
-		.filter(d =>
-			!d.errors.some(e =>
-				e.kind === 'some_missing_keys'
-				|| (e.kind === 'missing_key'
-					&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))
-			)
-		)
-	if (onlyCommonMissing.length !== 0) {
-		validDefinitions = onlyCommonMissing
-	} else {
-		// In this case we have multiple conflicting missing keys.
-		// This is a generic error message with no further info.
-		// A more informative error message would be quite complicated
-		// and look sth like this:
-		// Missing either keys ("A", "B" and "C"), ("A", and "D"), or "F"
-		errors.push(
-			...validDefinitions
-				.flatMap(d =>
-					d.errors
-						.filter(e =>
-							e.kind === 'missing_key'
-							&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode)
-						)
-				)
-				.map(e => e.node as RuntimeNode<T>)
-				.concat(
-					validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'some_missing_keys')
-						.map(e => e.node as RuntimeNode<T>),
-				)
-				.filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
-				.map(n => ({
-					kind: 'some_missing_keys' as 'some_missing_keys',
-					node: n,
-				})),
-		)
-	}
+	validDefinitions = missingKeyResult.filteredDefinitions
+	errors.push(...missingKeyResult.condensedErrors)
 
 	for (
 		const kind of [
@@ -304,6 +180,22 @@ export function condenseErrorsAndFilterSiblings<T>(
 			'number_out_of_range',
 		] as const
 	) {
+		const rangeErrorResult = condense(
+			validDefinitions,
+			context,
+			(e): e is RangeError<T> => e.kind === kind,
+			(a, b) =>
+				a.ranges.length === b.ranges.length
+				&& !a.ranges.some(r => !b.ranges.some(or => NumericRange.equals(r, or))),
+			errors => ({
+				kind,
+				node: errors[0].node,
+				ranges: deduplicateGroups(errors.map(e => e.ranges), NumericRange.equals),
+			}),
+		)
+		validDefinitions = rangeErrorResult.filteredDefinitions
+		errors.push(...rangeErrorResult.condensedErrors)
+
 		const noRangeError = validDefinitions.filter(d => !d.errors.some(e => e.kind === kind))
 		if (noRangeError.length !== 0) {
 			validDefinitions = noRangeError
@@ -327,9 +219,18 @@ export function condenseErrorsAndFilterSiblings<T>(
 		}
 	}
 
-	errors.push(
-		...validDefinitions.flatMap(d => d.errors.filter(e => e.kind === 'internal')),
+	// No condensing needed for duplicate key. If a key is a duplicate in one definition, it really
+	// should have been reported by all of them
+	validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
+
+	const internalErrorResult = condense(
+		validDefinitions,
+		context,
+		(e): e is SimpleError<T> => e.kind === 'internal',
+		_ => false,
 	)
+	validDefinitions = internalErrorResult.filteredDefinitions
+	errors.push(...internalErrorResult.condensedErrors)
 
 	return {
 		definitions: validDefinitions.map(d => d.definition),
@@ -337,42 +238,59 @@ export function condenseErrorsAndFilterSiblings<T>(
 	}
 }
 
-function condense<T extends McdocCheckerError<T>>(
-	validDefinitions: ErrorCondensingDefinition<T>[],
-	is: (e: McdocCheckerError<T>) => e is T,
-	equals: (a: T, b: T) => boolean,
-	combine: (a: T, b: T) => T,
-	combineAlternatives: (errors: T[]) => T,
-): { condensedErrors: T[]; filteredDefinitions: ErrorCondensingDefinition<T>[] } {
-	// TODO a lot of O(n^2) in this function, may need optimization
-	const condensedPerDefinition = validDefinitions
-		.map(def => {
-			const errorsPerNode = def.errors
-				.filter(is)
-				.reduce((errors, error) => {
-					const i = errors.findIndex(oe => oe.node === error.node)
-					if (i >= 0) {
-						const existingError = errors[i]
-						errors[i] = combine(existingError, error)
-					} else {
-						errors.push(error)
-					}
-					return errors
-				}, [] as T[])
-
-			return { def, errors: errorsPerNode }
-		})
-
-	if (condensedPerDefinition.some(d => d.errors.length === 0)) {
-		return {
-			condensedErrors: [],
-			filteredDefinitions: condensedPerDefinition
-				.filter(d => d.errors.length === 0)
-				.map(e => e.def),
+/**
+ * Deduplicates groups assuming:
+ * - There are no duplicates within a group
+ * - A group with 1 element implies there is no duplicated group of length 1 with the same element
+ *
+ * When calling {@link condense}, if a group stems from an error, this should automatically be the
+ * case.
+ */
+function deduplicateGroups<T>(
+	definitionGroups: T[][],
+	predicate?: (a: T, b: T) => boolean,
+): T[] {
+	const definitions: T[] = []
+	for (let i = 0; i < definitionGroups.length; i++) {
+		const group = definitionGroups[i]
+		if (group.length === 1) {
+			definitions.push(group[0])
+			continue
 		}
+		definitions.push(
+			...group
+				.filter(v =>
+					!definitionGroups.some((og, oi) =>
+						(oi > i || og.length === 1)
+							&& predicate
+							? og.some(ov => predicate(v, ov))
+							: og.includes(v)
+					)
+				),
+		)
+	}
+	return definitions
+}
+
+function condense<T, E extends McdocRuntimeError<T>>(
+	validDefinitions: ErrorCondensingDefinition<T>[],
+	context: CheckerContext,
+	is: (e: McdocRuntimeError<T>) => e is E,
+	equals: (a: E, b: E) => boolean,
+	combineAlternatives?: (errors: E[]) => E,
+): { condensedErrors: E[]; filteredDefinitions: ErrorCondensingDefinition<T>[] } {
+	// TODO a lot of O(n^2) in this function, may need optimization
+	const errorsOfType = validDefinitions
+		.map(def => ({ def, errors: def.errors.filter(is) }))
+
+	const definitionsWithoutError = errorsOfType
+		.filter(d => d.errors.length === 0)
+		.map(e => e.def)
+	if (definitionsWithoutError.length > 0) {
+		return { condensedErrors: [], filteredDefinitions: definitionsWithoutError }
 	}
 
-	const distinctErrorsPerNode = condensedPerDefinition
+	const distinctErrorsPerNode = errorsOfType
 		.flatMap(d => d.errors.map(e => ({ definition: d.def, error: e })))
 		.reduce((entries, e) => {
 			const entry = entries.find(oe => oe.errors[0].error.node === e.error.node)
@@ -388,9 +306,12 @@ function condense<T extends McdocCheckerError<T>>(
 			}
 
 			return entries
-		}, [] as { errors: { error: T; definitions: ErrorCondensingDefinition<T>[] }[] }[])
+		}, [] as { errors: { error: E; definitions: ErrorCondensingDefinition<T>[] }[] }[])
 
 	const distinctErrors = distinctErrorsPerNode.flatMap(e => e.errors)
+	const commonErrors = distinctErrors
+		.filter(e => e.definitions.length == validDefinitions.length)
+		.map(e => e.error)
 	const definitionsWithUncommonErrors = distinctErrors
 		.filter(e => e.definitions.length < validDefinitions.length)
 		.flatMap(e => e.definitions)
@@ -399,28 +320,56 @@ function condense<T extends McdocCheckerError<T>>(
 		.filter(d => !definitionsWithUncommonErrors.includes(d))
 
 	if (definitionsWithOnlyCommonErrors.length > 0) {
-		const commonErrors = distinctErrorsPerNode
-			.map(e => {
-				const commonErrorsOfNode = e.errors
-					.filter(e => e.definitions.length === validDefinitions.length)
-					.map(e => e.error)
-
-				if (commonErrorsOfNode.length === 0) {
-					return undefined
-				}
-				return (combineAlternatives(commonErrorsOfNode))
-			})
-			.filter((e): e is T => e !== undefined)
 		return {
 			filteredDefinitions: definitionsWithOnlyCommonErrors,
 			condensedErrors: commonErrors,
 		}
 	}
 
-	const combinedErrors = distinctErrorsPerNode
-		// TODO The error needs to be marked as only sometimes applicable when there is a definition
-		// That did not report an error on this node at all.
-		.map(e => combineAlternatives(e.errors.map(err => err.error)))
+	const combinedErrors = combineAlternatives
+		? distinctErrorsPerNode
+			.map(e => {
+				const uniqueDefinitions = deduplicateGroups(
+					e.errors.map(e => e.definitions),
+					(a, b) =>
+						isAssignable(a.definition.typeDef, b.definition.typeDef, context)
+						&& isAssignable(b.definition.typeDef, a.definition.typeDef, context),
+				)
+				const ans = {
+					definitions: uniqueDefinitions,
+					error: combineAlternatives(
+						e.errors
+							.filter(e => !commonErrors.includes(e.error))
+							.map(e => e.error),
+					),
+				}
+				ans.error.nodesWithConflictingErrors = deduplicateGroups(
+					e.errors.map(e => e.error.nodesWithConflictingErrors ?? []),
+				)
+				if (ans.error.nodesWithConflictingErrors.length === 0) {
+					ans.error.nodesWithConflictingErrors = undefined
+				}
 
-	return { filteredDefinitions: validDefinitions, condensedErrors: combinedErrors }
+				return ans
+			})
+		: distinctErrorsPerNode.flatMap(e =>
+			e.errors
+				.map(ee => ({ definitions: ee.definitions, error: ee.error }))
+		)
+
+	const conflictingErrors = combinedErrors
+		.filter(e => e.definitions.length < validDefinitions.length)
+
+	const nodesWithConflictingErrors = conflictingErrors
+		.map(e => e.error.node)
+		.filter((n, i, arr) => arr.indexOf(n) === i)
+
+	for (const error of conflictingErrors) {
+		error.error.nodesWithConflictingErrors = nodesWithConflictingErrors
+	}
+
+	return {
+		filteredDefinitions: validDefinitions,
+		condensedErrors: [...commonErrors, ...combinedErrors.map(e => e.error)],
+	}
 }

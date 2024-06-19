@@ -26,7 +26,7 @@ import type {
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
-import type { McdocCheckerError } from './error.js'
+import type { McdocRuntimeError, SimpleError } from './error.js'
 import { condenseErrorsAndFilterSiblings } from './error.js'
 
 export * from './error.js'
@@ -49,7 +49,7 @@ export type ChildrenGetter<T> = (
 	simplified: SimplifiedMcdocTypeNoUnion,
 ) => RuntimeUnion<T>[]
 
-export type ErrorReporter<T> = (error: McdocCheckerError<T>) => void
+export type ErrorReporter<T> = (error: McdocRuntimeError<T>) => void
 
 export type RuntimeUnion<T> = RuntimeNode<T>[] | RuntimePair<T>
 
@@ -204,7 +204,7 @@ export interface CheckerTreeNode<T> {
 }
 
 export interface CheckerTreeError<T> {
-	error: McdocCheckerError<T>
+	error: McdocRuntimeError<T>
 	definitionNode: CheckerTreeDefinitionNode<T> | undefined
 }
 
@@ -353,6 +353,7 @@ export function typeDefinition<T>(
 							definition: c,
 							errors: childErrors.filter(e => e.definitionNode === c).map(e => e.error),
 						})),
+						options.context,
 					)
 
 					definitionGroup.children = definitions
@@ -488,7 +489,7 @@ interface ShallowCheckResultChildDefinition {
 }
 
 interface ShallowCheckResult<T> {
-	errors: McdocCheckerError<T>[]
+	errors: McdocRuntimeError<T>[]
 	childDefinitions: (ShallowCheckResultChildDefinition | undefined)[]
 }
 
@@ -517,14 +518,14 @@ function checkShallowly<T>(
 	) {
 		return {
 			childDefinitions: Array(children.length).fill(undefined),
-			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: typeDef }],
+			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: [typeDef] }],
 		}
 	}
 
 	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
 		children.length,
 	).fill(undefined)
-	const errors: McdocCheckerError<T>[] = []
+	const errors: McdocRuntimeError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, options.context, (handler, config) => {
 		if (handler.checkInferred?.(config, simplifiedInferred, options.context) === false) {
@@ -657,7 +658,7 @@ function checkShallowly<T>(
 					&& pair.key.value.kind === 'string'
 					&& pair.optional !== true
 				) {
-					errors.push({ kind: 'missing_key', node: runtimeNode, key: pair.key.value.value })
+					errors.push({ kind: 'missing_key', node: runtimeNode, keys: [pair.key.value.value] })
 				}
 			}
 
@@ -676,6 +677,7 @@ function checkShallowly<T>(
 				const child = children[i]
 				if (childDef === undefined) {
 					if (Array.isArray(child)) {
+						// This should never happen
 						errors.push(
 							...child.map(v => ({
 								kind: 'expected_key_value_pair' as 'expected_key_value_pair',
@@ -728,7 +730,14 @@ function checkShallowly<T>(
 				if (i < typeDef.items.length) {
 					childDefinitions[i] = { type: typeDef.items[i] }
 				} else {
-					errors.push({ kind: 'unknown_tuple_element', node: child })
+					// This really should always be an array, just to handle this gracefully
+					const values = Array.isArray(child) ? child : [...child.possibleValues, child.key]
+					errors.push(
+						...values.map(v => ({
+							kind: 'unknown_tuple_element' as 'unknown_tuple_element',
+							node: v,
+						})),
+					)
 				}
 			}
 
@@ -1207,7 +1216,7 @@ function getValueType(
 
 export function getErrorRangeDefault<T extends core.AstNode>(
 	node: RuntimeNode<T>,
-	error: McdocCheckerError<T>['kind'],
+	error: McdocRuntimeError<T>['kind'],
 ): core.Range {
 	const { range } = node.originalNode
 	if (error === 'missing_key' || error === 'invalid_collection_length') {
@@ -1218,47 +1227,39 @@ export function getErrorRangeDefault<T extends core.AstNode>(
 
 export function getDefaultErrorReporter<T>(
 	ctx: core.CheckerContext,
-	getErrorRange: (node: RuntimeNode<T>, error: McdocCheckerError<T>['kind']) => core.Range,
+	getErrorRange: (node: RuntimeNode<T>, error: McdocRuntimeError<T>['kind']) => core.Range,
 ): ErrorReporter<T> {
-	return (error: McdocCheckerError<T>) => {
+	return (error: McdocRuntimeError<T>) => {
 		const defaultTranslationKey = error.kind.replaceAll('_', '-')
-		if (error.kind === 'unknown_tuple_element') {
-			const nodes = Array.isArray(error.node)
-				? error.node
-				: [...error.node.possibleValues, error.node.key]
-			for (const node of nodes) {
-				ctx.err.report(
-					localize('expected', localize('nothing')),
-					getErrorRange(node, 'unknown_tuple_element'),
-				)
-			}
-			return
-		} else if (error.kind === 'invalid_key_combination') {
-			const message = localize(
-				defaultTranslationKey,
-				arrayToMessage(error.node.map(n => McdocType.toString(n.inferredType))),
-			)
-			for (const node of error.node) {
-				ctx.err.report(message, getErrorRange(node, 'unknown_tuple_element'))
-			}
-			return
-		}
 		const range = getErrorRange(error.node, error.kind)
+		let localizedText: string
+		let severity = core.ErrorSeverity.Error
 		switch (error.kind) {
+			case 'unknown_tuple_element':
+				localizedText = localize('expected', localize('nothing'))
+				break
 			case 'unknown_key':
-				ctx.err.report(
-					localize(
-						defaultTranslationKey,
-						error.node.inferredType.kind === 'literal'
-							? error.node.inferredType.value.value
-							: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
-					),
-					range,
-					core.ErrorSeverity.Warning,
-				)
+				if (error.nodesWithConflictingErrors) {
+					localizedText = localize(
+						'invalid-key-combination',
+						arrayToMessage(
+							error.nodesWithConflictingErrors.map(n => McdocType.toString(n.inferredType)),
+						),
+					)
+				}
+				localizedText = localize(
+					defaultTranslationKey,
+					error.node.inferredType.kind === 'literal'
+						? localeQuote(error.node.inferredType.value.value.toString())
+						: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
+				), severity = core.ErrorSeverity.Warning
 				break
 			case 'missing_key':
-				ctx.err.report(localize(defaultTranslationKey, error.key), range)
+				if (error.keys.length === 1) {
+					ctx.err.report(localize(defaultTranslationKey, localeQuote(error.keys[0])), range)
+				} else {
+					ctx.err.report(localize('some-missing-keys', arrayToMessage(error.keys)), range)
+				}
 				break
 			case 'invalid_collection_length':
 			case 'invalid_string_length':
@@ -1291,43 +1292,34 @@ export function getDefaultErrorReporter<T>(
 					}
 					return left ?? right
 				}).filter(r => r !== undefined) as string[]
-				ctx.err.report(
-					localize('expected', localize(baseKey, arrayToMessage(rangeMessages, false))),
-					range,
+				localizedText = localize(
+					'expected',
+					localize(baseKey, arrayToMessage(rangeMessages, false)),
 				)
 				break
 			case 'type_mismatch':
-				const types = error.expected.kind === 'union'
-					? error.expected.members
-					: [error.expected]
-				ctx.err.report(
-					localize(
-						'expected',
-						arrayToMessage(
-							types.map(e =>
-								e.kind === 'enum'
-									? arrayToMessage(e.values.map(v => v.value.toString()))
-									: e.kind === 'literal'
-									? localeQuote(e.value.value.toString())
-									: localize(`mcdoc.type.${e.kind}`)
-							),
-							false,
+				localizedText = localize(
+					'expected',
+					arrayToMessage(
+						error.expected.map(e =>
+							e.kind === 'enum'
+								? arrayToMessage(e.values.map(v => v.value.toString()))
+								: e.kind === 'literal'
+								? localeQuote(e.value.value.toString())
+								: localize(`mcdoc.type.${e.kind}`)
 						),
+						false,
 					),
-					range,
 				)
 				break
 			case 'expected_key_value_pair':
-				ctx.err.report(localize(`mcdoc.runtime.checker.${defaultTranslationKey}`), range)
-				break
-			case 'duplicate_key':
-				// Vscode already reports duplicate keys in JSON files
-				// TODO: figure out how to report these errors in mcfunction files
+				localizedText = localize(`mcdoc.runtime.checker.${defaultTranslationKey}`)
 				break
 			case 'internal':
 				break
 			default:
-				ctx.err.report(localize(defaultTranslationKey), range)
+				localizedText = localize(defaultTranslationKey)
 		}
+		ctx.err.report(localizedText!, range)
 	}
 }
