@@ -337,7 +337,7 @@ function deduplicateGroups<T>(
 	return definitions
 }
 
-export function getErrorRangeDefault<T extends AstNode>(
+export function getDefaultErrorRange<T extends AstNode>(
 	node: RuntimeNode<T>,
 	error: McdocRuntimeError<T>['kind'],
 ): Range {
