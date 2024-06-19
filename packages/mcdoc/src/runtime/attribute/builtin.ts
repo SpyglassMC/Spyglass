@@ -25,8 +25,7 @@ function getResourceLocationOptions(
 	ctx: core.ContextBase,
 ): core.ResourceLocationOptions | undefined {
 	if (!registry) {
-		// TODO: handle resource locations without a category
-		return undefined
+		return { pool: [], allowUnknown: true }
 	}
 	if (tags === 'implicit') {
 		registry = `tag/${registry}`
