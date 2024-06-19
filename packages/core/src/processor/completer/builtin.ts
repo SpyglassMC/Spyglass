@@ -228,7 +228,7 @@ export const string: Completer<StringBaseNode> = (node, ctx) => {
 	return []
 }
 
-function escapeString(value: string, quote?: Quote) {
+export function escapeString(value: string, quote?: Quote) {
 	if (!quote) {
 		return value
 	}
