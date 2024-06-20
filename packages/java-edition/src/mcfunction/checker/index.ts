@@ -205,8 +205,8 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 }
 
 const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
+	const id = core.ResourceLocationNode.toString(node.id, 'full')
 	if (node.nbt) {
-		const id = core.ResourceLocationNode.toString(node.id, 'full')
 		nbt.checker.index('minecraft:item', id)(node.nbt, ctx)
 	}
 	if (!node.components) {
@@ -223,7 +223,7 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		}
 		groupedComponents.get(key)!.push(pair.key)
 		if (pair.value) {
-			nbt.checker.index('minecraft:data_component', key)(pair.value, ctx)
+			nbt.checker.index('minecraft:data_component', key, { item: id })(pair.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {

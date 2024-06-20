@@ -7,6 +7,7 @@ import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
 	isPredicate?: boolean
+	item?: `${string}:${string}`
 }
 
 /**
@@ -33,6 +34,13 @@ export function index(
 				registry,
 				parallelIndices: getIndices(id),
 			}
+			if (options.item && typeof id === 'string' && id.endsWith('custom_data')) {
+				return (node, ctx) => {
+					typeDefinition(typeDef, options)(node, ctx)
+				}
+			}
+			options.item = undefined
+
 			return (node, ctx) => {
 				typeDefinition(typeDef, options)(node, ctx)
 			}
@@ -59,6 +67,39 @@ export function typeDefinition(
 	options: Options = {},
 ): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
+		const fakeRange = options.item ? core.Range.create(node.range.start, node.range.start) : undefined
+		const fakeParent = options.item ? {
+			type: 'mcdoc:struct',
+			range: fakeRange,
+			children: [
+				{
+					type: 'ignore',
+					range: fakeRange
+				},
+				{
+					type: 'ignore',
+					range: fakeRange
+				},
+				{
+					type: 'mcdoc:struct/field/pair',
+					range: fakeRange,
+					children: [
+						{
+							type: 'mcdoc:identifier',
+							value: "pack"
+						} as unknown as core.AstNode,
+						{
+							type: 'mcdoc:type/literal',
+							children: [{
+								type: 'string',
+								value: options.item
+							}]
+						} as unknown as core.AstNode
+					]
+				}
+			]
+		} as core.AstNode : undefined
+
 		mcdoc.runtime.checker.typeDefinition<NbtNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
@@ -75,6 +116,9 @@ export function typeDefinition(
 					}
 					if (options.isPredicate) {
 						return inferred.kind === def.kind
+					}
+					if (fakeParent) {
+						node.parent = fakeParent
 					}
 					switch (inferred.kind) {
 						case 'struct':
@@ -93,6 +137,9 @@ export function typeDefinition(
 				},
 				getChildren: node => {
 					const { type } = node
+					if (fakeParent) {
+						node.parent = fakeParent
+					}
 					if (
 						type === 'nbt:list' || type === 'nbt:byte_array'
 						|| type === 'nbt:int_array' || type === 'nbt:long_array'
@@ -116,6 +163,9 @@ export function typeDefinition(
 					mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
 				),
 				attachTypeInfo: (node, definition, desc = '') => {
+					if (fakeParent) {
+						node.parent = fakeParent
+					}
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (core.PairNode.is(node.parent) && NbtStringNode.is(node.parent.key)) {
@@ -125,6 +175,9 @@ export function typeDefinition(
 					}
 				},
 				stringAttacher: (node, attacher) => {
+					if (fakeParent) {
+						node.parent = fakeParent
+					}
 					if (!NbtStringNode.is(node)) return
 					attacher(node)
 					if (node.children) {
