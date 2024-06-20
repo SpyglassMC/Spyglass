@@ -7,7 +7,6 @@ import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
 	isPredicate?: boolean
-	item?: `${string}:${string}`
 }
 
 /**
@@ -34,17 +33,6 @@ export function index(
 				registry,
 				parallelIndices: getIndices(id),
 			}
-			if (options.item && typeof id === 'string' && id.endsWith('custom_data')) {
-				return (node, ctx) => {
-					ctx.logger.info('!!! This actually happened!')
-					typeDefinition({
-						kind: 'dispatcher',
-						registry: 'mcdoc:custom_item_data',
-						parallelIndices: getIndices(id),
-					}, options)(node, ctx)
-				}
-			}
-			options.item = undefined
 
 			return (node, ctx) => {
 				typeDefinition(typeDef, options)(node, ctx)

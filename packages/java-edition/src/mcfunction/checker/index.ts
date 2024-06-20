@@ -205,9 +205,9 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 }
 
 const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
-	const id = core.ResourceLocationNode.toString(node.id, 'full')
+	const itemId = core.ResourceLocationNode.toString(node.id, 'full')
 	if (node.nbt) {
-		nbt.checker.index('minecraft:item', id)(node.nbt, ctx)
+		nbt.checker.index('minecraft:item', itemId)(node.nbt, ctx)
 	}
 	if (!node.components) {
 		return
@@ -217,13 +217,28 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		if (!pair.key) {
 			continue
 		}
-		const key = core.ResourceLocationNode.toString(pair.key, 'full')
-		if (!groupedComponents.has(key)) {
-			groupedComponents.set(key, [])
+		const componentId = core.ResourceLocationNode.toString(pair.key, 'full')
+		if (!groupedComponents.has(componentId)) {
+			groupedComponents.set(componentId, [])
 		}
-		groupedComponents.get(key)!.push(pair.key)
+		groupedComponents.get(componentId)!.push(pair.key)
 		if (pair.value) {
-			nbt.checker.index('minecraft:data_component', key, { item: id })(pair.value, ctx)
+			if (componentId === 'minecraft:custom_data') {
+				if (pair.value.type === 'nbt:string') {
+					// TODO: Maybe move this to the nbt package
+					const stringNBT = nbt.parser.compound(new core.Source(pair.value.value, pair.value.valueMap), ctx)
+					pair.value.children = [stringNBT]
+					core.AstNode.setParents(stringNBT)
+					// Because the runtime checker happens after binding, we need to manually call this
+					core.binder.dispatchSync(stringNBT, ctx)
+					core.checker.dispatchSync(stringNBT, ctx)
+					nbt.checker.index('mcdoc:custom_item_data', itemId)(stringNBT, ctx)
+				} else {
+					nbt.checker.index('mcdoc:custom_item_data', itemId)(pair.value, ctx)
+				}
+			} else {
+				nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
+			}
 		}
 	}
 	for (const [_, group] of groupedComponents) {
