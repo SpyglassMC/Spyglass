@@ -4,7 +4,7 @@ import type { ParserContext } from '../service/index.js'
 import type { Source } from '../source/index.js'
 import { Range } from '../source/index.js'
 import { literal } from './literal.js'
-import type { Parser, Result } from './Parser.js'
+import type { InfallibleParser, Parser, Result } from './Parser.js'
 import { Failure } from './Parser.js'
 
 export interface Options<C extends AstNode> {
@@ -12,8 +12,10 @@ export interface Options<C extends AstNode> {
 	child: Parser<C>
 }
 
-export function prefixed<C extends AstNode>(options: Options<C>): Parser<PrefixedNode<C>> {
-	return (src: Source, ctx: ParserContext): Result<PrefixedNode<C>> => {
+export function prefixed<C extends AstNode>(
+	options: Options<C>,
+): InfallibleParser<PrefixedNode<C>> {
+	return (src: Source, ctx: ParserContext): PrefixedNode<C> => {
 		const ans: PrefixedNode<C> = {
 			type: 'prefixed',
 			range: Range.create(src),

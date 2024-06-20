@@ -118,17 +118,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			if (!options) {
 				return
 			}
+			const resourceLocation = core.resourceLocation(options)
 			return (src, ctx) => {
-				const start = src.cursor
-				if (config.prefix && !src.trySkip(config.prefix)) {
-					ctx.err.report(localize('expected', localeQuote(config.prefix)), src)
-				} else if (!config.prefix && src.trySkip('!')) {
-					ctx.err.report(
-						localize('expected-got', localize('resource-location'), localeQuote('!')),
-						core.Range.create(start, src),
-					)
+				if (config.prefix) {
+					return core.prefixed({ prefix: config.prefix, child: resourceLocation })(src, ctx)
 				}
-				return core.resourceLocation(options)(src, ctx)
+				return resourceLocation(src, ctx)
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
@@ -136,7 +131,11 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			if (!options) {
 				return undefined
 			}
-			return core.ResourceLocationNode.mock(ctx.offset, options)
+			const resourceLocation = core.ResourceLocationNode.mock(ctx.offset, options)
+			if (config.prefix) {
+				return core.PrefixedNode.mock(ctx.offset, config.prefix, resourceLocation)
+			}
+			return resourceLocation
 		},
 	})
 }
