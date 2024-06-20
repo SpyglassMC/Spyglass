@@ -1,5 +1,6 @@
 import { strict as assert } from 'assert'
 import { describe, it } from 'mocha'
+import snapshot from 'snap-shot-it'
 import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils.js'
@@ -489,5 +490,66 @@ describe('Source', () => {
 				})
 			}
 		})
+	})
+	describe('visualizeIndexMap', () => {
+		const suites: { string: string; indexMap: IndexMap }[] = [
+			{ // Leading whitespace
+				/*
+				 * Index Tens - 000000000
+				 * Index Ones - 012345678
+				 * Outer      -      foo
+				 * Inner      - foo
+				 */
+				string: 'foo',
+				indexMap: [{ inner: Range.create(0, 0), outer: Range.create(5, 5) }],
+			},
+			{ // Escaped quotes
+				/*
+				 * Index Tens - 00000000
+				 * Index Ones - 01234567
+				 * Outer      - \"bar\"
+				 * Inner      - "bar"
+				 */
+				string: '"bar"',
+				indexMap: [
+					{ inner: Range.create(0, 1), outer: Range.create(0, 2) },
+					{ inner: Range.create(4, 5), outer: Range.create(5, 7) },
+				],
+			},
+			{ // Unicode
+				/*
+				 * Index Tens - 000000000011111
+				 * Index Ones - 012345678901234
+				 * Outer      - foo \u00a7 bar
+				 * Inner      - foo § bar
+				 */
+				string: 'foo § bar',
+				indexMap: [{ inner: Range.create(4, 5), outer: Range.create(4, 10) }],
+			},
+			{ // Leading whitespace + escaped characters
+				/*
+				 * Index Tens - 000000000011111111112
+				 * Index Ones - 012345678901234567890
+				 * Outer      -      foo\"bar\u00a7qux
+				 * Inner      - foo"bar§qux
+				 */
+				string: 'foo"bar§qux', // from: foo\"bar\u00a7qux
+				indexMap: [
+					{ inner: Range.create(0, 0), outer: Range.create(5, 5) },
+					{ inner: Range.create(3, 4), outer: Range.create(8, 10) },
+					{
+						inner: Range.create(7, 8),
+						outer: Range.create(13, 19),
+					},
+				],
+			},
+		]
+
+		for (const { string, indexMap } of suites) {
+			it(`Should visualize the index map for "${string}"`, () => {
+				const src = new Source(string, indexMap)
+				snapshot(src.visualizeIndexMap())
+			})
+		}
 	})
 })
