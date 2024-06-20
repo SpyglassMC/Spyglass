@@ -1,6 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localize } from '@spyglassmc/locales'
+import { arrayToMessage, localize } from '@spyglassmc/locales'
 import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
@@ -108,12 +108,14 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 					(ComponentTestExactNode.is(test) || ComponentTestSubpredicateNode.is(test))
 					&& test.value
 				) {
-					if (nbt.NbtIntNode.is(test.value) && test.value.value < 0) {
-						ctx.err.report(
-							localize('mcfunction.checker.item-predicate.count-not-positive'),
-							test.value.range,
-							core.ErrorSeverity.Warning,
-						)
+					if (nbt.NbtIntNode.is(test.value)) {
+						if (test.value.value < 0) {
+							ctx.err.report(
+								localize('mcfunction.checker.item-predicate.count-not-positive'),
+								test.value.range,
+								core.ErrorSeverity.Warning,
+							)
+						}
 					} else if (nbt.NbtCompoundNode.is(test.value)) {
 						test.value.children.filter(p => p.key?.value !== 'min' && p.key?.value !== 'max')
 							.forEach(node => {
@@ -184,12 +186,13 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 						}
 					} else {
 						ctx.err.report(
-							localize('expected', localize('nbt.node.int')),
-							test.value.range,
-							core.ErrorSeverity.Error,
-						)
-						ctx.err.report(
-							localize('expected', localize('nbt.node.compound')),
+							localize(
+								'expected',
+								arrayToMessage(
+									[localize('nbt.node.int'), localize('nbt.node.compound')],
+									false,
+								),
+							),
 							test.value.range,
 							core.ErrorSeverity.Error,
 						)
