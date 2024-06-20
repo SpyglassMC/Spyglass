@@ -877,7 +877,7 @@ function simplifyIndexed<T>(
 	const child = simplify(typeDef.child, { ...context, typeArgs: [] })
 
 	if (child.kind !== 'struct') {
-		context.ctx.logger.warn(`Tried to index unindexable type ${child.kind}`)
+		context.ctx.logger.warn(`Tried to index un-indexable type ${child.kind}`)
 		return { kind: 'union', members: [] }
 	}
 	let values: McdocType[] = []
@@ -885,10 +885,6 @@ function simplifyIndexed<T>(
 	for (const index of typeDef.parallelIndices) {
 		let lookup: string[] = []
 		if (index.kind === 'static') {
-			if (index.value === '%fallback') {
-				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-				break
-			}
 			if (index.value.startsWith('minecraft:')) {
 				lookup.push(index.value.substring(10))
 			} else {
@@ -979,9 +975,17 @@ function simplifyIndexed<T>(
 				)
 		)
 		if (currentValues.includes(undefined)) {
-			// fallback case
-			values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-			break
+			const fallbackDispatch = child.fields.find(f =>
+				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%fallback'
+			)
+
+			if (fallbackDispatch) {
+				values.push(fallbackDispatch.type)
+			} else {
+				// fallback case if a dispatch to `%fallback` is unavailable
+				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
+				break
+			}
 		} else {
 			values.push(...currentValues.map(v => v!.type))
 		}
