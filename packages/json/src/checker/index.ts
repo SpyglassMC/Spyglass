@@ -2,7 +2,14 @@ import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
 
-export function index(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
+export interface JsonCheckerOptions {
+	discardDuplicateKeyErrors?: true
+}
+
+export function index(
+	type: mcdoc.McdocType,
+	options?: JsonCheckerOptions,
+): core.SyncChecker<JsonNode> {
 	return (node, ctx) => {
 		mcdoc.runtime.checker.typeDefinition<JsonNode>(
 			[{ originalNode: node, inferredType: inferType(node) }],
@@ -44,10 +51,15 @@ export function index(type: mcdoc.McdocType): core.SyncChecker<JsonNode> {
 					}
 					return []
 				},
-				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
-					ctx,
-					mcdoc.runtime.checker.getErrorRangeDefault<JsonNode>,
-				),
+				reportError: err => {
+					if (err.kind === 'duplicate_key' && options?.discardDuplicateKeyErrors) {
+						return
+					}
+					mcdoc.runtime.checker.getDefaultErrorReporter(
+						ctx,
+						mcdoc.runtime.checker.getDefaultErrorRange<JsonNode>,
+					)(err)
+				},
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info

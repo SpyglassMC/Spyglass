@@ -1,7 +1,8 @@
-import * as core from '@spyglassmc/core'
-import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
+import { Range, Source } from '@spyglassmc/core'
+import type { CheckerContext, FullResourceLocation } from '@spyglassmc/core'
+import { localize } from '@spyglassmc/locales'
 import { TypeDefSymbolData } from '../../binder/index.js'
-import { type EnumKind, RangeKind } from '../../node/index.js'
+import { type EnumKind } from '../../node/index.js'
 import type {
 	ConcreteType,
 	DispatcherType,
@@ -25,59 +26,17 @@ import type {
 } from '../../type/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
-import type {
-	ErrorReporter,
-	NodeEquivalenceChecker,
-	RuntimeNode,
-	RuntimePair,
-	RuntimeUnion,
-} from './context.js'
+import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
 import { McdocCheckerContext } from './context.js'
+import type { McdocRuntimeError } from './error.js'
+import { condenseErrorsAndFilterSiblings } from './error.js'
 
 export * from './context.js'
+export * from './error.js'
 
-export type McdocCheckerError<T> =
-	| SimpleError<T>
-	| UnknownVariantWithKeyCombinationError<T>
-	| UnknownTupleElementError<T>
-	| RangeError<T>
-	| TypeMismatchError<T>
-	| MissingKeyError<T>
-export interface SimpleError<T> {
-	kind:
-		| 'unknown_key'
-		| 'duplicate_key'
-		| 'some_missing_keys'
-		| 'sometimes_type_mismatch'
-		| 'expected_key_value_pair'
-		| 'internal'
-	node: RuntimeNode<T>
-}
-export interface UnknownVariantWithKeyCombinationError<T> {
-	kind: 'invalid_key_combination'
-	node: RuntimeNode<T>[]
-}
-export interface UnknownTupleElementError<T> {
-	kind: 'unknown_tuple_element'
-	node: RuntimeUnion<T>
-}
-export interface RangeError<T> {
-	kind: 'invalid_collection_length' | 'invalid_string_length' | 'number_out_of_range'
-	node: RuntimeNode<T>
-	ranges: NumericRange[]
-}
-export interface MissingKeyError<T> {
-	kind: 'missing_key'
-	node: RuntimeNode<T>
-	key: string
-}
-export interface TypeMismatchError<T> {
-	node: RuntimeNode<T>
-	kind: 'type_mismatch'
-	expected: SimplifiedMcdocType
-}
-
-export type SimplifiedMcdocType = SimplifiedMcdocTypeNoUnion | UnionType<SimplifiedMcdocTypeNoUnion>
+export type SimplifiedMcdocType =
+	| SimplifiedMcdocTypeNoUnion
+	| UnionType<SimplifiedMcdocTypeNoUnion>
 
 export type SimplifiedMcdocTypeNoUnion =
 	| SimplifiedEnum
@@ -110,7 +69,7 @@ export function reference<T>(
 
 export function dispatcher<T>(
 	node: RuntimeNode<T>[],
-	registry: core.FullResourceLocation,
+	registry: FullResourceLocation,
 	index: string | Index | ParallelIndices,
 	ctx: McdocCheckerContext<T>,
 ) {
@@ -125,7 +84,7 @@ export function dispatcher<T>(
 export function isAssignable(
 	assignValue: McdocType,
 	typeDef: McdocType,
-	ctx: core.CheckerContext,
+	ctx: CheckerContext,
 	isEquivalent?: NodeEquivalenceChecker,
 ): boolean {
 	if (
@@ -195,7 +154,7 @@ export function isAssignable(
 	return ans
 }
 
-interface CheckerTreeNode<T> {
+export interface CheckerTreeNode<T> {
 	parent: CheckerTreeRuntimeNode<T> | undefined
 
 	key: {
@@ -205,12 +164,12 @@ interface CheckerTreeNode<T> {
 	possibleValues: CheckerTreeRuntimeNode<T>[]
 }
 
-interface CheckerTreeError<T> {
-	error: McdocCheckerError<T>
+export interface CheckerTreeError<T> {
+	error: McdocRuntimeError<T>
 	definitionNode: CheckerTreeDefinitionNode<T> | undefined
 }
 
-interface CheckerTreeRuntimeNode<T> {
+export interface CheckerTreeRuntimeNode<T> {
 	entryNode: CheckerTreeNode<T>
 	children: CheckerTreeNode<T>[]
 	node: RuntimeNode<T>
@@ -219,7 +178,7 @@ interface CheckerTreeRuntimeNode<T> {
 	validDefinitions: CheckerTreeDefinitionNode<T>[]
 }
 
-interface CheckerTreeDefinitionNode<T> {
+export interface CheckerTreeDefinitionNode<T> {
 	parent: CheckerTreeDefinitionNode<T> | undefined
 	runtimeNode: CheckerTreeRuntimeNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
@@ -463,217 +422,24 @@ function handleStringAttachers<T>(
 			return
 		}
 		ctx.stringAttacher(runtimeValue.originalNode, (node) => {
-			const src = new core.Source(node.value, node.valueMap)
+			const src = new Source(node.value, node.valueMap)
 			const start = src.cursor
 			const child = parser(src, ctx)
 			if (!child) {
 				ctx.err.report(
 					localize('expected', localize('mcdoc.runtime.checker.value')),
-					core.Range.create(start, src.skipRemaining()),
+					Range.create(start, src.skipRemaining()),
 				)
 				return
 			} else if (src.canRead()) {
 				ctx.err.report(
 					localize('mcdoc.runtime.checker.trailing'),
-					core.Range.create(src.cursor, src.skipRemaining()),
+					Range.create(src.cursor, src.skipRemaining()),
 				)
 			}
 			node.children = [child]
 		})
 	})
-}
-
-function condenseErrorsAndFilterSiblings<T>(
-	definitions: { definition: CheckerTreeDefinitionNode<T>; errors: McdocCheckerError<T>[] }[],
-): { definitions: CheckerTreeDefinitionNode<T>[]; condensedErrors: McdocCheckerError<T>[] } {
-	if (definitions.length === 0) {
-		return { definitions: [], condensedErrors: [] }
-	}
-
-	let validDefinitions = definitions
-	const errors = validDefinitions[0].errors.filter(e => e.kind === 'duplicate_key')
-
-	const alwaysMismatch: TypeMismatchError<T>[] =
-		(validDefinitions[0].errors.filter(e =>
-			e.kind === 'type_mismatch'
-			&& !validDefinitions.some(d =>
-				!d.errors.some(oe =>
-					oe.kind === 'type_mismatch' && e.node.originalNode === oe.node.originalNode
-				)
-			)
-		) as TypeMismatchError<T>[]).map(e => {
-			const expected = validDefinitions.map(d =>
-				(d.errors.find(oe =>
-					oe.kind === 'type_mismatch' && oe.node.originalNode === e.node.originalNode
-				) as TypeMismatchError<T>).expected
-			).flatMap(t => t.kind === 'union' ? t.members : [t]).filter((d, i, arr) =>
-				arr.findIndex(od => od.kind === d.kind) === i
-			)
-			return {
-				...e,
-				expected: expected.length === 1 ? expected[0] : { kind: 'union', members: expected },
-			}
-		})
-	errors.push(...alwaysMismatch)
-
-	const onlyCommonTypeMismatches = definitions.filter(d =>
-		!d.errors.some(e =>
-			e.kind === 'sometimes_type_mismatch'
-			|| (e.kind === 'type_mismatch'
-				&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode))
-		)
-	)
-	if (onlyCommonTypeMismatches.length !== 0) {
-		validDefinitions = onlyCommonTypeMismatches
-	} else {
-		// TODO Generic error, maybe we can keep original expected types?
-		// Error could be sth like Expected a string, a list or a different key in this file to have a different type.
-
-		const typeMismatches: SimpleError<T>[] = validDefinitions.flatMap(d =>
-			d.errors.filter(e =>
-				e.kind === 'type_mismatch'
-				&& !alwaysMismatch.some(oe => oe.node.originalNode === e.node.originalNode)
-			)
-		).map(e => e.node as RuntimeNode<T>).concat(
-			validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'sometimes_type_mismatch')
-				.map(e => e.node as RuntimeNode<T>),
-		).filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i).map(
-			n => ({ kind: 'sometimes_type_mismatch', node: n }),
-		)
-
-		errors.push(...typeMismatches)
-	}
-
-	const alwaysUnknown = validDefinitions[0].errors.filter(e =>
-		e.kind === 'unknown_key'
-		&& !validDefinitions.some(d =>
-			!d.errors.some(oe =>
-				oe.kind === 'unknown_key' && e.node.originalNode === oe.node.originalNode
-			)
-		)
-	) as SimpleError<T>[]
-	errors.push(...alwaysUnknown)
-
-	const onlyCommonUnknownKeys = validDefinitions.filter(d =>
-		!d.errors.some(e =>
-			e.kind === 'invalid_key_combination'
-			|| (e.kind === 'unknown_key'
-				&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode))
-		)
-	)
-	if (onlyCommonUnknownKeys.length !== 0) {
-		validDefinitions = onlyCommonUnknownKeys
-	} else {
-		const unknownKeys = validDefinitions.flatMap(d =>
-			d.errors.filter(e =>
-				e.kind === 'unknown_key'
-				&& !alwaysUnknown.some(oe => oe.node.originalNode === e.node.originalNode)
-			)
-		).map(e => e.node as RuntimeNode<T>).concat(
-			validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'invalid_key_combination')
-				.map(e => e.node as RuntimeNode<T>),
-		).filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i)
-
-		errors.push({ kind: 'invalid_key_combination', node: unknownKeys })
-	}
-
-	const noExpectedKvp = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'expected_key_value_pair')
-	)
-	if (noExpectedKvp.length !== 0) {
-		validDefinitions = noExpectedKvp
-	} else {
-		errors.push(
-			...validDefinitions.flatMap(d => d.errors).filter((e, i, arr) =>
-				e.kind === 'expected_key_value_pair'
-				&& arr.findIndex(oe =>
-						oe.kind === 'expected_key_value_pair'
-						&& oe.node.originalNode === e.node.originalNode
-					) === i
-			),
-		)
-	}
-
-	const noUnknownTupleElements = validDefinitions.filter(d =>
-		!d.errors.some(e => e.kind === 'unknown_tuple_element')
-	)
-	if (noUnknownTupleElements.length !== 0) {
-		validDefinitions = noUnknownTupleElements
-	}
-
-	const alwaysMissing = validDefinitions[0].errors.filter(e =>
-		e.kind === 'missing_key'
-		&& !validDefinitions.some(d =>
-			!d.errors.some(oe =>
-				oe.kind === 'missing_key'
-				&& oe.node.originalNode === e.node.originalNode
-				&& oe.key === e.key
-			)
-		)
-	) as MissingKeyError<T>[]
-	errors.push(...alwaysMissing)
-	const onlyCommonMissing = validDefinitions.filter(d =>
-		!d.errors.some(e =>
-			e.kind === 'some_missing_keys'
-			|| (e.kind === 'missing_key'
-				&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode))
-		)
-	)
-	if (onlyCommonMissing.length !== 0) {
-		validDefinitions = onlyCommonMissing
-	} else {
-		// In this case we have multiple conflicting missing keys.
-		// This is a generic error message with no further info.
-		// A more informative error message would be quite complicated
-		// and look sth like this:
-		// Missing either keys ("A", "B" and "C"), ("A", and "D"), or "F"
-		errors.push(
-			...validDefinitions.flatMap(d =>
-				d.errors.filter(e =>
-					e.kind === 'missing_key'
-					&& !alwaysMissing.some(oe => oe.node.originalNode === e.node.originalNode)
-				)
-			).map(e => e.node as RuntimeNode<T>).concat(
-				validDefinitions.flatMap(d => d.errors).filter(e => e.kind === 'some_missing_keys').map(
-					e => e.node as RuntimeNode<T>,
-				),
-			).filter((v, i, arr) => arr.findIndex(o => o.originalNode === v.originalNode) === i).map(
-				n => ({ kind: 'some_missing_keys' as 'some_missing_keys', node: n }),
-			),
-		)
-	}
-
-	for (
-		const kind of [
-			'invalid_collection_length',
-			'invalid_string_length',
-			'number_out_of_range',
-		] as const
-	) {
-		const noRangeError = validDefinitions.filter(d => !d.errors.some(e => e.kind === kind))
-		if (noRangeError.length !== 0) {
-			validDefinitions = noRangeError
-		} else {
-			const rangesErrors = validDefinitions.map(d => {
-				return d.errors.filter((e): e is RangeError<T> => e.kind === kind).reduce((a, b) => ({
-					kind,
-					node: a.node,
-					ranges: [NumericRange.intersect(a.ranges[0], b.ranges[0])],
-				}))
-			})
-			if (rangesErrors.length > 0) {
-				errors.push({
-					kind,
-					node: rangesErrors[0].node,
-					ranges: rangesErrors.flatMap(e => e.ranges),
-				})
-			}
-		}
-	}
-
-	errors.push(...validDefinitions.flatMap(d => d.errors.filter(e => e.kind === 'internal')))
-
-	return { definitions: validDefinitions.map(d => d.definition), condensedErrors: errors }
 }
 
 interface ShallowCheckResultChildDefinition {
@@ -683,7 +449,7 @@ interface ShallowCheckResultChildDefinition {
 }
 
 interface ShallowCheckResult<T> {
-	errors: McdocCheckerError<T>[]
+	errors: McdocRuntimeError<T>[]
 	childDefinitions: (ShallowCheckResultChildDefinition | undefined)[]
 }
 
@@ -712,14 +478,14 @@ function checkShallowly<T>(
 	) {
 		return {
 			childDefinitions: Array(children.length).fill(undefined),
-			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: typeDef }],
+			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: [typeDef] }],
 		}
 	}
 
 	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
 		children.length,
 	).fill(undefined)
-	const errors: McdocCheckerError<T>[] = []
+	const errors: McdocRuntimeError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
 		if (handler.checkInferred?.(config, simplifiedInferred, ctx) === false) {
@@ -853,7 +619,7 @@ function checkShallowly<T>(
 					&& pair.key.value.kind === 'string'
 					&& pair.optional !== true
 				) {
-					errors.push({ kind: 'missing_key', node: runtimeNode, key: pair.key.value.value })
+					errors.push({ kind: 'missing_key', node: runtimeNode, keys: [pair.key.value.value] })
 				}
 			}
 
@@ -872,6 +638,7 @@ function checkShallowly<T>(
 				const child = children[i]
 				if (childDef === undefined) {
 					if (Array.isArray(child)) {
+						// This should never happen
 						errors.push(
 							...child.map(v => ({
 								kind: 'expected_key_value_pair' as 'expected_key_value_pair',
@@ -924,7 +691,14 @@ function checkShallowly<T>(
 				if (i < typeDef.items.length) {
 					childDefinitions[i] = { type: typeDef.items[i] }
 				} else {
-					errors.push({ kind: 'unknown_tuple_element', node: child })
+					// This really should always be an array, just to handle this gracefully
+					const values = Array.isArray(child) ? child : [...child.possibleValues, child.key]
+					errors.push(
+						...values.map(v => ({
+							kind: 'unknown_tuple_element' as 'unknown_tuple_element',
+							node: v,
+						})),
+					)
 				}
 			}
 
@@ -1117,12 +891,9 @@ function simplifyIndexed<T>(
 								simplify(node.value.node.inferredType, { ...context, node: node.value }),
 							).filter(child => {
 								if (!Array.isArray(child)) {
-									return isAssignable(
-										child.key.inferredType,
-										{ kind: 'literal', value: { kind: 'string', value: entry } },
-										context.ctx,
-										context.ctx.isEquivalent,
-									)
+									return child.key.inferredType.kind === 'literal'
+										&& child.key.inferredType.value.kind === 'string'
+										&& child.key.inferredType.value.value === entry
 								}
 								// TODO if it's a list, consider all list items.
 								// This should probably work recursively if we have a list of lists.
@@ -1234,13 +1005,11 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 		} else {
 			// Only keep fields where the new key is not assignable to an existing field
 			complexFields = complexFields.filter(other =>
-				!isAssignable(
+				!McdocType.equals(
 					key,
 					typeof other.key === 'string'
 						? { kind: 'literal', value: { kind: 'string', value: other.key } }
 						: other.key,
-					context.ctx,
-					context.ctx.isEquivalent,
 				)
 			)
 			complexFields.push({ ...field, key })
@@ -1406,132 +1175,5 @@ function getValueType(
 			return { kind: type.enumKind }
 		default:
 			return type
-	}
-}
-
-export function getErrorRangeDefault<T extends core.AstNode>(
-	node: RuntimeNode<T>,
-	error: McdocCheckerError<T>['kind'],
-): core.Range {
-	const { range } = node.originalNode
-	if (error === 'missing_key' || error === 'invalid_collection_length') {
-		return { start: range.start, end: range.start + 1 }
-	}
-	return range
-}
-
-export function getDefaultErrorReporter<T>(
-	ctx: core.CheckerContext,
-	getErrorRange: (node: RuntimeNode<T>, error: McdocCheckerError<T>['kind']) => core.Range,
-): ErrorReporter<T> {
-	return (error: McdocCheckerError<T>) => {
-		const defaultTranslationKey = error.kind.replaceAll('_', '-')
-		if (error.kind === 'unknown_tuple_element') {
-			const nodes = Array.isArray(error.node)
-				? error.node
-				: [...error.node.possibleValues, error.node.key]
-			for (const node of nodes) {
-				ctx.err.report(
-					localize('expected', localize('nothing')),
-					getErrorRange(node, 'unknown_tuple_element'),
-				)
-			}
-			return
-		} else if (error.kind === 'invalid_key_combination') {
-			const message = localize(
-				defaultTranslationKey,
-				arrayToMessage(error.node.map(n => McdocType.toString(n.inferredType))),
-			)
-			for (const node of error.node) {
-				ctx.err.report(message, getErrorRange(node, 'unknown_tuple_element'))
-			}
-			return
-		}
-		const range = getErrorRange(error.node, error.kind)
-		switch (error.kind) {
-			case 'unknown_key':
-				ctx.err.report(
-					localize(
-						defaultTranslationKey,
-						error.node.inferredType.kind === 'literal'
-							? error.node.inferredType.value.value
-							: `<${localize(`mcdoc.type.${error.node.inferredType.kind}`)}>`,
-					),
-					range,
-					core.ErrorSeverity.Warning,
-				)
-				break
-			case 'missing_key':
-				ctx.err.report(localize(defaultTranslationKey, error.key), range)
-				break
-			case 'invalid_collection_length':
-			case 'invalid_string_length':
-			case 'number_out_of_range':
-				const baseKey = error.kind === 'invalid_collection_length'
-					? 'mcdoc.runtime.checker.range.collection'
-					: error.kind === 'invalid_string_length'
-					? 'mcdoc.runtime.checker.range.string'
-					: 'mcdoc.runtime.checker.range.number'
-				const rangeMessages = error.ranges.map(r => {
-					const left = r.min !== undefined
-						? localize(
-							RangeKind.isLeftExclusive(r.kind)
-								? 'mcdoc.runtime.checker.range.left-exclusive'
-								: 'mcdoc.runtime.checker.range.left-inclusive',
-							r.min,
-						)
-						: undefined
-					const right = r.max !== undefined
-						? localize(
-							RangeKind.isLeftExclusive(r.kind)
-								? 'mcdoc.runtime.checker.range.right-exclusive'
-								: 'mcdoc.runtime.checker.range.right-inclusive',
-							r.max,
-						)
-						: undefined
-
-					if (left !== undefined && right !== undefined) {
-						return localize('mcdoc.runtime.checker.range.concat', left, right)
-					}
-					return left ?? right
-				}).filter(r => r !== undefined) as string[]
-				ctx.err.report(
-					localize('expected', localize(baseKey, arrayToMessage(rangeMessages, false))),
-					range,
-				)
-				break
-			case 'type_mismatch':
-				const types = error.expected.kind === 'union'
-					? error.expected.members
-					: [error.expected]
-				ctx.err.report(
-					localize(
-						'expected',
-						arrayToMessage(
-							types.map(e =>
-								e.kind === 'enum'
-									? arrayToMessage(e.values.map(v => v.value.toString()))
-									: e.kind === 'literal'
-									? localeQuote(e.value.value.toString())
-									: localize(`mcdoc.type.${e.kind}`)
-							),
-							false,
-						),
-					),
-					range,
-				)
-				break
-			case 'expected_key_value_pair':
-				ctx.err.report(localize(`mcdoc.runtime.checker.${defaultTranslationKey}`), range)
-				break
-			case 'duplicate_key':
-				// Vscode already reports duplicate keys in JSON files
-				// TODO: figure out how to report these errors in mcfunction files
-				break
-			case 'internal':
-				break
-			default:
-				ctx.err.report(localize(defaultTranslationKey), range)
-		}
 	}
 }

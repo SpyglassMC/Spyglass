@@ -1,6 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import type { Attribute, EnumType, LiteralType, McdocType, UnionType } from '../../type/index.js'
-import type { McdocCheckerError, SimplifiedMcdocType, SimplifiedMcdocTypeNoUnion } from './index.js'
+import type { McdocRuntimeError } from './error.js'
+import type { SimplifiedMcdocType, SimplifiedMcdocTypeNoUnion } from './index.js'
 
 export type RuntimeUnion<T> = RuntimeNode<T>[] | RuntimePair<T>
 
@@ -32,7 +33,7 @@ export type ChildrenGetter<T> = (
 	simplified: SimplifiedMcdocTypeNoUnion,
 ) => RuntimeUnion<T>[]
 
-export type ErrorReporter<T> = (error: McdocCheckerError<T>) => void
+export type ErrorReporter<T> = (error: McdocRuntimeError<T>) => void
 
 export interface McdocCheckerContext<T> extends core.CheckerContext {
 	allowMissingKeys: boolean
