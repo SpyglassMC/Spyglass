@@ -88,36 +88,35 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 		const type = core.ResourceLocationNode.toString(node.id, 'full')
 		nbt.checker.index('minecraft:item', type, { isPredicate: true })(node.nbt, ctx)
 	}
-	if (!node.tests) {
+	if (!node.tests?.children) {
 		return
 	}
-	for (const anyOfTest of node.tests.children) {
-		for (const allOfTest of anyOfTest.children) {
-			for (const test of allOfTest.children) {
-				const key = core.ResourceLocationNode.toString(test.key, 'full')
-				// count is a special case that's only valid in item predicate arguments, not json
-				// note: basically all errors checked here are otherwise accepted by vanilla, but it's good to report them
-				if (key === 'minecraft:count') {
-					if (ComponentTestExistsNode.is(test)) {
+	const anyOfTest = node.tests.children[0]
+	for (const allOfTest of anyOfTest.children) {
+		for (const test of allOfTest.children) {
+			const key = core.ResourceLocationNode.toString(test.key, 'full')
+			// count is a special case that's only valid in item predicate arguments, not json
+			// note: basically all errors checked here are otherwise accepted by vanilla, but it's good to report them
+			if (key === 'minecraft:count') {
+				if (ComponentTestExistsNode.is(test)) {
+					ctx.err.report(
+						localize('mcfunction.checker.item-predicate.useless-count-check'),
+						test.range,
+						core.ErrorSeverity.Warning,
+					)
+				} else if (
+					(ComponentTestExactNode.is(test) || ComponentTestSubpredicateNode.is(test))
+					&& test.value
+				) {
+					if (nbt.NbtIntNode.is(test.value) && test.value.value < 0) {
 						ctx.err.report(
-							localize('mcfunction.checker.item-predicate.useless-count-check'),
-							test.range,
+							localize('mcfunction.checker.item-predicate.count-not-positive'),
+							test.value.range,
 							core.ErrorSeverity.Warning,
 						)
-					} else if (
-						(ComponentTestExactNode.is(test) || ComponentTestSubpredicateNode.is(test))
-						&& test.value
-					) {
-						if (nbt.NbtIntNode.is(test.value) && test.value.value < 0) {
-							ctx.err.report(
-								localize('mcfunction.checker.item-predicate.count-not-positive'),
-								test.value.range,
-								core.ErrorSeverity.Warning,
-							)
-						} else if (nbt.NbtCompoundNode.is(test.value)) {
-							test.value.children.filter(p =>
-								p.key?.value !== 'min' && p.key?.value !== 'max'
-							).forEach(node => {
+					} else if (nbt.NbtCompoundNode.is(test.value)) {
+						test.value.children.filter(p => p.key?.value !== 'min' && p.key?.value !== 'max')
+							.forEach(node => {
 								ctx.err.report(
 									localize(
 										'mcfunction.checker.item-predicate.count-unknown-key',
@@ -127,80 +126,79 @@ const itemPredicate: core.SyncChecker<ItemPredicateNode> = (node, ctx) => {
 									core.ErrorSeverity.Warning,
 								)
 							})
-							const mins = [...test.value.children.filter(p => p.key?.value === 'min')]
-							const maxes = [...test.value.children.filter(p => p.key?.value === 'max')]
+						const mins = [...test.value.children.filter(p => p.key?.value === 'min')]
+						const maxes = [...test.value.children.filter(p => p.key?.value === 'max')]
 
-							if (mins.length > 1 || maxes.length > 1) {
-								;[...mins, ...maxes].forEach(node => {
-									ctx.err.report(
-										localize('mcfunction.checker.item-predicate.count-range-multiple'),
-										node.key!.range,
-										core.ErrorSeverity.Error,
-									)
-								})
-							} else if (mins.length === 0 && maxes.length === 0) {
+						if (mins.length > 1 || maxes.length > 1) {
+							;[...mins, ...maxes].forEach(node => {
 								ctx.err.report(
-									localize('mcfunction.checker.item-predicate.count-range-missing'),
+									localize('mcfunction.checker.item-predicate.count-range-multiple'),
+									node.key!.range,
+									core.ErrorSeverity.Error,
+								)
+							})
+						} else if (mins.length === 0 && maxes.length === 0) {
+							ctx.err.report(
+								localize('mcfunction.checker.item-predicate.count-range-missing'),
+								test.value.range,
+								core.ErrorSeverity.Warning,
+							)
+						}
+
+						// if min/max are specified multiple times, vanilla seems to use the last one
+						const min = mins.pop()?.value
+						const max = maxes.pop()?.value
+
+						if (min && nbt.NbtIntNode.is(min) && max && nbt.NbtIntNode.is(max)) {
+							if (min.value > max.value) {
+								ctx.err.report(
+									localize('mcfunction.checker.item-predicate.count-range-invalid'),
 									test.value.range,
-									core.ErrorSeverity.Warning,
-								)
-							}
-
-							// if min/max are specified multiple times, vanilla seems to use the last one
-							const min = mins.pop()?.value
-							const max = maxes.pop()?.value
-
-							if (min && nbt.NbtIntNode.is(min) && max && nbt.NbtIntNode.is(max)) {
-								if (min.value > max.value) {
-									ctx.err.report(
-										localize('mcfunction.checker.item-predicate.count-range-invalid'),
-										test.value.range,
-										core.ErrorSeverity.Error,
-									)
-								}
-							} else if (min && !nbt.NbtIntNode.is(min)) {
-								ctx.err.report(
-									localize('expected', localize('nbt.node.int')),
-									min.range,
-									core.ErrorSeverity.Error,
-								)
-							} else if (max && !nbt.NbtIntNode.is(max)) {
-								ctx.err.report(
-									localize('expected', localize('nbt.node.int')),
-									max.range,
-									core.ErrorSeverity.Error,
-								)
-							} else if (min && min.value < 0) {
-								ctx.err.report(
-									localize('mcfunction.checker.item-predicate.value-negative', 'min'),
-									min.range,
-									core.ErrorSeverity.Error,
-								)
-							} else if (max && max.value < 0) {
-								ctx.err.report(
-									localize('mcfunction.checker.item-predicate.value-negative', 'max'),
-									max.range,
 									core.ErrorSeverity.Error,
 								)
 							}
-						} else {
+						} else if (min && !nbt.NbtIntNode.is(min)) {
 							ctx.err.report(
 								localize('expected', localize('nbt.node.int')),
-								test.value.range,
+								min.range,
 								core.ErrorSeverity.Error,
 							)
+						} else if (max && !nbt.NbtIntNode.is(max)) {
 							ctx.err.report(
-								localize('expected', localize('nbt.node.compound')),
-								test.value.range,
+								localize('expected', localize('nbt.node.int')),
+								max.range,
+								core.ErrorSeverity.Error,
+							)
+						} else if (min && min.value < 0) {
+							ctx.err.report(
+								localize('mcfunction.checker.item-predicate.value-negative', 'min'),
+								min.range,
+								core.ErrorSeverity.Error,
+							)
+						} else if (max && max.value < 0) {
+							ctx.err.report(
+								localize('mcfunction.checker.item-predicate.value-negative', 'max'),
+								max.range,
 								core.ErrorSeverity.Error,
 							)
 						}
+					} else {
+						ctx.err.report(
+							localize('expected', localize('nbt.node.int')),
+							test.value.range,
+							core.ErrorSeverity.Error,
+						)
+						ctx.err.report(
+							localize('expected', localize('nbt.node.compound')),
+							test.value.range,
+							core.ErrorSeverity.Error,
+						)
 					}
-				} else if (ComponentTestExactNode.is(test) && test.value) {
-					nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
-				} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
-					nbt.checker.index('minecraft:item_sub_predicate', key)(test.value, ctx)
 				}
+			} else if (ComponentTestExactNode.is(test) && test.value) {
+				nbt.checker.index('minecraft:data_component', key)(test.value, ctx)
+			} else if (ComponentTestSubpredicateNode.is(test) && test.value) {
+				nbt.checker.index('minecraft:item_sub_predicate', key)(test.value, ctx)
 			}
 		}
 	}

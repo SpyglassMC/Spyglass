@@ -90,15 +90,19 @@ const Suites: Partial<
 	}],
 	'minecraft:int_range': [{ content: ['0..5', '0', '-5', '-100..', '..100', '..'] }],
 	'minecraft:item_enchantment': [{ content: ['unbreaking', 'silk_touch'] }],
-	'minecraft:item_predicate': [{
-		content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'],
-	}],
-	'minecraft:item_slot': [{ content: ['container.5', 'weapon', 'contents'] }, {
-		content: ['contents', 'horse.armor'],
-		version: '1.20.5',
-	}],
+	'minecraft:item_predicate': [
+		{ content: ['stick', 'minecraft:stick', '#stick', '#stick{foo:bar}'] },
+		{ content: ['stick', '*[food]', 'stone[]'], version: '1.20.5' },
+	],
+	'minecraft:item_slot': [
+		{ content: ['container.5', 'weapon', 'contents'] },
+		{ content: ['contents', 'horse.armor'], version: '1.20.5' },
+	],
 	'minecraft:item_slots': [{ content: ['weapon', 'container.*', 'armor.head'] }],
-	'minecraft:item_stack': [{ content: ['stick', 'minecraft:stick', 'stick{foo:bar}'] }],
+	'minecraft:item_stack': [
+		{ content: ['stick', 'minecraft:stick', 'stick{foo:bar}'] },
+		{ content: ['stick', 'diamond_pickaxe[unbreakable={}]', 'apple[!food]'], version: '1.20.5' },
+	],
 	'minecraft:loot_modifier': [{ content: ['foo:bar', '[{function:"furnace_smelt"}]'] }],
 	'minecraft:loot_predicate': [{
 		content: ['custom:maybe', '{condition:"random_chance",chance:0.2}'],
