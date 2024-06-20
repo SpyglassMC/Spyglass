@@ -3,7 +3,7 @@ import { Range } from '../source/index.js'
 import type { AstNode } from './AstNode.js'
 import { LiteralNode } from './LiteralNode.js'
 
-export interface PrefixedNode<C extends AstNode> extends AstNode {
+export interface PrefixedNode<C extends AstNode = AstNode> extends AstNode {
 	readonly type: 'prefixed'
 	readonly children: (LiteralNode | C)[]
 	readonly prefix: string
