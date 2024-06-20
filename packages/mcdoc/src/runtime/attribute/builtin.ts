@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
+import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
 interface IdConfig {
@@ -24,10 +25,22 @@ function getResourceLocationOptions(
 	{ registry, tags, definition }: IdConfig,
 	requireCanonical: boolean,
 	ctx: core.ContextBase,
+	typeDef?: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
 ): core.ResourceLocationOptions | undefined {
 	if (!registry) {
-		// TODO: handle resource locations without a category
-		return undefined
+		if (typeDef?.kind === 'enum' && typeDef.enumKind === 'string') {
+			return {
+				pool: typeDef.values.map(v => core.ResourceLocation.lengthen(`${v.value}`)),
+				allowUnknown: true, // the mcdoc checker will already report errors for this
+			}
+		}
+		if (typeDef?.kind === 'literal' && typeDef.value.kind === 'string') {
+			return {
+				pool: [core.ResourceLocation.lengthen(typeDef.value.value)],
+				allowUnknown: true,
+			}
+		}
+		return { pool: [], allowUnknown: true }
 	}
 	if (tags === 'implicit') {
 		registry = `tag/${registry}`
@@ -86,8 +99,22 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 			return true
 		},
-		stringParser: (config, ctx) => {
-			const options = getResourceLocationOptions(config, ctx.requireCanonical, ctx)
+		mapType: (config, typeDef, ctx) => {
+			if (typeDef.kind === 'literal' && typeDef.value.kind === 'string') {
+				const value = core.ResourceLocation.lengthen(typeDef.value.value)
+				return { ...typeDef, value: { kind: 'string', value } }
+			}
+			if (typeDef.kind === 'enum' && typeDef.enumKind === 'string') {
+				const values = typeDef.values.map(v => ({
+					...v,
+					value: core.ResourceLocation.lengthen(`${v.value}`),
+				}))
+				return { ...typeDef, values }
+			}
+			return typeDef
+		},
+		stringParser: (config, typeDef, ctx) => {
+			const options = getResourceLocationOptions(config, ctx.requireCanonical, ctx, typeDef)
 			if (!options) {
 				return
 			}
@@ -104,10 +131,8 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.resourceLocation(options)(src, ctx)
 			}
 		},
-		stringMocker: (config, ctx) => {
-			// The completer doesn't know whether it should require canonical in this situation,
-			// so we will have to accept that it will also suggest entries with missing namespaces
-			const options = getResourceLocationOptions(config, false, ctx)
+		stringMocker: (config, typeDef, ctx) => {
+			const options = getResourceLocationOptions(config, false, ctx, typeDef)
 			if (!options) {
 				return undefined
 			}

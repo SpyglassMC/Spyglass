@@ -1,5 +1,5 @@
 import type { AstNode, CheckerContext, Range } from '@spyglassmc/core'
-import { ErrorSeverity } from '@spyglassmc/core'
+import { ErrorSeverity, ResourceLocation } from '@spyglassmc/core'
 import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { RangeKind } from '../../node/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
@@ -440,7 +440,9 @@ export function getDefaultErrorReporter<T>(
 					arrayToMessage(
 						error.expected.map(e =>
 							e.kind === 'enum'
-								? arrayToMessage(e.values.map(v => v.value.toString()))
+								? arrayToMessage(
+									e.values.map(v => ResourceLocation.shorten(v.value.toString())),
+								)
 								: e.kind === 'literal'
 								? localeQuote(e.value.value.toString())
 								: localize(`mcdoc.type.${e.kind}`)

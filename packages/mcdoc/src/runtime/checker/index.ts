@@ -376,8 +376,10 @@ export function typeDefinition<T>(
 		}
 	}
 
-	for (const node of rootNode.possibleValues) {
-		attachTypeInfo(node, ctx)
+	if (ctx.attachTypeInfo) {
+		for (const node of rootNode.possibleValues) {
+			attachTypeInfo(node, ctx)
+		}
 	}
 
 	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
@@ -390,10 +392,10 @@ export function typeDefinition<T>(
 function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerContext<T>) {
 	if (node.validDefinitions.length === 1) {
 		const { typeDef, desc } = node.validDefinitions[0]
-		ctx.attachTypeInfo(node.node.originalNode, typeDef, desc)
+		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, desc)
 		handleStringAttachers(node.node, typeDef, ctx)
 	} else if (node.validDefinitions.length > 1) {
-		ctx.attachTypeInfo(node.node.originalNode, {
+		ctx.attachTypeInfo?.(node.node.originalNode, {
 			kind: 'union',
 			members: node.validDefinitions.map(d => d.typeDef),
 		})
@@ -401,7 +403,7 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 	}
 	for (const child of node.children) {
 		if (child.key && child.key.typeDef) {
-			ctx.attachTypeInfo(child.key.runtimeValue.originalNode, child.key.typeDef)
+			ctx.attachTypeInfo?.(child.key.runtimeValue.originalNode, child.key.typeDef)
 			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, ctx)
 		}
 
@@ -416,12 +418,16 @@ function handleStringAttachers<T>(
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	ctx: McdocCheckerContext<T>,
 ) {
+	const { stringAttacher } = ctx
+	if (!stringAttacher) {
+		return
+	}
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
-		const parser = handler.stringParser?.(config, ctx)
+		const parser = handler.stringParser?.(config, typeDef, ctx)
 		if (!parser) {
 			return
 		}
-		ctx.stringAttacher(runtimeValue.originalNode, (node) => {
+		stringAttacher(runtimeValue.originalNode, (node) => {
 			const src = new Source(node.value, node.valueMap)
 			const start = src.cursor
 			const child = parser(src, ctx)
@@ -463,28 +469,21 @@ function checkShallowly<T>(
 	const typeDefValueType = getValueType(typeDef)
 	const runtimeValueType = getValueType(simplifiedInferred)
 
+	const childDefinitions = Array<ShallowCheckResultChildDefinition | undefined>(children.length)
+		.fill(undefined)
+
 	if (
 		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
 			&& simplifiedInferred.kind !== 'unsafe'
 			&& runtimeValueType.kind !== typeDefValueType.kind
 			&& !ctx.isEquivalent(runtimeValueType, typeDefValueType))
-		|| (typeDef.kind === 'literal'
-			&& (simplifiedInferred.kind !== 'literal'
-				|| typeDef.value.value !== simplifiedInferred.value.value))
-		// TODO handle enum field attributes
-		|| (typeDef.kind === 'enum'
-			&& (simplifiedInferred.kind !== 'literal'
-				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
 	) {
 		return {
-			childDefinitions: Array(children.length).fill(undefined),
+			childDefinitions,
 			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: [typeDef] }],
 		}
 	}
 
-	const childDefinitions: (ShallowCheckResultChildDefinition | undefined)[] = Array(
-		children.length,
-	).fill(undefined)
 	const errors: McdocRuntimeError<T>[] = []
 	let assignable = true
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
@@ -495,6 +494,22 @@ function checkShallowly<T>(
 	if (!assignable) {
 		errors.push({ kind: 'internal', node: runtimeNode })
 	}
+
+	if (
+		(typeDef.kind === 'literal'
+			&& (simplifiedInferred.kind !== 'literal'
+				|| typeDef.value.value !== simplifiedInferred.value.value))
+		// TODO handle enum field attributes
+		|| (typeDef.kind === 'enum'
+			&& (simplifiedInferred.kind !== 'literal'
+				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
+	) {
+		return {
+			childDefinitions,
+			errors: [{ kind: 'type_mismatch', node: runtimeNode, expected: [typeDef] }],
+		}
+	}
+
 	switch (typeDef.kind) {
 		case 'any':
 		case 'unsafe':
@@ -758,31 +773,42 @@ export function simplify<T>(
 ): SimplifiedMcdocTypeNoUnion
 export function simplify<T>(typeDef: McdocType, context: SimplifyContext<T>): SimplifiedMcdocType
 export function simplify<T>(typeDef: McdocType, context: SimplifyContext<T>): SimplifiedMcdocType {
+	function wrap(typeDef: SimplifiedMcdocType) {
+		if (!typeDef.attributes?.length) {
+			return typeDef
+		}
+		handleAttributes(typeDef.attributes, context.ctx, (handler, config) => {
+			if (handler.mapType) {
+				typeDef = handler.mapType(config, typeDef, context.ctx)
+			}
+		})
+		return typeDef
+	}
 	switch (typeDef.kind) {
 		case 'reference':
-			return simplifyReference(typeDef, context)
+			return wrap(simplifyReference(typeDef, context))
 		case 'dispatcher':
-			return simplifyDispatcher(typeDef, context)
+			return wrap(simplifyDispatcher(typeDef, context))
 		case 'indexed':
-			return simplifyIndexed(typeDef, context)
+			return wrap(simplifyIndexed(typeDef, context))
 		case 'union':
-			return simplifyUnion(typeDef, context)
+			return wrap(simplifyUnion(typeDef, context))
 		case 'struct':
-			return simplifyStruct(typeDef, context)
+			return wrap(simplifyStruct(typeDef, context))
 		case 'list':
-			return simplifyList(typeDef, context)
+			return wrap(simplifyList(typeDef, context))
 		case 'tuple':
-			return simplifyTuple(typeDef, context)
+			return wrap(simplifyTuple(typeDef, context))
 		case 'enum':
-			return simplifyEnum(typeDef, context)
+			return wrap(simplifyEnum(typeDef, context))
 		case 'concrete':
-			return simplifyConcrete(typeDef, context)
+			return wrap(simplifyConcrete(typeDef, context))
 		case 'template':
-			return simplifyTemplate(typeDef, context)
+			return wrap(simplifyTemplate(typeDef, context))
 		case 'mapped':
-			return simplifyMapped(typeDef, context)
+			return wrap(simplifyMapped(typeDef, context))
 		default:
-			return typeDef
+			return wrap(typeDef)
 	}
 }
 
@@ -806,7 +832,14 @@ function simplifyReference<T>(
 		context.ctx.logger.warn(`Tried to access unknown reference ${typeDef.path}`)
 		return { kind: 'union', members: [] }
 	}
-	return simplify(def, context)
+	const simplifiedDef = simplify(def, context)
+	if (typeDef.attributes?.length) {
+		return {
+			...simplifiedDef,
+			attributes: [...typeDef.attributes, ...simplifiedDef.attributes ?? []],
+		}
+	}
+	return simplifiedDef
 }
 
 function simplifyDispatcher<T>(
@@ -998,7 +1031,7 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 		})
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
-		} else if (key.kind === 'literal' && key.value.kind === 'string') {
+		} else if (key.kind === 'literal' && key.value.kind === 'string' && !key.attributes?.length) {
 			literalFields.set(key.value.value, field)
 		} else if (key.kind === 'union') {
 			key.members.forEach(m => addField(m, { ...field, optional: true }))

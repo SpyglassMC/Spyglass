@@ -16,7 +16,7 @@ const nbtValidator: mcdoc.runtime.attribute.validator.McdocAttributeValidator<
 
 export function registerMcdocAttributes(meta: core.MetaRegistry) {
 	mcdoc.runtime.registerAttribute(meta, 'nbt', nbtValidator, {
-		stringParser: (config, ctx) => (src) => {
+		stringParser: (config, typeDef, ctx) => (src) => {
 			const res = makeInfallible(entry, localize('nbt.node'))(src, ctx)
 			if (config && res) {
 				typeDefinition(config as core.Mutable<mcdoc.McdocType>)(res, ctx)
@@ -25,7 +25,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 		},
 	})
 	mcdoc.runtime.registerAttribute(meta, 'nbt_path', nbtValidator, {
-		stringParser: (config) => makeInfallible(path, localize('nbt.path')),
+		stringParser: () => makeInfallible(path, localize('nbt.path')),
 	})
 }
 

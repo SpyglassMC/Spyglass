@@ -52,11 +52,9 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 		}
 		if (pair.key && record.typeDef) {
 			const pairKey = pair.key.value
-			const field = mcdoc.runtime.completer
-				.getFields(record.typeDef, ctx)
+			const field = mcdoc.runtime.completer.getFields(record.typeDef, ctx)
 				.find(({ key }) => key === pairKey)
-				?.field
-				.type
+				?.field.type
 			if (field) {
 				return getValues(field, range, ctx)
 			}
@@ -68,7 +66,10 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 const primitive: core.Completer<JsonPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
 	if (node.type === 'json:string' && node.children?.length && insideRange) {
-		return core.completer.string(node, ctx)
+		const childItems = core.completer.string(node, ctx)
+		if (childItems.length > 0) {
+			return childItems
+		}
 	}
 	if (!node.typeDef) {
 		return []
@@ -81,16 +82,15 @@ function getValues(
 	range: core.RangeLike,
 	ctx: core.CompleterContext,
 ): core.CompletionItem[] {
-	return mcdoc.runtime.completer.getValues(typeDef, ctx).map((
-		{ value, detail, kind, completionKind },
-	) =>
-		core.CompletionItem.create(value, range, {
-			kind: completionKind ?? core.CompletionKind.Value,
-			detail,
-			filterText: kind === 'string' ? `"${value}"` : value,
-			insertText: kind === 'string' ? `"${value}"` : value,
-		})
-	)
+	return mcdoc.runtime.completer.getValues(typeDef, ctx)
+		.map(({ value, detail, kind, completionKind }) =>
+			core.CompletionItem.create(value, range, {
+				kind: completionKind ?? core.CompletionKind.Value,
+				detail,
+				filterText: kind === 'string' ? `"${value}"` : value,
+				insertText: kind === 'string' ? `"${value}"` : value,
+			})
+		)
 }
 
 export function register(meta: core.MetaRegistry): void {

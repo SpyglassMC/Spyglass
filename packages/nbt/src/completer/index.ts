@@ -41,8 +41,8 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
-					filterText: key,
-					insertText: `${key}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
+					filterText: formatKey(key, pair?.key?.quote),
+					insertText: `${formatKey(key, pair?.key?.quote)}${iv ? ':' : ''}${ipe ? '$1,' : ''}`,
 				})
 			)
 	},
@@ -54,8 +54,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 			const pairKey = pair.key.value
 			const field = mcdoc.runtime.completer.getFields(record.typeDef, ctx)
 				.find(({ key }) => key === pairKey)
-				?.field
-				.type
+				?.field.type
 			if (field) {
 				return getValues(field, range, ctx)
 			}
@@ -67,7 +66,10 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	const insideRange = core.Range.contains(node, ctx.offset, true)
 	if (node.type === 'nbt:string' && node.children?.length && insideRange) {
-		return core.completer.string(node, ctx)
+		const childItems = core.completer.string(node, ctx)
+		if (childItems.length > 0) {
+			return childItems
+		}
 	}
 	if (!node.typeDef) {
 		return []
@@ -80,22 +82,29 @@ function getValues(
 	range: core.RangeLike,
 	ctx: core.CompleterContext,
 ): core.CompletionItem[] {
-	return mcdoc.runtime.completer.getValues(typeDef, ctx).map((
-		{ value, detail, kind, completionKind },
-	) =>
-		core.CompletionItem.create(value, range, {
-			kind: completionKind ?? core.CompletionKind.Value,
-			detail,
-			filterText: formatValue(value, kind),
-			insertText: formatValue(value, kind),
-		})
-	)
+	return mcdoc.runtime.completer.getValues(typeDef, ctx)
+		.map(({ value, detail, kind, completionKind }) =>
+			core.CompletionItem.create(value, range, {
+				kind: completionKind ?? core.CompletionKind.Value,
+				detail,
+				filterText: formatValue(value, kind),
+				insertText: formatValue(value, kind),
+			})
+		)
+}
+
+function formatKey(key: string, quote?: core.Quote) {
+	if (!quote && core.BrigadierUnquotablePattern.test(key)) {
+		return key
+	}
+	const q = quote ?? '"'
+	return q + core.completer.escapeString(key, q) + q
 }
 
 function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
 	switch (kind) {
 		case 'string':
-			return `"${value}"`
+			return `"${core.completer.escapeString(value, '"')}"`
 		case 'byte':
 			return `${value}b`
 		case 'short':
