@@ -1,12 +1,12 @@
 import * as core from '@spyglassmc/core/lib/index.js'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { localeQuote } from '@spyglassmc/locales'
-import type { McdocCheckerError } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import { McdocCheckerContext, typeDefinition } from '@spyglassmc/mcdoc/lib/runtime/checker/index.js'
 import type { McdocType, UnionType } from '@spyglassmc/mcdoc/lib/type/index.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { McdocRuntimeError } from '../../lib/runtime/checker/error'
 
 describe('mcdoc runtime checker', () => {
 	type JsValue = boolean | number | string | JsValue[] | { [key: string]: JsValue }
@@ -512,7 +512,7 @@ describe('mcdoc runtime checker', () => {
 		describe(`typeDefinition ${localeQuote(name)}`, () => {
 			for (const value of values) {
 				it(`with value ${JSON.stringify(value)}`, () => {
-					const errors: McdocCheckerError<JsValue>[] = []
+					const errors: McdocRuntimeError<JsValue>[] = []
 					const project = mockProjectData()
 					init?.(project.symbols)
 					const checkerCtx = core.CheckerContext.create(project, {

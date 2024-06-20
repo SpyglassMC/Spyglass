@@ -301,7 +301,7 @@ export namespace ItemPredicateNode {
 
 export interface ComponentTestsNode extends core.AstNode {
 	type: 'mcfunction:component_tests'
-	children: ComponentTestsAnyOfNode[]
+	children?: [ComponentTestsAnyOfNode]
 }
 
 export namespace ComponentTestsNode {

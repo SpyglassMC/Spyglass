@@ -254,7 +254,10 @@ export class SymbolUtil implements ExternalEventEmitter {
 				}
 				this.removeLocationsFromSymbol(
 					symbol,
-					uri ? (data) => data.location.uri === uri && predicate(data) : predicate,
+					(data) =>
+						(!uri || data.location.uri === uri)
+						&& data.location.contributor === contributor
+						&& predicate(data),
 				)
 			}
 			this.trim(table)

@@ -863,7 +863,10 @@ const atIntRange: InfallibleParser<IntRangeNode | undefined> = optional((src, ct
 
 export const stringType: Parser<StringTypeNode> = typeBase(
 	'mcdoc:type/string',
-	syntax([keyword('string', { colorTokenType: 'type' }), atIntRange]),
+	syntax([
+		keyword('string', { colorTokenType: 'type' }),
+		atIntRange,
+	], true),
 )
 
 export const literalType: Parser<LiteralTypeNode> = typeBase(

@@ -1654,14 +1654,16 @@ const componentTests: core.Parser<ComponentTestsNode> = (src, ctx) => {
 	const ans: ComponentTestsNode = {
 		type: 'mcfunction:component_tests',
 		range: core.Range.create(src),
-		children: [],
 	}
 
 	if (!src.trySkip('[')) {
 		return core.Failure
 	}
 	src.skipWhitespace()
-	ans.children.push(componentTestsAnyOf(src, ctx))
+	const tests = core.optional(core.failOnEmpty(componentTestsAnyOf))(src, ctx)
+	if (tests) {
+		ans.children = [tests]
+	}
 	src.skipWhitespace()
 	core.literal(']')(src, ctx)
 

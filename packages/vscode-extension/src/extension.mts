@@ -36,8 +36,8 @@ export function activate(context: vsc.ExtensionContext) {
 		{ language: 'mcfunction' },
 		{ language: 'mcdoc' },
 		{ language: 'snbt' },
-		{ pattern: '**/pack.mcmeta' },
-		{ pattern: '**/data/*/*/**/*.json' },
+		{ language: 'json', pattern: '**/pack.mcmeta' },
+		{ language: 'json', pattern: '**/data/*/*/**/*.json' },
 	]
 
 	const initializationOptions: server.CustomInitializationOptions = {

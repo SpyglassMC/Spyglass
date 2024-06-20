@@ -113,7 +113,7 @@ export function typeDefinition(
 				},
 				reportError: mcdoc.runtime.checker.getDefaultErrorReporter(
 					ctx,
-					mcdoc.runtime.checker.getErrorRangeDefault<NbtNode>,
+					mcdoc.runtime.checker.getDefaultErrorRange<NbtNode>,
 				),
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition

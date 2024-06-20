@@ -35,7 +35,7 @@ export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 			registry: 'minecraft:resource',
 			parallelIndices: [{ kind: 'static', value: parts.category }],
 		}
-		return json.checker.index(type)(child, ctx)
+		return json.checker.index(type, { discardDuplicateKeyErrors: true })(child, ctx)
 	}
 }
 

@@ -11,7 +11,13 @@ import { entry } from './entry.js'
 import { primitive } from './primitive.js'
 
 export const list: core.Parser<NbtListNode> = (src, ctx) => {
-	const parser = core.list({ start: '[', value: entry, sep: ',', trailingSep: false, end: ']' })
+	const parser = core.list({
+		start: '[',
+		value: entry,
+		sep: ',',
+		trailingSep: true,
+		end: ']',
+	})
 	const ans = parser(src, ctx) as NbtListNode
 	ans.type = 'nbt:list'
 	ans.valueType = ans.children[0]?.value?.type
@@ -36,7 +42,7 @@ export const byteArray: core.Parser<NbtByteArrayNode> = (src, ctx) => {
 		start: '[B;',
 		value: primitive,
 		sep: ',',
-		trailingSep: false,
+		trailingSep: true,
 		end: ']',
 	})
 	const ans = parser(src, ctx) as NbtByteArrayNode
@@ -60,7 +66,7 @@ export const intArray: core.Parser<NbtIntArrayNode> = (src, ctx) => {
 		start: '[I;',
 		value: primitive,
 		sep: ',',
-		trailingSep: false,
+		trailingSep: true,
 		end: ']',
 	})
 	const ans = parser(src, ctx) as NbtIntArrayNode
@@ -84,7 +90,7 @@ export const longArray: core.Parser<NbtLongArrayNode> = (src, ctx) => {
 		start: '[L;',
 		value: primitive,
 		sep: ',',
-		trailingSep: false,
+		trailingSep: true,
 		end: ']',
 	})
 	const ans = parser(src, ctx) as NbtLongArrayNode
