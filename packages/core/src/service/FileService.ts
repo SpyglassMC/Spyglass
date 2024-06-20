@@ -231,14 +231,6 @@ export class FileUriSupporter implements UriProtocolSupporter {
 	}
 }
 
-// namespace ArchiveUri {
-
-// export function is(uri: Uri): boolean {
-// 	return uri.protocol === Protocol && uri.hostname === Hostname
-// }
-
-// }
-
 export class ArchiveUriSupporter implements UriProtocolSupporter {
 	public static readonly Protocol = 'archive:'
 	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip']
@@ -279,10 +271,14 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {
-			throw new Error(`Path “${pathInArchive}” does not exist in archive “${archiveName}”`)
+			throw new RemovedFileError(
+				`Path “${pathInArchive}” does not exist in archive “${archiveName}”`,
+			)
 		}
 		if (entry.type !== 'file') {
-			throw new Error(`Path “${pathInArchive}” in archive “${archiveName}” is not a file`)
+			throw new RemovedFileError(
+				`Path “${pathInArchive}” in archive “${archiveName}” is not a file`,
+			)
 		}
 		return entry.data
 	}
@@ -354,6 +350,8 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		return new ArchiveUriSupporter(externals, entries)
 	}
 }
+
+export class RemovedFileError extends Error {}
 
 async function hashFile(externals: Externals, uri: string): Promise<string> {
 	return externals.crypto.getSha1(await externals.fs.readFile(uri))

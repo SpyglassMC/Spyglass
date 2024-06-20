@@ -3,6 +3,7 @@ import { Uri } from '../common/index.js'
 import type { PosRangeLanguageError } from '../source/index.js'
 import type { UnlinkedSymbolTable } from '../symbol/index.js'
 import { SymbolTable } from '../symbol/index.js'
+import { RemovedFileError } from './FileService.js'
 import type { RootUriString } from './fileUtil.js'
 import { fileUtil } from './fileUtil.js'
 import type { Project } from './Project.js'
@@ -186,7 +187,8 @@ export class CacheService {
 				}
 			} catch (e) {
 				if (
-					this.project.externals.error.isKind(e, 'ENOENT')
+					e instanceof RemovedFileError
+					|| this.project.externals.error.isKind(e, 'ENOENT')
 					|| this.project.externals.error.isKind(e, 'EISDIR')
 				) {
 					ans.removedFiles.push(uri)
