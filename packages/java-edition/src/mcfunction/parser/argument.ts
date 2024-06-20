@@ -1536,6 +1536,11 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
 	src.skipWhitespace()
 
+	if (core.ResourceLocationNode.toString(key, 'full') === 'minecraft:count') {
+		key.options.category = undefined
+		key.options.pool = ['minecraft:count']
+	}
+
 	if (src.trySkip('=')) {
 		const ans: ComponentTestExactNode = {
 			type: 'mcfunction:component_test_exact',
@@ -1558,7 +1563,9 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('~')) {
-		key.options.category = 'item_sub_predicate_type'
+		if (key.options.category !== undefined) {
+			key.options.category = 'item_sub_predicate_type'
+		}
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',
 			range: core.Range.create(start, src),
@@ -1577,11 +1584,6 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 		src.skipWhitespace()
 		ans.range.end = src.cursor
 		return ans
-	}
-
-	if (core.ResourceLocationNode.toString(key, 'full') === 'minecraft:count') {
-		key.options.category = undefined
-		key.options.pool = ['minecraft:count']
 	}
 
 	const ans: ComponentTestExistsNode = {
