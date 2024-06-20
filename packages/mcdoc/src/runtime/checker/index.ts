@@ -984,7 +984,7 @@ function simplifyIndexed<T>(
 			} else {
 				// fallback case if a dispatch to `%fallback` is unavailable
 				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-				break	
+				break
 			}
 		} else {
 			values.push(...currentValues.map(v => v!.type))

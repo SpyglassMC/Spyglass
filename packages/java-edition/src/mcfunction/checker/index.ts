@@ -226,7 +226,10 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 			if (componentId === 'minecraft:custom_data') {
 				if (pair.value.type === 'nbt:string') {
 					// TODO: Maybe move this to the nbt package
-					const stringNBT = nbt.parser.compound(new core.Source(pair.value.value, pair.value.valueMap), ctx)
+					const stringNBT = nbt.parser.compound(
+						new core.Source(pair.value.value, pair.value.valueMap),
+						ctx,
+					)
 					pair.value.children = [stringNBT]
 					core.AstNode.setParents(stringNBT)
 					// Because the runtime checker happens after binding, we need to manually call this
