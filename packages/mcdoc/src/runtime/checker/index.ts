@@ -885,10 +885,6 @@ function simplifyIndexed<T>(
 	for (const index of typeDef.parallelIndices) {
 		let lookup: string[] = []
 		if (index.kind === 'static') {
-			// if (index.value === '%fallback') {
-			// 	values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-			// 	break
-			// }
 			if (index.value.startsWith('minecraft:')) {
 				lookup.push(index.value.substring(10))
 			} else {
