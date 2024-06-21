@@ -202,6 +202,10 @@ export type NbtPathChild = NbtPathKeyNode | NbtPathFilterNode | NbtPathIndexNode
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path'
 	children: NbtPathChild[]
+	/**
+	 * The type definition at the end of the path
+	 */
+	endTypeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */

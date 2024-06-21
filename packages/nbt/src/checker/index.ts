@@ -328,7 +328,9 @@ export function path(
 					if (definition.kind === 'literal' && !definition.attributes?.length) {
 						return
 					}
-					if (link.node.type !== 'leaf') {
+					if (link.node.type === 'leaf') {
+						link.path.endTypeDef = definition
+					} else {
 						link.node.typeDef = definition
 					}
 					// TODO: improve hover info
