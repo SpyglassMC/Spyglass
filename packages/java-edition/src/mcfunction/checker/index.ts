@@ -29,8 +29,20 @@ export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	rootCommand(node.children, 0, ctx)
 }
 
-const getNode = (nodes: mcf.CommandNode['children'], name: string): core.AstNode | undefined => {
-	return nodes.find(n => n.path[n.path.length - 1] === name)?.children[0]
+function getEarlierNode(
+	nodes: mcf.CommandNode['children'],
+	before: number,
+	name: string | undefined,
+): core.AstNode | undefined {
+	if (name === undefined) {
+		return undefined
+	}
+	for (let i = before - 1; i > 0; i -= 1) {
+		if (nodes[i].path[nodes[i].path.length - 1] === name) {
+			return nodes[i].children[0]
+		}
+	}
+	return undefined
 }
 
 const rootCommand = (
@@ -38,7 +50,8 @@ const rootCommand = (
 	index: number,
 	ctx: core.CheckerContext,
 ) => {
-	for (const { children: [node] } of nodes) {
+	for (let i = 0; i < nodes.length; i += 1) {
+		const node = nodes[i].children[0]
 		if (BlockNode.is(node)) {
 			block(node, ctx)
 		} else if (EntityNode.is(node)) {
@@ -54,13 +67,12 @@ const rootCommand = (
 		} else if (NbtResourceNode.is(node)) {
 			nbtResource(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
-			const by = getNode(nodes, node.properties.dispatchedBy)
-			// TODO: support `indexedBy`, and `accessType`
-			nbtChecker(by)(node, ctx)
+			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
+			const indexedBy = getEarlierNode(nodes, i, node.properties.indexedBy)
+			nbtChecker(dispatchedBy, indexedBy)(node, ctx)
 		} else if (NbtPathNode.is(node) && node.properties) {
-			const by = getNode(nodes, node.properties.dispatchedBy)
-			// TODO: support `indexedBy`, and `accessType`
-			nbtPathChecker(by)(node, ctx)
+			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
+			nbtPathChecker(dispatchedBy)(node, ctx)
 		}
 	}
 }
@@ -194,39 +206,48 @@ const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
 	nbt.checker.typeDefinition(type)(node.children[0], ctx)
 }
 
-function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
+function nbtChecker(
+	dispatchedBy?: core.AstNode,
+	indexedBy?: core.AstNode,
+): core.SyncChecker<NbtNode> {
 	return (node, ctx) => {
 		if (!node.properties) {
 			return
 		}
-		const compound = node.children[0]
+		const tag = node.children[0]
+		if (indexedBy) {
+			if (NbtPathNode.is(indexedBy) && indexedBy.children[0].endTypeDef) {
+				nbt.checker.typeDefinition(indexedBy.children[0].endTypeDef)(tag, ctx)
+			}
+			return
+		}
 		switch (node.properties.dispatcher) {
 			case 'minecraft:entity':
-				if (nbt.NbtCompoundNode.is(compound)) {
+				if (nbt.NbtCompoundNode.is(tag)) {
 					const types =
 						(EntityNode.is(dispatchedBy) || core.ResourceLocationNode.is(dispatchedBy))
 							? getTypesFromEntity(dispatchedBy, ctx)
 							: undefined
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
-					})(compound, ctx)
+					})(tag, ctx)
 				}
 				break
 			case 'minecraft:block':
-				if (nbt.NbtCompoundNode.is(compound)) {
+				if (nbt.NbtCompoundNode.is(tag)) {
 					nbt.checker.index('minecraft:block', undefined, {
 						isPredicate: node.properties.isPredicate,
-					})(compound, ctx)
+					})(tag, ctx)
 				}
 				break
 			case 'minecraft:storage':
-				if (nbt.NbtCompoundNode.is(compound)) {
+				if (nbt.NbtCompoundNode.is(tag)) {
 					const storage = core.ResourceLocationNode.is(dispatchedBy)
 						? core.ResourceLocationNode.toString(dispatchedBy)
 						: undefined
 					nbt.checker.index('minecraft:storage', storage, {
 						isPredicate: node.properties.isPredicate,
-					})(compound, ctx)
+					})(tag, ctx)
 				}
 				break
 		}
