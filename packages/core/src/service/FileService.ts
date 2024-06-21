@@ -271,12 +271,14 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {
-			throw new RemovedFileError(
+			throw this.externals.error.createKind(
+				'ENOENT',
 				`Path “${pathInArchive}” does not exist in archive “${archiveName}”`,
 			)
 		}
 		if (entry.type !== 'file') {
-			throw new RemovedFileError(
+			throw this.externals.error.createKind(
+				'EISDIR',
 				`Path “${pathInArchive}” in archive “${archiveName}” is not a file`,
 			)
 		}
@@ -350,8 +352,6 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		return new ArchiveUriSupporter(externals, entries)
 	}
 }
-
-export class RemovedFileError extends Error {}
 
 async function hashFile(externals: Externals, uri: string): Promise<string> {
 	return externals.crypto.getSha1(await externals.fs.readFile(uri))
