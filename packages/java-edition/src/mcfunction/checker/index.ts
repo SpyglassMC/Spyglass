@@ -233,8 +233,8 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 					pair.value.children = [stringNBT]
 					core.AstNode.setParents(stringNBT)
 					// Because the runtime checker happens after binding, we need to manually call this
-					core.binder.dispatchSync(stringNBT, ctx)
-					core.checker.dispatchSync(stringNBT, ctx)
+					core.binder.fallbackSync(stringNBT, ctx)
+					core.checker.fallbackSync(stringNBT, ctx)
 					nbt.checker.index('mcdoc:custom_item_data', itemId)(stringNBT, ctx)
 				} else {
 					nbt.checker.index('mcdoc:custom_item_data', itemId)(pair.value, ctx)

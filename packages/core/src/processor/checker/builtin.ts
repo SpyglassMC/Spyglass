@@ -80,6 +80,23 @@ export const fallback: Checker<AstNode> = async (node, ctx) => {
 	await Promise.all(promises)
 }
 
+export const fallbackSync: SyncChecker<AstNode> = async (node, ctx) => {
+	const promises: Promise<unknown>[] = []
+	traversePreOrder(
+		node,
+		(node) => !ctx.meta.hasChecker(node.type),
+		(node) => ctx.meta.hasChecker(node.type),
+		(node) => {
+			const checker = ctx.meta.getChecker(node.type)
+			const result = checker(node, ctx)
+			if (result instanceof Promise) {
+				ctx.logger.warn(`[fallbackSync] Trying to run async checker for "${node.type}"`)
+			}
+		},
+	)
+	await Promise.all(promises)
+}
+
 export const dispatchSync: SyncChecker<AstNode> = (node, ctx) => {
 	for (const child of node.children ?? []) {
 		if (ctx.meta.hasChecker(child.type)) {

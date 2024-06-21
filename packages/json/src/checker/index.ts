@@ -75,8 +75,8 @@ export function index(
 					if (node.children) {
 						core.AstNode.setParents(node)
 						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.dispatchSync(node, ctx)
-						core.checker.dispatchSync(node, ctx)
+						core.binder.fallbackSync(node, ctx)
+						core.checker.fallbackSync(node, ctx)
 					}
 				},
 			}),
