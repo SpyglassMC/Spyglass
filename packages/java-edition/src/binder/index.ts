@@ -90,7 +90,7 @@ export const Categories = (() => {
 		dataPackResource('loot_table', { since: '1.21' }),
 		dataPackResource('predicate', { since: '1.21' }),
 		dataPackResource('recipe', { since: '1.21' }),
-		['structure', { category: 'structure', extname: '.nbt', pack: 'data_pack', until: '1.21' }],
+		['structure', { category: 'structure', extname: '.nbt', pack: 'data_pack', since: '1.21' }],
 		dataPackResource('tag/block', 'tags/block', { since: '1.21' }),
 		dataPackResource('tag/entity_type', 'tags/entity_type', { since: '1.21' }),
 		dataPackResource('tag/fluid', 'tags/fluid', { since: '1.21' }),

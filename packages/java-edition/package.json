@@ -18,8 +18,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "fast-glob": "^3.2.5",
-    "vanilla-datapack-data": "SPGoding/vanilla-datapack#634cc1bf99c37bdb99cde101713f55abbbbe5e95"
+    "fast-glob": "^3.2.5"
   },
   "publishConfig": {
     "access": "public"

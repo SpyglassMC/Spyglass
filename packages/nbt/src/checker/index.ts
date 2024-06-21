@@ -33,6 +33,7 @@ export function index(
 				registry,
 				parallelIndices: getIndices(id),
 			}
+
 			return (node, ctx) => {
 				typeDefinition(typeDef, options)(node, ctx)
 			}
