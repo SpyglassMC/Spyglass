@@ -51,6 +51,8 @@ Please refrain from using `mocha --watch`, as it might interface with and break 
 
 You can debug tests with breakpoints by running the `Run Unit Tests` configuration and setting your breakpoints accordingly. If you want to run a specific subset of tests, add `.only` after the test block (e.g. `describe.only()`, `it.only()`).
 
+Note that the build will fail in CICD if `.only` tests are pushed to prevent mistakenly merging `.only` to `main` (it should only be used for local testing!).
+
 ### Code style
 
 Tabs for indents, spaces for alignment. Except do not align things because the available tooling is unfortunately terrible.

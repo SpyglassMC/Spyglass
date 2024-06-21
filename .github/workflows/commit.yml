@@ -43,7 +43,7 @@ jobs:
 
       - run: npm run build
 
-      - run: npm test
+      - run: npm test -- --forbid-only
 
       - run: tar -cvf build-artifact.tar packages/*/lib/ packages/*/out/ packages/*/dist/
       - uses: actions/upload-artifact@v3

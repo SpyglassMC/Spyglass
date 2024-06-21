@@ -4,7 +4,7 @@ import type { IndexMap } from '../../lib/index.js'
 import { Range, Source } from '../../lib/index.js'
 import { markOffsetInString, showWhitespaceGlyph } from '../utils.js'
 
-describe('Source', () => {
+describe.only('Source', () => {
 	describe('getCharRange()', () => {
 		/*
 		 * Index Tens - 000000000011111111112
