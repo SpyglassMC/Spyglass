@@ -25,7 +25,7 @@ export interface McdocAttribute<C = unknown> {
 		field: StructTypePairField,
 		ctx: McdocCheckerContext<T>,
 	) => StructTypePairField
-	filterElement?: <T>(config: C, ctx: McdocCheckerContext<T>) => boolean
+	filterElement?: (config: C, ctx: core.ContextBase) => boolean
 	stringParser?: <T>(
 		config: C,
 		typeDef: SimplifiedMcdocTypeNoUnion,
