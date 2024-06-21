@@ -97,7 +97,18 @@ export function getValues(
 		case 'boolean':
 			return ['false', 'true'].map(v => ({ value: v, kind: 'boolean' }))
 		case 'enum':
-			return typeDef.values.map(v => ({
+			// TODO: de-duplicate this logic from the runtime simplifier
+			const filteredValues = typeDef.values.filter(value => {
+				let keep = true
+				handleAttributes(value.attributes, ctx, (handler, config) => {
+					if (!keep || !handler.filterElement) return
+					if (!handler.filterElement(config, ctx)) {
+						keep = false
+					}
+				})
+				return keep
+			})
+			return filteredValues.map(v => ({
 				value: `${v.value}`,
 				detail: v.identifier,
 				kind: typeDef.enumKind ?? 'string',
