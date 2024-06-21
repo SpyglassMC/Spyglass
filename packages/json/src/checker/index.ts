@@ -1,6 +1,15 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
+import type { JsonNode, TypedJsonNode } from '../node/index.js'
+import { JsonPairNode, JsonStringNode } from '../node/index.js'
+
+const typed: core.Checker<TypedJsonNode> = (node, ctx) => {
+	index(node.targetType)(node.children[0], ctx)
+}
+
+export function register(meta: core.MetaRegistry): void {
+	meta.registerChecker<TypedJsonNode>('json:typed', typed)
+}
 
 export interface JsonCheckerOptions {
 	discardDuplicateKeyErrors?: true

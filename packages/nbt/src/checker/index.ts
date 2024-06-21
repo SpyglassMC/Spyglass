@@ -1,9 +1,17 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtNode, NbtPathChild, NbtPathNode } from '../node/index.js'
+import type { NbtNode, NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import { NbtCompoundNode, NbtPathIndexNode, NbtStringNode } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
+
+const typed: core.Checker<TypedNbtNode> = (node, ctx) => {
+	typeDefinition(node.targetType)(node.children[0], ctx)
+}
+
+export function register(meta: core.MetaRegistry) {
+	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
+}
 
 interface Options {
 	isPredicate?: boolean
