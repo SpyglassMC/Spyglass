@@ -5,7 +5,7 @@ import { boolean } from '../../lib/index.js'
 import { type Options, prefixed } from '../../lib/parser/prefixed.js'
 import { showWhitespaceGlyph, testParser } from '../utils.js'
 
-describe.only('prefixed()', () => {
+describe('prefixed()', () => {
 	const options: Options<BooleanNode> = { prefix: '!', child: boolean }
 	const cases: { content: string }[] = [
 		{ content: '' },
