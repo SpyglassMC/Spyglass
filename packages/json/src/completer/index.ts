@@ -41,8 +41,8 @@ const object = core.completer.record<JsonStringNode, JsonNode, JsonObjectNode>({
 					detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
 					deprecated: field.deprecated,
 					sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
-					filterText: `"${key}"`,
-					insertText: `"${key}"${iv ? ': ' : ''}${ipe ? '$1,' : ''}`,
+					filterText: formatKey(key),
+					insertText: `${formatKey(key)}${iv ? ': ' : ''}${ipe ? '$1,' : ''}`,
 				})
 			)
 	},
@@ -84,13 +84,55 @@ function getValues(
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
 		.map(({ value, detail, kind, completionKind }) =>
-			core.CompletionItem.create(value, range, {
+			core.CompletionItem.create(formatLabel(value, kind), range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				detail,
-				filterText: kind === 'string' ? `"${value}"` : value,
-				insertText: kind === 'string' ? `"${value}"` : value,
+				filterText: formatValue(value, kind),
+				insertText: formatValue(value, kind),
 			})
 		)
+}
+
+function formatKey(key: string) {
+	return `"${core.completer.escapeString(key, '"')}"`
+}
+
+function formatLabel(value: string, kind?: mcdoc.McdocType['kind']) {
+	if (value.length === 0) {
+		switch (kind) {
+			case 'string':
+				return '""'
+			case 'struct':
+				return '{}'
+			case 'list':
+			case 'tuple':
+			case 'byte_array':
+			case 'int_array':
+			case 'long_array':
+				return '[]'
+		}
+	}
+	return value
+}
+
+function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
+	switch (kind) {
+		case 'string':
+			if (value.length === 0) {
+				return '"$1"'
+			}
+			return `"${core.completer.escapeString(value, '"')}"`
+		case 'struct':
+			return '{$1}'
+		case 'list':
+		case 'tuple':
+		case 'byte_array':
+		case 'int_array':
+		case 'long_array':
+			return '[$1]'
+		default:
+			return value
+	}
 }
 
 export function register(meta: core.MetaRegistry): void {

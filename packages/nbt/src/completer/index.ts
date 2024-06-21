@@ -84,7 +84,7 @@ function getValues(
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
 		.map(({ value, detail, kind, completionKind }) =>
-			core.CompletionItem.create(value, range, {
+			core.CompletionItem.create(formatLabel(value, kind), range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				detail,
 				filterText: formatValue(value, kind),
@@ -101,9 +101,33 @@ function formatKey(key: string, quote?: core.Quote) {
 	return q + core.completer.escapeString(key, q) + q
 }
 
+function formatLabel(value: string, kind?: mcdoc.McdocType['kind']) {
+	if (value.length === 0) {
+		switch (kind) {
+			case 'string':
+				return '""'
+			case 'struct':
+				return '{}'
+			case 'list':
+			case 'tuple':
+				return '[]'
+			case 'byte_array':
+				return '[B;]'
+			case 'int_array':
+				return '[I;]'
+			case 'long_array':
+				return '[L;]'
+		}
+	}
+	return value
+}
+
 function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
 	switch (kind) {
 		case 'string':
+			if (value.length === 0) {
+				return '"$1"'
+			}
 			return `"${core.completer.escapeString(value, '"')}"`
 		case 'byte':
 			return `${value}b`
@@ -113,6 +137,17 @@ function formatValue(value: string, kind?: mcdoc.McdocType['kind']) {
 			return `${value}L`
 		case 'float':
 			return `${value}f`
+		case 'struct':
+			return '{$1}'
+		case 'list':
+		case 'tuple':
+			return '[$1]'
+		case 'byte_array':
+			return '[B;$1]'
+		case 'int_array':
+			return '[I;$1]'
+		case 'long_array':
+			return '[L;$1]'
 		default:
 			return value
 	}
