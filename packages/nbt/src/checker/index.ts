@@ -325,7 +325,10 @@ export function path(
 					)(error)
 				},
 				attachTypeInfo: (link, definition, desc = '') => {
-					if (link.node.type !== 'leaf' && !link.node.typeDef) {
+					if (definition.kind === 'literal' && !definition.attributes?.length) {
+						return
+					}
+					if (link.node.type !== 'leaf') {
 						link.node.typeDef = definition
 					}
 					// TODO: improve hover info

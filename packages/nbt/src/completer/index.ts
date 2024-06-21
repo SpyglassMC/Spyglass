@@ -4,6 +4,7 @@ import type {
 	NbtCollectionNode,
 	NbtCompoundNode,
 	NbtNode,
+	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
@@ -77,6 +78,25 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
 }
 
+const pathKey: core.Completer<NbtPathKeyNode> = (node, ctx) => {
+	if (!node.typeDef) {
+		return []
+	}
+	const child = node.children[0]
+	return mcdoc.runtime.completer
+		.getFields(node.typeDef, ctx)
+		.map(({ key, field }) =>
+			core.CompletionItem.create(key, node, {
+				kind: core.CompletionKind.Field,
+				detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
+				deprecated: field.deprecated,
+				sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
+				filterText: formatKey(key, child.quote),
+				insertText: formatKey(key, child.quote),
+			})
+		)
+}
+
 function getValues(
 	typeDef: core.DeepReadonly<mcdoc.McdocType>,
 	range: core.RangeLike,
@@ -131,4 +151,6 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerCompleter('nbt:string', primitive)
 	meta.registerCompleter('nbt:short', primitive)
 	meta.registerCompleter('nbt:float', primitive)
+
+	meta.registerCompleter('nbt:path/key', pathKey)
 }
