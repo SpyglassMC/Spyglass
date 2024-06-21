@@ -368,7 +368,7 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 	}
 }
 
-function entity(
+export function entity(
 	amount: 'multiple' | 'single',
 	type: 'entities' | 'players',
 ): core.Parser<EntityNode> {

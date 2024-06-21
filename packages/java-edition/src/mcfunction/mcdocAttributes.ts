@@ -6,6 +6,20 @@ import { getItemSlotsArgumentValues } from './common/index.js'
 import { EntitySelectorAtVariable, EntitySelectorNode, ScoreHolderNode } from './node/argument.js'
 import * as parser from './parser/index.js'
 
+const validator = mcdoc.runtime.attribute.validator
+
+interface EntityConfig {
+	amount: 'multiple' | 'single'
+	type: 'entities' | 'players'
+}
+const entityValidator = validator.alternatives<EntityConfig>(
+	validator.tree({
+		amount: validator.options('multiple', 'single'),
+		type: validator.options('entities', 'players'),
+	}),
+	() => ({ amount: 'multiple', type: 'entities' }),
+)
+
 export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: mcf.RootTreeNode) {
 	mcdoc.runtime.registerAttribute(meta, 'command', () => undefined, {
 		// TODO: validate slash
@@ -33,8 +47,9 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		stringParser: () => makeInfallible(parser.scoreHolder('multiple'), localize('score-holder')),
 		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
-	mcdoc.runtime.registerAttribute(meta, 'selector', () => undefined, {
-		stringParser: () => makeInfallible(parser.selector(), localize('selector')),
+	mcdoc.runtime.registerAttribute(meta, 'entity', entityValidator, {
+		stringParser: (config) =>
+			makeInfallible(parser.entity(config.amount, config.type), localize('selector')),
 		stringMocker: (_, __, ctx) =>
 			EntitySelectorNode.mock(ctx.offset, {
 				pool: EntitySelectorAtVariable.filterAvailable(ctx),
