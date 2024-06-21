@@ -3,7 +3,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import type { JsonNode, TypedJsonNode } from '../node/index.js'
 import { JsonPairNode, JsonStringNode } from '../node/index.js'
 
-const typed: core.Checker<TypedJsonNode> = (node, ctx) => {
+export const typed: core.Checker<TypedJsonNode> = (node, ctx) => {
 	index(node.targetType)(node.children[0], ctx)
 }
 

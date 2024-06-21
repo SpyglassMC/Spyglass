@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import * as json from '@spyglassmc/json'
 import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
@@ -17,7 +18,12 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 	mcdoc.runtime.registerAttribute(meta, 'text_component', () => undefined, {
 		stringParser: () =>
 			makeInfallible(
-				parser.jsonParser('::java::server::util::text::Text'),
+				core.map(json.parser.entry, (res) => ({
+					type: 'json:typed',
+					range: res.range,
+					children: [res],
+					targetType: { kind: 'reference', path: '::java::server::util::text::Text' },
+				} satisfies json.TypedJsonNode)),
 				localize('text-component'),
 			),
 	})
