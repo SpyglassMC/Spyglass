@@ -90,6 +90,7 @@
           "data/*/dimension/**/*.json",
           "data/*/dimension_type/**/*.json",
           "data/*/enchantment/**/*.json",
+          "data/*/enchantment_provider/**/*.json",
           "data/*/item_modifier/**/*.json",
           "data/*/item_modifiers/**/*.json",
           "data/*/jukebox_song/**/*.json",
