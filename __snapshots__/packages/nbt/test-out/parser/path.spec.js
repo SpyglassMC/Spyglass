@@ -24,25 +24,34 @@ exports['nbt path() Parse ""foo"" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 5
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 5
             },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 1,
+                  "end": 1
+                }
+              }
+            ],
+            "quote": "\""
           }
-        ],
-        "quote": "\""
+        ]
       }
     ],
     "range": {
@@ -58,25 +67,34 @@ exports['nbt path() Parse "\'foo\'" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 5
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 5
             },
-            "outer": {
-              "start": 1,
-              "end": 1
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 1,
+                  "end": 1
+                }
+              }
+            ],
+            "quote": "'"
           }
-        ],
-        "quote": "'"
+        ]
       }
     ],
     "range": {
@@ -121,22 +139,31 @@ exports['nbt path() Parse "foo" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       }
@@ -154,22 +181,31 @@ exports['nbt path() Parse "foo.[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -194,42 +230,60 @@ exports['nbt path() Parse "foo.bar" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 4,
           "end": 7
         },
-        "value": "bar",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
+            "type": "nbt:string",
+            "range": {
               "start": 4,
-              "end": 4
-            }
+              "end": 7
+            },
+            "value": "bar",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 4,
+                  "end": 4
+                }
+              }
+            ]
           }
         ]
       }
@@ -247,32 +301,50 @@ exports['nbt path() Parse "foo.{ }" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
       {
-        "type": "nbt:compound",
+        "type": "nbt:path/filter",
         "range": {
           "start": 4,
           "end": 7
         },
-        "children": []
+        "children": [
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 4,
+              "end": 7
+            },
+            "children": []
+          }
+        ]
       }
     ],
     "range": {
@@ -297,22 +369,31 @@ exports['nbt path() Parse "foo[ 0 ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -347,22 +428,31 @@ exports['nbt path() Parse "foo[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -387,22 +477,31 @@ exports['nbt path() Parse "foo[ ].[ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -434,22 +533,31 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -461,22 +569,31 @@ exports['nbt path() Parse "foo[ ].bar" 1'] = {
         }
       },
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 7,
           "end": 10
         },
-        "value": "bar",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
+            "type": "nbt:string",
+            "range": {
               "start": 7,
-              "end": 7
-            }
+              "end": 10
+            },
+            "value": "bar",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 7,
+                  "end": 7
+                }
+              }
+            ]
           }
         ]
       }
@@ -494,22 +611,31 @@ exports['nbt path() Parse "foo[ ][ ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -541,22 +667,31 @@ exports['nbt path() Parse "foo[ { } ]" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
@@ -591,32 +726,50 @@ exports['nbt path() Parse "foo{ }" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 3
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 3
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       },
       {
-        "type": "nbt:compound",
+        "type": "nbt:path/filter",
         "range": {
           "start": 3,
           "end": 6
         },
-        "children": []
+        "children": [
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 3,
+              "end": 6
+            },
+            "children": []
+          }
+        ]
       }
     ],
     "range": {
@@ -632,12 +785,21 @@ exports['nbt path() Parse "{ }" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:compound",
+        "type": "nbt:path/filter",
         "range": {
           "start": 0,
           "end": 3
         },
-        "children": []
+        "children": [
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": []
+          }
+        ]
       }
     ],
     "range": {
@@ -653,30 +815,48 @@ exports['nbt path() Parse "{ }.foo" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:compound",
+        "type": "nbt:path/filter",
         "range": {
           "start": 0,
           "end": 3
         },
-        "children": []
+        "children": [
+          {
+            "type": "nbt:compound",
+            "range": {
+              "start": 0,
+              "end": 3
+            },
+            "children": []
+          }
+        ]
       },
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 4,
           "end": 7
         },
-        "value": "foo",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
-              "start": 0,
-              "end": 0
-            },
-            "outer": {
+            "type": "nbt:string",
+            "range": {
               "start": 4,
-              "end": 4
-            }
+              "end": 7
+            },
+            "value": "foo",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 4,
+                  "end": 4
+                }
+              }
+            ]
           }
         ]
       }
@@ -694,22 +874,31 @@ exports['nbt path() Parse "文字" 1'] = {
     "type": "nbt:path",
     "children": [
       {
-        "type": "nbt:string",
+        "type": "nbt:path/key",
         "range": {
           "start": 0,
           "end": 2
         },
-        "value": "文字",
-        "valueMap": [
+        "children": [
           {
-            "inner": {
+            "type": "nbt:string",
+            "range": {
               "start": 0,
-              "end": 0
+              "end": 2
             },
-            "outer": {
-              "start": 0,
-              "end": 0
-            }
+            "value": "文字",
+            "valueMap": [
+              {
+                "inner": {
+                  "start": 0,
+                  "end": 0
+                },
+                "outer": {
+                  "start": 0,
+                  "end": 0
+                }
+              }
+            ]
           }
         ]
       }
