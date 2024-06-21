@@ -40,6 +40,7 @@ import type {
 	JsonNode,
 	MessageNode,
 	NbtNode,
+	NbtPathNode,
 	NbtResourceNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -202,7 +203,7 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:nbt_compound_tag':
 			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
-			return wrap(nbt.parser.path)
+			return wrap(nbtPathParser(nbt.parser.path, treeNode.properties))
 		case 'minecraft:nbt_tag':
 			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
@@ -518,6 +519,21 @@ function nbtParser(
 ): core.Parser<NbtNode> {
 	return core.map(parser, (res) => {
 		const ans: NbtNode = { type: 'mcfunction:nbt', range: res.range, children: [res], properties }
+		return ans
+	})
+}
+
+function nbtPathParser(
+	parser: core.Parser<nbt.NbtPathNode>,
+	properties?: NbtParserProperties,
+): core.Parser<NbtPathNode> {
+	return core.map(parser, (res) => {
+		const ans: NbtPathNode = {
+			type: 'mcfunction:nbt_path',
+			range: res.range,
+			children: [res],
+			properties,
+		}
 		return ans
 	})
 }

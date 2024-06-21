@@ -422,6 +422,18 @@ export namespace NbtNode {
 	}
 }
 
+export interface NbtPathNode extends core.AstNode {
+	type: 'mcfunction:nbt_path'
+	children: [nbt.NbtPathNode]
+	properties?: NbtParserProperties
+}
+export namespace NbtPathNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtPathNode {
+		return (node as NbtPathNode).type === 'mcfunction:nbt_path'
+	}
+}
+
 export interface NbtResourceNode extends core.AstNode {
 	type: 'mcfunction:nbt_resource'
 	children: [nbt.NbtNode]

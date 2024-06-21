@@ -17,6 +17,7 @@ import {
 	ItemStackNode,
 	JsonNode,
 	NbtNode,
+	NbtPathNode,
 	NbtResourceNode,
 	ParticleNode,
 } from '../node/index.js'
@@ -54,8 +55,12 @@ const rootCommand = (
 			nbtResource(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
 			const by = getNode(nodes, node.properties.dispatchedBy)
-			// TODO: support `indexedBy`, `isPredicate`, and `accessType`
+			// TODO: support `indexedBy`, and `accessType`
 			nbtChecker(by)(node, ctx)
+		} else if (NbtPathNode.is(node) && node.properties) {
+			const by = getNode(nodes, node.properties.dispatchedBy)
+			// TODO: support `indexedBy`, and `accessType`
+			nbtPathChecker(by)(node, ctx)
 		}
 	}
 }
@@ -223,6 +228,33 @@ function nbtChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtNode> {
 						isPredicate: node.properties.isPredicate,
 					})(compound, ctx)
 				}
+				break
+		}
+	}
+}
+
+function nbtPathChecker(dispatchedBy?: core.AstNode): core.SyncChecker<NbtPathNode> {
+	return (node, ctx) => {
+		if (!node.properties) {
+			return
+		}
+		const path = node.children[0]
+		switch (node.properties.dispatcher) {
+			case 'minecraft:entity':
+				const types =
+					(EntityNode.is(dispatchedBy) || core.ResourceLocationNode.is(dispatchedBy))
+						? getTypesFromEntity(dispatchedBy, ctx)
+						: undefined
+				nbt.checker.path('minecraft:entity', types)(path, ctx)
+				break
+			case 'minecraft:block':
+				nbt.checker.path('minecraft:block', undefined)(path, ctx)
+				break
+			case 'minecraft:storage':
+				const storage = core.ResourceLocationNode.is(dispatchedBy)
+					? core.ResourceLocationNode.toString(dispatchedBy)
+					: undefined
+				nbt.checker.path('minecraft:storage', storage)(path, ctx)
 				break
 		}
 	}

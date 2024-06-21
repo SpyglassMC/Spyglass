@@ -264,6 +264,8 @@ export function path(
 			[{ originalNode: link, inferredType: inferPath(link) }],
 			typeDef,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
+				allowMissingKeys: true,
+				requireCanonical: true,
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -306,7 +308,7 @@ export function path(
 					return []
 				},
 				reportError: (error) => {
-					if (error.kind === 'missing_key' || error.kind === 'invalid_collection_length') {
+					if (error.kind === 'invalid_collection_length') {
 						return
 					}
 					mcdoc.runtime.checker.getDefaultErrorReporter<NbtPathLink>(
@@ -324,13 +326,13 @@ export function path(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!NbtStringNode.is(node)) return
-					attacher(node)
-					if (node.children) {
-						core.AstNode.setParents(node)
+					if (!NbtStringNode.is(node.node)) return
+					attacher(node.node)
+					if (node.node.children) {
+						core.AstNode.setParents(node.node)
 						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.dispatchSync(node, ctx)
-						core.checker.dispatchSync(node, ctx)
+						core.binder.dispatchSync(node.node, ctx)
+						core.checker.dispatchSync(node.node, ctx)
 					}
 				},
 			}),
