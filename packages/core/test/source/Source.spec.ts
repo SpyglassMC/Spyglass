@@ -491,7 +491,7 @@ describe('Source', () => {
 			}
 		})
 	})
-	describe('visualizeIndexMap', () => {
+	describe('visualizeIndexMap()', () => {
 		const suites: { string: string; indexMap: IndexMap }[] = [
 			{ // Leading whitespace
 				/*
