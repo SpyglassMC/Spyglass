@@ -1534,14 +1534,12 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	src.skipWhitespace()
 
 	const key = core.resourceLocation({ category: 'data_component_type' })(src, ctx)
+	src.skipWhitespace()
 
-	// hack: if the key is minecraft:count, change the node's options. there has to be a better way to do this
 	if (core.ResourceLocationNode.toString(key, 'full') === 'minecraft:count') {
 		key.options.category = undefined
 		key.options.pool = ['minecraft:count']
 	}
-
-	src.skipWhitespace()
 
 	if (src.trySkip('=')) {
 		const ans: ComponentTestExactNode = {
@@ -1565,7 +1563,9 @@ const componentTest: core.InfallibleParser<ComponentTestNode> = (src, ctx) => {
 	}
 
 	if (src.trySkip('~')) {
-		key.options.category = 'item_sub_predicate_type'
+		if (key.options.category !== undefined) {
+			key.options.category = 'item_sub_predicate_type'
+		}
 		const ans: ComponentTestSubpredicateNode = {
 			type: 'mcfunction:component_test_sub_predicate',
 			range: core.Range.create(start, src),
