@@ -113,6 +113,7 @@ export const NormalFileCategories = Object.freeze(
 		'dimension',
 		'dimension_type',
 		'enchantment',
+		'enchantment_provider',
 		'function',
 		'item_modifier',
 		'jukebox_song',

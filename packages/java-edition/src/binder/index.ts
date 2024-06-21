@@ -106,6 +106,7 @@ export const Categories = (() => {
 		dataPackResource('chat_type', { since: '1.19' }),
 		dataPackResource('damage_type', { since: '1.19.4' }),
 		dataPackResource('enchantment', { since: '1.21' }),
+		dataPackResource('enchantment_provider', { since: '1.21' }),
 		dataPackResource('jukebox_song', { since: '1.21' }),
 		dataPackResource('painting_variant', { since: '1.21' }),
 		dataPackResource('trim_pattern', { since: '1.19.4' }),
