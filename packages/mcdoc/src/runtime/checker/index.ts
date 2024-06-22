@@ -859,18 +859,7 @@ function simplifyDispatcher<T>(
 		context.ctx.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`)
 		return { kind: 'union', members: [] }
 	}
-	const structFields: StructTypePairField[] = []
-	for (const key in dispatcher) {
-		const data = dispatcher[key].data
-		if (TypeDefSymbolData.is(data)) {
-			structFields.push({ kind: 'pair', key, type: data.typeDef })
-		}
-	}
-	return simplifyIndexed({
-		kind: 'indexed',
-		parallelIndices: typeDef.parallelIndices,
-		child: { kind: 'struct', fields: structFields },
-	}, context)
+	return resolveIndices<T>(typeDef.parallelIndices, dispatcher, context)
 }
 
 function simplifyIndexed<T>(
@@ -889,11 +878,47 @@ function simplifyIndexed<T>(
 		context.ctx.logger.warn(`Tried to index un-indexable type ${child.kind}`)
 		return { kind: 'union', members: [] }
 	}
+
+	const symbolMap: { [key: string]: { data?: unknown } } = {}
+	for (const field of child.fields) {
+		if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+			symbolMap[field.key.value.value] = {
+				data: {
+					typeDef: field.type,
+				} satisfies TypeDefSymbolData,
+			}
+		}
+	}
+
+	return resolveIndices(typeDef.parallelIndices, symbolMap, context)
+}
+
+function resolveIndices<T>(
+	parallelIndices: ParallelIndices,
+	symbolMap: { [key: string]: { data?: unknown } },
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
 	let values: McdocType[] = []
 
-	for (const index of typeDef.parallelIndices) {
+	let unkownTypeDef: McdocType | undefined | false = false
+	function getUnknownTypeDef() {
+		if (unkownTypeDef === false) {
+			const data = symbolMap['%unknown']?.data
+			unkownTypeDef = TypeDefSymbolData.is(data) ? data.typeDef : undefined
+		}
+		return unkownTypeDef
+	}
+
+	for (const index of parallelIndices) {
 		let lookup: string[] = []
 		if (index.kind === 'static') {
+			if (index.value === '%fallback') {
+				values = Object.values(symbolMap)
+					.map(e => e.data)
+					.filter(TypeDefSymbolData.is)
+					.map(f => f.typeDef)
+				break
+			}
 			if (index.value.startsWith('minecraft:')) {
 				lookup.push(index.value.substring(10))
 			} else {
@@ -975,28 +1000,19 @@ function simplifyIndexed<T>(
 			lookup = ['%none']
 		}
 
-		const currentValues = lookup.map(v =>
-			child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === v
-			)
-				?? child.fields.find(f =>
-					f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%unknown'
-				)
-		)
+		const currentValues = lookup.map(v => {
+			const data = symbolMap[v]?.data
+			return TypeDefSymbolData.is(data) ? data.typeDef : getUnknownTypeDef()
+		})
 		if (currentValues.includes(undefined)) {
-			const fallbackDispatch = child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%fallback'
-			)
-
-			if (fallbackDispatch) {
-				values.push(fallbackDispatch.type)
-			} else {
-				// fallback case if a dispatch to `%fallback` is unavailable
-				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-				break
-			}
+			// fallback case
+			values = Object.values(symbolMap)
+				.map(e => e.data)
+				.filter(TypeDefSymbolData.is)
+				.map(f => f.typeDef)
+			break
 		} else {
-			values.push(...currentValues.map(v => v!.type))
+			values.push(...currentValues.map(v => v!))
 		}
 	}
 	return simplifyUnion({ kind: 'union', members: values }, context)
