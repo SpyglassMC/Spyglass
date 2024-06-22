@@ -396,7 +396,6 @@ export class Project implements ExternalEventEmitter {
 			try {
 				const gitignore = bufferToString(await this.externals.fs.readFile(uri))
 				this.#ignore = Project.DefaultIgnore.add(gitignore)
-				uri
 			} catch (e) {
 				if (this.externals.error.isKind(e, 'ENOENT')) {
 					return
