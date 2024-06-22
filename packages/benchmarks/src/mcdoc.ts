@@ -32,6 +32,73 @@ dispatch minecraft:loot_entry[item] to struct ItemEntry {
 		`,
 		value: `{"type":"block","pools":[{"rolls":1,"entries":[{type:"item",name:"stone"}]}]}`,
 	},
+	{
+		name: 'entity fallback',
+		type: `
+struct Root {
+	id: string,
+	...minecraft:entity[[id]],
+}
+struct EntityBase {
+	Pos?: [double] @ 3,
+	Motion?: [double] @ 3,
+	Rotation?: [float] @ 2,
+	FallDistance?: float,
+	Fire?: short,
+	Air?: short,
+	OnGround?: boolean,
+	Invulnerable?: boolean,
+	CustomName?: string,
+	Glowing?: boolean,
+	Tags?: [string],
+}
+dispatch minecraft:entity[item] to struct Item {
+	...EntityBase,
+	Age?: short,
+	Health?: short,
+	PickupDelay?: short,
+	Item?: struct {},
+}
+struct LivingEntity {
+	...EntityBase,
+	Health?: float,
+	AbsorptionAmount?: float,
+	HurtTime?: short,
+	HurtByTimestamp?: int,
+	DeathTime?: short,
+	FallFlying?: boolean,
+	NoAI?: boolean,
+}
+struct MobBase {
+	...LivingEntity,
+	HandItems?: [struct {}] @ 2,
+	ArmorItems?: [struct {}] @ 4,
+	DeathLootTable?: string,
+	LeftHanded?: boolean,
+}
+dispatch minecraft:entity[blaze,breeze,cave_spider,elder_guardian,giant,guardian] to MobBase
+dispatch minecraft:entity[magma_cube,slime] to struct Slime {
+	...MobBase,
+	Size?: int,
+	wasOnGround?: boolean,
+}
+dispatch minecraft:entity[drowned,husk,zombie] to struct Zombie {
+	...MobBase,
+	IsBaby?: boolean,
+	CanBreakDoors?: boolean,
+	DrownedConversionTime?: int,
+	InWaterTime?: int,
+}
+dispatch minecraft:entity[zombie_villager] to struct ZombieVillager {
+	...Zombie,
+	VillagerData?: struct {},
+	Gossips?: [struct {}],
+	ConversionTime?: int,
+	ConversionPlayer?: int[] @ 4,
+}
+		`,
+		value: '{"Health":20,"Invulnerable":"wrong"}',
+	},
 ]
 
 export async function register(bench: Bench) {
