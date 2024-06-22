@@ -1429,6 +1429,69 @@ exports['mcdoc runtime checker typeDefinition “struct { test: double }” with
 
 exports['mcdoc runtime checker typeDefinition “struct { test: double }” with value {"test":1} 1'] = []
 
+exports['mcdoc runtime checker typeDefinition “struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]” with value {"baz":"world"} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "world",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "world"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "boolean"
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]” with value {"baz":true} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]” with value {"config":"hello"} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "hello",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "hello"
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "double"
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]” with value {"config":5} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]” with value {} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "config",
+      "baz"
+    ]
+  }
+]
+
 exports['mcdoc runtime checker typeDefinition “type Bounds<T> = struct { min: T, max: T }; Bounds<int @ 1..>” with value {"min":"hello","max":-1} 1'] = [
   {
     "kind": "type_mismatch",

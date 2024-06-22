@@ -290,6 +290,37 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other', data: { baz: true } },
 		],
 	}, {
+		name: 'struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]',
+		type: {
+			kind: 'indexed',
+			child: {
+				kind: 'struct',
+				fields: [{
+					kind: 'pair',
+					key: 'test',
+					type: {
+						kind: 'struct',
+						fields: [{ kind: 'pair', key: 'config', type: { kind: 'double' } }],
+					},
+				}, {
+					kind: 'pair',
+					key: 'other',
+					type: {
+						kind: 'struct',
+						fields: [{ kind: 'pair', key: 'baz', type: { kind: 'boolean' } }],
+					},
+				}],
+			},
+			parallelIndices: [{ kind: 'static', value: '%fallback' }],
+		},
+		values: [
+			{},
+			{ config: 'hello' },
+			{ config: 5 },
+			{ baz: 'world' },
+			{ baz: true },
+		],
+	}, {
 		name: 'struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }',
 		type: {
 			kind: 'struct',
