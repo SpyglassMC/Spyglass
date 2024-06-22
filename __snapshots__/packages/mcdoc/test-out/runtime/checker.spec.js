@@ -815,6 +815,49 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: double, bar: stri
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }” with value {"foo":"hello","bar":"world"} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }” with value {"foo":"hello","baz":"world"} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }” with value {"foo":"hi","bar":1} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }” with value {"foo":"hi"} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }” with value {} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  }
+]
+
 exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [double] }” with value 2 1'] = [
   {
     "kind": "type_mismatch",
@@ -1468,6 +1511,76 @@ exports['mcdoc runtime checker typeDefinition “type Bounds<T> = struct { min: 
     },
     "keys": [
       "max"
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }” with value {"foo":"hello","bar":"world"} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }” with value {"foo":"hi","bar":1} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 1,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 1
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }” with value {"foo":"hi"} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {
+        "foo": "hi"
+      },
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }” with value {} 1'] = [
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "foo"
+    ]
+  },
+  {
+    "kind": "missing_key",
+    "node": {
+      "originalNode": {},
+      "inferredType": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    "keys": [
+      "bar"
     ]
   }
 ]

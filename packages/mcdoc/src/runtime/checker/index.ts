@@ -763,7 +763,7 @@ export interface SimplifyValueNode<T> {
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
 	ctx: McdocCheckerContext<T>
-	literalStructFields?: Map<string, StructTypePairField>
+	literalStructFields?: Map<string, StructTypePairField & { unionMember?: boolean }>
 	complexStructFields?: SimplifiedStructTypePairField[]
 	spreadingUnion?: boolean
 	isMember?: boolean
@@ -1005,8 +1005,8 @@ function simplifyIndexed<T>(
 function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): SimplifiedMcdocType {
 	const filterCanonical = context.ctx.requireCanonical
 		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
-	const flatMembers = getPossibleTypes(typeDef)
-	const validMembers = flatMembers
+
+	const validMembers = typeDef.members
 		.filter(member => {
 			if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
 				return false
@@ -1021,11 +1021,32 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 			return keep
 		})
 
-	let memberContext = context
-	if (context.literalStructFields && validMembers.length > 1) {
-		memberContext = { ...context, spreadingUnion: true }
+	const members = validMembers
+		.flatMap(member => {
+			const simplified = simplify(member, { ...context, spreadingUnion: true })
+			if (simplified.kind === 'union') {
+				return simplified.members
+			}
+			return [simplified]
+		})
+
+	if (context.literalStructFields && !context.spreadingUnion) {
+		for (const field of context.literalStructFields.entries()) {
+			if (field[1].unionMember) {
+				field[1].unionMember = undefined
+				if (members.length > 1) {
+					// TODO: technically, if a field is required in all members of this union, it could
+					// be added as a required field
+
+					// TODO If there is multiple fields which are requried as part of one union element,
+					// we would need to somehow make the parent sturct a union with all possiblities of
+					// required and non-required fields.
+					// This would have a potential to explode in complexity though.
+					context.literalStructFields.set(field[0], { ...field[1], optional: true })
+				}
+			}
+		}
 	}
-	const members = validMembers.map(member => simplify(member, memberContext))
 
 	if (members.length === 1) {
 		return members[0]
@@ -1034,23 +1055,22 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 }
 
 function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): SimplifiedStructType {
-	const literalFields = context.literalStructFields ?? new Map<string, StructTypePairField>()
+	const literalFields = context.literalStructFields
+		?? new Map<string, StructTypePairField & { unionMember?: boolean }>()
 	let complexFields = context.complexStructFields ?? []
 
-	function addField(key: string | SimplifiedMcdocType, field: StructTypePairField) {
+	function addField(
+		key: string | SimplifiedMcdocType,
+		field: StructTypePairField & { unionMember?: boolean },
+	) {
 		handleAttributes(field.attributes, context.ctx, (handler, config) => {
 			if (handler.mapField) {
 				field = handler.mapField(config, field, context.ctx)
 			}
 		})
-		if (context.spreadingUnion) {
-			// TODO: technically, if a field is required in all members of this union, it could be
-			// added as a required field
 
-			// TODO If there is multiple fields which are requried as part of one union element, we
-			// would need to somehow make the parent sturct a union with all possiblities of required
-			// and non-required fields.
-			field = { ...field, optional: true }
+		if (context.spreadingUnion) {
+			field.unionMember = true
 		}
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
