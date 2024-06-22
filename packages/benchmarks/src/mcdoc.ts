@@ -35,10 +35,13 @@ dispatch minecraft:loot_entry[item] to struct ItemEntry {
 	{
 		name: 'entity fallback',
 		type: `
-struct Root {
-	id: string,
-	...minecraft:entity[[id]],
-}
+type Root (
+    struct {
+        id: string,
+        ...minecraft:entity[[id]],
+    }
+    | minecraft:entity[%fallback]
+)
 struct EntityBase {
 	Pos?: [double] @ 3,
 	Motion?: [double] @ 3,
