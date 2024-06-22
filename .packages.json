@@ -1,7 +1,9 @@
 {
 	"benchmarks": {
 		"dependencies": [
-			"core"
+			"core",
+			"json",
+			"mcdoc"
 		]
 	},
 	"core": {

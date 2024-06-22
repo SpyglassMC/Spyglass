@@ -10,9 +10,6 @@
   "devDependencies": {
     "tinybench": "^2.8.0"
   },
-  "publishConfig": {
-    "access": "public"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/SpyglassMC/Spyglass.git"

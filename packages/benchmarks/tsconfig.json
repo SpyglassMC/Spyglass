@@ -6,6 +6,12 @@
 			"path": "../core"
 		},
 		{
+			"path": "../json"
+		},
+		{
+			"path": "../mcdoc"
+		},
+		{
 			"path": "src"
 		}
 	]
