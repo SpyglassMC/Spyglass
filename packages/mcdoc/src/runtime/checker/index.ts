@@ -1042,17 +1042,22 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 		return simplify(validMembers[0], context)
 	}
 
-	const members = validMembers
-		.flatMap(member => {
-			const simplified = simplify(member, {
-				...context,
-				structFields: undefined,
-			})
-			if (simplified.kind === 'union') {
-				return simplified.members
-			}
-			return [simplified]
+	const members: SimplifiedMcdocTypeNoUnion[] = []
+	for (const member of validMembers) {
+		const simplified = simplify(member, {
+			...context,
+			structFields: undefined,
 		})
+		if (simplified.kind === 'union') {
+			members.push(...simplified.members)
+		} else {
+			members.push(simplified)
+		}
+
+		if (context.structFields && members.length > 1) {
+			return { kind: 'union', members: [] }
+		}
+	}
 
 	if (members.length === 1) {
 		// This should basically never happen, only when a union member resolves to an empty union.
@@ -1150,6 +1155,12 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 			}
 		}
 	}
+	if (context.structFields) {
+		// In this case we are spreading a struct and the fields have been added to the parent map
+		// from context now.
+		return { kind: 'struct', fields: [] }
+	}
+
 	// Literal fields may still be assignable to complex fields,
 	// however this is currently not seen as an issue
 	return {
