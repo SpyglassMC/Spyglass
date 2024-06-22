@@ -112,3 +112,15 @@ export namespace JsonNullNode {
 		return (obj as JsonNullNode).type === 'json:null'
 	}
 }
+
+export interface TypedJsonNode extends core.AstNode {
+	type: 'json:typed'
+	children: [JsonNode]
+	targetType: mcdoc.McdocType
+}
+export namespace TypedJsonNode {
+	/* istanbul ignore next */
+	export function is(obj: object): obj is TypedJsonNode {
+		return (obj as TypedJsonNode).type === 'json:typed'
+	}
+}
