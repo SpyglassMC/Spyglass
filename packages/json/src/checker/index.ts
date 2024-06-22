@@ -63,8 +63,18 @@ export function index(
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
-					if (node.parent && JsonPairNode?.is(node.parent) && node.parent.key) {
-						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+					if (node.parent && JsonPairNode?.is(node.parent)) {
+						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
+							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
+							const hover = `\`\`\`typescript\n"${
+								mcdoc.McdocType.toString(node.parent.key.typeDef)
+							}": ${valueString}\n\`\`\`\n${desc}`
+							node.parent.hover = hover
+							node.parent.key.hover
+							node.parent.value.hover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+						}
+					} else {
+						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
 					}
