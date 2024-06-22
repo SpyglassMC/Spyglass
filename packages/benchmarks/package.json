@@ -1,0 +1,24 @@
+{
+  "name": "@spyglassmc/benchmarks",
+  "version": "0.1.0-PLACEHOLDER",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "author": "Misode",
+  "license": "MIT",
+  "devDependencies": {
+    "tinybench": "^2.8.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SpyglassMC/Spyglass.git"
+  },
+  "homepage": "https://spyglassmc.com",
+  "bugs": {
+    "url": "https://github.com/SpyglassMC/Spyglass/issues"
+  }
+}

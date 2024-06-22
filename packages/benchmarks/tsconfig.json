@@ -1,0 +1,12 @@
+{
+	"extends": "../tsconfig-base",
+	"files": [],
+	"references": [
+		{
+			"path": "../core"
+		},
+		{
+			"path": "src"
+		}
+	]
+}
