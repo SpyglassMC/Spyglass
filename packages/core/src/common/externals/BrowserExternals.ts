@@ -189,6 +189,9 @@ export const BrowserExternals: Externals = {
 	},
 	downloader: new BrowserExternalDownloader(),
 	error: {
+		createKind(kind, message) {
+			return new Error(`${kind}: ${message}`)
+		},
 		isKind(e, kind) {
 			return e instanceof Error && e.message.startsWith(kind)
 		},

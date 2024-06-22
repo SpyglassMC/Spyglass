@@ -246,3 +246,15 @@ export namespace NbtPathIndexNode {
 		return (node as NbtPathIndexNode | undefined)?.type === 'nbt:path/index'
 	}
 }
+
+export interface TypedNbtNode extends core.AstNode {
+	type: 'nbt:typed'
+	children: [NbtNode]
+	targetType: mcdoc.McdocType
+}
+export namespace TypedNbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is TypedNbtNode {
+		return (node as TypedNbtNode | undefined)?.type === 'nbt:typed'
+	}
+}

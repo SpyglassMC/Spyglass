@@ -40,6 +40,30 @@ export class ReadonlySource {
 	}
 
 	/**
+	 * Returns a string that helps visualize this `Source`'s index map.
+	 * Primarily intended for debugging purposes.
+	 */
+	visualizeIndexMap(): string {
+		let res = this.string
+		const adjustments = []
+		for (const { inner, outer } of this.indexMap) {
+			const innerLength = inner.end - inner.start
+			const outerLength = outer.end - outer.start
+			const { char, count } = outerLength > innerLength
+				? {
+					count: outerLength - innerLength,
+					char: '\u2190', // ←
+				}
+				: { count: outer.start - inner.start, char: '\u2017' } // ‗
+			adjustments.push({ idx: inner.start, str: char.repeat(count) })
+		}
+		for (const { idx, str } of adjustments.reverse()) {
+			res = `${res.slice(0, idx)}${str}${res.slice(idx)}`
+		}
+		return res
+	}
+
+	/**
 	 * Peeks a substring from the current cursor.
 	 * @param length The length of the substring. Defaults to 1
 	 * @param offset The index to offset from cursor. Defaults to 0

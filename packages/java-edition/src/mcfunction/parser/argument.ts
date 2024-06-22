@@ -37,7 +37,6 @@ import type {
 	IntRangeNode,
 	ItemPredicateNode,
 	ItemStackNode,
-	JsonNode,
 	MessageNode,
 	NbtNode,
 	NbtPathNode,
@@ -483,11 +482,13 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
-export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
-	return core.map(json.parser.entry, (res) => {
-		const ans: JsonNode = { type: 'mcfunction:json', range: res.range, children: [res], typeRef }
-		return ans
-	})
+export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.TypedJsonNode> {
+	return core.map(json.parser.entry, (res) => ({
+		type: 'json:typed',
+		range: res.range,
+		children: [res],
+		targetType: { kind: 'reference', path: typeRef },
+	} satisfies json.TypedJsonNode))
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {

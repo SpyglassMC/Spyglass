@@ -548,8 +548,6 @@ describe('mcdoc runtime checker', () => {
 									return false
 							}
 						},
-						attachTypeInfo: () => {},
-						stringAttacher: () => {},
 					})
 					typeDefinition(
 						[{ originalNode: value, inferredType: inferType(value) }],

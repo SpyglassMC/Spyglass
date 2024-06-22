@@ -11,6 +11,7 @@ import type {
 	LiteralNode,
 	LongNode,
 	PairNode,
+	PrefixedNode,
 	Quote,
 	RecordBaseNode,
 	ResourceLocationNode,
@@ -75,6 +76,20 @@ export const literal: Completer<LiteralBaseNode> = (node) => {
 }
 
 export const noop: Completer<any> = () => []
+
+const prefixed: Completer<PrefixedNode> = (node, ctx) => {
+	const child = node.children.find(c => c.type !== 'literal')
+	if (!child) {
+		return [CompletionItem.create('!', node)]
+	}
+	const childItems = dispatch(child, ctx)
+	return childItems.map(item => ({
+		...item,
+		label: node.prefix + item.label,
+		filterText: node.prefix + (item.filterText ?? item.label),
+		insertText: node.prefix + (item.insertText ?? item.label),
+	}))
+}
 
 interface RecordOptions<K extends AstNode, V extends AstNode, N extends RecordBaseNode<K, V>> {
 	key: (
@@ -249,6 +264,7 @@ export function registerCompleters(meta: MetaRegistry) {
 	meta.registerCompleter<IntegerNode>('integer', noop)
 	meta.registerCompleter<LongNode>('long', noop)
 	meta.registerCompleter<LiteralNode>('literal', literal)
+	meta.registerCompleter<PrefixedNode>('prefixed', prefixed)
 	meta.registerCompleter<ResourceLocationNode>('resource_location', resourceLocation)
 	meta.registerCompleter<StringNode>('string', string)
 	meta.registerCompleter<SymbolNode>('symbol', symbol)

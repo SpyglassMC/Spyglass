@@ -19,7 +19,16 @@ export interface Externals {
 		getSha1: (data: string | Uint8Array) => Promise<string>
 	}
 	downloader: ExternalDownloader
-	error: { isKind: (e: unknown, kind: ExternalErrorKind) => boolean }
+	error: {
+		/**
+		 * @returns an error of the specified kind
+		 */
+		createKind: (kind: ExternalErrorKind, message: string) => unknown
+		/**
+		 * Checks whether the given error is of a certain kind
+		 */
+		isKind: (e: unknown, kind: ExternalErrorKind) => boolean
+	}
 	event: { EventEmitter: new() => ExternalEventEmitter }
 	fs: ExternalFileSystem
 }

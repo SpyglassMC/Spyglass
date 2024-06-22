@@ -15,7 +15,6 @@ import {
 	EntityNode,
 	ItemPredicateNode,
 	ItemStackNode,
-	JsonNode,
 	NbtNode,
 	NbtPathNode,
 	NbtResourceNode,
@@ -62,10 +61,10 @@ const rootCommand = (
 			itemStack(node, ctx)
 		} else if (ParticleNode.is(node)) {
 			particle(node, ctx)
-		} else if (JsonNode.is(node)) {
-			jsonChecker(node, ctx)
 		} else if (NbtResourceNode.is(node)) {
 			nbtResource(node, ctx)
+		} else if (json.TypedJsonNode.is(node)) {
+			json.checker.typed(node, ctx)
 		} else if (NbtNode.is(node) && node.properties) {
 			const dispatchedBy = getEarlierNode(nodes, i, node.properties.dispatchedBy)
 			const indexedBy = getEarlierNode(nodes, i, node.properties.indexedBy)
@@ -168,8 +167,8 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 					pair.value.children = [stringNBT]
 					core.AstNode.setParents(stringNBT)
 					// Because the runtime checker happens after binding, we need to manually call this
-					core.binder.dispatchSync(stringNBT, ctx)
-					core.checker.dispatchSync(stringNBT, ctx)
+					core.binder.fallbackSync(stringNBT, ctx)
+					core.checker.fallbackSync(stringNBT, ctx)
 					nbt.checker.index('mcdoc:custom_item_data', itemId)(stringNBT, ctx)
 				} else {
 					nbt.checker.index('mcdoc:custom_item_data', itemId)(pair.value, ctx)
@@ -190,11 +189,6 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 			}
 		}
 	}
-}
-
-const jsonChecker: core.SyncChecker<JsonNode> = (node, ctx) => {
-	const type: mcdoc.McdocType = { kind: 'reference', path: node.typeRef }
-	json.checker.index(type)(node.children[0], ctx)
 }
 
 const nbtResource: core.SyncChecker<NbtResourceNode> = (node, ctx) => {
@@ -356,6 +350,5 @@ export function register(meta: core.MetaRegistry) {
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
 	meta.registerChecker<ItemStackNode>('mcfunction:item_stack', itemStack)
 	meta.registerChecker<ItemPredicateNode>('mcfunction:item_predicate', itemPredicate)
-	meta.registerChecker<JsonNode>('mcfunction:json', jsonChecker)
 	meta.registerChecker<ParticleNode>('mcfunction:particle', particle)
 }

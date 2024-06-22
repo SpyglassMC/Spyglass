@@ -393,18 +393,6 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface JsonNode extends core.AstNode {
-	type: 'mcfunction:json'
-	children: [json.JsonNode]
-	typeRef: `::${string}::${string}`
-}
-export namespace JsonNode {
-	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is JsonNode {
-		return (node as JsonNode).type === 'mcfunction:json'
-	}
-}
-
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message'
 	children: (core.StringNode | EntitySelectorNode)[]
