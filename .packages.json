@@ -1,11 +1,4 @@
 {
-	"benchmarks": {
-		"dependencies": [
-			"core",
-			"json",
-			"mcdoc"
-		]
-	},
 	"core": {
 		"dependencies": [
 			"locales"
