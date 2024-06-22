@@ -24,7 +24,8 @@
 		"set-tsconfig-references": "ts-node scripts/set_tsconfig_references",
 		"start-discord-bot": "node packages/discord-bot/lib/index.js",
 		"test": "nyc mocha",
-		"test:local": "nyc mocha --config .mocharc.local.jsonc"
+		"test:local": "nyc mocha --config .mocharc.local.jsonc",
+		"bench": "node packages/benchmarks/lib/index.js"
 	},
 	"wireit": {
 		"build": {

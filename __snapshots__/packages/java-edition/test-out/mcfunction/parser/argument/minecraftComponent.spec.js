@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:component Parse """" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 2
@@ -28,14 +28,17 @@ exports['mcfunction argument minecraft:component Parse """" 1'] = {
         "quote": "\""
       }
     ],
-    "typeRef": "::java::server::util::text::Text"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 13
@@ -63,14 +66,17 @@ exports['mcfunction argument minecraft:component Parse ""hello world"" 1'] = {
         "quote": "\""
       }
     ],
-    "typeRef": "::java::server::util::text::Text"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 4
@@ -137,14 +143,17 @@ exports['mcfunction argument minecraft:component Parse "[""]" 1'] = {
         ]
       }
     ],
-    "typeRef": "::java::server::util::text::Text"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 22
@@ -257,7 +266,10 @@ exports['mcfunction argument minecraft:component Parse "{"text":"hello world"}" 
         ]
       }
     ],
-    "typeRef": "::java::server::util::text::Text"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::Text"
+    }
   },
   "errors": []
 }
