@@ -1,3 +1,5 @@
+import type { Ignore } from 'ignore'
+import ignore from 'ignore'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -156,6 +158,8 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
+	private static readonly DefaultIgnore = ignore().add('.vscode/**')
+	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
@@ -192,6 +196,7 @@ export class Project implements ExternalEventEmitter {
 
 	#dependencyRoots!: Set<RootUriString>
 	#dependencyFiles!: Set<string>
+	#ignore: Ignore = Project.DefaultIgnore
 
 	#roots: readonly RootUriString[] = []
 	/**
@@ -287,9 +292,11 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		return [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
+		const supportedFiles = [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
 			extensions.includes(fileUtil.extname(file) ?? '')
 		)
+		const filteredFiles = this.#ignore.filter(supportedFiles)
+		return filteredFiles
 	}
 
 	constructor(
@@ -384,6 +391,19 @@ export class Project implements ExternalEventEmitter {
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
 		}
+		const loadIgnore = async () => {
+			const uri = this.projectRoot + Project.GitIgnore
+			try {
+				const gitignore = bufferToString(await this.externals.fs.readFile(uri))
+				this.#ignore = Project.DefaultIgnore.add(gitignore)
+				uri
+			} catch (e) {
+				if (this.externals.error.isKind(e, 'ENOENT')) {
+					return
+				}
+				this.logger.error(`[Project] [loadIgnore] Reading .gitignore`, e)
+			}
+		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
 				cacheRoot: this.cacheRoot,
@@ -419,6 +439,9 @@ export class Project implements ExternalEventEmitter {
 
 			await loadConfig()
 			__profiler.task('Load Config')
+
+			await loadIgnore()
+			__profiler.task('Load Ignore')
 
 			await callIntializers()
 			__profiler.task('Initialize').finalize()
