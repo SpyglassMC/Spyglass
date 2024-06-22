@@ -763,9 +763,10 @@ export interface SimplifyValueNode<T> {
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
 	ctx: McdocCheckerContext<T>
-	literalStructFields?: Map<string, StructTypePairField & { unionMember?: boolean }>
-	complexStructFields?: SimplifiedStructTypePairField[]
-	spreadingUnion?: boolean
+	structFields?: {
+		literalFields: Map<string, StructTypePairField>
+		complexFields: SimplifiedStructTypePairField[]
+	}
 	isMember?: boolean
 	typeArgs?: SimplifiedMcdocType[]
 	typeMapping?: { [path: string]: SimplifiedMcdocType }
@@ -869,9 +870,7 @@ function simplifyIndexed<T>(
 	const child = simplify(typeDef.child, {
 		...context,
 		typeArgs: [],
-		spreadingUnion: false,
-		literalStructFields: undefined,
-		complexStructFields: undefined,
+		structFields: undefined,
 	})
 
 	if (child.kind !== 'struct') {
@@ -1006,14 +1005,15 @@ function resolveIndices<T>(
 		})
 		if (currentValues.includes(undefined)) {
 			// fallback case
-			values = Object.values(symbolMap)
-				.map(e => e.data)
-				.filter(TypeDefSymbolData.is)
-				.map(f => f.typeDef)
-			break
+			return { kind: 'any' }
 		} else {
 			values.push(...currentValues.map(v => v!))
 		}
+	}
+
+	if (values.length === 1) {
+		// avoid overhead from union
+		return simplify(values[0], context)
 	}
 	return simplifyUnion({ kind: 'union', members: values }, context)
 }
@@ -1037,47 +1037,49 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 			return keep
 		})
 
+	if (validMembers.length === 1) {
+		// Avoid needing to manually add struct fields to parent if we are in a spread operation
+		return simplify(validMembers[0], context)
+	}
+
 	const members = validMembers
 		.flatMap(member => {
-			const simplified = simplify(member, { ...context, spreadingUnion: true })
+			const simplified = simplify(member, {
+				...context,
+				structFields: undefined,
+			})
 			if (simplified.kind === 'union') {
 				return simplified.members
 			}
 			return [simplified]
 		})
 
-	if (context.literalStructFields && !context.spreadingUnion) {
-		for (const field of context.literalStructFields.entries()) {
-			if (field[1].unionMember) {
-				field[1].unionMember = undefined
-				if (members.length > 1) {
-					// TODO: technically, if a field is required in all members of this union, it could
-					// be added as a required field
-
-					// TODO If there is multiple fields which are requried as part of one union element,
-					// we would need to somehow make the parent sturct a union with all possiblities of
-					// required and non-required fields.
-					// This would have a potential to explode in complexity though.
-					context.literalStructFields.set(field[0], { ...field[1], optional: true })
+	if (members.length === 1) {
+		// This should basically never happen, only when a union member resolves to an empty union.
+		// Apply struct fields to parent if we are inside a spread operation.
+		if (members[0].kind === 'struct' && context.structFields) {
+			for (const field of members[0].fields) {
+				if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+					context.structFields.literalFields.set(field.key.value.value, field)
+				} else {
+					context.structFields.complexFields.push(field)
 				}
 			}
 		}
-	}
 
-	if (members.length === 1) {
 		return members[0]
 	}
 	return { ...typeDef, kind: 'union', members }
 }
 
 function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): SimplifiedStructType {
-	const literalFields = context.literalStructFields
-		?? new Map<string, StructTypePairField & { unionMember?: boolean }>()
-	let complexFields = context.complexStructFields ?? []
+	const literalFields = context.structFields?.literalFields
+		?? new Map<string, StructTypePairField>()
+	let complexFields = context.structFields?.complexFields ?? []
 
 	function addField(
 		key: string | SimplifiedMcdocType,
-		field: StructTypePairField & { unionMember?: boolean },
+		field: StructTypePairField,
 	) {
 		handleAttributes(field.attributes, context.ctx, (handler, config) => {
 			if (handler.mapField) {
@@ -1085,9 +1087,6 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 			}
 		})
 
-		if (context.spreadingUnion) {
-			field.unionMember = true
-		}
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
 		} else if (key.kind === 'literal' && key.value.kind === 'string' && !key.attributes?.length) {
@@ -1136,18 +1135,19 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 				: field
 			addField(structKey, mappedField)
 		} else {
-			// TODO: potential optimization: merge unions first before simplifying them,
-			// to avoid having to simplify shared nested spread types multiple times
-
-			// Ignore return value, as the recursive call will already use the field maps provided in
-			// the context
-			simplify(field.type, {
+			const simplifiedSpread = simplify(field.type, {
 				...context,
 				isMember: true,
 				typeArgs: [],
-				literalStructFields: literalFields,
-				complexStructFields: complexFields,
+				structFields: { literalFields, complexFields },
 			})
+			// Recursive calls above will already modify literal and complex fields passed by the
+			// context, so no need to handle them here.
+
+			// In case we are spreading sth that resolves to `any`, allow any other additional field.
+			if (simplifiedSpread.kind === 'any') {
+				addField({ kind: 'any' }, { kind: 'pair', key: { kind: 'any' }, type: { kind: 'any' } })
+			}
 		}
 	}
 	// Literal fields may still be assignable to complex fields,

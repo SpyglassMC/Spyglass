@@ -564,9 +564,9 @@ describe('mcdoc runtime checker', () => {
 				})
 		},
 		values: [{}, { id: 'diamond' }, { id: 'elytra', tag: {} }, {
-			id: 'eltrya',
+			id: 'elytra',
 			tag: { Damage: true },
-		}, { id: 'eltrya', tag: { Damage: 20 } }],
+		}, { id: 'elytra', tag: { Damage: 20 } }],
 	}]
 
 	function inferType(value: JsValue): Exclude<McdocType, UnionType> {
