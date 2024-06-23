@@ -2,7 +2,7 @@ import { ContextBase, UriBinderContext } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { dissectUri } from '../../../lib/binder/index.js'
+import { dissectUri } from '../../lib/binder/index.js'
 
 describe('dissectUri()', () => {
 	const suites: { uri: string; version?: `1.${number}` }[] = [
