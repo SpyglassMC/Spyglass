@@ -9,58 +9,22 @@ import { fileUtil, TaggableResourceLocationCategories } from '@spyglassmc/core'
 import { ReleaseVersion } from '../dependency/index.js'
 
 interface Resource {
-	path: string
 	category: FileCategory
 	ext: `.${string}`
 	since?: ReleaseVersion
 	until?: ReleaseVersion
 }
 
-interface ResourceTree {
-	children: Map<string, ResourceTree>
-	resource?: Resource
-}
-
-const rootNode: ResourceTree = { children: new Map() }
-
-function findResource(parts: string[]) {
-	let node: ResourceTree | undefined = rootNode
-	let resource: Resource | undefined = undefined
-	let matchIndex = 0
-	for (let i = 0; i < parts.length; i += 1) {
-		node = node.children.get(parts[i])
-		if (node === undefined) {
-			break
-		}
-		if (node.resource) {
-			resource = node.resource
-			matchIndex = i + 1
-		}
-	}
-	return {
-		resource,
-		path: parts.slice(matchIndex),
-	}
-}
+const Resources = new Map<string, Resource>()
 
 function resource(path: string, resource: Partial<Resource> & { category: FileCategory }): void
 function resource(path: FileCategory, resource: Partial<Resource>): void
 function resource(path: string, resource: Partial<Resource> = {}) {
-	let node: ResourceTree | undefined = rootNode
-	for (const part of path.split('/')) {
-		let child: ResourceTree | undefined = node.children.get(part)
-		if (child === undefined) {
-			child = { children: new Map() }
-			node.children.set(part, child)
-		}
-		node = child
-	}
-	node.resource = {
-		path,
+	Resources.set(path, {
 		category: resource.category ?? path as FileCategory,
 		ext: resource.ext ?? '.json',
 		...resource,
-	}
+	})
 }
 
 // Pre-1.21 data pack plurals
@@ -169,15 +133,26 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 
 	for (const rel of rels) {
 		const parts = rel.split('/')
+		if (parts.length < 4) {
+			continue
+		}
 		const [pack, namespace, ...rest] = parts
 		if (pack !== 'data') {
 			continue // TODO: support assets
 		}
-		const { resource, path } = findResource(rest)
-		if (!resource || path.length === 0) {
+		let resource: Resource | undefined = undefined
+		let matchIndex = 0
+		for (let i = 1; i < rest.length; i += 1) {
+			const res = Resources.get(rest.slice(0, i).join('/'))
+			if (res) {
+				resource = res
+				matchIndex = i
+			}
+		}
+		if (!resource) {
 			continue
 		}
-		let identifier = path.join('/')
+		let identifier = rest.slice(matchIndex).join('/')
 		if (!identifier.endsWith(resource.ext)) {
 			continue
 		}
