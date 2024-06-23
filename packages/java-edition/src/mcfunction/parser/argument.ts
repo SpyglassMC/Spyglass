@@ -684,7 +684,7 @@ function selectorPrefix(ignoreInvalidPrefix: boolean): core.InfallibleParser<cor
 		const start = src.cursor
 		let value: string
 		if (ignoreInvalidPrefix) {
-			value = src.peek(0, 2)
+			value = src.peek(2)
 			src.skip(2)
 		} else {
 			value = src.readUntil(' ', '\r', '\n', '[')
