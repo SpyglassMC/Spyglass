@@ -135,10 +135,21 @@
       },
       {
         "id": "mcmeta",
+        "aliases": [
+          "MCMETA",
+          "mcmeta"
+        ],
         "extensions": [
           ".mcmeta"
         ],
         "configuration": "./mcmeta-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mcmeta",
+        "scopeName": "source.mcmeta",
+        "path": "./resource/mcmeta.tmLanguage.json"
       }
     ],
     "commands": [
