@@ -1,12 +1,14 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtNode, NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
+import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
 	NbtCompoundNode,
+	NbtNode,
 	NbtPathFilterNode,
 	NbtPathIndexNode,
 	NbtPathKeyNode,
+	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
@@ -133,8 +135,28 @@ export function typeDefinition(
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
-					if (core.PairNode.is(node.parent) && NbtStringNode.is(node.parent.key)) {
-						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+					if (
+						node.parent && core.PairNode?.is(node.parent)
+						&& NbtNode.is(node.parent.key)
+						&& NbtNode.is(node.parent.value)
+					) {
+						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
+							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
+							let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
+							if (node.parent.key.typeDef.kind !== 'literal') {
+								keyString = `[${keyString}]`
+							}
+
+							node.parent.key.hover =
+								`\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
+
+							if (NbtPrimitiveNode.is(node.parent.value)) {
+								node.parent.value.hover =
+									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+							}
+						}
+					} else if (NbtPrimitiveNode.is(node)) {
+						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
 					}

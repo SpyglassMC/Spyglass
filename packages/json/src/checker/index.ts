@@ -72,8 +72,28 @@ export function index(
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
-					if (node.parent && JsonPairNode?.is(node.parent) && node.parent.key) {
-						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+					// TODO some sort of shared default implementaion between JSON and SNBT (DRY)
+					if (node.parent && JsonPairNode?.is(node.parent)) {
+						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
+							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
+							let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
+							if (node.parent.key.typeDef.kind !== 'literal') {
+								keyString = `[${keyString}]`
+							}
+
+							const hover = `\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
+							node.parent.key.hover = hover
+
+							if (
+								node.parent.value.type !== 'json:array'
+								&& node.parent.value.type !== 'json:object'
+							) {
+								node.parent.value.hover =
+									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+							}
+						}
+					} else if (node.type !== 'json:array' && node.type !== 'json:object') {
+						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
 					}
