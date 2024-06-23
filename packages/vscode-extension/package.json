@@ -134,14 +134,11 @@
         "configuration": "./snbt-language-configuration.json"
       },
       {
-        "id": "json",
+        "id": "mcmeta",
         "extensions": [
           ".mcmeta"
         ],
-        "filenames": [
-          ".spyglassconfig",
-          ".spyglassrc"
-        ]
+        "configuration": "./mcmeta-language-configuration.json"
       }
     ],
     "commands": [
