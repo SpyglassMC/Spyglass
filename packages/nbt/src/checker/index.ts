@@ -2,7 +2,13 @@ import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import type { NbtPathChild, NbtPathNode } from '../node/index.js'
-import { NbtCompoundNode, NbtNode, NbtPathIndexNode, NbtStringNode } from '../node/index.js'
+import {
+	NbtCompoundNode,
+	NbtNode,
+	NbtPathIndexNode,
+	NbtPrimitiveNode,
+	NbtStringNode,
+} from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
 
 interface Options {
@@ -120,19 +126,26 @@ export function typeDefinition(
 					node.typeDef = definition
 					// TODO: improve hover info
 					if (
-						node.parent && core.PairNode?.is(node.parent) && NbtNode.is(node.parent.key)
+						node.parent && core.PairNode?.is(node.parent)
+						&& NbtNode.is(node.parent.key)
 						&& NbtNode.is(node.parent.value)
 					) {
 						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
 							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
-							const hover = `\`\`\`typescript\n"${
-								mcdoc.McdocType.toString(node.parent.key.typeDef)
-							}": ${valueString}\n\`\`\`\n${desc}`
-							node.parent.hover = hover
-							node.parent.key.hover
-							node.parent.value.hover = `\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+							let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
+							if (node.parent.key.typeDef.kind !== 'literal') {
+								keyString = `[${keyString}]`
+							}
+
+							node.parent.key.hover =
+								`\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
+
+							if (NbtPrimitiveNode.is(node.parent.value)) {
+								node.parent.value.hover =
+									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+							}
 						}
-					} else {
+					} else if (NbtPrimitiveNode.is(node)) {
 						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
