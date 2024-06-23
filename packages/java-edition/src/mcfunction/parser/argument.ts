@@ -496,8 +496,8 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (src.peek() === '@') {
-			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
+		if (EntitySelectorAtVariable.is(src.peek(2))) {
+			ans.children.push(selector(true)(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
 				core.stopBefore(greedyString, ...EntitySelectorAtVariable.filterAvailable(ctx))(
@@ -679,10 +679,16 @@ function resourceOrInline(category: core.FileCategory) {
 	}])
 }
 
-function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
+function selectorPrefix(ignoreInvalidPrefix: boolean): core.InfallibleParser<core.LiteralNode> {
 	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
 		const start = src.cursor
-		const value = src.readUntil(' ', '\r', '\n', '[')
+		let value: string
+		if (ignoreInvalidPrefix) {
+			value = src.peek(0, 2)
+			src.skip(2)
+		} else {
+			value = src.readUntil(' ', '\r', '\n', '[')
+		}
 		const allowedVariables = EntitySelectorAtVariable.filterAvailable(ctx)
 
 		const ans: core.LiteralNode = {
@@ -692,7 +698,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 			value,
 		}
 
-		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
+		if (!allowedVariables.includes(value as EntitySelectorAtVariable) && !ignoreInvalidPrefix) {
 			ctx.err.report(localize('mcfunction.parser.entity-selector.invalid', ans.value), ans)
 		}
 
@@ -702,7 +708,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 /**
  * Failure when not beginning with `@[parse]`
  */
-export function selector(): core.Parser<EntitySelectorNode> {
+export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelectorNode> {
 	let chunkLimited: boolean | undefined
 	let currentEntity: boolean | undefined
 	let dimensionLimited: boolean | undefined
@@ -714,7 +720,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 		core.SequenceUtil<core.LiteralNode | EntitySelectorArgumentsNode>,
 		EntitySelectorNode
 	>(
-		core.sequence([core.failOnEmpty(selectorPrefix()), {
+		core.sequence([core.failOnEmpty(selectorPrefix(ignoreInvalidPrefix)), {
 			get: (res) => {
 				const variable = core.LiteralNode.is(res.children?.[0])
 					? res.children[0].value
