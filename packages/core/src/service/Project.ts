@@ -158,7 +158,6 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
-	private static readonly DefaultIgnore = ignore().add('.vscode/**')
 	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
@@ -184,6 +183,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
+	ignore: Ignore = ignore()
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
@@ -196,7 +196,6 @@ export class Project implements ExternalEventEmitter {
 
 	#dependencyRoots!: Set<RootUriString>
 	#dependencyFiles!: Set<string>
-	#ignore: Ignore = Project.DefaultIgnore
 
 	#roots: readonly RootUriString[] = []
 	/**
@@ -295,7 +294,7 @@ export class Project implements ExternalEventEmitter {
 		const supportedFiles = [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
 			extensions.includes(fileUtil.extname(file) ?? '')
 		)
-		const filteredFiles = this.#ignore.filter(supportedFiles)
+		const filteredFiles = this.ignore.filter(supportedFiles)
 		return filteredFiles
 	}
 
@@ -390,17 +389,22 @@ export class Project implements ExternalEventEmitter {
 	private setInitPromise(): void {
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
-		}
-		const loadIgnore = async () => {
-			const uri = this.projectRoot + Project.GitIgnore
-			try {
-				const gitignore = bufferToString(await this.externals.fs.readFile(uri))
-				this.#ignore = Project.DefaultIgnore.add(gitignore)
-			} catch (e) {
-				if (this.externals.error.isKind(e, 'ENOENT')) {
-					return
+			this.ignore = ignore()
+			for (const pattern of this.config.env.exclude) {
+				if (pattern === '@gitignore') {
+					try {
+						const uri = this.projectRoot + Project.GitIgnore
+						const contents = bufferToString(await this.externals.fs.readFile(uri))
+						this.ignore.add(contents)
+					} catch (e) {
+						if (this.externals.error.isKind(e, 'ENOENT')) {
+							continue
+						}
+						this.logger.error(`[Project] [Config] Failed reading .gitignore`, e)
+					}
+				} else {
+					this.ignore.add(pattern)
 				}
-				this.logger.error(`[Project] [loadIgnore] Reading .gitignore`, e)
 			}
 		}
 		const callIntializers = async () => {
@@ -438,9 +442,6 @@ export class Project implements ExternalEventEmitter {
 
 			await loadConfig()
 			__profiler.task('Load Config')
-
-			await loadIgnore()
-			__profiler.task('Load Ignore')
 
 			await callIntializers()
 			__profiler.task('Initialize').finalize()
