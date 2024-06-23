@@ -28,7 +28,7 @@ describe('dissectUri()', () => {
 	}
 })
 
-describe.only('dissectUri() with customResources', () => {
+describe('dissectUri() with customResources', () => {
 	const suites: { uri: string; version?: `1.${number}` }[] = [
 		{ uri: 'file:///data/minecraft/loot_tables/foo.json' },
 		{ uri: 'file:///data/minecraft/advancement/foo.json', version: '1.21' },
