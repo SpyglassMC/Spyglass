@@ -231,14 +231,6 @@ export class FileUriSupporter implements UriProtocolSupporter {
 	}
 }
 
-// namespace ArchiveUri {
-
-// export function is(uri: Uri): boolean {
-// 	return uri.protocol === Protocol && uri.hostname === Hostname
-// }
-
-// }
-
 export class ArchiveUriSupporter implements UriProtocolSupporter {
 	public static readonly Protocol = 'archive:'
 	private static readonly SupportedArchiveExtnames = ['.tar', '.tar.bz2', '.tar.gz', '.zip']
@@ -279,10 +271,16 @@ export class ArchiveUriSupporter implements UriProtocolSupporter {
 		}
 		const entry = entries.get(pathInArchive)
 		if (!entry) {
-			throw new Error(`Path “${pathInArchive}” does not exist in archive “${archiveName}”`)
+			throw this.externals.error.createKind(
+				'ENOENT',
+				`Path “${pathInArchive}” does not exist in archive “${archiveName}”`,
+			)
 		}
 		if (entry.type !== 'file') {
-			throw new Error(`Path “${pathInArchive}” in archive “${archiveName}” is not a file`)
+			throw this.externals.error.createKind(
+				'EISDIR',
+				`Path “${pathInArchive}” in archive “${archiveName}” is not a file`,
+			)
 		}
 		return entry.data
 	}

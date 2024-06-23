@@ -1,6 +1,6 @@
 exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": true }" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 34
@@ -188,14 +188,17 @@ exports['mcfunction argument minecraft:style Parse "{ "color": "red", "italic": 
         ]
       }
     ],
-    "typeRef": "::java::server::util::text::TextStyle"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::TextStyle"
+    }
   },
   "errors": []
 }
 
 exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
   "node": {
-    "type": "mcfunction:json",
+    "type": "json:typed",
     "range": {
       "start": 0,
       "end": 14
@@ -282,7 +285,10 @@ exports['mcfunction argument minecraft:style Parse "{"bold": true}" 1'] = {
         ]
       }
     ],
-    "typeRef": "::java::server::util::text::TextStyle"
+    "targetType": {
+      "kind": "reference",
+      "path": "::java::server::util::text::TextStyle"
+    }
   },
   "errors": []
 }

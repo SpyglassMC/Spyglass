@@ -42,7 +42,12 @@ export const path: core.Parser<NbtPathNode> = (src, ctx) => {
 }
 
 const filter: PartParser = (children, src, ctx) => {
-	children.push(compound(src, ctx))
+	const node = compound(src, ctx)
+	children.push({
+		type: 'nbt:path/filter',
+		range: node.range,
+		children: [node],
+	})
 	return src.trySkip('.') ? ['key'] : ['end']
 }
 
@@ -88,7 +93,11 @@ const key: PartParser = (children, src, ctx) => {
 			unquotable: { blockList: new Set(['\n', '\r', '\t', ' ', '"', '[', ']', '.', '{', '}']) },
 		}),
 	)(src, ctx)
-	children.push(node)
+	children.push({
+		type: 'nbt:path/key',
+		range: node.range,
+		children: [node],
+	})
 
 	return src.trySkip('.') ? ['index', 'key'] : ['end', 'filter', 'index']
 }

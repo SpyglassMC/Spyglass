@@ -68,6 +68,11 @@ export const NodeJsExternals: Externals = {
 	},
 	downloader: new NodeJsExternalDownloader(),
 	error: {
+		createKind(kind, message) {
+			const error = new Error(message)
+			;(error as NodeJS.ErrnoException).code = kind
+			return error
+		},
 		isKind(e, kind) {
 			return e instanceof Error && (e as NodeJS.ErrnoException).code === kind
 		},

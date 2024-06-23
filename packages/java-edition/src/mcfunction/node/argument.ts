@@ -393,18 +393,6 @@ export namespace IntRangeNode {
 	}
 }
 
-export interface JsonNode extends core.AstNode {
-	type: 'mcfunction:json'
-	children: [json.JsonNode]
-	typeRef: `::${string}::${string}`
-}
-export namespace JsonNode {
-	/* istanbul ignore next */
-	export function is(node: core.AstNode): node is JsonNode {
-		return (node as JsonNode).type === 'mcfunction:json'
-	}
-}
-
 export interface MessageNode extends core.AstNode {
 	type: 'mcfunction:message'
 	children: (core.StringNode | EntitySelectorNode)[]
@@ -419,6 +407,18 @@ export namespace NbtNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode): node is NbtNode {
 		return (node as NbtNode).type === 'mcfunction:nbt'
+	}
+}
+
+export interface NbtPathNode extends core.AstNode {
+	type: 'mcfunction:nbt_path'
+	children: [nbt.NbtPathNode]
+	properties?: NbtParserProperties
+}
+export namespace NbtPathNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode): node is NbtPathNode {
+		return (node as NbtPathNode).type === 'mcfunction:nbt_path'
 	}
 }
 

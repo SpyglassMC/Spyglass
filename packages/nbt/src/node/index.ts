@@ -197,12 +197,15 @@ export namespace NbtLongArrayNode {
 // #endregion
 // #endregion
 
-export type NbtPathChild = NbtStringNode | NbtCompoundNode | NbtPathIndexNode
+export type NbtPathChild = NbtPathKeyNode | NbtPathFilterNode | NbtPathIndexNode
 
 export interface NbtPathNode extends core.AstNode {
 	type: 'nbt:path'
 	children: NbtPathChild[]
-	targetType?: mcdoc.McdocType | undefined
+	/**
+	 * The type definition at the end of the path
+	 */
+	endTypeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
 }
 export namespace NbtPathNode {
 	/* istanbul ignore next */
@@ -211,7 +214,29 @@ export namespace NbtPathNode {
 	}
 }
 
-export interface NbtPathIndexNode extends core.AstNode {
+export interface NbtPathKeyNode extends core.AstNode, NbtBaseNode {
+	type: 'nbt:path/key'
+	children: [NbtStringNode]
+}
+export namespace NbtPathKeyNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtPathKeyNode {
+		return (node as NbtPathKeyNode | undefined)?.type === 'nbt:path/key'
+	}
+}
+
+export interface NbtPathFilterNode extends core.AstNode, NbtBaseNode {
+	type: 'nbt:path/filter'
+	children: [NbtCompoundNode]
+}
+export namespace NbtPathFilterNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is NbtPathFilterNode {
+		return (node as NbtPathFilterNode | undefined)?.type === 'nbt:path/filter'
+	}
+}
+
+export interface NbtPathIndexNode extends core.AstNode, NbtBaseNode {
 	type: 'nbt:path/index'
 	children: [core.IntegerNode] | [NbtCompoundNode] | undefined
 }
@@ -219,5 +244,17 @@ export namespace NbtPathIndexNode {
 	/* istanbul ignore next */
 	export function is(node: core.AstNode | undefined): node is NbtPathIndexNode {
 		return (node as NbtPathIndexNode | undefined)?.type === 'nbt:path/index'
+	}
+}
+
+export interface TypedNbtNode extends core.AstNode {
+	type: 'nbt:typed'
+	children: [NbtNode]
+	targetType: mcdoc.McdocType
+}
+export namespace TypedNbtNode {
+	/* istanbul ignore next */
+	export function is(node: core.AstNode | undefined): node is TypedNbtNode {
+		return (node as TypedNbtNode | undefined)?.type === 'nbt:typed'
 	}
 }

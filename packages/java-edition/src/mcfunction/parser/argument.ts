@@ -37,9 +37,9 @@ import type {
 	IntRangeNode,
 	ItemPredicateNode,
 	ItemStackNode,
-	JsonNode,
 	MessageNode,
 	NbtNode,
+	NbtPathNode,
 	NbtResourceNode,
 	ParticleNode,
 	ScoreHolderNode,
@@ -202,7 +202,7 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:nbt_compound_tag':
 			return wrap(nbtParser(nbt.parser.compound, treeNode.properties))
 		case 'minecraft:nbt_path':
-			return wrap(nbt.parser.path)
+			return wrap(nbtPathParser(nbt.parser.path, treeNode.properties))
 		case 'minecraft:nbt_tag':
 			return wrap(nbtParser(nbt.parser.entry, treeNode.properties))
 		case 'minecraft:objective':
@@ -482,11 +482,13 @@ const itemPredicate: core.InfallibleParser<ItemPredicateNode> = (src, ctx) => {
 	)(src, ctx)
 }
 
-export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<JsonNode> {
-	return core.map(json.parser.entry, (res) => {
-		const ans: JsonNode = { type: 'mcfunction:json', range: res.range, children: [res], typeRef }
-		return ans
-	})
+export function jsonParser(typeRef: `::${string}::${string}`): core.Parser<json.TypedJsonNode> {
+	return core.map(json.parser.entry, (res) => ({
+		type: 'json:typed',
+		range: res.range,
+		children: [res],
+		targetType: { kind: 'reference', path: typeRef },
+	} satisfies json.TypedJsonNode))
 }
 
 const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
@@ -518,6 +520,21 @@ function nbtParser(
 ): core.Parser<NbtNode> {
 	return core.map(parser, (res) => {
 		const ans: NbtNode = { type: 'mcfunction:nbt', range: res.range, children: [res], properties }
+		return ans
+	})
+}
+
+function nbtPathParser(
+	parser: core.Parser<nbt.NbtPathNode>,
+	properties?: NbtParserProperties,
+): core.Parser<NbtPathNode> {
+	return core.map(parser, (res) => {
+		const ans: NbtPathNode = {
+			type: 'mcfunction:nbt_path',
+			range: res.range,
+			children: [res],
+			properties,
+		}
 		return ans
 	})
 }

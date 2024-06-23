@@ -1,15 +1,25 @@
 import * as core from '@spyglassmc/core'
 import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { NbtPathChild, NbtPathNode } from '../node/index.js'
+import type { NbtPathChild, NbtPathNode, TypedNbtNode } from '../node/index.js'
 import {
 	NbtCompoundNode,
 	NbtNode,
+	NbtPathFilterNode,
 	NbtPathIndexNode,
+	NbtPathKeyNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
 import { getBlocksFromItem, getEntityFromItem } from './mcdocUtil.js'
+
+const typed: core.Checker<TypedNbtNode> = (node, ctx) => {
+	typeDefinition(node.targetType)(node.children[0], ctx)
+}
+
+export function register(meta: core.MetaRegistry) {
+	meta.registerChecker<TypedNbtNode>('nbt:typed', typed)
+}
 
 interface Options {
 	isPredicate?: boolean
@@ -152,13 +162,15 @@ export function typeDefinition(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!NbtStringNode.is(node)) return
+					if (!NbtStringNode.is(node)) {
+						return
+					}
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
 						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.dispatchSync(node, ctx)
-						core.checker.dispatchSync(node, ctx)
+						core.binder.fallbackSync(node, ctx)
+						core.checker.fallbackSync(node, ctx)
 					}
 				},
 			}),
@@ -290,6 +302,8 @@ export function path(
 			[{ originalNode: link, inferredType: inferPath(link) }],
 			typeDef,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
+				allowMissingKeys: true,
+				requireCanonical: true,
 				isEquivalent: (inferred, def) => {
 					switch (inferred.kind) {
 						case 'list':
@@ -304,7 +318,7 @@ export function path(
 					}
 				},
 				getChildren: (link): mcdoc.runtime.checker.RuntimeUnion<NbtPathLink>[] => {
-					while (link.next && link.node.type !== 'leaf' && NbtCompoundNode.is(link.node)) {
+					while (link.next && link.node.type !== 'leaf' && NbtPathFilterNode.is(link.node)) {
 						link = link.next
 					}
 					if (!link.next || link.node.type === 'leaf') {
@@ -313,13 +327,13 @@ export function path(
 					if (NbtPathIndexNode.is(link.node)) {
 						return [[{ originalNode: link.next, inferredType: inferPath(link.next) }]]
 					}
-					if (NbtStringNode.is(link.node)) {
+					if (NbtPathKeyNode.is(link.node)) {
 						return [{
 							key: {
 								originalNode: link,
 								inferredType: {
 									kind: 'literal',
-									value: { kind: 'string', value: link.node.value },
+									value: { kind: 'string', value: link.node.children[0].value },
 								},
 							},
 							possibleValues: [{
@@ -332,7 +346,7 @@ export function path(
 					return []
 				},
 				reportError: (error) => {
-					if (error.kind === 'missing_key' || error.kind === 'invalid_collection_length') {
+					if (error.kind === 'invalid_collection_length') {
 						return
 					}
 					mcdoc.runtime.checker.getDefaultErrorReporter<NbtPathLink>(
@@ -341,22 +355,31 @@ export function path(
 					)(error)
 				},
 				attachTypeInfo: (link, definition, desc = '') => {
-					// TODO: attach type def
+					if (definition.kind === 'literal' && !definition.attributes?.length) {
+						return
+					}
+					if (link.node.type === 'leaf') {
+						link.path.endTypeDef = definition
+					} else {
+						link.node.typeDef = definition
+					}
 					// TODO: improve hover info
-					if (NbtStringNode.is(link.prev?.node)) {
-						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.value}: ${
+					if (NbtPathKeyNode.is(link.prev?.node)) {
+						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.children[0].value}: ${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
 					}
 				},
-				stringAttacher: (node, attacher) => {
-					if (!NbtStringNode.is(node)) return
-					attacher(node)
-					if (node.children) {
-						core.AstNode.setParents(node)
+				stringAttacher: (link, attacher) => {
+					if (!NbtPathKeyNode.is(link.node)) {
+						return
+					}
+					attacher(link.node.children[0])
+					if (link.node.children[0].children) {
+						core.AstNode.setParents(link.node.children[0])
 						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.dispatchSync(node, ctx)
-						core.checker.dispatchSync(node, ctx)
+						core.binder.fallbackSync(link.node.children[0], ctx)
+						core.checker.fallbackSync(link.node.children[0], ctx)
 					}
 				},
 			}),
