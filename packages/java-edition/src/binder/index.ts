@@ -193,7 +193,7 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
 	for (const [path, config] of Object.entries(ctx.config.env.customResources)) {
-		if (config.pack === 'data') {
+		if (config.pack === undefined || config.pack === 'data') {
 			resource(path, { ...config, category: config.category as FileCategory })
 		}
 	}
