@@ -2,8 +2,8 @@ import * as core from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import type { Bench } from 'tinybench'
 import { TextDocument } from 'vscode-languageserver-textdocument'
+import type { BenchContext } from './index.js'
 
 const Suites: { name: string; type: string; value: string }[] = [
 	{
@@ -101,7 +101,7 @@ dispatch minecraft:entity[zombie_villager] to struct ZombieVillager {
 	},
 ]
 
-export async function register(bench: Bench) {
+export async function register(bench: BenchContext) {
 	for (const suite of Suites) {
 		const project = mockProjectData()
 
