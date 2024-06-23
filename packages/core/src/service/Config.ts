@@ -457,7 +457,7 @@ export class ConfigService implements ExternalEventEmitter {
 	async load(): Promise<Config> {
 		let ans = this.defaultConfig
 		for (const name of ConfigService.ConfigFileNames) {
-			const uri = this.project.projectRoot + name
+			const uri = this.project.projectRoots[0] + name
 			try {
 				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
 			} catch (e) {

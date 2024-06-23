@@ -23,11 +23,11 @@ export * as json from './json/index.js'
 export * as mcf from './mcfunction/index.js'
 
 export const initialize: core.ProjectInitializer = async (ctx) => {
-	const { config, downloader, externals, logger, meta, projectRoot } = ctx
+	const { config, downloader, externals, logger, meta, projectRoots } = ctx
 
 	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
 		let ans: PackMcmeta | undefined
-		const uri = `${projectRoot}pack.mcmeta`
+		const uri = `${projectRoots[0]}pack.mcmeta`
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
 			PackMcmeta.assert(data)

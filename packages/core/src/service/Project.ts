@@ -46,7 +46,7 @@ export type ProjectInitializerContext = Pick<
 	| 'isDebugging'
 	| 'logger'
 	| 'meta'
-	| 'projectRoot'
+	| 'projectRoots'
 >
 export type SyncProjectInitializer = (
 	this: void,
@@ -69,9 +69,9 @@ export interface ProjectOptions {
 	logger?: Logger
 	profilers?: ProfilerFactory
 	/**
-	 * A file URI to the root of this project.
+	 * File URIs to the roots of this project.
 	 */
-	projectRoot: RootUriString
+	projectRoots: RootUriString[]
 	symbols?: SymbolUtil
 }
 
@@ -110,7 +110,7 @@ export type ProjectData = Pick<
 	| 'logger'
 	| 'meta'
 	| 'profilers'
-	| 'projectRoot'
+	| 'projectRoots'
 	| 'roots'
 	| 'symbols'
 	| 'ctx'
@@ -187,7 +187,7 @@ export class Project implements ExternalEventEmitter {
 	readonly logger: Logger
 	readonly meta = new MetaRegistry()
 	readonly profilers: ProfilerFactory
-	readonly projectRoot: RootUriString
+	readonly projectRoots: RootUriString[]
 	symbols: SymbolUtil
 
 	#dependencyRoots!: Set<RootUriString>
@@ -224,7 +224,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private updateRoots(): void {
-		const rawRoots = [...this.#dependencyRoots, this.projectRoot]
+		const rawRoots = [...this.#dependencyRoots, ...this.projectRoots]
 		const ans = new Set(rawRoots)
 		// Identify roots indicated by `pack.mcmeta`.
 		for (const file of this.getTrackedFiles()) {
@@ -303,7 +303,7 @@ export class Project implements ExternalEventEmitter {
 			isDebugging = false,
 			logger = Logger.create(),
 			profilers = ProfilerFactory.noop(),
-			projectRoot,
+			projectRoots,
 		}: ProjectOptions,
 	) {
 		this.#cacheRoot = cacheRoot
@@ -314,7 +314,7 @@ export class Project implements ExternalEventEmitter {
 		this.isDebugging = isDebugging
 		this.logger = logger
 		this.profilers = profilers
-		this.projectRoot = projectRoot
+		this.projectRoots = projectRoots
 
 		this.cacheService = new CacheService(cacheRoot, this)
 		this.#configService = new ConfigService(this, defaultConfig)
@@ -393,7 +393,7 @@ export class Project implements ExternalEventEmitter {
 				isDebugging: this.isDebugging,
 				logger: this.logger,
 				meta: this.meta,
-				projectRoot: this.projectRoot,
+				projectRoots: this.projectRoots,
 			}
 			const results = await Promise.allSettled(this.#initializers.map((init) => init(initCtx)))
 			let ctx: Record<string, string> = {}
@@ -474,7 +474,7 @@ export class Project implements ExternalEventEmitter {
 			new Promise<void>((resolve) => {
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
-				this.#watcher = this.externals.fs.watch(this.projectRoot).once('ready', () => {
+				this.#watcher = this.externals.fs.watch(this.projectRoots).once('ready', () => {
 					this.#watcherReady = true
 					resolve()
 				}).on('add', (uri) => {

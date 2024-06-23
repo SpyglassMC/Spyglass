@@ -114,7 +114,9 @@ export class CacheService {
 	 */
 	private async getCacheFileUri(): Promise<string> {
 		return (this.#cacheFilePath ??= new Uri(
-			`symbols/${await this.project.externals.crypto.getSha1(this.project.projectRoot)}.json.gz`,
+			`symbols/${await this.project.externals.crypto.getSha1(
+				this.project.projectRoots[0],
+			)}.json.gz`,
 			this.cacheRoot,
 		).toString())
 	}
@@ -219,7 +221,7 @@ export class CacheService {
 			filePath = await this.getCacheFileUri()
 			const cache: CacheFile = {
 				version: LatestCacheVersion,
-				projectRoot: this.project.projectRoot,
+				projectRoot: this.project.projectRoots[0],
 				checksums: this.checksums,
 				symbols: SymbolTable.unlink(this.project.symbols.global),
 				errors: this.errors,

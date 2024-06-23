@@ -116,7 +116,7 @@ export const NodeJsExternals: Externals = {
 			return fsp.unlink(toFsPathLike(location))
 		},
 		watch(location) {
-			return new ChokidarWatcherWrapper(chokidar.watch(toPath(location)))
+			return new ChokidarWatcherWrapper(chokidar.watch(location.map(toPath)))
 		},
 		writeFile(location, data, options) {
 			return fsp.writeFile(toFsPathLike(location), data, options)

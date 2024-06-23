@@ -90,7 +90,7 @@ await CLI.scriptName('mcdoc').command(
 				defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
 				externals: NodeJsExternals,
 				initializers: [mcdoc.initialize],
-				projectRoot: fileUtil.ensureEndingSlash(pathToFileURL(project_path).toString()),
+				projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(project_path).toString())],
 			},
 		})
 

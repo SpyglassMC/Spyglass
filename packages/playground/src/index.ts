@@ -35,7 +35,7 @@ const service = new core.Service({
 		defaultConfig: core.ConfigService.merge(core.VanillaConfig, { env: { dependencies: [] } }),
 		externals: BrowserExternals,
 		initializers: [mcdoc.initialize, je.initialize],
-		projectRoot: 'file:///root/',
+		projectRoots: ['file:///root/'],
 	},
 })
 
