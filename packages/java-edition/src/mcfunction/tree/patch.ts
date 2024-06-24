@@ -122,6 +122,7 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				children: {
 					get: getDataPatch('target', 'path'),
 					merge: getDataPatch('target', 'nbt', {
+						isMerge: true,
 						vaultAccessType: SymbolAccessType.Write,
 					}),
 					modify: getDataPatch('target', 'targetPath', {
@@ -134,7 +135,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 									index: getDataModifySource(type),
 								},
 							},
-							merge: getDataModifySource(type),
+							merge: getDataModifySource(type, {
+								isMerge: true,
+							}),
 							prepend: getDataModifySource(type),
 							set: getDataModifySource(type),
 						}),
@@ -816,6 +819,7 @@ function getDataPatch(
 	{
 		children,
 		isPredicate = false,
+		isMerge = false,
 		nbtAccessType = SymbolAccessType.Read,
 		vaultAccessType = SymbolAccessType.Read,
 	}: {
@@ -825,6 +829,7 @@ function getDataPatch(
 			) => PartialTreeNode['children'])
 			| undefined
 		isPredicate?: boolean | undefined
+		isMerge?: boolean | undefined
 		nbtAccessType?: SymbolAccessType | undefined
 		vaultAccessType?: SymbolAccessType | undefined
 	} = {},
@@ -841,6 +846,7 @@ function getDataPatch(
 									dispatchedBy: `${vaultKey}Pos`,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('block') } : {},
 							},
@@ -858,6 +864,7 @@ function getDataPatch(
 									dispatchedBy: vaultKey,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('entity') } : {},
 							},
@@ -879,6 +886,7 @@ function getDataPatch(
 									dispatchedBy: vaultKey,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('storage') } : {},
 							},
@@ -892,6 +900,11 @@ function getDataPatch(
 
 const getDataModifySource = (
 	type: 'block' | 'entity' | 'storage',
+	{
+		isMerge = false,
+	}: {
+		isMerge?: boolean | undefined
+	} = {},
 ): PartialTreeNode =>
 	Object.freeze({
 		children: {
@@ -904,6 +917,7 @@ const getDataModifySource = (
 							dispatcher: `minecraft:${type}`,
 							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
 							indexedBy: 'targetPath',
+							isMerge,
 						} satisfies NbtParserProperties,
 					},
 				},
