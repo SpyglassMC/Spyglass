@@ -234,7 +234,11 @@ function matchVersion(
 	since: ReleaseVersion | undefined,
 	until: ReleaseVersion | undefined,
 ): boolean {
-	if (since && ReleaseVersion.cmp(target, since) < 0) return false
-	if (until && ReleaseVersion.cmp(until, target) <= 0) return false
+	if (since && ReleaseVersion.cmp(target, since) < 0) {
+		return false
+	}
+	if (until && ReleaseVersion.cmp(until, target) <= 0) {
+		return false
+	}
 	return true
 }

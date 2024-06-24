@@ -6,7 +6,9 @@
   "typescript": {
     "binaryExpression.operatorPosition": "nextLine",
     "quoteStyle": "preferSingle",
-    "semiColons": "asi"
+    "semiColons": "asi",
+    "singleBodyPosition": "nextLine",
+    "useBraces": "always"
   },
   "includes": [
     "packages/*/{src,test}/**/*.{ts,cts,mts}"
