@@ -132,7 +132,6 @@ export async function register(bench: BenchContext) {
 			throw new Error('Failed to find root symbol')
 		}
 		if (!mcdoc.binder.TypeDefSymbolData.is(rootSymbol.data)) {
-			console.log(rootSymbol)
 			throw new Error('Root symbol does not have a type definition')
 		}
 		const type = rootSymbol.data.typeDef

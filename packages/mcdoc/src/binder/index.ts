@@ -125,7 +125,6 @@ export namespace TypeDefSymbolData {
 export const fileModule = AsyncBinder.create<ModuleNode>(async (node, ctx) => {
 	const moduleIdentifier = uriToIdentifier(ctx.doc.uri, ctx)
 	if (!moduleIdentifier) {
-		console.log('out of root')
 		ctx.err.report(
 			localize('mcdoc.binder.out-of-root', localeQuote(ctx.doc.uri)),
 			Range.Beginning,
