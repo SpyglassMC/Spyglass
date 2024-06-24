@@ -318,7 +318,7 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
-		exclude: ['@gitignore', '.vscode/**', '.github/**'],
+		exclude: ['@gitignore', '.vscode/', '.github/'],
 		customResources: [],
 		feature: {
 			codeActions: true,
