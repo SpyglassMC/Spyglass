@@ -65,6 +65,10 @@ export interface EnvConfig {
 	 */
 	dependencies: string[]
 	/**
+	 * A list of file patterns to exclude. Each value in this array can either be a glob pattern or the special string `@gitignore`.
+	 */
+	exclude: string[]
+	/**
 	 * **Experimental feature, breaking changes could occur.**
 	 *
 	 * Track changes at [issue #1254](https://github.com/SpyglassMC/Spyglass/issues/1254).
@@ -316,6 +320,7 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
+		exclude: ['@gitignore', '.vscode/', '.github/'],
 		customResources: {},
 		feature: {
 			codeActions: true,
