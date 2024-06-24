@@ -1,6 +1,15 @@
 import * as core from '@spyglassmc/core'
 import * as mcdoc from '@spyglassmc/mcdoc'
-import { type JsonNode, JsonPairNode, JsonStringNode } from '../node/index.js'
+import type { JsonNode, TypedJsonNode } from '../node/index.js'
+import { JsonPairNode, JsonStringNode } from '../node/index.js'
+
+export const typed: core.Checker<TypedJsonNode> = (node, ctx) => {
+	index(node.targetType)(node.children[0], ctx)
+}
+
+export function register(meta: core.MetaRegistry): void {
+	meta.registerChecker<TypedJsonNode>('json:typed', typed)
+}
 
 export interface JsonCheckerOptions {
 	discardDuplicateKeyErrors?: true
@@ -63,8 +72,28 @@ export function index(
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
 					// TODO: improve hover info
-					if (node.parent && JsonPairNode?.is(node.parent) && node.parent.key) {
-						node.parent.key.hover = `\`\`\`typescript\n${node.parent.key.value}: ${
+					// TODO some sort of shared default implementaion between JSON and SNBT (DRY)
+					if (node.parent && JsonPairNode?.is(node.parent)) {
+						if (node.parent.key?.typeDef && node.parent.value?.typeDef) {
+							const valueString = mcdoc.McdocType.toString(node.parent.value.typeDef)
+							let keyString = mcdoc.McdocType.toString(node.parent.key.typeDef)
+							if (node.parent.key.typeDef.kind !== 'literal') {
+								keyString = `[${keyString}]`
+							}
+
+							const hover = `\`\`\`typescript\n${keyString}: ${valueString}\n\`\`\`\n${desc}`
+							node.parent.key.hover = hover
+
+							if (
+								node.parent.value.type !== 'json:array'
+								&& node.parent.value.type !== 'json:object'
+							) {
+								node.parent.value.hover =
+									`\`\`\`typescript\n${valueString}\n\`\`\`\n${desc}`
+							}
+						}
+					} else if (node.type !== 'json:array' && node.type !== 'json:object') {
+						node.hover = `\`\`\`typescript\n${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
 					}
@@ -75,8 +104,8 @@ export function index(
 					if (node.children) {
 						core.AstNode.setParents(node)
 						// Because the runtime checker happens after binding, we need to manually call this
-						core.binder.dispatchSync(node, ctx)
-						core.checker.dispatchSync(node, ctx)
+						core.binder.fallbackSync(node, ctx)
+						core.checker.fallbackSync(node, ctx)
 					}
 				},
 			}),

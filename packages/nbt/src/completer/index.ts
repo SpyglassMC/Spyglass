@@ -4,6 +4,8 @@ import type {
 	NbtCollectionNode,
 	NbtCompoundNode,
 	NbtNode,
+	NbtPathKeyNode,
+	NbtPathNode,
 	NbtPrimitiveNode,
 	NbtStringNode,
 } from '../node/index.js'
@@ -77,18 +79,63 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
 }
 
+const path: core.Completer<NbtPathNode> = (node, ctx) => {
+	const index = core.binarySearch(node.children, ctx.offset, (n, o) => {
+		return core.Range.compareOffset(n.range, o, true)
+	})
+	const item = index >= 0 ? node.children[index] : undefined
+	if (item) {
+		return ctx.meta.getCompleter(item.type)(item, ctx)
+	}
+	if (!node.endTypeDef) {
+		return []
+	}
+	return getPathKeys(node.endTypeDef, ctx.offset, undefined, ctx)
+}
+
+const pathKey: core.Completer<NbtPathKeyNode> = (node, ctx) => {
+	if (!node.typeDef) {
+		return []
+	}
+	const child = node.children[0]
+	if (child.children?.length) {
+		return core.completer.dispatch(child.children[0], ctx)
+	}
+	return getPathKeys(node.typeDef, node, child.quote, ctx)
+}
+
+function getPathKeys(
+	typeDef: core.DeepReadonly<mcdoc.runtime.checker.SimplifiedMcdocType>,
+	range: core.RangeLike,
+	quote: core.Quote | undefined,
+	ctx: core.CompleterContext,
+) {
+	return mcdoc.runtime.completer
+		.getFields(typeDef, ctx)
+		.map(({ key, field }) =>
+			core.CompletionItem.create(key, range, {
+				kind: core.CompletionKind.Field,
+				detail: mcdoc.McdocType.toString(field.type as core.Mutable<mcdoc.McdocType>),
+				deprecated: field.deprecated,
+				sortText: field.optional ? '$b' : '$a', // sort above hardcoded $schema
+				filterText: formatKey(key, quote),
+				insertText: formatKey(key, quote),
+			})
+		)
+}
+
 function getValues(
 	typeDef: core.DeepReadonly<mcdoc.McdocType>,
 	range: core.RangeLike,
 	ctx: core.CompleterContext,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
-		.map(({ value, detail, kind, completionKind }) =>
+		.map(({ value, detail, kind, completionKind, insertText }) =>
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
 				detail,
 				filterText: formatValue(value, kind),
-				insertText: formatValue(value, kind),
+				insertText: formatValue(insertText ?? value, kind),
 			})
 		)
 }
@@ -131,4 +178,7 @@ export function register(meta: core.MetaRegistry): void {
 	meta.registerCompleter('nbt:string', primitive)
 	meta.registerCompleter('nbt:short', primitive)
 	meta.registerCompleter('nbt:float', primitive)
+
+	meta.registerCompleter('nbt:path', path)
+	meta.registerCompleter('nbt:path/key', pathKey)
 }

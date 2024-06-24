@@ -98,13 +98,29 @@ export const fallback = AsyncBinder.create(async (node, ctx) => {
 		(node) => ctx.meta.hasBinder(node.type),
 		(node) => {
 			const binder = ctx.meta.getBinder(node.type)
-			const result = binder(node as StateProxy<AstNode>, ctx)
+			const result = binder(node, ctx)
 			if (result instanceof Promise) {
 				promises.push(result)
 			}
 		},
 	)
 	await Promise.all(promises)
+})
+
+export const fallbackSync = SyncBinder.create((node, ctx) => {
+	traversePreOrder(
+		node,
+		(node) => !ctx.meta.hasBinder(node.type),
+		(node) => ctx.meta.hasBinder(node.type),
+		(node) => {
+			const binder = ctx.meta.getBinder(node.type)
+			if (SyncBinder.is(binder)) {
+				binder(node, ctx)
+			} else {
+				ctx.logger.warn(`[fallbackSync] Trying to run async binder for "${node.type}"`)
+			}
+		},
+	)
 })
 
 export const dispatchSync = SyncBinder.create<AstNode>((node, ctx) => {

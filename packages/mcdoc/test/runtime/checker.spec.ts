@@ -290,6 +290,111 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other', data: { baz: true } },
 		],
 	}, {
+		name: 'struct { test: struct { config: double }, other: struct { baz: boolean } }[%fallback]',
+		type: {
+			kind: 'indexed',
+			child: {
+				kind: 'struct',
+				fields: [{
+					kind: 'pair',
+					key: 'test',
+					type: {
+						kind: 'struct',
+						fields: [{ kind: 'pair', key: 'config', type: { kind: 'double' } }],
+					},
+				}, {
+					kind: 'pair',
+					key: 'other',
+					type: {
+						kind: 'struct',
+						fields: [{ kind: 'pair', key: 'baz', type: { kind: 'boolean' } }],
+					},
+				}],
+			},
+			parallelIndices: [{ kind: 'static', value: '%fallback' }],
+		},
+		values: [
+			{},
+			{ config: 'hello' },
+			{ config: 5 },
+			{ baz: 'world' },
+			{ baz: true },
+		],
+	}, {
+		name: 'struct { foo: string, ...( struct { bar: string } | struct { baz: string } ) }',
+		type: {
+			kind: 'struct',
+			fields: [
+				{ kind: 'pair', key: 'foo', type: { kind: 'string' } },
+				{
+					kind: 'spread',
+					type: {
+						kind: 'union',
+						members: [
+							{
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'bar', type: { kind: 'string' } }],
+							},
+							{
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'baz', type: { kind: 'string' } }],
+							},
+						],
+					},
+				},
+			],
+		},
+		values: [
+			{},
+			{ foo: 'hi' },
+			{ foo: 'hi', bar: 1 },
+			{ foo: 'hello', bar: 'world' },
+			{ foo: 'hello', baz: 'world' },
+		],
+	}, {
+		name:
+			'type EmptyUnion = (); struct { foo: string, ...( struct { bar: string } | EmptyUnion ) }',
+		type: {
+			kind: 'struct',
+			fields: [
+				{ kind: 'pair', key: 'foo', type: { kind: 'string' } },
+				{
+					kind: 'spread',
+					type: {
+						kind: 'union',
+						members: [
+							{
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'bar', type: { kind: 'string' } }],
+							},
+							{ kind: 'reference', path: '::EmptyUnion' },
+						],
+					},
+				},
+			],
+		},
+		values: [
+			{},
+			{ foo: 'hi' },
+			{ foo: 'hi', bar: 1 },
+			{ foo: 'hello', bar: 'world' },
+		],
+		init: (symbols) => {
+			symbols
+				.query(TextDocument.create('', '', 0, ''), 'mcdoc', '::EmptyUnion')
+				.enter({
+					data: {
+						data: {
+							typeDef: {
+								kind: 'union',
+								members: [],
+							} satisfies McdocType,
+						},
+					},
+					usage: { type: 'definition' },
+				})
+		},
+	}, {
 		name: 'type Bounds<T> = struct { min: T, max: T }; Bounds<int @ 1..>',
 		type: {
 			kind: 'concrete',
@@ -467,29 +572,32 @@ describe('mcdoc runtime checker', () => {
 			}],
 		},
 		init: (symbols) => {
-			symbols.query(TextDocument.create('', '', 0, ''), 'mcdoc/dispatcher', 'minecraft:item')
+			symbols
+				.query(TextDocument.create('', '', 0, ''), 'mcdoc/dispatcher', 'minecraft:item')
 				.enter({ usage: { type: 'reference' } })
-			symbols.query(
-				TextDocument.create('', '', 0, ''),
-				'mcdoc/dispatcher',
-				'minecraft:item',
-				'elytra',
-			).enter({
-				data: {
+			symbols
+				.query(
+					TextDocument.create('', '', 0, ''),
+					'mcdoc/dispatcher',
+					'minecraft:item',
+					'elytra',
+				)
+				.enter({
 					data: {
-						typeDef: {
-							kind: 'struct',
-							fields: [{ kind: 'pair', key: 'Damage', type: { kind: 'double' } }],
-						} satisfies McdocType,
+						data: {
+							typeDef: {
+								kind: 'struct',
+								fields: [{ kind: 'pair', key: 'Damage', type: { kind: 'double' } }],
+							} satisfies McdocType,
+						},
 					},
-				},
-				usage: { type: 'definition' },
-			})
+					usage: { type: 'definition' },
+				})
 		},
 		values: [{}, { id: 'diamond' }, { id: 'elytra', tag: {} }, {
-			id: 'eltrya',
+			id: 'elytra',
 			tag: { Damage: true },
-		}, { id: 'eltrya', tag: { Damage: 20 } }],
+		}, { id: 'elytra', tag: { Damage: 20 } }],
 	}]
 
 	function inferType(value: JsValue): Exclude<McdocType, UnionType> {
@@ -548,8 +656,6 @@ describe('mcdoc runtime checker', () => {
 									return false
 							}
 						},
-						attachTypeInfo: () => {},
-						stringAttacher: () => {},
 					})
 					typeDefinition(
 						[{ originalNode: value, inferredType: inferType(value) }],
