@@ -886,11 +886,16 @@ function simplifyReference<T>(
 			attributes: [...typeDef.attributes, ...simplifiedResult.typeDef.attributes ?? []],
 		}
 	}
-	symbol.amend({
-		data: {
-			data: { ...data, simplifiedTypeDef: simplifiedResult.typeDef } satisfies TypeDefSymbolData,
-		},
-	})
+	if (!simplifiedResult.dynamicData) {
+		symbol.amend({
+			data: {
+				data: {
+					...data,
+					simplifiedTypeDef: simplifiedResult.typeDef,
+				} satisfies TypeDefSymbolData,
+			},
+		})
+	}
 	return simplifiedResult
 }
 
