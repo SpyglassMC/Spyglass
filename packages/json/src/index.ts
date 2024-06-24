@@ -16,7 +16,12 @@ export * as parser from './parser/index.js'
 
 export const initialize: core.SyncProjectInitializer = ({ meta }) => {
 	meta.registerLanguage('json', {
-		extensions: ['.json', '.mcmeta'],
+		extensions: ['.json'],
+		triggerCharacters: ['\n', ':', '"'],
+		parser: parser.file,
+	})
+	meta.registerLanguage('mcmeta', {
+		extensions: ['.mcmeta'],
 		triggerCharacters: ['\n', ':', '"'],
 		parser: parser.file,
 	})
