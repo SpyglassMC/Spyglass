@@ -113,6 +113,15 @@ export function getValues(
 				detail: v.identifier,
 				kind: typeDef.enumKind ?? 'string',
 			}))
+		case 'struct':
+		case 'list':
+		case 'tuple':
+		case 'byte_array':
+		case 'int_array':
+		case 'byte_array':
+		case 'string':
+			// in case getStringCompletions at the top of this function returned an empty list
+			return [{ value: '', kind: typeDef.kind }]
 		default:
 			return []
 	}
