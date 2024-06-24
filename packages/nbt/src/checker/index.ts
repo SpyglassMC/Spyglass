@@ -23,6 +23,7 @@ export function register(meta: core.MetaRegistry) {
 
 interface Options {
 	isPredicate?: boolean
+	isMerge?: boolean
 }
 
 /**
@@ -80,7 +81,7 @@ export function typeDefinition(
 			[{ originalNode: node, inferredType: inferType(node) }],
 			typeDef,
 			mcdoc.runtime.checker.McdocCheckerContext.create(ctx, {
-				allowMissingKeys: options.isPredicate,
+				allowMissingKeys: options.isPredicate || options.isMerge,
 				requireCanonical: options.isPredicate,
 				isEquivalent: (inferred, def) => {
 					if (def.kind === 'boolean') {

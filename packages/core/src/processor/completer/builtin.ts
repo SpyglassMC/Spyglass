@@ -211,15 +211,36 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	const pool = node.options.pool
 		? optimizePool(node.options.pool)
 		: [
-			...getPool(node.options.category!),
+			...getPool(node.options.category),
 			...(node.options.allowTag
-				? getPool(`tag/${node.options.category}` as TagFileCategory).map((v) =>
+				? getPool(`tag/${node.options.category}`).map((v) =>
 					`${ResourceLocation.TagPrefix}${v}`
 				)
 				: []),
 		]
 
-	return pool.map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Function }))
+	const items = pool.map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Function }))
+
+	if (node.options.category) {
+		const symbols = ctx.symbols.getVisibleSymbols(node.options.category, ctx.doc.uri)
+		const thisKey = Object.entries(symbols).flatMap(([key, symbol]) => {
+			if ((symbol.declaration?.[0] ?? symbol.definition?.[0])?.uri == ctx.doc.uri) {
+				return [key]
+			}
+			return []
+		})
+		if (thisKey.length > 0) {
+			items.push(
+				CompletionItem.create('THIS', node, {
+					kind: CompletionKind.Snippet,
+					insertText: thisKey[0],
+					detail: thisKey[0],
+				}),
+			)
+		}
+	}
+
+	return items
 }
 
 export const string: Completer<StringBaseNode> = (node, ctx) => {

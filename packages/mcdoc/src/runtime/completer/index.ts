@@ -53,6 +53,7 @@ export type SimpleCompletionValue = {
 	detail?: string
 	kind?: McdocType['kind']
 	completionKind?: core.CompletionKind
+	insertText?: string
 }
 
 // TODO: only accept SimplifiedMcdocType here
@@ -141,6 +142,7 @@ function getStringCompletions(
 				kind: 'string',
 				detail: item.detail,
 				completionKind: item.kind,
+				insertText: item.insertText,
 			})),
 		)
 	})
