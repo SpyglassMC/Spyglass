@@ -224,6 +224,7 @@ function nbtChecker(
 							: undefined
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break
@@ -231,6 +232,7 @@ function nbtChecker(
 				if (nbt.NbtCompoundNode.is(tag)) {
 					nbt.checker.index('minecraft:block', undefined, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break
@@ -241,6 +243,7 @@ function nbtChecker(
 						: undefined
 					nbt.checker.index('minecraft:storage', storage, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break

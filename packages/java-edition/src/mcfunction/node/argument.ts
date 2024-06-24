@@ -510,6 +510,7 @@ export namespace ParticleNode {
 	const OptionTypes = new Set(
 		[
 			...SpecialTypes,
+			'dust_pillar',
 			'entity_effect',
 		],
 	)
