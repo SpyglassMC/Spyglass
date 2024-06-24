@@ -34,11 +34,11 @@ export interface CustomResourceConfig {
 	/**
 	 * The file extension name of the dispatched resource. Only `.json` is supported for now.
 	 */
-	extname: '.json'
+	ext?: '.json'
 	/**
-	 * The pack type of the dispatched resource. Only `data_pack` is supported for now.
+	 * The pack type of the dispatched resource. Only `data` is supported for now.
 	 */
-	pack: 'data_pack'
+	pack?: 'data'
 	/**
 	 * The first minecraft version the dispatched resource is available in.
 	 */
@@ -75,7 +75,9 @@ export interface EnvConfig {
 	 *
 	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.
 	 */
-	customResources: [filePath: string, config: CustomResourceConfig][]
+	customResources: {
+		[path: string]: CustomResourceConfig
+	}
 	feature: {
 		codeActions: boolean
 		colors: boolean
@@ -319,7 +321,7 @@ export const VanillaConfig: Config = {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
 		exclude: ['@gitignore', '.vscode/', '.github/'],
-		customResources: [],
+		customResources: {},
 		feature: {
 			codeActions: true,
 			colors: true,

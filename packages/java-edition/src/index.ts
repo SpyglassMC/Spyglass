@@ -1,9 +1,8 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { localeQuote, localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { uriBinder } from './binder/index.js'
+import { registerBinders, uriBinder } from './binder/index.js'
 import type { McmetaSummary } from './dependency/index.js'
 import {
 	getMcmetaSummary,
@@ -18,6 +17,7 @@ import {
 import * as jeJson from './json/index.js'
 import * as jeMcf from './mcfunction/index.js'
 
+export * as binder from './binder/index.js'
 export * as dependency from './dependency/index.js'
 export * as json from './json/index.js'
 export * as mcf from './mcfunction/index.js'
@@ -42,6 +42,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 	}
 
 	meta.registerUriBinder(uriBinder)
+	registerBinders(meta)
 
 	const versions = await getVersions(ctx.externals, ctx.downloader)
 	if (!versions) {
