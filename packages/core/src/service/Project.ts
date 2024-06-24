@@ -392,15 +392,9 @@ export class Project implements ExternalEventEmitter {
 			this.ignore = ignore()
 			for (const pattern of this.config.env.exclude) {
 				if (pattern === '@gitignore') {
-					try {
-						const uri = this.projectRoot + Project.GitIgnore
-						const contents = bufferToString(await this.externals.fs.readFile(uri))
-						this.ignore.add(contents)
-					} catch (e) {
-						if (this.externals.error.isKind(e, 'ENOENT')) {
-							continue
-						}
-						this.logger.error(`[Project] [Config] Failed reading .gitignore`, e)
+					const gitignore = await this.readGitignore()
+					if (gitignore) {
+						this.ignore.add(gitignore)
 					}
 				} else {
 					this.ignore.add(pattern)
@@ -447,6 +441,19 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Initialize').finalize()
 		}
 		this.#initPromise = init()
+	}
+
+	private async readGitignore() {
+		try {
+			const uri = this.projectRoot + Project.GitIgnore
+			const contents = await this.externals.fs.readFile(uri)
+			return bufferToString(contents)
+		} catch (e) {
+			if (!this.externals.error.isKind(e, 'ENOENT')) {
+				this.logger.error(`[Project] [readGitignore]`, e)
+			}
+		}
+		return undefined
 	}
 
 	private setReadyPromise(): void {
