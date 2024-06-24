@@ -58,8 +58,12 @@ await CLI.scriptName('mcdoc').command(
 	async (args) => {
 		const include = []
 
-		if (args.locale) include.push('locales')
-		if (args.module) include.push('modules')
+		if (args.locale) {
+			include.push('locales')
+		}
+		if (args.module) {
+			include.push('modules')
+		}
 
 		console.info(
 			`Generating JSON files${

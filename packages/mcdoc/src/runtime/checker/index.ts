@@ -1057,7 +1057,9 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 			}
 			let keep = true
 			handleAttributes(member.attributes, context.ctx, (handler, config) => {
-				if (!keep || !handler.filterElement) return
+				if (!keep || !handler.filterElement) {
+					return
+				}
 				if (!handler.filterElement(config, context.ctx)) {
 					keep = false
 				}
@@ -1231,7 +1233,9 @@ function simplifyEnum<T>(typeDef: EnumType, context: SimplifyContext<T>): Simpli
 	const filteredValues = typeDef.values.filter(value => {
 		let keep = true
 		handleAttributes(value.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) return
+			if (!keep || !handler.filterElement) {
+				return
+			}
 			if (!handler.filterElement(config, context.ctx)) {
 				keep = false
 			}

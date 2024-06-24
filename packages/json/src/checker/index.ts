@@ -99,7 +99,9 @@ export function index(
 					}
 				},
 				stringAttacher: (node, attacher) => {
-					if (!JsonStringNode.is(node)) return
+					if (!JsonStringNode.is(node)) {
+						return
+					}
 					attacher(node)
 					if (node.children) {
 						core.AstNode.setParents(node)
