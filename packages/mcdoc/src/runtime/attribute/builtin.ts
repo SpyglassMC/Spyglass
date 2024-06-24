@@ -138,4 +138,16 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			return resourceLocation
 		},
 	})
+
+	registerAttribute(meta, 'dispatcher_key', () => undefined, {
+		stringParser: (_, __, _ctx) => {
+			return (src, ctx) => {
+				return {
+					type: 'mcdoc:dispatcher_key',
+					range: core.Range.create(src.cursor, src.cursor),
+					value: Object.keys(_ctx.symbols.getVisibleSymbols('mcdoc/dispatcher')[core.string({})(src, ctx).value].members!),
+				} as core.AstNode
+			}
+		},
+	})
 }
