@@ -23,7 +23,8 @@ export function register(meta: core.MetaRegistry) {
 
 interface Options {
 	isPredicate?: boolean
-	isMerge?: boolean
+	isMerge?: boolean,
+	generics?: mcdoc.TypeArgBlockNode[],
 }
 
 /**
@@ -45,11 +46,13 @@ export function index(
 			const entityId = getEntityFromItem(id as core.FullResourceLocation)
 			return entityId ? index('minecraft:entity', entityId, options) : core.checker.noop
 		default:
-			const typeDef: mcdoc.McdocType = {
+			const typeDef: mcdoc.DispatcherType = {
 				kind: 'dispatcher',
 				registry,
 				parallelIndices: getIndices(id),
 			}
+
+			// TODO: Actually apply options.generics to the dispatcher somehow
 
 			return (node, ctx) => {
 				typeDefinition(typeDef, options)(node, ctx)

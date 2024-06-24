@@ -157,25 +157,24 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		}
 		groupedComponents.get(componentId)!.push(pair.key)
 		if (pair.value) {
-			if (componentId === 'minecraft:custom_data') {
-				if (pair.value.type === 'nbt:string') {
-					// TODO: Maybe move this to the nbt package
-					const stringNBT = nbt.parser.compound(
-						new core.Source(pair.value.value, pair.value.valueMap),
-						ctx,
-					)
-					pair.value.children = [stringNBT]
-					core.AstNode.setParents(stringNBT)
-					// Because the runtime checker happens after binding, we need to manually call this
-					core.binder.fallbackSync(stringNBT, ctx)
-					core.checker.fallbackSync(stringNBT, ctx)
-					nbt.checker.index('mcdoc:custom_item_data', itemId)(stringNBT, ctx)
-				} else {
-					nbt.checker.index('mcdoc:custom_item_data', itemId)(pair.value, ctx)
-				}
-			} else {
-				nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
-			}
+			const componentChecker = nbt.checker.index('minecraft:data_component', componentId, {
+				generics: [{
+					type: 'mcdoc:type_arg_block',
+					range: pair.value.range,
+					children: [
+						{
+							type: 'mcdoc:type/string',
+							range: pair.value.range,
+							children: [{
+								type: 'mcdoc:literal',
+								range: pair.value.range,
+								value: itemId,
+							}]
+						},
+					],
+				}],
+			})
+			componentChecker(pair.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
