@@ -791,6 +791,10 @@ export interface SimplifyValueNode<T> {
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
 	ctx: McdocCheckerContext<T>
+	structFields?: {
+		literalFields: Map<string, StructTypePairField>
+		complexFields: SimplifiedStructTypePairField[]
+	}
 	isMember?: boolean
 	typeArgs?: SimplifiedMcdocType[]
 	typeMapping?: { [path: string]: SimplifiedMcdocType }
@@ -884,35 +888,64 @@ function simplifyDispatcher<T>(
 		context.ctx.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`)
 		return { kind: 'union', members: [] }
 	}
-	const structFields: StructTypePairField[] = []
-	for (const key in dispatcher) {
-		const data = dispatcher[key].data
-		if (TypeDefSymbolData.is(data)) {
-			structFields.push({ kind: 'pair', key, type: data.typeDef })
-		}
-	}
-	return simplifyIndexed({
-		kind: 'indexed',
-		parallelIndices: typeDef.parallelIndices,
-		child: { kind: 'struct', fields: structFields },
-	}, context)
+	return resolveIndices<T>(typeDef.parallelIndices, dispatcher, context)
 }
 
 function simplifyIndexed<T>(
 	typeDef: IndexedType,
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	const child = simplify(typeDef.child, { ...context, typeArgs: [] })
+	const child = simplify(typeDef.child, {
+		...context,
+		typeArgs: [],
+		structFields: undefined,
+	})
 
 	if (child.kind !== 'struct') {
 		context.ctx.logger.warn(`Tried to index un-indexable type ${child.kind}`)
 		return { kind: 'union', members: [] }
 	}
+
+	const symbolMap: { [key: string]: { data?: unknown } } = {}
+	for (const field of child.fields) {
+		if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+			symbolMap[field.key.value.value] = {
+				data: {
+					typeDef: field.type,
+				} satisfies TypeDefSymbolData,
+			}
+		}
+	}
+
+	return resolveIndices(typeDef.parallelIndices, symbolMap, context)
+}
+
+function resolveIndices<T>(
+	parallelIndices: ParallelIndices,
+	symbolMap: { [key: string]: { data?: unknown } },
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
 	let values: McdocType[] = []
 
-	for (const index of typeDef.parallelIndices) {
+	let unkownTypeDef: McdocType | undefined | false = false
+	function getUnknownTypeDef() {
+		if (unkownTypeDef === false) {
+			const data = symbolMap['%unknown']?.data
+			unkownTypeDef = TypeDefSymbolData.is(data) ? data.typeDef : undefined
+		}
+		return unkownTypeDef
+	}
+
+	for (const index of parallelIndices) {
 		let lookup: string[] = []
 		if (index.kind === 'static') {
+			if (index.value === '%fallback') {
+				values = Object.values(symbolMap)
+					.map(e => e.data)
+					.filter(TypeDefSymbolData.is)
+					.map(f => f.typeDef)
+				break
+			}
 			if (index.value.startsWith('minecraft:')) {
 				lookup.push(index.value.substring(10))
 			} else {
@@ -994,73 +1027,99 @@ function simplifyIndexed<T>(
 			lookup = ['%none']
 		}
 
-		const currentValues = lookup.map(v =>
-			child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === v
-			)
-				?? child.fields.find(f =>
-					f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%unknown'
-				)
-		)
+		const currentValues = lookup.map(v => {
+			const data = symbolMap[v]?.data
+			return TypeDefSymbolData.is(data) ? data.typeDef : getUnknownTypeDef()
+		})
 		if (currentValues.includes(undefined)) {
-			const fallbackDispatch = child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%fallback'
-			)
-
-			if (fallbackDispatch) {
-				values.push(fallbackDispatch.type)
-			} else {
-				// fallback case if a dispatch to `%fallback` is unavailable
-				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-				break
-			}
+			// fallback case
+			return { kind: 'any' }
 		} else {
-			values.push(...currentValues.map(v => v!.type))
+			values.push(...currentValues.map(v => v!))
 		}
+	}
+
+	if (values.length === 1) {
+		// avoid overhead from union
+		return simplify(values[0], context)
 	}
 	return simplifyUnion({ kind: 'union', members: values }, context)
 }
 
 function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): SimplifiedMcdocType {
-	const members: SimplifiedMcdocTypeNoUnion[] = []
 	const filterCanonical = context.ctx.requireCanonical
 		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
-	for (const member of typeDef.members) {
-		if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
-			continue
-		}
-		const simplified = simplify(member, context)
-		let keep = true
-		handleAttributes(member.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) return
-			if (!handler.filterElement(config, context.ctx)) {
-				keep = false
-			}
-		})
-		if (!keep) continue
 
+	const validMembers = typeDef.members
+		.filter(member => {
+			if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
+				return false
+			}
+			let keep = true
+			handleAttributes(member.attributes, context.ctx, (handler, config) => {
+				if (!keep || !handler.filterElement) return
+				if (!handler.filterElement(config, context.ctx)) {
+					keep = false
+				}
+			})
+			return keep
+		})
+
+	if (validMembers.length === 1) {
+		// Avoid needing to manually add struct fields to parent if we are in a spread operation
+		return simplify(validMembers[0], context)
+	}
+
+	const members: SimplifiedMcdocTypeNoUnion[] = []
+	for (const member of validMembers) {
+		const simplified = simplify(member, {
+			...context,
+			structFields: undefined,
+		})
 		if (simplified.kind === 'union') {
 			members.push(...simplified.members)
 		} else {
 			members.push(simplified)
 		}
+
+		if (context.structFields && members.length > 1) {
+			return { kind: 'union', members: [] }
+		}
 	}
+
 	if (members.length === 1) {
+		// This should basically never happen, only when a union member resolves to an empty union.
+		// Apply struct fields to parent if we are inside a spread operation.
+		if (members[0].kind === 'struct' && context.structFields) {
+			for (const field of members[0].fields) {
+				if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+					context.structFields.literalFields.set(field.key.value.value, field)
+				} else {
+					context.structFields.complexFields.push(field)
+				}
+			}
+		}
+
 		return members[0]
 	}
 	return { ...typeDef, kind: 'union', members }
 }
 
 function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): SimplifiedStructType {
-	const literalFields = new Map<string, StructTypePairField>()
-	let complexFields: SimplifiedStructTypePairField[] = []
+	const literalFields = context.structFields?.literalFields
+		?? new Map<string, StructTypePairField>()
+	let complexFields = context.structFields?.complexFields ?? []
 
-	function addField(key: string | SimplifiedMcdocType, field: StructTypePairField) {
+	function addField(
+		key: string | SimplifiedMcdocType,
+		field: StructTypePairField,
+	) {
 		handleAttributes(field.attributes, context.ctx, (handler, config) => {
 			if (handler.mapField) {
 				field = handler.mapField(config, field, context.ctx)
 			}
 		})
+
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
 		} else if (key.kind === 'literal' && key.value.kind === 'string' && !key.attributes?.length) {
@@ -1109,31 +1168,27 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 				: field
 			addField(structKey, mappedField)
 		} else {
-			// TODO: potential optimization: merge unions first before simplifying them,
-			// to avoid having to simplify shared nested spread types multiple times
-			const simplifiedSpreadType = simplify(field.type, {
+			const simplifiedSpread = simplify(field.type, {
 				...context,
 				isMember: true,
 				typeArgs: [],
+				structFields: { literalFields, complexFields },
 			})
-			if (simplifiedSpreadType.kind === 'struct') {
-				for (const field of simplifiedSpreadType.fields) {
-					addField(field.key, field)
-				}
-			} else if (simplifiedSpreadType.kind === 'union') {
-				for (const member of simplifiedSpreadType.members) {
-					if (member.kind === 'struct') {
-						for (const field of member.fields) {
-							// TODO: technically, if a field is required in all members of
-							// this union, it could be added as a required field
-							addField(field.key, { ...field, optional: true })
-						}
-					}
-				}
+			// Recursive calls above will already modify literal and complex fields passed by the
+			// context, so no need to handle them here.
+
+			// In case we are spreading sth that resolves to `any`, allow any other additional field.
+			if (simplifiedSpread.kind === 'any') {
+				addField({ kind: 'any' }, { kind: 'pair', key: { kind: 'any' }, type: { kind: 'any' } })
 			}
-			// Silently ignore spreading non-struct types
 		}
 	}
+	if (context.structFields) {
+		// In this case we are spreading a struct and the fields have been added to the parent map
+		// from context now.
+		return { kind: 'struct', fields: [] }
+	}
+
 	// Literal fields may still be assignable to complex fields,
 	// however this is currently not seen as an issue
 	return {
