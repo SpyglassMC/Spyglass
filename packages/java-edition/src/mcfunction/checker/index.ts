@@ -1,9 +1,10 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { localize } from '@spyglassmc/locales'
 import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
+import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
@@ -20,6 +21,14 @@ import {
 	NbtResourceNode,
 	ParticleNode,
 } from '../node/index.js'
+
+const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
+	const parts = dissectUri(ctx.doc.uri, ctx)
+	if (parts?.ok === false) {
+		reportDissectError(parts.path, parts.expected, ctx)
+	}
+	core.checker.dispatchSync(node, ctx)
+}
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -330,6 +339,7 @@ function getTypesFromEntity(
 }
 
 export function register(meta: core.MetaRegistry) {
+	meta.registerChecker<mcf.McfunctionNode>('mcfunction:entry', entry)
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
