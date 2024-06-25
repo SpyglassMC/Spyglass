@@ -2,7 +2,7 @@ import { UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { dissectUri, uriBinder } from '../../lib/binder/index.js'
+import { dissectUri, registerCustomResources } from '../../lib/binder/index.js'
 
 describe('dissectUri()', () => {
 	const suites: { uri: string; version?: `1.${number}` }[] = [
@@ -53,8 +53,7 @@ describe('dissectUri() with customResources', () => {
 					ctx: { loadedVersion: version ?? '1.15' },
 				}),
 			)
-			// Manually invoke uriBinder to make sure custom registries are included
-			uriBinder([], ctx)
+			registerCustomResources(ctx.config)
 			snapshot(dissectUri(uri, ctx) ?? 'undefined')
 		})
 	}

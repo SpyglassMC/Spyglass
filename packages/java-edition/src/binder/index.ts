@@ -1,5 +1,6 @@
 import type {
 	CheckerContext,
+	Config,
 	FileCategory,
 	RootUriString,
 	TaggableResourceLocationCategory,
@@ -12,9 +13,7 @@ import {
 	Range,
 	TaggableResourceLocationCategories,
 } from '@spyglassmc/core'
-import type { JsonFileNode } from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { McfunctionNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../dependency/index.js'
 
 interface Resource {
@@ -188,18 +187,20 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 }
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
-	for (const [path, config] of Object.entries(ctx.config.env.customResources)) {
-		if (config.pack === undefined || config.pack === 'data') {
-			resource(path, { ...config, category: config.category as FileCategory })
-		}
-	}
-
 	for (const uri of uris) {
 		const parts = dissectUri(uri, ctx)
 		if (parts) {
 			ctx.symbols.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`).enter({
 				usage: { type: 'definition' },
 			})
+		}
+	}
+}
+
+export function registerCustomResources(config: Config) {
+	for (const [path, res] of Object.entries(config.env.customResources)) {
+		if (res.pack === undefined || res.pack === 'data') {
+			resource(path, { ...res, category: res.category as FileCategory })
 		}
 	}
 }

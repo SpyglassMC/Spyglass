@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as mcf from '@spyglassmc/mcfunction'
+import { registerCustomResources } from '../binder/index.js'
 import type { McmetaCommands } from '../dependency/index.js'
 import { ReleaseVersion } from '../dependency/index.js'
 import * as checker from './checker/index.js'
@@ -24,6 +25,8 @@ export const initialize = (
 	releaseVersion: ReleaseVersion,
 ) => {
 	const { meta } = ctx
+
+	registerCustomResources(ctx.config)
 
 	const tree = core.merge(commands, getPatch(releaseVersion))
 	if (ctx.isDebugging) {
