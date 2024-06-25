@@ -98,11 +98,11 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	for (const pair of node.selector?.arguments?.children ?? []) {
 		if (pair.key?.value !== 'nbt' || !pair.value) {
-			return
+			continue
 		}
 		const types = getTypesFromEntity(node, ctx)
 		if (!nbt.NbtCompoundNode.is(pair.value.value)) {
-			return
+			continue
 		}
 		nbt.checker.index('minecraft:entity', types, { isPredicate: true })(pair.value.value, ctx)
 	}
