@@ -4,7 +4,9 @@ import { arrayToMessage, localeQuote, localize } from '@spyglassmc/locales'
 import { RangeKind } from '../../node/index.js'
 import { McdocType, NumericRange } from '../../type/index.js'
 import type {
+	CheckerTreeDefinitionGroupNode,
 	CheckerTreeDefinitionNode,
+	CheckerTreeNode,
 	ErrorReporter,
 	RuntimeNode,
 	SimplifiedMcdocTypeNoUnion,
@@ -112,7 +114,101 @@ export interface ErrorCondensingDefinition<T> {
 	errors: McdocRuntimeError<T>[]
 }
 
-export function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingDefinition<T>[]): {
+export function condenseAndPropagate<T>(
+	definitionGroup: CheckerTreeDefinitionGroupNode<T>,
+	definitionErrors: ErrorCondensingDefinition<T>[],
+) {
+	const queue = [{ node: definitionGroup, errorsOnLayer: definitionErrors, depth: 0 }]
+	while (queue.length) {
+		const { node, errorsOnLayer, depth } = queue.shift()!
+
+		const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
+		const { definitions, condensedErrors } = condenseErrorsAndFilterSiblings(
+			errorsOnLayer,
+		)
+
+		stillValidDefintions.push(...definitions)
+
+		node.condensedErrors.push(condensedErrors)
+
+		if (node.validDefinitions.length !== stillValidDefintions.length) {
+			filterChildDefinitions(
+				node.validDefinitions.filter(d => !stillValidDefintions.includes(d)),
+				node.runtimeNode.children,
+			)
+			node.validDefinitions = stillValidDefintions
+		}
+
+		const parents = node.parents
+			.filter(parent => {
+				const lastChild = parent.groupNode.validDefinitions
+					.flatMap(d => d.children)
+					.findLast(v => {
+						if (v.condensedErrors.length > depth) {
+							return true
+						}
+
+						let children = [v]
+						for (let i = 0; i < depth; i++) {
+							children = children.flatMap(v => v.validDefinitions).flatMap(v => v.children)
+						}
+						return children.length > 0
+					})
+
+				if (lastChild !== node) {
+					// Wait for all siblings to be evaluated first
+					return false
+				}
+				return true
+			})
+			.map(parent => ({
+				node: parent.groupNode,
+				depth: depth + 1,
+				errorsOnLayer: parent.groupNode.validDefinitions
+					.flatMap(d => ({
+						definition: d,
+						errors: d.children
+							.flatMap(c =>
+								c.condensedErrors.length > depth
+									? c.condensedErrors[depth]
+									: []
+							),
+					})),
+			}))
+
+		queue.push(...parents)
+	}
+}
+
+function filterChildDefinitions<T>(
+	removedDefs: CheckerTreeDefinitionNode<T>[],
+	children: CheckerTreeNode<T>[],
+) {
+	for (const child of children) {
+		for (const childValue of child.possibleValues) {
+			const removedChildDefs: CheckerTreeDefinitionNode<T>[] = []
+
+			for (let i = 0; i < childValue.definitionsByParent.length; i++) {
+				const definitionGroup = childValue.definitionsByParent[i]
+				definitionGroup.parents = definitionGroup.parents.filter(p => !removedDefs.includes(p))
+				if (definitionGroup.parents.length === 0) {
+					removedChildDefs.push(...definitionGroup.validDefinitions)
+					childValue.definitionsByParent.splice(i, 1)
+					i--
+				}
+			}
+
+			if (removedChildDefs.length > 0) {
+				filterChildDefinitions(
+					removedChildDefs,
+					childValue.children,
+				)
+			}
+		}
+	}
+}
+
+function condenseErrorsAndFilterSiblings<T>(definitions: ErrorCondensingDefinition<T>[]): {
 	definitions: CheckerTreeDefinitionNode<T>[]
 	condensedErrors: McdocRuntimeError<T>[]
 } {
