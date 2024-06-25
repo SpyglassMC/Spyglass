@@ -37,6 +37,8 @@ class NodeJsExternalDownloader implements ExternalDownloader {
 				} else {
 					resolve(promisifyAsyncIterable(res, (chunks) => Buffer.concat(chunks)))
 				}
+			}).on('error', (e) => {
+				reject(e)
 			})
 		})
 	}
