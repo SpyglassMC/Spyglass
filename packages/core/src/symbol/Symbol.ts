@@ -175,6 +175,7 @@ export type FileCategory = (typeof FileCategories)[number]
 
 export const MiscCategories = Object.freeze(
 	[
+		'attribute_modifier',
 		'bossbar',
 		'jigsaw_block_name',
 		'random_sequence',
