@@ -53,6 +53,10 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		stringParser: () => makeInfallible(parser.scoreHolder('multiple'), localize('score-holder')),
 		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
+	mcdoc.runtime.registerAttribute(meta, 'tag', () => undefined, {
+		stringParser: () => parser.tag(),
+		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'tag' }),
+	})
 	mcdoc.runtime.registerAttribute(meta, 'entity', entityValidator, {
 		stringParser: (config) =>
 			makeInfallible(parser.entity(config.amount, config.type), localize('selector')),
