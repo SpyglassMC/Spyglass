@@ -122,7 +122,7 @@ export function condenseAndPropagate<T>(
 	while (queue.length) {
 		const { node, errorsOnLayer, depth } = queue.shift()!
 
-		const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
+		const stillValidDefinitions: CheckerTreeDefinitionNode<T>[] = []
 		const { definitions, condensedErrors } = condenseErrorsAndFilterSiblings(
 			errorsOnLayer,
 		)
