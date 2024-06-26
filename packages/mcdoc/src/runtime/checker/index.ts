@@ -286,8 +286,9 @@ export function typeDefinition<T>(
 
 						for (const childValue of child.possibleValues) {
 							if (existingDefIndex >= 0) {
-								childValue.definitionsByParent[existingDefIndex].parents.push(def)
-								def.children.push(childValue.definitionsByParent[existingDefIndex])
+								const existingDef = childValue.definitionsByParent[existingDefIndex]
+								existingDef.parents.push(def)
+								def.children.push(existingDef)
 								continue
 							}
 							// TODO We need some sort of map / local cache which keeps track of the original
