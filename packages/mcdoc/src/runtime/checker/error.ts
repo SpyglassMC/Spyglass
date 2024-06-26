@@ -141,6 +141,12 @@ export function condenseAndPropagate<T>(
 
 		const parents = node.parents
 			.filter(parent => {
+				const lastDefWithNode = parent.groupNode.validDefinitions
+					.findLast(d => d.children.includes(node))
+				if (lastDefWithNode !== parent) {
+					// Wait for last definition that leads to this parent
+					return false
+				}
 				const lastChild = parent.groupNode.validDefinitions
 					.flatMap(d => d.children)
 					.findLast(v => {

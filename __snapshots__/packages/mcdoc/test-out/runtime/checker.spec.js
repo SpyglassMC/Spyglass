@@ -18,24 +18,6 @@ exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: 
         "kind": "string"
       }
     ]
-  },
-  {
-    "kind": "type_mismatch",
-    "node": {
-      "originalNode": 91,
-      "inferredType": {
-        "kind": "literal",
-        "value": {
-          "kind": "double",
-          "value": 91
-        }
-      }
-    },
-    "expected": [
-      {
-        "kind": "string"
-      }
-    ]
   }
 ]
 
