@@ -127,16 +127,16 @@ export function condenseAndPropagate<T>(
 			errorsOnLayer,
 		)
 
-		stillValidDefintions.push(...definitions)
+		stillValidDefinitions.push(...definitions)
 
 		node.condensedErrors.push(condensedErrors)
 
-		if (node.validDefinitions.length !== stillValidDefintions.length) {
+		if (node.validDefinitions.length !== stillValidDefinitions.length) {
 			filterChildDefinitions(
-				node.validDefinitions.filter(d => !stillValidDefintions.includes(d)),
+				node.validDefinitions.filter(d => !stillValidDefinitions.includes(d)),
 				node.runtimeNode.children,
 			)
-			node.validDefinitions = stillValidDefintions
+			node.validDefinitions = stillValidDefinitions
 		}
 
 		const parents = node.parents
