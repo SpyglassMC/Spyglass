@@ -258,8 +258,6 @@ function getListLikeChild(typeDef: mcdoc.McdocType): mcdoc.McdocType | undefined
 			return { kind: 'int' }
 		case 'long_array':
 			return { kind: 'long' }
-		case 'tuple':
-			return { kind: 'union', members: typeDef.items }
 		case 'union':
 			const members = typeDef.members
 				.map(m => getListLikeChild(m))
