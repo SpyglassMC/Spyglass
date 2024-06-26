@@ -488,4 +488,9 @@ CATEGORY worldgen/tree_decorator_type
 + SYMBOL minecraft:trunk_vine {worldgen/tree_decorator_type} [Public]
 + + declaration:
 + + + {"uri":"mcmeta://summary/registries.json"}
+------------
+CATEGORY loot_table
++ SYMBOL minecraft:empty {loot_table} [Public]
++ + declaration:
++ + + {"uri":"mcmeta://summary/registries.json"}
 `
