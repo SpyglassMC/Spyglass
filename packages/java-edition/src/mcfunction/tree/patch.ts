@@ -129,7 +129,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						nbtAccessType: SymbolAccessType.Write,
 						vaultAccessType: SymbolAccessType.Write,
 						children: (type) => ({
-							append: getDataModifySource(type),
+							append: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							insert: {
 								children: {
 									index: getDataModifySource(type),
@@ -138,7 +140,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							merge: getDataModifySource(type, {
 								isMerge: true,
 							}),
-							prepend: getDataModifySource(type),
+							prepend: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							set: getDataModifySource(type),
 						}),
 					}),
@@ -902,8 +906,10 @@ const getDataModifySource = (
 	type: 'block' | 'entity' | 'storage',
 	{
 		isMerge = false,
+		isListIndex = false,
 	}: {
 		isMerge?: boolean | undefined
+		isListIndex?: boolean | undefined
 	} = {},
 ): PartialTreeNode =>
 	Object.freeze({
@@ -918,6 +924,7 @@ const getDataModifySource = (
 							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
 							indexedBy: 'targetPath',
 							isMerge,
+							isListIndex,
 						} satisfies NbtParserProperties,
 					},
 				},

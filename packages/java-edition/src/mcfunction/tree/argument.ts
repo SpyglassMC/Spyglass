@@ -147,6 +147,11 @@ export interface NbtParserProperties extends Record<string, unknown> {
 	 * merge NBT argument, keys can be missing.
 	 */
 	isMerge?: boolean
+	/**
+	 * `true` if the NBT checker should check this type using the list item of
+	 * {@link indexedBy}
+	 */
+	isListIndex?: boolean
 }
 export interface MinecraftNbtCompoundTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_compound_tag'

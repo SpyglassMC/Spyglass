@@ -201,8 +201,14 @@ function nbtChecker(
 		}
 		const tag = node.children[0]
 		if (indexedBy) {
-			if (NbtPathNode.is(indexedBy) && indexedBy.children[0].endTypeDef) {
-				nbt.checker.typeDefinition(indexedBy.children[0].endTypeDef)(tag, ctx)
+			if (NbtPathNode.is(indexedBy)) {
+				let typeDef: mcdoc.McdocType | undefined = indexedBy.children[0].endTypeDef
+				if (typeDef && node.properties.isListIndex) {
+					typeDef = getListLikeChild(typeDef)
+				}
+				if (typeDef) {
+					nbt.checker.typeDefinition(typeDef)(tag, ctx)
+				}
 			}
 			return
 		}
@@ -239,6 +245,33 @@ function nbtChecker(
 				}
 				break
 		}
+	}
+}
+
+function getListLikeChild(typeDef: mcdoc.McdocType): mcdoc.McdocType | undefined {
+	switch (typeDef.kind) {
+		case 'list':
+			return typeDef.item
+		case 'byte_array':
+			return { kind: 'byte' }
+		case 'int_array':
+			return { kind: 'int' }
+		case 'long_array':
+			return { kind: 'long' }
+		case 'union':
+			const members = typeDef.members
+				.map(m => getListLikeChild(m))
+				.filter((m): m is mcdoc.McdocType => m !== undefined)
+
+			if (members.length === 0) {
+				return undefined
+			}
+			if (members.length === 1) {
+				return members[0]
+			}
+			return { kind: 'union', members }
+		default:
+			return undefined
 	}
 }
 
