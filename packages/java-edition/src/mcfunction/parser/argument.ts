@@ -375,12 +375,12 @@ export function entity(
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
 			parser: core.any([
+				core.failOnError(uuid),
 				validateLength<core.StringNode>(
 					core.brigadierString,
 					PlayerNameMaxLength,
 					'mcfunction.parser.entity-selector.player-name.too-long',
 				),
-				uuid,
 			]),
 		}]),
 		(res, _src, ctx) => {
