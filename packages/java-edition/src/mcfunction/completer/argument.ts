@@ -37,11 +37,11 @@ import {
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
 	getItemSlotsArgumentValues,
+	getScoreboardSlotArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
-	ScoreboardSlotArgumentValues,
 	SwizzleArgumentValues,
 } from '../common/index.js'
 import type {
@@ -177,7 +177,7 @@ export const getMockNodes: mcf.completer.MockNodesGetter = (
 		case 'minecraft:rotation':
 			return VectorNode.mock(range, { dimension: 2, noLocal: true })
 		case 'minecraft:scoreboard_slot':
-			return LiteralNode.mock(range, { pool: ScoreboardSlotArgumentValues })
+			return LiteralNode.mock(range, { pool: getScoreboardSlotArgumentValues(ctx) })
 		case 'minecraft:score_holder':
 			return ScoreHolderNode.mock(range)
 		case 'minecraft:style':
