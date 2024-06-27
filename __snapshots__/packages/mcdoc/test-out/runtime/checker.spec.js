@@ -1,3 +1,105 @@
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"one":"something"} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"one":91} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": 91,
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "double",
+          "value": 91
+        }
+      }
+    },
+    "expected": [
+      {
+        "kind": "string"
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91,"four":91} 1'] = [
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "four",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "four"
+        }
+      }
+    },
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "four",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "four"
+          }
+        }
+      },
+      {
+        "originalNode": "two",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "two"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "kind": "unknown_key",
+    "node": {
+      "originalNode": "two",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "two"
+        }
+      }
+    },
+    "nodesWithConflictingErrors": [
+      {
+        "originalNode": "four",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "four"
+          }
+        }
+      },
+      {
+        "originalNode": "two",
+        "inferredType": {
+          "kind": "literal",
+          "value": {
+            "kind": "string",
+            "value": "two"
+          }
+        }
+      }
+    ]
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91,"three":true} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91} 1'] = []
+
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {} 1'] = []
+
 exports['mcdoc runtime checker typeDefinition “( struct { text: string } | struct { selector: number })” with value {"selector":20} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “( struct { text: string } | struct { selector: number })” with value {"selector":[1]} 1'] = [
@@ -996,6 +1098,25 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
     ]
   }
 ]
+
+exports['mcdoc runtime checker typeDefinition “struct { foo?: () }” with value {"foo":"something"} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "something",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "something"
+        }
+      }
+    },
+    "expected": []
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { foo?: () }” with value {} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback"} 1'] = []
 
