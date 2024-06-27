@@ -25,20 +25,40 @@ export * as mcf from './mcfunction/index.js'
 export const initialize: core.ProjectInitializer = async (ctx) => {
 	const { config, downloader, externals, logger, meta, projectRoot } = ctx
 
-	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
-		let ans: PackMcmeta | undefined
-		const uri = `${projectRoot}pack.mcmeta`
+	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
 			PackMcmeta.assert(data)
-			ans = data
+			return data
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
 				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
 			}
 		}
-		return ans
+		return undefined
+	}
+
+	async function findPackMcmeta(): Promise<PackMcmeta | undefined> {
+		const searched = new Set<string>()
+		for (let depth = 0; depth <= 2; depth += 1) {
+			const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
+			for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
+				if (searched.has(uri)) {
+					continue
+				}
+				searched.add(uri)
+				const data = await readPackMcmeta(uri)
+				if (data) {
+					logger.info(
+						`[je.initialize] Found a valid pack.mcmeta “${uri}” with pack_format “${data.pack.pack_format}”`,
+					)
+					return data
+				}
+			}
+		}
+		logger.warn('[je.initialize] Failed finding a valid pack.mcmeta')
+		return undefined
 	}
 
 	meta.registerUriBinder(uriBinder)
@@ -51,15 +71,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const packMcmeta = await getPackMcmeta()
-	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, {
-		packMcmeta,
-		versions,
-	})
+	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, findPackMcmeta)
+	const release = version.release
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
-		() => getVanillaDatapack(downloader, version, isLatest),
+		() => getVanillaDatapack(downloader, version.id, version.isLatest),
 	)
 
 	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
@@ -68,8 +85,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		ctx.externals,
 		downloader,
 		logger,
-		version,
-		isLatest,
+		version.id,
+		version.isLatest,
 		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
