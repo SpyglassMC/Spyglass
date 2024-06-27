@@ -415,10 +415,6 @@ export const VanillaConfig: Config = {
 				then: { report: 'warning' },
 			},
 			{
-				if: [{ category: ['random_sequence', 'score_holder', 'storage', 'tag'] }],
-				then: { declare: 'public' },
-			},
-			{
 				then: { declare: 'block' },
 			},
 		],
