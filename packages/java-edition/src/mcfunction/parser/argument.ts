@@ -11,11 +11,11 @@ import {
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
 	getItemSlotsArgumentValues,
+	getScoreboardSlotArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
-	ScoreboardSlotArgumentValues,
 	SwizzleArgumentValues,
 } from '../common/index.js'
 import type {
@@ -242,7 +242,9 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:scoreboard_slot':
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
-			return wrap(core.literal(...ScoreboardSlotArgumentValues))
+			return wrap((src, ctx) => {
+				return core.literal(...getScoreboardSlotArgumentValues(ctx))(src, ctx)
+			})
 		case 'minecraft:style':
 			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
