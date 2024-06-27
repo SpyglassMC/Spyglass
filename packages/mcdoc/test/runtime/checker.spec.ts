@@ -47,7 +47,7 @@ describe('mcdoc runtime checker', () => {
 		}],
 	}, {
 		name:
-			'( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })',
+			'( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })',
 		type: {
 			kind: 'union',
 			members: [{

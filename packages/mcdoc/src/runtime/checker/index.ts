@@ -273,20 +273,19 @@ export function typeDefinition<T>(
 							continue
 						}
 						const child = childNodes[i]
-						const existingDefIndex = child.possibleValues.length > 0
+						const existingDef = child.possibleValues.length > 0
 							? child.possibleValues[0].definitionsByParent
-								.findIndex(
+								.find(
 									d =>
 										(d.keyDefinition === undefined || childDef.keyType === undefined
 											? d.keyDefinition === undefined
 											: McdocType.equals(d.keyDefinition, childDef.keyType))
 										&& McdocType.equals(d.originalTypeDef, childDef.type),
 								)
-							: -1
+							: undefined
 
 						for (const childValue of child.possibleValues) {
-							if (existingDefIndex >= 0) {
-								const existingDef = childValue.definitionsByParent[existingDefIndex]
+							if (existingDef) {
 								existingDef.parents.push(def)
 								def.children.push(existingDef)
 								continue

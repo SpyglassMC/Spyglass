@@ -1,6 +1,6 @@
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {"one":"something"} 1'] = []
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"one":"something"} 1'] = []
 
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {"one":91} 1'] = [
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"one":91} 1'] = [
   {
     "kind": "type_mismatch",
     "node": {
@@ -21,7 +21,7 @@ exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: 
   }
 ]
 
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {"two":91,"four":91} 1'] = [
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91,"four":91} 1'] = [
   {
     "kind": "unknown_key",
     "node": {
@@ -94,11 +94,11 @@ exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: 
   }
 ]
 
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {"two":91,"three":true} 1'] = []
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91,"three":true} 1'] = []
 
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {"two":91} 1'] = []
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {"two":91} 1'] = []
 
-exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: text, four?: int, five?: boolean })” with value {} 1'] = []
+exports['mcdoc runtime checker typeDefinition “( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })” with value {} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “( struct { text: string } | struct { selector: number })” with value {"selector":20} 1'] = []
 
