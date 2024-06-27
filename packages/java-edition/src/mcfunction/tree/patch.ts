@@ -134,7 +134,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 							}),
 							insert: {
 								children: {
-									index: getDataModifySource(type),
+									index: getDataModifySource(type, {
+										isListIndex: true,
+									}),
 								},
 							},
 							merge: getDataModifySource(type, {
