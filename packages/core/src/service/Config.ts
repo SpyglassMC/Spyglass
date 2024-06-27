@@ -410,17 +410,7 @@ export const VanillaConfig: Config = {
 			{
 				if: [
 					{ category: RegistryCategories, namespace: 'minecraft' },
-					{
-						category: [
-							...FileCategories,
-							'bossbar',
-							'objective',
-							'score_holder',
-							'storage',
-							'tag',
-							'team',
-						],
-					},
+					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
 				],
 				then: { report: 'warning' },
 			},
