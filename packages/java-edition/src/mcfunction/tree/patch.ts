@@ -1,3 +1,4 @@
+import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
@@ -637,6 +638,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									name: {
 										parser: 'spyglassmc:tag',
+										properties: {
+											usageType: 'definition',
+										},
 									},
 								},
 							},
@@ -878,7 +882,8 @@ function getDataPatch(
 						properties: {
 							category: 'storage',
 							accessType: vaultAccessType,
-						},
+							usageType: 'definition',
+						} satisfies ResourceLocationOptions,
 						children: {
 							[nbtKey]: {
 								properties: {
@@ -988,6 +993,9 @@ const LootSource: PartialTreeNode = Object.freeze({
 const ObjectiveWriteTargets: PartialTreeNode = Object.freeze({
 	children: {
 		targets: {
+			properties: {
+				usageType: 'definition',
+			},
 			children: {
 				objective: {
 					properties: {

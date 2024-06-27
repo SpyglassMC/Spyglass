@@ -197,7 +197,10 @@ export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode 
 }
 export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:score_holder'
-	properties: { amount: 'single' | 'multiple' }
+	properties: {
+		usageType: core.SymbolUsageType
+		amount: 'single' | 'multiple'
+	}
 }
 export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:scoreboard_slot'

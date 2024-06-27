@@ -238,7 +238,7 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:rotation':
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
-			return wrap(scoreHolder(treeNode.properties.amount))
+			return wrap(scoreHolder(treeNode.properties.usageType, treeNode.properties.amount))
 		case 'minecraft:scoreboard_slot':
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
@@ -268,7 +268,11 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:tag':
-			return wrap(tag())
+			return wrap(tag(
+				core.SymbolUsageType.is(treeNode.properties?.usageType)
+					? treeNode.properties?.usageType
+					: undefined,
+			))
 		default:
 			// Unknown parser.
 			return undefined
@@ -1089,7 +1093,9 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 														},
 													)
 												case 'tag':
-													return invertable(tag(['[', '=', ',', ']', '{', '}']))
+													return invertable(
+														tag('reference', ['[', '=', ',', ']', '{', '}']),
+													)
 												case 'team':
 													return core.map<
 														EntitySelectorInvertableArgumentValueNode<core.SymbolNode>
@@ -1296,16 +1302,21 @@ ${node.predicates.map((p) => `- \`${p}\``).join('\n')}`
 	return ans
 }
 
-export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<core.SymbolNode>(
-	symbol('score_holder'),
-	FakeNameMaxLength,
-	'mcfunction.parser.score_holder.fake-name.too-long',
-)
+export function scoreHolderFakeName(usageType: core.SymbolUsageType): core.Parser<core.SymbolNode> {
+	return validateLength<core.SymbolNode>(
+		symbol({ category: 'score_holder', usageType }),
+		FakeNameMaxLength,
+		'mcfunction.parser.score_holder.fake-name.too-long',
+	)
+}
 
-export function scoreHolder(amount: 'multiple' | 'single'): core.Parser<ScoreHolderNode> {
+export function scoreHolder(
+	usageType: core.SymbolUsageType,
+	amount: 'multiple' | 'single',
+): core.Parser<ScoreHolderNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
-			parser: scoreHolderFakeName,
+			parser: scoreHolderFakeName(usageType),
 		}]),
 		(res, _src, ctx) => {
 			const ans: ScoreHolderNode = {
@@ -1382,8 +1393,11 @@ const objectiveCriteria: core.InfallibleParser<ObjectiveCriteriaNode> = core.map
 	},
 )
 
-export function tag(terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
-	return unquotableSymbol('tag', terminators)
+export function tag(
+	usageType?: core.SymbolUsageType,
+	terminators: string[] = [],
+): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol({ category: 'tag', usageType }, terminators)
 }
 
 export function team(
