@@ -60,7 +60,7 @@ export class Downloader {
 					const cacheChecksum = bufferToString(
 						await fileUtil.readFile(this.externals, cacheChecksumUri),
 					).slice(0, -1) // Remove ending newline
-					if (checksum === undefined || checksum === cacheChecksum) {
+					if (checksum === cacheChecksum) {
 						try {
 							const cachedBuffer = await fileUtil.readFile(this.externals, cacheUri)
 							if (ttl) {
