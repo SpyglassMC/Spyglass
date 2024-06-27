@@ -202,12 +202,12 @@ function nbtChecker(
 		const tag = node.children[0]
 		if (indexedBy) {
 			if (NbtPathNode.is(indexedBy)) {
-				let typeDef: mcdoc.McdocType | undefined = indexedBy.children[0].endTypeDef
-				if (typeDef && node.properties.isListIndex) {
-					typeDef = getListLikeChild(typeDef)
-				}
+				const indexedByTypedef = indexedBy.children[0].endTypeDef
+				const typeDef = indexedByTypedef && node.properties.isListIndex
+					? getListLikeChild(indexedByTypedef)
+					: indexedByTypedef
 				if (typeDef) {
-					nbt.checker.typeDefinition(typeDef)(tag, ctx)
+					nbt.checker.typeDefinition(typeDef, node.properties)(tag, ctx)
 				}
 			}
 			return
@@ -248,7 +248,9 @@ function nbtChecker(
 	}
 }
 
-function getListLikeChild(typeDef: mcdoc.McdocType): mcdoc.McdocType | undefined {
+function getListLikeChild(
+	typeDef: mcdoc.runtime.checker.SimplifiedMcdocType,
+): mcdoc.McdocType | undefined {
 	switch (typeDef.kind) {
 		case 'list':
 			return typeDef.item
