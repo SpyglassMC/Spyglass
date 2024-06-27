@@ -39,7 +39,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return undefined
 	}
 
-	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
+	async function findPackMcmeta(): Promise<PackMcmeta | undefined> {
 		const searched = new Set<string>()
 		for (let depth = 0; depth <= 2; depth += 1) {
 			const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
@@ -71,7 +71,7 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, getPackMcmeta)
+	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, findPackMcmeta)
 	const release = version.release
 
 	meta.registerDependencyProvider(
