@@ -1099,6 +1099,25 @@ exports['mcdoc runtime checker typeDefinition “struct { foo: string, bar: [dou
   }
 ]
 
+exports['mcdoc runtime checker typeDefinition “struct { foo?: () }” with value {"foo":"something"} 1'] = [
+  {
+    "kind": "type_mismatch",
+    "node": {
+      "originalNode": "something",
+      "inferredType": {
+        "kind": "literal",
+        "value": {
+          "kind": "string",
+          "value": "something"
+        }
+      }
+    },
+    "expected": []
+  }
+]
+
+exports['mcdoc runtime checker typeDefinition “struct { foo?: () }” with value {} 1'] = []
+
 exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"fallback"} 1'] = []
 
 exports['mcdoc runtime checker typeDefinition “struct { id: string, ...struct { test: struct { config: double }, other: struct { baz: boolean } }[[id]] }” with value {"id":"other","baz":"world"} 1'] = [

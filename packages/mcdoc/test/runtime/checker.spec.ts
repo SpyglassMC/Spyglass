@@ -191,6 +191,21 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other', baz: true },
 		],
 	}, {
+		name: 'struct { foo?: () }',
+		type: {
+			kind: 'struct',
+			fields: [{
+				kind: 'pair',
+				key: 'foo',
+				optional: true,
+				type: { kind: 'union', members: [] },
+			}],
+		},
+		values: [
+			{},
+			{ foo: 'something' },
+		],
+	}, {
 		name: 'double @ 3..6.2',
 		type: { kind: 'double', valueRange: { kind: 0b00, min: 3, max: 6.2 } },
 		values: ['hello', 1, 3, 4, 6.2, 6.3],
