@@ -1094,7 +1094,7 @@ function resolveIndices<T>(
 		const missing = currentValues.find(v => !v.data)
 		if (missing) {
 			// fallback case
-			return { typeDef: { kind: 'any' }, dynamicData: false }
+			return { typeDef: { kind: 'any' }, dynamicData }
 		} else {
 			for (const entry of currentValues) {
 				pushValue(entry.value, entry.data!)
