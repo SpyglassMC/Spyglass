@@ -177,10 +177,16 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		}
 	}
 
+	function addBuiltinSymbols(symbols: core.SymbolUtil) {
+		symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+			.enter({ usage: { type: 'declaration' } })
+	}
+
 	return (symbols) => {
 		addRegistriesSymbols(summary.registries, symbols)
 		addStatesSymbols('block', summary.blocks, symbols)
 		addStatesSymbols('fluid', summary.fluids, symbols)
+		addBuiltinSymbols(symbols)
 	}
 }
 
