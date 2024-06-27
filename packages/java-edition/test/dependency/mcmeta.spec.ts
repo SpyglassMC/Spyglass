@@ -52,10 +52,11 @@ describe('mcmeta', () => {
 		]
 		for (const { version, packMcmeta } of suites) {
 			it(`Should resolve "${version}"`, async () => {
-				const actual = resolveConfiguredVersion(version, {
-					packMcmeta,
-					versions: Fixtures.Versions,
-				})
+				const actual = await resolveConfiguredVersion(
+					version,
+					Fixtures.Versions,
+					async () => packMcmeta,
+				)
 				snapshot(actual)
 			})
 		}

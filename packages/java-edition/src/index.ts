@@ -25,7 +25,7 @@ export * as mcf from './mcfunction/index.js'
 export const initialize: core.ProjectInitializer = async (ctx) => {
 	const { config, downloader, externals, logger, meta, projectRoot } = ctx
 
-	async function getPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
+	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
 			PackMcmeta.assert(data)
@@ -39,11 +39,11 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return undefined
 	}
 
-	async function findAndGetPackMcmeta(): Promise<PackMcmeta | undefined> {
+	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
 		for (let depth = 0; depth <= 2; depth += 1) {
 			const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
 			for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
-				const data = await getPackMcmeta(uri)
+				const data = await readPackMcmeta(uri)
 				if (data) {
 					logger.info(
 						`[je.initialize] Found a valid pack.mcmeta “${uri}” with pack_format “${data.pack.pack_format}”`,
@@ -66,15 +66,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const packMcmeta = await findAndGetPackMcmeta()
-	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, {
-		packMcmeta,
-		versions,
-	})
+	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, getPackMcmeta)
+	const release = version.release
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
-		() => getVanillaDatapack(downloader, version, isLatest),
+		() => getVanillaDatapack(downloader, version.id, version.isLatest),
 	)
 
 	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
@@ -83,8 +80,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		ctx.externals,
 		downloader,
 		logger,
-		version,
-		isLatest,
+		version.id,
+		version.isLatest,
 		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
