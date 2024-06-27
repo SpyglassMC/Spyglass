@@ -67,7 +67,6 @@
   "description": "%spyglassmc.description%",
   "icon": "icon.png",
   "categories": [
-    "Formatters",
     "Linters",
     "Programming Languages"
   ],
