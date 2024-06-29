@@ -44,6 +44,8 @@
   "integer": "an integer",
   "integer.between": "an integer between %0% and %1%",
   "invalid-key-combination": "Invalid combination of keys %0%",
+  "java-edition.binder.wrong-folder": "Files in the %0% folder are not recognized in loaded version %1%, did you meant to use the %2% folder?",
+  "java-edition.binder.wrong-version": "Files in the %0% folder are not recognized in loaded version %1%",
   "json.doc.advancement.display": "Advancement display settings. If present, the advancement will be visible in the advancement tabs.",
   "json.checker.array.length-between": "%0% with length between %1% and %2%",
   "json.checker.object.field.union-empty-members": "Disallowed property",

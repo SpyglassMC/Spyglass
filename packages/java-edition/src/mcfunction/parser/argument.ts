@@ -11,11 +11,11 @@ import {
 	GamemodeArgumentValues,
 	getItemSlotArgumentValues,
 	getItemSlotsArgumentValues,
+	getScoreboardSlotArgumentValues,
 	HeightmapValues,
 	MirrorValues,
 	OperationArgumentValues,
 	RotationValues,
-	ScoreboardSlotArgumentValues,
 	SwizzleArgumentValues,
 } from '../common/index.js'
 import type {
@@ -238,11 +238,13 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:rotation':
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:score_holder':
-			return wrap(scoreHolder(treeNode.properties.amount))
+			return wrap(scoreHolder(treeNode.properties.usageType, treeNode.properties.amount))
 		case 'minecraft:scoreboard_slot':
 			// `BELOWNAME` and `sidebar.team.r--.+++e----__d` are also legal slots.
 			// But I do not want to spend time supporting them.
-			return wrap(core.literal(...ScoreboardSlotArgumentValues))
+			return wrap((src, ctx) => {
+				return core.literal(...getScoreboardSlotArgumentValues(ctx))(src, ctx)
+			})
 		case 'minecraft:style':
 			return wrap(jsonParser('::java::server::util::text::TextStyle'))
 		case 'minecraft:swizzle':
@@ -268,7 +270,11 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
 		case 'spyglassmc:tag':
-			return wrap(tag())
+			return wrap(tag(
+				core.SymbolUsageType.is(treeNode.properties?.usageType)
+					? treeNode.properties?.usageType
+					: undefined,
+			))
 		default:
 			// Unknown parser.
 			return undefined
@@ -375,12 +381,12 @@ export function entity(
 	return core.map<core.StringNode | EntitySelectorNode | UuidNode, EntityNode>(
 		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
 			parser: core.any([
+				core.failOnError(uuid),
 				validateLength<core.StringNode>(
 					core.brigadierString,
 					PlayerNameMaxLength,
 					'mcfunction.parser.entity-selector.player-name.too-long',
 				),
-				uuid,
 			]),
 		}]),
 		(res, _src, ctx) => {
@@ -499,8 +505,8 @@ const message: core.InfallibleParser<MessageNode> = (src, ctx) => {
 	}
 
 	while (src.canReadInLine()) {
-		if (src.peek() === '@') {
-			ans.children.push(selector()(src, ctx) as EntitySelectorNode)
+		if (EntitySelectorAtVariable.is(src.peek(2))) {
+			ans.children.push(selector(true)(src, ctx) as EntitySelectorNode)
 		} else {
 			ans.children.push(
 				core.stopBefore(greedyString, ...EntitySelectorAtVariable.filterAvailable(ctx))(
@@ -697,10 +703,16 @@ function resourceOrInline(category: core.FileCategory) {
 	}])
 }
 
-function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
+function selectorPrefix(ignoreInvalidPrefix: boolean): core.InfallibleParser<core.LiteralNode> {
 	return (src: core.Source, ctx: core.ParserContext): core.LiteralNode => {
 		const start = src.cursor
-		const value = src.readUntil(' ', '\r', '\n', '[')
+		let value: string
+		if (ignoreInvalidPrefix) {
+			value = src.peek(2)
+			src.skip(2)
+		} else {
+			value = src.readUntil(' ', '\r', '\n', '[')
+		}
 		const allowedVariables = EntitySelectorAtVariable.filterAvailable(ctx)
 
 		const ans: core.LiteralNode = {
@@ -710,7 +722,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 			value,
 		}
 
-		if (!allowedVariables.includes(value as EntitySelectorAtVariable)) {
+		if (!allowedVariables.includes(value as EntitySelectorAtVariable) && !ignoreInvalidPrefix) {
 			ctx.err.report(localize('mcfunction.parser.entity-selector.invalid', ans.value), ans)
 		}
 
@@ -720,7 +732,7 @@ function selectorPrefix(): core.InfallibleParser<core.LiteralNode> {
 /**
  * Failure when not beginning with `@[parse]`
  */
-export function selector(): core.Parser<EntitySelectorNode> {
+export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelectorNode> {
 	let chunkLimited: boolean | undefined
 	let currentEntity: boolean | undefined
 	let dimensionLimited: boolean | undefined
@@ -732,7 +744,7 @@ export function selector(): core.Parser<EntitySelectorNode> {
 		core.SequenceUtil<core.LiteralNode | EntitySelectorArgumentsNode>,
 		EntitySelectorNode
 	>(
-		core.sequence([core.failOnEmpty(selectorPrefix()), {
+		core.sequence([core.failOnEmpty(selectorPrefix(ignoreInvalidPrefix)), {
 			get: (res) => {
 				const variable = core.LiteralNode.is(res.children?.[0])
 					? res.children[0].value
@@ -1083,7 +1095,9 @@ export function selector(): core.Parser<EntitySelectorNode> {
 														},
 													)
 												case 'tag':
-													return invertable(tag(['[', '=', ',', ']', '{', '}']))
+													return invertable(
+														tag('reference', ['[', '=', ',', ']', '{', '}']),
+													)
 												case 'team':
 													return core.map<
 														EntitySelectorInvertableArgumentValueNode<core.SymbolNode>
@@ -1290,16 +1304,21 @@ ${node.predicates.map((p) => `- \`${p}\``).join('\n')}`
 	return ans
 }
 
-export const scoreHolderFakeName: core.Parser<core.SymbolNode> = validateLength<core.SymbolNode>(
-	symbol('score_holder'),
-	FakeNameMaxLength,
-	'mcfunction.parser.score_holder.fake-name.too-long',
-)
+export function scoreHolderFakeName(usageType: core.SymbolUsageType): core.Parser<core.SymbolNode> {
+	return validateLength<core.SymbolNode>(
+		symbol({ category: 'score_holder', usageType }),
+		FakeNameMaxLength,
+		'mcfunction.parser.score_holder.fake-name.too-long',
+	)
+}
 
-export function scoreHolder(amount: 'multiple' | 'single'): core.Parser<ScoreHolderNode> {
+export function scoreHolder(
+	usageType: core.SymbolUsageType,
+	amount: 'multiple' | 'single',
+): core.Parser<ScoreHolderNode> {
 	return core.map<core.SymbolNode | EntitySelectorNode, ScoreHolderNode>(
 		core.select([{ predicate: (src) => src.peek() === '@', parser: selector() }, {
-			parser: scoreHolderFakeName,
+			parser: scoreHolderFakeName(usageType),
 		}]),
 		(res, _src, ctx) => {
 			const ans: ScoreHolderNode = {
@@ -1376,8 +1395,11 @@ const objectiveCriteria: core.InfallibleParser<ObjectiveCriteriaNode> = core.map
 	},
 )
 
-export function tag(terminators: string[] = []): core.InfallibleParser<core.SymbolNode> {
-	return unquotableSymbol('tag', terminators)
+export function tag(
+	usageType?: core.SymbolUsageType,
+	terminators: string[] = [],
+): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol({ category: 'tag', usageType }, terminators)
 }
 
 export function team(

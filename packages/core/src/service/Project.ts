@@ -1,3 +1,5 @@
+import type { Ignore } from 'ignore'
+import ignore from 'ignore'
 import type { TextDocumentContentChangeEvent } from 'vscode-languageserver-textdocument'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 import type { ExternalEventEmitter, Externals, FsWatcher, IntervalId } from '../common/index.js'
@@ -156,6 +158,7 @@ export type ProjectData = Pick<
  */
 export class Project implements ExternalEventEmitter {
 	private static readonly RootSuffix = '/pack.mcmeta'
+	private static readonly GitIgnore = '.gitignore'
 
 	/** Prevent circular binding. */
 	readonly #bindingInProgressUris = new Set<string>()
@@ -180,6 +183,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	config!: Config
+	ignore: Ignore = ignore()
 	readonly downloader: Downloader
 	readonly externals: Externals
 	readonly fs: FileService
@@ -287,9 +291,11 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		return [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
+		const supportedFiles = [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
 			extensions.includes(fileUtil.extname(file) ?? '')
 		)
+		const filteredFiles = this.ignore.filter(supportedFiles)
+		return filteredFiles
 	}
 
 	constructor(
@@ -383,6 +389,17 @@ export class Project implements ExternalEventEmitter {
 	private setInitPromise(): void {
 		const loadConfig = async () => {
 			this.config = await this.#configService.load()
+			this.ignore = ignore()
+			for (const pattern of this.config.env.exclude) {
+				if (pattern === '@gitignore') {
+					const gitignore = await this.readGitignore()
+					if (gitignore) {
+						this.ignore.add(gitignore)
+					}
+				} else {
+					this.ignore.add(pattern)
+				}
+			}
 		}
 		const callIntializers = async () => {
 			const initCtx: ProjectInitializerContext = {
@@ -424,6 +441,19 @@ export class Project implements ExternalEventEmitter {
 			__profiler.task('Initialize').finalize()
 		}
 		this.#initPromise = init()
+	}
+
+	private async readGitignore() {
+		try {
+			const uri = this.projectRoot + Project.GitIgnore
+			const contents = await this.externals.fs.readFile(uri)
+			return bufferToString(contents)
+		} catch (e) {
+			if (!this.externals.error.isKind(e, 'ENOENT')) {
+				this.logger.error(`[Project] [readGitignore]`, e)
+			}
+		}
+		return undefined
 	}
 
 	private setReadyPromise(): void {

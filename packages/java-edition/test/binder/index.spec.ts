@@ -1,8 +1,8 @@
-import { ContextBase, UriBinderContext } from '@spyglassmc/core'
+import { UriBinderContext, VanillaConfig } from '@spyglassmc/core'
 import { mockProjectData } from '@spyglassmc/core/test-out/utils.js'
 import { describe, it } from 'mocha'
 import snapshot from 'snap-shot-it'
-import { dissectUri } from '../../../lib/binder/index.js'
+import { dissectUri, registerCustomResources } from '../../lib/binder/index.js'
 
 describe('dissectUri()', () => {
 	const suites: { uri: string; version?: `1.${number}` }[] = [
@@ -23,6 +23,37 @@ describe('dissectUri()', () => {
 			const ctx = UriBinderContext.create(
 				mockProjectData({ roots: ['file:///'], ctx: { loadedVersion: version ?? '1.15' } }),
 			)
+			snapshot(dissectUri(uri, ctx) ?? 'undefined')
+		})
+	}
+})
+
+describe('dissectUri() with customResources', () => {
+	const suites: { uri: string; version?: `1.${number}` }[] = [
+		{ uri: 'file:///data/minecraft/loot_tables/foo.json' },
+		{ uri: 'file:///data/minecraft/advancement/foo.json', version: '1.21' },
+		{ uri: 'file:///data/qux/biome_modifiers/snowy.json' },
+		{ uri: 'file:///data/qux/tags/custom_registry/nested/bar.json' },
+	]
+	for (const { uri, version } of suites) {
+		it(`Dissect Uri "${uri}"${version ? ' in ' + version : ''}`, () => {
+			const ctx = UriBinderContext.create(
+				mockProjectData({
+					config: {
+						...VanillaConfig,
+						env: {
+							...VanillaConfig.env,
+							customResources: {
+								'biome_modifiers': { category: 'fabric:biome_modifier' },
+								'tags/custom_registry': { category: 'tag/custom_registry' },
+							},
+						},
+					},
+					roots: ['file:///'],
+					ctx: { loadedVersion: version ?? '1.15' },
+				}),
+			)
+			registerCustomResources(ctx.config)
 			snapshot(dissectUri(uri, ctx) ?? 'undefined')
 		})
 	}

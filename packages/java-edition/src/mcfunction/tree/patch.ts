@@ -1,3 +1,4 @@
+import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
@@ -122,20 +123,29 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 				children: {
 					get: getDataPatch('target', 'path'),
 					merge: getDataPatch('target', 'nbt', {
+						isMerge: true,
 						vaultAccessType: SymbolAccessType.Write,
 					}),
 					modify: getDataPatch('target', 'targetPath', {
 						nbtAccessType: SymbolAccessType.Write,
 						vaultAccessType: SymbolAccessType.Write,
 						children: (type) => ({
-							append: getDataModifySource(type),
+							append: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							insert: {
 								children: {
-									index: getDataModifySource(type),
+									index: getDataModifySource(type, {
+										isListIndex: true,
+									}),
 								},
 							},
-							merge: getDataModifySource(type),
-							prepend: getDataModifySource(type),
+							merge: getDataModifySource(type, {
+								isMerge: true,
+							}),
+							prepend: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							set: getDataModifySource(type),
 						}),
 					}),
@@ -634,6 +644,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									name: {
 										parser: 'spyglassmc:tag',
+										properties: {
+											usageType: 'definition',
+										},
 									},
 								},
 							},
@@ -816,6 +829,7 @@ function getDataPatch(
 	{
 		children,
 		isPredicate = false,
+		isMerge = false,
 		nbtAccessType = SymbolAccessType.Read,
 		vaultAccessType = SymbolAccessType.Read,
 	}: {
@@ -825,6 +839,7 @@ function getDataPatch(
 			) => PartialTreeNode['children'])
 			| undefined
 		isPredicate?: boolean | undefined
+		isMerge?: boolean | undefined
 		nbtAccessType?: SymbolAccessType | undefined
 		vaultAccessType?: SymbolAccessType | undefined
 	} = {},
@@ -841,6 +856,7 @@ function getDataPatch(
 									dispatchedBy: `${vaultKey}Pos`,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('block') } : {},
 							},
@@ -858,6 +874,7 @@ function getDataPatch(
 									dispatchedBy: vaultKey,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('entity') } : {},
 							},
@@ -871,7 +888,8 @@ function getDataPatch(
 						properties: {
 							category: 'storage',
 							accessType: vaultAccessType,
-						},
+							usageType: 'definition',
+						} satisfies ResourceLocationOptions,
 						children: {
 							[nbtKey]: {
 								properties: {
@@ -879,6 +897,7 @@ function getDataPatch(
 									dispatchedBy: vaultKey,
 									accessType: nbtAccessType,
 									isPredicate,
+									isMerge,
 								} satisfies NbtParserProperties,
 								...children ? { children: children('storage') } : {},
 							},
@@ -892,6 +911,13 @@ function getDataPatch(
 
 const getDataModifySource = (
 	type: 'block' | 'entity' | 'storage',
+	{
+		isMerge = false,
+		isListIndex = false,
+	}: {
+		isMerge?: boolean | undefined
+		isListIndex?: boolean | undefined
+	} = {},
 ): PartialTreeNode =>
 	Object.freeze({
 		children: {
@@ -904,6 +930,8 @@ const getDataModifySource = (
 							dispatcher: `minecraft:${type}`,
 							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
 							indexedBy: 'targetPath',
+							isMerge,
+							isListIndex,
 						} satisfies NbtParserProperties,
 					},
 				},
@@ -974,6 +1002,9 @@ const LootSource: PartialTreeNode = Object.freeze({
 const ObjectiveWriteTargets: PartialTreeNode = Object.freeze({
 	children: {
 		targets: {
+			properties: {
+				usageType: 'definition',
+			},
 			children: {
 				objective: {
 					properties: {

@@ -175,20 +175,26 @@ export type FileCategory = (typeof FileCategories)[number]
 
 export const MiscCategories = Object.freeze(
 	[
-		'attribute_modifier_uuid',
+		'attribute_modifier',
 		'bossbar',
 		'jigsaw_block_name',
-		'objective',
 		'random_sequence',
-		'score_holder',
 		'storage',
-		'tag',
-		'team',
 	] as const,
 )
 export type MiscCategory = (typeof MiscCategories)[number]
 
-export const DatapackCategories = Object.freeze([...FileCategories, ...MiscCategories] as const)
+export const DatapackCategories = Object.freeze(
+	[
+		'attribute_modifier_uuid',
+		'objective',
+		'score_holder',
+		'tag',
+		'team',
+		...FileCategories,
+		...MiscCategories,
+	] as const,
+)
 export type DatapackCategory = (typeof DatapackCategories)[number]
 // #endregion
 
@@ -199,11 +205,8 @@ export type AllCategory = (typeof AllCategories)[number]
 
 export const ResourceLocationCategories = Object.freeze(
 	[
-		'bossbar',
-		'jigsaw_block_name',
-		'random_sequence',
-		'storage',
 		'mcdoc/dispatcher',
+		...MiscCategories,
 		...FileCategories,
 		...RegistryCategories,
 	] as const,

@@ -180,6 +180,10 @@ const Suites: Partial<
 			],
 		},
 	],
+	'minecraft:scoreboard_slot': [
+		{ content: ['below_name', 'belowName', 'sidebar.team.aqua'] },
+		{ content: ['below_name', 'belowName', 'sidebar.team.red'], version: '1.20.2' },
+	],
 	'minecraft:style': [{ content: ['{"bold": true}', '{ "color": "red", "italic": true }'] }],
 	'minecraft:swizzle': [{ content: ['xyz', 'x'] }],
 	'minecraft:team': [{ content: ['foo', '123'] }],

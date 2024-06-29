@@ -28,8 +28,8 @@ import { McdocType, NumericRange } from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
 import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
 import { McdocCheckerContext } from './context.js'
-import type { McdocRuntimeError } from './error.js'
-import { condenseErrorsAndFilterSiblings } from './error.js'
+import type { ErrorCondensingDefinition, McdocRuntimeError } from './error.js'
+import { condenseAndPropagate } from './error.js'
 
 export * from './context.js'
 export * from './error.js'
@@ -133,15 +133,14 @@ export function isAssignable(
 
 	const node: CheckerTreeNode<McdocType> = {
 		parent: undefined,
-		key: undefined,
+		runtimeKey: undefined,
 		possibleValues: [],
 	}
 	node.possibleValues = getPossibleTypes(typeDef).map(v => ({
 		entryNode: node,
 		node: { originalNode: v, inferredType: v },
 		children: [],
-		validDefinitions: [],
-		condensedErrors: [],
+		definitionsByParent: [],
 	}))
 
 	// TODO add bail option to allow checking logic to bail on first error
@@ -157,16 +156,8 @@ export function isAssignable(
 export interface CheckerTreeNode<T> {
 	parent: CheckerTreeRuntimeNode<T> | undefined
 
-	key: {
-		runtimeValue: RuntimeNode<T>
-		typeDef: SimplifiedMcdocTypeNoUnion | undefined
-	} | undefined
+	runtimeKey: RuntimeNode<T> | undefined
 	possibleValues: CheckerTreeRuntimeNode<T>[]
-}
-
-export interface CheckerTreeError<T> {
-	error: McdocRuntimeError<T>
-	definitionNode: CheckerTreeDefinitionNode<T> | undefined
 }
 
 export interface CheckerTreeRuntimeNode<T> {
@@ -174,15 +165,24 @@ export interface CheckerTreeRuntimeNode<T> {
 	children: CheckerTreeNode<T>[]
 	node: RuntimeNode<T>
 
-	condensedErrors: CheckerTreeError<T>[][]
+	definitionsByParent: CheckerTreeDefinitionGroupNode<T>[]
+}
+
+export interface CheckerTreeDefinitionGroupNode<T> {
+	parents: CheckerTreeDefinitionNode<T>[]
+	runtimeNode: CheckerTreeRuntimeNode<T>
+	condensedErrors: McdocRuntimeError<T>[][]
+
+	desc?: string
+	keyDefinition: SimplifiedMcdocTypeNoUnion | undefined
+	originalTypeDef: McdocType
 	validDefinitions: CheckerTreeDefinitionNode<T>[]
 }
 
 export interface CheckerTreeDefinitionNode<T> {
-	parent: CheckerTreeDefinitionNode<T> | undefined
-	runtimeNode: CheckerTreeRuntimeNode<T>
+	groupNode: CheckerTreeDefinitionGroupNode<T>
 	typeDef: SimplifiedMcdocTypeNoUnion
-	desc?: string
+	children: CheckerTreeDefinitionGroupNode<T>[]
 }
 
 export function typeDefinition<T>(
@@ -192,32 +192,38 @@ export function typeDefinition<T>(
 ) {
 	const rootNode: CheckerTreeNode<T> = {
 		parent: undefined,
-		key: undefined,
+		runtimeKey: undefined,
 		possibleValues: [],
 	}
 	rootNode.possibleValues = runtimeValues.map(n => ({
 		node: n,
 		entryNode: rootNode,
-		validDefinitions: [],
+		definitionsByParent: [],
 		children: [],
-		condensedErrors: [],
 	}))
 	for (const value of rootNode.possibleValues) {
 		const simplifiedRoot = simplify(typeDef, { ctx, node: value })
 		const validRootDefinitions = simplifiedRoot.kind === 'union'
 			? simplifiedRoot.members
 			: [simplifiedRoot]
-		value.validDefinitions = validRootDefinitions.map(d => ({
-			parent: undefined,
+		value.definitionsByParent = [{
+			parents: [],
+			keyDefinition: undefined,
 			runtimeNode: value,
+			originalTypeDef: typeDef,
+			condensedErrors: [],
+			validDefinitions: [],
+		}]
+		value.definitionsByParent[0].validDefinitions = validRootDefinitions.map(d => ({
+			groupNode: value.definitionsByParent[0],
 			typeDef: d,
+			children: [],
 		}))
 	}
 	const nodeQueue: CheckerTreeNode<T>[] = [rootNode]
 
 	while (nodeQueue.length !== 0) {
-		const node = nodeQueue.splice(0, 1)[0]
-		const encounterdErrors: CheckerTreeError<T>[] = []
+		const node = nodeQueue.shift()!
 
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(value.node.inferredType, { ctx, node: value })
@@ -225,14 +231,14 @@ export function typeDefinition<T>(
 			const childNodes = children.map(c => {
 				const ans: CheckerTreeNode<T> = {
 					parent: value,
-					key: !Array.isArray(c) ? { runtimeValue: c.key, typeDef: undefined } : undefined,
+					runtimeKey: !Array.isArray(c) ? c.key : undefined,
 					possibleValues: [],
 				}
 
 				ans.possibleValues = (Array.isArray(c) ? c : c.possibleValues).map(v => ({
 					entryNode: ans,
 					node: v,
-					validDefinitions: [],
+					definitionsByParent: [],
 					condensedErrors: [],
 					children: [],
 				}))
@@ -240,139 +246,85 @@ export function typeDefinition<T>(
 				return ans
 			})
 
-			for (const def of value.validDefinitions) {
-				const { errors, childDefinitions } = checkShallowly(
-					value.node,
-					inferredSimplified,
-					children,
-					def.typeDef,
-					ctx,
-				)
-				encounterdErrors.push(...errors.map(e => ({ error: e, definitionNode: def })))
-				for (let i = 0; i < childDefinitions.length; i++) {
-					const childDef = childDefinitions[i]
-					if (!childDef) {
-						continue
-					}
-					const child = childNodes[i]
-					if (child.key) {
-						child.key.typeDef = childDef.keyType
-					}
-					for (const childValue of child.possibleValues) {
-						// TODO We need some sort of map / local cache which keeps track of the original
-						// non-simplified types and see if they have been compared yet. This is needed
-						// for structures that are cyclic, to essentially bail out once we are comparing
-						// the same types again and just collect the errors of the lower depth.
-						// This will currently lead to a stack overflow error when e.g. comparing two
-						// text component definitions
-						const simplified = simplify(childDef.type, { ctx, node: childValue })
-						// TODO this does not keep track correctly of empty unions. The child node should receive
-						// some kind of empty union valid definition with the parent set to the correct definition
-						// so that we can potentially error some valid parent defs if only some of them produce an
-						// empty union for the child.
-						const validDefs =
-							(simplified.kind === 'union' ? simplified.members : [simplified]).map(d => ({
-								parent: def,
+			for (const definitionGroup of value.definitionsByParent) {
+				const definitionErrors: ErrorCondensingDefinition<T>[] = []
+
+				if (definitionGroup.validDefinitions.length === 0) {
+					// nothing can be assigned to an empty union
+					definitionGroup.condensedErrors = [[{
+						kind: 'type_mismatch',
+						node: value.node,
+						expected: [],
+					}]]
+				}
+
+				for (const def of definitionGroup.validDefinitions) {
+					const { errors, childDefinitions } = checkShallowly(
+						value.node,
+						inferredSimplified,
+						children,
+						def.typeDef,
+						ctx,
+					)
+					definitionErrors.push({ definition: def, errors })
+					for (let i = 0; i < childDefinitions.length; i++) {
+						const childDef = childDefinitions[i]
+						if (!childDef) {
+							continue
+						}
+						const child = childNodes[i]
+						const existingDef = child.possibleValues.length > 0
+							? child.possibleValues[0].definitionsByParent
+								.find(
+									d =>
+										(d.keyDefinition === undefined || childDef.keyType === undefined
+											? d.keyDefinition === undefined
+											: McdocType.equals(d.keyDefinition, childDef.keyType))
+										&& McdocType.equals(d.originalTypeDef, childDef.type),
+								)
+							: undefined
+
+						for (const childValue of child.possibleValues) {
+							if (existingDef) {
+								existingDef.parents.push(def)
+								def.children.push(existingDef)
+								continue
+							}
+							// TODO We need some sort of map / local cache which keeps track of the original
+							// non-simplified types and see if they have been compared yet. This is needed
+							// for structures that are cyclic, to essentially bail out once we are comparing
+							// the same types again and just collect the errors of the lower depth.
+							// This will currently lead to a stack overflow error when e.g. comparing two
+							// text component definitions
+							const simplified = simplify(childDef.type, { ctx, node: childValue })
+							const childDefinitionGroup: CheckerTreeDefinitionGroupNode<T> = {
+								parents: [def],
 								runtimeNode: childValue,
-								typeDef: d,
+								keyDefinition: childDef.keyType,
+								originalTypeDef: childDef.type,
+								validDefinitions: [],
+								condensedErrors: [],
 								desc: childDef.desc,
-							}))
-						childValue.validDefinitions.push(...validDefs)
+							}
+							childDefinitionGroup.validDefinitions =
+								(simplified.kind === 'union' ? simplified.members : [simplified])
+									.map(
+										d => ({
+											groupNode: childDefinitionGroup,
+											typeDef: d,
+											children: [],
+										}),
+									)
+							childValue.definitionsByParent.push(childDefinitionGroup)
+							def.children.push(childDefinitionGroup)
+						}
 					}
 				}
+
+				condenseAndPropagate(definitionGroup, definitionErrors)
 			}
 			value.children = childNodes
 			nodeQueue.push(...childNodes)
-
-			let curNode: CheckerTreeRuntimeNode<T> | undefined = value
-			let depth = 0
-			let childErrors = encounterdErrors
-			while (curNode) {
-				const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
-				const errors: CheckerTreeError<T>[] = []
-
-				// It is only meaningful to reduce valid definitions where the union actually happened
-				const definitionGroups = curNode.validDefinitions.reduce(
-					(groups, item) => {
-						const group = groups.find(g => g.parent === item.parent)
-						if (group) {
-							group.children.push(item)
-						} else {
-							groups.push({ parent: item.parent, children: [item] })
-						}
-						return groups
-					},
-					[] as {
-						parent: CheckerTreeDefinitionNode<T> | undefined
-						children: CheckerTreeDefinitionNode<T>[]
-					}[],
-				)
-
-				for (const definitionGroup of definitionGroups) {
-					const { definitions, condensedErrors } = condenseErrorsAndFilterSiblings(
-						definitionGroup.children.map(c => ({
-							definition: c,
-							errors: childErrors.filter(e => e.definitionNode === c).map(e => e.error),
-						})),
-					)
-
-					definitionGroup.children = definitions
-					stillValidDefintions.push(...definitions)
-					errors.push(
-						...condensedErrors.map(e => ({
-							error: e,
-							definitionNode: definitionGroup.parent,
-						})),
-					)
-				}
-				curNode.condensedErrors.push(errors)
-
-				if (curNode.validDefinitions.length !== stillValidDefintions.length) {
-					curNode.validDefinitions = stillValidDefintions
-
-					filterChildDefinitions(curNode.validDefinitions, curNode.children)
-
-					function filterChildDefinitions(
-						parentDefs: CheckerTreeDefinitionNode<T>[],
-						children: CheckerTreeNode<T>[],
-					) {
-						for (const child of children) {
-							for (const childValue of child.possibleValues) {
-								childValue.validDefinitions = childValue.validDefinitions.filter(d =>
-									parentDefs.includes(d.parent!)
-								)
-								filterChildDefinitions(childValue.validDefinitions, childValue.children)
-							}
-						}
-					}
-				}
-
-				const oldNode: CheckerTreeRuntimeNode<T> = curNode
-				curNode = oldNode.entryNode.parent
-
-				const lastChild = curNode?.children.flatMap(v => v.possibleValues).findLast(v => {
-					if (v.condensedErrors.length > depth) {
-						return true
-					}
-
-					let children = [v]
-					for (let i = 0; i < depth; i++) {
-						children = children.flatMap(v => v.children).flatMap(v => v.possibleValues)
-					}
-					return children.length > 0
-				})
-
-				if (lastChild !== oldNode) {
-					// Wait for all siblings to be evaluated first
-					break
-				}
-
-				childErrors = curNode!.children.flatMap(c => c.possibleValues).flatMap(c =>
-					c.condensedErrors.length > depth ? c.condensedErrors[depth] : []
-				)
-
-				depth++
-			}
 		}
 	}
 
@@ -382,34 +334,51 @@ export function typeDefinition<T>(
 		}
 	}
 
-	for (const error of rootNode.possibleValues.flatMap(v => v.condensedErrors).flat()) {
+	for (
+		const error of rootNode.possibleValues
+			.flatMap(v => v.definitionsByParent)
+			.flatMap(d => d.condensedErrors)
+			.flat()
+	) {
 		if (error) {
-			ctx.reportError(error.error)
+			ctx.reportError(error)
 		}
 	}
 }
 
 function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerContext<T>) {
-	if (node.validDefinitions.length === 1) {
-		const { typeDef, desc } = node.validDefinitions[0]
-		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, desc)
+	const definitions = node.definitionsByParent.flatMap(d => d.validDefinitions)
+	if (definitions.length === 1) {
+		const { typeDef, groupNode } = definitions[0]
+		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, groupNode.desc)
 		handleStringAttachers(node.node, typeDef, ctx)
-	} else if (node.validDefinitions.length > 1) {
+
+		if (node.entryNode.runtimeKey && groupNode.keyDefinition) {
+			ctx.attachTypeInfo?.(
+				node.entryNode.runtimeKey.originalNode,
+				groupNode.keyDefinition,
+				groupNode.desc,
+			)
+			handleStringAttachers(node.entryNode.runtimeKey, groupNode.keyDefinition, ctx)
+		}
+	} else if (definitions.length > 1) {
 		ctx.attachTypeInfo?.(node.node.originalNode, {
 			kind: 'union',
-			members: node.validDefinitions.map(d => d.typeDef),
+			members: definitions.map(d => d.typeDef),
 		})
-		// when there are multiple valid definitions, we don't run any string parsers,
-	}
-	for (const child of node.children) {
-		if (child.key && child.key.typeDef) {
-			ctx.attachTypeInfo?.(child.key.runtimeValue.originalNode, child.key.typeDef)
-			handleStringAttachers(child.key.runtimeValue, child.key.typeDef, ctx)
-		}
 
-		for (const node of child.possibleValues) {
-			attachTypeInfo(node, ctx)
+		if (node.entryNode.runtimeKey) {
+			ctx.attachTypeInfo?.(node.entryNode.runtimeKey.originalNode, {
+				kind: 'union',
+				members: node.definitionsByParent
+					.map(d => d.keyDefinition)
+					.filter((d): d is SimplifiedMcdocTypeNoUnion => d !== undefined),
+			})
 		}
+		// when there are multiple valid definitions, we don't run any string parsers.
+	}
+	for (const child of node.children.flatMap(c => c.possibleValues)) {
+		attachTypeInfo(child, ctx)
 	}
 }
 
@@ -756,13 +725,17 @@ interface SimplifyNode<T> {
 export interface SimplifyValueNode<T> {
 	entryNode: {
 		parent: SimplifyValueNode<T> | undefined
-		key: { runtimeValue: RuntimeNode<T> } | undefined
+		runtimeKey: RuntimeNode<T> | undefined
 	}
 	node: RuntimeNode<T>
 }
 export interface SimplifyContext<T> {
 	node: SimplifyValueNode<T>
 	ctx: McdocCheckerContext<T>
+	structFields?: {
+		literalFields: Map<string, StructTypePairField>
+		complexFields: SimplifiedStructTypePairField[]
+	}
 	isMember?: boolean
 	typeArgs?: SimplifiedMcdocType[]
 	typeMapping?: { [path: string]: SimplifiedMcdocType }
@@ -856,35 +829,64 @@ function simplifyDispatcher<T>(
 		context.ctx.logger.warn(`Tried to access unknown dispatcher ${typeDef.registry}`)
 		return { kind: 'union', members: [] }
 	}
-	const structFields: StructTypePairField[] = []
-	for (const key in dispatcher) {
-		const data = dispatcher[key].data
-		if (TypeDefSymbolData.is(data)) {
-			structFields.push({ kind: 'pair', key, type: data.typeDef })
-		}
-	}
-	return simplifyIndexed({
-		kind: 'indexed',
-		parallelIndices: typeDef.parallelIndices,
-		child: { kind: 'struct', fields: structFields },
-	}, context)
+	return resolveIndices<T>(typeDef.parallelIndices, dispatcher, context)
 }
 
 function simplifyIndexed<T>(
 	typeDef: IndexedType,
 	context: SimplifyContext<T>,
 ): SimplifiedMcdocType {
-	const child = simplify(typeDef.child, { ...context, typeArgs: [] })
+	const child = simplify(typeDef.child, {
+		...context,
+		typeArgs: [],
+		structFields: undefined,
+	})
 
 	if (child.kind !== 'struct') {
 		context.ctx.logger.warn(`Tried to index un-indexable type ${child.kind}`)
 		return { kind: 'union', members: [] }
 	}
+
+	const symbolMap: { [key: string]: { data?: unknown } } = {}
+	for (const field of child.fields) {
+		if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+			symbolMap[field.key.value.value] = {
+				data: {
+					typeDef: field.type,
+				} satisfies TypeDefSymbolData,
+			}
+		}
+	}
+
+	return resolveIndices(typeDef.parallelIndices, symbolMap, context)
+}
+
+function resolveIndices<T>(
+	parallelIndices: ParallelIndices,
+	symbolMap: { [key: string]: { data?: unknown } },
+	context: SimplifyContext<T>,
+): SimplifiedMcdocType {
 	let values: McdocType[] = []
 
-	for (const index of typeDef.parallelIndices) {
+	let unkownTypeDef: McdocType | undefined | false = false
+	function getUnknownTypeDef() {
+		if (unkownTypeDef === false) {
+			const data = symbolMap['%unknown']?.data
+			unkownTypeDef = TypeDefSymbolData.is(data) ? data.typeDef : undefined
+		}
+		return unkownTypeDef
+	}
+
+	for (const index of parallelIndices) {
 		let lookup: string[] = []
 		if (index.kind === 'static') {
+			if (index.value === '%fallback') {
+				values = Object.values(symbolMap)
+					.map(e => e.data)
+					.filter(TypeDefSymbolData.is)
+					.map(f => f.typeDef)
+				break
+			}
 			if (index.value.startsWith('minecraft:')) {
 				lookup.push(index.value.substring(10))
 			} else {
@@ -892,21 +894,21 @@ function simplifyIndexed<T>(
 			}
 		} else {
 			let possibilities: SimplifyNode<T>[] = context.isMember
-				? [{ value: context.node, key: context.node.entryNode.key?.runtimeValue }]
+				? [{ value: context.node, key: context.node.entryNode.runtimeKey }]
 				: [{
 					value: context.node.entryNode.parent,
-					key: context.node.entryNode.key?.runtimeValue,
+					key: context.node.entryNode.runtimeKey,
 				}]
 			for (const entry of index.accessor) {
 				if (typeof entry !== 'string' && entry.keyword === 'parent') {
 					possibilities = possibilities.map(n => ({
 						value: n.value?.entryNode.parent,
-						key: n.value?.entryNode.key?.runtimeValue,
+						key: n.value?.entryNode.runtimeKey,
 					}))
 				} else if (typeof entry !== 'string' && entry.keyword === 'key') {
 					possibilities = possibilities.map(p => ({
 						value: p.key
-							? { node: p.key, entryNode: { parent: p.value, key: { runtimeValue: p.key } } }
+							? { node: p.key, entryNode: { parent: p.value, runtimeKey: p.key } }
 							: undefined,
 						key: undefined,
 					}))
@@ -932,7 +934,7 @@ function simplifyIndexed<T>(
 									c.possibleValues.map(v => ({
 										value: {
 											node: v,
-											entryNode: { parent: node.value, key: { runtimeValue: c.key } },
+											entryNode: { parent: node.value, runtimeKey: c.key },
 										},
 										key: undefined,
 									}))
@@ -966,73 +968,101 @@ function simplifyIndexed<T>(
 			lookup = ['%none']
 		}
 
-		const currentValues = lookup.map(v =>
-			child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === v
-			)
-				?? child.fields.find(f =>
-					f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%unknown'
-				)
-		)
+		const currentValues = lookup.map(v => {
+			const data = symbolMap[v]?.data
+			return TypeDefSymbolData.is(data) ? data.typeDef : getUnknownTypeDef()
+		})
 		if (currentValues.includes(undefined)) {
-			const fallbackDispatch = child.fields.find(f =>
-				f.kind === 'pair' && f.key.kind === 'literal' && f.key.value.value === '%fallback'
-			)
-
-			if (fallbackDispatch) {
-				values.push(fallbackDispatch.type)
-			} else {
-				// fallback case if a dispatch to `%fallback` is unavailable
-				values = child.fields.filter(f => f.kind === 'pair').map(f => f.type)
-				break
-			}
+			// fallback case
+			return { kind: 'any' }
 		} else {
-			values.push(...currentValues.map(v => v!.type))
+			values.push(...currentValues.map(v => v!))
 		}
+	}
+
+	if (values.length === 1) {
+		// avoid overhead from union
+		return simplify(values[0], context)
 	}
 	return simplifyUnion({ kind: 'union', members: values }, context)
 }
 
 function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): SimplifiedMcdocType {
-	const members: SimplifiedMcdocTypeNoUnion[] = []
 	const filterCanonical = context.ctx.requireCanonical
 		&& typeDef.members.some(m => m.attributes?.some(a => a.name === 'canonical'))
-	for (const member of typeDef.members) {
-		if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
-			continue
-		}
-		const simplified = simplify(member, context)
-		let keep = true
-		handleAttributes(member.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) return
-			if (!handler.filterElement(config, context.ctx)) {
-				keep = false
-			}
-		})
-		if (!keep) continue
 
+	const validMembers = typeDef.members
+		.filter(member => {
+			if (filterCanonical && !member.attributes?.some(a => a.name === 'canonical')) {
+				return false
+			}
+			let keep = true
+			handleAttributes(member.attributes, context.ctx, (handler, config) => {
+				if (!keep || !handler.filterElement) {
+					return
+				}
+				if (!handler.filterElement(config, context.ctx)) {
+					keep = false
+				}
+			})
+			return keep
+		})
+
+	if (validMembers.length === 1) {
+		// Avoid needing to manually add struct fields to parent if we are in a spread operation
+		return simplify(validMembers[0], context)
+	}
+
+	const members: SimplifiedMcdocTypeNoUnion[] = []
+	for (const member of validMembers) {
+		const simplified = simplify(member, {
+			...context,
+			structFields: undefined,
+		})
 		if (simplified.kind === 'union') {
 			members.push(...simplified.members)
 		} else {
 			members.push(simplified)
 		}
+
+		if (context.structFields && members.length > 1) {
+			return { kind: 'union', members: [] }
+		}
 	}
+
 	if (members.length === 1) {
+		// This should basically never happen, only when a union member resolves to an empty union.
+		// Apply struct fields to parent if we are inside a spread operation.
+		if (members[0].kind === 'struct' && context.structFields) {
+			for (const field of members[0].fields) {
+				if (field.key.kind === 'literal' && field.key.value.kind === 'string') {
+					context.structFields.literalFields.set(field.key.value.value, field)
+				} else {
+					context.structFields.complexFields.push(field)
+				}
+			}
+		}
+
 		return members[0]
 	}
 	return { ...typeDef, kind: 'union', members }
 }
 
 function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): SimplifiedStructType {
-	const literalFields = new Map<string, StructTypePairField>()
-	let complexFields: SimplifiedStructTypePairField[] = []
+	const literalFields = context.structFields?.literalFields
+		?? new Map<string, StructTypePairField>()
+	let complexFields = context.structFields?.complexFields ?? []
 
-	function addField(key: string | SimplifiedMcdocType, field: StructTypePairField) {
+	function addField(
+		key: string | SimplifiedMcdocType,
+		field: StructTypePairField,
+	) {
 		handleAttributes(field.attributes, context.ctx, (handler, config) => {
 			if (handler.mapField) {
 				field = handler.mapField(config, field, context.ctx)
 			}
 		})
+
 		if (typeof key === 'string') {
 			literalFields.set(key, field)
 		} else if (key.kind === 'literal' && key.value.kind === 'string' && !key.attributes?.length) {
@@ -1081,31 +1111,27 @@ function simplifyStruct<T>(typeDef: StructType, context: SimplifyContext<T>): Si
 				: field
 			addField(structKey, mappedField)
 		} else {
-			// TODO: potential optimization: merge unions first before simplifying them,
-			// to avoid having to simplify shared nested spread types multiple times
-			const simplifiedSpreadType = simplify(field.type, {
+			const simplifiedSpread = simplify(field.type, {
 				...context,
 				isMember: true,
 				typeArgs: [],
+				structFields: { literalFields, complexFields },
 			})
-			if (simplifiedSpreadType.kind === 'struct') {
-				for (const field of simplifiedSpreadType.fields) {
-					addField(field.key, field)
-				}
-			} else if (simplifiedSpreadType.kind === 'union') {
-				for (const member of simplifiedSpreadType.members) {
-					if (member.kind === 'struct') {
-						for (const field of member.fields) {
-							// TODO: technically, if a field is required in all members of
-							// this union, it could be added as a required field
-							addField(field.key, { ...field, optional: true })
-						}
-					}
-				}
+			// Recursive calls above will already modify literal and complex fields passed by the
+			// context, so no need to handle them here.
+
+			// In case we are spreading sth that resolves to `any`, allow any other additional field.
+			if (simplifiedSpread.kind === 'any') {
+				addField({ kind: 'any' }, { kind: 'pair', key: { kind: 'any' }, type: { kind: 'any' } })
 			}
-			// Silently ignore spreading non-struct types
 		}
 	}
+	if (context.structFields) {
+		// In this case we are spreading a struct and the fields have been added to the parent map
+		// from context now.
+		return { kind: 'struct', fields: [] }
+	}
+
 	// Literal fields may still be assignable to complex fields,
 	// however this is currently not seen as an issue
 	return {
@@ -1148,7 +1174,9 @@ function simplifyEnum<T>(typeDef: EnumType, context: SimplifyContext<T>): Simpli
 	const filteredValues = typeDef.values.filter(value => {
 		let keep = true
 		handleAttributes(value.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) return
+			if (!keep || !handler.filterElement) {
+				return
+			}
 			if (!handler.filterElement(config, context.ctx)) {
 				keep = false
 			}

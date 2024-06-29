@@ -4,10 +4,11 @@ import type { PackMcmeta, ReleaseVersion, VersionInfo } from './common.js'
 /**
  * @param inputVersion {@link core.Config.env.gameVersion}
  */
-export function resolveConfiguredVersion(
+export async function resolveConfiguredVersion(
 	inputVersion: string,
-	{ packMcmeta, versions }: { packMcmeta: PackMcmeta | undefined; versions: McmetaVersions },
-): VersionInfo {
+	versions: McmetaVersions,
+	getPackMcmeta: () => Promise<PackMcmeta | undefined>,
+): Promise<VersionInfo> {
 	function findReleaseTarget(version: McmetaVersion): string {
 		if (version.release_target) {
 			return version.release_target
@@ -43,6 +44,7 @@ export function resolveConfiguredVersion(
 	versions = versions.sort((a, b) => b.data_version - a.data_version)
 	const latestRelease = versions.find((v) => v.type === 'release')
 	if (inputVersion === 'auto') {
+		const packMcmeta = await getPackMcmeta()
 		if (packMcmeta && latestRelease) {
 			// If the pack format is larger than the latest release, use the latest snapshot
 			if (packMcmeta.pack.pack_format > latestRelease.data_pack_version) {
@@ -177,10 +179,16 @@ export function symbolRegistrar(summary: McmetaSummary): core.SymbolRegistrar {
 		}
 	}
 
+	function addBuiltinSymbols(symbols: core.SymbolUtil) {
+		symbols.query(McmetaSummaryUri, 'loot_table', 'minecraft:empty')
+			.enter({ usage: { type: 'declaration' } })
+	}
+
 	return (symbols) => {
 		addRegistriesSymbols(summary.registries, symbols)
 		addStatesSymbols('block', summary.blocks, symbols)
 		addStatesSymbols('fluid', summary.fluids, symbols)
+		addBuiltinSymbols(symbols)
 	}
 }
 

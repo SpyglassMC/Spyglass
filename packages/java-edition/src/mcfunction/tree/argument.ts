@@ -138,10 +138,20 @@ export interface NbtParserProperties extends Record<string, unknown> {
 	accessType?: core.SymbolAccessType
 	/**
 	 * `true` if the NBT checker should check this argument as a predicate. In a
-	 * predicate NBT argument, resource location strings must include the default
-	 * `minecraft:` namespace and numbers must have the exact type match.
+	 * predicate NBT argument, keys can be missing, resource location strings must
+	 * include the default namespace and numbers must have the exact type match.
 	 */
 	isPredicate?: boolean
+	/**
+	 * `true` if the NBT checker should check this argument as a merge. In a
+	 * merge NBT argument, keys can be missing.
+	 */
+	isMerge?: boolean
+	/**
+	 * `true` if the NBT checker should check this type using the list item of
+	 * {@link indexedBy}
+	 */
+	isListIndex?: boolean
 }
 export interface MinecraftNbtCompoundTagArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:nbt_compound_tag'
@@ -192,7 +202,10 @@ export interface MinecraftRotationArgumentTreeNode extends mcf.ArgumentTreeNode 
 }
 export interface MinecraftScoreHolderArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:score_holder'
-	properties: { amount: 'single' | 'multiple' }
+	properties: {
+		usageType: core.SymbolUsageType
+		amount: 'single' | 'multiple'
+	}
 }
 export interface MinecraftScoreboardSlotArgumentTreeNode extends mcf.ArgumentTreeNode {
 	parser: 'minecraft:scoreboard_slot'

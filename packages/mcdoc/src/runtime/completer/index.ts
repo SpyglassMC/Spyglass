@@ -53,6 +53,7 @@ export type SimpleCompletionValue = {
 	detail?: string
 	kind?: McdocType['kind']
 	completionKind?: core.CompletionKind
+	insertText?: string
 }
 
 // TODO: only accept SimplifiedMcdocType here
@@ -81,10 +82,14 @@ export function getValues(
 			return [...allValues.values()]
 		case 'reference':
 			// TODO: de-duplicate this logic from the runtime simplifier
-			if (!typeDef.path) return []
+			if (!typeDef.path) {
+				return []
+			}
 			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc', typeDef.path)
 			const def = symbol.getData(TypeDefSymbolData.is)?.typeDef
-			if (!def) return []
+			if (!def) {
+				return []
+			}
 			if (typeDef.attributes?.length) {
 				return getValues({
 					...def,
@@ -101,7 +106,9 @@ export function getValues(
 			const filteredValues = typeDef.values.filter(value => {
 				let keep = true
 				handleAttributes(value.attributes, ctx, (handler, config) => {
-					if (!keep || !handler.filterElement) return
+					if (!keep || !handler.filterElement) {
+						return
+					}
 					if (!handler.filterElement(config, ctx)) {
 						keep = false
 					}
@@ -135,6 +142,7 @@ function getStringCompletions(
 				kind: 'string',
 				detail: item.detail,
 				completionKind: item.kind,
+				insertText: item.insertText,
 			})),
 		)
 	})

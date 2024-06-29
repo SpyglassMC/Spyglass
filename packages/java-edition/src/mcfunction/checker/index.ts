@@ -1,9 +1,10 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
-import { arrayToMessage, localize } from '@spyglassmc/locales'
+import { localize } from '@spyglassmc/locales'
 import type * as mcdoc from '@spyglassmc/mcdoc'
 import * as mcf from '@spyglassmc/mcfunction'
 import * as nbt from '@spyglassmc/nbt'
+import { dissectUri, reportDissectError } from '../../binder/index.js'
 import { getTagValues } from '../../common/index.js'
 import { ReleaseVersion } from '../../dependency/common.js'
 import type { EntitySelectorInvertableArgumentValueNode } from '../node/index.js'
@@ -20,6 +21,14 @@ import {
 	NbtResourceNode,
 	ParticleNode,
 } from '../node/index.js'
+
+const entry: core.Checker<mcf.McfunctionNode> = (node, ctx) => {
+	const parts = dissectUri(ctx.doc.uri, ctx)
+	if (parts?.ok === false) {
+		reportDissectError(parts.path, parts.expected, ctx)
+	}
+	core.checker.dispatchSync(node, ctx)
+}
 
 export const command: core.Checker<mcf.CommandNode> = (node, ctx) => {
 	if (node.slash && node.parent && mcf.McfunctionNode.is(node.parent)) {
@@ -89,11 +98,11 @@ const block: core.SyncChecker<BlockNode> = (node, ctx) => {
 const entity: core.SyncChecker<EntityNode> = (node, ctx) => {
 	for (const pair of node.selector?.arguments?.children ?? []) {
 		if (pair.key?.value !== 'nbt' || !pair.value) {
-			return
+			continue
 		}
 		const types = getTypesFromEntity(node, ctx)
 		if (!nbt.NbtCompoundNode.is(pair.value.value)) {
-			return
+			continue
 		}
 		nbt.checker.index('minecraft:entity', types, { isPredicate: true })(pair.value.value, ctx)
 	}
@@ -157,25 +166,7 @@ const itemStack: core.SyncChecker<ItemStackNode> = (node, ctx) => {
 		}
 		groupedComponents.get(componentId)!.push(pair.key)
 		if (pair.value) {
-			if (componentId === 'minecraft:custom_data') {
-				if (pair.value.type === 'nbt:string') {
-					// TODO: Maybe move this to the nbt package
-					const stringNBT = nbt.parser.compound(
-						new core.Source(pair.value.value, pair.value.valueMap),
-						ctx,
-					)
-					pair.value.children = [stringNBT]
-					core.AstNode.setParents(stringNBT)
-					// Because the runtime checker happens after binding, we need to manually call this
-					core.binder.fallbackSync(stringNBT, ctx)
-					core.checker.fallbackSync(stringNBT, ctx)
-					nbt.checker.index('mcdoc:custom_item_data', itemId)(stringNBT, ctx)
-				} else {
-					nbt.checker.index('mcdoc:custom_item_data', itemId)(pair.value, ctx)
-				}
-			} else {
-				nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
-			}
+			nbt.checker.index('minecraft:data_component', componentId)(pair.value, ctx)
 		}
 	}
 	for (const [_, group] of groupedComponents) {
@@ -210,8 +201,14 @@ function nbtChecker(
 		}
 		const tag = node.children[0]
 		if (indexedBy) {
-			if (NbtPathNode.is(indexedBy) && indexedBy.children[0].endTypeDef) {
-				nbt.checker.typeDefinition(indexedBy.children[0].endTypeDef)(tag, ctx)
+			if (NbtPathNode.is(indexedBy)) {
+				const indexedByTypedef = indexedBy.children[0].endTypeDef
+				const typeDef = indexedByTypedef && node.properties.isListIndex
+					? getListLikeChild(indexedByTypedef)
+					: indexedByTypedef
+				if (typeDef) {
+					nbt.checker.typeDefinition(typeDef, node.properties)(tag, ctx)
+				}
 			}
 			return
 		}
@@ -224,6 +221,7 @@ function nbtChecker(
 							: undefined
 					nbt.checker.index('minecraft:entity', types, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break
@@ -231,6 +229,7 @@ function nbtChecker(
 				if (nbt.NbtCompoundNode.is(tag)) {
 					nbt.checker.index('minecraft:block', undefined, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break
@@ -241,10 +240,40 @@ function nbtChecker(
 						: undefined
 					nbt.checker.index('minecraft:storage', storage, {
 						isPredicate: node.properties.isPredicate,
+						isMerge: node.properties.isMerge,
 					})(tag, ctx)
 				}
 				break
 		}
+	}
+}
+
+function getListLikeChild(
+	typeDef: mcdoc.runtime.checker.SimplifiedMcdocType,
+): mcdoc.McdocType | undefined {
+	switch (typeDef.kind) {
+		case 'list':
+			return typeDef.item
+		case 'byte_array':
+			return { kind: 'byte' }
+		case 'int_array':
+			return { kind: 'int' }
+		case 'long_array':
+			return { kind: 'long' }
+		case 'union':
+			const members = typeDef.members
+				.map(m => getListLikeChild(m))
+				.filter((m): m is mcdoc.McdocType => m !== undefined)
+
+			if (members.length === 0) {
+				return undefined
+			}
+			if (members.length === 1) {
+				return members[0]
+			}
+			return { kind: 'union', members }
+		default:
+			return undefined
 	}
 }
 
@@ -345,6 +374,7 @@ function getTypesFromEntity(
 }
 
 export function register(meta: core.MetaRegistry) {
+	meta.registerChecker<mcf.McfunctionNode>('mcfunction:entry', entry)
 	meta.registerChecker<mcf.CommandNode>('mcfunction:command', command)
 	meta.registerChecker<BlockNode>('mcfunction:block', block)
 	meta.registerChecker<EntityNode>('mcfunction:entity', entity)
