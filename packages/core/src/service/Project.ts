@@ -445,7 +445,7 @@ export class Project implements ExternalEventEmitter {
 
 	private async readGitignore() {
 		try {
-			const uri = this.projectRoot + Project.GitIgnore
+			const uri = this.projectRoots[0] + Project.GitIgnore
 			const contents = await this.externals.fs.readFile(uri)
 			return bufferToString(contents)
 		} catch (e) {
