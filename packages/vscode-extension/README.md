@@ -13,25 +13,26 @@ Spyglass aims at improving users' editing experience of Minecraft data packs by 
 
 ### Semantic coloring
 All command arguments are colored semantically. This extension includes [syntax-mcfunction](https://marketplace.visualstudio.com/items?itemName=MinecraftCommands.syntax-mcfunction) as a dependency, to get instant coloring feedback.
-![Semantic coloring example](https://gist.github.com/assets/17352009/44d9aec8-e1ba-46b3-ba56-4f7e3793c1a5)
+![Semantic coloring example](./img/semantic-coloring.png)
 
 ### Diagnostics
 Spyglass provides real-time diagnostics about your commands and JSON files. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
 
-![Diagnostics example](https://gist.github.com/assets/17352009/3cd406f7-eca5-4d07-b144-99f00a380f40)
+![Diagnostics example](./img/diagnostics.gif)
 
 ### Code completions
 The extension can compute completions as you typing commands. Completions will automatically show when typing certain characters. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually.
-![Completions in an NBT tag](https://gist.github.com/assets/17352009/c89d7ff2-72b4-4b0a-b6b5-2ff378ceb060)
-![Completions in a loot table file](https://gist.github.com/assets/17352009/d856b154-718d-4794-a19d-2f94eb67edb9)
+![Completions in an NBT tag](./img/nbt-tag-completions.gif)
+![Completions in an NBT path](./img/nbt-path-completions.gif)
+![Completions in a loot table file](./img/loot-table-completions.gif)
 
 ### Definition links
 You can navigate to functions, advancements, loot tables, and other resources by Ctrl-clicking on their namespaced IDs. This even works for vanilla resources.
-![Document links example](https://gist.github.com/assets/17352009/fc44f3be-5727-4be1-95ed-ce6478026316)
+![Document links example](./img/document-link.gif)
 
 ### Peek references
 You can find all the references of objectives, tags, data storages, functions, and other resources in the workspace by pressing Shift + F12 or other configured key.
-![image](https://gist.github.com/assets/17352009/c731d0d3-56ae-4826-b02d-e834c59fff93)
+![image](./img/peek-references.png)
 
 ## Credits
 This extension is only possible thanks to all the contributors that have worked on this project!
