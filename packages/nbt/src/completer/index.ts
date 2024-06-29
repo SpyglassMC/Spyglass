@@ -21,7 +21,7 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 	if (node.typeDef?.kind === 'list') {
 		const completions = getValues(node.typeDef.item, ctx.offset, {
 			...ctx,
-			requireCannonical: node.requireCannonical,
+			requireCanonical: node.requireCanonical,
 		})
 		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
@@ -38,7 +38,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
 		return mcdoc.runtime.completer
-			.getFields(record.typeDef, { ...ctx, requireCannonical: record.requireCannonical })
+			.getFields(record.typeDef, { ...ctx, requireCanonical: record.requireCanonical })
 			.filter(({ key }) => !keySet.has(key))
 			.map(({ key, field }) =>
 				core.CompletionItem.create(key, pair?.key ?? range, {
@@ -64,7 +64,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 			if (field) {
 				return getValues(field, range, {
 					...ctx,
-					requireCannonical: record.requireCannonical,
+					requireCanonical: record.requireCanonical,
 				})
 			}
 		}
@@ -85,7 +85,7 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	}
 	return getValues(node.typeDef, insideRange ? node : ctx.offset, {
 		...ctx,
-		requireCannonical: node.requireCannonical,
+		requireCanonical: node.requireCanonical,
 	})
 }
 
@@ -121,7 +121,7 @@ function getPathKeys(
 	ctx: core.CompleterContext,
 ) {
 	return mcdoc.runtime.completer
-		.getFields(typeDef, { ...ctx, requireCannonical: true })
+		.getFields(typeDef, { ...ctx, requireCanonical: true })
 		.map(({ key, field }) =>
 			core.CompletionItem.create(key, range, {
 				kind: core.CompletionKind.Field,

@@ -7,7 +7,7 @@ import type { SimplifiedEnum, SimplifiedMcdocType } from '../checker/index.js'
 export type SimpleCompletionField = { key: string; field: core.DeepReadonly<StructTypePairField> }
 
 export interface McdocCompleterContext extends core.CompleterContext {
-	requireCannonical?: boolean
+	requireCanonical?: boolean
 }
 
 export function getFields(
