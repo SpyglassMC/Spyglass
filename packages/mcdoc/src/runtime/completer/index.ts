@@ -6,9 +6,13 @@ import type { SimplifiedEnum, SimplifiedMcdocType } from '../checker/index.js'
 
 export type SimpleCompletionField = { key: string; field: core.DeepReadonly<StructTypePairField> }
 
+export interface McdocCompleterContext extends core.CompleterContext {
+	requireCannonical?: boolean
+}
+
 export function getFields(
 	typeDef: core.DeepReadonly<SimplifiedMcdocType>,
-	ctx: core.CompleterContext,
+	ctx: McdocCompleterContext,
 ): SimpleCompletionField[] {
 	switch (typeDef.kind) {
 		case 'union':
@@ -59,7 +63,7 @@ export type SimpleCompletionValue = {
 // TODO: only accept SimplifiedMcdocType here
 export function getValues(
 	typeDef: core.DeepReadonly<McdocType>,
-	ctx: core.CompleterContext,
+	ctx: McdocCompleterContext,
 ): SimpleCompletionValue[] {
 	if (
 		typeDef.kind === 'string'
@@ -127,7 +131,7 @@ export function getValues(
 
 function getStringCompletions(
 	typeDef: core.DeepReadonly<StringType | SimplifiedEnum | LiteralType>,
-	ctx: core.CompleterContext,
+	ctx: McdocCompleterContext,
 ) {
 	const ans: SimpleCompletionValue[] = []
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {

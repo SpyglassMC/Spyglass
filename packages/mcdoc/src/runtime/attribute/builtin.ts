@@ -127,7 +127,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
-			const options = getResourceLocationOptions(config, false, ctx, typeDef)
+			const options = getResourceLocationOptions(
+				config,
+				ctx.requireCannonical ?? false,
+				ctx,
+				typeDef,
+			)
 			if (!options) {
 				return undefined
 			}
