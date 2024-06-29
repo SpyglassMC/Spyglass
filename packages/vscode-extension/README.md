@@ -32,7 +32,15 @@ You can navigate to functions, advancements, loot tables, and other resources by
 
 ### Peek references
 You can find all the references of objectives, tags, data storages, functions, and other resources in the workspace by pressing Shift + F12 or other configured key.
-![image](./img/peek-references.png)
+![Peek references example](./img/peek-references.png)
+
+## Commands
+
+### Reset project cache
+Spyglass uses a cache to speedup the process of validating, finding references/definitions, document links, etc. However the cache may become outdated because of various reasons, which could lead to strange behaviors. You can use the `Spyglass: Reset Project Cache` command to regenerate the cache manually.
+
+### Open cache folder
+If you are still experiencing problems after running the above command, you can navigate to the cache folder by using the `Spyglass: Open Cache Folder` command and wiping the folder. This removes the downloaded vanilla data pack, project caches, etc.
 
 ## Credits
 This extension is only possible thanks to all the contributors that have worked on this project!
