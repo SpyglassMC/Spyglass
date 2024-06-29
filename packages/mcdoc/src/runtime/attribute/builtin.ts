@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import { localeQuote, localize } from '@spyglassmc/locales'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
@@ -68,6 +67,13 @@ function getResourceLocationOptions(
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'canonical', () => undefined, {
 		// Has hardcoded behavior in the runtime checker
+	})
+	registerAttribute(meta, 'dispatcher_key', validator.string, {
+		stringMocker: (config, _, ctx) => {
+			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', config).symbol
+			const keys = Object.keys(symbol?.members ?? {}).filter(m => !m.startsWith('%'))
+			return core.LiteralNode.mock(ctx.offset, { pool: keys })
+		},
 	})
 	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
