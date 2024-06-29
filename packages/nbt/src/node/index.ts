@@ -3,6 +3,7 @@ import type * as mcdoc from '@spyglassmc/mcdoc'
 
 interface NbtBaseNode {
 	typeDef?: mcdoc.runtime.checker.SimplifiedMcdocType
+	requireCanonical?: boolean
 }
 
 export type NbtNode = NbtPrimitiveNode | NbtCompoundNode | NbtCollectionNode
