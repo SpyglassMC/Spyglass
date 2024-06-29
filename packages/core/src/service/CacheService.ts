@@ -11,7 +11,7 @@ import type { Project } from './Project.js'
  * The format version of the cache. Should be increased when any changes that
  * could invalidate the cache are introduced to the Spyglass codebase.
  */
-export const LatestCacheVersion = 3
+export const LatestCacheVersion = 4
 
 /**
  * Checksums of cached files or roots.
@@ -35,7 +35,7 @@ type ErrorCache = Record<string, readonly PosRangeLanguageError[]>
 interface CacheFile {
 	checksums: Checksums
 	errors: ErrorCache
-	projectRoot: string
+	projectRoots: string[]
 	symbols: UnlinkedSymbolTable
 	/**
 	 * Format version of the cache. The cache should be invalidated if this number
@@ -104,21 +104,14 @@ export class CacheService {
 		})
 	}
 
-	#cacheFilePath:
-		| string
-		| undefined
-	/**
-	 * @throws
-	 *
-	 * @returns `${cacheRoot}symbols/${sha1(projectRoot)}.json`
-	 */
+	#cacheFilePath: string | undefined
 	private async getCacheFileUri(): Promise<string> {
-		return (this.#cacheFilePath ??= new Uri(
-			`symbols/${await this.project.externals.crypto.getSha1(
-				this.project.projectRoots[0],
-			)}.json.gz`,
-			this.cacheRoot,
-		).toString())
+		if (!this.#cacheFilePath) {
+			const sortedRoots = [...this.project.projectRoots].sort()
+			const hash = await this.project.externals.crypto.getSha1(sortedRoots.join(':'))
+			this.#cacheFilePath = new Uri(`symbols/${hash}.json.gz`, this.cacheRoot).toString()
+		}
+		return this.#cacheFilePath
 	}
 
 	async load(): Promise<LoadResult> {
@@ -221,7 +214,7 @@ export class CacheService {
 			filePath = await this.getCacheFileUri()
 			const cache: CacheFile = {
 				version: LatestCacheVersion,
-				projectRoot: this.project.projectRoots[0],
+				projectRoots: this.project.projectRoots,
 				checksums: this.checksums,
 				symbols: SymbolTable.unlink(this.project.symbols.global),
 				errors: this.errors,
