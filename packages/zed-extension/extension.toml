@@ -1,0 +1,16 @@
+id = "spyglass"
+name = "Datapack Helper Plus by Spyglass"
+description = "Heavy language features for Minecraft: Java Edition data pack files."
+version = "0.4.0"
+schema_version = 1
+authors = ["Spyglass Maintainers"]
+repository = "https://github.com/SpyglassMC/zed-spyglass"
+
+[language_servers.spyglass]
+name = "Spyglass LSP"
+languages = [
+    "JSON",
+    "MCFunction",
+    "SNBT",
+]
+code_action_kinds = ["quickfix"]

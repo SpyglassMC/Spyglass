@@ -35,6 +35,14 @@ jobs:
 
       - run: npm test -- --forbid-only
 
-      #- run: npm run lint
+      # - run: npm run lint
 
       - run: npm run release
+
+      # - name: Release Zed Extension
+      #   uses: huacnlee/zed-extension-action@v1
+      #   with:
+      #     extension-name: spyglass
+      #     push-to: SpyglassMC/zed-extensions
+      #   env:
+      #     COMMITTER_TOKEN: ${{ secrets.GITHUB_TOKEN }}
