@@ -1,10 +1,12 @@
 # Datapack Helper Plus by Spyglass
+
 <div align="center"><img src="https://raw.githubusercontent.com/SpyglassMC/logo/main/banner.png"></div>
 
 [![Discord](https://img.shields.io/discord/666020457568403505?logo=discord&style=flat-square)](https://discord.gg/EbdseuS)
 [![VSCode Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
 [![VSCode Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
 [![VSCode Marketplace Rating](https://img.shields.io/visual-studio-marketplace/stars/SPGoding.datapack-language-server.svg?logo=visual-studio-code&style=flat-square)](https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server)
+[![GitHub Stars](https://img.shields.io/github/stars/SpyglassMC/Spyglass.svg?style=flat-square)](https://github.com/SpyglassMC/Spyglass)
 [![License](https://img.shields.io/github/license/SpyglassMC/vscode-datapack.svg?style=flat-square)](https://github.com/SPGoding/vscode-datapack-helper-plus/blob/master/LICENSE)
 
 Spyglass aims at improving users' editing experience of Minecraft data packs by providing IntelliSense features like real-time error reporting, auto-completion, semantic coloring, and code navigation tools.
