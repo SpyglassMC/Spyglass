@@ -291,9 +291,8 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles].filter((file) =>
-			extensions.includes(fileUtil.extname(file) ?? '')
-		)
+		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles]
+			.filter((file) => extensions.includes(fileUtil.extname(file) ?? ''))
 		const filteredFiles = this.ignore.filter(supportedFiles)
 		return filteredFiles
 	}
