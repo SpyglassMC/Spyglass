@@ -6,6 +6,8 @@ env:
   BOT_NAME: ${{ secrets.BOT_NAME }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  OVSX_PAT: ${{ secrets.OVSX_PAT }}
+  VSCE_PAT: ${{ secrets.VSCE_PAT }}
 jobs:
   test-and-release:
     name: Test & Release
@@ -38,11 +40,3 @@ jobs:
       - run: npm run lint
 
       - run: npm run release
-
-      - run: |
-          cd packages/vscode-extension
-          npx vsce publish
-          npx ovsx publish
-        env:
-          VSCE_PAT: ${{ secrets.VSCE_PAT }}
-          OVSX_PAT: ${{ secrets.OVSX_PAT }}
