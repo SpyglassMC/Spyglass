@@ -6,6 +6,8 @@ env:
   BOT_NAME: ${{ secrets.BOT_NAME }}
   BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+  OVSX_PAT: ${{ secrets.OVSX_PAT }}
+  VSCE_PAT: ${{ secrets.VSCE_PAT }}
 jobs:
   test-and-release:
     name: Test & Release
@@ -35,6 +37,6 @@ jobs:
 
       - run: npm test -- --forbid-only
 
-      #- run: npm run lint
+      - run: npm run lint
 
       - run: npm run release
