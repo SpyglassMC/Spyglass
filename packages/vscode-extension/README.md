@@ -25,26 +25,26 @@ If you wish to override the detected version, for example when working in multi-
 
 ### Semantic coloring
 All command arguments are colored semantically. This extension includes [syntax-mcfunction](https://marketplace.visualstudio.com/items?itemName=MinecraftCommands.syntax-mcfunction) as a dependency to get instant coloring feedback.
-![Semantic coloring example](./img/semantic-coloring.png)
+![Semantic coloring example](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/semantic-coloring.png)
 
 ### Diagnostics
 Spyglass provides real-time diagnostics about your commands and JSON files. It can show syntax errors as Minecraft does, and even give your more detailed warnings.
 
-![Diagnostics example](./img/diagnostics.gif)
+![Diagnostics example](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/diagnostics.gif)
 
 ### Code completions
 The extension can compute completions as you type commands. Completions will automatically show when typing certain characters. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually.
-![Completions in an NBT tag](./img/nbt-tag-completions.gif)
-![Completions in an NBT path](./img/nbt-path-completions.gif)
-![Completions in a loot table file](./img/loot-table-completions.gif)
+![Completions in an NBT tag](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/nbt-tag-completions.gif)
+![Completions in an NBT path](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/nbt-path-completions.gif)
+![Completions in a loot table file](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/loot-table-completions.gif)
 
 ### Definition links
 You can navigate to functions, advancements, loot tables, and other resources by Ctrl-clicking on their namespaced IDs. This even works for vanilla resources.
-![Document links example](./img/document-link.gif)
+![Document links example](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/document-link.gif)
 
 ### Peek references
 You can find all the references of objectives, tags, data storages, functions, and other resources in the workspace by pressing Shift + F12 or other configured key.
-![Peek references example](./img/peek-references.png)
+![Peek references example](https://raw.githubusercontent.com/SpyglassMC/Spyglass/main/packages/vscode-extension/img/peek-references.png)
 
 ## Commands <small>[[docs](https://spyglassmc.com/user/commands)]</small>
 
