@@ -27,7 +27,7 @@ If you want resource location completions to always include the default `minecra
 ```json
 {
    "lint": {
-		"idOmitDefaultNamespace": false
+      "idOmitDefaultNamespace": false
    }
 }
 ```
