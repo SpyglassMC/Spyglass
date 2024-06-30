@@ -5,6 +5,7 @@ import type {
 	SimplifiedMcdocType,
 	SimplifiedMcdocTypeNoUnion,
 } from '../checker/index.js'
+import type { McdocCompleterContext } from '../completer/index.js'
 import type { McdocAttributeValidator } from './validator.js'
 
 export * as validator from './validator.js'
@@ -34,7 +35,7 @@ export interface McdocAttribute<C = unknown> {
 	stringMocker?: (
 		config: C,
 		typeDef: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
-		ctx: core.CompleterContext,
+		ctx: McdocCompleterContext,
 	) => core.AstNode | undefined
 }
 

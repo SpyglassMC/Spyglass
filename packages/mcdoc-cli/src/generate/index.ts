@@ -48,7 +48,9 @@ export async function generate(
 		let resource = join(path.dir.replace(`${project_path}`, ''), path.name).replace(/^[\/\\]/, '')
 
 		// remove windows cruft
-		if (resource.includes('\\')) resource = resource.replaceAll('\\', '/')
+		if (resource.includes('\\')) {
+			resource = resource.replaceAll('\\', '/')
+		}
 
 		logger.info(`parsing ${resource}\n`)
 
@@ -69,10 +71,14 @@ export async function generate(
 				child.self = self
 
 				/* @ts-ignore */
-				if (_child.parent) child.parent = parent
+				if (_child.parent) {
+					child.parent = parent
+				}
 
 				/* @ts-ignore */
-				if (_child.parentMap) child.parentMap = parent
+				if (_child.parentMap) {
+					child.parentMap = parent
+				}
 
 				if (_child.children) {
 					child.children = []
@@ -595,7 +601,9 @@ export async function generate(
 					let value = internal_locales[parent].join('').trimEnd()
 
 					/// remove windows cruft
-					if (value.includes('\r')) value = value.replaceAll('\r', '')
+					if (value.includes('\r')) {
+						value = value.replaceAll('\r', '')
+					}
 
 					locales[key] = value
 				}
@@ -668,12 +676,17 @@ export async function generate(
 					}
 				}
 
-				if (_child.hover) child.hover = _child.hover
+				if (_child.hover) {
+					child.hover = _child.hover
+				}
 
-				if (_child.color) child.color = _child.color
+				if (_child.color) {
+					child.color = _child.color
+				}
 
-				if (child.type !== 'error') return child
-				else {
+				if (child.type !== 'error') {
+					return child
+				} else {
 					errors++
 
 					const lc = lineColumn(doc_contents)
@@ -732,7 +745,9 @@ export async function generate(
 			if (!args.dry && args.module) {
 				const dir = parse(join(generated_path, 'module', resource)).dir
 
-				if (dir !== '') await fs.ensureDir(dir)
+				if (dir !== '') {
+					await fs.ensureDir(dir)
+				}
 
 				await fs.writeFile(
 					join(generated_path, 'module', `${resource}.mcdoc.json`),

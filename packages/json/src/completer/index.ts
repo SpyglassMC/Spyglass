@@ -88,7 +88,7 @@ function getValues(
 				kind: completionKind ?? core.CompletionKind.Value,
 				detail,
 				filterText: kind === 'string' ? `"${value}"` : value,
-				insertText: kind === 'string' ? `"${insertText}"` : insertText ?? value,
+				insertText: kind === 'string' ? `"${insertText ?? value}"` : insertText ?? value,
 			})
 		)
 }

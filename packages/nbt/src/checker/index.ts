@@ -135,6 +135,7 @@ export function typeDefinition(
 				),
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
+					node.requireCanonical = options.isPredicate
 					// TODO: improve hover info
 					if (
 						node.parent && core.PairNode?.is(node.parent)

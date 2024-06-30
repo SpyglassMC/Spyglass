@@ -272,10 +272,11 @@ export function escapeString(value: string, quote?: Quote) {
 }
 
 export const symbol: Completer<SymbolBaseNode> = (node, ctx) => {
-	return Object.keys(
-		ctx.symbols.query(ctx.doc, node.options.category, ...(node.options.parentPath ?? []))
-			.visibleMembers,
-	).map((v) => CompletionItem.create(v, node, { kind: CompletionKind.Variable }))
+	const path = node.options.parentPath ?? []
+	const symbols = ctx.symbols.query(ctx.doc, node.options.category, ...path).visibleMembers
+	return Object.entries(symbols)
+		.filter(([k, v]) => SymbolUtil.isDeclared(v))
+		.map(([k, v]) => CompletionItem.create(k, node, { kind: CompletionKind.Variable }))
 }
 
 export function registerCompleters(meta: MetaRegistry) {

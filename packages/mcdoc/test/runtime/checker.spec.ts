@@ -46,6 +46,35 @@ describe('mcdoc runtime checker', () => {
 			selector: [1],
 		}],
 	}, {
+		name:
+			'( struct { one?: string, two?: int, three?: boolean } | struct { one?: string, four?: int, five?: boolean })',
+		type: {
+			kind: 'union',
+			members: [{
+				kind: 'struct',
+				fields: [
+					{ kind: 'pair', key: 'one', optional: true, type: { kind: 'string' } },
+					{ kind: 'pair', key: 'two', optional: true, type: { kind: 'int' } },
+					{ kind: 'pair', key: 'three', optional: true, type: { kind: 'boolean' } },
+				],
+			}, {
+				kind: 'struct',
+				fields: [
+					{ kind: 'pair', key: 'one', optional: true, type: { kind: 'string' } },
+					{ kind: 'pair', key: 'four', optional: true, type: { kind: 'int' } },
+					{ kind: 'pair', key: 'five', optional: true, type: { kind: 'boolean' } },
+				],
+			}],
+		},
+		values: [
+			{},
+			{ one: 'something' },
+			{ two: 91 },
+			{ two: 91, three: true },
+			{ two: 91, four: 91 },
+			{ one: 91 },
+		],
+	}, {
 		name: '[struct { foo: double, bar?: boolean }]',
 		type: {
 			kind: 'list',
@@ -160,6 +189,21 @@ describe('mcdoc runtime checker', () => {
 			{ id: 'other' },
 			{ id: 'other', baz: 'world' },
 			{ id: 'other', baz: true },
+		],
+	}, {
+		name: 'struct { foo?: () }',
+		type: {
+			kind: 'struct',
+			fields: [{
+				kind: 'pair',
+				key: 'foo',
+				optional: true,
+				type: { kind: 'union', members: [] },
+			}],
+		},
+		values: [
+			{},
+			{ foo: 'something' },
 		],
 	}, {
 		name: 'double @ 3..6.2',

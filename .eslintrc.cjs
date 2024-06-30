@@ -39,6 +39,7 @@ module.exports = {
 		"@typescript-eslint/prefer-for-of": "warn",
 		"@typescript-eslint/prefer-readonly": "warn",
 		"@typescript-eslint/no-floating-promises": "error",
+		"curly": "warn",
 		"import/no-duplicates": "error",
 		"indent": "off",
 		"no-fallthrough": "warn",

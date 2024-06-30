@@ -67,7 +67,6 @@
   "description": "%spyglassmc.description%",
   "icon": "icon.png",
   "categories": [
-    "Formatters",
     "Linters",
     "Programming Languages"
   ],
@@ -134,14 +133,22 @@
         "configuration": "./snbt-language-configuration.json"
       },
       {
-        "id": "json",
+        "id": "mcmeta",
+        "aliases": [
+          "MCMETA",
+          "mcmeta"
+        ],
         "extensions": [
           ".mcmeta"
         ],
-        "filenames": [
-          ".spyglassconfig",
-          ".spyglassrc"
-        ]
+        "configuration": "./mcmeta-language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mcmeta",
+        "scopeName": "source.mcmeta",
+        "path": "./resource/mcmeta.tmLanguage.json"
       }
     ],
     "commands": [

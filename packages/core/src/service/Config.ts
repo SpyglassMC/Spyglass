@@ -34,11 +34,11 @@ export interface CustomResourceConfig {
 	/**
 	 * The file extension name of the dispatched resource. Only `.json` is supported for now.
 	 */
-	extname: '.json'
+	ext?: '.json'
 	/**
-	 * The pack type of the dispatched resource. Only `data_pack` is supported for now.
+	 * The pack type of the dispatched resource. Only `data` is supported for now.
 	 */
-	pack: 'data_pack'
+	pack?: 'data'
 	/**
 	 * The first minecraft version the dispatched resource is available in.
 	 */
@@ -65,13 +65,19 @@ export interface EnvConfig {
 	 */
 	dependencies: string[]
 	/**
+	 * A list of file patterns to exclude. Each value in this array can either be a glob pattern or the special string `@gitignore`.
+	 */
+	exclude: string[]
+	/**
 	 * **Experimental feature, breaking changes could occur.**
 	 *
 	 * Track changes at [issue #1254](https://github.com/SpyglassMC/Spyglass/issues/1254).
 	 *
 	 * Custom resources, currently only works for `minecraft:resource` JSON definitions dispatched from mcdoc.
 	 */
-	customResources: [filePath: string, config: CustomResourceConfig][]
+	customResources: {
+		[path: string]: CustomResourceConfig
+	}
 	feature: {
 		codeActions: boolean
 		colors: boolean
@@ -314,7 +320,8 @@ export const VanillaConfig: Config = {
 	env: {
 		dataSource: 'GitHub',
 		dependencies: ['@vanilla-datapack', '@vanilla-mcdoc'],
-		customResources: [],
+		exclude: ['@gitignore', '.vscode/', '.github/'],
+		customResources: {},
 		feature: {
 			codeActions: true,
 			colors: true,
@@ -399,12 +406,18 @@ export const VanillaConfig: Config = {
 		nbtListLengthCheck: null,
 		nbtTypeCheck: 'loosely',
 
-		undeclaredSymbol: [{
-			if: [{ category: RegistryCategories, namespace: 'minecraft' }, {
-				category: [...FileCategories, 'bossbar', 'objective', 'team'],
-			}],
-			then: { report: 'warning' },
-		}, { then: { declare: 'block' } }],
+		undeclaredSymbol: [
+			{
+				if: [
+					{ category: RegistryCategories, namespace: 'minecraft' },
+					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+				],
+				then: { report: 'warning' },
+			},
+			{
+				then: { declare: 'block' },
+			},
+		],
 	},
 	snippet: {
 		executeIfScoreSet:

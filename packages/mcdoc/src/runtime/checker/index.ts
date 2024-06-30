@@ -29,7 +29,7 @@ import { handleAttributes } from '../attribute/index.js'
 import type { NodeEquivalenceChecker, RuntimeNode, RuntimePair, RuntimeUnion } from './context.js'
 import { McdocCheckerContext } from './context.js'
 import type { ErrorCondensingDefinition, McdocRuntimeError } from './error.js'
-import { condenseErrorsAndFilterSiblings } from './error.js'
+import { condenseAndPropagate } from './error.js'
 
 export * from './context.js'
 export * from './error.js'
@@ -169,12 +169,13 @@ export interface CheckerTreeRuntimeNode<T> {
 }
 
 export interface CheckerTreeDefinitionGroupNode<T> {
-	parent: CheckerTreeDefinitionNode<T> | undefined
+	parents: CheckerTreeDefinitionNode<T>[]
 	runtimeNode: CheckerTreeRuntimeNode<T>
 	condensedErrors: McdocRuntimeError<T>[][]
 
 	desc?: string
 	keyDefinition: SimplifiedMcdocTypeNoUnion | undefined
+	originalTypeDef: McdocType
 	validDefinitions: CheckerTreeDefinitionNode<T>[]
 }
 
@@ -206,9 +207,10 @@ export function typeDefinition<T>(
 			? simplifiedRoot.members
 			: [simplifiedRoot]
 		value.definitionsByParent = [{
-			parent: undefined,
+			parents: [],
 			keyDefinition: undefined,
 			runtimeNode: value,
+			originalTypeDef: typeDef,
 			condensedErrors: [],
 			validDefinitions: [],
 		}]
@@ -221,7 +223,7 @@ export function typeDefinition<T>(
 	const nodeQueue: CheckerTreeNode<T>[] = [rootNode]
 
 	while (nodeQueue.length !== 0) {
-		const node = nodeQueue.splice(0, 1)[0]
+		const node = nodeQueue.shift()!
 
 		for (const value of node.possibleValues) {
 			const inferredSimplified = simplify(value.node.inferredType, { ctx, node: value })
@@ -271,7 +273,23 @@ export function typeDefinition<T>(
 							continue
 						}
 						const child = childNodes[i]
+						const existingDef = child.possibleValues.length > 0
+							? child.possibleValues[0].definitionsByParent
+								.find(
+									d =>
+										(d.keyDefinition === undefined || childDef.keyType === undefined
+											? d.keyDefinition === undefined
+											: McdocType.equals(d.keyDefinition, childDef.keyType))
+										&& McdocType.equals(d.originalTypeDef, childDef.type),
+								)
+							: undefined
+
 						for (const childValue of child.possibleValues) {
+							if (existingDef) {
+								existingDef.parents.push(def)
+								def.children.push(existingDef)
+								continue
+							}
 							// TODO We need some sort of map / local cache which keeps track of the original
 							// non-simplified types and see if they have been compared yet. This is needed
 							// for structures that are cyclic, to essentially bail out once we are comparing
@@ -280,9 +298,10 @@ export function typeDefinition<T>(
 							// text component definitions
 							const simplified = simplify(childDef.type, { ctx, node: childValue })
 							const childDefinitionGroup: CheckerTreeDefinitionGroupNode<T> = {
-								parent: def,
+								parents: [def],
 								runtimeNode: childValue,
 								keyDefinition: childDef.keyType,
+								originalTypeDef: childDef.type,
 								validDefinitions: [],
 								condensedErrors: [],
 								desc: childDef.desc,
@@ -302,85 +321,7 @@ export function typeDefinition<T>(
 					}
 				}
 
-				let curNode: CheckerTreeDefinitionGroupNode<T> | undefined = definitionGroup
-				let depth = 0
-				let errorsOnLayer = definitionErrors
-				while (curNode) {
-					const stillValidDefintions: CheckerTreeDefinitionNode<T>[] = []
-					const { definitions, condensedErrors } = condenseErrorsAndFilterSiblings(
-						errorsOnLayer,
-					)
-
-					stillValidDefintions.push(...definitions)
-
-					curNode.condensedErrors.push(condensedErrors)
-
-					if (curNode.validDefinitions.length !== stillValidDefintions.length) {
-						filterChildDefinitions(
-							curNode.validDefinitions.filter(d => !stillValidDefintions.includes(d)),
-							curNode.runtimeNode.children,
-						)
-
-						function filterChildDefinitions(
-							removedDefs: CheckerTreeDefinitionNode<T>[],
-							children: CheckerTreeNode<T>[],
-						) {
-							for (const child of children) {
-								for (const childValue of child.possibleValues) {
-									const removedChildDefs: CheckerTreeDefinitionNode<T>[] = []
-									const stillValidChildDefs: CheckerTreeDefinitionGroupNode<T>[] = []
-
-									for (const definitionGroup of childValue.definitionsByParent) {
-										if (removedDefs.includes(definitionGroup.parent!)) {
-											removedChildDefs.push(...definitionGroup.validDefinitions)
-										} else {
-											stillValidChildDefs.push(definitionGroup)
-										}
-									}
-									childValue.definitionsByParent = stillValidChildDefs
-
-									if (removedChildDefs.length > 0) {
-										filterChildDefinitions(
-											removedChildDefs,
-											childValue.children,
-										)
-									}
-								}
-							}
-						}
-						curNode.validDefinitions = stillValidDefintions
-					}
-
-					const oldNode: CheckerTreeDefinitionGroupNode<T> = curNode
-					curNode = oldNode.parent?.groupNode
-
-					const lastChild = curNode?.validDefinitions.flatMap(d => d.children).findLast(v => {
-						if (v.condensedErrors.length > depth) {
-							return true
-						}
-
-						let children = [v]
-						for (let i = 0; i < depth; i++) {
-							children = children.flatMap(v => v.validDefinitions).flatMap(v => v.children)
-						}
-						return children.length > 0
-					})
-
-					if (lastChild !== oldNode) {
-						// Wait for all siblings to be evaluated first
-						break
-					}
-
-					errorsOnLayer = curNode!.validDefinitions
-						.flatMap(d => ({
-							definition: d,
-							errors: d.children.flatMap(c =>
-								c.condensedErrors.length > depth ? c.condensedErrors[depth] : []
-							),
-						}))
-
-					depth++
-				}
+				condenseAndPropagate(definitionGroup, definitionErrors)
 			}
 			value.children = childNodes
 			nodeQueue.push(...childNodes)
@@ -1057,7 +998,9 @@ function simplifyUnion<T>(typeDef: UnionType, context: SimplifyContext<T>): Simp
 			}
 			let keep = true
 			handleAttributes(member.attributes, context.ctx, (handler, config) => {
-				if (!keep || !handler.filterElement) return
+				if (!keep || !handler.filterElement) {
+					return
+				}
 				if (!handler.filterElement(config, context.ctx)) {
 					keep = false
 				}
@@ -1231,7 +1174,9 @@ function simplifyEnum<T>(typeDef: EnumType, context: SimplifyContext<T>): Simpli
 	const filteredValues = typeDef.values.filter(value => {
 		let keep = true
 		handleAttributes(value.attributes, context.ctx, (handler, config) => {
-			if (!keep || !handler.filterElement) return
+			if (!keep || !handler.filterElement) {
+				return
+			}
 			if (!handler.filterElement(config, context.ctx)) {
 				keep = false
 			}

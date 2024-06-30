@@ -57,12 +57,15 @@ export function getItemSlotsArgumentValues(ctx: core.ContextBase) {
 
 export const OperationArgumentValues = ['=', '+=', '-=', '*=', '/=', '%=', '<', '>', '><']
 
-export const ScoreboardSlotArgumentValues = [
-	'belowName',
-	'list',
-	'sidebar',
-	...core.Color.ColorNames.map((n) => `sidebar.team.${n}`),
-]
+export function getScoreboardSlotArgumentValues(ctx: core.ContextBase) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion
+	return [
+		ReleaseVersion.cmp(release, '1.20.2') < 0 ? 'belowName' : 'below_name',
+		'list',
+		'sidebar',
+		...core.Color.ColorNames.map((n) => `sidebar.team.${n}`),
+	]
+}
 
 export const SwizzleArgumentValues = [
 	'x',
