@@ -33,7 +33,7 @@ Spyglass provides real-time diagnostics about your commands and JSON files. It c
 ![Diagnostics example](./img/diagnostics.gif)
 
 ### Code completions
-The extension can compute completions as you typing commands. Completions will automatically show when typing certain characters. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually.
+The extension can compute completions as you type commands. Completions will automatically show when typing certain characters. Alternatively you can use Ctrl + Space (or other configured hotkey) to show completions manually.
 ![Completions in an NBT tag](./img/nbt-tag-completions.gif)
 ![Completions in an NBT path](./img/nbt-path-completions.gif)
 ![Completions in a loot table file](./img/loot-table-completions.gif)
