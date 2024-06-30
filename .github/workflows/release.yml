@@ -35,6 +35,14 @@ jobs:
 
       - run: npm test -- --forbid-only
 
-      #- run: npm run lint
+      - run: npm run lint
 
       - run: npm run release
+
+      - run: |
+          cd packages/vscode-extension
+          npx vsce publish
+          npx ovsx publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
