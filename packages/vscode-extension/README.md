@@ -9,10 +9,22 @@
 
 Spyglass aims at improving users' editing experience of Minecraft data packs by providing IntelliSense features like real-time error reporting, auto-completion, semantic coloring, and code navigation tools.
 
+## Configuration <small>[[docs](https://spyglassmc.com/user/config)]</small>
+By default, Spyglass will look for a `pack.mcmeta` file containing a `pack_format` value. The Minecraft release version matching that pack format will be used to determine the vanilla data pack, validation schemas for JSON and NBT, command-specific checks, etc.
+
+If you wish to override the detected version, for example when working in multi-version packs, create a `spyglass.json` file at the workspace root containing:
+```json
+{
+   "env": {
+      "gameVersion": "1.20.6"
+   }
+}
+```
+
 ## Features
 
 ### Semantic coloring
-All command arguments are colored semantically. This extension includes [syntax-mcfunction](https://marketplace.visualstudio.com/items?itemName=MinecraftCommands.syntax-mcfunction) as a dependency, to get instant coloring feedback.
+All command arguments are colored semantically. This extension includes [syntax-mcfunction](https://marketplace.visualstudio.com/items?itemName=MinecraftCommands.syntax-mcfunction) as a dependency to get instant coloring feedback.
 ![Semantic coloring example](./img/semantic-coloring.png)
 
 ### Diagnostics
@@ -34,7 +46,7 @@ You can navigate to functions, advancements, loot tables, and other resources by
 You can find all the references of objectives, tags, data storages, functions, and other resources in the workspace by pressing Shift + F12 or other configured key.
 ![Peek references example](./img/peek-references.png)
 
-## Commands
+## Commands <small>[[docs](https://spyglassmc.com/user/commands)]</small>
 
 ### Reset project cache
 Spyglass uses a cache to speedup the process of validating, finding references/definitions, document links, etc. However the cache may become outdated because of various reasons, which could lead to strange behaviors. You can use the `Spyglass: Reset Project Cache` command to regenerate the cache manually.
