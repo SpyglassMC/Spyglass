@@ -194,8 +194,8 @@ export class Project implements ExternalEventEmitter {
 	readonly projectRoot: RootUriString
 	symbols: SymbolUtil
 
-	#dependencyRoots!: Set<RootUriString>
-	#dependencyFiles!: Set<string>
+	#dependencyRoots: Set<RootUriString> | undefined
+	#dependencyFiles: Set<string> | undefined
 
 	#roots: readonly RootUriString[] = []
 	/**
@@ -228,7 +228,7 @@ export class Project implements ExternalEventEmitter {
 	}
 
 	private updateRoots(): void {
-		const rawRoots = [...this.#dependencyRoots, this.projectRoot]
+		const rawRoots = [...this.#dependencyRoots ?? [], this.projectRoot]
 		const ans = new Set(rawRoots)
 		// Identify roots indicated by `pack.mcmeta`.
 		for (const file of this.getTrackedFiles()) {
@@ -291,7 +291,7 @@ export class Project implements ExternalEventEmitter {
 	 */
 	getTrackedFiles(): string[] {
 		const extensions: string[] = this.meta.getSupportedFileExtensions()
-		const supportedFiles = [...this.#dependencyFiles, ...this.#watchedFiles].filter((file) =>
+		const supportedFiles = [...this.#dependencyFiles ?? [], ...this.#watchedFiles].filter((file) =>
 			extensions.includes(fileUtil.extname(file) ?? '')
 		)
 		const filteredFiles = this.ignore.filter(supportedFiles)
@@ -966,13 +966,13 @@ export class Project implements ExternalEventEmitter {
 
 	private shouldRemove(uri: string): boolean {
 		return (!this.#clientManagedUris.has(uri)
-			&& !this.#dependencyFiles.has(uri)
+			&& !this.#dependencyFiles?.has(uri)
 			&& !this.#watchedFiles.has(uri))
 	}
 
 	private isOnlyWatched(uri: string): boolean {
 		return (this.#watchedFiles.has(uri)
 			&& !this.#clientManagedUris.has(uri)
-			&& !this.#dependencyFiles.has(uri))
+			&& !this.#dependencyFiles?.has(uri))
 	}
 }
