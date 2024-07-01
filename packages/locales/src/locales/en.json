@@ -199,6 +199,7 @@
   "parser.resource-location.illegal": "Illegal character(s): %0%",
   "parser.resource-location.namespace-expected": "Namespaces cannot be omitted here",
   "parser.resource-location.tag-disallowed": "Tags are not allowed here",
+  "parser.resource-location.tag-required": "Only tags are allowed here",
   "parser.string.illegal-brigadier": "Encountered non-[0-9A-Za-z_.+-] characters in %0%",
   "parser.string.illegal-escape": "Unexpected escape character %0%",
   "parser.string.illegal-quote": "Only %0% can be used to quote strings here",

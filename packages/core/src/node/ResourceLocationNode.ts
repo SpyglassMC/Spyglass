@@ -21,13 +21,21 @@ export type ResourceLocationOptions =
 		category: ResourceLocationCategory
 		pool?: undefined
 		allowTag?: false
+		requireTag?: false
 		allowUnknown?: false
 	} | {
 		category: TaggableResourceLocationCategory
 		pool?: undefined
 		allowTag?: boolean
+		requireTag?: boolean
 		allowUnknown?: false
-	} | { category?: undefined; pool: string[]; allowTag?: false; allowUnknown?: boolean })
+	} | {
+		category?: undefined
+		pool: string[]
+		allowTag?: false
+		requireTag?: false
+		allowUnknown?: boolean
+	})
 
 export interface ResourceLocationBaseNode extends AstNode, Partial<ResourceLocation> {
 	readonly options: ResourceLocationOptions
