@@ -148,7 +148,7 @@ class BrowserFileSystem implements ExternalFileSystem {
 		delete this.states[location]
 		this.saveStates()
 	}
-	watch(_location: FsLocation): FsWatcher {
+	watch(_locations: FsLocation[]): FsWatcher {
 		return new BrowserFsWatcher()
 	}
 	async writeFile(

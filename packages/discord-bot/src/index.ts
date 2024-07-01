@@ -49,7 +49,7 @@ const service = new Service({
 		defaultConfig: ConfigService.merge(VanillaConfig, { env: { dependencies: [] } }),
 		externals: NodeJsExternals,
 		initializers: [mcdoc.initialize, je.initialize],
-		projectRoot: fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString()),
+		projectRoots: [fileUtil.ensureEndingSlash(pathToFileURL(projectPath).toString())],
 	},
 })
 const DocumentUri = 'spyglassmc://discord-bot/file.mcfunction'
