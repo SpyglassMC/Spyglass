@@ -52,6 +52,7 @@ function getResourceLocationOptions(
 				category: registry,
 				requireCanonical,
 				allowTag: true,
+				requireTag: tags === 'required',
 			}
 		}
 	} else if (core.ResourceLocationCategory.is(registry)) {
