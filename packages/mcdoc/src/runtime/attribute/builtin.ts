@@ -45,7 +45,6 @@ function getResourceLocationOptions(
 	if (tags === 'implicit') {
 		registry = `tag/${registry}`
 	}
-	// TODO: disallow non-tags when tags=required
 	if (tags === 'allowed' || tags === 'required') {
 		if (core.TaggableResourceLocationCategory.is(registry)) {
 			return {
