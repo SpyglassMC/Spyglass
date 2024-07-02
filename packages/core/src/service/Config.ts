@@ -468,21 +468,24 @@ export class ConfigService implements ExternalEventEmitter {
 	}
 
 	async load(): Promise<Config> {
-		let ans = this.defaultConfig
-		for (const name of ConfigService.ConfigFileNames) {
-			const uri = this.project.projectRoots[0] + name
-			try {
-				ans = JSON.parse(bufferToString(await this.project.externals.fs.readFile(uri)))
-			} catch (e) {
-				if (this.project.externals.error.isKind(e, 'ENOENT')) {
-					// File doesn't exist.
-					continue
+		const overrides = []
+		for (const projectRoot of this.project.projectRoots) {
+			for (const name of ConfigService.ConfigFileNames) {
+				const uri = projectRoot + name
+				try {
+					const contents = await this.project.externals.fs.readFile(uri)
+					overrides.push(JSON.parse(bufferToString(contents)))
+				} catch (e) {
+					if (this.project.externals.error.isKind(e, 'ENOENT')) {
+						// File doesn't exist.
+						continue
+					}
+					this.emit('error', { error: e, uri })
 				}
-				this.emit('error', { error: e, uri })
+				break
 			}
-			break
 		}
-		return ConfigService.merge(this.defaultConfig, ans)
+		return ConfigService.merge(this.defaultConfig, ...overrides)
 	}
 
 	private static isConfigFile(this: void, uri: string): boolean {
