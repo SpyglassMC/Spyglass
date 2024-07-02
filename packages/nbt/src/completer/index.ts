@@ -19,7 +19,10 @@ const collection: core.Completer<NbtCollectionNode> = (node, ctx) => {
 		return ctx.meta.getCompleter(item.value.type)(item.value, ctx)
 	}
 	if (node.typeDef?.kind === 'list') {
-		const completions = getValues(node.typeDef.item, ctx.offset, ctx)
+		const completions = getValues(node.typeDef.item, ctx.offset, {
+			...ctx,
+			requireCanonical: node.requireCanonical,
+		})
 		if (ctx.offset < node.children[node.children.length - 1]?.range.start ?? 0) {
 			return completions.map(c => ({ ...c, insertText: c.insertText + ',' }))
 		}
@@ -35,7 +38,7 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 		}
 		const keySet = new Set(exitingKeys.map(n => n.value))
 		return mcdoc.runtime.completer
-			.getFields(record.typeDef, ctx)
+			.getFields(record.typeDef, { ...ctx, requireCanonical: record.requireCanonical })
 			.filter(({ key }) => !keySet.has(key))
 			.map(({ key, field }) =>
 				core.CompletionItem.create(key, pair?.key ?? range, {
@@ -54,11 +57,15 @@ const compound = core.completer.record<NbtStringNode, NbtNode, NbtCompoundNode>(
 		}
 		if (pair.key && record.typeDef) {
 			const pairKey = pair.key.value
-			const field = mcdoc.runtime.completer.getFields(record.typeDef, ctx)
+			const field = mcdoc.runtime.completer
+				.getFields(record.typeDef, ctx)
 				.find(({ key }) => key === pairKey)
 				?.field.type
 			if (field) {
-				return getValues(field, range, ctx)
+				return getValues(field, range, {
+					...ctx,
+					requireCanonical: record.requireCanonical,
+				})
 			}
 		}
 		return []
@@ -76,7 +83,10 @@ const primitive: core.Completer<NbtPrimitiveNode> = (node, ctx) => {
 	if (!node.typeDef) {
 		return []
 	}
-	return getValues(node.typeDef, insideRange ? node : ctx.offset, ctx)
+	return getValues(node.typeDef, insideRange ? node : ctx.offset, {
+		...ctx,
+		requireCanonical: node.requireCanonical,
+	})
 }
 
 const path: core.Completer<NbtPathNode> = (node, ctx) => {
@@ -111,7 +121,7 @@ function getPathKeys(
 	ctx: core.CompleterContext,
 ) {
 	return mcdoc.runtime.completer
-		.getFields(typeDef, ctx)
+		.getFields(typeDef, { ...ctx, requireCanonical: true })
 		.map(({ key, field }) =>
 			core.CompletionItem.create(key, range, {
 				kind: core.CompletionKind.Field,
@@ -127,7 +137,7 @@ function getPathKeys(
 function getValues(
 	typeDef: core.DeepReadonly<mcdoc.McdocType>,
 	range: core.RangeLike,
-	ctx: core.CompleterContext,
+	ctx: mcdoc.runtime.completer.McdocCompleterContext,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
 		.map(({ value, detail, kind, completionKind, insertText }) =>

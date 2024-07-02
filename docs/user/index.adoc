@@ -7,9 +7,9 @@
 :link-github-repo: https://github.com/SpyglassMC/Spyglass
 :link-l10n: https://l10n.spgoding.com/projects/spyglass/locales/
 
-Welcome to the work-in-progress documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real time diagnostics, semantic coloring and such.
+Welcome to the documentation site for Spyglass, a project that aims at improving your editing experience with Minecraft: Java Edition data packs by providing handy features like auto-completion, real-time diagnostics, semantic coloring and such.
 
-The project is under a complete rewrite and is planned to support multiple text editors. For the legacy version of the project commonly known as Data-pack Helper Plus, check out https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server[the VS Code Marketplace].
+It is planned to support multiple text editors, but for now, the only officially supported release is our vscode extension.
 
 
 == User Testimonials
@@ -23,10 +23,6 @@ ____
 
 You can enjoy features provided by Spyglass on various text editors.
 
-=== Sublime Text
-
-Follow the https://github.com/SpyglassMC/LSP-Spyglass#installation[instructions here].
-
 === VS Code
 
 Install https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-language-server[from the Marketplace].
@@ -34,6 +30,14 @@ Install https://marketplace.visualstudio.com/items?itemName=SPGoding.datapack-la
 === VSCodium
 
 Install https://open-vsx.org/extension/SPGoding/datapack-language-server[from the Open VSX Registry].
+
+=== Sublime Text
+
+Planned.
+
+=== Zed Editor
+
+Planned.
 
 == Customization
 
@@ -47,13 +51,7 @@ Main article: link:./user/mcdoc[Mcdoc]
 
 Click link:./playground[here].
 
-== Plugins
-
-The cake is a lie. ALL LIES.
-
 == Contributing
-
-Uh so many things to write.
 
 * {link-github-repo}/issues/new/choose[Create an issue]
 * {link-github-repo}[GitHub Repository]

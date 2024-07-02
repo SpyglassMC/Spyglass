@@ -1,5 +1,4 @@
 import * as core from '@spyglassmc/core'
-import { localeQuote, localize } from '@spyglassmc/locales'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
@@ -45,13 +44,13 @@ function getResourceLocationOptions(
 	if (tags === 'implicit') {
 		registry = `tag/${registry}`
 	}
-	// TODO: disallow non-tags when tags=required
 	if (tags === 'allowed' || tags === 'required') {
 		if (core.TaggableResourceLocationCategory.is(registry)) {
 			return {
 				category: registry,
 				requireCanonical,
 				allowTag: true,
+				requireTag: tags === 'required',
 			}
 		}
 	} else if (core.ResourceLocationCategory.is(registry)) {
@@ -68,6 +67,13 @@ function getResourceLocationOptions(
 export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 	registerAttribute(meta, 'canonical', () => undefined, {
 		// Has hardcoded behavior in the runtime checker
+	})
+	registerAttribute(meta, 'dispatcher_key', validator.string, {
+		stringMocker: (config, _, ctx) => {
+			const symbol = ctx.symbols.query(ctx.doc, 'mcdoc/dispatcher', config).symbol
+			const keys = Object.keys(symbol?.members ?? {}).filter(m => !m.startsWith('%'))
+			return core.LiteralNode.mock(ctx.offset, { pool: keys })
+		},
 	})
 	registerAttribute(meta, 'id', idValidator, {
 		checkInferred: (config, inferred, ctx) => {
@@ -127,7 +133,12 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 			}
 		},
 		stringMocker: (config, typeDef, ctx) => {
-			const options = getResourceLocationOptions(config, false, ctx, typeDef)
+			const options = getResourceLocationOptions(
+				config,
+				ctx.requireCanonical ?? false,
+				ctx,
+				typeDef,
+			)
 			if (!options) {
 				return undefined
 			}

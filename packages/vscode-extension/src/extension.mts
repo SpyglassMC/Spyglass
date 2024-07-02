@@ -11,6 +11,11 @@ import * as lc from 'vscode-languageclient/node.js'
 let client: lc.LanguageClient
 
 export function activate(context: vsc.ExtensionContext) {
+	if ((vsc.workspace.workspaceFolders ?? []).length === 0) {
+		// Don't start the language server without a workspace folder
+		return
+	}
+
 	// The server is implemented in node
 	const serverModule = context.asAbsolutePath(path.join('dist', 'server.js'))
 

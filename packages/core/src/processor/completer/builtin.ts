@@ -211,7 +211,9 @@ export const resourceLocation: Completer<ResourceLocationNode> = (node, ctx) => 
 	const pool = node.options.pool
 		? optimizePool(node.options.pool)
 		: [
-			...getPool(node.options.category),
+			...(!node.options.requireTag
+				? getPool(node.options.category)
+				: []),
 			...(node.options.allowTag
 				? getPool(`tag/${node.options.category}`).map((v) =>
 					`${ResourceLocation.TagPrefix}${v}`

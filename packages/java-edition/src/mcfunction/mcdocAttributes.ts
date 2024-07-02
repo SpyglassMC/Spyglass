@@ -21,6 +21,16 @@ const entityValidator = validator.alternatives<EntityConfig>(
 	() => ({ amount: 'multiple', type: 'entities' }),
 )
 
+interface ScoreHolderConfig {
+	amount: 'multiple' | 'single'
+}
+const scoreHolderValidator = validator.alternatives<ScoreHolderConfig>(
+	validator.tree({
+		amount: validator.options('multiple', 'single'),
+	}),
+	() => ({ amount: 'multiple' }),
+)
+
 export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: mcf.RootTreeNode) {
 	mcdoc.runtime.registerAttribute(meta, 'command', () => undefined, {
 		// TODO: validate slash
@@ -49,9 +59,9 @@ export function registerMcdocAttributes(meta: core.MetaRegistry, rootTreeNode: m
 		stringParser: () => parser.team('reference'),
 		stringMocker: (_, __, ctx) => core.SymbolNode.mock(ctx.offset, { category: 'team' }),
 	})
-	mcdoc.runtime.registerAttribute(meta, 'score_holder', () => undefined, {
-		stringParser: () =>
-			makeInfallible(parser.scoreHolder('reference', 'multiple'), localize('score-holder')),
+	mcdoc.runtime.registerAttribute(meta, 'score_holder', scoreHolderValidator, {
+		stringParser: (config) =>
+			makeInfallible(parser.scoreHolder('reference', config.amount), localize('score-holder')),
 		stringMocker: (_, __, ctx) => ScoreHolderNode.mock(ctx.offset),
 	})
 	mcdoc.runtime.registerAttribute(meta, 'tag', () => undefined, {
