@@ -505,6 +505,10 @@ export class Project implements ExternalEventEmitter {
 		}
 		const listProjectFiles = () =>
 			new Promise<void>((resolve) => {
+				if (this.projectRoots.length === 0) {
+					resolve()
+					return
+				}
 				this.#watchedFiles.clear()
 				this.#watcherReady = false
 				this.#watcher = this.externals.fs.watch(this.projectRoots).once('ready', () => {
