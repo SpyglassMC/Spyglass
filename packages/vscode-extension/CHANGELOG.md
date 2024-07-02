@@ -1,3 +1,16 @@
+# v4.0.1 (2024-07-02)
+
+## 🐛 Bug Fixes
+- [`601255e`](https://github.com/SpyglassMC/Spyglass/commit/601255e5f05ba64c057b629d0e5e8d2396f6024a) Crash when fileModified before dependencyFiles is set ([#1428](https://github.com/SpyglassMC/Spyglass/pull/1428))
+- [`a08b7a8`](https://github.com/SpyglassMC/Spyglass/commit/a08b7a8f4bffc27880d3327974b6f8bf5ae378d4) Require tag resource locations in some places
+- [`212cb71`](https://github.com/SpyglassMC/Spyglass/commit/212cb71c14d3135ce55dddf1967d591a224cc55d) Crash when extension activates without workspace folders
+
+# v4.0.0 (2024-06-30)
+
+## ✨ New Features
+- Complete rewrite of the extension
+- Added support for Minecraft 1.20.6 and 1.21
+
 # [v3.2.0](https://github.com/SPGoding/vscode-datapack-helper-plus/compare/v3.1.2...v3.2.0) (2020-11-29)
 
 ## ✨ New Features
