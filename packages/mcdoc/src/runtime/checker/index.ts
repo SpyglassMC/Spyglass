@@ -351,7 +351,7 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 	if (definitions.length === 1) {
 		const { typeDef, groupNode } = definitions[0]
 		ctx.attachTypeInfo?.(node.node.originalNode, typeDef, groupNode.desc)
-		handleStringAttachers(node.node, typeDef, ctx)
+		handleNodeAttachers(node.node, typeDef, ctx)
 
 		if (node.entryNode.runtimeKey && groupNode.keyDefinition) {
 			ctx.attachTypeInfo?.(
@@ -359,7 +359,7 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 				groupNode.keyDefinition,
 				groupNode.desc,
 			)
-			handleStringAttachers(node.entryNode.runtimeKey, groupNode.keyDefinition, ctx)
+			handleNodeAttachers(node.entryNode.runtimeKey, groupNode.keyDefinition, ctx)
 		}
 	} else if (definitions.length > 1) {
 		ctx.attachTypeInfo?.(node.node.originalNode, {
@@ -382,38 +382,43 @@ function attachTypeInfo<T>(node: CheckerTreeRuntimeNode<T>, ctx: McdocCheckerCon
 	}
 }
 
-function handleStringAttachers<T>(
+function handleNodeAttachers<T>(
 	runtimeValue: RuntimeNode<T>,
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	ctx: McdocCheckerContext<T>,
 ) {
-	const { stringAttacher } = ctx
-	if (!stringAttacher) {
+	const { nodeAttacher, stringAttacher } = ctx
+	if (!nodeAttacher && !stringAttacher) {
 		return
 	}
 	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
 		const parser = handler.stringParser?.(config, typeDef, ctx)
-		if (!parser) {
-			return
+		if (parser && stringAttacher) {
+			stringAttacher(runtimeValue.originalNode, (node) => {
+				const src = new Source(node.value, node.valueMap)
+				const start = src.cursor
+				const child = parser(src, ctx)
+				if (!child) {
+					ctx.err.report(
+						localize('expected', localize('mcdoc.runtime.checker.value')),
+						Range.create(start, src.skipRemaining()),
+					)
+					return
+				} else if (src.canRead()) {
+					ctx.err.report(
+						localize('mcdoc.runtime.checker.trailing'),
+						Range.create(src.cursor, src.skipRemaining()),
+					)
+				}
+				node.children = [child]
+			})
 		}
-		stringAttacher(runtimeValue.originalNode, (node) => {
-			const src = new Source(node.value, node.valueMap)
-			const start = src.cursor
-			const child = parser(src, ctx)
-			if (!child) {
-				ctx.err.report(
-					localize('expected', localize('mcdoc.runtime.checker.value')),
-					Range.create(start, src.skipRemaining()),
-				)
-				return
-			} else if (src.canRead()) {
-				ctx.err.report(
-					localize('mcdoc.runtime.checker.trailing'),
-					Range.create(src.cursor, src.skipRemaining()),
-				)
-			}
-			node.children = [child]
-		})
+		const checker = handler.checker?.(config, runtimeValue.inferredType, ctx)
+		if (checker && nodeAttacher) {
+			nodeAttacher(runtimeValue.originalNode, (node) => {
+				checker(node, ctx)
+			})
+		}
 	})
 }
 

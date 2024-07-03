@@ -98,6 +98,7 @@ export function index(
 						}\n\`\`\`\n${desc}`
 					}
 				},
+				nodeAttacher: (node, attacher) => attacher(node),
 				stringAttacher: (node, attacher) => {
 					if (!JsonStringNode.is(node)) {
 						return

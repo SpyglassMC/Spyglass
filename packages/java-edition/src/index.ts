@@ -1,5 +1,6 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
@@ -163,6 +164,28 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		}
 	}
 	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
+		checker: (_, typeDef) => {
+			if (typeDef.kind !== 'literal' || typeof typeDef.value.value !== 'number') {
+				return undefined
+			}
+			const target = typeDef.value.value
+			return (node, ctx) => {
+				const targetVersion = packFormats.get(target)
+				if (!targetVersion) {
+					ctx.err.report(
+						localize('java-edition.pack-format.unsupported', target),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				} else if (targetVersion.id !== release) {
+					ctx.err.report(
+						localize('java-edition.pack-format.not-loaded', target, release),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				}
+			}
+		},
 		numericCompleter: (_, ctx) => {
 			return [...packFormats.values()].map((v, i) => ({
 				range: core.Range.create(ctx.offset),
