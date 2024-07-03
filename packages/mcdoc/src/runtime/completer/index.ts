@@ -1,6 +1,12 @@
 import type * as core from '@spyglassmc/core'
 import { TypeDefSymbolData } from '../../binder/index.js'
-import type { LiteralType, McdocType, StringType, StructTypePairField } from '../../type/index.js'
+import type {
+	LiteralType,
+	McdocType,
+	NumericType,
+	StringType,
+	StructTypePairField,
+} from '../../type/index.js'
 import { handleAttributes } from '../attribute/index.js'
 import type { SimplifiedEnum, SimplifiedMcdocType } from '../checker/index.js'
 
@@ -55,9 +61,11 @@ export function getFields(
 export type SimpleCompletionValue = {
 	value: string
 	detail?: string
+	labelSuffix?: string
 	kind?: McdocType['kind']
 	completionKind?: core.CompletionKind
 	insertText?: string
+	sortText?: string
 }
 
 // TODO: only accept SimplifiedMcdocType here
@@ -124,6 +132,13 @@ export function getValues(
 				detail: v.identifier,
 				kind: typeDef.enumKind ?? 'string',
 			}))
+		case 'byte':
+		case 'short':
+		case 'int':
+		case 'long':
+		case 'float':
+		case 'double':
+			return getNumericCompletions(typeDef, ctx)
 		default:
 			return []
 	}
@@ -144,14 +159,39 @@ function getStringCompletions(
 			...items.map<SimpleCompletionValue>(item => ({
 				value: item.label,
 				kind: 'string',
+				labelSuffix: item.labelSuffix,
 				detail: item.detail,
 				completionKind: item.kind,
 				insertText: item.insertText,
+				sortText: item.sortText,
 			})),
 		)
 	})
 	if (ans.length === 0 && typeDef.kind === 'literal') {
 		ans.push({ value: `${typeDef.value.value}`, kind: 'string' })
 	}
+	return ans
+}
+
+function getNumericCompletions(
+	typeDef: core.DeepReadonly<NumericType>,
+	ctx: McdocCompleterContext,
+) {
+	const ans: SimpleCompletionValue[] = []
+	handleAttributes(typeDef.attributes, ctx, (handler, config) => {
+		const items = handler.numericCompleter?.(config, ctx)
+		if (!items) {
+			return
+		}
+		ans.push(...items.map(item => ({
+			value: item.label,
+			kind: typeDef.kind,
+			labelSuffix: item.labelSuffix,
+			detail: item.detail,
+			completionKind: item.kind,
+			insertText: item.insertText,
+			sortText: item.sortText,
+		})))
+	})
 	return ans
 }

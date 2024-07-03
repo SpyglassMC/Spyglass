@@ -195,6 +195,7 @@ export function completionItem(
 	const ans: ls.CompletionItem = {
 		label: completion.label,
 		kind: completion.kind,
+		...(completion.labelSuffix ? { labelDetails: { detail: completion.labelSuffix } } : {}),
 		detail: completion.detail,
 		documentation: completion.documentation,
 		filterText: completion.filterText,

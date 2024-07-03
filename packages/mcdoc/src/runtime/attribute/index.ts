@@ -37,6 +37,10 @@ export interface McdocAttribute<C = unknown> {
 		typeDef: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
 		ctx: McdocCompleterContext,
 	) => core.AstNode | undefined
+	numericCompleter?: (
+		config: C,
+		ctx: McdocCompleterContext,
+	) => core.CompletionItem[]
 }
 
 export function registerAttribute<C extends core.Returnable>(

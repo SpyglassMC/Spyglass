@@ -3,7 +3,7 @@ import * as json from '@spyglassmc/json'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
 import { uriBinder } from './binder/index.js'
-import type { McmetaSummary } from './dependency/index.js'
+import type { McmetaSummary, McmetaVersion } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
@@ -156,6 +156,22 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			},
 		},
 	)
+	const packFormats = new Map<number, McmetaVersion>()
+	for (const version of versions) {
+		if (version.type === 'release' && !packFormats.has(version.data_pack_version)) {
+			packFormats.set(version.data_pack_version, version)
+		}
+	}
+	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
+		numericCompleter: (_, ctx) => {
+			return [...packFormats.values()].map((v, i) => ({
+				range: core.Range.create(ctx.offset),
+				label: `${v.data_pack_version}`,
+				labelSuffix: ` (${v.id})`,
+				sortText: `${i}`.padStart(4, '0'),
+			} satisfies core.CompletionItem))
+		},
+	})
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)
