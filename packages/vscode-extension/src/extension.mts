@@ -69,64 +69,66 @@ export async function activate(context: vsc.ExtensionContext) {
 		location: vsc.ProgressLocation.Window,
 		title: localize('progress.preparing.title'),
 	}, async (progress) => {
-		// Start the client. This will also launch the server
-		client.start().then(() => {
-			const customCapabilities: server.CustomServerCapabilities | undefined = client
-				.initializeResult?.capabilities.experimental?.spyglassmc
-
-			if (customCapabilities?.dataHackPubify) {
-				context.subscriptions.push(
-					vsc.commands.registerCommand('spyglassmc.dataHackPubify', async () => {
-						try {
-							const initialism = await vsc.window.showInputBox({ placeHolder: 'DHP' })
-							if (!initialism) {
-								return
-							}
-
-							const params: server.MyLspDataHackPubifyRequestParams = { initialism }
-							const response: string = await client.sendRequest(
-								'spyglassmc/dataHackPubify',
-								params,
-							)
-							await vsc.window.showInformationMessage(response)
-						} catch (e) {
-							console.error('[client#dataHackPubify]', e)
-						}
-					}),
-				)
-			}
-
-			if (customCapabilities?.resetProjectCache) {
-				context.subscriptions.push(
-					vsc.commands.registerCommand('spyglassmc.resetProjectCache', async () => {
-						try {
-							await vsc.window.withProgress({
-								location: vsc.ProgressLocation.Window,
-								title: localize('progress.reset-project-cache.title'),
-							}, async () => {
-								await client.sendRequest('spyglassmc/resetProjectCache')
-							})
-						} catch (e) {
-							console.error('[client#resetProjectCache]', e)
-						}
-					}),
-				)
-			}
-
-			if (customCapabilities?.showCacheRoot) {
-				context.subscriptions.push(
-					vsc.commands.registerCommand('spyglassmc.showCacheRoot', async (): Promise<void> => {
-						try {
-							await client.sendRequest('spyglassmc/showCacheRoot')
-						} catch (e) {
-							console.error('[client#showCacheRoot]', e)
-						}
-					}),
-				)
-			}
-		}, (e) => {
+		try {
+			// Start the client. This will also launch the server
+			await client.start()
+		} catch (e) {
 			console.error('[client#start]', e)
-		})
+		}
+
+		const customCapabilities: server.CustomServerCapabilities | undefined = client
+			.initializeResult?.capabilities.experimental?.spyglassmc
+
+		if (customCapabilities?.dataHackPubify) {
+			context.subscriptions.push(
+				vsc.commands.registerCommand('spyglassmc.dataHackPubify', async () => {
+					try {
+						const initialism = await vsc.window.showInputBox({ placeHolder: 'DHP' })
+						if (!initialism) {
+							return
+						}
+
+						const params: server.MyLspDataHackPubifyRequestParams = { initialism }
+						const response: string = await client.sendRequest(
+							'spyglassmc/dataHackPubify',
+							params,
+						)
+						await vsc.window.showInformationMessage(response)
+					} catch (e) {
+						console.error('[client#dataHackPubify]', e)
+					}
+				}),
+			)
+		}
+
+		if (customCapabilities?.resetProjectCache) {
+			context.subscriptions.push(
+				vsc.commands.registerCommand('spyglassmc.resetProjectCache', async () => {
+					try {
+						await vsc.window.withProgress({
+							location: vsc.ProgressLocation.Window,
+							title: localize('progress.reset-project-cache.title'),
+						}, async () => {
+							await client.sendRequest('spyglassmc/resetProjectCache')
+						})
+					} catch (e) {
+						console.error('[client#resetProjectCache]', e)
+					}
+				}),
+			)
+		}
+
+		if (customCapabilities?.showCacheRoot) {
+			context.subscriptions.push(
+				vsc.commands.registerCommand('spyglassmc.showCacheRoot', async (): Promise<void> => {
+					try {
+						await client.sendRequest('spyglassmc/showCacheRoot')
+					} catch (e) {
+						console.error('[client#showCacheRoot]', e)
+					}
+				}),
+			)
+		}
 
 		return new Promise<void>((resolve) => {
 			client.onProgress(lc.WorkDoneProgress.type, 'initialize', (params) => {
