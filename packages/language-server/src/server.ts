@@ -60,11 +60,6 @@ connection.onInitialize(async (params) => {
 		)
 	}
 
-	if (params.workDoneToken) {
-		progressReporter = connection.window.attachWorkDoneProgress(params.workDoneToken)
-		progressReporter.begin(locales.localize('server.progress.preparing.title'))
-	}
-
 	try {
 		await locales.loadLocale(params.locale)
 	} catch (e) {
@@ -99,8 +94,8 @@ connection.onInitialize(async (params) => {
 			} catch (e) {
 				console.error('[sendDiagnostics]', e)
 			}
-		}).on('ready', () => {
-			progressReporter?.done()
+		}).on('ready', async () => {
+			await connection.sendProgress(ls.WorkDoneProgress.type, 'initialize', { kind: 'end' })
 		})
 		await service.project.init()
 	} catch (e) {
