@@ -102,7 +102,10 @@ function shouldUseOldItemStackFormat(ctx: core.ParserContext) {
  * @returns The parser for the specified argument tree node. All argument parsers used in the `mcfunction` package
  * fail on empty input.
  */
-export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | undefined => {
+export const argument: mcf.ArgumentParserGetter = (
+	rawTreeNode,
+	prevNodes,
+): core.Parser | undefined => {
 	const treeNode = rawTreeNode as ArgumentTreeNode
 
 	const wrap = <T extends core.AstNode>(parser: core.Parser<T>): core.Parser =>
@@ -269,6 +272,19 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 			return wrap(vector({ dimension: 2, noLocal: true }))
 		case 'minecraft:vec3':
 			return wrap(vector({ dimension: 3 }))
+		case 'spyglassmc:criterion':
+			const advancementNode = prevNodes.length > 0
+				? prevNodes[prevNodes.length - 1].children[0]
+				: undefined
+			if (core.ResourceLocationNode.is(advancementNode)) {
+				return wrap(criterion(
+					core.ResourceLocationNode.toString(advancementNode, 'full'),
+					core.SymbolUsageType.is(treeNode.properties?.usageType)
+						? treeNode.properties?.usageType
+						: undefined,
+				))
+			}
+			return wrap(greedyString)
 		case 'spyglassmc:tag':
 			return wrap(tag(
 				core.SymbolUsageType.is(treeNode.properties?.usageType)
@@ -372,6 +388,17 @@ function coordinate(integerOnly = false): core.InfallibleParser<CoordinateNode> 
 
 		return ans
 	}
+}
+
+export function criterion(
+	advancement: core.FullResourceLocation,
+	usageType?: core.SymbolUsageType,
+	terminators: string[] = [],
+): core.InfallibleParser<core.SymbolNode> {
+	return unquotableSymbol(
+		{ category: 'advancement', parentPath: [advancement], usageType },
+		terminators,
+	)
 }
 
 export function entity(
@@ -844,41 +871,63 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 																	category: 'advancement',
 																}),
 																sep: '=',
-																value: core.select([{
-																	predicate: (src) => src.peek() === '{',
-																	parser: core.map<
-																		core.RecordNode<
-																			core.StringNode,
-																			core.BooleanNode
-																		>,
-																		EntitySelectorAdvancementsArgumentCriteriaNode
-																	>(
-																		core.record<
-																			core.StringNode,
-																			core.BooleanNode
-																		>({
-																			start: '{',
-																			pair: {
-																				key: unquotedString,
-																				sep: '=',
-																				value: core.boolean,
-																				end: ',',
-																				trailingEnd: true,
-																			},
-																			end: '}',
-																		}),
-																		(res) => {
-																			const ans:
-																				EntitySelectorAdvancementsArgumentCriteriaNode =
-																					{
-																						...res,
-																						type:
-																							'mcfunction:entity_selector/arguments/advancements/criteria',
-																					}
-																			return ans
-																		},
-																	),
-																}, { parser: core.boolean }]),
+																value: {
+																	get: (_, key) =>
+																		core.select([{
+																			predicate: (src) => src.peek() === '{',
+																			parser: core.map<
+																				core.RecordNode<
+																					core.StringNode | core.SymbolNode,
+																					core.BooleanNode
+																				>,
+																				EntitySelectorAdvancementsArgumentCriteriaNode
+																			>(
+																				core.record<
+																					core.StringNode | core.SymbolNode,
+																					core.BooleanNode
+																				>({
+																					start: '{',
+																					pair: {
+																						key: key
+																							? core.stopBefore(
+																								core.symbol({
+																									category: 'advancement',
+																									parentPath: [
+																										core
+																											.ResourceLocationNode
+																											.toString(
+																												key,
+																												'full',
+																											),
+																									],
+																									usageType: 'reference',
+																								}),
+																								core.Whitespaces,
+																								'}',
+																								',',
+																								'=',
+																							)
+																							: unquotedString,
+																						sep: '=',
+																						value: core.boolean,
+																						end: ',',
+																						trailingEnd: true,
+																					},
+																					end: '}',
+																				}),
+																				(res) => {
+																					const ans:
+																						EntitySelectorAdvancementsArgumentCriteriaNode =
+																							{
+																								...res,
+																								type:
+																									'mcfunction:entity_selector/arguments/advancements/criteria',
+																							}
+																					return ans
+																				},
+																			),
+																		}, { parser: core.boolean }]),
+																},
 																end: ',',
 																trailingEnd: true,
 															},

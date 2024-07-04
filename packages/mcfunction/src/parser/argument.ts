@@ -1,4 +1,5 @@
 import type * as core from '@spyglassmc/core'
+import type { CommandChildNode } from '../node/command.js'
 import type { ArgumentTreeNode } from '../tree/index.js'
 
 /**
@@ -8,7 +9,10 @@ import type { ArgumentTreeNode } from '../tree/index.js'
  *
  * @returns The parser corresponding to that tree node, or `undefined` if such parser doesn't exist.
  */
-export type ArgumentParserGetter = (treeNode: ArgumentTreeNode) => core.Parser | undefined
+export type ArgumentParserGetter = (
+	treeNode: ArgumentTreeNode,
+	prevNodes: CommandChildNode[],
+) => core.Parser | undefined
 
 export function argumentTreeNodeToString(name: string, treeNode: ArgumentTreeNode): string {
 	const parserName = treeNode.parser.slice(treeNode.parser.indexOf(':') + 1)
