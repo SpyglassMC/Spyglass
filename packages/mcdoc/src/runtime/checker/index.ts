@@ -465,11 +465,15 @@ function checkShallowly<T>(
 	}
 
 	if (
-		(typeDef.kind === 'literal'
+		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
+			&& simplifiedInferred.kind !== 'unsafe'
+			&& typeDef.kind === 'literal'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| typeDef.value.value !== simplifiedInferred.value.value))
 		// TODO handle enum field attributes
-		|| (typeDef.kind === 'enum'
+		|| (typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
+			&& simplifiedInferred.kind !== 'unsafe'
+			&& typeDef.kind === 'enum'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
 	) {
