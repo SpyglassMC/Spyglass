@@ -67,7 +67,7 @@ export async function activate(context: vsc.ExtensionContext) {
 	let initializeProgress: vsc.Progress<{ message?: string; increment?: number }> | undefined
 	await vsc.window.withProgress({
 		location: vsc.ProgressLocation.Window,
-		title: localize('progress.preparing.title'),
+		title: localize('progress.initializing.title'),
 	}, async (progress) => {
 		try {
 			// Start the client. This will also launch the server
