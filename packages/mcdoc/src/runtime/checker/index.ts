@@ -612,7 +612,7 @@ function checkShallowly<T>(
 
 			errors.push(
 				...Array.from(missingKeys).map(key => ({
-					kind: 'missing_key' as 'missing_key',
+					kind: 'missing_key' as const,
 					node: runtimeNode,
 					keys: [key],
 				})),
@@ -636,7 +636,7 @@ function checkShallowly<T>(
 						// This should never happen
 						errors.push(
 							...child.map(v => ({
-								kind: 'expected_key_value_pair' as 'expected_key_value_pair',
+								kind: 'expected_key_value_pair' as const,
 								node: v,
 							})),
 						)
@@ -690,7 +690,7 @@ function checkShallowly<T>(
 					const values = Array.isArray(child) ? child : [...child.possibleValues, child.key]
 					errors.push(
 						...values.map(v => ({
-							kind: 'unknown_tuple_element' as 'unknown_tuple_element',
+							kind: 'unknown_tuple_element' as const,
 							node: v,
 						})),
 					)
