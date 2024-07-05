@@ -100,7 +100,7 @@ async function _setupLanguage(code: string, dry = false) {
  * arrayToMessage(['bar', 'foo']) // "“bar” or “foo”"
  * arrayToMessage(['bar', 'baz', 'foo']) // "“bar”, “baz”, or “foo”"
  * @example // Using Locale
- * arrayToMessage([], false) // "nothing"
+ * arrayToMessage([], false) // "{nothing}"
  * arrayToMessage(['A'], false) // "A"
  * arrayToMessage(['A', 'B'], false) // "A{conjunction.or_2}B"
  * arrayToMessage(['A', 'B', 'C'], false) // "A{conjunction.or_3+_1}B{conjunction.or_3+_2}C"

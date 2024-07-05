@@ -78,6 +78,7 @@ import {
 	UseStatementNode,
 } from '../node/index.js'
 import type { LiteralNumberCaseInsensitiveSuffix } from '../parser/index.js'
+import type { SimplifiedMcdocType } from '../runtime/checker/index.js'
 import type {
 	Attribute,
 	AttributeTree,
@@ -113,6 +114,7 @@ namespace ModuleSymbolData {
 
 export interface TypeDefSymbolData {
 	typeDef: McdocType
+	simplifiedTypeDef?: SimplifiedMcdocType
 }
 export namespace TypeDefSymbolData {
 	export function is(data: unknown): data is TypeDefSymbolData {
