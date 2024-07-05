@@ -135,6 +135,7 @@ export function typeDefinition(
 				),
 				attachTypeInfo: (node, definition, desc = '') => {
 					node.typeDef = definition
+					node.requireCanonical = options.isPredicate
 					// TODO: improve hover info
 					if (
 						node.parent && core.PairNode?.is(node.parent)
@@ -162,6 +163,7 @@ export function typeDefinition(
 						}\n\`\`\`\n${desc}`
 					}
 				},
+				nodeAttacher: (node, attacher) => attacher(node),
 				stringAttacher: (node, attacher) => {
 					if (!NbtStringNode.is(node)) {
 						return
@@ -369,6 +371,11 @@ export function path(
 						link.prev.node.hover = `\`\`\`typescript\n${link.prev.node.children[0].value}: ${
 							mcdoc.McdocType.toString(definition)
 						}\n\`\`\`\n${desc}`
+					}
+				},
+				nodeAttacher: (link, attacher) => {
+					if (link.node.type !== 'leaf') {
+						attacher(link.node)
 					}
 				},
 				stringAttacher: (link, attacher) => {

@@ -256,7 +256,7 @@ export class SymbolUtil implements ExternalEventEmitter {
 					symbol,
 					(data) =>
 						(!uri || data.location.uri === uri)
-						&& data.location.contributor === contributor
+						&& (!contributor || data.location.contributor === contributor)
 						&& predicate(data),
 				)
 			}

@@ -1,6 +1,6 @@
 {
   "name": "datapack-language-server",
-  "version": "4.0.0",
+  "version": "0.1.0-PLACEHOLDER",
   "type": "commonjs",
   "main": "dist/extension.js",
   "author": "Spyglass Contributors",
@@ -9,7 +9,7 @@
   "scripts": {
     "build": "wireit",
     "build:dev": "wireit",
-    "release": "echo \"DO NOT PUBLISH\"",
+    "release": "vsce publish && ovsx publish",
     "release:dry": "echo \"DO NOT PUBLISH (DRY)\"",
     "watch": "npm run build:dev --watch"
   },
@@ -48,7 +48,9 @@
   ],
   "devDependencies": {
     "@types/vscode": "1.67.0",
+    "@vscode/vsce": "^2.29.0",
     "esbuild": "^0.17.18",
+    "ovsx": "^0.9.1",
     "vscode-languageclient": "^9.0.1",
     "vscode-test": "^1.5.2"
   },
@@ -67,7 +69,6 @@
   "description": "%spyglassmc.description%",
   "icon": "icon.png",
   "categories": [
-    "Formatters",
     "Linters",
     "Programming Languages"
   ],
@@ -240,7 +241,7 @@
         "description": "A vector."
       }
     ],
-    "semanticTokenModifiers": [ ],
+    "semanticTokenModifiers": [],
     "semanticTokenScopes": [
       {
         "scopes": {

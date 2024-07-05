@@ -3,7 +3,7 @@ import * as mcdoc from '@spyglassmc/mcdoc'
 import type { JsonNode, TypedJsonNode } from '../node/index.js'
 import { JsonPairNode, JsonStringNode } from '../node/index.js'
 
-export const typed: core.Checker<TypedJsonNode> = (node, ctx) => {
+export const typed: core.SyncChecker<TypedJsonNode> = (node, ctx) => {
 	index(node.targetType)(node.children[0], ctx)
 }
 
@@ -98,6 +98,7 @@ export function index(
 						}\n\`\`\`\n${desc}`
 					}
 				},
+				nodeAttacher: (node, attacher) => attacher(node),
 				stringAttacher: (node, attacher) => {
 					if (!JsonStringNode.is(node)) {
 						return

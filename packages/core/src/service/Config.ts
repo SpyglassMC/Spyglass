@@ -406,12 +406,18 @@ export const VanillaConfig: Config = {
 		nbtListLengthCheck: null,
 		nbtTypeCheck: 'loosely',
 
-		undeclaredSymbol: [{
-			if: [{ category: RegistryCategories, namespace: 'minecraft' }, {
-				category: [...FileCategories, 'bossbar', 'objective', 'team'],
-			}],
-			then: { report: 'warning' },
-		}, { then: { declare: 'block' } }],
+		undeclaredSymbol: [
+			{
+				if: [
+					{ category: RegistryCategories, namespace: 'minecraft' },
+					{ category: [...FileCategories, 'bossbar', 'objective', 'team'] },
+				],
+				then: { report: 'warning' },
+			},
+			{
+				then: { declare: 'block' },
+			},
+		],
 	},
 	snippet: {
 		executeIfScoreSet:

@@ -1,8 +1,8 @@
 import type {
+	CheckerContext,
+	Config,
 	FileCategory,
-	MetaRegistry,
 	RootUriString,
-	SyncBinder,
 	TaggableResourceLocationCategory,
 	UriBinder,
 	UriBinderContext,
@@ -13,9 +13,7 @@ import {
 	Range,
 	TaggableResourceLocationCategories,
 } from '@spyglassmc/core'
-import type { JsonFileNode } from '@spyglassmc/json'
 import { localeQuote, localize } from '@spyglassmc/locales'
-import type { McfunctionNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../dependency/index.js'
 
 interface Resource {
@@ -189,18 +187,20 @@ export function dissectUri(uri: string, ctx: UriBinderContext) {
 }
 
 export const uriBinder: UriBinder = (uris: readonly string[], ctx: UriBinderContext) => {
-	for (const [path, config] of Object.entries(ctx.config.env.customResources)) {
-		if (config.pack === undefined || config.pack === 'data') {
-			resource(path, { ...config, category: config.category as FileCategory })
-		}
-	}
-
 	for (const uri of uris) {
 		const parts = dissectUri(uri, ctx)
 		if (parts) {
 			ctx.symbols.query(uri, parts.category, `${parts.namespace}:${parts.identifier}`).enter({
 				usage: { type: 'definition' },
 			})
+		}
+	}
+}
+
+export function registerCustomResources(config: Config) {
+	for (const [path, res] of Object.entries(config.env.customResources)) {
+		if (res.pack === undefined || res.pack === 'data') {
+			resource(path, { ...res, category: res.category as FileCategory })
 		}
 	}
 }
@@ -219,39 +219,35 @@ function matchVersion(
 	return true
 }
 
-const fileBinder: SyncBinder<JsonFileNode | McfunctionNode> = (node, ctx) => {
-	const parts = dissectUri(ctx.doc.uri, ctx)
-	if (parts?.ok === false) {
-		const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
-		if (!release) {
-			return
-		}
-		if (parts.expected) {
-			ctx.err.report(
-				localize(
-					'java-edition.binder.wrong-folder',
-					localeQuote(parts.path),
-					release,
-					localeQuote(parts.expected),
-				),
-				Range.Beginning,
-				ErrorSeverity.Hint,
-			)
-		} else {
-			ctx.err.report(
-				localize(
-					'java-edition.binder.wrong-version',
-					localeQuote(parts.path),
-					release,
-				),
-				Range.Beginning,
-				ErrorSeverity.Hint,
-			)
-		}
+export function reportDissectError(
+	realPath: string,
+	expectedPath: string | undefined,
+	ctx: CheckerContext,
+) {
+	const release = ctx.project['loadedVersion'] as ReleaseVersion | undefined
+	if (!release) {
+		return
 	}
-}
-
-export function registerBinders(meta: MetaRegistry) {
-	meta.registerBinder<JsonFileNode>('json:file', fileBinder)
-	meta.registerBinder<McfunctionNode>('mcfunction:entry', fileBinder)
+	if (expectedPath) {
+		ctx.err.report(
+			localize(
+				'java-edition.binder.wrong-folder',
+				localeQuote(realPath),
+				release,
+				localeQuote(expectedPath),
+			),
+			Range.Beginning,
+			ErrorSeverity.Hint,
+		)
+	} else {
+		ctx.err.report(
+			localize(
+				'java-edition.binder.wrong-version',
+				localeQuote(realPath),
+				release,
+			),
+			Range.Beginning,
+			ErrorSeverity.Hint,
+		)
+	}
 }

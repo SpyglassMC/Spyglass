@@ -43,6 +43,7 @@ export interface CompletionItem {
 	label: string
 	range: Range
 	kind?: CompletionKind
+	labelSuffix?: string
 	detail?: string
 	documentation?: string
 	deprecated?: boolean

@@ -121,7 +121,8 @@ connection.onInitialize(async (params) => {
 			declarationProvider: {},
 			definitionProvider: {},
 			implementationProvider: {},
-			documentFormattingProvider: {},
+			// TODO: re-enable this
+			// documentFormattingProvider: {},
 			referencesProvider: {},
 			typeDefinitionProvider: {},
 			documentHighlightProvider: {},

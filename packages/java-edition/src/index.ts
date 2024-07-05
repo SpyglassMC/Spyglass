@@ -1,9 +1,10 @@
 import * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
+import { localize } from '@spyglassmc/locales'
 import * as mcdoc from '@spyglassmc/mcdoc'
 import * as nbt from '@spyglassmc/nbt'
-import { registerBinders, uriBinder } from './binder/index.js'
-import type { McmetaSummary } from './dependency/index.js'
+import { uriBinder } from './binder/index.js'
+import type { McmetaSummary, McmetaVersion } from './dependency/index.js'
 import {
 	getMcmetaSummary,
 	getVanillaDatapack,
@@ -25,24 +26,43 @@ export * as mcf from './mcfunction/index.js'
 export const initialize: core.ProjectInitializer = async (ctx) => {
 	const { config, downloader, externals, logger, meta, projectRoot } = ctx
 
-	async function getPackMcmeta(): Promise<PackMcmeta | undefined> {
-		let ans: PackMcmeta | undefined
-		const uri = `${projectRoot}pack.mcmeta`
+	async function readPackMcmeta(uri: string): Promise<PackMcmeta | undefined> {
 		try {
 			const data = await core.fileUtil.readJson(externals, uri)
 			PackMcmeta.assert(data)
-			ans = data
+			return data
 		} catch (e) {
 			if (!externals.error.isKind(e, 'ENOENT')) {
 				// `pack.mcmeta` exists but broken. Log an error.
 				logger.error(`[je.initialize] Failed loading pack.mcmeta “${uri}”`, e)
 			}
 		}
-		return ans
+		return undefined
+	}
+
+	async function findPackMcmeta(): Promise<PackMcmeta | undefined> {
+		const searched = new Set<string>()
+		for (let depth = 0; depth <= 2; depth += 1) {
+			const files = await externals.fs.getAllFiles(projectRoot, depth + 1)
+			for (const uri of files.filter(uri => uri.endsWith('/pack.mcmeta'))) {
+				if (searched.has(uri)) {
+					continue
+				}
+				searched.add(uri)
+				const data = await readPackMcmeta(uri)
+				if (data) {
+					logger.info(
+						`[je.initialize] Found a valid pack.mcmeta “${uri}” with pack_format “${data.pack.pack_format}”`,
+					)
+					return data
+				}
+			}
+		}
+		logger.warn('[je.initialize] Failed finding a valid pack.mcmeta')
+		return undefined
 	}
 
 	meta.registerUriBinder(uriBinder)
-	registerBinders(meta)
 
 	const versions = await getVersions(ctx.externals, ctx.downloader)
 	if (!versions) {
@@ -52,15 +72,12 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		return
 	}
 
-	const packMcmeta = await getPackMcmeta()
-	const { release, id: version, isLatest } = resolveConfiguredVersion(config.env.gameVersion, {
-		packMcmeta,
-		versions,
-	})
+	const version = await resolveConfiguredVersion(config.env.gameVersion, versions, findPackMcmeta)
+	const release = version.release
 
 	meta.registerDependencyProvider(
 		'@vanilla-datapack',
-		() => getVanillaDatapack(downloader, version, isLatest),
+		() => getVanillaDatapack(downloader, version.id, version.isLatest),
 	)
 
 	meta.registerDependencyProvider('@vanilla-mcdoc', () => getVanillaMcdoc(downloader))
@@ -69,8 +86,8 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 		ctx.externals,
 		downloader,
 		logger,
-		version,
-		isLatest,
+		version.id,
+		version.isLatest,
 		config.env.dataSource,
 		config.env.mcmetaSummaryOverrides,
 	)
@@ -140,6 +157,44 @@ export const initialize: core.ProjectInitializer = async (ctx) => {
 			},
 		},
 	)
+	const packFormats = new Map<number, McmetaVersion>()
+	for (const version of versions) {
+		if (version.type === 'release' && !packFormats.has(version.data_pack_version)) {
+			packFormats.set(version.data_pack_version, version)
+		}
+	}
+	mcdoc.runtime.registerAttribute(meta, 'pack_format', () => undefined, {
+		checker: (_, typeDef) => {
+			if (typeDef.kind !== 'literal' || typeof typeDef.value.value !== 'number') {
+				return undefined
+			}
+			const target = typeDef.value.value
+			return (node, ctx) => {
+				const targetVersion = packFormats.get(target)
+				if (!targetVersion) {
+					ctx.err.report(
+						localize('java-edition.pack-format.unsupported', target),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				} else if (targetVersion.id !== release) {
+					ctx.err.report(
+						localize('java-edition.pack-format.not-loaded', target, release),
+						node,
+						core.ErrorSeverity.Warning,
+					)
+				}
+			}
+		},
+		numericCompleter: (_, ctx) => {
+			return [...packFormats.values()].map((v, i) => ({
+				range: core.Range.create(ctx.offset),
+				label: `${v.data_pack_version}`,
+				labelSuffix: ` (${v.id})`,
+				sortText: `${i}`.padStart(4, '0'),
+			} satisfies core.CompletionItem))
+		},
+	})
 
 	json.initialize(ctx)
 	jeJson.initialize(ctx)

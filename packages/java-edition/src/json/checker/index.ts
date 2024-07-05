@@ -1,7 +1,7 @@
 import type * as core from '@spyglassmc/core'
 import * as json from '@spyglassmc/json'
 import type * as mcdoc from '@spyglassmc/mcdoc'
-import { dissectUri } from '../../binder/index.js'
+import { dissectUri, reportDissectError } from '../../binder/index.js'
 
 function createTagDefinition(registry: string): mcdoc.McdocType {
 	const id: mcdoc.AttributeValue = {
@@ -36,6 +36,8 @@ export const file: core.Checker<json.JsonFileNode> = (node, ctx) => {
 			parallelIndices: [{ kind: 'static', value: parts.category }],
 		}
 		return json.checker.index(type, { discardDuplicateKeyErrors: true })(child, ctx)
+	} else if (parts?.ok === false) {
+		reportDissectError(parts.path, parts.expected, ctx)
 	}
 }
 

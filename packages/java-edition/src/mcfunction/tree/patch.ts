@@ -1,3 +1,4 @@
+import type { ResourceLocationOptions } from '@spyglassmc/core'
 import { SymbolAccessType } from '@spyglassmc/core'
 import type { PartialRootTreeNode, PartialTreeNode } from '@spyglassmc/mcfunction'
 import { ReleaseVersion } from '../../dependency/index.js'
@@ -129,16 +130,22 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 						nbtAccessType: SymbolAccessType.Write,
 						vaultAccessType: SymbolAccessType.Write,
 						children: (type) => ({
-							append: getDataModifySource(type),
+							append: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							insert: {
 								children: {
-									index: getDataModifySource(type),
+									index: getDataModifySource(type, {
+										isListIndex: true,
+									}),
 								},
 							},
 							merge: getDataModifySource(type, {
 								isMerge: true,
 							}),
-							prepend: getDataModifySource(type),
+							prepend: getDataModifySource(type, {
+								isListIndex: true,
+							}),
 							set: getDataModifySource(type),
 						}),
 					}),
@@ -637,6 +644,9 @@ export function getPatch(release: ReleaseVersion): PartialRootTreeNode {
 								children: {
 									name: {
 										parser: 'spyglassmc:tag',
+										properties: {
+											usageType: 'definition',
+										},
 									},
 								},
 							},
@@ -878,7 +888,8 @@ function getDataPatch(
 						properties: {
 							category: 'storage',
 							accessType: vaultAccessType,
-						},
+							usageType: 'definition',
+						} satisfies ResourceLocationOptions,
 						children: {
 							[nbtKey]: {
 								properties: {
@@ -902,8 +913,10 @@ const getDataModifySource = (
 	type: 'block' | 'entity' | 'storage',
 	{
 		isMerge = false,
+		isListIndex = false,
 	}: {
 		isMerge?: boolean | undefined
+		isListIndex?: boolean | undefined
 	} = {},
 ): PartialTreeNode =>
 	Object.freeze({
@@ -918,6 +931,7 @@ const getDataModifySource = (
 							dispatchedBy: type === 'block' ? 'targetPos' : 'target',
 							indexedBy: 'targetPath',
 							isMerge,
+							isListIndex,
 						} satisfies NbtParserProperties,
 					},
 				},
@@ -988,6 +1002,9 @@ const LootSource: PartialTreeNode = Object.freeze({
 const ObjectiveWriteTargets: PartialTreeNode = Object.freeze({
 	children: {
 		targets: {
+			properties: {
+				usageType: 'definition',
+			},
 			children: {
 				objective: {
 					properties: {
