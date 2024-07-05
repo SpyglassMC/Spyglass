@@ -1,5 +1,5 @@
 import * as core from '@spyglassmc/core'
-import type { Attribute, StructTypePairField } from '../../type/index.js'
+import type { Attribute, McdocType, StructTypePairField, UnionType } from '../../type/index.js'
 import type {
 	McdocCheckerContext,
 	SimplifiedMcdocType,
@@ -32,11 +32,20 @@ export interface McdocAttribute<C = unknown> {
 		typeDef: SimplifiedMcdocTypeNoUnion,
 		ctx: McdocCheckerContext<T>,
 	) => core.InfallibleParser<core.AstNode | undefined> | undefined
+	checker?: <T>(
+		config: C,
+		inferred: Exclude<McdocType, UnionType>,
+		ctx: McdocCheckerContext<T>,
+	) => core.SyncChecker<core.AstNode> | undefined
 	stringMocker?: (
 		config: C,
 		typeDef: core.DeepReadonly<SimplifiedMcdocTypeNoUnion>,
 		ctx: McdocCompleterContext,
 	) => core.AstNode | undefined
+	numericCompleter?: (
+		config: C,
+		ctx: McdocCompleterContext,
+	) => core.CompletionItem[]
 }
 
 export function registerAttribute<C extends core.Returnable>(

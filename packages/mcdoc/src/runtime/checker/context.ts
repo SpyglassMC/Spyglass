@@ -26,6 +26,8 @@ export type TypeInfoAttacher<T> = (
 	description?: string,
 ) => void
 
+export type NodeAttacher<T> = (node: T, attacher: (node: core.AstNode) => void) => void
+
 export type StringAttacher<T> = (node: T, attacher: (node: core.StringBaseNode) => void) => void
 
 export type ChildrenGetter<T> = (
@@ -42,6 +44,7 @@ export interface McdocCheckerContext<T> extends core.CheckerContext {
 	getChildren: ChildrenGetter<T>
 	reportError: ErrorReporter<T>
 	attachTypeInfo?: TypeInfoAttacher<T>
+	nodeAttacher?: NodeAttacher<T>
 	stringAttacher?: StringAttacher<T>
 }
 type McdocCheckerContextOptions<T> = Partial<McdocCheckerContext<T>>
@@ -58,6 +61,7 @@ export namespace McdocCheckerContext {
 			getChildren: options.getChildren ?? (() => []),
 			reportError: options.reportError ?? (() => {}),
 			attachTypeInfo: options.attachTypeInfo,
+			nodeAttacher: options.nodeAttacher,
 			stringAttacher: options.stringAttacher,
 		}
 	}

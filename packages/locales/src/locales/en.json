@@ -46,6 +46,8 @@
   "invalid-key-combination": "Invalid combination of keys %0%",
   "java-edition.binder.wrong-folder": "Files in the %0% folder are not recognized in loaded version %1%, did you meant to use the %2% folder?",
   "java-edition.binder.wrong-version": "Files in the %0% folder are not recognized in loaded version %1%",
+  "java-edition.pack-format.unsupported": "Pack format %0% does not have a corresponding release version. Snapshot versions are unsupported.",
+  "java-edition.pack-format.not-loaded": "Pack format %0% does not match the actively loaded version %1%. You may need to reload Spyglass.",
   "json.doc.advancement.display": "Advancement display settings. If present, the advancement will be visible in the advancement tabs.",
   "json.checker.array.length-between": "%0% with length between %1% and %2%",
   "json.checker.object.field.union-empty-members": "Disallowed property",

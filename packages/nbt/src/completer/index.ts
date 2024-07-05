@@ -140,12 +140,14 @@ function getValues(
 	ctx: mcdoc.runtime.completer.McdocCompleterContext,
 ): core.CompletionItem[] {
 	return mcdoc.runtime.completer.getValues(typeDef, ctx)
-		.map(({ value, detail, kind, completionKind, insertText }) =>
+		.map(({ value, labelSuffix, detail, kind, completionKind, insertText, sortText }) =>
 			core.CompletionItem.create(value, range, {
 				kind: completionKind ?? core.CompletionKind.Value,
+				labelSuffix,
 				detail,
 				filterText: formatValue(value, kind),
 				insertText: formatValue(insertText ?? value, kind),
+				sortText,
 			})
 		)
 }
