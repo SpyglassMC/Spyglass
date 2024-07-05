@@ -435,17 +435,21 @@ function checkShallowly<T>(
 	typeDef: SimplifiedMcdocTypeNoUnion,
 	ctx: McdocCheckerContext<T>,
 ): ShallowCheckResult<T> {
-	const typeDefValueType = getValueType(typeDef)
-	const runtimeValueType = getValueType(simplifiedInferred)
-
 	const childDefinitions = Array<ShallowCheckResultChildDefinition | undefined>(children.length)
 		.fill(undefined)
 
 	if (
-		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
-			&& simplifiedInferred.kind !== 'unsafe'
-			&& runtimeValueType.kind !== typeDefValueType.kind
-			&& !ctx.isEquivalent(runtimeValueType, typeDefValueType))
+		typeDef.kind === 'any' || typeDef.kind === 'unsafe' || simplifiedInferred.kind === 'unsafe'
+	) {
+		return { childDefinitions, errors: [] }
+	}
+
+	const typeDefValueType = getValueType(typeDef)
+	const runtimeValueType = getValueType(simplifiedInferred)
+
+	if (
+		runtimeValueType.kind !== typeDefValueType.kind
+		&& !ctx.isEquivalent(runtimeValueType, typeDefValueType)
 	) {
 		return {
 			childDefinitions,
@@ -465,15 +469,11 @@ function checkShallowly<T>(
 	}
 
 	if (
-		(typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
-			&& simplifiedInferred.kind !== 'unsafe'
-			&& typeDef.kind === 'literal'
+		(typeDef.kind === 'literal'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| typeDef.value.value !== simplifiedInferred.value.value))
 		// TODO handle enum field attributes
-		|| (typeDef.kind !== 'any' && typeDef.kind !== 'unsafe'
-			&& simplifiedInferred.kind !== 'unsafe'
-			&& typeDef.kind === 'enum'
+		|| (typeDef.kind === 'enum'
 			&& (simplifiedInferred.kind !== 'literal'
 				|| !typeDef.values.some(v => v.value === simplifiedInferred.value.value)))
 	) {
@@ -484,9 +484,6 @@ function checkShallowly<T>(
 	}
 
 	switch (typeDef.kind) {
-		case 'any':
-		case 'unsafe':
-			break
 		case 'byte':
 		case 'short':
 		case 'int':
