@@ -64,7 +64,6 @@ export async function activate(context: vsc.ExtensionContext) {
 		clientOptions,
 	)
 
-	let initializeProgress: vsc.Progress<{ message?: string; increment?: number }> | undefined
 	await vsc.window.withProgress({
 		location: vsc.ProgressLocation.Window,
 		title: localize('progress.initializing.title'),
@@ -133,15 +132,14 @@ export async function activate(context: vsc.ExtensionContext) {
 		return new Promise<void>((resolve) => {
 			client.onProgress(lc.WorkDoneProgress.type, 'initialize', (params) => {
 				if (params.kind === 'begin') {
-					initializeProgress?.report({ increment: 0, message: params.message })
+					progress?.report({ increment: 0, message: params.message })
 				} else if (params.kind === 'report') {
-					initializeProgress?.report({ increment: params.percentage, message: params.message })
+					progress?.report({ increment: params.percentage, message: params.message })
 				} else if (params.kind === 'end') {
 					resolve()
 				}
 			})
 		})
-		initializeProgress = progress
 	})
 }
 
