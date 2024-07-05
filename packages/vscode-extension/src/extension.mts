@@ -4,13 +4,14 @@
  * ------------------------------------------------------------------------------------------*/
 
 import type * as server from '@spyglassmc/language-server'
+import { localize } from '@spyglassmc/locales'
 import path from 'path'
 import * as vsc from 'vscode'
 import * as lc from 'vscode-languageclient/node.js'
 
 let client: lc.LanguageClient
 
-export function activate(context: vsc.ExtensionContext) {
+export async function activate(context: vsc.ExtensionContext) {
 	if ((vsc.workspace.workspaceFolders ?? []).length === 0) {
 		// Don't start the language server without a workspace folder
 		return
@@ -53,7 +54,6 @@ export function activate(context: vsc.ExtensionContext) {
 	const clientOptions: lc.LanguageClientOptions = {
 		documentSelector,
 		initializationOptions,
-		progressOnInitialization: true,
 	}
 
 	// Create the language client and start the client.
@@ -64,14 +64,23 @@ export function activate(context: vsc.ExtensionContext) {
 		clientOptions,
 	)
 
-	// Start the client. This will also launch the server
-	client.start().then(() => {
+	await vsc.window.withProgress({
+		location: vsc.ProgressLocation.Window,
+		title: localize('progress.initializing.title'),
+	}, async (progress) => {
+		try {
+			// Start the client. This will also launch the server
+			await client.start()
+		} catch (e) {
+			console.error('[client#start]', e)
+		}
+
 		const customCapabilities: server.CustomServerCapabilities | undefined = client
 			.initializeResult?.capabilities.experimental?.spyglassmc
 
 		if (customCapabilities?.dataHackPubify) {
 			context.subscriptions.push(
-				vsc.commands.registerCommand('spyglassmc.dataHackPubify', async (): Promise<void> => {
+				vsc.commands.registerCommand('spyglassmc.dataHackPubify', async () => {
 					try {
 						const initialism = await vsc.window.showInputBox({ placeHolder: 'DHP' })
 						if (!initialism) {
@@ -93,16 +102,18 @@ export function activate(context: vsc.ExtensionContext) {
 
 		if (customCapabilities?.resetProjectCache) {
 			context.subscriptions.push(
-				vsc.commands.registerCommand(
-					'spyglassmc.resetProjectCache',
-					async (): Promise<void> => {
-						try {
+				vsc.commands.registerCommand('spyglassmc.resetProjectCache', async () => {
+					try {
+						await vsc.window.withProgress({
+							location: vsc.ProgressLocation.Window,
+							title: localize('progress.reset-project-cache.title'),
+						}, async () => {
 							await client.sendRequest('spyglassmc/resetProjectCache')
-						} catch (e) {
-							console.error('[client#resetProjectCache]', e)
-						}
-					},
-				),
+						})
+					} catch (e) {
+						console.error('[client#resetProjectCache]', e)
+					}
+				}),
 			)
 		}
 
@@ -117,8 +128,18 @@ export function activate(context: vsc.ExtensionContext) {
 				}),
 			)
 		}
-	}, (e) => {
-		console.error('[client#start]', e)
+
+		return new Promise<void>((resolve) => {
+			client.onProgress(lc.WorkDoneProgress.type, 'initialize', (params) => {
+				if (params.kind === 'begin') {
+					progress?.report({ increment: 0, message: params.message })
+				} else if (params.kind === 'report') {
+					progress?.report({ increment: params.percentage, message: params.message })
+				} else if (params.kind === 'end') {
+					resolve()
+				}
+			})
+		})
 	})
 }
 
