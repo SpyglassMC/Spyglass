@@ -1,4 +1,5 @@
 import * as core from '@spyglassmc/core'
+import { localeQuote, localize } from '@spyglassmc/locales'
 import type { SimplifiedMcdocTypeNoUnion } from '../checker/index.js'
 import { registerAttribute, validator } from './index.js'
 
@@ -147,6 +148,72 @@ export function registerBuiltinAttributes(meta: core.MetaRegistry) {
 				return core.PrefixedNode.mock(ctx.offset, config.prefix, resourceLocation)
 			}
 			return resourceLocation
+		},
+	})
+	registerAttribute(meta, 'color', validator.string, {
+		checkInferred: (config, inferred, ctx) => {
+			if (
+				config === 'hex_rgb' && inferred.kind === 'literal' && inferred.value.kind === 'string'
+			) {
+				return inferred.value.value.startsWith('#')
+			}
+			return true
+		},
+		checker: (config, inferred) => {
+			return (node, ctx) => {
+				switch (config) {
+					case 'named':
+						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
+							return
+						}
+						node.color = core.Color.fromNamed(inferred.value.value)
+						return
+					case 'hex_rgb':
+						if (inferred.kind !== 'literal' || inferred.value.kind !== 'string') {
+							return
+						}
+						let range = node.range
+						if (core.StringBaseNode.is(node) && node.quote) {
+							range = core.Range.translate(range, 1, -1)
+						}
+						if (!inferred.value.value.startsWith('#')) {
+							ctx.err.report(
+								localize('expected', localeQuote('#')),
+								range,
+								core.ErrorSeverity.Warning,
+							)
+							return
+						}
+						node.color = {
+							value: core.Color.fromHexRGB(inferred.value.value),
+							format: [core.ColorFormat.HexRGB],
+							range,
+						}
+						return
+					case 'composite_rgb':
+						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
+							return
+						}
+						node.color = {
+							value: core.Color.fromCompositeRGB(inferred.value.value),
+							format: [core.ColorFormat.CompositeRGB],
+							range: node.range,
+						}
+						return
+					case 'composite_argb':
+						if (inferred.kind !== 'literal' || typeof inferred.value.value !== 'number') {
+							return
+						}
+						node.color = {
+							value: core.Color.fromCompositeARGB(inferred.value.value),
+							format: [core.ColorFormat.CompositeARGB],
+							range: node.range,
+						}
+						return
+					default:
+						return
+				}
+			}
 		},
 	})
 }

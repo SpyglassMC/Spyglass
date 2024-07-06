@@ -30,6 +30,14 @@ export namespace Color {
 	])
 	export const ColorNames = [...NamedColors.keys()]
 
+	export function fromNamed(value: string): Color | undefined {
+		const composite = NamedColors.get(value)
+		if (composite === undefined) {
+			return undefined
+		}
+		return fromCompositeRGB(composite)
+	}
+
 	/**
 	 * @param r A decimal within [0.0, 1.0].
 	 * @param g A decimal within [0.0, 1.0].
@@ -66,6 +74,17 @@ export namespace Color {
 	 */
 	export function fromIntRGB(r: number, g: number, b: number): Color {
 		return fromIntRGBA(r, g, b, 255)
+	}
+
+	/**
+	 * @param value A string in the format `#rrggbb`
+	 */
+	export function fromHexRGB(value: string): Color {
+		var bigint = parseInt(value.slice(1), 16)
+		var r = (bigint >> 16) & 255
+		var g = (bigint >> 8) & 255
+		var b = bigint & 255
+		return fromIntRGB(r, g, b)
 	}
 
 	/**
@@ -175,10 +194,10 @@ export namespace ColorPresentation {
 				}`
 			case ColorFormat.CompositeARGB:
 				return `${
-					Math.round(
-						((color[3] * 255) << 24) + ((color[0] * 255) << 16) + ((color[1] * 255) << 8)
-							+ color[2] * 255,
-					)
+					(BigInt(Math.round(color[3] * 255)) << 24n)
+					+ (BigInt(Math.round(color[0] * 255)) << 16n)
+					+ (BigInt(Math.round(color[1] * 255)) << 8n)
+					+ BigInt(Math.round(color[2] * 255))
 				}`
 		}
 	}
