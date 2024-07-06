@@ -150,7 +150,7 @@ export const argument: mcf.ArgumentParserGetter = (rawTreeNode): core.Parser | u
 					(res) => ({
 						...res,
 						color: core.Color.NamedColors.has(res.value)
-							? core.Color.fromCompositeInt(core.Color.NamedColors.get(res.value)!)
+							? core.Color.fromCompositeRGB(core.Color.NamedColors.get(res.value)!)
 							: undefined,
 					}),
 				),
