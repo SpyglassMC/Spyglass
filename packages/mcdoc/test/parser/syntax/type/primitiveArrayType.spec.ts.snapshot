@@ -7,7 +7,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse '' 1`] = `
         "start": 0,
         "end": 0
       },
-      "message": "Expected “byte”, “int”, or “long” but got “”",
+      "message": "Expected “long” but got “”",
       "severity": 3
     },
     {
@@ -24,91 +24,17 @@ exports[`mcdoc parser > primitiveArrayType > Parse '' 1`] = `
 
 exports[`mcdoc parser > primitiveArrayType > Parse 'byte @ 0..1 [] @ 0..' 1`] = `
 {
-  "node": {
-    "type": "mcdoc:type/primitive_array",
-    "children": [
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 0,
-          "end": 4
-        },
-        "value": "byte"
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
       },
-      {
-        "type": "mcdoc:int_range",
-        "children": [
-          {
-            "type": "integer",
-            "range": {
-              "start": 7,
-              "end": 8
-            },
-            "value": 0
-          },
-          {
-            "type": "mcdoc:literal",
-            "range": {
-              "start": 8,
-              "end": 10
-            },
-            "value": ".."
-          },
-          {
-            "type": "integer",
-            "range": {
-              "start": 10,
-              "end": 11
-            },
-            "value": 1
-          }
-        ],
-        "range": {
-          "start": 7,
-          "end": 11
-        }
-      },
-      {
-        "type": "mcdoc:literal",
-        "range": {
-          "start": 12,
-          "end": 14
-        },
-        "value": "[]",
-        "colorTokenType": "type"
-      },
-      {
-        "type": "mcdoc:int_range",
-        "children": [
-          {
-            "type": "integer",
-            "range": {
-              "start": 17,
-              "end": 18
-            },
-            "value": 0
-          },
-          {
-            "type": "mcdoc:literal",
-            "range": {
-              "start": 18,
-              "end": 20
-            },
-            "value": ".."
-          }
-        ],
-        "range": {
-          "start": 17,
-          "end": 20
-        }
-      }
-    ],
-    "range": {
-      "start": 0,
-      "end": 20
+      "message": "Expected “[]” but got “”",
+      "severity": 3
     }
-  },
-  "errors": []
+  ]
 }
 `;
 
@@ -274,6 +200,22 @@ exports[`mcdoc parser > primitiveArrayType > Parse 'int[] @ 4' 1`] = `
 }
 `;
 
+exports[`mcdoc parser > primitiveArrayType > Parse 'long @ 10000000000000001.. [] @ 0..' 1`] = `
+{
+  "node": "FAILURE",
+  "errors": [
+    {
+      "range": {
+        "start": 5,
+        "end": 5
+      },
+      "message": "Expected “[]” but got “”",
+      "severity": 3
+    }
+  ]
+}
+`;
+
 exports[`mcdoc parser > primitiveArrayType > Parse 'other[]' 1`] = `
 {
   "node": {
@@ -308,7 +250,7 @@ exports[`mcdoc parser > primitiveArrayType > Parse 'other[]' 1`] = `
         "start": 0,
         "end": 5
       },
-      "message": "Expected “byte”, “int”, or “long” but got “other”",
+      "message": "Expected “long” but got “other”",
       "severity": 3
     }
   ]
