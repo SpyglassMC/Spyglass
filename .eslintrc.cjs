@@ -64,6 +64,6 @@ module.exports = {
 		],
 		"object-shorthand": "warn",
 		"prefer-const": "warn",
-		"prefer-object-spread": "warn"
+		"prefer-object-spread": "warn",
 	}
 }
