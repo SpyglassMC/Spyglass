@@ -396,7 +396,7 @@ export function criterion(
 	terminators: string[] = [],
 ): core.InfallibleParser<core.SymbolNode> {
 	return unquotableSymbol(
-		{ category: 'advancement', parentPath: [advancement], usageType },
+		{ category: 'advancement', subcategory: 'criterion', parentPath: [advancement], usageType },
 		terminators,
 	)
 }
@@ -889,23 +889,11 @@ export function selector(ignoreInvalidPrefix = false): core.Parser<EntitySelecto
 																					start: '{',
 																					pair: {
 																						key: key
-																							? core.stopBefore(
-																								core.symbol({
-																									category: 'advancement',
-																									parentPath: [
-																										core
-																											.ResourceLocationNode
-																											.toString(
-																												key,
-																												'full',
-																											),
-																									],
-																									usageType: 'reference',
-																								}),
-																								core.Whitespaces,
-																								'}',
-																								',',
-																								'=',
+																							? criterion(
+																								core.ResourceLocationNode
+																									.toString(key, 'full'),
+																								'reference',
+																								['}', ',', '='],
 																							)
 																							: unquotedString,
 																						sep: '=',

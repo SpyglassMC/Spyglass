@@ -20,6 +20,7 @@ export function registerMcdocAttributes(meta: core.MetaRegistry) {
 			}
 			return core.symbol({
 				category: 'advancement',
+				subcategory: 'criterion',
 				parentPath: [`${parts.namespace}:${parts.identifier}`],
 				usageType: config.definition ? 'definition' : 'reference',
 			})
