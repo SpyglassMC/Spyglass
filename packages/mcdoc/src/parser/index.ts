@@ -5,6 +5,7 @@ import type {
 	FloatNode,
 	InfallibleParser,
 	IntegerNode,
+	LongNode,
 	Parser,
 	ParserContext,
 	ReadonlySource,
@@ -60,6 +61,7 @@ import type {
 	ListTypeNode,
 	LiteralNode,
 	LiteralTypeNode,
+	LongRangeNode,
 	ModuleNode,
 	NumericTypeNode,
 	PathNode,
@@ -580,6 +582,9 @@ export const float: InfallibleParser<FloatNode> = core.float({
 export const integer: InfallibleParser<IntegerNode> = core.integer({
 	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
 })
+export const long: InfallibleParser<LongNode> = core.long({
+	pattern: /^(?:0|[-+]?[1-9][0-9]*)$/,
+})
 export const LiteralIntSuffixes = Object.freeze(['b', 's', 'l'] as const)
 export type LiteralIntSuffix = (typeof LiteralIntSuffixes)[number]
 export const LiteralIntCaseInsensitiveSuffixes = Object.freeze(
@@ -609,6 +614,12 @@ export type LiteralNumberCaseInsensitiveSuffix =
 export const typedNumber: InfallibleParser<TypedNumberNode> = setType(
 	'mcdoc:typed_number',
 	select([{
+		regex: /^(?:\+|-)?\d+L/i,
+		parser: sequence([
+			long,
+			optional(keyword(LiteralIntCaseInsensitiveSuffixes, { colorTokenType: 'keyword' })),
+		]),
+	}, {
 		regex: /^(?:\+|-)?\d+(?!\d|[.dfe])/i,
 		parser: sequence([
 			integer,
@@ -817,13 +828,20 @@ export const booleanType: Parser<BooleanTypeNode> = typeBase(
 	keyword('boolean', { colorTokenType: 'type' }),
 )
 
-function range<P extends InfallibleParser<IntegerNode> | InfallibleParser<FloatNode>>(
+function range<
+	P extends
+		| InfallibleParser<IntegerNode>
+		| InfallibleParser<LongNode>
+		| InfallibleParser<FloatNode>,
+>(
 	type: P extends InfallibleParser<infer V> ? (V extends IntegerNode ? IntRangeNode
+			: V extends LongNode ? LongRangeNode
 			: FloatRangeNode)['type']
 		: never,
 	number: P,
 ): InfallibleParser<
-	P extends InfallibleParser<infer V> ? V extends IntegerNode ? IntRangeNode : FloatRangeNode
+	P extends InfallibleParser<infer V>
+		? (V extends IntegerNode ? IntRangeNode : V extends LongNode ? LongRangeNode : FloatRangeNode)
 		: never
 >
 function range(type: string, number: InfallibleParser): InfallibleParser {
@@ -849,15 +867,25 @@ function range(type: string, number: InfallibleParser): InfallibleParser {
 	)
 }
 
-export const intRange: InfallibleParser<IntRangeNode> = range('mcdoc:int_range', integer)
+function atRange<T extends (IntRangeNode | LongRangeNode | FloatRangeNode)>(
+	parser: InfallibleParser<T>,
+) {
+	return optional((src, ctx) => {
+		if (!src.trySkip('@')) {
+			return Failure
+		}
+		src.skipWhitespace()
+		return parser(src, ctx)
+	})
+}
 
-const atIntRange: InfallibleParser<IntRangeNode | undefined> = optional((src, ctx) => {
-	if (!src.trySkip('@')) {
-		return Failure
-	}
-	src.skipWhitespace()
-	return intRange(src, ctx)
-})
+export const intRange: InfallibleParser<IntRangeNode> = range('mcdoc:int_range', integer)
+export const longRange: InfallibleParser<LongRangeNode> = range('mcdoc:long_range', long)
+export const floatRange: InfallibleParser<FloatRangeNode> = range('mcdoc:float_range', float)
+
+export const atIntRange = atRange(intRange)
+export const atLongRange = atRange(longRange)
+export const atFloatRange = atRange(floatRange)
 
 export const stringType: Parser<StringTypeNode> = typeBase(
 	'mcdoc:type/string',
@@ -879,16 +907,6 @@ export const literalType: Parser<LiteralTypeNode> = typeBase(
 	]),
 )
 
-export const floatRange: InfallibleParser<FloatRangeNode> = range('mcdoc:float_range', float)
-
-const atFloatRange: InfallibleParser<FloatRangeNode | undefined> = optional((src, ctx) => {
-	if (!src.trySkip('@')) {
-		return Failure
-	}
-	src.skipWhitespace()
-	return floatRange(src, ctx)
-})
-
 export const numericType: Parser<NumericTypeNode> = typeBase(
 	'mcdoc:type/numeric_type',
 	select([{
@@ -898,6 +916,9 @@ export const numericType: Parser<NumericTypeNode> = typeBase(
 			true,
 		),
 	}, {
+		predicate: (src) => src.tryPeek('long'),
+		parser: syntax([keyword(NumericTypeIntKinds, { colorTokenType: 'type' }), atLongRange], true),
+	}, {
 		parser: syntax([keyword(NumericTypeIntKinds, { colorTokenType: 'type' }), atIntRange], true),
 	}]),
 )
@@ -905,8 +926,10 @@ export const numericType: Parser<NumericTypeNode> = typeBase(
 export const primitiveArrayType: Parser<PrimitiveArrayTypeNode> = typeBase(
 	'mcdoc:type/primitive_array',
 	syntax([
-		literal(PrimitiveArrayValueKinds),
-		atIntRange,
+		any([
+			sequence([literal('long'), atLongRange]),
+			sequence([literal(PrimitiveArrayValueKinds), atIntRange]),
+		]),
 		keyword('[]', { allowedChars: new Set(['[', ']']), colorTokenType: 'type' }),
 		atIntRange,
 	]),
